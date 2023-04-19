@@ -38,10 +38,10 @@ import javax.xml.ws.Service;
                   targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 public class AccordoCooperazioneSoap12Service extends Service {
 
-    public final static URL WSDL_LOCATION;
+    public static final URL WSDL_LOCATION;
 
-    public final static QName SERVICE = new QName("http://www.openspcoop2.org/core/registry/management", "AccordoCooperazioneSoap12Service");
-    public final static QName AccordoCooperazionePortSoap12 = new QName("http://www.openspcoop2.org/core/registry/management", "AccordoCooperazionePortSoap12");
+    public static final QName SERVICE = new QName("http://www.openspcoop2.org/core/registry/management", "AccordoCooperazioneSoap12Service");
+    public static final QName AccordoCooperazionePortSoap12 = new QName("http://www.openspcoop2.org/core/registry/management", "AccordoCooperazionePortSoap12");
     static {
         URL url = null;
         try {

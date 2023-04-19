@@ -52,7 +52,7 @@ import org.openspcoop2.utils.threads.RunnableLogger;
 public class TimerConsegnaContenutiApplicativiThread extends GestoreCodaRunnable{
 
     /** Variabile che indica il Nome del modulo dell'architettura di OpenSPCoop rappresentato da questa classe */
-    public final static String ID_MODULO = "TimerConsegnaContenutiApplicativi";
+    public static final String ID_MODULO = "TimerConsegnaContenutiApplicativi";
     public static Timestamp LOCK_CONSEGNA_FUTURA = null;
     static {
     	try {

@@ -19,7 +19,7 @@
 
 
 
-<%@ page session="true" import="java.util.Vector, org.openspcoop2.web.lib.mvc.*" %>
+<%@ page session="true" import="java.util.List, org.openspcoop2.web.lib.mvc.*" %>
 
 <%
 String iddati = "";
@@ -41,14 +41,14 @@ GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData
 PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
 String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 String showListInfos = request.getParameter("showListInfos");
-Vector<?> v = pd.getDati();
+List<?> v = pd.getDati();
 
 String message = pd.getMessage();
 String messageType = pd.getMessageType();
 String pageDescription = pd.getPageDescription();
 String messageTitle = pd.getMessageTitle();
 boolean mostraLinkHome = pd.isMostraLinkHome();
-Vector<GeneralLink> titlelist = pd.getTitleList();
+List<GeneralLink> titlelist = pd.getTitleList();
 String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 %>
 <table id="crumbs-table">
@@ -64,7 +64,7 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 						<%
 						GeneralLink l;
 					  	for (int i = 0; i < titlelist.size(); i++) {
-					    	l = titlelist.elementAt(i);
+					    	l = titlelist.get(i);
 						    if (!l.getLabel().equals("")) {
 						    	if (i != titlelist.size()-1) {
 					        		if (!l.getUrl().equals("")) {

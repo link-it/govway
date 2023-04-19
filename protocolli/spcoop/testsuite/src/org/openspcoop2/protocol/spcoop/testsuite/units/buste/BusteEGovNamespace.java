@@ -23,7 +23,7 @@
 package org.openspcoop2.protocol.spcoop.testsuite.units.buste;
 
 import java.util.Date;
-import java.util.Vector;
+import java.util.List;
 
 import javax.activation.DataHandler;
 import javax.xml.soap.AttachmentPart;
@@ -79,7 +79,7 @@ public class BusteEGovNamespace {
 		this.dataAvvioGruppoTest = DateManager.getDate();
 		this.traduttore = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(CostantiTestSuite.PROTOCOL_NAME).createTraduttore();
 	} 	
-	private Vector<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new Vector<ErroreAttesoOpenSPCoopLogCore>();
+	private List<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new java.util.ArrayList<>();
 	@AfterGroups (alwaysRun=true , groups=ID_GRUPPO)
 	public void testOpenspcoopCoreLog() throws Exception{
 		if(this.erroriAttesiOpenSPCoopCore.size()>0){

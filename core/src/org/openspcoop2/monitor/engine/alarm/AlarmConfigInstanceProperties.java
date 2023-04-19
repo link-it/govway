@@ -36,8 +36,8 @@ import org.slf4j.Logger;
 
 class AlarmConfigInstanceProperties extends InstanceProperties {
 
-    public final static String ALARM_PROPERTIES_LOCAL_PATH = "allarmi_configurazione_local.properties";
-    public final static String ALARM_PROPERTIES = "ALLARMI_CONFIGURAZIONE_PROPERTIES";
+    public static final String ALARM_PROPERTIES_LOCAL_PATH = "allarmi_configurazione_local.properties";
+    public static final String ALARM_PROPERTIES = "ALLARMI_CONFIGURAZIONE_PROPERTIES";
 	
 	AlarmConfigInstanceProperties(Properties reader,Logger log,String confDir) throws Exception{
 		super(org.openspcoop2.utils.Costanti.OPENSPCOOP2_LOCAL_HOME,reader, log);

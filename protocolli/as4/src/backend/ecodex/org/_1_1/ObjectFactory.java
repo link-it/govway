@@ -173,7 +173,7 @@ public class ObjectFactory {
         return new StatusRequest();
     }
 
-    private final static QName _GetMessageErrorsResponse = new QName("http://org.ecodex.backend/1_1/", "getMessageErrorsResponse");
+    private static final QName _GetMessageErrorsResponse = new QName("http://org.ecodex.backend/1_1/", "getMessageErrorsResponse");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ErrorResultImplArray }{@code >}}

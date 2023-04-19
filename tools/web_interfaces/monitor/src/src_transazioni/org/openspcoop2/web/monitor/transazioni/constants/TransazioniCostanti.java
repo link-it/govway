@@ -33,7 +33,7 @@ public class TransazioniCostanti {
 	public static final String NOME_ACTION_RICERCA_LVL2 = "transazioni_lvl2";
 
 	// Indica il numero delle possibili classi CSS per i tag dei gruppi, modificare questo valore se si vuole modificare il numero delle classi disponibili
-	public final static Integer NUMERO_GRUPPI_CSS = 30;
+	public static final Integer NUMERO_GRUPPI_CSS = 30;
 
 	/* costanti properties file messages_it.properties*/ 
 	public static final String TRANSAZIONI_SUMMARY_SOGGETTO_LOCALE_SERVIZIO_LABEL_KEY = "transazioni.summary.soggettoLocaleServizio.label";

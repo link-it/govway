@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.Vector;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -162,18 +161,18 @@ public class Common {
 	 * ma non posso modificarla perchè è appunto usata in test di rate limiting 
 	 * 
 	 */
-	public static Vector<HttpResponse> makeParallelRequests(HttpRequest request, int count) {
+	public static List<HttpResponse> makeParallelRequests(HttpRequest request, int count) {
 		
 		if (count < 0) {
 			throw new IllegalArgumentException("Request count must be > 0");
 		} else if (count == 0) {
-			return new Vector<>();
+			return new java.util.ArrayList<>();
 		}
 		
 		int nthreads = Integer.valueOf(System.getProperty("soglia_richieste_simultanee"));
 		var logger = ConfigLoader.getLoggerCore();
 
-		final Vector<HttpResponse> responses = new Vector<>();
+		final List<HttpResponse> responses = new java.util.ArrayList<>();
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nthreads);
 
 		for (int i = 0; i < count; i++) {
@@ -207,9 +206,9 @@ public class Common {
 	}
 	
 	
-	public static Vector<Future<HttpResponse>> makeBackgroundRequests(List<HttpRequest> requests, int count,
+	public static List<Future<HttpResponse>> makeBackgroundRequests(List<HttpRequest> requests, int count,
 			int request_delay) {
-		final Vector<Future<HttpResponse>> oldFutureResponses = new Vector<>();
+		final List<Future<HttpResponse>> oldFutureResponses = new java.util.ArrayList<>();
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(sogliaRichiesteSimultanee);
 		var logger = ConfigLoader.getLoggerCore();
 	

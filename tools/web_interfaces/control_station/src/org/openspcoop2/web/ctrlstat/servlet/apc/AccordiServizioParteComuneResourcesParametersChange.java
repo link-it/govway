@@ -21,8 +21,8 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.apc;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -91,7 +91,7 @@ public final class AccordiServizioParteComuneResourcesParametersChange extends A
 
 			String editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
-			long idAccordoLong = Long.valueOf(id);
+			long idAccordoLong = Long.parseLong(id);
 			String nomeRisorsa = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME);
 			if (nomeRisorsa == null) {
 				nomeRisorsa = "";
@@ -171,10 +171,9 @@ public final class AccordiServizioParteComuneResourcesParametersChange extends A
 				}
 			}
 			
-			if(parameterList != null && parameterList.size() > 0) {
+			if(parameterList != null && !parameterList.isEmpty()) {
 				for (ResourceParameter resourceParameter : parameterList) {
 					if(resourceParameter.getId().intValue() == idParInt) {
-//					if(resourceParameter.getNome().equals(nome) && resourceParameter.getParameterType().equals(tipoParametro)) {
 						resourceParameterOLD = resourceParameter;
 						break;
 					}
@@ -198,7 +197,7 @@ public final class AccordiServizioParteComuneResourcesParametersChange extends A
 			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false).getValue();
 			List<Parameter> listaParams = apcHelper.getTitoloApc(TipoOperazione.CHANGE, as, tipoAccordo, labelASTitle, null, false);
 			
-			String labelRisorse = isModalitaVistaApiCustom ? AccordiServizioParteComuneCostanti.LABEL_RISORSE : AccordiServizioParteComuneCostanti.LABEL_RISORSE + " di " + labelASTitle;
+			String labelRisorse = (isModalitaVistaApiCustom!=null && isModalitaVistaApiCustom.booleanValue()) ? AccordiServizioParteComuneCostanti.LABEL_RISORSE : AccordiServizioParteComuneCostanti.LABEL_RISORSE + " di " + labelASTitle;
 			
 			listaParams.add(new Parameter(labelRisorse, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_LIST, pIdAccordo, pNomeAccordo, pTipoAccordo));
 			
@@ -239,9 +238,9 @@ public final class AccordiServizioParteComuneResourcesParametersChange extends A
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = apcHelper.addAccordiResourceParameterToDati(tipoOp, dati, id, as.getStatoPackage(),tipoAccordo,
 						 nomeRisorsa, isRequest, statusS, idParInt, nome, descr,  tipoParametro, tipo, restrizioni, required);
@@ -269,9 +268,9 @@ public final class AccordiServizioParteComuneResourcesParametersChange extends A
 				ServletUtils.setPageDataTitle(pd,listaParams); 
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 				
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = apcHelper.addAccordiResourceParameterToDati(tipoOp, dati, id, as.getStatoPackage(),tipoAccordo,
 						 nomeRisorsa, isRequest, statusS, idParInt, nome, descr,  tipoParametro, tipo, restrizioni, required);
@@ -295,11 +294,10 @@ public final class AccordiServizioParteComuneResourcesParametersChange extends A
 			newParameter.setRequired(required);
 			
 			int idx = -1;			
-			if(parameterList != null && parameterList.size() > 0) {
+			if(parameterList != null && !parameterList.isEmpty()) {
 				for (int i = 0; i < parameterList.size(); i++) {
 					ResourceParameter resourceParameter = parameterList.get(i);
 					if(resourceParameter.getId().intValue() == idParInt) {
-//					if(resourceParameter.getNome().equals(nome) && resourceParameter.getParameterType().equals(tipoParametro)) {
 						idx = i;
 						break;
 					}

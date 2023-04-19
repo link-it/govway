@@ -21,8 +21,8 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.apc;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -103,7 +103,7 @@ public final class AccordiServizioParteComuneResourcesRepresentationAdd extends 
 			String editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 
 			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
-			long idAccordoLong = Long.valueOf(id);
+			long idAccordoLong = Long.parseLong(id);
 			String nomeRisorsa = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME);
 			if (nomeRisorsa == null) {
 				nomeRisorsa = "";
@@ -199,7 +199,7 @@ public final class AccordiServizioParteComuneResourcesRepresentationAdd extends 
 			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false).getValue();
 			List<Parameter> listaParams = apcHelper.getTitoloApc(TipoOperazione.ADD, as, tipoAccordo, labelASTitle, null, false);
 			
-			String labelRisorse = isModalitaVistaApiCustom ? AccordiServizioParteComuneCostanti.LABEL_RISORSE : AccordiServizioParteComuneCostanti.LABEL_RISORSE + " di " + labelASTitle;
+			String labelRisorse = (isModalitaVistaApiCustom!=null && isModalitaVistaApiCustom.booleanValue()) ? AccordiServizioParteComuneCostanti.LABEL_RISORSE : AccordiServizioParteComuneCostanti.LABEL_RISORSE + " di " + labelASTitle;
 			
 			listaParams.add(new Parameter(labelRisorse, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_LIST, pIdAccordo, pNomeAccordo, pTipoAccordo));
 			
@@ -239,9 +239,9 @@ public final class AccordiServizioParteComuneResourcesRepresentationAdd extends 
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = apcHelper.addAccordiResourceRepresentationToDati(tipoOp, dati, id, as.getStatoPackage(),tipoAccordo,protocollo, 
 						protocolFactory,serviceBinding, nomeRisorsa, isRequest, statusS, null, mediaType, nome, descr, messageType, tipo, tipoJson, nomeXml, namespaceXml, xmlType);
@@ -262,9 +262,9 @@ public final class AccordiServizioParteComuneResourcesRepresentationAdd extends 
 				ServletUtils.setPageDataTitle(pd, listaParams);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = apcHelper.addAccordiResourceRepresentationToDati(tipoOp, dati, id, as.getStatoPackage(),tipoAccordo,protocollo, 
 						protocolFactory,serviceBinding, nomeRisorsa, isRequest, statusS, null, mediaType, nome, descr,  messageType, tipo, tipoJson, nomeXml, namespaceXml, xmlType);

@@ -34,7 +34,7 @@ import org.openspcoop2.pdd.mdb.Sbustamento;
  * @version $Rev$, $Date$
  */
 public class SbustamentoWorker extends ModuloAlternativoWorker implements IWorker {
-	private final static String idModulo = "Sbustamento";
+	private static final String idModulo = "Sbustamento";
 
 	public SbustamentoWorker(MessageIde ide) {
 		super(SbustamentoWorker.idModulo , ide);

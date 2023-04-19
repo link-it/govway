@@ -20,7 +20,8 @@
 
 package org.openspcoop2.testsuite.core.asincrono;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Repository degli id utilizzati nelle istanze di risposta di un profilo asincrono.
@@ -31,13 +32,13 @@ import java.util.Vector;
  */
 
 public class RepositoryCorrelazioneIstanzeAsincrone {
-private Vector<SetIDCorrelazione> vet;
+private List<SetIDCorrelazione> vet;
 private int positionOneWay;
 private int positionInverse;
 
 
 public RepositoryCorrelazioneIstanzeAsincrone(){
-	this.vet=new Vector<SetIDCorrelazione>();
+	this.vet=new ArrayList<>();
 	this.positionOneWay=0;
 	this.positionInverse=0;
 }

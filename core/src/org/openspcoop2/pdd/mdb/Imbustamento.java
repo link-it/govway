@@ -88,7 +88,7 @@ import org.slf4j.Logger;
  */
 public class Imbustamento extends GenericLib{
 
-	public final static String ID_MODULO = "Imbustamento";
+	public static final String ID_MODULO = "Imbustamento";
 
 	public Imbustamento(Logger log) throws GenericLibException {
 		super(Imbustamento.ID_MODULO, log);

@@ -24,7 +24,7 @@
 <%@page import="org.openspcoop2.web.ctrlstat.servlet.GeneralHelper"%>
 <%@page import="org.apache.commons.lang3.StringUtils"%>
 <%@ page contentType="text/html; charset=UTF-8"%>
-<%@ page session="true" import="java.util.Vector, org.openspcoop2.web.lib.mvc.*" %>
+<%@ page session="true" import="java.util.List, org.openspcoop2.web.lib.mvc.*" %>
 <%
 String iddati = "";
 String ct = request.getContentType();

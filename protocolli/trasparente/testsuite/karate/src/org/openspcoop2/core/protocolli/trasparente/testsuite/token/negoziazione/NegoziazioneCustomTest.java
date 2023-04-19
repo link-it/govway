@@ -36,8 +36,8 @@ import org.openspcoop2.utils.transport.http.HttpResponse;
 */
 public class NegoziazioneCustomTest extends ConfigLoader {
 
-	public final static String api_negoziazione = "TestNegoziazioneTokenCustom";
-	public final static String api_negoziazione_payload_invertito = "TestNegoziazioneTokenCustomPayloadInvertito";
+	public static final String api_negoziazione = "TestNegoziazioneTokenCustom";
+	public static final String api_negoziazione_payload_invertito = "TestNegoziazioneTokenCustomPayloadInvertito";
 	
 	
 	@Test

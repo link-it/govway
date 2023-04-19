@@ -33,7 +33,7 @@ import org.openspcoop2.utils.transport.http.HttpResponse;
 */
 public class SoapAutenticazioneTest extends ConfigLoader {
 
-	private final static String API = "TestAutenticazioneTokenSOAP";
+	private static final String API = "TestAutenticazioneTokenSOAP";
 	
 	@Test
 	public void erogazioneSoloToken_clientIdNonRegistrato() throws Exception {

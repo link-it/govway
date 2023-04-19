@@ -22,7 +22,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.apc;
 
 import java.util.List;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -78,8 +78,8 @@ public final class AccordiServizioParteComuneAllegatiView extends Action {
 			String idAllegato = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ALLEGATO);
 			String idAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ACCORDO);
 			
-			long idAllegatoLong = Long.valueOf(idAllegato);
-			long idAccordoLong = Long.valueOf(idAccordo);
+			long idAllegatoLong = Long.parseLong(idAllegato);
+			long idAccordoLong = Long.parseLong(idAccordo);
 			
 			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
@@ -109,7 +109,7 @@ public final class AccordiServizioParteComuneAllegatiView extends Action {
 			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false).getValue();
 			List<Parameter> listaParams = apcHelper.getTitoloApc(TipoOperazione.ADD, as, tipoAccordo, labelASTitle, null, false);
 			
-			String labelAllegati = isModalitaVistaApiCustom ? AccordiServizioParteComuneCostanti.LABEL_ALLEGATI : AccordiServizioParteComuneCostanti.LABEL_ALLEGATI + " di " + labelASTitle;
+			String labelAllegati = (isModalitaVistaApiCustom!=null && isModalitaVistaApiCustom.booleanValue()) ? AccordiServizioParteComuneCostanti.LABEL_ALLEGATI : AccordiServizioParteComuneCostanti.LABEL_ALLEGATI + " di " + labelASTitle;
 			 
 			listaParams.add(new Parameter(labelAllegati, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_ALLEGATI_LIST, pIdAccordo, pNomeAccordo, pTipoAccordo));
 			listaParams.add(new Parameter(doc.getFile(), null));
@@ -118,9 +118,9 @@ public final class AccordiServizioParteComuneAllegatiView extends Action {
 			ServletUtils.setPageDataTitle(pd, listaParams);
 			
 			// preparo i campi
-			Vector<Object> dati = new Vector<Object>();
+			List<Object> dati = new ArrayList<>();
 
-			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+			dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 			apcHelper.addAccordiAllegatiToDati(dati,TipoOperazione.OTHER,idAccordo,
 					null,null,null,null,tipoAccordo,null,

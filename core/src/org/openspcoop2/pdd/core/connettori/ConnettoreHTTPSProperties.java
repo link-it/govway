@@ -40,8 +40,12 @@ public class ConnettoreHTTPSProperties extends SSLConfig implements Serializable
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public static SSLConfig readProperties(java.util.Map<String,String> properties) throws Exception{
-		return org.openspcoop2.core.commons.ConnettoreHTTPSProperties.readProperties(properties);
+	public static SSLConfig readProperties(java.util.Map<String,String> properties) throws ConnettoreException{
+		try {
+			return org.openspcoop2.core.commons.ConnettoreHTTPSProperties.readProperties(properties);
+		}catch(Exception e) {
+			throw new ConnettoreException(e.getMessage(),e);
+		}
 	}
 	
 	

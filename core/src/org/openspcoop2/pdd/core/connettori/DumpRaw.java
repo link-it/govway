@@ -224,7 +224,8 @@ public class DumpRaw {
 		}
 		
 		if(this.dump!=null) {
-			this.dump.emitDiagnosticStartDumpBinarioRichiestaUscita();
+			boolean onlyFileTrace = !isRegistrazioneDatabaseRichiesta();
+			this.dump.emitDiagnosticStartDumpBinarioRichiestaUscita(onlyFileTrace);
 		}
 	}
 	public void dumpRequest(DumpByteArrayOutputStream content, MessageType messageType, InfoConnettoreUscita infoConnettoreUscita) throws DumpException {
@@ -248,7 +249,8 @@ public class DumpRaw {
 		}
 		
 		if(this.dump!=null) {
-			this.dump.emitDiagnosticStartDumpBinarioRispostaIngresso();
+			boolean onlyFileTrace = !isRegistrazioneDatabaseRisposta();
+			this.dump.emitDiagnosticStartDumpBinarioRispostaIngresso(onlyFileTrace);
 		}
 	}
 	public void dumpResponse(DumpByteArrayOutputStream content, MessageType messageType, InfoConnettoreUscita infoConnettoreUscita, Map<String, List<String>> trasportoRisposta) throws DumpException {

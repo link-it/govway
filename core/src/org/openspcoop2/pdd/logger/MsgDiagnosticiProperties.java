@@ -50,19 +50,19 @@ public class MsgDiagnosticiProperties {
 
 	/** Costanti */
 	
-	public final static String DIAGNOSTIC_WITH_DYNAMIC_INFO_TYPE = "DYNAMIC_INFO_TYPE";
+	public static final String DIAGNOSTIC_WITH_DYNAMIC_INFO_TYPE = "DYNAMIC_INFO_TYPE";
 	
-	public final static String DIAGNOSTIC_WITH_DYNAMIC_INFO_VALUE = "DYNAMIC_INFO_VALUE";
+	public static final String DIAGNOSTIC_WITH_DYNAMIC_INFO_VALUE = "DYNAMIC_INFO_VALUE";
 	
-	public final static String DIAGNOSTIC_WITH_DYNAMIC_INFO_SEPARATOR = "#_#";
+	public static final String DIAGNOSTIC_WITH_DYNAMIC_INFO_SEPARATOR = "#_#";
 	
-	public final static String DIAGNOSTIC_WITH_DYNAMIC_INFO_DIAG_SEPARATOR = "###";
+	public static final String DIAGNOSTIC_WITH_DYNAMIC_INFO_DIAG_SEPARATOR = "###";
 	
-	public final static String DIAGNOSTIC_WITH_DYNAMIC_INFO_TYPE_SEPARATOR = " ";
+	public static final String DIAGNOSTIC_WITH_DYNAMIC_INFO_TYPE_SEPARATOR = " ";
 	
-	public final static String DIAGNOSTIC_TYPE_POLICY_CONTROLLO_TRAFFICO = "CT";
+	public static final String DIAGNOSTIC_TYPE_POLICY_CONTROLLO_TRAFFICO = "CT";
 	
-	public final static String NON_PRESENTE = "-";
+	public static final String NON_PRESENTE = "-";
 	
 	public static final String SEPARATOR = " ";
 	
@@ -747,27 +747,27 @@ public class MsgDiagnosticiProperties {
 	}
 	
 	/*---------- Keyword attese -------------*/
-	public final static String MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI="ricezioneContenutiApplicativi.";
-	public final static String MSG_DIAG_IMBUSTAMENTO="imbustamentoBusta.";
-	public final static String MSG_DIAG_IMBUSTAMENTO_RISPOSTE="imbustamentoRispostaBusta.";
-	public final static String MSG_DIAG_INOLTRO_BUSTE="inoltroBuste.";
-	public final static String MSG_DIAG_RICEZIONE_BUSTE="ricezioneBuste.";
-	public final static String MSG_DIAG_SBUSTAMENTO="sbustamentoBusta.";
-	public final static String MSG_DIAG_SBUSTAMENTO_RISPOSTE="sbustamentoRispostaBusta.";
-	public final static String MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI="consegnaContenutiApplicativi.";
-	public final static String MSG_DIAG_INTEGRATION_MANAGER="integrationManager.";
-	public final static String MSG_DIAG_TRACCIAMENTO="tracciamento.";
-	public final static String MSG_DIAG_TIMER_GESTORE_RISCONTRI_RICEVUTE="timerGestoreRiscontriRicevute.";
-	public final static String MSG_DIAG_TIMER_GESTORE_MESSAGGI="timerGestoreMessaggi.";
-	public final static String MSG_DIAG_TIMER_GESTORE_MESSAGGI_INCONSISTENTI="timerGestoreMessaggiInconsistenti.";
-	public final static String MSG_DIAG_TIMER_GESTORE_REPOSITORY_BUSTE="timerGestoreRepositoryBuste.";
-	public final static String MSG_DIAG_TIMER_MONITORAGGIO_RISORSE="timerMonitoraggioRisorse.";
-	public final static String MSG_DIAG_TIMER_THRESHOLD="timerThreshold.";
-	public final static String MSG_DIAG_TIMER_CONSEGNA_CONTENUTI_APPLICATIVI="timerConsegnaContenutiApplicativi.";
-	public final static String MSG_DIAG_TIMER_STATISTICHE="timerStatistiche.";
-	public final static String MSG_DIAG_OPENSPCOOP_STARTUP="openspcoopStartup.";
-	public final static String MSG_DIAG_ALL="all.";
-	private final static String[] MSG_DIAGNOSTICI_PERSONALIZZATI = {
+	public static final String MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI="ricezioneContenutiApplicativi.";
+	public static final String MSG_DIAG_IMBUSTAMENTO="imbustamentoBusta.";
+	public static final String MSG_DIAG_IMBUSTAMENTO_RISPOSTE="imbustamentoRispostaBusta.";
+	public static final String MSG_DIAG_INOLTRO_BUSTE="inoltroBuste.";
+	public static final String MSG_DIAG_RICEZIONE_BUSTE="ricezioneBuste.";
+	public static final String MSG_DIAG_SBUSTAMENTO="sbustamentoBusta.";
+	public static final String MSG_DIAG_SBUSTAMENTO_RISPOSTE="sbustamentoRispostaBusta.";
+	public static final String MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI="consegnaContenutiApplicativi.";
+	public static final String MSG_DIAG_INTEGRATION_MANAGER="integrationManager.";
+	public static final String MSG_DIAG_TRACCIAMENTO="tracciamento.";
+	public static final String MSG_DIAG_TIMER_GESTORE_RISCONTRI_RICEVUTE="timerGestoreRiscontriRicevute.";
+	public static final String MSG_DIAG_TIMER_GESTORE_MESSAGGI="timerGestoreMessaggi.";
+	public static final String MSG_DIAG_TIMER_GESTORE_MESSAGGI_INCONSISTENTI="timerGestoreMessaggiInconsistenti.";
+	public static final String MSG_DIAG_TIMER_GESTORE_REPOSITORY_BUSTE="timerGestoreRepositoryBuste.";
+	public static final String MSG_DIAG_TIMER_MONITORAGGIO_RISORSE="timerMonitoraggioRisorse.";
+	public static final String MSG_DIAG_TIMER_THRESHOLD="timerThreshold.";
+	public static final String MSG_DIAG_TIMER_CONSEGNA_CONTENUTI_APPLICATIVI="timerConsegnaContenutiApplicativi.";
+	public static final String MSG_DIAG_TIMER_STATISTICHE="timerStatistiche.";
+	public static final String MSG_DIAG_OPENSPCOOP_STARTUP="openspcoopStartup.";
+	public static final String MSG_DIAG_ALL="all.";
+	private static final String[] MSG_DIAGNOSTICI_PERSONALIZZATI = {
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"correlazioneApplicativaEsistente",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"correlazioneApplicativaInstaurata",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"ricevutaRichiestaApplicativa",
@@ -1289,6 +1289,14 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"dumpContenutiApplicativi.rispostaIngresso.completato",
 		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"dumpContenutiApplicativi.rispostaUscita.inCorso",
 		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"dumpContenutiApplicativi.rispostaUscita.completato",
+		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"dumpContenutiApplicativiFileTrace.richiestaIngresso.inCorso",
+		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"dumpContenutiApplicativiFileTrace.richiestaIngresso.completato",
+		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"dumpContenutiApplicativiFileTrace.richiestaUscita.inCorso",
+		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"dumpContenutiApplicativiFileTrace.richiestaUscita.completato",
+		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"dumpContenutiApplicativiFileTrace.rispostaIngresso.inCorso",
+		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"dumpContenutiApplicativiFileTrace.rispostaIngresso.completato",
+		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"dumpContenutiApplicativiFileTrace.rispostaUscita.inCorso",
+		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"dumpContenutiApplicativiFileTrace.rispostaUscita.completato",
 		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_RISCONTRI_RICEVUTE+"avvioInCorso",
 		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_RISCONTRI_RICEVUTE+"avvioEffettuato",
 		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_RISCONTRI_RICEVUTE+"timerGiaAvviato",
@@ -1396,11 +1404,11 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_ALL+"controlloTraffico.policy.violata.risorsaNumeroFaultApplicativi"
 	};
 	
-	private final static String PREFIX_MSG_DIAGNOSTICO = "org.openspcoop2.pdd.msgdiagnostico.";
-	private final static String SUFFIX_LIVELLO_MSG_DIAGNOSTICO = ".livello";
-	private final static String SUFFIX_CODICE_MSG_DIAGNOSTICO = ".codice";
-	private final static String SUFFIX_MESSAGGIO_MSG_DIAGNOSTICO = ".messaggio";
-	private final static String SUFFIX_CODICE_MODULO_MSG_DIAGNOSTICO = ".codiceModulo";
+	private static final String PREFIX_MSG_DIAGNOSTICO = "org.openspcoop2.pdd.msgdiagnostico.";
+	private static final String SUFFIX_LIVELLO_MSG_DIAGNOSTICO = ".livello";
+	private static final String SUFFIX_CODICE_MSG_DIAGNOSTICO = ".codice";
+	private static final String SUFFIX_MESSAGGIO_MSG_DIAGNOSTICO = ".messaggio";
+	private static final String SUFFIX_CODICE_MODULO_MSG_DIAGNOSTICO = ".codiceModulo";
 	
 	
 	

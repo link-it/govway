@@ -22,7 +22,6 @@ package org.openspcoop2.web.ctrlstat.servlet.utenti;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -90,7 +89,7 @@ public class UtentiServiziAdd extends Action {
 			ConsoleSearch searchServizi = new ConsoleSearch(true);
 			List<String> protocolli = user.getProtocolliSupportati();
 			if(protocollo == null) {
-				if(protocolli!=null && protocolli.size()>0) {
+				if(protocolli!=null && !protocolli.isEmpty()) {
 					protocollo = utentiCore.getProtocolloDefault(request, null, protocolli);
 				}
 			}
@@ -99,7 +98,7 @@ public class UtentiServiziAdd extends Action {
 			boolean[] permessiUtente = null;
 			List<AccordoServizioParteSpecifica> serviziList = aspsCore.soggettiServizioList(null, searchServizi, permessiUtente , false, false);
 			
-			List<AccordoServizioParteSpecifica> listaServiziNonUtilizzati = new ArrayList<AccordoServizioParteSpecifica>();
+			List<AccordoServizioParteSpecifica> listaServiziNonUtilizzati = new ArrayList<>();
 			
 			for (AccordoServizioParteSpecifica asps : serviziList) {
 				boolean found = false;
@@ -127,14 +126,14 @@ public class UtentiServiziAdd extends Action {
 			
 			for (int i = 0; i < listaServiziNonUtilizzati.size(); i++) {
 				AccordoServizioParteSpecifica asps = listaServiziNonUtilizzati.get(i);
-				String _protocollo = aspsCore.getProtocolloAssociatoTipoServizio(asps.getTipo());
-				serviziLabels[(i+1)] = utentiHelper.getLabelNomeServizio(_protocollo, asps.getTipo(), asps.getNome(), asps.getVersione()) + 
-						" ("+utentiHelper.getLabelNomeSoggetto(_protocollo, asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore())+")";
+				String protocolloTmp = aspsCore.getProtocolloAssociatoTipoServizio(asps.getTipo());
+				serviziLabels[(i+1)] = utentiHelper.getLabelNomeServizio(protocolloTmp, asps.getTipo(), asps.getNome(), asps.getVersione()) + 
+						" ("+utentiHelper.getLabelNomeSoggetto(protocolloTmp, asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore())+")";
 				serviziValues[(i+1)] = asps.getId() + "";
 			}
 	
 			
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 			lstParam.add(new Parameter(UtentiCostanti.LABEL_UTENTI ,UtentiCostanti.SERVLET_NAME_UTENTI_LIST));
 			lstParam.add(new Parameter(nomesu, UtentiCostanti.SERVLET_NAME_UTENTI_CHANGE, new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, nomesu)));
 			lstParam.add(new Parameter(UtentiCostanti.LABEL_UTENTI_SERVIZI, UtentiCostanti.SERVLET_NAME_UTENTI_SERVIZI_LIST, new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, nomesu)));
@@ -144,15 +143,15 @@ public class UtentiServiziAdd extends Action {
 				ServletUtils.setPageDataTitle(pd,lstParam);
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 	
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 	
 				if(servizio==null){
 					servizio = "";
 				}
 				
-				if(listaServiziNonUtilizzati.size()<=0){
+				if(listaServiziNonUtilizzati.isEmpty()){
 					if(protocolli.size() == 1) {
 						pd.setMessage(UtentiCostanti.LABEL_UTENTI_SERVIZI_DISPONIBILI_ESAURITI, MessageType.INFO);
 						pd.disableEditMode();
@@ -181,9 +180,9 @@ public class UtentiServiziAdd extends Action {
 				ServletUtils.setPageDataTitle(pd,lstParam);
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 	
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				utentiHelper.addUtentiServiziToDati(dati, TipoOperazione.ADD,nomesu,servizio,serviziValues,serviziLabels,protocolli,protocollo);
 				

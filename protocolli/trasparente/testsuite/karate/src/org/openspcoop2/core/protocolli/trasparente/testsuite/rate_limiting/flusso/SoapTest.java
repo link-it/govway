@@ -21,7 +21,7 @@
 
 package org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.flusso;
 
-import java.util.Vector;
+import java.util.List;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -112,7 +112,7 @@ public class SoapTest extends ConfigLoader {
 		request.setContent(SoapBodies.get(PolicyAlias.ORARIO).getBytes());
 		
 		// Faccio maxRequestsPolicy2 Richieste e verifico che vengano conteggiate
-		Vector<HttpResponse> responsesOk = Utils.makeSequentialRequests(request, maxRequestsPolicy3);
+		List<HttpResponse> responsesOk = Utils.makeSequentialRequests(request, maxRequestsPolicy3);
 		
 		// Gli headers vengono valorizzati con i dati della policy più stringente, per questo passo le info sulla policy 3
 		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.numero_richieste_completate_con_successo.SoapTest.checkOkRequests(responsesOk, windowSizePolicy3, maxRequestsPolicy3);
@@ -122,7 +122,7 @@ public class SoapTest extends ConfigLoader {
 		Utils.checkConditionsNumeroRichieste(idPolicy3, 0, maxRequestsPolicy3, 0);
 		
 		
-		Vector<HttpResponse> responsesFailed = Utils.makeSequentialRequests(request, 3);
+		List<HttpResponse> responsesFailed = Utils.makeSequentialRequests(request, 3);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy1, 0, maxRequestsPolicy3, 0);
 		Utils.checkConditionsNumeroRichieste(idPolicy2, 0, 0, 0);

@@ -31,15 +31,15 @@ package org.openspcoop2.message.soap.mtom;
  */
 public class Costanti {
 	
-	public final static String OPENSPCOOP2_MTOM_NAMESPACE = "http://www.openspcoop2.org/core/mtom";
+	public static final String OPENSPCOOP2_MTOM_NAMESPACE = "http://www.openspcoop2.org/core/mtom";
 	
-	public final static String XOP_INCLUDE_NAMESPACE = "http://www.w3.org/2004/08/xop/include";
-	public final static String XOP_INCLUDE_LOCAL_NAME = "Include";
-	public final static String XOP_INCLUDE_ATTRIBUTE_HREF ="href";
-	public final static String XOP_INCLUDE_ATTRIBUTE_HREF_CID_PREFIX_VALUE ="cid:";
-	public final static String MTOM_XOP_REFERENCES = "//{"+Costanti.XOP_INCLUDE_NAMESPACE+"}:"+Costanti.XOP_INCLUDE_LOCAL_NAME;
+	public static final String XOP_INCLUDE_NAMESPACE = "http://www.w3.org/2004/08/xop/include";
+	public static final String XOP_INCLUDE_LOCAL_NAME = "Include";
+	public static final String XOP_INCLUDE_ATTRIBUTE_HREF ="href";
+	public static final String XOP_INCLUDE_ATTRIBUTE_HREF_CID_PREFIX_VALUE ="cid:";
+	public static final String MTOM_XOP_REFERENCES = "//{"+Costanti.XOP_INCLUDE_NAMESPACE+"}:"+Costanti.XOP_INCLUDE_LOCAL_NAME;
 	
-	public final static String XMIME_NAMESPACE = "http://www.w3.org/2005/05/xmlmime";
-	public final static String XMIME_ATTRIBUTE_CONTENT_TYPE = "contentType";
+	public static final String XMIME_NAMESPACE = "http://www.w3.org/2005/05/xmlmime";
+	public static final String XMIME_ATTRIBUTE_CONTENT_TYPE = "contentType";
 	
 }

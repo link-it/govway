@@ -27,15 +27,15 @@ package org.openspcoop2.utils;
  */
 public class Costanti {
 
-	public final static String OPENSPCOOP2 = "GovWay";
+	public static final String OPENSPCOOP2 = "GovWay";
 	
-	public final static String OPENSPCOOP2_LOCAL_HOME = "GOVWAY_HOME";
-	public final static String OPENSPCOOP2_FORCE_CONFIG_FILE = "GOVWAY_FORCE_CONFIG_FILE";
+	public static final String OPENSPCOOP2_LOCAL_HOME = "GOVWAY_HOME";
+	public static final String OPENSPCOOP2_FORCE_CONFIG_FILE = "GOVWAY_FORCE_CONFIG_FILE";
 	
-	public final static String OPENSPCOOP2_LOOKUP = "GOVWAY_LOOKUP";
+	public static final String OPENSPCOOP2_LOOKUP = "GOVWAY_LOOKUP";
 	 
     /** Versione beta, es: "b1" */
-    public static final String OPENSPCOOP2_BETA = ".10"; //".0.rc1";
+    public static final String OPENSPCOOP2_BETA = ".12"; //".0.rc1";
     /** Versione di OpenSPCoop */
     public static final String OPENSPCOOP2_VERSION = "3.3"+Costanti.OPENSPCOOP2_BETA;
     /** Versione di OpenSPCoop */
@@ -45,9 +45,9 @@ public class Costanti {
     /** Details */
     public static final String OPENSPCOOP2_DETAILS = "www.govway.org";
     /** Copyright */
-	public final static String OPENSPCOOP2_COPYRIGHT = "2005-2023 Link.it srl";
+	public static final String OPENSPCOOP2_COPYRIGHT = "2005-2023 Link.it srl";
 	 /** License */
-	public final static String OPENSPCOOP2_LICENSE = "This program is free software: you can redistribute it and/or modify\n"+
+	public static final String OPENSPCOOP2_LICENSE = "This program is free software: you can redistribute it and/or modify\n"+
 	"it under the terms of the GNU General Public License version 3, as published by\n"+
 	"the Free Software Foundation.\n"+
 	"\n"+

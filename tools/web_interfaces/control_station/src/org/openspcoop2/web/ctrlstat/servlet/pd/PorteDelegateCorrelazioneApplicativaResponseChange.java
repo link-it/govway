@@ -22,7 +22,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.List;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -178,23 +178,23 @@ public final class PorteDelegateCorrelazioneApplicativaResponseChange extends Ac
 				if (elemxml == null) {
 					elemxml = StringEscapeUtils.escapeHtml(cae.getNome());
 				}
-				if (mode == null) {
-					if(cae.getIdentificazione()!=null)
-						mode = cae.getIdentificazione().toString();
+				if (mode == null &&
+					cae.getIdentificazione()!=null) {
+					mode = cae.getIdentificazione().toString();
 				}
 				if (pattern == null) {
 					pattern = StringEscapeUtils.escapeHtml(cae.getPattern());
 				}
-				if (gif == null){
-					if(cae.getIdentificazioneFallita()!=null)
-						gif = cae.getIdentificazioneFallita().toString();
+				if (gif == null &&
+					cae.getIdentificazioneFallita()!=null) {
+					gif = cae.getIdentificazioneFallita().toString();
 				}
 
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, idAsps, 
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
@@ -220,9 +220,9 @@ public final class PorteDelegateCorrelazioneApplicativaResponseChange extends Ac
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, idAsps, 
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
@@ -247,7 +247,6 @@ public final class PorteDelegateCorrelazioneApplicativaResponseChange extends Ac
 			for (int i = 0; i < ca.sizeElementoList(); i++) {
 				cae = ca.getElemento(i);
 				if (idcorr == cae.getId().intValue()) {
-					//ca.removeElemento(i);
 					caeNew = cae;
 					break;
 				}

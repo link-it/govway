@@ -759,15 +759,15 @@ public class NotificatoreEventi {
 
 	//---- Per salvare
 
-	private final static String ZIP_IN_MEMORY = "memory";
-	private final static String ZIP_DB = "db";
-	private final static String ZIP_LAST_MAX_REQUESTS = "lastMaxRequests.xml";
-	private final static String ZIP_LAST_MAX_REQUESTS_WARNING_ONLY = "lastMaxRequests_warningOnly.xml";
-	private final static String ZIP_LAST_PDD_CONGESTIONATA = "lastPddCongestionata.xml";
-	private final static String ZIP_POLICY_GLOBALE = "policyGlobale";
-	private final static String ZIP_POLICY_GLOBALE_WARNING_ONLY = "policyGlobale_warningOnly";
-	private final static String ZIP_POLICY_API = "policyAPI";
-	private final static String ZIP_POLICY_API_WARNING_ONLY = "policyAPI_warningOnly";
+	private static final String ZIP_IN_MEMORY = "memory";
+	private static final String ZIP_DB = "db";
+	private static final String ZIP_LAST_MAX_REQUESTS = "lastMaxRequests.xml";
+	private static final String ZIP_LAST_MAX_REQUESTS_WARNING_ONLY = "lastMaxRequests_warningOnly.xml";
+	private static final String ZIP_LAST_PDD_CONGESTIONATA = "lastPddCongestionata.xml";
+	private static final String ZIP_POLICY_GLOBALE = "policyGlobale";
+	private static final String ZIP_POLICY_GLOBALE_WARNING_ONLY = "policyGlobale_warningOnly";
+	private static final String ZIP_POLICY_API = "policyAPI";
+	private static final String ZIP_POLICY_API_WARNING_ONLY = "policyAPI_warningOnly";
 
 	
 	public void serialize(File file) throws Exception{

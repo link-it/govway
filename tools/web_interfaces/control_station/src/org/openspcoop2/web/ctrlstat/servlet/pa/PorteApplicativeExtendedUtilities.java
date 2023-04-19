@@ -22,7 +22,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.web.ctrlstat.core.UrlParameters;
@@ -41,8 +40,10 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  * @version $Rev$, $Date$
  */
 public class PorteApplicativeExtendedUtilities {
+	
+	private PorteApplicativeExtendedUtilities() {}
 
-	public static void addToHiddenDati(TipoOperazione tipoOperazione,Vector<DataElement> dati,ConsoleHelper consoleHelper) throws ExtendedException{
+	public static void addToHiddenDati(TipoOperazione tipoOperazione,List<DataElement> dati,ConsoleHelper consoleHelper) throws ExtendedException{
 		try {
 			String idPorta = consoleHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			String idsogg = consoleHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
@@ -61,12 +62,8 @@ public class PorteApplicativeExtendedUtilities {
 		return porteApplicativeCore.getPortaApplicativa(idInt);
 	}
 	
-	public static List<Parameter> getTitle(Object object, ConsoleHelper consoleHelper) throws Exception {
-		
-//		PortaApplicativa pa = (PortaApplicativa) object;
-//		String protocollo = ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(pa.getTipoSoggettoProprietario());
-//		String tmpTitle = consoleHelper.getLabelNomeSoggetto(protocollo, pa.getTipoSoggettoProprietario() , pa.getNomeSoggettoProprietario());
-		
+	public static List<Parameter> getTitle(ConsoleHelper consoleHelper) throws Exception {
+				
 		String idsogg = consoleHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
 		String idAsps = consoleHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
 		if(idAsps == null) 
@@ -77,39 +74,7 @@ public class PorteApplicativeExtendedUtilities {
 		Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, consoleHelper.getSession(), consoleHelper.getRequest());
 		if(parentPA == null) parentPA = PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE;
 		
-		List<Parameter> list = paHelper.getTitoloPA(parentPA, idsogg, idAsps);
-		
-		/*
-		List<Parameter> list = new ArrayList<Parameter>();
-		
-		switch (parentPA) {
-		case PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE:
-			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(consoleHelper.getCore());
-			// Prendo il nome e il tipo del servizio
-			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
-			String servizioTmpTile = consoleHelper.getLabelIdServizio(asps);
-			Parameter pIdServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId()+ "");
-			Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
-			Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
-			Parameter pIdsoggErogatore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+asps.getIdSoggetto());
-			
-			list.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
-			list.add(new Parameter(servizioTmpTile, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, pIdServizio,pNomeServizio, pTipoServizio));
-			list.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_APPLICATIVE, 
-					AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_PORTE_APPLICATIVE_LIST ,pIdServizio,pNomeServizio, pTipoServizio, pIdsoggErogatore));
-			break;
-		case PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_SOGGETTO:
-			list.add(new Parameter(SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
-			list.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTE_APPLICATIVE_DI + tmpTitle, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST ,
-					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg)));
-			break;
-		case PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE:
-		default:
-			list.add(new Parameter(PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST));
-			break;
-		}
-		*/
-		return list;
+		return paHelper.getTitoloPA(parentPA, idsogg, idAsps);
 		
 	}
 	
@@ -120,7 +85,7 @@ public class PorteApplicativeExtendedUtilities {
 		String idasps = consoleHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
 		String nomePorta = consoleHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA);
 		
-		List<Parameter> list = new ArrayList<Parameter>();
+		List<Parameter> list = new ArrayList<>();
 		list.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta));
 		list.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg));
 		if(StringUtils.isNotEmpty(idasps)) {

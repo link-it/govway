@@ -23,7 +23,7 @@
 <%@page import="java.util.List"%>
 <%@page import="org.openspcoop2.web.lib.mvc.DataElement.STATO_APERTURA_SEZIONI"%>
 <%@page import="org.openspcoop2.utils.crypt.PasswordGenerator"%>
-<%@ page session="true" import="java.util.Vector, org.apache.commons.lang.StringEscapeUtils ,org.openspcoop2.web.lib.mvc.*" %>
+<%@ page session="true" import="java.util.List, org.apache.commons.lang.StringEscapeUtils ,org.openspcoop2.web.lib.mvc.*" %>
 
 <%
 String iddati = "";
@@ -57,9 +57,9 @@ if(vBL != null){
 
 boolean mime = false;
 
-Vector<?> dati = pd.getDati();
+List<?> dati = pd.getDati();
 for (int i = 0; i < dati.size(); i++) {
-  DataElement de = (DataElement) dati.elementAt(i);
+  DataElement de = (DataElement) dati.get(i);
   if (de.getType().equals("file") || de.getType().equals("multi-file")) {
     mime = true;
   }
@@ -112,10 +112,10 @@ if(!visualizzaPanelLista)
 String classDivPanelLista = visualizzaPanelLista  ? "panelLista" : "";
 String classTabellaPanelLista = visualizzaPanelLista  ? "tabella" : "";
 
-Vector<GeneralLink> titlelist = pd.getTitleList();
+List<GeneralLink> titlelist = pd.getTitleList();
 String titoloSezione = null;
 if (titlelist != null && titlelist.size() > 0) {
-	GeneralLink l = titlelist.elementAt(titlelist.size() -1);
+	GeneralLink l = titlelist.get(titlelist.size() -1);
 	titoloSezione = l.getLabel();
 	
 	if(titoloSezione != null && titoloSezione.equals(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI))
@@ -319,7 +319,7 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 
 if(elementsRequiredEnabled){
 	for (int i = 0; i < dati.size(); i++) {
-	  DataElement de = (DataElement) dati.elementAt(i);
+	  DataElement de = (DataElement) dati.get(i);
 	  if(de.isRequired()){
 	     elementsRequired=true;
 	     break;
@@ -350,7 +350,7 @@ String classDivNoEdit="divNoEdit";
 boolean fieldsetOpen = false;
 boolean subtitleOpen = false;
 for (int i = 0; i < dati.size(); i++) {
-	DataElement de = (DataElement) dati.elementAt(i);
+	DataElement de = (DataElement) dati.get(i);
   
 	String deName = !de.getName().equals("") ? de.getName() : "de_name_"+i;
   	String type = de.getType();

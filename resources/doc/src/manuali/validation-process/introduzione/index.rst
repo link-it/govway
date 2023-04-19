@@ -5,7 +5,7 @@ Introduzione
 
 Ogni nuova versione di GovWay prima del rilascio viene sottoposta a 3 diversi tipi di verifiche di sicurezza al fine di assicurarne la stabilità e l'assenza di vulnerabilità note.
 
-- :ref:`releaseProcessGovWay_staticCodeAnalysis`: identifica possibili vulnerabilità all'interno del codice sorgente tramite il tool `SpotBugs <https://spotbugs.github.io/>`_.
+- :ref:`releaseProcessGovWay_staticCodeAnalysis`: identifica possibili vulnerabilità all'interno del codice sorgente tramite i tools `SpotBugs <https://spotbugs.github.io/>`_ e `SonarQube <https://sonarqube.org/>`_.
 
 - :ref:`releaseProcessGovWay_dynamicAnalysis`: cerca vulnerabilità del software durante l'effettiva esecuzione del prodotto. L'analisi viene eseguita attraverso l'esecuzione di estese batterie di test realizzate tramite i tool `TestNG <https://testng.org/doc/>`_, `JUnit <https://junit.org/junit4/>`_, `Karate <https://karatelabs.github.io/karate/>`_ e `OWASP ZAP Proxy <https://www.zaproxy.org/>`_.
 

@@ -11708,8 +11708,8 @@
         </servizio-applicativo>
     </soggetto>
     <soggetto tipo="spc" nome="TestUrlPrefixRewriter8" 
-        pd-url-prefix-rewriter="http://127.0.0.3"
-        pa-url-prefix-rewriter="http://127.0.0.3">
+        pd-url-prefix-rewriter="http://127.0.0.3:1234"
+        pa-url-prefix-rewriter="http://127.0.0.3:1234">
         <porta-delegata gestione-manifest="abilitato" nome="TestUrlPrefixRewriter8" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />

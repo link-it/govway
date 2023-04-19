@@ -31,7 +31,7 @@ Per creare una tag version:
 
 10. Sistemare la documentazione e soprattutto il documento di ReleaseNotes
       Inoltre aggiungere la corretta versione. 
-10b. Vedere se esistono segnalazioni di vulnerabilità in vulnerability-management/securityAdvisory/*, registrate in data successiva all'ultimo rilascio, in cui deve essere indicata la fix version sostituendo la frase: "prima versione in rilascio".
+10b. Vedere se esistono segnalazioni di vulnerabilità in vulnerability-management/securityAdvisory/*, registrate in data successiva all'ultimo rilascio, in cui deve essere indicata la fix version sostituendo la frase: "prima versione in rilascio" o la frase "future versioni in rilascio".
 
 11. Aggiungere la versione in rilascio come versione delle interfacce OpenAPI dei servizi in tools/rs/*
     - tools/rs/config/server/src/schemi/govway_rs-api_config.yaml
@@ -47,6 +47,7 @@ Per creare una tag version:
     NOTA!!!!! Dentro il file publiccode.yml è presente anche una release date da aggiornare!!!!!!
 
 14. Verificare che con gli stresstest tramite benchmark si ottengano risultati simili o migliori della precedente versione.
+    NOTA: farlo girare anche in locale per verificare che vi sia un tracciamento corretto (dati ricostruiti)
 14b. Verifica anche che il seguente test base passi con successo:
      mvn test -Dcompile=none -Dowasp=none -Dpackage=none -Dtestsuite.pdd.core=none -Dtestsuite.utils.group=utils.OpenAPI-Validator-BIG
      mvn test -Dcompile=none -Dowasp=none -Dpackage=none -Dtestsuite.pdd.core=none -Dtestsuite.utils.group=utils.Cache-MisurazioneTempi
@@ -125,4 +126,6 @@ Per creare una tag version:
 
 22. Aggiungere la nuova versione come directory all'interno degli script di distribuzione delle immagini docker
 
-23. (PVersion) Creazione versione tag
+23. Verificare licenze in 'third-party-licenses' siano tutte aggiornate alle versioni delle lib utilizzate
+
+24. (PVersion) Creazione versione tag

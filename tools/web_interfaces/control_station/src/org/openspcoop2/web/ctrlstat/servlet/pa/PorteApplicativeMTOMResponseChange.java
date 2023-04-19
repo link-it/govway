@@ -20,7 +20,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.List;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -95,7 +95,6 @@ public class PorteApplicativeMTOMResponseChange extends Action {
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			String idporta = pa.getNome();
 
-			// String pdd = soggetto.getServer();
 			Parameter[] urlParms = { 
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID,id)	,
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,idsogg) ,
@@ -140,23 +139,26 @@ public class PorteApplicativeMTOMResponseChange extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// primo accesso 
-				if(nome == null)
-					if(flowParameterOld != null)
-						nome  = flowParameterOld.getNome();
+				if(nome == null &&
+					flowParameterOld != null) {
+					nome  = flowParameterOld.getNome();
+				}
 				
-				if(pattern == null)
-					if(flowParameterOld != null)
-						pattern  = flowParameterOld.getPattern();
+				if(pattern == null &&
+					flowParameterOld != null) {
+					pattern  = flowParameterOld.getPattern();
+				}
 				
-				if(contentType == null)
-					if(flowParameterOld != null)
-						contentType  = flowParameterOld.getContentType();
+				if(contentType == null &&
+					flowParameterOld != null) {
+					contentType  = flowParameterOld.getContentType();
+				}
 				
-				if(obbligatorio == null)
-					if(flowParameterOld != null){
-						boolean b = flowParameterOld.getRequired();
-						obbligatorio = b ? "yes" : ""; 
-					}
+				if(obbligatorio == null &&
+					flowParameterOld != null){
+					boolean b = flowParameterOld.getRequired();
+					obbligatorio = b ? "yes" : ""; 
+				}
 				
 				if(nome == null)
 					nome = "";
@@ -171,8 +173,8 @@ public class PorteApplicativeMTOMResponseChange extends Action {
 					obbligatorio = "";
 					
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addMTOMParameterToDati(TipoOperazione.CHANGE, dati, false, nome, pattern, contentType, obbligatorio,
 						pa.getMtomProcessor().getResponseFlow().getMode());
@@ -194,9 +196,9 @@ public class PorteApplicativeMTOMResponseChange extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addMTOMParameterToDati(TipoOperazione.CHANGE, dati, false, nome, pattern, contentType, obbligatorio,
 						pa.getMtomProcessor().getResponseFlow().getMode());

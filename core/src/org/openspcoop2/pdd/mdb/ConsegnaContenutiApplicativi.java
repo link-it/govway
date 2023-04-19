@@ -86,6 +86,7 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.EJBUtils;
 import org.openspcoop2.pdd.core.EJBUtilsException;
 import org.openspcoop2.pdd.core.GestoreCorrelazioneApplicativa;
+import org.openspcoop2.pdd.core.GestoreCorrelazioneApplicativaConfig;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.IntegrationContext;
 import org.openspcoop2.pdd.core.LocalForwardEngine;
@@ -144,6 +145,7 @@ import org.openspcoop2.protocol.engine.driver.ConsegnaInOrdine;
 import org.openspcoop2.protocol.engine.validator.ValidazioneSintattica;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.Riscontro;
@@ -778,9 +780,12 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		boolean salvaRispostaPerNotifiche = false;
 		String identificativoMessaggioDoveSalvareLaRisposta = null; 
 		MessaggioDaNotificare tipoMessaggioDaNotificare_notificaAsincrona = null;
+		boolean transactionContext_notificaAsincrona = false;
 		HttpRequestMethod metodoHttpDaNotificare_notificaAsincrona = null;
 		String nomeConnettoreMultiplo = null;
 		String nomeServizioApplicativoErogatoreConnettoreMultiplo = null;
+		String nomeConnettoreAPIImplementation = null;
+		String nomeServizioApplicativoErogatoreAPIImplementation = null;
 		try{
 			if(pa!=null && pa.getBehaviour()!=null) {
 				
@@ -800,12 +805,25 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						}
 					}
 				}
+				else {
+					for (PortaApplicativaServizioApplicativo pasa : pa.getServizioApplicativoList()) {
+						if(pasa!=null && pasa.getNome()!=null && pasa.getNome().equals(servizioApplicativo)) {
+							nomeServizioApplicativoErogatoreAPIImplementation = servizioApplicativo;
+							nomeConnettoreAPIImplementation = pasa.getDatiConnettore()!= null ? pasa.getDatiConnettore().getNome() : null;
+							if(nomeConnettoreAPIImplementation==null) {
+								nomeConnettoreAPIImplementation=CostantiConfigurazione.NOME_CONNETTORE_DEFAULT;
+							}
+							pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_NOME_CONNETTORE_API, nomeConnettoreAPIImplementation);
+							break;
+						}
+					}
+				}
 				
 				if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType)) {
 					if(transazioneApplicativoServer==null) {
 						List<String> serviziApplicativiAbilitatiForwardTo = readServiziApplicativiAbilitatiForwardTo(pddContext);
 						if(serviziApplicativiAbilitatiForwardTo!=null && !serviziApplicativiAbilitatiForwardTo.isEmpty()) {
-							MessaggioDaNotificare tipiMessaggiNotificabili = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.readMessaggiNotificabili(pa, serviziApplicativiAbilitatiForwardTo, this.log);
+							MessaggioDaNotificare tipiMessaggiNotificabili = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.readMessaggiNotificabili(pa, serviziApplicativiAbilitatiForwardTo);
 							if(tipiMessaggiNotificabili!=null && 
 									(
 											MessaggioDaNotificare.RISPOSTA.equals(tipiMessaggiNotificabili)
@@ -815,14 +833,23 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								salvaRispostaPerNotifiche = true;
 								identificativoMessaggioDoveSalvareLaRisposta = CostantiPdD.PREFIX_MESSAGGIO_CONNETTORE_MULTIPLO+0+CostantiPdD.SEPARATOR_MESSAGGIO_CONNETTORE_MULTIPLO+idMessaggioConsegna;
 							}
+							
+							boolean injectTransactionContext = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.isSaveTransactionContext(pa, serviziApplicativiAbilitatiForwardTo);
+							if(injectTransactionContext) {
+								if(identificativoMessaggioDoveSalvareLaRisposta==null) {
+									identificativoMessaggioDoveSalvareLaRisposta = CostantiPdD.PREFIX_MESSAGGIO_CONNETTORE_MULTIPLO+0+CostantiPdD.SEPARATOR_MESSAGGIO_CONNETTORE_MULTIPLO+idMessaggioConsegna;
+								}
+								pddContext.addObject(CostantiPdD.SALVA_CONTESTO_IDENTIFICATIVO_MESSAGGIO_NOTIFICA, identificativoMessaggioDoveSalvareLaRisposta);
+							}
 						}
 					}
 					else {
 						for (PortaApplicativaServizioApplicativo pasa : pa.getServizioApplicativoList()) {
 							if(pasa!=null && pasa.getNome()!=null && pasa.getNome().equals(transazioneApplicativoServer.getServizioApplicativoErogatore())) {
-								ConfigurazioneGestioneConsegnaNotifiche config = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(pasa, this.log);
+								ConfigurazioneGestioneConsegnaNotifiche config = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(pasa);
 								if(config!=null) {
 									tipoMessaggioDaNotificare_notificaAsincrona = config.getMessaggioDaNotificare();
+									transactionContext_notificaAsincrona = config.isInjectTransactionSyncContext();
 									metodoHttpDaNotificare_notificaAsincrona = config.getHttpMethod();
 								}
 								if(tipoMessaggioDaNotificare_notificaAsincrona==null) {
@@ -1160,6 +1187,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		GestoreMessaggi msgRequest = new GestoreMessaggi(openspcoopstate, true, idMessaggioGestoreMessaggiRichiesta,Costanti.INBOX,msgDiag,pddContext);
 		OpenSPCoop2Message consegnaMessagePrimaTrasformazione = null;
 		OpenSPCoop2Message consegnaResponseMessagePrimaTrasformazione = null;
+		Context notificaTransactionContext = null;
 		GestoreMessaggi msgResponse = null;
 		msgRequest.setPortaDiTipoStateless(portaDiTipoStateless);
 		
@@ -1176,6 +1204,13 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				RequestInfo _requestInfoForMemoryOptimization = null;
 				if(requestInfoForMemoryOptimization) {
 					_requestInfoForMemoryOptimization = requestInfo;
+				}
+
+				if(transactionContext_notificaAsincrona) {
+					notificaTransactionContext = msgRequest.getSyncTransactionContext();
+					if(notificaTransactionContext!=null && !notificaTransactionContext.isEmpty()) {
+						pddContext.put(CostantiPdD.CONTESTO_RICHIESTA_MESSAGGIO_NOTIFICA, notificaTransactionContext);
+					}
 				}
 				
 				if(tipoMessaggioDaNotificare_notificaAsincrona!=null) {
@@ -1804,11 +1839,17 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								configurazionePdDManager,
 								idPD);
 					}
-					gestoreTrasformazioni.setNomeConnettore(nomeConnettoreMultiplo);
-					gestoreTrasformazioni.setNomeServizioApplicativoErogatore(nomeServizioApplicativoErogatoreConnettoreMultiplo);
+					if(transazioneApplicativoServer!=null) {
+						gestoreTrasformazioni.setNomeConnettore(nomeConnettoreMultiplo);
+						gestoreTrasformazioni.setNomeServizioApplicativoErogatore(nomeServizioApplicativoErogatoreConnettoreMultiplo);
+					}
+					else {
+						gestoreTrasformazioni.setNomeConnettore(nomeConnettoreAPIImplementation);
+						gestoreTrasformazioni.setNomeServizioApplicativoErogatore(nomeServizioApplicativoErogatoreAPIImplementation);
+					}
 					if(tipoMessaggioDaNotificare_notificaAsincrona!=null) {
 						consegnaMessageTrasformato = gestoreTrasformazioni.trasformazioneNotifica(consegnaMessagePrimaTrasformazione, bustaRichiesta,
-								tipoMessaggioDaNotificare_notificaAsincrona, consegnaResponseMessagePrimaTrasformazione);
+								tipoMessaggioDaNotificare_notificaAsincrona, consegnaResponseMessagePrimaTrasformazione, notificaTransactionContext);
 						if(!gestoreTrasformazioni.isTrasformazioneContenutoRichiestaEffettuata() && consegnaResponseMessagePrimaTrasformazione!=null) {
 							// si entra in questo caso solo se è stato scelto ENTRAMBI e una trasformazione non ha modificato il messaggio
 							consegnaMessageTrasformato = GestoreTrasformazioniUtilities.buildRequestResponseArchive(this.log, consegnaMessagePrimaTrasformazione, consegnaResponseMessagePrimaTrasformazione, 
@@ -3898,22 +3939,26 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							GestoreCorrelazioneApplicativa gestoreCorrelazione = null;
 							try{
 								
+								GestoreCorrelazioneApplicativaConfig caConfig = new GestoreCorrelazioneApplicativaConfig();
+								caConfig.setState(openspcoopstate.getStatoRisposta());
+								caConfig.setAlog(this.log);
+								caConfig.setSoggettoFruitore(soggettoFruitore);
+								caConfig.setIdServizio(idServizio);
+								caConfig.setBusta(bustaRichiesta);
+								caConfig.setServizioApplicativo(servizioApplicativo);
+								caConfig.setProtocolFactory(protocolFactory);
+								caConfig.setTransaction(transactionNullable);
+								caConfig.setPddContext(pddContext);
+								
 								if(pa!=null) {
-									gestoreCorrelazione = 
-											new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRisposta(), this.log,
-													soggettoFruitore,idServizio,bustaRichiesta, 
-													servizioApplicativo,protocolFactory,
-													transactionNullable, pddContext,
-													pa);
+									caConfig.setPa(pa);
+									gestoreCorrelazione = new GestoreCorrelazioneApplicativa(caConfig);
 								}
 								else if(pd!=null) {
-									gestoreCorrelazione = 
-											new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRisposta(), this.log,
-													soggettoFruitore,idServizio,bustaRichiesta, 
-													servizioApplicativo,protocolFactory,
-													transactionNullable, pddContext,
-													pd);
+									caConfig.setPd(pd);
+									gestoreCorrelazione = new GestoreCorrelazioneApplicativa(caConfig);
 								}
+								
 								if(gestoreCorrelazione!=null){
 									gestoreCorrelazione.verificaCorrelazioneRisposta(correlazioneApplicativaRisposta, responseMessage, headerIntegrazioneRisposta, false);
 									

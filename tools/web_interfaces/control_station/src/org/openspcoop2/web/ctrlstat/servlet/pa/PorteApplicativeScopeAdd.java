@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -105,7 +104,7 @@ public final class PorteApplicativeScopeAdd extends Action {
 			filtroScope.setTipologia("");
 						
 			List<String> scopes = new ArrayList<>();
-			if(pa.getScope()!=null && pa.getScope().getScopeList()!=null && pa.getScope().getScopeList().size()>0){
+			if(pa.getScope()!=null && pa.getScope().getScopeList()!=null && !pa.getScope().getScopeList().isEmpty()){
 				for (Scope scope : pa.getScope().getScopeList()) {
 					scopes.add(scope.getNome());	
 				}
@@ -146,8 +145,8 @@ public final class PorteApplicativeScopeAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addScopeToDati(TipoOperazione.ADD, dati, false, filtroScope, nome, scopes, false, true, true); 
 				
@@ -169,9 +168,9 @@ public final class PorteApplicativeScopeAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteApplicativeHelper.addScopeToDati(TipoOperazione.ADD, dati, false, filtroScope, nome, scopes, false, true, true);
 				

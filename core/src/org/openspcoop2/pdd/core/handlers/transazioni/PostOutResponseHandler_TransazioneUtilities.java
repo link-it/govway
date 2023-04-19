@@ -220,7 +220,9 @@ public class PostOutResponseHandler_TransazioneUtilities {
 		MsgDiagnostico msgDiag = null;
 		String idTransazione = null;
 		String nomePorta = null;
-				
+		
+		String identificativoSaveTransactionContext = null;
+		
 		long timeStart = -1;
 		try {
 
@@ -238,6 +240,10 @@ public class PostOutResponseHandler_TransazioneUtilities {
 				requestInfo = (RequestInfo) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 			}
 
+			if(context.getPddContext()!=null && context.getPddContext().containsKey(CostantiPdD.SALVA_CONTESTO_IDENTIFICATIVO_MESSAGGIO_NOTIFICA)) {
+				identificativoSaveTransactionContext = (String) context.getPddContext().getObject(CostantiPdD.SALVA_CONTESTO_IDENTIFICATIVO_MESSAGGIO_NOTIFICA);
+			}
+			
 			Transazione transactionDTO = new Transazione();
 
 			EsitiProperties esitiProperties = EsitiProperties.getInstance(this.logger, protocolFactory);
@@ -1305,6 +1311,11 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			// token info
 			if(this.transazioniRegistrazioneTokenInformazioniNormalizzate && transaction.getInformazioniToken()!=null) {
 				
+				// token validazione
+				if(transaction.getInformazioniToken().getToken()!=null && op2Properties.isGestioneToken_saveTokenInfo_validationFailed_excludeJwtSignature()) {
+					transaction.getInformazioniToken().setToken(TokenUtilities.deleteSignature(transaction.getInformazioniToken().getToken()));
+				}
+				
 				// token negoziazione
 				if(informazioniNegoziazioneToken!=null) {
 					transaction.getInformazioniToken().setRetrievedToken(informazioniNegoziazioneToken);
@@ -1587,106 +1598,16 @@ public class PostOutResponseHandler_TransazioneUtilities {
 		finally{
 		
 			if(consegnaMultipla_profiloSincrono) {
-				IOpenSPCoopState openspcoopState = null;
-				try {
-					
-					EJBUtilsMessaggioInConsegna messaggiInConsegna = null;
-					Object oConnettoreConfig = context.getPddContext().getObject(CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_MESSAGGI_SPEDIRE );
-					if (oConnettoreConfig!=null && oConnettoreConfig instanceof EJBUtilsMessaggioInConsegna){
-						messaggiInConsegna = (EJBUtilsMessaggioInConsegna) oConnettoreConfig;
-					}
-					if(messaggiInConsegna==null) {
-						this.logger.error("Non è stato possibile gestire lo scheduling delle notifiche (connettori multipli): configurazione non disponibile");
-					}
-					else {
-						openspcoopState = new OpenSPCoopStateful();
-						openspcoopState.initResource(idDominio, context.getIdModulo(), idTransazione);
-						
-						if(times!=null) {
-							long timeEnd =  DateManager.getTimeMillis();
-							long timeProcess = timeEnd-timeStart;
-							times.fillTransaction_details.add("async-send-getConnection:"+timeProcess);
-							
-							timeStart = DateManager.getTimeMillis();
-						}
-						
-						GestoreMessaggi msgRequest = new GestoreMessaggi(openspcoopState,true, messaggiInConsegna.getBusta().getID(),
-								org.openspcoop2.protocol.engine.constants.Costanti.INBOX,msgDiag,context.getPddContext());
-						
-						if(schedulaNotificheDopoConsegnaSincrona) {
-							
-							RepositoryBuste repositoryBuste = null;
-							boolean spedizioneConsegnaContenuti = false; // sarà il timer a far partire effettivamente la spedizione
-							/*
-								RepositoryBuste repositoryBuste = new RepositoryBuste(openspcoopState.getStatoRichiesta(), true, context.getProtocolFactory());
-							 */
-								
-							// Devo rilasciare l'attendi esito
-							Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniSql(op2Properties.isTransazioniDebug());
-							msgRequest.releaseAttesaEsiti(op2Properties.isTransazioniDebug(), log);
-							
-							EJBUtils.sendMessages(this.logger, msgDiag, openspcoopState, idTransazione, 
-									repositoryBuste, msgRequest, null, 
-									context.getProtocolFactory(), idDominio, nomePorta, messaggiInConsegna,
-									spedizioneConsegnaContenuti,
-									context.getPddContext(),
-									ConfigurazionePdDManager.getInstance());
-							
-							if(times!=null) {
-								long timeEnd =  DateManager.getTimeMillis();
-								long timeProcess = timeEnd-timeStart;
-								times.fillTransaction_details.add("async-send:"+timeProcess);
-								
-								timeStart = DateManager.getTimeMillis();
-							}
-							
-						}
-						else {
-							
-							for (String servizioApplicativo : messaggiInConsegna.getServiziApplicativi()) {
-								msgRequest.eliminaDestinatarioMessaggio(servizioApplicativo, null, messaggiInConsegna.getOraRegistrazioneMessaggio());
-							}
-						
-							if(times!=null) {
-								long timeEnd =  DateManager.getTimeMillis();
-								long timeProcess = timeEnd-timeStart;
-								times.fillTransaction_details.add("async-send-del:"+timeProcess);
-								
-								timeStart = DateManager.getTimeMillis();
-							}
-						}
-					}
-					
-				}catch(Exception e) {
-					this.logger.error("Non è stato possibile gestire lo scheduling delle notifiche (connettori multipli): "+e.getMessage(), e);
-				}
-				finally {
-					try{
-						if(openspcoopState!=null && !openspcoopState.resourceReleased()){
-							openspcoopState.commit();
-							
-							if(times!=null) {
-								long timeEnd =  DateManager.getTimeMillis();
-								long timeProcess = timeEnd-timeStart;
-								times.fillTransaction_details.add("async-send-commit:"+timeProcess);
-								
-								timeStart = DateManager.getTimeMillis();
-							}
-							
-							openspcoopState.releaseResource();
-							
-							if(times!=null) {
-								long timeEnd =  DateManager.getTimeMillis();
-								long timeProcess = timeEnd-timeStart;
-								times.fillTransaction_details.add("async-send-finish:"+timeProcess);
-								
-								timeStart = DateManager.getTimeMillis();
-							}
-						}
-					}catch(Exception e){}
-				}
+				timeStart = consegnaMultiplaProfiloSincrono(context, idDominio, idTransazione,
+						times, timeStart,
+						schedulaNotificheDopoConsegnaSincrona, msgDiag, nomePorta);
 			}
 			
+			if(identificativoSaveTransactionContext!=null) {
+				timeStart = saveTransactionContext(identificativoSaveTransactionContext, context, idDominio, idTransazione,
+						times, timeStart,
+						msgDiag);
+			}
 		}
 	}
 	
@@ -1697,5 +1618,176 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			}
 		}
 		return false;
+	}
+	
+	private long consegnaMultiplaProfiloSincrono(PostOutResponseContext context, IDSoggetto idDominio, String idTransazione,
+			TransazioniProcessTimes times, long timeStart,
+			boolean schedulaNotificheDopoConsegnaSincrona, MsgDiagnostico msgDiag, String nomePorta) {
+		IOpenSPCoopState openspcoopState = null;
+		try {
+			OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+			
+			EJBUtilsMessaggioInConsegna messaggiInConsegna = null;
+			Object oConnettoreConfig = context.getPddContext().getObject(CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_MESSAGGI_SPEDIRE );
+			if (oConnettoreConfig instanceof EJBUtilsMessaggioInConsegna){
+				messaggiInConsegna = (EJBUtilsMessaggioInConsegna) oConnettoreConfig;
+			}
+			if(messaggiInConsegna==null) {
+				this.logger.error("Non è stato possibile gestire lo scheduling delle notifiche (connettori multipli): configurazione non disponibile");
+			}
+			else {
+				openspcoopState = new OpenSPCoopStateful();
+				openspcoopState.initResource(idDominio, context.getIdModulo(), idTransazione);
+				
+				if(times!=null) {
+					long timeEnd =  DateManager.getTimeMillis();
+					long timeProcess = timeEnd-timeStart;
+					times.fillTransaction_details.add("async-send-getConnection:"+timeProcess);
+					
+					timeStart = DateManager.getTimeMillis();
+				}
+				
+				GestoreMessaggi msgRequest = new GestoreMessaggi(openspcoopState,true, messaggiInConsegna.getBusta().getID(),
+						org.openspcoop2.protocol.engine.constants.Costanti.INBOX,msgDiag,context.getPddContext());
+				
+				if(schedulaNotificheDopoConsegnaSincrona) {
+					
+					RepositoryBuste repositoryBuste = null;
+					boolean spedizioneConsegnaContenuti = false; // sarà il timer a far partire effettivamente la spedizione
+					/**
+						RepositoryBuste repositoryBuste = new RepositoryBuste(openspcoopState.getStatoRichiesta(), true, context.getProtocolFactory());
+					 */
+						
+					// Devo rilasciare l'attendi esito
+					Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniSql(op2Properties.isTransazioniDebug());
+					msgRequest.releaseAttesaEsiti(op2Properties.isTransazioniDebug(), log);
+					
+					EJBUtils.sendMessages(this.logger, msgDiag, openspcoopState, idTransazione, 
+							repositoryBuste, msgRequest, null, 
+							context.getProtocolFactory(), idDominio, nomePorta, messaggiInConsegna,
+							spedizioneConsegnaContenuti,
+							context.getPddContext(),
+							ConfigurazionePdDManager.getInstance());
+					
+					if(times!=null) {
+						long timeEnd =  DateManager.getTimeMillis();
+						long timeProcess = timeEnd-timeStart;
+						times.fillTransaction_details.add("async-send:"+timeProcess);
+						
+						timeStart = DateManager.getTimeMillis();
+					}
+					
+				}
+				else {
+					
+					for (String servizioApplicativo : messaggiInConsegna.getServiziApplicativi()) {
+						msgRequest.eliminaDestinatarioMessaggio(servizioApplicativo, null, messaggiInConsegna.getOraRegistrazioneMessaggio());
+					}
+				
+					if(times!=null) {
+						long timeEnd =  DateManager.getTimeMillis();
+						long timeProcess = timeEnd-timeStart;
+						times.fillTransaction_details.add("async-send-del:"+timeProcess);
+						
+						timeStart = DateManager.getTimeMillis();
+					}
+				}
+			}
+			
+		}catch(Exception e) {
+			this.logger.error("Non è stato possibile gestire lo scheduling delle notifiche (connettori multipli): "+e.getMessage(), e);
+		}
+		finally {
+			try{
+				if(openspcoopState!=null && !openspcoopState.resourceReleased()){
+					openspcoopState.commit();
+					
+					if(times!=null) {
+						long timeEnd =  DateManager.getTimeMillis();
+						long timeProcess = timeEnd-timeStart;
+						times.fillTransaction_details.add("async-send-commit:"+timeProcess);
+						
+						timeStart = DateManager.getTimeMillis();
+					}
+					
+					openspcoopState.releaseResource();
+					
+					if(times!=null) {
+						long timeEnd =  DateManager.getTimeMillis();
+						long timeProcess = timeEnd-timeStart;
+						times.fillTransaction_details.add("async-send-finish:"+timeProcess);
+						
+						timeStart = DateManager.getTimeMillis();
+					}
+				}
+			}catch(Exception e){
+				// ignore
+			}
+		}
+		
+		return timeStart;
+	}
+	
+	private long saveTransactionContext(String identificativoSaveTransactionContext, PostOutResponseContext context, IDSoggetto idDominio, String idTransazione,
+			TransazioniProcessTimes times, long timeStart,
+			MsgDiagnostico msgDiag) {
+		IOpenSPCoopState openspcoopState = null;
+		try {
+			openspcoopState = new OpenSPCoopStateful();
+			openspcoopState.initResource(idDominio, context.getIdModulo(), idTransazione);
+				
+			if(times!=null) {
+				long timeEnd =  DateManager.getTimeMillis();
+				long timeProcess = timeEnd-timeStart;
+				times.fillTransaction_details.add("async-send-saveTransactionContext:"+timeProcess);
+					
+				timeStart = DateManager.getTimeMillis();
+			}
+				
+			GestoreMessaggi msgRequest = new GestoreMessaggi(openspcoopState,true, identificativoSaveTransactionContext,
+					org.openspcoop2.protocol.engine.constants.Costanti.INBOX,msgDiag,context.getPddContext());
+				
+			msgRequest.registraTransactionContext_statelessEngine(identificativoSaveTransactionContext, context.getPddContext());
+								
+			if(times!=null) {
+				long timeEnd =  DateManager.getTimeMillis();
+				long timeProcess = timeEnd-timeStart;
+				times.fillTransaction_details.add("async-send-saveTransactionContext-saved:"+timeProcess);
+				
+				timeStart = DateManager.getTimeMillis();
+			}
+			
+		}catch(Exception e) {
+			this.logger.error("Non è stato possibile salvare il contesto della transazione per le notifiche (connettori multipli): "+e.getMessage(), e);
+		}
+		finally {
+			try{
+				if(openspcoopState!=null && !openspcoopState.resourceReleased()){
+					openspcoopState.commit();
+					
+					if(times!=null) {
+						long timeEnd =  DateManager.getTimeMillis();
+						long timeProcess = timeEnd-timeStart;
+						times.fillTransaction_details.add("async-send-saveTransactionContext-commit:"+timeProcess);
+						
+						timeStart = DateManager.getTimeMillis();
+					}
+					
+					openspcoopState.releaseResource();
+					
+					if(times!=null) {
+						long timeEnd =  DateManager.getTimeMillis();
+						long timeProcess = timeEnd-timeStart;
+						times.fillTransaction_details.add("async-send-saveTransactionContext-finish:"+timeProcess);
+						
+						timeStart = DateManager.getTimeMillis();
+					}
+				}
+			}catch(Exception e){
+				// ignore
+			}
+		}
+		
+		return timeStart;
 	}
 }

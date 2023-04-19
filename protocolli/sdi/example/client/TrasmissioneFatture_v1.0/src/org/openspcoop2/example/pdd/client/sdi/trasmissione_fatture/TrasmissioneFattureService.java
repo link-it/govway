@@ -40,10 +40,10 @@ import javax.xml.ws.Service;
                   targetNamespace = "http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0") 
 public class TrasmissioneFattureService extends Service {
 
-    public final static URL WSDL_LOCATION;
+    public static final URL WSDL_LOCATION;
 
-    public final static QName SERVICE = new QName("http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0", "TrasmissioneFatture_service");
-    public final static QName TrasmissioneFatturePort = new QName("http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0", "TrasmissioneFatture_port");
+    public static final QName SERVICE = new QName("http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0", "TrasmissioneFatture_service");
+    public static final QName TrasmissioneFatturePort = new QName("http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0", "TrasmissioneFatture_port");
     static {
         URL url = TrasmissioneFattureService.class.getResource("TrasmissioneFatture_v1.1.wsdl");
         if (url == null) {

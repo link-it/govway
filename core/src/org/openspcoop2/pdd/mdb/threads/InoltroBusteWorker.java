@@ -50,7 +50,7 @@ public class InoltroBusteWorker extends ModuloAlternativoWorker{
 	/* ********  F I E L D S  P R I V A T I S T A T I C I  ******** */
 
 	/** Variabile che indica il Nome del modulo dell'architettura di OpenSPCoop rappresentato da questa classe */
-	public final static String idModulo = "InoltroBuste";
+	public static final String idModulo = "InoltroBuste";
 
 	public InoltroBusteWorker(MessageIde ide){
 		super(InoltroBusteWorker.idModulo, ide);

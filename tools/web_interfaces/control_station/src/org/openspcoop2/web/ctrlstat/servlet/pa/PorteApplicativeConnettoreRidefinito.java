@@ -21,7 +21,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -181,8 +180,8 @@ public class PorteApplicativeConnettoreRidefinito extends Action {
 				
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,idAsps, dati);
 				
@@ -205,9 +204,9 @@ public class PorteApplicativeConnettoreRidefinito extends Action {
 			
 			if(!isOk) {
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteApplicativeHelper.addConnettoreDefaultRidefinitoToDati(dati,TipoOperazione.OTHER, modalita, modalitaValues,modalitaLabels,true,servletConnettore,parametriServletConnettore);
 				
@@ -222,8 +221,8 @@ public class PorteApplicativeConnettoreRidefinito extends Action {
 						ForwardParams.OTHER(""));
 			}
 
-			List<Object> listaOggettiDaEliminare = new ArrayList<Object>();
-			List<Object> listaOggettiDaModificare = new ArrayList<Object>();
+			List<Object> listaOggettiDaEliminare = new ArrayList<>();
+			List<Object> listaOggettiDaModificare = new ArrayList<>();
 			
 			for (PortaApplicativaServizioApplicativo paSA : portaApplicativa.getServizioApplicativoList()) {
 				IDServizioApplicativo idSA = new IDServizioApplicativo();
@@ -241,8 +240,8 @@ public class PorteApplicativeConnettoreRidefinito extends Action {
 						IDServizioApplicativo idSAassociato = new IDServizioApplicativo();
 						idSAassociato.setIdSoggettoProprietario(idSoggetto);
 						idSAassociato.setNome(portaApplicativa.getServizioApplicativoDefault());
-						ServizioApplicativo sa_associato = saCore.getServizioApplicativo(idSAassociato);
-						listaOggettiDaEliminare.add(sa_associato);
+						ServizioApplicativo saAssociato = saCore.getServizioApplicativo(idSAassociato);
+						listaOggettiDaEliminare.add(saAssociato);
 					}
 				}
 			}
@@ -278,10 +277,9 @@ public class PorteApplicativeConnettoreRidefinito extends Action {
 					ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 					
 					String tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
-					if(tipologia!=null) {
-						if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
-							ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE);
-						}
+					if(tipologia!=null &&
+						AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
+						ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE);
 					}
 					
 					boolean [] permessi = new boolean[2];

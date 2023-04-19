@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -141,7 +140,7 @@ public class PorteApplicativeTrasformazioniAdd extends Action {
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
 			AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
 			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(apc.getServiceBinding());
-			Map<String,String> azioniAccordo = porteApplicativeCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<String>());
+			Map<String,String> azioniAccordo = porteApplicativeCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<>());
 			
 			if(azioniAccordo!=null && azioniAccordo.size()>0) {
 				// porte ridefinite
@@ -231,8 +230,8 @@ public class PorteApplicativeTrasformazioniAdd extends Action {
 			// dati
 			if (porteApplicativeHelper.isEditModeInProgress()) {
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteApplicativeHelper.addTrasformazioneToDatiOpAdd(dati, pa, nome, 
 						stato, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
@@ -255,18 +254,18 @@ public class PorteApplicativeTrasformazioniAdd extends Action {
 			String contentTypeDBCheck = StringUtils.isNotEmpty(contentType) ? contentType : null;
 			String connettoriAsString = connettori != null ? StringUtils.join(Arrays.asList(connettori), ",") : "";
 			String connettoriDBCheck = StringUtils.isNotEmpty(connettoriAsString) ? connettoriAsString : null;
-			TrasformazioneRegola trasformazioneDBCheck_criteri = porteApplicativeCore.getTrasformazione(Long.parseLong(idPorta), azioniDBCheck, patternDBCheck, contentTypeDBCheck, connettoriDBCheck, 
+			TrasformazioneRegola trasformazioneDBCheckCriteri = porteApplicativeCore.getTrasformazione(Long.parseLong(idPorta), azioniDBCheck, patternDBCheck, contentTypeDBCheck, connettoriDBCheck, 
 					null, null, true);
-			TrasformazioneRegola trasformazioneDBCheck_nome = porteApplicativeCore.getTrasformazione(Long.parseLong(idPorta), nome);
+			TrasformazioneRegola trasformazioneDBCheckNome = porteApplicativeCore.getTrasformazione(Long.parseLong(idPorta), nome);
 			
-			boolean isOk = porteApplicativeHelper.trasformazioniCheckData(TipoOperazione.ADD, Long.parseLong(idPorta), nome, trasformazioneDBCheck_criteri, trasformazioneDBCheck_nome, null,
+			boolean isOk = porteApplicativeHelper.trasformazioniCheckData(TipoOperazione.ADD, Long.parseLong(idPorta), nome, trasformazioneDBCheckCriteri, trasformazioneDBCheckNome, null,
 					serviceBinding);
 			if (!isOk) {
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteApplicativeHelper.addTrasformazioneToDatiOpAdd(dati, pa, nome, 
 						stato, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,

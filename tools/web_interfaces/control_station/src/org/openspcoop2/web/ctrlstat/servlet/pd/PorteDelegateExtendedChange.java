@@ -22,7 +22,6 @@
 package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -52,7 +51,7 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
 public final class PorteDelegateExtendedChange extends AbstractServletListExtendedChange {
 	
 	@Override
-	public void addToHiddenDati(Vector<DataElement> dati,ConsoleHelper consoleHelper) throws ExtendedException{
+	public void addToHiddenDati(List<DataElement> dati,ConsoleHelper consoleHelper) throws ExtendedException{
 		PorteDelegateExtendedUtilities.addToHiddenDati(TipoOperazione.CHANGE, dati, consoleHelper);
 	}
 	
@@ -81,7 +80,7 @@ public final class PorteDelegateExtendedChange extends AbstractServletListExtend
 
 	@Override
 	protected List<Parameter> getTitle(Object object, ConsoleHelper consoleHelper) throws Exception {
-		return PorteDelegateExtendedUtilities.getTitle(object, consoleHelper);
+		return PorteDelegateExtendedUtilities.getTitle(consoleHelper);
 	}
 
 	@Override

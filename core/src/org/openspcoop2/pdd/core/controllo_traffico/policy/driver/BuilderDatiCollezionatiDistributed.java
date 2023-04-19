@@ -60,21 +60,21 @@ public class BuilderDatiCollezionatiDistributed implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	public final static String DISTRUBUITED_UPDATE_POLICY_DATE = "-updatePolicyDate-c-";
-	public final static String DISTRUBUITED_POLICY_DATE = "-policyDate-c";
+	public static final String DISTRUBUITED_UPDATE_POLICY_DATE = "-updatePolicyDate-c-";
+	public static final String DISTRUBUITED_POLICY_DATE = "-policyDate-c";
 	
-	public final static String DISTRUBUITED_SUFFIX_CONFIG_DATE = "-c-";
+	public static final String DISTRUBUITED_SUFFIX_CONFIG_DATE = "-c-";
 	
-	public final static String DISTRUBUITED_INTERVAL_POLICY_REQUEST_COUNTER = "-policyRequestCounter-i-";
-	public final static String DISTRUBUITED_INTERVAL_POLICY_COUNTER = "-policyCounter-i-";
+	public static final String DISTRUBUITED_INTERVAL_POLICY_REQUEST_COUNTER = "-policyRequestCounter-i-";
+	public static final String DISTRUBUITED_INTERVAL_POLICY_COUNTER = "-policyCounter-i-";
 	
-	public final static String DISTRUBUITED_POLICY_DEGRADO_PRESTAZIONALE_DATE = "-policyDegradoPrestazionaleDate-c-";
-	public final static String DISTRUBUITED_INTERVAL_POLICY_DEGRADO_PRESTAZIONALE_COUNTER = "-policyDegradoPrestazionaleCounter-i-";
-	public final static String DISTRUBUITED_INTERVAL_POLICY_DEGRADO_PRESTAZIONALE_REQUEST_COUNTER = "-policyDegradoPrestazionaleRequestCounter-i-";
+	public static final String DISTRUBUITED_POLICY_DEGRADO_PRESTAZIONALE_DATE = "-policyDegradoPrestazionaleDate-c-";
+	public static final String DISTRUBUITED_INTERVAL_POLICY_DEGRADO_PRESTAZIONALE_COUNTER = "-policyDegradoPrestazionaleCounter-i-";
+	public static final String DISTRUBUITED_INTERVAL_POLICY_DEGRADO_PRESTAZIONALE_REQUEST_COUNTER = "-policyDegradoPrestazionaleRequestCounter-i-";
 	
-	public final static String DISTRUBUITED_ACTIVE_REQUEST_COUNTER = "-activeRequestCounter-c-";
+	public static final String DISTRUBUITED_ACTIVE_REQUEST_COUNTER = "-activeRequestCounter-c-";
 	
-	public final static String DISTRUBUITED_INTERVAL_POLICY_DENY_REQUEST_COUNTER = "-policyDenyRequestCounter-i-";
+	public static final String DISTRUBUITED_INTERVAL_POLICY_DENY_REQUEST_COUNTER = "-policyDenyRequestCounter-i-";
 	
 	
 	public final PolicyGroupByActiveThreadsType tipoPolicy;

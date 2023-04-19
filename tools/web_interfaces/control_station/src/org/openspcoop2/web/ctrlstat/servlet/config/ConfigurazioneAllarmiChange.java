@@ -24,7 +24,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -242,11 +241,7 @@ public class ConfigurazioneAllarmiChange extends Action {
 								}
 											
 								parameters = confCore.getParameters(allarme, context);
-								
-//								for (org.openspcoop2.monitor.sdk.parameters.Parameter<?> par : parameters) {
-//									par.setValue(par.getRendering().getDefaultValue());
-//								}
-								
+																
 								confHelper.saveParametriIntoSession(request, session, parameters);
 								confHelper.savePluginIntoSession(request, session, allarme.getPlugin());
 							}catch(Exception e){
@@ -265,7 +260,7 @@ public class ConfigurazioneAllarmiChange extends Action {
 				}
 			}
 			
-			List<Parameter> lstParamSession = new ArrayList<Parameter>();
+			List<Parameter> lstParamSession = new ArrayList<>();
 
 			Parameter parRuoloPorta = null;
 			if(ruoloPorta!=null) {
@@ -303,8 +298,6 @@ public class ConfigurazioneAllarmiChange extends Action {
 					lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI, 
 						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_LIST));
 				}
-//				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
-//				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_LIST));
 				lstParam.add(new Parameter(allarme.getAlias(), null));
 			}
 			
@@ -314,8 +307,8 @@ public class ConfigurazioneAllarmiChange extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				confHelper.addAllarmeToDati(dati, tipoOperazione, allarme, alarmEngineConfig, listaPlugin, parameters, ruoloPorta, nomePorta, serviceBinding); 
 				
@@ -339,8 +332,8 @@ public class ConfigurazioneAllarmiChange extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				confHelper.addAllarmeToDati(dati, tipoOperazione, allarme, alarmEngineConfig, listaPlugin, parameters, ruoloPorta, nomePorta, serviceBinding);
 				
@@ -357,7 +350,7 @@ public class ConfigurazioneAllarmiChange extends Action {
 			}
 				
 			// salvataggio dei parametri
-			if(parameters!=null && parameters.size()>0) {
+			if(parameters!=null && !parameters.isEmpty()) {
 				for (org.openspcoop2.monitor.sdk.parameters.Parameter<?> par : parameters) {
 					boolean found = false;
 					for (AllarmeParametro parDB : allarme.getAllarmeParametroList()) {
@@ -429,7 +422,7 @@ public class ConfigurazioneAllarmiChange extends Action {
 			
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ALLARMI, ForwardParams.CHANGE());
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ALLARMI, ForwardParams.CHANGE());
 		}  

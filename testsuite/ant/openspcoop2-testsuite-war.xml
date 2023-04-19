@@ -160,8 +160,8 @@
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/spring">
-				<include name="spring-web-5.3.23.jar"/>
-				<include name="spring-core-5.3.23.jar"/>
+				<include name="spring-web-5.3.27.jar"/>
+				<include name="spring-core-5.3.27.jar"/>
 			</lib>
 			<lib dir="${required_lib}/jax">
 				<include name="${jaxb_jar}" />
@@ -169,7 +169,7 @@
 			</lib>
 			<lib dir="${required_lib}/jackson">
 				<include name="${jackson_jar}"/>
-				<include name="jackson-datatype-joda-2.13.4.jar"/>
+				<include name="jackson-datatype-joda-2.14.2.jar"/>
 			</lib>
 			<lib dir="${required_lib}/log">
 				<include name="slf4j-api-2.0.3-gov4j-1.jar"/>

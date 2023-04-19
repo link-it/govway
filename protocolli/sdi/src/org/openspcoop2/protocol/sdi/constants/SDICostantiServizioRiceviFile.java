@@ -30,45 +30,45 @@ import it.gov.fatturapa.sdi.ws.trasmissione.v1_0.types.utils.ProjectInfo;
  */
 public class SDICostantiServizioRiceviFile {
 
-    public final static String SDI_SERVIZIO_RICEVI_FILE = "SdIRiceviFile";
-    public final static String SDI_SERVIZIO_RICEVI_FILE_AZIONE_RICEVI_FILE = "RiceviFile";
+    public static final String SDI_SERVIZIO_RICEVI_FILE = "SdIRiceviFile";
+    public static final String SDI_SERVIZIO_RICEVI_FILE_AZIONE_RICEVI_FILE = "RiceviFile";
 	
-	public final static String SDI_SERVIZIO_RICEVI_FILE_NAMESPACE = ProjectInfo.getInstance().getProjectNamespace();
+	public static final String SDI_SERVIZIO_RICEVI_FILE_NAMESPACE = ProjectInfo.getInstance().getProjectNamespace();
 	
-	//public final static String SDI_SOAP_ACTION_SERVIZIO_RICEVI_FILE_AZIONE_RICEVI_FILE = "\"\"";
-	public final static String SDI_SOAP_ACTION_SERVIZIO_RICEVI_FILE_AZIONE_RICEVI_FILE = "\"http://www.fatturapa.it/SdIRiceviFile/RiceviFile\"";
+	//public static final String SDI_SOAP_ACTION_SERVIZIO_RICEVI_FILE_AZIONE_RICEVI_FILE = "\"\"";
+	public static final String SDI_SOAP_ACTION_SERVIZIO_RICEVI_FILE_AZIONE_RICEVI_FILE = "\"http://www.fatturapa.it/SdIRiceviFile/RiceviFile\"";
 	
 	
 	// AZIONE: RiceviFile
 	
-	public final static String RICEVI_FILE_RICHIESTA_ROOT_ELEMENT = "fileSdIAccoglienza";
+	public static final String RICEVI_FILE_RICHIESTA_ROOT_ELEMENT = "fileSdIAccoglienza";
 	
-    public final static String FILE_SDI_TYPE_ELEMENT_FILE = "File";
+    public static final String FILE_SDI_TYPE_ELEMENT_FILE = "File";
 	
-	public final static String RICEVI_FILE_RISPOSTA_ROOT_ELEMENT = "rispostaSdIRiceviFile";
-    public final static String RICEVI_FILE_RISPOSTA_ELEMENT_IDENTIFICATIVO_SDI = "IdentificativoSdI";
-    public final static String RICEVI_FILE_RISPOSTA_ELEMENT_DATA_ORA_RICEZIONE = "DataOraRicezione";
-    public final static String RICEVI_FILE_RISPOSTA_ELEMENT_ERRORE = "Errore";
+	public static final String RICEVI_FILE_RISPOSTA_ROOT_ELEMENT = "rispostaSdIRiceviFile";
+    public static final String RICEVI_FILE_RISPOSTA_ELEMENT_IDENTIFICATIVO_SDI = "IdentificativoSdI";
+    public static final String RICEVI_FILE_RISPOSTA_ELEMENT_DATA_ORA_RICEZIONE = "DataOraRicezione";
+    public static final String RICEVI_FILE_RISPOSTA_ELEMENT_ERRORE = "Errore";
 	
-	public final static String RICEVI_FILE_INTEGRAZIONE_URLBASED_VERSIONE_FATTURA  = "Versione";
-	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_1  = "SDI-Versione";
-	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_2  = "GovWay-SDI-Versione";
+	public static final String RICEVI_FILE_INTEGRAZIONE_URLBASED_VERSIONE_FATTURA  = "Versione";
+	public static final String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_1  = "SDI-Versione";
+	public static final String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_2  = "GovWay-SDI-Versione";
 	
-	public final static String RICEVI_FILE_INTEGRAZIONE_URLBASED_TIPO_FILE  = "TipoFile";
-	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_1  = "SDI-TipoFile";
-	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_2  = "GovWay-SDI-TipoFile";
+	public static final String RICEVI_FILE_INTEGRAZIONE_URLBASED_TIPO_FILE  = "TipoFile";
+	public static final String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_1  = "SDI-TipoFile";
+	public static final String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_2  = "GovWay-SDI-TipoFile";
 	
-	public final static String RICEVI_FILE_INTEGRAZIONE_URLBASED_ID_PAESE  = "IdPaese";
-	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_PAESE_1  = "SDI-IdPaese";
-	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_PAESE_2  = "GovWay-SDI-IdPaese";
+	public static final String RICEVI_FILE_INTEGRAZIONE_URLBASED_ID_PAESE  = "IdPaese";
+	public static final String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_PAESE_1  = "SDI-IdPaese";
+	public static final String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_PAESE_2  = "GovWay-SDI-IdPaese";
 	
-	public final static String RICEVI_FILE_INTEGRAZIONE_URLBASED_ID_CODICE  = "IdCodice";
-	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_CODICE_1  = "SDI-IdCodice";
-	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_CODICE_2  = "GovWay-SDI-IdCodice";
+	public static final String RICEVI_FILE_INTEGRAZIONE_URLBASED_ID_CODICE  = "IdCodice";
+	public static final String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_CODICE_1  = "SDI-IdCodice";
+	public static final String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_CODICE_2  = "GovWay-SDI-IdCodice";
 	
-	public final static String RICEVI_FILE_INTEGRAZIONE_URLBASED_NOME_FILE  = "NomeFile";
-	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_NOME_FILE_1  = "SDI-NomeFile";
-	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_NOME_FILE_2  = "GovWay-SDI-NomeFile";
+	public static final String RICEVI_FILE_INTEGRAZIONE_URLBASED_NOME_FILE  = "NomeFile";
+	public static final String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_NOME_FILE_1  = "SDI-NomeFile";
+	public static final String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_NOME_FILE_2  = "GovWay-SDI-NomeFile";
 
 	
 }

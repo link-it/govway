@@ -61,6 +61,7 @@ public class ConfigurazioneGestioneConsegnaNotifiche  {
 	private String faultMessage;
 
 	private MessaggioDaNotificare messaggioDaNotificare;
+	private boolean injectTransactionSyncContext;
 	private HttpRequestMethod httpMethod;
 
 	public Integer getCadenzaRispedizione() {
@@ -195,6 +196,13 @@ public class ConfigurazioneGestioneConsegnaNotifiche  {
 	}
 	public void setMessaggioDaNotificare(MessaggioDaNotificare messaggioDaNotificare) {
 		this.messaggioDaNotificare = messaggioDaNotificare;
+	}
+	
+	public boolean isInjectTransactionSyncContext() {
+		return this.injectTransactionSyncContext;
+	}
+	public void setInjectTransactionSyncContext(boolean injectTransactionSyncContext) {
+		this.injectTransactionSyncContext = injectTransactionSyncContext;
 	}
 	
 	public HttpRequestMethod getHttpMethod() {

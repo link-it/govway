@@ -37,11 +37,11 @@ import org.openspcoop2.pdd.logger.MsgDiagnostico;
 public class GeneratoreMessaggiDiagnostici {
 
 	
-	public final static int NUMERO_TEMPLATE_DINAMICI_ERRORI_GENERICI = 4; // sono i diagnostici emessi dai moduli ricezione contenuti o buste
-	public final static int NUMERO_TEMPLATE_DINAMICI_DETTAGLI_SINGOLO_ERRORE = 10; // sono i diagnostici di "appoggio" registrati nel modulo 'all' utilizzati per generare l'errore
+	public static final int NUMERO_TEMPLATE_DINAMICI_ERRORI_GENERICI = 4; // sono i diagnostici emessi dai moduli ricezione contenuti o buste
+	public static final int NUMERO_TEMPLATE_DINAMICI_DETTAGLI_SINGOLO_ERRORE = 10; // sono i diagnostici di "appoggio" registrati nel modulo 'all' utilizzati per generare l'errore
 	// NOTA: siccome tanto viene salvato direttamente il diagnostico emesso dai moduli ricezione contenuti o buste non sembra necessario salvare i singoli dettagli visto che sono già nell'errore generico
 	
-	public final static boolean saveSingleValueOfMessageError = false;
+	public static final boolean saveSingleValueOfMessageError = false;
 	
 	public static void cleanPolicyValues(MsgDiagnostico msgDiag) throws Exception{
 		

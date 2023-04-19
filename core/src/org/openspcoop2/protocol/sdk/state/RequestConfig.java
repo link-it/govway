@@ -20,8 +20,10 @@
 
 package org.openspcoop2.protocol.sdk.state;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +50,7 @@ import org.openspcoop2.protocol.sdk.Servizio;
 import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPorteApplicative;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPorteDelegate;
+import org.openspcoop2.utils.BooleanNullable;
 
 
 /**
@@ -57,7 +60,7 @@ import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPorteDelegate;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class RequestConfig implements java.io.Serializable, Cloneable {
+public class RequestConfig implements java.io.Serializable {
 
 	/**
 	 * 
@@ -76,8 +79,8 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 	private org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding = null;
 	private AccordoServizioParteComune aspc = null;
 	private AccordoServizioParteSpecifica asps = null;
-	private Map<String, org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper> asWrapper_soap = null;
-	private Map<String, org.openspcoop2.core.registry.rest.AccordoServizioWrapper> asWrapper_rest = null;
+	private Map<String, org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper> asWrapperSoap = null;
+	private Map<String, org.openspcoop2.core.registry.rest.AccordoServizioWrapper> asWrapperRest = null;
 	private Servizio infoServizio;
 	private Servizio infoServizioCorrelato;
 	private Servizio infoServizioAzioneCorrelata;
@@ -135,259 +138,288 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 	private SystemProperties systemProperties;
 	
 	private Boolean forwardProxyEnabled;
-	private Map<String, Object> forwardProxy = null;
+	private Map<String, Serializable> forwardProxy = null;
 	
 	private transient org.openspcoop2.utils.Semaphore semaphoreCredenziali = null; // possono essere alimentati da thread differenti
-	private Map<TipoCredenzialeMittente, Map<String, CredenzialeMittente>> mapCredenziali = null;
+	private EnumMap<TipoCredenzialeMittente, Map<String, CredenzialeMittente>> mapCredenziali = null;
 	
 	private transient org.openspcoop2.utils.Semaphore semaphorePolicy = null; // possono essere alimentati da thread differenti
-	private Map<String, Object> policyValidazioneToken = null;
-	private Map<String, Object> policyNegoziazioneToken = null;
-	private Map<String, Object> attributeAuthority = null;
+	private Map<String, Serializable> policyValidazioneToken = null;
+	private Map<String, Serializable> policyNegoziazioneToken = null;
+	private Map<String, Serializable> attributeAuthority = null;
 	
 	private transient org.openspcoop2.utils.Semaphore semaphoreStore = null; // possono essere alimentati da thread differenti
-	private Map<String, Object> merlinTruststore = null;
-	private Map<String, Object> merlinKeystore = null;
-	private Map<String, Object> symmetricKeystore = null;
-	private Map<String, Object> multiKeystore = null;
-	private Map<String, Object> jwkSetStore = null;
-	private Map<String, Object> httpStore = null;
-	private Map<String, Object> crlCertstore = null;
-	private Map<String, Object> sslSocketFactory = null;
-	private Map<String, Object> externalResource = null;
-	private Map<String, Object> ocspResponse = null;
+	private Map<String, Serializable> merlinTruststore = null;
+	private Map<String, Serializable> merlinKeystore = null;
+	private Map<String, Serializable> symmetricKeystore = null;
+	private Map<String, Serializable> multiKeystore = null;
+	private Map<String, Serializable> jwkSetStore = null;
+	private Map<String, Serializable> httpStore = null;
+	private Map<String, Serializable> crlCertstore = null;
+	private Map<String, Serializable> sslSocketFactory = null;
+	private Map<String, Serializable> sslConfigProps = null;
+	private Map<String, Serializable> externalResource = null;
+	private Map<String, Serializable> ocspResponse = null;
 	
 	private transient org.openspcoop2.utils.Semaphore semaphoreTemplate = null; // possono essere alimentati da thread differenti
-	private Map<String, Object> template = null;
+	private Map<String, Serializable> template = null;
 	
 	
 	
-	
-	@Override
-	public RequestConfig clone(){
-		RequestConfig clone = new RequestConfig();
-		
-		if(this.key!=null) {
-			clone.key = this.key;
+	public void copyFrom(RequestConfig source) {
+
+		if(source==null) {
+			throw new NullPointerException("Source is null");
 		}
 		
-		clone.cached = this.cached;
-		
-		if(this.dominioDefault!=null) {
-			clone.dominioDefault = this.dominioDefault.clone();
+		if(source.key!=null) {
+			this.key = source.key;
 		}
 		
-		if(this.idServizio!=null) {
-			clone.idServizio = this.idServizio.clone();
+		this.cached = source.cached;
+		
+		if(source.dominioDefault!=null) {
+			this.dominioDefault = source.dominioDefault.clone();
 		}
-		if(this.serviceBinding!=null) {
-			clone.serviceBinding = this.serviceBinding;
+		
+		if(source.idServizio!=null) {
+			this.idServizio = source.idServizio.clone();
 		}
-		if(this.aspc!=null) {
-			clone.aspc = this.aspc;
+		if(source.serviceBinding!=null) {
+			this.serviceBinding = source.serviceBinding;
 		}
-		if(this.asps!=null) {
-			clone.asps = this.asps;
+		if(source.aspc!=null) {
+			this.aspc = source.aspc;
 		}
-		if(this.asWrapper_soap!=null) {
-			clone.asWrapper_soap = this.asWrapper_soap;
+		if(source.asps!=null) {
+			this.asps = source.asps;
 		}
-		if(this.asWrapper_rest!=null) {
-			clone.asWrapper_rest = this.asWrapper_rest;
+		if(source.asWrapperSoap!=null) {
+			this.asWrapperSoap = source.asWrapperSoap;
 		}
-		if(this.infoServizio!=null) {
-			clone.infoServizio = this.infoServizio;
+		if(source.asWrapperRest!=null) {
+			this.asWrapperRest = source.asWrapperRest;
 		}
-		if(this.infoServizioCorrelato!=null) {
-			clone.infoServizioCorrelato = this.infoServizioCorrelato;
+		if(source.infoServizio!=null) {
+			this.infoServizio = source.infoServizio;
 		}
-		if(this.infoServizioAzioneCorrelata!=null) {
-			clone.infoServizioAzioneCorrelata = this.infoServizioAzioneCorrelata;
+		if(source.infoServizioCorrelato!=null) {
+			this.infoServizioCorrelato = source.infoServizioCorrelato;
 		}
-		if(this.servizioVersioneProtocollo!=null) {
-			clone.servizioVersioneProtocollo = this.servizioVersioneProtocollo;
+		if(source.infoServizioAzioneCorrelata!=null) {
+			this.infoServizioAzioneCorrelata = source.infoServizioAzioneCorrelata;
+		}
+		if(source.servizioVersioneProtocollo!=null) {
+			this.servizioVersioneProtocollo = source.servizioVersioneProtocollo;
 		}
 		
 		// Informazioni che vengono impostate dopo aver letto l'azione specifica
-		if(this.allegatoApi!=null) {
-			clone.allegatoApi = this.allegatoApi;
+		if(source.allegatoApi!=null) {
+			this.allegatoApi = source.allegatoApi;
 		}	
-		if(this.allegatoServizio!=null) {
-			clone.allegatoServizio = this.allegatoServizio;
+		if(source.allegatoServizio!=null) {
+			this.allegatoServizio = source.allegatoServizio;
 		}
 
-		if(this.soggettoErogatoreRegistry!=null) {
-			clone.soggettoErogatoreRegistry = this.soggettoErogatoreRegistry;
+		this.copyErogatoreFrom(source);
+		
+		this.copyFruitoreFrom(source);
+		
+		this.copyConfigFrom(source);
+		
+		this.copyCredenzialiFrom(source);
+		
+		this.copyPolicyFrom(source);
+		
+		this.copyStoreFrom(source);
+		
+		this.copyTemplateFrom(source);
+
+	}
+	private void copyErogatoreFrom(RequestConfig source) {
+		
+		if(source.soggettoErogatoreRegistry!=null) {
+			this.soggettoErogatoreRegistry = source.soggettoErogatoreRegistry;
 		}
-		if(this.soggettoErogatoreConfig!=null) {
-			clone.soggettoErogatoreConfig = this.soggettoErogatoreConfig;
+		if(source.soggettoErogatoreConfig!=null) {
+			this.soggettoErogatoreConfig = source.soggettoErogatoreConfig;
 		}
-		if(this.soggettoErogatoreIdentificativoPorta!=null) {
-			clone.soggettoErogatoreIdentificativoPorta = this.soggettoErogatoreIdentificativoPorta;
+		if(source.soggettoErogatoreIdentificativoPorta!=null) {
+			this.soggettoErogatoreIdentificativoPorta = source.soggettoErogatoreIdentificativoPorta;
 		}
-		if(this.soggettoErogatoreSoggettoVirtuale!=null) {
-			clone.soggettoErogatoreSoggettoVirtuale = this.soggettoErogatoreSoggettoVirtuale;
+		if(source.soggettoErogatoreSoggettoVirtuale!=null) {
+			this.soggettoErogatoreSoggettoVirtuale = source.soggettoErogatoreSoggettoVirtuale;
 		}
-		if(this.soggettoErogatoreImplementazionePdd!=null) {
-			clone.soggettoErogatoreImplementazionePdd = this.soggettoErogatoreImplementazionePdd;
+		if(source.soggettoErogatoreImplementazionePdd!=null) {
+			this.soggettoErogatoreImplementazionePdd = source.soggettoErogatoreImplementazionePdd;
 		}
-		if(this.soggettoErogatorePddReaded!=null) {
-			clone.soggettoErogatorePddReaded = this.soggettoErogatorePddReaded;
+		if(source.soggettoErogatorePddReaded!=null) {
+			this.soggettoErogatorePddReaded = source.soggettoErogatorePddReaded;
 		}
-		if(this.soggettoErogatorePdd!=null) {
-			clone.soggettoErogatorePdd = this.soggettoErogatorePdd;
+		if(source.soggettoErogatorePdd!=null) {
+			this.soggettoErogatorePdd = source.soggettoErogatorePdd;
 		}
-		if(this.soggettoErogatoreVersioneProtocollo!=null) {
-			clone.soggettoErogatoreVersioneProtocollo = this.soggettoErogatoreVersioneProtocollo;
+		if(source.soggettoErogatoreVersioneProtocollo!=null) {
+			this.soggettoErogatoreVersioneProtocollo = source.soggettoErogatoreVersioneProtocollo;
 		}
 
-		if(this.idPortaApplicativaDefault!=null) {
-			clone.idPortaApplicativaDefault = this.idPortaApplicativaDefault.clone();
+		if(source.idPortaApplicativaDefault!=null) {
+			this.idPortaApplicativaDefault = source.idPortaApplicativaDefault.clone();
 		}
-		if(this.portaApplicativaDefault!=null) {
-			clone.portaApplicativaDefault = this.portaApplicativaDefault;
+		if(source.portaApplicativaDefault!=null) {
+			this.portaApplicativaDefault = source.portaApplicativaDefault;
 		}
-		if(this.idPortaApplicativa!=null) {
-			clone.idPortaApplicativa = this.idPortaApplicativa.clone();
+		if(source.idPortaApplicativa!=null) {
+			this.idPortaApplicativa = source.idPortaApplicativa.clone();
 		}
-		if(this.portaApplicativa!=null) {
-			clone.portaApplicativa = this.portaApplicativa;
+		if(source.portaApplicativa!=null) {
+			this.portaApplicativa = source.portaApplicativa;
 		}
-		if(this.listMappingErogazionePortaApplicativa!=null) {
-			clone.listMappingErogazionePortaApplicativa = this.listMappingErogazionePortaApplicativa;
+		if(source.listMappingErogazionePortaApplicativa!=null) {
+			this.listMappingErogazionePortaApplicativa = source.listMappingErogazionePortaApplicativa;
 		}
-		if(this.serviziApplicativiErogatore!=null) {
-			clone.serviziApplicativiErogatore = this.serviziApplicativiErogatore;
-		}
-		
-		if(this.listPorteApplicativeByFiltroRicerca!=null) {
-			clone.listPorteApplicativeByFiltroRicerca = this.listPorteApplicativeByFiltroRicerca;
+		if(source.serviziApplicativiErogatore!=null) {
+			this.serviziApplicativiErogatore = source.serviziApplicativiErogatore;
 		}
 		
-		if(this.idFruitore!=null) {
-			clone.idFruitore = this.idFruitore.clone();
-		}
-		if(this.idPortaDelegataDefault!=null) {
-			clone.idPortaDelegataDefault = this.idPortaDelegataDefault.clone();
-		}
-		if(this.portaDelegataDefault!=null) {
-			clone.portaDelegataDefault = this.portaDelegataDefault;
-		}
-		if(this.idPortaDelegata!=null) {
-			clone.idPortaDelegata = this.idPortaDelegata.clone();
-		}
-		if(this.portaDelegata!=null) {
-			clone.portaDelegata = this.portaDelegata;
-		}
-		if(this.listMappingFruizionePortaDelegata!=null) {
-			clone.listMappingFruizionePortaDelegata = this.listMappingFruizionePortaDelegata;
+		if(source.listPorteApplicativeByFiltroRicerca!=null) {
+			this.listPorteApplicativeByFiltroRicerca = source.listPorteApplicativeByFiltroRicerca;
 		}
 		
-		if(this.listPorteDelegateByFiltroRicerca!=null) {
-			clone.listPorteDelegateByFiltroRicerca = this.listPorteDelegateByFiltroRicerca;
+	}
+	private void copyFruitoreFrom(RequestConfig source) {
+		
+		if(source.idFruitore!=null) {
+			this.idFruitore = source.idFruitore.clone();
+		}
+		if(source.idPortaDelegataDefault!=null) {
+			this.idPortaDelegataDefault = source.idPortaDelegataDefault.clone();
+		}
+		if(source.portaDelegataDefault!=null) {
+			this.portaDelegataDefault = source.portaDelegataDefault;
+		}
+		if(source.idPortaDelegata!=null) {
+			this.idPortaDelegata = source.idPortaDelegata.clone();
+		}
+		if(source.portaDelegata!=null) {
+			this.portaDelegata = source.portaDelegata;
+		}
+		if(source.listMappingFruizionePortaDelegata!=null) {
+			this.listMappingFruizionePortaDelegata = source.listMappingFruizionePortaDelegata;
 		}
 		
-		
-		if(this.soggettoFruitoreRegistry!=null) {
-			clone.soggettoFruitoreRegistry = this.soggettoFruitoreRegistry;
-		}
-		if(this.soggettoFruitoreConfig!=null) {
-			clone.soggettoFruitoreConfig = this.soggettoFruitoreConfig;
-		}
-		if(this.soggettoFruitoreIdentificativoPorta!=null) {
-			clone.soggettoFruitoreIdentificativoPorta = this.soggettoFruitoreIdentificativoPorta;
-		}
-		if(this.soggettoFruitoreSoggettoVirtuale!=null) {
-			clone.soggettoFruitoreSoggettoVirtuale = this.soggettoFruitoreSoggettoVirtuale;
-		}
-		if(this.soggettoFruitoreImplementazionePdd!=null) {
-			clone.soggettoFruitoreImplementazionePdd = this.soggettoFruitoreImplementazionePdd;
-		}
-		if(this.soggettoFruitorePddReaded!=null) {
-			clone.soggettoFruitorePddReaded = this.soggettoFruitorePddReaded;
-		}
-		if(this.soggettoFruitorePdd!=null) {
-			clone.soggettoFruitorePdd = this.soggettoFruitorePdd;
-		}
-		if(this.soggettoFruitoreVersioneProtocollo!=null) {
-			clone.soggettoFruitoreVersioneProtocollo = this.soggettoFruitoreVersioneProtocollo;
+		if(source.listPorteDelegateByFiltroRicerca!=null) {
+			this.listPorteDelegateByFiltroRicerca = source.listPorteDelegateByFiltroRicerca;
 		}
 		
-		if(this.connettoreFrutoreServizio!=null) {
-			clone.connettoreFrutoreServizio = this.connettoreFrutoreServizio;
+		if(source.soggettoFruitoreRegistry!=null) {
+			this.soggettoFruitoreRegistry = source.soggettoFruitoreRegistry;
 		}
-		if(this.connettoreSoggettoErogatore!=null) {
-			clone.connettoreSoggettoErogatore = this.connettoreSoggettoErogatore;
+		if(source.soggettoFruitoreConfig!=null) {
+			this.soggettoFruitoreConfig = source.soggettoFruitoreConfig;
+		}
+		if(source.soggettoFruitoreIdentificativoPorta!=null) {
+			this.soggettoFruitoreIdentificativoPorta = source.soggettoFruitoreIdentificativoPorta;
+		}
+		if(source.soggettoFruitoreSoggettoVirtuale!=null) {
+			this.soggettoFruitoreSoggettoVirtuale = source.soggettoFruitoreSoggettoVirtuale;
+		}
+		if(source.soggettoFruitoreImplementazionePdd!=null) {
+			this.soggettoFruitoreImplementazionePdd = source.soggettoFruitoreImplementazionePdd;
+		}
+		if(source.soggettoFruitorePddReaded!=null) {
+			this.soggettoFruitorePddReaded = source.soggettoFruitorePddReaded;
+		}
+		if(source.soggettoFruitorePdd!=null) {
+			this.soggettoFruitorePdd = source.soggettoFruitorePdd;
+		}
+		if(source.soggettoFruitoreVersioneProtocollo!=null) {
+			this.soggettoFruitoreVersioneProtocollo = source.soggettoFruitoreVersioneProtocollo;
+		}
+	}
+	private void copyConfigFrom(RequestConfig source) {
+		
+		if(source.connettoreFrutoreServizio!=null) {
+			this.connettoreFrutoreServizio = source.connettoreFrutoreServizio;
+		}
+		if(source.connettoreSoggettoErogatore!=null) {
+			this.connettoreSoggettoErogatore = source.connettoreSoggettoErogatore;
 		}
 		
-		if(this.ruolo!=null) {
-			clone.ruolo = this.ruolo;
+		if(source.ruolo!=null) {
+			this.ruolo = source.ruolo;
 		}
-		if(this.scope!=null) {
-			clone.scope = this.scope;
-		}
-		
-		if(this.systemProperties!=null) {
-			clone.systemProperties = this.systemProperties;
+		if(source.scope!=null) {
+			this.scope = source.scope;
 		}
 		
-		if(this.forwardProxyEnabled!=null) {
-			clone.forwardProxyEnabled = this.forwardProxyEnabled;
-		}
-		if(this.forwardProxy!=null) {
-			clone.forwardProxy = this.forwardProxy;
+		if(source.systemProperties!=null) {
+			this.systemProperties = source.systemProperties;
 		}
 		
-		if(this.mapCredenziali!=null) {
-			clone.mapCredenziali = this.mapCredenziali;
+		if(source.forwardProxyEnabled!=null) {
+			this.forwardProxyEnabled = source.forwardProxyEnabled;
+		}
+		if(source.forwardProxy!=null) {
+			this.forwardProxy = source.forwardProxy;
 		}
 		
-		if(this.policyValidazioneToken!=null) {
-			clone.policyValidazioneToken = this.policyValidazioneToken;
+	}
+	private void copyCredenzialiFrom(RequestConfig source) {		
+		if(source.mapCredenziali!=null) {
+			this.mapCredenziali = source.mapCredenziali;
 		}
-		if(this.policyNegoziazioneToken!=null) {
-			clone.policyNegoziazioneToken = this.policyNegoziazioneToken;
+	}
+	private void copyPolicyFrom(RequestConfig source) {
+		if(source.policyValidazioneToken!=null) {
+			this.policyValidazioneToken = source.policyValidazioneToken;
 		}
-		if(this.attributeAuthority!=null) {
-			clone.attributeAuthority = this.attributeAuthority;
+		if(source.policyNegoziazioneToken!=null) {
+			this.policyNegoziazioneToken = source.policyNegoziazioneToken;
 		}
-		
-		if(this.merlinTruststore!=null) {
-			clone.merlinTruststore = this.merlinTruststore;
+		if(source.attributeAuthority!=null) {
+			this.attributeAuthority = source.attributeAuthority;
 		}
-		if(this.merlinKeystore!=null) {
-			clone.merlinKeystore = this.merlinKeystore;
+	}
+	private void copyStoreFrom(RequestConfig source) {		
+		if(source.merlinTruststore!=null) {
+			this.merlinTruststore = source.merlinTruststore;
 		}
-		if(this.symmetricKeystore!=null) {
-			clone.symmetricKeystore = this.symmetricKeystore;
+		if(source.merlinKeystore!=null) {
+			this.merlinKeystore = source.merlinKeystore;
 		}
-		if(this.multiKeystore!=null) {
-			clone.multiKeystore = this.multiKeystore;
+		if(source.symmetricKeystore!=null) {
+			this.symmetricKeystore = source.symmetricKeystore;
 		}
-		if(this.jwkSetStore!=null) {
-			clone.jwkSetStore = this.jwkSetStore;
+		if(source.multiKeystore!=null) {
+			this.multiKeystore = source.multiKeystore;
 		}
-		if(this.httpStore!=null) {
-			clone.httpStore = this.httpStore;
+		if(source.jwkSetStore!=null) {
+			this.jwkSetStore = source.jwkSetStore;
 		}
-		if(this.crlCertstore!=null) {
-			clone.crlCertstore = this.crlCertstore;
+		if(source.httpStore!=null) {
+			this.httpStore = source.httpStore;
 		}
-		if(this.sslSocketFactory!=null) {
-			clone.sslSocketFactory = this.sslSocketFactory;
+		if(source.crlCertstore!=null) {
+			this.crlCertstore = source.crlCertstore;
 		}
-		if(this.externalResource!=null) {
-			clone.externalResource = this.externalResource;
+		if(source.sslSocketFactory!=null) {
+			this.sslSocketFactory = source.sslSocketFactory;
 		}
-		if(this.ocspResponse!=null) {
-			clone.ocspResponse = this.ocspResponse;
+		if(source.sslConfigProps!=null) {
+			this.sslConfigProps = source.sslConfigProps;
 		}
-
-		if(this.template!=null) {
-			clone.template = this.template;
+		if(source.externalResource!=null) {
+			this.externalResource = source.externalResource;
 		}
-
-		return clone;
+		if(source.ocspResponse!=null) {
+			this.ocspResponse = source.ocspResponse;
+		}
+	}
+	private void copyTemplateFrom(RequestConfig source) {
+		if(source.template!=null) {
+			this.template = source.template;
+		}
 	}
 	
 	
@@ -455,52 +487,52 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		}
 	}
 	
-	public org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper getAsWrapper_soap(InformationApiSource infoWsdlSource,boolean buildSchemaXSD,boolean readDatiRegistro) {
-		if(this.asWrapper_soap==null) {
+	public org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper getAsWrapperSoap(InformationApiSource infoWsdlSource,boolean buildSchemaXSD,boolean readDatiRegistro) {
+		if(this.asWrapperSoap==null) {
 			return null;
 		}
-		String key = buildKeyAccordoServizioWrapper(infoWsdlSource, buildSchemaXSD, false, readDatiRegistro);
-		return this.asWrapper_soap.get(key);
+		String keyASWrapper = buildKeyAccordoServizioWrapper(infoWsdlSource, buildSchemaXSD, false, readDatiRegistro);
+		return this.asWrapperSoap.get(keyASWrapper);
 	}
-	public void setAsWrapper_soap(org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper asWrapper_soap, InformationApiSource infoWsdlSource,boolean buildSchemaXSD,boolean readDatiRegistro, String idTransazione) {
-		String key = buildKeyAccordoServizioWrapper(infoWsdlSource, buildSchemaXSD, false, readDatiRegistro);
+	public void setAsWrapperSoap(org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper asWrapperSoap, InformationApiSource infoWsdlSource,boolean buildSchemaXSD,boolean readDatiRegistro, String idTransazione) {
+		String keyASWrapper = buildKeyAccordoServizioWrapper(infoWsdlSource, buildSchemaXSD, false, readDatiRegistro);
 		if(this.semaphore==null) {
 			// serializzazione da transient
 			initSemaphore();
 		}
 		
-		this.semaphore.acquireThrowRuntime("setAsWrapper_soap", idTransazione);
+		this.semaphore.acquireThrowRuntime("setAsWrapperSoap", idTransazione);
 		try {
-			if(this.asWrapper_soap==null) {
-				this.asWrapper_soap = new HashMap<String, org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper>(2);
+			if(this.asWrapperSoap==null) {
+				this.asWrapperSoap = new HashMap<>(2);
 			}
-			this.asWrapper_soap.put(key, asWrapper_soap);
+			this.asWrapperSoap.put(keyASWrapper, asWrapperSoap);
 		}finally {
-			this.semaphore.release("setAsWrapper_soap", idTransazione);
+			this.semaphore.release("setAsWrapperSoap", idTransazione);
 		}
 	}
-	public org.openspcoop2.core.registry.rest.AccordoServizioWrapper getAsWrapper_rest(InformationApiSource infoWsdlSource,boolean buildSchemaXSD,boolean processIncludeForOpenApi,boolean readDatiRegistro) {
-		if(this.asWrapper_rest==null) {
+	public org.openspcoop2.core.registry.rest.AccordoServizioWrapper getAsWrapperRest(InformationApiSource infoWsdlSource,boolean buildSchemaXSD,boolean processIncludeForOpenApi,boolean readDatiRegistro) {
+		if(this.asWrapperRest==null) {
 			return null;
 		}
-		String key = buildKeyAccordoServizioWrapper(infoWsdlSource, buildSchemaXSD, processIncludeForOpenApi, readDatiRegistro);
-		return this.asWrapper_rest.get(key);
+		String keyASWrapper = buildKeyAccordoServizioWrapper(infoWsdlSource, buildSchemaXSD, processIncludeForOpenApi, readDatiRegistro);
+		return this.asWrapperRest.get(keyASWrapper);
 	}
-	public void setAsWrapper_rest(org.openspcoop2.core.registry.rest.AccordoServizioWrapper asWrapper_rest, InformationApiSource infoWsdlSource,boolean buildSchemaXSD,boolean processIncludeForOpenApi,boolean readDatiRegistro, String idTransazione) {
-		String key = buildKeyAccordoServizioWrapper(infoWsdlSource, buildSchemaXSD, processIncludeForOpenApi, readDatiRegistro);
+	public void setAsWrapperRest(org.openspcoop2.core.registry.rest.AccordoServizioWrapper asWrapperRest, InformationApiSource infoWsdlSource,boolean buildSchemaXSD,boolean processIncludeForOpenApi,boolean readDatiRegistro, String idTransazione) {
+		String keyASWrapper = buildKeyAccordoServizioWrapper(infoWsdlSource, buildSchemaXSD, processIncludeForOpenApi, readDatiRegistro);
 		if(this.semaphore==null) {
 			// serializzazione da transient
 			initSemaphore();
 		}
 		
-		this.semaphore.acquireThrowRuntime("setAsWrapper_rest", idTransazione);
+		this.semaphore.acquireThrowRuntime("setAsWrapperRest", idTransazione);
 		try {
-			if(this.asWrapper_rest==null) {
-				this.asWrapper_rest = new HashMap<String, org.openspcoop2.core.registry.rest.AccordoServizioWrapper>(2);
+			if(this.asWrapperRest==null) {
+				this.asWrapperRest = new HashMap<>(2);
 			}
-			this.asWrapper_rest.put(key, asWrapper_rest);
+			this.asWrapperRest.put(keyASWrapper, asWrapperRest);
 		}finally {
-			this.semaphore.release("setAsWrapper_rest", idTransazione);
+			this.semaphore.release("setAsWrapperRest", idTransazione);
 		}
 	}
 	
@@ -544,7 +576,7 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		this.semaphoreAllegatoApi.acquireThrowRuntime("addAllegatoApi", idTransazione);
 		try {
 			if(this.allegatoApi==null) {
-				this.allegatoApi = new HashMap<String, Documento>(3);
+				this.allegatoApi = new HashMap<>(3);
 			}
 			this.allegatoApi.put(key, documento);
 		}finally {
@@ -572,7 +604,7 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		this.semaphoreAllegatoServizio.acquireThrowRuntime("addAllegatoServizio", idTransazione);
 		try {
 			if(this.allegatoServizio==null) {
-				this.allegatoServizio = new HashMap<String, Documento>(3);
+				this.allegatoServizio = new HashMap<>(3);
 			}
 			this.allegatoServizio.put(key, documento);
 		}finally {
@@ -626,7 +658,7 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		this.semaphore.acquireThrowRuntime("addServizioApplicativoErogatore", idTransazione);
 		try {
 			if(this.serviziApplicativiErogatore==null) {
-				this.serviziApplicativiErogatore = new HashMap<String, ServizioApplicativo>(5);
+				this.serviziApplicativiErogatore = new HashMap<>(5);
 			}		
 			this.serviziApplicativiErogatore.put(sa.getNome(), sa);
 		}finally {
@@ -646,13 +678,13 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		return this.serviziApplicativiErogatore.size();
 	}
 	
-	public List<IDPortaApplicativa> getPorteApplicativeByFiltroRicerca(ProtocolFiltroRicercaPorteApplicative filtro) {
+	public List<IDPortaApplicativa> getPorteApplicativeByFiltroRicerca(ProtocolFiltroRicercaPorteApplicative filtro, BooleanNullable nullConditionsList) {
 		if(this.listPorteApplicativeByFiltroRicerca==null) {
-			return null;
+			nullConditionsList.setValue(null);
+			return new ArrayList<>();
 		}
 		String keyCache = filtro.toString();
-		List<IDPortaApplicativa> l = this.listPorteApplicativeByFiltroRicerca.get(keyCache);
-		return l;
+		return this.listPorteApplicativeByFiltroRicerca.get(keyCache);
 	}
 	public Map<String, List<IDPortaApplicativa>> getListPorteApplicativeByFiltroRicerca() {
 		return this.listPorteApplicativeByFiltroRicerca;
@@ -671,7 +703,7 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		this.semaphorePorteApplicativeByFiltroRicerca.acquireThrowRuntime("addPorteApplicativeByFiltroRicerca", idTransazione);
 		try {
 			if(this.listPorteApplicativeByFiltroRicerca==null) {
-				this.listPorteApplicativeByFiltroRicerca=new HashMap<String, List<IDPortaApplicativa>>(3);
+				this.listPorteApplicativeByFiltroRicerca=new HashMap<>(3);
 			}
 			String keyCache = filtro.toString();
 			this.listPorteApplicativeByFiltroRicerca.put(keyCache, list);
@@ -718,13 +750,13 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		this.listMappingFruizionePortaDelegata = listMappingFruizionePortaDelegata;
 	}
 	
-	public List<IDPortaDelegata> getPorteDelegateByFiltroRicerca(ProtocolFiltroRicercaPorteDelegate filtro) {
+	public List<IDPortaDelegata> getPorteDelegateByFiltroRicerca(ProtocolFiltroRicercaPorteDelegate filtro, BooleanNullable nullConditionsList) {
 		if(this.listPorteDelegateByFiltroRicerca==null) {
-			return null;
+			nullConditionsList.setValue(null);
+			return new ArrayList<>();
 		}
 		String keyCache = filtro.toString();
-		List<IDPortaDelegata> l = this.listPorteDelegateByFiltroRicerca.get(keyCache);
-		return l;
+		return this.listPorteDelegateByFiltroRicerca.get(keyCache);
 	}
 	public Map<String, List<IDPortaDelegata>> getListPorteDelegateByFiltroRicerca() {
 		return this.listPorteDelegateByFiltroRicerca;
@@ -743,7 +775,7 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		this.semaphorePorteDelegateByFiltroRicerca.acquireThrowRuntime("addPorteDelegateByFiltroRicerca", idTransazione);
 		try {
 			if(this.listPorteDelegateByFiltroRicerca==null) {
-				this.listPorteDelegateByFiltroRicerca=new HashMap<String, List<IDPortaDelegata>>(3);
+				this.listPorteDelegateByFiltroRicerca=new HashMap<>(3);
 			}
 			String keyCache = filtro.toString();
 			this.listPorteDelegateByFiltroRicerca.put(keyCache, list);
@@ -875,7 +907,7 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		this.semaphore.acquireThrowRuntime("addRuolo", idTransazione);
 		try {
 			if(this.ruolo==null) {
-				this.ruolo=new HashMap<String, Ruolo>(3);
+				this.ruolo=new HashMap<>(3);
 			}
 			this.ruolo.put(key, ruolo);
 		}finally {
@@ -889,7 +921,7 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		return this.ruolo.get(key);
 	}
 	public List<String> getRuoloKeys(){
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(this.ruolo!=null && !this.ruolo.isEmpty()) {
 			l.addAll(this.ruolo.keySet());
 		}
@@ -905,7 +937,7 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		this.semaphore.acquireThrowRuntime("addScope", idTransazione);
 		try {
 			if(this.scope==null) {
-				this.scope=new HashMap<String, Scope>(3);
+				this.scope=new HashMap<>(3);
 			}
 			this.scope.put(key, scope);
 		}finally {
@@ -919,7 +951,7 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		return this.scope.get(key);
 	}
 	public List<String> getScopeKeys(){
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(this.scope!=null && !this.scope.isEmpty()) {
 			l.addAll(this.scope.keySet());
 		}
@@ -939,7 +971,7 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		this.forwardProxyEnabled = forwardProxyEnabled;
 	}
 	
-	public void addForwardProxy(String key, Object fp, String idTransazione) {
+	public void addForwardProxy(String key, Serializable fp, String idTransazione) {
 		if(this.semaphore==null) {
 			// serializzazione da transient
 			initSemaphore();
@@ -948,21 +980,21 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		this.semaphore.acquireThrowRuntime("addForwardProxy", idTransazione);
 		try {
 			if(this.forwardProxy==null) {
-				this.forwardProxy=new HashMap<String, Object>(3);
+				this.forwardProxy=new HashMap<>(3);
 			}
 			this.forwardProxy.put(key, fp);
 		}finally {
 			this.semaphore.release("addForwardProxy", idTransazione);
 		}
 	}
-	public Object getForwardProxy(String key) {
+	public Serializable getForwardProxy(String key) {
 		if(this.forwardProxy==null) {
 			return null;
 		}
 		return this.forwardProxy.get(key);
 	}
 	public List<String> getForwardProxyKeys(){
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(this.forwardProxy!=null && !this.forwardProxy.isEmpty()) {
 			l.addAll(this.forwardProxy.keySet());
 		}
@@ -995,11 +1027,11 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		this.semaphoreCredenziali.acquireThrowRuntime("addCredenzialeMittente", idTransazione);
 		try {
 			if(this.mapCredenziali==null) {
-				this.mapCredenziali = new HashMap<TipoCredenzialeMittente, Map<String,CredenzialeMittente>>();
+				this.mapCredenziali = new EnumMap<>(TipoCredenzialeMittente.class);
 			}
 			Map<String, CredenzialeMittente> map = this.mapCredenziali.get(tipo);
 			if(map==null) {
-				map = new HashMap<String, CredenzialeMittente>();
+				map = new HashMap<>();
 				this.mapCredenziali.put(tipo, map);
 			}
 			if(!map.containsKey(keyCache)) {
@@ -1023,7 +1055,7 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		}
 	}
 	
-	public void addPolicyValidazioneToken(String key, Object fp, String idTransazione) {
+	public void addPolicyValidazioneToken(String key, Serializable fp, String idTransazione) {
 		if(this.semaphorePolicy==null) {
 			// serializzazione da transient
 			initSemaphorePolicy();
@@ -1032,28 +1064,28 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		this.semaphorePolicy.acquireThrowRuntime("addPolicyValidazioneToken", idTransazione);
 		try {
 			if(this.policyValidazioneToken==null) {
-				this.policyValidazioneToken = new HashMap<String, Object>(3);
+				this.policyValidazioneToken = new HashMap<>(3);
 			}
 			this.policyValidazioneToken.put(key, fp);
 		}finally {
 			this.semaphorePolicy.release("addPolicyValidazioneToken", idTransazione);
 		}
 	}
-	public Object getPolicyValidazioneToken(String key) {
+	public Serializable getPolicyValidazioneToken(String key) {
 		if(this.policyValidazioneToken==null) {
 			return null;
 		}
 		return this.policyValidazioneToken.get(key);
 	}
 	public List<String> getPolicyValidazioneTokenKeys(){
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(this.policyValidazioneToken!=null && !this.policyValidazioneToken.isEmpty()) {
 			l.addAll(this.policyValidazioneToken.keySet());
 		}
 		return l;
 	}
 	
-	public void addPolicyNegoziazioneToken(String key, Object fp, String idTransazione) {
+	public void addPolicyNegoziazioneToken(String key, Serializable fp, String idTransazione) {
 		
 		if(this.semaphorePolicy==null) {
 			// serializzazione da transient
@@ -1063,28 +1095,28 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		this.semaphorePolicy.acquireThrowRuntime("addPolicyNegoziazioneToken", idTransazione);
 		try {
 			if(this.policyNegoziazioneToken==null) {
-				this.policyNegoziazioneToken = new HashMap<String, Object>(3);
+				this.policyNegoziazioneToken = new HashMap<>(3);
 			}
 			this.policyNegoziazioneToken.put(key, fp);
 		}finally {
 			this.semaphorePolicy.release("addPolicyNegoziazioneToken", idTransazione);
 		}
 	}
-	public Object getPolicyNegoziazioneToken(String key) {
+	public Serializable getPolicyNegoziazioneToken(String key) {
 		if(this.policyNegoziazioneToken==null) {
 			return null;
 		}
 		return this.policyNegoziazioneToken.get(key);
 	}
 	public List<String> getPolicyNegoziazioneTokenKeys(){
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(this.policyNegoziazioneToken!=null && !this.policyNegoziazioneToken.isEmpty()) {
 			l.addAll(this.policyNegoziazioneToken.keySet());
 		}
 		return l;
 	}
 	
-	public void addAttributeAuthority(String key, Object fp, String idTransazione) {
+	public void addAttributeAuthority(String key, Serializable fp, String idTransazione) {
 		if(this.semaphorePolicy==null) {
 			// serializzazione da transient
 			initSemaphorePolicy();
@@ -1093,21 +1125,21 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		this.semaphorePolicy.acquireThrowRuntime("addAttributeAuthority", idTransazione);
 		try {
 			if(this.attributeAuthority==null) {
-				this.attributeAuthority = new HashMap<String, Object>(3);
+				this.attributeAuthority = new HashMap<>(3);
 			}
 			this.attributeAuthority.put(key, fp);
 		}finally {
 			this.semaphorePolicy.release("addAttributeAuthority", idTransazione);
 		}
 	}
-	public Object getAttributeAuthority(String key) {
+	public Serializable getAttributeAuthority(String key) {
 		if(this.attributeAuthority==null) {
 			return null;
 		}
 		return this.attributeAuthority.get(key);
 	}
 	public List<String> getAttributeAuthorityKeys(){
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(this.attributeAuthority!=null && !this.attributeAuthority.isEmpty()) {
 			l.addAll(this.attributeAuthority.keySet());
 		}
@@ -1121,7 +1153,7 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		}
 	}
 	
-	public void addMerlinTruststore(String key, Object merlinTruststore, String idTransazione) {
+	public void addMerlinTruststore(String key, Serializable merlinTruststore, String idTransazione) {
 		
 		if(this.semaphoreStore==null) {
 			// serializzazione da transient
@@ -1131,21 +1163,21 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		this.semaphoreStore.acquireThrowRuntime("addMerlinTruststore", idTransazione);
 		try {
 			if(this.merlinTruststore==null) {
-				this.merlinTruststore = new HashMap<String, Object>(3);
+				this.merlinTruststore = new HashMap<>(3);
 			}
 			this.merlinTruststore.put(key, merlinTruststore);
 		}finally {
 			this.semaphoreStore.release("addMerlinTruststore", idTransazione);
 		}
 	}
-	public Object getMerlinTruststore(String key) {
+	public Serializable getMerlinTruststore(String key) {
 		if(this.merlinTruststore==null) {
 			return null;
 		}
 		return this.merlinTruststore.get(key);
 	}
 	
-	public void addMerlinKeystore(String key, Object merlinKeystore, String idTransazione) {
+	public void addMerlinKeystore(String key, Serializable merlinKeystore, String idTransazione) {
 		
 		if(this.semaphoreStore==null) {
 			// serializzazione da transient
@@ -1155,21 +1187,21 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		this.semaphoreStore.acquireThrowRuntime("addMerlinKeystore", idTransazione);
 		try {
 			if(this.merlinKeystore==null) {
-				this.merlinKeystore = new HashMap<String, Object>(3);
+				this.merlinKeystore = new HashMap<>(3);
 			}
 			this.merlinKeystore.put(key, merlinKeystore);
 		}finally {
 			this.semaphoreStore.release("addMerlinKeystore", idTransazione);
 		}
 	}
-	public Object getMerlinKeystore(String key) {
+	public Serializable getMerlinKeystore(String key) {
 		if(this.merlinKeystore==null) {
 			return null;
 		}
 		return this.merlinKeystore.get(key);
 	}
 	
-	public void addSymmetricKeystore(String key, Object symmetricKeystore, String idTransazione) {
+	public void addSymmetricKeystore(String key, Serializable symmetricKeystore, String idTransazione) {
 		 
 		
 		if(this.semaphoreStore==null) {
@@ -1180,21 +1212,21 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		this.semaphoreStore.acquireThrowRuntime("addSymmetricKeystore", idTransazione);
 		try {
 			if(this.symmetricKeystore==null) {
-				this.symmetricKeystore = new HashMap<String, Object>(3);
+				this.symmetricKeystore = new HashMap<>(3);
 			}
 			this.symmetricKeystore.put(key, symmetricKeystore);
 		}finally {
 			this.semaphoreStore.release("addSymmetricKeystore", idTransazione);
 		}
 	}
-	public Object getSymmetricKeystore(String key) {
+	public Serializable getSymmetricKeystore(String key) {
 		if(this.symmetricKeystore==null) {
 			return null;
 		}
 		return this.symmetricKeystore.get(key);
 	}
 	
-	public void addMultiKeystore(String key, Object multiKeystore, String idTransazione) {
+	public void addMultiKeystore(String key, Serializable multiKeystore, String idTransazione) {
 		 
 		
 		if(this.semaphoreStore==null) {
@@ -1205,21 +1237,21 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		this.semaphoreStore.acquireThrowRuntime("addMultiKeystore", idTransazione);
 		try {
 			if(this.multiKeystore==null) {
-				this.multiKeystore = new HashMap<String, Object>(3);
+				this.multiKeystore = new HashMap<>(3);
 			}
 			this.multiKeystore.put(key, multiKeystore);
 		}finally {
 			this.semaphoreStore.release("addMultiKeystore", idTransazione);
 		}
 	}
-	public Object getMultiKeystore(String key) {
+	public Serializable getMultiKeystore(String key) {
 		if(this.multiKeystore==null) {
 			return null;
 		}
 		return this.multiKeystore.get(key);
 	}
 	
-	public void addJWKSetStore(String key, Object jwkSetStore, String idTransazione) {
+	public void addJWKSetStore(String key, Serializable jwkSetStore, String idTransazione) {
 		 
 		
 		if(this.semaphoreStore==null) {
@@ -1230,21 +1262,21 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		this.semaphoreStore.acquireThrowRuntime("addJWKSetStore", idTransazione);
 		try {
 			if(this.jwkSetStore==null) {
-				this.jwkSetStore = new HashMap<String, Object>(3);
+				this.jwkSetStore = new HashMap<>(3);
 			}
 			this.jwkSetStore.put(key, jwkSetStore);
 		}finally {
 			this.semaphoreStore.release("addJWKSetStore", idTransazione);
 		}
 	}
-	public Object getJWKSetStore(String key) {
+	public Serializable getJWKSetStore(String key) {
 		if(this.jwkSetStore==null) {
 			return null;
 		}
 		return this.jwkSetStore.get(key);
 	}
 
-	public void addHttpStore(String key, Object httpStore, String idTransazione) {
+	public void addHttpStore(String key, Serializable httpStore, String idTransazione) {
 		 
 		
 		if(this.semaphoreStore==null) {
@@ -1255,21 +1287,21 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		this.semaphoreStore.acquireThrowRuntime("addHttpStore", idTransazione);
 		try {
 			if(this.httpStore==null) {
-				this.httpStore = new HashMap<String, Object>(3);
+				this.httpStore = new HashMap<>(3);
 			}
 			this.httpStore.put(key, httpStore);
 		}finally {
 			this.semaphoreStore.release("addHttpStore", idTransazione);
 		}
 	}
-	public Object getHttpStore(String key) {
+	public Serializable getHttpStore(String key) {
 		if(this.httpStore==null) {
 			return null;
 		}
 		return this.httpStore.get(key);
 	}
 	
-	public void addCRLCertstore(String key, Object crlCertstore, String idTransazione) {
+	public void addCRLCertstore(String key, Serializable crlCertstore, String idTransazione) {
 		 
 		
 		if(this.semaphoreStore==null) {
@@ -1280,21 +1312,21 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		this.semaphoreStore.acquireThrowRuntime("addCRLCertstore", idTransazione);
 		try {
 			if(this.crlCertstore==null) {
-				this.crlCertstore = new HashMap<String, Object>(3);
+				this.crlCertstore = new HashMap<>(3);
 			}
 			this.crlCertstore.put(key, crlCertstore);
 		}finally {
 			this.semaphoreStore.release("addCRLCertstore", idTransazione);
 		}
 	}
-	public Object getCRLCertstore(String key) {
+	public Serializable getCRLCertstore(String key) {
 		if(this.crlCertstore==null) {
 			return null;
 		}
 		return this.crlCertstore.get(key);
 	}
 	
-	public void addSSLSocketFactory(String key, Object sslSocketFactory, String idTransazione) {
+	public void addSSLSocketFactory(String key, Serializable sslSocketFactory, String idTransazione) {
 		 
 		
 		if(this.semaphoreStore==null) {
@@ -1305,21 +1337,46 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		this.semaphoreStore.acquireThrowRuntime("addSSLSocketFactory", idTransazione);
 		try {
 			if(this.sslSocketFactory==null) {
-				this.sslSocketFactory = new HashMap<String, Object>(3);
+				this.sslSocketFactory = new HashMap<>(3);
 			}
 			this.sslSocketFactory.put(key, sslSocketFactory);
 		}finally {
 			this.semaphoreStore.release("addSSLSocketFactory", idTransazione);
 		}
 	}
-	public Object getSSLSocketFactory(String key) {
+	public Serializable getSSLSocketFactory(String key) {
 		if(this.sslSocketFactory==null) {
 			return null;
 		}
 		return this.sslSocketFactory.get(key);
 	}
 	
-	public void addExternalResource(String key, Object resource, String idTransazione) {
+	public void addSSLConfigProps(String key, Serializable resource, String idTransazione) {
+		 
+		
+		if(this.semaphoreStore==null) {
+			// serializzazione da transient
+			initSemaphoreStore();
+		}
+		
+		this.semaphoreStore.acquireThrowRuntime("addSSLConfigProps", idTransazione);
+		try {
+			if(this.sslConfigProps==null) {
+				this.sslConfigProps = new HashMap<>(3);
+			}
+			this.sslConfigProps.put(key, resource);
+		}finally {
+			this.semaphoreStore.release("addSSLConfigProps", idTransazione);
+		}
+	}
+	public Serializable getSSLConfigProps(String key) {
+		if(this.sslConfigProps==null) {
+			return null;
+		}
+		return this.sslConfigProps.get(key);
+	}
+	
+	public void addExternalResource(String key, Serializable resource, String idTransazione) {
 		 
 		
 		if(this.semaphoreStore==null) {
@@ -1330,21 +1387,21 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		this.semaphoreStore.acquireThrowRuntime("addExternalResource", idTransazione);
 		try {
 			if(this.externalResource==null) {
-				this.externalResource = new HashMap<String, Object>(3);
+				this.externalResource = new HashMap<>(3);
 			}
 			this.externalResource.put(key, resource);
 		}finally {
 			this.semaphoreStore.release("addExternalResource", idTransazione);
 		}
 	}
-	public Object getExternalResource(String key) {
+	public Serializable getExternalResource(String key) {
 		if(this.externalResource==null) {
 			return null;
 		}
 		return this.externalResource.get(key);
 	}
 	
-	public void addOCSPResponse(String key, Object resource, String idTransazione) {
+	public void addOCSPResponse(String key, Serializable resource, String idTransazione) {
 		 
 		
 		if(this.semaphoreStore==null) {
@@ -1355,14 +1412,14 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		this.semaphoreStore.acquireThrowRuntime("addOCSPResponse", idTransazione);
 		try {
 			if(this.ocspResponse==null) {
-				this.ocspResponse = new HashMap<String, Object>(3);
+				this.ocspResponse = new HashMap<>(3);
 			}
 			this.ocspResponse.put(key, resource);
 		}finally {
 			this.semaphoreStore.release("addOCSPResponse", idTransazione);
 		}
 	}
-	public Object getOCSPResponse(String key) {
+	public Serializable getOCSPResponse(String key) {
 		if(this.ocspResponse==null) {
 			return null;
 		}
@@ -1376,7 +1433,7 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		}
 	}
 	
-	public void addTemplate(String key, Object fp, String idTransazione) {
+	public void addTemplate(String key, Serializable fp, String idTransazione) {
 		if(this.semaphoreTemplate==null) {
 			// serializzazione da transient
 			initSemaphoreTemplate();
@@ -1385,14 +1442,14 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		this.semaphoreTemplate.acquireThrowRuntime("addTemplate", idTransazione);
 		try {
 			if(this.template==null) {
-				this.template = new HashMap<String, Object>(3);
+				this.template = new HashMap<>(3);
 			}
 			this.template.put(key, fp);
 		}finally {
 			this.semaphoreTemplate.release("addTemplate", idTransazione);
 		}
 	}
-	public Object getTemplate(String key) {
+	public Serializable getTemplate(String key) {
 		if(this.template==null) {
 			return null;
 		}

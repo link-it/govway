@@ -28,7 +28,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Vector;
 import java.util.function.Predicate;
 
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -312,7 +311,7 @@ public class EventiUtils {
 
 
 	public static void checkEventiCongestioneAttivaConViolazioneRL(String idServizio, LocalDateTime dataSpedizione, Optional<String> gruppo,
-			Vector<HttpResponse> responses, Logger log) {
+			List<HttpResponse> responses, Logger log) {
 				
 		waitForDbEvents();
 		
@@ -357,7 +356,7 @@ public class EventiUtils {
 
 
 
-	public static void checkEventiCongestioneAttiva(LocalDateTime dataSpedizione, Vector<HttpResponse> responses, Logger log) {
+	public static void checkEventiCongestioneAttiva(LocalDateTime dataSpedizione, List<HttpResponse> responses, Logger log) {
 	
 		waitForDbEvents();
 		

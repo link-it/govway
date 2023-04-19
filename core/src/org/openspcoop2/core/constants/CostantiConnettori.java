@@ -34,8 +34,8 @@ public class CostantiConnettori {
 	
 	/** COMMONS PROPERTIES */
 	
-	public final static String CONNETTORE_LOCATION = "location";
-	public final static String CONNETTORE_DEBUG = "debug";
+	public static final String CONNETTORE_LOCATION = "location";
+	public static final String CONNETTORE_DEBUG = "debug";
     public static final String CONNETTORE_USERNAME = "user";
     public static final String CONNETTORE_PASSWORD = "password";
     public static final String CONNETTORE_BEARER_TOKEN = "bearerToken";
@@ -47,7 +47,7 @@ public class CostantiConnettori {
     
     /** EXTENDED PROPERTIES */
     
-    public final static String CONNETTORE_EXTENDED_PREFIX = "-#ext#-";
+    public static final String CONNETTORE_EXTENDED_PREFIX = "-#ext#-";
     
     
     /** HTTP PROPERTIES */
@@ -123,17 +123,17 @@ public class CostantiConnettori {
     
     /** FILE PROPERTIES */
     
-	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_FILE = "outputFile";
-	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_FILE_PERMISSIONS = "outputFilePermissions";
-	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS = "outputFileHeaders";
-	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS_PERMISSIONS = "outputFileHeadersPermissions";
-	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR = "outputFileAutoCreateParentDirectory";
-	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE = "outputFileOverwriteIfExists";
-	public final static String CONNETTORE_FILE_RESPONSE_INPUT_MODE = "response";
-	public final static String CONNETTORE_FILE_RESPONSE_INPUT_FILE = "inputFile";
-	public final static String CONNETTORE_FILE_RESPONSE_INPUT_FILE_HEADERS = "inputFileHeaders";
-	public final static String CONNETTORE_FILE_RESPONSE_INPUT_FILE_DELETE_AFTER_READ = "inputFileDeleteAfterRead";
-	public final static String CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME = "inputFileWaitTimeIfNotExists";
+	public static final String CONNETTORE_FILE_REQUEST_OUTPUT_FILE = "outputFile";
+	public static final String CONNETTORE_FILE_REQUEST_OUTPUT_FILE_PERMISSIONS = "outputFilePermissions";
+	public static final String CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS = "outputFileHeaders";
+	public static final String CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS_PERMISSIONS = "outputFileHeadersPermissions";
+	public static final String CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR = "outputFileAutoCreateParentDirectory";
+	public static final String CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE = "outputFileOverwriteIfExists";
+	public static final String CONNETTORE_FILE_RESPONSE_INPUT_MODE = "response";
+	public static final String CONNETTORE_FILE_RESPONSE_INPUT_FILE = "inputFile";
+	public static final String CONNETTORE_FILE_RESPONSE_INPUT_FILE_HEADERS = "inputFileHeaders";
+	public static final String CONNETTORE_FILE_RESPONSE_INPUT_FILE_DELETE_AFTER_READ = "inputFileDeleteAfterRead";
+	public static final String CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME = "inputFileWaitTimeIfNotExists";
     
     
     
@@ -157,7 +157,7 @@ public class CostantiConnettori {
     
     /** NULLECHO PROPERTIES */
     
-    public final static String CONNETTORE_NULL_ECHO_GENERA_TRASMISSIONE = "generaTrasmissione";
-    public final static String CONNETTORE_NULL_ECHO_GENERA_TRASMISSIONE_INVERTITA = "generaTrasmissioneInvertita";
-    public final static String CONNETTORE_NULL_ECHO_GENERA_TRASMISSIONE_ANDATA_RITORNO = "generaTrasmissioneAndataRitorno";
+    public static final String CONNETTORE_NULL_ECHO_GENERA_TRASMISSIONE = "generaTrasmissione";
+    public static final String CONNETTORE_NULL_ECHO_GENERA_TRASMISSIONE_INVERTITA = "generaTrasmissioneInvertita";
+    public static final String CONNETTORE_NULL_ECHO_GENERA_TRASMISSIONE_ANDATA_RITORNO = "generaTrasmissioneAndataRitorno";
 }

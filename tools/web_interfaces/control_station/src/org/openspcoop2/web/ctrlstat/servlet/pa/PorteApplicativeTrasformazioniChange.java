@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -152,27 +151,27 @@ public class PorteApplicativeTrasformazioniChange extends Action {
 			String servletTrasformazioniRispostaList = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_LIST;
 			int numeroTrasformazioniRisposte = oldRegola.sizeRispostaList();
 			
-			List<Parameter> parametriInvocazioneServletTrasformazioniRichiesta = new ArrayList<Parameter>();
+			List<Parameter> parametriInvocazioneServletTrasformazioniRichiesta = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdPorta);
 			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdSoggetto);
 			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdAsps);
 			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdTrasformazione);
 			
-			List<Parameter> parametriInvocazioneServletTrasformazioniRisposta = new ArrayList<Parameter>();
+			List<Parameter> parametriInvocazioneServletTrasformazioniRisposta = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniRisposta.add(pIdPorta);
 			parametriInvocazioneServletTrasformazioniRisposta.add(pIdSoggetto);
 			parametriInvocazioneServletTrasformazioniRisposta.add(pIdAsps);
 			parametriInvocazioneServletTrasformazioniRisposta.add(pIdTrasformazione);
 			
 			String servletTrasformazioniAutorizzazioneAutenticati =   PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO_LIST;
-			List<Parameter> parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati = new ArrayList<Parameter>();
+			List<Parameter> parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pIdPorta);
 			parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pIdSoggetto);
 			parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pIdAsps);
 			parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pIdTrasformazione);
 			int numAutenticati = oldRegola.getApplicabilita() != null ? oldRegola.getApplicabilita().sizeSoggettoList() : 0;
 			String servletTrasformazioniApplicativiAutenticati = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_AUTORIZZATO_LIST;
-			List<Parameter> parametriInvocazioneServletTrasformazioniApplicativiAutenticati  = new ArrayList<Parameter>();
+			List<Parameter> parametriInvocazioneServletTrasformazioniApplicativiAutenticati  = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniApplicativiAutenticati.add(pIdPorta);
 			parametriInvocazioneServletTrasformazioniApplicativiAutenticati.add(pIdSoggetto);
 			parametriInvocazioneServletTrasformazioniApplicativiAutenticati.add(pIdAsps);
@@ -195,7 +194,7 @@ public class PorteApplicativeTrasformazioniChange extends Action {
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
 			AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
 			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(apc.getServiceBinding());
-			Map<String,String> azioniAccordo = porteApplicativeCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<String>());
+			Map<String,String> azioniAccordo = porteApplicativeCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<>());
 			
 			if(azioniAccordo!=null && azioniAccordo.size()>0) {
 				// porte ridefinite
@@ -286,8 +285,8 @@ public class PorteApplicativeTrasformazioniChange extends Action {
 			// dati
 			if (porteApplicativeHelper.isEditModeInProgress()) {
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				// primo accesso
 				if(first == null) {
@@ -342,18 +341,18 @@ public class PorteApplicativeTrasformazioniChange extends Action {
 			String contentTypeDBCheck = StringUtils.isNotEmpty(contentType) ? contentType : null;
 			String connettoriAsString = connettori != null ? StringUtils.join(Arrays.asList(connettori), ",") : "";
 			String connettoriDBCheck = StringUtils.isNotEmpty(connettoriAsString) ? connettoriAsString : null;
-			TrasformazioneRegola trasformazioneDBCheck_criteri = porteApplicativeCore.getTrasformazione(Long.parseLong(idPorta), azioniDBCheck, patternDBCheck, contentTypeDBCheck, connettoriDBCheck,
+			TrasformazioneRegola trasformazioneDBCheckCriteri = porteApplicativeCore.getTrasformazione(Long.parseLong(idPorta), azioniDBCheck, patternDBCheck, contentTypeDBCheck, connettoriDBCheck,
 					applicabilitaSoggetti, applicabilitaApplicativi, true);
-			TrasformazioneRegola trasformazioneDBCheck_nome = porteApplicativeCore.getTrasformazione(Long.parseLong(idPorta), nome);
+			TrasformazioneRegola trasformazioneDBCheckNome = porteApplicativeCore.getTrasformazione(Long.parseLong(idPorta), nome);
 			
-			boolean isOk = porteApplicativeHelper.trasformazioniCheckData(TipoOperazione.CHANGE, Long.parseLong(idPorta), nome, trasformazioneDBCheck_criteri, trasformazioneDBCheck_nome, oldRegola,
+			boolean isOk = porteApplicativeHelper.trasformazioniCheckData(TipoOperazione.CHANGE, Long.parseLong(idPorta), nome, trasformazioneDBCheckCriteri, trasformazioneDBCheckNome, oldRegola,
 					serviceBinding);
 			if (!isOk) {
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteApplicativeHelper.addTrasformazioneToDati(TipoOperazione.CHANGE, dati, pa, id, nome, 
 						stato, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,

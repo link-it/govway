@@ -23,7 +23,8 @@ package org.openspcoop2.testsuite.db;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.transazioni.Transazione;
@@ -107,7 +108,7 @@ public class VerificatoreTransazioni {
 		ResultSet res = null;
 		try {
 			res = pstmt.executeQuery();
-			Vector<String> out = new Vector<String>();
+			List<String> out = new ArrayList<>();
 			while(res.next()){
 				String colonnaValue = res.getString(colonna);
 				if(colonnaValue!=null){

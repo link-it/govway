@@ -74,8 +74,9 @@ public class Costanti  {
 	public static final String MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_FAULT_MESSAGE = "md_notifiche_err_fault_message"; // claims in problem
 	
 	public static final String MULTI_DELIVER_NOTIFICHE_GESTIONE_TIPO_MESSAGGIO_DA_NOTIFICARE = "md_tipo_msg_da_notificare";
+	public static final String MULTI_DELIVER_NOTIFICHE_GESTIONE_INIETTA_CONTESTO_SINCRONO = "md_inject_sync_context_da_notificare";
 	public static final String MULTI_DELIVER_NOTIFICHE_GESTIONE_TIPO_HTTP_NOTIFICA = "md_tipo_http_notifica";
-	public final static String MULTI_DELIVER_NOTIFICHE_GESTIONE_TIPO_HTTP_NOTIFICA_USA_QUELLO_DELLA_RICHIESTA = "asRequest";
+	public static final String MULTI_DELIVER_NOTIFICHE_GESTIONE_TIPO_HTTP_NOTIFICA_USA_QUELLO_DELLA_RICHIESTA = "asRequest";
 
 	
 }

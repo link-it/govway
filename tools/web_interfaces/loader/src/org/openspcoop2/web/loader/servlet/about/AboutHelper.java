@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.web.loader.servlet.about;
 
-import java.util.Vector;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -52,7 +52,7 @@ public class AboutHelper extends LoaderHelper {
 		super(request, pd,  session);
 	}
 
-	public Vector<DataElement> addAboutToDati(Vector<DataElement> dati,TipoOperazione tipoOperazione, String userLogin) throws UtilsException {
+	public List<DataElement> addAboutToDati(List<DataElement> dati,TipoOperazione tipoOperazione, String userLogin) throws UtilsException {
 		 
 		IVersionInfo versionInfo = null;
 		try {
@@ -69,20 +69,18 @@ public class AboutHelper extends LoaderHelper {
 			}
 		}
 		
-		DataElement de = new DataElement();
-
 		// titolo sezione
-		de = new DataElement();
+		DataElement de = new DataElement();
 		de.setLabel(AboutCostanti.LABEL_PRODOTTO);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// versione
 		de = new DataElement();
 		de.setLabel(AboutCostanti.LABEL_VERSIONE);
 		de.setType(DataElementType.TEXT);
 		de.setValue(this.core.getProductVersion());
-		dati.addElement(de);
+		dati.add(de);
 		
 		// sito
 		de = new DataElement();
@@ -97,7 +95,7 @@ public class AboutHelper extends LoaderHelper {
 			de.setValue(Costanti.LABEL_OPENSPCOOP2_WEB);
 			de.setUrl(Costanti.LABEL_OPENSPCOOP2_WEB);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		// copyright
 		de = new DataElement();
@@ -109,7 +107,7 @@ public class AboutHelper extends LoaderHelper {
 		else {
 			de.setValue(AboutCostanti.LABEL_COPYRIGHT_VALUE);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		// sito openspcoop
 		de = new DataElement();
@@ -131,7 +129,7 @@ public class AboutHelper extends LoaderHelper {
 			de.setValue(AboutCostanti.LICENSE);
 			de.setRows(11);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		return dati;
 	}

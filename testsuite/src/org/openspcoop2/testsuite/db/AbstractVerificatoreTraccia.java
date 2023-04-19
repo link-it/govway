@@ -30,7 +30,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -326,7 +325,7 @@ public abstract class AbstractVerificatoreTraccia {
 		ResultSet res = null;
 		try {
 			res = pstmt.executeQuery();
-			Vector<String> out = new Vector<String>();
+			List<String> out = new ArrayList<>();
 			while(res.next()){
 				String colonnaValue = res.getString(colonna);
 				if(colonnaValue!=null){
@@ -3540,7 +3539,7 @@ public abstract class AbstractVerificatoreTraccia {
 
 			res = pstmt.executeQuery();
 
-			Vector<String> v = new Vector<String>();
+			List<String> v = new ArrayList<>();
 			while (res.next()) {
 
 				String value = res.getString(CostantiDB.TRACCE_COLUMN_ID_MESSAGGIO);

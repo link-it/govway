@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -323,7 +322,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		}
 	}
 
-	public Vector<DataElement> addServizioApplicativoToDati(Vector<DataElement> dati, String oldNomeSA, String nome, String tipoENomeSoggetto, String fault, TipoOperazione tipoOperazione,  
+	public List<DataElement> addServizioApplicativoToDati(List<DataElement> dati, String oldNomeSA, String nome, String tipoENomeSoggetto, String fault, TipoOperazione tipoOperazione,  
 			long idSA, Boolean contaListe,String[] soggettiList,String[] soggettiListLabel, String provider, String dominio,
 			String utente,String password, String subject, String principal, String tipoauth,
 			String faultactor,String genericfault,String prefixfault, String invrif, String sbustamentoInformazioniProtocolloRisposta,
@@ -378,7 +377,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			Parameter pSAId = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId()+"");
 			Parameter pSAIdSoggetto = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, sa.getIdSoggetto()+"");
 			Parameter pDominio = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO, dominio);
-			List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+			List<Parameter> listaParametriChange = new ArrayList<>();
 			listaParametriChange.add(pSAId);
 			listaParametriChange.add(pSAIdSoggetto);
 			listaParametriChange.add(pDominio);
@@ -419,7 +418,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 			// Verifica connettività 
 			if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
-				List<Parameter> listaParametriVerificaConnettivitaChange = new ArrayList<Parameter>();
+				List<Parameter> listaParametriVerificaConnettivitaChange = new ArrayList<>();
 				listaParametriVerificaConnettivitaChange.addAll(listaParametriChange);
 				listaParametriVerificaConnettivitaChange.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTIVITA, "true"));
 				this.pd.addComandoVerificaConnettivitaElementoButton(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI, listaParametriVerificaConnettivitaChange);
@@ -458,7 +457,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de.setValue(id);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		DataElement de = new DataElement();
@@ -469,7 +468,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de.setLabel(ServiziApplicativiCostanti.LABEL_APPLICATIVO);
 		}
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 
 
 		if(!useIdSogg) {
@@ -486,7 +485,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					deLABEL.setType(DataElementType.TEXT);
 					deLABEL.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO+"__label");
 					deLABEL.setValue(this.getLabelProtocollo(tipoProtocollo));
-					dati.addElement(deLABEL);
+					dati.add(deLABEL);
 					
 					de.setValue(tipoProtocollo);
 					de.setType(DataElementType.HIDDEN);
@@ -506,7 +505,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO);
 			}
 			de.setSize(this.getSize());
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		boolean dominioEsterno = false;
@@ -518,16 +517,18 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			if(TipoOperazione.CHANGE.equals(tipoOperazione)){
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(dominio);
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setType(DataElementType.TEXT);
 				de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DOMINIO);
 				de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO+"__LABEL");
 				String valueDom = dominio;
-				for (int i = 0; i < SoggettiCostanti.SOGGETTI_DOMINI_VALUE.length; i++) {
-					if(SoggettiCostanti.SOGGETTI_DOMINI_VALUE[i].equals(dominio)) {
-						valueDom = SoggettiCostanti.SOGGETTI_DOMINI_LABEL[i];
+				String [] sdValues = SoggettiCostanti.getSoggettiDominiValue();
+				String [] sdLabels = SoggettiCostanti.getSoggettiDominiLabel();
+				for (int i = 0; i < sdValues.length; i++) {
+					if(sdValues[i].equals(dominio)) {
+						valueDom = sdLabels[i];
 						break;
 					}
 				}
@@ -535,15 +536,15 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			}
 			else {
 				de.setType(DataElementType.SELECT);
-				de.setValues(SoggettiCostanti.SOGGETTI_DOMINI_VALUE);
-				de.setLabels(SoggettiCostanti.SOGGETTI_DOMINI_LABEL);
+				de.setValues(SoggettiCostanti.getSoggettiDominiValue());
+				de.setLabels(SoggettiCostanti.getSoggettiDominiLabel());
 				de.setSelected(dominio);
 				de.setPostBack(true);
 			}
 			
 			dominioEsterno = SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE.equals(dominio);
 			
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		
@@ -597,7 +598,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			}
 			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			de.setValue(tipoENomeSoggetto);
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(this.isModalitaCompleta()) {
 				de = new DataElement();
@@ -608,14 +609,14 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SOGGETTO, tipoSoggetto),
 						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SOGGETTO, nomeSoggetto)
 						);
-				dati.addElement(de);
+				dati.add(de);
 			}
 
 			de = new DataElement();
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);				
 			de.setValue(provider);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}else{
 			de = new DataElement();
@@ -652,7 +653,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			} else {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(provider);
-				dati.addElement(de);
+				dati.add(de);
 
 				de = new DataElement();
 				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
@@ -665,7 +666,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				de.setSize(this.getSize());
 
 			}
-			dati.addElement(de);
+			dati.add(de);
 
 		}
 		
@@ -683,7 +684,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 //			de.setType(DataElementType.TEXT);
 //		}
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME);
-		dati.addElement(de);
+		dati.add(de);
 
 		boolean applicativiServerEnabled = this.saCore.isApplicativiServerEnabled(this);
 		
@@ -705,13 +706,13 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			if(tipoOperazione.equals(TipoOperazione.ADD) && applicativoServerSelezionabile) {
 				de.setSelected(tipoSA);
 				de.setType(DataElementType.SELECT);
-				de.setLabels(ServiziApplicativiCostanti.LABELS_SERVIZI_APPLICATIVI_TIPO);
-				de.setValues(ServiziApplicativiCostanti.VALUES_SERVIZI_APPLICATIVI_TIPO);
+				de.setLabels(ServiziApplicativiCostanti.getLabelsServiziApplicativiTipo());
+				de.setValues(ServiziApplicativiCostanti.getValuesServiziApplicativiTipo());
 				de.setPostBack(true);
 			} else {
 				de.setValue(tipoSA);
 				de.setType(DataElementType.HIDDEN);
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_TIPO);
@@ -723,7 +724,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(tipoSA);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		if (!this.isModalitaCompleta()) {
@@ -736,7 +737,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 //			if(!TipologiaFruizione.DISABILITATO.equals(ruoloFruitore)){
 //				de.setSelected(true);
 //			}
-//			dati.addElement(de);
+//			dati.add(de);
 //			
 //			de = new DataElement();
 //			de.setLabel(ServiziApplicativiCostanti.LABEL_EROGATORE);
@@ -746,7 +747,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 //			if(!TipologiaErogazione.DISABILITATO.equals(ruoloErogatore)){
 //				de.setSelected(true);
 //			}
-//			dati.addElement(de);
+//			dati.add(de);
 			
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_TIPOLOGIA);
@@ -821,7 +822,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				
 			}
 						
-			dati.addElement(de);
+			dati.add(de);
 			
 		}// fine !modalitàCompleta
 		
@@ -831,7 +832,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
 			
-			List<Parameter> parametersServletSAChange = new ArrayList<Parameter>();
+			List<Parameter> parametersServletSAChange = new ArrayList<>();
 			Parameter pIdSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId()+"");
 			parametersServletSAChange.add(pIdSA);
 			int idProv = sa.getIdSoggetto().intValue();
@@ -906,7 +907,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""));
 				}
 	
-				dati.addElement(de);
+				dati.add(de);
 				
 			}
 		}
@@ -951,7 +952,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 //				de = new DataElement();
 //				de.setLabel(ServiziApplicativiCostanti.LABEL_FRUITORE);
 //				de.setType(DataElementType.TITLE);
-//				dati.addElement(de);
+//				dati.add(de);
 //				
 //				de = new DataElement();
 //				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO + " '" + nomeProtocollo + "' Risposta");
@@ -959,13 +960,13 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 //				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RISPOSTA);
 //				de.setValues(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_SBUSTAMENTO_PROTOCOLLO);
 //				de.setSelected(sbustamentoInformazioniProtocolloRisposta);
-//				dati.addElement(de);
+//				dati.add(de);
 //			}
 //			else{
 //				de = new DataElement();
 //				de.setLabel(ServiziApplicativiCostanti.LABEL_CREDENZIALI_ACCESSO_PORTA);
 //				de.setType(DataElementType.TITLE);
-//				dati.addElement(de);
+//				dati.add(de);
 //			}
 
 			// Credenziali di accesso
@@ -1031,7 +1032,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				de = new DataElement();
 				de.setLabel(RuoliCostanti.LABEL_RUOLI);
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
@@ -1062,7 +1063,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					ServletUtils.setDataElementVisualizzaLabel(de,(long)numRuoli);
 				} else
 					ServletUtils.setDataElementVisualizzaLabel(de);
-				dati.addElement(de);
+				dati.add(de);
 				
 			}
 			
@@ -1072,7 +1073,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					de = new DataElement();
 					de.setLabel(titleConfigSslCredenziali);
 					de.setType(DataElementType.TITLE);
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 				dati = this.addCredenzialiToDati(tipoOperazione, dati, tipoauth, oldtipoauth, utente, password, subject, principal, servlet, showLabelCredenzialiAccesso, null, false, visualizzaTipoAutenticazione, null, true,
@@ -1098,7 +1099,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				de = new DataElement();
 				de.setLabel(RuoliCostanti.LABEL_RUOLI);
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
@@ -1129,7 +1130,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					ServletUtils.setDataElementVisualizzaLabel(de,(long)numRuoli);
 				} else
 					ServletUtils.setDataElementVisualizzaLabel(de);
-				dati.addElement(de);
+				dati.add(de);
 				
 			}
 			
@@ -1144,7 +1145,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_ERRORE_APPLICATIVO);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		if (TipoOperazione.ADD.equals(tipoOperazione)) {
@@ -1153,14 +1154,14 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_FAULT);
 			if (faultChoice) {
 				de.setType(DataElementType.SELECT);
-				de.setValues(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_FAULT);
+				de.setValues(ServiziApplicativiCostanti.getServiziApplicativiFault());
 				de.setSelected(fault);
 			}
 			else{
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(fault);
 			}
-			dati.addElement(de);
+			dati.add(de);
 		}
 		else{
 			de = new DataElement();
@@ -1168,7 +1169,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_FAULT);
 			if (faultChoice) {
 				de.setType(DataElementType.SELECT);
-				de.setValues(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_FAULT);
+				de.setValues(ServiziApplicativiCostanti.getServiziApplicativiFault());
 				de.setSelected(fault);
 				//			de.setOnChange("CambiaFault()");
 				de.setPostBack(true);
@@ -1177,7 +1178,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(fault);
 			}
-			dati.addElement(de);
+			dati.add(de);
 
 			if (fault.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_FAULT_SOAP)) {
 				de = new DataElement();
@@ -1191,7 +1192,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				}
 				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_FAULT_ACTOR);
 				de.setSize(this.getSize());
-				dati.addElement(de);
+				dati.add(de);
 			}
 
 
@@ -1200,14 +1201,14 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_FAULT_GENERIC_CODE);
 			if (faultChoice) {
 				de.setType(DataElementType.SELECT);
-				de.setValues(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_FAULT_GENERIC_CODE);
+				de.setValues(ServiziApplicativiCostanti.getServiziApplicativiFaultGenericCode());
 				de.setSelected(genericfault);
 			}
 			else{
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(genericfault);
 			}
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_FAULT_PREFIX);
@@ -1220,7 +1221,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			}
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_FAULT_PREFIX);
 			de.setSize(this.getSize());
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		
@@ -1229,7 +1230,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_TRATTAMENTO_MESSAGGIO);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		
@@ -1238,14 +1239,14 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		de.setLabel(ServiziApplicativiCostanti.getLabelSbustamentoProtocollo(nomeProtocollo));
 		if(avanzatoFruitore && config.isSupportoSbustamentoProtocollo()){
 			de.setType(DataElementType.SELECT);
-			de.setValues(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_SBUSTAMENTO_PROTOCOLLO);
+			de.setValues(ServiziApplicativiCostanti.getServiziApplicativiSbustamentoProtocollo());
 			de.setSelected(sbustamentoInformazioniProtocolloRisposta);
 		}
 		else {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(sbustamentoInformazioniProtocolloRisposta);
 		}
-		dati.addElement(de);
+		dati.add(de);
 			
 					
 
@@ -1255,23 +1256,23 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO_RISPOSTA);
 			de.setValue(invrif == null || "".equals(invrif) ? CostantiConfigurazione.DISABILITATO.toString() : invrif);
-			dati.addElement(de);
+			dati.add(de);
 		} else {
 			if (!TipoOperazione.ADD.equals(tipoOperazione)) {
 				de = new DataElement();
 				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO);
 				de.setType(DataElementType.SELECT);
 				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO_RISPOSTA);
-				de.setValues(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO);
+				de.setValues(ServiziApplicativiCostanti.getServiziApplicativiInvioPerRiferimento());
 				de.setSelected(invrif);
-				dati.addElement(de);
+				dati.add(de);
 			}else{
 				de = new DataElement();
 				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO);
 				de.setType(DataElementType.HIDDEN);
 				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO_RISPOSTA);
 				de.setValue(invrif == null || "".equals(invrif) ? ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO_DISABILITATO : invrif);
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 
@@ -1285,7 +1286,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_INFO_INTEGRAZIONE);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			// invocazione servizio
 			if(showLinkInvocazioneServizio) {
@@ -1311,7 +1312,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+"")
 							);
 				}
-				dati.addElement(de);
+				dati.add(de);
 			}
 
 			// risposta asincrona
@@ -1341,7 +1342,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""));
 				}
 	
-				dati.addElement(de);
+				dati.add(de);
 			}
 
 		}
@@ -2457,7 +2458,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 	private void addFilterRuoloServizioApplicativo(String ruoloSA, boolean postBack) throws Exception{
 		try {
-			String [] tmp = ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO;
+			String [] tmp = ServiziApplicativiCostanti.getServiziApplicativiRuolo();
 			
 			String [] values = new String[tmp.length + 1];
 			String [] labels = new String[tmp.length + 1];
@@ -2482,8 +2483,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 	
 	private void addFilterTipoServizioApplicativo(String tipoSA, boolean postBack) throws Exception{
 		try {
-			String [] tmp_labels = ServiziApplicativiCostanti.LABELS_SERVIZI_APPLICATIVI_TIPO;
-			String [] tmp_values = ServiziApplicativiCostanti.VALUES_SERVIZI_APPLICATIVI_TIPO;
+			String [] tmp_labels = ServiziApplicativiCostanti.getLabelsServiziApplicativiTipo();
+			String [] tmp_values = ServiziApplicativiCostanti.getValuesServiziApplicativiTipo();
 			
 			String [] values = new String[tmp_values.length + 1];
 			String [] labels = new String[tmp_labels.length + 1];
@@ -2852,7 +2853,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA,null));	
 				}
 			} else {
-				List<Parameter> lstParam = new ArrayList<Parameter>();
+				List<Parameter> lstParam = new ArrayList<>();
 
 				lstParam.add(new Parameter(SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
 
@@ -2894,18 +2895,18 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			this.setLabelColonne(modalitaCompleta, useIdSogg, multitenant, supportatoAutenticazioneApplicativiEsterni, showProtocolli, supportAsincroni);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<ServizioApplicativo> it = lista.iterator();
 				while (it.hasNext()) {
-					Vector<DataElement> e = (!modalitaCompleta && !useIdSogg) ? 
+					List<DataElement> e = (!modalitaCompleta && !useIdSogg) ? 
 							
 							this.creaEntryCustom(multitenant, useIdSogg, showProtocolli, supportatoAutenticazioneApplicativiEsterni, applicativiServerEnabled, it) :
 							
 							this.creaEntry(modalitaCompleta, multitenant, useIdSogg, contaListe, supportAsincroni, showProtocolli, supportatoAutenticazioneApplicativiEsterni, applicativiServerEnabled, it);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -2919,17 +2920,17 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
 					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.SERVIZIO_APPLICATIVO, this.request, this.session)){
 
-						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+						List<AreaBottoni> bottoni = new ArrayList<>();
 
 						AreaBottoni ab = new AreaBottoni();
-						Vector<DataElement> otherbott = new Vector<DataElement>();
+						List<DataElement> otherbott = new ArrayList<>();
 						DataElement de = new DataElement();
 						de.setValue(ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI_ESPORTA_SELEZIONATI);
 						de.setOnClick(ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI_ESPORTA_SELEZIONATI_ONCLICK);
 						de.setDisabilitaAjaxStatus();
-						otherbott.addElement(de);
+						otherbott.add(de);
 						ab.setBottoni(otherbott);
-						bottoni.addElement(ab);
+						bottoni.add(ab);
 
 						this.pd.setAreaBottoni(bottoni);
 
@@ -2943,17 +2944,17 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			throw new Exception(e);
 		}
 	}
-	private Vector<DataElement> creaEntry(boolean modalitaCompleta, boolean multitenant, Boolean useIdSogg,
+	private List<DataElement> creaEntry(boolean modalitaCompleta, boolean multitenant, Boolean useIdSogg,
 			Boolean contaListe, boolean supportAsincroni, boolean showProtocolli, boolean supportatoAutenticazioneApplicativiEsterni, boolean applicativiServerEnabled,
 			Iterator<ServizioApplicativo> it) throws DriverRegistroServiziNotFound, DriverRegistroServiziException,
 			DriverControlStationException, DriverControlStationNotFound, Exception, DriverConfigurazioneException {
 		ServizioApplicativo sa = it.next();
-		Vector<DataElement> e = new Vector<DataElement>();
+		List<DataElement> e = new ArrayList<>();
 
 		DataElement de = new DataElement();
 		de.setType(DataElementType.HIDDEN);
 		de.setValue("" + sa.getId());
-		e.addElement(de);
+		e.add(de);
 
 		String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(sa.getTipoSoggettoProprietario());
 		
@@ -2969,7 +2970,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());
 		de.setValue(sa.getNome());
 		de.setIdToRemove(sa.getId().toString());
-		e.addElement(de);
+		e.add(de);
 
 		if(!useIdSogg && (
 				(multitenant && !this.isSoggettoMultitenantSelezionato())
@@ -2984,13 +2985,13 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO, sa.getTipoSoggettoProprietario()));
 			}
 			de.setValue(this.getLabelNomeSoggetto(protocollo, sa.getTipoSoggettoProprietario() , sa.getNomeSoggettoProprietario()));
-			e.addElement(de);
+			e.add(de);
 		}
 
 		if( showProtocolli ) {
 			de = new DataElement();
 			de.setValue(this.getLabelProtocollo(protocollo));
-			e.addElement(de);
+			e.add(de);
 		}
 		
 		boolean pddEsterna = false;
@@ -3015,7 +3016,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				// tipoLabel = tipoLabel+" / "+ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI_TIPO_CLIENT; gia aggiunto in metodo getTipo
 			}
 			de.setValue(tipoLabel);
-			e.addElement(de);
+			e.add(de);
 		}
 
 		if(!modalitaCompleta) {
@@ -3044,13 +3045,13 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				} else
 					ServletUtils.setDataElementVisualizzaLabel(de);
 			}
-			e.addElement(de);
+			e.add(de);
 		}
 		
 		if (modalitaCompleta){
 			de = new DataElement();
 			de.setValue(this.getTipologia(sa));
-			e.addElement(de);
+			e.add(de);
 		}
 		
 		if (modalitaCompleta){
@@ -3084,7 +3085,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					}
 				}
 			}
-			e.addElement(de);
+			e.add(de);
 		}
 
 		if(supportAsincroni && modalitaCompleta){
@@ -3135,15 +3136,15 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					}
 				}
 			}
-			e.addElement(de);
+			e.add(de);
 		}
 		return e;
 	}
-	private Vector<DataElement> creaEntryCustom(boolean multitenant, Boolean useIdSogg, boolean showProtocolli, boolean supportatoAutenticazioneApplicativiEsterni,
+	private List<DataElement> creaEntryCustom(boolean multitenant, Boolean useIdSogg, boolean showProtocolli, boolean supportatoAutenticazioneApplicativiEsterni,
 			boolean applicativiServerEnabled, Iterator<ServizioApplicativo> it) throws DriverRegistroServiziNotFound, DriverRegistroServiziException,
 		DriverControlStationException, DriverControlStationNotFound, Exception, DriverConfigurazioneException {
 			ServizioApplicativo sa = it.next();
-			Vector<DataElement> e = new Vector<DataElement>();
+			List<DataElement> e = new ArrayList<>();
 		String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(sa.getTipoSoggettoProprietario());
 		
 		IDSoggetto idSoggettoProprietario = new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario());
@@ -3155,7 +3156,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		Parameter pDominio = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO, dominio);
 		
 		
-		List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+		List<Parameter> listaParametriChange = new ArrayList<>();
 		listaParametriChange.add(pSAId);
 		listaParametriChange.add(pSAIdSoggetto);
 		listaParametriChange.add(pDominio);
@@ -3172,7 +3173,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			nome = nome + "@" + this.getLabelNomeSoggetto(protocollo, sa.getTipoSoggettoProprietario() , sa.getNomeSoggettoProprietario());
 		}
 		de.setValue(nome);
-		e.addElement(de);
+		e.add(de);
 
 		// Metadati (profilo + tipo)
 		
@@ -3209,7 +3210,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de.setType(DataElementType.SUBTITLE);
 			
 			if(addMetadati)
-				e.addElement(de);
+				e.add(de);
 		}
 		
 		// Ruoli e' come i tag per ora
@@ -3236,7 +3237,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				
 				de.setToolTip(RuoliCostanti.LABEL_RUOLI); 
 				
-				e.addElement(de);
+				e.add(de);
 			}
 		}
 		
@@ -3283,7 +3284,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		
 		// Verifica connettività 
 		if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
-			List<Parameter> listaParametriVerificaConnettivitaChange = new ArrayList<Parameter>();
+			List<Parameter> listaParametriVerificaConnettivitaChange = new ArrayList<>();
 			listaParametriVerificaConnettivitaChange.addAll(listaParametriChange);
 			listaParametriVerificaConnettivitaChange.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTIVITA, "true"));
 			this.addVerificaConnettivitaButton(e, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI, listaParametriVerificaConnettivitaChange);
@@ -3420,7 +3421,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		
 	}
 	
-	public void addEndPointToDati(Vector<DataElement> dati,
+	public void addEndPointToDati(List<DataElement> dati,
 			String idsil,String nomeservizioApplicativo,String sbustamento,String sbustamentoInformazioniProtocolloRichiesta,
 			String getmsg,String usernameGetMsg, String passwordGetMsg,boolean gestioneCredenzialiGetMsg,
 			String invrif,String risprif, String nomeProtocollo, boolean showName,
@@ -3447,14 +3448,14 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		de.setValue(idsil);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
-		dati.addElement(de);
+		dati.add(de);
 
 		if(accessoDaAPSParametro!=null && !"".equals(accessoDaAPSParametro)) {
 			de = new DataElement();
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(accessoDaAPSParametro);
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		boolean showFromConfigurazione = false;
@@ -3467,7 +3468,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME);
@@ -3475,7 +3476,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de.setType(DataElementType.TEXT);
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO);
 			de.setSize(this.getSize());
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		
@@ -3493,7 +3494,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				de = new DataElement();
 				de.setLabel(ServiziApplicativiCostanti.LABEL_TRATTAMENTO_MESSAGGIO);
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			String[] tipoSbustamentoSOAP = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
@@ -3517,7 +3518,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				}
 			}
 			
-			dati.addElement(de);
+			dati.add(de);
 	
 			String[] tipoSbustamentoInformazioniProtocollo = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
 			de = new DataElement();
@@ -3544,7 +3545,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					de.setValue(sbustamentoInformazioniProtocolloRichiesta);
 				}
 			}
-			dati.addElement(de);
+			dati.add(de);
 	
 			if (!this.isModalitaCompleta()) {
 				de = new DataElement();
@@ -3552,14 +3553,14 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				de.setType(DataElementType.HIDDEN);
 				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO_RICHIESTA);
 				de.setValue(invrif);
-				dati.addElement(de);
+				dati.add(de);
 	
 				de = new DataElement();
 				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO);
 				de.setType(DataElementType.HIDDEN);
 				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO);
 				de.setValue(risprif);
-				dati.addElement(de);
+				dati.add(de);
 			} else {
 				String[] tipoInvRif = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
 				de = new DataElement();
@@ -3572,7 +3573,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				}else{
 					de.setSelected(invrif);
 				}
-				dati.addElement(de);
+				dati.add(de);
 	
 				String[] tipoRispRif = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
 				de = new DataElement();
@@ -3585,7 +3586,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				}else{
 					de.setSelected(risprif);
 				}
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			
@@ -3593,7 +3594,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				de = new DataElement();
 				de.setLabel(ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX);
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			String[] tipoGM = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
@@ -3618,7 +3619,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					de.setValue(getmsg);
 				}
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(gestioneCredenzialiGetMsg && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
 				de = new DataElement();
@@ -3633,7 +3634,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				de.setSize(this.getSize());
 				de.setRequired(true);
-				dati.addElement(de);
+				dati.add(de);
 	
 				boolean change = TipoOperazione.CHANGE.equals(tipoOperazione);
 				
@@ -3671,7 +3672,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					deModifica.setPostBack(true);
 					deModifica.setSelected(changepwd);
 					deModifica.setSize(this.getSize());
-					dati.addElement(deModifica);
+					dati.add(deModifica);
 					
 					DataElement deCifratura = new DataElement();
 					deCifratura.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
@@ -3722,7 +3723,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 					de.setSize(this.getSize());
 					de.setRequired(true);
-					dati.addElement(de);
+					dati.add(de);
 					
 				}
 				else {
@@ -3731,7 +3732,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					de.setType(DataElementType.HIDDEN);
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 					de.setValue(StringEscapeUtils.escapeHtml(passwordGetMsg));
-					dati.addElement(de);
+					dati.add(de);
 					
 				}
 				
@@ -3742,13 +3743,13 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(useAsClient);
 					//de.setPostBack(true); Non abilitare senno spunta il link 'ruoli' prima di aver salvata effettivamente l'opzione usaComeClient
-					dati.addElement(de);
+					dati.add(de);
 				}
 			}
 			
 	}
 	
-	public void addEndPointToDatiAsHidden(Vector<DataElement> dati,
+	public void addEndPointToDatiAsHidden(List<DataElement> dati,
 			String idsil,String nomeservizioApplicativo,String sbustamento,String sbustamentoInformazioniProtocolloRichiesta,
 			String getmsg,String usernameGetMsg, String passwordGetMsg,boolean gestioneCredenzialiGetMsg,
 			String invrif,String risprif, String nomeProtocollo, boolean showName,
@@ -3764,14 +3765,14 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		de.setValue(idsil);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
-		dati.addElement(de);
+		dati.add(de);
 
 		if(accessoDaAPSParametro!=null && !"".equals(accessoDaAPSParametro)) {
 			de = new DataElement();
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(accessoDaAPSParametro);
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		boolean showFromConfigurazione = false;
@@ -3784,7 +3785,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 //			de = new DataElement();
 //			de.setLabel(ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO);
 //			de.setType(DataElementType.TITLE);
-//			dati.addElement(de);
+//			dati.add(de);
 			
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME);
@@ -3792,7 +3793,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO);
 			de.setSize(this.getSize());
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 			boolean sbustamentoSoapEnabled = !this.isModalitaStandard() && (serviceBinding == null || serviceBinding.equals(ServiceBinding.SOAP));
@@ -3809,7 +3810,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 //				de = new DataElement();
 //				de.setLabel(ServiziApplicativiCostanti.LABEL_TRATTAMENTO_MESSAGGIO);
 //				de.setType(DataElementType.TITLE);
-//				dati.addElement(de);
+//				dati.add(de);
 //			}
 			
 //			String[] tipoSbustamentoSOAP = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
@@ -3833,7 +3834,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				}
 //			}
 			
-			dati.addElement(de);
+			dati.add(de);
 	
 //			String[] tipoSbustamentoInformazioniProtocollo = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
 			de = new DataElement();
@@ -3860,7 +3861,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					de.setValue(sbustamentoInformazioniProtocolloRichiesta);
 				}
 //			}
-			dati.addElement(de);
+			dati.add(de);
 	
 //			if (!this.isModalitaCompleta()) {
 				de = new DataElement();
@@ -3872,7 +3873,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				}else{
 					de.setSelected(invrif);
 				}
-				dati.addElement(de);
+				dati.add(de);
 	
 				de = new DataElement();
 				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO);
@@ -3883,7 +3884,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				}else{
 					de.setSelected(risprif);
 				}
-				dati.addElement(de);
+				dati.add(de);
 //			} else {
 //				String[] tipoInvRif = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
 //				de = new DataElement();
@@ -3896,7 +3897,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 //				}else{
 //					de.setSelected(invrif);
 //				}
-//				dati.addElement(de);
+//				dati.add(de);
 //	
 //				String[] tipoRispRif = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
 //				de = new DataElement();
@@ -3909,7 +3910,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 //				}else{
 //					de.setSelected(risprif);
 //				}
-//				dati.addElement(de);
+//				dati.add(de);
 //			}
 			
 			
@@ -3919,7 +3920,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 //				de = new DataElement();
 //				de.setLabel(ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX);
 //				de.setType(DataElementType.TITLE);
-//				dati.addElement(de);
+//				dati.add(de);
 //			}
 			
 //			String[] tipoGM = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
@@ -3944,7 +3945,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					de.setValue(getmsg);
 				}
 //			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(gestioneCredenzialiGetMsg && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
 				de = new DataElement();
@@ -3959,7 +3960,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				de.setSize(this.getSize());
 //				de.setRequired(true);
-				dati.addElement(de);
+				dati.add(de);
 	
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
@@ -3973,13 +3974,13 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 				de.setSize(this.getSize());
 //				de.setRequired(true);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 	}
 
 
-	public Vector<DataElement> addHiddenFieldsToDati(Vector<DataElement> dati, String provider,
+	public List<DataElement> addHiddenFieldsToDati(List<DataElement> dati, String provider,
 			String idAsps, String idPorta){
 
 		DataElement de = new DataElement();
@@ -3987,21 +3988,21 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		de.setValue(provider);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_ASPS);
 		de.setValue(idAsps);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_ASPS);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_PORTA);
 		de.setValue(idPorta);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_PORTA);
-		dati.addElement(de);
+		dati.add(de);
 
 		return dati;
 
@@ -4105,7 +4106,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 								new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA,null));	
 					}
 				} else {
-					List<Parameter> lstParam = new ArrayList<Parameter>();
+					List<Parameter> lstParam = new ArrayList<>();
 	
 					lstParam.add(new Parameter(SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
 					lstParam.add(new Parameter(labelApplicativiDi + tipoENomeSoggetto,
@@ -4141,14 +4142,14 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			this.pd.setLabels(labels);
 		
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 		
 			if (lista != null) {
 				Iterator<String> it = lista.iterator();
 				while (it.hasNext()) {
 					String ruolo = it.next();
 		
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 		
 					DataElement de = new DataElement();
 					de.setValue(ruolo);
@@ -4164,9 +4165,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						this.newDataElementVisualizzaInNuovoTab(de, url, tooltip);
 					}
 					
-					e.addElement(de);
+					e.add(de);
 		
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 		
@@ -4380,7 +4381,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			Soggetto soggettoProprietario = this.soggettiCore.getSoggettoRegistro(idSoggettoProprietario);
 			String dominio = this.pddCore.isPddEsterna(soggettoProprietario.getPortaDominio()) ? SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE : SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE;
 		
-			List<Parameter> parametersServletSAChange = new ArrayList<Parameter>();
+			List<Parameter> parametersServletSAChange = new ArrayList<>();
 			Parameter pIdSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId()+"");
 			parametersServletSAChange.add(pIdSA);
 			Parameter pIdSoggettoSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, sa.getIdSoggetto()+"");
@@ -4392,7 +4393,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			
 			if(useIdSogg){
 				Parameter pProvider = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, idProvider); 
-				List<Parameter> parametersServletSAChangeProvider = new ArrayList<Parameter>();
+				List<Parameter> parametersServletSAChangeProvider = new ArrayList<>();
 				parametersServletSAChangeProvider.add(pProvider);
 				parametersServletSAChangeProvider.addAll(parametersServletSAChange);
 				ServletUtils.addListElementIntoSession(this.request, this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_CREDENZIALI, parametersServletSAChangeProvider.toArray(new Parameter[parametersServletSAChangeProvider.size()]));
@@ -4474,7 +4475,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			this.pd.setLabels(labels.toArray(new String[1]));
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 			
 			List<Credenziali> lista = sa.getInvocazionePorta().getCredenzialiList();
 
@@ -4485,7 +4486,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				Iterator<Credenziali> it = lista.iterator();
 				while (it.hasNext()) {
 					
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 					Credenziali credenziali = it.next();
 					Certificate cSelezionato = ArchiveLoader.load(credenziali.getCertificate());
 					String tipoCredenzialiSSLAliasCertificatoIssuer = cSelezionato.getCertificate().getIssuer().getNameNormalized();
@@ -4497,7 +4498,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					String tipoCredenzialiSSLAliasCertificatoNotAfter = this.getSdfCredenziali().format(notAfter);
 					
 					Parameter pIdCredenziale = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_CREDENZIALI_ID, i+"");
-					List<Parameter> parametersServletCredenzialeChange = new ArrayList<Parameter>();
+					List<Parameter> parametersServletCredenzialeChange = new ArrayList<>();
 					parametersServletCredenzialeChange.add(pIdCredenziale);
 					parametersServletCredenzialeChange.addAll(parametersServletSAChange);
 					parametersServletCredenzialeChange.add(new Parameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_MULTI_AGGIORNA,Costanti.CHECK_BOX_ENABLED));
@@ -4508,7 +4509,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					de.setValue(i == 0 ? CostantiControlStation.LABEL_SI : CostantiControlStation.LABEL_NO);
 					de.allineaTdAlCentro();
 					de.setWidthPx(60);
-					e.addElement(de);
+					e.add(de);
 					
 					// Subject con link edit
 					de = new DataElement();
@@ -4518,7 +4519,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					de.setValue(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLAliasCertificatoSubject));
 					de.setToolTip(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLAliasCertificatoSubject)); 
 					de.setIdToRemove(i+"");
-					e.addElement(de);
+					e.add(de);
 					
 					// Issuer 
 					de = new DataElement();
@@ -4528,7 +4529,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					}
 					de.setValue(issuerValue);
 					de.setToolTip(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLAliasCertificatoIssuer)); 
-					e.addElement(de);
+					e.add(de);
 					
 					// verifica tutti i campi
 					de = new DataElement();
@@ -4537,7 +4538,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI_DISABLE);
 					de.allineaTdAlCentro();
 					de.setWidthPx(70);
-					e.addElement(de);
+					e.add(de);
 					
 					// not before
 					de = new DataElement();
@@ -4555,7 +4556,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						de.setLabelStyleClass(Costanti.INPUT_TEXT_BOLD_CSS_CLASS);
 						de.setWidthPx(150);
 					}
-					e.addElement(de);	
+					e.add(de);	
 					
 					// not after
 					de = new DataElement();
@@ -4574,9 +4575,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						de.setWidthPx(150);
 					}
 					
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 					i++;
 				}
 			}
@@ -4590,14 +4591,14 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		
 	}
 	
-	public Vector<DataElement> addServizioApplicativoHiddenToDati(Vector<DataElement> dati, String idSA, String idSoggettoSA, String dominio, String nomeSA) throws Exception {
+	public List<DataElement> addServizioApplicativoHiddenToDati(List<DataElement> dati, String idSA, String idSoggettoSA, String dominio, String nomeSA) throws Exception {
 		
 		DataElement de = new DataElement();
 		de.setLabel(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
 		de.setValue(idSA);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(idSoggettoSA != null) {
 			de = new DataElement();
@@ -4605,7 +4606,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de.setValue(idSoggettoSA);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		if(dominio != null) {
@@ -4614,7 +4615,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de.setValue(dominio);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		if(nomeSA != null) {
@@ -4623,7 +4624,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de.setValue(nomeSA);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		return dati;
@@ -4836,12 +4837,12 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		}
 	}
 	
-	public  Vector<DataElement> addProprietaToDati(TipoOperazione tipoOp, int size, String nome, String valore, Vector<DataElement> dati) {
+	public  List<DataElement> addProprietaToDati(TipoOperazione tipoOp, int size, String nome, String valore, List<DataElement> dati) {
 
 		DataElement de = new DataElement();
 		de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROPRIETA);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROP_NOME);
@@ -4855,7 +4856,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		}
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROP_NOME);
 		de.setSize(size);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
@@ -4864,7 +4865,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROP_VALORE);
 		de.setValue(valore);
 		de.setSize(size);
-		dati.addElement(de);
+		dati.add(de);
 
 		return dati;
 	}
@@ -4953,7 +4954,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			Soggetto soggettoProprietario = this.soggettiCore.getSoggettoRegistro(idSoggettoProprietario);
 			String dominio = this.pddCore.isPddEsterna(soggettoProprietario.getPortaDominio()) ? SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE : SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE;
 		
-			List<Parameter> parametersServletSAChange = new ArrayList<Parameter>();
+			List<Parameter> parametersServletSAChange = new ArrayList<>();
 			Parameter pIdSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId()+"");
 			parametersServletSAChange.add(pIdSA);
 			Parameter pIdSoggettoSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, sa.getIdSoggetto()+"");
@@ -4965,7 +4966,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			
 			if(useIdSogg){
 				Parameter pProvider = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, idProvider); 
-				List<Parameter> parametersServletSAChangeProvider = new ArrayList<Parameter>();
+				List<Parameter> parametersServletSAChangeProvider = new ArrayList<>();
 				parametersServletSAChangeProvider.add(pProvider);
 				parametersServletSAChangeProvider.addAll(parametersServletSAChange);
 				ServletUtils.addListElementIntoSession(this.request, this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_PROPRIETA, parametersServletSAChangeProvider.toArray(new Parameter[parametersServletSAChangeProvider.size()]));
@@ -5017,7 +5018,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_APPLICATIVI_DI;
 			}
 			
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 			if(!useIdSogg){
 				lstParam.add(new Parameter(labelApplicativi, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST));
 				lstParam.add(new Parameter(sa.getNome(), ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE, parametersServletSAChange.toArray(new Parameter[parametersServletSAChange.size()])));
@@ -5052,17 +5053,17 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<Proprieta> it = lista.iterator();
 				while (it.hasNext()) {
 					Proprieta ssp = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					Parameter pNomeProprieta = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROP_NOME, ssp.getNome());
-					List<Parameter> parametersServletProprietaChange = new ArrayList<Parameter>();
+					List<Parameter> parametersServletProprietaChange = new ArrayList<>();
 					parametersServletProprietaChange.add(pNomeProprieta);
 					parametersServletProprietaChange.addAll(parametersServletSAChange);
 				
@@ -5071,14 +5072,14 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 							parametersServletProprietaChange.toArray(new Parameter[parametersServletProprietaChange.size()]));
 					de.setValue(ssp.getNome());
 					de.setIdToRemove(ssp.getNome());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					if(ssp.getValore()!=null)
 						de.setValue(ssp.getValore().toString());
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -5091,10 +5092,10 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		}
 	}
 
-	public void addDescrizioneVerificaConnettivitaToDati(Vector<DataElement> dati, Connettore connettore,
+	public void addDescrizioneVerificaConnettivitaToDati(List<DataElement> dati, Connettore connettore,
 			String server, String aliasConnettore) throws Exception {
 						
-		List<Parameter> downloadCertServerParameters = new ArrayList<Parameter>();
+		List<Parameter> downloadCertServerParameters = new ArrayList<>();
 		
 		downloadCertServerParameters.add(new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_ID_CONNETTORE, connettore.getId().longValue()+""));
 		

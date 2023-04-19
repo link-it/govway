@@ -29,7 +29,7 @@ package org.openspcoop2.pdd.mdb.threads;
  */
 public class ImbustamentoMain extends ModuloAlternativoMain {
 
-	private final static String idModulo = "Imbustamento";
+	private static final String idModulo = "Imbustamento";
 	
 	public ImbustamentoMain(){
 		super(ImbustamentoMain.idModulo);

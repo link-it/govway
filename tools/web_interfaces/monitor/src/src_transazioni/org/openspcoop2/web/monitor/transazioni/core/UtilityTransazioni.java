@@ -104,16 +104,16 @@ import org.openspcoop2.web.monitor.transazioni.core.search.TransazioneType.Trans
  *
  */
 public class UtilityTransazioni {
-	private final static double KB = 1024;
-	private final static double MB = 1048576;
+	private static final double KB = 1024;
+	private static final double MB = 1048576;
 
-	private final static String FRUIZIONE = "Fruizione";
-	private final static String EROGAZIONE = "Erogazione";
-	private final static String ROUTER = "Router";
-	private final static String IM = "I.M.";
+	private static final String FRUIZIONE = "Fruizione";
+	private static final String EROGAZIONE = "Erogazione";
+	private static final String ROUTER = "Router";
+	private static final String IM = "I.M.";
 
-	public final static String DIAGNOSTIC_WITH_DYNAMIC_INFO_DIAG_SEPARATOR = MsgDiagnosticiProperties.DIAGNOSTIC_WITH_DYNAMIC_INFO_DIAG_SEPARATOR;
-	public final static String DIAGNOSTIC_WITH_DYNAMIC_INFO_TYPE_SEPARATOR = MsgDiagnosticiProperties.DIAGNOSTIC_WITH_DYNAMIC_INFO_TYPE_SEPARATOR;
+	public static final String DIAGNOSTIC_WITH_DYNAMIC_INFO_DIAG_SEPARATOR = MsgDiagnosticiProperties.DIAGNOSTIC_WITH_DYNAMIC_INFO_DIAG_SEPARATOR;
+	public static final String DIAGNOSTIC_WITH_DYNAMIC_INFO_TYPE_SEPARATOR = MsgDiagnosticiProperties.DIAGNOSTIC_WITH_DYNAMIC_INFO_TYPE_SEPARATOR;
 	
 	/**
 	 * Formatta una stringa contenente il riepilogo della transazione

@@ -38,69 +38,53 @@ import org.openspcoop2.utils.UtilsException;
  */
 public class MimeTypes {
 
-	private Map<String, Object> mapMimeToExt = new HashMap<String, Object>();
-	private Map<String, String> mapExtToMime = new HashMap<String, String>();
+	private Map<String, Object> mapMimeToExt = new HashMap<>();
+	private Map<String, String> mapExtToMime = new HashMap<>();
 	
 	MimeTypes() throws UtilsException{
 		
-		InputStream is =null;
-		BufferedReader br = null;
-		InputStreamReader ir = null;
-		try{
-			String file = "/org/openspcoop2/utils/mime/mime.types";
-			is = MimeTypes.class.getResourceAsStream(file);
+		String file = "/org/openspcoop2/utils/mime/mime.types";
+		try (InputStream is = MimeTypes.class.getResourceAsStream(file);){
 			if(is==null){
-				throw new Exception("File ["+file+"] in classpath not found");
+				throw new UtilsException("File ["+file+"] in classpath not found");
 			}
-			
-			ir = new InputStreamReader(is);
-			br = new BufferedReader(ir);
-			String line;
-			while ((line = br.readLine()) != null) {
-				line = line.trim();
-				if(!line.startsWith("#")){
-					if(line.contains("\t")){
-						throw new Exception("Line["+line+"] contains tabs");
-					}
-					String [] tmp = line.split(" "); 
-					if(tmp.length<2){
-						//System.out.println("TYPE["+tmp[0]+"] without exts");
-						this.mapMimeToExt.put(tmp[0].trim(), org.apache.commons.lang.ObjectUtils.NULL);
-					}else{
-						StringBuilder bf = new StringBuilder();
-						for (int i = 1; i < tmp.length; i++) {
-							bf.append(" EXT-"+i+"=["+tmp[i].trim()+"]");
-							this.mapExtToMime.put(tmp[i].trim(),tmp[0].trim());
-						}
-						//System.out.println("TYPE["+tmp[0]+"]"+bf.toString());
-						this.mapMimeToExt.put(tmp[0].trim(), tmp[1].trim());
-					}
-				}
-			}
-			
+			init(is, this.mapMimeToExt, this.mapExtToMime);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
-		}finally{
-			try{
-				if(br!=null){
-					br.close();
-				}
-			}catch(Exception eClose){}
-			try{
-				if(ir!=null){
-					ir.close();
-				}
-			}catch(Exception eClose){}
-			try{
-				if(is!=null){
-					is.close();
-				}
-			}catch(Exception eClose){
-				// close
-			}
 		}
 		
 	} 
+	private static void init(InputStream is, Map<String, Object> mapMimeToExt, Map<String, String> mapExtToMime) throws UtilsException {
+		try (
+				InputStreamReader ir = new InputStreamReader(is);
+				BufferedReader br = new BufferedReader(ir);
+			){
+				String line;
+				while ((line = br.readLine()) != null) {
+					line = line.trim();
+					if(!line.startsWith("#")){
+						if(line.contains("\t")){
+							throw new UtilsException("Line["+line+"] contains tabs");
+						}
+						String [] tmp = line.split(" "); 
+						if(tmp.length<2){
+							/** System.out.println("TYPE["+tmp[0]+"] without exts"); */
+							mapMimeToExt.put(tmp[0].trim(), org.apache.commons.lang.ObjectUtils.NULL);
+						}else{
+							StringBuilder bf = new StringBuilder();
+							for (int i = 1; i < tmp.length; i++) {
+								bf.append(" EXT-"+i+"=["+tmp[i].trim()+"]");
+								mapExtToMime.put(tmp[i].trim(),tmp[0].trim());
+							}
+							/** System.out.println("TYPE["+tmp[0]+"]"+bf.toString()); */
+							mapMimeToExt.put(tmp[0].trim(), tmp[1].trim());
+						}
+					}
+				}
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
 	
 	public String getMimeType(File file){
 		String ext = null;

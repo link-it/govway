@@ -21,7 +21,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -189,7 +188,7 @@ public class PorteApplicativeCorrelazioneApplicativa extends Action {
 				}
 				if(tracciamentoEsitiSelezionePersonalizzataOk==null) {
 					
-					List<String> attivi = new ArrayList<String>();
+					List<String> attivi = new ArrayList<>();
 					if(nuovaConfigurazioneEsiti!=null){
 						String [] tmp = nuovaConfigurazioneEsiti.split(",");
 						if(tmp!=null){
@@ -227,11 +226,11 @@ public class PorteApplicativeCorrelazioneApplicativa extends Action {
 						tracciamentoEsitiSelezionePersonalizzataFault = ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO;
 					}
 					
-					boolean isFalliteSenza_MaxThreads_Scartate_Totale = false;
+					boolean isFalliteSenzaMaxThreadsScartateTotale = false;
 					List<Integer> listFalliteSenzaMax = porteApplicativeHelper.getListaEsitiFalliteSenza_RateLimiting_MaxThreads_Scartate(esiti);
 					if(porteApplicativeHelper.isCompleteEnabled(attivi, listFalliteSenzaMax)) {
 						tracciamentoEsitiSelezionePersonalizzataFallite = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
-						isFalliteSenza_MaxThreads_Scartate_Totale = true;
+						isFalliteSenzaMaxThreadsScartateTotale = true;
 					}
 					else if(porteApplicativeHelper.isCompleteDisabled(attivi, listFalliteSenzaMax)) {
 						tracciamentoEsitiSelezionePersonalizzataFallite = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
@@ -285,7 +284,7 @@ public class PorteApplicativeCorrelazioneApplicativa extends Action {
 					}
 					
 					selectAll = isOkTotale && isFaultTotale && 
-							isFalliteSenza_MaxThreads_Scartate_Totale && isScartateTotale && 
+							isFalliteSenzaMaxThreadsScartateTotale && isScartateTotale && 
 							isRateLimiting && isMaxThreads && isCorsTotale;
 					
 				}
@@ -343,8 +342,8 @@ public class PorteApplicativeCorrelazioneApplicativa extends Action {
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				porteApplicativeHelper.addToDatiRegistrazioneEsiti(dati, TipoOperazione.OTHER, 
 						tracciamentoEsitiStato, nuovaConfigurazioneEsiti, 
@@ -371,8 +370,8 @@ public class PorteApplicativeCorrelazioneApplicativa extends Action {
 			boolean isOk = porteApplicativeHelper.correlazioneApplicativaCheckData(TipoOperazione.OTHER,true,scadcorr);
 			if(!isOk) {
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				porteApplicativeHelper.addToDatiRegistrazioneEsiti(dati, TipoOperazione.OTHER, 
 						tracciamentoEsitiStato, nuovaConfigurazioneEsiti, 
@@ -426,7 +425,7 @@ public class PorteApplicativeCorrelazioneApplicativa extends Action {
 
 
 			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 
 			// Aggiorno valori MTOM request e response
 			pde = porteApplicativeCore.getPortaApplicativa(idInt);
@@ -468,8 +467,8 @@ public class PorteApplicativeCorrelazioneApplicativa extends Action {
 			pd.setDati(dati);
 			
 			pd.setMessage(CostantiControlStation.LABEL_AGGIORNAMENTO_EFFETTUATO_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
-			//pd.disableEditMode();
-			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+
+			dati.add(ServletUtils.getDataElementForEditModeFinished());
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 

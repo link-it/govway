@@ -38,17 +38,17 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WSSecuritySAMLTokenTest extends ConfigLoader {
 
-	public final static String api_saml_prefix = "TestOCSPWSSecuritySaml";
-	public final static String api_bearer = api_saml_prefix+"Bearer";
-	public final static String api_sender_vouches = api_saml_prefix+"SenderVouches";
-	public final static String api_holder_of_key = api_saml_prefix+"HolderOfKey";
-	public final static String soggetto = "SoggettoInternoTestFruitore";
+	public static final String api_saml_prefix = "TestOCSPWSSecuritySaml";
+	public static final String api_bearer = api_saml_prefix+"Bearer";
+	public static final String api_sender_vouches = api_saml_prefix+"SenderVouches";
+	public static final String api_holder_of_key = api_saml_prefix+"HolderOfKey";
+	public static final String soggetto = "SoggettoInternoTestFruitore";
 	
-	public final static String opensslCommand = System.getProperty(Utils.PROPERTY_OCSP_OPENSSL_COMMAND);
+	public static final String opensslCommand = System.getProperty(Utils.PROPERTY_OCSP_OPENSSL_COMMAND);
 	
-	public final static int waitStartupServer = Integer.valueOf(System.getProperty(Utils.PROPERTY_OCSP_WAIT_STARTUP_SERVER));
+	public static final int waitStartupServer = Integer.valueOf(System.getProperty(Utils.PROPERTY_OCSP_WAIT_STARTUP_SERVER));
 	
-	public final static int waitStopServer = Integer.valueOf(System.getProperty(Utils.PROPERTY_OCSP_WAIT_STOP_SERVER));
+	public static final int waitStopServer = Integer.valueOf(System.getProperty(Utils.PROPERTY_OCSP_WAIT_STOP_SERVER));
 	
 
 	@Test

@@ -38,7 +38,7 @@ import org.openspcoop2.utils.xml.XMLDiffOptions;
  */
 public class XMLDiffClientTest {
 
-	private final static String XML_ORIGINAL =  "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n"+
+	private static final String XML_ORIGINAL =  "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n"+
     "<soapenv:Header xmlns:prova=\"http://prova.openspcoop2.org\">\n"+
     "<a:example1 xmlns:a=\"http://www.openspcoop2.org\" soapenv:actor=\"http://www.prova.it\" soapenv:mustUnderstand=\"0\" >prova</a:example1>\n"+
     "<b:example2 xmlns:b=\"http://www.openspcoop2.org\" soapenv:actor=\"http://www.prova.it\" soapenv:mustUnderstand=\"0\" >prova2</b:example2>\n"+
@@ -63,7 +63,7 @@ public class XMLDiffClientTest {
     "</soapenv:Body>\n"+
     "</soapenv:Envelope>\n";
 	
-	private final static String XML_COMPARE =  "<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n"+
+	private static final String XML_COMPARE =  "<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n"+
     "<soapenv:Header xmlns:prova=\"http://prova.openspcoop2.org\">\n"+
     "<a:example1 xmlns:a=\"http://www.openspcoop2.org\" soapenv:actor=\"http://www.prova.it\" soapenv:mustUnderstand=\"0\" >prova</a:example1>\n"+
     "<b:example2 xmlns:b=\"http://www.openspcoop2.org\" soapenv:actor=\"http://www.prova.it\" soapenv:mustUnderstand=\"0\" >prova2</b:example2>\n"+
@@ -87,7 +87,7 @@ public class XMLDiffClientTest {
     "<!-- ALTRO commento -->\n"+
     "</soapenv:Envelope>\n";
 	
-	private final static String XML_COMPARE_2 =  "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n"+
+	private static final String XML_COMPARE_2 =  "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n"+
     "<soapenv:Header xmlns:prova=\"http://prova.openspcoop2.org\">\n"+
     "<a:example1 xmlns:a=\"http://www.openspcoop2.org\" soapenv:actor=\"http://www.prova.it\" soapenv:mustUnderstand=\"0\" >prova</a:example1>\n"+
     "<b:example2 xmlns:b=\"http://www.openspcoop2.org\" soapenv:actor=\"http://www.prova.it\" soapenv:mustUnderstand=\"0\" >prova2</b:example2>\n"+

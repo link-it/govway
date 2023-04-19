@@ -23,7 +23,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -69,7 +68,7 @@ public class OperazioniHelper extends ConsoleHelper{
 	public void prepareOperazioniList(ConsoleSearch ricerca, List<Operation> lista)throws Exception {
 		try {
 
-			ArrayList<String> errors = new ArrayList<String>();
+			ArrayList<String> errors = new ArrayList<>();
 			OperazioniFormBean formBean = this.getBeanForm(errors);
 
 			Parameter pUtente = new Parameter(OperazioniCostanti.PARAMETRO_OPERAZIONI_UTENTE, formBean.getUtente());
@@ -88,7 +87,7 @@ public class OperazioniHelper extends ConsoleHelper{
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			String elencoLabel = OperazioniCostanti.getTipoOperazioneLabelFromValue(formBean.getTipo());
 
@@ -99,7 +98,6 @@ public class OperazioniHelper extends ConsoleHelper{
 			}
 			else{
 				lstParam.add(new Parameter(elencoLabel, OperazioniCostanti.SERVLET_NAME_OPERAZIONI, pUtente, pOperazione));
-				//					lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE_RISULTATI_RICERCA, null));
 			}
 
 			// setto la barra del titolo
@@ -118,7 +116,7 @@ public class OperazioniHelper extends ConsoleHelper{
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			// Risultati Ricerca
 
@@ -127,7 +125,7 @@ public class OperazioniHelper extends ConsoleHelper{
 				while (it.hasNext()) {
 					Operation op = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					Parameter pId = new Parameter(OperazioniCostanti.PARAMETRO_OPERAZIONI_ID, op.getId()+"");
 
@@ -136,40 +134,40 @@ public class OperazioniHelper extends ConsoleHelper{
 					de.setUrl(OperazioniCostanti.SERVLET_NAME_OPERAZIONI, pId, pOperazione ,pUtente,pDetail);
 					de.setValue(op.getId()+"");
 					de.setIdToRemove(op.getId().toString());
-					e.addElement(de);
+					e.add(de);
 
 					// Colonna Operazione
 
 					de = new DataElement();
 					de.setValue(op.getOperation());
-					e.addElement(de);
+					e.add(de);
 
 					// Colonna Host
 
 					de = new DataElement();
 					de.setValue(op.getHostname());
-					e.addElement(de);
+					e.add(de);
 
 					// Colonna Utente
 					User user = ServletUtils.getUserFromSession(this.request, this.session);
 					if(user.getPermessi().isUtenti()){
 						de = new DataElement();
 						de.setValue(op.getSuperUser());
-						e.addElement(de);
+						e.add(de);
 					}
 					
 					// Colonna Data Richiesta
 
 					de = new DataElement();
 					de.setValue(this.formatter.format(op.getTimeReq().getTime()));
-					e.addElement(de);
+					e.add(de);
 
 					// Colonna Data Esecuzione
 
 					if(!formBean.getTipo().equals(OperazioniCostanti.PARAMETRO_OPERAZIONI_OPERAZIONE_IN_CODA)){
 						de = new DataElement();
 						de.setValue(this.formatter.format(op.getTimeExecute().getTime()));
-						e.addElement(de);	
+						e.add(de);	
 					}
 
 					// Colonna Eliminata
@@ -179,10 +177,10 @@ public class OperazioniHelper extends ConsoleHelper{
 							de.setValue(OperazioniCostanti.LABEL_PARAMETRO_OPERAZIONI_ELIMINAZIONE_OPERATORE);
 						else
 							de.setValue("");
-						e.addElement(de);
+						e.add(de);
 					}
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -203,7 +201,7 @@ public class OperazioniHelper extends ConsoleHelper{
 	}
 
 	private List<String> getListaLabel(OperazioniFormBean formBean) {
-		List<String> listaLabel= 	new ArrayList<String>();
+		List<String> listaLabel = new ArrayList<>();
 
 		User user = ServletUtils.getUserFromSession(this.request, this.session);
 		
@@ -239,15 +237,15 @@ public class OperazioniHelper extends ConsoleHelper{
 			ServletUtils.setPageDataTitle_ServletFirst(this.pd, OperazioniCostanti.LABEL_OPERAZIONI, OperazioniCostanti.SERVLET_NAME_OPERAZIONI);
 
 			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 			dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 
 			// Campi Ricerca
 
 			// Tipo Operazione
-			String[] tipoOperazioneValori = OperazioniCostanti.PARAMETRO_OPERAZIONI_OPERAZIONE_LIST;
-			String[] tipoOperazioneLabel = OperazioniCostanti.LABEL_PARAMETRO_OPERAZIONI_OPERAZIONE_LIST;
+			String[] tipoOperazioneValori = OperazioniCostanti.getParametroOperazioniOperazioneList();
+			String[] tipoOperazioneLabel = OperazioniCostanti.getLabelParametroOperazioniOperazioneList();
 
 			DataElement de = new DataElement();
 			de.setLabel(OperazioniCostanti.LABEL_PARAMETRO_OPERAZIONI_OPERAZIONE);
@@ -258,7 +256,7 @@ public class OperazioniHelper extends ConsoleHelper{
 			de.setName(OperazioniCostanti.PARAMETRO_OPERAZIONI_OPERAZIONE);
 			if(!hasPermessiUtenti)
 				de.setSize(this.getSize());
-			dati.addElement(de);
+			dati.add(de);
 
 
 
@@ -270,15 +268,15 @@ public class OperazioniHelper extends ConsoleHelper{
 				// Titolo Filter
 				de.setLabel(MonitorCostanti.LABEL_MONITOR_FILTRO_RICERCA);
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 
 				de = new DataElement();
 				de.setType(DataElementType.SELECT);
 				List<User> listaUser =	formBean.getListaUser();
-				List<String> utentiLabels = new ArrayList<String>();
-				List<String> utentiValues = new ArrayList<String>();
+				List<String> utentiLabels = new ArrayList<>();
+				List<String> utentiValues = new ArrayList<>();
 
-				if(listaUser != null && listaUser.size() > 0){
+				if(listaUser != null && !listaUser.isEmpty()){
 					for (User ut : listaUser) {
 						utentiLabels.add(ut.getLogin());
 						utentiValues.add(ut.getLogin());
@@ -297,8 +295,7 @@ public class OperazioniHelper extends ConsoleHelper{
 			}
 			de.setLabel(OperazioniCostanti.LABEL_PARAMETRO_OPERAZIONI_UTENTE);
 			de.setName(OperazioniCostanti.PARAMETRO_OPERAZIONI_UTENTE);
-			//			de.setSize(this.getSize());
-			dati.addElement(de);
+			dati.add(de);
 
 			this.pd.setDati(dati);
 		} catch (Exception e) {
@@ -313,7 +310,7 @@ public class OperazioniHelper extends ConsoleHelper{
 	 * @return OperazioniFormBean
 	 * @throws Exception
 	 */
-	public OperazioniFormBean getBeanForm(ArrayList<String> errors) throws Exception {
+	public OperazioniFormBean getBeanForm(List<String> errors) throws Exception {
 		try {
 			OperazioniFormBean form = null;
 
@@ -326,10 +323,10 @@ public class OperazioniHelper extends ConsoleHelper{
 			}
 
 
-			String [] tipiOperazione = OperazioniCostanti.PARAMETRO_OPERAZIONI_OPERAZIONE_LIST;
+			String [] tipiOperazione = OperazioniCostanti.getParametroOperazioniOperazioneList();
 
-			for (int i = 0; (i < tipiOperazione.length) && (trovato == false); i++) {
-				if (operazione.equals(tipiOperazione[i])){ // || operazione.equals(OperazioniCostanti.DEFAULT_VALUE_FORM_BEAN_METHOD_DETAILS)) {
+			for (int i = 0; (i < tipiOperazione.length) && (!trovato); i++) {
+				if (operazione.equals(tipiOperazione[i])){ 
 					trovato = true;
 					continue;
 				}
@@ -353,7 +350,7 @@ public class OperazioniHelper extends ConsoleHelper{
 
 			String utente = this.getParameter(OperazioniCostanti.PARAMETRO_OPERAZIONI_UTENTE);
 
-			List<User> userList = new ArrayList<User>();
+			List<User> userList = new ArrayList<>();
 			String utenteTmp = null;
 			HttpSession session = this.request.getSession(true);
 			User user = ServletUtils.getUserFromSession(this.request, session);
@@ -364,7 +361,7 @@ public class OperazioniHelper extends ConsoleHelper{
 				userList = this.utentiCore.userList(new ConsoleSearch(true));
 			} else {
 				utenteTmp = user.getLogin();
-				userList = new ArrayList<User>();
+				userList = new ArrayList<>();
 			}
 
 			if(utente == null){	
@@ -390,7 +387,7 @@ public class OperazioniHelper extends ConsoleHelper{
 	}
 	
 	public List<Parameter> getFormBeanAsParameters(OperazioniFormBean formBean){
-		List<Parameter> listaParametri = new ArrayList<Parameter>();
+		List<Parameter> listaParametri = new ArrayList<>();
 		
 		if(formBean.getTipo() != null){
 			listaParametri.add(new Parameter(OperazioniCostanti.PARAMETRO_OPERAZIONI_OPERAZIONE, formBean.getTipo()));
@@ -415,7 +412,7 @@ public class OperazioniHelper extends ConsoleHelper{
 			List<Parameter> lstUrlParam = this.getFormBeanAsParameters(formBean);
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(OperazioniCostanti.LABEL_OPERAZIONI, OperazioniCostanti.SERVLET_NAME_OPERAZIONI,lstUrlParam));
 
@@ -426,17 +423,17 @@ public class OperazioniHelper extends ConsoleHelper{
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam);
 
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 			DataElement de = new DataElement();
 
 			de.setType(DataElementType.TITLE);
 			de.setLabel(OperazioniCostanti.LABEL_OPERAZIONI_DETTAGLI);
-			dati.addElement(de);
+			dati.add(de);
 
 			DataElement timereq = new DataElement();
 			timereq.setLabel(OperazioniCostanti.LABEL_OPERAZIONI_RICHIESTA_IL);
 			timereq.setValue("" + op.getTimeReq());
-			dati.addElement(timereq);
+			dati.add(timereq);
 			if (OperationStatus.NOT_SET.equals(op.getStatus())) {
 				String tmpDet = op.getDetails();
 				if ((tmpDet != null) && !tmpDet.equals("")) {
@@ -447,7 +444,7 @@ public class OperazioniHelper extends ConsoleHelper{
 					errore.setLabel(OperazioniCostanti.LABEL_OPERAZIONI_PARAMETRO_ERRORE);
 					errore.setValue(formatDetail(op.getDetails()));
 					errore.setName(OperazioniCostanti.PARAMETRO_OPERAZIONI_ERRORE);
-					dati.addElement(errore);
+					dati.add(errore);
 				}
 			} else {
 				DataElement timexecute = new DataElement();
@@ -458,7 +455,7 @@ public class OperazioniHelper extends ConsoleHelper{
 				}
 				timexecute.setValue("" + op.getTimeExecute());
 				timexecute.setName(OperazioniCostanti.PARAMETRO_OPERAZIONI_TEMPO_ESECUZIONE);
-				dati.addElement(timexecute);
+				dati.add(timexecute);
 			}
 			if (OperationStatus.ERROR.equals(op.getStatus()) ||
 					OperationStatus.INVALID.equals(op.getStatus()) ||
@@ -467,7 +464,7 @@ public class OperazioniHelper extends ConsoleHelper{
 				errore.setLabel(OperazioniCostanti.LABEL_OPERAZIONI_PARAMETRO_ERRORE);
 				errore.setValue(formatDetail(op.getDetails()));
 				errore.setName(OperazioniCostanti.PARAMETRO_OPERAZIONI_ERRORE);
-				dati.addElement(errore);
+				dati.add(errore);
 			}
 			if (OperationStatus.WAIT.equals(op.getStatus())) {
 				DataElement timeWait = new DataElement();
@@ -479,13 +476,13 @@ public class OperazioniHelper extends ConsoleHelper{
 				}
 				timeWait.setValue(tw);
 				timeWait.setName(OperazioniCostanti.PARAMETRO_OPERAZIONI_WAIT_TIME);
-				dati.addElement(timeWait);
+				dati.add(timeWait);
 			}
 
 			DataElement partitle = new DataElement();
 			partitle.setType(DataElementType.TITLE);
 			partitle.setLabel(OperazioniCostanti.LABEL_PARAMETRI);
-			dati.addElement(partitle);
+			dati.add(partitle);
 
 			org.openspcoop2.web.lib.queue.dao.Parameter[] parList = op.getParameters();
 			for (int i = 0; i < parList.length; i++) {
@@ -502,7 +499,7 @@ public class OperazioniHelper extends ConsoleHelper{
 				}
 				par.setType(DataElementType.TEXT);
 				par.setName(OperazioniCostanti.PARAMETRO_OPERAZIONI_PAR);
-				dati.addElement(par);
+				dati.add(par);
 			}
 
 			this.pd.setDati(dati);

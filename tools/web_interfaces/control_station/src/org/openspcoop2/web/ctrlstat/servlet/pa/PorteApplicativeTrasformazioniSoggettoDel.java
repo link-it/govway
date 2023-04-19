@@ -106,9 +106,6 @@ public final class PorteApplicativeTrasformazioniSoggettoDel extends Action {
 			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
-				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
-				// .elementAt(idToRemove[i])).elementAt(0);
-				// servizioApplicativo = de.getValue();
 				soggetto = idsToRemove.get(i);
 				for (int j = 0; j < applicabilita.sizeSoggettoList(); j++) {
 					TrasformazioneRegolaApplicabilitaSoggetto soggettoAutorizzato = applicabilita.getSoggetto(j); 

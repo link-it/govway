@@ -34,7 +34,7 @@ import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreads
  */
 public class Costanti {
 
-	public final static String SEPARATORE_IDPOLICY_RAGGRUPPAMENTO = " - ";
+	public static final String SEPARATORE_IDPOLICY_RAGGRUPPAMENTO = " - ";
 	
 	private static String controlloTrafficoImagePrefix = "image";
 	private static String controlloTrafficoEventiImagePrefix = "imageEventi";
@@ -55,36 +55,36 @@ public class Costanti {
 		return sb.toString();
 	}
 	
-	public final static String POLICY_GLOBALE = "Globale";
-	public final static String POLICY_API = "API";
+	public static final String POLICY_GLOBALE = "Globale";
+	public static final String POLICY_API = "API";
 	
 	
-	public final static String GESTORE = "ctGestore";
-	public final static String GESTORE_HAZELCAST_MAP_BACKWARD_COMPATIBILITY = "HAZELCAST";
+	public static final String GESTORE = "ctGestore";
+	public static final String GESTORE_HAZELCAST_MAP_BACKWARD_COMPATIBILITY = "HAZELCAST";
 	
-	public final static String GESTORE_CONFIG_DATE = "ctGestoreConfigDate";
+	public static final String GESTORE_CONFIG_DATE = "ctGestoreConfigDate";
 	
-	public final static String MODALITA_SINCRONIZZAZIONE = "ctSyncMode";
+	public static final String MODALITA_SINCRONIZZAZIONE = "ctSyncMode";
 	
-	public final static String VALUE_MODALITA_SINCRONIZZAZIONE_DEFAULT = "default";
-	public final static String VALUE_MODALITA_SINCRONIZZAZIONE_LOCALE = "locale";
-	public final static String VALUE_MODALITA_SINCRONIZZAZIONE_LOCALE_SUDDIVISA_TRA_NODI = "localePiuNodi";
-	public final static String VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA = "distribuita";
-	public final static List<String> getVALUES_MODALITA_SINCRONIZZAZIONE(List<PolicyGroupByActiveThreadsType> tipiSupportati){
+	public static final String VALUE_MODALITA_SINCRONIZZAZIONE_DEFAULT = "default";
+	public static final String VALUE_MODALITA_SINCRONIZZAZIONE_LOCALE = "locale";
+	public static final String VALUE_MODALITA_SINCRONIZZAZIONE_LOCALE_SUDDIVISA_TRA_NODI = "localePiuNodi";
+	public static final String VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA = "distribuita";
+	public static final List<String> getVALUES_MODALITA_SINCRONIZZAZIONE(List<PolicyGroupByActiveThreadsType> tipiSupportati){
 		return _getMODALITA_SINCRONIZZAZIONE(tipiSupportati, true);
 	}
 	
-	public final static String LABEL_MODALITA_SINCRONIZZAZIONE = "Sincronizzazione";	
-	public final static String LABEL_MODALITA_SINCRONIZZAZIONE_DEFAULT = "Default";
-	public final static String LABEL_MODALITA_SINCRONIZZAZIONE_LOCALE = "Locale";
-	public final static String LABEL_MODALITA_SINCRONIZZAZIONE_LOCALE_SUDDIVISA_TRA_NODI = "Locale - Quota divisa sui nodi";
-	public final static String LABEL_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA = "Distribuita";
+	public static final String LABEL_MODALITA_SINCRONIZZAZIONE = "Sincronizzazione";	
+	public static final String LABEL_MODALITA_SINCRONIZZAZIONE_DEFAULT = "Default";
+	public static final String LABEL_MODALITA_SINCRONIZZAZIONE_LOCALE = "Locale";
+	public static final String LABEL_MODALITA_SINCRONIZZAZIONE_LOCALE_SUDDIVISA_TRA_NODI = "Locale - Quota divisa sui nodi";
+	public static final String LABEL_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA = "Distribuita";
 	
-	public final static List<String> getLABELS_MODALITA_SINCRONIZZAZIONE(List<PolicyGroupByActiveThreadsType> tipiSupportati){
+	public static final List<String> getLABELS_MODALITA_SINCRONIZZAZIONE(List<PolicyGroupByActiveThreadsType> tipiSupportati){
 		return _getMODALITA_SINCRONIZZAZIONE(tipiSupportati, false);
 	} 
 	
-	private final static List<String> _getMODALITA_SINCRONIZZAZIONE(List<PolicyGroupByActiveThreadsType> tipiSupportati, boolean values){
+	private static final List<String> _getMODALITA_SINCRONIZZAZIONE(List<PolicyGroupByActiveThreadsType> tipiSupportati, boolean values){
 		boolean locale = false;
 		boolean localeNodi = false;
 		boolean distribuita = false;
@@ -114,25 +114,25 @@ public class Costanti {
 	}
 	
 	
-	public final static String MODALITA_IMPLEMENTAZIONE = "ctImpl";
+	public static final String MODALITA_IMPLEMENTAZIONE = "ctImpl";
 	
-	public final static String VALUE_MODALITA_IMPLEMENTAZIONE_DATABASE = "database";
-	public final static String VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST = "hazelcast";
-	public final static String VALUE_MODALITA_IMPLEMENTAZIONE_REDIS = "redis";
-	public final static List<String> getVALUES_MODALITA_IMPLEMENTAZIONE(List<PolicyGroupByActiveThreadsType> tipiSupportati){
+	public static final String VALUE_MODALITA_IMPLEMENTAZIONE_DATABASE = "database";
+	public static final String VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST = "hazelcast";
+	public static final String VALUE_MODALITA_IMPLEMENTAZIONE_REDIS = "redis";
+	public static final List<String> getVALUES_MODALITA_IMPLEMENTAZIONE(List<PolicyGroupByActiveThreadsType> tipiSupportati){
 		return _getMODALITA_IMPLEMENTAZIONE(tipiSupportati, true);
 	}
 	
-	public final static String LABEL_MODALITA_IMPLEMENTAZIONE = "Implementazione";
+	public static final String LABEL_MODALITA_IMPLEMENTAZIONE = "Implementazione";
 	
-	public final static String LABEL_MODALITA_IMPLEMENTAZIONE_DATABASE = "embedded";
-	public final static String LABEL_MODALITA_IMPLEMENTAZIONE_HAZELCAST = "hazelcast";
-	public final static String LABEL_MODALITA_IMPLEMENTAZIONE_REDIS = "redis";	
-	public final static List<String> getLABELS_MODALITA_IMPLEMENTAZIONE(List<PolicyGroupByActiveThreadsType> tipiSupportati){
+	public static final String LABEL_MODALITA_IMPLEMENTAZIONE_DATABASE = "embedded";
+	public static final String LABEL_MODALITA_IMPLEMENTAZIONE_HAZELCAST = "hazelcast";
+	public static final String LABEL_MODALITA_IMPLEMENTAZIONE_REDIS = "redis";	
+	public static final List<String> getLABELS_MODALITA_IMPLEMENTAZIONE(List<PolicyGroupByActiveThreadsType> tipiSupportati){
 		return _getMODALITA_IMPLEMENTAZIONE(tipiSupportati, false);
 	}
 	
-	private final static List<String> _getMODALITA_IMPLEMENTAZIONE(List<PolicyGroupByActiveThreadsType> tipiSupportati, boolean values){
+	private static final List<String> _getMODALITA_IMPLEMENTAZIONE(List<PolicyGroupByActiveThreadsType> tipiSupportati, boolean values){
 		boolean database = false;
 		boolean hazelcast = false;
 		boolean redis = false;
@@ -162,25 +162,25 @@ public class Costanti {
 	
 	
 	
-	public final static String MODALITA_CONTATORI = "ctCount";
+	public static final String MODALITA_CONTATORI = "ctCount";
 	
-	public final static String VALUE_MODALITA_CONTATORI_EXACT = "exact";
-	public final static String VALUE_MODALITA_CONTATORI_APPROXIMATED = "approximated";
-	public final static String VALUE_MODALITA_CONTATORI_INCONSISTENT = "inconsistent";
-	public final static List<String> getVALUES_MODALITA_CONTATORI(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl){
+	public static final String VALUE_MODALITA_CONTATORI_EXACT = "exact";
+	public static final String VALUE_MODALITA_CONTATORI_APPROXIMATED = "approximated";
+	public static final String VALUE_MODALITA_CONTATORI_INCONSISTENT = "inconsistent";
+	public static final List<String> getVALUES_MODALITA_CONTATORI(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl){
 		return _getMODALITA_CONTATORI(tipiSupportati, impl, true);
 	}
 	
-	public final static String LABEL_MODALITA_CONTATORI = "Misurazione";
+	public static final String LABEL_MODALITA_CONTATORI = "Misurazione";
 	
-	public final static String LABEL_MODALITA_CONTATORI_EXACT = "esatta";
-	public final static String LABEL_MODALITA_CONTATORI_APPROXIMATED = "approssimata";
-	public final static String LABEL_MODALITA_CONTATORI_INCONSISTENT = "inconsistente";
-	public final static List<String> getLABELS_MODALITA_CONTATORI(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl){
+	public static final String LABEL_MODALITA_CONTATORI_EXACT = "esatta";
+	public static final String LABEL_MODALITA_CONTATORI_APPROXIMATED = "approssimata";
+	public static final String LABEL_MODALITA_CONTATORI_INCONSISTENT = "inconsistente";
+	public static final List<String> getLABELS_MODALITA_CONTATORI(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl){
 		return _getMODALITA_CONTATORI(tipiSupportati, impl, false);
 	}
 	
-	private final static List<String> _getMODALITA_CONTATORI(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl, boolean values){
+	private static final List<String> _getMODALITA_CONTATORI(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl, boolean values){
 		boolean exact = false;
 		boolean approximated = false;
 		boolean inconsistent = false;
@@ -234,48 +234,48 @@ public class Costanti {
 	
 	
 	
-	public final static String MODALITA_TIPOLOGIA = "ctEngineType";
+	public static final String MODALITA_TIPOLOGIA = "ctEngineType";
 	
-	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_FULL_SYNC = "full-sync";
-	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_NEAR_CACHE = "near-cache";
-	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE = "local-cache";
-	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC = "remote-sync";
-	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC = "remote-async";
+	public static final String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_FULL_SYNC = "full-sync";
+	public static final String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_NEAR_CACHE = "near-cache";
+	public static final String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE = "local-cache";
+	public static final String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC = "remote-sync";
+	public static final String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC = "remote-async";
 	public static final String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REPLICATED_MAP = "replicated-map";
-	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG = "atomic-long-counters";
-	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG_ASYNC = "atomic-long-async-counters";
-	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_PNCOUNTER = "pn-counters";	
+	public static final String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG = "atomic-long-counters";
+	public static final String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG_ASYNC = "atomic-long-async-counters";
+	public static final String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_PNCOUNTER = "pn-counters";	
 	
-	public final static String VALUE_MODALITA_TIPOLOGIA_REDIS_REDDISSON_MAP = "redisson-map";
+	public static final String VALUE_MODALITA_TIPOLOGIA_REDIS_REDDISSON_MAP = "redisson-map";
 	public static final String VALUE_MODALITA_TIPOLOGIA_REDIS_CONTATORI_ATOMIC_LONG = "atomic-long-counters";
 	public static final String VALUE_MODALITA_TIPOLOGIA_REDIS_CONTATORI_LONGADDER = "longadder-counters";
 	
-	public final static List<String> getVALUES_MODALITA_TIPOLOGIA(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl, String counter){
+	public static final List<String> getVALUES_MODALITA_TIPOLOGIA(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl, String counter){
 		return _getMODALITA_TIPOLOGIA(tipiSupportati, impl, counter, true);
 	}
 	
-	public final static String LABEL_MODALITA_TIPOLOGIA = "Algoritmo";
+	public static final String LABEL_MODALITA_TIPOLOGIA = "Algoritmo";
 	
-	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_FULL_SYNC = "map";
-	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_NEAR_CACHE = "near-cache";
-	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE = "local-cache";
-	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC = "remote-sync";
-	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC = "remote-async";
+	public static final String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_FULL_SYNC = "map";
+	public static final String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_NEAR_CACHE = "near-cache";
+	public static final String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE = "local-cache";
+	public static final String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC = "remote-sync";
+	public static final String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC = "remote-async";
 	public static final String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REPLICATED_MAP = "replicated-map";
-	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG = "atomic-long-counters";
-	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG_ASYNC = "atomic-long-async-counters";
-	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_PNCOUNTER = "pn-counters";
+	public static final String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG = "atomic-long-counters";
+	public static final String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG_ASYNC = "atomic-long-async-counters";
+	public static final String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_PNCOUNTER = "pn-counters";
 	
-	public final static String LABEL_MODALITA_TIPOLOGIA_REDIS_REDDISSON = "map";
+	public static final String LABEL_MODALITA_TIPOLOGIA_REDIS_REDDISSON = "map";
 	public static final String LABEL_MODALITA_TIPOLOGIA_REDIS_CONTATORI_ATOMIC_LONG = "atomic-long-counters";
 	public static final String LABEL_MODALITA_TIPOLOGIA_REDIS_CONTATORI_LONGADDER = "longadder-counters";
 
 
-	public final static List<String> getLABELS_MODALITA_TIPOLOGIA(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl, String counter){
+	public static final List<String> getLABELS_MODALITA_TIPOLOGIA(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl, String counter){
 		return _getMODALITA_TIPOLOGIA(tipiSupportati, impl, counter, false);
 	}
 	
-	private final static List<String> _getMODALITA_TIPOLOGIA(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl, String counter, boolean values){
+	private static final List<String> _getMODALITA_TIPOLOGIA(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl, String counter, boolean values){
 		List<String> l = new ArrayList<String>();
 		if(VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST.equals(impl)) {
 			for (PolicyGroupByActiveThreadsType tipo : tipiSupportati) {
@@ -345,35 +345,35 @@ public class Costanti {
 	
 	// HTTP HEADERS
 	
-	public final static String VALUE_HTTP_HEADER_DEFAULT = "default";
-	public final static String VALUE_HTTP_HEADER_DISABILITATO = "disabilitato";
-	public final static String VALUE_HTTP_HEADER_ABILITATO = "abilitato";
-	public final static String VALUE_HTTP_HEADER_ABILITATO_NO_WINDOWS = "noWindows";
-	public final static String VALUE_HTTP_HEADER_ABILITATO_WINDOWS = "windows";
-	public final static String VALUE_HTTP_HEADER_ABILITATO_NO_BACKOFF = "noBackoff";
-	public final static String VALUE_HTTP_HEADER_ABILITATO_BACKOFF = "backoff";
-	public final static String VALUE_HTTP_HEADER_RIDEFINITO = "ridefinito";
+	public static final String VALUE_HTTP_HEADER_DEFAULT = "default";
+	public static final String VALUE_HTTP_HEADER_DISABILITATO = "disabilitato";
+	public static final String VALUE_HTTP_HEADER_ABILITATO = "abilitato";
+	public static final String VALUE_HTTP_HEADER_ABILITATO_NO_WINDOWS = "noWindows";
+	public static final String VALUE_HTTP_HEADER_ABILITATO_WINDOWS = "windows";
+	public static final String VALUE_HTTP_HEADER_ABILITATO_NO_BACKOFF = "noBackoff";
+	public static final String VALUE_HTTP_HEADER_ABILITATO_BACKOFF = "backoff";
+	public static final String VALUE_HTTP_HEADER_RIDEFINITO = "ridefinito";
 	
-	public final static String LABEL_HTTP_HEADER_DEFAULT = "Default";
-	public final static String LABEL_HTTP_HEADER_DISABILITATO = "Disabilitato";
-	public final static String LABEL_HTTP_HEADER_ABILITATO = "Abilitato";
-	public final static String LABEL_HTTP_HEADER_ABILITATO_NO_WINDOWS = "Abilitato (senza finestra temporale)";
-	public final static String LABEL_HTTP_HEADER_ABILITATO_WINDOWS = "Abilitato (con finestra temporale)";
-	public final static String LABEL_HTTP_HEADER_ABILITATO_NO_BACKOFF = "Abilitato (senza backoff)";
-	public final static String LABEL_HTTP_HEADER_ABILITATO_BACKOFF = "Abilitato (con backoff)";
-	public final static String LABEL_HTTP_HEADER_RIDEFINITO = "Ridefinito";
+	public static final String LABEL_HTTP_HEADER_DEFAULT = "Default";
+	public static final String LABEL_HTTP_HEADER_DISABILITATO = "Disabilitato";
+	public static final String LABEL_HTTP_HEADER_ABILITATO = "Abilitato";
+	public static final String LABEL_HTTP_HEADER_ABILITATO_NO_WINDOWS = "Abilitato (senza finestra temporale)";
+	public static final String LABEL_HTTP_HEADER_ABILITATO_WINDOWS = "Abilitato (con finestra temporale)";
+	public static final String LABEL_HTTP_HEADER_ABILITATO_NO_BACKOFF = "Abilitato (senza backoff)";
+	public static final String LABEL_HTTP_HEADER_ABILITATO_BACKOFF = "Abilitato (con backoff)";
+	public static final String LABEL_HTTP_HEADER_RIDEFINITO = "Ridefinito";
 	
 	
-	public final static String MODALITA_GENERAZIONE_HEADER_HTTP = "ctHttpMode";	
-	public final static List<String> VALUES_MODALITA_GENERAZIONE_HEADER_HTTP = new ArrayList<String>();
+	public static final String MODALITA_GENERAZIONE_HEADER_HTTP = "ctHttpMode";	
+	public static final List<String> VALUES_MODALITA_GENERAZIONE_HEADER_HTTP = new ArrayList<String>();
 	static {
 		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP.add(VALUE_HTTP_HEADER_DEFAULT);
 		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP.add(VALUE_HTTP_HEADER_DISABILITATO);
 		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP.add(VALUE_HTTP_HEADER_RIDEFINITO);
 	}
 	
-	public final static String LABEL_MODALITA_GENERAZIONE_HEADER_HTTP = "HTTP Headers";	
-	public final static List<String> LABELS_MODALITA_GENERAZIONE_HEADER_HTTP = new ArrayList<String>();
+	public static final String LABEL_MODALITA_GENERAZIONE_HEADER_HTTP = "HTTP Headers";	
+	public static final List<String> LABELS_MODALITA_GENERAZIONE_HEADER_HTTP = new ArrayList<String>();
 	static {
 		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP.add(LABEL_HTTP_HEADER_DEFAULT);
 		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP.add(LABEL_HTTP_HEADER_DISABILITATO);
@@ -381,8 +381,8 @@ public class Costanti {
 	}
 	
 	
-	public final static String MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT = "ctHttpQuota";	
-	public final static List<String> VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT = new ArrayList<String>();
+	public static final String MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT = "ctHttpQuota";	
+	public static final List<String> VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT = new ArrayList<String>();
 	static {
 		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT.add(VALUE_HTTP_HEADER_DEFAULT);
 		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT.add(VALUE_HTTP_HEADER_ABILITATO_NO_WINDOWS);
@@ -390,8 +390,8 @@ public class Costanti {
 		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT.add(VALUE_HTTP_HEADER_DISABILITATO);
 	}
 	
-	public final static String LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT = "Limiti di Quota";	
-	public final static List<String> LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT = new ArrayList<String>();
+	public static final String LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT = "Limiti di Quota";	
+	public static final List<String> LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT = new ArrayList<String>();
 	static {
 		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT.add(LABEL_HTTP_HEADER_DEFAULT);
 		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT.add(LABEL_HTTP_HEADER_ABILITATO_NO_WINDOWS);
@@ -400,16 +400,16 @@ public class Costanti {
 	}
 	
 
-	public final static String MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING = "ctHttpRemaining";	
-	public final static List<String> VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING = new ArrayList<String>();
+	public static final String MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING = "ctHttpRemaining";	
+	public static final List<String> VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING = new ArrayList<String>();
 	static {
 		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING.add(VALUE_HTTP_HEADER_DEFAULT);
 		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING.add(VALUE_HTTP_HEADER_ABILITATO);
 		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING.add(VALUE_HTTP_HEADER_DISABILITATO);
 	}
 	
-	public final static String LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING = "Rimanenza della Quota";	
-	public final static List<String> LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING = new ArrayList<String>();
+	public static final String LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING = "Rimanenza della Quota";	
+	public static final List<String> LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING = new ArrayList<String>();
 	static {
 		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING.add(LABEL_HTTP_HEADER_DEFAULT);
 		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING.add(LABEL_HTTP_HEADER_ABILITATO);
@@ -417,16 +417,16 @@ public class Costanti {
 	}
 	
 	
-	public final static String MODALITA_GENERAZIONE_HEADER_HTTP_RESET = "ctHttpReset";	
-	public final static List<String> VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RESET = new ArrayList<String>();
+	public static final String MODALITA_GENERAZIONE_HEADER_HTTP_RESET = "ctHttpReset";	
+	public static final List<String> VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RESET = new ArrayList<String>();
 	static {
 		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RESET.add(VALUE_HTTP_HEADER_DEFAULT);
 		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RESET.add(VALUE_HTTP_HEADER_ABILITATO);
 		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RESET.add(VALUE_HTTP_HEADER_DISABILITATO);
 	}
 	
-	public final static String LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_RESET = "Reset della Quota (secondi)";	
-	public final static List<String> LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RESET = new ArrayList<String>();
+	public static final String LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_RESET = "Reset della Quota (secondi)";	
+	public static final List<String> LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RESET = new ArrayList<String>();
 	static {
 		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RESET.add(LABEL_HTTP_HEADER_DEFAULT);
 		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RESET.add(LABEL_HTTP_HEADER_ABILITATO);
@@ -434,8 +434,8 @@ public class Costanti {
 	}
 	
 	
-	public final static String MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER = "ctHttpRetryAfter";	
-	public final static List<String> VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER = new ArrayList<String>();
+	public static final String MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER = "ctHttpRetryAfter";	
+	public static final List<String> VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER = new ArrayList<String>();
 	static {
 		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER.add(VALUE_HTTP_HEADER_DEFAULT);
 		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER.add(VALUE_HTTP_HEADER_ABILITATO_NO_BACKOFF);
@@ -443,8 +443,8 @@ public class Costanti {
 		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER.add(VALUE_HTTP_HEADER_DISABILITATO);
 	}
 	
-	public final static String LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER = "Retry-After";	
-	public final static List<String> LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER = new ArrayList<String>();
+	public static final String LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER = "Retry-After";	
+	public static final List<String> LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER = new ArrayList<String>();
 	static {
 		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER.add(LABEL_HTTP_HEADER_DEFAULT);
 		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER.add(LABEL_HTTP_HEADER_ABILITATO_NO_BACKOFF);
@@ -452,7 +452,7 @@ public class Costanti {
 		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER.add(LABEL_HTTP_HEADER_DISABILITATO);
 	}
 	
-	public final static String MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS = "ctHttpRetryAfterBackoff";	
+	public static final String MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS = "ctHttpRetryAfterBackoff";	
 	
-	public final static String LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS = "Backoff (secondi)";	
+	public static final String LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS = "Backoff (secondi)";	
 }

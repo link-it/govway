@@ -24,7 +24,6 @@ package org.openspcoop2.web.ctrlstat.servlet.ruoli;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -198,8 +197,8 @@ public final class RuoliChange extends Action {
 
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = ruoliHelper.addRuoloToDati(TipoOperazione.CHANGE, ruoloId, nome, descrizione, tipologia, nomeEsterno, contesto, dati, ruolo.getNome());
 
@@ -221,9 +220,9 @@ public final class RuoliChange extends Action {
 						RuoliCostanti.SERVLET_NAME_RUOLI_LIST, ruolo.getNome());
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = ruoliHelper.addRuoloToDati(TipoOperazione.CHANGE, ruoloId, nome, descrizione, tipologia, nomeEsterno, contesto, dati, ruolo.getNome());
 
@@ -257,7 +256,7 @@ public final class RuoliChange extends Action {
 			
 			listOggettiDaAggiornare.add(ruoloNEW);
 			
-			if(ruolo.getNome().equals(nome)==false){
+			if(!ruolo.getNome().equals(nome)){
 				
 				// e' stato modificato il nome
 				
@@ -270,7 +269,7 @@ public final class RuoliChange extends Action {
 					
 			ruoliCore.performUpdateOperation(userLogin, ruoliHelper.smista(), listOggettiDaAggiornare.toArray());
 
-			if(ruolo.getNome().equals(nome)==false){
+			if(!ruolo.getNome().equals(nome)){
 				ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.RUOLI);
 			}
 			

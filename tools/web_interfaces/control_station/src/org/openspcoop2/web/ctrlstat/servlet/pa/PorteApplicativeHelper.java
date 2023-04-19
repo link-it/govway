@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -631,7 +630,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						}
 						if(fruitoriCompatibili == false){
 							this.pd.setMessage(MessageFormat.format(
-									PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_E_POSSIBILE_MODIFICARE_IL_TIPO_DI_AUTENTICAZIONE_DA_XX_A_YY_POICHÈ_RISULTANO_ASSOCIATI_AL_SERVIZIO_DEI_FRUITORI_CON_CREDENZIALI_NON_COMPATIBILI_NELLA_MODALITA_DI_ACCESSO_CON_IL_NUOVO_TIPO_DI_AUTENTICAZIONE,
+									PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_E_POSSIBILE_MODIFICARE_IL_TIPO_DI_AUTENTICAZIONE_DA_XX_A_YY_POICHE_RISULTANO_ASSOCIATI_AL_SERVIZIO_DEI_FRUITORI_CON_CREDENZIALI_NON_COMPATIBILI_NELLA_MODALITA_DI_ACCESSO_CON_IL_NUOVO_TIPO_DI_AUTENTICAZIONE,
 									pa.getAutenticazione(), autenticazione));
 							return false;
 						}
@@ -1058,8 +1057,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		}
 	}
 
-	public Vector<DataElement> addHiddenFieldCorrelazioneApplicativaToDati(TipoOperazione tipoOp,
-			String idcorrString, Vector<DataElement> dati) {
+	public List<DataElement> addHiddenFieldCorrelazioneApplicativaToDati(TipoOperazione tipoOp,
+			String idcorrString, List<DataElement> dati) {
 
 		DataElement de = new DataElement();
 		if(idcorrString != null){
@@ -1068,13 +1067,13 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setValue(idcorrString);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_CORRELAZIONE_APPLICATIVA);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		return dati;
 	}
 
 
-	public Vector<DataElement> addPorteAppToDati(TipoOperazione tipoOp,Vector<DataElement> dati, String nomePorta, String descr, String soggvirt, String[] soggettiList, String[] soggettiListLabel, 
+	public List<DataElement> addPorteAppToDati(TipoOperazione tipoOp,List<DataElement> dati, String nomePorta, String descr, String soggvirt, String[] soggettiList, String[] soggettiListLabel, 
 			String servizio, String[] serviziList, String[] serviziListLabel, String azione, String[] azioniList,  String[] azioniListLabel,  String stateless, String ricsim, String ricasim, 
 			String idsogg, String idPorta, String statoValidazione, String tipoValidazione, String gestBody, String gestManifest,String integrazioneStato, String integrazione,
 			String[] integrazioneGruppi, List<GruppoIntegrazione> integrazioneGruppiDaVisualizzare, Map<String, List<String>> integrazioneGruppiValoriDeiGruppi,
@@ -1132,19 +1131,19 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE);
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(datiInvocazione+"");
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_PORTA);
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(datiAltroPorta+"");
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_API);
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(datiAltroApi+"");
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 
@@ -1173,7 +1172,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_GENERALI);
 			}
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 				
 		DataElement de = new DataElement();
@@ -1187,7 +1186,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setRequired(true);
 		}
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA);
-		dati.addElement(de);
+		dati.add(de);
 
 		if(datiInvocazione) {
 			
@@ -1208,7 +1207,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setValue(urlInvocazione.getUrl());
 			de.setType(DataElementType.TEXT);
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA+"___LABEL");
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		de = new DataElement();
@@ -1220,7 +1219,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setType(DataElementType.TEXT_EDIT);
 		}
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_STATO_PORTA);
@@ -1240,7 +1239,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setValue(statoPorta);
 			de.setType(DataElementType.HIDDEN);
 		}
-		dati.addElement(de);
+		dati.add(de);
 
 		
 		
@@ -1248,7 +1247,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de = new DataElement();
 			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_SERVIZIO);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		
@@ -1260,7 +1259,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de = new DataElement();
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_VIRTUALE);
 				de.setType(DataElementType.SUBTITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 		
@@ -1283,7 +1282,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setValue("-");
 			de.setType(DataElementType.HIDDEN);
 		}
-		dati.addElement(de);
+		dati.add(de);
 
 		
 		
@@ -1293,7 +1292,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de = new DataElement();
 			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO);
 			de.setType(DataElementType.SUBTITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		de = new DataElement();
@@ -1309,7 +1308,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(servizio); 
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(this.isModalitaCompleta()) {
 				DataElement deLabel = new DataElement();
@@ -1321,10 +1320,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						break;
 					}
 				}
-				dati.addElement(deLabel);
+				dati.add(deLabel);
 			}
 		}		
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		// *************** Azione *********************
@@ -1391,7 +1390,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				}
 			}
 			de.setType(DataElementType.SUBTITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		boolean viewOnlyModeDatiAzione = datiInvocazione && modeaz!=null && !"".equals(modeaz) && this.isModalitaStandard() &&
@@ -1416,7 +1415,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			if(viewOnlyModeDatiAzione || (tipoModeAzione!=null && tipoModeAzione.length==1) || visualizzazioneSpecialeSoapPerEssereUgualeARest) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(modeaz);
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_IDENTIFICAZIONE);
@@ -1443,7 +1442,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setValue(modeaz);
 		}
 		
-		dati.addElement(de);
+		dati.add(de);
 		
 		boolean addHiddenAzione = false;
 		
@@ -1456,7 +1455,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE);
 				de.setValue(azione);
-				dati.addElement(de);
+				dati.add(de);
 				
 				addHiddenAzione = true;
 				
@@ -1473,7 +1472,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					de.setValues(azioniList);
 					de.setLabels(azioniListLabel);
 					de.setSelected(azid);
-					dati.addElement(de);
+					dati.add(de);
 					
 					disableSaveButtonForDatiInvocazione = false;
 					
@@ -1524,7 +1523,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					}else
 						de.setType(DataElementType.HIDDEN);
 					de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE);
-					dati.addElement(de);
+					dati.add(de);
 				}
 		
 				// se non e' selezionata la modalita userInput / wsdlbased / registerInput faccio vedere il check box forceWsdlbased
@@ -1563,7 +1562,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					de.setValue(forceWsdlBased);
 				}
 				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED);
-				dati.addElement(de);
+				dati.add(de);
 				
 				if( (!visualizzazioneSpecialeSoapPerEssereUgualeARest) &&
 						modeaz!= null && 
@@ -1592,7 +1591,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_AZIONI_SIZE);
 					}
 					de.setValue(bf.toString());
-					dati.addElement(de);
+					dati.add(de);
 				}
 			}
 		
@@ -1610,14 +1609,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE_ID);
 			de.setValue(azid);
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(this.isModalitaCompleta()) {
 				DataElement deLabel = new DataElement();
 				deLabel.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_IDENTIFICAZIONE);
 				deLabel.setType(DataElementType.TEXT);
 				deLabel.setValue(modeaz);
-				dati.addElement(deLabel);
+				dati.add(deLabel);
 			}
 			
 			de = new DataElement();
@@ -1634,7 +1633,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 			de.setType(DataElementType.HIDDEN);
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(this.isModalitaCompleta()) {
 				DataElement deLabel = new DataElement();
@@ -1658,7 +1657,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					deLabel.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 					deLabel.setValue(azione);
 				}
-				dati.addElement(deLabel);
+				dati.add(deLabel);
 			}
 			
 			if(this.isModalitaCompleta()) {
@@ -1667,14 +1666,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTA_DELEGANTE);
 					de.setType(DataElementType.TEXT);
 					de.setValue(nomePortaDelegante);
-					dati.addElement(de);
+					dati.add(de);
 				}
 				else {
 					DataElement deLabel = new DataElement();
 					deLabel.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_RICERCA_PORTA_AZIONE_DELEGATA);
 					deLabel.setType(DataElementType.TEXT);
 					deLabel.setValue(ricercaPortaAzioneDelegata ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue() );
-					dati.addElement(deLabel);
+					dati.add(deLabel);
 				}
 			}
 			
@@ -1683,7 +1682,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(forceWsdlBased);
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED);
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(this.isModalitaCompleta()) {
 				if( modeaz!= null && (
@@ -1695,7 +1694,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					deLabel.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED_LEFT);
 					deLabel.setType(DataElementType.TEXT);
 					deLabel.setValue(ServletUtils.isCheckBoxEnabled(forceWsdlBased) ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue() );
-					dati.addElement(deLabel);
+					dati.add(deLabel);
 				}
 			}
 			
@@ -1716,7 +1715,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 //			de = new DataElement();
 //			de.setType(DataElementType.TITLE);
 //			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI_EROGATORI);
-//			dati.addElement(de);
+//			dati.add(de);
 //			
 //			de = new DataElement();
 //			de.setType(DataElementType.LINK);
@@ -1727,7 +1726,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 //			ServletUtils.setDataElementVisualizzaLabel(de);
 //
 //
-//			dati.addElement(de);
+//			dati.add(de);
 		
 			
 		//}
@@ -1746,7 +1745,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 //				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, pIdSogg, pIdPorta, pIdAsps);
 //				String statoControlloAccessi = this.getLabelStatoControlloAccessi(gestioneToken,autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom);
 //				ServletUtils.setDataElementCustomLabel(de, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, statoControlloAccessi);
-//				dati.addElement(de);
+//				dati.add(de);
 			}
 		}else {
 			// Pintori 29/11/2017 Gestione Accessi spostata nella servlet PorteApplicativeControlloAccessi,  in ADD devo mostrare comunque la form.
@@ -1811,7 +1810,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 //				de = new DataElement();
 //				de.setType(DataElementType.TITLE);
 //				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI);
-//				dati.addElement(de);
+//				dati.add(de);
 //				
 //				
 //				// Validazione Contenuti
@@ -1819,7 +1818,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 //				de.setType(DataElementType.LINK);
 //				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI, pIdSogg, pIdPorta, pIdAsps);
 //				ServletUtils.setDataElementCustomLabel(de, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI, statoValidazione);
-//				dati.addElement(de);
+//				dati.add(de);
 			}
 		}else {
 			// 	Pintori 08/02/2018 Validazione Contenuti spostata nella servlet PorteApplicativeValidazione, in ADD devo mostrare comunque la form.
@@ -1829,7 +1828,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		
 		// *************** Integrazione *********************
 		
-		Vector<DataElement> deIntegrazione = new Vector<DataElement>();
+		List<DataElement> deIntegrazione = new ArrayList<>();
 				
 		boolean nascondiSezioneOpzioniAvanzate = (this.isModalitaStandard() || (isConfigurazione && !datiAltroPorta));
 		
@@ -1848,12 +1847,12 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		if(!this.core.isShowJ2eeOptions() || (isConfigurazione && !datiAltroPorta)){
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(stateless);
-			dati.addElement(de);
+			dati.add(de);
 		}else{
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoStateless);
 			de.setSelected(stateless);
-			deIntegrazione.addElement(de);	
+			deIntegrazione.add(de);	
 		}	
 		
 				
@@ -1863,14 +1862,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_BEHAVIOUR);
 		if(this.core.isConnettoriMultipliEnabled()) {
 			de.setType(DataElementType.HIDDEN);
-			dati.addElement(de);
+			dati.add(de);
 		} else if (!this.isModalitaAvanzata() || (isConfigurazione && !datiAltroPorta)) {
 			de.setType(DataElementType.HIDDEN);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		else{
 			de.setType(DataElementType.TEXT_EDIT);
-			deIntegrazione.addElement(de);	
+			deIntegrazione.add(de);	
 		}
 			
 		if (tipoOp.equals(TipoOperazione.CHANGE)) {
@@ -1884,7 +1883,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				} else
 					ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES);
 
-				deIntegrazione.addElement(de);
+				deIntegrazione.add(de);
 			}
 		}
 		
@@ -1894,10 +1893,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de = new DataElement();
 				de.setType(DataElementType.TITLE);
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE);
-				dati.addElement(de);
+				dati.add(de);
 				
 				for (int i = 0; i < deIntegrazione.size(); i++) {
-					dati.addElement(deIntegrazione.get(i));
+					dati.add(deIntegrazione.get(i));
 				}
 			}
 		}
@@ -1931,7 +1930,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
 			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA);
-			dati.addElement(de);
+			dati.add(de);
 			
 			boolean riuso = false; // riuso non abilitato nella porta applicativa
 			if (numCorrApp > 0 && riuso) {
@@ -1941,7 +1940,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setValue(scadcorr);
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SCADENZA_CORRELAZIONE_APPLICATIVA);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			
@@ -1954,7 +1953,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			} else
 				ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RICHIESTA);
 
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
@@ -1964,7 +1963,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			} else
 				ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RISPOSTA);
 
-			dati.addElement(de);
+			dati.add(de);
 						
 		}
 
@@ -1984,7 +1983,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 //				de = new DataElement();
 //				de.setType(DataElementType.TITLE);
 //				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MESSAGGIO);
-//				dati.addElement(de);
+//				dati.add(de);
 //	
 //				de = new DataElement();
 //				de.setType(DataElementType.LINK);
@@ -1994,20 +1993,20 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 //					statoCorrelazioneApplicativa = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_ABILITATA;
 //				}
 //				ServletUtils.setDataElementCustomLabel(de, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA, statoCorrelazioneApplicativa);
-//				dati.addElement(de);
+//				dati.add(de);
 //				
 //				de = new DataElement();
 //				de.setType(DataElementType.LINK);
 //				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY,pIdSogg,pIdPorta, pIdAsps);
 //				ServletUtils.setDataElementCustomLabel(de, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY, statoMessageSecurity);
-//				dati.addElement(de);
+//				dati.add(de);
 //				
 //				//if (InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
 //				de = new DataElement();
 //				de.setType(DataElementType.LINK);
 //				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM, pIdSogg,pIdPorta, pIdAsps);
 //				ServletUtils.setDataElementCustomLabel(de, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM, statoMTOM);
-//				dati.addElement(de);
+//				dati.add(de);
 				//}
 			}
 		}
@@ -2024,7 +2023,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setType(DataElementType.TITLE);
 			}
 			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_ASINCRONA );
-			dati.addElement(de);
+			dati.add(de);
 	
 			String[] tipoRicsim = { 
 					PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_ABILITATO, 
@@ -2041,7 +2040,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setSelected(ricsim);
 			}
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_RICEVUTA_ASINCRONA_SIMMETRICA);
-			dati.addElement(de);
+			dati.add(de);
 	
 			String[] tipoRicasim = {
 					PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_ABILITATO, 
@@ -2058,7 +2057,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setSelected(ricasim);
 			}
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_RICEVUTA_ASINCRONA_ASIMMETRICA);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		
@@ -2076,7 +2075,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
 			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOAP_WITH_ATTACHMENTS);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}
 	
@@ -2097,7 +2096,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(gestBody);
 		}
-		dati.addElement(de);
+		dati.add(de);
 
 		String[] tipoGestManifest = { 
 				PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_MANIFEST_DEFAULT, 
@@ -2121,7 +2120,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_MANIFEST_DISABILITATO );
 		}
-		dati.addElement(de);
+		dati.add(de);
 			
 		
 //		if(configurazioneStandardNonApplicabile){
@@ -2140,7 +2139,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
 			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_ENGINE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		de = new DataElement();
@@ -2161,7 +2160,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(messageEngine);
 		}
-		dati.addElement(de);
+		dati.add(de);
 
 
 		
@@ -2349,14 +2348,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<PortaApplicativa> it = lista.iterator();
 				while (it.hasNext()) {
 					PortaApplicativa pa = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					Parameter pNomePorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA, pa.getNome());
 					Parameter pIdNome = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME, ""+pa.getNome());
@@ -2379,30 +2378,30 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					DataElement de = new DataElement();
 					de.setType(DataElementType.HIDDEN);
 					de.setValue("" + pa.getId());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE, pIdSogg, pNomePorta, pIdPorta, pIdAsps);
 					de.setValue(pa.getNome());
 					de.setIdToRemove(pa.getId().toString());
 					de.setToolTip(pa.getDescrizione());
-					e.addElement(de);
+					e.add(de);
 					
 					if(useIdSogg==false){
 						de = new DataElement();
 						de.setValue(this.getLabelNomeSoggetto(protocollo, pa.getTipoSoggettoProprietario() , pa.getNomeSoggettoProprietario()));
-						e.addElement(de);
+						e.add(de);
 						
 						if( showProtocolli ) {
 							de = new DataElement();
 							de.setValue(this.getLabelProtocollo(protocollo));
-							e.addElement(de);
+							e.add(de);
 						}
 					}
 					
 //					de = new DataElement();
 //					de.setValue(pa.getDescrizione());
-//					e.addElement(de);
+//					e.add(de);
 
 					de = new DataElement();
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_LIST, pIdSogg, pIdPorta, pIdAsps);
@@ -2411,7 +2410,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						ServletUtils.setDataElementVisualizzaLabel(de,Long.valueOf(numSA));
 					} else
 						ServletUtils.setDataElementVisualizzaLabel(de);
-					e.addElement(de);
+					e.add(de);
 					
 					
 					// controllo accessi
@@ -2420,13 +2419,13 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, pIdSogg, pIdPorta, pIdAsps);
 					String statoControlloAccessi = this.getStatoControlloAccessiPortaApplicativa(protocollo, pa);
 					de.setValue(statoControlloAccessi);
-					e.addElement(de);
+					e.add(de);
 					
 
 					de = new DataElement();
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY, pIdSogg, pIdPorta,pIdAsps);
 					de.setValue(pa.getStatoMessageSecurity());
-					e.addElement(de);
+					e.add(de);
 					
 					//if(isModalitaAvanzata){
 					de = new DataElement();
@@ -2457,7 +2456,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_ABILITATO);
 					else 
 						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_DISABILITATO);
-					e.addElement(de);
+					e.add(de);
 					//}
 
 					de = new DataElement();
@@ -2476,7 +2475,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_ABILITATA);
 					else 
 						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_DISABILITATA);
-					e.addElement(de);
+					e.add(de);
 
 					if((this.isModalitaAvanzata() || this.porteApplicativeCore.isProprietaErogazioni_showModalitaStandard())){
 						de = new DataElement();
@@ -2486,7 +2485,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							ServletUtils.setDataElementVisualizzaLabel(de,Long.valueOf(numProp));
 						} else
 							ServletUtils.setDataElementVisualizzaLabel(de);
-						e.addElement(de);
+						e.add(de);
 					}
 
 //					if(this.core.isRegistroServiziLocale()){
@@ -2534,7 +2533,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 //								asps.getVersione());
 //						de.setValue(IDServizioFactory.getInstance().getUriFromIDServizio(idServizio) + tmpAz);
 //
-//						e.addElement(de);
+//						e.add(de);
 //					}
 
 					
@@ -2548,7 +2547,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							ServletUtils.setDataElementVisualizzaLabel(de,Long.valueOf(numExtended));
 						} else
 							ServletUtils.setDataElementVisualizzaLabel(de);
-						e.addElement(de);
+						e.add(de);
 					}
 					
 					de = new DataElement();
@@ -2557,9 +2556,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					de.setSelected(abilitatoPorta);
 					de.setToolTip(abilitatoPorta?CostantiConfigurazione.ABILITATO.getValue():CostantiConfigurazione.DISABILITATO.getValue());
 					de.setValue(abilitatoPorta+"");
-					e.addElement(de);
+					e.add(de);
 					
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -2653,14 +2652,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<Proprieta> it = lista.iterator();
 				while (it.hasNext()) {
 					Proprieta ssp = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					DataElement de = new DataElement();
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_CHANGE,
@@ -2671,14 +2670,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					de.setValue(ssp.getNome());
 					de.setIdToRemove(ssp.getNome());
 					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					if(ssp.getValore()!=null)
 						de.setValue(ssp.getValore().toString());
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -2764,14 +2763,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<ServizioApplicativo> it = lista.iterator();
 				while (it.hasNext()) {
 					ServizioApplicativo sa = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					DataElement de = new DataElement();
 					de.setUrl(
@@ -2781,9 +2780,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
 					de.setValue(sa.getNome());
 					de.setIdToRemove(sa.getNome());
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -2879,19 +2878,19 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<CorrelazioneApplicativaElemento> it = lista.iterator();
 				while (it.hasNext()) {
 					CorrelazioneApplicativaElemento cae = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					DataElement de = new DataElement();
 					de.setType(DataElementType.HIDDEN);
 					de.setValue("" + cae.getId());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setUrl(
@@ -2907,7 +2906,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						nomeElemento = cae.getNome();
 					de.setValue(nomeElemento);
 					de.setIdToRemove("" + cae.getId());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					if(cae.getIdentificazione()!=null) {
@@ -2939,9 +2938,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							break;
 						}
 					}
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -3038,19 +3037,19 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<CorrelazioneApplicativaRispostaElemento> it = lista.iterator();
 				while (it.hasNext()) {
 					CorrelazioneApplicativaRispostaElemento cae = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					DataElement de = new DataElement();
 					de.setType(DataElementType.HIDDEN);
 					de.setValue("" + cae.getId());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setUrl(
@@ -3066,7 +3065,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						nomeElemento = cae.getNome();
 					de.setValue(nomeElemento);
 					de.setIdToRemove("" + cae.getId());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					if(cae.getIdentificazione()!=null) {
@@ -3095,9 +3094,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							break;
 						}
 					}
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -3189,14 +3188,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<MessageSecurityFlowParameter> it = lista.iterator();
 				while (it.hasNext()) {
 					MessageSecurityFlowParameter wsrfp = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					DataElement de = new DataElement();
 					de.setUrl(
@@ -3207,13 +3206,13 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
 					de.setValue(wsrfp.getNome());
 					de.setIdToRemove(wsrfp.getNome());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setValue(wsrfp.getValore());
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -3304,14 +3303,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<MessageSecurityFlowParameter> it = lista.iterator();
 				while (it.hasNext()) {
 					MessageSecurityFlowParameter wsrfp = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					DataElement de = new DataElement();
 					de.setUrl(
@@ -3323,13 +3322,13 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							);
 					de.setValue(wsrfp.getNome());
 					de.setIdToRemove(wsrfp.getNome());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setValue(wsrfp.getValore());
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -3442,14 +3441,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<PortaApplicativaAutorizzazioneSoggetto> it = lista.iterator();
 				while (it.hasNext()) {
 					PortaApplicativaAutorizzazioneSoggetto sog = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					Long idSoggetto =this.soggettiCore.getIdSoggetto(sog.getNome(), sog.getTipo());
 					DataElement de = new DataElement();
@@ -3466,9 +3465,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					}
 					de.setValue(labelNomeSoggetto);
 					de.setIdToRemove(sog.getTipo() + "/" + sog.getNome());
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -3604,14 +3603,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setLabels(labels.toArray(new String[1]));
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<PortaApplicativaAutorizzazioneServizioApplicativo> it = lista.iterator();
 				while (it.hasNext()) {
 					PortaApplicativaAutorizzazioneServizioApplicativo sa = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					if(this.porteApplicativeCore.isMultitenant() || isSupportatoAutenticazioneApplicativiEsterni) {
 						Long idSoggetto =this.soggettiCore.getIdSoggetto(sa.getNomeSoggettoProprietario(), sa.getTipoSoggettoProprietario());	
@@ -3623,7 +3622,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 									new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,sa.getTipoSoggettoProprietario()));
 						}
 						de.setValue(this.getLabelNomeSoggetto(protocollo, sa.getTipoSoggettoProprietario() , sa.getNomeSoggettoProprietario()));
-						e.addElement(de);
+						e.add(de);
 					}
 					
 					
@@ -3646,9 +3645,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						this.newDataElementVisualizzaInNuovoTab(de, url, tooltip);
 					}
 					
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -3662,22 +3661,22 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	}
 
 	
-	public Vector<DataElement> addPorteApplicativeCorrelazioneApplicativeRichiestaToDati(TipoOperazione tipoOp,
+	public List<DataElement> addPorteApplicativeCorrelazioneApplicativeRichiestaToDati(TipoOperazione tipoOp,
 			String elemxml, String mode, String pattern, String gif,
-			String riusoIdMessaggio, Vector<DataElement> dati, org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding,
+			String riusoIdMessaggio, List<DataElement> dati, org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding,
 			String protocollo) {
 		
 		DataElement de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
-		dati.addElement(this.getDataElementNotCorrelazioneApplicativa());
+		dati.add(this.getDataElementNotCorrelazioneApplicativa());
 		de = new DataElement();
 		de.setLabel("");
 		de.setValue("");
 		de.setType(DataElementType.NOTE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML);
@@ -3699,7 +3698,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_VALORI_SOAP);
 		}
 		de.setInfo(dInfoPattern);
-		dati.addElement(de);
+		dati.add(de);
 
 		//String[] tipoMode = { "urlBased", "contentBased", "inputBased","disabilitato" };
 		String[] tipoMode = { 
@@ -3732,7 +3731,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de.setSelected(mode);
 		//				de.setOnChange("CambiaModeCorrAppPortaApplicativa('add')");
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 
 		if (PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_URL_BASED.equals(mode) ||
 				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_HEADER_BASED.equals(mode) ||
@@ -3812,7 +3811,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_PATTERN);
 			de.setRequired(true);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		if(!PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_DISABILITATO.equals(mode)){
@@ -3823,13 +3822,13 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_GESTIONE_IDENTIFICAZIONE_FALLITA);
 			de.setValues(tipiGIF);
 			de.setSelected(gif);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_RIUSO_ID_MESSAGGIO);
 			de.setValue(riusoIdMessaggio);
 			de.setType(DataElementType.HIDDEN);
-			dati.addElement(de);
+			dati.add(de);
 
 		}
 
@@ -3837,22 +3836,22 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		return dati;
 	}
 
-	public Vector<DataElement> addPorteApplicativeCorrelazioneApplicativeRispostaToDati(TipoOperazione tipoOp,
+	public List<DataElement> addPorteApplicativeCorrelazioneApplicativeRispostaToDati(TipoOperazione tipoOp,
 			String elemxml, String mode, String pattern, String gif,
-			Vector<DataElement> dati, org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding,
+			List<DataElement> dati, org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding,
 			String protocollo) {
 		
 		DataElement de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
-		dati.addElement(this.getDataElementNotCorrelazioneApplicativa());
+		dati.add(this.getDataElementNotCorrelazioneApplicativa());
 		de = new DataElement();
 		de.setLabel("");
 		de.setValue("");
 		de.setType(DataElementType.NOTE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML);
@@ -3874,7 +3873,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_VALORI_SOAP);
 		}
 		de.setInfo(dInfoPattern);
-		dati.addElement(de);
+		dati.add(de);
 
 		String[] tipoMode = {
 				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_HEADER_BASED,
@@ -3904,7 +3903,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de.setSelected(mode);
 		//				de.setOnChange("CambiaModeCorrAppPortaApplicativa('add','Risposta')");
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 
 		if (PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_URL_BASED.equals(mode) ||
 				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_HEADER_BASED.equals(mode) ||
@@ -3983,7 +3982,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_PATTERN);
 			de.setRequired(true);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		if(!PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_DISABILITATO.equals(mode)){
@@ -3994,7 +3993,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_GESTIONE_IDENTIFICAZIONE_FALLITA);
 			de.setValues(tipiGIF);
 			de.setSelected(gif);
-			dati.addElement(de);
+			dati.add(de);
 
 		}
 
@@ -4006,14 +4005,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		return 50;
 	}
 
-	public  Vector<DataElement>  addProprietaProtocolloToDati(TipoOperazione tipoOp,
+	public  List<DataElement>  addProprietaProtocolloToDati(TipoOperazione tipoOp,
 			int size,
-			String nome, String valore, Vector<DataElement> dati) {
+			String nome, String valore, List<DataElement> dati) {
 
 		DataElement de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
@@ -4027,7 +4026,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		}
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
 		de.setSize(size);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
@@ -4036,7 +4035,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE);
 		de.setValue(valore);
 		de.setSize(size);
-		dati.addElement(de);
+		dati.add(de);
 
 		return dati;
 	}
@@ -4124,14 +4123,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<MtomProcessorFlowParameter> it = lista.iterator();
 				while (it.hasNext()) {
 					MtomProcessorFlowParameter parametro = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					DataElement de = new DataElement();
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM_REQUEST_CHANGE ,
@@ -4142,8 +4141,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							);
 					de.setValue(parametro.getNome());
 					de.setIdToRemove(parametro.getNome());
-					e.addElement(de);
-					dati.addElement(e);
+					e.add(de);
+					dati.add(e);
 				}
 			}
 
@@ -4240,14 +4239,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<MtomProcessorFlowParameter> it = lista.iterator();
 				while (it.hasNext()) {
 					MtomProcessorFlowParameter wsrfp = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					DataElement de = new DataElement();
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE_CHANGE,
@@ -4258,9 +4257,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							);
 					de.setValue(wsrfp.getNome());
 					de.setIdToRemove(wsrfp.getNome());
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -4378,14 +4377,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<String> it = lista.iterator();
 				while (it.hasNext()) {
 					String ruolo = it.next();
 		
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 		
 					DataElement de = new DataElement();
 					de.setValue(ruolo);
@@ -4401,9 +4400,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						this.newDataElementVisualizzaInNuovoTab(de, url, tooltip);
 					}
 					
-					e.addElement(de);
+					e.add(de);
 		
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -4494,14 +4493,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<String> it = lista.iterator();
 				while (it.hasNext()) {
 					String scope = it.next();
 		
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 		
 					DataElement de = new DataElement();
 					de.setValue(scope);
@@ -4517,9 +4516,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						this.newDataElementVisualizzaInNuovoTab(de, url, tooltip);
 					}
 					
-					e.addElement(de);
+					e.add(de);
 		
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -4719,14 +4718,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<ResponseCachingConfigurazioneRegola> it = lista.iterator();
 				while (it.hasNext()) {
 					ResponseCachingConfigurazioneRegola regola = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					DataElement de = new DataElement();
 					de.setIdToRemove(regola.getId() + "");
@@ -4759,17 +4758,17 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					}
 					
 					de.setValue(statusValue);
-					e.addElement(de);
+					e.add(de);
 					
 					de = new DataElement();
 					de.setValue(regola.getFault() ? CostantiControlStation.LABEL_SI : CostantiControlStation.LABEL_NO);
-					e.addElement(de);
+					e.add(de);
 					
 					de = new DataElement();
 					de.setValue(regola.getCacheTimeoutSeconds() != null ? regola.getCacheTimeoutSeconds() + "" : "default ("+defaultCacheSeconds+")");
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -4933,7 +4932,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<TrasformazioneRegola> it = lista.iterator();
@@ -4943,7 +4942,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					TrasformazioneRegola regola = it.next();
 					Parameter pIdTrasformazione = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE, regola.getId() + "");
 					
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 					
 					// Posizione
 					if(lista.size() > 1) {
@@ -4974,7 +4973,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							de.addImage(imageDown);
 						}
 						de.setValue(regola.getPosizione()+"");
-						e.addElement(de);
+						e.add(de);
 					}
 					
 					// Stato
@@ -4999,7 +4998,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							pIdAsps,
 							pIdTrasformazione
 							);
-					e.addElement(de);
+					e.add(de);
 					
 					
 					// Nome
@@ -5013,7 +5012,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							pIdAsps,
 							pIdTrasformazione
 							);
-					e.addElement(de);
+					e.add(de);
 					
 					
 					// Azioni
@@ -5054,7 +5053,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					}
 					de.setSize(200);
 
-					e.addElement(de);
+					e.add(de);
 					
 
 					// Content-type
@@ -5078,7 +5077,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					
 					de = new DataElement();
 					de.setValue(ct);
-					e.addElement(de);
+					e.add(de);
 
 					
 					// Pattern
@@ -5087,7 +5086,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					de.setValue(p.length()>CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PATTERN_LIST_MAX_VALUE ? 
 								p.substring(0, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PATTERN_LIST_MAX_VALUE)+"..." :
 								p);
-					e.addElement(de);
+					e.add(de);
 					
 					
 					// Connettori
@@ -5131,7 +5130,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						}
 						de.setSize(200);
 
-						e.addElement(de);
+						e.add(de);
 						
 					}
 					
@@ -5154,7 +5153,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						} else {
 							ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTI);
 						}
-						e.addElement(de);
+						e.add(de);
 					}
 					
 					if((isSupportatoAutenticazione && autenticazione) || (autenticazioneToken)) {
@@ -5179,10 +5178,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						} else {
 							ServletUtils.setDataElementCustomLabel(de,labelApplicativi);
 						}
-						e.addElement(de);
+						e.add(de);
 					}
 					
-					dati.addElement(e);
+					dati.add(e);
 					i++;
 				}
 			}
@@ -5287,7 +5286,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<TrasformazioneRegolaRisposta> it = lista.iterator();
@@ -5297,7 +5296,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					TrasformazioneRegolaRisposta risposta = it.next();
 					Parameter pIdTrasformazioneRisposta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE_RISPOSTA, risposta.getId() + "");
 					
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 					
 					// Posizione
 					if(lista.size() > 1) {
@@ -5328,7 +5327,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							de.addImage(imageDown);
 						}
 						de.setValue(risposta.getPosizione()+"");
-						e.addElement(de);
+						e.add(de);
 					}
 					// Nome
 					DataElement de = new DataElement();
@@ -5343,7 +5342,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							pIdTrasformazione,
 							pIdTrasformazioneRisposta
 							);
-					e.addElement(de);
+					e.add(de);
 					
 					
 					
@@ -5381,7 +5380,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					
 					de.setValue(statusValue);
 					
-					e.addElement(de);
+					e.add(de);
 					
 					
 					
@@ -5405,7 +5404,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					
 					de = new DataElement();
 					de.setValue(ct);
-					e.addElement(de);
+					e.add(de);
 
 					
 					// Pattern
@@ -5414,11 +5413,11 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					de.setValue(p.length()>CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PATTERN_LIST_MAX_VALUE ? 
 								p.substring(0, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PATTERN_LIST_MAX_VALUE)+"..." :
 								p);
-					e.addElement(de);
+					e.add(de);
 					
 					
 					
-					dati.addElement(e);
+					dati.add(e);
 					i++;
 				}
 			}
@@ -5546,14 +5545,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<TrasformazioneRegolaParametro> it = lista.iterator();
 				while (it.hasNext()) {
 					TrasformazioneRegolaParametro parametro = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 					
 					// Nome
 					DataElement de = new DataElement();
@@ -5568,12 +5567,12 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							pIdTrasformazioneRisposta,
 							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE_RISPOSTA_HEADER, parametro.getId() + "")
 							);
-					e.addElement(de);
+					e.add(de);
 					
 					// Tipo
 					de = new DataElement();
 					de.setValue(parametro.getConversioneTipo().getValue());
-					e.addElement(de);
+					e.add(de);
 					
 					// Valore
 					de = new DataElement();
@@ -5581,9 +5580,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					if(StringUtils.isNotEmpty(parametro.getValore())) {
 						de.setToolTip(parametro.getValore());
 					}
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -5691,14 +5690,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<TrasformazioneRegolaParametro> it = lista.iterator();
 				while (it.hasNext()) {
 					TrasformazioneRegolaParametro parametro = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 					
 					// Nome
 					DataElement de = new DataElement();
@@ -5712,12 +5711,12 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							pIdTrasformazione,
 							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE_RICHIESTA_HEADER, parametro.getId() + "")
 							);
-					e.addElement(de);
+					e.add(de);
 					
 					// Tipo
 					de = new DataElement();
 					de.setValue(parametro.getConversioneTipo().getValue());
-					e.addElement(de);
+					e.add(de);
 					
 					// Valore
 					de = new DataElement();
@@ -5725,9 +5724,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					if(StringUtils.isNotEmpty(parametro.getValore())) {
 						de.setToolTip(parametro.getValore());
 					}
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -5835,14 +5834,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<TrasformazioneRegolaParametro> it = lista.iterator();
 				while (it.hasNext()) {
 					TrasformazioneRegolaParametro parametro = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 					
 					// Nome
 					DataElement de = new DataElement();
@@ -5856,12 +5855,12 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							pIdTrasformazione,
 							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE_RICHIESTA_PARAMETRO, parametro.getId() + "")
 							);
-					e.addElement(de);
+					e.add(de);
 					
 					// Tipo
 					de = new DataElement();
 					de.setValue(parametro.getConversioneTipo().getValue());
-					e.addElement(de);
+					e.add(de);
 					
 					// Valore
 					de = new DataElement();
@@ -5869,9 +5868,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					if(StringUtils.isNotEmpty(parametro.getValore())) {
 						de.setToolTip(parametro.getValore());
 					}
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -6012,14 +6011,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setLabels(labels.toArray(new String[1]));
 	
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 	
 			if (lista != null) {
 				Iterator<TrasformazioneRegolaApplicabilitaServizioApplicativo> it = lista.iterator();
 				while (it.hasNext()) {
 					TrasformazioneRegolaApplicabilitaServizioApplicativo sa = it.next();
 	
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 	
 					if(this.porteApplicativeCore.isMultitenant()) {
 						Long idSoggetto =this.soggettiCore.getIdSoggetto(sa.getNomeSoggettoProprietario(), sa.getTipoSoggettoProprietario());	
@@ -6031,16 +6030,16 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 									new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,sa.getTipoSoggettoProprietario()));
 						}
 						de.setValue(this.getLabelNomeSoggetto(protocollo, sa.getTipoSoggettoProprietario() , sa.getNomeSoggettoProprietario()));
-						e.addElement(de);
+						e.add(de);
 					}
 					
 					
 					DataElement de = new DataElement();
 					de.setValue(sa.getNome());
 					de.setIdToRemove(sa.getNome()+"@"+sa.getTipoSoggettoProprietario() + "/" + sa.getNomeSoggettoProprietario());
-					e.addElement(de);
+					e.add(de);
 	
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 	
@@ -6177,14 +6176,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<TrasformazioneRegolaApplicabilitaSoggetto> it = lista.iterator();
 				while (it.hasNext()) {
 					TrasformazioneRegolaApplicabilitaSoggetto sog = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					Long idSoggetto =this.soggettiCore.getIdSoggetto(sog.getNome(), sog.getTipo());
 					DataElement de = new DataElement();
@@ -6196,9 +6195,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					}
 					de.setValue(this.getLabelNomeSoggetto(protocollo, sog.getTipo() , sog.getNome()));
 					de.setIdToRemove(sog.getTipo() + "/" + sog.getNome());
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -6408,26 +6407,26 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<Proprieta> it = lista.iterator();
 				while (it.hasNext()) {
 					Proprieta proprieta = it.next();
 		
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 		
 					DataElement de = new DataElement();
 					de.setValue(proprieta.getNome());
 					de.setIdToRemove(proprieta.getId() + "");
 					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
-					e.addElement(de);
+					e.add(de);
 					
 					de = new DataElement();
 					de.setValue(proprieta.getValore());
-					e.addElement(de);
+					e.add(de);
 		
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -6588,26 +6587,26 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<Proprieta> it = lista.iterator();
 				while (it.hasNext()) {
 					Proprieta proprieta = it.next();
 		
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 		
 					DataElement de = new DataElement();
 					de.setValue(proprieta.getNome());
 					de.setIdToRemove(proprieta.getId() + "");
 					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
-					e.addElement(de);
+					e.add(de);
 					
 					de = new DataElement();
 					de.setValue(proprieta.getValore());
-					e.addElement(de);
+					e.add(de);
 		
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -6767,26 +6766,26 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<Proprieta> it = lista.iterator();
 				while (it.hasNext()) {
 					Proprieta proprieta = it.next();
 		
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 		
 					DataElement de = new DataElement();
 					de.setValue(proprieta.getNome());
 					de.setIdToRemove(proprieta.getId() + "");
 					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
-					e.addElement(de);
+					e.add(de);
 					
 					de = new DataElement();
 					de.setValue(proprieta.getValore());
-					e.addElement(de);
+					e.add(de);
 		
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -6871,7 +6870,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	
 	
 	
-	public Vector<DataElement> addConnettoriMultipliConfigurazioneToDati(Vector<DataElement> dati,
+	public List<DataElement> addConnettoriMultipliConfigurazioneToDati(List<DataElement> dati,
 			TipoOperazione tipoOp, String protocollo, String accessoDaAPSParametro, String stato, String modalitaConsegna, String tipoCustom,
 			int numeroProprietaCustom, String servletProprietaCustom, List<Parameter> listaParametriServletProprietaCustom, boolean visualizzaLinkProprietaCustom,
 			String loadBalanceStrategia,boolean modificaStatoAbilitata,
@@ -6888,14 +6887,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		DataElement de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(accessoDaAPSParametro!=null && !"".equals(accessoDaAPSParametro)) {
 			de = new DataElement();
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(accessoDaAPSParametro);
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		de = new DataElement();
@@ -6913,7 +6912,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setType(DataElementType.TEXT);
 			de.setValue(stato);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		de = new DataElement();
@@ -6942,7 +6941,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				this.pd.setInserisciBottoni(false);
 				this.pd.disableEditMode();
 				
-				dati.addElement(de);
+				dati.add(de);
 			
 				return dati;
 				
@@ -6957,7 +6956,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(modalitaConsegna);
 		}
-		dati.addElement(de);
+		dati.add(de);
 			
 		if(stato.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO)) {
 			
@@ -6984,7 +6983,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 //				de.setSize(this.getSize());
 //				de.setRequired(true);
 //				de.setValue(tipoCustom);
-//				dati.addElement(de);
+//				dati.add(de);
 				
 				// Link
 				if(visualizzaLinkProprietaCustom){
@@ -6995,7 +6994,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_PROPRIETA +"(" + numeroProprietaCustom + ")");
 					else
 						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_PROPRIETA);
-					dati.addElement(de);
+					dati.add(de);
 				}
 			} else if(TipoBehaviour.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna)) {
 				
@@ -7017,7 +7016,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				DataElementInfo dInfo = new DataElementInfo(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA);
 				dInfo.setListBody(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_INFO);
 				de.setInfo(dInfo);
-				dati.addElement(de);
+				dati.add(de);
 				
 				
 				// sticky
@@ -7042,7 +7041,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					de.setType(DataElementType.HIDDEN);
 					de.setSelected(false);
 				}
-				dati.addElement(de);
+				dati.add(de);
 				
 				
 				// health check
@@ -7057,7 +7056,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				DataElementInfo dInfoPassiveHealthCheck = new DataElementInfo(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK);
 				dInfoPassiveHealthCheck.setBody(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_INFO);
 				de.setInfo(dInfoPassiveHealthCheck);
-				dati.addElement(de);
+				dati.add(de);
 				
 			}  
 			
@@ -7067,7 +7066,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				//de = new DataElement();
 				//de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SEZIONE_NOTIFICHE);
 				//de.setType(DataElementType.SUBTITLE);
-				//dati.addElement(de);
+				//dati.add(de);
 					
 				// select con il nome connettore
 				de = new DataElement();
@@ -7078,7 +7077,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setLabels(connettoriImplementaAPILabels);
 				de.setSelected(connettoreImplementaAPI);
 				de.setPostBack(true);
-				dati.addElement(de);
+				dati.add(de);
 
 			}
 			
@@ -7107,7 +7106,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					de.setSelected(true);
 					de.setValue(Costanti.CHECK_BOX_ENABLED);
 					de.setPostBack(false);
-					dati.addElement(de);
+					dati.add(de);
 					
 					de = new DataElement();
 					de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONSEGNA_CONDIZIONALE+"__NOTE");
@@ -7123,7 +7122,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					deConsegnaConNotifiche = de;
 				}
 				else {
-					dati.addElement(de);
+					dati.add(de);
 				}
 			}
 			
@@ -7133,7 +7132,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de = new DataElement();
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY);
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 				
 				
 				de = new DataElement();
@@ -7178,7 +7177,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setLabels(identificazioneCondizionale_labels);
 				de.setPostBack(true);
 				de.setSelected(stickyTipoSelettore);
-				dati.addElement(de);
+				dati.add(de);
 				
 				
 				// nome
@@ -7275,7 +7274,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de = new DataElement();
 				de.setLabel(PorteApplicativeCostanti.LABEL_TITLE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK);
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_EXCLUDE_FOR_SECONDS );
@@ -7305,7 +7304,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de = new DataElement();
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SEZIONE_NOTIFICHE);
 				de.setType(DataElementType.SUBTITLE);
-				dati.addElement(de);
+				dati.add(de);
 									
 				// checkbox abilita notifiche condizionali
 				de = new DataElement();
@@ -7315,7 +7314,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setType(DataElementType.CHECKBOX);
 				de.setSelected(notificheCondizionaliEsito);
 				de.setPostBack(true);
-				dati.addElement(de);
+				dati.add(de);
 				
 				// multiselect con esiti
 				if(notificheCondizionaliEsito) {
@@ -7328,10 +7327,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					de.setLabels(PorteApplicativeCostanti.LABELS_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE);
 					de.setSelezionati(esitiTransazione);
 					de.setRequired(true);
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
-				dati.addElement(deConsegnaConNotifiche);
+				dati.add(deConsegnaConNotifiche);
 			}
 			
 			
@@ -7339,7 +7338,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de = new DataElement();
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_CONDIZIONALITA);
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 				
 				// select list selezione connettore by se modalita' consegna e' piu' destiantari'
 				de = new DataElement();
@@ -7362,7 +7361,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					de.setType(DataElementType.HIDDEN);
 					de.setValue(selezioneConnettoreBy);
 				}
-				dati.addElement(de);
+				dati.add(de);
 				
 				// Identificazione condizionale
 				de = new DataElement();
@@ -7406,7 +7405,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setLabels(identificazioneCondizionale_labels);
 				de.setPostBack(true);
 				de.setSelected(identificazioneCondizionale);
-				dati.addElement(de);
+				dati.add(de);
 				
 				// nome
 				de = new DataElement();
@@ -7482,7 +7481,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					de.setInfo(dInfoPattern);
 				}
 				
-				dati.addElement(de);
+				dati.add(de);
 				
 				// prefisso
 				de = new DataElement();
@@ -7495,7 +7494,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				} else {
 					 de.setType(DataElementType.TEXT_EDIT);
 				}
-				dati.addElement(de);
+				dati.add(de);
 				
 				// suffisso
 				de = new DataElement();
@@ -7508,7 +7507,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				} else {
 					 de.setType(DataElementType.TEXT_EDIT);
 				}
-				dati.addElement(de);
+				dati.add(de);
 				
 				
 				// regole per azioni
@@ -7521,7 +7520,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_REGOLE_PER_AZIONI +"(" + numeroRegolePerAzioni + ")");
 					else
 						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_REGOLE_PER_AZIONI);
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 
@@ -7530,7 +7529,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de = new DataElement();
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA);
 				de.setType(DataElementType.SUBTITLE);
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_ABORT_TRANSACTION);
@@ -7538,7 +7537,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setType(DataElementType.CHECKBOX);
 				de.setSelected(condizioneNonIdentificataAbortTransaction);
 				de.setPostBack(true);
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(!condizioneNonIdentificataAbortTransaction) {
 					
@@ -7564,7 +7563,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					de.setValues(condizioneNonIdentificataDiagnosticiValues);
 					de.setLabels(condizioneNonIdentificataDiagnosticiLabels);
 					de.setSelected(condizioneNonIdentificataDiagnostico);
-					dati.addElement(de);
+					dati.add(de);
 					
 					if(TipoBehaviour.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna) && !condizioneNonIdentificataAbortTransaction) {	
 						
@@ -7572,7 +7571,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_ABORT_TRANSACTION+"__NOTE");
 						de.setType(DataElementType.NOTE);
 						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_LOAD_BALANCER_WARNING);
-						dati.addElement(de);
+						dati.add(de);
 
 					}
 					
@@ -7611,7 +7610,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						de.setValues(condizioneNonIdentificataConnettoriValues);
 						de.setLabels(condizioneNonIdentificataConnettoriLabels);
 						de.setSelected(condizioneNonIdentificataConnettore);
-						dati.addElement(de);
+						dati.add(de);
 						
 						if(TipoBehaviour.CONSEGNA_MULTIPLA.getValue().equals(modalitaConsegna) || TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
 							if(condizioneNonIdentificataConnettore==null || 
@@ -7621,14 +7620,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 								de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_CONNETTORE+"__NOTE");
 								de.setType(DataElementType.NOTE);
 								de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_MULTI_WARNING);
-								dati.addElement(de);
+								dati.add(de);
 							}
 							else if(org.openspcoop2.pdd.core.behaviour.conditional.Costanti.CONDITIONAL_NOME_CONNETTORE_VALORE_NESSUNO.equals(condizioneNonIdentificataConnettore)) {
 								de = new DataElement();
 								de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_CONNETTORE+"__NOTE");
 								de.setType(DataElementType.NOTE);
 								de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_NESSUNA_CONSEGNA);
-								dati.addElement(de);
+								dati.add(de);
 							}
 						}
 					}
@@ -7639,7 +7638,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de = new DataElement();
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO);
 				de.setType(DataElementType.SUBTITLE);
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_ABORT_TRANSACTION);
@@ -7647,7 +7646,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setType(DataElementType.CHECKBOX);
 				de.setSelected(connettoreNonTrovatoAbortTransaction);
 				de.setPostBack(true);
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(!connettoreNonTrovatoAbortTransaction) {
 										
@@ -7673,7 +7672,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					de.setValues(connettoreNonTrovatoDiagnosticiValues);
 					de.setLabels(connettoreNonTrovatoDiagnosticiLabels);
 					de.setSelected(connettoreNonTrovatoDiagnostico);
-					dati.addElement(de);
+					dati.add(de);
 					
 					if(TipoBehaviour.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna) && !connettoreNonTrovatoAbortTransaction) {	
 					
@@ -7681,7 +7680,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_ABORT_TRANSACTION+"__NOTE");
 						de.setType(DataElementType.NOTE);
 						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_LOAD_BALANCER_WARNING);
-						dati.addElement(de);
+						dati.add(de);
 
 					}
 					
@@ -7720,7 +7719,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						de.setValues(connettoreNonTrovatoConnettoriValues);
 						de.setLabels(connettoreNonTrovatoConnettoriLabels);
 						de.setSelected(connettoreNonTrovatoConnettore);
-						dati.addElement(de);
+						dati.add(de);
 						
 						if(TipoBehaviour.CONSEGNA_MULTIPLA.getValue().equals(modalitaConsegna) || TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
 							if(connettoreNonTrovatoConnettore==null || 
@@ -7730,14 +7729,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 								de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_CONNETTORE+"__NOTE");
 								de.setType(DataElementType.NOTE);
 								de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_MULTI_WARNING);
-								dati.addElement(de);
+								dati.add(de);
 							}
 							else if(org.openspcoop2.pdd.core.behaviour.conditional.Costanti.CONDITIONAL_NOME_CONNETTORE_VALORE_NESSUNO.equals(connettoreNonTrovatoConnettore)) {
 								de = new DataElement();
 								de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_CONNETTORE+"__NOTE");
 								de.setType(DataElementType.NOTE);
 								de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_NESSUNA_CONSEGNA);
-								dati.addElement(de);
+								dati.add(de);
 							}
 						}
 					}
@@ -8344,7 +8343,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 //			}
 			
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 			
 			int idTab = 0;
 			
@@ -8480,7 +8479,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 				PortaApplicativaServizioApplicativoConnettore datiConnettore = paSA.getDatiConnettore();
 				
-				Vector<DataElement> e = new Vector<DataElement>();
+				List<DataElement> e = new ArrayList<>();
 				
 				Parameter pIdTAb = new Parameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB, ""+idTab);
 				Parameter pNomePaSA = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME_SA, paSA.getNome());
@@ -8595,7 +8594,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					
 				}	
 				
-				e.addElement(de);
+				e.add(de);
 				
 				// Descrizione
 				String descrizioneOrig = (datiConnettore != null && datiConnettore.getDescrizione() != null) ? datiConnettore.getDescrizione() : "";
@@ -8623,7 +8622,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 				de.addImage(image );
 				
-				e.addElement(de);
+				e.add(de);
 				
 				// Connettore
 				de = new DataElement();
@@ -8658,7 +8657,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					de.addImage(image);
 				}
 				
-				e.addElement(de);
+				e.add(de);
 				
 				// Filtri
 				boolean showFiltri = behaviourConFiltri;
@@ -8693,7 +8692,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					
 					de.addImage(image);
 					
-					e.addElement(de);
+					e.add(de);
 				}
 				
 				if(behaviourType.equals(TipoBehaviour.CONSEGNA_LOAD_BALANCE) &&
@@ -8716,7 +8715,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					
 					de.addImage(image );
 					
-					e.addElement(de);
+					e.add(de);
 				}
 				
 				
@@ -8736,7 +8735,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					
 					de.addImage(image );
 					
-					e.addElement(de);
+					e.add(de);
 				}
 				
 				boolean showGestioneNotifiche = false;
@@ -8773,7 +8772,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					}
 					de.setLabel(label);
 					
-					ConfigurazioneGestioneConsegnaNotifiche configurazioneGestioneConsegnaNotifiche = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(paSA, this.log);
+					ConfigurazioneGestioneConsegnaNotifiche configurazioneGestioneConsegnaNotifiche = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(paSA);
 					
 					String consegnaNotificheLabel = "";
 					
@@ -8829,10 +8828,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					
 					de.addImage(image );
 					
-					e.addElement(de);
+					e.add(de);
 				}
 				
-				dati.addElement(e);
+				dati.add(e);
 				idTab ++;
 			}
 			
@@ -9191,7 +9190,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		return null;
 	}
 	
-	public Vector<DataElement> addConnettoriMultipliToDati(Vector<DataElement> dati, TipoOperazione tipoOp,
+	public List<DataElement> addConnettoriMultipliToDati(List<DataElement> dati, TipoOperazione tipoOp,
 			TipoBehaviour beaBehaviourType, String nomeSAConnettore,
 			String nome, String descrizione, String stato, boolean behaviourConFiltri, String filtri, String vDatiGenerali, String vDescrizione, String vFiltri, String vConnettore,
 			PortaApplicativaServizioApplicativo paSA) {
@@ -9312,7 +9311,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		return dati;
 	}
 	
-	public Vector<DataElement> addInformazioniGruppiAsHiddenToDati(TipoOperazione tipoOp, Vector<DataElement> dati,	
+	public List<DataElement> addInformazioniGruppiAsHiddenToDati(TipoOperazione tipoOp, List<DataElement> dati,	
 			String visualizzaDatiGenerali, String visualizzaDescrizione, String visualizzaConnettore, String visualizzaFiltri) {
 		
 //		Parameter pConfigurazioneDatiGenerali = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_DATI_GENERALI, visualizzaDatiGenerali);
@@ -9355,7 +9354,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		return dati;
 	}
 	
-	public Vector<DataElement> addConnettoriMultipliLoadBalanceToDati(Vector<DataElement> dati, TipoOperazione tipoOp,
+	public List<DataElement> addConnettoriMultipliLoadBalanceToDati(List<DataElement> dati, TipoOperazione tipoOp,
 			TipoBehaviour beaBehaviourType, String nomeSAConnettore, String peso) {
 		
 		DataElement de = new DataElement();
@@ -9862,25 +9861,25 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<Proprieta> it = lista.iterator();
 				while (it.hasNext()) {
 					Proprieta proprieta = it.next();
 		
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 		
 					DataElement de = new DataElement();
 					de.setValue(proprieta.getNome());
 					de.setIdToRemove(proprieta.getId() + "");
-					e.addElement(de);
+					e.add(de);
 					
 					de = new DataElement();
 					de.setValue(proprieta.getValore());
-					e.addElement(de);
+					e.add(de);
 		
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -10088,26 +10087,26 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<Proprieta> it = lista.iterator();
 				while (it.hasNext()) {
 					Proprieta proprieta = it.next();
 		
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 		
 					DataElement de = new DataElement();
 					de.setValue(proprieta.getNome());
 					de.setIdToRemove(proprieta.getId() + "");
 					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
-					e.addElement(de);
+					e.add(de);
 					
 					de = new DataElement();
 					de.setValue(proprieta.getValore());
-					e.addElement(de);
+					e.add(de);
 		
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -10190,16 +10189,16 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		}
 	}
 	
-	public Vector<DataElement> addProprietaConnettoriMultipliConfigToDati(Vector<DataElement> dati, TipoOperazione tipoOp, String nome, String valore, String labelTitolo) {
+	public List<DataElement> addProprietaConnettoriMultipliConfigToDati(List<DataElement> dati, TipoOperazione tipoOp, String nome, String valore, String labelTitolo) {
 		return addProprietaConnettoriMultipliConfigToDati(dati, tipoOp, nome, valore, labelTitolo, null);
 	}
 	
-	public Vector<DataElement> addProprietaConnettoriMultipliConfigToDati(Vector<DataElement> dati, TipoOperazione tipoOp, String nome, String valore, String labelTitolo, String nomeSA) {
+	public List<DataElement> addProprietaConnettoriMultipliConfigToDati(List<DataElement> dati, TipoOperazione tipoOp, String nome, String valore, String labelTitolo, String nomeSA) {
 
 		DataElement de = new DataElement();
 		de.setLabel(labelTitolo);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
@@ -10213,7 +10212,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		}
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PROP);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
@@ -10222,7 +10221,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de.setName(CostantiControlStation.PARAMETRO_VALORE);
 		de.setValue(valore);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(nomeSA != null) {
 			de = new DataElement();
@@ -10230,7 +10229,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setValue(nomeSA);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME_SA);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		return dati;
 		
@@ -10469,7 +10468,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<String> it = lista.iterator();
@@ -10478,20 +10477,20 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					ConfigurazioneSelettoreCondizioneRegola regola = configurazioneCondizionale.getRegola(nomeRegola);
 					Parameter pNomeRegola = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_OLD_NOME, nomeRegola);
 					
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 		
 					DataElement de = new DataElement();
 					de.setValue(nomeRegola);
 					de.setIdToRemove(nomeRegola + "");
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI_CHANGE, 
 							pIdPorta, pIdSogg, pIdAsps, pNomePorta, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pAccessoDaAPS, pIdTab, pConnettoreAccessoCM,pNomeRegola);
-					e.addElement(de);
+					e.add(de);
 					
 					de = new DataElement();
 					de.setValue(regola.getPatternOperazione());
-					e.addElement(de);
+					e.add(de);
 		
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -10503,7 +10502,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			throw new Exception(e);
 		}
 	}
-	public Vector<DataElement> addAzioneConnettoriMultipliConfigToDati(Vector<DataElement> dati, TipoOperazione tipoOp, String protocollo, ServiceBinding serviceBinding,
+	public List<DataElement> addAzioneConnettoriMultipliConfigToDati(List<DataElement> dati, TipoOperazione tipoOp, String protocollo, ServiceBinding serviceBinding,
 			String oldNome, String nome, String patternOperazione, boolean selezioneConnettoreByFiltro, String identificazioneCondizionale,
 			String identificazioneCondizionalePattern, String identificazioneCondizionalePrefisso, String identificazioneCondizionaleSuffisso,
 			List<String> connettoriValues, List<String> connettoriLabels) throws Exception {
@@ -10511,7 +10510,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		DataElement de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_REGOLA);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// vecchio nome
 		if(tipoOp.equals(TipoOperazione.CHANGE)) {
@@ -10520,7 +10519,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setValue(oldNome);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_OLD_NOME);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		// nome
@@ -10530,7 +10529,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_NOME);
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// operationPattern
 		de = new DataElement();
@@ -10548,7 +10547,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			info.setListBody(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_BODY_LIST_SOAP);
 		}
 		de.setInfo(info);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Identificazione condizionale
 		de = new DataElement();
@@ -10593,7 +10592,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de.setLabels(identificazioneCondizionale_labels);
 		de.setPostBack(true);
 		de.setSelected(identificazioneCondizionale);
-		dati.addElement(de);	
+		dati.add(de);	
 		
 		// nome
 		de = new DataElement();
@@ -10667,7 +10666,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setInfo(dInfoPattern);
 		}
 		
-		dati.addElement(de);
+		dati.add(de);
 		
 		// prefisso
 		de = new DataElement();
@@ -10683,7 +10682,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		} else {
 			 de.setType(DataElementType.TEXT_EDIT);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		// suffisso
 		de = new DataElement();
@@ -10699,7 +10698,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		} else {
 			 de.setType(DataElementType.TEXT_EDIT);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		
@@ -10843,7 +10842,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 						if(behaviourType.equals(TipoBehaviour.CONSEGNA_CON_NOTIFICHE)) {
 								org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = 
-										org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(pa, ControlStationCore.getLog());
+										org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(pa);
 
 							if(configurazioneMultiDeliver != null) {
 								if(configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() != null) {
@@ -10972,7 +10971,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	}
 	
 	
-	public Vector<DataElement> addConnettoriMultipliNotificheToDati(Vector<DataElement> dati, TipoOperazione tipoOp,
+	public List<DataElement> addConnettoriMultipliNotificheToDati(List<DataElement> dati, TipoOperazione tipoOp,
 			TipoBehaviour beaBehaviourType, String nomeSAConnettore, ServiceBinding serviceBinding, String cadenzaRispedizione,
 			String codiceRisposta2xx, String codiceRisposta2xxValueMin, String codiceRisposta2xxValueMax, String codiceRisposta2xxValue,
 			String codiceRisposta3xx, String codiceRisposta3xxValueMin, String codiceRisposta3xxValueMax, String codiceRisposta3xxValue,
@@ -10981,7 +10980,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			String gestioneFault, String faultCode, String faultActor, String faultMessage,
 			boolean consegnaSincrona,
 			String coda, String priorita, String prioritaMax,
-			String connettoreTipoMessaggioDaNotificare, String httpMethodDaNotificare
+			String connettoreTipoMessaggioDaNotificare, String connettoreIniettaContestoSincrono, String httpMethodDaNotificare
 	) {
 		
 		DataElement de = new DataElement();
@@ -11008,8 +11007,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setLabels(PorteApplicativeCostanti.VALORI_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_DA_NOTIFICARE);
 			de.setSelected(connettoreTipoMessaggioDaNotificare);
 			de.setPostBack(true);
-			dati.addElement(de);
-			
+			dati.add(de);
+						
 			// http notifica
 			if(ServiceBinding.REST.equals(serviceBinding) || 
 					(connettoreTipoMessaggioDaNotificare!=null && MessaggioDaNotificare.ENTRAMBI.equals(connettoreTipoMessaggioDaNotificare)) 
@@ -11028,8 +11027,16 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				}
 				de.setSelected(httpMethodDaNotificare);
 				de.setPostBack(false);
-				dati.addElement(de);
+				dati.add(de);
 			}
+			
+			// contesto sincrono
+			de = new DataElement();
+			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_INIETTA_CONTESTO_SINCRONO);
+			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_INIETTA_CONTESTO_SINCRONO);
+			de.setType(DataElementType.CHECKBOX);
+			de.setSelected(connettoreIniettaContestoSincrono);
+			dati.add(de);
 			
 		}
 		
@@ -11161,7 +11168,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					codiceRisposta5xx, codiceRisposta5xxValueMin, codiceRisposta5xxValueMax, codiceRisposta5xxValue,
 					gestioneFault, faultCode, faultActor, faultMessage,
 					consegnaSincrona,
-					connettoreTipoMessaggioDaNotificare, httpMethodDaNotificare);
+					connettoreTipoMessaggioDaNotificare, connettoreIniettaContestoSincrono, httpMethodDaNotificare);
 			if(nuovaConfigurazioneGestioneConsegnaNotifiche != null) {
 				consegnaNotificheLabel = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.GestioneConsegnaNotificheUtils.toString(nuovaConfigurazioneGestioneConsegnaNotifiche,
 						serviceBinding.equals(ServiceBinding.SOAP));
@@ -11517,7 +11524,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			String codiceRisposta5xx, String codiceRisposta5xxValueMin, String codiceRisposta5xxValueMax, String codiceRisposta5xxValue,
 			String gestioneFault, String faultCode, String faultActor, String faultMessage,
 			boolean consegnaSincrona,
-			String connettoreTipoMessaggioDaNotificare, String httpMethodDaNotificare) throws Exception {
+			String connettoreTipoMessaggioDaNotificare, String connettoreIniettaContestoSincrono, String httpMethodDaNotificare) throws Exception {
 		
 		ConfigurazioneGestioneConsegnaNotifiche configurazioneGestioneConsegnaNotifiche = new ConfigurazioneGestioneConsegnaNotifiche();
 		
@@ -11527,6 +11534,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				tipo = MessaggioDaNotificare.toEnumConstant(connettoreTipoMessaggioDaNotificare, false);
 			}
 			configurazioneGestioneConsegnaNotifiche.setMessaggioDaNotificare(tipo);
+			
+			configurazioneGestioneConsegnaNotifiche.setInjectTransactionSyncContext(ServletUtils.isCheckBoxEnabled(connettoreIniettaContestoSincrono));
 			
 			HttpRequestMethod tipoHttp = null;
 			if(httpMethodDaNotificare!=null && !PorteApplicativeCostanti.VALORE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA_USA_QUELLO_DELLA_RICHIESTA.equals(httpMethodDaNotificare)) {

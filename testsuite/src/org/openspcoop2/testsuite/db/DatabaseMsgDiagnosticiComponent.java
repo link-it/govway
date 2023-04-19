@@ -28,8 +28,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
@@ -485,6 +486,9 @@ public class DatabaseMsgDiagnosticiComponent {
 	}
 	
 	public boolean isTracedMessaggioWithLike(String id,String messaggio)throws Exception{
+		return isTracedMessaggioWithLike(id, messaggio, null);
+	}
+	public boolean isTracedMessaggioWithLike(String id,String messaggio, List<String> listDiagnostici)throws Exception{
 		if(messaggio==null)throw new TestSuiteException("Messaggio vale null");
 
 		ResultSet res = null;
@@ -499,7 +503,24 @@ public class DatabaseMsgDiagnosticiComponent {
 //					CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO+"='"+id+"' AND "+
 //					CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO+" LIKE '%"+org.openspcoop2.utils.sql.SQLQueryObjectCore.getEscapeStringValue(messaggio)+"%' ]");
 			res = prep.executeQuery();
-			return res.next();
+			boolean value=res.next();
+			
+			if(listDiagnostici!=null) {
+				res.close();
+				prep.close();
+				
+				prep = this.connectionMsgDiagnostici
+						.prepareStatement("select "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO+" from "+CostantiDB.MSG_DIAGNOSTICI+" where "+
+								CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO+"=? order by "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_GDO+" ASC");
+				prep.setString(1, id);
+				res = prep.executeQuery();
+				while(res.next()) {
+					String msg = res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO);
+					listDiagnostici.add(msg);
+				}
+			}
+			
+			return value;
 		} catch (SQLException e) {
 			throw new TestSuiteException("Errore nel database: "+e.getMessage(),
 			"nella fase DBC.getResult");
@@ -762,10 +783,10 @@ public class DatabaseMsgDiagnosticiComponent {
 		}
 	}
 	
-	public Vector<String> getMessaggiDiagnostici(String id)throws TestSuiteException{
+	public List<String> getMessaggiDiagnostici(String id)throws TestSuiteException{
 		ResultSet res = null;
 		PreparedStatement prep = null;
-		Vector<String> resultsVector = new Vector<String>();
+		List<String> resultsList = new ArrayList<>();
 		try {
 			StringBuilder sql = new StringBuilder();
 			sql.append("select * from "+CostantiDB.MSG_DIAGNOSTICI+" where "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO+"=?");
@@ -776,7 +797,7 @@ public class DatabaseMsgDiagnosticiComponent {
 				
 				// Verifico che non siano due email o tre email del caso di test
 				String messaggio = res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO);
-				resultsVector.add(messaggio);
+				resultsList.add(messaggio);
 
 			}
 			res.close();
@@ -795,13 +816,13 @@ public class DatabaseMsgDiagnosticiComponent {
 			}catch(Exception e){}
 		}
 		
-		return resultsVector;
+		return resultsList;
 	}
 	
-	public Vector<String> getMessaggiNonTrasformatiCorrettamente()throws TestSuiteException{
+	public List<String> getMessaggiNonTrasformatiCorrettamente()throws TestSuiteException{
 		ResultSet res = null;
 		PreparedStatement prep = null;
-		Vector<String> resultsVector = new Vector<String>();
+		List<String> resultsList = new ArrayList<String>();
 		try {
 			StringBuilder sql = new StringBuilder();
 			sql.append("select * from "+CostantiDB.MSG_DIAGNOSTICI+" where "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO +" LIKE '%@%@%'");
@@ -885,7 +906,7 @@ public class DatabaseMsgDiagnosticiComponent {
 				}
 				
 				if(casoSpecialeEmail==false){
-					resultsVector.add(CostantiDB.MSG_DIAGNOSTICI+"."+res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO)+
+					resultsList.add(CostantiDB.MSG_DIAGNOSTICI+"."+res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO)+
 							": "+res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO));
 				}/*else{
 					System.out.println("CASO SPECIALE EMAIL");
@@ -907,13 +928,13 @@ public class DatabaseMsgDiagnosticiComponent {
 			}catch(Exception e){}
 		}
 		
-		return resultsVector;
+		return resultsList;
 	}
 	
-	public Vector<String> getMessaggiCheSegnalanoNullPointer()throws TestSuiteException{
+	public List<String> getMessaggiCheSegnalanoNullPointer()throws TestSuiteException{
 		ResultSet res = null;
 		PreparedStatement prep = null;
-		Vector<String> resultsVector = new Vector<String>();
+		List<String> resultsList = new ArrayList<>();
 		try {
 			StringBuilder sql = new StringBuilder();
 			sql.append("select * from "+CostantiDB.MSG_DIAGNOSTICI+" where "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO +" LIKE '%NullPointer%'");
@@ -923,7 +944,7 @@ public class DatabaseMsgDiagnosticiComponent {
 				
 				// Verifico che non siano due email o tre email del caso di test
 				String messaggio = res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO);
-				resultsVector.add(CostantiDB.MSG_DIAGNOSTICI+"."+res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO)+
+				resultsList.add(CostantiDB.MSG_DIAGNOSTICI+"."+res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO)+
 						": "+messaggio);
 
 			}
@@ -943,13 +964,13 @@ public class DatabaseMsgDiagnosticiComponent {
 			}catch(Exception e){}
 		}
 		
-		return resultsVector;
+		return resultsList;
 	}
 	
-	public Vector<String> getMessaggiSenzaCodici()throws TestSuiteException{
+	public List<String> getMessaggiSenzaCodici()throws TestSuiteException{
 		ResultSet res = null;
 		PreparedStatement prep = null;
-		Vector<String> resultsVector = new Vector<String>();
+		List<String> resultsList = new ArrayList<>();
 		try {
 			StringBuilder sql = new StringBuilder();
 			sql.append("select * from "+CostantiDB.MSG_DIAGNOSTICI+" where "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE +" is null OR "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE +"=''");
@@ -959,7 +980,7 @@ public class DatabaseMsgDiagnosticiComponent {
 				
 				// Verifico che non siano due email o tre email del caso di test
 				String messaggio = res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO);
-				resultsVector.add(CostantiDB.MSG_DIAGNOSTICI+"."+res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO)+
+				resultsList.add(CostantiDB.MSG_DIAGNOSTICI+"."+res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO)+
 						": "+messaggio);
 
 			}
@@ -979,16 +1000,18 @@ public class DatabaseMsgDiagnosticiComponent {
 			}catch(Exception e){}
 		}
 		
-		return resultsVector;
+		return resultsList;
 	}
 	
-	private static final String LISTA_CODICI_DUMP = "'009007','009008','009009','009010','009011','009012','009013','009014'," // dump
-			+ "'007071','007072'"; // ricezione risposta
+	private static final String LISTA_CODICI_DUMP = 
+			"'009007','009008','009009','009010','009011','009012','009013','009014',"+ // dump
+			"'009015','009016','009017','009018','009019','009020','009021','009022',"+ // dump file trace
+			"'007071','007072'"; // ricezione risposta
 	
-	public Vector<String> getTracciamentoNonRiuscito()throws TestSuiteException{
+	public List<String> getTracciamentoNonRiuscito()throws TestSuiteException{
 		ResultSet res = null;
 		PreparedStatement prep = null;
-		Vector<String> resultsVector = new Vector<String>();
+		List<String> resultsList = new ArrayList<>();
 		try {
 			StringBuilder sql = new StringBuilder();
 			sql.append("select * from "+CostantiDB.MSG_DIAGNOSTICI+" where "+
@@ -999,7 +1022,7 @@ public class DatabaseMsgDiagnosticiComponent {
 				
 				// Verifico che non siano due email o tre email del caso di test
 				String messaggio = res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO);
-				resultsVector.add(CostantiDB.MSG_DIAGNOSTICI+"."+res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO)+
+				resultsList.add(CostantiDB.MSG_DIAGNOSTICI+"."+res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO)+
 						": "+messaggio);
 
 			}
@@ -1019,7 +1042,7 @@ public class DatabaseMsgDiagnosticiComponent {
 			}catch(Exception e){}
 		}
 		
-		return resultsVector;
+		return resultsList;
 	}
 	
 

@@ -31,8 +31,8 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 */
 public class JoseSecurityTest extends ConfigLoader {
 
-	public final static String api = "TestJoseSecurity";
-	public final static String apiNONE = "TestJoseSecurityNONE";
+	public static final String api = "TestJoseSecurity";
+	public static final String apiNONE = "TestJoseSecurityNONE";
 	
 	@Test
 	public void signature() throws Exception {

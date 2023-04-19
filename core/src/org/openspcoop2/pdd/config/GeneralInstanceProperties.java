@@ -821,7 +821,9 @@ public class GeneralInstanceProperties {
 				}
 			}
 			
-		}catch(Exception e){
+		} catch (RuntimeException e) {
+			return null;
+		} catch (Exception e) {
 			return null;
 		}
 		

@@ -27,7 +27,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -74,7 +73,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/NumeroRichiesteSoap/v1?sleep="+durata_simultanee);
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxConcurrentRequests + 1);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, maxConcurrentRequests + 1);
 		
 		checkAssertionsRichiesteSimultanee(responses, maxConcurrentRequests);
 		Commons.checkPostConditionsRichiesteSimultanee(idPolicy);
@@ -99,7 +98,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/NumeroRichiesteSoap/v1?sleep="+durata_simultanee);
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxConcurrentRequests + 1);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, maxConcurrentRequests + 1);
 		
 		checkAssertionsRichiesteSimultanee(responses, maxConcurrentRequests);
 		Commons.checkPostConditionsRichiesteSimultanee(idPolicy);
@@ -120,7 +119,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/NumeroRichiesteSoap/v1?sleep="+durata_simultanee);
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxConcurrentRequests + 1);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, maxConcurrentRequests + 1);
 
 		assertEquals(maxConcurrentRequests, responses.stream().filter(r -> r.getResultHTTPOperation() == 200).count());
 		// La richiesta fallita deve avere status code 429
@@ -168,7 +167,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl( System.getProperty("govway_base_path") + "/SoggettoInternoTest/NumeroRichiesteSoap/v1");
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
 		
 		Utils.waitForZeroActiveRequests(idPolicy, maxRequests);
 		
@@ -204,7 +203,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl( System.getProperty("govway_base_path") + "/SoggettoInternoTest/NumeroRichiesteSoap/v1");
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
 		
 		Utils.waitForZeroActiveRequests(idPolicy, maxRequests);
 		
@@ -241,7 +240,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl( System.getProperty("govway_base_path") + "/SoggettoInternoTest/NumeroRichiesteSoap/v1");
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
 		
 		Utils.waitForZeroActiveRequests(idPolicy, maxRequests);
 		
@@ -278,7 +277,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl( System.getProperty("govway_base_path") + "/SoggettoInternoTest/NumeroRichiesteSoap/v1");
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
 		
 		Utils.waitForZeroActiveRequests(idPolicy, maxRequests);
 		
@@ -316,7 +315,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl( System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/NumeroRichiesteSoap/v1");
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
 		
 		Utils.waitForZeroActiveRequests(idPolicy, maxRequests);
 		
@@ -354,7 +353,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl( System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/NumeroRichiesteSoap/v1");
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
 		
 		Utils.waitForZeroActiveRequests(idPolicy, maxRequests);
 		
@@ -391,7 +390,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl( System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/NumeroRichiesteSoap/v1");
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
 		
 		Utils.waitForZeroActiveRequests(idPolicy, maxRequests);
 		
@@ -428,7 +427,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl( System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/NumeroRichiesteSoap/v1");
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
 		
 		Utils.waitForZeroActiveRequests(idPolicy, maxRequests);
 		
@@ -439,7 +438,7 @@ public class SoapTest extends ConfigLoader {
 	}
 	
 	
-	private void checkAssertionsNumeroRichieste(Vector<HttpResponse> responses, int maxRequests, int windowSize) throws DynamicException {
+	private void checkAssertionsNumeroRichieste(List<HttpResponse> responses, int maxRequests, int windowSize) throws DynamicException {
 
 		// Tutte le richieste devono avere lo header X-RateLimit-Reset impostato ad un numero
 		// Tutte le richieste devono avere lo header X-RateLimit-Limit
@@ -487,7 +486,7 @@ public class SoapTest extends ConfigLoader {
 	}
 	
 	
-	private void checkAssertionsRichiesteSimultanee(Vector<HttpResponse> responses, int maxConcurrentRequests) throws Exception {
+	private void checkAssertionsRichiesteSimultanee(List<HttpResponse> responses, int maxConcurrentRequests) throws Exception {
 		// Tutte le richieste tranne 1 devono restituire 200
 		
 		assertEquals(maxConcurrentRequests, responses.stream().filter(r -> r.getResultHTTPOperation() == 200).count());

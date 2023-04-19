@@ -25,7 +25,7 @@ import static org.junit.Assert.assertNotEquals;
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Vector;
+import java.util.List;
 
 import org.junit.Test;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
@@ -75,7 +75,7 @@ public class RestTest extends ConfigLoader {
 		request.setMethod(HttpRequestMethod.POST);
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/OccupazioneBandaRest/v1/minuto");
 
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
 		
 		Utils.waitForZeroActiveRequests(idPolicy, 3);
 		
@@ -129,7 +129,7 @@ public class RestTest extends ConfigLoader {
 			// Faccio n-1 richieste parallele per testare eventuali race conditions sui contatori,
 			// alla fine faccio l'ultima che fa scattare la policy
 	
-			Vector<HttpResponse> responses = null;
+			List<HttpResponse> responses = null;
 			if(policyType!=null && (policyType.isHazelcastCounters() || policyType.isRedisCounters())) {
 				 // altrimenti a volte non funziona per via del parallelismo e del controllo che avviene una volta processata la risposta
 				responses = Utils.makeSequentialRequests(request, 3);
@@ -177,7 +177,7 @@ public class RestTest extends ConfigLoader {
 		request.setMethod(HttpRequestMethod.POST);
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/OccupazioneBandaRest/v1/orario");
 
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
 		Utils.waitForZeroActiveRequests(idPolicy, 3);
 		responses.addAll(Utils.makeSequentialRequests(request, 1));
 
@@ -203,7 +203,7 @@ public class RestTest extends ConfigLoader {
 		request.setMethod(HttpRequestMethod.POST);
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/OccupazioneBandaRest/v1/giornaliero");
 
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
 		Utils.waitForZeroActiveRequests(idPolicy, 3);
 		responses.addAll(Utils.makeSequentialRequests(request, 1));
 
@@ -229,7 +229,7 @@ public class RestTest extends ConfigLoader {
 		request.setMethod(HttpRequestMethod.POST);
 		request.setUrl(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/OccupazioneBandaRest/v1/minuto");
 
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
 		Utils.waitForZeroActiveRequests(idPolicy, 3);
 		responses.addAll(Utils.makeSequentialRequests(request, 1));
 
@@ -277,7 +277,7 @@ public class RestTest extends ConfigLoader {
 			idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "OccupazioneBandaRest", PolicyAlias.MINUTODEFAULT);
 			Commons.checkPreConditionsOccupazioneBanda(idPolicy, policyType);
 			
-			Vector<HttpResponse> responses = null;
+			List<HttpResponse> responses = null;
 			if(policyType!=null && (policyType.isHazelcastCounters() || policyType.isRedisCounters())) {
 				 // altrimenti a volte non funziona per via del parallelismo e del controllo che avviene una volta processata la risposta
 				responses = Utils.makeSequentialRequests(request, 3);
@@ -326,7 +326,7 @@ public class RestTest extends ConfigLoader {
 		request.setMethod(HttpRequestMethod.POST);
 		request.setUrl(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/OccupazioneBandaRest/v1/orario");
 
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
 		Utils.waitForZeroActiveRequests(idPolicy, 3);
 		responses.addAll(Utils.makeSequentialRequests(request, 1));
 
@@ -352,7 +352,7 @@ public class RestTest extends ConfigLoader {
 		request.setMethod(HttpRequestMethod.POST);
 		request.setUrl(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/OccupazioneBandaRest/v1/giornaliero");
 
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
 		Utils.waitForZeroActiveRequests(idPolicy, 3);
 		responses.addAll(Utils.makeSequentialRequests(request, 1));
 
@@ -362,10 +362,10 @@ public class RestTest extends ConfigLoader {
 	
 	
 	
-	private void checkAssertions(Vector<HttpResponse> responses, int maxKb, int windowSize) throws Exception {
+	private void checkAssertions(List<HttpResponse> responses, int maxKb, int windowSize) throws Exception {
 		checkAssertions(responses, maxKb, windowSize, PolicyGroupByActiveThreadsType.LOCAL);
 	}
-	private void checkAssertions(Vector<HttpResponse> responses, int maxKb, int windowSize, PolicyGroupByActiveThreadsType policyType) throws Exception {
+	private void checkAssertions(List<HttpResponse> responses, int maxKb, int windowSize, PolicyGroupByActiveThreadsType policyType) throws Exception {
 		
 		if(policyType!=null && policyType.isInconsistent()) {
 			// numero troppo casuali
@@ -386,7 +386,7 @@ public class RestTest extends ConfigLoader {
 			}
 		}
 	}
-	private void _checkAssertions(Vector<HttpResponse> responses, int maxKb, int windowSize, PolicyGroupByActiveThreadsType policyType) throws Exception {
+	private void _checkAssertions(List<HttpResponse> responses, int maxKb, int windowSize, PolicyGroupByActiveThreadsType policyType) throws Exception {
 		
 		responses.forEach(r -> { 			
 				assertNotEquals(null,Integer.valueOf(r.getHeaderFirstValue(Headers.BandWidthQuotaReset)));

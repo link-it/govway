@@ -50,8 +50,8 @@ public class ExampleServletInitListener implements ServletContextListener {
 		return ExampleServletInitListener.initialized;
 	}
 	
-	public final static String ID_APPLICATIVO_RUNTIME = "Esempio1RuntimeProdotto";
-	public final static String ID_APPLICATIVO_CONFIGURAZIONE = "Esempio2ConfigurazioneProdotto";
+	public static final String ID_APPLICATIVO_RUNTIME = "Esempio1RuntimeProdotto";
+	public static final String ID_APPLICATIVO_CONFIGURAZIONE = "Esempio2ConfigurazioneProdotto";
 	public static String UUID_RUNTIME = null;
 	public static String UUID_CONFIGURAZIONE = null;
 	public static String JNDI_NAME_RUNTIME = null;

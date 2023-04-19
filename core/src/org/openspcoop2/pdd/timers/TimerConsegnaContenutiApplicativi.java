@@ -187,7 +187,7 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 		}
 	}
 	
-	private final static String DATA_START = "DATA_START";
+	private static final String DATA_START = "DATA_START";
 	
 	@Override
 	public void logCheckInProgress(Map<String, Object> context) {

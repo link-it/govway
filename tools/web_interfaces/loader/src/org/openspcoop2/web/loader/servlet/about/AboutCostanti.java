@@ -19,7 +19,8 @@
  */
 package org.openspcoop2.web.loader.servlet.about;
 
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -33,30 +34,35 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
  * @version $Rev$, $Date$
  */
 public class AboutCostanti {
+	
+	private AboutCostanti() {}
 
 	/* OBJECT NAME */
 
-	public final static String OBJECT_NAME_ABOUT = "about";
+	public static final String OBJECT_NAME_ABOUT = "about";
 
-	public final static ForwardParams TIPO_OPERAZIONE_ABOUT = ForwardParams.OTHER("");
+	public static final ForwardParams TIPO_OPERAZIONE_ABOUT = ForwardParams.OTHER("");
 
 	/* SERVLET NAME */
 
-	public final static String SERVLET_NAME_ABOUT = OBJECT_NAME_ABOUT+".do";
-	public final static Vector<String> SERVLET_ABOUT = new Vector<String>();
+	public static final String SERVLET_NAME_ABOUT = OBJECT_NAME_ABOUT+".do";
+	private static final List<String> SERVLET_ABOUT = new ArrayList<>();
+	public static List<String> getServletAbout() {
+		return SERVLET_ABOUT;
+	}
 	static{
 		SERVLET_ABOUT.add(SERVLET_NAME_ABOUT);
 	}
 	
 	/* LABEL */
-	public final static String LABEL_ABOUT = "Informazioni";
-	public final static String LABEL_PRODOTTO = "Prodotto";
-	public final static String LABEL_VERSIONE = "Versione";
-	public final static String LABEL_SITO = "Sito";
+	public static final String LABEL_ABOUT = "Informazioni";
+	public static final String LABEL_PRODOTTO = "Prodotto";
+	public static final String LABEL_VERSIONE = "Versione";
+	public static final String LABEL_SITO = "Sito";
 	
-	public final static String LABEL_COPYRIGHT = "Copyright";
-	public final static String LABEL_COPYRIGHT_VALUE = CostantiPdD.OPENSPCOOP2_COPYRIGHT;
+	public static final String LABEL_COPYRIGHT = "Copyright";
+	public static final String LABEL_COPYRIGHT_VALUE = CostantiPdD.OPENSPCOOP2_COPYRIGHT;
 	
-	public final static String LABEL_LICENZA = "Licenza";
-	public final static String LICENSE = CostantiPdD.OPENSPCOOP2_LICENSE;
+	public static final String LABEL_LICENZA = "Licenza";
+	public static final String LICENSE = CostantiPdD.OPENSPCOOP2_LICENSE;
 }

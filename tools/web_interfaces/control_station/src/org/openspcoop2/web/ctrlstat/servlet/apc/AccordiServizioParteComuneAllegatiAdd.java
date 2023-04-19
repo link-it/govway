@@ -22,7 +22,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.apc;
 
 import java.util.List;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -70,7 +70,6 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public final class AccordiServizioParteComuneAllegatiAdd extends Action {
 
-	@SuppressWarnings("incomplete-switch")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -84,26 +83,22 @@ public final class AccordiServizioParteComuneAllegatiAdd extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
-		String userLogin = (String) ServletUtils.getUserLoginFromSession(session);
+		String userLogin = ServletUtils.getUserLoginFromSession(session);
 
 		try {
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 			ArchiviHelper archiviHelper = new ArchiviHelper(request, pd, session);
 			
 			Boolean isShowAccordiCooperazione = ServletUtils.getObjectFromSession(request, session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_COOPERAZIONE);
-			
-//			FileUploadForm fileUpload = (FileUploadForm) form;
 
 			String idAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
-			long idAccordoLong = Long.valueOf(idAccordo);
+			long idAccordoLong = Long.parseLong(idAccordo);
 			String ruolo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_RUOLO);
 			String tipoFile = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_TIPO_FILE);
 			
 			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
-
-//			FormFile ff = fileUpload.getTheFile();
 			
 			List<BinaryParameter> binaryParameterDocumenti = apcHelper.getBinaryParameters(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_DOCUMENTO);
 			
@@ -117,7 +112,7 @@ public final class AccordiServizioParteComuneAllegatiAdd extends Action {
 			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 			
 			String[] ruoli = null;
-			if(isShowAccordiCooperazione){
+			if(isShowAccordiCooperazione!=null && isShowAccordiCooperazione.booleanValue()){
 				ruoli = as.getServizioComposto() ==null ? new String[2] : new String[3];
 			}else{
 				ruoli = new String[2];
@@ -127,8 +122,9 @@ public final class AccordiServizioParteComuneAllegatiAdd extends Action {
 			ruoli[0]=RuoliDocumento.allegato.toString();
 			ruoli[1]=RuoliDocumento.specificaSemiformale.toString();
 			
-			if(isShowAccordiCooperazione){
-				if(as.getServizioComposto()!=null) ruoli[2]=RuoliDocumento.specificaCoordinamento.toString();
+			if(isShowAccordiCooperazione!=null && isShowAccordiCooperazione.booleanValue() &&
+				as.getServizioComposto()!=null) {
+				ruoli[2]=RuoliDocumento.specificaCoordinamento.toString();
 			}
 			
 			String[] tipiAmmessi = null;
@@ -147,7 +143,8 @@ public final class AccordiServizioParteComuneAllegatiAdd extends Action {
 						tipiAmmessi = TipiDocumentoSemiformale.toEnumNameArray();
 						tipiAmmessiLabel=TipiDocumentoSemiformale.toStringArray();
 						break;
-					
+					default:
+						break;
 				}
 			}
 			
@@ -174,7 +171,7 @@ public final class AccordiServizioParteComuneAllegatiAdd extends Action {
 			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false).getValue();
 			List<Parameter> listaParams = apcHelper.getTitoloApc(TipoOperazione.ADD, as, tipoAccordo, labelASTitle, null, false);
 			
-			String labelAllegati = isModalitaVistaApiCustom ? AccordiServizioParteComuneCostanti.LABEL_ALLEGATI : AccordiServizioParteComuneCostanti.LABEL_ALLEGATI + " di " + labelASTitle;
+			String labelAllegati = (isModalitaVistaApiCustom!=null && isModalitaVistaApiCustom.booleanValue()) ? AccordiServizioParteComuneCostanti.LABEL_ALLEGATI : AccordiServizioParteComuneCostanti.LABEL_ALLEGATI + " di " + labelASTitle;
 			 
 			listaParams.add(new Parameter(labelAllegati, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_ALLEGATI_LIST, pIdAccordo, pNomeAccordo, pTipoAccordo));
 			listaParams.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
@@ -187,9 +184,9 @@ public final class AccordiServizioParteComuneAllegatiAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, listaParams);
 
 				// preparo i campi
-				Vector<Object> dati = new Vector<Object>();
+				List<Object> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				apcHelper.addAccordiAllegatiToDati(dati,TipoOperazione.ADD,idAccordo,
 						ruolo,ruoli,tipiAmmessi,tipiAmmessiLabel,tipoAccordo,tipoFile,
@@ -210,9 +207,9 @@ public final class AccordiServizioParteComuneAllegatiAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, listaParams);
 
 				// preparo i campi
-				Vector<Object> dati = new Vector<Object>();
+				List<Object> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				apcHelper.addAccordiAllegatiToDati(dati,TipoOperazione.ADD,idAccordo,
 						ruolo,ruoli,tipiAmmessi,tipiAmmessiLabel,tipoAccordo,tipoFile,
@@ -249,6 +246,8 @@ public final class AccordiServizioParteComuneAllegatiAdd extends Action {
 							assc=new AccordoServizioParteComuneServizioComposto();
 						assc.addSpecificaCoordinamento(documento);
 						as.setServizioComposto(assc);
+						break;
+					default:
 						break;
 				}
 			}

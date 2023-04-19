@@ -41,7 +41,7 @@ GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData
 PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
 String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 
-Vector<GeneralLink> titlelist = pd.getTitleList();
+List<GeneralLink> titlelist = pd.getTitleList();
 String titoloSezione = Costanti.LABEL_TITOLO_SEZIONE_DEFAULT;
 if (titlelist != null && titlelist.size() > 0) {
 	
@@ -50,7 +50,7 @@ if (titlelist != null && titlelist.size() > 0) {
 		indexLabel = 0;
 	}
 	
-	GeneralLink l = titlelist.elementAt(indexLabel);
+	GeneralLink l = titlelist.get(indexLabel);
 	titoloSezione = l.getLabel();
 } 
 

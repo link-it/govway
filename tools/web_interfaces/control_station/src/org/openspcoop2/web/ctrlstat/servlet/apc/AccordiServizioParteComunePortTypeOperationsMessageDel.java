@@ -67,14 +67,14 @@ public class AccordiServizioParteComunePortTypeOperationsMessageDel extends Acti
 
 		GeneralData gd = generalHelper.initGeneralData(request);
 
-		String userLogin = (String) ServletUtils.getUserLoginFromSession(session);
+		String userLogin = ServletUtils.getUserLoginFromSession(session);
 
 		try {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 
 			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
-			long idAccordoLong = Long.valueOf(id);
+			long idAccordoLong = Long.parseLong(id);
 			String nomept = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME);
 			String nomeop = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_NOME);
 			String objToRemove = apcHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
@@ -89,14 +89,6 @@ public class AccordiServizioParteComunePortTypeOperationsMessageDel extends Acti
 			// Preparo il menu
 			apcHelper.makeMenu();
 
-			// Elimino le azioni del port-type dal db
-			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
-			// int[] idToRemove = new int[objTok.countTokens()];
-			//
-			// int k = 0;
-			// while (objTok.hasMoreElements()) {
-			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
-			// }
 			ArrayList<String> optsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAccordoLong);
 
@@ -119,9 +111,6 @@ public class AccordiServizioParteComunePortTypeOperationsMessageDel extends Acti
 
 			for (int i = 0; i < optsToRemove.size(); i++) {
 
-				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
-				// .elementAt(idToRemove[i])).elementAt(0);
-				// nomeop = de.getValue();
 				nomeopToRemove = optsToRemove.get(i);
 				
 				Message m = null;

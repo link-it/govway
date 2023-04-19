@@ -38,10 +38,10 @@ import javax.xml.ws.Service;
                   targetNamespace = "http://www.openspcoop2.org/example/server/mtom/ws") 
 public class MTOMServiceExampleSOAP11Service extends Service {
 
-    public final static URL WSDL_LOCATION;
+    public static final URL WSDL_LOCATION;
 
-    public final static QName SERVICE = new QName("http://www.openspcoop2.org/example/server/mtom/ws", "MTOMServiceExampleSOAP11Service");
-    public final static QName MTOMServiceExampleSOAP11InterfaceEndpoint = new QName("http://www.openspcoop2.org/example/server/mtom/ws", "MTOMServiceExampleSOAP11InterfaceEndpoint");
+    public static final QName SERVICE = new QName("http://www.openspcoop2.org/example/server/mtom/ws", "MTOMServiceExampleSOAP11Service");
+    public static final QName MTOMServiceExampleSOAP11InterfaceEndpoint = new QName("http://www.openspcoop2.org/example/server/mtom/ws", "MTOMServiceExampleSOAP11InterfaceEndpoint");
     static {
         URL url = MTOMServiceExampleSOAP11Service.class.getResource("configurazionePdD/wsdl/implementazioneErogatoreSoap11.wsdl");
         if (url == null) {

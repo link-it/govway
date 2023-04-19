@@ -43,28 +43,28 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _SearchFilterMessaggio_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "search-filter-messaggio");
-    private final static QName _FindAllResponse_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "findAllResponse");
-    private final static QName _MonitorServiceException_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "monitor-service-exception");
-    private final static QName _Find_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "find");
-    private final static QName _BustaSoggetto_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "busta-soggetto");
-    private final static QName _DeleteAllResponse_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "deleteAllResponse");
-    private final static QName _FindResponse_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "findResponse");
-    private final static QName _CreateResponse_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "createResponse");
-    private final static QName _MonitorNotFoundException_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "monitor-not-found-exception");
-    private final static QName _DeleteAllByFilterResponse_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "deleteAllByFilterResponse");
-    private final static QName _DeleteAll_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "deleteAll");
-    private final static QName _MonitorMultipleResultException_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "monitor-multiple-result-exception");
-    private final static QName _BustaServizio_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "busta-servizio");
-    private final static QName _Busta_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "busta");
-    private final static QName _MonitorNotImplementedException_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "monitor-not-implemented-exception");
-    private final static QName _Create_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "create");
-    private final static QName _MonitorNotAuthorizedException_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "monitor-not-authorized-exception");
-    private final static QName _Filtro_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "filtro");
-    private final static QName _Count_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "count");
-    private final static QName _FindAll_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "findAll");
-    private final static QName _DeleteAllByFilter_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "deleteAllByFilter");
-    private final static QName _CountResponse_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "countResponse");
+    private static final QName _SearchFilterMessaggio_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "search-filter-messaggio");
+    private static final QName _FindAllResponse_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "findAllResponse");
+    private static final QName _MonitorServiceException_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "monitor-service-exception");
+    private static final QName _Find_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "find");
+    private static final QName _BustaSoggetto_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "busta-soggetto");
+    private static final QName _DeleteAllResponse_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "deleteAllResponse");
+    private static final QName _FindResponse_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "findResponse");
+    private static final QName _CreateResponse_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "createResponse");
+    private static final QName _MonitorNotFoundException_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "monitor-not-found-exception");
+    private static final QName _DeleteAllByFilterResponse_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "deleteAllByFilterResponse");
+    private static final QName _DeleteAll_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "deleteAll");
+    private static final QName _MonitorMultipleResultException_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "monitor-multiple-result-exception");
+    private static final QName _BustaServizio_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "busta-servizio");
+    private static final QName _Busta_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "busta");
+    private static final QName _MonitorNotImplementedException_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "monitor-not-implemented-exception");
+    private static final QName _Create_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "create");
+    private static final QName _MonitorNotAuthorizedException_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "monitor-not-authorized-exception");
+    private static final QName _Filtro_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "filtro");
+    private static final QName _Count_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "count");
+    private static final QName _FindAll_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "findAll");
+    private static final QName _DeleteAllByFilter_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "deleteAllByFilter");
+    private static final QName _CountResponse_QNAME = new QName("http://www.openspcoop2.org/pdd/monitor/management", "countResponse");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.openspcoop2.pdd.monitor.ws.client.messaggio.all

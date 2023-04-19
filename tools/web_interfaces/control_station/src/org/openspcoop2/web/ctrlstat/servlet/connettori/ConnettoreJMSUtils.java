@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.connettori;
 
-import java.util.Vector;
+import java.util.List;
 
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
@@ -38,112 +38,114 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  * @version $Rev$, $Date$
  */
 public class ConnettoreJMSUtils {
+	
+	private ConnettoreJMSUtils() {}
 
 	public static void fillConnettoreConfig(org.openspcoop2.core.config.Connettore connettore,
-			String jms_nome,
-			String jms_tipo, String jms_user, String jms_pwd,
-			String jms_nf_initial, String jms_nf_urlPkg, String jms_np_url,
-			String jms_connection_factory, String jms_send_as){
+			String jmsNome,
+			String jmsTipo, String jmsUser, String jmsPwd,
+			String jmsNfInitial, String jmsNfUrlPkg, String jmsNpUrl,
+			String jmsConnectionFactory, String jmsSendAs){
 		
 		org.openspcoop2.core.config.Property prop = new org.openspcoop2.core.config.Property();
 		prop.setNome(CostantiDB.CONNETTORE_JMS_NOME);
-		prop.setValore(jms_nome);
+		prop.setValore(jmsNome);
 		connettore.addProperty(prop);
 
 		prop = new org.openspcoop2.core.config.Property();
 		prop.setNome(CostantiDB.CONNETTORE_USER);
-		prop.setValore(jms_user);
+		prop.setValore(jmsUser);
 		connettore.addProperty(prop);
 
 		prop = new org.openspcoop2.core.config.Property();
 		prop.setNome(CostantiDB.CONNETTORE_JMS_TIPO);
-		prop.setValore(jms_tipo);
+		prop.setValore(jmsTipo);
 		connettore.addProperty(prop);
 
 		prop = new org.openspcoop2.core.config.Property();
 		prop.setNome(CostantiDB.CONNETTORE_PWD);
-		prop.setValore(jms_pwd);
+		prop.setValore(jmsPwd);
 		connettore.addProperty(prop);
 
 		prop = new org.openspcoop2.core.config.Property();
 		prop.setNome(CostantiDB.CONNETTORE_JMS_CONNECTION_FACTORY);
-		prop.setValore(jms_connection_factory);
+		prop.setValore(jmsConnectionFactory);
 		connettore.addProperty(prop);
 
 		prop = new org.openspcoop2.core.config.Property();
 		prop.setNome(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_INITIAL);
-		prop.setValore(jms_nf_initial);
+		prop.setValore(jmsNfInitial);
 		connettore.addProperty(prop);
 
 		prop = new org.openspcoop2.core.config.Property();
 		prop.setNome(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_URL_PKG);
-		prop.setValore(jms_nf_urlPkg);
+		prop.setValore(jmsNfUrlPkg);
 		connettore.addProperty(prop);
 
 		prop = new org.openspcoop2.core.config.Property();
 		prop.setNome(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_PROVIDER_URL);
-		prop.setValore(jms_np_url);
+		prop.setValore(jmsNpUrl);
 		connettore.addProperty(prop);
 
 		prop = new org.openspcoop2.core.config.Property();
 		prop.setNome(CostantiDB.CONNETTORE_JMS_SEND_AS);
-		prop.setValore(jms_send_as);
+		prop.setValore(jmsSendAs);
 		connettore.addProperty(prop);
 	}
 	
 	public static void fillConnettoreRegistry(org.openspcoop2.core.registry.Connettore connettore,
-			String jms_nome,
-			String jms_tipo, String jms_user, String jms_pwd,
-			String jms_nf_initial, String jms_nf_urlPkg, String jms_np_url,
-			String jms_connection_factory, String jms_send_as){
+			String jmsNome,
+			String jmsTipo, String jmsUser, String jmsPwd,
+			String jmsNfInitial, String jmsNfUrlPkg, String jmsNpUrl,
+			String jmsConnectionFactory, String jmsSendAs){
 		
 		org.openspcoop2.core.registry.Property prop = new org.openspcoop2.core.registry.Property();
 		prop.setNome(CostantiDB.CONNETTORE_JMS_NOME);
-		prop.setValore(jms_nome);
+		prop.setValore(jmsNome);
 		connettore.addProperty(prop);
 
 		prop = new org.openspcoop2.core.registry.Property();
 		prop.setNome(CostantiDB.CONNETTORE_USER);
-		prop.setValore(jms_user);
+		prop.setValore(jmsUser);
 		connettore.addProperty(prop);
 
 		prop = new org.openspcoop2.core.registry.Property();
 		prop.setNome(CostantiDB.CONNETTORE_JMS_TIPO);
-		prop.setValore(jms_tipo);
+		prop.setValore(jmsTipo);
 		connettore.addProperty(prop);
 
 		prop = new org.openspcoop2.core.registry.Property();
 		prop.setNome(CostantiDB.CONNETTORE_PWD);
-		prop.setValore(jms_pwd);
+		prop.setValore(jmsPwd);
 		connettore.addProperty(prop);
 
 		prop = new org.openspcoop2.core.registry.Property();
 		prop.setNome(CostantiDB.CONNETTORE_JMS_CONNECTION_FACTORY);
-		prop.setValore(jms_connection_factory);
+		prop.setValore(jmsConnectionFactory);
 		connettore.addProperty(prop);
 
 		prop = new org.openspcoop2.core.registry.Property();
 		prop.setNome(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_INITIAL);
-		prop.setValore(jms_nf_initial);
+		prop.setValore(jmsNfInitial);
 		connettore.addProperty(prop);
 
 		prop = new org.openspcoop2.core.registry.Property();
 		prop.setNome(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_URL_PKG);
-		prop.setValore(jms_nf_urlPkg);
+		prop.setValore(jmsNfUrlPkg);
 		connettore.addProperty(prop);
 
 		prop = new org.openspcoop2.core.registry.Property();
 		prop.setNome(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_PROVIDER_URL);
-		prop.setValore(jms_np_url);
+		prop.setValore(jmsNpUrl);
 		connettore.addProperty(prop);
 
 		prop = new org.openspcoop2.core.registry.Property();
 		prop.setNome(CostantiDB.CONNETTORE_JMS_SEND_AS);
-		prop.setValore(jms_send_as);
+		prop.setValore(jmsSendAs);
 		connettore.addProperty(prop);
 	}
 	
-	public static void addJMSDati(Vector<DataElement> dati,
+	public static void addJMSDati(List<DataElement> dati,
 			String nome, String tipo,
 			String user, String password, String initcont, String urlpgk,
 			String provurl, String connfact, String sendas, String objectName, TipoOperazione tipoOperazione,
@@ -154,7 +156,7 @@ public class ConnettoreJMSUtils {
 		DataElement de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_JMS_CONFIGURAZIONI_CODA);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_NOME_CODA);
@@ -167,7 +169,7 @@ public class ConnettoreJMSUtils {
 		}
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_NOME_CODA);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_TIPO_CODA);
@@ -176,7 +178,7 @@ public class ConnettoreJMSUtils {
 		de.setSelected(tipo);
 
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_CODA);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS);
@@ -184,14 +186,12 @@ public class ConnettoreJMSUtils {
 		de.setValues(ConnettoriCostanti.TIPO_SEND_AS);
 		de.setSelected(sendas);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS);
-		dati.addElement(de);
-
-		//if ( !objectName.equals(ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI) ) {
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_JMS_CONFIGURAZIONI_CONNESIONE);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_CONNECTION_FACTORY);
@@ -204,7 +204,7 @@ public class ConnettoreJMSUtils {
 		}
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_CONNECTION_FACTORY);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_USERNAME);
@@ -212,7 +212,7 @@ public class ConnettoreJMSUtils {
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_USERNAME);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_PASSWORD);
@@ -220,13 +220,12 @@ public class ConnettoreJMSUtils {
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
 		de.setSize(pageSize);
-		dati.addElement(de);
-		//}
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_JMS_CONFIGURAZIONI_CONTESTO_JNDI);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_INIT_CTX);
@@ -234,16 +233,15 @@ public class ConnettoreJMSUtils {
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_INIT_CTX);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_URL_PKG);
 		de.setValue(urlpgk);
 		de.setType(DataElementType.TEXT_EDIT);
-		//de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_URL_PKG);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_PROVIDER_URL);
@@ -251,12 +249,12 @@ public class ConnettoreJMSUtils {
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PROVIDER_URL);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 
 	}
 	
 	
-	public static void addJMSDatiAsHidden(Vector<DataElement> dati,
+	public static void addJMSDatiAsHidden(List<DataElement> dati,
 			String nome, String tipo,
 			String user, String password, String initcont, String urlpgk,
 			String provurl, String connfact, String sendas, String objectName, TipoOperazione tipoOperazione,
@@ -267,27 +265,18 @@ public class ConnettoreJMSUtils {
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_NOME_CODA);
 		de.setValue(nome);
 		de.setType(DataElementType.HIDDEN);
-//		if(!this.core.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
-//			de.setType(DataElementType.TEXT_EDIT);
-//			de.setRequired(true);	
-//		}else{
-//			de.setType(DataElementType.TEXT);
-//		}
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_NOME_CODA);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_TIPO_CODA);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(tipo);
-//		de.setType(DataElementType.SELECT);
-//		de.setValues(ConnettoriCostanti.TIPI_CODE_JMS);
-//		de.setSelected(tipo);
 
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_CODA);
-		dati.addElement(de);
+		dati.add(de);
 
 		if ( !objectName.equals(ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI) ) {
 
@@ -295,71 +284,57 @@ public class ConnettoreJMSUtils {
 			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_USERNAME);
 			de.setValue(user);
 			de.setType(DataElementType.HIDDEN);
-//			de.setType(DataElementType.TEXT_EDIT);
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_USERNAME);
 			de.setSize(pageSize);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_PASSWORD);
 			de.setValue(password);
 			de.setType(DataElementType.HIDDEN);
-//			de.setType(DataElementType.TEXT_EDIT);
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
 			de.setSize(pageSize);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_INIT_CTX);
 		de.setValue(initcont);
 		de.setType(DataElementType.HIDDEN);
-//		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_INIT_CTX);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_URL_PKG);
 		de.setValue(urlpgk);
 		de.setType(DataElementType.TEXT_EDIT);
-		//de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_URL_PKG);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_PROVIDER_URL);
 		de.setValue(provurl);
 		de.setType(DataElementType.HIDDEN);
-//		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PROVIDER_URL);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_CONNECTION_FACTORY);
 		de.setValue(connfact);
 		de.setType(DataElementType.HIDDEN);
-//		if(!this.core.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
-//			de.setType(DataElementType.TEXT_EDIT);
-//			de.setRequired(true);	
-//		}else{
-//			de.setType(DataElementType.TEXT);
-//		}
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_CONNECTION_FACTORY);
 		de.setSize(pageSize);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(sendas);
-//		de.setType(DataElementType.SELECT);
-//		de.setValues(ConnettoriCostanti.TIPO_SEND_AS);
-//		de.setSelected(sendas);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS);
-		dati.addElement(de);
+		dati.add(de);
 		
 	}
 	

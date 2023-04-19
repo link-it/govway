@@ -41,7 +41,7 @@ public class ImbustamentoRisposteWorker extends ModuloAlternativoWorker implemen
 	/* ********  F I E L D S  P R I V A T I S T A T I C I  ******** */
 
 	/** Variabile che indica il Nome del modulo dell'architettura di OpenSPCoop rappresentato da questa classe */
-	public final static String idModulo = "ImbustamentoRisposte";
+	public static final String idModulo = "ImbustamentoRisposte";
 
 	public ImbustamentoRisposteWorker(MessageIde ide){
 		super(ImbustamentoRisposteWorker.idModulo, ide);

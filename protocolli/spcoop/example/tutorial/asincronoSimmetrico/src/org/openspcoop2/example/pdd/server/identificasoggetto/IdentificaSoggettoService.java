@@ -39,9 +39,9 @@ import javax.xml.ws.WebServiceFeature;
                   targetNamespace = "http://openspcoop2.org/example/pdd/server/IdentificaSoggetto") 
 public class IdentificaSoggettoService extends Service {
 
-    public final static URL WSDL_LOCATION;
-    public final static QName SERVICE = new QName("http://openspcoop2.org/example/pdd/server/IdentificaSoggetto", "IdentificaSoggettoService");
-    public final static QName IdentificaSoggettoInterfaceEndpoint = new QName("http://openspcoop2.org/example/pdd/server/IdentificaSoggetto", "IdentificaSoggettoInterfaceEndpoint");
+    public static final URL WSDL_LOCATION;
+    public static final QName SERVICE = new QName("http://openspcoop2.org/example/pdd/server/IdentificaSoggetto", "IdentificaSoggettoService");
+    public static final QName IdentificaSoggettoInterfaceEndpoint = new QName("http://openspcoop2.org/example/pdd/server/IdentificaSoggetto", "IdentificaSoggettoInterfaceEndpoint");
     static {
         URL url = null;
         try {

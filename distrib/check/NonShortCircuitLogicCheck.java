@@ -90,7 +90,7 @@ public class NonShortCircuitLogicCheck {
 				if( f.getAbsolutePath().contains("distrib/check/NonShortCircuitLogicCheck.java") )
 					jumpCheck = true;
 				
-				else if( f.getAbsolutePath().indexOf("core/src/org/openspcoop2/pdd/core/trasformazioni/Test.java")!= -1 )
+				else if( f.getAbsolutePath().indexOf("core/src/org/openspcoop2/pdd/core/trasformazioni/test/TrasformazioniTest.java")!= -1 )
 					orCheck = false;
 
 				else if( f.getAbsolutePath().indexOf("core/src/org/openspcoop2/protocol/basic/Costanti.java")!= -1 )
@@ -120,7 +120,7 @@ public class NonShortCircuitLogicCheck {
 				else if( f.getAbsolutePath().indexOf("tools/utils/src/org/openspcoop2/utils/xml/test/TestBugEntityReferences.java")!= -1 )
 					jumpCheck = true;
 
-				else if( f.getAbsolutePath().indexOf("tools/utils/src/org/openspcoop2/utils/sql/ClientTest.java")!= -1 )
+				else if( f.getAbsolutePath().indexOf("tools/utils/src/org/openspcoop2/utils/sql/test/ClientTest.java")!= -1 )
 					jumpCheck = true;
 
 
@@ -157,7 +157,9 @@ public class NonShortCircuitLogicCheck {
 						fileNonValidi.add(f.getAbsolutePath());
 					}
 					else if(andCheck && byteInputBuffer.toString().indexOf(AND_CHECK)>0){
-						fileNonValidi.add(f.getAbsolutePath());
+						if(!byteInputBuffer.toString().contains(" & 0xFF")){
+							fileNonValidi.add(f.getAbsolutePath());
+						}
 					}
 					
 

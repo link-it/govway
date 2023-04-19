@@ -30,34 +30,34 @@ import it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.utils.ProjectInfo;
  */
 public class SDICostantiServizioRiceviNotifica {
 
-	public final static String SDI_SERVIZIO_RICEVI_NOTIFICA = "SdIRiceviNotifica";
-    public final static String SDI_SERVIZIO_NOTIFICA_ESITO_AZIONE_NOTIFICA_ESITO = "NotificaEsito";
+	public static final String SDI_SERVIZIO_RICEVI_NOTIFICA = "SdIRiceviNotifica";
+    public static final String SDI_SERVIZIO_NOTIFICA_ESITO_AZIONE_NOTIFICA_ESITO = "NotificaEsito";
 	 
-	public final static String SDI_SERVIZIO_RICEVI_NOTIFICA_NAMESPACE = ProjectInfo.getInstance().getProjectNamespace();
+	public static final String SDI_SERVIZIO_RICEVI_NOTIFICA_NAMESPACE = ProjectInfo.getInstance().getProjectNamespace();
 	
-	//public final static String SDI_SOAP_ACTION_SERVIZIO_NOTIFICA_ESITO_AZIONE_NOTIFICA_ESITO = "\"\"";
-	public final static String SDI_SOAP_ACTION_SERVIZIO_NOTIFICA_ESITO_AZIONE_NOTIFICA_ESITO = "\"http://www.fatturapa.it/SdIRicezioneNotifiche/NotificaEsito\"";
+	//public static final String SDI_SOAP_ACTION_SERVIZIO_NOTIFICA_ESITO_AZIONE_NOTIFICA_ESITO = "\"\"";
+	public static final String SDI_SOAP_ACTION_SERVIZIO_NOTIFICA_ESITO_AZIONE_NOTIFICA_ESITO = "\"http://www.fatturapa.it/SdIRicezioneNotifiche/NotificaEsito\"";
 	
 	
 	// AZIONE: NotificaEsito
 	
-	public final static String NOTIFICA_ESITO_RICHIESTA_ROOT_ELEMENT = "fileSdI";
-	public final static String NOTIFICA_ESITO_RICHIESTA_ELEMENT_IDENTIFICATIVO_SDI = "IdentificativoSdI";
-	public final static String NOTIFICA_ESITO_RICHIESTA_ELEMENT_NOME_FILE = "NomeFile";
-	public final static String NOTIFICA_ESITO_RICHIESTA_ELEMENT_FILE = "File";
+	public static final String NOTIFICA_ESITO_RICHIESTA_ROOT_ELEMENT = "fileSdI";
+	public static final String NOTIFICA_ESITO_RICHIESTA_ELEMENT_IDENTIFICATIVO_SDI = "IdentificativoSdI";
+	public static final String NOTIFICA_ESITO_RICHIESTA_ELEMENT_NOME_FILE = "NomeFile";
+	public static final String NOTIFICA_ESITO_RICHIESTA_ELEMENT_FILE = "File";
 	
-	public final static String NOTIFICA_ESITO_RISPOSTA_ROOT_ELEMENT = "rispostaSdINotificaEsito";
-	public final static String NOTIFICA_ESITO_RISPOSTA_ELEMENT_ESITO = "Esito";
-    public final static String NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO = "ScartoEsito";
-    public final static String NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO_NOME_FILE = "NomeFile";
-    public final static String NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO_FILE = "File";
+	public static final String NOTIFICA_ESITO_RISPOSTA_ROOT_ELEMENT = "rispostaSdINotificaEsito";
+	public static final String NOTIFICA_ESITO_RISPOSTA_ELEMENT_ESITO = "Esito";
+    public static final String NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO = "ScartoEsito";
+    public static final String NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO_NOME_FILE = "NomeFile";
+    public static final String NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO_FILE = "File";
 	
-	public final static String NOTIFICA_ESITO_INTEGRAZIONE_URLBASED_NOME_FILE  = "NomeFile";	
-	public final static String NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_NOME_FILE_1  = "SDI-NomeFile";
-	public final static String NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_NOME_FILE_2  = "GovWay-SDI-NomeFile";
+	public static final String NOTIFICA_ESITO_INTEGRAZIONE_URLBASED_NOME_FILE  = "NomeFile";	
+	public static final String NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_NOME_FILE_1  = "SDI-NomeFile";
+	public static final String NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_NOME_FILE_2  = "GovWay-SDI-NomeFile";
 	
-	public final static String NOTIFICA_ESITO_INTEGRAZIONE_URLBASED_IDENTIFICATIVO_SDI  = "IdentificativoSdI";	
-	public final static String NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_IDENTIFICATIVO_SDI_1  = "SDI-IdentificativoSdI";
-	public final static String NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_IDENTIFICATIVO_SDI_2  = "GovWay-SDI-IdentificativoSdI";
+	public static final String NOTIFICA_ESITO_INTEGRAZIONE_URLBASED_IDENTIFICATIVO_SDI  = "IdentificativoSdI";	
+	public static final String NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_IDENTIFICATIVO_SDI_1  = "SDI-IdentificativoSdI";
+	public static final String NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_IDENTIFICATIVO_SDI_2  = "GovWay-SDI-IdentificativoSdI";
 
 }

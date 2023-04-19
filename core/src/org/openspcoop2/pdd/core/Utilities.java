@@ -173,7 +173,7 @@ public class Utilities {
 	
 	/* *********** INDIVIDUAZIONE RISORSA REST ************ */
 	
-	private final static String SPECIAL = "*";
+	private static final String SPECIAL = "*";
 	
 	public static String [] parseResourceRest(String element) {
 		

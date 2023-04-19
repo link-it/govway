@@ -21,8 +21,8 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.pdd;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -93,9 +93,9 @@ public final class PddSinglePdDAdd extends Action {
 				ServletUtils.setPageDataTitle_ServletAdd(pd, PddCostanti.LABEL_PORTE_DI_DOMINIO, PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_LIST);
 	
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 	
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 	
 				if (implementazione == null || "".equals(implementazione))
 					implementazione = PddCostanti.DEFAULT_PDD_IMPLEMENTAZIONE;
@@ -117,9 +117,9 @@ public final class PddSinglePdDAdd extends Action {
 				ServletUtils.setPageDataTitle_ServletAdd(pd, PddCostanti.LABEL_PORTE_DI_DOMINIO, PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_LIST);
 					
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 	
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 	
 				dati = pddHelper.addPddToDati(dati, nome, null, "", subject, "", "", PddTipologia.ESTERNO, TipoOperazione.ADD, 
 						null, "", "", 0, descr, "", 0, implementazione, clientAuth, true);
@@ -141,7 +141,7 @@ public final class PddSinglePdDAdd extends Action {
 			}else{
 				listaPddOperative = pddCore.pddListSinglePdd(userLogin,PddTipologia.OPERATIVO.toString(), new ConsoleSearch(true));
 			}
-			if(listaPddOperative.size()>0)
+			if(!listaPddOperative.isEmpty())
 				pdd.setTipo(PddTipologia.ESTERNO.toString());
 			else
 				pdd.setTipo(PddTipologia.OPERATIVO.toString());

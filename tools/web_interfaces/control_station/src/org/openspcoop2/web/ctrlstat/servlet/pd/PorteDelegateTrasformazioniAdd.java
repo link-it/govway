@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -150,7 +149,7 @@ public class PorteDelegateTrasformazioniAdd extends Action {
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
 			AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
 			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(apc.getServiceBinding());
-			Map<String,String> azioniAccordo = porteDelegateCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<String>());
+			Map<String,String> azioniAccordo = porteDelegateCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<>());
 			
 			if(azioniAccordo!=null && azioniAccordo.size()>0) {
 				// porte ridefinite
@@ -232,8 +231,8 @@ public class PorteDelegateTrasformazioniAdd extends Action {
 			// dati
 			if (porteDelegateHelper.isEditModeInProgress()) {
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteDelegateHelper.addTrasformazioneToDatiOpAdd(dati, portaDelegata, nome, 
 						stato, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
@@ -255,18 +254,18 @@ public class PorteDelegateTrasformazioniAdd extends Action {
 			String patternDBCheck = StringUtils.isNotEmpty(pattern) ? pattern : null;
 			String contentTypeDBCheck = StringUtils.isNotEmpty(contentType) ? contentType : null;
 			String azioniDBCheck = StringUtils.isNotEmpty(azioniAsString) ? azioniAsString : null;
-			TrasformazioneRegola trasformazioneDBCheck_criteri = porteDelegateCore.getTrasformazione(Long.parseLong(id), azioniDBCheck, patternDBCheck, contentTypeDBCheck, null, 
+			TrasformazioneRegola trasformazioneDBCheckCriteri = porteDelegateCore.getTrasformazione(Long.parseLong(id), azioniDBCheck, patternDBCheck, contentTypeDBCheck, null, 
 					null);
-			TrasformazioneRegola trasformazioneDBCheck_nome = porteDelegateCore.getTrasformazione(Long.parseLong(id), nome);
+			TrasformazioneRegola trasformazioneDBCheckNome = porteDelegateCore.getTrasformazione(Long.parseLong(id), nome);
 			
-			boolean isOk = porteDelegateHelper.trasformazioniCheckData(TipoOperazione.ADD, Long.parseLong(id), nome, trasformazioneDBCheck_criteri, trasformazioneDBCheck_nome, null,
+			boolean isOk = porteDelegateHelper.trasformazioniCheckData(TipoOperazione.ADD, Long.parseLong(id), nome, trasformazioneDBCheckCriteri, trasformazioneDBCheckNome, null,
 					serviceBinding);
 			if (!isOk) {
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteDelegateHelper.addTrasformazioneToDatiOpAdd(dati, portaDelegata, nome, 
 						stato, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,

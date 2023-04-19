@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.archivi;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -467,10 +466,10 @@ public final class Exporter extends Action {
 						new Parameter(ArchiviCostanti.LABEL_ARCHIVI_EXPORT,urlTitle));
 			}
 		
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 			
 			// imposto grafica
-			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+			dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 			// init cascade
 			if(ServletUtils.isCheckBoxEnabled(cascade) 

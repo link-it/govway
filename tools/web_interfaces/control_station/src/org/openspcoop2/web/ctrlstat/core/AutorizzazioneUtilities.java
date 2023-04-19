@@ -37,9 +37,9 @@ import org.openspcoop2.core.registry.constants.RuoloTipologia;
  */
 public class AutorizzazioneUtilities {
 
-	public final static String STATO_ABILITATO = StatoFunzionalita.ABILITATO.getValue();
-	public final static String STATO_DISABILITATO = StatoFunzionalita.DISABILITATO.getValue();
-	public final static String STATO_XACML_POLICY = "xacml-Policy";
+	public static final String STATO_ABILITATO = StatoFunzionalita.ABILITATO.getValue();
+	public static final String STATO_DISABILITATO = StatoFunzionalita.DISABILITATO.getValue();
+	public static final String STATO_XACML_POLICY = "xacml-Policy";
 	public static List<String> getStati(){
 		List<String> l = new ArrayList<String>();
 		l.add(STATO_DISABILITATO);

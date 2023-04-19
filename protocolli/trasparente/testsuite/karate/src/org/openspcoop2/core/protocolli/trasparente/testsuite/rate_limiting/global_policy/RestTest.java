@@ -21,7 +21,7 @@
 
 package org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.global_policy;
 
-import java.util.Vector;
+import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -42,12 +42,12 @@ import org.openspcoop2.utils.transport.http.HttpResponse;
 */
 public class RestTest extends ConfigLoader {
 	
-	protected final static String HEADER_GLOBAL_POLICY_VALUE = "TestPolicyGlobale";
-	protected final static String HEADER_GLOBAL_POLICY = "GovWay-TestSuite-RL-GlobalPolicy";
-	protected final static String HEADER_GLOBAL_POLICY_FILTRO_TAG = "GovWay-TestSuite-RL-GlobalPolicy-FiltroTag";
+	protected static final String HEADER_GLOBAL_POLICY_VALUE = "TestPolicyGlobale";
+	protected static final String HEADER_GLOBAL_POLICY = "GovWay-TestSuite-RL-GlobalPolicy";
+	protected static final String HEADER_GLOBAL_POLICY_FILTRO_TAG = "GovWay-TestSuite-RL-GlobalPolicy-FiltroTag";
 	
-	protected final static String ID_POLICY_GLOBALE = "EsempioPolicyGlobale-Orario";
-	protected final static String ID_POLICY_GLOBALE_FILTRO_TAG = "EsempioPolicyGlobale-Orario-FiltroTag";
+	protected static final String ID_POLICY_GLOBALE = "EsempioPolicyGlobale-Orario";
+	protected static final String ID_POLICY_GLOBALE_FILTRO_TAG = "EsempioPolicyGlobale-Orario-FiltroTag";
 	
 	@BeforeClass
 	public static void initTest() {
@@ -113,8 +113,8 @@ public class RestTest extends ConfigLoader {
 		request.setUrl(url);
 		request.addHeader(headerName, HEADER_GLOBAL_POLICY_VALUE);
 		
-		Vector<HttpResponse> responseOk = Utils.makeSequentialRequests(request, maxRequests);
-		Vector<HttpResponse> responseBlocked = Utils.makeSequentialRequests(request, maxRequests);
+		List<HttpResponse> responseOk = Utils.makeSequentialRequests(request, maxRequests);
+		List<HttpResponse> responseBlocked = Utils.makeSequentialRequests(request, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, maxRequests);
 		// X-RateLimit-Limit=10, 10;w=3600, X-RateLimit-Remaining=9

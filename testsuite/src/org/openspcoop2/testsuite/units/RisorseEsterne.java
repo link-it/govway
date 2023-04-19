@@ -24,7 +24,7 @@ package org.openspcoop2.testsuite.units;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Vector;
+import java.util.List;
 
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
@@ -81,7 +81,7 @@ public class RisorseEsterne extends GestioneViaJmx {
 	public void testDatabaseOpenSPCoop(DatabaseComponent data) throws Exception{
 		try{
 			Reporter.log("Controllo database...");
-			Vector<String> anomalie = data.getVerificatoreMessaggi().getTabelleNonCorrettamenteSvuotate(TestSuiteProperties.getInstance().getTipoRepositoryBuste());
+			List<String> anomalie = data.getVerificatoreMessaggi().getTabelleNonCorrettamenteSvuotate(TestSuiteProperties.getInstance().getTipoRepositoryBuste());
 			Reporter.log("Anomalie riscontrate: "+anomalie.size());
 			for(int i=0; i<anomalie.size(); i++){
 				Reporter.log(anomalie.get(i));
@@ -112,7 +112,7 @@ public class RisorseEsterne extends GestioneViaJmx {
 		try{
 			
 			Reporter.log("Controllo Keyword non trasformate (@KEYWORD@)...");
-			Vector<String> anomalie = data.getMessaggiNonTrasformatiCorrettamente();
+			List<String> anomalie = data.getMessaggiNonTrasformatiCorrettamente();
 			Reporter.log("Anomalie riscontrate: "+anomalie.size());
 			for(int i=0; i<anomalie.size(); i++){
 				Reporter.log(anomalie.get(i));
@@ -120,7 +120,7 @@ public class RisorseEsterne extends GestioneViaJmx {
 			Assert.assertTrue(anomalie.size()==0);
 			
 			Reporter.log("Controllo NullPointerException ...");
-			Vector<String> anomalieNullPointer = data.getMessaggiCheSegnalanoNullPointer();
+			List<String> anomalieNullPointer = data.getMessaggiCheSegnalanoNullPointer();
 			Reporter.log("Anomalie riscontrate: "+anomalieNullPointer.size());
 			for(int i=0; i<anomalieNullPointer.size(); i++){
 				Reporter.log(anomalieNullPointer.get(i));
@@ -128,7 +128,7 @@ public class RisorseEsterne extends GestioneViaJmx {
 			Assert.assertTrue(anomalieNullPointer.size()==0);
 			
 			Reporter.log("Controllo Codici diagnostici ...");
-			Vector<String> anomalieCodiciDiagnostici = data.getMessaggiSenzaCodici();
+			List<String> anomalieCodiciDiagnostici = data.getMessaggiSenzaCodici();
 			Reporter.log("Anomalie Codici diagnostici: "+anomalieCodiciDiagnostici.size());
 			for(int i=0; i<anomalieCodiciDiagnostici.size(); i++){
 				Reporter.log(anomalieCodiciDiagnostici.get(i));
@@ -136,7 +136,7 @@ public class RisorseEsterne extends GestioneViaJmx {
 			Assert.assertTrue(anomalieCodiciDiagnostici.size()==0);
 			
 			Reporter.log("Controllo errori di tracciamento non riuscito ...");
-			Vector<String> anomalieTracciamentiNonRiusciti = data.getTracciamentoNonRiuscito();
+			List<String> anomalieTracciamentiNonRiusciti = data.getTracciamentoNonRiuscito();
 			Reporter.log("Anomalie tracciamento non riuscito: "+anomalieTracciamentiNonRiusciti.size());
 			for(int i=0; i<anomalieTracciamentiNonRiusciti.size(); i++){
 				Reporter.log(anomalieTracciamentiNonRiusciti.get(i));

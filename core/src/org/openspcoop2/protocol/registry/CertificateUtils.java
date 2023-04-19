@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.StatoCheck;
 import org.openspcoop2.utils.LoggerBuffer;
@@ -531,10 +532,15 @@ public class CertificateUtils {
 		
 		IOCSPValidator ocspValidator = null;
 		CRLCertstore crls = null;		
-		if(!keystore && (trustStoreCrls!=null || ocspPolicy!=null)) {
+		if(!keystore && ( 
+				(trustStoreCrls!=null && StringUtils.isNotEmpty(trustStoreCrls)) 
+				|| 
+				(ocspPolicy!=null && StringUtils.isNotEmpty(ocspPolicy))
+				)
+			) {
 			
 			boolean crlByOcsp = false;
-			if(ocspPolicy!=null) {
+			if(ocspPolicy!=null && StringUtils.isNotEmpty(ocspPolicy)) {
 				LoggerBuffer lb = new LoggerBuffer();
 				lb.setLogDebug(log);
 				lb.setLogError(log);
@@ -548,7 +554,10 @@ public class CertificateUtils {
 				}
 			}
 			
-			List<String> crlList = CRLCertstore.readCrlPaths(trustStoreCrls);
+			List<String> crlList = null;
+			if(trustStoreCrls!=null && StringUtils.isNotEmpty(trustStoreCrls)) { 
+				crlList = CRLCertstore.readCrlPaths(trustStoreCrls);
+			}
 			if(crlList!=null && !crlList.isEmpty()) {
 				for (String path : crlList) {
 					File f = new File(path);

@@ -41,7 +41,7 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
 */
 public class ValidazioneJWTTest extends ConfigLoader {
 
-	public final static String validazione = "TestValidazioneToken-ValidazioneJWT";
+	public static final String validazione = "TestValidazioneToken-ValidazioneJWT";
 		
 	@Test
 	public void success() throws Exception {
@@ -88,7 +88,7 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers,  null,
 				"Validazione del token 'JWS' fallita: Token non valido: [COMPACT] Signature verification failure",
-				null);
+				Utilities.getMapExpectedTokenInfoInvalid());
 	}
 	
 	@Test
@@ -104,7 +104,7 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers,  null,
 				"Validazione del token 'JWS' fallita: Token non valido",
-				null);
+				Utilities.getMapExpectedTokenInfoInvalid());
 	}
 	
 	

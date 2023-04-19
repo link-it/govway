@@ -56,6 +56,7 @@ import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
 import org.openspcoop2.utils.cache.CacheResponse;
 import org.openspcoop2.utils.cache.CacheType;
+import org.openspcoop2.utils.cache.Constants;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
@@ -69,22 +70,30 @@ import org.slf4j.Logger;
  */
 public class GestoreRichieste {
 
-	public static boolean useCache = true;
+	private GestoreRichieste() {}
 	
+	private static boolean useCache = true;
+	public static boolean isUseCache() {
+		return useCache;
+	}
+	public static void setUseCache(boolean useCache) {
+		GestoreRichieste.useCache = useCache;
+	}
+
 	/** Chiave della cache per il Gestore delle Richieste  */
 	public static final String GESTORE_RICHIESTE_PREFIX_CACHE_NAME = "gestoreRichieste-";
 	private static final String GESTORE_RICHIESTE_API_CACHE_NAME = GESTORE_RICHIESTE_PREFIX_CACHE_NAME+"API";
 	private static final String GESTORE_RICHIESTE_RATE_LIMITING_CACHE_NAME = GESTORE_RICHIESTE_PREFIX_CACHE_NAME+"RateLimiting";
 	private static final String GESTORE_RICHIESTE_FRUITORI_CACHE_NAME = GESTORE_RICHIESTE_PREFIX_CACHE_NAME+"Fruitori";
 	
-	private static Cache cache_api = null;
-	private static Cache cache_rateLimiting = null;
-	private static Cache cache_fruitori = null;
+	private static Cache cacheApi = null;
+	private static Cache cacheRateLimiting = null;
+	private static Cache cacheFruitori = null;
 	private static Map<String, Cache> caches = null;
 	private static List<String> cacheKeys = null;
 	private static synchronized void initCacheKeys() {
 		if(cacheKeys==null) {
-			cacheKeys = new ArrayList<String>();
+			cacheKeys = new ArrayList<>();
 			cacheKeys.add(GESTORE_RICHIESTE_API_CACHE_NAME);
 			cacheKeys.add(GESTORE_RICHIESTE_RATE_LIMITING_CACHE_NAME);
 			cacheKeys.add(GESTORE_RICHIESTE_FRUITORI_CACHE_NAME);
@@ -96,7 +105,6 @@ public class GestoreRichieste {
 	private static final org.openspcoop2.utils.Semaphore lockCache_fruitori = new org.openspcoop2.utils.Semaphore(GESTORE_RICHIESTE_FRUITORI_CACHE_NAME);
 	
 	/** Logger log */
-	@SuppressWarnings("unused")
 	private static Logger logger = null;
 	private static Logger logConsole = OpenSPCoop2Logger.getLoggerOpenSPCoopConsole();
 	
@@ -126,15 +134,15 @@ public class GestoreRichieste {
 						if(sb.length()>0) {
 							sb.append(separator);
 						}
-						//String funzione = cacheKey.substring(cacheKey.indexOf("-")+1, cacheKey.length());
-						//sb.append(funzione).append(separator);
+						/** String funzione = cacheKey.substring(cacheKey.indexOf("-")+1, cacheKey.length());
+						sb.append(funzione).append(separator); */
 						sb.append(cache.printStats(separator));
 					}
 				}
 				return sb.toString();
 			}
 			else{
-				throw new Exception("Cache non abilitata");
+				throw new CoreException(Constants.MSG_CACHE_NON_ABILITATA);
 			}
 		}catch(Exception e){
 			throw new CoreException("Visualizzazione Statistiche riguardante la cache dei dati di gestione delle richieste non riuscita: "+e.getMessage(),e);
@@ -146,18 +154,18 @@ public class GestoreRichieste {
 		else{
 			try{
 				initCacheKeys();
-				GestoreRichieste.cache_api = new Cache(CacheType.JCS, GESTORE_RICHIESTE_API_CACHE_NAME); // lascio JCS come default abilitato via jmx
-				GestoreRichieste.cache_rateLimiting = new Cache(CacheType.JCS, GESTORE_RICHIESTE_RATE_LIMITING_CACHE_NAME); // lascio JCS come default abilitato via jmx
-				GestoreRichieste.cache_fruitori = new Cache(CacheType.JCS, GESTORE_RICHIESTE_FRUITORI_CACHE_NAME); // lascio JCS come default abilitato via jmx
+				GestoreRichieste.cacheApi = new Cache(CacheType.JCS, GESTORE_RICHIESTE_API_CACHE_NAME); // lascio JCS come default abilitato via jmx
+				GestoreRichieste.cacheRateLimiting = new Cache(CacheType.JCS, GESTORE_RICHIESTE_RATE_LIMITING_CACHE_NAME); // lascio JCS come default abilitato via jmx
+				GestoreRichieste.cacheFruitori = new Cache(CacheType.JCS, GESTORE_RICHIESTE_FRUITORI_CACHE_NAME); // lascio JCS come default abilitato via jmx
 				
-				GestoreRichieste.cache_api.build();
-				GestoreRichieste.cache_rateLimiting.build();
-				GestoreRichieste.cache_fruitori.build();
+				GestoreRichieste.cacheApi.build();
+				GestoreRichieste.cacheRateLimiting.build();
+				GestoreRichieste.cacheFruitori.build();
 				
-				GestoreRichieste.caches = new HashMap<String, Cache>();
-				GestoreRichieste.caches.put(GESTORE_RICHIESTE_API_CACHE_NAME, GestoreRichieste.cache_api);
-				GestoreRichieste.caches.put(GESTORE_RICHIESTE_RATE_LIMITING_CACHE_NAME, GestoreRichieste.cache_rateLimiting);
-				GestoreRichieste.caches.put(GESTORE_RICHIESTE_FRUITORI_CACHE_NAME, GestoreRichieste.cache_fruitori);
+				GestoreRichieste.caches = new HashMap<>();
+				GestoreRichieste.caches.put(GESTORE_RICHIESTE_API_CACHE_NAME, GestoreRichieste.cacheApi);
+				GestoreRichieste.caches.put(GESTORE_RICHIESTE_RATE_LIMITING_CACHE_NAME, GestoreRichieste.cacheRateLimiting);
+				GestoreRichieste.caches.put(GESTORE_RICHIESTE_FRUITORI_CACHE_NAME, GestoreRichieste.cacheFruitori);
 			}catch(Exception e){
 				throw new CoreException(e.getMessage(),e);
 			}
@@ -203,20 +211,20 @@ public class GestoreRichieste {
 		if(GestoreRichieste.cacheKeys==null)
 			throw new CoreException("Cache già disabilitata");
 		else{
-			_disabilitaCache();
+			disabilitaCacheEngine();
 		}
 	}
-	private static synchronized void _disabilitaCache() throws CoreException{
+	private static synchronized void disabilitaCacheEngine() throws CoreException{
 		if(GestoreRichieste.cacheKeys!=null) {
 			try{
-				GestoreRichieste.cache_api.clear();
-				GestoreRichieste.cache_api = null;
+				GestoreRichieste.cacheApi.clear();
+				GestoreRichieste.cacheApi = null;
 				
-				GestoreRichieste.cache_rateLimiting.clear();
-				GestoreRichieste.cache_rateLimiting = null;
+				GestoreRichieste.cacheRateLimiting.clear();
+				GestoreRichieste.cacheRateLimiting = null;
 				
-				GestoreRichieste.cache_fruitori.clear();
-				GestoreRichieste.cache_fruitori = null;
+				GestoreRichieste.cacheFruitori.clear();
+				GestoreRichieste.cacheFruitori = null;
 				
 				GestoreRichieste.caches.clear();
 				GestoreRichieste.caches = null;
@@ -245,7 +253,7 @@ public class GestoreRichieste {
 						if(nomeCache.startsWith(GestoreRichieste.GESTORE_RICHIESTE_PREFIX_CACHE_NAME)) {
 							nomeCache = nomeCache.substring(GestoreRichieste.GESTORE_RICHIESTE_PREFIX_CACHE_NAME.length());
 						}
-						sb.append( cache.printKeys(separator).replaceFirst("Cache","Cache-"+nomeCache ) );
+						sb.append( cache.printKeys(separator).replaceFirst(Constants.MSG_CACHE,Constants.MSG_CACHE_PREFIX+nomeCache ) );
 					}catch(Exception e){
 						throw new CoreException(e.getMessage(),e);
 					}
@@ -253,11 +261,13 @@ public class GestoreRichieste {
 			}
 			return sb.toString();
 		}else{
-			throw new CoreException("Cache non abilitata");
+			throw new CoreException(Constants.MSG_CACHE_NON_ABILITATA);
 		}
 	}
+	/**
+	 * non viene gestito correttamente la chiave rispetto alla cache, potrebbe essere presente la solita chiave
+	 */
 	@Deprecated
-	// non viene gestito correttamente la chiave rispetto alla cache, potrebbe essere presente la solita chiave
 	public static List<String> listKeysCache() throws CoreException{
 		if(GestoreRichieste.cacheKeys!=null && !GestoreRichieste.cacheKeys.isEmpty()){
 			List<String> keys = new ArrayList<String>();
@@ -276,7 +286,7 @@ public class GestoreRichieste {
 			}
 			return keys;
 		}else{
-			throw new CoreException("Cache non abilitata");
+			throw new CoreException(Constants.MSG_CACHE_NON_ABILITATA);
 		}
 	}
 	public static String getObjectCache(String key) throws CoreException{
@@ -286,13 +296,13 @@ public class GestoreRichieste {
 				for (String cacheKey : GestoreRichieste.cacheKeys) {
 					
 					// trucco per avere il valore di una precisa cache				
-					if(key.startsWith("Cache-")) {
+					if(key.startsWith(Constants.MSG_CACHE_PREFIX)) {
 						
 						String nomeCache = cacheKey;
 						if(nomeCache.startsWith(GestoreRichieste.GESTORE_RICHIESTE_PREFIX_CACHE_NAME)) {
 							nomeCache = nomeCache.substring(GestoreRichieste.GESTORE_RICHIESTE_PREFIX_CACHE_NAME.length());
 						}
-						nomeCache = "Cache-"+nomeCache+" ";
+						nomeCache = Constants.MSG_CACHE_PREFIX+nomeCache+" ";
 						
 						if(!key.startsWith(nomeCache)) {
 							continue; // cerco in altra cache
@@ -319,7 +329,7 @@ public class GestoreRichieste {
 				throw new CoreException(e.getMessage(),e);
 			}
 		}else{
-			throw new CoreException("Cache non abilitata");
+			throw new CoreException(Constants.MSG_CACHE_NON_ABILITATA);
 		}
 	}
 	public static Object getRawObjectCache(String key) throws CoreException{
@@ -329,13 +339,13 @@ public class GestoreRichieste {
 				for (String cacheKey : GestoreRichieste.cacheKeys) {
 					
 					// trucco per avere il valore di una precisa cache		
-					if(key.startsWith("Cache-")) {
+					if(key.startsWith(Constants.MSG_CACHE_PREFIX)) {
 						
 						String nomeCache = cacheKey;
 						if(nomeCache.startsWith(GestoreRichieste.GESTORE_RICHIESTE_PREFIX_CACHE_NAME)) {
 							nomeCache = nomeCache.substring(GestoreRichieste.GESTORE_RICHIESTE_PREFIX_CACHE_NAME.length());
 						}
-						nomeCache = "Cache-"+nomeCache+" ";
+						nomeCache = Constants.MSG_CACHE_PREFIX+nomeCache+" ";
 						
 						if(!key.startsWith(nomeCache)) {
 							continue; // cerco in altra cache
@@ -353,15 +363,15 @@ public class GestoreRichieste {
 						}
 					}
 				}
-				return _getRawObjectCache(o);
+				return getRawObjectCacheEngine(o);
 			}catch(Exception e){
 				throw new CoreException(e.getMessage(),e);
 			}
 		}else{
-			throw new CoreException("Cache non abilitata");
+			throw new CoreException(Constants.MSG_CACHE_NON_ABILITATA);
 		}
 	}
-	public static Object _getRawObjectCache(Object o) throws CoreException{
+	public static Object getRawObjectCacheEngine(Object o) throws CoreException{
 		if(o!=null){
 			if(o instanceof CacheResponse) {
 				CacheResponse cR = (CacheResponse) o;
@@ -383,13 +393,13 @@ public class GestoreRichieste {
 				for (String cacheKey : GestoreRichieste.cacheKeys) {
 					
 					// trucco per avere il valore di una precisa cache		
-					if(key.startsWith("Cache-")) {
+					if(key.startsWith(Constants.MSG_CACHE_PREFIX)) {
 						
 						String nomeCache = cacheKey;
 						if(nomeCache.startsWith(GestoreRichieste.GESTORE_RICHIESTE_PREFIX_CACHE_NAME)) {
 							nomeCache = nomeCache.substring(GestoreRichieste.GESTORE_RICHIESTE_PREFIX_CACHE_NAME.length());
 						}
-						nomeCache = "Cache-"+nomeCache+" ";
+						nomeCache = Constants.MSG_CACHE_PREFIX+nomeCache+" ";
 						
 						if(!key.startsWith(nomeCache)) {
 							continue; // cerco in altra cache
@@ -408,7 +418,7 @@ public class GestoreRichieste {
 				throw new CoreException(e.getMessage(),e);
 			}
 		}else{
-			throw new CoreException("Cache non abilitata");
+			throw new CoreException(Constants.MSG_CACHE_NON_ABILITATA);
 		}
 	}
 	
@@ -438,21 +448,21 @@ public class GestoreRichieste {
 
 
 	public static void initCacheGestoreRichieste(CacheType cacheType, int dimensioneCache,String algoritmoCache,
-			long idleTime, long itemLifeSecond, Logger log) throws Exception {
+			long idleTime, long itemLifeSecond, Logger log) throws UtilsException, CoreException {
 		
 		if(log!=null)
 			log.info("Inizializzazione cache GestoreRichieste");
 
 		initCacheKeys();
 		
-		GestoreRichieste.cache_api = new Cache(cacheType, GESTORE_RICHIESTE_API_CACHE_NAME); 
-		GestoreRichieste.cache_rateLimiting = new Cache(cacheType, GESTORE_RICHIESTE_RATE_LIMITING_CACHE_NAME);
-		GestoreRichieste.cache_fruitori = new Cache(cacheType, GESTORE_RICHIESTE_FRUITORI_CACHE_NAME); 
+		GestoreRichieste.cacheApi = new Cache(cacheType, GESTORE_RICHIESTE_API_CACHE_NAME); 
+		GestoreRichieste.cacheRateLimiting = new Cache(cacheType, GESTORE_RICHIESTE_RATE_LIMITING_CACHE_NAME);
+		GestoreRichieste.cacheFruitori = new Cache(cacheType, GESTORE_RICHIESTE_FRUITORI_CACHE_NAME); 
 		
-		GestoreRichieste.caches = new HashMap<String, Cache>();
-		GestoreRichieste.caches.put(GESTORE_RICHIESTE_API_CACHE_NAME, GestoreRichieste.cache_api);
-		GestoreRichieste.caches.put(GESTORE_RICHIESTE_RATE_LIMITING_CACHE_NAME, GestoreRichieste.cache_rateLimiting);
-		GestoreRichieste.caches.put(GESTORE_RICHIESTE_FRUITORI_CACHE_NAME, GestoreRichieste.cache_fruitori);
+		GestoreRichieste.caches = new HashMap<>();
+		GestoreRichieste.caches.put(GESTORE_RICHIESTE_API_CACHE_NAME, GestoreRichieste.cacheApi);
+		GestoreRichieste.caches.put(GESTORE_RICHIESTE_RATE_LIMITING_CACHE_NAME, GestoreRichieste.cacheRateLimiting);
+		GestoreRichieste.caches.put(GESTORE_RICHIESTE_FRUITORI_CACHE_NAME, GestoreRichieste.cacheFruitori);
 		
 		if( (dimensioneCache>0) ||
 				(algoritmoCache != null) ){
@@ -521,9 +531,9 @@ public class GestoreRichieste {
 			throw new CoreException("Parametro errato per l'attributo 'MaxLifeSecond' (Gestore Messaggi): "+error.getMessage(),error);
 		}
 
-		GestoreRichieste.cache_api.build();
-		GestoreRichieste.cache_rateLimiting.build();
-		GestoreRichieste.cache_fruitori.build();
+		GestoreRichieste.cacheApi.build();
+		GestoreRichieste.cacheRateLimiting.build();
+		GestoreRichieste.cacheFruitori.build();
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -552,11 +562,11 @@ public class GestoreRichieste {
 				boolean isDisabled = true;
 				for (String cacheKey : GestoreRichieste.cacheKeys) {
 					Cache cache = GestoreRichieste.caches.get(cacheKey);
-					if(cache!=null) {
-						if(!cache.isDisableSyncronizedGet()) {
-							isDisabled = false;
-							break;
-						}
+					if(cache!=null &&
+						(!cache.isDisableSyncronizedGet())
+						) {
+						isDisabled = false;
+						break;
 					}
 				}
 				return isDisabled;
@@ -574,27 +584,25 @@ public class GestoreRichieste {
 	
 	/*----------------- CLEANER - RATELIMITING --------------------*/
 	
-	public static void removeRateLimitingConfigGlobale() throws Exception {
-		if(GestoreRichieste.cache_rateLimiting!=null) {
-			GestoreRichieste.cache_rateLimiting.clear();
+	public static void removeRateLimitingConfigGlobale() throws UtilsException {
+		if(GestoreRichieste.cacheRateLimiting!=null) {
+			GestoreRichieste.cacheRateLimiting.clear();
 		}
 	}
 	
-	public static void removeRateLimitingConfig(TipoPdD tipoPdD, String nomePorta) throws Exception {
+	public static void removeRateLimitingConfig(TipoPdD tipoPdD, String nomePorta) throws UtilsException, CoreException {
 		
-		if(GestoreRichieste.cache_rateLimiting!=null) {
-			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreRichieste.cache_rateLimiting.keys();
+		if(GestoreRichieste.cacheRateLimiting!=null) {
+			List<String> keyForClean = new ArrayList<>();
+			List<String> keys = GestoreRichieste.cacheRateLimiting.keys();
 			if(keys!=null && !keys.isEmpty()) {
 				for (String key : keys) {
 					if(key!=null) {
-						Object o =  _getRawObjectCache(GestoreRichieste.cache_rateLimiting.get(key));
-						if(o!=null) {
-							if(o instanceof RequestRateLimitingConfig) {
-								RequestRateLimitingConfig rl = (RequestRateLimitingConfig) o;
-								if(tipoPdD.equals(rl.getTipoPdD()) && nomePorta.equals(rl.getNomePorta())) {
-									keyForClean.add(key);
-								}
+						Object o =  getRawObjectCacheEngine(GestoreRichieste.cacheRateLimiting.get(key));
+						if(o instanceof RequestRateLimitingConfig) {
+							RequestRateLimitingConfig rl = (RequestRateLimitingConfig) o;
+							if(tipoPdD.equals(rl.getTipoPdD()) && nomePorta.equals(rl.getNomePorta())) {
+								keyForClean.add(key);
 							}
 						}
 					}
@@ -602,7 +610,7 @@ public class GestoreRichieste {
 			}
 			if(keyForClean!=null && !keyForClean.isEmpty()) {
 				for (String key : keyForClean) {
-					GestoreRichieste.cache_rateLimiting.remove(key);
+					GestoreRichieste.cacheRateLimiting.remove(key);
 				}
 			}
 		}
@@ -613,24 +621,28 @@ public class GestoreRichieste {
 	
 	/*----------------- CLEANER --------------------*/
 	
-	public static void removeApi(IDAccordo idAccordo) throws Exception {
+	public static void removeApi(IDAccordo idAccordo) throws UtilsException, CoreException {
 		
 		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 		
 		// RequestConfig
 		{
-			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreRichieste.cache_api.keys();
+			List<String> keyForClean = new ArrayList<>();
+			List<String> keys = GestoreRichieste.cacheApi.keys();
 			if(keys!=null && !keys.isEmpty()) {
 				for (String key : keys) {
 					if(key!=null) {
-						Object o =  _getRawObjectCache(GestoreRichieste.cache_api.get(key));
-						if(o!=null) {
-							if(o instanceof RequestConfig) {
-								RequestConfig rc = (RequestConfig) o;
-								if(rc.getAspc()!=null && idAccordo.equals(idAccordoFactory.getIDAccordoFromAccordo(rc.getAspc()))) {
-									keyForClean.add(key);
-								}
+						Object o =  getRawObjectCacheEngine(GestoreRichieste.cacheApi.get(key));
+						if(o instanceof RequestConfig) {
+							RequestConfig rc = (RequestConfig) o;
+							IDAccordo idCheck = null;
+							try {
+								idCheck = idAccordoFactory.getIDAccordoFromAccordo(rc.getAspc());
+							}catch(Exception e) {
+								throw new CoreException(e.getMessage(),e);
+							}
+							if(rc.getAspc()!=null && idAccordo.equals(idCheck)) {
+								keyForClean.add(key);
 							}
 						}
 					}
@@ -638,670 +650,618 @@ public class GestoreRichieste {
 			}
 			if(keyForClean!=null && !keyForClean.isEmpty()) {
 				for (String key : keyForClean) {
-					GestoreRichieste.cache_api.remove(key);
+					GestoreRichieste.cacheApi.remove(key);
 				}
 			}
 		}
 		
 	}
-	public static void removeErogazione(IDServizio idServizio) throws Exception {
-		
-		// RequestConfig
-		{
-			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreRichieste.cache_api.keys();
-			if(keys!=null && !keys.isEmpty()) {
-				for (String key : keys) {
-					if(key!=null) {
-						Object o =  _getRawObjectCache(GestoreRichieste.cache_api.get(key));
-						if(o!=null) {
-							if(o instanceof RequestConfig) {
-								RequestConfig rc = (RequestConfig) o;
-								if(rc.getIdServizio()!=null && idServizio.equals(rc.getIdServizio(),false)) {
-									keyForClean.add(key);
-								}
-							}
-						}
-					}
-				}
-			}
-			if(keyForClean!=null && !keyForClean.isEmpty()) {
-				for (String key : keyForClean) {
-					GestoreRichieste.cache_api.remove(key);
-				}
-			}
-		}
-		
-		// RequestRateLimitingConfig
-		{
-			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreRichieste.cache_rateLimiting.keys();
-			if(keys!=null && !keys.isEmpty()) {
-				for (String key : keys) {
-					if(key!=null) {
-						Object o =  _getRawObjectCache(GestoreRichieste.cache_rateLimiting.get(key));
-						if(o!=null) {
-							if(o instanceof RequestRateLimitingConfig) {
-								RequestRateLimitingConfig rl = (RequestRateLimitingConfig) o;
-								if(rl.getIdServizio()!=null && idServizio.equals(rl.getIdServizio(),false)) {
-									keyForClean.add(key);
-								}
-							}
-						}
-					}
-				}
-			}
-			if(keyForClean!=null && !keyForClean.isEmpty()) {
-				for (String key : keyForClean) {
-					GestoreRichieste.cache_rateLimiting.remove(key);
-				}
-			}
-		}
-		
+	public static void removeErogazione(IDServizio idServizio) throws UtilsException, CoreException {
+		removeErogazioneRequestConfig(idServizio);
+		removeErogazioneRequestRateLimitingConfig(idServizio);
 	}
-	public static void removeFruizione(IDSoggetto fruitore, IDServizio idServizio) throws Exception {
-		
+	private static void removeErogazioneRequestConfig(IDServizio idServizio) throws UtilsException, CoreException {
 		// RequestConfig
-		{
-			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreRichieste.cache_api.keys();
-			if(keys!=null && !keys.isEmpty()) {
-				for (String key : keys) {
-					if(key!=null) {
-						Object o =  _getRawObjectCache(GestoreRichieste.cache_api.get(key));
-						if(o!=null) {
-							if(o instanceof RequestConfig) {
-								RequestConfig rc = (RequestConfig) o;
-								if(rc.getIdServizio()!=null && idServizio.equals(rc.getIdServizio(),false) &&
-										rc.getIdFruitore()!=null && fruitore.equals(rc.getIdFruitore())) {
-									keyForClean.add(key);
-								}
-							}
+		List<String> keyForClean = new ArrayList<>();
+		List<String> keys = GestoreRichieste.cacheApi.keys();
+		if(keys!=null && !keys.isEmpty()) {
+			for (String key : keys) {
+				if(key!=null) {
+					Object o =  getRawObjectCacheEngine(GestoreRichieste.cacheApi.get(key));
+					if(o instanceof RequestConfig) {
+						RequestConfig rc = (RequestConfig) o;
+						if(rc.getIdServizio()!=null && idServizio.equals(rc.getIdServizio(),false)) {
+							keyForClean.add(key);
 						}
 					}
 				}
 			}
-			if(keyForClean!=null && !keyForClean.isEmpty()) {
-				for (String key : keyForClean) {
-					GestoreRichieste.cache_api.remove(key);
-				}
+		}
+		if(keyForClean!=null && !keyForClean.isEmpty()) {
+			for (String key : keyForClean) {
+				GestoreRichieste.cacheApi.remove(key);
 			}
 		}
-		
+	}
+	private static void removeErogazioneRequestRateLimitingConfig(IDServizio idServizio) throws UtilsException, CoreException {
 		// RequestRateLimitingConfig
-		{
-			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreRichieste.cache_rateLimiting.keys();
-			if(keys!=null && !keys.isEmpty()) {
-				for (String key : keys) {
-					if(key!=null) {
-						Object o =  _getRawObjectCache(GestoreRichieste.cache_rateLimiting.get(key));
-						if(o!=null) {
-							if(o instanceof RequestRateLimitingConfig) {
-								RequestRateLimitingConfig rl = (RequestRateLimitingConfig) o;
-								if(rl.getIdServizio()!=null && idServizio.equals(rl.getIdServizio(),false) &&
-										rl.getIdFruitore()!=null && fruitore.equals(rl.getIdFruitore())) {
-									keyForClean.add(key);
-								}
-							}
+		List<String> keyForClean = new ArrayList<>();
+		List<String> keys = GestoreRichieste.cacheRateLimiting.keys();
+		if(keys!=null && !keys.isEmpty()) {
+			for (String key : keys) {
+				if(key!=null) {
+					Object o =  getRawObjectCacheEngine(GestoreRichieste.cacheRateLimiting.get(key));
+					if(o instanceof RequestRateLimitingConfig) {
+						RequestRateLimitingConfig rl = (RequestRateLimitingConfig) o;
+						if(rl.getIdServizio()!=null && idServizio.equals(rl.getIdServizio(),false)) {
+							keyForClean.add(key);
 						}
 					}
 				}
 			}
-			if(keyForClean!=null && !keyForClean.isEmpty()) {
-				for (String key : keyForClean) {
-					GestoreRichieste.cache_rateLimiting.remove(key);
+		}
+		if(keyForClean!=null && !keyForClean.isEmpty()) {
+			for (String key : keyForClean) {
+				GestoreRichieste.cacheRateLimiting.remove(key);
+			}
+		}
+	}
+	
+	public static void removeFruizione(IDSoggetto fruitore, IDServizio idServizio) throws UtilsException, CoreException {
+		removeFruizioneRequestConfig(fruitore, idServizio);
+		removeFruizioneRequestRateLimitingConfig(fruitore, idServizio);
+		removeFruizioneRequestFruitore(fruitore, idServizio);
+	}
+	private static void removeFruizioneRequestConfig(IDSoggetto fruitore, IDServizio idServizio) throws UtilsException, CoreException {	
+		// RequestConfig
+		List<String> keyForClean = new ArrayList<>();
+		List<String> keys = GestoreRichieste.cacheApi.keys();
+		if(keys!=null && !keys.isEmpty()) {
+			for (String key : keys) {
+				if(key!=null) {
+					Object o =  getRawObjectCacheEngine(GestoreRichieste.cacheApi.get(key));
+					if(o instanceof RequestConfig) {
+						RequestConfig rc = (RequestConfig) o;
+						if(rc.getIdServizio()!=null && idServizio.equals(rc.getIdServizio(),false) &&
+								rc.getIdFruitore()!=null && fruitore.equals(rc.getIdFruitore())) {
+							keyForClean.add(key);
+						}
+					}
 				}
 			}
 		}
-		
+		if(keyForClean!=null && !keyForClean.isEmpty()) {
+			for (String key : keyForClean) {
+				GestoreRichieste.cacheApi.remove(key);
+			}
+		}
+	}
+	private static void removeFruizioneRequestRateLimitingConfig(IDSoggetto fruitore, IDServizio idServizio) throws UtilsException, CoreException {
+		// RequestRateLimitingConfig
+		List<String> keyForClean = new ArrayList<>();
+		List<String> keys = GestoreRichieste.cacheRateLimiting.keys();
+		if(keys!=null && !keys.isEmpty()) {
+			for (String key : keys) {
+				if(key!=null) {
+					Object o =  getRawObjectCacheEngine(GestoreRichieste.cacheRateLimiting.get(key));
+					if(o instanceof RequestRateLimitingConfig) {
+						RequestRateLimitingConfig rl = (RequestRateLimitingConfig) o;
+						if(rl.getIdServizio()!=null && idServizio.equals(rl.getIdServizio(),false) &&
+								rl.getIdFruitore()!=null && fruitore.equals(rl.getIdFruitore())) {
+							keyForClean.add(key);
+						}
+					}
+				}
+			}
+		}
+		if(keyForClean!=null && !keyForClean.isEmpty()) {
+			for (String key : keyForClean) {
+				GestoreRichieste.cacheRateLimiting.remove(key);
+			}
+		}
+	}
+	private static void removeFruizioneRequestFruitore(IDSoggetto fruitore, IDServizio idServizio) throws UtilsException, CoreException {
 		// RequestFruitore
-		{
-			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreRichieste.cache_fruitori.keys();
-			if(keys!=null && !keys.isEmpty()) {
-				for (String key : keys) {
-					if(key!=null) {
-						Object o =  _getRawObjectCache(GestoreRichieste.cache_fruitori.get(key));
-						if(o!=null) {
-							if(o instanceof RequestFruitore) {
-								RequestFruitore rf = (RequestFruitore) o;
-								if(rf.getIdSoggettoFruitore()!=null && fruitore.equals(rf.getIdSoggettoFruitore())) {
-									keyForClean.add(key);
-								}
-							}
+		List<String> keyForClean = new ArrayList<>();
+		List<String> keys = GestoreRichieste.cacheFruitori.keys();
+		if(keys!=null && !keys.isEmpty()) {
+			for (String key : keys) {
+				if(key!=null) {
+					Object o =  getRawObjectCacheEngine(GestoreRichieste.cacheFruitori.get(key));
+					if(o instanceof RequestFruitore) {
+						RequestFruitore rf = (RequestFruitore) o;
+						if(rf.getIdSoggettoFruitore()!=null && fruitore.equals(rf.getIdSoggettoFruitore())) {
+							keyForClean.add(key);
 						}
 					}
 				}
 			}
-			if(keyForClean!=null && !keyForClean.isEmpty()) {
-				for (String key : keyForClean) {
-					GestoreRichieste.cache_fruitori.remove(key);
-				}
+		}
+		if(keyForClean!=null && !keyForClean.isEmpty()) {
+			for (String key : keyForClean) {
+				GestoreRichieste.cacheFruitori.remove(key);
 			}
 		}
 	}
 	
-	public static void removePortaApplicativa(IDPortaApplicativa idPA) throws Exception {
-		
+	public static void removePortaApplicativa(IDPortaApplicativa idPA) throws UtilsException, CoreException {
+		removePortaApplicativaRequestConfig(idPA);
+		removePortaApplicativaRequestRateLimitingConfig(idPA) ;
+	}
+	private static void removePortaApplicativaRequestConfig(IDPortaApplicativa idPA) throws UtilsException, CoreException {
 		// RequestConfig
-		{
-			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreRichieste.cache_api.keys();
-			if(keys!=null && !keys.isEmpty()) {
-				for (String key : keys) {
-					if(key!=null) {
-						Object o =  _getRawObjectCache(GestoreRichieste.cache_api.get(key));
-						if(o!=null) {
-							if(o instanceof RequestConfig) {
-								RequestConfig rc = (RequestConfig) o;
-								if(rc.getIdPortaApplicativaDefault()!=null && idPA.equals(rc.getIdPortaApplicativaDefault())) {
-									keyForClean.add(key);
-								}
-								else if(rc.getIdPortaApplicativa()!=null && idPA.equals(rc.getIdPortaApplicativa())) {
-									keyForClean.add(key);
-								}
-								else if(rc.getPortaApplicativaDefault()!=null && rc.getPortaApplicativaDefault().getNome()!=null && idPA!=null && 
-										rc.getPortaApplicativaDefault().getNome().equals(idPA.getNome())) {
-									keyForClean.add(key);
-								}
-								else if(rc.getPortaApplicativa()!=null && rc.getPortaApplicativa().getNome()!=null && idPA!=null && 
-										rc.getPortaApplicativa().getNome().equals(idPA.getNome())) {
-									keyForClean.add(key);
-								}
-								else {
-									
-									boolean find = false;
-									if(rc.getListPorteApplicativeByFiltroRicerca()!=null && !rc.getListPorteApplicativeByFiltroRicerca().isEmpty()) {
-										for (String keyID : rc.getListPorteApplicativeByFiltroRicerca().keySet()) {
-											List<IDPortaApplicativa> ids =  rc.getListPorteApplicativeByFiltroRicerca().get(keyID);
-											if(ids!=null && ids.contains(idPA)) {
-												find = true;
-												break;
-											}
-										}
+		List<String> keyForClean = new ArrayList<>();
+		List<String> keys = GestoreRichieste.cacheApi.keys();
+		if(keys!=null && !keys.isEmpty()) {
+			for (String key : keys) {
+				if(key!=null) {
+					Object o =  getRawObjectCacheEngine(GestoreRichieste.cacheApi.get(key));
+					if(o instanceof RequestConfig) {
+						RequestConfig rc = (RequestConfig) o;
+						if(rc.getIdPortaApplicativaDefault()!=null && idPA.equals(rc.getIdPortaApplicativaDefault())) {
+							keyForClean.add(key);
+						}
+						else if(rc.getIdPortaApplicativa()!=null && idPA.equals(rc.getIdPortaApplicativa())) {
+							keyForClean.add(key);
+						}
+						else if(rc.getPortaApplicativaDefault()!=null && rc.getPortaApplicativaDefault().getNome()!=null && idPA!=null && 
+								rc.getPortaApplicativaDefault().getNome().equals(idPA.getNome())) {
+							keyForClean.add(key);
+						}
+						else if(rc.getPortaApplicativa()!=null && rc.getPortaApplicativa().getNome()!=null && idPA!=null && 
+								rc.getPortaApplicativa().getNome().equals(idPA.getNome())) {
+							keyForClean.add(key);
+						}
+						else {
+							
+							boolean find = false;
+							if(rc.getListPorteApplicativeByFiltroRicerca()!=null && !rc.getListPorteApplicativeByFiltroRicerca().isEmpty()) {
+								for (String keyID : rc.getListPorteApplicativeByFiltroRicerca().keySet()) {
+									List<IDPortaApplicativa> ids =  rc.getListPorteApplicativeByFiltroRicerca().get(keyID);
+									if(ids!=null && ids.contains(idPA)) {
+										find = true;
+										break;
 									}
-									if(!find) {
-										if(rc.getListMappingErogazionePortaApplicativa()!=null && !rc.getListMappingErogazionePortaApplicativa().isEmpty()) {
-											for (MappingErogazionePortaApplicativa mapping : rc.getListMappingErogazionePortaApplicativa()) {
-												if(mapping!=null && mapping.getIdPortaApplicativa()!=null && mapping.getIdPortaApplicativa().equals(idPA)) {
-													find = true;
-													break;
-												}
-											}
-										}
-									}
-									if(find) {
-										keyForClean.add(key);
-									}
-									
 								}
 							}
+							if(!find &&
+								rc.getListMappingErogazionePortaApplicativa()!=null && !rc.getListMappingErogazionePortaApplicativa().isEmpty()) {
+								for (MappingErogazionePortaApplicativa mapping : rc.getListMappingErogazionePortaApplicativa()) {
+									if(mapping!=null && mapping.getIdPortaApplicativa()!=null && mapping.getIdPortaApplicativa().equals(idPA)) {
+										find = true;
+										break;
+									}
+								}
+							}
+							if(find) {
+								keyForClean.add(key);
+							}
+							
 						}
 					}
 				}
 			}
-			if(keyForClean!=null && !keyForClean.isEmpty()) {
-				for (String key : keyForClean) {
-					GestoreRichieste.cache_api.remove(key);
-				}
+		}
+		if(keyForClean!=null && !keyForClean.isEmpty()) {
+			for (String key : keyForClean) {
+				GestoreRichieste.cacheApi.remove(key);
 			}
 		}
-		
+	}
+	private static void removePortaApplicativaRequestRateLimitingConfig(IDPortaApplicativa idPA) throws UtilsException, CoreException {
 		// RequestRateLimitingConfig
-		{
-			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreRichieste.cache_rateLimiting.keys();
-			if(keys!=null && !keys.isEmpty()) {
-				for (String key : keys) {
-					if(key!=null) {
-						Object o =  _getRawObjectCache(GestoreRichieste.cache_rateLimiting.get(key));
-						if(o!=null) {
-							if(o instanceof RequestRateLimitingConfig) {
-								RequestRateLimitingConfig rl = (RequestRateLimitingConfig) o;
-								if(TipoPdD.APPLICATIVA.equals(rl.getTipoPdD()) && idPA.getNome().equals(rl.getNomePorta())) {
-									keyForClean.add(key);
-								}
+		List<String> keyForClean = new ArrayList<>();
+		List<String> keys = GestoreRichieste.cacheRateLimiting.keys();
+		if(keys!=null && !keys.isEmpty()) {
+			for (String key : keys) {
+				if(key!=null) {
+					Object o =  getRawObjectCacheEngine(GestoreRichieste.cacheRateLimiting.get(key));
+					if(o instanceof RequestRateLimitingConfig) {
+						RequestRateLimitingConfig rl = (RequestRateLimitingConfig) o;
+						if(TipoPdD.APPLICATIVA.equals(rl.getTipoPdD()) && idPA.getNome().equals(rl.getNomePorta())) {
+							keyForClean.add(key);
+						}
+					}
+				}
+			}
+		}
+		if(keyForClean!=null && !keyForClean.isEmpty()) {
+			for (String key : keyForClean) {
+				GestoreRichieste.cacheRateLimiting.remove(key);
+			}
+		}
+	}
+	
+	public static void removeConnettore(IDConnettore idConnettore)throws UtilsException, CoreException {
+		
+		// RequestConfig
+		List<String> keyForClean = new ArrayList<>();
+		List<String> keys = GestoreRichieste.cacheApi.keys();
+		if(keys!=null && !keys.isEmpty()) {
+			for (String key : keys) {
+				if(key!=null) {
+					Object o =  getRawObjectCacheEngine(GestoreRichieste.cacheApi.get(key));
+					if(o instanceof RequestConfig) {
+						RequestConfig rc = (RequestConfig) o;
+						if(rc.getIdServizio()!=null && rc.getIdServizio().getSoggettoErogatore()!=null && idConnettore.getIdSoggettoProprietario().equals(rc.getIdServizio().getSoggettoErogatore())) {
+							ServizioApplicativo sa = rc.getServizioApplicativoErogatore(idConnettore.getNome());
+							if(sa!=null) {
+								keyForClean.add(key);
 							}
 						}
 					}
 				}
 			}
-			if(keyForClean!=null && !keyForClean.isEmpty()) {
-				for (String key : keyForClean) {
-					GestoreRichieste.cache_rateLimiting.remove(key);
-				}
+		}
+		if(keyForClean!=null && !keyForClean.isEmpty()) {
+			for (String key : keyForClean) {
+				GestoreRichieste.cacheApi.remove(key);
 			}
 		}
 		
 	}
 	
-	public static void removeConnettore(IDConnettore idConnettore)throws Exception {
-		
-		// RequestConfig
-		{
-			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreRichieste.cache_api.keys();
-			if(keys!=null && !keys.isEmpty()) {
-				for (String key : keys) {
-					if(key!=null) {
-						Object o =  _getRawObjectCache(GestoreRichieste.cache_api.get(key));
-						if(o!=null) {
-							if(o instanceof RequestConfig) {
-								RequestConfig rc = (RequestConfig) o;
-								if(rc.getIdServizio()!=null && rc.getIdServizio().getSoggettoErogatore()!=null && idConnettore.getIdSoggettoProprietario().equals(rc.getIdServizio().getSoggettoErogatore())) {
-									ServizioApplicativo sa = rc.getServizioApplicativoErogatore(idConnettore.getNome());
-									if(sa!=null) {
-										keyForClean.add(key);
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-			if(keyForClean!=null && !keyForClean.isEmpty()) {
-				for (String key : keyForClean) {
-					GestoreRichieste.cache_api.remove(key);
-				}
-			}
-		}
-		
+	public static void removePortaDelegata(IDPortaDelegata idPD) throws UtilsException, CoreException {
+		removePortaDelegataRequestConfig(idPD);
+		removePortaDelegataRequestRateLimitingConfig(idPD);
 	}
-	
-	public static void removePortaDelegata(IDPortaDelegata idPD) throws Exception {
-		
+	private static void removePortaDelegataRequestConfig(IDPortaDelegata idPD) throws UtilsException, CoreException {
 		// RequestConfig
-		{
-			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreRichieste.cache_api.keys();
-			if(keys!=null && !keys.isEmpty()) {
-				for (String key : keys) {
-					if(key!=null) {
-						Object o =  _getRawObjectCache(GestoreRichieste.cache_api.get(key));
-						if(o!=null) {
-							if(o instanceof RequestConfig) {
-								RequestConfig rc = (RequestConfig) o;
-								if(rc.getIdPortaDelegataDefault()!=null && idPD.equals(rc.getIdPortaDelegataDefault())) {
-									keyForClean.add(key);
-								}
-								else if(rc.getIdPortaDelegata()!=null && idPD.equals(rc.getIdPortaDelegata())) {
-									keyForClean.add(key);
-								}
-								else if(rc.getPortaDelegataDefault()!=null && rc.getPortaDelegataDefault().getNome()!=null && idPD!=null && 
-										rc.getPortaDelegataDefault().getNome().equals(idPD.getNome())) {
-									keyForClean.add(key);
-								}
-								else if(rc.getPortaDelegata()!=null && rc.getPortaDelegata().getNome()!=null && idPD!=null && 
-										rc.getPortaDelegata().getNome().equals(idPD.getNome())) {
-									keyForClean.add(key);
-								}
-								else {
-									
-									boolean find = false;
-									if(rc.getListPorteDelegateByFiltroRicerca()!=null && !rc.getListPorteDelegateByFiltroRicerca().isEmpty()) {
-										for (String keyID : rc.getListPorteDelegateByFiltroRicerca().keySet()) {
-											List<IDPortaDelegata> ids =  rc.getListPorteDelegateByFiltroRicerca().get(keyID);
-											if(ids!=null && ids.contains(idPD)) {
-												find = true;
-												break;
-											}
-										}
+		List<String> keyForClean = new ArrayList<>();
+		List<String> keys = GestoreRichieste.cacheApi.keys();
+		if(keys!=null && !keys.isEmpty()) {
+			for (String key : keys) {
+				if(key!=null) {
+					Object o =  getRawObjectCacheEngine(GestoreRichieste.cacheApi.get(key));
+					if(o instanceof RequestConfig) {
+						RequestConfig rc = (RequestConfig) o;
+						if(rc.getIdPortaDelegataDefault()!=null && idPD.equals(rc.getIdPortaDelegataDefault())) {
+							keyForClean.add(key);
+						}
+						else if(rc.getIdPortaDelegata()!=null && idPD.equals(rc.getIdPortaDelegata())) {
+							keyForClean.add(key);
+						}
+						else if(rc.getPortaDelegataDefault()!=null && rc.getPortaDelegataDefault().getNome()!=null && idPD!=null && 
+								rc.getPortaDelegataDefault().getNome().equals(idPD.getNome())) {
+							keyForClean.add(key);
+						}
+						else if(rc.getPortaDelegata()!=null && rc.getPortaDelegata().getNome()!=null && idPD!=null && 
+								rc.getPortaDelegata().getNome().equals(idPD.getNome())) {
+							keyForClean.add(key);
+						}
+						else {
+							
+							boolean find = false;
+							if(rc.getListPorteDelegateByFiltroRicerca()!=null && !rc.getListPorteDelegateByFiltroRicerca().isEmpty()) {
+								for (String keyID : rc.getListPorteDelegateByFiltroRicerca().keySet()) {
+									List<IDPortaDelegata> ids =  rc.getListPorteDelegateByFiltroRicerca().get(keyID);
+									if(ids!=null && ids.contains(idPD)) {
+										find = true;
+										break;
 									}
-									if(!find) {
-										if(rc.getListMappingFruizionePortaDelegata()!=null && !rc.getListMappingFruizionePortaDelegata().isEmpty()) {
-											for (MappingFruizionePortaDelegata mapping : rc.getListMappingFruizionePortaDelegata()) {
-												if(mapping!=null && mapping.getIdPortaDelegata()!=null && mapping.getIdPortaDelegata().equals(idPD)) {
-													find = true;
-													break;
-												}
-											}
-										}
-									}
-									if(find) {
-										keyForClean.add(key);
-									}
-									
 								}
 							}
+							if(!find &&
+								rc.getListMappingFruizionePortaDelegata()!=null && !rc.getListMappingFruizionePortaDelegata().isEmpty()) {
+								for (MappingFruizionePortaDelegata mapping : rc.getListMappingFruizionePortaDelegata()) {
+									if(mapping!=null && mapping.getIdPortaDelegata()!=null && mapping.getIdPortaDelegata().equals(idPD)) {
+										find = true;
+										break;
+									}
+								}
+							}
+							if(find) {
+								keyForClean.add(key);
+							}
+							
 						}
 					}
 				}
 			}
-			if(keyForClean!=null && !keyForClean.isEmpty()) {
-				for (String key : keyForClean) {
-					GestoreRichieste.cache_api.remove(key);
-				}
+		}
+		if(keyForClean!=null && !keyForClean.isEmpty()) {
+			for (String key : keyForClean) {
+				GestoreRichieste.cacheApi.remove(key);
 			}
 		}
-		
+	}
+	private static void removePortaDelegataRequestRateLimitingConfig(IDPortaDelegata idPD) throws UtilsException, CoreException {	
 		// RequestRateLimitingConfig
-		{
-			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreRichieste.cache_rateLimiting.keys();
-			if(keys!=null && !keys.isEmpty()) {
-				for (String key : keys) {
-					if(key!=null) {
-						Object o =  _getRawObjectCache(GestoreRichieste.cache_rateLimiting.get(key));
-						if(o!=null) {
-							if(o instanceof RequestRateLimitingConfig) {
-								RequestRateLimitingConfig rl = (RequestRateLimitingConfig) o;
-								if(TipoPdD.DELEGATA.equals(rl.getTipoPdD()) && idPD.getNome().equals(rl.getNomePorta())) {
-									keyForClean.add(key);
-								}
-							}
+		List<String> keyForClean = new ArrayList<>();
+		List<String> keys = GestoreRichieste.cacheRateLimiting.keys();
+		if(keys!=null && !keys.isEmpty()) {
+			for (String key : keys) {
+				if(key!=null) {
+					Object o =  getRawObjectCacheEngine(GestoreRichieste.cacheRateLimiting.get(key));
+					if(o instanceof RequestRateLimitingConfig) {
+						RequestRateLimitingConfig rl = (RequestRateLimitingConfig) o;
+						if(TipoPdD.DELEGATA.equals(rl.getTipoPdD()) && idPD.getNome().equals(rl.getNomePorta())) {
+							keyForClean.add(key);
 						}
 					}
 				}
 			}
-			if(keyForClean!=null && !keyForClean.isEmpty()) {
-				for (String key : keyForClean) {
-					GestoreRichieste.cache_rateLimiting.remove(key);
+		}
+		if(keyForClean!=null && !keyForClean.isEmpty()) {
+			for (String key : keyForClean) {
+				GestoreRichieste.cacheRateLimiting.remove(key);
+			}
+		}
+	}
+	
+	public static void removePdd(String portaDominio) throws UtilsException, CoreException {
+		
+		// RequestConfig
+		List<String> keyForClean = new ArrayList<>();
+		List<String> keys = GestoreRichieste.cacheApi.keys();
+		if(keys!=null && !keys.isEmpty()) {
+			for (String key : keys) {
+				if(key!=null) {
+					Object o =  getRawObjectCacheEngine(GestoreRichieste.cacheApi.get(key));
+					if(o instanceof RequestConfig) {
+						RequestConfig rc = (RequestConfig) o;
+						if(
+								(rc.getSoggettoErogatorePdd()!=null && rc.getSoggettoErogatorePdd().getNome()!=null && portaDominio.equals(rc.getSoggettoErogatorePdd().getNome()))
+								||
+								(rc.getSoggettoFruitorePdd()!=null && rc.getSoggettoFruitorePdd().getNome()!=null && portaDominio.equals(rc.getSoggettoFruitorePdd().getNome()))
+							) {
+							keyForClean.add(key);
+						}
+					}
 				}
+			}
+		}
+		if(keyForClean!=null && !keyForClean.isEmpty()) {
+			for (String key : keyForClean) {
+				GestoreRichieste.cacheApi.remove(key);
 			}
 		}
 		
 	}
 	
-	public static void removePdd(String portaDominio) throws Exception {
-		
-		// RequestConfig
-		{
-			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreRichieste.cache_api.keys();
-			if(keys!=null && !keys.isEmpty()) {
-				for (String key : keys) {
-					if(key!=null) {
-						Object o =  _getRawObjectCache(GestoreRichieste.cache_api.get(key));
-						if(o!=null) {
-							if(o instanceof RequestConfig) {
-								RequestConfig rc = (RequestConfig) o;
-								if(rc.getSoggettoErogatorePdd()!=null && rc.getSoggettoErogatorePdd().getNome()!=null && portaDominio.equals(rc.getSoggettoErogatorePdd().getNome())) {
-									keyForClean.add(key);
-								}
-								else if(rc.getSoggettoFruitorePdd()!=null && rc.getSoggettoFruitorePdd().getNome()!=null && portaDominio.equals(rc.getSoggettoFruitorePdd().getNome())) {
-									keyForClean.add(key);
-								}
-							}
-						}
-					}
-				}
-			}
-			if(keyForClean!=null && !keyForClean.isEmpty()) {
-				for (String key : keyForClean) {
-					GestoreRichieste.cache_api.remove(key);
-				}
-			}
-		}
-		
+	public static void removeSoggetto(IDSoggetto idSoggetto) throws UtilsException, CoreException {
+		removeSoggettoRequestConfig(idSoggetto);
+		removeSoggettoRequestRateLimitingConfig(idSoggetto);
+		removeSoggettoRequestFruitore(idSoggetto);
 	}
-	
-	public static void removeSoggetto(IDSoggetto idSoggetto) throws Exception {
-		
+	private static void removeSoggettoRequestConfig(IDSoggetto idSoggetto) throws UtilsException, CoreException {	
 		// RequestConfig
-		{
-			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreRichieste.cache_api.keys();
-			if(keys!=null && !keys.isEmpty()) {
-				for (String key : keys) {
-					if(key!=null) {
-						Object o =  _getRawObjectCache(GestoreRichieste.cache_api.get(key));
-						if(o!=null) {
-							if(o instanceof RequestConfig) {
-								RequestConfig rc = (RequestConfig) o;
-								if(rc.getIdServizio()!=null && rc.getIdServizio().getSoggettoErogatore()!=null && idSoggetto.equals(rc.getIdServizio().getSoggettoErogatore())) {
-									keyForClean.add(key);
-								}
-								else if(rc.getIdFruitore()!=null && idSoggetto.equals(rc.getIdFruitore())) {
-									keyForClean.add(key);
-								}
-							}
+		List<String> keyForClean = new ArrayList<>();
+		List<String> keys = GestoreRichieste.cacheApi.keys();
+		if(keys!=null && !keys.isEmpty()) {
+			for (String key : keys) {
+				if(key!=null) {
+					Object o =  getRawObjectCacheEngine(GestoreRichieste.cacheApi.get(key));
+					if(o instanceof RequestConfig) {
+						RequestConfig rc = (RequestConfig) o;
+						if(
+								(rc.getIdServizio()!=null && rc.getIdServizio().getSoggettoErogatore()!=null && idSoggetto.equals(rc.getIdServizio().getSoggettoErogatore()))
+								||
+								(rc.getIdFruitore()!=null && idSoggetto.equals(rc.getIdFruitore()))
+							) {
+							keyForClean.add(key);
 						}
 					}
 				}
 			}
-			if(keyForClean!=null && !keyForClean.isEmpty()) {
-				for (String key : keyForClean) {
-					GestoreRichieste.cache_api.remove(key);
-				}
+		}
+		if(keyForClean!=null && !keyForClean.isEmpty()) {
+			for (String key : keyForClean) {
+				GestoreRichieste.cacheApi.remove(key);
 			}
 		}
-		
+	}
+	private static void removeSoggettoRequestRateLimitingConfig(IDSoggetto idSoggetto) throws UtilsException, CoreException {
 		// RequestRateLimitingConfig
-		{
-			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreRichieste.cache_rateLimiting.keys();
-			if(keys!=null && !keys.isEmpty()) {
-				for (String key : keys) {
-					if(key!=null) {
-						Object o =  _getRawObjectCache(GestoreRichieste.cache_rateLimiting.get(key));
-						if(o!=null) {
-							if(o instanceof RequestRateLimitingConfig) {
-								RequestRateLimitingConfig rl = (RequestRateLimitingConfig) o;
-								if(rl.getIdServizio()!=null && rl.getIdServizio().getSoggettoErogatore()!=null && idSoggetto.equals(rl.getIdServizio().getSoggettoErogatore())) {
-									keyForClean.add(key);
-								}
-								else if(rl.getIdFruitore()!=null && idSoggetto.equals(rl.getIdFruitore())) {
-									keyForClean.add(key);
-								}
-							}
+		List<String> keyForClean = new ArrayList<>();
+		List<String> keys = GestoreRichieste.cacheRateLimiting.keys();
+		if(keys!=null && !keys.isEmpty()) {
+			for (String key : keys) {
+				if(key!=null) {
+					Object o =  getRawObjectCacheEngine(GestoreRichieste.cacheRateLimiting.get(key));
+					if(o instanceof RequestRateLimitingConfig) {
+						RequestRateLimitingConfig rl = (RequestRateLimitingConfig) o;
+						if(
+								(rl.getIdServizio()!=null && rl.getIdServizio().getSoggettoErogatore()!=null && idSoggetto.equals(rl.getIdServizio().getSoggettoErogatore()))
+								||
+								(rl.getIdFruitore()!=null && idSoggetto.equals(rl.getIdFruitore()))
+							) {
+							keyForClean.add(key);
 						}
 					}
 				}
 			}
-			if(keyForClean!=null && !keyForClean.isEmpty()) {
-				for (String key : keyForClean) {
-					GestoreRichieste.cache_rateLimiting.remove(key);
-				}
+		}
+		if(keyForClean!=null && !keyForClean.isEmpty()) {
+			for (String key : keyForClean) {
+				GestoreRichieste.cacheRateLimiting.remove(key);
 			}
 		}
-		
+	}
+	private static void removeSoggettoRequestFruitore(IDSoggetto idSoggetto) throws UtilsException, CoreException {
 		// RequestFruitore
-		{
-			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreRichieste.cache_fruitori.keys();
-			if(keys!=null && !keys.isEmpty()) {
-				for (String key : keys) {
-					if(key!=null) {
-						Object o =  _getRawObjectCache(GestoreRichieste.cache_fruitori.get(key));
-						if(o!=null) {
-							if(o instanceof RequestFruitore) {
-								RequestFruitore rf = (RequestFruitore) o;
-								if(rf.getIdServizioApplicativoFruitore()!=null && rf.getIdServizioApplicativoFruitore().getIdSoggettoProprietario()!=null && idSoggetto.equals(rf.getIdServizioApplicativoFruitore().getIdSoggettoProprietario())) {
-									keyForClean.add(key);
-								}
-								else if(rf.getIdSoggettoFruitore()!=null && idSoggetto.equals(rf.getIdSoggettoFruitore())) {
-									keyForClean.add(key);
-								}
-							}
+		List<String> keyForClean = new ArrayList<>();
+		List<String> keys = GestoreRichieste.cacheFruitori.keys();
+		if(keys!=null && !keys.isEmpty()) {
+			for (String key : keys) {
+				if(key!=null) {
+					Object o =  getRawObjectCacheEngine(GestoreRichieste.cacheFruitori.get(key));
+					if(o instanceof RequestFruitore) {
+						RequestFruitore rf = (RequestFruitore) o;
+						if(
+								(rf.getIdServizioApplicativoFruitore()!=null && rf.getIdServizioApplicativoFruitore().getIdSoggettoProprietario()!=null && idSoggetto.equals(rf.getIdServizioApplicativoFruitore().getIdSoggettoProprietario()))
+								||
+								(rf.getIdSoggettoFruitore()!=null && idSoggetto.equals(rf.getIdSoggettoFruitore()))
+							) {
+							keyForClean.add(key);
 						}
 					}
 				}
 			}
-			if(keyForClean!=null && !keyForClean.isEmpty()) {
-				for (String key : keyForClean) {
-					GestoreRichieste.cache_fruitori.remove(key);
-				}
+		}
+		if(keyForClean!=null && !keyForClean.isEmpty()) {
+			for (String key : keyForClean) {
+				GestoreRichieste.cacheFruitori.remove(key);
 			}
 		}
-		
 	}
 	
-	public static void removeApplicativo(IDServizioApplicativo idApplicativo) throws Exception {
-		
+	public static void removeApplicativo(IDServizioApplicativo idApplicativo) throws UtilsException, CoreException {
+		removeApplicativoRequestConfig(idApplicativo);
+		removeApplicativoRequestFruitore(idApplicativo);
+	}
+	private static void removeApplicativoRequestConfig(IDServizioApplicativo idApplicativo) throws UtilsException, CoreException {
 		// RequestConfig
-		{
-			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreRichieste.cache_api.keys();
-			if(keys!=null && !keys.isEmpty()) {
-				for (String key : keys) {
-					if(key!=null) {
-						Object o =  _getRawObjectCache(GestoreRichieste.cache_api.get(key));
-						if(o!=null) {
-							if(o instanceof RequestConfig) {
-								RequestConfig rc = (RequestConfig) o;
-								if(rc.getIdServizio()!=null && rc.getIdServizio().getSoggettoErogatore()!=null && idApplicativo.getIdSoggettoProprietario().equals(rc.getIdServizio().getSoggettoErogatore())) {
-									ServizioApplicativo sa = rc.getServizioApplicativoErogatore(idApplicativo.getNome());
-									if(sa!=null) {
-										keyForClean.add(key);
-									}
-								}
+		List<String> keyForClean = new ArrayList<>();
+		List<String> keys = GestoreRichieste.cacheApi.keys();
+		if(keys!=null && !keys.isEmpty()) {
+			for (String key : keys) {
+				if(key!=null) {
+					Object o =  getRawObjectCacheEngine(GestoreRichieste.cacheApi.get(key));
+					if(o instanceof RequestConfig) {
+						RequestConfig rc = (RequestConfig) o;
+						if(rc.getIdServizio()!=null && rc.getIdServizio().getSoggettoErogatore()!=null && idApplicativo.getIdSoggettoProprietario().equals(rc.getIdServizio().getSoggettoErogatore())) {
+							ServizioApplicativo sa = rc.getServizioApplicativoErogatore(idApplicativo.getNome());
+							if(sa!=null) {
+								keyForClean.add(key);
 							}
 						}
 					}
 				}
 			}
-			if(keyForClean!=null && !keyForClean.isEmpty()) {
-				for (String key : keyForClean) {
-					GestoreRichieste.cache_api.remove(key);
-				}
+		}
+		if(keyForClean!=null && !keyForClean.isEmpty()) {
+			for (String key : keyForClean) {
+				GestoreRichieste.cacheApi.remove(key);
 			}
 		}
-		
+	}
+	private static void removeApplicativoRequestFruitore(IDServizioApplicativo idApplicativo) throws UtilsException, CoreException {	
 		// RequestFruitore
-		{
-			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreRichieste.cache_fruitori.keys();
-			if(keys!=null && !keys.isEmpty()) {
-				for (String key : keys) {
-					if(key!=null) {
-						Object o =  _getRawObjectCache(GestoreRichieste.cache_fruitori.get(key));
-						if(o!=null) {
-							if(o instanceof RequestFruitore) {
-								RequestFruitore rf = (RequestFruitore) o;
-								if(rf.getIdServizioApplicativoFruitore()!=null && idApplicativo.equals(rf.getIdServizioApplicativoFruitore())) {
-									keyForClean.add(key);
-								}
-							}
+		List<String> keyForClean = new ArrayList<>();
+		List<String> keys = GestoreRichieste.cacheFruitori.keys();
+		if(keys!=null && !keys.isEmpty()) {
+			for (String key : keys) {
+				if(key!=null) {
+					Object o =  getRawObjectCacheEngine(GestoreRichieste.cacheFruitori.get(key));
+					if(o instanceof RequestFruitore) {
+						RequestFruitore rf = (RequestFruitore) o;
+						if(rf.getIdServizioApplicativoFruitore()!=null && idApplicativo.equals(rf.getIdServizioApplicativoFruitore())) {
+							keyForClean.add(key);
 						}
 					}
-				}
-			}
-			if(keyForClean!=null && !keyForClean.isEmpty()) {
-				for (String key : keyForClean) {
-					GestoreRichieste.cache_fruitori.remove(key);
-				}
-			}
-		}		
-		
-	}
-	
-	
-	public static void removeRuolo(IDRuolo idRuolo) throws Exception {
-		// RequestConfig
-		{
-			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreRichieste.cache_api.keys();
-			if(keys!=null && !keys.isEmpty()) {
-				for (String key : keys) {
-					if(key!=null) {
-						Object o =  _getRawObjectCache(GestoreRichieste.cache_api.get(key));
-						if(o!=null) {
-							if(o instanceof RequestConfig) {
-								RequestConfig rc = (RequestConfig) o;
-								
-								List<String> ruoloKeys = rc.getRuoloKeys();
-								if(ruoloKeys!=null && ruoloKeys.contains(idRuolo.getNome())) {
-									keyForClean.add(key);
-									continue;
-								}
-							}
-						}
-					}
-				}
-			}
-			if(keyForClean!=null && !keyForClean.isEmpty()) {
-				for (String key : keyForClean) {
-					GestoreRichieste.cache_api.remove(key);
 				}
 			}
 		}
-	}
-	
-	public static void removeScope(IDScope idScope) throws Exception {
-		// RequestConfig
-		{
-			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreRichieste.cache_api.keys();
-			if(keys!=null && !keys.isEmpty()) {
-				for (String key : keys) {
-					if(key!=null) {
-						Object o =  _getRawObjectCache(GestoreRichieste.cache_api.get(key));
-						if(o!=null) {
-							if(o instanceof RequestConfig) {
-								RequestConfig rc = (RequestConfig) o;
-								
-								List<String> scopeKeys = rc.getScopeKeys();
-								if(scopeKeys!=null && scopeKeys.contains(idScope.getNome())) {
-									keyForClean.add(key);
-									continue;
-								}
-							}
-						}
-					}
-				}
-			}
-			if(keyForClean!=null && !keyForClean.isEmpty()) {
-				for (String key : keyForClean) {
-					GestoreRichieste.cache_api.remove(key);
-				}
+		if(keyForClean!=null && !keyForClean.isEmpty()) {
+			for (String key : keyForClean) {
+				GestoreRichieste.cacheFruitori.remove(key);
 			}
 		}
 	}
 	
 	
-	public static void removeGenericProperties(IDGenericProperties idGP) throws Exception {
+	public static void removeRuolo(IDRuolo idRuolo) throws UtilsException, CoreException {
 		// RequestConfig
-		{
-			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreRichieste.cache_api.keys();
-			if(keys!=null && !keys.isEmpty()) {
-				for (String key : keys) {
-					if(key!=null) {
-						Object o =  _getRawObjectCache(GestoreRichieste.cache_api.get(key));
-						if(o!=null) {
-							if(o instanceof RequestConfig) {
-								RequestConfig rc = (RequestConfig) o;
-								
-								if(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA.equals(idGP.getTipologia())) {
-									Object oT = rc.getPolicyValidazioneToken(idGP.getNome());
-									if(oT!=null) {
-										keyForClean.add(key);
-										continue;
-									}
-								}
-								
-								if(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA_RETRIEVE.equals(idGP.getTipologia())) {
-									Object oT = rc.getPolicyNegoziazioneToken(idGP.getNome());
-									if(oT!=null) {
-										keyForClean.add(key);
-										continue;
-									}
-								}
-								
-								if(org.openspcoop2.pdd.core.token.Costanti.ATTRIBUTE_AUTHORITY.equals(idGP.getTipologia())) {
-									Object oT = rc.getAttributeAuthority(idGP.getNome());
-									if(oT!=null) {
-										keyForClean.add(key);
-										continue;
-									}
-								}
-								
-								List<String> forwardProxyKeys = (rc.getForwardProxyEnabled()!=null && rc.getForwardProxyEnabled()) ? rc.getForwardProxyKeys() : null;
-								String forwardProxyGP = ConfigurazionePdD._toKey_ForwardProxyConfigSuffix(idGP);
-								if(forwardProxyKeys!=null && forwardProxyKeys.contains(forwardProxyGP)) {
-									keyForClean.add(key);
-									continue;
-								}
-							}
+		List<String> keyForClean = new ArrayList<>();
+		List<String> keys = GestoreRichieste.cacheApi.keys();
+		if(keys!=null && !keys.isEmpty()) {
+			for (String key : keys) {
+				if(key!=null) {
+					Object o =  getRawObjectCacheEngine(GestoreRichieste.cacheApi.get(key));
+					if(o instanceof RequestConfig) {
+						RequestConfig rc = (RequestConfig) o;
+						
+						List<String> ruoloKeys = rc.getRuoloKeys();
+						if(ruoloKeys!=null && ruoloKeys.contains(idRuolo.getNome())) {
+							keyForClean.add(key);
 						}
 					}
 				}
 			}
-			if(keyForClean!=null && !keyForClean.isEmpty()) {
-				for (String key : keyForClean) {
-					GestoreRichieste.cache_api.remove(key);
+		}
+		if(keyForClean!=null && !keyForClean.isEmpty()) {
+			for (String key : keyForClean) {
+				GestoreRichieste.cacheApi.remove(key);
+			}
+		}
+	}
+	
+	public static void removeScope(IDScope idScope) throws UtilsException, CoreException {
+		// RequestConfig
+		List<String> keyForClean = new ArrayList<>();
+		List<String> keys = GestoreRichieste.cacheApi.keys();
+		if(keys!=null && !keys.isEmpty()) {
+			for (String key : keys) {
+				if(key!=null) {
+					Object o =  getRawObjectCacheEngine(GestoreRichieste.cacheApi.get(key));
+					if(o instanceof RequestConfig) {
+						RequestConfig rc = (RequestConfig) o;
+						
+						List<String> scopeKeys = rc.getScopeKeys();
+						if(scopeKeys!=null && scopeKeys.contains(idScope.getNome())) {
+							keyForClean.add(key);
+						}
+					}
 				}
+			}
+		}
+		if(keyForClean!=null && !keyForClean.isEmpty()) {
+			for (String key : keyForClean) {
+				GestoreRichieste.cacheApi.remove(key);
+			}
+		}
+	}
+	
+	
+	public static void removeGenericProperties(IDGenericProperties idGP) throws UtilsException, CoreException {
+		// RequestConfig
+		List<String> keyForClean = new ArrayList<>();
+		List<String> keys = GestoreRichieste.cacheApi.keys();
+		if(keys!=null && !keys.isEmpty()) {
+			for (String key : keys) {
+				if(key!=null) {
+					Object o =  getRawObjectCacheEngine(GestoreRichieste.cacheApi.get(key));
+					if(o instanceof RequestConfig) {
+						RequestConfig rc = (RequestConfig) o;
+						
+						if(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA.equals(idGP.getTipologia())) {
+							Object oT = rc.getPolicyValidazioneToken(idGP.getNome());
+							if(oT!=null) {
+								keyForClean.add(key);
+								continue;
+							}
+						}
+						
+						if(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA_RETRIEVE.equals(idGP.getTipologia())) {
+							Object oT = rc.getPolicyNegoziazioneToken(idGP.getNome());
+							if(oT!=null) {
+								keyForClean.add(key);
+								continue;
+							}
+						}
+						
+						if(org.openspcoop2.pdd.core.token.Costanti.ATTRIBUTE_AUTHORITY.equals(idGP.getTipologia())) {
+							Object oT = rc.getAttributeAuthority(idGP.getNome());
+							if(oT!=null) {
+								keyForClean.add(key);
+								continue;
+							}
+						}
+						
+						List<String> forwardProxyKeys = (rc.getForwardProxyEnabled()!=null && rc.getForwardProxyEnabled()) ? rc.getForwardProxyKeys() : null;
+						String forwardProxyGP = ConfigurazionePdD._toKey_ForwardProxyConfigSuffix(idGP);
+						if(forwardProxyKeys!=null && forwardProxyKeys.contains(forwardProxyGP)) {
+							keyForClean.add(key);
+							continue;
+						}
+					}
+				}
+			}
+		}
+		if(keyForClean!=null && !keyForClean.isEmpty()) {
+			for (String key : keyForClean) {
+				GestoreRichieste.cacheApi.remove(key);
 			}
 		}
 	}
@@ -1313,12 +1273,14 @@ public class GestoreRichieste {
 	// ******** RICHIESTE **********
 	
 	private static final String KEY_IN_MEMORY_ONLY = "@@InMemoryOnly@@";
+	private static final String INIT_SEPARATOR = "\n\n=======================";
+	private static final String END_SEPARATOR = "=======================";
 	
 	public static void setRequestConfigInMemory(RequestInfo requestInfo) {
 		if(org.openspcoop2.utils.cache.Cache.DEBUG_CACHE) {
-			System.out.println("\n\n=======================");
+			System.out.println(INIT_SEPARATOR);
 			System.out.println("Creato RequestConfig in ram");
-			System.out.println("=======================");
+			System.out.println(END_SEPARATOR);
 		}
 					
 		RequestConfig rc = new RequestConfig();
@@ -1346,8 +1308,8 @@ public class GestoreRichieste {
 		if(key==null) {
 			return;
 		}
-		_readRequestConfig(requestInfo, key, null);
-		_readRequestRateLimitingConfig(requestInfo, key);
+		readRequestConfigEngine(requestInfo, key, null);
+		readRequestRateLimitingConfigEngine(requestInfo, key);
 		requestInfo.setRequestThreadContext(RequestThreadContext.getRequestThreadContext());
 		if(requestInfo.getRequestThreadContext()!=null) {
 			// ripulisco precedenti assegnamenti
@@ -1356,14 +1318,14 @@ public class GestoreRichieste {
 		}
 		
 		if(org.openspcoop2.utils.cache.Cache.DEBUG_CACHE) {
-			System.out.println("\n\n=======================");
+			System.out.println(INIT_SEPARATOR);
 			System.out.println("Creato RequestConfig con chiave '"+key+"'");
 			System.out.println("\tRequestThreadContext '"+requestInfo.getRequestThreadContext().gettName()+"'");
-			System.out.println("=======================");
+			System.out.println(END_SEPARATOR);
 		}
 	}
 	
-	public static void updateRequestConfig(Logger logCore, RequestInfo requestInfo, ServiceBinding serviceBinding, OpenSPCoop2MessageSoapStreamReader soapStreamReader) {
+	public static void updateRequestConfig(RequestInfo requestInfo, ServiceBinding serviceBinding, OpenSPCoop2MessageSoapStreamReader soapStreamReader) {
 		
 		if(!useCache) {
 			return; // solo in memory, la differenza sull'azione non è importante
@@ -1382,47 +1344,46 @@ public class GestoreRichieste {
 		}
 		
 		if(org.openspcoop2.utils.cache.Cache.DEBUG_CACHE) {
-			System.out.println("\n\n=======================");
+			System.out.println(INIT_SEPARATOR);
 			System.out.println("AGGIORNO RequestConfig");
 			System.out.println("OLD: "+oldKey);
 			System.out.println("NEW: "+key);
-			System.out.println("=======================");
+			System.out.println(END_SEPARATOR);
 		}
 		
 		RequestConfig rcOld = requestInfo.getRequestConfig();
 		
 		// Aggiorno nel contesto nuovi oggetti con nuova chiave
-		_readRequestConfig(requestInfo, key, rcOld);
-		_readRequestRateLimitingConfig(requestInfo, key);
+		readRequestConfigEngine(requestInfo, key, rcOld);
+		readRequestRateLimitingConfigEngine(requestInfo, key);
 
 		requestInfo.setPreRequestConfig(rcOld);
 
 	}
 	
-	private static void _readRequestConfig(RequestInfo requestInfo, String key, RequestConfig srcClone) {
+	private static void readRequestConfigEngine(RequestInfo requestInfo, String key, RequestConfig srcClone) {
 		
-		if(cache_api==null) {
+		if(cacheApi==null) {
 			return;
 		}
 		
 		org.openspcoop2.utils.cache.CacheResponse response = 
-				(org.openspcoop2.utils.cache.CacheResponse) cache_api.get(key);
-		if(response != null){
-			if(response.getObject()!=null){
-				RequestConfig rc = (RequestConfig) response.getObject(); 
-				//System.out.println("TROVATA IN CACHE ("+rc.isCached()+")");
-				if(rc.getIdServizio()!=null) {
-					rc.setIdServizio(rc.getIdServizio().clone()); // per l'azione
-				}
-				requestInfo.setRequestConfig(rc);
-				return;
+				(org.openspcoop2.utils.cache.CacheResponse) cacheApi.get(key);
+		if(response != null &&
+			response.getObject()!=null){
+			RequestConfig rc = (RequestConfig) response.getObject(); 
+			/**System.out.println("TROVATA IN CACHE ("+rc.isCached()+")");*/
+			if(rc.getIdServizio()!=null) {
+				rc.setIdServizio(rc.getIdServizio().clone()); // per l'azione
 			}
+			requestInfo.setRequestConfig(rc);
+			return;
 		}
 		
-		//System.out.println("CONFIG NON TROVATA IN CACHE");
-		RequestConfig rc = null;
+		/**System.out.println("CONFIG NON TROVATA IN CACHE");*/
+		RequestConfig rc = new RequestConfig();
 		if(srcClone!=null) {
-			rc = srcClone.clone();
+			rc.copyFrom(srcClone);
 		}
 		else {
 			rc = new RequestConfig();
@@ -1430,37 +1391,34 @@ public class GestoreRichieste {
 		rc.setKey(key);
 		rc.setCached(false);
 		requestInfo.setRequestConfig(rc);
-		return;
 		
 	}
 	
-	private static void _readRequestRateLimitingConfig(RequestInfo requestInfo, String key) {
+	private static void readRequestRateLimitingConfigEngine(RequestInfo requestInfo, String key) {
 		
-		if(cache_rateLimiting==null) {
+		if(cacheRateLimiting==null) {
 			return;
 		}
 		
 		org.openspcoop2.utils.cache.CacheResponse response = 
-				(org.openspcoop2.utils.cache.CacheResponse) cache_rateLimiting.get(key);
-		if(response != null){
-			if(response.getObject()!=null){
-				RequestRateLimitingConfig rc = (RequestRateLimitingConfig) response.getObject(); 
-				//System.out.println("TROVATA IN CACHE ("+rc.isCached()+")");
-				requestInfo.setRequestRateLimitingConfig(rc);
-				return;
-			}
+				(org.openspcoop2.utils.cache.CacheResponse) cacheRateLimiting.get(key);
+		if(response != null &&
+			response.getObject()!=null){
+			RequestRateLimitingConfig rc = (RequestRateLimitingConfig) response.getObject(); 
+			/** System.out.println("TROVATA IN CACHE ("+rc.isCached()+")"); */
+			requestInfo.setRequestRateLimitingConfig(rc);
+			return;
 		}
 		
-		//System.out.println("RATE LIMIT NON TROVATA IN CACHE");
+		/** System.out.println("RATE LIMIT NON TROVATA IN CACHE"); */
 		RequestRateLimitingConfig rc = new RequestRateLimitingConfig();
 		rc.setKey(key);
 		rc.setCached(false);
 		requestInfo.setRequestRateLimitingConfig(rc);
-		return;
 		
 	}
 	
-	public static void saveRequestConfig(RequestInfo requestInfo)throws Exception {
+	public static void saveRequestConfig(RequestInfo requestInfo)throws UtilsException, CoreException {
 		
 		if(!useCache) {
 			return;
@@ -1472,21 +1430,21 @@ public class GestoreRichieste {
 		
 		String idTransazione = requestInfo.getIdTransazione();
 		
-		if(cache_api!=null && requestInfo.getPreRequestConfig()!=null && !requestInfo.getPreRequestConfig().isCached()) {
+		if(cacheApi!=null && requestInfo.getPreRequestConfig()!=null && !requestInfo.getPreRequestConfig().isCached()) {
 			lockCache.acquire("savePreRequestConfig", idTransazione);
 			try {
 				String key = requestInfo.getPreRequestConfig().getKey();
 				org.openspcoop2.utils.cache.CacheResponse response = 
-						(org.openspcoop2.utils.cache.CacheResponse) cache_api.get(key);
+						(org.openspcoop2.utils.cache.CacheResponse) cacheApi.get(key);
 				if(response == null){
 					org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
 					requestInfo.getPreRequestConfig().setCached(true);
 					responseCache.setObject(requestInfo.getPreRequestConfig());
-					cache_api.put(key,responseCache);
-					//System.out.println("SALVATA IN CACHE con chiave ["+requestInfo.getPreRequestConfig().getKey()+"]");
+					cacheApi.put(key,responseCache);
+					/** System.out.println("SALVATA IN CACHE con chiave ["+requestInfo.getPreRequestConfig().getKey()+"]"); */
 				}
 				else {
-					//System.out.println("NON SALVATA IN CACHE, GIA PRESENTE");
+					/** System.out.println("NON SALVATA IN CACHE, GIA PRESENTE"); */
 				}
 				
 			}finally {
@@ -1494,21 +1452,21 @@ public class GestoreRichieste {
 			}
 		}
 		
-		if(cache_api!=null && requestInfo.getRequestConfig()!=null && !requestInfo.getRequestConfig().isCached()) {
+		if(cacheApi!=null && requestInfo.getRequestConfig()!=null && !requestInfo.getRequestConfig().isCached()) {
 			lockCache.acquire("saveRequestConfig", idTransazione);
 			try {
 				String key = requestInfo.getRequestConfig().getKey();
 				org.openspcoop2.utils.cache.CacheResponse response = 
-						(org.openspcoop2.utils.cache.CacheResponse) cache_api.get(key);
+						(org.openspcoop2.utils.cache.CacheResponse) cacheApi.get(key);
 				if(response == null){
 					org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
 					requestInfo.getRequestConfig().setCached(true);
 					responseCache.setObject(requestInfo.getRequestConfig());
-					cache_api.put(key,responseCache);
-					//System.out.println("SALVATA IN CACHE con chiave ["+requestInfo.getRequestConfig().getKey()+"]");
+					cacheApi.put(key,responseCache);
+					/** System.out.println("SALVATA IN CACHE con chiave ["+requestInfo.getRequestConfig().getKey()+"]");*/
 				}
 				else {
-					//System.out.println("NON SALVATA IN CACHE, GIA PRESENTE");
+					/**System.out.println("NON SALVATA IN CACHE, GIA PRESENTE");*/
 				}
 				
 			}finally {
@@ -1516,21 +1474,21 @@ public class GestoreRichieste {
 			}
 		}
 		
-		if(cache_rateLimiting!=null && requestInfo.getRequestRateLimitingConfig()!=null && !requestInfo.getRequestRateLimitingConfig().isCached()) {
+		if(cacheRateLimiting!=null && requestInfo.getRequestRateLimitingConfig()!=null && !requestInfo.getRequestRateLimitingConfig().isCached()) {
 			lockCache_rateLimiting.acquire("saveRequestRateLimitingConfig", idTransazione);
 			try {
 				String key = requestInfo.getRequestConfig().getKey();
 				org.openspcoop2.utils.cache.CacheResponse response = 
-						(org.openspcoop2.utils.cache.CacheResponse) cache_rateLimiting.get(key);
+						(org.openspcoop2.utils.cache.CacheResponse) cacheRateLimiting.get(key);
 				if(response == null){
 					org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
 					requestInfo.getRequestRateLimitingConfig().setCached(true);
 					responseCache.setObject(requestInfo.getRequestRateLimitingConfig());
-					cache_rateLimiting.put(key,responseCache);
-					//System.out.println("RATE LIMIT SALVATA IN CACHE con chiave ["+requestInfo.getRequestConfig().getKey()+"]");
+					cacheRateLimiting.put(key,responseCache);
+					/** System.out.println("RATE LIMIT SALVATA IN CACHE con chiave ["+requestInfo.getRequestConfig().getKey()+"]");*/
 				}
 				else {
-					//System.out.println("RATE LIMIT NON SALVATA IN CACHE, GIA PRESENTE");
+					/** System.out.println("RATE LIMIT NON SALVATA IN CACHE, GIA PRESENTE");*/
 				}
 				
 			}finally {
@@ -1556,7 +1514,7 @@ public class GestoreRichieste {
 		
 		StringBuilder bf = new StringBuilder();
 		
-		List<String> headerInKey = new ArrayList<String>();
+		List<String> headerInKey = new ArrayList<>();
 		headerInKey.add(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION);
 		
 		if(requestInfo.getProtocolContext()!=null) {
@@ -1581,7 +1539,6 @@ public class GestoreRichieste {
 					bf.append("\t");
 				}
 				// i parametri non servono per identificare una risorsa
-				//bf.append("URL:").append(requestInfo.getProtocolContext().getUrlInvocazione_formBased());
 				bf.append("URL:").append(requestInfo.getProtocolContext().getUrlInvocazioneWithoutParameters());
 			}
 			
@@ -1626,15 +1583,15 @@ public class GestoreRichieste {
 	private static final String FRUITORE_TOKEN = "token";
 	private static final String FRUITORE_TOKEN_MODI = "token-modi";
 	public static RequestFruitore readFruitoreTrasporto(RequestInfo requestInfo, IDSoggetto idSoggetto, IDServizioApplicativo servizioApplicativo) {
-		return _readFruitore(requestInfo, idSoggetto, servizioApplicativo, null, FRUITORE_TRASPORTO, true, false);
+		return readFruitoreEngine(requestInfo, idSoggetto, servizioApplicativo, null, FRUITORE_TRASPORTO, true, false);
 	}
 	public static RequestFruitore readFruitoreToken(RequestInfo requestInfo, IDSoggetto idSoggetto, IDServizioApplicativo servizioApplicativo) {
-		return _readFruitore(requestInfo, idSoggetto, servizioApplicativo, null, FRUITORE_TOKEN, false, false);
+		return readFruitoreEngine(requestInfo, idSoggetto, servizioApplicativo, null, FRUITORE_TOKEN, false, false);
 	}
 	public static RequestFruitore readFruitoreTokenModI(RequestInfo requestInfo, String certificateKey) {
-		return _readFruitore(requestInfo, null, null, certificateKey, FRUITORE_TOKEN_MODI, false, true);
+		return readFruitoreEngine(requestInfo, null, null, certificateKey, FRUITORE_TOKEN_MODI, false, true);
 	}
-	private static RequestFruitore _readFruitore(RequestInfo requestInfo, IDSoggetto idSoggetto, IDServizioApplicativo servizioApplicativo, String certificateKey, 
+	private static RequestFruitore readFruitoreEngine(RequestInfo requestInfo, IDSoggetto idSoggetto, IDServizioApplicativo servizioApplicativo, String certificateKey, 
 			String tipo, boolean trasporto, boolean tokenModi) {
 		String key = null;
 		if(tokenModi) {		
@@ -1643,13 +1600,12 @@ public class GestoreRichieste {
 		else {
 			key = buildKey(idSoggetto, servizioApplicativo,null, tipo, tokenModi);
 		}
-		if(key==null) {
-			if(useCache) {
-				return null;
-			}
+		if(key==null &&
+			useCache) {
+			return null;
 		}
 		if(useCache) {
-			_readFruitore(requestInfo, key, trasporto);
+			readFruitoreEngine(requestInfo, key, trasporto);
 		}
 		if(requestInfo!=null && requestInfo.getRequestThreadContext()!=null) {
 			if(trasporto) {
@@ -1674,48 +1630,47 @@ public class GestoreRichieste {
 		}
 	}
 		
-	public static RequestFruitore _readFruitore(RequestInfo requestInfo, String key, boolean trasporto) {
+	public static RequestFruitore readFruitoreEngine(RequestInfo requestInfo, String key, boolean trasporto) {
 		
 		if(requestInfo==null || requestInfo.getRequestThreadContext()==null) {
 			return null;
 		}
 		
-		if(cache_fruitori==null) {
+		if(cacheFruitori==null) {
 			return null;
 		}
 		
 		org.openspcoop2.utils.cache.CacheResponse response = 
-				(org.openspcoop2.utils.cache.CacheResponse) cache_fruitori.get(key);
-		if(response != null){
-			if(response.getObject()!=null){
-				RequestFruitore rf = (RequestFruitore) response.getObject(); 
-				//System.out.println("TROVATO FUITORE IN CACHE ("+rf.isCached()+")");
-				if(trasporto) {
-					requestInfo.getRequestThreadContext().setRequestFruitoreTrasportoInfo(rf);
-				}
-				else {
-					requestInfo.getRequestThreadContext().setRequestFruitoreTokenInfo(rf);
-				}
-				return rf;
+				(org.openspcoop2.utils.cache.CacheResponse) cacheFruitori.get(key);
+		if(response != null &&
+			response.getObject()!=null){
+			RequestFruitore rf = (RequestFruitore) response.getObject(); 
+			/** System.out.println("TROVATO FUITORE IN CACHE ("+rf.isCached()+")");*/
+			if(trasporto) {
+				requestInfo.getRequestThreadContext().setRequestFruitoreTrasportoInfo(rf);
 			}
+			else {
+				requestInfo.getRequestThreadContext().setRequestFruitoreTokenInfo(rf);
+			}
+			return rf;
 		}
 		
-		//System.out.println("FRUITORE NON TROVATO IN CACHE");
+		/** System.out.println("FRUITORE NON TROVATO IN CACHE");*/
 		return null;
 		
 	}
 	
-	public static void saveRequestFruitoreTrasporto(RequestInfo requestInfo, RequestFruitore rf)throws Exception {
-		 _saveRequestFruitore(requestInfo, rf, FRUITORE_TRASPORTO, true, false);
+	public static void saveRequestFruitoreTrasporto(RequestInfo requestInfo, RequestFruitore rf)throws UtilsException {
+		 saveRequestFruitoreEngine(requestInfo, rf, FRUITORE_TRASPORTO, true, false);
 	}
-	public static void saveRequestFruitoreToken(RequestInfo requestInfo, RequestFruitore rf)throws Exception {
-		 _saveRequestFruitore(requestInfo, rf, FRUITORE_TOKEN, false, false);
+	public static void saveRequestFruitoreToken(RequestInfo requestInfo, RequestFruitore rf)throws UtilsException {
+		 saveRequestFruitoreEngine(requestInfo, rf, FRUITORE_TOKEN, false, false);
 	}
-	public static void saveRequestFruitoreTokenModI(RequestInfo requestInfo, RequestFruitore rf)throws Exception {
-		 _saveRequestFruitore(requestInfo, rf, FRUITORE_TOKEN_MODI, false, true);
+	public static void saveRequestFruitoreTokenModI(RequestInfo requestInfo, RequestFruitore rf)throws UtilsException {
+		 saveRequestFruitoreEngine(requestInfo, rf, FRUITORE_TOKEN_MODI, false, true);
 	}
-	private static void _saveRequestFruitore(RequestInfo requestInfo, RequestFruitore rf, 
-			String tipo, boolean trasporto, boolean tokenModi) throws Exception {
+	private static void saveRequestFruitoreEngine(RequestInfo requestInfo, RequestFruitore rf, 
+			String tipo, boolean trasporto, boolean tokenModi) throws UtilsException {
 		if(requestInfo==null || requestInfo.getRequestThreadContext()==null || rf==null) {
 			return;
 		}	
@@ -1752,7 +1707,7 @@ public class GestoreRichieste {
 		}
 		
 		
-		if(!useCache || cache_fruitori==null) {
+		if(!useCache || cacheFruitori==null) {
 			return; // salvo solo nel thread context
 		}
 		
@@ -1770,16 +1725,16 @@ public class GestoreRichieste {
 			lockCache_fruitori.acquire("saveRequestFruitore", idTransazione);
 			try {
 				org.openspcoop2.utils.cache.CacheResponse response = 
-						(org.openspcoop2.utils.cache.CacheResponse) cache_fruitori.get(key);
+						(org.openspcoop2.utils.cache.CacheResponse) cacheFruitori.get(key);
 				if(response == null){
 					org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
 					requestFruitore.setCached(true);
 					responseCache.setObject(requestFruitore);
-					cache_fruitori.put(key,responseCache);
-					//System.out.println("FRUITORE SALVATO IN CACHE con chiave ["+requestInfo.getRequestThreadContext().getRequestFruitoreInfo().getKey()+"]");
+					cacheFruitori.put(key,responseCache);
+					/** System.out.println("FRUITORE SALVATO IN CACHE con chiave ["+requestInfo.getRequestThreadContext().getRequestFruitoreInfo().getKey()+"]"); */
 				}
 				else {
-					//System.out.println("FUITORE NON SALVATO IN CACHE, GIA PRESENTE");
+					/** System.out.println("FUITORE NON SALVATO IN CACHE, GIA PRESENTE"); */
 				}
 				
 			}finally {

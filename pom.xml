@@ -18,14 +18,14 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- govway version -->
-		<govway.version>3.3.10</govway.version>
+		<govway.version>3.3.12</govway.version>
 
 		<!-- compile config -->
 		<compile>compile</compile> <!-- compile phase, use 'none' for disable -->
 		
 		<!-- owasp config -->
 		<owasp>verify</owasp> <!-- owasp phase, use 'none' for disable -->
-		<owasp.plugin.version>8.1.2</owasp.plugin.version>
+		<owasp.plugin.version>8.2.1</owasp.plugin.version>
 		<owasp.plugin.autoUpdate>true</owasp.plugin.autoUpdate> <!-- Impostare a false quando ci sono problemi su repository NIST -->
 		<owasp.plugin.failBuildOnAnyVulnerability>false</owasp.plugin.failBuildOnAnyVulnerability>
 		<owasp.ossindex.prevents429.sleep>5</owasp.ossindex.prevents429.sleep> <!-- https://github.com/sonatype/ossindex-maven/issues/17 -->
@@ -53,6 +53,13 @@
 		<testsuite.pdd.group>pdd</testsuite.pdd.group>
 		<testsuite.pdd.sql.group>pdd.sql</testsuite.pdd.sql.group>
 
+		<!-- testsuite coverage -->
+		<testsuite.coverage>false</testsuite.coverage>
+		<testsuite.utils.coverage>${testsuite.coverage}</testsuite.utils.coverage>
+		<testsuite.utils.sql.coverage>${testsuite.coverage}</testsuite.utils.sql.coverage>
+		<testsuite.pdd.coverage>${testsuite.coverage}</testsuite.pdd.coverage>
+		<testsuite.pdd.sql.coverage>${testsuite.coverage}</testsuite.pdd.sql.coverage>
+
 		<!-- testsuite (openssl config) -->
 		<testsuite.utils.openssl.cmd>/usr/bin/openssl</testsuite.utils.openssl.cmd>
 		<testsuite.utils.openssl.waitStartupServerOcspMs>5000</testsuite.utils.openssl.waitStartupServerOcspMs>
@@ -74,6 +81,9 @@
                 <!-- dynamic_analysis -->
                 <zaproxy>none</zaproxy>
 
+                <!-- coverage-reports -->
+                <jacoco>none</jacoco>
+
 	</properties>
 
 	<modules>
@@ -87,6 +97,7 @@
 		<module>tools/spotbugs/mvn</module>
                 <module>tools/sonarqube/mvn</module>
                 <module>tools/zap/mvn</module>
+                <module>tools/jacoco/mvn</module>
 	</modules>
 
 	<repositories>

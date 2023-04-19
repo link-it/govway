@@ -22,7 +22,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -150,11 +149,10 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 			String postBackElementName = porteApplicativeHelper.getPostBackElementName();
 			
 			// se ho modificato il soggetto ricalcolo il servizio e il service binding
-			if (postBackElementName != null) {
-				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS)) {
-					statusMin = "";
-					statusMax = "";
-				}
+			if (postBackElementName != null &&
+				postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS)) {
+				statusMin = "";
+				statusMax = "";
 			}
 
 			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
@@ -184,7 +182,7 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 			
 			String labelPag = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE;
 			
-			List<Parameter> parametriInvocazioneServletTrasformazioniRisposta = new ArrayList<Parameter>();
+			List<Parameter> parametriInvocazioneServletTrasformazioniRisposta = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniRisposta.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta));
 			parametriInvocazioneServletTrasformazioniRisposta.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg));
 			parametriInvocazioneServletTrasformazioniRisposta.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
@@ -200,8 +198,8 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 			// dati
 			if (porteApplicativeHelper.isEditModeInProgress()) {
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteApplicativeHelper.addTrasformazioneRispostaToDatiOpAdd(protocollo, dati, idTrasformazioneS, 
 						apc.getServiceBinding(),
@@ -245,9 +243,9 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 			if (!isOk) {
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteApplicativeHelper.addTrasformazioneRispostaToDatiOpAdd(protocollo, dati, idTrasformazioneS, 
 						apc.getServiceBinding(),

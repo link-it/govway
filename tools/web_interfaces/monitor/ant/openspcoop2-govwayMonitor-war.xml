@@ -189,6 +189,7 @@
 				<include name="jakarta.ws.rs-api-2.1.6.jar" />
 				<include name="woodstox-core-6.4.0.jar" />
 				<include name="${geronimo_jaxws_spec_jar}" />
+				<include name="${stax2-api_jar}" />
 			</lib>
 			<lib dir="${required_lib_govwayMonitor}/saaj">
 				<include name="*.jar" />

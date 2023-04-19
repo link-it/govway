@@ -54,23 +54,23 @@ public enum IDService implements IEnumeration , Serializable , Cloneable {
 	
 	
 	// ID: 7 cifre (parlante)
-	private final static String ID_OPENSPCOOP_SERVLET = "OP20000";
+	private static final String ID_OPENSPCOOP_SERVLET = "OP20000";
 	
-	private final static String ID_PORTA_DELEGATA = "PD00000";
-	private final static String ID_PORTA_DELEGATA_NIO = "PDNIO00";
+	private static final String ID_PORTA_DELEGATA = "PD00000";
+	private static final String ID_PORTA_DELEGATA_NIO = "PDNIO00";
 	
-	private final static String ID_PORTA_DELEGATA_IMBUSTAMENTO_SOAP = "PD2SOAP";
-	private final static String ID_PORTA_DELEGATA_IMBUSTAMENTO_SOAP_NIO = "PD2SOAN";
+	private static final String ID_PORTA_DELEGATA_IMBUSTAMENTO_SOAP = "PD2SOAP";
+	private static final String ID_PORTA_DELEGATA_IMBUSTAMENTO_SOAP_NIO = "PD2SOAN";
 	
-	private final static String ID_PORTA_DELEGATA_INTEGRATION_MANAGER = "PDIM000";
+	private static final String ID_PORTA_DELEGATA_INTEGRATION_MANAGER = "PDIM000";
 	
-	private final static String ID_PORTA_APPLICATIVA = "PA00000";
-	private final static String ID_PORTA_APPLICATIVA_NIO = "PANIO00";
+	private static final String ID_PORTA_APPLICATIVA = "PA00000";
+	private static final String ID_PORTA_APPLICATIVA_NIO = "PANIO00";
 	
-	private final static String ID_INTEGRATION_MANAGER = "IM00000";
+	private static final String ID_INTEGRATION_MANAGER = "IM00000";
 	
-	private final static String ID_CHECK_PDD = "CHKPDD0";
-	private final static String ID_PROXY = "PROXY00";
+	private static final String ID_CHECK_PDD = "CHKPDD0";
+	private static final String ID_PROXY = "PROXY00";
 	
 	public String getCode() throws ProtocolException{
 		switch (this) {

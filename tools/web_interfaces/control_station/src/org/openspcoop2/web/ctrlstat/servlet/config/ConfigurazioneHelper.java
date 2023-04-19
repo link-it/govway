@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.Vector;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -248,25 +247,25 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		super(core, request, pd,  session);
 	}
 
-	public Vector<DataElement>   addIdProprietaToDati(TipoOperazione tipoOp, String idprop, Vector<DataElement> dati) {
+	public List<DataElement>   addIdProprietaToDati(TipoOperazione tipoOp, String idprop, List<DataElement> dati) {
 		DataElement de = new DataElement();
 
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ID_PROPRIETA);
 		de.setValue(idprop);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID_PROPRIETA);
-		dati.addElement(de);
+		dati.add(de);
 
 		return dati;
 	}
 
-	public Vector<DataElement> addTipoTracciamentoAppenderToDati(TipoOperazione tipoOp, String tipo,
-			Vector<DataElement> dati,String idAppenderDati, int dimensioneAppenderDati) {
+	public List<DataElement> addTipoTracciamentoAppenderToDati(TipoOperazione tipoOp, String tipo,
+			List<DataElement> dati,String idAppenderDati, int dimensioneAppenderDati) {
 		
 		DataElement de = new DataElement();
 		de.setType(DataElementType.TITLE);
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO);
@@ -275,7 +274,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO);
 		de.setSize(getSize());
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 
 		if(tipoOp.equals(TipoOperazione.CHANGE)){
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
@@ -284,11 +283,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setUrl(
 					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_APPENDER_PROPERTIES_LIST ,
 					new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID, idAppenderDati));
-			if (contaListe)
+			if (contaListe!=null && contaListe.booleanValue())
 				ServletUtils.setDataElementVisualizzaLabel(de, (long) dimensioneAppenderDati);
 			else
 				ServletUtils.setDataElementVisualizzaLabel(de);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		return dati;
@@ -311,7 +310,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 	}
 	
-	public void setDataElementCRLCacheInfo(Vector<DataElement> dati,
+	public void setDataElementCRLCacheInfo(List<DataElement> dati,
 			String nomeParametroCrlLifeCache, String crllifecache,
 			boolean allHidden){
 	
@@ -337,11 +336,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		de.setName(nomeParametroCrlLifeCache);
 		de.setSize( getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 	}
 	
-	public void setDataElementCache(Vector<DataElement> dati, String intestazioneSezione,
+	public void setDataElementCache(List<DataElement> dati, String intestazioneSezione,
 			String nomeParametroStatoCache, String statocache,
 			String nomeParametroDimensioneCache, String dimensionecache,
 			String nomeParametroAlgoritmoCache, String algoritmocache,
@@ -355,7 +354,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			DataElement de = new DataElement();
 			de.setLabel(intestazioneSezione);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		String[] tipoStatoCache = {
@@ -377,7 +376,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(statocache);
 		}
-		dati.addElement(de);
+		dati.add(de);
 
 		if (statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO)) {
 			de = new DataElement();
@@ -392,7 +391,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			de.setName(nomeParametroDimensioneCache);
 			de.setSize( getSize());
-			dati.addElement(de);
+			dati.add(de);
 
 			String[] tipoAlg = {
 					ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_LRU,
@@ -415,7 +414,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(algoritmocache);
 			}
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIFE_CACHE);
@@ -439,7 +438,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			de.setName(nomeParametroLifeCache);
 			de.setSize( getSize());
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_IDLE_CACHE);
@@ -456,27 +455,25 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			de.setName(nomeParametroIdleCache);
 			de.setSize( getSize());
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 	}
 	
-	public Vector<DataElement> addConfigurazioneRegistroToDati(String statocache,
+	public List<DataElement> addConfigurazioneRegistroToDati(String statocache,
 			String dimensionecache, String algoritmocache, String idlecache,
-			String lifecache, Vector<DataElement> dati) {
+			String lifecache, List<DataElement> dati) {
+		
 		DataElement de = new DataElement();
-
-
-		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRO_ROTTA);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setType(DataElementType.LINK);
 		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_REGISTRI_LIST);
 		de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ELENCO_REGISTRI);
-		dati.addElement(de);
+		dati.add(de);
 
 		this.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_REGISTRY,
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_REGISTRY,statocache,
@@ -496,13 +493,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 
 
-	public Vector<DataElement> addTipoDiagnosticaAppenderToDati(TipoOperazione tipoOp, String tipo,
-			Vector<DataElement> dati,String idAppenderDati, int dimensioneAppenderDati) {
+	public List<DataElement> addTipoDiagnosticaAppenderToDati(TipoOperazione tipoOp, String tipo,
+			List<DataElement> dati,String idAppenderDati, int dimensioneAppenderDati) {
 		
 		DataElement de = new DataElement();
 		de.setType(DataElementType.TITLE);
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO);
@@ -511,7 +508,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO);
 		de.setSize(getSize());
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 
 		if(tipoOp.equals(TipoOperazione.CHANGE)){
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
@@ -520,23 +517,23 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setUrl(
 					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DIAGNOSTICA_APPENDER_PROPERTIES_LIST,
 					new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID, idAppenderDati));
-			if (contaListe)
+			if (contaListe!=null && contaListe.booleanValue())
 				ServletUtils.setDataElementVisualizzaLabel(de, (long) dimensioneAppenderDati);
 			else
 				ServletUtils.setDataElementVisualizzaLabel(de);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		return dati;
 	}
 
-	public Vector<DataElement>   addDiagnosticaDatasourceToDati(TipoOperazione tipoOp, String nome, String nomeJndi,
-			String tipoDatabase, String[] tipoDbList, Vector<DataElement> dati, String idSorgenteDati, int dimensioneSorgenteDati) {
+	public List<DataElement>   addDiagnosticaDatasourceToDati(TipoOperazione tipoOp, String nome, String nomeJndi,
+			String tipoDatabase, String[] tipoDbList, List<DataElement> dati, String idSorgenteDati, int dimensioneSorgenteDati) {
 		
 		DataElement de = new DataElement();
 		de.setType(DataElementType.TITLE);
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME);
@@ -545,7 +542,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME);
 		de.setSize(getSize());
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME_JNDI);
@@ -554,7 +551,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME_JNDI);
 		de.setSize(getSize());
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_DATABASE);
@@ -565,7 +562,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setSelected(tipoDatabase);
 		}
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 
 		if(tipoOp .equals(TipoOperazione.CHANGE)){
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
@@ -574,23 +571,23 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setUrl(
 					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DIAGNOSTICA_DATASOURCE_PROPERTIES_LIST,
 					new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID, idSorgenteDati));
-			if (contaListe)
+			if (contaListe!=null && contaListe.booleanValue())
 				ServletUtils.setDataElementVisualizzaLabel(de, (long) dimensioneSorgenteDati);
 			else
 				ServletUtils.setDataElementVisualizzaLabel(de);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		return dati;
 	}
 
-	public Vector<DataElement>   addTracciamentoDatasourceToDati(TipoOperazione tipoOp, String nome, String nomeJndi,
-			String tipoDatabase, String[] tipoDbList, Vector<DataElement> dati, String idSorgenteDati, int dimensioneSorgenteDati) {
+	public List<DataElement>   addTracciamentoDatasourceToDati(TipoOperazione tipoOp, String nome, String nomeJndi,
+			String tipoDatabase, String[] tipoDbList, List<DataElement> dati, String idSorgenteDati, int dimensioneSorgenteDati) {
 
 		DataElement de = new DataElement();
 		de.setType(DataElementType.TITLE);
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME);
@@ -599,7 +596,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME);
 		de.setSize(getSize());
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME_JNDI);
@@ -608,7 +605,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME_JNDI);
 		de.setSize(getSize());
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_DATABASE);
@@ -619,7 +616,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setSelected(tipoDatabase);
 		}
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 
 		if(tipoOp .equals(TipoOperazione.CHANGE)){
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
@@ -628,11 +625,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setUrl(
 					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_DATASOURCE_PROPERTIES_LIST,
 					new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID, idSorgenteDati));
-			if (contaListe)
+			if (contaListe!=null && contaListe.booleanValue())
 				ServletUtils.setDataElementVisualizzaLabel(de, (long) dimensioneSorgenteDati);
 			else
 				ServletUtils.setDataElementVisualizzaLabel(de);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		return dati;
@@ -658,7 +655,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setSearch("off");
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, 
 					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI));
@@ -676,13 +673,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				for (int i = 0; i < lista.size(); i++) {
 					OpenspcoopSorgenteDati od = lista.get(i);
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					Parameter pid = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID, od.getId() + "");
 
@@ -691,27 +688,27 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_DATASOURCE_CHANGE, pid);
 					de.setValue(od.getNome());
 					de.setIdToRemove(""+od.getId());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setValue(od.getNomeJndi());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setValue(od.getTipoDatabase());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setUrl(
 							ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_DATASOURCE_PROPERTIES_LIST, pid);
-					if (contaListe)
+					if (contaListe!=null && contaListe.booleanValue())
 						ServletUtils.setDataElementVisualizzaLabel(de, (long) od.sizePropertyList());
 					else
 						ServletUtils.setDataElementVisualizzaLabel(de);
 
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -794,7 +791,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setSearch("off");
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, 
 					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI));
@@ -812,13 +809,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				for (int i = 0; i < lista.size(); i++) {
 					Property oap = lista.get(i);
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 					Parameter pOapId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID_PROPRIETA, oap.getId()  + "");
 					DataElement de = new DataElement();
 					de.setUrl(
@@ -826,13 +823,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							);
 					de.setValue(oap.getNome());
 					de.setIdToRemove(""+oap.getId());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setValue(oap.getValore());
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -921,7 +918,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setSearch("off");
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, 
 					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI));
@@ -939,7 +936,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				for (int i = 0; i < lista.size(); i++) {
@@ -947,7 +944,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 					Parameter pOapId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID_PROPRIETA, odp.getId()  + "");
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					DataElement de = new DataElement();
 					de.setUrl(
@@ -955,13 +952,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							);
 					de.setValue(odp.getNome());
 					de.setIdToRemove(""+odp.getId());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setValue(odp.getValore());
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -1050,7 +1047,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setSearch("off");
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, 
 					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI));
@@ -1066,13 +1063,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				for (int i = 0; i < lista.size(); i++) {
 					OpenspcoopAppender oa = lista.get(i);
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					Parameter pId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID, oa.getId()  + "");
 					DataElement de = new DataElement();
@@ -1080,19 +1077,19 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_APPENDER_CHANGE, pId);
 					de.setValue(oa.getTipo());
 					de.setIdToRemove(""+oa.getId());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setUrl(
 							ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_APPENDER_PROPERTIES_LIST ,pId);
 
-					if (contaListe)
+					if (contaListe!=null && contaListe.booleanValue())
 						ServletUtils.setDataElementVisualizzaLabel(de, (long)oa.sizePropertyList());
 					else
 						ServletUtils.setDataElementVisualizzaLabel(de);
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -1162,7 +1159,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setSearch("off");
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, 
 					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI));
@@ -1178,31 +1175,31 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				for (int i = 0; i < lista.size(); i++) {
 					OpenspcoopAppender oa = lista.get(i);
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					Parameter pId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID, oa.getId()  + "");
 					DataElement de = new DataElement();
 					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_CHANGE, pId);
 					de.setValue(oa.getTipo());
 					de.setIdToRemove(""+oa.getId());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES_LIST ,pId);
 
-					if (contaListe)
+					if (contaListe!=null && contaListe.booleanValue())
 						ServletUtils.setDataElementVisualizzaLabel(de, (long)oa.sizePropertyList());
 					else
 						ServletUtils.setDataElementVisualizzaLabel(de);
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -1253,12 +1250,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 	}
 
-	public Vector<DataElement> addTipoDumpAppenderToDati(TipoOperazione tipoOp, String tipo, Vector<DataElement> dati,String idAppenderDati, int dimensioneAppenderDati) {
+	public List<DataElement> addTipoDumpAppenderToDati(TipoOperazione tipoOp, String tipo, List<DataElement> dati,String idAppenderDati, int dimensioneAppenderDati) {
 		
 		DataElement de = new DataElement();
 		de.setType(DataElementType.TITLE);
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO);
@@ -1267,18 +1264,18 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO);
 		de.setSize(getSize());
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 
 		if(tipoOp.equals(TipoOperazione.CHANGE)){
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
 			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES_LIST, new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID, idAppenderDati));
-			if (contaListe)
+			if (contaListe!=null && contaListe.booleanValue())
 				ServletUtils.setDataElementVisualizzaLabel(de, (long) dimensioneAppenderDati);
 			else
 				ServletUtils.setDataElementVisualizzaLabel(de);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		return dati;
@@ -1303,7 +1300,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setSearch("off");
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, 
 					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI));
@@ -1321,25 +1318,25 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				for (int i = 0; i < lista.size(); i++) {
 					Property oap = lista.get(i);
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 					Parameter pOapId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID_PROPRIETA, oap.getId()  + "");
 					DataElement de = new DataElement();
 					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES_CHANGE, pOaId, pOapId	);
 					de.setValue(oap.getNome());
 					de.setIdToRemove(""+oap.getId());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setValue(oap.getValore());
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -1496,7 +1493,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 			if (search.equals("")) {
@@ -1523,14 +1520,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<Property> it = lista.iterator();
 				while (it.hasNext()) {
 					Property sp = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					Parameter pIdProp = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID, ""+sp.getId());
 
@@ -1540,13 +1537,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValue(sp.getNome());
 					de.setIdToRemove(sp.getNome());
 					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setValue(sp.getValore());
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -1757,7 +1754,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TABELLA_DI_ROUTING, 
@@ -1787,21 +1784,21 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<RoutingTableDestinazione> it = lista.iterator();
 				while (it.hasNext()) {
 					RoutingTableDestinazione rtd = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					DataElement de = new DataElement();
 					Parameter pId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID, rtd.getId() + "");
 					de.setUrl(
 							ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ROTTE_ROUTING_CHANGE, pId);
 					de.setValue(rtd.getTipo()+"/"+rtd.getNome());
-					e.addElement(de);
+					e.add(de);
 
 					Route r = rtd.getRoute(0);
 					de = new DataElement();
@@ -1810,9 +1807,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					} else {
 						de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA_REGISTRO);
 					}
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -2030,7 +2027,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO, 
@@ -2060,14 +2057,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<AccessoRegistroRegistro> it = lista.iterator();
 				while (it.hasNext()) {
 					AccessoRegistroRegistro arr = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					DataElement de = new DataElement();
 					Parameter pNome = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME, arr.getNome());
@@ -2075,13 +2072,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_REGISTRI_CHANGE , pNome);
 					de.setValue(arr.getNome());
 					de.setIdToRemove(arr.getNome());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setValue(arr.getTipo().toString());
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -2111,7 +2108,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			ServletUtils.disabledPageDataSearch(this.pd);
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE, null));
@@ -2127,14 +2124,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<ResponseCachingConfigurazioneRegola> it = lista.iterator();
 				while (it.hasNext()) {
 					ResponseCachingConfigurazioneRegola regola = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					DataElement de = new DataElement();
 					de.setIdToRemove(regola.getId() + "");
@@ -2167,17 +2164,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 					
 					de.setValue(statusValue);
-					e.addElement(de);
+					e.add(de);
 					
 					de = new DataElement();
 					de.setValue(regola.getFault() ? CostantiControlStation.LABEL_SI : CostantiControlStation.LABEL_NO);
-					e.addElement(de);
+					e.add(de);
 					
 					de = new DataElement();
 					de.setValue(regola.getCacheTimeoutSeconds() != null ? regola.getCacheTimeoutSeconds() + "" : "default ("+defaultCacheSeconds+")");
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -2719,7 +2716,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setSearch("off");
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, 
 					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI));
@@ -2735,13 +2732,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				for (int i = 0; i < lista.size(); i++) {
 					OpenspcoopAppender oa = lista.get(i);
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					Parameter pOaId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID, oa.getId() + ""); 
 
@@ -2750,17 +2747,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DIAGNOSTICA_APPENDER_CHANGE, pOaId);
 					de.setValue(oa.getTipo());
 					de.setIdToRemove(""+oa.getId());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DIAGNOSTICA_APPENDER_PROPERTIES_LIST, pOaId);
-					if (contaListe)
+					if (contaListe!=null && contaListe.booleanValue())
 						ServletUtils.setDataElementVisualizzaLabel(de, (long)oa.sizePropertyList());
 					else
 						ServletUtils.setDataElementVisualizzaLabel(de);
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -2831,7 +2828,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setSearch("off");
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, 
 					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI));
@@ -2850,13 +2847,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				for (int i = 0; i < lista.size(); i++) {
 					Property oap = lista.get(i);
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					Parameter pIdProp = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID_PROPRIETA, oap.getId()  + "");
 					DataElement de = new DataElement();
@@ -2864,13 +2861,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DIAGNOSTICA_APPENDER_PROPERTIES_CHANGE, pOaId, pIdProp);
 					de.setValue(oap.getNome());
 					de.setIdToRemove(""+oap.getId());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setValue(oap.getValore());
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -2956,7 +2953,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setSearch("off");
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, 
 					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI));
@@ -2974,13 +2971,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				for (int i = 0; i < lista.size(); i++) {
 					OpenspcoopSorgenteDati od = lista.get(i);
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					Parameter pId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID, od.getId() + "");
 					DataElement de = new DataElement();
@@ -2988,25 +2985,25 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DIAGNOSTICA_DATASOURCE_CHANGE, pId);
 					de.setValue(od.getNome());
 					de.setIdToRemove(""+od.getId());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setValue(od.getNomeJndi());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setValue(od.getTipoDatabase());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DIAGNOSTICA_DATASOURCE_PROPERTIES_LIST, pId);
-					if (contaListe)
+					if (contaListe!=null && contaListe.booleanValue())
 						ServletUtils.setDataElementVisualizzaLabel(de, (long)  od.sizePropertyList());
 					else
 						ServletUtils.setDataElementVisualizzaLabel(de);
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -3087,7 +3084,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setSearch("off");
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, 
 					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI));
@@ -3105,26 +3102,26 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				for (int i = 0; i < lista.size(); i++) {
 					Property odp = lista.get(i);
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 					Parameter pOdpId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID_PROPRIETA, odp.getId() + "");
 					DataElement de = new DataElement();
 					de.setUrl(
 							ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DIAGNOSTICA_DATASOURCE_PROPERTIES_CHANGE, pId, pOdpId);
 					de.setValue(odp.getNome());
 					de.setIdToRemove(""+odp.getId());
-					e.addElement(de);
+					e.add(de);
 
 					de = new DataElement();
 					de.setValue(odp.getValore());
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -3196,16 +3193,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 
 
-	public Vector<DataElement>  addValoriRottaToDati(TipoOperazione tipoOp, String nome,
+	public List<DataElement>  addValoriRottaToDati(TipoOperazione tipoOp, String nome,
 			String tipo, String tiporotta, String registrorotta,
 			String[] registriList,
-			String[] registriListLabel, Vector<DataElement> dati, String tiposoggrotta, String nomesoggrotta, 
+			String[] registriListLabel, List<DataElement> dati, String tiposoggrotta, String nomesoggrotta, 
 			String[] tipiSoggettiLabel, String[] tipiSoggettiLabelPerProtocollo )
 					throws DriverRegistroServiziException {
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DESTINATARIO);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 
 //		if (InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
 //			de = new DataElement();
@@ -3214,7 +3211,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //			de.setType(DataElementType.HIDDEN);
 //			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO);
 //			de.setSize(getSize());
-//			dati.addElement(de);
+//			dati.add(de);
 //		} else {
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO);
@@ -3231,7 +3228,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setPostBack(true);
 		de.setSize(getSize());
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 //		}
 
 		de = new DataElement();
@@ -3241,12 +3238,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME);
 		de.setSize(getSize());
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ROTTA);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 
 		String[] tipoR = { ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA_GATEWAY,
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA_REGISTRO 
@@ -3259,7 +3256,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setSelected(tiporotta);
 		//				de.setOnChange("CambiaRotta('add')");
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 
 //		if (InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
 //			if (tiporotta.equals(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA_GATEWAY)) {
@@ -3269,7 +3266,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //				de.setType(DataElementType.HIDDEN);
 //				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO_SOGGETTO_ROTTA);
 //				de.setSize(getSize());
-//				dati.addElement(de);
+//				dati.add(de);
 //
 //				de = new DataElement();
 //				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME_SOGGETTO_ROTTA);
@@ -3278,7 +3275,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME_SOGGETTO_ROTTA);
 //				de.setSize(getSize());
 //				de.setRequired(true);
-//				dati.addElement(de);
+//				dati.add(de);
 //			}
 //		} else {
 		if (tiporotta.equals(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA_GATEWAY)) {
@@ -3292,7 +3289,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO_SOGGETTO_ROTTA);
 			de.setSize(getSize());
 			de.setRequired(true);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME_SOGGETTO_ROTTA);
@@ -3301,7 +3298,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME_SOGGETTO_ROTTA);
 			de.setSize(getSize());
 			de.setRequired(true);
-			dati.addElement(de);
+			dati.add(de);
 		}
 //		}
 
@@ -3313,7 +3310,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValues(registriList);
 			de.setLabels(registriListLabel);
 			de.setSelected(registrorotta);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		return dati;
@@ -3322,11 +3319,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 
 
-	public Vector<DataElement> addRoutingToDati(TipoOperazione tipoOp, String tiporotta,
+	public List<DataElement> addRoutingToDati(TipoOperazione tipoOp, String tiporotta,
 			String tiposoggrotta, String nomesoggrotta, String registrorotta,
 			String rottaenabled,  
 			String[] registriList, String[] registriListLabel, String[] tipiSoggettiLabel,
-			Vector<DataElement> dati) throws DriverRegistroServiziException {
+			List<DataElement> dati) throws DriverRegistroServiziException {
 		
 		if(dati==null) {
 			throw new DriverRegistroServiziException("Dati is null");
@@ -3350,13 +3347,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setSelected(rottaenabled);
 		//					de.setOnChange("CambiaRouting()");
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 
 		if (rottaenabled.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO)) {
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ROTTA_DI_DEFAULT);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 
 			String[] tipoR = {
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA_GATEWAY,
@@ -3370,7 +3367,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setSelected(tiporotta);
 			//						de.setOnChange("CambiaRotta('routing')");
 			de.setPostBack(true);
-			dati.addElement(de);
+			dati.add(de);
 
 //			if (InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
 //				if (tiporotta.equals(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA_GATEWAY)) {
@@ -3380,7 +3377,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //					de.setType(DataElementType.HIDDEN);
 //					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO_SOGGETTO_ROTTA);
 //					de.setSize(getSize());
-//					dati.addElement(de);
+//					dati.add(de);
 //
 //					de = new DataElement();
 //					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME_SOGGETTO_ROTTA);
@@ -3389,7 +3386,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME_SOGGETTO_ROTTA);
 //					de.setRequired(true);
 //					de.setSize(getSize());
-//					dati.addElement(de);
+//					dati.add(de);
 //				}
 //			} else {
 			if (tiporotta.equals(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA_GATEWAY)) {
@@ -3403,7 +3400,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setSelected(tiposoggrotta);
 				de.setSize(getSize());
 				de.setRequired(true);
-				dati.addElement(de);
+				dati.add(de);
 
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME_SOGGETTO_ROTTA);
@@ -3412,7 +3409,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME_SOGGETTO_ROTTA);
 				de.setSize(getSize());
 				de.setRequired(true);
-				dati.addElement(de);
+				dati.add(de);
 			}
 //			}
 
@@ -3424,19 +3421,19 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValues(registriList);
 				de.setLabels(registriListLabel);
 				de.setSelected(registrorotta);
-				dati.addElement(de);
+				dati.add(de);
 			}
 
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ROTTE_STATICHE);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
 			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ROTTE_ROUTING_LIST);
 			de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DESTINAZIONI);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		dati = this.addParameterApplicaModifica(dati);
@@ -3444,9 +3441,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return dati;
 	}
 
-	public Vector<DataElement> addRegistroToDati(TipoOperazione tipoOP, String nome, String location, String tipo,
+	public List<DataElement> addRegistroToDati(TipoOperazione tipoOP, String nome, String location, String tipo,
 			String utente, String password, String confpw,
-			Vector<DataElement> dati) {
+			List<DataElement> dati) {
 		
 		DataElement dataElement = new DataElement();
 		dataElement.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO);
@@ -3466,7 +3463,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME);
 		de.setSize( getSize());
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOCATION);
@@ -3475,7 +3472,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOCATION);
 		de.setSize( getSize());
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 
 		//String[] tipoReg = { "xml", "db", "uddi", "web", "ws" };
 		String[] tipoReg = { 
@@ -3492,7 +3489,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setSelected(tipo);
 		//				de.setOnChange("CambiaTipo('add')");
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 
 		if (tipo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_UDDI)) {
 			de = new DataElement();
@@ -3501,7 +3498,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_UTENTE);
 			de.setSize( getSize());
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PW);
@@ -3509,7 +3506,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.CRYPT);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PW);
 			de.setSize( getSize());
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONFERMA_PW);
@@ -3517,7 +3514,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.CRYPT);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONFERMA_PW);
 			de.setSize( getSize());
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 
@@ -3527,7 +3524,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	
 
 
-	public Vector<DataElement> addConfigurazioneToDati(  
+	public List<DataElement> addConfigurazioneToDati(  
 			boolean allHidden,
 			String inoltromin, String stato,
 			String controllo, String severita, String severita_log4j,
@@ -3535,7 +3532,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String connessione, String utilizzo, String validman,
 			String gestman, String registrazioneTracce, String dumpPD, String dumpPA,
 			String xsd,	String tipoValidazione, String confPers, Configurazione configurazione,
-			Vector<DataElement> dati, String applicaMTOM, 
+			List<DataElement> dati, String applicaMTOM, 
 			String urlInvocazionePA, String urlInvocazionePD,
 			boolean multitenantEnabled, String multitenantSoggettiFruizioni, String multitenantSoggettiErogazioni,
 			boolean editModeEnabled,
@@ -3559,7 +3556,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_INOLTRO_MIN);
 			de.setSize( getSize());
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO);
@@ -3567,33 +3564,33 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO);
 			de.setValue(stato);
 
-			dati.addElement(de);
+			dati.add(de);
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO);
 			de.setValue(controllo);
 
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROFILO_COLLABORAZIONE);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROFILO_COLLABORAZIONE);
 			de.setValue(profcoll);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_VALIDMAN);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_VALIDMAN);
 			de.setValue(validman);
-			dati.addElement(de);
+			dati.add(de);
 		} else {
 
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INOLTRO_BUSTE_NON_RISCONTRATE);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
  
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_INOLTRO_MIN);
@@ -3602,12 +3599,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_INOLTRO_MIN);
 			de.setRequired(true);
 			de.setSize(getSize());
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_VALIDAZIONE_BUSTE);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 
 			String[] tipoStato = { 
 					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
@@ -3620,7 +3617,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO);
 			de.setValues(tipoStato);
 			de.setSelected(stato);
-			dati.addElement(de);
+			dati.add(de);
 
 			String[] tipoControllo = { 
 					ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONTROLLO_RIGIDO,
@@ -3632,7 +3629,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO);
 			de.setValues(tipoControllo);
 			de.setSelected(controllo);
-			dati.addElement(de);
+			dati.add(de);
 
 			String[] tipoPF = { 
 					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
@@ -3644,7 +3641,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROFILO_COLLABORAZIONE);
 			de.setValues(tipoPF);
 			de.setSelected(profcoll);
-			dati.addElement(de);
+			dati.add(de);
 
 			String[] tipoVM = { 
 					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
@@ -3656,7 +3653,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_VALIDMAN);
 			de.setValues(tipoVM);
 			de.setSelected(validman);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		// Mesaggi Diagnostici
@@ -3680,7 +3677,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONNESSIONE);
 			de.setValue(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONNESSIONE_REPLY);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_UTILIZZO);
@@ -3688,12 +3685,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_UTILIZZO);
 			de.setValue(CostantiConfigurazione.DISABILITATO.toString());
 			de.setSelected(utilizzo);
-			dati.addElement(de);
+			dati.add(de);
 		} else {
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_VALIDAZIONE_CONTENUTI_APPLICATIVI);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 
 			String[] tipoXsd = { 
 					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
@@ -3714,7 +3711,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			} else {
 				de.setSelected(xsd);
 			}
-			dati.addElement(de);
+			dati.add(de);
 
 			if (ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(xsd) || 
 					ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_STATO_WARNING_ONLY .equals(xsd)) {
@@ -3733,7 +3730,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				} else {
 					de.setSelected(tipoValidazione);
 				}
-				dati.addElement(de);
+				dati.add(de);
 				
 				
 				// Applica MTOM 
@@ -3753,13 +3750,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 			 
 				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_APPLICA_MTOM);
-				dati.addElement(de);
+				dati.add(de);
 			}
 
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RISPOSTE);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 
 			String[] tipoConn = { 
 					ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONNESSIONE_NEW,
@@ -3771,12 +3768,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONNESSIONE);
 			de.setValues(tipoConn);
 			de.setSelected(connessione);
-			dati.addElement(de);
+			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INDIRIZZO_TELEMATICO);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 
 			String[] tipoU = { 
 					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
@@ -3788,7 +3785,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_UTILIZZO);
 			de.setValues(tipoU);
 			de.setSelected(utilizzo);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		
@@ -3798,7 +3795,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MANIFEST_ATTACHMENTS);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		String[] tipoGM = { 
@@ -3817,7 +3814,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setSelected(gestman);
 		}
 		de.setValue(gestman);
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		
@@ -3827,7 +3824,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MULTITENANT);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		boolean existsMoreThanOneSoggettoOperativoPerProtocollo = false;
@@ -3867,7 +3864,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 		}
 		de.setValue(multitenantEnabled ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue());
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(multitenantEnabled) {
 			
@@ -3878,14 +3875,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setType(DataElementType.LINK);
 				de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST,
 						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_FILTER_DOMINIO_INTERNO,"true"));
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			if(!allHidden) {
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MULTITENANT_FRUIZIONI);
 				de.setType(DataElementType.SUBTITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			de = new DataElement();
@@ -3903,7 +3900,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setType(DataElementType.HIDDEN);
 			}
 			de.setValue(multitenantSoggettiFruizioni);
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(!editModeEnabled) {
 				de = new DataElement();
@@ -3919,14 +3916,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(allHidden) {
 					de.setType(DataElementType.HIDDEN);
 				}
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			if(!allHidden) {
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MULTITENANT_EROGAZIONI);
 				de.setType(DataElementType.SUBTITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			de = new DataElement();
@@ -3944,7 +3941,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setType(DataElementType.HIDDEN);
 			}
 			de.setValue(multitenantSoggettiErogazioni);
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(!editModeEnabled) {
 				de = new DataElement();
@@ -3960,7 +3957,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(allHidden) {
 					de.setType(DataElementType.HIDDEN);
 				}
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 		
@@ -3972,7 +3969,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PREFIX_URL_INVOCAZIONE);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		de = new DataElement();
@@ -3986,7 +3983,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setRequired(true);
 		}
 		de.setValue(urlInvocazionePA);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD);
@@ -3999,7 +3996,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setRequired(false);
 		}
 		de.setValue(urlInvocazionePD);
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(!allHidden) {
 			de = new DataElement();
@@ -4010,7 +4007,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValue(ConfigurazioneCostanti.LABEL_REGOLE_PROXY_PASS+" (" + numeroRegoleProxyPass + ")");
 			else
 				de.setValue(ConfigurazioneCostanti.LABEL_REGOLE_PROXY_PASS);
-			dati.addElement(de);
+			dati.add(de);
 			
 
 			String send = ArchiviCostanti.SERVLET_NAME_PACKAGE_EXPORT+"?"+
@@ -4037,7 +4034,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.LINK);
 			de.setUrl(send);
 			de.setValue(ConfigurazioneCostanti.LABEL_ESPORTA_URL_INVOCAZIONE);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}
 		
@@ -4070,7 +4067,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INTEGRATION_MANAGER);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		int totEl = ConfigurazioneCostanti.PARAMETRI_CONFIGURAZIONE_IM.length;
@@ -4095,7 +4092,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setPostBack(true);
 		}
 		de.setValue(integman);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME_INTEGMAN);
@@ -4110,7 +4107,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME_INTEGMAN);
 		de.setValue(nomeintegman);
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		
@@ -4125,7 +4122,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PLUGINS);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			// link Registro Archivi
 			de = new DataElement();
@@ -4135,7 +4132,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PLUGINS_REGISTRO_ARCHIVI +" (" + numeroArchiviPlugins + ")");
 			else
 				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PLUGINS_REGISTRO_ARCHIVI);
-			dati.addElement(de);
+			dati.add(de);
 			
 			// Registro Classi
 			de = new DataElement();
@@ -4145,7 +4142,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO_CLASSI+" (" + numeroClassiPlugins + ")");
 			else
 				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO_CLASSI);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		
@@ -4161,7 +4158,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROFILO);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		ProtocolFactoryManager pManager = ProtocolFactoryManager.getInstance();
@@ -4185,7 +4182,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de = new DataElement();
 					de.setLabel(infoProt.getLabel());
 					de.setType(DataElementType.SUBTITLE);
-					dati.addElement(de);
+					dati.add(de);
 				}
 			}
 			
@@ -4194,7 +4191,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_NAME+protocollo);
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(protocollo);
-			dati.addElement(de);
+			dati.add(de);
 														
 			if(!multitenantEnabled) {
 				IDSoggetto idSoggetto = this.soggettiCore.getSoggettoOperativoDefault(userLogin, protocollo);
@@ -4210,7 +4207,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				else {
 					de.setType(DataElementType.TEXT);
 				}
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(!allHidden) {
 					de = new DataElement();
@@ -4221,7 +4218,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,idSoggetto.getNome()),
 							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,idSoggetto.getTipo()),
 							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_MODIFICA_OPERATIVO,"true"));
-					dati.addElement(de);
+					dati.add(de);
 				}
 			}
 		}
@@ -4233,24 +4230,24 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO_SERVIZI);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 	
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
 			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ACCESSO_REGISTRO_SERVIZI);
 			ServletUtils.setDataElementVisualizzaLabel(de);
-			dati.addElement(de);
+			dati.add(de);
 	
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TABELLA_DI_ROUTING);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 	
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
 			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ROUTING);
 			ServletUtils.setDataElementVisualizzaLabel(de);
-			dati.addElement(de);
+			dati.add(de);
 		
 		}
 		
@@ -4261,13 +4258,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
 			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SYSTEM_PROPERTIES_LIST);
 			ServletUtils.setDataElementVisualizzaLabel(de);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}
 		
@@ -4277,20 +4274,20 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //			de = new DataElement();
 //			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA);
 //			de.setType(DataElementType.TITLE);
-//			dati.addElement(de);
+//			dati.add(de);
 //	
 //			de = new DataElement();
 //			de.setType(DataElementType.LINK);
 //			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD);
 //			ServletUtils.setDataElementVisualizzaLabel(de);
-//			dati.addElement(de);
+//			dati.add(de);
 //			
 //		}
 
 		return dati;
 	}
 	
-	private void addConfigurazioneCanaliToDati(Vector<DataElement> dati, boolean canaliEnabled, int numeroCanali,
+	private void addConfigurazioneCanaliToDati(List<DataElement> dati, boolean canaliEnabled, int numeroCanali,
 			int numeroNodi, String canaliNome, String canaliDescrizione, boolean addTitle, boolean allHidden, List<CanaleConfigurazione> canaleList, String canaliDefault) throws Exception {
 		
 		boolean contaListeFromSession = ServletUtils.getContaListeFromSession(this.session) != null ? ServletUtils.getContaListeFromSession(this.session) : false;
@@ -4300,7 +4297,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALI);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		boolean funzionalitaDisabilitabile = true;
@@ -4331,7 +4328,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setSelected(canaliEnabled ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
 		}
 		de.setValue(canaliEnabled ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(!allHidden) {
 			// se si passa da disabilitato ad abilitato, il numero dei canali e' 0, devo visualizzare la form di inserimento del canale di default
@@ -4341,7 +4338,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de = new DataElement();
 					de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALE_DEFAULT);
 					de.setType(DataElementType.SUBTITLE);
-					dati.addElement(de);
+					dati.add(de);
 					
 					// nome canale 
 					de = new DataElement();
@@ -4350,7 +4347,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_NOME);
 					de.setValue(canaliNome);
 					de.setRequired(true);
-					dati.addElement(de);
+					dati.add(de);
 					
 					
 					// descrizione canale
@@ -4359,7 +4356,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.TEXT_EDIT);
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_DESCRIZIONE);
 					de.setValue(canaliDescrizione);
-					dati.addElement(de);
+					dati.add(de);
 				} else {
 					// scelta canale default
 					de = new DataElement();
@@ -4371,7 +4368,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValues(canaliListValues);
 					de.setLabels(canaliListValues);
 					de.setSelected(canaliDefault);
-					dati.addElement(de);
+					dati.add(de);
 					
 					// link canali
 					de = new DataElement();
@@ -4382,7 +4379,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_CANALI +" (" + numeroCanali + ")");
 					else
 						de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_CANALI);
-					dati.addElement(de);
+					dati.add(de);
 					
 					// link nodi
 					de = new DataElement();
@@ -4392,12 +4389,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_CANALI_NODI +" (" + numeroNodi + ")");
 					else
 						de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_CANALI_NODI);
-					dati.addElement(de);
+					dati.add(de);
 				}
 			}
 		}
 	}
-	public void addRegistrazioneMessaggiToDatiAsHidden(String dumpPD, String dumpPA, Configurazione configurazione,	Vector<DataElement> dati) {
+	public void addRegistrazioneMessaggiToDatiAsHidden(String dumpPD, String dumpPA, Configurazione configurazione,	List<DataElement> dati) {
 		DataElement de = new DataElement();
 		
 		de = new DataElement();
@@ -4405,25 +4402,25 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(dumpPD);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(dumpPA);
-		dati.addElement(de);
+		dati.add(de);
 		
 	}
 	
-	public void addRegistrazioneMessaggiToDati(String dumpApplicativo, String dumpPD, String dumpPA, Configurazione configurazione,	Vector<DataElement> dati, Boolean contaListe) {
+	public void addRegistrazioneMessaggiToDati(String dumpApplicativo, String dumpPD, String dumpPA, Configurazione configurazione,	List<DataElement> dati, Boolean contaListe) {
 		DataElement de;
 		// DUMP
 		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_MESSAGGI);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		String[] tipoDump = {
 				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
@@ -4436,7 +4433,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setValues(tipoDump);
 		de.setSelected(dumpApplicativo);
 		de.setPostBack_viaPOST(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(dumpApplicativo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO)) {
 			String oldDumpApplicativo =null;
@@ -4449,14 +4446,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_CONFIGURAZIONE, 
 						new Parameter(CostantiControlStation.PARAMETRO_DUMP_TIPO_CONFIGURAZIONE, TipoPdD.APPLICATIVA.getTipo()));
 				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DUMP_CONFIGURAZIONE_EROGAZIONI);
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
 				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_CONFIGURAZIONE, 
 						new Parameter(CostantiControlStation.PARAMETRO_DUMP_TIPO_CONFIGURAZIONE, TipoPdD.DELEGATA.getTipo()));
 				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DUMP_CONFIGURAZIONE_FRUIZIONI);
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 		
@@ -4465,7 +4462,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
 				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_LIST);
-				if (contaListe) {
+				if (contaListe!=null && contaListe.booleanValue()) {
 					int totAppender = 0;
 					if (configurazione.getDump() != null)
 						totAppender =
@@ -4473,7 +4470,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER, (long)totAppender);
 				} else
 					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER);
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 		
@@ -4481,7 +4478,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE);
 			de.setType(DataElementType.SUBTITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		String[] tipoDumpConnettorePA = {
@@ -4501,7 +4498,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(dumpPA);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		String[] tipoDumpConnettorePD = {
 				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
@@ -4520,20 +4517,20 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(dumpPD);
 		}
-		dati.addElement(de);
+		dati.add(de);
 				
 	}
 	
-	public void addTracciamentoToDatiAsHidden(String registrazioneTracce, Configurazione configurazione, Vector<DataElement> dati) {
+	public void addTracciamentoToDatiAsHidden(String registrazioneTracce, Configurazione configurazione, List<DataElement> dati) {
 		DataElement de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(registrazioneTracce);
-		dati.addElement(de);
+		dati.add(de);
 	}
 
-	public void addTracciamentoToDati(String registrazioneTracce, Configurazione configurazione, Vector<DataElement> dati,	Boolean contaListe) {
+	public void addTracciamentoToDati(String registrazioneTracce, Configurazione configurazione, List<DataElement> dati,	Boolean contaListe) {
 		DataElement de;
 		
 		boolean showTitleSection = 
@@ -4546,7 +4543,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCE);
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 	
@@ -4567,14 +4564,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(registrazioneTracce);
 		}
-		dati.addElement(de);
+		dati.add(de);
 	
 		if (this.isModalitaAvanzata()) {
 			if (this.confCore.isTracce_showConfigurazioneCustomAppender()) {
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
 				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_APPENDER_LIST);
-				if (contaListe) {
+				if (contaListe!=null && contaListe.booleanValue()) {
 					int totAppender = 0;
 					if (configurazione.getTracciamento() != null)
 						totAppender =
@@ -4582,13 +4579,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER, (long)totAppender);
 				} else
 					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			if (this.confCore.isTracce_showSorgentiDatiDatabase()) {
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
 				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_DATASOURCE_LIST);
-				if (contaListe) {
+				if (contaListe!=null && contaListe.booleanValue()) {
 					int totDs = 0;
 					if (configurazione.getTracciamento() != null)
 						totDs =
@@ -4596,30 +4593,30 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI, (long)totDs);
 				} else
 					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI);
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 		
 	}
 
-	public void addMessaggiDiagnosticiToDatiAsHidden(String severita, String severita_log4j, Vector<DataElement> dati) {
+	public void addMessaggiDiagnosticiToDatiAsHidden(String severita, String severita_log4j, List<DataElement> dati) {
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
 		de.setValue(severita);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(severita_log4j);
-		dati.addElement(de);
+		dati.add(de);
 	}
 		
 	public void addMessaggiDiagnosticiToDati(String severita, String severita_log4j, Configurazione configurazione,
-			Vector<DataElement> dati, Boolean contaListe) {
+			List<DataElement> dati, Boolean contaListe) {
 		
 		this.addSeveritaMessaggiDiagnosticiToDati(severita, severita_log4j, dati);
 
@@ -4628,7 +4625,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				DataElement de = new DataElement();
 				de.setType(DataElementType.LINK);
 				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DIAGNOSTICA_APPENDER_LIST);
-				if (contaListe) {
+				if (contaListe!=null && contaListe.booleanValue()) {
 					int totAppender = 0;
 					if (configurazione.getMessaggiDiagnostici() != null)
 						totAppender =
@@ -4636,13 +4633,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER, (long)totAppender);
 				} else
 					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			if (this.confCore.isMsgDiagnostici_showSorgentiDatiDatabase()) {
 				DataElement de = new DataElement();
 				de.setType(DataElementType.LINK);
 				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DIAGNOSTICA_DATASOURCE_LIST);
-				if (contaListe) {
+				if (contaListe!=null && contaListe.booleanValue()) {
 					int totDs = 0;
 					if (configurazione.getMessaggiDiagnostici() != null)
 						totDs =
@@ -4650,12 +4647,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI, (long)totDs);
 				} else
 					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI);
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 	}
 	
-	public Vector<DataElement> addConfigurazioneSistemaSelectListNodiCluster(Vector<DataElement> dati, String [] nodiSelezionati) throws Exception {
+	public List<DataElement> addConfigurazioneSistemaSelectListNodiCluster(List<DataElement> dati, String [] nodiSelezionati) throws Exception {
 		
 		DataElement de = new DataElement();
 		de.setType(DataElementType.MULTI_SELECT);
@@ -4676,7 +4673,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setRows(labels.size());
 		}
 		de.setSelezionati(nodiSelezionati);
-		dati.addElement(de);
+		dati.add(de);
 		
 				
 		boolean resetAllCaches = false;
@@ -4729,7 +4726,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES);
 			de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET_ALL_NODES);
 			de.setSize(this.getSize());
-			dati.addElement(de);
+			dati.add(de);
 			
 			StringBuilder sb = new StringBuilder("");
 			if(nodiSelezionati!=null && nodiSelezionati.length>0) {
@@ -4749,7 +4746,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_SELECTED_CACHES);
 			de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET_SELECTED_NODES);
 			de.setSize(this.getSize());
-			dati.addElement(de);
+			dati.add(de);
 			
 			 Map<String, List<String>> map = this.confCore.getJmxPdD_gruppi_aliases();
 			 if(map!=null && !map.isEmpty()) {
@@ -4782,7 +4779,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						 de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_SELECTED_CACHES+"__gr"+indexGr);
 						 de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET_GROUPES_NODES.replace(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET_GROUPES_NODES_KEYWORD, gruppo));
 						 de.setSize(this.getSize());
-						 dati.addElement(de);
+						 dati.add(de);
 					 }
 					 
 				 }
@@ -4792,13 +4789,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return dati;
 	}
 	
-	private void addInformazioneNonDisponibile(Vector<DataElement> dati, String label){
+	private void addInformazioneNonDisponibile(List<DataElement> dati, String label){
 		DataElement de = newDataElementStyleRuntime();
 		de.setLabel(label);
 		de.setValue(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
 		de.setType(DataElementType.TEXT);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 	}
 	
 	private DataElement newDataElementStyleRuntime() {
@@ -4807,21 +4804,21 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return de;
 	}
 	
-	public Vector<DataElement> addConfigurazioneSistema(Vector<DataElement> dati, String alias) throws Exception {
+	public List<DataElement> addConfigurazioneSistema(List<DataElement> dati, String alias) throws Exception {
 	
 		
 		
 		DataElement de = newDataElementStyleRuntime();
 		de.setType(DataElementType.TITLE);
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_RUNTIME);
-		dati.addElement(de);
+		dati.add(de);
 				
 		de = newDataElementStyleRuntime();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
 		de.setLabel(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(alias);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT);
@@ -4831,7 +4828,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT);
 		de.setValue(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 
 		boolean resetAllCaches = false;
@@ -4875,7 +4872,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES);
 			de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET);
 			de.setSize(this.getSize());
-			dati.addElement(de);
+			dati.add(de);
 		}		
 		
 
@@ -4883,7 +4880,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_GENERALI);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		String versionePdD = null;
 		try{
@@ -4907,7 +4904,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setType(DataElementType.TEXT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_PDD);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		
 		String versioneBaseDati = null;
@@ -4934,7 +4931,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setRows(4);
 		de.setCols(60);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		String confDir = null;
@@ -4961,7 +4958,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setRows(4);
 		de.setCols(60);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		String vendorJava = null;
@@ -4986,7 +4983,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setType(DataElementType.TEXT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_VENDOR_JAVA);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		String versioneJava = null;
@@ -5011,7 +5008,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setType(DataElementType.TEXT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_JAVA);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		
@@ -5040,7 +5037,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setCols(60);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_MESSAGE_FACTORY);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		
@@ -5048,7 +5045,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setType(DataElementType.TITLE);
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_STATO_SERVIZI);
-		dati.addElement(de);
+		dati.add(de);
 		
 		try{
 			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
@@ -5065,7 +5062,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValues(tipoMsg);
 			de.setSelected(v);
 			de.setPostBack_viaPOST(true);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sullo stato del servizio Porta Delegata (jmxResourcePdD): "+e.getMessage(),e);
@@ -5087,7 +5084,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValues(tipoMsg);
 			de.setSelected(v);
 			de.setPostBack_viaPOST(true);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sullo stato del servizio Porta Applicativa (jmxResourcePdD): "+e.getMessage(),e);
@@ -5109,7 +5106,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValues(tipoMsg);
 			de.setSelected(v);
 			de.setPostBack_viaPOST(true);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sullo stato del servizio Integration Manager (jmxResourcePdD): "+e.getMessage(),e);
@@ -5123,7 +5120,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_DIAGNOSTICA);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 
 		try{
 			String livelloSeverita = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
@@ -5141,7 +5138,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValues(tipoMsg);
 			de.setSelected(livelloSeverita);
 			de.setPostBack_viaPOST(true);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sul livello dei diagnostici (jmxResourcePdD): "+e.getMessage(),e);
@@ -5170,7 +5167,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setType(DataElementType.TEXT);
 				de.setValue(livelloSeverita);
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sul livello dei diagnostici log4j (jmxResourcePdD): "+e.getMessage(),e);
@@ -5190,7 +5187,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.TEXT);
 			de.setValue(v);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file govway_diagnostici.log (jmxResourcePdD): "+e.getMessage(),e);
@@ -5210,7 +5207,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.TEXT);
 			de.setValue(v);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file govway.log (jmxResourcePdD): "+e.getMessage(),e);
@@ -5230,7 +5227,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.TEXT);
 			de.setValue(v);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file govway_integrationManager.log (jmxResourcePdD): "+e.getMessage(),e);
@@ -5245,7 +5242,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_TRACCIAMENTO);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 
 		try{
 			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
@@ -5274,7 +5271,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(v);
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sul tracciamento (jmxResourcePdD): "+e.getMessage(),e);
@@ -5297,7 +5294,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValues(tipoMsg);
 			de.setSelected(v);
 			de.setPostBack_viaPOST(true);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sul dump binario sulla Porta Applicativa (jmxResourcePdD): "+e.getMessage(),e);
@@ -5320,7 +5317,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValues(tipoMsg);
 			de.setSelected(v);
 			de.setPostBack_viaPOST(true);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sul dump binario sulla Porta Delegata (jmxResourcePdD): "+e.getMessage(),e);
@@ -5340,7 +5337,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.TEXT);
 			de.setValue(v);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file govway_tracciamento.log (jmxResourcePdD): "+e.getMessage(),e);
@@ -5360,7 +5357,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.TEXT);
 			de.setValue(v);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file govway_dump.log (jmxResourcePdD): "+e.getMessage(),e);
@@ -5377,7 +5374,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = newDataElementStyleRuntime();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_LABEL);
 				de.setType(DataElementType.SUBTITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			de = newDataElementStyleRuntime();
@@ -5391,7 +5388,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String v = state.isEnabled() ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.TEXT);
 			de.setValue(v);
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(state.isEnabled()) {
 				
@@ -5400,7 +5397,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_CONFIGURAZIONE_LABEL);
 				de.setType(DataElementType.TEXT);
 				de.setValue(state.getPath());
-				dati.addElement(de);
+				dati.add(de);
 				
 				String[] valori = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
 				String[] label = { ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_CONFIGURAZIONE_NOTE, state.getLastModified() };
@@ -5413,7 +5410,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setLabels(label);
 				de.setSelected(CostantiConfigurazione.DISABILITATO.getValue());
 				de.setPostBack_viaPOST(true);
-				dati.addElement(de);
+				dati.add(de);
 				
 			}
 		
@@ -5429,12 +5426,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		try{
 			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
@@ -5454,7 +5451,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setLabels(labels);
 			de.setSelected(v);
 			de.setPostBack_viaPOST(true);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}catch(Exception e){
 			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE+" ("+
@@ -5484,7 +5481,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setLabels(labels);
 			de.setSelected(v);
 			de.setPostBack_viaPOST(true);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}catch(Exception e){
 			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE+" ("+
@@ -5511,7 +5508,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setLabels(labels);
 			de.setSelected(v);
 			de.setPostBack_viaPOST(true);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}catch(Exception e){
 			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE+" ("+
@@ -5523,7 +5520,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		try{
 			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
@@ -5540,7 +5537,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValues(tipoMsg);
 			de.setSelected(v);
 			de.setPostBack_viaPOST(true);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}catch(Exception e){
 			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS+" ("+
@@ -5564,7 +5561,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValues(tipoMsg);
 			de.setSelected(v);
 			de.setPostBack_viaPOST(true);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}catch(Exception e){
 			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS+" ("+
@@ -5576,7 +5573,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_DETAILS);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		try{
 			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
@@ -5593,7 +5590,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValues(tipoMsg);
 			de.setSelected(v);
 			de.setPostBack_viaPOST(true);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}catch(Exception e){
 			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_DETAILS+" ("+
@@ -5605,7 +5602,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		try{
 			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
@@ -5622,7 +5619,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValues(tipoMsg);
 			de.setSelected(v);
 			de.setPostBack_viaPOST(true);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}catch(Exception e){
 			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE+" ("+
@@ -5634,7 +5631,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		try{
 			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
@@ -5651,7 +5648,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValues(tipoMsg);
 			de.setSelected(v);
 			de.setPostBack_viaPOST(true);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}catch(Exception e){
 			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP+" ("+
@@ -5666,7 +5663,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_DATABASE);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		String [] infoDatabase = null;
 		try{
@@ -5704,7 +5701,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.TEXT);
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_DATABASE+i);
 					de.setSize(this.getSize());
-					dati.addElement(de);
+					dati.add(de);
 				}catch(Exception e){
 					this.log.error("Errore durante la lettura delle informazioni sul database (jmxResourcePdD): "+e.getMessage(),e);
 				}
@@ -5824,7 +5821,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = newDataElementStyleRuntime();
 				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_DATABASE+" "+idAltroDB.split(" ")[0]);
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 				
 				String [] infoConnessioneDatabase = infoConnessioneAltroDB.split("\n");
 				
@@ -5851,7 +5848,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							de.setType(DataElementType.TEXT);
 							de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_DATABASE+"_db"+index+"_"+i);
 							de.setSize(this.getSize());
-							dati.addElement(de);
+							dati.add(de);
 						}catch(Exception e){
 							this.log.error("Errore durante la lettura delle informazioni sul database (jmxResourcePdD): "+e.getMessage(),e);
 						}
@@ -5868,7 +5865,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_SSL);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		String [] infoSSL = null;
 		try{
@@ -5906,7 +5903,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.TEXT);
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_SSL+i);
 					de.setSize(this.getSize());
-					dati.addElement(de);
+					dati.add(de);
 				}catch(Exception e){
 					this.log.error("Errore durante la lettura delle informazioni SSL (jmxResourcePdD): "+e.getMessage(),e);
 				}
@@ -5920,7 +5917,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_CRYPTOGRAPHY_KEY_LENGTH);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			String [] infoCryptoKeyLength = null;
 			try{
@@ -5958,7 +5955,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setType(DataElementType.TEXT);
 						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_CRYPTOGRAPHY_KEY_LENGTH+i);
 						de.setSize(this.getSize());
-						dati.addElement(de);
+						dati.add(de);
 					}catch(Exception e){
 						this.log.error("Errore durante la lettura delle informazioni sulla lunghezza delle chiavi di cifratura (jmxResourcePdD): "+e.getMessage(),e);
 					}
@@ -5979,7 +5976,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_CHARSET);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		String [] infoCharset = null;
 		try{
@@ -6021,7 +6018,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.TEXT);
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_CHARSET+i);
 					de.setSize(this.getSize());
-					dati.addElement(de);
+					dati.add(de);
 				}catch(Exception e){
 					this.log.error("Errore durante la lettura delle informazioni sul charset (jmxResourcePdD): "+e.getMessage(),e);
 				}
@@ -6041,7 +6038,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_INTERNAZIONALIZZAZIONE);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		String [] infoInternazionalizzazione = null;
 		try{
@@ -6083,7 +6080,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.TEXT);
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_INTERNAZIONALIZZAZIONE+i);
 					de.setSize(this.getSize());
-					dati.addElement(de);
+					dati.add(de);
 				}catch(Exception e){
 					this.log.error("Errore durante la lettura delle informazioni sull'internazionalizzazione (jmxResourcePdD): "+e.getMessage(),e);
 				}
@@ -6101,7 +6098,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_TIMEZONE);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		String [] infoTimezone = null;
 		try{
@@ -6143,7 +6140,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.TEXT);
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_TIMEZONE+i);
 					de.setSize(this.getSize());
-					dati.addElement(de);
+					dati.add(de);
 				}catch(Exception e){
 					this.log.error("Errore durante la lettura delle informazioni sul TimeZone (jmxResourcePdD): "+e.getMessage(),e);
 				}
@@ -6158,7 +6155,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_JAVA_NET);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		String [] infoJavaNet = null;
 		try{
@@ -6211,7 +6208,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.TEXT);
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_JAVA_NET+i);
 					de.setSize(this.getSize());
-					dati.addElement(de);
+					dati.add(de);
 				}catch(Exception e){
 					this.log.error("Errore durante la lettura delle informazioni di Java Networking (jmxResourcePdD): "+e.getMessage(),e);
 				}
@@ -6228,7 +6225,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLI);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		String [] infoProtocolli = null;
 		try{
@@ -6279,7 +6276,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setType(DataElementType.TEXT);
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO+index);
 				de.setSize(this.getSize());
-				dati.addElement(de);
+				dati.add(de);
 				
 //				de = newDataElementStyleLong();
 //				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO);
@@ -6287,7 +6284,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //				de.setType(DataElementType.TEXT);
 //				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO+index);
 //				de.setSize(this.getSize());
-//				dati.addElement(de);
+//				dati.add(de);
 //				
 //				de = newDataElementStyleLong();
 //				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO_CONTESTO);
@@ -6295,7 +6292,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //				de.setType(DataElementType.TEXT);
 //				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO_CONTESTO+index);
 //				de.setSize(this.getSize());
-//				dati.addElement(de);
+//				dati.add(de);
 				
 				index++;
 			}
@@ -6311,14 +6308,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CACHE);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			for (String cache : caches) {
 			
 				de = newDataElementStyleRuntime();
 				de.setLabel(cache);
 				de.setType(DataElementType.SUBTITLE);
-				dati.addElement(de);
+				dati.add(de);
 				
 				String stato = null;
 				try{
@@ -6351,7 +6348,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET);
 					de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET_SINGOLA);
 					de.setSize(this.getSize());
-					dati.addElement(de);
+					dati.add(de);
 					
 					if(this.confCore.getJmxPdD_caches_prefill(alias).contains(cache)){
 						de = newDataElementStyleRuntime();
@@ -6364,7 +6361,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_PREFILL);
 						de.setValue(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_PREFILL);
 						de.setSize(this.getSize());
-						dati.addElement(de);
+						dati.add(de);
 					}
 					
 				}
@@ -6375,7 +6372,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setType(DataElementType.TEXT);
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO);
 				de.setSize(this.getSize());
-				dati.addElement(de);
+				dati.add(de);
 				
 				if("abilitata".equals(stato)){
 					
@@ -6474,7 +6471,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 									de.setType(DataElementType.TEXT);
 									de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO+"_"+i);
 									de.setSize(this.getSize());
-									dati.addElement(de);
+									dati.add(de);
 									
 								}
 									
@@ -6493,14 +6490,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								de.setType(DataElementType.TEXT);
 								de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO+"_int_"+i);
 								de.setSize(this.getSize());
-								dati.addElement(de);
+								dati.add(de);
 								
 								i++;
 								
 								List<DataElement> lDe = mapDe.get(internalCacheName);
 								if(lDe!=null && !lDe.isEmpty()) {
 									for (DataElement dea : lDe) {
-										dati.addElement(dea);
+										dati.add(dea);
 									}
 								}
 							}
@@ -6517,12 +6514,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONI);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_DATABASE);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		String stato = null;
 		try{
@@ -6550,7 +6547,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setSize(this.getSize());
 		de.setRows(6);
 		de.setCols(80);
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		// statoConnessioniAltriDB, letto prima durante l'acquisizione delle informazion
@@ -6564,7 +6561,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = newDataElementStyleRuntime();
 				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_DATABASE+" "+idAltroDB.split(" ")[0]);
 				de.setType(DataElementType.SUBTITLE);
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = newDataElementStyleRuntime();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
@@ -6578,7 +6575,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setSize(this.getSize());
 				de.setRows(6);
 				de.setCols(80);
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 		
@@ -6586,7 +6583,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_JMS);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		stato = null;
 		try{
@@ -6614,7 +6611,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setSize(this.getSize());
 		de.setRows(6);
 		de.setCols(80);
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		
@@ -6623,12 +6620,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TRANSAZIONI);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		stato = null;
 		try{
@@ -6656,12 +6653,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setSize(this.getSize());
 		de.setRows(6);
 		de.setCols(80);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID_PROTOCOLLO);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		stato = null;
 		try{
@@ -6689,7 +6686,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setSize(this.getSize());
 		de.setRows(6);
 		de.setCols(80);
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		
@@ -6699,7 +6696,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONI_HTTP);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 				
 		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiVerificaConnessioniAttive(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_VERIFICA_CONNESSIONI_ATTIVE, 
@@ -6708,7 +6705,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PD);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		stato = null;
 		try{
@@ -6736,14 +6733,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setSize(this.getSize());
 		de.setRows(6);
 		de.setCols(80);
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PA);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		stato = null;
 		try{
@@ -6771,7 +6768,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setSize(this.getSize());
 		de.setRows(6);
 		de.setCols(80);
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		
@@ -6786,7 +6783,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_THREADS);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		de = newDataElementStyleRuntime();
@@ -6797,7 +6794,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		else {
 			de.setType(DataElementType.TITLE);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		boolean timerAttivo = addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerConsegnaContenutiApplicativi(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CONSEGNA_CONTENUTI_APPLICATIVI, 
@@ -6812,7 +6809,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de = newDataElementStyleRuntime();
 					de.setLabel(labelCoda);
 					de.setType(DataElementType.SUBTITLE);
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 				stato = null;
@@ -6842,7 +6839,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setSize(this.getSize());
 				de.setRows(2);
 				de.setCols(80);
-				dati.addElement(de);
+				dati.add(de);
 				
 				String configurazioneCoda = null;
 				try{
@@ -6871,7 +6868,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setSize(this.getSize());
 				de.setRows(2);
 				de.setCols(80);
-				dati.addElement(de);
+				dati.add(de);
 				
 				String connettoriPrioritari = null;
 				try{
@@ -6906,7 +6903,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setRows(2);
 					de.setCols(80);
 				}
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(!"".equals(connettoriPrioritari)) {
 					de = newDataElementStyleRuntime();
@@ -6919,7 +6916,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_THREAD_POOL_ELIMINA_CONNETTORI_PRIORITARI);
 					de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_THREAD_POOL_ELIMINA_CONNETTORI_PRIORITARI);
 					de.setSize(this.getSize());
-					dati.addElement(de);
+					dati.add(de);
 				}
 			}
 		}
@@ -6929,14 +6926,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_THREADS);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 			
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_STATISTICHE);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 
 		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheOrarie(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_ORARIE, 
@@ -6958,7 +6955,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_RUNTIME);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 
 		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiEliminati(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_ELIMINATI, 
@@ -6989,7 +6986,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_MONITORAGGIO);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 
 		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerMonitoraggioRisorseThread(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_MONITORAGGIO_RISORSE_THREAD, 
@@ -7003,7 +7000,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_SISTEMA);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 
 		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerEventi(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_EVENTI, 
@@ -7030,7 +7027,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI);
 			de.setType(DataElementType.SUBTITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			AlarmEngineConfig alarmEngineConfig = this.confCore.getAllarmiConfig();
 			stato = null;
@@ -7052,7 +7049,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"="+alias+
 						"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_MANAGER+"="+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_STOP);
 				de.setType(DataElementType.LINK);
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = newDataElementStyleRuntime();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_RESTART);
@@ -7062,7 +7059,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"="+alias+
 						"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_MANAGER+"="+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_RESTART);
 				de.setType(DataElementType.LINK);
-				dati.addElement(de);
+				dati.add(de);
 
 			}
 			else {
@@ -7077,7 +7074,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"="+alias+
 							"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_MANAGER+"="+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_START);
 					de.setType(DataElementType.LINK);
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 			}
@@ -7098,14 +7095,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setSize(this.getSize());
 			de.setRows(5);
 			de.setCols(80);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}
 		
 		return dati;
 	}
 
-	private boolean addTimerState(Vector<DataElement> dati, String alias, String nomeAttributo, String nomeParametro, String labelParametro) {
+	private boolean addTimerState(List<DataElement> dati, String alias, String nomeAttributo, String nomeParametro, String labelParametro) {
 		try{
 			String stato = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
@@ -7129,7 +7126,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setSelected(stato);
 				de.setPostBack_viaPOST(true);
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			return !TimerState.OFF.equals(timerState);
 			
@@ -7188,7 +7185,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return true;
 	}
 	
-	public void addConfigurazionControlloTrafficoToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico, long sizePolicy, long sizeGlobalPolicy, boolean configurazioneTerminata) throws Exception {
+	public void addConfigurazionControlloTrafficoToDati(List<DataElement> dati, TipoOperazione tipoOperazione, org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico, long sizePolicy, long sizeGlobalPolicy, boolean configurazioneTerminata) throws Exception {
 		
 		
 		boolean first = this.isFirstTimeFromHttpParameters(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_FIRST_TIME); 
@@ -7208,7 +7205,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TEMPI_RISPOSTA);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		this.addToDatiTempiRispostaFruizione(dati, tipoOperazione, true, configurazioneControlloTraffico.getTempiRispostaFruizione());
 		
@@ -7222,14 +7219,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 	}
 	
-	public void addToDatiConfigurazioneControlloTraffico(Vector<DataElement> dati, TipoOperazione tipoOperazione, ConfigurazioneControlloTraffico controlloTraffico) throws Exception {
+	public void addToDatiConfigurazioneControlloTraffico(List<DataElement> dati, TipoOperazione tipoOperazione, ConfigurazioneControlloTraffico controlloTraffico) throws Exception {
 	
 		// **** Limitazione Numero di Richieste Complessive Gestite dalla PdD ****
 		
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_LIMITAZIONE_NUMERO_RICHIESTE_COMPLESSIVE);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// stato
 		
@@ -7250,7 +7247,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setSelected(CostantiConfigurazione.STATO_CON_WARNING_DISABILITATO.getValue());
 		}
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		// soglia
@@ -7270,7 +7267,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			numeroThreadComplessivi = controlloTraffico.getControlloMaxThreadsSoglia();
 			de.setValue(numeroThreadComplessivi+"");
 		}
-		dati.addElement(de);
+		dati.add(de);
 	
 				
 		// messaggio di errore
@@ -7285,7 +7282,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(controlloTraffico.isControlloMaxThreadsTipoErroreIncludiDescrizione()+"");
 		}
-		dati.addElement(de);
+		dati.add(de);
 			
 		// tipo errore
 		
@@ -7317,7 +7314,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValue(tipoErroEnum.getValue());
 			}
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(controlloTraffico.isControlloMaxThreadsEnabled()) {
 			
@@ -7328,7 +7325,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_VISUALIZZA_STATO);
 			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RUNTIME);
 			de.setType(DataElementType.LINK);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}
 		
@@ -7341,7 +7338,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_STATO_CONTROLLO_CONGESTIONE);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 		
 			// stato
@@ -7353,7 +7350,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValues(ConfigurazioneCostanti.STATI);
 			de.setSelected(controlloTraffico.isControlloCongestioneEnabled() ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue());
 			de.setPostBack(true);
-			dati.addElement(de);
+			dati.add(de);
 					
 			
 			// threshold
@@ -7379,7 +7376,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(controlloTraffico.getControlloCongestioneThreshold()!=null){
 				de.setValue(controlloTraffico.getControlloCongestioneThreshold()+"");
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			Integer soglia = controlloTraffico.getControlloCongestioneThreshold();
 			Long numeroThreadCongestionamento = null; 
@@ -7395,13 +7392,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setType(DataElementType.NOTE);
 				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_THRESHOLD_DESCRIZIONE.
 						replace(ConfigurazioneCostanti.CONFIGURAZIONE_CONTROLLO_CONGESTIONE_THRESHOLD_DESCRIZIONE_TEMPLATE, numeroThreadCongestionamento+""));
-				dati.addElement(de);
+				dati.add(de);
 			}
 					
 		}
 	}
 	
-	public void addToDatiConfigurazioneRateLimiting(Vector<DataElement> dati, TipoOperazione tipoOperazione, org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale controlloTraffico, boolean first, boolean finished, long sizePolicy, long sizeGlobalPolicy) throws Exception {
+	public void addToDatiConfigurazioneRateLimiting(List<DataElement> dati, TipoOperazione tipoOperazione, org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale controlloTraffico, boolean first, boolean finished, long sizePolicy, long sizeGlobalPolicy) throws Exception {
 			
 		// Policy
 //		if( first || finished ){
@@ -7409,7 +7406,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 				
 		// messaggio di errore
 		de = new DataElement();
@@ -7423,7 +7420,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.CHECKBOX);
 			de.setSelected(controlloTraffico.getRateLimiting().isTipoErroreIncludiDescrizione());
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		// tipo errore
 		
@@ -7448,7 +7445,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setSelected(tipoErroEnum.getValue());
 			}
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		List<Proprieta> listProprieta = new ArrayList<Proprieta>();
 		if(controlloTraffico.getRateLimiting().sizeProprietaList()>0) {
@@ -7481,7 +7478,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_LINK);
@@ -7489,7 +7486,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setType(DataElementType.LINK);
 		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY_LIST);
 		de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO_POLICY+" (" +sizePolicy+ ")");
-		dati.addElement(de);
+		dati.add(de);
 				
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK);
@@ -7497,12 +7494,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setType(DataElementType.LINK);
 		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_LIST);
 		de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK+" (" + sizeGlobalPolicy+ ")");
-		dati.addElement(de);
+		dati.add(de);
 //		}
 		
 	}
 	
-	public void addConfigurazioneControlloTrafficoJmxStateToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione) throws Exception {
+	public void addConfigurazioneControlloTrafficoJmxStateToDati(List<DataElement> dati, TipoOperazione tipoOperazione) throws Exception {
 		// jmx
 		
 		List<String> aliases = this.getCore().getJmxPdD_aliases();
@@ -7513,7 +7510,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_STATO_RUNTIME);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Link visualizza stato 
 		de = new DataElement();
@@ -7522,7 +7519,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_VISUALIZZA_STATO_REFRESH);
 		de.setUrl(org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RUNTIME);
 		de.setType(DataElementType.LINK);
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		for (String alias : aliases) {
@@ -7533,7 +7530,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setLabel(descrizioneAlias);
 			de.setValue(descrizioneAlias);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			String threadsAttivi = null;
 			try{
@@ -7550,7 +7547,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_VISUALIZZA_STATO_THREADS_ATTIVI);
 			de.setType(DataElementType.TEXT);
 			de.setValue(threadsAttivi);
-			dati.addElement(de);
+			dati.add(de);
 			
 			String pddCongestionata = null;
 			try{
@@ -7567,19 +7564,19 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_VISUALIZZA_STATO_CONGESTIONE);
 			de.setType(DataElementType.TEXT);
 			de.setValue(pddCongestionata);
-			dati.addElement(de);
+			dati.add(de);
 			
 			this.getPd().disableEditMode();
 			
 		}
 	}
 	
-	public void addToDatiTempiRispostaFruizione(Vector<DataElement> dati, TipoOperazione tipoOperazione, boolean editEnabled, TempiRispostaFruizione tempiRispostaFruizione) throws Exception {
+	public void addToDatiTempiRispostaFruizione(List<DataElement> dati, TipoOperazione tipoOperazione, boolean editEnabled, TempiRispostaFruizione tempiRispostaFruizione) throws Exception {
 		
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_FRUIZIONI);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT_LABEL);
@@ -7594,7 +7591,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		if(tempiRispostaFruizione.getConnectionTimeout()!=null)
 			de.setValue(tempiRispostaFruizione.getConnectionTimeout()+"");
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_READ_TIMEOUT_LABEL);
@@ -7609,7 +7606,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		if(tempiRispostaFruizione.getReadTimeout()!=null)
 			de.setValue(tempiRispostaFruizione.getReadTimeout()+"");
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_TEMPO_MEDIO_RISPOSTA_LABEL);
@@ -7624,17 +7621,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		if(tempiRispostaFruizione.getTempoMedioRisposta()!=null)
 			de.setValue(tempiRispostaFruizione.getTempoMedioRisposta()+"");
-		dati.addElement(de);
+		dati.add(de);
 		
 	}
 	
 	
-	public void addToDatiTempiRispostaErogazione(Vector<DataElement> dati, TipoOperazione tipoOperazione, boolean editEnabled, TempiRispostaErogazione tempiRispostaErogazione) throws Exception {
+	public void addToDatiTempiRispostaErogazione(List<DataElement> dati, TipoOperazione tipoOperazione, boolean editEnabled, TempiRispostaErogazione tempiRispostaErogazione) throws Exception {
 		
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_EROGAZIONI);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT_LABEL);
@@ -7649,7 +7646,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		if(tempiRispostaErogazione.getConnectionTimeout()!=null)
 			de.setValue(tempiRispostaErogazione.getConnectionTimeout()+"");
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_READ_TIMEOUT_LABEL);
@@ -7664,7 +7661,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		if(tempiRispostaErogazione.getReadTimeout()!=null)
 			de.setValue(tempiRispostaErogazione.getReadTimeout()+"");
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_TEMPO_MEDIO_RISPOSTA_LABEL);
@@ -7679,12 +7676,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		if(tempiRispostaErogazione.getTempoMedioRisposta()!=null)
 			de.setValue(tempiRispostaErogazione.getTempoMedioRisposta()+"");
-		dati.addElement(de);
+		dati.add(de);
 		
 	}
 	
 	
-	public void addToDatiConfigurazioneCache(Vector<DataElement> dati, TipoOperazione tipoOperazione, 
+	public void addToDatiConfigurazioneCache(List<DataElement> dati, TipoOperazione tipoOperazione, 
 			Cache cache, boolean enabled) throws Exception {
 		
 	
@@ -7692,7 +7689,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			DataElement de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONFIGURAZIONE_CACHE_DATI_STATISTICI);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		DataElement de = new DataElement();
@@ -7709,7 +7706,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setSelected(cache.isCache() ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue());
 		de.setValue(cache.isCache() ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue());
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 				
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_DIMENSIONE);
@@ -7723,7 +7720,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		if(cache.getSize()!=null)
 			de.setValue(cache.getSize()+"");
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		String[] tipoAlgoritmo = { 
@@ -7746,7 +7743,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(cache.getAlgorithm()!=null){
 			de.setValue(cache.getAlgorithm().name());
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_LIFE_TIME);
@@ -7760,7 +7757,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		if(cache.getLifeTime()!=null)
 			de.setValue(cache.getLifeTime()+"");
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_IDLE_TIME);
@@ -7774,7 +7771,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		if(cache.getIdleTime()!=null)
 			de.setValue(cache.getIdleTime()+"");
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 	}
@@ -8409,7 +8406,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.addFilterTipoPolicy(filterTipoPolicy,false);
 			
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO_POLICY, null));
@@ -8430,11 +8427,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setLabels(labels);
 		
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				for (int i = 0; i < lista.size(); i++) {
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 					ConfigurazionePolicy policy = lista.get(i);
 					
 					String nDesr = policy.getDescrizione();
@@ -8447,7 +8444,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValue(policy.getIdPolicy());
 					de.setIdToRemove(""+policy.getId());
 					de.setToolTip(policy.getIdPolicy()+"\n"+nDesr); 
-					e.addElement(de);
+					e.add(de);
 					
 					de = new DataElement();
 					if(policy.isBuiltIn()) {
@@ -8456,11 +8453,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					else {
 						de.setValue(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_UTENTE);
 					}
-					e.addElement(de);
+					e.add(de);
 					
 					this.addInUsoButtonVisualizzazioneClassica(e, policy.getIdPolicy(), policy.getId()+"", InUsoType.RATE_LIMITING_POLICY);
 					
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -8474,17 +8471,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
 					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIG_POLICY, this.request, this.session)){
 
-						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+						List<AreaBottoni> bottoni = new ArrayList<>();
 
 						AreaBottoni ab = new AreaBottoni();
-						Vector<DataElement> otherbott = new Vector<DataElement>();
+						List<DataElement> otherbott = new ArrayList<>();
 						DataElement de = new DataElement();
 						de.setValue(ConfigurazioneCostanti.LABEL_CONTROLLO_TRAFFICO_CONFIG_POLICY_ESPORTA_SELEZIONATI);
 						de.setOnClick(ConfigurazioneCostanti.LABEL_CONTROLLO_TRAFFICO_CONFIG_POLICY_ESPORTA_SELEZIONATI_ONCLICK);
 						de.setDisabilitaAjaxStatus();
-						otherbott.addElement(de);
+						otherbott.add(de);
 						ab.setBottoni(otherbott);
-						bottoni.addElement(ab);
+						bottoni.add(ab);
 
 						this.pd.setAreaBottoni(bottoni);
 
@@ -8631,7 +8628,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	public void prepareAttivazionePolicyList(ConsoleSearch ricerca, List<AttivazionePolicy> lista, List<TipoRisorsaPolicyAttiva> listaTipoRisorsa, 
 			int idLista,RuoloPolicy ruoloPorta, String nomePorta, ServiceBinding serviceBinding) throws Exception{
 		try {
-			List<Parameter> lstParamSession = new ArrayList<Parameter>();
+			List<Parameter> lstParamSession = new ArrayList<>();
 
 			Parameter parRuoloPorta = null;
 			if(ruoloPorta!=null) {
@@ -8689,7 +8686,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				lstParam = lstParamPorta;
 			}
 			else {
-				lstParam = new ArrayList<Parameter>();
+				lstParam = new ArrayList<>();
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO));
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK, null));
 			}
@@ -8754,7 +8751,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
 			
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				
@@ -8764,7 +8761,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				for (int i = 0; i < lista.size(); i++) {
 					AttivazionePolicy policy = lista.get(i);
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 					
 					// Fix retrocompatibilita dove il nome non era obbligatorio.
 					policy.setAlias(PolicyUtilities.getNomeActivePolicy(policy.getAlias(), policy.getIdActivePolicy()));
@@ -8836,7 +8833,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							de.addImage(imageDown);
 						}
 						de.setValue(policy.getPosizione()+"");
-						e.addElement(de);
+						e.add(de);
 					}
 										
 					// Stato
@@ -8866,7 +8863,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					else {
 						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId);
 					}
-					e.addElement(de);
+					e.add(de);
 					
 					
 					// nome
@@ -8885,7 +8882,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					
 					de.setIdToRemove(""+policy.getId());
 					de.setToolTip(nDescr); 
-					e.addElement(de);
+					e.add(de);
 
 					
 					ConfigurazionePolicy configPolicy = null;
@@ -8958,7 +8955,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						}
 						
 						de.allineaTdAlCentro();
-						e.addElement(de);
+						e.add(de);
 					}
 					
 					
@@ -8974,7 +8971,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							String labelRisorsaPolicyAttiva = this.getLabelTipoRisorsaPolicyAttiva(tipoRisorsaPolicyAttiva);							
 							de = new DataElement();
 							de.setValue(labelRisorsaPolicyAttiva);
-							e.addElement(de);
+							e.add(de);
 							
 						}
 					}
@@ -9000,7 +8997,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId,pJmx);
 							}
 						}
-						e.addElement(de);
+						e.add(de);
 					}
 								
 					
@@ -9031,7 +9028,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.allineaTdAlCentro();
 					
 					de.setValue(policy.getPosizione()+"");
-					e.addElement(de);
+					e.add(de);
 					
 					
 //					de = new DataElement();
@@ -9048,7 +9045,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //					else {
 //						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId);
 //					}
-//					e.addElement(de);
+//					e.add(de);
 //					
 //					de = new DataElement();
 //					String groupBy = this.toStringCompactGroupBy(policy.getGroupBy(),ruoloPorta,nomePorta);
@@ -9064,9 +9061,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //					else {
 //						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId);
 //					}
-//					e.addElement(de);
+//					e.add(de);
 					
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -9080,17 +9077,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
 					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ACTIVE_POLICY, this.request, this.session)){
 
-						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+						List<AreaBottoni> bottoni = new ArrayList<>();
 
 						AreaBottoni ab = new AreaBottoni();
-						Vector<DataElement> otherbott = new Vector<DataElement>();
+						List<DataElement> otherbott = new ArrayList<>();
 						DataElement de = new DataElement();
 						de.setValue(ConfigurazioneCostanti.LABEL_CONTROLLO_TRAFFICO_ACTIVE_POLICY_ESPORTA_SELEZIONATI);
 						de.setOnClick(ConfigurazioneCostanti.LABEL_CONTROLLO_TRAFFICO_ACTIVE_POLICY_ESPORTA_SELEZIONATI_ONCLICK);
 						de.setDisabilitaAjaxStatus();
-						otherbott.addElement(de);
+						otherbott.add(de);
 						ab.setBottoni(otherbott);
-						bottoni.addElement(ab);
+						bottoni.add(ab);
 
 						this.pd.setAreaBottoni(bottoni);
 
@@ -10434,13 +10431,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return null;
 	}
 	
-	public void addConfigurazionePolicyToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, ConfigurazionePolicy policy, boolean editMode, long numeroPolicyIstanziate,
+	public void addConfigurazionePolicyToDati(List<DataElement> dati, TipoOperazione tipoOperazione, ConfigurazionePolicy policy, boolean editMode, long numeroPolicyIstanziate,
 			String oldNomeSuggeritoPolicy,  String oldDDescrizioneSuggeritaPolicy, String oldPolicyId) throws Exception {
 		
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(policy.getId()!=null && policy.getId()>0){
 			// id
@@ -10448,7 +10445,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID);
 			de.setValue(policy.getId()+"");
 			de.setType(DataElementType.HIDDEN);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		if(oldNomeSuggeritoPolicy !=null){
@@ -10457,7 +10454,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_OLD_NOME_SUGGERITO);
 			de.setValue(oldNomeSuggeritoPolicy);
 			de.setType(DataElementType.HIDDEN);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		if(oldDDescrizioneSuggeritaPolicy !=null){
@@ -10466,7 +10463,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_OLD_DESCRIZIONE_SUGGERITA);
 			de.setValue(oldDDescrizioneSuggeritaPolicy);
 			de.setType(DataElementType.HIDDEN);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		if(oldPolicyId !=null){
@@ -10475,7 +10472,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_OLD_ID);
 			de.setValue(oldPolicyId);
 			de.setType(DataElementType.HIDDEN);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		/* Servono per le bradcump */
@@ -10494,7 +10491,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		//de.setSize(consoleHelper.getSize());
 		de.setSize(70);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// descrizione
 		de = new DataElement();
@@ -10512,7 +10509,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setRows(6);
 		de.setCols(55);
 		//de.setCols(80);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// risorsa	
 		addDataElementRisorsa(dati, 
@@ -10531,16 +10528,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ISTANZIATA_VALUE.
 					replace(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ISTANZIATA_TEMPLATE,name));
 			de.setType(DataElementType.TEXT);
-			dati.addElement(de);
+			dati.add(de);
 		}
 	}
 	
-	public void addConfigurazionePolicyValoriSoglia(Vector<DataElement> dati, TipoOperazione tipoOperazione, ConfigurazionePolicy policy, boolean editMode, boolean editOnlyValueMode) throws Exception {
+	public void addConfigurazionePolicyValoriSoglia(List<DataElement> dati, TipoOperazione tipoOperazione, ConfigurazionePolicy policy, boolean editMode, boolean editOnlyValueMode) throws Exception {
 		
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_VALORI_SOGLIA);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 //		// simultanee
@@ -10562,7 +10559,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //		de.setSelected(policy.isSimultanee());
 //		de.setValue(policy.isSimultanee()+"");
 //		de.setPostBack_viaPOST(true);
-//		dati.addElement(de);
+//		dati.add(de);
 //		
 //		if(TipoRisorsa.NUMERO_RICHIESTE.getValue().equals(policy.getRisorsa()) && !editMode){
 //			// Il valore del parametor originale viene passato come hidden
@@ -10578,7 +10575,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
 //			}
 //			de.setType(DataElementType.TEXT);
-//			dati.addElement(de);
+//			dati.add(de);
 //		}
 		
 		
@@ -10606,7 +10603,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(!editMode) {
 				de.setType(DataElementType.HIDDEN);
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(!editMode) {
 				// Il valore del parametor originale viene passato come hidden
@@ -10627,7 +10624,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 				}
 				de.setType(DataElementType.TEXT);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 		}
@@ -10644,7 +10641,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_INTERVALLO_OSSERVAZIONE);
 			de.setType(DataElementType.SUBTITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_TIPO_PERIODO);
@@ -10672,7 +10669,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 			}
 			de.setPostBack_viaPOST(true);
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(!editMode) {
 				// Il valore del parametor originale viene passato come hidden
@@ -10714,7 +10711,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 				}
 				de.setType(DataElementType.TEXT);
-				dati.addElement(de);
+				dati.add(de);
 			}
 	
 			
@@ -10741,7 +10738,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setRequired(true);
 			}
 			//de.setSize(consoleHelper.getSize());
-			dati.addElement(de);
+			dati.add(de);
 			
 			
 			
@@ -10770,10 +10767,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setRequired(false);
 			}
 			de.setPostBack_viaPOST(true);			
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(editMode==false) {
-				dati.addElement(deNoEditMode);
+				dati.add(deNoEditMode);
 			}
 		}
 	}
@@ -10847,7 +10844,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 	}
 	
-	private void addToDatiPolicyValue(Vector<DataElement> dati, ConfigurazionePolicy policy, boolean editMode, boolean editOnlyValueMode) throws Exception{
+	private void addToDatiPolicyValue(List<DataElement> dati, ConfigurazionePolicy policy, boolean editMode, boolean editOnlyValueMode) throws Exception{
 		
 		TipoRisorsa tipoRisorsa = TipoRisorsa.toEnumConstant(policy.getRisorsa(), true);
 	
@@ -10869,7 +10866,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValue(policy.getValoreTipoBanda().getValue());
 			}
 			de.setPostBack_viaPOST(true);
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(!editMode) {
 				// Il valore del parametor originale viene passato come hidden
@@ -10890,7 +10887,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					break;
 				}
 				de.setType(DataElementType.TEXT);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 		}
@@ -10918,7 +10915,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValue(policy.getValoreTipoLatenza().getValue());
 			}
 			de.setPostBack_viaPOST(true);
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(!editMode) {
 				// Il valore del parametor originale viene passato come hidden
@@ -10947,7 +10944,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					break;
 				}
 				de.setType(DataElementType.TEXT);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 		}
@@ -10967,7 +10964,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValue(policy.getValore2()+"");
 			}
 			//de.setSize(consoleHelper.getSize());
-			dati.addElement(de);			
+			dati.add(de);			
 		}
 			
 		DataElement de = new DataElement();
@@ -11020,7 +11017,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValue(policy.getValore()+"");
 		}
 		//de.setSize(consoleHelper.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(!editMode) {
 			
@@ -11030,7 +11027,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_MODIFICATO_CON_ISTANZE_ATTIVE_MODIFICA_EFFETTIVA);
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(Costanti.CHECK_BOX_ENABLED);
-				dati.addElement(de);
+				dati.add(de);
 				
 			}
 			else {
@@ -11044,13 +11041,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID,policy.getId()+""),
 						new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_MODIFICATO_CON_ISTANZE_ATTIVE_RICHIESTA_MODIFICA,Costanti.CHECK_BOX_ENABLED));
 				de.setType(DataElementType.LINK);
-				dati.addElement(de);
+				dati.add(de);
 				
 			}
 		}
 	}
 	
-	public void addConfigurazionePolicyApplicabilitaToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione,  ConfigurazionePolicy policy, ConfigurazioneControlloTraffico controlloTraffico, boolean editMode) throws Exception {
+	public void addConfigurazionePolicyApplicabilitaToDati(List<DataElement> dati, TipoOperazione tipoOperazione,  ConfigurazionePolicy policy, ConfigurazioneControlloTraffico controlloTraffico, boolean editMode) throws Exception {
 		
 		if(TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(policy.getRisorsa())){
 			return;
@@ -11059,7 +11056,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPLICABILITA);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		// condizionale
@@ -11076,7 +11073,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setSelected(condizionata);
 		de.setValue(condizionata+"");
 		de.setPostBack_viaPOST(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(!editMode){
 			// Il valore del parametor originale viene passato come hidden
@@ -11092,7 +11089,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
 			}
 			de.setType(DataElementType.TEXT);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		// con congestione in corso
@@ -11120,7 +11117,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		de.setSelected(policy.isApplicabilitaConCongestione());
 		de.setValue(policy.isApplicabilitaConCongestione()+"");
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(!editMode && condizionata){
 			// Il valore del parametor originale viene passato come hidden
@@ -11131,7 +11128,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_NO_EDIT_SUFFIX);
 				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE_NOTE);
 				de.setType(DataElementType.TEXT);
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 		
@@ -11162,7 +11159,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		de.setSelected(policy.isApplicabilitaDegradoPrestazionale());
 		de.setValue(policy.isApplicabilitaDegradoPrestazionale()+"");
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(!editMode && condizionata && 
 				!TipoRisorsa.TEMPO_MEDIO_RISPOSTA.equals(policy.getRisorsa()) && 
@@ -11175,7 +11172,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_NO_EDIT_SUFFIX);
 				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_NOTE);
 				de.setType(DataElementType.TEXT);
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 		
@@ -11204,7 +11201,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		de.setSelected(policy.isApplicabilitaStatoAllarme());
 		de.setValue(policy.isApplicabilitaStatoAllarme()+"");
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(!editMode && condizionata && this.confCore.isConfigurazioneAllarmiEnabled()){
 			// Il valore del parametor originale viene passato come hidden
@@ -11215,7 +11212,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_NO_EDIT_SUFFIX);
 				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOTE);
 				de.setType(DataElementType.TEXT);
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 		
@@ -11231,13 +11228,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	
 	// Metodo soppiantato dall'info
 	@SuppressWarnings("unused")
-	private void addToApplicabilitaConCongestione(Vector<DataElement> dati, TipoOperazione tipoOperazione, ConfigurazionePolicy policy, ConfigurazioneControlloTraffico controlloTraffico, boolean editMode) throws Exception {
+	private void addToApplicabilitaConCongestione(List<DataElement> dati, TipoOperazione tipoOperazione, ConfigurazionePolicy policy, ConfigurazioneControlloTraffico controlloTraffico, boolean editMode) throws Exception {
 		
 		if(policy.isApplicabilitaConCongestione()){
 			DataElement de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONGESTIONE);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			// Note
 			de = new DataElement();
@@ -11246,7 +11243,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setRows(4);
 			de.setCols(55);
 			de.setValue(this.getApplicabilitaConCongestione(controlloTraffico));
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 	}
@@ -11280,13 +11277,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 	
 	@SuppressWarnings("incomplete-switch")
-	private void addToApplicabilitaDegradoPrestazionale(Vector<DataElement> dati, TipoOperazione tipoOperazione, ConfigurazionePolicy policy, boolean editMode) throws Exception {
+	private void addToApplicabilitaDegradoPrestazionale(List<DataElement> dati, TipoOperazione tipoOperazione, ConfigurazionePolicy policy, boolean editMode) throws Exception {
 		
 		if(policy.isApplicabilitaDegradoPrestazionale()){
 			DataElement de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DEGRADO_PRESTAZIONALE);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			// Spostato nell'info
 //			// Note
@@ -11296,7 +11293,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 //			de.setRows(6);
 //			de.setCols(55);
-//			dati.addElement(de);
+//			dati.add(de);
 		}
 		
 		// Modalità di Controllo
@@ -11326,7 +11323,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(!editMode) {
 			de.setType(DataElementType.HIDDEN);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(!editMode && policy.isApplicabilitaDegradoPrestazionale()){
 			// Il valore del parametor originale viene passato come hidden
@@ -11344,7 +11341,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				break;
 			}
 			de.setType(DataElementType.TEXT);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		
@@ -11375,7 +11372,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(!editMode) {
 			de.setType(DataElementType.HIDDEN);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(!editMode && policy.isApplicabilitaDegradoPrestazionale()){
 			// Il valore del parametor originale viene passato come hidden
@@ -11397,7 +11394,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				break;
 			}
 			de.setType(DataElementType.TEXT);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 				
@@ -11407,7 +11404,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_INTERVALLO_OSSERVAZIONE);
 			de.setType(DataElementType.SUBTITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		de = new DataElement();
@@ -11462,7 +11459,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(!editMode) {
 			de.setType(DataElementType.HIDDEN);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(!editMode && policy.isApplicabilitaDegradoPrestazionale()){
 			// Il valore del parametor originale viene passato come hidden
@@ -11504,7 +11501,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 			}
 			de.setType(DataElementType.TEXT);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		
@@ -11536,7 +11533,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValue(policy.getDegradoAvgTimeIntervalloOsservazione()+"");
 		}
 		//de.setSize(consoleHelper.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		
@@ -11570,10 +11567,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		else{
 			de.setPostBack_viaPOST(true);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(editMode==false && policy.isApplicabilitaDegradoPrestazionale()) {
-			dati.addElement(deNoEditMode);
+			dati.add(deNoEditMode);
 		}
 		
 		
@@ -11586,13 +11583,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 	}
 	
-	private void addToApplicabilitaStatoAllarme(Vector<DataElement> dati, TipoOperazione tipoOperazione, ConfigurazionePolicy policy, boolean editMode) throws Exception {
+	private void addToApplicabilitaStatoAllarme(List<DataElement> dati, TipoOperazione tipoOperazione, ConfigurazionePolicy policy, boolean editMode) throws Exception {
 		
 		if(policy.isApplicabilitaStatoAllarme()){
 			DataElement de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ALLARME);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 //			// Note
 //			de = new DataElement();
@@ -11602,7 +11599,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 ////			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 ////			de.setRows(6);
 ////			de.setCols(80);
-//			dati.addElement(de);
+//			dati.add(de);
 		}
 		
 		List<String> allarmi_id = null;
@@ -11631,7 +11628,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			DataElement de = new DataElement();
 			de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_NON_ESISTENTI);
 			de.setType(DataElementType.NOTE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		// Nome
@@ -11677,7 +11674,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(!editMode) {
 			de.setType(DataElementType.HIDDEN);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(!editMode && policy.isApplicabilitaStatoAllarme() && allarmi_id.size()>0){
 			// Il valore del parametor originale viene passato come hidden
@@ -11688,7 +11685,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOME);
 			de.setValue(policy.getAllarmeNome());
 			de.setType(DataElementType.TEXT);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		
@@ -11710,7 +11707,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		de.setSelected(policy.isAllarmeNotStato());
 		de.setValue(policy.isAllarmeNotStato()+"");
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(!editMode && policy.isApplicabilitaStatoAllarme() && allarmi_id.size()>0){
 			// Il valore del parametor originale viene passato come hidden
@@ -11726,7 +11723,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
 			}
 			de.setType(DataElementType.TEXT);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		
@@ -11756,7 +11753,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(!editMode) {
 			de.setType(DataElementType.HIDDEN);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(!editMode && policy.isApplicabilitaStatoAllarme() && allarmi_id.size()>0){
 			// Il valore del parametor originale viene passato come hidden
@@ -11777,7 +11774,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 			}
 			de.setType(DataElementType.TEXT);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 	}
@@ -12621,7 +12618,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 
 	private void addDataElementRisorsa( 
-			Vector<DataElement> dati, 
+			List<DataElement> dati, 
 			String parametroRisorsaNome, String valoreRisorsa,
 			String parametroEsitiNome, String valoreEsiti,
 			boolean editMode) {
@@ -12633,7 +12630,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				null);
 	}
 	private void addDataElementRisorsa( 
-			Vector<DataElement> dati, 
+			List<DataElement> dati, 
 			String parametroRisorsaNome, String valoreRisorsa,
 			String parametroEsitiNome, String valoreEsiti,
 			boolean editMode,
@@ -12654,7 +12651,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setType(DataElementType.TEXT);
 			}
 			de.setValue(valoreRisorsa);
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_NUMERO_RICHIESTE.equals(valoreRisorsa)) {
 				
@@ -12674,7 +12671,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.TEXT);
 				}
 				de.setValue(valoreEsiti);
-				dati.addElement(de);
+				dati.add(de);
 				
 			}
 		}
@@ -12709,7 +12706,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			else {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(valoreRisorsa);
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setName(parametroRisorsaNome+"__LABEL");
@@ -12718,7 +12715,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				String labelRisorsaPolicyAttiva = this.getLabelTipoRisorsaPolicyAttiva(valoreRisorsa);
 				de.setValue(labelRisorsaPolicyAttiva);
 			}
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 	}
@@ -12939,7 +12936,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 	}
 	
-	public void addAttivazionePolicyToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, AttivazionePolicy policy, String nomeSezione, List<InfoPolicy> policies, 
+	public void addAttivazionePolicyToDati(List<DataElement> dati, TipoOperazione tipoOperazione, AttivazionePolicy policy, String nomeSezione, List<InfoPolicy> policies, 
 			RuoloPolicy ruoloPorta, String nomePorta, ServiceBinding serviceBinding, String modalita, PolicyGroupByActiveThreadsType type) throws Exception {
 				
 		
@@ -12961,26 +12958,26 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_IS_ATTIVAZIONE_GLOBALE);
 		de.setValue(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_IS_ATTIVAZIONE_GLOBALE_VALORE);
 		de.setType(DataElementType.HIDDEN);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_RUOLO_PORTA);
 		de.setValue(ruoloPorta!=null ? ruoloPorta.getValue() : null);
 		de.setType(DataElementType.HIDDEN);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_NOME_PORTA);
 		de.setValue(nomePorta);
 		de.setType(DataElementType.HIDDEN);
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(serviceBinding!=null) {
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_SERVICE_BINDING);
 			de.setValue(serviceBinding.name());
 			de.setType(DataElementType.HIDDEN);
-			dati.addElement(de);
+			dati.add(de);
 		}
 						
 		/* Servono per le bradcump */
@@ -12992,7 +12989,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setLabel(nomeSezione);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		if(policy!=null && policy.getId()!=null && policy.getId()>0){
@@ -13001,7 +12998,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID);
 			de.setValue(policy.getId()+"");
 			de.setType(DataElementType.HIDDEN);
-			dati.addElement(de);
+			dati.add(de);
 		}
 			
 		InfoPolicy infoPolicy = null;
@@ -13166,7 +13163,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //			}
 			de.setValue(policy.getAlias());
 			de.setRequired(true);
-			dati.addElement(de);
+			dati.add(de);
 			
 			// descrizione
 			de = new DataElement();
@@ -13189,7 +13186,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(null);
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			//if(infoPolicy!=null){
 			// stato
@@ -13236,7 +13233,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dInfoContinuePolicy.setListBody(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_CONTINUE_ELEM);
 			de.setInfo(dInfoContinuePolicy);
 			
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		if(!jmx){
@@ -13247,7 +13244,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de = new DataElement();
 					de.setLabel(ConfigurazioneCostanti.LABEL_POLICY_CRITERI);
 					de.setType(DataElementType.SUBTITLE);
-					dati.addElement(de);
+					dati.add(de);
 					
 					String modalitaRisorsaConvertValue = this.getDataElementValueRisorsa(infoPolicy.getTipoRisorsa(), infoPolicy.isCheckRichiesteSimultanee());
 					String modalitaEsitiConvertValue = this.getDataElementValueRisorsaEsiti(infoPolicy.getTipoRisorsa());
@@ -13273,7 +13270,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								}
 								de.setValue(labelValue);
 							}
-							dati.addElement(de);
+							dati.add(de);
 						}
 						
 						if(infoPolicy.isControlloCongestione()) {
@@ -13281,7 +13278,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_CONGESTIONE+"__label");
 							de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE_NOTE);
 							de.setType(DataElementType.TEXT);
-							dati.addElement(de);
+							dati.add(de);
 						}
 						
 						if(infoPolicy.isDegradoPrestazione()) {
@@ -13289,7 +13286,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_DEGRADO+"__label");
 							de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_NOTE);
 							de.setType(DataElementType.TEXT);
-							dati.addElement(de);
+							dati.add(de);
 						}
 					}
 	
@@ -13301,7 +13298,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID);
 					de.setType(DataElementType.TEXT);
 					de.setValue(infoPolicy.getIdPolicy());
-					dati.addElement(de);
+					dati.add(de);
 					
 				}
 				
@@ -13319,7 +13316,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de = new DataElement();
 						de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME);
 						de.setType(DataElementType.SUBTITLE);
-						dati.addElement(de);
+						dati.add(de);
 					}
 				}
 			}
@@ -13340,7 +13337,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			//	de.setType(DataElementType.HIDDEN);
 			//}
 			de.setValue(policy.getIdActivePolicy());
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		if(!jmx){
@@ -13367,7 +13364,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 									new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_STATE, true+""));
 						}
 						de.setType(DataElementType.LINK);
-						dati.addElement(de);
+						dati.add(de);
 						
 					}
 				}
@@ -13384,7 +13381,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValue(modalita);
 				de.setType(DataElementType.SELECT);
 				de.setPostBack_viaPOST(true);
-				dati.addElement(de);
+				dati.add(de);
 				
 			}
 			
@@ -13432,7 +13429,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValue("-");
 			}
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(!jmx){
 			
@@ -13444,7 +13441,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_POLICY_CRITERI);
 				de.setType(DataElementType.SUBTITLE);
-				dati.addElement(de);
+				dati.add(de);
 				
 				addDataElementRisorsa(dati, 
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_RISORSA, modalitaRisorsa, 
@@ -13464,7 +13461,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setSelected(modalitaIntervallo);
 						de.setValue(modalitaIntervallo);
 						de.setPostBack_viaPOST(true);
-						dati.addElement(de);
+						dati.add(de);
 					}
 					
 					de = new DataElement();
@@ -13478,7 +13475,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					DataElementInfo dInfoDescrizioneCongestione = new DataElementInfo(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE_LABEL);
 					dInfoDescrizioneCongestione.setHeaderBody(replaceToHtmlSeparator(this.getApplicabilitaConCongestione(configurazioneControlloTraffico.getControlloTraffico())));
 					de.setInfo(dInfoDescrizioneCongestione);
-					dati.addElement(de);
+					dati.add(de);
 					
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_DEGRADO);
@@ -13498,7 +13495,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					DataElementInfo dInfoDescrizioneDegrado = new DataElementInfo(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_LABEL);
 					dInfoDescrizioneDegrado.setHeaderBody(replaceToHtmlSeparator(this.getApplicabilitaDegradoPrestazionale()));
 					de.setInfo(dInfoDescrizioneDegrado);
-					dati.addElement(de);
+					dati.add(de);
 					
 	//				de = new DataElement();
 	//				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_ERROR_RATE);
@@ -13508,7 +13505,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	//				de.setSelected(modalitaErrorRateEnabled);
 	//				de.setValue(modalitaErrorRateEnabled+"");
 	//				de.setPostBack_viaPOST(true);
-	//				dati.addElement(de);
+	//				dati.add(de);
 				}
 				
 			}
@@ -13518,7 +13515,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_POLICY_INFORMAZIONI_SOGLIA);
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			// ridefinisci
@@ -13535,7 +13532,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValue("false");
 			}
 			de.setPostBack_viaPOST(true);
-			dati.addElement(de);
+			dati.add(de);
 			
 			// Valore Soglia
 			
@@ -13572,7 +13569,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValue("");
 				}
 				//de.setSize(consoleHelper.getSize());
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			de = new DataElement();
@@ -13642,7 +13639,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValue("");
 			}
 			//de.setSize(consoleHelper.getSize());
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(infoPolicy!=null){
 								
@@ -13786,7 +13783,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INFORMAZIONI_RUNTIME);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			// Link refresh
 			de = new DataElement();
@@ -13805,7 +13802,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_STATE, true+""));
 			}
 			de.setType(DataElementType.LINK);
-			dati.addElement(de);
+			dati.add(de);
 
 			if(showResetCounters && aliases.size()>1){
 				// Link resetCounters
@@ -13829,7 +13826,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 									ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_RESET_ALL_VALUE));
 				}
 				de.setType(DataElementType.LINK);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			int i=0;
@@ -13841,7 +13838,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setLabel(descrizioneAlias);
 				de.setValue(descrizioneAlias);
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(jmxReset && (aliasJmxReset==null || aliasJmxReset.equals(alias))){
 					
@@ -13862,7 +13859,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de = new DataElement();
 					de.setType(DataElementType.NOTE);
 					de.setValue(resultReset);
-					dati.addElement(de);
+					dati.add(de);
 					
 				}
 				
@@ -13886,7 +13883,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_RESET, alias));
 					}
 					de.setType(DataElementType.LINK);
-					dati.addElement(de);
+					dati.add(de);
 				}
 					
 				String result = null;
@@ -13910,7 +13907,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setRows(20);
 				de.setCols(100);
 				de.setValue(result);
-				dati.addElement(de);
+				dati.add(de);
 				
 				this.pd.disableEditMode();
 				
@@ -13920,16 +13917,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 	}
 	
-	protected void addToDatiDataElementStato_postBackViaGET(Vector<DataElement> dati, String param, String label, boolean enabled, boolean postBack, boolean withWarningOnly, 
+	protected void addToDatiDataElementStato_postBackViaGET(List<DataElement> dati, String param, String label, boolean enabled, boolean postBack, boolean withWarningOnly, 
 			boolean warningOnly, boolean hidden){
 		this._addToDatiDataElementStato(dati, param, label, enabled, postBack, false, withWarningOnly, warningOnly, hidden);
 	}
-	protected void addToDatiDataElementStato_postBackViaPOST(Vector<DataElement> dati, String param, String label, boolean enabled, boolean postBackPOST, boolean withWarningOnly, 
+	protected void addToDatiDataElementStato_postBackViaPOST(List<DataElement> dati, String param, String label, boolean enabled, boolean postBackPOST, boolean withWarningOnly, 
 			boolean warningOnly, boolean hidden){
 		this._addToDatiDataElementStato(dati, param, label, enabled, false, postBackPOST, withWarningOnly, warningOnly, hidden);
 	}
 	
-	private void _addToDatiDataElementStato(Vector<DataElement> dati, String param, String label, boolean enabled, boolean postBack, boolean postBackPOST, boolean withWarningOnly, 
+	private void _addToDatiDataElementStato(List<DataElement> dati, String param, String label, boolean enabled, boolean postBack, boolean postBackPOST, boolean withWarningOnly, 
 			boolean warningOnly, boolean hidden){
 		DataElement de = new DataElement();
 		de.setName(param);
@@ -13964,9 +13961,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setSelected(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO);
 			de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
 		}
-		dati.addElement(de);
+		dati.add(de);
 	}
-	private void addToDatiDataElementStatoReadOnly(Vector<DataElement> dati, String param, String label, boolean enabled, boolean postBack, 
+	private void addToDatiDataElementStatoReadOnly(List<DataElement> dati, String param, String label, boolean enabled, boolean postBack, 
 			boolean withWarningOnly, boolean warningOnly){
 		DataElement de = new DataElement();
 		de.setName(param);
@@ -13984,7 +13981,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setSelected(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO);
 			de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setName(param+"___LABEL");
@@ -14002,11 +13999,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setSelected(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO);
 			de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 	}
 	
-	private void addToDatiAttivazioneFiltro(Vector<DataElement> dati, TipoOperazione tipoOperazione,AttivazionePolicy policy, String nomeSezione, InfoPolicy infoPolicy, 
+	private void addToDatiAttivazioneFiltro(List<DataElement> dati, TipoOperazione tipoOperazione,AttivazionePolicy policy, String nomeSezione, InfoPolicy infoPolicy, 
 			RuoloPolicy ruoloPorta, String nomePorta, ServiceBinding serviceBinding,
 			IDSoggetto idSoggettoProprietario, boolean tokenAbilitato, 
 			CredenzialeTipo tipoAutenticazione, Boolean appId, String tokenPolicy, 
@@ -14847,7 +14844,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_FILTRO);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		boolean filtroAbilitatoAPI = false;
 		if(ruoloPorta!=null) {
@@ -14873,7 +14870,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = new DataElement();
 				de.setType(DataElementType.NOTE);
 				de.setValue("Filtro non modificabile poichè definito per un "+CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO_DI.toLowerCase()+" non attivo nella console");
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 		else {
@@ -14902,7 +14899,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PROTOCOLLO);
 			de.setValue(protocolloSelezionatoValue); // un protocollo e' sempre selezionato 
 			de.setType(DataElementType.HIDDEN);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		if(filtroEnabled){
@@ -14916,7 +14913,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
 				de.setType(DataElementType.HIDDEN);
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(configurazione) {
 					de = new DataElement();
@@ -14940,7 +14937,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setType(DataElementType.SELECT);
 				de.setPostBack_viaPOST(true);
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 	
 			// Protocollo
@@ -14950,7 +14947,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValue(protocolloSelezionatoValue); // un protocollo e' sempre selezionato 
 			if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
 				de.setType(DataElementType.HIDDEN);
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(configurazione) {
 					de = new DataElement();
@@ -14970,7 +14967,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			else{
 				de.setType(DataElementType.HIDDEN);
 				if(protocolliValue!=null && protocolliValue.size()>0) {
-					dati.addElement(de);
+					dati.add(de);
 					
 					// Si è deciso cmq di farlo vedere
 					de = new DataElement();
@@ -14980,7 +14977,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.TEXT);
 				}
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			// Ruolo Erogatore
 			de = new DataElement();
@@ -14993,7 +14990,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValue(ruoloErogatoreSelezionatoValue);
 				if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
 					de.setType(DataElementType.HIDDEN);
-					dati.addElement(de);
+					dati.add(de);
 					
 					if(configurazione) {
 						de = new DataElement();
@@ -15011,7 +15008,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setPostBack_viaPOST(true);
 				}
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			// Erogatore
 			de = new DataElement();
@@ -15024,7 +15021,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValue(datiIdentificativiErogatoreSelezionatoValue);
 				if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
 					de.setType(DataElementType.HIDDEN);
-					dati.addElement(de);
+					dati.add(de);
 					
 					if(configurazione) {
 						de = new DataElement();
@@ -15042,7 +15039,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setPostBack_viaPOST(true);
 				}
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			// Tag
 			de = new DataElement();
@@ -15051,7 +15048,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValue(datiIdentificativiTagSelezionatoValue);
 			if(!configurazione) {
 				de.setType(DataElementType.HIDDEN);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			else {
 				de.setValue(datiIdentificativiTagSelezionatoValue);
@@ -15066,7 +15063,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.HIDDEN);
 				}
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			// Servizio
 			de = new DataElement();
@@ -15075,7 +15072,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValue(datiIdentificativiServizioSelezionatoValue);
 			if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
 				de.setType(DataElementType.HIDDEN);
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(configurazione) {
 					de = new DataElement();
@@ -15103,7 +15100,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.HIDDEN);
 				}
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			// Azione
 			boolean showAzione = true;
@@ -15152,7 +15149,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_AZIONE);
 					}
 					de.setType(DataElementType.SELECT);
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 				de = new DataElement();
@@ -15171,7 +15168,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(protocolloAssociatoFiltroNonSelezionatoUtente) {
 					de.setValue(policy.getFiltro().getAzione());
 					de.setType(DataElementType.HIDDEN);
-					dati.addElement(de);
+					dati.add(de);
 					
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_AZIONE+"___LABEL");
@@ -15214,7 +15211,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setType(DataElementType.HIDDEN);
 					}
 				}
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			// Servizio Applicativo Erogatore
@@ -15225,7 +15222,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValue(servizioApplicativoErogatoreSelezionatoValue);
 				if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
 					de.setType(DataElementType.HIDDEN);
-					dati.addElement(de);
+					dati.add(de);
 					
 					if(configurazione) {
 						de = new DataElement();
@@ -15245,7 +15242,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.HIDDEN);
 					de.setPostBack_viaPOST(true);
 				}
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			// Ruolo Fruitore
@@ -15282,7 +15279,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValue(ruoloFruitoreSelezionatoValue);
 				if(protocolloAssociatoFiltroNonSelezionatoUtente) {
 					de.setType(DataElementType.HIDDEN);
-					dati.addElement(de);
+					dati.add(de);
 					
 					if(configurazione) {
 						de = new DataElement();
@@ -15305,7 +15302,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setPostBack_viaPOST(true);
 				}
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			// Fruitore
 			if(fruitoriValue!=null && fruitoriValue.size()>1 &&
@@ -15321,7 +15318,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValue(datiIdentificativiFruitoreSelezionatoValue);
 					if(protocolloAssociatoFiltroNonSelezionatoUtente || delegata) {
 						de.setType(DataElementType.HIDDEN);
-						dati.addElement(de);
+						dati.add(de);
 						
 						if(configurazione) {
 							de = new DataElement();
@@ -15339,7 +15336,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setPostBack_viaPOST(true);
 					}
 				}
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			// Servizio Applicativo Fruitore
@@ -15356,7 +15353,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValue(servizioApplicativoFruitoreSelezionatoValue);
 					if(protocolloAssociatoFiltroNonSelezionatoUtente) {
 						de.setType(DataElementType.HIDDEN);
-						dati.addElement(de);
+						dati.add(de);
 						
 						if(configurazione) {
 							de = new DataElement();
@@ -15374,7 +15371,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setPostBack_viaPOST(true);
 					}
 				}
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			if(tokenAbilitato) {
@@ -15386,7 +15383,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setType(DataElementType.TEXT_AREA);
 				de.setRows(6);
 				de.setCols(55);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			if(filtroByKey){
@@ -15397,7 +15394,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de = new DataElement();
 					de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED);
 					de.setType(DataElementType.NOTE);
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 				de = new DataElement();
@@ -15411,7 +15408,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValue(policy.getFiltro().isInformazioneApplicativaEnabled()+"");
 				if(protocolloAssociatoFiltroNonSelezionatoUtente) {
 					de.setType(DataElementType.HIDDEN);
-					dati.addElement(de);
+					dati.add(de);
 					
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED+"___LABEL");
@@ -15434,7 +15431,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setSelected(policy.getFiltro().isInformazioneApplicativaEnabled());
 					de.setPostBack_viaPOST(true);
 				}
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(policy.getFiltro().isInformazioneApplicativaEnabled()){
 					
@@ -15452,7 +15449,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValue(policy.getFiltro().getInformazioneApplicativaTipo());
 					if(protocolloAssociatoFiltroNonSelezionatoUtente) {
 						de.setType(DataElementType.HIDDEN);
-						dati.addElement(de);
+						dati.add(de);
 						
 						de = new DataElement();
 						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_TIPO+"___LABEL");
@@ -15481,7 +15478,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setType(DataElementType.SELECT);
 						de.setPostBack_viaPOST(true);
 					}
-					dati.addElement(de);
+					dati.add(de);
 					
 					if(TipoFiltroApplicativo.PLUGIN_BASED.equals(tipoFiltro)) {
 						this.addCustomField(TipoPlugin.RATE_LIMITING,
@@ -15519,7 +15516,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								}
 							}
 						}
-						dati.addElement(de);
+						dati.add(de);
 					}
 				
 					de = new DataElement();
@@ -15528,7 +15525,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValue(StringEscapeUtils.escapeHtml(policy.getFiltro().getInformazioneApplicativaValore())); // il valore può contenere ""
 					if(protocolloAssociatoFiltroNonSelezionatoUtente) {
 						de.setType(DataElementType.HIDDEN);
-						dati.addElement(de);
+						dati.add(de);
 						
 						de = new DataElement();
 						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_VALORE+"___LABEL");
@@ -15540,7 +15537,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setRequired(true);
 						de.setType(DataElementType.TEXT_EDIT);
 					}
-					dati.addElement(de);
+					dati.add(de);
 					
 					// se sono richiesti campionamenti statistici
 					if(infoPolicy!=null && infoPolicy.isIntervalloUtilizzaRisorseStatistiche()){
@@ -15549,7 +15546,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setBold(true);
 						de.setLabel("Nota");
 						de.setValue("Il filtro per chiave, su campionamento statistico, serve solamente a filtrare l'applicabilità della policy.<BR/>Verranno conteggiate anche le richieste che non hanno un match con il filtro per chiave indicato.");
-						dati.addElement(de);
+						dati.add(de);
 					}
 				}
 				
@@ -15558,7 +15555,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 	}
 	
-	private void addToDatiAttivazioneGroupBy(Vector<DataElement> dati, TipoOperazione tipoOperazione,AttivazionePolicy policy, String nomeSezione,	
+	private void addToDatiAttivazioneGroupBy(List<DataElement> dati, TipoOperazione tipoOperazione,AttivazionePolicy policy, String nomeSezione,	
 			InfoPolicy infoPolicy, RuoloPolicy ruoloPorta, String nomePorta, ServiceBinding serviceBinding,
 			boolean tokenAbilitato) throws Exception {
 	
@@ -15596,12 +15593,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RAGGRUPPAMENTO);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RAGGRUPPAMENTO_NOTE);
 		de.setType(DataElementType.NOTE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// stato
 		addToDatiDataElementStato_postBackViaPOST(dati, ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_ENABLED, 
@@ -15622,7 +15619,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_COLLEZIONAMENTO_DISABILITATO);
 		}
 		de.setPostBack_viaPOST(true);
-		dati.addElement(de);
+		dati.add(de);
 		*/
 		
 		if(policy.getGroupBy().isEnabled()){
@@ -15650,7 +15647,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //					de = new DataElement();
 //					de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_DATI_GENERALI);
 //					de.setType(DataElementType.NOTE);
-//					dati.addElement(de);
+//					dati.add(de);
 				}
 				
 				// Ruolo PdD
@@ -15662,7 +15659,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(policy.getGroupBy().isRuoloPorta());
 					de.setValue(policy.getGroupBy().isRuoloPorta()+"");
-					dati.addElement(de);
+					dati.add(de);
 				}
 			
 				// Protocollo
@@ -15680,7 +15677,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setValue("false");
 					}
 				}
-				dati.addElement(de);
+				dati.add(de);
 				
 				// Erogatore
 				if( showErogatore ){
@@ -15690,7 +15687,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(policy.getGroupBy().isErogatore());
 					de.setValue(policy.getGroupBy().isErogatore()+"");
-					dati.addElement(de);
+					dati.add(de);
 				}
 								
 			}
@@ -15737,7 +15734,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //						de = new DataElement();
 //						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_API);
 //						de.setType(DataElementType.NOTE);
-//						dati.addElement(de);
+//						dati.add(de);
 					}
 				}
 						
@@ -15750,7 +15747,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setSelected(policy.getGroupBy().isServizio());
 					de.setValue(policy.getGroupBy().isServizio()+"");
 					de.setPostBack_viaPOST(true);
-					dati.addElement(de);
+					dati.add(de);
 				}
 			}
 				
@@ -15771,7 +15768,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setType(DataElementType.HIDDEN);
 			}
 			de.setValue(policy.getGroupBy().isAzione()+"");
-			dati.addElement(de);
+			dati.add(de);
 			
 			
 			// Servizio Applicativo Erogatore
@@ -15784,7 +15781,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.HIDDEN);
 					de.setSelected(policy.getGroupBy().isServizioApplicativoErogatore());
 					de.setValue(policy.getGroupBy().isServizioApplicativoErogatore()+"");
-					dati.addElement(de);
+					dati.add(de);
 				}
 			}
 				
@@ -15796,7 +15793,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //				de = new DataElement();
 //				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_MITTENTE);
 //				de.setType(DataElementType.NOTE);
-//				dati.addElement(de);
+//				dati.add(de);
 			}
 			
 			// Fruitore
@@ -15816,7 +15813,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(policy.getGroupBy().isFruitore());
 					de.setValue(policy.getGroupBy().isFruitore()+"");
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 				
@@ -15833,7 +15830,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(policy.getGroupBy().isServizioApplicativoFruitore());
 					de.setValue(policy.getGroupBy().isServizioApplicativoFruitore()+"");
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 			}
@@ -15846,7 +15843,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setType(DataElementType.CHECKBOX);
 				de.setSelected(policy.getGroupBy().isIdentificativoAutenticato()); // uso isIdentificativoAutenticato come informazione equivalente a isServizioApplicativoFruitore e isSoggettoFruitore
 				de.setValue(policy.getGroupBy().isIdentificativoAutenticato()+"");
-				dati.addElement(de);
+				dati.add(de);
 			
 			}
 			
@@ -15890,7 +15887,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setSelected(groupByToken); // uso isIdentificativoAutenticato come informazione equivalente a isServizioApplicativoFruitore e isSoggettoFruitore
 				de.setValue(groupByToken+"");
 				de.setPostBack_viaPOST(true);
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(groupByToken) {
 					de = new DataElement();
@@ -15902,7 +15899,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.MULTI_SELECT);
 					de.setRows(4); 
 					de.setRequired(true);
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 			}
@@ -15915,7 +15912,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de = new DataElement();
 					de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_ENABLED_NOTE);
 					de.setType(DataElementType.NOTE);
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 				de = new DataElement();
@@ -15932,7 +15929,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setSelected(policy.getGroupBy().isInformazioneApplicativaEnabled());
 				de.setValue(policy.getGroupBy().isInformazioneApplicativaEnabled()+"");
 				de.setPostBack_viaPOST(true);
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(policy.getGroupBy().isInformazioneApplicativaEnabled()){
 					
@@ -15953,7 +15950,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValue(policy.getGroupBy().getInformazioneApplicativaTipo());
 					de.setType(DataElementType.SELECT);
 					de.setPostBack_viaPOST(true);
-					dati.addElement(de);
+					dati.add(de);
 					
 					if(TipoFiltroApplicativo.PLUGIN_BASED.equals(tipoChiaveGroupBy)) {
 						this.addCustomField(TipoPlugin.RATE_LIMITING,
@@ -15985,7 +15982,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							de.setRequired(true);
 							de.setType(DataElementType.TEXT_EDIT);
 						}
-						dati.addElement(de);
+						dati.add(de);
 					}
 				}
 				
@@ -16677,7 +16674,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 			
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			String label = attributeAuthority ?
 					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY :
@@ -16719,14 +16716,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setLabels(labels);
 		
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				for (int i = 0; i < lista.size(); i++) {
-					Vector<DataElement> e = creaEntryTokenPolicyCustom(lista, pInfoType, attributeAuthority,
+					List<DataElement> e = creaEntryTokenPolicyCustom(lista, pInfoType, attributeAuthority,
 							nomiConfigurazioniPolicyGestioneToken, labelConfigurazioniPolicyGestioneToken, forceId, i);
 					
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -16743,10 +16740,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_TOKEN_POLICY;
 					if(exporterUtils.existsAtLeastOneExportMode(archiveType, this.request, this.session)){
 
-						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+						List<AreaBottoni> bottoni = new ArrayList<>();
 
 						AreaBottoni ab = new AreaBottoni();
-						Vector<DataElement> otherbott = new Vector<DataElement>();
+						List<DataElement> otherbott = new ArrayList<>();
 						DataElement de = new DataElement();
 						if(attributeAuthority) {
 							de.setValue(ConfigurazioneCostanti.LABEL_ATTRIBUTE_AUTHORITY_ESPORTA_SELEZIONATI);
@@ -16757,9 +16754,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							de.setOnClick(ConfigurazioneCostanti.LABEL_TOKEN_POLICY_ESPORTA_SELEZIONATI_ONCLICK);
 						}
 						de.setDisabilitaAjaxStatus();
-						otherbott.addElement(de);
+						otherbott.add(de);
 						ab.setBottoni(otherbott);
-						bottoni.addElement(ab);
+						bottoni.add(ab);
 
 						this.pd.setAreaBottoni(bottoni);
 
@@ -16774,10 +16771,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 	}
 	
-	public Vector<DataElement> creaEntryTokenPolicy(List<GenericProperties> lista, Parameter pInfoType,
+	public List<DataElement> creaEntryTokenPolicy(List<GenericProperties> lista, Parameter pInfoType,
 			boolean attributeAuthority, List<String> nomiConfigurazioniPolicyGestioneToken,
 			List<String> labelConfigurazioniPolicyGestioneToken, boolean forceId, int i) {
-		Vector<DataElement> e = new Vector<DataElement>();
+		List<DataElement> e = new ArrayList<>();
 		GenericProperties policy = lista.get(i);
 		
 		Parameter pPolicyId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID, policy.getId() + ""); 
@@ -16786,11 +16783,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_CHANGE, pInfoType, pPolicyId);
 		de.setValue(policy.getNome());
 		de.setIdToRemove(""+policy.getId());
-		e.addElement(de);
+		e.add(de);
 		
 		de = new DataElement();
 		de.setValue(policy.getDescrizione());
-		e.addElement(de);
+		e.add(de);
 		
 		if(!forceId) {
 			de = new DataElement();
@@ -16811,7 +16808,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			else {
 				de.setValue(policy.getTipo());
 			}
-			e.addElement(de);
+			e.add(de);
 		}
 		
 		InUsoType inUsoType = attributeAuthority ? InUsoType.ATTRIBUTE_AUTHORITY : InUsoType.TOKEN_POLICY;
@@ -16819,15 +16816,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return e;
 	}
 	
-	private Vector<DataElement> creaEntryTokenPolicyCustom(List<GenericProperties> lista, Parameter pInfoType,
+	private List<DataElement> creaEntryTokenPolicyCustom(List<GenericProperties> lista, Parameter pInfoType,
 			boolean attributeAuthority, List<String> nomiConfigurazioniPolicyGestioneToken,
 			List<String> labelConfigurazioniPolicyGestioneToken, boolean forceId, int i) {
-		Vector<DataElement> e = new Vector<DataElement>();
+		List<DataElement> e = new ArrayList<>();
 		GenericProperties policy = lista.get(i);
 		
 		Parameter pPolicyId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID, policy.getId() + "");
 		
-		List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+		List<Parameter> listaParametriChange = new ArrayList<>();
 		listaParametriChange.add(pInfoType);
 		listaParametriChange.add(pPolicyId);
 		
@@ -16838,7 +16835,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());
 		de.setIdToRemove(""+policy.getId());
 		de.setType(DataElementType.TITLE);
-		e.addElement(de);
+		e.add(de);
 		
 		// seconda riga
 		boolean visualizzaSecondaRiga = StringUtils.isNotBlank(policy.getDescrizione()) || !forceId || attributeAuthority;
@@ -16979,7 +16976,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			if(visualizzaSecondaRiga) {
 				de.setType(DataElementType.SUBTITLE);
-				e.addElement(de);
+				e.add(de);
 			}
 		}
 		
@@ -16998,7 +16995,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		// verifica connettivita
 		if(verificaConnettivita) {
-			List<Parameter> listaParametriVerificaConnettivitaChange = new ArrayList<Parameter>();
+			List<Parameter> listaParametriVerificaConnettivitaChange = new ArrayList<>();
 			listaParametriVerificaConnettivitaChange.addAll(listaParametriChange);
 			listaParametriVerificaConnettivitaChange.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTIVITA, "true"));
 			this.addVerificaConnettivitaButton(e, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CERTIFICATI, listaParametriVerificaConnettivitaChange);
@@ -17013,7 +17010,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 	}
 
-	public Vector<DataElement> addPolicyGestioneTokenToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String id, String nome, String descrizione, String tipo, String[] propConfigPolicyGestioneTokenLabelList, String[] propConfigPolicyGestioneTokenList,
+	public List<DataElement> addPolicyGestioneTokenToDati(TipoOperazione tipoOperazione, List<DataElement> dati, String id, String nome, String descrizione, String tipo, String[] propConfigPolicyGestioneTokenLabelList, String[] propConfigPolicyGestioneTokenList,
 			boolean attributeAuthority, GenericProperties genericProperties) throws Exception {
 		
 		if(TipoOperazione.CHANGE.equals(tipoOperazione)){
@@ -17026,7 +17023,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			Parameter pInfoType = new Parameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE, infoType); 
 			
-			List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+			List<Parameter> listaParametriChange = new ArrayList<>();
 			listaParametriChange.add(pInfoType);
 			listaParametriChange.add(pPolicyId);
 			
@@ -17062,7 +17059,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			// verifica connettivita
 			if(verificaConnettivita) {
-				List<Parameter> listaParametriVerificaConnettivitaChange = new ArrayList<Parameter>();
+				List<Parameter> listaParametriVerificaConnettivitaChange = new ArrayList<>();
 				listaParametriVerificaConnettivitaChange.addAll(listaParametriChange);
 				listaParametriVerificaConnettivitaChange.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTIVITA, "true"));
 				this.pd.addComandoVerificaConnettivitaElementoButton(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CERTIFICATI, listaParametriVerificaConnettivitaChange);
@@ -17087,7 +17084,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY :
 				ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// id
 		de = new DataElement();
@@ -17095,7 +17092,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(id);
-		dati.addElement(de);
+		dati.add(de);
 
 		// tipo
 		
@@ -17113,7 +17110,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}else {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(tipo);
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO);
@@ -17141,7 +17138,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(tipo);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		// nome
 		de = new DataElement();
@@ -17154,7 +17151,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.TEXT);
 		}
 		de.setValue(nome);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// descrizione
 		de = new DataElement();
@@ -17162,7 +17159,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_DESCRIZIONE);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setValue(descrizione);
-		dati.addElement(de);
+		dati.add(de);
 
 		
 		return dati;
@@ -17243,7 +17240,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 			
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 			
@@ -17274,7 +17271,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<ConfigurazioneUrlInvocazioneRegola> it = lista.iterator();
@@ -17283,7 +17280,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				while (it.hasNext()) {
 					ConfigurazioneUrlInvocazioneRegola regola = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 					Parameter pIdRegola = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_ID_REGOLA, regola.getId() + "");
 					
 					// Posizione
@@ -17315,7 +17312,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							de.addImage(imageDown);
 						}
 						de.setValue(regola.getPosizione()+"");
-						e.addElement(de);
+						e.add(de);
 					}
 					
 					// Stato
@@ -17335,7 +17332,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setSelected(CheckboxStatusType.CONFIG_DISABLE);
 					}
 					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA_CHANGE, pIdRegola);
-					e.addElement(de);
+					e.add(de);
 					
 					
 					// Nome
@@ -17344,7 +17341,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValue(regola.getNome());
 					de.setToolTip(regola.getNome());
 					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA_CHANGE, pIdRegola);
-					e.addElement(de);
+					e.add(de);
 					
 					de = new DataElement();
 					if(regola.getDescrizione() != null && regola.getDescrizione().length() > 100) {
@@ -17354,9 +17351,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setValue(regola.getDescrizione());
 					}
 					
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 					i++;
 				}
 			}
@@ -17371,17 +17368,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
 					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA, this.request, this.session)){
 
-						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+						List<AreaBottoni> bottoni = new ArrayList<>();
 
 						AreaBottoni ab = new AreaBottoni();
-						Vector<DataElement> otherbott = new Vector<DataElement>();
+						List<DataElement> otherbott = new ArrayList<>();
 						DataElement de = new DataElement();
 						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA_ESPORTA_SELEZIONATI);
 						de.setOnClick(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA_ESPORTA_SELEZIONATI_ONCLICK);
 						de.setDisabilitaAjaxStatus();
-						otherbott.addElement(de);
+						otherbott.add(de);
 						ab.setBottoni(otherbott);
-						bottoni.addElement(ab);
+						bottoni.add(ab);
 
 						this.pd.setAreaBottoni(bottoni);
 
@@ -17593,7 +17590,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 			
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 			
@@ -17623,7 +17620,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 
@@ -17631,7 +17628,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				while (it.hasNext()) {
 					CanaleConfigurazione regola = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 					Parameter pIdCanale = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_ID_CANALE, regola.getId() + "");
 					
 					// Nome
@@ -17640,7 +17637,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValue(regola.getNome());
 					de.setToolTip(regola.getNome());
 					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CANALI_CHANGE, pIdCanale);
-					e.addElement(de);
+					e.add(de);
 					
 					de = new DataElement();
 					if(regola.getDescrizione() != null && regola.getDescrizione().length() > 100) {
@@ -17650,7 +17647,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setValue(regola.getDescrizione());
 					}
 					
-					e.addElement(de);
+					e.add(de);
 					
 					// Default
 					de = new DataElement();
@@ -17661,12 +17658,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					else{
 						de.setValue("No");
 					}
-					e.addElement(de);
+					e.add(de);
 					
 					
 					this.addInUsoButtonVisualizzazioneClassica(e, regola.getNome(), regola.getNome(), InUsoType.CANALE);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -17678,7 +17675,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 	}
-	public Vector<DataElement> addCanaleToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String idCanaleS,
+	public List<DataElement> addCanaleToDati(TipoOperazione tipoOp, List<DataElement> dati, String idCanaleS,
 			String nome, String descrizione) {
 		
 		DataElement dataElement = new DataElement();
@@ -17704,7 +17701,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setRequired(true);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_NOME);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		// descrizione
 		de = new DataElement();
@@ -17713,7 +17710,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setType(DataElementType.TEXT_AREA);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_DESCRIZIONE);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		return dati;
 	}
@@ -17762,7 +17759,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 			
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 			
@@ -17791,14 +17788,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
 
 			// preparo i dati  
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<CanaleConfigurazioneNodo> it = lista.iterator();
 				while (it.hasNext()) {
 					CanaleConfigurazioneNodo regola = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 					Parameter pIdCanaleNodo = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_NODI_ID_NODO, regola.getId() + "");
 					
 					// Nome
@@ -17807,7 +17804,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValue(regola.getNome());
 					de.setToolTip(regola.getNome());
 					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CANALI_NODI_CHANGE, pIdCanaleNodo);
-					e.addElement(de);
+					e.add(de);
 					
 					// descrizione
 					de = new DataElement();
@@ -17818,7 +17815,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setValue(regola.getDescrizione());
 					}
 					
-					e.addElement(de);
+					e.add(de);
 					
 					// Canali
 					de = new DataElement();
@@ -17834,9 +17831,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					} else {
 						de.setValue(labelTooltip);
 					}
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -17848,7 +17845,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 	}
-	public Vector<DataElement> addCanaleNodoToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String idNodoS, String oldNome,
+	public List<DataElement> addCanaleNodoToDati(TipoOperazione tipoOp, List<DataElement> dati, String idNodoS, String oldNome,
 			String nome, String descrizione, String[] canali, List<CanaleConfigurazione> canaleList,
 			boolean selectListNode, List<String> aliasesNodi) {
 		
@@ -17888,7 +17885,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(tipoOp.equals(TipoOperazione.CHANGE)) {
 				de.setPostBack(true);
 			}
-			dati.addElement(de);
+			dati.add(de);
 		}
 		else {
 			DataElement de = new DataElement();
@@ -17899,7 +17896,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setRequired(true);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_NODI_NOME);
 			de.setSize(this.getSize());
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		// descrizione
@@ -17909,7 +17906,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setType(DataElementType.TEXT_AREA);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_NODI_DESCRIZIONE);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		// canali
 		de = new DataElement();
@@ -17922,7 +17919,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setType(DataElementType.MULTI_SELECT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_NODI_CANALI);
 		de.setRows(10);
-		dati.addElement(de);
+		dati.add(de);
 		
 		return dati;
 	}
@@ -17994,7 +17991,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 			
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 			
@@ -18026,7 +18023,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<RegistroPlugin> it = lista.iterator();
@@ -18035,7 +18032,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				while (it.hasNext()) {
 					RegistroPlugin registro = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 //					Parameter pIdRegola = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_ID_ARCHIVIO, regola.getId() + "");
 					Parameter pNomeRegola = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_NOME, registro.getNome() + "");
 					Parameter pOldNomePlugin = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_OLD_NOME, registro.getNome() + "");
@@ -18069,7 +18066,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							de.addImage(imageDown);
 						}
 						de.setValue(registro.getPosizione()+"");
-						e.addElement(de);
+						e.add(de);
 					}
 					
 					// Stato
@@ -18089,7 +18086,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setSelected(CheckboxStatusType.CONFIG_DISABLE);
 					}
 //					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PLUGINS_ARCHIVI_CHANGE, pNomeRegola);
-					e.addElement(de);
+					e.add(de);
 					
 					
 					// Nome
@@ -18098,7 +18095,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValue(registro.getNome());
 					de.setToolTip(registro.getNome());
 					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PLUGINS_ARCHIVI_CHANGE, pOldNomePlugin);
-					e.addElement(de);
+					e.add(de);
 					
 					// ultimo aggiornamento
 					de = new DataElement();
@@ -18111,7 +18108,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 					
 					de.setValue(dataValue);
-					e.addElement(de);
+					e.add(de);
 					
 					// applicabilita
 					de = new DataElement();
@@ -18139,9 +18136,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_QUALSIASI_IN_LIST);
 					}
 					
-					e.addElement(de);
+					e.add(de);
 					
-					dati.addElement(e);
+					dati.add(e);
 					i++;
 				}
 			}
@@ -18156,17 +18153,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
 					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_PLUGIN_ARCHVIO, this.request, this.session)){
 
-						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+						List<AreaBottoni> bottoni = new ArrayList<>();
 
 						AreaBottoni ab = new AreaBottoni();
-						Vector<DataElement> otherbott = new Vector<DataElement>();
+						List<DataElement> otherbott = new ArrayList<>();
 						DataElement de = new DataElement();
 						de.setValue(ConfigurazioneCostanti.LABEL_PLUGIN_ARCHIVIO_ESPORTA_SELEZIONATI);
 						de.setOnClick(ConfigurazioneCostanti.LABEL_PLUGIN_ARCHIVIO_ESPORTA_SELEZIONATI_ONCLICK);
 						de.setDisabilitaAjaxStatus();
-						otherbott.addElement(de);
+						otherbott.add(de);
 						ab.setBottoni(otherbott);
-						bottoni.addElement(ab);
+						bottoni.add(ab);
 
 						this.pd.setAreaBottoni(bottoni);
 
@@ -18182,7 +18179,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 
 	
-	public Vector<DataElement> addRegistroPluginToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String oldNome, String idArchivioS,
+	public List<DataElement> addRegistroPluginToDati(TipoOperazione tipoOp, List<DataElement> dati, String oldNome, String idArchivioS,
 			String nome, String descrizione, String stato, String sorgente, BinaryParameter jarArchivio,
 			String dirArchivio, String urlArchivio, String classiPlugin, String[] tipoPlugin, int numeroArchivi) {
 		
@@ -18198,7 +18195,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_NOME);
 		de.setSize( getSize());
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(tipoOp.equals(TipoOperazione.ADD)) {
 			
@@ -18209,7 +18206,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_ID_ARCHIVIO);
 			de.setSize( getSize());
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_NOME);
@@ -18217,7 +18214,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_OLD_NOME);
 			de.setSize( getSize());
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		// stato
@@ -18230,7 +18227,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setType(DataElementType.SELECT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_STATO);
 		de.setSelected(stato);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// descrizione
 		de = new DataElement();
@@ -18240,7 +18237,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setRows(3);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_DESCRIZIONE);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(tipoOp.equals(TipoOperazione.ADD)) {
 			dati = addRegistroPluginJarToDati(TipoOperazione.ADD, dati, false, nome, sorgente, jarArchivio, dirArchivio, urlArchivio);
@@ -18252,11 +18249,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PLUGINS_ARCHIVI_JAR_LIST ,
 					new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_NOME, oldNome));
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
-			if (contaListe)
+			if (contaListe!=null && contaListe.booleanValue())
 				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO_ARCHIVI_ARCHIVI_JAR +" (" + numeroArchivi + ")");
 			else
 				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO_ARCHIVI_ARCHIVI_JAR);
-			dati.addElement(de);
+			dati.add(de);
 			
 		}
 		
@@ -18275,7 +18272,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setValues(ConfigurazioneCostanti.VALUES_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN);
 		de.setSelected(classiPlugin);
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// tipo plugin
 		if(classiPlugin.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE)) {
@@ -18286,13 +18283,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setLabels(ConfigurazionePluginsTipoPluginUtils.getLabelsTipoPlugin(this.confCore.isConfigurazioneAllarmiEnabled()));
 			de.setValues(ConfigurazionePluginsTipoPluginUtils.getValuesTipoPlugin(this.confCore.isConfigurazioneAllarmiEnabled()));
 			de.setSelezionati(tipoPlugin);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		return dati;
 	}
 	
-	public Vector<DataElement> addRegistroPluginJarToDati(TipoOperazione tipoOp, Vector<DataElement> dati, boolean addTitle, String nomePlugin, String sorgente, BinaryParameter jarArchivio, String dirArchivio,
+	public List<DataElement> addRegistroPluginJarToDati(TipoOperazione tipoOp, List<DataElement> dati, boolean addTitle, String nomePlugin, String sorgente, BinaryParameter jarArchivio, String dirArchivio,
 			String urlArchivio) {
 		DataElement de;
 		
@@ -18308,7 +18305,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_NOME);
 			de.setSize( getSize());
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		// sorgente
@@ -18320,7 +18317,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setValues(ConfigurazioneCostanti.VALUES_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_SORGENTE);
 		de.setSelected(sorgente);
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(sorgente.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_SORGENTE_JAR)) {
 			// jar
@@ -18338,7 +18335,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_DIR_ARCHIVIO);
 			de.setSize(this.getSize());
 			de.setRequired(true);
-			dati.addElement(de);
+			dati.add(de);
 		} else {
 			// url
 			de = new DataElement();
@@ -18348,7 +18345,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_URL_ARCHIVIO);
 			de.setSize(this.getSize());
 			de.setRequired(true);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		return dati;
@@ -18530,7 +18527,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 			
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PLUGINS_REGISTRO_ARCHIVI, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PLUGINS_ARCHIVI_LIST));
@@ -18563,7 +18560,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			boolean visualizzaElimina = false;
 			if (lista != null) {
@@ -18573,7 +18570,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					RegistroPluginArchivio registro = it.next();
 					PluginSorgenteArchivio sorgente = registro.getSorgente();
 					
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 					
 					// Data Inserimento (definisce IdToRemove)
 					DataElement de = new DataElement();
@@ -18585,7 +18582,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setToolTip(dataValue);
 					}
 					de.setValue(dataValue);
-					e.addElement(de);
+					e.add(de);
 					
 					// Tipo Sorgente
 					de = new DataElement();
@@ -18600,7 +18597,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_URL_ARCHIVIO);
 						break;
 					}
-					e.addElement(de);
+					e.add(de);
 					
 					// Sorgente
 					de = new DataElement();
@@ -18615,7 +18612,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setValue(registro.getUrl());
 						break;
 					}
-					e.addElement(de);
+					e.add(de);
 					
 					// Archivio
 					de = new DataElement();
@@ -18636,9 +18633,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setValue("-");
 						break;
 					}
-					e.addElement(de);
+					e.add(de);
 					
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -18676,7 +18673,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 			
@@ -18708,14 +18705,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<Plugin> it = lista.iterator();
 				while (it.hasNext()) {
 					Plugin registro = it.next();
 					
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 					Parameter pIdRegistro = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_ID_PLUGIN, registro.getId() + "");
 					
 					// Stato 
@@ -18733,7 +18730,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setSelected(CheckboxStatusType.CONFIG_DISABLE);
 					}
 //						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PLUGINS_ARCHIVI_CHANGE, pNomeRegola);
-					e.addElement(de);
+					e.add(de);
 					
 					
 					// tipo plugin
@@ -18749,17 +18746,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setToolTip(tipoPluginLabel);
 					}
 					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PLUGINS_CLASSI_CHANGE, pIdRegistro);
-					e.addElement(de);
+					e.add(de);
 					
 					// tipo
 					de = new DataElement();
 					de.setValue(registro.getTipo());
-					e.addElement(de);
+					e.add(de);
 					
 					// label
 					de = new DataElement();
 					de.setValue(registro.getLabel());
-					e.addElement(de);
+					e.add(de);
 					
 					// applicabilita
 					de = new DataElement();
@@ -18774,12 +18771,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}else {
 						de.setValue("-");
 					}
-					e.addElement(de);
+					e.add(de);
 					
 					// InUso
 					this.addInUsoButtonVisualizzazioneClassica(e, tipoPluginLabel + " - " +registro.getLabel(), registro.getId() + "", InUsoType.PLUGIN_CLASSE);
 					
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 
@@ -18793,17 +18790,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
 					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_PLUGIN_CLASSE, this.request, this.session)){
 
-						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+						List<AreaBottoni> bottoni = new ArrayList<>();
 
 						AreaBottoni ab = new AreaBottoni();
-						Vector<DataElement> otherbott = new Vector<DataElement>();
+						List<DataElement> otherbott = new ArrayList<>();
 						DataElement de = new DataElement();
 						de.setValue(ConfigurazioneCostanti.LABEL_PLUGIN_CLASSE_ESPORTA_SELEZIONATI);
 						de.setOnClick(ConfigurazioneCostanti.LABEL_PLUGIN_CLASSE_ESPORTA_SELEZIONATI_ONCLICK);
 						de.setDisabilitaAjaxStatus();
-						otherbott.addElement(de);
+						otherbott.add(de);
 						ab.setBottoni(otherbott);
-						bottoni.addElement(ab);
+						bottoni.add(ab);
 
 						this.pd.setAreaBottoni(bottoni);
 
@@ -18817,7 +18814,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			throw new Exception(e);
 		}
 	}
-	public Vector<DataElement> addPluginClassiToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String idPluginS,
+	public List<DataElement> addPluginClassiToDati(TipoOperazione tipoOp, List<DataElement> dati, String idPluginS,
 			TipoPlugin tipoPlugin, String tipo, String label, String className, String stato, String descrizione, String ruolo,
 			String shTipo, String mhTipo, String mhRuolo,
 			String applicabilita) {
@@ -18851,7 +18848,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setRequired(true);
 		}
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(tipoOp.equals(TipoOperazione.ADD)) {
 			
@@ -18862,7 +18859,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_ID_PLUGIN);
 			de.setSize(getSize());
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		// sezione dinamica
@@ -18879,7 +18876,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_TIPO);
 		de.setSize(this.getSize());
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// class name
 		de = new DataElement();
@@ -18894,7 +18891,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			ConfigurazionePluginsTipoPluginUtils.addInfoClassePlugin(de, tipoPlugin, ruolo, shTipo, mhTipo, mhRuolo,
 					this.confCore.isIntegrationManagerEnabled());
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		// label
 		de = new DataElement();
@@ -18904,7 +18901,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_LABEL);
 		de.setSize(this.getSize());
 		de.setRequired(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// stato
 		de = new DataElement();
@@ -18916,7 +18913,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setType(DataElementType.SELECT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_STATO);
 		de.setSelected(stato);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// descrizione
 		de = new DataElement();
@@ -18926,7 +18923,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setRows(3);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_DESCRIZIONE);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		return dati;
 	}
@@ -19133,7 +19130,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	public void prepareAllarmiList(ConsoleSearch ricerca, List<ConfigurazioneAllarmeBean> lista,
 			RuoloPorta ruoloPorta, String nomePorta, ServiceBinding serviceBinding) throws Exception{
 		try {
-			List<Parameter> lstParamSession = new ArrayList<Parameter>();
+			List<Parameter> lstParamSession = new ArrayList<>();
 
 			Parameter parRuoloPorta = null;
 			if(ruoloPorta!=null) {
@@ -19186,7 +19183,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(lstParamPorta!=null) {
 				lstParam = lstParamPorta;
 			} else {
-				lstParam = new ArrayList<Parameter>();
+				lstParam = new ArrayList<>();
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI, null));
 			}
 			
@@ -19225,14 +19222,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<ConfigurazioneAllarmeBean> it = lista.iterator();
 				while (it.hasNext()) {
-					Vector<DataElement> e = creaEntryAllarmeCustom(lstParamSession, it);
+					List<DataElement> e = creaEntryAllarmeCustom(lstParamSession, it);
 										
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 			
@@ -19246,17 +19243,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
 					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.ALLARME, this.request, this.session)){
 
-						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+						List<AreaBottoni> bottoni = new ArrayList<>();
 
 						AreaBottoni ab = new AreaBottoni();
-						Vector<DataElement> otherbott = new Vector<DataElement>();
+						List<DataElement> otherbott = new ArrayList<>();
 						DataElement de = new DataElement();
 						de.setValue(ConfigurazioneCostanti.LABEL_ALLARMI_ESPORTA_SELEZIONATI);
 						de.setOnClick(ConfigurazioneCostanti.LABEL_ALLARMI_ESPORTA_SELEZIONATI_ONCLICK);
 						de.setDisabilitaAjaxStatus();
-						otherbott.addElement(de);
+						otherbott.add(de);
 						ab.setBottoni(otherbott);
-						bottoni.addElement(ab);
+						bottoni.add(ab);
 
 						this.pd.setAreaBottoni(bottoni);
 
@@ -19271,18 +19268,18 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 	}
 	
-	public Vector<DataElement> creaEntryAllarme(List<Parameter> lstParamSession, Iterator<ConfigurazioneAllarmeBean> it)
+	public List<DataElement> creaEntryAllarme(List<Parameter> lstParamSession, Iterator<ConfigurazioneAllarmeBean> it)
 			throws UtilsException {
 		ConfigurazioneAllarmeBean allarme = it.next();
 		
 		Parameter pId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME, allarme.getId() + "");
-		List<Parameter> lstParamEntry = new ArrayList<Parameter>();
+		List<Parameter> lstParamEntry = new ArrayList<>();
 		lstParamEntry.add(pId);
 		if(lstParamSession.size() > 0) {
 			lstParamEntry.addAll(lstParamSession);
 		}
 		
-		Vector<DataElement> e = new Vector<DataElement>();
+		List<DataElement> e = new ArrayList<>();
 		
 		// Abilitato
 		DataElement de = new DataElement();
@@ -19316,7 +19313,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setSelected(CheckboxStatusType.CONFIG_DISABLE);
 		}
 		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntry.toArray(new Parameter[lstParamEntry.size()]));
-		e.addElement(de);
+		e.add(de);
 		
 		// Stato
 //					de = new DataElement();
@@ -19337,12 +19334,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
 //					}
 //					
-//					e.addElement(de);
+//					e.add(de);
 		
 //					// Tipo
 //					de = new DataElement();
 //					de.setValue(allarme.getTipo());
-//					e.addElement(de);
+//					e.add(de);
 		
 		// TipoAllarme
 		
@@ -19362,7 +19359,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.addImage(imageUp);
 		de.allineaTdAlCentro();
 		de.setValue(mode);
-		e.addElement(de);
+		e.add(de);
 		
 		// Nome 
 		de = new DataElement();
@@ -19371,13 +19368,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setIdToRemove(""+allarme.getId());
 		//de.setToolTip(allarme.getNome());
 		de.setToolTip(allarme.getAlias());
-		e.addElement(de);
+		e.add(de);
 		
 		// Descrizione
 		de = new DataElement();
 		de.setValue(allarme.getDescrizioneAbbr());
 		de.setToolTip(allarme.getDescrizione()); 
-		e.addElement(de);
+		e.add(de);
 		
 		// Runtime
 		boolean isActive = allarme.getEnabled() == 1 && TipoAllarme.ATTIVO.equals(allarme.getTipoAllarme());
@@ -19392,26 +19389,26 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setWidthPx(60);
 		if(isActive){
 			Parameter pState = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE, true+"");
-			List<Parameter> lstParamEntryState = new ArrayList<Parameter>();
+			List<Parameter> lstParamEntryState = new ArrayList<>();
 			lstParamEntryState.addAll(lstParamEntry);
 			lstParamEntryState.add(pState);
 			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntryState.toArray(new Parameter[lstParamEntryState.size()]));
 		}
-		e.addElement(de);
+		e.add(de);
 		return e;
 	}
 	
-	private Vector<DataElement> creaEntryAllarmeCustom(List<Parameter> lstParamSession, Iterator<ConfigurazioneAllarmeBean> it) throws UtilsException {
+	private List<DataElement> creaEntryAllarmeCustom(List<Parameter> lstParamSession, Iterator<ConfigurazioneAllarmeBean> it) throws UtilsException {
 		ConfigurazioneAllarmeBean allarme = it.next();
 		
 		Parameter pId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME, allarme.getId() + "");
-		List<Parameter> lstParamEntry = new ArrayList<Parameter>();
+		List<Parameter> lstParamEntry = new ArrayList<>();
 		lstParamEntry.add(pId);
 		if(lstParamSession.size() > 0) {
 			lstParamEntry.addAll(lstParamSession);
 		}
 		
-		Vector<DataElement> e = new Vector<DataElement>();
+		List<DataElement> e = new ArrayList<>();
 		
 		// Riga 1 Titolo
 		DataElement de = new DataElement();
@@ -19419,7 +19416,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setValue(allarme.getAlias());
 		de.setIdToRemove(""+allarme.getId());
 		de.setType(DataElementType.TITLE);
-		e.addElement(de);
+		e.add(de);
 		
 		// Riga2 : Modalita' + descrizione
 		de = new DataElement();
@@ -19431,7 +19428,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValue(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_ALLARMI_LIST_MODALITA, mode));
 		}
 		de.setType(DataElementType.SUBTITLE);
-		e.addElement(de);
+		e.add(de);
 		
 		// Abilitato
 		de = new DataElement();
@@ -19459,14 +19456,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
 			de.setStatusToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
 		}
-		e.addElement(de);
+		e.add(de);
 		
 		// Runtime
 		boolean isActive = allarme.getEnabled() == 1 && TipoAllarme.ATTIVO.equals(allarme.getTipoAllarme());
 		de = new DataElement();
 		if(isActive){
 			Parameter pState = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE, true+"");
-			List<Parameter> lstParamEntryState = new ArrayList<Parameter>();
+			List<Parameter> lstParamEntryState = new ArrayList<>();
 			lstParamEntryState.addAll(lstParamEntry);
 			lstParamEntryState.add(pState);
 			this.addVisualizzaRuntimeButton(e, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntryState);
@@ -20425,7 +20422,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return null;
 	}
 	
-	public void addAllarmeToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, ConfigurazioneAllarmeBean allarme, AlarmEngineConfig alarmEngineConfig, List<Plugin> listaPlugin,
+	public void addAllarmeToDati(List<DataElement> dati, TipoOperazione tipoOperazione, ConfigurazioneAllarmeBean allarme, AlarmEngineConfig alarmEngineConfig, List<Plugin> listaPlugin,
 			List<org.openspcoop2.monitor.sdk.parameters.Parameter<?>> parameters, RuoloPorta ruoloPorta, String nomePorta, ServiceBinding serviceBinding
 			) throws Exception { 
 		
@@ -20438,7 +20435,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(!state) {
 				boolean isActive = allarme.getEnabled() == 1 && TipoAllarme.ATTIVO.equals(allarme.getTipoAllarme());
 				if(isActive){
-					List<Parameter> lstParamSession = new ArrayList<Parameter>();
+					List<Parameter> lstParamSession = new ArrayList<>();
 	
 					Parameter parRuoloPorta = null;
 					if(ruoloPorta!=null) {
@@ -20459,13 +20456,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					Parameter pState = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE, true+"");
 					
 					Parameter pId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME, allarme.getId() + "");
-					List<Parameter> lstParamEntry = new ArrayList<Parameter>();
+					List<Parameter> lstParamEntry = new ArrayList<>();
 					lstParamEntry.add(pId);
 					if(lstParamSession.size() > 0) {
 						lstParamEntry.addAll(lstParamSession);
 					}
 					
-					List<Parameter> lstParamEntryState = new ArrayList<Parameter>();
+					List<Parameter> lstParamEntryState = new ArrayList<>();
 					lstParamEntryState.addAll(lstParamEntry);
 					lstParamEntryState.add(pState);
 					
@@ -20492,26 +20489,26 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		} else {
 			de.setValue(allarme.getId()+"");
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_RUOLO_PORTA);
 		de.setValue(ruoloPorta!=null ? ruoloPorta.getValue() : null);
 		de.setType(DataElementType.HIDDEN);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME_PORTA);
 		de.setValue(nomePorta);
 		de.setType(DataElementType.HIDDEN);
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(serviceBinding!=null) {
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_SERVICE_BINDING);
 			de.setValue(serviceBinding.name());
 			de.setType(DataElementType.HIDDEN);
-			dati.addElement(de);
+			dati.add(de);
 		}
 				
 		if(state) {
@@ -20567,7 +20564,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			
 			
-			List<Parameter> lstParamEntry = new ArrayList<Parameter>();
+			List<Parameter> lstParamEntry = new ArrayList<>();
 			if(ruoloPorta!=null) {
 				Parameter parRuoloPorta = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_RUOLO_PORTA, ruoloPorta.getValue());
 				lstParamEntry.add(parRuoloPorta);
@@ -20598,7 +20595,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INFORMAZIONI_RUNTIME);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			// Link refresh
 			
@@ -20608,7 +20605,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_VISUALIZZA_STATO_REFRESH);
 			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntry.toArray(new Parameter[lstParamEntry.size()]));
 			de.setType(DataElementType.LINK);
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE);
@@ -20630,7 +20627,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				result = errorMsg;
 			}
 			de.setValue(result);
-			dati.addElement(de);
+			dati.add(de);
 			
 			
 			de = new DataElement();
@@ -20645,13 +20642,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_AGGIORNA_STATO);
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_AGGIORNA_STATO_REFRESH);
 				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_AGGIORNA_STATO_REFRESH);
-				List<Parameter> lstParamEntryRecheck = new ArrayList<Parameter>();
+				List<Parameter> lstParamEntryRecheck = new ArrayList<>();
 				lstParamEntryRecheck.addAll(lstParamEntry);
 				Parameter pRecheck = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_REFRESH, true+"");
 				lstParamEntryRecheck.add(pRecheck);
 				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntryRecheck.toArray(new Parameter[lstParamEntryRecheck.size()]));
 				de.setType(DataElementType.LINK);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			// Link restart
@@ -20661,13 +20658,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_RESTART_ALLARME);
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_RESTART_ALLARME);
 				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_RESTART_ALLARME);
-				List<Parameter> lstParamEntryRestart = new ArrayList<Parameter>();
+				List<Parameter> lstParamEntryRestart = new ArrayList<>();
 				lstParamEntryRestart.addAll(lstParamEntry);
 				Parameter pRestart = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_RESTART, true+"");
 				lstParamEntryRestart.add(pRestart);
 				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntryRestart.toArray(new Parameter[lstParamEntryRestart.size()]));
 				de.setType(DataElementType.LINK);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			// Link stop
@@ -20677,13 +20674,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_STOP_ALLARME);
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STOP_ALLARME);
 				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STOP_ALLARME);
-				List<Parameter> lstParamEntryStop = new ArrayList<Parameter>();
+				List<Parameter> lstParamEntryStop = new ArrayList<>();
 				lstParamEntryStop.addAll(lstParamEntry);
 				Parameter pStop = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_STOP, true+"");
 				lstParamEntryStop.add(pStop);
 				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntryStop.toArray(new Parameter[lstParamEntryStop.size()]));
 				de.setType(DataElementType.LINK);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			// Link start
@@ -20693,13 +20690,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_START_ALLARME);
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_START_ALLARME);
 				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_START_ALLARME);
-				List<Parameter> lstParamEntryStart = new ArrayList<Parameter>();
+				List<Parameter> lstParamEntryStart = new ArrayList<>();
 				lstParamEntryStart.addAll(lstParamEntry);
 				Parameter pStart = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_START, true+"");
 				lstParamEntryStart.add(pStart);
 				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntryStart.toArray(new Parameter[lstParamEntryStart.size()]));
 				de.setType(DataElementType.LINK);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 
@@ -20751,7 +20748,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.TEXT);
 			de.setValue(allarme.getPlugin().getLabel());	
 		}
-		dati.addElement(de);
+		dati.add(de);
 						
 		// tipo
 		de = new DataElement();
@@ -20759,7 +20756,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_TIPO);
 		de.setValue(allarme.getTipo() != null ? allarme.getTipo() : "");
 		de.setType(DataElementType.HIDDEN);
-		dati.addElement(de);
+		dati.add(de);
 				
 		// nome
 		de = new DataElement();
@@ -20784,7 +20781,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			de.setValue(allarme.getNome());
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		// alias
 		de = new DataElement();
@@ -20804,7 +20801,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setValue(allarme.getAlias());
 		}
-		dati.addElement(de);
+		dati.add(de);
 				
 		// abilitato
 		de = new DataElement();
@@ -20828,7 +20825,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}else{
 			de.setSelected(allarme.getEnabled()+"");
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		// descrizione
 		de = new DataElement();
@@ -20848,7 +20845,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setRows(2);
 		}
 		de.setValue(allarme.getDescrizione());
-		dati.addElement(de);
+		dati.add(de);
 		
 		// frequenza
 		if(allarmeAttivo) {
@@ -20864,7 +20861,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA);
 		de.setValue(allarme.getTipoAllarme() != null ? allarme.getTipoAllarme().getValue() : "");
 		de.setType(DataElementType.HIDDEN);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA);
@@ -20877,7 +20874,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.HIDDEN);
 			de.setValue("");
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		// frequenza
 		if(allarmeAttivo) {
@@ -20897,7 +20894,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}else{
 				de.setValue(allarme.getPeriodo()+"");
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			// select tipo periodo
 			de = new DataElement();
@@ -20919,7 +20916,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}else{
 				de.setSelected(allarme.getTipoPeriodo());
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 		}
 		
@@ -20943,7 +20940,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(allarme.getEnabled() == 0) { // allarme disabilitato
 				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO); 
 			}
-			dati.addElement(de);	
+			dati.add(de);	
 			
 			// Acknowledge
 			if(this.confCore.getAllarmiConfig().isOptionsAcknowledgedStatusAssociation() || 
@@ -20972,7 +20969,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(allarme.getAcknowledged() == 0) { 
 					de.setValue(ConfigurazioneCostanti.LABEL_VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_ACKNOWLEDGE_NO); 
 				}
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			// Archivio Stati
@@ -20982,7 +20979,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setType(DataElementType.LINK);
 				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_HISTORY_LIST, pIdAllarme);
 				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ARCHIVIO_STATI); 
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 		
@@ -20993,7 +20990,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME);
 			dati.add(de);		
 			
-			List<Parameter> lstParamEntry = new ArrayList<Parameter>();
+			List<Parameter> lstParamEntry = new ArrayList<>();
 			if(ruoloPorta!=null) {
 				Parameter parRuoloPorta = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_RUOLO_PORTA, ruoloPorta.getValue());
 				lstParamEntry.add(parRuoloPorta);
@@ -21015,7 +21012,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.LINK);
 			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntry.toArray(new Parameter[lstParamEntry.size()]));
 			de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_VISUALIZZA_STATO_EDIT); 
-			dati.addElement(de);
+			dati.add(de);
 			
 		}
 		
@@ -21193,7 +21190,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(allarme.getMail().getInvia()+"");
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(allarme.getMail().getInvia() == 1) {
 			// destinatari
@@ -21208,7 +21205,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setType(DataElementType.HIDDEN);
 			}
 			de.setValue(allarme.getMail().getDestinatari());
-			dati.addElement(de);
+			dati.add(de);
 			
 			// notifica warning
 			de = new DataElement();
@@ -21226,7 +21223,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(allarme.getMail().getInviaWarning()+"");
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(this.confCore.getAllarmiConfig().isMailShowAllOptions()) {			
 				// Subject
@@ -21240,7 +21237,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.HIDDEN);
 				}
 				de.setValue(allarme.getMail().getSubject());
-				dati.addElement(de);
+				dati.add(de);
 				
 				// Body
 				de = new DataElement();
@@ -21253,7 +21250,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.HIDDEN);
 				}
 				de.setValue(allarme.getMail().getBody());
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 		
@@ -21283,7 +21280,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(allarme.getScript().getInvoca()+"");
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(allarme.getScript().getInvoca() == 1) {
 			// notifica warning
@@ -21302,7 +21299,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(allarme.getScript().getInvocaWarning()+"");
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(this.confCore.getAllarmiConfig().isScriptShowAllOptions()) {
 			
@@ -21317,7 +21314,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.HIDDEN);
 				}
 				de.setValue(allarme.getScript().getCommand());
-				dati.addElement(de);
+				dati.add(de);
 				
 				// Body
 				de = new DataElement();
@@ -21330,7 +21327,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.HIDDEN);
 				}
 				de.setValue(allarme.getScript().getArgs());
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 		
@@ -21374,7 +21371,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return this.confCore.getParameterSectionTitle(allarme, groupByAllarme);
 	}
 	
-	private void addToDatiAllarmeFiltro(Vector<DataElement> dati, TipoOperazione tipoOperazione, ConfigurazioneAllarmeBean allarme, Context context, String nomeSezione,
+	private void addToDatiAllarmeFiltro(List<DataElement> dati, TipoOperazione tipoOperazione, ConfigurazioneAllarmeBean allarme, Context context, String nomeSezione,
 			RuoloPorta ruoloPorta, String nomePorta, ServiceBinding serviceBinding,
 			IDSoggetto idSoggettoProprietario, boolean tokenAbilitato, 
 			CredenzialeTipo tipoAutenticazione, Boolean appId, String tokenPolicy, 
@@ -22223,7 +22220,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_FILTRO);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		boolean filtroAbilitatoAPI = false;
 		if(ruoloPorta!=null) {
@@ -22249,7 +22246,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = new DataElement();
 				de.setType(DataElementType.NOTE);
 				de.setValue("Filtro non modificabile poichè definito per un "+CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO_DI.toLowerCase()+" non attivo nella console");
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 		else {
@@ -22278,7 +22275,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_PROTOCOLLO);
 			de.setValue(protocolloSelezionatoValue); // un protocollo e' sempre selezionato 
 			de.setType(DataElementType.HIDDEN);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		if(filtroEnabled){ 
@@ -22292,16 +22289,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			if(filterConfig!=null && filterConfig.isHideGatewayRole()) {
 				de.setType(DataElementType.HIDDEN);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			else if(configurazione && filterConfig!=null && 
 					(filterConfig.isForceInGatewayRole() || filterConfig.isForceOutGatewayRole())) {
 				de.setType(DataElementType.HIDDEN);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			else if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
 				de.setType(DataElementType.HIDDEN);
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(configurazione) {
 					de = new DataElement();
@@ -22325,7 +22322,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setType(DataElementType.SELECT);
 				de.setPostBack_viaPOST(true);
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 	
 			// Protocollo
@@ -22335,11 +22332,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValue(protocolloSelezionatoValue); // un protocollo e' sempre selezionato 
 			if(filterConfig!=null && filterConfig.isHideProtocol()) {
 				de.setType(DataElementType.HIDDEN);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			else if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
 				de.setType(DataElementType.HIDDEN);
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(configurazione) {
 					de = new DataElement();
@@ -22359,7 +22356,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			else{
 				de.setType(DataElementType.HIDDEN);
 				if(protocolliValue!=null && protocolliValue.size()>0) {
-					dati.addElement(de);
+					dati.add(de);
 					
 					// Si è deciso cmq di farlo vedere
 					de = new DataElement();
@@ -22369,7 +22366,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.TEXT);
 				}
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			// Ruolo Erogatore
 			de = new DataElement();
@@ -22385,7 +22382,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValue(ruoloErogatoreSelezionatoValue);
 				if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
 					de.setType(DataElementType.HIDDEN);
-					dati.addElement(de);
+					dati.add(de);
 					
 					if(configurazione) {
 						de = new DataElement();
@@ -22403,7 +22400,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setPostBack_viaPOST(true);
 				}
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			// Erogatore
 			de = new DataElement();
@@ -22419,7 +22416,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValue(datiIdentificativiErogatoreSelezionatoValue);
 				if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
 					de.setType(DataElementType.HIDDEN);
-					dati.addElement(de);
+					dati.add(de);
 					
 					if(configurazione) {
 						de = new DataElement();
@@ -22437,7 +22434,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setPostBack_viaPOST(true);
 				}
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			// Tag
 			de = new DataElement();
@@ -22447,11 +22444,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			boolean allarmiFiltroApi = this.core.getAllarmiConfig().isOptionsFilterApi();
 			if(filterConfig!=null && filterConfig.isHideTag()) {
 				de.setType(DataElementType.HIDDEN);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			else if(!configurazione) {
 				de.setType(DataElementType.HIDDEN);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			else {
 				de.setValue(datiIdentificativiTagSelezionatoValue);
@@ -22466,7 +22463,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.HIDDEN);
 				}
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			// Servizio
 			de = new DataElement();
@@ -22475,11 +22472,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValue(datiIdentificativiServizioSelezionatoValue);
 			if(filterConfig!=null && filterConfig.isHideService()) {
 				de.setType(DataElementType.HIDDEN);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			else if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
 				de.setType(DataElementType.HIDDEN);
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(configurazione) {
 					de = new DataElement();
@@ -22507,7 +22504,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.HIDDEN);
 				}
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			// Azione
 			boolean showAzione = true;
@@ -22564,7 +22561,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_AZIONE);
 					}
 					de.setType(DataElementType.SELECT);
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 				de = new DataElement();
@@ -22583,7 +22580,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(protocolloAssociatoFiltroNonSelezionatoUtente) {
 					de.setValue(allarme.getFiltro().getAzione());
 					de.setType(DataElementType.HIDDEN);
-					dati.addElement(de);
+					dati.add(de);
 					
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_AZIONE+"___LABEL");
@@ -22626,7 +22623,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setType(DataElementType.HIDDEN);
 					}
 				}
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 //			// Servizio Applicativo Erogatore
@@ -22637,7 +22634,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //				de.setValue(servizioApplicativoErogatoreSelezionatoValue);
 //				if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
 //					de.setType(DataElementType.HIDDEN);
-//					dati.addElement(de);
+//					dati.add(de);
 //					
 //					if(configurazione) {
 //						de = new DataElement();
@@ -22657,7 +22654,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //					de.setType(DataElementType.HIDDEN);
 //					de.setPostBack_viaPOST(true);
 //				}
-//				dati.addElement(de);
+//				dati.add(de);
 //			}
 			
 			// Ruolo Fruitore
@@ -22691,7 +22688,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValue(ruoloFruitoreSelezionatoValue);
 				if(protocolloAssociatoFiltroNonSelezionatoUtente) {
 					de.setType(DataElementType.HIDDEN);
-					dati.addElement(de);
+					dati.add(de);
 					
 					if(configurazione) {
 						de = new DataElement();
@@ -22714,7 +22711,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setPostBack_viaPOST(true);
 				}
 			}
-			dati.addElement(de);
+			dati.add(de);
 			
 			// Fruitore
 			if(fruitoriValue!=null && fruitoriValue.size()>1){
@@ -22731,7 +22728,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValue(datiIdentificativiFruitoreSelezionatoValue);
 					if(protocolloAssociatoFiltroNonSelezionatoUtente || delegata) {
 						de.setType(DataElementType.HIDDEN);
-						dati.addElement(de);
+						dati.add(de);
 						
 						if(configurazione) {
 							de = new DataElement();
@@ -22749,7 +22746,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setPostBack_viaPOST(true);
 					}
 				}
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			// Servizio Applicativo Fruitore
@@ -22767,7 +22764,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValue(servizioApplicativoFruitoreSelezionatoValue);
 					if(protocolloAssociatoFiltroNonSelezionatoUtente) {
 						de.setType(DataElementType.HIDDEN);
-						dati.addElement(de);
+						dati.add(de);
 						
 						if(configurazione) {
 							de = new DataElement();
@@ -22785,12 +22782,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setPostBack_viaPOST(true);
 					}
 				}
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 	}
 	
-	private void addToDatiAllarmeGroupBy(Vector<DataElement> dati, TipoOperazione tipoOperazione,ConfigurazioneAllarmeBean allarme, Context context, String nomeSezione,	
+	private void addToDatiAllarmeGroupBy(List<DataElement> dati, TipoOperazione tipoOperazione,ConfigurazioneAllarmeBean allarme, Context context, String nomeSezione,	
 			RuoloPorta ruoloPorta, String nomePorta, ServiceBinding serviceBinding,
 			boolean tokenAbilitato) throws Exception {
 	
@@ -22828,12 +22825,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RAGGRUPPAMENTO);
 		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RAGGRUPPAMENTO_NOTE);
 		de.setType(DataElementType.NOTE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// stato
 		boolean allarmeGBEnabled = allarme!=null && allarme.getGroupBy()!=null ? allarme.getGroupBy().isEnabled() : false;
@@ -22855,7 +22852,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_COLLEZIONAMENTO_DISABILITATO);
 		}
 		de.setPostBack_viaPOST(true);
-		dati.addElement(de);
+		dati.add(de);
 		*/
 		
 		if(allarme!=null && allarme.getGroupBy()!=null && allarme.getGroupBy().isEnabled()){
@@ -22914,7 +22911,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //					de = new DataElement();
 //					de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_GROUPBY_DATI_GENERALI);
 //					de.setType(DataElementType.NOTE);
-//					dati.addElement(de);
+//					dati.add(de);
 				}
 				
 				// Ruolo PdD
@@ -22926,7 +22923,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(allarme.getGroupBy().isRuoloPorta());
 					de.setValue(allarme.getGroupBy().isRuoloPorta()+"");
-					dati.addElement(de);
+					dati.add(de);
 				}
 			
 				// Protocollo
@@ -22944,7 +22941,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setValue("false");
 					}
 				}
-				dati.addElement(de);
+				dati.add(de);
 				
 				// Erogatore
 				if( showErogatore ){
@@ -22954,7 +22951,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(allarme.getGroupBy().isErogatore());
 					de.setValue(allarme.getGroupBy().isErogatore()+"");
-					dati.addElement(de);
+					dati.add(de);
 				}
 								
 			}
@@ -23016,7 +23013,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //						de = new DataElement();
 //						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_GROUPBY_API);
 //						de.setType(DataElementType.NOTE);
-//						dati.addElement(de);
+//						dati.add(de);
 					}
 				}
 						
@@ -23029,7 +23026,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setSelected(allarme.getGroupBy().isServizio());
 					de.setValue(allarme.getGroupBy().isServizio()+"");
 					de.setPostBack_viaPOST(true);
-					dati.addElement(de);
+					dati.add(de);
 				}
 			}
 				
@@ -23050,7 +23047,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setType(DataElementType.HIDDEN);
 			}
 			de.setValue(allarme.getGroupBy().isAzione()+"");
-			dati.addElement(de);
+			dati.add(de);
 			
 				
 			// Servizio Applicativo Erogatore
@@ -23063,7 +23060,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //					de.setType(DataElementType.HIDDEN);
 //					de.setSelected(allarme.getGroupBy().isServizioApplicativoErogatore());
 //					de.setValue(allarme.getGroupBy().isServizioApplicativoErogatore()+"");
-//					dati.addElement(de);
+//					dati.add(de);
 //				}
 //			}
 				
@@ -23075,7 +23072,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //				de = new DataElement();
 //				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_GROUPBY_MITTENTE);
 //				de.setType(DataElementType.NOTE);
-//				dati.addElement(de);
+//				dati.add(de);
 			}
 			
 			// Fruitore
@@ -23100,7 +23097,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(allarme.getGroupBy().isFruitore());
 					de.setValue(allarme.getGroupBy().isFruitore()+"");
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 				
@@ -23122,7 +23119,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(allarme.getGroupBy().isServizioApplicativoFruitore());
 					de.setValue(allarme.getGroupBy().isServizioApplicativoFruitore()+"");
-					dati.addElement(de);
+					dati.add(de);
 				}
 				
 			}
@@ -23143,7 +23140,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(allarme.getGroupBy().isIdentificativoAutenticato()); // uso isIdentificativoAutenticato come informazione equivalente a isServizioApplicativoFruitore e isSoggettoFruitore
 					de.setValue(allarme.getGroupBy().isIdentificativoAutenticato()+"");
-					dati.addElement(de);
+					dati.add(de);
 				}
 			
 			}
@@ -23196,7 +23193,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setSelected(groupByToken); // uso isIdentificativoAutenticato come informazione equivalente a isServizioApplicativoFruitore e isSoggettoFruitore
 					de.setValue(groupByToken+"");
 					de.setPostBack_viaPOST(true);
-					dati.addElement(de);
+					dati.add(de);
 					
 					boolean showTokenClaims = true;
 					if(showTokenClaims) {
@@ -23215,7 +23212,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setType(DataElementType.MULTI_SELECT);
 						de.setRows(4); 
 						de.setRequired(true);
-						dati.addElement(de);
+						dati.add(de);
 					}
 				}
 				
@@ -23229,7 +23226,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //					de = new DataElement();
 //					de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_PER_CHIAVE_ENABLED_NOTE);
 //					de.setType(DataElementType.NOTE);
-//					dati.addElement(de);
+//					dati.add(de);
 //				}
 //				
 //				de = new DataElement();
@@ -23246,7 +23243,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //				de.setSelected(allarme.getGroupBy().isInformazioneApplicativaEnabled());
 //				de.setValue(allarme.getGroupBy().isInformazioneApplicativaEnabled()+"");
 //				de.setPostBack_viaPOST(true);
-//				dati.addElement(de);
+//				dati.add(de);
 //				
 //				if(allarme.getGroupBy().isInformazioneApplicativaEnabled()){
 //					
@@ -23267,7 +23264,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //					de.setValue(allarme.getGroupBy().getInformazioneApplicativaTipo());
 //					de.setType(DataElementType.SELECT);
 //					de.setPostBack_viaPOST(true);
-//					dati.addElement(de);
+//					dati.add(de);
 //					
 //					de = new DataElement();
 //					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_PER_CHIAVE_NOME);
@@ -23288,7 +23285,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //						de.setRequired(true);
 //						de.setType(DataElementType.TEXT_EDIT);
 //					}
-//					dati.addElement(de);
+//					dati.add(de);
 //				}
 //				
 //			}
@@ -23486,7 +23483,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			RuoloPorta ruoloPorta, String nomePorta, ServiceBinding serviceBinding) throws Exception{
 		try {
 			
-			List<Parameter> lstParAllarme = new ArrayList<Parameter>();
+			List<Parameter> lstParAllarme = new ArrayList<>();
 			Parameter parRuoloPorta = null;
 			if(ruoloPorta!=null) {
 				parRuoloPorta = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_RUOLO_PORTA, ruoloPorta.getValue());
@@ -23530,7 +23527,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						new Parameter(allarme.getNome(), ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParAllarme.toArray(new Parameter[lstParAllarme.size()])));
 				
 			} else {
-				lstParam = new ArrayList<Parameter>();
+				lstParam = new ArrayList<>();
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_LIST));
 				lstParam.add(new Parameter(allarme.getNome(), ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParAllarme.toArray(new Parameter[lstParAllarme.size()])));
 			}
@@ -23550,7 +23547,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 			
 			
 
@@ -23560,7 +23557,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				while (it.hasNext()) {
 					ConfigurazioneAllarmeHistoryBean entry = it.next();
 					
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 					
 					// Data Aggiornamento
 					DataElement de = new DataElement();
@@ -23569,7 +23566,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					String dataValue = DateUtils.getSimpleDateFormat(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_FORMATO_DATA).format(timestampUpdate);
 					de.setToolTip(dataValue);
 					de.setValue(dataValue);
-					e.addElement(de);
+					e.add(de);
 					
 					// Abilitato
 					de = new DataElement();
@@ -23580,7 +23577,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					else{
 						de.setValue(ConfigurazioneCostanti.LABEL_VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO_NO);
 					}
-					e.addElement(de);
+					e.add(de);
 					
 					// Stato
 					de = new DataElement();
@@ -23601,7 +23598,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
 					}
 					
-					e.addElement(de);
+					e.add(de);
 					
 					// ack
 					de = new DataElement();
@@ -23614,21 +23611,21 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setToolTip(ConfigurazioneCostanti.LABEL_VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_ACKNOWLEDGE_NO);
 						de.setValue(ConfigurazioneCostanti.LABEL_VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_ACKNOWLEDGE_NO);
 					}
-					e.addElement(de);
+					e.add(de);
 					
 					// dettaglio
 					de = new DataElement();
 					de.setValue(entry.getDettaglioStatoAbbr());
 					de.setToolTip(entry.getDettaglioStatoHtmlEscaped()); 
-					e.addElement(de);
+					e.add(de);
 					
 					// utente
 					de = new DataElement();
 					de.setValue(entry.getUtente());
 					de.setToolTip(entry.getUtente()); 
-					e.addElement(de);
+					e.add(de);
 					
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 			
@@ -23688,7 +23685,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String servletChangeURL, String labelHandler, String labelHandlerDi, int idLista, String searchLabel)
 			throws Exception {
 		try {
-			List<Parameter> lstParamSession = new ArrayList<Parameter>();
+			List<Parameter> lstParamSession = new ArrayList<>();
 
 			Parameter parRuoloPorta = null;
 			if(ruoloPorta!=null) {
@@ -23739,7 +23736,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(lstParamPorta!=null) {
 				lstParam = lstParamPorta;
 			} else {
-				lstParam = new ArrayList<Parameter>();
+				lstParam = new ArrayList<>();
 				lstParam.add(new Parameter(labelHandler, null));
 			}
 			
@@ -23773,7 +23770,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			if (lista != null) {
 				Iterator<ConfigurazioneHandlerBean> it = lista.iterator();
@@ -23783,13 +23780,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					ConfigurazioneHandlerBean handler = it.next();
 					
 					Parameter pId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_ID_HANDLER, handler.getId() + "");
-					List<Parameter> lstParamEntry = new ArrayList<Parameter>();
+					List<Parameter> lstParamEntry = new ArrayList<>();
 					lstParamEntry.add(pId);
 					if(lstParamSession.size() > 0) {
 						lstParamEntry.addAll(lstParamSession);
 					}
 					
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 					
 					// Posizione
 					if(lista.size() > 1) {
@@ -23802,10 +23799,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						Parameter pDirezioneGiu = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_POSIZIONE, 
 								CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_POSIZIONE_GIU);
 						
-						List<Parameter> lstParamDirezioneSu = new ArrayList<Parameter>();
+						List<Parameter> lstParamDirezioneSu = new ArrayList<>();
 						lstParamDirezioneSu.addAll(lstParamEntry);
 						lstParamDirezioneSu.add(pDirezioneSu);
-						List<Parameter> lstParamDirezioneGiu = new ArrayList<Parameter>();
+						List<Parameter> lstParamDirezioneGiu = new ArrayList<>();
 						lstParamDirezioneGiu.addAll(lstParamEntry);
 						lstParamDirezioneGiu.add(pDirezioneGiu);
 						
@@ -23827,7 +23824,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							de.addImage(imageDown);
 						}
 						de.setValue(handler.getPosizione()+"");
-						e.addElement(de);
+						e.add(de);
 					}
 					
 					// Stato
@@ -23846,7 +23843,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
 						de.setSelected(CheckboxStatusType.CONFIG_DISABLE);
 					}
-					e.addElement(de);
+					e.add(de);
 					
 					
 					// label
@@ -23855,15 +23852,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValue(handler.getNome());
 					de.setToolTip(handler.getNome());
 					de.setUrl(servletChangeURL, lstParamEntry.toArray(new Parameter[lstParamEntry.size()]));
-					e.addElement(de);
+					e.add(de);
 
 					// descrizione
 					de = new DataElement();
 					de.setValue(handler.getDescrizioneAbbr());
 					de.setToolTip(handler.getDescrizione()); 
-					e.addElement(de);
+					e.add(de);
 					
-					dati.addElement(e);
+					dati.add(e);
 					i++;
 				}
 			}
@@ -24028,28 +24025,28 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return null;
 	}
 
-	public void addHandlerRichiestaToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, String idHandlerS, String nomePlugin,
+	public void addHandlerRichiestaToDati(List<DataElement> dati, TipoOperazione tipoOperazione, String idHandlerS, String nomePlugin,
 			String stato,TipoPdD ruoloPorta, String idPortaS,
 			ServiceBinding serviceBinding, String fase, List<String> tipiPluginGiaUtilizzati, String messaggioValoriNonDisponibili) throws Exception{
 		this.addHandlerToDati(dati, tipoOperazione, idHandlerS, nomePlugin, stato, ruoloPorta, idPortaS, 
 				serviceBinding, fase, PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_VALORE_RICHIESTA, TipoPlugin.MESSAGE_HANDLER, tipiPluginGiaUtilizzati, messaggioValoriNonDisponibili);
 	}
 	
-	public void addHandlerRispostaToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, String idHandlerS, String nomePlugin,
+	public void addHandlerRispostaToDati(List<DataElement> dati, TipoOperazione tipoOperazione, String idHandlerS, String nomePlugin,
 			String stato,  TipoPdD ruoloPorta, String idPortaS,
 			ServiceBinding serviceBinding, String fase, List<String> tipiPluginGiaUtilizzati, String messaggioValoriNonDisponibili) throws Exception{
 		this.addHandlerToDati(dati, tipoOperazione, idHandlerS, nomePlugin, stato, ruoloPorta, idPortaS, 
 				serviceBinding, fase, PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_VALORE_RISPOSTA, TipoPlugin.MESSAGE_HANDLER, tipiPluginGiaUtilizzati, messaggioValoriNonDisponibili);
 	}
 	
-	public void addHandlerServizioToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, String idHandlerS, String nomePlugin,
+	public void addHandlerServizioToDati(List<DataElement> dati, TipoOperazione tipoOperazione, String idHandlerS, String nomePlugin,
 			String stato, TipoPdD ruoloPorta, String idPortaS,
 			ServiceBinding serviceBinding, String fase, List<String> tipiPluginGiaUtilizzati, String messaggioValoriNonDisponibili) throws Exception{
 		this.addHandlerToDati(dati, tipoOperazione, idHandlerS, nomePlugin, stato, ruoloPorta, idPortaS, 
 				serviceBinding, fase, null, TipoPlugin.SERVICE_HANDLER, tipiPluginGiaUtilizzati, messaggioValoriNonDisponibili);
 	}
 
-	public void addHandlerToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, String idHandlerS, String nomePlugin,
+	public void addHandlerToDati(List<DataElement> dati, TipoOperazione tipoOperazione, String idHandlerS, String nomePlugin,
 			String stato, TipoPdD ruoloPorta, String idPortaS,
 			ServiceBinding serviceBinding, String fase, String ruoloHandler, TipoPlugin tipoPlugin, List<String> tipiPluginGiaUtilizzati, String messaggioValoriNonDisponibili) throws Exception{
 
@@ -24067,33 +24064,33 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		} else {
 			de.setValue(idHandlerS);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_RUOLO_PORTA);
 		de.setValue(ruoloPorta!=null ? ruoloPorta.getTipo() : null);
 		de.setType(DataElementType.HIDDEN);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_ID_PORTA);
 		de.setValue(idPortaS);
 		de.setType(DataElementType.HIDDEN);
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(serviceBinding!=null) {
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_SERVICE_BINDING);
 			de.setValue(serviceBinding.name());
 			de.setType(DataElementType.HIDDEN);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_FASE);
 		de.setValue(fase);
 		de.setType(DataElementType.HIDDEN);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// Informazioni Generali
 		de = new DataElement();
@@ -24110,14 +24107,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_PLUGIN);
 			de.setValue(nomePlugin);
 			de.setType(DataElementType.HIDDEN);
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_PLUGIN + "txt");
 			de.setValue(nomePlugin);
 			de.setType(DataElementType.TEXT);
 			de.setLabel(GruppoIntegrazione.PLUGIN.getCompactLabel()); 
-			dati.addElement(de);
+			dati.add(de);
 			
 		}
 		// stato
@@ -24189,7 +24186,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		//handlerDestinazione.setId(handlerSorgente.getId());
 	}
 	
-	public void addDescrizioneVerificaConnettivitaToDati(Vector<DataElement> dati, GenericProperties genericProperties,
+	public void addDescrizioneVerificaConnettivitaToDati(List<DataElement> dati, GenericProperties genericProperties,
 			String server, boolean registro, String aliasConnettore) throws Exception {
 		
 		List<Connettore> l = ConnettoreCheck.convertPolicyToConnettore(genericProperties, this.log);
@@ -24198,7 +24195,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				String tipo = ConnettoreCheck.getPropertyValue(connettore, ConnettoreCheck.POLICY_TIPO_ENDPOINT);
 								
-				List<Parameter> downloadCertServerParameters = new ArrayList<Parameter>();
+				List<Parameter> downloadCertServerParameters = new ArrayList<>();
 				
 				downloadCertServerParameters.add(new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_TOKEN_NOME, genericProperties.getNome()));
 				downloadCertServerParameters.add(new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_TOKEN_TIPOLOGIA, genericProperties.getTipologia()));
@@ -24213,26 +24210,26 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 	}
-	public Vector<DataElement> addTokenPolicyHiddenToDati(Vector<DataElement> dati, String id, String infoType) {
+	public List<DataElement> addTokenPolicyHiddenToDati(List<DataElement> dati, String id, String infoType) {
 		
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID);
 		de.setValue(id);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
 		de.setValue(infoType);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		return dati;
 	}
 	
-	public void addVisualizzaRuntimeButton(Vector<DataElement> e, String servletName, List<Parameter> parameters) {
+	public void addVisualizzaRuntimeButton(List<DataElement> e, String servletName, List<Parameter> parameters) {
 		this.addAzioneButton(e, DataElementType.IMAGE, 
 				ConfigurazioneCostanti.ICONA_VISUALIZZA_RUNTIME_ALLARME_TOOLTIP,
 				ConfigurazioneCostanti.ICONA_VISUALIZZA_RUNTIME_ALLARME, servletName,parameters);

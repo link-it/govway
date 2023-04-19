@@ -29,7 +29,6 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -100,7 +99,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 
 		HttpRequest request = buildRequest(erogazione);
 
-		Vector<HttpResponse> responses = org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeParallelRequests(request, 15);
+		List<HttpResponse> responses = org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeParallelRequests(request, 15);
 
 		// Ho 5 connettori buoni, mi aspetto tre richieste per ognuno.
 		Map<String, Integer> howManys = Common.contaConnettoriUtilizzati(responses);
@@ -121,7 +120,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 
 		HttpRequest request = buildRequest(erogazione);
 
-		Vector<HttpResponse> responses = Common.makeParallelRequests(request, 15);
+		List<HttpResponse> responses = Common.makeParallelRequests(request, 15);
 		Map<String, Integer> howManys = Common.contaConnettoriUtilizzati(responses);
 
 		// 		PESI:
@@ -193,7 +192,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX);
 		
-		Vector<HttpResponse> responses = Common.makeParallelRequests(request, Common.richiesteTestRandom);
+		List<HttpResponse> responses = Common.makeParallelRequests(request, Common.richiesteTestRandom);
 		Map<String, Integer> howManys = Common.contaConnettoriUtilizzati(responses);
 		Common.printMap(howManys);
 		
@@ -215,7 +214,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		
 		HttpRequest request = buildRequest(erogazione);
 
-		Vector<HttpResponse> responses = org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeParallelRequests(request, 15);	
+		List<HttpResponse> responses = org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeParallelRequests(request, 15);	
 		Map<String, Integer> howManys = Common.contaConnettoriUtilizzati(responses);
 		
 		// In questo caso controlliamo che un unico connettore venga raggiunto.
@@ -240,7 +239,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nthreads);
 
-		Vector<HttpResponse> wholeResponses = new Vector<>();
+		List<HttpResponse> wholeResponses = new java.util.ArrayList<>();
 		
 		Map<Integer,String> indiciConnettori = new ConcurrentHashMap<>();
 		
@@ -258,7 +257,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 						+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX);
 				request.addHeader(forwardedHeader, forwardedFor);
 											
-				Vector<HttpResponse> responses = org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeSequentialRequests(request, reqsPerThread);				
+				List<HttpResponse> responses = org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeSequentialRequests(request, reqsPerThread);				
 				Map<String, Integer> howManys = Common.contaConnettoriUtilizzati(responses);
 				
 				// Controlliamo all'interno del thread che un unico connettore venga raggiunto,
@@ -335,7 +334,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		var blockingRespFuture = org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeBackgroundRequest(requestBlocking);
 		
 		// Dopo faccio 3 richieste parallele che devono raggiungere gli altri 3 connettori attivi
-		Vector<HttpResponse> responses = org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeParallelRequests(request, 3);
+		List<HttpResponse> responses = org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeParallelRequests(request, 3);
 		Map<String, Integer> howManys = Common.contaConnettoriUtilizzati(responses);
 		HttpResponse blockingResp;
 		try {

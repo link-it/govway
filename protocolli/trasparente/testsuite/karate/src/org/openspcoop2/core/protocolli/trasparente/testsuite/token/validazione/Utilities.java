@@ -53,6 +53,12 @@ import net.minidev.json.JSONObject;
 */
 public class Utilities extends ConfigLoader {
 
+	public static List<String> getMapExpectedTokenInfoInvalid() {
+		List<String> mapExpectedTokenInfo = new ArrayList<String>();
+		mapExpectedTokenInfo.add("\"valid\":false");
+		return mapExpectedTokenInfo;
+	}
+	
 	public static HttpResponse _test(Logger logCore, String api, String operazione,
 			Map<String, String> headers, Map<String, String> queryParameters, String msgError,
 			List<String> mapExpectedTokenInfo) throws Exception {
@@ -218,15 +224,15 @@ public class Utilities extends ConfigLoader {
 		}
 	}
 	
-	public final static String username = "Utente di Prova";
+	public static final String username = "Utente di Prova";
 	
-	public final static String s1 = "https://userinfo.email";
-	public final static String s2 = "https://userinfo.profile";
-	public final static String s3 = "s3";
+	public static final String s1 = "https://userinfo.email";
+	public static final String s2 = "https://userinfo.profile";
+	public static final String s3 = "s3";
 	
-	public final static String r1 = "https://r1";
-	public final static String r2 = "https://r2";
-	public final static String r3 = "r3";
+	public static final String r1 = "https://r1";
+	public static final String r2 = "https://r2";
+	public static final String r3 = "r3";
 	
 	public static String buildJson(boolean requiredClaims,
 			boolean requiredClaims_clientId, boolean requiredClaims_issuer, boolean requiredClaims_subject,

@@ -27,6 +27,7 @@ Le regole di trasformazione possono avvalersi di un contesto di risorse, con val
 -   *providerOrganizationConfig:NAME* : accesso alle proprietà configurate nel soggetto erogatore; il valore 'NAME' indica la proprietà desiderata
 -   *tokenClientApplicationConfig:NAME* : permette di accedere alla proprietà, configurata nell'applicativo client identificato tramite il clientId presente nel token, con nome 'NAME'
 -   *tokenClientOrganizationConfig:NAME* : permette di accedere alla proprietà, configurata nel soggetto proprietario dell'applicativo client identificato tramite il clientId presente nel token, con nome 'NAME'
+-   *dynamicConfig:FIELD* : permette di accedere alle proprietà degli attori coinvolti nella richiesta (api, applicativi, soggetti); il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.pdd.core.dynamic.DynamicConfig'
 -   *request:FIELD* : permette di accedere al contenuto della richiesta; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.pdd.core.dynamic.ContentReader' (es. per ottenere il digest dell'attachment usare ${request:part.attachmentByIndex(0).contentBase64Digest(SHA-256)})
 -   *system:NAME* : valore associato alla proprietà di sistema, indicata nella configurazione generale, con nome 'NAME'
 -   *env:NAME* : valore associato alla variabile di sistema con nome 'NAME'
@@ -67,6 +68,7 @@ La sintassi per accedere le proprietà dinamiche sopraelencate è differente in 
 - ${providerOrganizationConfig:NAME}
 - ${tokenClientApplicationConfig:NAME}
 - ${tokenClientOrganizationConfig:NAME}
+- ${dynamicConfig:FIELD}
 - ${request:FIELD} o ${response:FIELD}
 - ${system:NAME}
 - ${env:NAME}
@@ -96,6 +98,7 @@ Nei casi in cui il testo della trasformazione è interpretato da framework ester
 - providerOrganizationConfig (java.util.Map<String, String>)
 - tokenClientApplicationConfig (java.util.Map<String, String>)
 - tokenClientOrganizationConfig (java.util.Map<String, String>)
+- dynamicConfig (org.openspcoop2.pdd.core.dynamic.DynamicConfig)
 - request o response (org.openspcoop2.pdd.core.dynamic.ContentExtractor)
 - system (org.openspcoop2.pdd.core.dynamic.PropertiesReader)
 - env (org.openspcoop2.pdd.core.dynamic.PropertiesReader)

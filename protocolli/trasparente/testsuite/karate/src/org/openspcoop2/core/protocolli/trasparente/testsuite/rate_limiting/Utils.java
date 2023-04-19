@@ -26,7 +26,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Vector;
+import java.util.List;
 
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
@@ -87,7 +87,7 @@ public class Utils {
 	public static Logger logRateLimiting = ConfigLoader.getLoggerRateLimiting();
 	 
 	
-	public static Vector<HttpResponse> makeParallelRequests(HttpRequest request, int count) {
+	public static List<HttpResponse> makeParallelRequests(HttpRequest request, int count) {
 		return org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeParallelRequests(request, count, logRateLimiting);
 	}
 	
@@ -95,7 +95,7 @@ public class Utils {
 		return org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeRequest(request, logRateLimiting);
 	}
 
-	public static Vector<HttpResponse> makeSequentialRequests(HttpRequest request, int count) {
+	public static List<HttpResponse> makeSequentialRequests(HttpRequest request, int count) {
 		return org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeSequentialRequests(request, count, logRateLimiting);
 	}
 	
@@ -683,8 +683,8 @@ public class Utils {
 	 * 
 	 */
 	
-	public static Vector<HttpResponse> makeRequestsAndCheckPolicy(HttpRequest request, int count, String idPolicy) {
-		final Vector<HttpResponse> responses = new Vector<>();
+	public static List<HttpResponse> makeRequestsAndCheckPolicy(HttpRequest request, int count, String idPolicy) {
+		final List<HttpResponse> responses = new java.util.ArrayList<>();
 	
 		for(int i=0; i<count;i++) {
 			logRateLimiting.info(request.getMethod() + " " + request.getUrl());
@@ -712,7 +712,7 @@ public class Utils {
 	 * @param header
 	 */
 	
-	public static void checkHeaderRemaining(Vector<HttpResponse> responses, String header, int limit) {
+	public static void checkHeaderRemaining(List<HttpResponse> responses, String header, int limit) {
 		for(int i=0;i<limit;i++) {
 			var r = responses.get(i);
 			assertEquals(limit-i-1, Integer.parseInt(r.getHeaderFirstValue(header)));

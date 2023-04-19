@@ -21,9 +21,10 @@
 
 package org.openspcoop2.web.loader.servlet.archivi;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
-import java.util.Vector;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -97,9 +98,9 @@ public class EliminazioneXML extends Action {
 						new Parameter(Costanti.LABEL_ELIMINA, Costanti.SERVLET_NAME_ARCHIVI_ELIMINAZIONE_XML));
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				loaderHelper.addEliminazioneXMLtoDati(dati, tipoxml);
 
@@ -122,9 +123,9 @@ public class EliminazioneXML extends Action {
 						new Parameter(Costanti.LABEL_ELIMINA, Costanti.SERVLET_NAME_ARCHIVI_ELIMINAZIONE_XML));
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				loaderHelper.addEliminazioneXMLtoDati(dati, tipoxml);
 
@@ -207,9 +208,9 @@ public class EliminazioneXML extends Action {
 					new Parameter(Costanti.LABEL_ELIMINA, Costanti.SERVLET_NAME_ARCHIVI_ELIMINAZIONE_XML));
 			
 			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 
-			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+			dati.add(ServletUtils.getDataElementForEditModeFinished());
 			
 			loaderHelper.addEliminazioneXMLtoDati(dati, tipoxml);
 			

@@ -25,7 +25,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
-import java.util.Vector;
+import java.util.List;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -118,7 +118,7 @@ public class SoapTest extends ConfigLoader {
 		request.setContent(body.getBytes());
 		request.setUrl( System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+erogazione+"/v1?sleep="+small_delay );
 		
-		Vector<HttpResponse> notBlockedResponses = Utils.makeParallelRequests(request, small_delay_count);
+		List<HttpResponse> notBlockedResponses = Utils.makeParallelRequests(request, small_delay_count);
 		
 		// Poi faccio una richiesta che fa scattare la policy
 		
@@ -138,7 +138,7 @@ public class SoapTest extends ConfigLoader {
 		request.setContent(body.getBytes());
 		request.setUrl( System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+erogazione+"/v1?sleep="+small_delay );
 		
-		Vector<HttpResponse> blockedResponses = Utils.makeParallelRequests(request, small_delay_count);
+		List<HttpResponse> blockedResponses = Utils.makeParallelRequests(request, small_delay_count);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, small_delay_count+1, small_delay_count);
 		checkPassedRequests(notBlockedResponses, windowSize, soglia);
@@ -171,7 +171,7 @@ public class SoapTest extends ConfigLoader {
 		request.setContent(body.getBytes());
 		request.setUrl( System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+erogazione+"/v1?sleep="+small_delay );
 		
-		Vector<HttpResponse> notBlockedResponses = Utils.makeParallelRequests(request, small_delay_count);
+		List<HttpResponse> notBlockedResponses = Utils.makeParallelRequests(request, small_delay_count);
 		
 		// Poi faccio una richiesta che fa scattare la policy
 		
@@ -191,7 +191,7 @@ public class SoapTest extends ConfigLoader {
 		request.setContent(body.getBytes());
 		request.setUrl( System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+erogazione+"/v1?sleep="+small_delay );
 		
-		Vector<HttpResponse> blockedResponses = Utils.makeParallelRequests(request, small_delay_count);
+		List<HttpResponse> blockedResponses = Utils.makeParallelRequests(request, small_delay_count);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, small_delay_count+1, small_delay_count);
 		checkPassedRequests(notBlockedResponses, windowSize, soglia);
@@ -199,7 +199,7 @@ public class SoapTest extends ConfigLoader {
 	}
 
 	
-	private void checkPassedRequests(Vector<HttpResponse> responses, int windowSize, int soglia) {
+	private void checkPassedRequests(List<HttpResponse> responses, int windowSize, int soglia) {
 		// Delle richieste ok Controllo lo header *-Limit, *-Reset e lo status code
 		
 		responses.forEach( r -> {
@@ -215,7 +215,7 @@ public class SoapTest extends ConfigLoader {
 		});
 	}
 	
-	private void checkBlockedRequests(Vector<HttpResponse> responses, int windowSize, int soglia) throws Exception {
+	private void checkBlockedRequests(List<HttpResponse> responses, int windowSize, int soglia) throws Exception {
 		
 		for (var r: responses) {
 			Utils.checkXLimitHeader(logRateLimiting, Headers.AvgTimeResponseLimit, r.getHeaderFirstValue(Headers.AvgTimeResponseLimit), soglia);			

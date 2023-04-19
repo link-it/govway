@@ -21,9 +21,9 @@ L'ambiente di esecuzione è composto da:
 
   - profilo 'ModI' su API SOAP.
 
-Gli scenari configurati sull'ambiente docker devono poter accedere ai seguenti servizi su internet:
+Gli scenari configurati sull'ambiente docker devono poter accedere alle seguenti API pubbliche disponibili su internet:
 
-- Petstore: https://petstore.swagger.io/
+- (API REST) Petstore: https://petstore.swagger.io/
 
-- Credit Card Verification: https://ws.cdyne.com/creditcardverify/luhnchecker.asmx
+- (API SOAP) Temperature Conversion: https://www.w3schools.com/xml/tempconvert.asmx
 

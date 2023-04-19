@@ -37,9 +37,9 @@ import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
  */
 public class PreInRequestContext extends PreInAcceptRequestContext {
 
-	public final static String SERVLET_REQUEST = "SERVLET_REQUEST";
-	public final static String SERVLET_RESPONSE = "SERVLET_RESPONSE";
-	public final static String CONTEXT = "CONTEXT";
+	public static final String SERVLET_REQUEST = "SERVLET_REQUEST";
+	public static final String SERVLET_RESPONSE = "SERVLET_RESPONSE";
+	public static final String CONTEXT = "CONTEXT";
 	
 	/** Trasporto */
 	private Map<String, Object> transportContext = new HashMap<String, Object>();

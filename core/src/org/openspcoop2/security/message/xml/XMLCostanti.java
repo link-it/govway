@@ -38,19 +38,19 @@ public class XMLCostanti {
 	
 	// SELECT LIST ID
 	
-	public final static String ID_SIGNATURE_ALGORITHM = "signatureAlgorithm";
-	public final static String ID_SIGNATURE_DIGEST_ALGORITHM = "signatureDigestAlgorithm";
-	public final static String ID_SIGNATURE_C14N_ALGORITHM = "signatureC14nAlgorithm";
-	public final static String ID_SIGNATURE_C14N_ALGORITHM_EXCLUSIVE = "signatureC14nAlgorithmExclusive";
-	public final static String ID_SIGNATURE_C14N_ALGORITHM_INCLUSIVE = "signatureC14nAlgorithmInclusive";
+	public static final String ID_SIGNATURE_ALGORITHM = "signatureAlgorithm";
+	public static final String ID_SIGNATURE_DIGEST_ALGORITHM = "signatureDigestAlgorithm";
+	public static final String ID_SIGNATURE_C14N_ALGORITHM = "signatureC14nAlgorithm";
+	public static final String ID_SIGNATURE_C14N_ALGORITHM_EXCLUSIVE = "signatureC14nAlgorithmExclusive";
+	public static final String ID_SIGNATURE_C14N_ALGORITHM_INCLUSIVE = "signatureC14nAlgorithmInclusive";
 	
-	public final static String ID_ENCRYPT_KEY_ALGORITHM = "encryptionKeyAlgorithm";
-	public final static String ID_ENCRYPT_SYMMETRIC_KEY_WRAP_ALGORITHM = "encryptionSymAlgorithm";
-	public final static String ID_ENCRYPT_TRANSPORT_KEY_WRAP_ALGORITHM = "encryptionKeyTransportAlgorithm";
-	public final static String ID_ENCRYPT_ALGORITHM = "encryptionAlgorithm";
-	public final static String ID_ENCRYPT_DIGEST_ALGORITHM = "encryptionDigestAlgorithm";
-	public final static String ID_ENCRYPT_C14N_ALGORITHM = "encryptionC14nAlgorithm";
-	public final static String ID_ENCRYPT_C14N_ALGORITHM_EXCLUSIVE = "encryptionC14nAlgorithmOnlyExclusive";
-	public final static String ID_ENCRYPT_C14N_ALGORITHM_INCLUSIVE = "encryptionC14nAlgorithmInclusive";
+	public static final String ID_ENCRYPT_KEY_ALGORITHM = "encryptionKeyAlgorithm";
+	public static final String ID_ENCRYPT_SYMMETRIC_KEY_WRAP_ALGORITHM = "encryptionSymAlgorithm";
+	public static final String ID_ENCRYPT_TRANSPORT_KEY_WRAP_ALGORITHM = "encryptionKeyTransportAlgorithm";
+	public static final String ID_ENCRYPT_ALGORITHM = "encryptionAlgorithm";
+	public static final String ID_ENCRYPT_DIGEST_ALGORITHM = "encryptionDigestAlgorithm";
+	public static final String ID_ENCRYPT_C14N_ALGORITHM = "encryptionC14nAlgorithm";
+	public static final String ID_ENCRYPT_C14N_ALGORITHM_EXCLUSIVE = "encryptionC14nAlgorithmOnlyExclusive";
+	public static final String ID_ENCRYPT_C14N_ALGORITHM_INCLUSIVE = "encryptionC14nAlgorithmInclusive";
 
 }

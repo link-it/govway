@@ -24,7 +24,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -169,13 +168,11 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniChange extends 
 			}
 			
 			String postBackElementName = porteApplicativeHelper.getPostBackElementName();
-			if(postBackElementName != null ){
-				
-				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE)) {
-					identificazioneCondizionalePattern = "";
-					identificazioneCondizionalePrefisso = "";
-					identificazioneCondizionaleSuffisso = ""; 
-				}
+			if(postBackElementName != null &&
+				postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE)) {
+				identificazioneCondizionalePattern = "";
+				identificazioneCondizionalePrefisso = "";
+				identificazioneCondizionaleSuffisso = ""; 
 			}
 			
 			boolean isModalitaCompleta = porteApplicativeHelper.isModalitaCompleta();
@@ -253,8 +250,8 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniChange extends 
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addAzioneConnettoriMultipliConfigToDati(dati, TipoOperazione.CHANGE, protocollo, serviceBinding, oldNome, nome,
 						patternOperazione,  selezioneConnettoreByFiltro, identificazioneCondizionale, identificazioneCondizionalePattern, 
@@ -285,9 +282,9 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniChange extends 
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteApplicativeHelper.addAzioneConnettoriMultipliConfigToDati(dati, TipoOperazione.CHANGE, protocollo, serviceBinding, oldNome, nome,
 						patternOperazione,  selezioneConnettoreByFiltro, identificazioneCondizionale, identificazioneCondizionalePattern, 

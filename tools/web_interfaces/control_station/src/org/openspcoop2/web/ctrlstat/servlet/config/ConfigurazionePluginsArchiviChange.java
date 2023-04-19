@@ -24,7 +24,6 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -96,19 +95,8 @@ public final class ConfigurazionePluginsArchiviChange extends Action {
 
 			// Preparo il menu
 			confHelper.makeMenu();
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 			
-//			String postBackElementName = confHelper.getPostBackElementName();
-//			
-//			// se ho modificato il soggetto ricalcolo il servizio e il service binding
-//			if (postBackElementName != null) {
-//				if(postBackElementName.equals(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_SORGENTE)) {
-//				}
-//				
-//				if(postBackElementName.equals(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN)) {
-//				}
-//			}
-
 			// setto la barra del titolo
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PLUGINS_REGISTRO_ARCHIVI, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PLUGINS_ARCHIVI_LIST));
@@ -137,8 +125,8 @@ public final class ConfigurazionePluginsArchiviChange extends Action {
 					urlArchivio = "";
 				}
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = confHelper.addRegistroPluginToDati(TipoOperazione.CHANGE, dati, oldNome, idArchivioS, nome, descrizione, stato, sorgente, jarArchivio, dirArchivio, urlArchivio, classiPlugin, tipoPlugin, numeroArchivi);
 
@@ -157,9 +145,9 @@ public final class ConfigurazionePluginsArchiviChange extends Action {
 			if (!isOk) {
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = confHelper.addRegistroPluginToDati(TipoOperazione.CHANGE, dati, oldNome, idArchivioS, nome, descrizione, stato, sorgente, jarArchivio, dirArchivio, urlArchivio, classiPlugin, tipoPlugin, numeroArchivi);
 

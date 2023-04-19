@@ -21,9 +21,9 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.utenti;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -90,7 +90,7 @@ public final class UtentiAdd extends Action {
 	
 			String nomesu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
 			String pwsu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_PW);
-			String confpwsu = null; //utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_CONFERMA_PASSWORD);
+			String confpwsu = null; 
 			String tipoGui = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
 			
 			String tipoModalitaConsoleGestione = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA);
@@ -104,7 +104,6 @@ public final class UtentiAdd extends Action {
 			
 			InterfaceType interfaceType = null;
 			if(tipoGui==null) {
-				//interfaceType = utentiHelper.getTipoInterfaccia();
 				interfaceType = InterfaceType.STANDARD;
 			}
 			else {
@@ -200,16 +199,15 @@ public final class UtentiAdd extends Action {
 			if(utentiHelper.isEditModeInProgress()){
 				
 				// setto la barra del titolo
-//				ServletUtils.setPageDataTitle_ServletAdd(pd, UtentiCostanti.LABEL_UTENTI);
 				
 				ServletUtils.setPageDataTitle(pd, 
 						new Parameter(UtentiCostanti.LABEL_UTENTI ,UtentiCostanti.SERVLET_NAME_UTENTI_LIST),
 						ServletUtils.getParameterAggiungi());
 	
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 	
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 	
 				if(nomesu==null){
 					nomesu = "";
@@ -217,9 +215,6 @@ public final class UtentiAdd extends Action {
 				if(pwsu==null){
 					pwsu = "";
 				}
-//				if(confpwsu==null){
-//					confpwsu = "";
-//				}
 				
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.ADD, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
@@ -241,16 +236,15 @@ public final class UtentiAdd extends Action {
 			if (!isOk) {
 				
 				// setto la barra del titolo
-//				ServletUtils.setPageDataTitle_ServletAdd(pd, UtentiCostanti.LABEL_UTENTI);
 				
 				ServletUtils.setPageDataTitle(pd, 
 						new Parameter(UtentiCostanti.LABEL_UTENTI ,UtentiCostanti.SERVLET_NAME_UTENTI_LIST),
 						ServletUtils.getParameterAggiungi());
 	
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 	
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 	
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.ADD, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
@@ -267,9 +261,9 @@ public final class UtentiAdd extends Action {
 			}
 	
 			boolean secret = false;
-			String secret_password  = pwsu;
-			String secret_user = nomesu;
-			boolean secret_appId = false;
+			String secretPassword  = pwsu;
+			String secretUser = nomesu;
+			boolean secretAppId = false;
 			
 			// Cripto la password
 			if(utentiCore.isUtenzePasswordEncryptEnabled()) {
@@ -379,7 +373,7 @@ public final class UtentiAdd extends Action {
 	
 			// Messaggio 'Please Copy'
 			if(loginApplication && secret) {
-				utentiHelper.setSecretPleaseCopy(secret_password, secret_user, secret_appId, ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC, OggettoDialogEnum.UTENTE, nomesu);
+				utentiHelper.setSecretPleaseCopy(secretPassword, secretUser, secretAppId, ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC, OggettoDialogEnum.UTENTE, nomesu);
 			}
 			
 			// Preparo la lista
@@ -393,10 +387,10 @@ public final class UtentiAdd extends Action {
 	
 			utentiHelper.prepareUtentiList(ricerca, lista, singlePdD);
 	
-			if(newU.isConfigurazioneValidaSoggettiAbilitati()==false) {
+			if(!newU.isConfigurazioneValidaSoggettiAbilitati()) {
 				pd.setMessage(UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SOGGETTI_DEFINIZIONE_CREATE_NOTE, MessageType.INFO);
 			}
-			else if(newU.isConfigurazioneValidaServiziAbilitati()==false) {
+			else if(!newU.isConfigurazioneValidaServiziAbilitati()) {
 				pd.setMessage(UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SERVIZI_DEFINIZIONE_CREATE_NOTE, MessageType.INFO);
 			}
 			

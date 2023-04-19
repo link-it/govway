@@ -63,13 +63,14 @@ import org.slf4j.Logger;
 
 public class Utilities {
 
+	private Utilities() {}
 	
 	
 	// ** Thread Sleep **
 	public static void sleep(long ms) {
 		try {
 			Thread.sleep(ms);
-		}catch(Throwable t) {
+		}catch(InterruptedException t) {
 			// ignore
 			Thread.currentThread().interrupt();
 		}
@@ -82,14 +83,11 @@ public class Utilities {
 			Future<?> future = executor.submit(callable);
 			return (T) future.get(secondsTimeout, TimeUnit.SECONDS); //timeout is in 2 seconds
 		} catch (TimeoutException e) {
-		    //System.err.println("Timeout");
 		    throw e;
 		} catch (InterruptedException e) {
-			//System.err.println("Interrupted");
 			Thread.currentThread().interrupt();
 			throw new UtilsException(e.getMessage(),e);
 		} catch (ExecutionException e) {
-			//System.err.println("ExecutionException");
 			throw new UtilsException(e.getMessage(),e);
 		}finally {
 			executor.shutdownNow();
@@ -114,7 +112,7 @@ public class Utilities {
 	public static <T> T newInstance(Class<T> classType) throws UtilsException {
 		if(classType!=null) {
 			try {
-				return  (T) classType.getConstructor().newInstance();
+				return  classType.getConstructor().newInstance();
 			}catch(Exception e) {
 				throw new UtilsException(e.getMessage(), e);
 			}
@@ -743,9 +741,9 @@ public class Utilities {
 	
 
 
-	private final static double KB = 1024;
-	private final static double MB = 1048576;
-	private final static double GB = 1073741824;
+	private static final double KB = 1024;
+	private static final double MB = 1048576;
+	private static final double GB = 1073741824;
 	public static String convertBytesToFormatString(long value) {
 		return convertBytesToFormatString(value, false, "");
 	}

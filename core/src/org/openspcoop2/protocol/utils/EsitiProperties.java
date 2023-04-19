@@ -85,7 +85,7 @@ public class EsitiProperties {
 	@SuppressWarnings("unused")
 	private String protocollo = null;
 	
-	protected final static MapKey<String> NO_PROTOCOL_CONFIG = CostantiLabel.NO_PROTOCOL_MAP_KEY; 
+	protected static final MapKey<String> NO_PROTOCOL_CONFIG = CostantiLabel.NO_PROTOCOL_MAP_KEY; 
 	
 	/**
 	 * Viene chiamato in causa per istanziare il properties reader

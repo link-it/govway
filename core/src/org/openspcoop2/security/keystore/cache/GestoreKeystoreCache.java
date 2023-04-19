@@ -33,6 +33,7 @@ import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.MerlinTruststore;
 import org.openspcoop2.security.keystore.MultiKeystore;
 import org.openspcoop2.security.keystore.OCSPResponse;
+import org.openspcoop2.security.keystore.SSLConfigProps;
 import org.openspcoop2.security.keystore.SSLSocketFactory;
 import org.openspcoop2.security.keystore.SymmetricKeystore;
 import org.openspcoop2.utils.cache.Cache;
@@ -49,6 +50,8 @@ import org.openspcoop2.utils.transport.http.SSLConfig;
  * @version $Rev$, $Date$
  */
 public class GestoreKeystoreCache {
+	
+	private GestoreKeystoreCache() {}
 
 	private static final MerlinTruststoreCache merlinTruststoreCache = new MerlinTruststoreCache();
 	private static final MerlinKeystoreCache merlinKeystoreCache = new MerlinKeystoreCache();
@@ -58,6 +61,7 @@ public class GestoreKeystoreCache {
 	private static final HttpStoreCache httpStoreCache = new HttpStoreCache();
 	private static final CRLCertstoreCache crlCertstoreCache = new CRLCertstoreCache();
 	private static final SSLSocketFactoryCache sslSocketFactoryCache = new SSLSocketFactoryCache();
+	private static final SSLConfigPropsCache sslConfigPropsCache = new SSLConfigPropsCache();
 	private static final ExternalResourceCache externalResourceCache = new ExternalResourceCache();
 	private static final OCSPResponseCache ocspResponseCache = new OCSPResponseCache();
 	private static boolean cacheEnabled = false;
@@ -72,6 +76,7 @@ public class GestoreKeystoreCache {
 		GestoreKeystoreCache.httpStoreCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.crlCertstoreCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.sslSocketFactoryCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
+		GestoreKeystoreCache.sslConfigPropsCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.externalResourceCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.ocspResponseCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 	}
@@ -85,10 +90,11 @@ public class GestoreKeystoreCache {
 		GestoreKeystoreCache.httpStoreCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.crlCertstoreCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.sslSocketFactoryCache.setCacheJCS(cacheLifeSecond, cacheJCS);
+		GestoreKeystoreCache.sslConfigPropsCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.externalResourceCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.ocspResponseCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 	}
-	public static void setKeystoreCacheJCS_crlLifeSeconds(int cacheCrlLifeSecond){
+	public static void setKeystoreCacheJCSCrlLifeSeconds(int cacheCrlLifeSecond){
 		GestoreKeystoreCache.crlCertstoreCache.updateCacheLifeSecond(cacheCrlLifeSecond);
 		GestoreKeystoreCache.ocspResponseCache.updateCacheLifeSecond(cacheCrlLifeSecond);
 		GestoreKeystoreCache.externalResourceCache.updateCacheLifeSecond(cacheCrlLifeSecond); // Per adesso utilizzo la stessa impostazione che consente di indicare un tempo minore rispetto al resto della cache
@@ -99,7 +105,7 @@ public class GestoreKeystoreCache {
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && propertyFilePath!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getMerlinTruststore(propertyFilePath);
-			if(o!=null && o instanceof MerlinTruststore) {
+			if(o instanceof MerlinTruststore) {
 				return (MerlinTruststore) o;
 			}
 		}
@@ -117,7 +123,7 @@ public class GestoreKeystoreCache {
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && pathStore!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getMerlinTruststore(pathStore);
-			if(o!=null && o instanceof MerlinTruststore) {
+			if(o instanceof MerlinTruststore) {
 				return (MerlinTruststore) o;
 			}
 		}
@@ -137,7 +143,7 @@ public class GestoreKeystoreCache {
 		if(useRequestInfo) {
 			keyParam = AbstractKeystoreCache.buildKeyCacheFromBytes(bytesStore);
 			Object o = requestInfo.getRequestConfig().getMerlinTruststore(keyParam);
-			if(o!=null && o instanceof MerlinTruststore) {
+			if(o instanceof MerlinTruststore) {
 				return (MerlinTruststore) o;
 			}
 		}
@@ -157,7 +163,7 @@ public class GestoreKeystoreCache {
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && propertyFilePath!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getMerlinKeystore(propertyFilePath);
-			if(o!=null && o instanceof MerlinKeystore) {
+			if(o instanceof MerlinKeystore) {
 				return (MerlinKeystore) o;
 			}
 		}
@@ -175,7 +181,7 @@ public class GestoreKeystoreCache {
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && propertyFilePath!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getMerlinKeystore(propertyFilePath);
-			if(o!=null && o instanceof MerlinKeystore) {
+			if(o instanceof MerlinKeystore) {
 				return (MerlinKeystore) o;
 			}
 		}
@@ -193,7 +199,7 @@ public class GestoreKeystoreCache {
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && pathStore!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getMerlinKeystore(pathStore);
-			if(o!=null && o instanceof MerlinKeystore) {
+			if(o instanceof MerlinKeystore) {
 				return (MerlinKeystore) o;
 			}
 		}
@@ -211,7 +217,7 @@ public class GestoreKeystoreCache {
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && pathStore!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getMerlinKeystore(pathStore);
-			if(o!=null && o instanceof MerlinKeystore) {
+			if(o instanceof MerlinKeystore) {
 				return (MerlinKeystore) o;
 			}
 		}
@@ -231,7 +237,7 @@ public class GestoreKeystoreCache {
 		if(useRequestInfo) {
 			keyParam = AbstractKeystoreCache.buildKeyCacheFromBytes(bytesStore);
 			Object o = requestInfo.getRequestConfig().getMerlinKeystore(keyParam);
-			if(o!=null && o instanceof MerlinKeystore) {
+			if(o instanceof MerlinKeystore) {
 				return (MerlinKeystore) o;
 			}
 		}
@@ -251,7 +257,7 @@ public class GestoreKeystoreCache {
 		if(useRequestInfo) {
 			keyParam = AbstractKeystoreCache.buildKeyCacheFromBytes(bytesStore);
 			Object o = requestInfo.getRequestConfig().getMerlinKeystore(keyParam);
-			if(o!=null && o instanceof MerlinKeystore) {
+			if(o instanceof MerlinKeystore) {
 				return (MerlinKeystore) o;
 			}
 		}
@@ -271,7 +277,7 @@ public class GestoreKeystoreCache {
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && key!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getSymmetricKeystore(key);
-			if(o!=null && o instanceof SymmetricKeystore) {
+			if(o instanceof SymmetricKeystore) {
 				return (SymmetricKeystore) o;
 			}
 		}
@@ -291,7 +297,7 @@ public class GestoreKeystoreCache {
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && propertyFilePath!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getMultiKeystore(propertyFilePath);
-			if(o!=null && o instanceof MultiKeystore) {
+			if(o instanceof MultiKeystore) {
 				return (MultiKeystore) o;
 			}
 		}
@@ -311,7 +317,7 @@ public class GestoreKeystoreCache {
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && propertyFilePath!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getJWKSetStore(propertyFilePath);
-			if(o!=null && o instanceof JWKSetStore) {
+			if(o instanceof JWKSetStore) {
 				return (JWKSetStore) o;
 			}
 		}
@@ -331,7 +337,7 @@ public class GestoreKeystoreCache {
 		if(useRequestInfo) {
 			keyParam = AbstractKeystoreCache.buildKeyCacheFromBytes(archive);
 			Object o = requestInfo.getRequestConfig().getJWKSetStore(keyParam);
-			if(o!=null && o instanceof JWKSetStore) {
+			if(o instanceof JWKSetStore) {
 				return (JWKSetStore) o;
 			}
 		}
@@ -351,7 +357,7 @@ public class GestoreKeystoreCache {
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && endpoint!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getHttpStore(endpoint);
-			if(o!=null && o instanceof HttpStore) {
+			if(o instanceof HttpStore) {
 				return (HttpStore) o;
 			}
 		}
@@ -369,7 +375,7 @@ public class GestoreKeystoreCache {
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && endpoint!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getHttpStore(endpoint);
-			if(o!=null && o instanceof HttpStore) {
+			if(o instanceof HttpStore) {
 				return (HttpStore) o;
 			}
 		}
@@ -387,7 +393,7 @@ public class GestoreKeystoreCache {
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && endpoint!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getHttpStore(endpoint);
-			if(o!=null && o instanceof HttpStore) {
+			if(o instanceof HttpStore) {
 				return (HttpStore) o;
 			}
 		}
@@ -405,7 +411,7 @@ public class GestoreKeystoreCache {
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && endpoint!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getHttpStore(endpoint);
-			if(o!=null && o instanceof HttpStore) {
+			if(o instanceof HttpStore) {
 				return (HttpStore) o;
 			}
 		}
@@ -425,7 +431,7 @@ public class GestoreKeystoreCache {
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && endpoint!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getHttpStore(endpoint);
-			if(o!=null && o instanceof HttpStore) {
+			if(o instanceof HttpStore) {
 				return (HttpStore) o;
 			}
 		}
@@ -449,7 +455,7 @@ public class GestoreKeystoreCache {
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && endpoint!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getHttpStore(endpoint);
-			if(o!=null && o instanceof HttpStore) {
+			if(o instanceof HttpStore) {
 				return (HttpStore) o;
 			}
 		}
@@ -473,7 +479,7 @@ public class GestoreKeystoreCache {
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && crlPath!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getCRLCertstore(crlPath);
-			if(o!=null && o instanceof CRLCertstore) {
+			if(o instanceof CRLCertstore) {
 				return (CRLCertstore) o;
 			}
 		}
@@ -491,7 +497,7 @@ public class GestoreKeystoreCache {
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && crlPath!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getCRLCertstore(crlPath);
-			if(o!=null && o instanceof CRLCertstore) {
+			if(o instanceof CRLCertstore) {
 				return (CRLCertstore) o;
 			}
 		}
@@ -511,7 +517,7 @@ public class GestoreKeystoreCache {
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && sslConfigKey!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getSSLSocketFactory(sslConfigKey);
-			if(o!=null && o instanceof SSLSocketFactory) {
+			if(o instanceof SSLSocketFactory) {
 				return (SSLSocketFactory) o;
 			}
 		}
@@ -530,7 +536,7 @@ public class GestoreKeystoreCache {
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && resource!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getExternalResource(resource);
-			if(o!=null && o instanceof ExternalResource) {
+			if(o instanceof ExternalResource) {
 				return (ExternalResource) o;
 			}
 		}
@@ -541,6 +547,25 @@ public class GestoreKeystoreCache {
 			k = new ExternalResource(resource, resource, externalConfig); // l'id della risorsa esterna è la url stessa della risorsa, non serve un id aggiuntivo
 		if(useRequestInfo) {
 			requestInfo.getRequestConfig().addExternalResource(resource, k, requestInfo.getIdTransazione());
+		}
+		return k;
+	}
+	
+	public static SSLConfigProps getSSLConfigProps(RequestInfo requestInfo,String resource, boolean sslConfigRequired) throws SecurityException{
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && resource!=null;
+		if(useRequestInfo) {
+			Object o = requestInfo.getRequestConfig().getSSLConfigProps(resource);
+			if(o instanceof SSLConfigProps) {
+				return (SSLConfigProps) o;
+			}
+		}
+		SSLConfigProps k = null;
+		if(GestoreKeystoreCache.cacheEnabled)
+			k = GestoreKeystoreCache.sslConfigPropsCache.getKeystoreAndCreateIfNotExists(resource, sslConfigRequired);
+		else
+			k = new SSLConfigProps(resource, sslConfigRequired);
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addSSLConfigProps(resource, k, requestInfo.getIdTransazione());
 		}
 		return k;
 	}
@@ -559,7 +584,7 @@ public class GestoreKeystoreCache {
 		String pem = null;
 		try {
 			pem = cert.getPEMEncoded();
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw new SecurityException(t.getMessage(),t);
 		}
 		if(pem==null) {
@@ -568,7 +593,7 @@ public class GestoreKeystoreCache {
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getOCSPResponse(pem);
-			if(o!=null && o instanceof OCSPResponse) {
+			if(o instanceof OCSPResponse) {
 				return (OCSPResponse) o;
 			}
 		}

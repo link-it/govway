@@ -29,7 +29,7 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
 /**
-* TokenPolicyValidazioneTest
+* AttributeAuthorityTest
 *
 * @author Francesco Scarlato (scarlato@link.it)
 * @author $Author$
@@ -38,14 +38,14 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class AttributeAuthorityTest extends ConfigLoader {
 
-	public final static String api = "TestOCSPAttributeAuthority";
-	public final static String soggetto = "SoggettoInternoTest";
+	public static final String api = "TestOCSPAttributeAuthority";
+	public static final String soggetto = "SoggettoInternoTest";
 	
-	public final static String opensslCommand = System.getProperty(Utils.PROPERTY_OCSP_OPENSSL_COMMAND);
+	public static final String opensslCommand = System.getProperty(Utils.PROPERTY_OCSP_OPENSSL_COMMAND);
 	
-	public final static int waitStartupServer = Integer.valueOf(System.getProperty(Utils.PROPERTY_OCSP_WAIT_STARTUP_SERVER));
+	public static final int waitStartupServer = Integer.valueOf(System.getProperty(Utils.PROPERTY_OCSP_WAIT_STARTUP_SERVER));
 	
-	public final static int waitStopServer = Integer.valueOf(System.getProperty(Utils.PROPERTY_OCSP_WAIT_STOP_SERVER));
+	public static final int waitStopServer = Integer.valueOf(System.getProperty(Utils.PROPERTY_OCSP_WAIT_STOP_SERVER));
 	
 
 	@Test
@@ -64,6 +64,27 @@ public class AttributeAuthorityTest extends ConfigLoader {
 				"case2-revoked", 
 				Utils.CERTIFICATE_REVOKED_CESSATION_OF_OPERATION, Utils.ERROR_CACHED,
 				Utils.CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO);
+	}
+	
+	
+	
+	
+	@Test
+	public void case2_kid_certificateValid() throws Exception {
+		Utils.composedTestSuccess(logCore, TipoServizio.EROGAZIONE, api, soggetto,
+				opensslCommand, waitStartupServer, waitStopServer,
+				"case2-kid", 
+				Utils.CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED_KID);
+	}
+
+	
+	@Test
+	public void case2_kid_certificateRevoked() throws Exception {
+		Utils.composedTestError(logCore, TipoServizio.EROGAZIONE, api, soggetto,
+				opensslCommand, waitStartupServer, waitStopServer,
+				"case2-revoked-kid", 
+				Utils.CERTIFICATE_REVOKED_CESSATION_OF_OPERATION, Utils.ERROR_CACHED,
+				Utils.CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED_KID);
 	}
 	
 	

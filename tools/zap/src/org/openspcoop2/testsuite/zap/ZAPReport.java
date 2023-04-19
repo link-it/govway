@@ -41,7 +41,7 @@ import org.zaproxy.clientapi.core.ClientApi;
  */
 public class ZAPReport {
 
-	public final static String NONE = "none";
+	public static final String NONE = "none";
 	
 	public static String suffix = " report-title report-description report-includedConfidences report-includedRisks report-reportFileNamePattern report-dir report-display [report-template1 report-theme1 report-sections1] ... [report-templateN report-themeN report-sectionsN]";
 	

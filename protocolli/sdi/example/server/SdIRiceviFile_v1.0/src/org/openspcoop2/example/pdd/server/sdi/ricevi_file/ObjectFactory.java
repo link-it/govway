@@ -46,15 +46,15 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _NotificaFileNonRecapitabile_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types", "notificaFileNonRecapitabile");
-    private final static QName _RicevutaConsegna_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types", "ricevutaConsegna");
-    private final static QName _NotificaMancataConsegna_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types", "notificaMancataConsegna");
-    private final static QName _FileSdIAccoglienza_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types", "fileSdIAccoglienza");
-    private final static QName _RispostaSdIRiceviFile_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types", "rispostaSdIRiceviFile");
-    private final static QName _NotificaEsito_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types", "notificaEsito");
-    private final static QName _NotificaScarto_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types", "notificaScarto");
-    private final static QName _FileSdI_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types", "fileSdI");
-    private final static QName _NotificaDecorrenzaTermini_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types", "notificaDecorrenzaTermini");
+    private static final QName _NotificaFileNonRecapitabile_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types", "notificaFileNonRecapitabile");
+    private static final QName _RicevutaConsegna_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types", "ricevutaConsegna");
+    private static final QName _NotificaMancataConsegna_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types", "notificaMancataConsegna");
+    private static final QName _FileSdIAccoglienza_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types", "fileSdIAccoglienza");
+    private static final QName _RispostaSdIRiceviFile_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types", "rispostaSdIRiceviFile");
+    private static final QName _NotificaEsito_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types", "notificaEsito");
+    private static final QName _NotificaScarto_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types", "notificaScarto");
+    private static final QName _FileSdI_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types", "fileSdI");
+    private static final QName _NotificaDecorrenzaTermini_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types", "notificaDecorrenzaTermini");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.openspcoop2.example.pdd.server.sdi.ricevi_file

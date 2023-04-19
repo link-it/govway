@@ -25,7 +25,7 @@ package org.openspcoop2.protocol.spcoop.testsuite.units.errori_applicativi;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Date;
-import java.util.Vector;
+import java.util.List;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
@@ -94,7 +94,7 @@ public class ErroreApplicativoCNIPA extends GestioneViaJmx  {
 	protected void _testOpenspcoopCoreLog_raccoltaTempoAvvioTest() throws Exception{
 		this.dataAvvioGruppoTest = DateManager.getDate();
 	} 	
-	private Vector<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new Vector<ErroreAttesoOpenSPCoopLogCore>();
+	private List<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new java.util.ArrayList<>();
 	protected void _testOpenspcoopCoreLog() throws Exception{
 		if(this.erroriAttesiOpenSPCoopCore.size()>0){
 			FileSystemUtilities.verificaOpenspcoopCore(this.dataAvvioGruppoTest,

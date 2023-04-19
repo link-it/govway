@@ -1878,7 +1878,7 @@ public class EJBUtils {
 					if(behaviourImpl instanceof MultiDeliverBehaviour) {
 						MultiDeliverBehaviour multi = (MultiDeliverBehaviour) behaviourImpl;
 						if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(multi.getBt())) {
-							tipiMessaggiNotificabili = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.readMessaggiNotificabili(pa, serviziApplicativiAbilitatiForwardTo, this.log);
+							tipiMessaggiNotificabili = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.readMessaggiNotificabili(pa, serviziApplicativiAbilitatiForwardTo);
 						}
 					}
 					
@@ -2094,7 +2094,7 @@ public class EJBUtils {
 									}
 								}
 							}
-							ConfigurazioneGestioneConsegnaNotifiche configGestioneConsegna = MultiDeliverUtils.read(pasa, this.log); 
+							ConfigurazioneGestioneConsegnaNotifiche configGestioneConsegna = MultiDeliverUtils.read(pasa); 
 							GestioneErrore gestioneErroreBehaviour = GestioneConsegnaNotificheUtils.toGestioneErrore(configGestioneConsegna);		
 							behaviourMsg.setGestioneErrore(gestioneErroreBehaviour);
 							break;

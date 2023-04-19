@@ -22,7 +22,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.gruppi;
 
 import java.util.List;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -94,8 +94,8 @@ public final class GruppiAdd extends Action {
 				ServletUtils.setPageDataTitle_ServletAdd(pd, GruppiCostanti.LABEL_GRUPPI, GruppiCostanti.SERVLET_NAME_GRUPPI_LIST);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 
 				dati = gruppiHelper.addGruppoToDati(TipoOperazione.ADD, null, nome != null ? nome : "", descrizione != null ? descrizione : "", serviceBinding, dati);
@@ -115,9 +115,9 @@ public final class GruppiAdd extends Action {
 				ServletUtils.setPageDataTitle_ServletAdd(pd, GruppiCostanti.LABEL_GRUPPI, GruppiCostanti.SERVLET_NAME_GRUPPI_LIST);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = gruppiHelper.addGruppoToDati(TipoOperazione.ADD, null, nome, descrizione, serviceBinding, dati);
 

@@ -959,54 +959,57 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 					}
 					try (PreparedStatement pstmtMap = con.prepareStatement(query)){
 						pstmtMap.setString(1, this.uniqueIdMap_idActivePolicy);
-						rsMap = pstmtMap.executeQuery();
-						if(rsMap == null) {
-							throw new UtilsException("CheckMap failed: ResultSet is null?");		
-						}
-						boolean exist = rsMap.next();
-						if(this.debug) {
-							this.logSql.debug("[updateMap"+""+this.idTransazione+"] (forUpdate) executed (result:"+exist+") "+DBUtils.formatSQLString(query, this.uniqueIdMap_idActivePolicy));
-						}
-						//System.out.println("@update SELECT ["+opType+"] result:"+exist);
-						
-						if(!exist) {
-							if(!OperationType.getMapActiveThreads.equals(opType) &&
-									!OperationType.resetCounters.equals(opType)  &&
-									!OperationType.remove.equals(opType) &&
-									!OperationType.getActiveThreads.equals(opType)  &&
-									!OperationType.printInfos.equals(opType)) {
-								throw new Exception("Map with id '"+this.uniqueIdMap_idActivePolicy+"' not found ?");
+						try{
+							rsMap = pstmtMap.executeQuery();
+							if(rsMap == null) {
+								throw new UtilsException("CheckMap failed: ResultSet is null?");		
 							}
-						}
-						else {
-							Timestamp tCheck = rsMap.getTimestamp(CT_MAP_COLUMN_UPDATE_TIME);
-							if(this.uniqueIdMap_updateTime.equals(tCheck)) {
-								try(InputStream is = this.jdbcAdapter.getBinaryStream(rsMap, CT_MAP_COLUMN_VALUE);){
-									mapActiveThreads = (java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati>) this.getJavaDeserializer().readObject(is, java.util.Map.class);
+							boolean exist = rsMap.next();
+							if(this.debug) {
+								this.logSql.debug("[updateMap"+""+this.idTransazione+"] (forUpdate) executed (result:"+exist+") "+DBUtils.formatSQLString(query, this.uniqueIdMap_idActivePolicy));
+							}
+							//System.out.println("@update SELECT ["+opType+"] result:"+exist);
+							
+							if(!exist) {
+								if(!OperationType.getMapActiveThreads.equals(opType) &&
+										!OperationType.resetCounters.equals(opType)  &&
+										!OperationType.remove.equals(opType) &&
+										!OperationType.getActiveThreads.equals(opType)  &&
+										!OperationType.printInfos.equals(opType)) {
+									throw new Exception("Map with id '"+this.uniqueIdMap_idActivePolicy+"' not found ?");
 								}
 							}
 							else {
-								// data aggiornata
-								mapActiveThreads = new HashMap<IDUnivocoGroupByPolicy, DatiCollezionati>();
-								updateDate = true;
-							}
-							if(mapActiveThreads == null) {
-								if(!OperationType.getMapActiveThreads.equals(opType) &&
-										!OperationType.resetCounters.equals(opType)  &&
-										!OperationType.getActiveThreads.equals(opType)  &&
-										!OperationType.printInfos.equals(opType)) {
-									throw new Exception("Map with id '"+this.uniqueIdMap_idActivePolicy+"' null ?");
+								Timestamp tCheck = rsMap.getTimestamp(CT_MAP_COLUMN_UPDATE_TIME);
+								if(this.uniqueIdMap_updateTime.equals(tCheck)) {
+									try(InputStream is = this.jdbcAdapter.getBinaryStream(rsMap, CT_MAP_COLUMN_VALUE);){
+										mapActiveThreads = (java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati>) this.getJavaDeserializer().readObject(is, java.util.Map.class);
+									}
+								}
+								else {
+									// data aggiornata
+									mapActiveThreads = new HashMap<IDUnivocoGroupByPolicy, DatiCollezionati>();
+									updateDate = true;
+								}
+								if(mapActiveThreads == null) {
+									if(!OperationType.getMapActiveThreads.equals(opType) &&
+											!OperationType.resetCounters.equals(opType)  &&
+											!OperationType.getActiveThreads.equals(opType)  &&
+											!OperationType.printInfos.equals(opType)) {
+										throw new Exception("Map with id '"+this.uniqueIdMap_idActivePolicy+"' null ?");
+									}
 								}
 							}
+						}finally {
+							try{
+								if( rsMap != null ) {
+									rsMap.close();
+								}
+							} catch(Throwable er) {
+								// close rs
+							}
 						}
-					}finally {
-						try{
-							if( rsMap != null )
-								rsMap.close();
-						} catch(Throwable er) {
-							// close
-						}
-					}
+					} // close pstmt
 					
 					
 					DatiCollezionati datiCollezionati = null;

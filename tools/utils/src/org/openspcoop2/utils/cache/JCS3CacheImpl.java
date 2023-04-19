@@ -303,7 +303,7 @@ public class JCS3CacheImpl extends AbstractCacheImpl {
 		//	        }
 		//
 		// Dove in org.apache.commons.jcs3.engine.behavior.ICache
-		// 		public final static String NAME_COMPONENT_DELIMITER = ":";
+		// 		public static final String NAME_COMPONENT_DELIMITER = ":";
 
 		/*StringBuilder bf = new StringBuilder(key);
 		if(bf.toString().endsWith(org.apache.commons.jcs3.engine.behavior.ICache.NAME_COMPONENT_DELIMITER)){

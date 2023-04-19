@@ -21,7 +21,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -177,7 +176,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 			
 			String passiveHealthCheckS = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK);
 			boolean passiveHealthCheck = ServletUtils.isCheckBoxEnabled(passiveHealthCheckS);
-			String passiveHealthCheck_excludeForSeconds = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_EXCLUDE_FOR_SECONDS);
+			String passiveHealthCheckExcludeForSeconds = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_EXCLUDE_FOR_SECONDS);
 			
 			boolean accessoDaListaAPS = false;
 			String accessoDaAPSParametro = null;
@@ -397,7 +396,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 							HealthCheckConfigurazione config = HealthCheckUtils.read(portaApplicativa, ControlStationLogger.getPddConsoleCoreLogger());
 							passiveHealthCheck = config.isPassiveCheckEnabled();
 							if(passiveHealthCheck) {
-								passiveHealthCheck_excludeForSeconds = config.getPassiveHealthCheck_excludeForSeconds().intValue()+"";
+								passiveHealthCheckExcludeForSeconds = config.getPassiveHealthCheck_excludeForSeconds().intValue()+"";
 							}
 							
 							consegnaCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(portaApplicativa, ControlStationCore.getLog());
@@ -407,9 +406,8 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 								behaviourType.equals(TipoBehaviour.CONSEGNA_CON_NOTIFICHE)) {
 							consegnaCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(portaApplicativa, ControlStationCore.getLog());
 
-							//if(!isSoapOneWay) {
 							if(!behaviourType.equals(TipoBehaviour.CONSEGNA_MULTIPLA)) {
-								org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(portaApplicativa, ControlStationCore.getLog());
+								org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(portaApplicativa);
 								connettoreImplementaAPI = configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() != null ? configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() : "";
 								notificheCondizionaliEsito = configurazioneMultiDeliver.isNotificheByEsito();
 								esitiTransazione = porteApplicativeHelper.getEsitiTransazione(configurazioneMultiDeliver);
@@ -478,8 +476,8 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,idAsps, dati);
 
@@ -492,7 +490,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 						numeroRegolePerAzioni,  condizioneNonIdentificataAbortTransaction,  condizioneNonIdentificataDiagnostico, condizioneNonIdentificataConnettore,
 						connettoreNonTrovatoAbortTransaction, connettoreNonTrovatoDiagnostico, connettoreNonTrovatoConnettore,
 						sticky, stickyTipoSelettore, stickyTipoSelettorePattern, stickyMaxAge,
-						passiveHealthCheck, passiveHealthCheck_excludeForSeconds
+						passiveHealthCheck, passiveHealthCheckExcludeForSeconds
 						);
 
 				pd.setDati(dati);
@@ -506,14 +504,14 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 			// Controlli sui campi immessi
 			boolean isOk = porteApplicativeHelper.connettoriMultipliConfigurazioneCheckData(TipoOperazione.OTHER, stato, modalitaConsegna, tipoCustom, loadBalanceStrategia, isSoapOneWay,
 					sticky, stickyTipoSelettore, stickyTipoSelettorePattern, stickyMaxAge,
-					passiveHealthCheck, passiveHealthCheck_excludeForSeconds,
+					passiveHealthCheck, passiveHealthCheckExcludeForSeconds,
 					serviceBinding);
 
 			if(!isOk) {
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addConnettoriMultipliConfigurazioneToDati(dati, TipoOperazione.OTHER, protocollo, accessoDaAPSParametro, stato, modalitaConsegna, tipoCustom, 
 						numeroProprietaCustom, servletProprietaCustom, listaParametriServletProprietaCustom, visualizzaLinkProprietaCustom, loadBalanceStrategia, modificaStatoAbilitata,
@@ -524,7 +522,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 						numeroRegolePerAzioni,  condizioneNonIdentificataAbortTransaction,  condizioneNonIdentificataDiagnostico,  condizioneNonIdentificataConnettore,
 						connettoreNonTrovatoAbortTransaction, connettoreNonTrovatoDiagnostico, connettoreNonTrovatoConnettore,
 						sticky, stickyTipoSelettore, stickyTipoSelettorePattern, stickyMaxAge,
-						passiveHealthCheck, passiveHealthCheck_excludeForSeconds
+						passiveHealthCheck, passiveHealthCheckExcludeForSeconds
 						);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,idAsps, dati);
@@ -556,7 +554,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 					
 					// configurazione healthCheck
 					org.openspcoop2.pdd.core.behaviour.built_in.load_balance.health_check.HealthCheckConfigurazione healthCheckConfig = 
-							porteApplicativeHelper.toConfigurazioneHealthCheck(passiveHealthCheck, passiveHealthCheck_excludeForSeconds);
+							porteApplicativeHelper.toConfigurazioneHealthCheck(passiveHealthCheck, passiveHealthCheckExcludeForSeconds);
 					HealthCheckUtils.save(portaApplicativa, healthCheckConfig);
 					
 					// configurazione multideliver
@@ -659,16 +657,15 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 					HealthCheckConfigurazione config = HealthCheckUtils.read(portaApplicativa, ControlStationLogger.getPddConsoleCoreLogger());
 					passiveHealthCheck = config.isPassiveCheckEnabled();
 					if(passiveHealthCheck) {
-						passiveHealthCheck_excludeForSeconds = config.getPassiveHealthCheck_excludeForSeconds().intValue()+"";
+						passiveHealthCheckExcludeForSeconds = config.getPassiveHealthCheck_excludeForSeconds().intValue()+"";
 					}
 					
 					consegnaCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(portaApplicativa, ControlStationCore.getLog());
 				} else if(behaviourType.equals(TipoBehaviour.CONSEGNA_MULTIPLA)) {
 					consegnaCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(portaApplicativa, ControlStationCore.getLog());
 
-					//if(!isSoapOneWay) {
 					if(!behaviourType.equals(TipoBehaviour.CONSEGNA_MULTIPLA)) {
-						org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(portaApplicativa, ControlStationCore.getLog());
+						org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(portaApplicativa);
 						connettoreImplementaAPI = configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() != null ? configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() : "";
 						notificheCondizionaliEsito = configurazioneMultiDeliver.isNotificheByEsito();
 						esitiTransazione = porteApplicativeHelper.getEsitiTransazione(configurazioneMultiDeliver);
@@ -761,7 +758,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 			}
 			
 			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 
 			dati = porteApplicativeHelper.addConnettoriMultipliConfigurazioneToDati(dati, TipoOperazione.OTHER, protocollo, accessoDaAPSParametro, stato, modalitaConsegna, tipoCustom, 
 					numeroProprietaCustom, servletProprietaCustom, listaParametriServletProprietaCustom, visualizzaLinkProprietaCustom,loadBalanceStrategia, modificaStatoAbilitata,
@@ -772,7 +769,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 					numeroRegolePerAzioni,  condizioneNonIdentificataAbortTransaction,  condizioneNonIdentificataDiagnostico,  condizioneNonIdentificataConnettore,
 					connettoreNonTrovatoAbortTransaction, connettoreNonTrovatoDiagnostico, connettoreNonTrovatoConnettore,
 					sticky, stickyTipoSelettore, stickyTipoSelettorePattern, stickyMaxAge,
-					passiveHealthCheck, passiveHealthCheck_excludeForSeconds
+					passiveHealthCheck, passiveHealthCheckExcludeForSeconds
 					);
 
 			dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null, idAsps, dati);
@@ -780,8 +777,8 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 			pd.setDati(dati);
 
 			pd.setMessage(CostantiControlStation.LABEL_AGGIORNAMENTO_EFFETTUATO_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
-			//pd.disableEditMode();
-			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+
+			dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 

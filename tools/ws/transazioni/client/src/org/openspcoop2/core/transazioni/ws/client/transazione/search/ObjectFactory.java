@@ -43,24 +43,24 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _SearchFilterTransazione_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "search-filter-transazione");
-    private final static QName _TransazioniServiceException_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "transazioni-service-exception");
-    private final static QName _TransazioniNotFoundException_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "transazioni-not-found-exception");
-    private final static QName _TransazioniMultipleResultException_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "transazioni-multiple-result-exception");
-    private final static QName _TransazioniNotImplementedException_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "transazioni-not-implemented-exception");
-    private final static QName _TransazioniNotAuthorizedException_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "transazioni-not-authorized-exception");
-    private final static QName _FindAll_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "findAll");
-    private final static QName _FindAllResponse_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "findAllResponse");
-    private final static QName _Find_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "find");
-    private final static QName _FindResponse_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "findResponse");
-    private final static QName _Count_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "count");
-    private final static QName _CountResponse_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "countResponse");
-    private final static QName _Get_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "get");
-    private final static QName _GetResponse_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "getResponse");
-    private final static QName _Exists_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "exists");
-    private final static QName _ExistsResponse_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "existsResponse");
-    private final static QName _FindAllIds_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "findAllIds");
-    private final static QName _FindAllIdsResponse_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "findAllIdsResponse");
+    private static final QName _SearchFilterTransazione_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "search-filter-transazione");
+    private static final QName _TransazioniServiceException_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "transazioni-service-exception");
+    private static final QName _TransazioniNotFoundException_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "transazioni-not-found-exception");
+    private static final QName _TransazioniMultipleResultException_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "transazioni-multiple-result-exception");
+    private static final QName _TransazioniNotImplementedException_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "transazioni-not-implemented-exception");
+    private static final QName _TransazioniNotAuthorizedException_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "transazioni-not-authorized-exception");
+    private static final QName _FindAll_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "findAll");
+    private static final QName _FindAllResponse_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "findAllResponse");
+    private static final QName _Find_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "find");
+    private static final QName _FindResponse_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "findResponse");
+    private static final QName _Count_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "count");
+    private static final QName _CountResponse_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "countResponse");
+    private static final QName _Get_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "get");
+    private static final QName _GetResponse_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "getResponse");
+    private static final QName _Exists_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "exists");
+    private static final QName _ExistsResponse_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "existsResponse");
+    private static final QName _FindAllIds_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "findAllIds");
+    private static final QName _FindAllIdsResponse_QNAME = new QName("http://www.openspcoop2.org/core/transazioni/management", "findAllIdsResponse");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.openspcoop2.core.transazioni.ws.client.transazione.search

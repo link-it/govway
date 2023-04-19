@@ -149,4 +149,67 @@ public class DBVerifier {
 
 	}
 	
+	
+	public static String readTokenInfo(String idTransazione) throws Exception  {
+		
+		// La scrittura su database avviene dopo aver risposto al client
+		
+		Utilities.sleep(100); 
+		try {
+			return DBVerifier._readTokenInfo(idTransazione);
+		}catch(Throwable t) {
+			Utilities.sleep(500);
+			try {
+				return DBVerifier._readTokenInfo(idTransazione);
+			}catch(Throwable t2) {
+				Utilities.sleep(2000);
+				try {
+					return DBVerifier._readTokenInfo(idTransazione);
+				}catch(Throwable t3) {
+					Utilities.sleep(5000);
+					return DBVerifier._readTokenInfo(idTransazione);
+				}
+			}
+		}
+	}
+	
+	private static String _readTokenInfo(String idTransazione) throws Exception  {
+		
+		
+		String query = "select count(*) from transazioni where id = ?";
+		log().info(query);
+		
+		int count = dbUtils().readValue(query, Integer.class, idTransazione);
+		assertEquals("IdTransazione: "+idTransazione, 1, count);
+
+		
+		
+		query = "select token_info from transazioni where id = ?";
+		log().info(query);
+		
+		String msg = "IdTransazione: "+idTransazione;
+		
+		List<Map<String, Object>> rows = dbUtils().readRows(query, idTransazione);
+		assertNotNull(msg, rows);
+		assertEquals(msg, 1, rows.size());
+				
+		Map<String, Object> row = rows.get(0);
+		for (String key : row.keySet()) {
+			log().debug("Row["+key+"]="+row.get(key));
+		}
+		
+		
+		Object otoken_info = row.get("token_info");
+		assertNotNull(msg,otoken_info);
+		assertTrue(msg+" otoken_info classe '"+otoken_info.getClass().getName()+"'", (otoken_info instanceof String));
+		String tokenInfo = null;
+		if(otoken_info instanceof String) {
+			tokenInfo = (String)otoken_info;
+		}
+		assertNotNull(msg+" (token info string)",tokenInfo);
+			
+		return tokenInfo;
+
+	}
+	
 }

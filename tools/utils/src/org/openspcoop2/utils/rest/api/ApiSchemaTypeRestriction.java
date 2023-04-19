@@ -93,32 +93,32 @@ public class ApiSchemaTypeRestriction extends BaseBean implements Serializable {
 	private List<?> enumValues;
 	
 	
-	private final static String TYPE = "type";
-	private final static String TYPE_OBJECT = "object";
-	private final static String TYPE_ARRAY = "array";
-	private final static String FORMAT = "format";
-	private final static String MINIMUM = "minimum";
-	private final static String EXCLUSIVE_MINIMUM = "exclusiveMinimum";
-	private final static String MAXIMUM = "maximum";
-	private final static String EXCLUSIVE_MAXIMUM = "exclusiveMaximum";
-	private final static String MULTIPLE_OF = "multipleOf";
-	private final static String MIN_LENGTH = "minLength";
-	private final static String MAX_LENGTH = "maxLength";
-	private final static String PATTERN = "pattern";
-	private final static String ENUM_VALUES = "enumValues";
+	private static final String TYPE = "type";
+	private static final String TYPE_OBJECT = "object";
+	private static final String TYPE_ARRAY = "array";
+	private static final String FORMAT = "format";
+	private static final String MINIMUM = "minimum";
+	private static final String EXCLUSIVE_MINIMUM = "exclusiveMinimum";
+	private static final String MAXIMUM = "maximum";
+	private static final String EXCLUSIVE_MAXIMUM = "exclusiveMaximum";
+	private static final String MULTIPLE_OF = "multipleOf";
+	private static final String MIN_LENGTH = "minLength";
+	private static final String MAX_LENGTH = "maxLength";
+	private static final String PATTERN = "pattern";
+	private static final String ENUM_VALUES = "enumValues";
 	
-	private final static String ARRAY_PARAMETER = "arrayParameter";
-	private final static String STYLE = "style";
-	private final static String STYLE_PATH_SIMPLE = "simple";
-	private final static String STYLE_PATH_LABEL = "label";
-	private final static String STYLE_PATH_MATRIX = "matrix";
-	private final static String STYLE_QUERY_FORM = "form";
-	private final static String STYLE_QUERY_SPACE_DELIMITED = "spaceDelimited";
-	private final static String STYLE_QUERY_PIPE_DELIMITED = "pipeDelimited";
-	private final static String STYLE_QUERY_DEEP_OBJECT = "deepObject";
-	private final static String STYLE_HEADER_SIMPLE = "simple";
-	private final static String STYLE_COOKIE_FORM = "form";
-	private final static String EXPLODE = "explode";
+	private static final String ARRAY_PARAMETER = "arrayParameter";
+	private static final String STYLE = "style";
+	private static final String STYLE_PATH_SIMPLE = "simple";
+	private static final String STYLE_PATH_LABEL = "label";
+	private static final String STYLE_PATH_MATRIX = "matrix";
+	private static final String STYLE_QUERY_FORM = "form";
+	private static final String STYLE_QUERY_SPACE_DELIMITED = "spaceDelimited";
+	private static final String STYLE_QUERY_PIPE_DELIMITED = "pipeDelimited";
+	private static final String STYLE_QUERY_DEEP_OBJECT = "deepObject";
+	private static final String STYLE_HEADER_SIMPLE = "simple";
+	private static final String STYLE_COOKIE_FORM = "form";
+	private static final String EXPLODE = "explode";
 	
 	public static ApiSchemaTypeRestriction toApiSchemaTypeRestriction(String restriction) throws UtilsException {
 		if(restriction!=null) {

@@ -38,7 +38,7 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
 */
 public class IntrospectionTest extends ConfigLoader {
 
-	public final static String validazione = "TestValidazioneToken-Introspection";
+	public static final String validazione = "TestValidazioneToken-Introspection";
 		
 	@Test
 	public void success() throws Exception {
@@ -89,7 +89,7 @@ public class IntrospectionTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers,  null,
 				"Risposta del servizio di Introspection non valida: Connessione terminata con errore (codice trasporto: 500)",
-				null);
+				Utilities.getMapExpectedTokenInfoInvalid());
 	}
 		
 	

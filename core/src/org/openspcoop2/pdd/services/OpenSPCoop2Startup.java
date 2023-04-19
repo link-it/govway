@@ -243,7 +243,11 @@ import com.sun.xml.messaging.saaj.soap.MessageImpl;
 public class OpenSPCoop2Startup implements ServletContextListener {
 
 	/** Logger utilizzato per segnalazione di errori. */
-	private static Logger log = LoggerWrapperFactory.getLogger("govway.startup");
+	private static final String LOG_CATEGORY_STARTUP = "govway.startup";
+	private static Logger log = LoggerWrapperFactory.getLogger(LOG_CATEGORY_STARTUP);
+	private static void logStartupInfo(String msg) {
+		OpenSPCoop2Startup.log.info(msg);
+	}
 
 	/** Variabile che indica il Nome del modulo attuale di OpenSPCoop */
 	private static final String ID_MODULO = "InizializzazioneRisorse";
@@ -384,7 +388,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			if(OpenSPCoop2Logger.initializeLogConsole(OpenSPCoop2Startup.log) == false){
 				return;
 			}
-			OpenSPCoop2Startup.log = LoggerWrapperFactory.getLogger("govway.startup");
+			OpenSPCoop2Startup.log = LoggerWrapperFactory.getLogger(LOG_CATEGORY_STARTUP);
 			
 			
 			
@@ -528,7 +532,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			 *	  private static final int DEFAULT_SAX_PARSER_POOL_SIZE = 5;
 			 **/
 			System.setProperty("com.sun.xml.messaging.saaj.soap.saxParserPoolSize", propertiesReader.getSoapMessageSaajSaxParserPoolSize()+"");
-			OpenSPCoop2Startup.log.info("saaj.soap.saxParserPoolSize="+propertiesReader.getSoapMessageSaajSaxParserPoolSize());
+			OpenSPCoop2Startup.logStartupInfo("saaj.soap.saxParserPoolSize="+propertiesReader.getSoapMessageSaajSaxParserPoolSize());
 			
 			/*
 			 * ApacheXMLDSig: usato da wssecurity come XMLSignatureFactory, come si può vedere nella classe 'WSSecSignature'
@@ -540,7 +544,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					Security.removeProvider(providerName_ApacheXMLDSig);
 				}
 				Security.insertProviderAt(new org.apache.jcp.xml.dsig.internal.dom.XMLDSigRI(),2); // lasciare alla posizione 1 il provider 'SUN'
-				OpenSPCoop2Startup.log.info("Aggiunto Security Provider ApacheXMLDSig");
+				OpenSPCoop2Startup.logStartupInfo("Aggiunto Security Provider ApacheXMLDSig");
 			}
 	        			
 			/*
@@ -557,13 +561,13 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			if(propertiesReader.isLoadBouncyCastle()){ 
 				//Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 				Security.insertProviderAt(new org.bouncycastle.jce.provider.BouncyCastleProvider(), 2); // lasciare alla posizione 1 il provider 'SUN'
-				OpenSPCoop2Startup.log.info("Aggiunto Security Provider org.bouncycastle.jce.provider.BouncyCastleProvider");
+				OpenSPCoop2Startup.logStartupInfo("Aggiunto Security Provider org.bouncycastle.jce.provider.BouncyCastleProvider");
 				
 				if(propertiesReader.getBouncyCastleSecureRandomAlgorithm()!=null) {
 			        try{
 				        SecureRandom secureRandom = SecureRandom.getInstance(propertiesReader.getBouncyCastleSecureRandomAlgorithm());
 				        CryptoServicesRegistrar.setSecureRandom(secureRandom);
-				        OpenSPCoop2Startup.log.info("Aggiunto default SecureRandom '"+secureRandom.getAlgorithm()+"' in CryptoServicesRegistrar di Bouncycastle");
+				        OpenSPCoop2Startup.logStartupInfo("Aggiunto default SecureRandom '"+secureRandom.getAlgorithm()+"' in CryptoServicesRegistrar di Bouncycastle");
 			        }catch(Exception e){
 						this.logError("Inizializzazione SecureRandom in BouncyCastle fallita",e);
 						return;
@@ -572,20 +576,20 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				else {
 					SecureRandom secureRandom = CryptoServicesRegistrar.getSecureRandom();
 					if(secureRandom!=null) {
-						OpenSPCoop2Startup.log.info("SecureRandom used in CryptoServicesRegistrar di Bouncycastle: '"+secureRandom.getAlgorithm()+"'");
+						OpenSPCoop2Startup.logStartupInfo("SecureRandom used in CryptoServicesRegistrar di Bouncycastle: '"+secureRandom.getAlgorithm()+"'");
 					}
 				}				
 			}
 			if(propertiesReader.isUseBouncyCastleProviderForCertificate()) {
-				OpenSPCoop2Startup.log.info("Add Bouncycastle in CertificateFactory");
+				OpenSPCoop2Startup.logStartupInfo("Add Bouncycastle in CertificateFactory");
 				CertificateFactory.setUseBouncyCastleProvider(true);
 			}
 			if(propertiesReader.isUseBouncyCastleProviderForMessageDigest()) {
-				OpenSPCoop2Startup.log.info("Add Bouncycastle in MessageDigestFactory");
+				OpenSPCoop2Startup.logStartupInfo("Add Bouncycastle in MessageDigestFactory");
 				MessageDigestFactory.setUseBouncyCastleProvider(true);
 			}
 			if(propertiesReader.isUseBouncyCastleProviderForWss4jCryptoMerlin()) {
-				OpenSPCoop2Startup.log.info("Add Bouncycastle in keystore.Merlin provider");
+				OpenSPCoop2Startup.logStartupInfo("Add Bouncycastle in keystore.Merlin provider");
 				org.openspcoop2.security.keystore.MerlinProvider.setUseBouncyCastleProvider(true);
 			}
 						
@@ -595,11 +599,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	        for (int i = 0; i < providerList.length; i++) {
 	        	sb.append("[" + (i + 1) + "] - Name:"+ providerList[i].getName()+"\n");
 	        }
-	        OpenSPCoop2Startup.log.info(sb.toString());
+	        OpenSPCoop2Startup.logStartupInfo(sb.toString());
 	        
 	        if(propertiesReader.getSecurityEgd()!=null) {
 	        	System.setProperty("java.security.egd", propertiesReader.getSecurityEgd());
-	        	OpenSPCoop2Startup.log.info("Aggiunta proprietà java.security.egd="+propertiesReader.getSecurityEgd());
+	        	OpenSPCoop2Startup.logStartupInfo("Aggiunta proprietà java.security.egd="+propertiesReader.getSecurityEgd());
 	        }
 	        			
 			/* ------------ 
@@ -631,7 +635,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			}
 			if(propertiesReader.getWsuIdSecureRandomAlgorithm()!=null) {
 				WsuIdAllocator.setSecureRandomAlgorithm(propertiesReader.getWsuIdSecureRandomAlgorithm());
-				OpenSPCoop2Startup.log.info("SecureRandom used in WsuIdAllocator per WS-Security: '"+propertiesReader.getWsuIdSecureRandomAlgorithm()+"'");
+				OpenSPCoop2Startup.logStartupInfo("SecureRandom used in WsuIdAllocator per WS-Security: '"+propertiesReader.getWsuIdSecureRandomAlgorithm()+"'");
 			}
 			
 			/* ------------ 
@@ -642,7 +646,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			try{
 				System.setProperty(freemarker.log.Logger.SYSTEM_PROPERTY_NAME_LOGGER_LIBRARY,freemarker.log.Logger.LIBRARY_NAME_NONE);
 			}catch(Exception e){
-				this.logError("Inizializzazione org.apache.wss4j.dom.engine.WSSConfig.init",e);
+				this.logError("Inizializzazione "+freemarker.log.Logger.SYSTEM_PROPERTY_NAME_LOGGER_LIBRARY,e);
 				return;
 			}
 			
@@ -652,10 +656,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			try{
 				if(!propertiesReader.isJsonPathCacheEnabled()){ 
 					JsonPathExpressionEngine.disableCacheJsonPathEngine();
-					OpenSPCoop2Startup.log.info("Disabilitata cache (NOOPCache) in engine com.jayway.jsonpath.spi.cache.CacheProvider (JsonPath)");
+					OpenSPCoop2Startup.logStartupInfo("Disabilitata cache (NOOPCache) in engine com.jayway.jsonpath.spi.cache.CacheProvider (JsonPath)");
 				}
 			}catch(Exception e){
-				this.logError("Inizializzazione org.apache.wss4j.dom.engine.WSSConfig.init",e);
+				this.logError("Cache JsonPathEngine disabilitata",e);
 				return;
 			}
 			
@@ -665,7 +669,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				 */
 				try{
 					System.setProperty("http.keepAlive","false");
-					OpenSPCoop2Startup.log.info("Impostazione http.keepAlive=false effettuata");
+					OpenSPCoop2Startup.logStartupInfo("Impostazione http.keepAlive=false effettuata");
 				}catch(Exception e){
 					this.logError("Impostazione http.keepAlive=false non riuscita",e);
 					return;
@@ -677,7 +681,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			org.openspcoop2.utils.Semaphore.setDEBUG(propertiesReader.isSemaphoreDebug());
 			org.openspcoop2.utils.Semaphore.setSemaphoreType(propertiesReader.getSemaphoreType());
 			org.openspcoop2.utils.Semaphore.setFair(propertiesReader.isSemaphoreFair());
-			OpenSPCoop2Startup.log.info("Impostazione semaphore timeoutMS="+org.openspcoop2.utils.Semaphore.getTIMEOUT_MS()+
+			OpenSPCoop2Startup.logStartupInfo("Impostazione semaphore timeoutMS="+org.openspcoop2.utils.Semaphore.getTIMEOUT_MS()+
 					" debug="+org.openspcoop2.utils.Semaphore.isDEBUG()+
 					" type="+org.openspcoop2.utils.Semaphore.getSemaphoreType()+
 					" fair="+org.openspcoop2.utils.Semaphore.isFair());
@@ -695,7 +699,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				return;
 			}
 			Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
-			OpenSPCoop2Startup.log = LoggerWrapperFactory.getLogger("govway.startup");
+			OpenSPCoop2Startup.log = LoggerWrapperFactory.getLogger(LOG_CATEGORY_STARTUP);
 			
 			Utilities.log = logCore;
 			Utilities.freeMemoryLog = propertiesReader.getFreeMemoryLog();
@@ -709,7 +713,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				logSaaj.setLevel(Level.OFF);
 				logSaaj.severe("Il logger utilizzato nel package '"+com.sun.xml.messaging.saaj.util.LogDomainConstants.MODULE_TOPLEVEL_DOMAIN+"' e' stato disabilitato; questo messaggio non deve essere visualizzato");
 				logSaaj.severe("SAAJ0511.soap.cannot.create.envelope"); // serve per caricare il logger con il local string
-				OpenSPCoop2Startup.log.info("Il logger utilizzato nel package '"+com.sun.xml.messaging.saaj.util.LogDomainConstants.MODULE_TOPLEVEL_DOMAIN+"' e' stato disabilitato");
+				OpenSPCoop2Startup.logStartupInfo("Il logger utilizzato nel package '"+com.sun.xml.messaging.saaj.util.LogDomainConstants.MODULE_TOPLEVEL_DOMAIN+"' e' stato disabilitato");
 			}
 			
 			RequestThreadContext.setLog(OpenSPCoop2Logger.getLoggerOpenSPCoopConnettori());
@@ -806,19 +810,19 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			try{
 				// TransazioneContext
 				TransactionContext.initGestioneStateful();
-				OpenSPCoop2Startup.log.info("TransactionContext.gestioneStateful: "+propertiesReader.isTransazioniStatefulEnabled());
+				OpenSPCoop2Startup.logStartupInfo("TransactionContext.gestioneStateful: "+propertiesReader.isTransazioniStatefulEnabled());
 				TransactionContext.initResources();
-				OpenSPCoop2Startup.log.info("TransactionContext.type (sync:"+propertiesReader.isConfigurazioneCache_transactionContext_accessiSynchronized()+"): "+TransactionContext.getTransactionContextType());
+				OpenSPCoop2Startup.logStartupInfo("TransactionContext.type (sync:"+propertiesReader.isConfigurazioneCache_transactionContext_accessiSynchronized()+"): "+TransactionContext.getTransactionContextType());
 				
 				// Cache
 				if(!propertiesReader.isConfigurazioneCache_accessiSynchronized()) {
 					Cache.disableSyncronizedGetAsDefault();
 				}
-				OpenSPCoop2Startup.log.info("Cache.disableSyncronizedGetAsDefault: "+Cache.isDisableSyncronizedGetAsDefault());
+				OpenSPCoop2Startup.logStartupInfo("Cache.disableSyncronizedGetAsDefault: "+Cache.isDisableSyncronizedGetAsDefault());
 				Cache.DEBUG_CACHE=propertiesReader.isConfigurazioneCache_debug();
-				OpenSPCoop2Startup.log.info("Cache.DEBUG: "+Cache.DEBUG_CACHE);
-				GestoreRichieste.useCache=propertiesReader.isConfigurazioneCache_requestManager_useCache();
-				OpenSPCoop2Startup.log.info("Cache.requestManager.useCache: "+GestoreRichieste.useCache);
+				OpenSPCoop2Startup.logStartupInfo("Cache.DEBUG: "+Cache.DEBUG_CACHE);
+				GestoreRichieste.setUseCache(propertiesReader.isConfigurazioneCache_requestManager_useCache());
+				OpenSPCoop2Startup.logStartupInfo("Cache.requestManager.useCache: "+GestoreRichieste.isUseCache());
 				
 				
 				// MessageFactory
@@ -829,32 +833,32 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				if(propertiesReader.getDumpBufferImpl()!=null && !"".equals(propertiesReader.getDumpBufferImpl())) {
 					DumpByteArrayOutputStream.setClassImpl(propertiesReader.getDumpBufferImpl());
 				}
-				OpenSPCoop2Startup.log.info("DumpByteArrayOutputStream buffer implementation: "+DumpByteArrayOutputStream.getClassImpl());
-				OpenSPCoop2Startup.log.info("DumpBinario set buffer threshold: "+propertiesReader.getDumpBinario_inMemoryThreshold());
+				OpenSPCoop2Startup.logStartupInfo("DumpByteArrayOutputStream buffer implementation: "+DumpByteArrayOutputStream.getClassImpl());
+				OpenSPCoop2Startup.logStartupInfo("DumpBinario set buffer threshold: "+propertiesReader.getDumpBinario_inMemoryThreshold());
 				AbstractBaseOpenSPCoop2MessageDynamicContent.setSoglia(propertiesReader.getDumpBinario_inMemoryThreshold());
-				OpenSPCoop2Startup.log.info("DumpBinario set buffer repository: "+propertiesReader.getDumpBinario_repository());
+				OpenSPCoop2Startup.logStartupInfo("DumpBinario set buffer repository: "+propertiesReader.getDumpBinario_repository());
 				AbstractBaseOpenSPCoop2MessageDynamicContent.setRepositoryFile(propertiesReader.getDumpBinario_repository());
 				
 				// SoapBuffer
 				boolean soapReader = propertiesReader.useSoapMessageReader();
-				OpenSPCoop2Startup.log.info("SOAPMessageReader enabled="+soapReader);
+				OpenSPCoop2Startup.logStartupInfo("SOAPMessageReader enabled="+soapReader);
 				AbstractBaseOpenSPCoop2MessageDynamicContent.setSoapReader(soapReader);
-				OpenSPCoop2Startup.log.info("SOAPMessageReader set buffer threshold (kb): "+propertiesReader.getSoapMessageReaderBufferThresholdKb());
+				OpenSPCoop2Startup.logStartupInfo("SOAPMessageReader set buffer threshold (kb): "+propertiesReader.getSoapMessageReaderBufferThresholdKb());
 				AbstractBaseOpenSPCoop2MessageDynamicContent.setSoapReaderBufferThresholdKb(propertiesReader.getSoapMessageReaderBufferThresholdKb());
 				if(soapReader) {
-					OpenSPCoop2Startup.log.info("SOAPMessageReader headerOptimization enabled="+propertiesReader.useSoapMessageReaderHeaderOptimization());
+					OpenSPCoop2Startup.logStartupInfo("SOAPMessageReader headerOptimization enabled="+propertiesReader.useSoapMessageReaderHeaderOptimization());
 					OpenSPCoop2MessageSoapStreamReader.SOAP_HEADER_OPTIMIZATION_ENABLED=propertiesReader.useSoapMessageReaderHeaderOptimization();
 				}
 				
 				// SoapPassthrough
 				boolean soapPassthroughImpl = propertiesReader.useSoapMessagePassthrough();
-				OpenSPCoop2Startup.log.info("OpenSPCoop2MessageFactory_impl soapPassthroughImpl="+soapPassthroughImpl);
+				OpenSPCoop2Startup.logStartupInfo("OpenSPCoop2MessageFactory_impl soapPassthroughImpl="+soapPassthroughImpl);
 				OpenSPCoop2MessageFactory_impl.setSoapPassthroughImpl(soapPassthroughImpl);
 								
 				// Locale SOAPFault String
 				Locale localeSoapFaultString = propertiesReader.getLocaleSOAPFaultString();
 				if(localeSoapFaultString!=null) {
-					OpenSPCoop2Startup.log.info("Locale SOAPFault String: "+localeSoapFaultString);
+					OpenSPCoop2Startup.logStartupInfo("Locale SOAPFault String: "+localeSoapFaultString);
 					SoapUtils.setSoapFaultStringLocale(localeSoapFaultString);
 				}
 				
@@ -868,13 +872,13 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						}
 						sbCT.append(alternativeContentType);
 					}
-					OpenSPCoop2Startup.log.info("Registrati ulteriori '"+MessageImpl.alternativeAcceptedContentType1_2.size()+"' content-type associabili ai messaggi SOAP 1.2: "+sbCT.toString());
+					OpenSPCoop2Startup.logStartupInfo("Registrati ulteriori '"+MessageImpl.alternativeAcceptedContentType1_2.size()+"' content-type associabili ai messaggi SOAP 1.2: "+sbCT.toString());
 					
 				}
 				
 				// DiagnosticInputStream
 				DiagnosticInputStream.setSetDateEmptyStream(propertiesReader.isConnettoriUseDiagnosticInputStream_setDateEmptyStream());
-				OpenSPCoop2Startup.log.info("DiagnosticInputStream isSetDateEmptyStream: "+DiagnosticInputStream.isSetDateEmptyStream());
+				OpenSPCoop2Startup.logStartupInfo("DiagnosticInputStream isSetDateEmptyStream: "+DiagnosticInputStream.isSetDateEmptyStream());
 				
 				// PipeUnblockedStream
 				if(propertiesReader.getPipedUnblockedStreamClassName()!=null) {
@@ -883,7 +887,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				
 				// RestMultipartLazy
 				AbstractLazyContent.BUILD_LAZY=propertiesReader.useRestMultipartLazy();
-				OpenSPCoop2Startup.log.info("OpenSPCoop2Content lazy="+AbstractLazyContent.BUILD_LAZY);
+				OpenSPCoop2Startup.logStartupInfo("OpenSPCoop2Content lazy="+AbstractLazyContent.BUILD_LAZY);
 				
 				// MessageSecurity
 				MessageSecurityFactory.setMessageSecurityContextClassName(classNameReader.getMessageSecurityContext(propertiesReader.getMessageSecurityContext()));
@@ -899,7 +903,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				
 				String [] tmp_tipiMessageFactory = classNameReader.getOpenSPCoop2MessageFactory();
 				if(tmp_tipiMessageFactory!=null && tmp_tipiMessageFactory.length>0) {
-					OpenSPCoop2Startup.log.info("Analizzo "+tmp_tipiMessageFactory.length+" message factories ...");
+					OpenSPCoop2Startup.logStartupInfo("Analizzo "+tmp_tipiMessageFactory.length+" message factories ...");
 					for (int i = 0; i < tmp_tipiMessageFactory.length; i++) {
 						String tipo = tmp_tipiMessageFactory[i];
 						String classe = classNameReader.getOpenSPCoop2MessageFactory(tipo);
@@ -908,19 +912,19 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 							tipiMessageFactory.add(tipo);
 							messageFactory.add(factory);
 							classiMessageFactory.add(classe);
-							OpenSPCoop2Startup.log.info("Registrazione '"+tipo+"' corrispondente alla classe '"+classe+"' terminata");
+							OpenSPCoop2Startup.logStartupInfo("Registrazione '"+tipo+"' corrispondente alla classe '"+classe+"' terminata");
 						}
 						else {
-							OpenSPCoop2Startup.log.info("Registrazione '"+tipo+"' corrispondente alla classe '"+classe+"' non effettuata. La stessa classe risulta già associata ad altri tipi.");
+							OpenSPCoop2Startup.logStartupInfo("Registrazione '"+tipo+"' corrispondente alla classe '"+classe+"' non effettuata. La stessa classe risulta già associata ad altri tipi.");
 						}
 					}
 				}
 				
 				AbstractXMLUtils.DISABLE_DTDs = !propertiesReader.isXmlFactoryDTDsEnabled();
-				OpenSPCoop2Startup.log.info("XMLUtils - DISABLE_DTDs: "+AbstractXMLUtils.DISABLE_DTDs);
+				OpenSPCoop2Startup.logStartupInfo("XMLUtils - DISABLE_DTDs: "+AbstractXMLUtils.DISABLE_DTDs);
 				
-				DynamicUtils.XSLT_PROCESS_AS_DOMSOURCE = propertiesReader.isXsltProcessAsDOMSource();
-				OpenSPCoop2Startup.log.info("DynamicUtils - XSLT_PROCESS_AS_DOMSOURCE: "+DynamicUtils.XSLT_PROCESS_AS_DOMSOURCE);
+				DynamicUtils.setXsltProcessAsDomSource(propertiesReader.isXsltProcessAsDOMSource());
+				OpenSPCoop2Startup.logStartupInfo("DynamicUtils - XSLT_PROCESS_AS_DOMSOURCE: "+DynamicUtils.isXsltProcessAsDomSource());
 				
 				Properties yamlSnakeLimits = propertiesReader.getYamlSnakeLimits();
 				if(yamlSnakeLimits!=null && !yamlSnakeLimits.isEmpty()) {
@@ -934,7 +938,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					
 					try{
 					
-						OpenSPCoop2Startup.log.info("Inizializzazione '"+tipo+"' corrispondente alla classe '"+classe+"' ... ");
+						OpenSPCoop2Startup.logStartupInfo("Inizializzazione '"+tipo+"' corrispondente alla classe '"+classe+"' ... ");
 					
 						// XML
 						org.openspcoop2.message.xml.MessageXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.getInstance(factory);
@@ -989,41 +993,41 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						// Log
 						// stampo comunque saaj factory
 						String factoryClassName = OpenSPCoop2MessageFactory_impl.class.getName()+"";
-						OpenSPCoop2Startup.log.info("OpenSPCoop MessageFactory (open:"+factoryClassName.equals(factory.getClass().getName())+"): "+factory.getClass().getName());
+						OpenSPCoop2Startup.logStartupInfo("OpenSPCoop MessageFactory (open:"+factoryClassName.equals(factory.getClass().getName())+"): "+factory.getClass().getName());
 						if(propertiesReader.isPrintInfoFactory()){
 							MessageType [] mt = MessageType.values();
 							for (int i = 0; i < mt.length; i++) {
-								OpenSPCoop2Startup.log.info("OpenSPCoop Message ["+mt[i].name()+"]: "+factory.createEmptyMessage(mt[i],MessageRole.NONE).getClass().getName());	
+								OpenSPCoop2Startup.logStartupInfo("OpenSPCoop Message ["+mt[i].name()+"]: "+factory.createEmptyMessage(mt[i],MessageRole.NONE).getClass().getName());	
 							}
 							if( factory.getSoapFactory11()!=null)
-								OpenSPCoop2Startup.log.info("SOAP1.1 Factory: "+ factory.getSoapFactory11().getClass().getName());
+								OpenSPCoop2Startup.logStartupInfo("SOAP1.1 Factory: "+ factory.getSoapFactory11().getClass().getName());
 							else
-								OpenSPCoop2Startup.log.info("SOAP1.1 Factory: not implemented");
+								OpenSPCoop2Startup.logStartupInfo("SOAP1.1 Factory: not implemented");
 							if(factory.getSoapFactory12()!=null){
-								OpenSPCoop2Startup.log.info("SOAP1.2 Factory: "+ factory.getSoapFactory12().getClass().getName());
+								OpenSPCoop2Startup.logStartupInfo("SOAP1.2 Factory: "+ factory.getSoapFactory12().getClass().getName());
 							}else{
-								OpenSPCoop2Startup.log.info("SOAP1.2 Factory: not implemented");
+								OpenSPCoop2Startup.logStartupInfo("SOAP1.2 Factory: not implemented");
 							}
-							OpenSPCoop2Startup.log.info("SOAP MessageFactory: "+factory.getSoapMessageFactory().getClass().getName());
+							OpenSPCoop2Startup.logStartupInfo("SOAP MessageFactory: "+factory.getSoapMessageFactory().getClass().getName());
 			
 							// XML - XERCES
-							OpenSPCoop2Startup.log.info("XERCES - DocumentFactory: "+xmlUtils.getDocumentBuilderFactory().getClass().getName());
-							OpenSPCoop2Startup.log.info("XERCES - DatatypeFactory: "+xmlUtils.getDatatypeFactory().getClass().getName());
-							OpenSPCoop2Startup.log.info("XERCES - SAXParserFactory: "+xmlUtils.getSAXParserFactory().getClass().getName());
-//							OpenSPCoop2Startup.log.info("XERCES - XMLEventFactory: "+xmlUtils.getXMLEventFactory().getClass().getName());
-							OpenSPCoop2Startup.log.info("XERCES - SchemaFactory: "+xmlUtils.getSchemaFactory().getClass().getName());
+							OpenSPCoop2Startup.logStartupInfo("XERCES - DocumentFactory: "+xmlUtils.getDocumentBuilderFactory().getClass().getName());
+							OpenSPCoop2Startup.logStartupInfo("XERCES - DatatypeFactory: "+xmlUtils.getDatatypeFactory().getClass().getName());
+							OpenSPCoop2Startup.logStartupInfo("XERCES - SAXParserFactory: "+xmlUtils.getSAXParserFactory().getClass().getName());
+//							OpenSPCoop2Startup.logStartupInfo("XERCES - XMLEventFactory: "+xmlUtils.getXMLEventFactory().getClass().getName());
+							OpenSPCoop2Startup.logStartupInfo("XERCES - SchemaFactory: "+xmlUtils.getSchemaFactory().getClass().getName());
 							
 							// XML - XALAN
-							OpenSPCoop2Startup.log.info("XALAN - TransformerFactory: "+xmlUtils.getTransformerFactory().getClass().getName());
-							OpenSPCoop2Startup.log.info("XALAN - XPathFactory: "+xmlUtils.getXPathFactory().getClass().getName());
+							OpenSPCoop2Startup.logStartupInfo("XALAN - TransformerFactory: "+xmlUtils.getTransformerFactory().getClass().getName());
+							OpenSPCoop2Startup.logStartupInfo("XALAN - XPathFactory: "+xmlUtils.getXPathFactory().getClass().getName());
 
 						}
 						if(propertiesReader.isPrintInfoMessageSecurity()){
-							OpenSPCoop2Startup.log.info("MessageSecurity Context: "+MessageSecurityFactory.messageSecurityContextImplClass);
-							OpenSPCoop2Startup.log.info("MessageSecurity DigestReader: "+MessageSecurityFactory.messageSecurityDigestReaderImplClass);
-							OpenSPCoop2Startup.log.info("MessageSecurity (SoapBox) EncryptedDataHeaderBlock: "+factory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().getEncryptedDataHeaderBlockClass());
-							OpenSPCoop2Startup.log.info("MessageSecurity (SoapBox) ProcessPartialEncryptedMessage: "+factory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().getProcessPartialEncryptedMessageClass());
-							OpenSPCoop2Startup.log.info("MessageSecurity (SoapBox) getSignPartialMessageProcessor: "+factory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().getSignPartialMessageProcessorClass());
+							OpenSPCoop2Startup.logStartupInfo("MessageSecurity Context: "+MessageSecurityFactory.messageSecurityContextImplClass);
+							OpenSPCoop2Startup.logStartupInfo("MessageSecurity DigestReader: "+MessageSecurityFactory.messageSecurityDigestReaderImplClass);
+							OpenSPCoop2Startup.logStartupInfo("MessageSecurity (SoapBox) EncryptedDataHeaderBlock: "+factory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().getEncryptedDataHeaderBlockClass());
+							OpenSPCoop2Startup.logStartupInfo("MessageSecurity (SoapBox) ProcessPartialEncryptedMessage: "+factory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().getProcessPartialEncryptedMessageClass());
+							OpenSPCoop2Startup.logStartupInfo("MessageSecurity (SoapBox) getSignPartialMessageProcessor: "+factory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().getSignPartialMessageProcessorClass());
 						}
 												
 						// Inizializzo Operazioni "Costose"
@@ -1044,7 +1048,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 							eGovIntestazioneMsg.toString();
 						}
 					
-						OpenSPCoop2Startup.log.info("Inizializzazione '"+tipo+"' corrispondente alla classe '"+classe+"' effettuata");
+						OpenSPCoop2Startup.logStartupInfo("Inizializzazione '"+tipo+"' corrispondente alla classe '"+classe+"' effettuata");
 						
 					} catch(Exception e) {
 						this.logError("Inizializzazione '"+tipo+"' corrispondente alla classe '"+classe+"' fallita: "+e.getMessage(),e);
@@ -1070,10 +1074,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			try{
 				String tipoClass = classNameReader.getDateManager(propertiesReader.getTipoDateManager());
 				DateManager.initializeDataManager(tipoClass, propertiesReader.getDateManagerProperties(),logCore);
-				OpenSPCoop2Startup.log.info("Inizializzazione DateManager: "+propertiesReader.getTipoDateManager());
+				OpenSPCoop2Startup.logStartupInfo("Inizializzazione DateManager: "+propertiesReader.getTipoDateManager());
 				
 				DateUtils.setDEFAULT_DATA_ENGINE_TYPE(propertiesReader.getTipoDateTimeFormat());
-				OpenSPCoop2Startup.log.info("Inizializzazione DateTimeFormat: "+propertiesReader.getTipoDateTimeFormat());
+				OpenSPCoop2Startup.logStartupInfo("Inizializzazione DateTimeFormat: "+propertiesReader.getTipoDateTimeFormat());
 			}catch(Exception e){
 				this.logError("Riscontrato errore durante l'inizializzazione del DataManager: "+e.getMessage(),e);
 				return;
@@ -1091,7 +1095,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						propertiesReader.getJNDIContext_DataSource());
 			}catch(Exception e){
 				erroreDB = e.getMessage();
-				OpenSPCoop2Startup.log.info("Datasource non inizializzato... riprovo");
+				OpenSPCoop2Startup.logStartupInfo("Datasource non inizializzato... riprovo");
 				//msgDiag.logStartupError(e, "DatabaseManager");
 				logCore.error(erroreDB,e);
 			}
@@ -1104,7 +1108,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 							propertiesReader.getJNDIContext_DataSource());
 				} catch (Exception e) {
 					erroreDB = e.getMessage();
-					OpenSPCoop2Startup.log.info("Attendo inizializzazione del Datasource ... "+erroreDB);
+					OpenSPCoop2Startup.logStartupInfo("Attendo inizializzazione del Datasource ... "+erroreDB);
 					logCore.error(erroreDB,e);
 				}
 
@@ -1117,7 +1121,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			}
 
 			if (DBManager.isInitialized()) {
-				OpenSPCoop2Startup.log.info("Inizializzazione DBManager effettuata con successo.");
+				OpenSPCoop2Startup.logStartupInfo("Inizializzazione DBManager effettuata con successo.");
 			} else {
 				OpenSPCoop2Startup.log.error("Inizializzazione DBManager non effettuata", new Exception(erroreDB));
 				//msgDiag.logStartupError(new Exception(erroreDB), "DatabaseManager");
@@ -1125,17 +1129,17 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			}
 
 			if( JDBCUtilities.isTransactionIsolationNone(DBManager.getTransactionIsolationLevel()) )
-				OpenSPCoop2Startup.log.info("Database TransactionLevel is NONE");
+				OpenSPCoop2Startup.logStartupInfo("Database TransactionLevel is NONE");
 			else if(JDBCUtilities.isTransactionIsolationReadCommitted(DBManager.getTransactionIsolationLevel()) )
-				OpenSPCoop2Startup.log.info("Database TransactionLevel is READ_COMMITTED");
+				OpenSPCoop2Startup.logStartupInfo("Database TransactionLevel is READ_COMMITTED");
 			else if(JDBCUtilities.isTransactionIsolationReadUncommitted(DBManager.getTransactionIsolationLevel()) )
-				OpenSPCoop2Startup.log.info("Database TransactionLevel is READ_UNCOMMITTED");
+				OpenSPCoop2Startup.logStartupInfo("Database TransactionLevel is READ_UNCOMMITTED");
 			else if(JDBCUtilities.isTransactionIsolationRepeatableRead(DBManager.getTransactionIsolationLevel()) )
-				OpenSPCoop2Startup.log.info("Database TransactionLevel is REPEATABLE_READ");
+				OpenSPCoop2Startup.logStartupInfo("Database TransactionLevel is REPEATABLE_READ");
 			else if(JDBCUtilities.isTransactionIsolationSerializable(DBManager.getTransactionIsolationLevel()) )
-				OpenSPCoop2Startup.log.info("Database TransactionLevel is SERIALIZABLE");
+				OpenSPCoop2Startup.logStartupInfo("Database TransactionLevel is SERIALIZABLE");
 			else if(JDBCUtilities.isTransactionIsolationSqlServerSnapshot(DBManager.getTransactionIsolationLevel()) )
-				OpenSPCoop2Startup.log.info("Database TransactionLevel is SQLSERVER SNAPSHOT");
+				OpenSPCoop2Startup.logStartupInfo("Database TransactionLevel is SQLSERVER SNAPSHOT");
 			else {
 				OpenSPCoop2Startup.log.error("TransactionLevel associato alla connessione non conosciuto");
 				//			msgDiag.logStartupError("TransactionLevel associato alla connessione non conosciuto","DatabaseManager");
@@ -1320,13 +1324,13 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						}
 					}
 					UniqueIdentifierManager.inizializzaUniqueIdentifierManager(propertiesReader.useIDManagerWithThreadLocal(),classClusterID,paramsObject);
-					OpenSPCoop2Startup.log.info("UUID Generator: "+classClusterID);
+					OpenSPCoop2Startup.logStartupInfo("UUID Generator: "+classClusterID);
 					
 					if(propertiesReader.generazioneDateCasualiLogAbilitato()){
 						GeneratoreCasualeDate.init(propertiesReader.getGenerazioneDateCasualiLog_dataInizioIntervallo(), 
 								propertiesReader.getGenerazioneDateCasualiLog_dataFineIntervallo(),
 								OpenSPCoop2Startup.log);
-						OpenSPCoop2Startup.log.info("Abilitata generazione date casuali");
+						OpenSPCoop2Startup.logStartupInfo("Abilitata generazione date casuali");
 					}
 					
 					// BufferProducer avviato in fondo allo startup
@@ -1378,7 +1382,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			if(msgDiagProperties.checkValoriFiltriMsgDiagnostici(OpenSPCoop2Startup.log)==false){
 				return;
 			}
-			OpenSPCoop2Startup.log.info("ConfigurazionePdD, refresh: "+propertiesReader.isConfigurazioneDinamica());
+			OpenSPCoop2Startup.logStartupInfo("ConfigurazionePdD, refresh: "+propertiesReader.isConfigurazioneDinamica());
 
 
 
@@ -1392,7 +1396,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					if(propertiesReader.isUseHashClusterId()) {
 						propertiesReader.updateClusterId();
 					}
-					OpenSPCoop2Startup.log.info("Nodo avviato in modalità cluster dinamica con identificativo '"+propertiesReader.getClusterId(false)+"' ("+propertiesReader.getCluster_id_preCodificaHash()+")");
+					OpenSPCoop2Startup.logStartupInfo("Nodo avviato in modalità cluster dinamica con identificativo '"+propertiesReader.getClusterId(false)+"' ("+propertiesReader.getCluster_id_preCodificaHash()+")");
 					
 					// aggiorno
 					clusterID = propertiesReader.getClusterId(false);
@@ -1768,7 +1772,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					GestoreKeystoreCache.setKeystoreCacheParameters(propertiesReader.isAbilitataCacheMessageSecurityKeystore(),
 							propertiesReader.getItemLifeSecondCacheMessageSecurityKeystore(), 
 							propertiesReader.getDimensioneCacheMessageSecurityKeystore());
-					OpenSPCoop2Startup.log.info("MessageSecurity Keystore Cache In-Memory enabled["+propertiesReader.isAbilitataCacheMessageSecurityKeystore()+"] itemLifeSecond["+
+					OpenSPCoop2Startup.logStartupInfo("MessageSecurity Keystore Cache In-Memory enabled["+propertiesReader.isAbilitataCacheMessageSecurityKeystore()+"] itemLifeSecond["+
 							propertiesReader.getItemLifeSecondCacheMessageSecurityKeystore()+"] size["+
 							propertiesReader.getDimensioneCacheMessageSecurityKeystore()+"]");
 					
@@ -1987,7 +1991,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					}
 				}
 				
-				OpenSPCoop2Startup.log.info("ProtocolFactory default: "+protocolFactoryManager.getDefaultProtocolFactory().getProtocol());
+				OpenSPCoop2Startup.logStartupInfo("ProtocolFactory default: "+protocolFactoryManager.getDefaultProtocolFactory().getProtocol());
 			} catch(Exception e) {
 				this.logError("Initialize ProtocolFactoryManager failed: "+e.getMessage());
 				logCore.error("Initialize ProtocolFactoryManager failed: "+e.getMessage(),e);
@@ -2054,7 +2058,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						msgDiag.logStartupError(e, "QueueManager.initConnectionFactory");
 						return;
 					}
-					OpenSPCoop2Startup.log.info("Inizializzazione connectionFactoryJMS ["+propertiesReader.getJNDIName_ConnectionFactory()+"] effettuata.");
+					OpenSPCoop2Startup.logStartupInfo("Inizializzazione connectionFactoryJMS ["+propertiesReader.getJNDIName_ConnectionFactory()+"] effettuata.");
 
 					// Code di Ricezione
 					if( CostantiConfigurazione.COMUNICAZIONE_INFRASTRUTTURALE_JMS.equals(propertiesReader.getNodeReceiver()) 
@@ -2065,7 +2069,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 							msgDiag.logStartupError(e, "QueueManager.initQueueNodeReceiver");
 							return;
 						}
-						OpenSPCoop2Startup.log.info("Inizializzazione code JMS per la ricezione di messaggi nell'infrastruttura di OpenSPCoop, effettuata.");
+						OpenSPCoop2Startup.logStartupInfo("Inizializzazione code JMS per la ricezione di messaggi nell'infrastruttura di OpenSPCoop, effettuata.");
 					}
 
 					// Code di Spedizione
@@ -2077,7 +2081,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						msgDiag.logStartupError(e, "QueueManager.initQueueNodeSender");
 						return;
 					}
-					OpenSPCoop2Startup.log.info("Inizializzazione code JMS per la spedizione di messaggi nell'infrastruttura di OpenSPCoop, effettuata.");
+					OpenSPCoop2Startup.logStartupInfo("Inizializzazione code JMS per la spedizione di messaggi nell'infrastruttura di OpenSPCoop, effettuata.");
 				}
 			}
 
@@ -3013,7 +3017,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					OpenSPCoop2Startup.this.timerMonitoraggioRisorse = new TimerMonitoraggioRisorseThread();
 					OpenSPCoop2Startup.this.timerMonitoraggioRisorse.start();
 					TimerMonitoraggioRisorseThread.setSTATE( TimerState.ENABLED );
-					OpenSPCoop2Startup.log.info("Inizializzo Timer per il Monitoraggio delle Risorse");
+					OpenSPCoop2Startup.logStartupInfo("Inizializzo Timer per il Monitoraggio delle Risorse");
 				}
 			}catch(Exception e){
 				msgDiag.logStartupError(e,"TimerMonitoraggioRisorse");
@@ -3031,7 +3035,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					OpenSPCoop2Startup.this.timerThreshold = new TimerThresholdThread();
 					OpenSPCoop2Startup.this.timerThreshold.start();
 					TimerThresholdThread.setSTATE( TimerState.ENABLED );
-					OpenSPCoop2Startup.log.info("Inizializzo Timer per il Controllo dei Threshold sulle risorse");
+					OpenSPCoop2Startup.logStartupInfo("Inizializzo Timer per il Controllo dei Threshold sulle risorse");
 				}
 			}catch(Exception e){
 				msgDiag.logStartupError(e,"TimerThreshold");
@@ -3083,7 +3087,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					if(propertiesReader.isTimerGestoreRiscontriRicevuteAbilitato()){
 						try{
 							String nomeJNDI = propertiesReader.getJNDITimerEJBName().get(TimerGestoreBusteNonRiscontrate.ID_MODULO);
-							OpenSPCoop2Startup.log.info("Inizializzo EJB gestore riscontri ["+nomeJNDI+"]");
+							OpenSPCoop2Startup.logStartupInfo("Inizializzo EJB gestore riscontri ["+nomeJNDI+"]");
 							jndi.lookup(nomeJNDI);
 							gestoreBusteNonRiscontrate = true;
 						}catch(Exception e){
@@ -3103,7 +3107,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					if(propertiesReader.isTimerGestoreMessaggiAbilitato()){
 						try{
 							String nomeJNDI = propertiesReader.getJNDITimerEJBName().get(TimerGestoreMessaggi.ID_MODULO);
-							OpenSPCoop2Startup.log.info("Inizializzo EJB gestore messaggi ["+nomeJNDI+"]");
+							OpenSPCoop2Startup.logStartupInfo("Inizializzo EJB gestore messaggi ["+nomeJNDI+"]");
 							jndi.lookup(nomeJNDI);
 							gestoreMessaggi = true;
 						}catch(Exception e){
@@ -3123,7 +3127,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					if(propertiesReader.isTimerGestorePuliziaMessaggiAnomaliAbilitato()){
 						try{
 							String nomeJNDI = propertiesReader.getJNDITimerEJBName().get(TimerGestorePuliziaMessaggiAnomali.ID_MODULO);
-							OpenSPCoop2Startup.log.info("Inizializzo EJB gestore pulizia messaggi anomali ["+nomeJNDI+"]");
+							OpenSPCoop2Startup.logStartupInfo("Inizializzo EJB gestore pulizia messaggi anomali ["+nomeJNDI+"]");
 							jndi.lookup(nomeJNDI);
 							gestorePuliziaMessaggiAnomali = true;
 						}catch(Exception e){
@@ -3144,7 +3148,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					if(propertiesReader.isTimerGestoreRepositoryBusteAbilitato()){
 						try{
 							String nomeJNDI = propertiesReader.getJNDITimerEJBName().get(TimerGestoreRepositoryBuste.ID_MODULO);
-							OpenSPCoop2Startup.log.info("Inizializzo EJB gestore repository ["+nomeJNDI+"]");
+							OpenSPCoop2Startup.logStartupInfo("Inizializzo EJB gestore repository ["+nomeJNDI+"]");
 							jndi.lookup(nomeJNDI);
 							gestoreRepository = true;
 						}catch(Exception e){
@@ -3618,7 +3622,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					UniversallyUniqueIdentifierProducer.initialize(propertiesReader.getIDManagerBufferSize(), OpenSPCoop2Logger.getLoggerOpenSPCoopTimers());
 					OpenSPCoop2Startup.this.universallyUniqueIdentifierProducer = UniversallyUniqueIdentifierProducer.getInstance();
 					OpenSPCoop2Startup.this.universallyUniqueIdentifierProducer.start();
-					OpenSPCoop2Startup.log.info("Thread per la produzione di un buffer di uuid avviato correttamente");
+					OpenSPCoop2Startup.logStartupInfo("Thread per la produzione di un buffer di uuid avviato correttamente");
 				}
 			}catch(Exception e){
 				this.logError("Riscontrato errore durante l'inizializzazione del thread che produce e mantiene in un buffer gli uuid: "+e.getMessage(),e);
@@ -3663,7 +3667,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_OPENSPCOOP_STARTUP);
 			msgDiag.addKeyword(CostantiPdD.KEY_VERSIONE_PORTA, propertiesReader.getPddDetailsForLog());
 			msgDiag.addKeyword(CostantiPdD.KEY_TEMPO_AVVIO, secondStarter+" secondi");
-			OpenSPCoop2Startup.log.info(propertiesReader.getPddDetailsForLog()+" avviata correttamente in "+secondStarter+" secondi.");
+			OpenSPCoop2Startup.logStartupInfo(propertiesReader.getPddDetailsForLog()+" avviata correttamente in "+secondStarter+" secondi.");
 			if(OpenSPCoop2Logger.isLoggerOpenSPCoopConsoleStartupAgganciatoLog()){
 				// per farlo finire anche sul server.log
 				System.out.println(propertiesReader.getPddDetailsForLog()+" avviata correttamente in "+secondStarter+" secondi.");

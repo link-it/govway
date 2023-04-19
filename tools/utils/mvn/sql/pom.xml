@@ -63,7 +63,7 @@
 					<execution>
 						<phase>${testsuite.utils.sql}</phase>
 						<configuration>
-							<target>
+							<target xmlns:jacoco="antlib:org.jacoco.ant">
 								<property name="rootDir" location="../../../../" />
 								<path id="classpath_run" >
 									<pathelement path="../../src"/>
@@ -98,20 +98,54 @@
 
 								<delete dir="${testsuite.output}"/>
 
+								<if>
+									<istrue value="${testsuite.utils.sql.coverage}"/>
+									<then>
+										<path id="classpath_jacoco">
+											<fileset dir="${rootDir}/lib/coverage">
+												<include name="org.jacoco.*.jar"/>
+											</fileset>
+										</path>
+										<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" classpathref="classpath_jacoco"/>
+									</then>
+								</if>
+
 								<echo message="Avvio TestSuite (gruppo: ${testsuite.utils.sql.group}) (haltOnFailure:${testsuite.haltOnFailure})" />
-								<testng classpathref="classpath_run"
-									outputdir="${testsuite.output}"
-									haltonfailure="${testsuite.haltOnFailure}" groups="${testsuite.utils.sql.group}">
-									<classfileset dir="build_testunits" includes="**/*.class"/>
-									<jvmarg value="-Dtestng.show.stack.frames=${testsuite.showStackFrames}" />
-									<jvmarg value="-Djenkins=${testsuite.env.jenkins}" />
-									<jvmarg value="-DtipoDatabase=${testsuite.utils.sql.tipoDatabase}" />
-									<jvmarg value="-DconnectionUrl=${testsuite.utils.sql.connectionUrl}" />
-                        						<jvmarg value="-Dusername=${testsuite.utils.sql.username}" />
-                        						<jvmarg value="-Dpassword=${testsuite.utils.sql.password}" />
-	                       						<jvmarg value="-DdriverJdbc=${testsuite.utils.sql.driverJdbc}" />
-									<jvmarg value="-DtestIdle=${testsuite.utils.sql.testIdle}" />
-								</testng>
+								<if>
+									<istrue value="${testsuite.utils.sql.coverage}"/>
+									<then>
+										<jacoco:coverage destfile="${testsuite.output}/coverage/jacoco.exec">
+											<testng classpathref="classpath_run"
+												outputdir="${testsuite.output}"
+												haltonfailure="${testsuite.haltOnFailure}" groups="${testsuite.utils.sql.group}">
+												<classfileset dir="build_testunits" includes="**/*.class"/>
+												<jvmarg value="-Dtestng.show.stack.frames=${testsuite.showStackFrames}" />
+												<jvmarg value="-Djenkins=${testsuite.env.jenkins}" />
+												<jvmarg value="-DtipoDatabase=${testsuite.utils.sql.tipoDatabase}" />
+												<jvmarg value="-DconnectionUrl=${testsuite.utils.sql.connectionUrl}" />
+												<jvmarg value="-Dusername=${testsuite.utils.sql.username}" />
+												<jvmarg value="-Dpassword=${testsuite.utils.sql.password}" />
+						       						<jvmarg value="-DdriverJdbc=${testsuite.utils.sql.driverJdbc}" />
+												<jvmarg value="-DtestIdle=${testsuite.utils.sql.testIdle}" />
+											</testng>
+										</jacoco:coverage>
+									</then>
+									<else>
+										<testng classpathref="classpath_run"
+											outputdir="${testsuite.output}"
+											haltonfailure="${testsuite.haltOnFailure}" groups="${testsuite.utils.sql.group}">
+											<classfileset dir="build_testunits" includes="**/*.class"/>
+											<jvmarg value="-Dtestng.show.stack.frames=${testsuite.showStackFrames}" />
+											<jvmarg value="-Djenkins=${testsuite.env.jenkins}" />
+											<jvmarg value="-DtipoDatabase=${testsuite.utils.sql.tipoDatabase}" />
+											<jvmarg value="-DconnectionUrl=${testsuite.utils.sql.connectionUrl}" />
+				        						<jvmarg value="-Dusername=${testsuite.utils.sql.username}" />
+				        						<jvmarg value="-Dpassword=${testsuite.utils.sql.password}" />
+					       						<jvmarg value="-DdriverJdbc=${testsuite.utils.sql.driverJdbc}" />
+											<jvmarg value="-DtestIdle=${testsuite.utils.sql.testIdle}" />
+										</testng>
+									</else>
+								</if>
 
 								<delete dir="build_testunits"/>
 

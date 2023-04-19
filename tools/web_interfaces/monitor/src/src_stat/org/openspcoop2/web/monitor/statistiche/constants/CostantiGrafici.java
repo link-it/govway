@@ -52,7 +52,7 @@ public class CostantiGrafici {
 	public static final String WHITE_SPACE = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.WHITE_SPACE;
 	
 	
-	public final static String DATI_NON_PRESENTI = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.DATI_NON_PRESENTI;
+	public static final String DATI_NON_PRESENTI = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.DATI_NON_PRESENTI;
 	public static final String ALTRI_LABEL = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.ALTRI_LABEL;
 	public static final String NUMERO_ESITI_LABEL = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.NUMERO_ESITI_LABEL;
 	public static final String DISTRIBUZIONE_ESITO_DEI_MESSAGGI_NELL_ULTIMO_PERIODO =org.openspcoop2.web.monitor.core.constants.CostantiGrafici.DISTRIBUZIONE_ESITO_DEI_MESSAGGI_NELL_ULTIMO_PERIODO;

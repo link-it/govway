@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.soggetti;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -76,7 +75,7 @@ public final class SoggettiProprietaAdd extends Action {
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
 			
 			String id = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
-			long idSoggettoLong = Long.valueOf(id);
+			long idSoggettoLong = Long.parseLong(id);
 			String nomeprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
 			String tipoprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
 			
@@ -95,15 +94,12 @@ public final class SoggettiProprietaAdd extends Action {
 			Soggetto soggettoRegistry = null;
 			org.openspcoop2.core.config.Soggetto soggettoConfig = null;
 			
-			//if(soggettiCore.isRegistroServiziLocale()){
-			soggettoRegistry = soggettiCore.getSoggettoRegistro(idSoggettoLong);// core.getSoggettoRegistro(new
-			// IDSoggetto(tipoprov,nomeprov));
+			soggettoRegistry = soggettiCore.getSoggettoRegistro(idSoggettoLong);
 			if(soggettoRegistry==null) {
 				throw new Exception("Soggetto non trovato con id '"+idSoggettoLong+"'");
 			}
 			
 			soggettoConfig = soggettiCore.getSoggetto(idSoggettoLong);// core.getSoggetto(new
-			// IDSoggetto(tipoprov,nomeprov));
 			
 			if(soggettiCore.isRegistroServiziLocale()){
 				nomeprov = soggettoRegistry.getNome();
@@ -116,7 +112,7 @@ public final class SoggettiProprietaAdd extends Action {
 
 			protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoprov);
 			
-			List<Parameter> parametersServletSoggettoChange = new ArrayList<Parameter>();
+			List<Parameter> parametersServletSoggettoChange = new ArrayList<>();
 			Parameter pIdSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, id);
 			Parameter pNomeSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME, nomeprov);
 			Parameter pTipoSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO, tipoprov);
@@ -124,13 +120,11 @@ public final class SoggettiProprietaAdd extends Action {
 			parametersServletSoggettoChange.add(pNomeSoggetto);
 			parametersServletSoggettoChange.add(pTipoSoggetto);
 
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 			lstParam.add(new Parameter(SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
-			if(soggettoRegistry!=null) {
-				lstParam.add(new Parameter(soggettiHelper.getLabelNomeSoggetto(protocollo, soggettoRegistry.getTipo() , soggettoRegistry.getNome()),
-							SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE, parametersServletSoggettoChange.toArray(new Parameter[parametersServletSoggettoChange.size()])));
-			}
-			if(soggettoRegistry!=null && soggettoRegistry.sizeProprietaList()>1) {
+			lstParam.add(new Parameter(soggettiHelper.getLabelNomeSoggetto(protocollo, soggettoRegistry.getTipo() , soggettoRegistry.getNome()),
+					SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE, parametersServletSoggettoChange.toArray(new Parameter[parametersServletSoggettoChange.size()])));
+			if(soggettoRegistry.sizeProprietaList()>1) {
 				lstParam.add(new Parameter(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTI_PROPRIETA,
 							SoggettiCostanti.SERVLET_NAME_SOGGETTI_PROPRIETA_LIST, parametersServletSoggettoChange.toArray(new Parameter[parametersServletSoggettoChange.size()])));
 			}
@@ -143,8 +137,8 @@ public final class SoggettiProprietaAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = soggettiHelper.addSoggettoHiddenToDati(dati, id,nomeprov, tipoprov);
 
@@ -165,9 +159,9 @@ public final class SoggettiProprietaAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = soggettiHelper.addSoggettoHiddenToDati(dati, id,nomeprov, tipoprov);
 				

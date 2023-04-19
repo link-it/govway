@@ -30,14 +30,14 @@ package org.openspcoop2.core.diagnostica.ws.server.config;
 
 public class ConstantsEnv {
 
-	public final static String OPENSPCOOP2_LOCAL_HOME = "GOVWAY_HOME";
+	public static final String OPENSPCOOP2_LOCAL_HOME = "GOVWAY_HOME";
 	
-    public final static String OPENSPCOOP2_WSDIAGNOSTICA_LOCAL_PATH = "wsdiagnostica_local.properties";
-    public final static String OPENSPCOOP2_WSDIAGNOSTICA_PROPERTIES = "OPENSPCOOP2_WSDIAGNOSTICA_PROPERTIES";
+    public static final String OPENSPCOOP2_WSDIAGNOSTICA_LOCAL_PATH = "wsdiagnostica_local.properties";
+    public static final String OPENSPCOOP2_WSDIAGNOSTICA_PROPERTIES = "OPENSPCOOP2_WSDIAGNOSTICA_PROPERTIES";
     
-    public final static String OPENSPCOOP2_DATASOURCE_LOCAL_PATH = "wsdiagnostica_local.datasource.properties";
-    public final static String OPENSPCOOP2_DATASOURCE_PROPERTIES = "OPENSPCOOP2_WSDIAGNOSTICA_DATASOURCE_PROPERTIES";
+    public static final String OPENSPCOOP2_DATASOURCE_LOCAL_PATH = "wsdiagnostica_local.datasource.properties";
+    public static final String OPENSPCOOP2_DATASOURCE_PROPERTIES = "OPENSPCOOP2_WSDIAGNOSTICA_DATASOURCE_PROPERTIES";
     	
-    public final static String OPENSPCOOP2_LOGGER_LOCAL_PATH = "wsdiagnostica_local.log4j2.properties";
-    public final static String OPENSPCOOP2_LOGGER_PROPERTIES = "OPENSPCOOP2_WSDIAGNOSTICA_LOG_PROPERTIES";
+    public static final String OPENSPCOOP2_LOGGER_LOCAL_PATH = "wsdiagnostica_local.log4j2.properties";
+    public static final String OPENSPCOOP2_LOGGER_PROPERTIES = "OPENSPCOOP2_WSDIAGNOSTICA_LOG_PROPERTIES";
 }

@@ -30,7 +30,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Vector;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -170,7 +169,7 @@ public class SoapTest extends ConfigLoader {
 		requestErogazione.setUrl(urlServizioErogazione);
 		requestErogazione.setContent(SoapBodies.get(policy).getBytes());
 						
-		Vector<HttpResponse> degradoResponsesErogazione = Utils.makeParallelRequests(requestErogazione, maxRequests+1);
+		List<HttpResponse> degradoResponsesErogazione = Utils.makeParallelRequests(requestErogazione, maxRequests+1);
 		assertEquals(maxRequests+1, degradoResponsesErogazione.stream().filter( r -> r.getResultHTTPOperation() == 200).count());
 		
 		HttpRequest requestFruizione = new HttpRequest();
@@ -179,7 +178,7 @@ public class SoapTest extends ConfigLoader {
 		requestFruizione.setUrl(urlServizioFruizione);
 		requestFruizione.setContent(SoapBodies.get(policy).getBytes());
 		
-		Vector<HttpResponse> degradoResponsesFruizione = Utils.makeParallelRequests(requestFruizione, maxRequests+1);
+		List<HttpResponse> degradoResponsesFruizione = Utils.makeParallelRequests(requestFruizione, maxRequests+1);
 		assertEquals(maxRequests+1, degradoResponsesFruizione.stream().filter( r -> r.getResultHTTPOperation() == 200).count());
 		
 		
@@ -227,7 +226,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl(urlServizio);
 		request.setContent(SoapBodies.get(policy).getBytes());
 		
-		Vector<HttpResponse> degradoResponses = Utils.makeParallelRequests(request, maxRequests);
+		List<HttpResponse> degradoResponses = Utils.makeParallelRequests(request, maxRequests);
 		
 		assertEquals(maxRequests, degradoResponses.stream().filter( r -> r.getResultHTTPOperation() == 200).count());
 		
@@ -238,7 +237,7 @@ public class SoapTest extends ConfigLoader {
 		
 		// Faccio n richieste che non devono ancora essere bloccate perchè non in congestione.
 		logRateLimiting.info("Faccio n richieste parallele e nessuna viene bloccata perchè non ancora in congestione...");
-		Vector<HttpResponse> stillNonBlockedResponses = Utils.makeParallelRequests(request, maxRequests);
+		List<HttpResponse> stillNonBlockedResponses = Utils.makeParallelRequests(request, maxRequests);
 
 		assertEquals(maxRequests, stillNonBlockedResponses.stream().filter( r -> r.getResultHTTPOperation() == 200).count());
 		
@@ -251,7 +250,7 @@ public class SoapTest extends ConfigLoader {
 		congestionRequest.setUrl(url);
 		
 		// faccio n richieste che devono essere tutte bloccate
-		//Vector<HttpResponse> blockedResponses = Utils.makeParallelRequests(request, maxRequests);
+		//List<HttpResponse> blockedResponses = Utils.makeParallelRequests(request, maxRequests);
 		//org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.numero_richieste_completate_con_successo.SoapTest.checkFailedRequests(blockedResponses, windowSize, maxRequests);
 		makeParallelRequests_and_checkFailedRequests(request, windowSize, maxRequests, congestionRequest);
 
@@ -281,7 +280,7 @@ public class SoapTest extends ConfigLoader {
 
 		
 		// Faccio n richieste che devono andare tutte bene perchè il sistema è solo in congestione
-		Vector<HttpResponse> nonBlockedResponses = Utils.makeParallelRequests(request, maxRequests);
+		List<HttpResponse> nonBlockedResponses = Utils.makeParallelRequests(request, maxRequests);
 		
 		assertEquals(maxRequests, nonBlockedResponses.stream().filter( r -> r.getResultHTTPOperation() == 200).count());
 		
@@ -321,7 +320,7 @@ public class SoapTest extends ConfigLoader {
 				}
 				
 				logRateLimiting.info("["+i+"] Invocazione ...");
-				Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
+				List<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
 				
 				if(responses==null || responses.isEmpty() || responses.get(0)==null || responses.get(0).getHeaderFirstValue(Headers.RequestSuccesfulLimit)==null) {
 					logRateLimiting.info("["+i+"] la risposta non contiene l'header '"+Headers.RequestSuccesfulLimit+"' ; riprovo tra 2 secondi attendendo che le statistiche girano");
@@ -430,7 +429,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl(urlServizio);
 		request.setContent(SoapBodies.get(policy).getBytes());
 						
-		Vector<HttpResponse> responses = Utils.makeRequestsAndCheckPolicy(request, maxRequests+1, idPolicy);
+		List<HttpResponse> responses = Utils.makeRequestsAndCheckPolicy(request, maxRequests+1, idPolicy);
 		
 		// Controllo che non sia scattata la policy
 		assertEquals( maxRequests+1, responses.stream().filter(r -> r.getResultHTTPOperation() == 200).count());
@@ -513,14 +512,14 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl(url);
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, sogliaRichiesteSimultanee+1);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, sogliaRichiesteSimultanee+1);
 		
 		checkCongestioneAttivaViolazioneRichiesteComplessive(dataSpedizione, responses);
 	}
 
 
 	public static void checkCongestioneAttivaViolazioneRichiesteComplessive(LocalDateTime dataSpedizione,
-			Vector<HttpResponse> responses) {
+			List<HttpResponse> responses) {
 		
 		EventiUtils.waitForDbEvents();
 		Utils.waitForZeroGovWayThreads();
@@ -594,7 +593,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl(url);
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, sogliaCongestione+1);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, sogliaCongestione+1);
 		
 		EventiUtils.checkEventiCongestioneAttiva(dataSpedizione, responses, logRateLimiting);		
 	}
@@ -626,7 +625,7 @@ public class SoapTest extends ConfigLoader {
 		request.setUrl(url);
 		request.setContent(body.getBytes());
 		
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, sogliaRichiesteSimultanee+1);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, sogliaRichiesteSimultanee+1);
 		
 		EventiUtils.checkEventiCongestioneAttivaConViolazioneRL(idServizio, dataSpedizione, Optional.of("RichiesteSimultanee"), responses, logRateLimiting);
 	}

@@ -21,7 +21,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -164,8 +163,8 @@ public class PorteDelegateConfigurazioneChange extends Action {
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				porteDelegateHelper.configurazioneCambiaNome(dati, TipoOperazione.OTHER, nomeGruppo,isPortaDelegata);
 				
@@ -185,9 +184,9 @@ public class PorteDelegateConfigurazioneChange extends Action {
 			
 			if (!isOk) {
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				porteDelegateHelper.configurazioneCambiaNome(dati, TipoOperazione.OTHER, nomeGruppo,isPortaDelegata);
 				
@@ -219,10 +218,9 @@ public class PorteDelegateConfigurazioneChange extends Action {
 					
 					String tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 					boolean gestioneFruitori = false;
-					if(tipologia!=null) {
-						if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
-							gestioneFruitori = true;
-						}
+					if(tipologia!=null &&
+						AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+						gestioneFruitori = true;
 					}
 					if(gestioneFruitori) {
 						

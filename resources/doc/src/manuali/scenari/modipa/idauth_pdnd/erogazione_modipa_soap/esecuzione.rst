@@ -16,11 +16,11 @@ Esecuzione
 
 L'esecuzione dello scenario si basa sui seguenti elementi:
 
-- una API SOAP di esempio (Credit Card Verification) definita con pattern di interazione Bloccante e pattern di sicurezza "ID_AUTH_CHANNEL_01" e "ID_AUTH_REST_01 via PDND";
+- una API SOAP di esempio (Temperature Conversion) definita con pattern di interazione Bloccante e pattern di sicurezza "ID_AUTH_CHANNEL_01" e "ID_AUTH_REST_01 via PDND";
 - un'istanza Govway per la gestione del profilo ModI nel dominio dell'erogatore;
 - un'authorization server che simula la PDND;
-- un client del dominio esterno che invoca l'azione di esempio "CheckCC" dell'erogazione esposta da Govway;
-- il server 'Credit Card Verification' di esempio che riceve le richieste inoltrate dal Govway e produce le relative risposte. Per questo scenario viene utilizzato il server disponibile on line all'indirizzo 'https://ws.cdyne.com/creditcardverify/luhnchecker.asmx'.
+- un client del dominio esterno che invoca l'azione di esempio "CelsiusToFahrenheit" dell'erogazione esposta da Govway;
+- il server 'Temperature Conversion' di esempio che riceve le richieste inoltrate dal Govway e produce le relative risposte. Per questo scenario viene utilizzato il server disponibile on line all'indirizzo 'https://www.w3schools.com/xml/tempconvert.asmx'.
 
 Per eseguire e verificare lo scenario si può utilizzare il progetto Postman a corredo con la request "Profilo ModI SOAP - IDAuth+PDND - IN App1" che è stata preconfigurata per il funzionamento con le caratteristiche descritte sopra.
 

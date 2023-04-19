@@ -127,7 +127,7 @@ import org.slf4j.Logger;
  */
 public class InoltroRisposte extends GenericLib{
 
-	public final static String ID_MODULO = "InoltroRisposte";
+	public static final String ID_MODULO = "InoltroRisposte";
 
 	public InoltroRisposte(Logger log) throws GenericLibException {
 		super(InoltroRisposte.ID_MODULO, log);

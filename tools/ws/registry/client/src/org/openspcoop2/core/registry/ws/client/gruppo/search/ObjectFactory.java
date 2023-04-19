@@ -43,34 +43,34 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _SearchFilterGruppo_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "search-filter-gruppo");
-    private final static QName _WrapperIdAccordoCooperazione_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdAccordoCooperazione");
-    private final static QName _WrapperIdAccordoServizioParteComune_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdAccordoServizioParteComune");
-    private final static QName _WrapperIdPortaDominio_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdPortaDominio");
-    private final static QName _WrapperIdRuolo_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdRuolo");
-    private final static QName _WrapperIdScope_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdScope");
-    private final static QName _WrapperIdGruppo_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdGruppo");
-    private final static QName _WrapperIdSoggetto_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdSoggetto");
-    private final static QName _WrapperIdAccordoServizioParteSpecifica_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdAccordoServizioParteSpecifica");
-    private final static QName _RegistryServiceException_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "registry-service-exception");
-    private final static QName _RegistryNotFoundException_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "registry-not-found-exception");
-    private final static QName _RegistryMultipleResultException_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "registry-multiple-result-exception");
-    private final static QName _RegistryNotImplementedException_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "registry-not-implemented-exception");
-    private final static QName _RegistryNotAuthorizedException_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "registry-not-authorized-exception");
-    private final static QName _FindAll_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "findAll");
-    private final static QName _FindAllResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "findAllResponse");
-    private final static QName _Find_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "find");
-    private final static QName _FindResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "findResponse");
-    private final static QName _Count_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "count");
-    private final static QName _CountResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "countResponse");
-    private final static QName _Get_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "get");
-    private final static QName _GetResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "getResponse");
-    private final static QName _Exists_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "exists");
-    private final static QName _ExistsResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "existsResponse");
-    private final static QName _FindAllIds_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "findAllIds");
-    private final static QName _FindAllIdsResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "findAllIdsResponse");
-    private final static QName _InUse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "inUse");
-    private final static QName _InUseResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "inUseResponse");
+    private static final QName _SearchFilterGruppo_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "search-filter-gruppo");
+    private static final QName _WrapperIdAccordoCooperazione_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdAccordoCooperazione");
+    private static final QName _WrapperIdAccordoServizioParteComune_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdAccordoServizioParteComune");
+    private static final QName _WrapperIdPortaDominio_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdPortaDominio");
+    private static final QName _WrapperIdRuolo_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdRuolo");
+    private static final QName _WrapperIdScope_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdScope");
+    private static final QName _WrapperIdGruppo_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdGruppo");
+    private static final QName _WrapperIdSoggetto_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdSoggetto");
+    private static final QName _WrapperIdAccordoServizioParteSpecifica_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdAccordoServizioParteSpecifica");
+    private static final QName _RegistryServiceException_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "registry-service-exception");
+    private static final QName _RegistryNotFoundException_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "registry-not-found-exception");
+    private static final QName _RegistryMultipleResultException_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "registry-multiple-result-exception");
+    private static final QName _RegistryNotImplementedException_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "registry-not-implemented-exception");
+    private static final QName _RegistryNotAuthorizedException_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "registry-not-authorized-exception");
+    private static final QName _FindAll_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "findAll");
+    private static final QName _FindAllResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "findAllResponse");
+    private static final QName _Find_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "find");
+    private static final QName _FindResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "findResponse");
+    private static final QName _Count_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "count");
+    private static final QName _CountResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "countResponse");
+    private static final QName _Get_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "get");
+    private static final QName _GetResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "getResponse");
+    private static final QName _Exists_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "exists");
+    private static final QName _ExistsResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "existsResponse");
+    private static final QName _FindAllIds_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "findAllIds");
+    private static final QName _FindAllIdsResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "findAllIdsResponse");
+    private static final QName _InUse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "inUse");
+    private static final QName _InUseResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "inUseResponse");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.openspcoop2.core.registry.ws.client.gruppo.search

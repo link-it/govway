@@ -22,7 +22,6 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
@@ -48,10 +47,12 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class ConfigurazionePluginsTipoPluginUtils {
+	
+	private ConfigurazionePluginsTipoPluginUtils() {}
 
-	public final static boolean addTransazioni = false;
-	public final static boolean addRicerche = false;
-	public final static boolean addStatistiche = false;
+	public static final boolean ADD_TRANSAZIONI = false;
+	public static final boolean ADD_RICERCHE = false;
+	public static final boolean ADD_STATISTICHE = false;
 	
 	public static List<String> getValuesTipoPlugin(boolean addAllarmi) {
 		List<String> valori = new ArrayList<>();
@@ -82,13 +83,13 @@ public class ConfigurazionePluginsTipoPluginUtils {
 		
 		valori.add(TipoPlugin.ATTRIBUTE_AUTHORITY.toString());
 		
-		if(addRicerche) {
+		if(ADD_RICERCHE) {
 			valori.add(TipoPlugin.RICERCA.toString());
 		}
-		if(addStatistiche) {
+		if(ADD_STATISTICHE) {
 			valori.add(TipoPlugin.STATISTICA.toString());
 		}
-		if(addTransazioni) {
+		if(ADD_TRANSAZIONI) {
 			valori.add(TipoPlugin.TRANSAZIONE.toString());
 		}
 				
@@ -264,7 +265,6 @@ public class ConfigurazionePluginsTipoPluginUtils {
 	}
 	
 	public static TipoPlugin getTipoPluginDefault() {
-		//return TipoPlugin.AUTENTICAZIONE;
 		return null;
 	}
 	
@@ -335,11 +335,11 @@ public class ConfigurazionePluginsTipoPluginUtils {
 		String titolo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_CLASS_NAME;
 		DataElementInfo info = new DataElementInfo(titolo);
 		
-		String info_singola = DynamicHelperCostanti.PLUGIN_CLASSNAME_INFO_SINGOLA;
-		String info_multipla_and = DynamicHelperCostanti.PLUGIN_CLASSNAME_INFO_MULTIPLA_AND;
-		String info_multipla_or = DynamicHelperCostanti.PLUGIN_CLASSNAME_INFO_MULTIPLA_OR;
+		String infoSingola = DynamicHelperCostanti.PLUGIN_CLASSNAME_INFO_SINGOLA;
+		String infoMultiplaAnd = DynamicHelperCostanti.PLUGIN_CLASSNAME_INFO_MULTIPLA_AND;
+		String infoMultiplaOr = DynamicHelperCostanti.PLUGIN_CLASSNAME_INFO_MULTIPLA_OR;
 		
-		List<String> listBody = new ArrayList<String>();
+		List<String> listBody = new ArrayList<>();
 		
 		switch (tipoPlugin) {
 		case AUTENTICAZIONE:
@@ -349,15 +349,15 @@ public class ConfigurazionePluginsTipoPluginUtils {
 			}
 			
 			if(Filtri.FILTRO_RUOLO_VALORE_EROGAZIONE.equals(ruolo)) {
-				info.setHeaderBody(info_singola);
+				info.setHeaderBody(infoSingola);
 				listBody.add(org.openspcoop2.pdd.core.autenticazione.pa.IAutenticazionePortaApplicativa.class.getName());
 			}
 			else if(Filtri.FILTRO_RUOLO_VALORE_FRUIZIONE.equals(ruolo)) {
-				info.setHeaderBody(info_singola);
+				info.setHeaderBody(infoSingola);
 				listBody.add(org.openspcoop2.pdd.core.autenticazione.pd.IAutenticazionePortaDelegata.class.getName());
 			}
 			else {
-				info.setHeaderBody(info_multipla_and);
+				info.setHeaderBody(infoMultiplaAnd);
 				listBody.add(org.openspcoop2.pdd.core.autenticazione.pa.IAutenticazionePortaApplicativa.class.getName());
 				listBody.add(org.openspcoop2.pdd.core.autenticazione.pd.IAutenticazionePortaDelegata.class.getName());
 			}
@@ -369,15 +369,15 @@ public class ConfigurazionePluginsTipoPluginUtils {
 			}
 			
 			if(Filtri.FILTRO_RUOLO_VALORE_EROGAZIONE.equals(ruolo)) {
-				info.setHeaderBody(info_singola);
+				info.setHeaderBody(infoSingola);
 				listBody.add(org.openspcoop2.pdd.core.autorizzazione.pa.IAutorizzazionePortaApplicativa.class.getName());
 			}
 			else if(Filtri.FILTRO_RUOLO_VALORE_FRUIZIONE.equals(ruolo)) {
-				info.setHeaderBody(info_singola);
+				info.setHeaderBody(infoSingola);
 				listBody.add(org.openspcoop2.pdd.core.autorizzazione.pd.IAutorizzazionePortaDelegata.class.getName());
 			}
 			else {
-				info.setHeaderBody(info_multipla_and);
+				info.setHeaderBody(infoMultiplaAnd);
 				listBody.add(org.openspcoop2.pdd.core.autorizzazione.pa.IAutorizzazionePortaApplicativa.class.getName());
 				listBody.add(org.openspcoop2.pdd.core.autorizzazione.pd.IAutorizzazionePortaDelegata.class.getName());
 			}
@@ -389,15 +389,15 @@ public class ConfigurazionePluginsTipoPluginUtils {
 			}
 			
 			if(Filtri.FILTRO_RUOLO_VALORE_EROGAZIONE.equals(ruolo)) {
-				info.setHeaderBody(info_singola);
+				info.setHeaderBody(infoSingola);
 				listBody.add(org.openspcoop2.pdd.core.autorizzazione.pa.IAutorizzazioneContenutoPortaApplicativa.class.getName());
 			}
 			else if(Filtri.FILTRO_RUOLO_VALORE_FRUIZIONE.equals(ruolo)) {
-				info.setHeaderBody(info_singola);
+				info.setHeaderBody(infoSingola);
 				listBody.add(org.openspcoop2.pdd.core.autorizzazione.pd.IAutorizzazioneContenutoPortaDelegata.class.getName());
 			}
 			else {
-				info.setHeaderBody(info_multipla_and);
+				info.setHeaderBody(infoMultiplaAnd);
 				listBody.add(org.openspcoop2.pdd.core.autorizzazione.pa.IAutorizzazioneContenutoPortaApplicativa.class.getName());
 				listBody.add(org.openspcoop2.pdd.core.autorizzazione.pd.IAutorizzazioneContenutoPortaDelegata.class.getName());
 			}
@@ -409,35 +409,35 @@ public class ConfigurazionePluginsTipoPluginUtils {
 			}
 			
 			if(Filtri.FILTRO_RUOLO_VALORE_EROGAZIONE.equals(ruolo)) {
-				info.setHeaderBody(info_multipla_or);
+				info.setHeaderBody(infoMultiplaOr);
 				listBody.add(org.openspcoop2.pdd.core.integrazione.IGestoreIntegrazionePA.class.getName());
 				listBody.add(org.openspcoop2.pdd.core.integrazione.IGestoreIntegrazionePASoap.class.getName());
 			}
 			else if(Filtri.FILTRO_RUOLO_VALORE_FRUIZIONE.equals(ruolo)) {
-				info.setHeaderBody(info_multipla_or);
+				info.setHeaderBody(infoMultiplaOr);
 				listBody.add(org.openspcoop2.pdd.core.integrazione.IGestoreIntegrazionePD.class.getName());
 				listBody.add(org.openspcoop2.pdd.core.integrazione.IGestoreIntegrazionePDSoap.class.getName());
 			}
 			else {
-				info.setHeaderBody(info_multipla_and);
+				info.setHeaderBody(infoMultiplaAnd);
 				listBody.add(org.openspcoop2.pdd.core.integrazione.IGestoreIntegrazionePA.class.getName() + "(o versione Soap)");
 				listBody.add(org.openspcoop2.pdd.core.integrazione.IGestoreIntegrazionePD.class.getName() + "(o versione Soap)");
 			}
 			break;
 		case RATE_LIMITING:
-			info.setHeaderBody(info_singola);
+			info.setHeaderBody(infoSingola);
 			listBody.add(org.openspcoop2.pdd.core.controllo_traffico.plugins.IRateLimiting.class.getName());
 			break;
 		case CONNETTORE:
-			info.setHeaderBody(info_singola);
+			info.setHeaderBody(infoSingola);
 			listBody.add(org.openspcoop2.pdd.core.connettori.IConnettore.class.getName());
 			break;
 		case ALLARME:
-			info.setHeaderBody(info_singola);
+			info.setHeaderBody(infoSingola);
 			listBody.add(org.openspcoop2.monitor.sdk.plugins.IAlarmProcessing.class.getName());
 			break;
 		case BEHAVIOUR:
-			info.setHeaderBody(info_singola);
+			info.setHeaderBody(infoSingola);
 			listBody.add(org.openspcoop2.pdd.core.behaviour.IBehaviour.class.getName());
 			break;
 		case SERVICE_HANDLER:{
@@ -448,19 +448,19 @@ public class ConfigurazionePluginsTipoPluginUtils {
 			}
 			
 			if(PluginCostanti.FILTRO_SERVICE_HANDLER_VALORE_INIT.equals(shTipo)) {
-				info.setHeaderBody(info_singola);
+				info.setHeaderBody(infoSingola);
 				listBody.add(org.openspcoop2.pdd.core.handlers.InitHandler.class.getName());
 			}
 			else if(PluginCostanti.FILTRO_SERVICE_HANDLER_VALORE_EXIT.equals(shTipo)) {
-				info.setHeaderBody(info_singola);
+				info.setHeaderBody(infoSingola);
 				listBody.add(org.openspcoop2.pdd.core.handlers.ExitHandler.class.getName());
 			}
 			else if(PluginCostanti.FILTRO_SERVICE_HANDLER_VALORE_INTEGRATION_MANAGER_REQUEST.equals(shTipo)) {
-				info.setHeaderBody(info_singola);
+				info.setHeaderBody(infoSingola);
 				listBody.add(org.openspcoop2.pdd.core.handlers.IntegrationManagerRequestHandler.class.getName());
 			}
 			else if(PluginCostanti.FILTRO_SERVICE_HANDLER_VALORE_INTEGRATION_MANAGER_RESPONSE.equals(shTipo)) {
-				info.setHeaderBody(info_singola);
+				info.setHeaderBody(infoSingola);
 				listBody.add(org.openspcoop2.pdd.core.handlers.IntegrationManagerResponseHandler.class.getName());
 			}
 			break;
@@ -478,41 +478,41 @@ public class ConfigurazionePluginsTipoPluginUtils {
 			
 			if(PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_VALORE_RICHIESTA.equals(mhRuolo)) {
 				if(PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORE_PRE_IN.equals(mhTipo)) {
-					info.setHeaderBody(info_singola);
+					info.setHeaderBody(infoSingola);
 					listBody.add(org.openspcoop2.pdd.core.handlers.PreInRequestHandler.class.getName());
 				}
 				else if(PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORE_IN.equals(mhTipo)) {
-					info.setHeaderBody(info_singola);
+					info.setHeaderBody(infoSingola);
 					listBody.add(org.openspcoop2.pdd.core.handlers.InRequestHandler.class.getName());
 				}
 				else if(PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORE_IN_PROTOCOL_INFO.equals(mhTipo)) {
-					info.setHeaderBody(info_singola);
+					info.setHeaderBody(infoSingola);
 					listBody.add(org.openspcoop2.pdd.core.handlers.InRequestProtocolHandler.class.getName());
 				}
 				else if(PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORE_OUT.equals(mhTipo)) {
-					info.setHeaderBody(info_singola);
+					info.setHeaderBody(infoSingola);
 					listBody.add(org.openspcoop2.pdd.core.handlers.OutRequestHandler.class.getName());
 				}
 				else if(PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORE_POST_OUT.equals(mhTipo)) {
-					info.setHeaderBody(info_singola);
+					info.setHeaderBody(infoSingola);
 					listBody.add(org.openspcoop2.pdd.core.handlers.PostOutRequestHandler.class.getName());
 				}
 			}
 			else {
 				if(PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORE_PRE_IN.equals(mhTipo)) {
-					info.setHeaderBody(info_singola);
+					info.setHeaderBody(infoSingola);
 					listBody.add(org.openspcoop2.pdd.core.handlers.PreInResponseHandler.class.getName());
 				}
 				else if(PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORE_IN.equals(mhTipo)) {
-					info.setHeaderBody(info_singola);
+					info.setHeaderBody(infoSingola);
 					listBody.add(org.openspcoop2.pdd.core.handlers.InResponseHandler.class.getName());
 				}
 				else if(PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORE_OUT.equals(mhTipo)) {
-					info.setHeaderBody(info_singola);
+					info.setHeaderBody(infoSingola);
 					listBody.add(org.openspcoop2.pdd.core.handlers.OutResponseHandler.class.getName());
 				}
 				else if(PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORE_POST_OUT.equals(mhTipo)) {
-					info.setHeaderBody(info_singola);
+					info.setHeaderBody(infoSingola);
 					listBody.add(org.openspcoop2.pdd.core.handlers.PostOutResponseHandler.class.getName());
 				}
 			}
@@ -523,15 +523,15 @@ public class ConfigurazionePluginsTipoPluginUtils {
 		case TRANSAZIONE:
 			break;
 		case TOKEN_VALIDAZIONE:
-			info.setHeaderBody(info_singola);
+			info.setHeaderBody(infoSingola);
 			listBody.add(org.openspcoop2.pdd.core.token.parser.ITokenParser.class.getName());
 			break;
 		case TOKEN_NEGOZIAZIONE:
-			info.setHeaderBody(info_singola);
+			info.setHeaderBody(infoSingola);
 			listBody.add(org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser.class.getName());
 			break;
 		case ATTRIBUTE_AUTHORITY:
-			info.setHeaderBody(info_singola);
+			info.setHeaderBody(infoSingola);
 			listBody.add(org.openspcoop2.pdd.core.token.attribute_authority.IRetrieveAttributeAuthorityResponseParser.class.getName());
 			break;
 		}
@@ -543,7 +543,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 		
 	} 
 	
-	public static Vector<DataElement> getSezioneDinamicaClassePlugin(Vector<DataElement> dati, TipoPlugin tipoPlugin, String ruolo, String shTipo, String mhTipo, String mhRuolo, String applicabilita,
+	public static List<DataElement> getSezioneDinamicaClassePlugin(List<DataElement> dati, TipoPlugin tipoPlugin, String ruolo, String shTipo, String mhTipo, String mhRuolo, String applicabilita,
 			boolean integrationManagerEnabled) {
 			switch (tipoPlugin) {
 			case AUTENTICAZIONE:
@@ -558,7 +558,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 				deRuolo.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_RUOLO);
 				deRuolo.setSelected(ruolo);
 				deRuolo.setPostBack(true); // serve per 'info' del className
-				dati.addElement(deRuolo);
+				dati.add(deRuolo);
 				
 				break;
 			case SERVICE_HANDLER:{
@@ -572,7 +572,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 				deShTipo.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_SERVICE_HANDLER);
 				deShTipo.setSelected(shTipo);
 				deShTipo.setPostBack(true); // serve per 'info' del className
-				dati.addElement(deShTipo);
+				dati.add(deShTipo);
 				break;
 			}
 			case MESSAGE_HANDLER:{
@@ -586,7 +586,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 				deMhRuolo.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_RUOLO_MESSAGE_HANDLER);
 				deMhRuolo.setSelected(mhRuolo);
 				deMhRuolo.setPostBack(true); // serve per 'info' del className
-				dati.addElement(deMhRuolo);
+				dati.add(deMhRuolo);
 				
 				DataElement deMhTipo = new DataElement();
 				deMhTipo.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_FASE_MESSAGE_HANDLER);
@@ -599,7 +599,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 				deMhTipo.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_FASE_MESSAGE_HANDLER);
 				deMhTipo.setSelected(mhTipo);
 				deMhTipo.setPostBack(true); // serve per 'info' del className
-				dati.addElement(deMhTipo);
+				dati.add(deMhTipo);
 				
 				break;
 			}
@@ -613,7 +613,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 				deApplicabilita.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_APPLICABILITA);
 				deApplicabilita.setSelected(applicabilita);
 				deApplicabilita.setPostBack(false); // non serve per 'info' del className, non cambia
-				dati.addElement(deApplicabilita);
+				dati.add(deApplicabilita);
 				
 				break;
 				
@@ -641,28 +641,10 @@ public class ConfigurazionePluginsTipoPluginUtils {
 			case AUTORIZZAZIONE:
 			case AUTORIZZAZIONE_CONTENUTI:
 			case INTEGRAZIONE:
-				// una property con nome = Ruolo
-				for (PluginProprietaCompatibilita prop : plugin.getPluginProprietaCompatibilitaList()) {
-					if(prop.getNome().equals(nome))
-						return prop.getValore();
-				}
-				return null;
 			case SERVICE_HANDLER:
-				// nome handler
-				for (PluginProprietaCompatibilita prop : plugin.getPluginProprietaCompatibilitaList()) {
-					if(prop.getNome().equals(nome))
-						return prop.getValore();
-				}
-				return null;
 			case MESSAGE_HANDLER:
-				// message handler e ruolo messa ge handler
-				for (PluginProprietaCompatibilita prop : plugin.getPluginProprietaCompatibilitaList()) {
-					if(prop.getNome().equals(nome))
-						return prop.getValore();
-				}
-				return null;
 			case ALLARME:
-				// una property con nome = Applicabilita
+				// una property con nome = Ruolo
 				for (PluginProprietaCompatibilita prop : plugin.getPluginProprietaCompatibilitaList()) {
 					if(prop.getNome().equals(nome))
 						return prop.getValore();
@@ -748,7 +730,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 		try {
 			
 			int length = 1;
-			if(valuesFiltro!=null && valuesFiltro.size()>0) {
+			if(valuesFiltro!=null && !valuesFiltro.isEmpty()) {
 				length+=valuesFiltro.size();
 			}
 			String [] values = new String[length];

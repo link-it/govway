@@ -35,15 +35,15 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoS
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class AutenticazioneHttpsTest extends ConfigLoader {
 
-	public final static String api = "TestOCSPAutenticazioneHTTPS";
-	public final static String soggetto_ocsp = "SoggettoInternoTestAutenticazioneHttpsOcsp"; 
-	public final static String soggetto_xca = "SoggettoInternoTestAutenticazioneHttpsXca"; 
+	public static final String api = "TestOCSPAutenticazioneHTTPS";
+	public static final String soggetto_ocsp = "SoggettoInternoTestAutenticazioneHttpsOcsp"; 
+	public static final String soggetto_xca = "SoggettoInternoTestAutenticazioneHttpsXca"; 
 	
-	public final static String opensslCommand = System.getProperty(Utils.PROPERTY_OCSP_OPENSSL_COMMAND);
+	public static final String opensslCommand = System.getProperty(Utils.PROPERTY_OCSP_OPENSSL_COMMAND);
 	
-	public final static int waitStartupServer = Integer.valueOf(System.getProperty(Utils.PROPERTY_OCSP_WAIT_STARTUP_SERVER));
+	public static final int waitStartupServer = Integer.valueOf(System.getProperty(Utils.PROPERTY_OCSP_WAIT_STARTUP_SERVER));
 	
-	public final static int waitStopServer = Integer.valueOf(System.getProperty(Utils.PROPERTY_OCSP_WAIT_STOP_SERVER));
+	public static final int waitStopServer = Integer.valueOf(System.getProperty(Utils.PROPERTY_OCSP_WAIT_STOP_SERVER));
 	
 
 	@Test

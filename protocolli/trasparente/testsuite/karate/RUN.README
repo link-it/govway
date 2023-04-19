@@ -242,6 +242,21 @@
   cp jwks/testJWKprivate.jwk /etc/govway/keys/
   cp jwks/testJWKpublic.jwk /etc/govway/keys/
 
+- Impostare in govway_local.properties per i test sulla sovrascrittura della configurazione https della jvm:
+
+	org.openspcoop2.pdd.connettori.inoltroBuste.http.urlHttps.overrideDefaultConfiguration=true
+	org.openspcoop2.pdd.connettori.inoltroBuste.http.urlHttps.repository=/etc/govway/https/fruizioni
+	org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.http.urlHttps.repository=/etc/govway/https/erogazioni
+
+
+  Copiare le configurazioni:
+
+        cp -r https/override/ /etc/govway/keys/
+	mkdir -p /etc/govway/https/erogazioni/
+	cp https/override/erogazioni/erogazione_HttpsOverrideJvmConfigSoggetto1.properties  /etc/govway/https/erogazioni/
+	mkdir -p /etc/govway/https/fruizioni/
+	cp https/override/fruizioni/fruizione_HttpsOverrideJvmConfigSoggetto1.properties  /etc/govway/https/fruizioni/
+
 Per eseguire i test:
 	ant run_test
 
@@ -338,6 +353,9 @@ Di seguito vengono descritti i test del package 'trasformazione':
 - 'protocollo', verifica la trasformazione utilizzata per effettuare trasformazioni di protocollo rest->soap e viceversa
   ant run_test -Ddelete=false -Dload=false -Dpackage=trasformazione.protocollo
 
+- 'info_integrazione', verifica la trasformazione utilizzata per inoltrare informazioni al backend
+  ant run_test -Ddelete=false -Dload=false -Dpackage=trasformazione.info_integrazione
+
 Di seguito vengono descritti i test del package 'registrazione_messaggi':
 
 - 'dump_binario', verifica la registrazione dei messaggi in modalità 'binaria'
@@ -375,6 +393,9 @@ Di seguito vengono descritti i test del package 'connettori':
 
 - 'proxy_pass', verifica le regole di proxy pass
    ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.proxy_pass
+
+- 'override_jvm', verifica la funzionalità di overriding delle configurazioni jvm per gli endpoint https
+   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.override_jvm
 
 Di seguito vengono descritti i test del package 'token':
 

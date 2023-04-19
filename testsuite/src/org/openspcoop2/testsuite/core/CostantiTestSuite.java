@@ -32,10 +32,10 @@ package org.openspcoop2.testsuite.core;
 
 public class CostantiTestSuite {
 
-	public final static String OPENSPCOOP2_LOCAL_HOME = "GOVWAY_HOME";
+	public static final String OPENSPCOOP2_LOCAL_HOME = "GOVWAY_HOME";
 	
-    public final static String OPENSPCOOP2_TESTSUITE_LOCAL_PATH = "testsuite_local.properties";
-    public final static String OPENSPCOOP2_TESTSUITE_PROPERTIES = "OPENSPCOOP2_TESTSUITE_PROPERTIES";
+    public static final String OPENSPCOOP2_TESTSUITE_LOCAL_PATH = "testsuite_local.properties";
+    public static final String OPENSPCOOP2_TESTSUITE_PROPERTIES = "OPENSPCOOP2_TESTSUITE_PROPERTIES";
 	
 	
 	/** Timeout */

@@ -73,7 +73,7 @@ public final class PorteApplicativeExtendedDel extends AbstractServletListExtend
 	@Override
 	protected List<Parameter> getTitle(Object object,
 			ConsoleHelper consoleHelper) throws Exception {
-		return PorteApplicativeExtendedUtilities.getTitle(object, consoleHelper);
+		return PorteApplicativeExtendedUtilities.getTitle(consoleHelper);
 	}
 
 	@Override

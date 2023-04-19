@@ -44,19 +44,19 @@ import org.openspcoop2.utils.UtilsException;
  */
 public class JwtHeaders {
 
-	public final static String JWT_HDR_ALG = "alg"; // (Algorithm) Header Parameter
-	public final static String JWT_HDR_JKU = "jku"; //  (JWK Set URL) Header Parameter
-	public final static String JWT_HDR_JWK = "jwk"; // (JSON Web Key) Header Parameter
-	public final static String JWT_HDR_KID = "kid"; // (Key ID) Header Parameter
-	public final static String JWT_HDR_X5U = "x5u"; // (X.509 URL) Header Parameter
-	public final static String JWT_HDR_X5C = "x5c"; // (X.509 Certificate Chain) Header Parameter
-	public final static String JWT_HDR_X5T = "x5t"; // (X.509 Certificate SHA-1 Thumbprint) Header Parameter
-	public final static String JWT_HDR_X5t_S256 = "x5t#S256"; // (X.509 Certificate SHA-256 Thumbprint) Header Parameter
-	public final static String JWT_HDR_TYP = "typ"; // (Type) Header Parameter
-	public final static String JWT_HDR_CTY = "cty"; // (Content Type) Header Parameter
-	public final static String JWT_HDR_CRIT = "crit"; // (Critical) Header Parameter
-	public final static String JWT_HDR_ENC = "enc"; // (Encryption Algorithm) Header Parameter [solo in jwe]
-	public final static String JWT_HDR_ZIP = "zip"; // (Compression Algorithm) Header Parameter [solo in jwe]
+	public static final String JWT_HDR_ALG = "alg"; // (Algorithm) Header Parameter
+	public static final String JWT_HDR_JKU = "jku"; //  (JWK Set URL) Header Parameter
+	public static final String JWT_HDR_JWK = "jwk"; // (JSON Web Key) Header Parameter
+	public static final String JWT_HDR_KID = "kid"; // (Key ID) Header Parameter
+	public static final String JWT_HDR_X5U = "x5u"; // (X.509 URL) Header Parameter
+	public static final String JWT_HDR_X5C = "x5c"; // (X.509 Certificate Chain) Header Parameter
+	public static final String JWT_HDR_X5T = "x5t"; // (X.509 Certificate SHA-1 Thumbprint) Header Parameter
+	public static final String JWT_HDR_X5t_S256 = "x5t#S256"; // (X.509 Certificate SHA-256 Thumbprint) Header Parameter
+	public static final String JWT_HDR_TYP = "typ"; // (Type) Header Parameter
+	public static final String JWT_HDR_CTY = "cty"; // (Content Type) Header Parameter
+	public static final String JWT_HDR_CRIT = "crit"; // (Critical) Header Parameter
+	public static final String JWT_HDR_ENC = "enc"; // (Encryption Algorithm) Header Parameter [solo in jwe]
+	public static final String JWT_HDR_ZIP = "zip"; // (Compression Algorithm) Header Parameter [solo in jwe]
 	 
 	private String type;
 	private String contentType;

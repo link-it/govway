@@ -24,7 +24,8 @@
 package org.openspcoop2.web.lib.mvc;
 
 import java.io.Serializable;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * GeneralData
@@ -42,15 +43,15 @@ public class GeneralData implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	String product;
-	String url;
-	String css;
-	String language;
-	String title;
-	String linkFoot;
-	Vector<GeneralLink> headerLinks;
-	Vector<GeneralLink> modalitaLinks;
-	Vector<GeneralLink> soggettiLinks;
+	private String product;
+	private String url;
+	private String css;
+	private String language;
+	private String title;
+	private String linkFoot;
+	private List<GeneralLink> headerLinks;
+	private List<GeneralLink> modalitaLinks;
+	private List<GeneralLink> soggettiLinks;
 	private String contextName;
 	private String logoHeaderImage;
 	private String logoHeaderTitolo;
@@ -64,9 +65,9 @@ public class GeneralData implements Serializable{
 		this.language = "";
 		this.title = "";
 		this.linkFoot = linkFoot;
-		this.headerLinks = new Vector<GeneralLink>();
-		this.modalitaLinks = new Vector<GeneralLink>();
-		this.soggettiLinks = new Vector<GeneralLink>();
+		this.headerLinks = new ArrayList<>();
+		this.modalitaLinks = new ArrayList<>();
+		this.soggettiLinks = new ArrayList<>();
 		this.logoHeaderImage = "";
 		this.logoHeaderLink= "";
 		this.logoHeaderTitolo= "";
@@ -118,10 +119,10 @@ public class GeneralData implements Serializable{
 		return this.linkFoot;
 	}
 
-	public void setHeaderLinks(Vector<GeneralLink> v) {
+	public void setHeaderLinks(List<GeneralLink> v) {
 		this.headerLinks = v;
 	}
-	public Vector<GeneralLink> getHeaderLinks() {
+	public List<GeneralLink> getHeaderLinks() {
 		return this.headerLinks;
 	}
 
@@ -153,16 +154,16 @@ public class GeneralData implements Serializable{
 	public void setLogoHeaderLink(String logoHeaderLink) {
 		this.logoHeaderLink = logoHeaderLink;
 	}
-	public Vector<GeneralLink> getModalitaLinks() {
+	public List<GeneralLink> getModalitaLinks() {
 		return this.modalitaLinks;
 	}
-	public void setModalitaLinks(Vector<GeneralLink> modalitaLinks) {
+	public void setModalitaLinks(List<GeneralLink> modalitaLinks) {
 		this.modalitaLinks = modalitaLinks;
 	}
-	public Vector<GeneralLink> getSoggettiLinks() {
+	public List<GeneralLink> getSoggettiLinks() {
 		return this.soggettiLinks;
 	}
-	public void setSoggettiLinks(Vector<GeneralLink> soggettiLinks) {
+	public void setSoggettiLinks(List<GeneralLink> soggettiLinks) {
 		this.soggettiLinks = soggettiLinks;
 	}
 	public boolean isVisualizzaLinkHome() {

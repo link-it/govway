@@ -65,7 +65,7 @@ public class Utilities extends ConfigLoader {
 	public static String descr_notifica_ko = "Notifica fallita";
 	public static String descr_notifica_ko_json = "{\"listaAnomalie\":[{\"codiceAnomalia\":\"0083\",\"descrizioneAnomalia\":\"Codice Classificazione non presente in base dati per attributo 9.2.2.1.0.0\",\"campiInErrore\":\"InizioRapporto.QualificaProfessionale\"},{\"codiceAnomalia\":\"0001\",\"descrizioneAnomalia\":\"La Qualifica Professionale '9.2.2.1.0.0' non e' riconosciuta dalla corrispondente tabella di classificazione.\",\"campiInErrore\":\"InizioRapporto.QualificaProfessionale\"}]}";
 	
-	private final static String soapaction = "";
+	private static final String soapaction = "";
 
 	public static HttpResponse _test(
 			TipoServizio tipoServizio, String contentTypeParam, byte[]content,

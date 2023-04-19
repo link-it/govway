@@ -42,36 +42,36 @@ GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData
 PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
 String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 
-Vector<?> v = pd.getDati();
+List<?> v = pd.getDati();
 
 String numeroEntryS = request.getParameter("numeroEntry");
 int numeroEntry = Integer.parseInt(numeroEntryS);
 
-Vector<?> riga = (Vector<?>) v.elementAt(numeroEntry);
+List<?> riga = (List<?>) v.get(numeroEntry);
 
-Vector<DataElement> vectorRiepilogo = new Vector<DataElement>();
-Vector<DataElement> vectorImmagini = new Vector<DataElement>();
-Vector<DataElement> vectorCheckBox = new Vector<DataElement>();
+List<DataElement> listRiepilogo = new ArrayList<DataElement>();
+List<DataElement> listImmagini = new ArrayList<DataElement>();
+List<DataElement> listCheckBox = new ArrayList<DataElement>();
 boolean visualizzaMetadati = false;
 
 for (int j = 0; j < riga.size(); j++) {
-    DataElement de = (DataElement) riga.elementAt(j);
+    DataElement de = (DataElement) riga.get(j);
     
     if (de.getType().equals("image")) {
-    	vectorImmagini.add(de);
+    	listImmagini.add(de);
    	} else  if (de.getType().equals("checkbox")) {
-   		vectorCheckBox.add(de);
+   		listCheckBox.add(de);
     } else{
-    	vectorRiepilogo.add(de);
+    	listRiepilogo.add(de);
     }
 }
 
-visualizzaMetadati = vectorRiepilogo.size() > 1;
+visualizzaMetadati = listRiepilogo.size() > 1;
 %>
 <td>
 	<div id="entry_<%=numeroEntryS %>" class="entryTokenPolicy">
 			<% 
-				DataElement deTitolo = (DataElement) vectorRiepilogo.elementAt(0);
+				DataElement deTitolo = (DataElement) listRiepilogo.get(0);
 				String deTitoloName = "url_entry_"+numeroEntry;
 				String deTitoloValue = !deTitolo.getValue().equals("") ? deTitolo.getValue() : "&nbsp;";
 				String visualizzaAjaxStatus = deTitolo.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
@@ -92,7 +92,7 @@ visualizzaMetadati = vectorRiepilogo.size() > 1;
 		<div id="titolo_<%=numeroEntryS %>" class="titoloEntry">
 			<span class="titoloEntry"><%=deTitoloValue %>&nbsp;&nbsp;&nbsp;&nbsp;</span>	
 			
-			<% if(vectorImmagini.size() > 0){
+			<% if(listImmagini.size() > 0){
 				String iconaComandiMenu = Costanti.ICONA_MENU_AZIONI_BUTTON;
 				String tipComandiMenu = " title=\"" + Costanti.ICONA_MENU_AZIONI_BUTTON_TOOLTIP + "\"" ;
 				String idDivIconMenu = "divIconMenu_"+numeroEntry;
@@ -111,8 +111,8 @@ visualizzaMetadati = vectorRiepilogo.size() > 1;
    					
    					<% 
 					// creazione elementi hidden necessari per visualizzare le modali
-					for(int idxLink =0; idxLink < vectorImmagini.size() ; idxLink ++ ){
-						DataElement de = (DataElement) vectorImmagini.elementAt(idxLink);
+					for(int idxLink =0; idxLink < listImmagini.size() ; idxLink ++ ){
+						DataElement de = (DataElement) listImmagini.get(idxLink);
 						String deTip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
 						String classLink = "";
 						
@@ -162,8 +162,8 @@ visualizzaMetadati = vectorRiepilogo.size() > 1;
 			         	// set context menu button
 			            contextMenu_<%=numeroEntry %>.button = mouseButton.LEFT;
 						<% 
-							for(int idxLink =0; idxLink < vectorImmagini.size() ; idxLink ++ ){
-								DataElement de = (DataElement) vectorImmagini.elementAt(idxLink);
+							for(int idxLink =0; idxLink < listImmagini.size() ; idxLink ++ ){
+								DataElement de = (DataElement) listImmagini.get(idxLink);
 								String deTip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
 								String classLink = "";
 								
@@ -252,7 +252,7 @@ visualizzaMetadati = vectorRiepilogo.size() > 1;
 		</div>
 		<% 
 		if(visualizzaMetadati){
-			DataElement deMetadati = (DataElement) vectorRiepilogo.elementAt(1);
+			DataElement deMetadati = (DataElement) listRiepilogo.get(1);
 			String deMetadatiValue = !deMetadati.getValue().equals("") ? deMetadati.getValue() : "&nbsp;";
 			%>
 			<div id="metadati_<%=numeroEntryS %>" class="metadatiEntry">

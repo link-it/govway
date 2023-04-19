@@ -80,40 +80,40 @@ import org.slf4j.Logger;
 public class MonitoraggioRisorse extends NotificationBroadcasterSupport implements DynamicMBean {
 
 	/** Nomi attributi */
-	public final static String NUMERO_MSG_IN_CONSEGNA = "numMsgInConsegna";
-	public final static String TEMPO_MEDIO_ATTESA_IN_CONSEGNA = "tempoMedioAttesaInConsegna";
-	public final static String TEMPO_MAX_ATTESA_IN_CONSEGNA = "tempoMaxAttesaInConsegna";
-	public final static String NUMERO_MSG_IN_SPEDIZIONE = "numMsgInSpedizione";
-	public final static String TEMPO_MEDIO_ATTESA_IN_SPEDIZIONE = "tempoMedioAttesaInSpedizione";
-	public final static String TEMPO_MAX_ATTESA_IN_SPEDIZIONE = "tempoMaxAttesaInSpedizione";
-	public final static String NUMERO_MSG_IN_PROCESSAMENTO = "numMsgInProcessamento";
-	public final static String TEMPO_MEDIO_ATTESA_IN_PROCESSAMENTO = "tempoMedioAttesaInProcessamento";
-	public final static String TEMPO_MAX_ATTESA_IN_PROCESSAMENTO = "tempoMaxAttesaInProcessamento";
-	public final static String NUMERO_MSG_TOTALI = "totMessaggi";
-	public final static String TEMPO_MEDIO_ATTESA_MSG_TOTALI = "tempoMedioAttesa";
-	public final static String TEMPO_MAX_ATTESA_MSG_TOTALI = "tempoMaxAttesa";
-	public final static String TOT_MSG_DUPLICATI = "totMessaggiDuplicati";
-	public final static String STATO_DATI_MONITORAGGIO = "statoDatiMonitoraggioPdD";
-	public final static String RISORSE_DI_SISTEMA = "risorseDiSistema";
+	public static final String NUMERO_MSG_IN_CONSEGNA = "numMsgInConsegna";
+	public static final String TEMPO_MEDIO_ATTESA_IN_CONSEGNA = "tempoMedioAttesaInConsegna";
+	public static final String TEMPO_MAX_ATTESA_IN_CONSEGNA = "tempoMaxAttesaInConsegna";
+	public static final String NUMERO_MSG_IN_SPEDIZIONE = "numMsgInSpedizione";
+	public static final String TEMPO_MEDIO_ATTESA_IN_SPEDIZIONE = "tempoMedioAttesaInSpedizione";
+	public static final String TEMPO_MAX_ATTESA_IN_SPEDIZIONE = "tempoMaxAttesaInSpedizione";
+	public static final String NUMERO_MSG_IN_PROCESSAMENTO = "numMsgInProcessamento";
+	public static final String TEMPO_MEDIO_ATTESA_IN_PROCESSAMENTO = "tempoMedioAttesaInProcessamento";
+	public static final String TEMPO_MAX_ATTESA_IN_PROCESSAMENTO = "tempoMaxAttesaInProcessamento";
+	public static final String NUMERO_MSG_TOTALI = "totMessaggi";
+	public static final String TEMPO_MEDIO_ATTESA_MSG_TOTALI = "tempoMedioAttesa";
+	public static final String TEMPO_MAX_ATTESA_MSG_TOTALI = "tempoMaxAttesa";
+	public static final String TOT_MSG_DUPLICATI = "totMessaggiDuplicati";
+	public static final String STATO_DATI_MONITORAGGIO = "statoDatiMonitoraggioPdD";
+	public static final String RISORSE_DI_SISTEMA = "risorseDiSistema";
 	
 	/** Nomi metodi */
-	public final static String GET_STATO_RISORSE_DI_SISTEMA = "getStatoRisorseSistema";
-	public final static String GET_STATO_RISORSE_DI_SISTEMA_METHOD2 = "listStatoRisorseSistema"; // per farlo comparire in jmx-console
-	public final static String GET_STATO_CACHES = "getStatoCache";
-	public final static String GET_STATO_CACHES_METHOD2 = "listStatoCache"; // per farlo comparire in jmx-console
-	public final static String CONNESSIONI_ALLOCATE_DB_MANAGER = "getUsedDBConnections";
-	public final static String CONNESSIONI_ALLOCATE_DB_MANAGER_METHOD2 = "listUsedDBConnections"; // per farlo comparire in jmx-console
-	public final static String CONNESSIONI_ALLOCATE_QUEUE_MANAGER = "getUsedQueueConnections";
-	public final static String CONNESSIONI_ALLOCATE_QUEUE_MANAGER_METHOD2 = "listUsedQueueConnections"; // per farlo comparire in jmx-console
-	public final static String TRANSAZIONI_ATTIVE_ID = "getActiveTransactions";
-	public final static String TRANSAZIONI_ATTIVE_ID_METHOD2 = "listActiveTransactions"; // per farlo comparire in jmx-console
-	public final static String TRANSAZIONI_ATTIVE_ID_PROTOCOLLO = "getActiveProtocolIds";
-	public final static String TRANSAZIONI_ATTIVE_ID_PROTOCOLLO_METHOD2 = "listActiveProtocolIds"; // per farlo comparire in jmx-console
-	public final static String GET_DETTAGLIO_TRANSAZIONE_ATTIVA = "getActiveTransactionDetails";
-	public final static String CONNESSIONI_ALLOCATE_CONNETTORI_PD = "getActivePDConnections";
-	public final static String CONNESSIONI_ALLOCATE_CONNETTORI_PD_METHOD2 = "listActivePDConnections"; // per farlo comparire in jmx-console
-	public final static String CONNESSIONI_ALLOCATE_CONNETTORI_PA = "getActivePAConnections";
-	public final static String CONNESSIONI_ALLOCATE_CONNETTORI_PA_METHOD2 = "listActivePAConnections"; // per farlo comparire in jmx-console
+	public static final String GET_STATO_RISORSE_DI_SISTEMA = "getStatoRisorseSistema";
+	public static final String GET_STATO_RISORSE_DI_SISTEMA_METHOD2 = "listStatoRisorseSistema"; // per farlo comparire in jmx-console
+	public static final String GET_STATO_CACHES = "getStatoCache";
+	public static final String GET_STATO_CACHES_METHOD2 = "listStatoCache"; // per farlo comparire in jmx-console
+	public static final String CONNESSIONI_ALLOCATE_DB_MANAGER = "getUsedDBConnections";
+	public static final String CONNESSIONI_ALLOCATE_DB_MANAGER_METHOD2 = "listUsedDBConnections"; // per farlo comparire in jmx-console
+	public static final String CONNESSIONI_ALLOCATE_QUEUE_MANAGER = "getUsedQueueConnections";
+	public static final String CONNESSIONI_ALLOCATE_QUEUE_MANAGER_METHOD2 = "listUsedQueueConnections"; // per farlo comparire in jmx-console
+	public static final String TRANSAZIONI_ATTIVE_ID = "getActiveTransactions";
+	public static final String TRANSAZIONI_ATTIVE_ID_METHOD2 = "listActiveTransactions"; // per farlo comparire in jmx-console
+	public static final String TRANSAZIONI_ATTIVE_ID_PROTOCOLLO = "getActiveProtocolIds";
+	public static final String TRANSAZIONI_ATTIVE_ID_PROTOCOLLO_METHOD2 = "listActiveProtocolIds"; // per farlo comparire in jmx-console
+	public static final String GET_DETTAGLIO_TRANSAZIONE_ATTIVA = "getActiveTransactionDetails";
+	public static final String CONNESSIONI_ALLOCATE_CONNETTORI_PD = "getActivePDConnections";
+	public static final String CONNESSIONI_ALLOCATE_CONNETTORI_PD_METHOD2 = "listActivePDConnections"; // per farlo comparire in jmx-console
+	public static final String CONNESSIONI_ALLOCATE_CONNETTORI_PA = "getActivePAConnections";
+	public static final String CONNESSIONI_ALLOCATE_CONNETTORI_PA_METHOD2 = "listActivePAConnections"; // per farlo comparire in jmx-console
 	
 	
 	
@@ -713,20 +713,20 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 		}
 	}
 	
-	public final static String MSG_NESSUNA_CONNESSIONE_ALLOCATA = "Nessuna connessione allocata";
-	public final static String MSG_CONNESSIONI_ALLOCATE = " risorse allocate: ";
-	public final static String MSG_CONNESSIONI_ALLOCATE_TRANSAZIONI = " risorse allocate per la gestione delle transazioni: ";
-	public final static String MSG_CONNESSIONI_ALLOCATE_STATISTICHE = " risorse allocate per la generazione delle statistiche: ";
-	public final static String MSG_CONNESSIONI_ALLOCATE_CONSEGNE_PRESE_IN_CARICO_SMISTATORE = " risorse allocate per lo smistatore dei messaggi presi in carico: ";
-	public final static String MSG_CONNESSIONI_ALLOCATE_CONSEGNE_PRESE_IN_CARICO_RUNTIME = " risorse allocate per il gestore runtime dei messaggi presi in carico: ";
-	public final static String MSG_CONNESSIONI_ALLOCATE_CONSEGNE_PRESE_IN_CARICO_TRANSAZIONI = " risorse allocate per il gestore delle tracce relative ai messaggi presi in carico: ";
-	public final static String MSG_CONNESSIONI_ALLOCATE_CONSEGNE_MESSAGE_BOX_RUNTIME = " risorse allocate per il gestore runtime del servizio MessageBox: ";
-	public final static String MSG_CONNESSIONI_ALLOCATE_CONSEGNE_MESSAGE_BOX_TRANSAZIONI = " risorse allocate per il gestore delle tracce del servizio MessageBox: ";
-	public final static String MSG_CONNESSIONI_HTTP_ALLOCATE = " connessioni allocate: ";
+	public static final String MSG_NESSUNA_CONNESSIONE_ALLOCATA = "Nessuna connessione allocata";
+	public static final String MSG_CONNESSIONI_ALLOCATE = " risorse allocate: ";
+	public static final String MSG_CONNESSIONI_ALLOCATE_TRANSAZIONI = " risorse allocate per la gestione delle transazioni: ";
+	public static final String MSG_CONNESSIONI_ALLOCATE_STATISTICHE = " risorse allocate per la generazione delle statistiche: ";
+	public static final String MSG_CONNESSIONI_ALLOCATE_CONSEGNE_PRESE_IN_CARICO_SMISTATORE = " risorse allocate per lo smistatore dei messaggi presi in carico: ";
+	public static final String MSG_CONNESSIONI_ALLOCATE_CONSEGNE_PRESE_IN_CARICO_RUNTIME = " risorse allocate per il gestore runtime dei messaggi presi in carico: ";
+	public static final String MSG_CONNESSIONI_ALLOCATE_CONSEGNE_PRESE_IN_CARICO_TRANSAZIONI = " risorse allocate per il gestore delle tracce relative ai messaggi presi in carico: ";
+	public static final String MSG_CONNESSIONI_ALLOCATE_CONSEGNE_MESSAGE_BOX_RUNTIME = " risorse allocate per il gestore runtime del servizio MessageBox: ";
+	public static final String MSG_CONNESSIONI_ALLOCATE_CONSEGNE_MESSAGE_BOX_TRANSAZIONI = " risorse allocate per il gestore delle tracce del servizio MessageBox: ";
+	public static final String MSG_CONNESSIONI_HTTP_ALLOCATE = " connessioni allocate: ";
 	
-	public final static String MSG_NESSUNA_TRANSAZIONE_ATTIVA = "Nessuna transazione attiva";
-	public final static String MSG_TRANSAZIONI_ATTIVE = " transazioni attive: ";
-	public final static String MSG_TRANSAZIONI_ATTIVE_ID_PROTOCOLLO = " id di protocollo attivi: ";
+	public static final String MSG_NESSUNA_TRANSAZIONE_ATTIVA = "Nessuna transazione attiva";
+	public static final String MSG_TRANSAZIONI_ATTIVE = " transazioni attive: ";
+	public static final String MSG_TRANSAZIONI_ATTIVE_ID_PROTOCOLLO = " id di protocollo attivi: ";
 	
 	public String getUsedDBConnections(){
 		String[] risorse = null;

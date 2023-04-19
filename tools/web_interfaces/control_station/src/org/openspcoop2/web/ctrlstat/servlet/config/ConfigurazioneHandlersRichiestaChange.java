@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -132,7 +131,7 @@ public class ConfigurazioneHandlersRichiestaChange extends Action {
 			// Preparo il menu
 			confHelper.makeMenu();
 			
-			List<Parameter> lstParamSession = new ArrayList<Parameter>();
+			List<Parameter> lstParamSession = new ArrayList<>();
 
 			Parameter parRuoloPorta = null;
 			if(ruoloPorta!=null) {
@@ -173,9 +172,9 @@ public class ConfigurazioneHandlersRichiestaChange extends Action {
 				lstParam = lstParamPorta;
 			}
 			else {
-				lstParam  = new ArrayList<Parameter>();
+				lstParam  = new ArrayList<>();
 				
-				if(lstParamSession.size() > 0) {
+				if(!lstParamSession.isEmpty()) {
 					lstParam.add(new Parameter(labelHandler, servletListURL, lstParamSession.toArray(new Parameter[lstParamSession.size()])));
 				} else {
 					lstParam.add(new Parameter(labelHandler, servletListURL));
@@ -198,8 +197,8 @@ public class ConfigurazioneHandlersRichiestaChange extends Action {
 				}
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				confHelper.addHandlerRichiestaToDati(dati, tipoOperazione, idHandlerS, nomePlugin, stato, ruoloPorta, idPortaS, serviceBinding, fase, tipiPluginGiaUtilizzati, messaggioValoriNonDisponibili); 
 				
@@ -220,8 +219,8 @@ public class ConfigurazioneHandlersRichiestaChange extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				confHelper.addHandlerRichiestaToDati(dati, tipoOperazione, idHandlerS, nomePlugin, stato, ruoloPorta, idPortaS, serviceBinding, fase, tipiPluginGiaUtilizzati, messaggioValoriNonDisponibili); 
 				
@@ -239,7 +238,7 @@ public class ConfigurazioneHandlersRichiestaChange extends Action {
 				
 			handler.setStato(StatoFunzionalita.toEnumConstant(stato));
 			
-			List<Object> oggettiDaAggiornare = new ArrayList<Object>();
+			List<Object> oggettiDaAggiornare = new ArrayList<>();
 			List<ConfigurazioneHandler> listaDaAggiornare = null;
 			if(ruoloPorta !=null) {
 				if(ruoloPorta.equals(TipoPdD.DELEGATA)) {

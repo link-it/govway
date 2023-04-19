@@ -48,8 +48,13 @@ public class NegoziazioneJWKsTest extends ConfigLoader {
 		_test(logCore, "test");
 		
 	}
-
 	
+	@Test
+	public void jwk_kid() throws Exception {
+		
+		_test(logCore, "test-kid");
+		
+	}
 	
 	
 	

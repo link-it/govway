@@ -104,9 +104,9 @@ import org.slf4j.Logger;
  */
 public abstract class ConnettoreBase extends AbstractCore implements IConnettore {
 
-	public final static MapKey<String> RESPONSE_FROM_CACHE = org.openspcoop2.utils.Map.newMapKey("RESPONSE_READED_FROM_CACHE");
-	public final static String LOCATION_CACHED = "govway://responseCaching";
-	public final static String LOCATION_CACHED_SEPARATOR_REQUEST_URL = "\n";
+	public static final MapKey<String> RESPONSE_FROM_CACHE = org.openspcoop2.utils.Map.newMapKey("RESPONSE_READED_FROM_CACHE");
+	public static final String LOCATION_CACHED = "govway://responseCaching";
+	public static final String LOCATION_CACHED_SEPARATOR_REQUEST_URL = "\n";
 	
 	/** Proprieta' del connettore */
 	protected java.util.Map<String,String> properties;

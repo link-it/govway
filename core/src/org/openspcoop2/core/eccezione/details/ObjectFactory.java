@@ -103,7 +103,7 @@ public class ObjectFactory {
         return new DettaglioEccezione();
     }
 
-    private final static QName _FaultDetails = new QName("http://govway.org/integration/fault/details", "fault-details");
+    private static final QName _FaultDetails = new QName("http://govway.org/integration/fault/details", "fault-details");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DettaglioEccezione }{@code >}}

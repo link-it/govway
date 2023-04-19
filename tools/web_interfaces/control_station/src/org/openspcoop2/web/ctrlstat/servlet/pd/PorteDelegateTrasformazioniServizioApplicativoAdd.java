@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -136,7 +135,6 @@ public final class PorteDelegateTrasformazioniServizioApplicativoAdd extends Act
 				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(soggInt);
 				idSoggetto = new IDSoggetto(soggetto.getTipo(),soggetto.getNome());
 			}
-			// String pdd = soggetto.getServer();
 
 			// Prendo nome della porta delegata
 			PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
@@ -227,15 +225,15 @@ public final class PorteDelegateTrasformazioniServizioApplicativoAdd extends Act
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 				
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				TrasformazioneRegolaApplicabilitaRichiesta applicabilita = regola.getApplicabilita();
 				
 				// Prendo la lista di servizioApplicativo associati al soggetto
 				// e la metto in un array
-				Vector<String> silV = new Vector<String>();
+				List<String> silV = new ArrayList<>();
 				boolean bothSslAndToken = false;
 				List<IDServizioApplicativoDB> oldSilList = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione,appId,
 						filtroTipoSA, 
@@ -257,7 +255,7 @@ public final class PorteDelegateTrasformazioniServizioApplicativoAdd extends Act
 						silV.add(tmpNome);
 				}
 				String[] servizioApplicativoList = null;
-				if (silV.size() > 0) {
+				if (!silV.isEmpty()) {
 					servizioApplicativoList = new String[silV.size()];
 					for (int j = 0; j < silV.size(); j++)
 						servizioApplicativoList[j] = silV.get(j);
@@ -297,9 +295,9 @@ public final class PorteDelegateTrasformazioniServizioApplicativoAdd extends Act
 				String azioniDBCheck = StringUtils.isNotEmpty(azioniAsString) ? azioniAsString : null;
 				String connettoriAsString = (regola.getApplicabilita() != null && regola.getApplicabilita().getConnettoreList() != null) ? StringUtils.join(regola.getApplicabilita().getConnettoreList(), ",") : "";
 				String connettoriDBCheck = StringUtils.isNotEmpty(connettoriAsString) ? connettoriAsString : null;
-				TrasformazioneRegola trasformazioneDBCheck_criteri = porteDelegateCore.getTrasformazione(Long.parseLong(idPorta), azioniDBCheck, patternDBCheck, contentTypeDBCheck, connettoriDBCheck,
+				TrasformazioneRegola trasformazioneDBCheckCriteri = porteDelegateCore.getTrasformazione(Long.parseLong(idPorta), azioniDBCheck, patternDBCheck, contentTypeDBCheck, connettoriDBCheck,
 						sacheckList);
-				if(trasformazioneDBCheck_criteri!=null) {
+				if(trasformazioneDBCheckCriteri!=null) {
 					isOk = false;
 					pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_DUPLICATA_APPLICATIVO);
 				}
@@ -310,14 +308,14 @@ public final class PorteDelegateTrasformazioniServizioApplicativoAdd extends Act
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				TrasformazioneRegolaApplicabilitaRichiesta applicabilita = regola.getApplicabilita();
 				// Prendo la lista di servizioApplicativo (tranne quelli già
 				// usati) e la metto in un array
-				Vector<String> silV = new Vector<String>();
+				List<String> silV = new ArrayList<>();
 				boolean bothSslAndToken = false;
 				List<IDServizioApplicativoDB> oldSilList = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione,appId,
 						filtroTipoSA, 
@@ -339,7 +337,7 @@ public final class PorteDelegateTrasformazioniServizioApplicativoAdd extends Act
 						silV.add(tmpNome);
 				}
 				String[] servizioApplicativoList = null;
-				if (silV.size() > 0) {
+				if (!silV.isEmpty()) {
 					servizioApplicativoList = new String[silV.size()];
 					for (int j = 0; j < silV.size(); j++)
 						servizioApplicativoList[j] = silV.get(j);

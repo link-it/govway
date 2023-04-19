@@ -87,29 +87,18 @@ public final class AccordiCooperazioneDel extends Action {
 			// Preparo il menu
 			acHelper.makeMenu();
 
-			// Elimino gli accordi dal db
-			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
-			// int[] idToRemove = new int[objTok.countTokens()];
-			//
-			// int k = 0;
-			// while (objTok.hasMoreElements()) {
-			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
-			// }
 			String msg = "";
 			boolean isInUso = false;
 			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
-				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
-				// .elementAt(idToRemove[i])).elementAt(0);
-				// nome = de.getValue();
 				String id = idsToRemove.get(i);
 				int idAccordo = Integer.parseInt(id);
 				String tipoSICA = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_SICA);
 				if("".equals(tipoSICA))
 					tipoSICA = null;
 
-				HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+				HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<>();
 				
 				AccordoCooperazione ac = acCore.getAccordoCooperazione(idAccordo);
 				IDAccordoCooperazione idAccordoCooperazione = idAccordoCooperazioneFactory.getIDAccordoFromAccordo(ac);

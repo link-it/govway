@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.audit;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -102,7 +101,7 @@ public final class AuditingDettaglio extends Action {
 			AuditingCore auditingCore = new AuditingCore();
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT, AuditCostanti.SERVLET_NAME_AUDITING));
 			lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT_OPERAZIONI, AuditCostanti.SERVLET_NAME_AUDITING,
@@ -116,7 +115,7 @@ public final class AuditingDettaglio extends Action {
 
 			// preparo i campi
 			boolean showLinkDocumentiBinari = !auditingCore.isAuditingRegistrazioneElementiBinari();
-			Vector<DataElement> dati = auditingHelper.getAuditHelper().addAuditReportDettaglioToDati(
+			List<DataElement> dati = auditingHelper.getAuditHelper().addAuditReportDettaglioToDati(
 					singleOp, showLinkDocumentiBinari, 
 					pDataInizio, pDataFine, pTipoOperazione, pTipoOggetto, pId, pOldId, pUtente, pStatoOperazione, pContoggetto);
 

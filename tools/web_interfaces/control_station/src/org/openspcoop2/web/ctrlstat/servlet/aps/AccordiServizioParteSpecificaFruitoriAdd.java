@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
@@ -144,7 +143,6 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			strutsBean.id = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 			strutsBean.idSoggettoFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE);
 			strutsBean.correlato = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_CORRELATO);
-			//			strutsBean.endpointtype = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE );
 
 			strutsBean.controlloAccessiStato = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_CONTROLLO_ACCESSI_STATO);
 			
@@ -180,8 +178,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			String autorizzazioneRuoliTipologiaToken = apsHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA_TOKEN);
 			String autorizzazioneRuoliMatchToken = apsHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO_MATCH_TOKEN);
 			
-			String autorizzazione_token = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN);
-			String autorizzazione_tokenOptions = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS);
+			String autorizzazioneToken = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN);
+			String autorizzazioneTokenOptions = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS);
 			String autorizzazioneScope = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
 			String autorizzazioneScopeMatch = apsHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
 			String scope = apsHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE);
@@ -291,14 +289,6 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			if(apsHelper.isMultipart()){
 				strutsBean.decodeRequestValidazioneDocumenti = true;
 			}
-			//			
-			//			String ct = request.getContentType();
-			//			if ((ct != null) && (ct.indexOf(Costanti.MULTIPART) != -1)) {
-			//				// decodeReq = true;
-			//				strutsBean.decodeRequestValidazioneDocumenti = false; // init
-			//				this.decodeRequest(request,apsHelper);
-			//			}
-
 
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 			PddCore pddCore = new PddCore(apsCore);
@@ -339,7 +329,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			if (strutsBean.httpsstatoS != null && strutsBean.httpsstatoS.equals(Costanti.CHECK_BOX_ENABLED))
 				strutsBean.httpsstato = true;
 
-			long idServizioLong = Long.valueOf(strutsBean.id);
+			long idServizioLong = Long.parseLong(strutsBean.id);
 
 			Boolean isConnettoreCustomUltimaImmagineSalvata = null;
 
@@ -380,7 +370,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_NORMALE));
 			}
 
-			//String profiloSoggettoFruitore = null;
+			/**String profiloSoggettoFruitore = null;
 			//if ((this.provider != null) && !this.provider.equals("")) {
 			//	long idFruitore = Long.parseLong(this.provider);
 			//	Soggetto soggetto = soggettiCore.getSoggettoRegistro(idFruitore);
@@ -389,7 +379,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			//String profiloValue = profiloSoggettoFruitore;
 			//if(this.profilo!=null && !"".equals(this.profilo) && !"-".equals(this.profilo)){
 			//	profiloValue = this.profilo;
-			//}
+			//}*/
 
 			String protocollo = apsCore.getProtocolloAssociatoTipoServizio(tiposervizio);
 			List<String> versioniProtocollo = apsCore.getVersioniProtocollo(protocollo);
@@ -403,31 +393,31 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			String[] soggettiList = null;
 			String[] soggettiListLabel = null;
 			List<Fruitore> fruList1 = apsCore.getSoggettiWithServizioNotFruitori(idServizioLong,true,null);
-			Map<String, Fruitore> mapFruitori = new HashMap<String, Fruitore>();
+			Map<String, Fruitore> mapFruitori = new HashMap<>();
 			List<String> keyFruitori = new ArrayList<>();
-			if(fruList1!=null && fruList1.size()>0){
+			if(fruList1!=null && !fruList1.isEmpty()){
 				for (Fruitore fr : fruList1) {
 					String key = fr.getTipo()+""+fr.getNome();
-					if(keyFruitori.contains(key)==false){
+					if(!keyFruitori.contains(key)){
 						keyFruitori.add(key);
 						mapFruitori.put(key, fr);
 					}
 				}
 			}
-			if(keyFruitori.size()>0){
+			if(!keyFruitori.isEmpty()){
 				Collections.sort(keyFruitori);
 			}
 			
-			List<String> soggettiListVector = new ArrayList<String>();
-			List<String> soggettiListLabelVector = new ArrayList<String>();
+			List<String> soggettiListList = new ArrayList<>();
+			List<String> soggettiListLabelList = new ArrayList<>();
 			IDSoggetto idSoggettoSelected = null;
 			IDSoggetto idSoggettoFirst = null;
 			for (int i = 0; i < keyFruitori.size(); i++) {
 				String tipoNome = keyFruitori.get(i);
 				Fruitore fru = mapFruitori.get(tipoNome);
 				if(tipiSoggettiCompatibiliAccordo.contains(fru.getTipo())){
-					soggettiListVector.add("" + fru.getId());
-					soggettiListLabelVector.add(apsHelper.getLabelNomeSoggetto(protocollo, fru.getTipo() , fru.getNome()));
+					soggettiListList.add("" + fru.getId());
+					soggettiListLabelList.add(apsHelper.getLabelNomeSoggetto(protocollo, fru.getTipo() , fru.getNome()));
 					if(idSoggettoFirst==null) {
 						idSoggettoFirst = new IDSoggetto(fru.getTipo(), fru.getNome());
 					}
@@ -439,15 +429,13 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					}
 				}
 			}
-			if(soggettiListVector.size()>0){
-				soggettiList = soggettiListVector.toArray(new String[1]);
-				soggettiListLabel = soggettiListLabelVector.toArray(new String[1]);
+			if(!soggettiListList.isEmpty()){
+				soggettiList = soggettiListList.toArray(new String[1]);
+				soggettiListLabel = soggettiListLabelList.toArray(new String[1]);
 
-				if(idSoggettoSelected==null){
-					// prendo il primo soggetto se esiste
-					if(idSoggettoFirst!=null){
-						idSoggettoSelected = idSoggettoFirst;
-					}
+				if(idSoggettoSelected==null &&
+					idSoggettoFirst!=null){
+					idSoggettoSelected = idSoggettoFirst; // prendo il primo soggetto se esiste
 				}
 			}
 
@@ -498,12 +486,14 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								credenziale, appId, filtroTipoSA, 
 								bothSslAndToken, tokenPolicy, tokenPolicyOR);
 					}
-					if(oldSilList!=null && oldSilList.size()>0){
+					if(oldSilList!=null && !oldSilList.isEmpty()){
 						for (int i = 0; i < oldSilList.size(); i++) {
 							saList.add(oldSilList.get(i).getNome());		
 						}
 					}
-				}catch(DriverConfigurazioneNotFound dNotFound){}
+				}catch(DriverConfigurazioneNotFound dNotFound){
+					// ignore
+				}
 
 			}
 
@@ -554,7 +544,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			// dati
 			if(ServletUtils.isEditModeInProgress(strutsBean.editMode)){
 				// setto la barra del titolo
-				List<Parameter> lstParm = new ArrayList<Parameter>();
+				List<Parameter> lstParm = new ArrayList<>();
 
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + tmpTitle, 
@@ -568,10 +558,10 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParm );
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
-				if(soggettiListVector.size()<=0){
+				if(soggettiListList.isEmpty()){
 
 					pd.setMessage(AccordiServizioParteSpecificaCostanti.LABEL_AGGIUNTA_FRUITORI_COMPLETATA, Costanti.MESSAGE_TYPE_INFO);
 
@@ -584,10 +574,10 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 					if (strutsBean.idSoggettoFruitore == null) {
 						strutsBean.idSoggettoFruitore = "";
-//						if(strutsBean.wsdlimpler.getValue() == null)
+/**						if(strutsBean.wsdlimpler.getValue() == null)
 //							strutsBean.wsdlimpler.setValue(new byte[1]);
 //						if(strutsBean.wsdlimplfru.getValue() == null)
-//							strutsBean.wsdlimplfru.setValue(new byte[1]); 
+//							strutsBean.wsdlimplfru.setValue(new byte[1]); */ 
 						strutsBean.endpointtype = AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_DISABILITATO;
 						strutsBean.tipoconn = "";
 						strutsBean.url = "";
@@ -619,11 +609,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 						if(apsHelper.isShowGestioneWorkflowStatoDocumenti()){
 							if(strutsBean.statoPackage==null || "".equals(strutsBean.statoPackage)){
-								//if(serviziFruitoriAdd.generazioneAutomaticaPorteDelegate){
 								strutsBean.statoPackage=StatiAccordo.bozza.toString();
-								/*}else{
-									strutsBean.statoPackage=servizio.getStatoPackage();
-								}*/
 							}
 
 							//Se l'ASPS riferito e' in stato operativo o finale allora setto la fruizione come operativa.
@@ -732,7 +718,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							gestioneTokenPolicy, gestioneTokenOpzionale,
 							gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 							autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-							autorizzazione_token, autorizzazione_tokenOptions,
+							autorizzazioneToken, autorizzazioneTokenOptions,
 							autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 							identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
 							autorizzazioneAutenticatiToken, 
@@ -846,7 +832,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 			if (!isOk) {
 				// setto la barra del titolo
-				List<Parameter> lstParm = new ArrayList<Parameter>();
+				List<Parameter> lstParm = new ArrayList<>();
 
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + tmpTitle, 
@@ -861,9 +847,9 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParm );
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				// update della configurazione 
 				strutsBean.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, apsHelper, strutsBean.protocolProperties, 
@@ -881,7 +867,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						gestioneTokenPolicy, gestioneTokenOpzionale,
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-						autorizzazione_token, autorizzazione_tokenOptions,
+						autorizzazioneToken, autorizzazioneTokenOptions,
 						autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
 						autorizzazioneAutenticatiToken, 
@@ -944,10 +930,6 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			String tipoFruitore = sogFru.getTipo();
 			String pdd = sogFru.getPortaDominio();
 
-			// soggetto erogatore servizio
-//			Soggetto sogEr = soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggErogatore));
-//			String nomeErogatore = sogEr.getNome();
-//			String tipoErogatore = sogEr.getTipo();
 
 			Connettore connettore = null;
 			if (apsHelper.isModalitaAvanzata()) {
@@ -994,11 +976,11 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			// stato
 			fruitore.setStatoPackage(strutsBean.statoPackage);
 
-			//			Spostato sopra a livello di edit in progress			
+			/**			Spostato sopra a livello di edit in progress			
 			//			//Se l'ASPS riferito e' in stato operativo o finale allora setto la fruizione come operativa.
 			//			if(asps.getStatoPackage().equals(StatiAccordo.operativo.toString()) || asps.getStatoPackage().equals(StatiAccordo.finale.toString())){
 			//				fruitore.setStatoPackage(StatiAccordo.operativo.toString());
-			//			}
+			//			}*/
 
 			// Check stato
 			if(apsHelper.isShowGestioneWorkflowStatoDocumenti()){
@@ -1011,7 +993,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					pd.setMessage(validazioneException.toString());
 
 					// setto la barra del titolo
-					List<Parameter> lstParm = new ArrayList<Parameter>();
+					List<Parameter> lstParm = new ArrayList<>();
 
 					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + tmpTitle, 
@@ -1026,9 +1008,9 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					ServletUtils.setPageDataTitle(pd, lstParm );
 
 					// preparo i campi
-					Vector<DataElement> dati = new Vector<DataElement>();
+					List<DataElement> dati = new ArrayList<>();
 
-					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+					dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 					// update della configurazione 
 					strutsBean.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, apsHelper, strutsBean.protocolProperties, 
@@ -1047,7 +1029,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							gestioneTokenPolicy, gestioneTokenOpzionale,
 							gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 							autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-							autorizzazione_token, autorizzazione_tokenOptions,
+							autorizzazioneToken, autorizzazioneTokenOptions,
 							autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 							identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
 							autorizzazioneAutenticatiToken, 
@@ -1122,13 +1104,13 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				}
 			}catch(DriverControlStationNotFound dNT){
 				// In singlePdD la porta di dominio e' opzionale.
-				if(apsCore.isSinglePdD()==false){
+				if(!apsCore.isSinglePdD()){
 					throw dNT;
 				}
 			}
 			if (generazionePortaDelegata) {
 				
-				List<Object> listaOggettiDaCreare = new ArrayList<Object>();
+				List<Object> listaOggettiDaCreare = new ArrayList<>();
 				
 				IDSoggetto idFruitore = new IDSoggetto(tipoFruitore, nomeFruitore);
 				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tiposervizio, nomeservizio, mytipoprov, mynomeprov, versioneservizio);
@@ -1162,7 +1144,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						strutsBean.fruizioneServizioApplicativo, strutsBean.fruizioneRuolo,
 						autorizzazioneAutenticatiToken, 
 						autorizzazioneRuoliToken,  autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken,
-						autorizzazione_tokenOptions,
+						autorizzazioneTokenOptions,
 						autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 						identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 				
@@ -1170,7 +1152,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						gestioneTokenPolicy, gestioneTokenOpzionale,
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-						autorizzazione_tokenOptions
+						autorizzazioneTokenOptions
 						);
 							
 				// Verifico prima che la porta delegata non esista già

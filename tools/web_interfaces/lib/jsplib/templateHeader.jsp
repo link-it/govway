@@ -20,7 +20,7 @@
 
 
 <%@page import="org.apache.commons.lang.StringUtils"%>
-<%@ page session="true" import="java.util.Vector, org.openspcoop2.web.lib.mvc.*" %>
+<%@ page session="true" import="java.util.List, org.openspcoop2.web.lib.mvc.*" %>
 <%
 String iddati = "";
 String ct = request.getContentType();
@@ -97,7 +97,7 @@ if(!tabSessionKey.equals("")){
 				 			<tbody>
 				 				<tr>
 				 					<%
-										Vector<GeneralLink> soggetti = gd.getSoggettiLinks();
+										List<GeneralLink> soggetti = gd.getSoggettiLinks();
 							 			if(soggetti!= null && soggetti.size() > 0) {
 							 				GeneralLink soggettoTitoloLink = soggetti.get(0);
 									 		%>
@@ -120,7 +120,7 @@ if(!tabSessionKey.equals("")){
 											 				<% 
 													  		GeneralLink l;
 													  		for (int i = 1; i < soggetti.size(); i++) {
-																l = (GeneralLink) soggetti.elementAt(i);
+																l = (GeneralLink) soggetti.get(i);
 	// 															String icon = l.getIcon();
 																String spanLabelClass= "item-label";
 																String itemClass= "menu-item-no-icon";
@@ -229,7 +229,7 @@ if(!tabSessionKey.equals("")){
 													  		String labelSelezionato = "";
 										  					GeneralLink l;
 										  					for (int i = 1; i < soggetti.size(); i++) {
-																l = (GeneralLink) soggetti.elementAt(i);
+																l = (GeneralLink) soggetti.get(i);
 																
 																String label = l.getLabel();
 																String value = l.getUrl();
@@ -264,7 +264,7 @@ if(!tabSessionKey.equals("")){
 									 		</td>
 				 						<% } %>
 				 					<%
-										Vector<GeneralLink> modalita = gd.getModalitaLinks();
+										List<GeneralLink> modalita = gd.getModalitaLinks();
 							 			if(modalita!= null && modalita.size() > 0) {
 							 				GeneralLink modalitaTitoloLink = modalita.get(0);
 									 		%>
@@ -298,7 +298,7 @@ if(!tabSessionKey.equals("")){
 											 				<% 
 													  		GeneralLink l;
 													  		for (int i = 1; i < modalita.size(); i++) {
-																l = (GeneralLink) modalita.elementAt(i);
+																l = (GeneralLink) modalita.get(i);
 	// 															String icon = l.getIcon();
 																String spanLabelClass= "item-label";
 																String itemClass= "menu-item-no-icon";
@@ -391,7 +391,7 @@ if(!tabSessionKey.equals("")){
 				 						<% }%>
 				 					<td>
 								 		<%
-										Vector<GeneralLink> v = gd.getHeaderLinks();
+										List<GeneralLink> v = gd.getHeaderLinks();
 							 			if(v!= null && v.size() > 1) {
 							 				GeneralLink userNameLink = v.get(0);
 									 		%>
@@ -406,7 +406,7 @@ if(!tabSessionKey.equals("")){
 												  		<% 
 												  		GeneralLink l;
 												  		for (int i = 1; i < v.size(); i++) {
-															l = (GeneralLink) v.elementAt(i);
+															l = (GeneralLink) v.get(i);
 															String icon = l.getIcon();
 															String spanLabelClass= "item-label";
 															String itemClass= "menu-item";

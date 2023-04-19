@@ -114,6 +114,11 @@
             <stringProp name="Argument.value">${__P(contentType,text/xml; charset=UTF-8)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
+          <elementProp name="bound" elementType="Argument">
+            <stringProp name="Argument.name">bound</stringProp>
+            <stringProp name="Argument.value">${__P(bound,in)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
           <elementProp name="soggetto" elementType="Argument">
             <stringProp name="Argument.name">soggetto</stringProp>
             <stringProp name="Argument.value">${__P(soggetto,ENTE)}</stringProp>
@@ -152,6 +157,11 @@
           <elementProp name="testName" elementType="Argument">
             <stringProp name="Argument.name">testName</stringProp>
             <stringProp name="Argument.value">${__P(testName,&quot;TESTNAME&quot;)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="prova" elementType="Argument">
+            <stringProp name="Argument.name">prova</stringProp>
+            <stringProp name="Argument.value">${__P(prova,VALOREACASO)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
@@ -203,7 +213,7 @@
           <stringProp name="HTTPSampler.port">${nodoRun.port}</stringProp>
           <stringProp name="HTTPSampler.protocol">${nodoRun.protocol}</stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">/govway/${protocollo}/in/${soggetto}/StressTestSoap${tipoTest}/v1</stringProp>
+          <stringProp name="HTTPSampler.path">/govway/${protocollo}/${bound}/${soggetto}/StressTestSoap${tipoTest}/v1</stringProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>

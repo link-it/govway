@@ -50,7 +50,7 @@ GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData
 PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
 String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 
-Vector<?> v = pd.getDati();
+List<?> v = pd.getDati();
 int n = v.size();
 String search = request.getParameter(Costanti.SEARCH_PARAMETER_NAME);
 if (search == null)

@@ -21,7 +21,7 @@
 <%@page import="org.openspcoop2.web.lib.mvc.ServletUtils"%>
 <%@page import="org.openspcoop2.web.lib.mvc.GeneralData"%>
 <%@page import="org.openspcoop2.web.lib.mvc.GeneralLink"%>
-<%@page import="java.util.Vector"%>
+<%@page import="java.util.List"%>
 <%
 String iddati = "";
 String ct = request.getContentType();
@@ -37,10 +37,10 @@ else
   iddati = "notdefined";
 GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
 String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
-Vector<GeneralLink> v = gd.getHeaderLinks();
+List<GeneralLink> v = gd.getHeaderLinks();
 
-Vector<GeneralLink> modalitaLinks = gd.getModalitaLinks();
-Vector<GeneralLink> soggettoLinks = gd.getSoggettiLinks();
+List<GeneralLink> modalitaLinks = gd.getModalitaLinks();
+List<GeneralLink> soggettoLinks = gd.getSoggettiLinks();
 
 String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 if(v!= null && v.size() > 1) {

@@ -24,7 +24,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -119,40 +118,39 @@ public final class PorteApplicativeAzioneAdd extends Action {
 				idServizio = Integer.parseInt(idAsps);
 				asps = apsCore.getAccordoServizioParteSpecifica(idServizio);
 			} else {
-				// long idPorta = pa.getId();
 				PortaApplicativaServizio pas = pa.getServizio();
-				  idServizio = -1;
-				String tipo_servizio = null;
-				String nome_servizio = null;
-				Integer versione_servizio = null;
+				idServizio = -1;
+				String tipoServizio = null;
+				String nomeServizio = null;
+				Integer versioneServizio = null;
 				if (pas != null) {
 					idServizio = pas.getId().intValue();
-					tipo_servizio = pas.getTipo();
-					nome_servizio = pas.getNome();
-					versione_servizio = pas.getVersione();
+					tipoServizio = pas.getTipo();
+					nomeServizio = pas.getNome();
+					versioneServizio = pas.getVersione();
 				}
 				PortaApplicativaSoggettoVirtuale pasv = pa.getSoggettoVirtuale();
-				long id_soggetto_virtuale = -1;
-				String tipo_soggetto_virtuale = null;
-				String nome_soggetto_virtuale = null;
+				long idSoggettoVirtuale = -1;
+				String tipoSoggettoVirtuale = null;
+				String nomeSoggettoVirtuale = null;
 				if (pasv != null) {
-					id_soggetto_virtuale = pasv.getId();
-					tipo_soggetto_virtuale = pasv.getTipo();
-					nome_soggetto_virtuale = pasv.getNome();
+					idSoggettoVirtuale = pasv.getId();
+					tipoSoggettoVirtuale = pasv.getTipo();
+					nomeSoggettoVirtuale = pasv.getNome();
 				}
 				// Recupero eventuale idServizio mancante
 				if(porteApplicativeCore.isRegistroServiziLocale()){
 					if (idServizio <= 0) {
 						long idSoggettoServizio = -1;
-						if (id_soggetto_virtuale > 0) {
-							idSoggettoServizio = id_soggetto_virtuale;
-						} else if (tipo_soggetto_virtuale != null && (!("".equals(tipo_soggetto_virtuale))) && nome_soggetto_virtuale != null && (!("".equals(nome_soggetto_virtuale)))) {
-							idSoggettoServizio = soggettiCore.getIdSoggetto(nome_soggetto_virtuale, tipo_soggetto_virtuale);
+						if (idSoggettoVirtuale > 0) {
+							idSoggettoServizio = idSoggettoVirtuale;
+						} else if (tipoSoggettoVirtuale != null && (!("".equals(tipoSoggettoVirtuale))) && nomeSoggettoVirtuale != null && (!("".equals(nomeSoggettoVirtuale)))) {
+							idSoggettoServizio = soggettiCore.getIdSoggetto(nomeSoggettoVirtuale, tipoSoggettoVirtuale);
 						} else {
 							idSoggettoServizio = soggInt;
 						}
 						Soggetto soggServ = soggettiCore.getSoggetto(idSoggettoServizio);
-						idServizio = (int) apsCore.getIdAccordoServizioParteSpecifica(nome_servizio, tipo_servizio, versione_servizio, soggServ.getNome(), soggServ.getTipo()); 
+						idServizio = (int) apsCore.getIdAccordoServizioParteSpecifica(nomeServizio, tipoServizio, versioneServizio, soggServ.getNome(), soggServ.getTipo()); 
 					}
 				}
 				asps = apsCore.getAccordoServizioParteSpecifica(idServizio);
@@ -222,8 +220,8 @@ public final class PorteApplicativeAzioneAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				if(azioniDisponibiliList==null || azioniDisponibiliList.length <= sogliaAzioni) {
 					// si controlla 1 poiche' c'e' il trattino nelle azioni disponibili
@@ -249,9 +247,9 @@ public final class PorteApplicativeAzioneAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addPorteAzioneToDati(TipoOperazione.ADD,dati, "", azioniDisponibiliList, azioniDisponibiliLabelList, azionis, serviceBinding);
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps,  dati);

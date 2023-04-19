@@ -55,7 +55,7 @@
 	
 	String formatPar = listElement.formatParametersURL();
 	
-	Vector<?> datiConGruppi = pd.getDati();
+	List<?> datiConGruppi = pd.getDati();
 	int n = datiConGruppi.size();
 	
 	String classSpanNoEdit="spanNoEdit";
@@ -175,7 +175,7 @@ function Esporta(tipo) {
 				<div class="panelLista">
 					<table id="tabellaInterna" class="tabella">
 					<%
-						Vector<?> v = pd.getDati();
+						List<?> v = pd.getDati();
 						int index = pd.getIndex();
 					  	if (pd.getNumEntries() > 0){
 					    	index++;
@@ -196,11 +196,11 @@ function Esporta(tipo) {
 												for (int i = 0; i < v.size(); i++) {
 													String idTab = "#tabs-"+i;
 													String idLi = "li-tabs-"+i;
-													Vector<?> dati = (Vector<?>) v.elementAt(i);
+													List<?> dati = (List<?>) v.get(i);
 													
 													String titoloTab = "Tab" + (i+1);
 													for (int j = 0; j < dati.size(); j++) {
-													    DataElement de = (DataElement) dati.elementAt(j);
+													    DataElement de = (DataElement) dati.get(j);
 													    // if (de.getType().equals("text")) {
 													    titoloTab = de.getValue();
 													    break;
@@ -225,17 +225,17 @@ function Esporta(tipo) {
 									<%
 										for (int z = 0; z < v.size(); z++) {
 											String idTab = "tabs-"+z;
-											Vector<?> dati = (Vector<?>) v.elementAt(z);
-											Vector<DataElement> vectorRiepilogo = new Vector<DataElement>();
-											Vector<DataElement> vectorLink = new Vector<DataElement>();
+											List<?> dati = (List<?>) v.get(z);
+											List<DataElement> listRiepilogo = new ArrayList<DataElement>();
+											List<DataElement> listLink = new ArrayList<DataElement>();
 											
 											for (int j = 0; j < dati.size(); j++) {
-											    DataElement de = (DataElement) dati.elementAt(j);
+											    DataElement de = (DataElement) dati.get(j);
 											    
 											    if (de.getType().equals("link")) {
-											    	vectorLink.add(de);
+											    	listLink.add(de);
 											    } else {
-											    	vectorRiepilogo.add(de);
+											    	listRiepilogo.add(de);
 											    }
 											}
 										%>
@@ -243,8 +243,8 @@ function Esporta(tipo) {
 										<table class="tabella">
 											<%
 												boolean firstText = true;
-												for (int i = 0; i < vectorRiepilogo.size(); i++) {
-													DataElement de = (DataElement) vectorRiepilogo.elementAt(i);
+												for (int i = 0; i < listRiepilogo.size(); i++) {
+													DataElement de = (DataElement) listRiepilogo.get(i);
 												  
 													String hiddenIdRemove = "hiddenIdRemove-"+z;
 													String deName = !de.getName().equals("") ? de.getName() : "de_name_"+z+"_"+i;

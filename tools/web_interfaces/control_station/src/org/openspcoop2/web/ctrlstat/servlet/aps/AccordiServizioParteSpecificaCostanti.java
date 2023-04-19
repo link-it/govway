@@ -19,7 +19,8 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.aps;
 
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
@@ -34,33 +35,40 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
  * @version $Rev$, $Date$
  */
 public class AccordiServizioParteSpecificaCostanti {
+	
+	private AccordiServizioParteSpecificaCostanti() {}
 
 	/* OBJECT NAME */
 	
-	public final static String OBJECT_NAME_APS = "accordiServizioParteSpecifica";
+	public static final String OBJECT_NAME_APS = "accordiServizioParteSpecifica";
 	
-	public final static String OBJECT_NAME_APS_FRUITORI = "accordiServizioParteSpecificaFruitori";
+	public static final String OBJECT_NAME_APS_FRUITORI = "accordiServizioParteSpecificaFruitori";
 	
-	public final static ForwardParams TIPO_OPERAZIONE_WSDL_CHANGE = ForwardParams.OTHER("WSDLChange");
+	public static final ForwardParams TIPO_OPERAZIONE_WSDL_CHANGE = ForwardParams.OTHER("WSDLChange");
 		
-	public final static String OBJECT_NAME_APS_ALLEGATI = "accordiServizioParteSpecificaAllegati";
-	public final static ForwardParams TIPO_OPERAZIONE_VIEW = ForwardParams.OTHER("View");
+	public static final String OBJECT_NAME_APS_ALLEGATI = "accordiServizioParteSpecificaAllegati";
+	public static final ForwardParams TIPO_OPERAZIONE_VIEW = ForwardParams.OTHER("View");
 	
-	public final static String OBJECT_NAME_APS_PORTE_APPLICATIVE = "accordiServizioParteSpecificaPorteApplicative";
+	public static final String OBJECT_NAME_APS_PORTE_APPLICATIVE = "accordiServizioParteSpecificaPorteApplicative";
 	
-	public final static ForwardParams TIPO_OPERAZIONE_CONFIGURAZIONE = ForwardParams.OTHER("Configurazione");
+	private static final String CONFIGURAZIONE = "Configurazione";
+	
+	public static final ForwardParams TIPO_OPERAZIONE_CONFIGURAZIONE = ForwardParams.OTHER(CONFIGURAZIONE);
 	
 	
-	public final static String OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE = "accordiServizioParteSpecificaFruitoriPorteDelegate";
+	public static final String OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE = "accordiServizioParteSpecificaFruitoriPorteDelegate";
 	
 	/* SERVLET NAME */
 	
-	public final static String SERVLET_NAME_APS_ADD = OBJECT_NAME_APS+"Add.do";
-	public final static String SERVLET_NAME_APS_CHANGE = OBJECT_NAME_APS+"Change.do";
-	public final static String SERVLET_NAME_APS_DELETE = OBJECT_NAME_APS+"Del.do";
-	public final static String SERVLET_NAME_APS_LIST = OBJECT_NAME_APS+"List.do";
-	public final static String SERVLET_NAME_APS_WSDL_CHANGE = OBJECT_NAME_APS+"WSDLChange.do";
-	public final static Vector<String> SERVLET_APS = new Vector<String>();
+	public static final String SERVLET_NAME_APS_ADD = OBJECT_NAME_APS+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_APS_CHANGE = OBJECT_NAME_APS+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_APS_DELETE = OBJECT_NAME_APS+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_APS_LIST = OBJECT_NAME_APS+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	public static final String SERVLET_NAME_APS_WSDL_CHANGE = OBJECT_NAME_APS+"WSDLChange.do";
+	private static final List<String> SERVLET_APS = new ArrayList<>();
+	public static List<String> getServletAps() {
+		return SERVLET_APS;
+	}
 	static{
 		SERVLET_APS.add(SERVLET_NAME_APS_ADD);
 		SERVLET_APS.add(SERVLET_NAME_APS_CHANGE);
@@ -69,12 +77,15 @@ public class AccordiServizioParteSpecificaCostanti {
 		SERVLET_APS.add(SERVLET_NAME_APS_WSDL_CHANGE);
 	}
 	
-	public final static String SERVLET_NAME_APS_FRUITORI_ADD = OBJECT_NAME_APS_FRUITORI+"Add.do";
-	public final static String SERVLET_NAME_APS_FRUITORI_CHANGE = OBJECT_NAME_APS_FRUITORI+"Change.do";
-	public final static String SERVLET_NAME_APS_FRUITORI_DELETE = OBJECT_NAME_APS_FRUITORI+"Del.do";
-	public final static String SERVLET_NAME_APS_FRUITORI_LIST = OBJECT_NAME_APS_FRUITORI+"List.do";
-	public final static String SERVLET_NAME_APS_FRUITORI_WSDL_CHANGE = OBJECT_NAME_APS_FRUITORI+"WSDLChange.do";
-	public final static Vector<String> SERVLET_APS_FRUITORI = new Vector<String>();
+	public static final String SERVLET_NAME_APS_FRUITORI_ADD = OBJECT_NAME_APS_FRUITORI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_APS_FRUITORI_CHANGE = OBJECT_NAME_APS_FRUITORI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_APS_FRUITORI_DELETE = OBJECT_NAME_APS_FRUITORI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_APS_FRUITORI_LIST = OBJECT_NAME_APS_FRUITORI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	public static final String SERVLET_NAME_APS_FRUITORI_WSDL_CHANGE = OBJECT_NAME_APS_FRUITORI+"WSDLChange.do";
+	private static final List<String> SERVLET_APS_FRUITORI = new ArrayList<>();
+	public static List<String> getServletApsFruitori() {
+		return SERVLET_APS_FRUITORI;
+	}
 	static{
 		SERVLET_APS.add(SERVLET_NAME_APS_FRUITORI_ADD);
 		SERVLET_APS.add(SERVLET_NAME_APS_FRUITORI_CHANGE);
@@ -83,12 +94,15 @@ public class AccordiServizioParteSpecificaCostanti {
 		SERVLET_APS.add(SERVLET_NAME_APS_FRUITORI_WSDL_CHANGE);
 	}
 		
-	public final static String SERVLET_NAME_APS_ALLEGATI_ADD = OBJECT_NAME_APS_ALLEGATI+"Add.do";
-	public final static String SERVLET_NAME_APS_ALLEGATI_CHANGE = OBJECT_NAME_APS_ALLEGATI+"Change.do";
-	public final static String SERVLET_NAME_APS_ALLEGATI_DELETE = OBJECT_NAME_APS_ALLEGATI+"Del.do";
-	public final static String SERVLET_NAME_APS_ALLEGATI_LIST = OBJECT_NAME_APS_ALLEGATI+"List.do";
-	public final static String SERVLET_NAME_APS_ALLEGATI_VIEW = OBJECT_NAME_APS_ALLEGATI+"View.do";
-	public final static Vector<String> SERVLET_APS_ALLEGATI = new Vector<String>();
+	public static final String SERVLET_NAME_APS_ALLEGATI_ADD = OBJECT_NAME_APS_ALLEGATI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_APS_ALLEGATI_CHANGE = OBJECT_NAME_APS_ALLEGATI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_APS_ALLEGATI_DELETE = OBJECT_NAME_APS_ALLEGATI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_APS_ALLEGATI_LIST = OBJECT_NAME_APS_ALLEGATI+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	public static final String SERVLET_NAME_APS_ALLEGATI_VIEW = OBJECT_NAME_APS_ALLEGATI+"View.do";
+	private static final List<String> SERVLET_APS_ALLEGATI = new ArrayList<>();
+	public static List<String> getServletApsAllegati() {
+		return SERVLET_APS_ALLEGATI;
+	}
 	static{
 		SERVLET_APS_ALLEGATI.add(SERVLET_NAME_APS_ALLEGATI_ADD);
 		SERVLET_APS_ALLEGATI.add(SERVLET_NAME_APS_ALLEGATI_CHANGE);
@@ -97,20 +111,26 @@ public class AccordiServizioParteSpecificaCostanti {
 		SERVLET_APS_ALLEGATI.add(SERVLET_NAME_APS_ALLEGATI_VIEW);
 	}
 
-	public final static String SERVLET_NAME_APS_PORTE_APPLICATIVE_ADD = OBJECT_NAME_APS_PORTE_APPLICATIVE+"Add.do";
-	public final static String SERVLET_NAME_APS_PORTE_APPLICATIVE_DELETE = OBJECT_NAME_APS_PORTE_APPLICATIVE+"Del.do";
-	public final static String SERVLET_NAME_APS_PORTE_APPLICATIVE_LIST = OBJECT_NAME_APS_PORTE_APPLICATIVE+"List.do";
-	public final static Vector<String> SERVLET_APS_PORTE_APPLICATIVE = new Vector<String>();
+	public static final String SERVLET_NAME_APS_PORTE_APPLICATIVE_ADD = OBJECT_NAME_APS_PORTE_APPLICATIVE+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_APS_PORTE_APPLICATIVE_DELETE = OBJECT_NAME_APS_PORTE_APPLICATIVE+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_APS_PORTE_APPLICATIVE_LIST = OBJECT_NAME_APS_PORTE_APPLICATIVE+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_APS_PORTE_APPLICATIVE = new ArrayList<>();
+	public static List<String> getServletApsPorteApplicative() {
+		return SERVLET_APS_PORTE_APPLICATIVE;
+	}
 	static{
 		SERVLET_APS_PORTE_APPLICATIVE.add(SERVLET_NAME_APS_PORTE_APPLICATIVE_ADD);
 		SERVLET_APS_PORTE_APPLICATIVE.add(SERVLET_NAME_APS_PORTE_APPLICATIVE_DELETE);
 		SERVLET_APS_PORTE_APPLICATIVE.add(SERVLET_NAME_APS_PORTE_APPLICATIVE_LIST);
 	}
 	
-	public final static String SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_ADD = OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE+"Add.do";
-	public final static String SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_DELETE = OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE+"Del.do";
-	public final static String SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_LIST = OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE+"List.do";
-	public final static Vector<String> SERVLET_APS_FRUITORI_PORTE_DELEGATE = new Vector<String>();
+	public static final String SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_ADD = OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_DELETE = OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_LIST = OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE+org.openspcoop2.web.lib.mvc.Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_APS_FRUITORI_PORTE_DELEGATE = new ArrayList<>();
+	public static List<String> getServletApsFruitoriPorteDelegate() {
+		return SERVLET_APS_FRUITORI_PORTE_DELEGATE;
+	}
 	static{
 		SERVLET_APS_FRUITORI_PORTE_DELEGATE.add(SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_ADD);
 		SERVLET_APS_FRUITORI_PORTE_DELEGATE.add(SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_DELETE);
@@ -121,226 +141,224 @@ public class AccordiServizioParteSpecificaCostanti {
 	
 	/* LABEL GENERALI */
 	
-	public final static String LABEL_APS = "Erogazioni";
-	public final static String LABEL_APS_SINGOLO = "Erogazione";
-	public final static String LABEL_APC_COMPOSTO = "API (ParteComune/Composto)";
-	public final static String LABEL_APC_COMPOSTO_SOLO_PARTE_COMUNE = "API";
-	public final static String LABEL_APC_COMPOSTO_SOLO_COMPOSTO = "API (Servizio Composto)";
-	public final static String LABEL_APS_SERVIZI = "Servizi";
-	public final static String LABEL_APS_FRUITORI = "Fruizioni";
-	public final static String LABEL_APS_FRUITORE = "Fruizione";
-	public final static String LABEL_PARAMETRO_VISUALIZZA_DATI_FRUITORE = "Visualizza Dati Soggetto";
-	public final static String LABEL_APS_CORRELATO = "Correlato";
-	public final static String LABEL_APS_FUITORI_DI = "Fruizioni di ";
-	public final static String LABEL_APS_WSDL_IMPLEMENTATIVO_EROGATORE_DI = "WSDL Implementativo Erogatore di "; 
-	public final static String LABEL_APS_WSDL_IMPLEMENTATIVO_FRUITORE_DI = "WSDL Implementativo Fruitore di ";
-	public final static String LABEL_APS_ALLEGATI_DI = "Allegati di ";
-	public final static String LABEL_APS_DOWNLOAD = "Download";
-	public final static String LABEL_APS_INFO_GENERALI = "Informazioni Generali";
-	public final static String LABEL_APS_SERVIZIO = "Servizio";
-	public final static String LABEL_APS_SERVIZIO_SOAP = "Servizio ("+CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_SOAP+")";
-	public final static String LABEL_APS_RICERCA_SERVIZIO_SOGGETTO = "Servizio / Soggetto";
-	//public final static String LABEL_APS_RICERCA_API_SOGGETTO = "API / Soggetto Erogatore";
-	public final static String LABEL_APS_RICERCA_API_EROGAZIONE = LABEL_APS_SINGOLO; //"API / Erogazione";
-	public final static String LABEL_APS_RICERCA_API_FRUIZIONE = LABEL_APS_FRUITORE; //"API / Fruizione";
-	public final static String LABEL_APS_ALLEGATI = "Allegati";
-	public final static String LABEL_APS_ALLEGATO = "Allegato";
-	public final static String LABEL_APS_CONFIGURAZIONI = "Configurazioni";
-	//public final static String LABEL_APS_CONFIGURAZIONI_DI = "Configurazioni di ";
-	public final static String LABEL_APS_CONFIGURAZIONI_DI = "";
-	public final static String LABEL_APS_PORTE_APPLICATIVE = "Configurazione";
-	public final static String LABEL_APS_PORTE_DELEGATE = "Configurazione";
-	public final static String LABEL_APS_DATI_INVOCAZIONE = "URL Invocazione";
-	//public final static String LABEL_APS_DATI_INVOCAZIONE_DI = "URL Invocazione di ";
-	public final static String LABEL_APS_DATI_INVOCAZIONE_DI = "";
-	public final static String LABEL_APS_STATO = "Stato";
-	public final static String LABEL_APS_ESPORTA_SELEZIONATI = "Esporta";
-	public final static String LABEL_APS_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA.name()+"')";
-	public final static String LABEL_EROGAZIONI_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.EROGAZIONE.name()+"')";
-	public final static String LABEL_FRUIZIONI_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.FRUIZIONE.name()+"')";
-	public final static String LABEL_APS_USA_VERSIONE_EROGATORE = "usa versione erogatore";
-	public final static String LABEL_APS_SPECIFICA_PORTI_ACCESSO = "Specifica dei Porti di Accesso";
-	public final static String LABEL_APS_SPECIFICA_PORTA_APPLICATIVA = "Configurazione";
-	public final static String LABEL_APS_SPECIFICA_PORTA_DELEGATA = "Porta Delegata";
-	public final static String LABEL_APS_ALTRE_INFORMAZIONI = "Altre informazioni";
-	public final static String LABEL_APS_SERVIZIO_APPLICATIVO_EROGATORE = "Servizio Applicativo Erogatore";
-	public final static String LABEL_APS_SERVIZIO_APPLICATIVO_FRUITORE = "Servizio Applicativo Fruitore";
-	public final static String LABEL_APS_SOGGETTO_EROGATORE = "Soggetto Erogatore";
-	public final static String LABEL_APS_SOGGETTO_FRUITORE = "Soggetto Fruitore";
-	public final static String LABEL_APS_WSDL_IMPLEMENTATIVO_DI = "WSDL Implementativo di ";
-	public final static String LABEL_WSDL_CHANGE_CLEAR_WARNING = "Attenzione";
-	public final static String LABEL_WSDL_CHANGE_CLEAR = "Se si desidera eliminare un documento precedentemente caricato cliccare su 'Invi&agrave; senza selezionare alcun file"; //fornirne un'altra versione";
-	public final static String LABEL_WSDL_AGGIORNAMENTO = "Aggiornamento WSDL";
-	public final static String LABEL_WSDL_NOT_FOUND = "non fornito";
-	public final static String LABEL_WSDL_ATTUALE = "Attuale";
-	public final static String LABEL_WSDL_NUOVO = "Nuovo WSDL";
-	public final static String LABEL_AGGIUNTA_FRUITORI_COMPLETATA = "Tutti i soggetti sono già stati aggiunti come fruitori";
-	public final static String LABEL_APS_VERSIONE_APS = "Versione Accordo Servizio Parte Specifica";
+	public static final String LABEL_APS = "Erogazioni";
+	public static final String LABEL_APS_SINGOLO = "Erogazione";
+	public static final String LABEL_APC_COMPOSTO = "API (ParteComune/Composto)";
+	public static final String LABEL_APC_COMPOSTO_SOLO_PARTE_COMUNE = "API";
+	public static final String LABEL_APC_COMPOSTO_SOLO_COMPOSTO = "API (Servizio Composto)";
+	public static final String LABEL_APS_SERVIZI = "Servizi";
+	public static final String LABEL_APS_FRUITORI = "Fruizioni";
+	public static final String LABEL_APS_FRUITORE = "Fruizione";
+	public static final String LABEL_PARAMETRO_VISUALIZZA_DATI_FRUITORE = "Visualizza Dati Soggetto";
+	public static final String LABEL_APS_CORRELATO = "Correlato";
+	public static final String LABEL_APS_FUITORI_DI = "Fruizioni di ";
+	public static final String LABEL_APS_WSDL_IMPLEMENTATIVO_EROGATORE_DI = "WSDL Implementativo Erogatore di "; 
+	public static final String LABEL_APS_WSDL_IMPLEMENTATIVO_FRUITORE_DI = "WSDL Implementativo Fruitore di ";
+	public static final String LABEL_APS_ALLEGATI_DI = "Allegati di ";
+	public static final String LABEL_APS_DOWNLOAD = "Download";
+	public static final String LABEL_APS_INFO_GENERALI = "Informazioni Generali";
+	public static final String LABEL_APS_SERVIZIO = "Servizio";
+	public static final String LABEL_APS_SERVIZIO_SOAP = "Servizio ("+CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_SOAP+")";
+	public static final String LABEL_APS_RICERCA_SERVIZIO_SOGGETTO = "Servizio / Soggetto";
+	public static final String LABEL_APS_RICERCA_API_EROGAZIONE = LABEL_APS_SINGOLO; 
+	public static final String LABEL_APS_RICERCA_API_FRUIZIONE = LABEL_APS_FRUITORE; 
+	public static final String LABEL_APS_ALLEGATI = "Allegati";
+	public static final String LABEL_APS_ALLEGATO = "Allegato";
+	public static final String LABEL_APS_CONFIGURAZIONI = "Configurazioni";
+	public static final String LABEL_APS_CONFIGURAZIONI_DI = "";
+	public static final String LABEL_APS_PORTE_APPLICATIVE = CONFIGURAZIONE;
+	public static final String LABEL_APS_PORTE_DELEGATE = CONFIGURAZIONE;
+	public static final String LABEL_APS_DATI_INVOCAZIONE = "URL Invocazione";
+	public static final String LABEL_APS_DATI_INVOCAZIONE_DI = "";
+	public static final String LABEL_APS_STATO = "Stato";
+	public static final String LABEL_APS_ESPORTA_SELEZIONATI = "Esporta";
+	private static final String LABEL_ESPORTA_SELEZIONATI_ONCLICK_PREFIX = "Esporta('";
+	public static final String LABEL_APS_ESPORTA_SELEZIONATI_ONCLICK = LABEL_ESPORTA_SELEZIONATI_ONCLICK_PREFIX+ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA.name()+"')";
+	public static final String LABEL_EROGAZIONI_ESPORTA_SELEZIONATI_ONCLICK = LABEL_ESPORTA_SELEZIONATI_ONCLICK_PREFIX+ArchiveType.EROGAZIONE.name()+"')";
+	public static final String LABEL_FRUIZIONI_ESPORTA_SELEZIONATI_ONCLICK = LABEL_ESPORTA_SELEZIONATI_ONCLICK_PREFIX+ArchiveType.FRUIZIONE.name()+"')";
+	public static final String LABEL_APS_USA_VERSIONE_EROGATORE = "usa versione erogatore";
+	public static final String LABEL_APS_SPECIFICA_PORTI_ACCESSO = "Specifica dei Porti di Accesso";
+	public static final String LABEL_APS_SPECIFICA_PORTA_APPLICATIVA = CONFIGURAZIONE;
+	public static final String LABEL_APS_SPECIFICA_PORTA_DELEGATA = "Porta Delegata";
+	public static final String LABEL_APS_ALTRE_INFORMAZIONI = "Altre informazioni";
+	public static final String LABEL_APS_SERVIZIO_APPLICATIVO_EROGATORE = "Servizio Applicativo Erogatore";
+	public static final String LABEL_APS_SERVIZIO_APPLICATIVO_FRUITORE = "Servizio Applicativo Fruitore";
+	public static final String LABEL_APS_SOGGETTO_EROGATORE = "Soggetto Erogatore";
+	public static final String LABEL_APS_SOGGETTO_FRUITORE = "Soggetto Fruitore";
+	public static final String LABEL_APS_WSDL_IMPLEMENTATIVO_DI = "WSDL Implementativo di ";
+	public static final String LABEL_WSDL_CHANGE_CLEAR_WARNING = "Attenzione";
+	public static final String LABEL_WSDL_CHANGE_CLEAR = "Se si desidera eliminare un documento precedentemente caricato cliccare su 'Invi&agrave; senza selezionare alcun file"; 
+	public static final String LABEL_WSDL_AGGIORNAMENTO = "Aggiornamento WSDL";
+	public static final String LABEL_WSDL_NOT_FOUND = "non fornito";
+	public static final String LABEL_WSDL_ATTUALE = "Attuale";
+	public static final String LABEL_WSDL_NUOVO = "Nuovo WSDL";
+	public static final String LABEL_AGGIUNTA_FRUITORI_COMPLETATA = "Tutti i soggetti sono già stati aggiunti come fruitori";
+	public static final String LABEL_APS_VERSIONE_APS = "Versione Accordo Servizio Parte Specifica";
 	public static final String LABEL_APS_SOGGETTO = "Soggetto";
 	public static final String LABEL_APS_TIPO_SERVIZIO = "Tipo Servizio";
 	public static final String LABEL_APS_NOME_SERVIZIO = "Nome Servizio";
-	public final static String LABEL_PARAMETRO_APS_PROTOCOLLO = CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO;
-	public final static String LABEL_PARAMETRO_APS_PROTOCOLLO_COMPACT = CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO_COMPACT;
-	public final static String LABEL_APS_APPLICATIVO_INTERNO_PREFIX = "Dominio Interno - ";
-	public final static String LABEL_APS_APPLICATIVO_ESTERNO_PREFIX = "Dominio Esterno - ";
+	public static final String LABEL_PARAMETRO_APS_PROTOCOLLO = CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO;
+	public static final String LABEL_PARAMETRO_APS_PROTOCOLLO_COMPACT = CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO_COMPACT;
+	public static final String LABEL_APS_APPLICATIVO_INTERNO_PREFIX = "Dominio Interno - ";
+	public static final String LABEL_APS_APPLICATIVO_ESTERNO_PREFIX = "Dominio Esterno - ";
 	
-	public final static String LABEL_APS_MENU_VISUALE_AGGREGATA = "Erogazioni";
-	public final static String LABEL_APS_FRUIZIONI_MENU_VISUALE_AGGREGATA = "Fruizioni";
+	public static final String LABEL_APS_MENU_VISUALE_AGGREGATA = "Erogazioni";
+	public static final String LABEL_APS_FRUIZIONI_MENU_VISUALE_AGGREGATA = "Fruizioni";
 	public static final String LABEL_N_D = "N.D.";
 	
 	/* PARAMETRI */
 	
-	public final static String PARAMETRO_APS_TIPO_EROGAZIONE = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE;
-	public final static String PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE;
-	public final static String PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE;
-	public final static String PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_COMPLETA = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_COMPLETA;
+	public static final String PARAMETRO_APS_TIPO_EROGAZIONE = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE;
+	public static final String PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE;
+	public static final String PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE;
+	public static final String PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_COMPLETA = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_COMPLETA;
 	
-	public final static String PARAMETRO_APS_ID = CostantiControlStation.PARAMETRO_ID;
-	public final static String PARAMETRO_APS_MY_ID = CostantiControlStation.PARAMETRO_ID_FRUIZIONE;
-	public final static String PARAMETRO_APS_MY_TIPO = "myTipo";
-	public final static String PARAMETRO_APS_MY_NOME = "myNome";
-	public final static String PARAMETRO_APS_ID_SOGGETTO = CostantiControlStation.PARAMETRO_ID_SOGGETTO;
-	public final static String PARAMETRO_APS_ID_SOGGETTO_EROGATORE = "idSoggErogatore";
-	public final static String PARAMETRO_APS_SERVIZIO_APPLICATIVO = "servizioApplicativo";
-	public final static String PARAMETRO_APS_WSDL_EROGATORE = "wsdlimpler";
-	public final static String PARAMETRO_APS_WSDL_FRUITORE = "wsdlimplfru";
-	public final static String PARAMETRO_APS_NOME_SERVIZIO = "nomeservizio";
-	public final static String PARAMETRO_APS_TIPO_SERVIZIO = "tiposervizio";	
-	public final static String PARAMETRO_APS_TIPO = "tipo";
-	public final static String PARAMETRO_APS_NOME = "nome";
-	public final static String PARAMETRO_APS_WSDL = "wsdl";
-	public final static String PARAMETRO_APS_WSDL_WARN = "wsdlWarn";
-	public final static String PARAMETRO_APS_VALIDAZIONE_DOCUMENTI = "validazioneDocumenti";
-	public final static String PARAMETRO_APS_ACCORDO = "accordo";
-	public final static String PARAMETRO_APS_SERVIZIO_CORRELATO = "servcorr";
-	public final static String PARAMETRO_APS_PORT_TYPE = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_APS_PORT_TYPE;
-	public final static String PARAMETRO_APS_PORT_TYPE_OLD = "port_type_old";
-	public final static String PARAMETRO_APS_DESCRIZIONE = "descrizione";
-	public final static String PARAMETRO_APS_PRIVATO = "privato";
-	public final static String PARAMETRO_APS_VERSIONE = "versione";
-	public final static String PARAMETRO_APS_RUOLO = "ruolo";
-	public final static String PARAMETRO_APS_TIPO_FILE = "tipoFile";
-	public final static String PARAMETRO_APS_THE_FILE = "theFile";
-	public final static String PARAMETRO_APS_NOME_DOCUMENTO = "nomeDoc";
-	public final static String PARAMETRO_APS_TIPO_DOCUMENTO = "tipoDocumento";
-	public final static String PARAMETRO_APS_ID_ALLEGATO = "idAllegato";
-	public final static String PARAMETRO_APS_ID_ACCORDO= "idAccordo";
-	public final static String PARAMETRO_APS_DOCUMENTO= "documento";
-	public final static String PARAMETRO_APS_ID_FRUITORE = "idFruitore";
-	public final static String PARAMETRO_APS_ID_PORTA = "idPorta";
-	public final static String PARAMETRO_APS_NOME_PORTA = "nomePorta";
-	public final static String PARAMETRO_APS_ACCORDO_LABEL = "accordoLabel";
-	public final static String PARAMETRO_APS_PORT_TYPE_LABEL =  "port_type_label";
-	public final static String PARAMETRO_APS_PROVIDER_EROGATORE =  "providerErogatore";
-	public final static String PARAMETRO_APS_PROVIDER_CAMBIO_EROGATORE =  "providerCambioErogatore";
-	public final static String PARAMETRO_APS_PROVIDER_FRUITORE =  "providerFruitore";
-	public final static String PARAMETRO_APS_PROVIDER_FRUITORE_AS_TEXT =  "providerFruitoreAsText";
-	public final static String PARAMETRO_APS_PROVIDER_TEXT =  "providerText";
-	public final static String PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE =  "fruitoreViewConnettoreAzione";
-	public final static String PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE_ID_PORTA =  "fruitoreViewConnettoreAzioneIdPorta";
-	public final static String PARAMETRO_APS_SERVIZIO_CORRELATO_LABEL = "servcorrLabel";
-	public final static String PARAMETRO_APS_PRIVATO_LABEL = "privatoLabel";
-	public final static String PARAMETRO_APS_PROFILO = "profilo";
-	public final static String PARAMETRO_APS_NOME_SOGGETTO = "nomeSogg";
-	public final static String PARAMETRO_APS_TIPO_SOGGETTO = "tipoSogg";
-	public final static String PARAMETRO_APS_NOME_SOGGETTO_FRUITORE = "nomeSoggFru";
-	public final static String PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE = "tipoSoggFru";
-	public final static String PARAMETRO_APS_CORRELATO = "correlato";	
-	public final static String PARAMETRO_APS_ID_SERVIZIO = "idServ";
-	public final static String PARAMETRO_APS_STATO = "stato";
-	public final static String PARAMETRO_APS_NOME_PA = "nomePA";
-	public final static String PARAMETRO_APS_NOME_SA = "nomeServizioApplicativo";
-	public final static String PARAMETRO_APS_FRUIZIONE_NOME_SA = CostantiControlStation.PARAMETRO_SERVIZIO_APPLICATIVO;
-	public final static String PARAMETRO_APS_NOME_RUOLO = CostantiControlStation.PARAMETRO_RUOLO;
-	public final static String PARAMETRO_APS_AUTENTICAZIONE = CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE;
-	public final static String PARAMETRO_APS_AUTENTICAZIONE_OPZIONALE = CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE;
-	public final static String PARAMETRO_APS_AUTORIZZAZIONE = CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE;
-	public final static String PARAMETRO_APS_AUTORIZZAZIONE_AUTENTICAZIONE = CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE;
-	public final static String PARAMETRO_APS_AUTORIZZAZIONE_RUOLI = CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI;
-	public final static String PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_TIPOLOGIA = CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA;
-	public final static String PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_MATCH = CostantiControlStation.PARAMETRO_RUOLO_MATCH;
-	public final static String PARAMETRO_APS_AUTORIZZAZIONE_SOGGETTO_AUTENTICATO = CostantiControlStation.PARAMETRO_SOGGETTO;
-	public final static String PARAMETRO_APS_RIPRISTINA_STATO = "backToStato";
-	public final static String PARAMETRO_APS_SERVICE_BINDING = CostantiControlStation.PARAMETRO_SERVICE_BINDING;
-	public final static String PARAMETRO_APS_PROTOCOLLO = CostantiControlStation.PARAMETRO_PROTOCOLLO;
-	public final static String PARAMETRO_APS_GESTIONE_GRUPPI = "gestioneGruppi";
-	public final static String PARAMETRO_APS_GESTIONE_CONFIGURAZIONI = "gestioneConfigurazioni";
-	public final static String PARAMETRO_APS_MODIFICA_API = "modificaAPI";
-	public final static String PARAMETRO_APS_MODIFICA_PROFILO = "modificaProfilo";
-	public final static String PARAMETRO_APS_CAMBIA_API = "cambiaAPI";
-	public final static String PARAMETRO_APS_CAMBIA_SOGGETTO_EROGATORE = "cambiaErogatore";
-	public final static String PARAMETRO_APS_CONFERMA_MODIFICA_DATI_SERVIZIO = "backToConfermaModificaDatiServizio";
-	public final static String PARAMETRO_APS_ABILITA_USO_APPLICATIVO_SERVER = CostantiControlStation.PARAMETRO_ABILITA_USO_APPLICATIVO_SERVER;
-	public final static String PARAMETRO_APS_ID_APPLICATIVO_SERVER = CostantiControlStation.PARAMETRO_ID_APPLICATIVO_SERVER;
+	public static final String PARAMETRO_APS_ID = CostantiControlStation.PARAMETRO_ID;
+	public static final String PARAMETRO_APS_MY_ID = CostantiControlStation.PARAMETRO_ID_FRUIZIONE;
+	public static final String PARAMETRO_APS_MY_TIPO = "myTipo";
+	public static final String PARAMETRO_APS_MY_NOME = "myNome";
+	public static final String PARAMETRO_APS_ID_SOGGETTO = CostantiControlStation.PARAMETRO_ID_SOGGETTO;
+	public static final String PARAMETRO_APS_ID_SOGGETTO_EROGATORE = "idSoggErogatore";
+	public static final String PARAMETRO_APS_SERVIZIO_APPLICATIVO = "servizioApplicativo";
+	public static final String PARAMETRO_APS_WSDL_EROGATORE = "wsdlimpler";
+	public static final String PARAMETRO_APS_WSDL_FRUITORE = "wsdlimplfru";
+	public static final String PARAMETRO_APS_NOME_SERVIZIO = "nomeservizio";
+	public static final String PARAMETRO_APS_TIPO_SERVIZIO = "tiposervizio";	
+	public static final String PARAMETRO_APS_TIPO = "tipo";
+	public static final String PARAMETRO_APS_NOME = "nome";
+	public static final String PARAMETRO_APS_WSDL = "wsdl";
+	public static final String PARAMETRO_APS_WSDL_WARN = "wsdlWarn";
+	public static final String PARAMETRO_APS_VALIDAZIONE_DOCUMENTI = "validazioneDocumenti";
+	public static final String PARAMETRO_APS_ACCORDO = "accordo";
+	public static final String PARAMETRO_APS_SERVIZIO_CORRELATO = "servcorr";
+	public static final String PARAMETRO_APS_PORT_TYPE = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_APS_PORT_TYPE;
+	public static final String PARAMETRO_APS_PORT_TYPE_OLD = "port_type_old";
+	public static final String PARAMETRO_APS_DESCRIZIONE = "descrizione";
+	public static final String PARAMETRO_APS_PRIVATO = "privato";
+	public static final String PARAMETRO_APS_VERSIONE = "versione";
+	public static final String PARAMETRO_APS_RUOLO = "ruolo";
+	public static final String PARAMETRO_APS_TIPO_FILE = "tipoFile";
+	public static final String PARAMETRO_APS_THE_FILE = "theFile";
+	public static final String PARAMETRO_APS_NOME_DOCUMENTO = "nomeDoc";
+	public static final String PARAMETRO_APS_TIPO_DOCUMENTO = "tipoDocumento";
+	public static final String PARAMETRO_APS_ID_ALLEGATO = "idAllegato";
+	public static final String PARAMETRO_APS_ID_ACCORDO= "idAccordo";
+	public static final String PARAMETRO_APS_DOCUMENTO= "documento";
+	public static final String PARAMETRO_APS_ID_FRUITORE = "idFruitore";
+	public static final String PARAMETRO_APS_ID_PORTA = "idPorta";
+	public static final String PARAMETRO_APS_NOME_PORTA = "nomePorta";
+	public static final String PARAMETRO_APS_ACCORDO_LABEL = "accordoLabel";
+	public static final String PARAMETRO_APS_PORT_TYPE_LABEL =  "port_type_label";
+	public static final String PARAMETRO_APS_PROVIDER_EROGATORE =  "providerErogatore";
+	public static final String PARAMETRO_APS_PROVIDER_CAMBIO_EROGATORE =  "providerCambioErogatore";
+	public static final String PARAMETRO_APS_PROVIDER_FRUITORE =  "providerFruitore";
+	public static final String PARAMETRO_APS_PROVIDER_FRUITORE_AS_TEXT =  "providerFruitoreAsText";
+	public static final String PARAMETRO_APS_PROVIDER_TEXT =  "providerText";
+	public static final String PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE =  "fruitoreViewConnettoreAzione";
+	public static final String PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE_ID_PORTA =  "fruitoreViewConnettoreAzioneIdPorta";
+	public static final String PARAMETRO_APS_SERVIZIO_CORRELATO_LABEL = "servcorrLabel";
+	public static final String PARAMETRO_APS_PRIVATO_LABEL = "privatoLabel";
+	public static final String PARAMETRO_APS_PROFILO = "profilo";
+	public static final String PARAMETRO_APS_NOME_SOGGETTO = "nomeSogg";
+	public static final String PARAMETRO_APS_TIPO_SOGGETTO = "tipoSogg";
+	public static final String PARAMETRO_APS_NOME_SOGGETTO_FRUITORE = "nomeSoggFru";
+	public static final String PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE = "tipoSoggFru";
+	public static final String PARAMETRO_APS_CORRELATO = "correlato";	
+	public static final String PARAMETRO_APS_ID_SERVIZIO = "idServ";
+	public static final String PARAMETRO_APS_STATO = "stato";
+	public static final String PARAMETRO_APS_NOME_PA = "nomePA";
+	public static final String PARAMETRO_APS_NOME_SA = "nomeServizioApplicativo";
+	public static final String PARAMETRO_APS_FRUIZIONE_NOME_SA = CostantiControlStation.PARAMETRO_SERVIZIO_APPLICATIVO;
+	public static final String PARAMETRO_APS_NOME_RUOLO = CostantiControlStation.PARAMETRO_RUOLO;
+	public static final String PARAMETRO_APS_AUTENTICAZIONE = CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE;
+	public static final String PARAMETRO_APS_AUTENTICAZIONE_OPZIONALE = CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE;
+	public static final String PARAMETRO_APS_AUTORIZZAZIONE = CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE;
+	public static final String PARAMETRO_APS_AUTORIZZAZIONE_AUTENTICAZIONE = CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE;
+	public static final String PARAMETRO_APS_AUTORIZZAZIONE_RUOLI = CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI;
+	public static final String PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_TIPOLOGIA = CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA;
+	public static final String PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_MATCH = CostantiControlStation.PARAMETRO_RUOLO_MATCH;
+	public static final String PARAMETRO_APS_AUTORIZZAZIONE_SOGGETTO_AUTENTICATO = CostantiControlStation.PARAMETRO_SOGGETTO;
+	public static final String PARAMETRO_APS_RIPRISTINA_STATO = "backToStato";
+	public static final String PARAMETRO_APS_SERVICE_BINDING = CostantiControlStation.PARAMETRO_SERVICE_BINDING;
+	public static final String PARAMETRO_APS_PROTOCOLLO = CostantiControlStation.PARAMETRO_PROTOCOLLO;
+	public static final String PARAMETRO_APS_GESTIONE_GRUPPI = "gestioneGruppi";
+	public static final String PARAMETRO_APS_GESTIONE_CONFIGURAZIONI = "gestioneConfigurazioni";
+	public static final String PARAMETRO_APS_MODIFICA_API = "modificaAPI";
+	public static final String PARAMETRO_APS_MODIFICA_PROFILO = "modificaProfilo";
+	public static final String PARAMETRO_APS_CAMBIA_API = "cambiaAPI";
+	public static final String PARAMETRO_APS_CAMBIA_SOGGETTO_EROGATORE = "cambiaErogatore";
+	public static final String PARAMETRO_APS_CONFERMA_MODIFICA_DATI_SERVIZIO = "backToConfermaModificaDatiServizio";
+	public static final String PARAMETRO_APS_ABILITA_USO_APPLICATIVO_SERVER = CostantiControlStation.PARAMETRO_ABILITA_USO_APPLICATIVO_SERVER;
+	public static final String PARAMETRO_APS_ID_APPLICATIVO_SERVER = CostantiControlStation.PARAMETRO_ID_APPLICATIVO_SERVER;
 	
 	/* ATTRIBUTI SESSIONE */
 	
 	
-	public final static String SESSION_ATTRIBUTE_APS_SERVIZI_AGGIUNTI = "serviziAggiunti";
+	public static final String SESSION_ATTRIBUTE_APS_SERVIZI_AGGIUNTI = "serviziAggiunti";
 	
 	
 	/* LABEL PARAMETRI */
 	
-	public final static String LABEL_PARAMETRO_APS_TIPO = "Tipo";
-	public final static String LABEL_PARAMETRO_APS_WSDL_NUOVO = "Nuovo WSDL";
-	public final static String LABEL_PARAMETRO_APS_WSDL_ATTUALE  ="WSDL attuale";
-	public final static String LABEL_PARAMETRO_APS_VALIDAZIONE_DOCUMENTI = "Validazione";
-	public final static String LABEL_PARAMETRO_APS_ID_SOGGETTO_EROGATORE = "idErogatore";
-	public final static String LABEL_PARAMETRO_APS_TIPO_FILE = "Tipo";
-	public final static String LABEL_PARAMETRO_APS_NOME_FILE = "Nome";
-	public final static String LABEL_PARAMETRO_APS_NOME_EROGAZIONE = "Nome Erogazione";
-	public final static String LABEL_PARAMETRO_APS_NOME_FRUIZIONE = "Nome Fruizione";
-	public final static String LABEL_PARAMETRO_APS_RUOLO = "Ruolo";
-	public final static String LABEL_PARAMETRO_APS_SCOPE = "Scope";
-	public final static String LABEL_PARAMETRO_APS_THE_FILE = "Documento";
-	public final static String LABEL_PARAMETRO_APS_ACCORDO = LABEL_APC_COMPOSTO_SOLO_PARTE_COMUNE;//"API";
-	public final static String LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_NOME = "Nome";
-	public final static String LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_NOME_ATTUALE = "Attuale";
-	public final static String LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_NOME_NUOVO = "Nuovo";
-	public final static String LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_REFERENTE = "Soggetto Referente";
-	public final static String LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_VERSIONE = "Versione";
-	public final static String LABEL_PARAMETRO_APS_DESCRIZIONE = "Descrizione";
-	public final static String LABEL_PARAMETRO_APS_PROVIDER_EROGATORE = "Nome";
-	public final static String LABEL_PARAMETRO_APS_PROVIDER_FRUITORE = "Nome";
-	public final static String LABEL_PARAMETRO_APS_VERSIONE = "Versione";
-	public final static String LABEL_PARAMETRO_APS_STATO = "Stato";
-	public final static String LABEL_PARAMETRO_APS_SERVIZIO_CORRELATO = "Correlato";
-	public final static String LABEL_PARAMETRO_APS_TIPOLOGIA_SERVIZIO = "Tipologia Servizio";
-	public final static String LABEL_PARAMETRO_APS_PRIVATO = "Privato";
-	public final static String LABEL_PARAMETRO_APS_VISIBILITA_SERVIZIO = "Visibilit&agrave; Servizio";
-	public final static String LABEL_PARAMETRO_APS_VERSIONE_PROTOCOLLO = "Versione Protocollo";
-	public final static String LABEL_PARAMETRO_APS_VALIDAZIONE_DOCUMENTI_ESTESA = "Validazione Documenti";
-	public final static String LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_EROGATORE_COMPATTO = "WSDL Impl. Erogatore"; 
-	public final static String LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_FRUITORE_COMPATTO = "WSDL Impl. Fruitore";
-	public final static String LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_EROGATORE_ESTESO = "WSDL Implementativo Erogatore"; 
-	public final static String LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_FRUITORE_ESTESO = "WSDL Implementativo Fruitore";
-	public final static String LABEL_PARAMETRO_APS_NOME_PA = "Nome";
-	public final static String LABEL_PARAMETRO_APS_NOME_SA = "ServizioApplicativo";
-	public final static String LABEL_PARAMETRO_APS_NOME_SERVIZIO_APPLICATIVO_EROGATORE = "Nome";
-	public final static String LABEL_PARAMETRO_APS_NOME_SERVIZIO_APPLICATIVO_FRUITORE = "Nome";
-	public final static String LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO = "WSDL Implementativo";
-	public final static String LABEL_PARAMETRO_APS_RIPRISTINA_STATO_OPERATIVO = "Ripristina Stato Operativo";
-	public final static String LABEL_PARAMETRO_APS_SERVICE_BINDING = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING;
+	public static final String LABEL_PARAMETRO_APS_TIPO = "Tipo";
+	public static final String LABEL_PARAMETRO_APS_WSDL_NUOVO = "Nuovo WSDL";
+	public static final String LABEL_PARAMETRO_APS_WSDL_ATTUALE  ="WSDL attuale";
+	public static final String LABEL_PARAMETRO_APS_VALIDAZIONE_DOCUMENTI = "Validazione";
+	public static final String LABEL_PARAMETRO_APS_ID_SOGGETTO_EROGATORE = "idErogatore";
+	public static final String LABEL_PARAMETRO_APS_TIPO_FILE = "Tipo";
+	public static final String LABEL_PARAMETRO_APS_NOME_FILE = "Nome";
+	public static final String LABEL_PARAMETRO_APS_NOME_EROGAZIONE = "Nome Erogazione";
+	public static final String LABEL_PARAMETRO_APS_NOME_FRUIZIONE = "Nome Fruizione";
+	public static final String LABEL_PARAMETRO_APS_RUOLO = "Ruolo";
+	public static final String LABEL_PARAMETRO_APS_SCOPE = "Scope";
+	public static final String LABEL_PARAMETRO_APS_THE_FILE = "Documento";
+	public static final String LABEL_PARAMETRO_APS_ACCORDO = LABEL_APC_COMPOSTO_SOLO_PARTE_COMUNE;
+	public static final String LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_NOME = "Nome";
+	public static final String LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_NOME_ATTUALE = "Attuale";
+	public static final String LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_NOME_NUOVO = "Nuovo";
+	public static final String LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_REFERENTE = "Soggetto Referente";
+	public static final String LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_VERSIONE = "Versione";
+	public static final String LABEL_PARAMETRO_APS_DESCRIZIONE = "Descrizione";
+	public static final String LABEL_PARAMETRO_APS_PROVIDER_EROGATORE = "Nome";
+	public static final String LABEL_PARAMETRO_APS_PROVIDER_FRUITORE = "Nome";
+	public static final String LABEL_PARAMETRO_APS_VERSIONE = "Versione";
+	public static final String LABEL_PARAMETRO_APS_STATO = "Stato";
+	public static final String LABEL_PARAMETRO_APS_SERVIZIO_CORRELATO = "Correlato";
+	public static final String LABEL_PARAMETRO_APS_TIPOLOGIA_SERVIZIO = "Tipologia Servizio";
+	public static final String LABEL_PARAMETRO_APS_PRIVATO = "Privato";
+	public static final String LABEL_PARAMETRO_APS_VISIBILITA_SERVIZIO = "Visibilit&agrave; Servizio";
+	public static final String LABEL_PARAMETRO_APS_VERSIONE_PROTOCOLLO = "Versione Protocollo";
+	public static final String LABEL_PARAMETRO_APS_VALIDAZIONE_DOCUMENTI_ESTESA = "Validazione Documenti";
+	public static final String LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_EROGATORE_COMPATTO = "WSDL Impl. Erogatore"; 
+	public static final String LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_FRUITORE_COMPATTO = "WSDL Impl. Fruitore";
+	public static final String LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_EROGATORE_ESTESO = "WSDL Implementativo Erogatore"; 
+	public static final String LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_FRUITORE_ESTESO = "WSDL Implementativo Fruitore";
+	public static final String LABEL_PARAMETRO_APS_NOME_PA = "Nome";
+	public static final String LABEL_PARAMETRO_APS_NOME_SA = "ServizioApplicativo";
+	public static final String LABEL_PARAMETRO_APS_NOME_SERVIZIO_APPLICATIVO_EROGATORE = "Nome";
+	public static final String LABEL_PARAMETRO_APS_NOME_SERVIZIO_APPLICATIVO_FRUITORE = "Nome";
+	public static final String LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO = "WSDL Implementativo";
+	public static final String LABEL_PARAMETRO_APS_RIPRISTINA_STATO_OPERATIVO = "Ripristina Stato Operativo";
+	public static final String LABEL_PARAMETRO_APS_SERVICE_BINDING = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING;
 	
-	public final static String LABEL_DEFAULT_VALUE_PARAMETRO_ACCORDO_NON_SELEZIONATO = "-";	
+	public static final String LABEL_DEFAULT_VALUE_PARAMETRO_ACCORDO_NON_SELEZIONATO = "-";	
 	
 	/* DEFAULT VALUE PARAMETRI */
 	
-	public final static String DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_FRUITORE = "wsdlimplfru";
-	public final static String DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_EROGATORE = "wsdlimpler";
+	public static final String DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_FRUITORE = "wsdlimplfru";
+	public static final String DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_EROGATORE = "wsdlimpler";
 	
-	public final static String DEFAULT_VALUE_PARAMETRO_APS_SERVICE_BINDING_REST = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_REST;
-	public final static String DEFAULT_VALUE_PARAMETRO_APS_SERVICE_BINDING_SOAP = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_SOAP;
+	public static final String DEFAULT_VALUE_PARAMETRO_APS_SERVICE_BINDING_REST = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_REST;
+	public static final String DEFAULT_VALUE_PARAMETRO_APS_SERVICE_BINDING_SOAP = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_SOAP;
 	
-	public final static String DEFAULT_VALUE_ABILITATO = "abilitato"; 
-	public final static String DEFAULT_VALUE_DISABILITATO = "disabilitato";
-	public final static String DEFAULT_VALUE_DEFAULT = "default";
-	public final static String DEFAULT_VALUE_CORRELATO = "correlato";
-	public final static String DEFAULT_VALUE_NORMALE = "normale";
-	public final static String DEFAULT_VALUE_PRIVATA = "privata";
-	public final static String DEFAULT_VALUE_PUBBLICA = "pubblica";	
+	public static final String DEFAULT_VALUE_ABILITATO = "abilitato"; 
+	public static final String DEFAULT_VALUE_DISABILITATO = "disabilitato";
+	public static final String DEFAULT_VALUE_DEFAULT = "default";
+	public static final String DEFAULT_VALUE_CORRELATO = "correlato";
+	public static final String DEFAULT_VALUE_NORMALE = "normale";
+	public static final String DEFAULT_VALUE_PRIVATA = "privata";
+	public static final String DEFAULT_VALUE_PUBBLICA = "pubblica";	
 	
-	public final static String DEFAULT_VALUE_PARAMETRO_ACCORDO_NON_SELEZIONATO = "";	
+	public static final String DEFAULT_VALUE_PARAMETRO_ACCORDO_NON_SELEZIONATO = "";	
 	
 	/* DEFAULT VALUE ATTRIBUTI SESSIONE */
 	
@@ -362,7 +380,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public static final String MESSAGGIO_ERRORE_DOCUMENTO_OBBLIGATORIO = "&Egrave; necessario selezionare un documento.";
 	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_IL_TIPO_DI_DOCUMENTO = "Dati incompleti. &Egrave; necessario indicare il Tipo di documento";
 	public static final String MESSAGGIO_ERRORE_ESISTE_GI_AGRAVE_UN_FRUITORE_DEL_SERVIZIO_CON_LO_STESSO_SOGGETTO = "Esiste gi&agrave; un fruitore del Servizio con lo stesso Soggetto";
-	public static final String MESSAGGIO_ERRORE_PER_POTER_AGGIUNGERE_IL_FRUITORE_DEVE_ESSERE_DEFINITO_IL_CONNETTORE_BR_IN_ALTERNATIVA_È_POSSIBILE_CONFIGURARE_UN_CONNETTORE_SUL_SERVIZIO_O_SUL_SOGGETTO_EROGATORE_PRIMA_DI_PROCEDERE_CON_LA_CREAZIONE_DEL_FRUITORE = "Per poter aggiungere il fruitore deve essere definito il connettore.<br/>In alternativa è possibile configurare un connettore sul servizio o sul soggetto erogatore prima di procedere con la creazione del fruitore.";
+	public static final String MESSAGGIO_ERRORE_PER_POTER_AGGIUNGERE_IL_FRUITORE_DEVE_ESSERE_DEFINITO_IL_CONNETTORE_BR_IN_ALTERNATIVA_E_POSSIBILE_CONFIGURARE_UN_CONNETTORE_SUL_SERVIZIO_O_SUL_SOGGETTO_EROGATORE_PRIMA_DI_PROCEDERE_CON_LA_CREAZIONE_DEL_FRUITORE = "Per poter aggiungere il fruitore deve essere definito il connettore.<br/>In alternativa è possibile configurare un connettore sul servizio o sul soggetto erogatore prima di procedere con la creazione del fruitore.";
 	public static final String MESSAGGIO_ERRORE_PER_POTER_AGGIUNGERE_IL_FRUITORE_DEVE_PRIMA_ESSERE_DEFINITO_UN_CONNETTORE_SUL_SERVIZIO_O_SUL_SOGGETTO_EROGATORE = "Per poter aggiungere il fruitore deve prima essere definito un connettore sul servizio o sul soggetto erogatore.";
 	public static final String MESSAGGIO_ERRORE_PER_POTER_DISABILITARE_IL_CONNETTORE_DEVE_PRIMA_ESSERE_DEFINITO_UN_CONNETTORE_SUL_SERVIZIO_O_SUL_SOGGETTO_EROGATORE = "Per poter disabilitare il connettore deve prima essere definito un connettore sul servizio o sul soggetto erogatore";
 	public static final String MESSAGGIO_ERRORE_VALIDAZIONE_PROTOCOLLO_CON_PARAMETRI = "[validazione-{0}] {1}";

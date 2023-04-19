@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -133,14 +132,14 @@ public final class PorteDelegateRuoliAdd extends Action {
 						
 			List<String> ruoli = new ArrayList<>();
 			if(isToken) {
-				if(pde.getAutorizzazioneToken()!=null && pde.getAutorizzazioneToken().getRuoli()!=null && pde.getAutorizzazioneToken().getRuoli().getRuoloList()!=null && pde.getAutorizzazioneToken().getRuoli().getRuoloList().size()>0){
+				if(pde.getAutorizzazioneToken()!=null && pde.getAutorizzazioneToken().getRuoli()!=null && pde.getAutorizzazioneToken().getRuoli().getRuoloList()!=null && !pde.getAutorizzazioneToken().getRuoli().getRuoloList().isEmpty()){
 					for (Ruolo ruolo : pde.getAutorizzazioneToken().getRuoli().getRuoloList()) {
 						ruoli.add(ruolo.getNome());	
 					}
 				}
 			}
 			else {
-				if(pde.getRuoli()!=null && pde.getRuoli().getRuoloList()!=null && pde.getRuoli().getRuoloList().size()>0){
+				if(pde.getRuoli()!=null && pde.getRuoli().getRuoloList()!=null && !pde.getRuoli().getRuoloList().isEmpty()){
 					for (Ruolo ruolo : pde.getRuoli().getRuoloList()) {
 						ruoli.add(ruolo.getNome());	
 					}
@@ -194,9 +193,9 @@ public final class PorteDelegateRuoliAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 				
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteDelegateHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true, true, null, isToken);
 
@@ -219,9 +218,9 @@ public final class PorteDelegateRuoliAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteDelegateHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true, true, null, isToken);
 

@@ -22,7 +22,6 @@
 package org.openspcoop2.web.ctrlstat.servlet.audit;
 
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,8 +32,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.driver.IDBuilder;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -90,8 +89,7 @@ public   class Auditing extends Action {
 
 			// Preparo il menu
 			auditingHelper.makeMenu();
-			//User user = Utilities.getLoggedUser(session);
-
+			
 			IDBuilder idb = new IDBuilder();
 			String[] tipiOggTmp = idb.getManagedObjects(true);
 			String[] tipiOgg = new String[tipiOggTmp.length+1];
@@ -105,7 +103,7 @@ public   class Auditing extends Action {
 				ServletUtils.setPageDataTitle_ServletFirst(pd, AuditCostanti.LABEL_AUDIT, AuditCostanti.SERVLET_NAME_AUDITING);
 
 				// preparo i campi
-				Vector<DataElement> dati = auditingHelper.getAuditHelper().addAuditReportToDati(
+				List<DataElement> dati = auditingHelper.getAuditHelper().addAuditReportToDati(
 						"", "", "-", tipiOgg, "-", "", "", "", "-", "");
 
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
@@ -131,12 +129,12 @@ public   class Auditing extends Action {
 				ServletUtils.setPageDataTitle_ServletFirst(pd, AuditCostanti.LABEL_AUDIT, AuditCostanti.SERVLET_NAME_AUDITING);
 
 				// preparo i campi
-				Vector<DataElement> dati = auditingHelper.getAuditHelper().addAuditReportToDati(
+				List<DataElement> dati = auditingHelper.getAuditHelper().addAuditReportToDati(
 						datainizio, datafine, tipooperazione, tipiOgg,
 						tipooggetto, id, oldid, utente, statooperazione,
 						contoggetto);
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				pd.setDati(dati);
 

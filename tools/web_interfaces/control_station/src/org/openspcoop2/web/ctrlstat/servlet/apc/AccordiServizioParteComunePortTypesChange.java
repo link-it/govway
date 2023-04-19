@@ -22,9 +22,9 @@
 package org.openspcoop2.web.ctrlstat.servlet.apc;
 
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -126,7 +126,7 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 			String editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			String protocolPropertiesSet = apcHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
 			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
-			long idAccordoLong = Long.valueOf(id);
+			long idAccordoLong = Long.parseLong(id);
 			String nomept = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME);
 			if (nomept == null) {
 				nomept = "";
@@ -233,7 +233,7 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false).getValue();
 			List<Parameter> listaParams = apcHelper.getTitoloApc(TipoOperazione.CHANGE, as, tipoAccordo, labelASTitle, null, false);
 			
-			String labelPortTypes = isModalitaVistaApiCustom ? AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES : AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES + " di " + labelASTitle;
+			String labelPortTypes = (isModalitaVistaApiCustom!=null && isModalitaVistaApiCustom.booleanValue()) ? AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES : AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES + " di " + labelASTitle;
 		 	listaParams.add(new Parameter(labelPortTypes, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPES_LIST, pIdAccordo, pNomeAccordo, pTipoAccordo));
 		 	listaParams.add(new Parameter(nomept, null));
 
@@ -280,9 +280,9 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				// update della configurazione 
 				consoleDynamicConfiguration.updateDynamicConfigPortType(consoleConfiguration, consoleOperationType, apcHelper, protocolProperties, 
@@ -348,7 +348,7 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 				ServletUtils.setPageDataTitle(pd, listaParams);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
 				// update della configurazione 
 				consoleDynamicConfiguration.updateDynamicConfigPortType(consoleConfiguration, consoleOperationType, apcHelper, protocolProperties, 
@@ -372,13 +372,6 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 			}
 
 			// Modifico i dati del port-type nel db
-			// if (prof.equals("default")) {
-			// filtroduppt = null;
-			// confricpt = null;
-			// idcollpt = null;
-			// consordpt = null;
-			// scadenzapt = null;
-			// } else {
 			if(ServletUtils.isCheckBoxEnabled(filtroduppt)){
 				filtroduppt = CostantiRegistroServizi.ABILITATO.toString();
 			} else {
@@ -404,7 +397,6 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 			} else {
 				consordpt = CostantiRegistroServizi.DISABILITATO.toString();
 			}
-			// }
 
 			PortType oldPt = null;
 			for (int i = 0; i < as.sizePortTypeList(); i++) {

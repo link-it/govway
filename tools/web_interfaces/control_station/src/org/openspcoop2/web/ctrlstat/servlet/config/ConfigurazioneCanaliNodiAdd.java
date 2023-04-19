@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,7 +51,7 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
- * ConfigurazioneProxyPassRegolaAdd
+ * ConfigurazioneCanaliNodiAdd
  * 
  * @author Giuliano Pintori (pintori@link.it)
  * @author $Author$
@@ -93,7 +92,7 @@ public final class ConfigurazioneCanaliNodiAdd extends Action {
 
 			// Preparo il menu
 			confHelper.makeMenu();
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 			// setto la barra del titolo
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALI_NODI, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CANALI_NODI_LIST));
@@ -118,9 +117,9 @@ public final class ConfigurazioneCanaliNodiAdd extends Action {
 					
 					pd.disableEditMode();
 
-					Vector<DataElement> dati = new Vector<DataElement>();
+					List<DataElement> dati = new ArrayList<>();
 
-					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+					dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 					pd.setDati(dati);
 
@@ -142,8 +141,8 @@ public final class ConfigurazioneCanaliNodiAdd extends Action {
 				}
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = confHelper.addCanaleNodoToDati(TipoOperazione.ADD, dati, idNodoS, null, nome, descrizione, canali, canaleList,
 						selectListNode, aliases);
@@ -162,9 +161,9 @@ public final class ConfigurazioneCanaliNodiAdd extends Action {
 			if (!isOk) {
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = confHelper.addCanaleNodoToDati(TipoOperazione.ADD, dati, idNodoS, null,nome, descrizione, canali, canaleList,
 						selectListNode, aliases);

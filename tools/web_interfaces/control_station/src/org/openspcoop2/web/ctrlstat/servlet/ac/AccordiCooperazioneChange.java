@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -129,7 +128,7 @@ public final class AccordiCooperazioneChange extends Action {
 			String tipoProtocollo = acHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
 			String actionConfirm = acHelper.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
 			// patch per version spinner fino a che non si trova un modo piu' elegante
-			/*if(ch.core.isBackwardCompatibilityAccordo11()){
+			/**if(ch.core.isBackwardCompatibilityAccordo11()){
 				if("0".equals(versione))
 					versione = "";
 			}*/
@@ -137,9 +136,9 @@ public final class AccordiCooperazioneChange extends Action {
 			boolean privato = ServletUtils.isCheckBoxEnabled(privatoS);
 			String statoPackage = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_STATO);
 
-			String tipoSICA = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_SICA);
+			/**String tipoSICA = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_SICA);
 			if("".equals(tipoSICA))
-				tipoSICA = null;
+				tipoSICA = null;*/
 
 			AccordiCooperazioneCore acCore = new AccordiCooperazioneCore();
 			SoggettiCore soggettiCore = new SoggettiCore(acCore);
@@ -176,7 +175,7 @@ public final class AccordiCooperazioneChange extends Action {
 
 				List<IDAccordo> allIdAccordiServizio = apcCore.getAllIdAccordiServizio(filtroRicerca);
 
-				if(allIdAccordiServizio != null && allIdAccordiServizio.size() > 0)
+				if(allIdAccordiServizio != null && !allIdAccordiServizio.isEmpty())
 					used = true;
 				
 			}catch(DriverRegistroServiziNotFound de){
@@ -206,7 +205,7 @@ public final class AccordiCooperazioneChange extends Action {
 			String[] providersListLabel = null;
 
 			// Provider
-			/*
+			/**
 				int totProv = ch.getCounterFromDB("soggetti", "superuser", userLogin);
 				if (totProv != 0) {
 					providersList = new String[totProv+1];
@@ -243,12 +242,12 @@ public final class AccordiCooperazioneChange extends Action {
 				lista = soggettiCore.soggettiRegistroList(userLogin, new ConsoleSearch(true));
 			}
 			
-			List<String> soggettiListTmp = new ArrayList<String>();
-			List<String> soggettiListLabelTmp = new ArrayList<String>();
+			List<String> soggettiListTmp = new ArrayList<>();
+			List<String> soggettiListLabelTmp = new ArrayList<>();
 			soggettiListTmp.add("-");
 			soggettiListLabelTmp.add("-");
 			
-			if (lista.size() > 0) {
+			if (!lista.isEmpty()) {
 				for (Soggetto soggetto : lista) {
 					if(tipiSoggettiGestitiProtocollo.contains(soggetto.getTipo())){
 						soggettiListTmp.add(soggetto.getId().toString());
@@ -304,7 +303,7 @@ public final class AccordiCooperazioneChange extends Action {
 			// modifica dati
 			if (ServletUtils.isEditModeInProgress(strutsBean.editMode)) {
 				// setto la barra del titolo
-				List<Parameter> lstParam = new ArrayList<Parameter>();
+				List<Parameter> lstParam = new ArrayList<>();
 				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
 				lstParam.add(new Parameter(titleAS, null));
 
@@ -318,13 +317,13 @@ public final class AccordiCooperazioneChange extends Action {
 					statoPackage = ac.getStatoPackage();
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 				
 				// update della configurazione 
 				strutsBean.consoleDynamicConfiguration.updateDynamicConfigAccordoCooperazione(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, acHelper, strutsBean.protocolProperties, 
 						strutsBean.registryReader, strutsBean.configRegistryReader, idAcOLD);
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = acHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
 
@@ -384,19 +383,19 @@ public final class AccordiCooperazioneChange extends Action {
 			
 			if (!isOk) {
 				// setto la barra del titolo
-				List<Parameter> lstParam = new ArrayList<Parameter>();
+				List<Parameter> lstParam = new ArrayList<>();
 				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
 				lstParam.add(new Parameter(titleAS, null));
 
 				ServletUtils.setPageDataTitle(pd, lstParam);
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 				
 				// update della configurazione 
 				strutsBean.consoleDynamicConfiguration.updateDynamicConfigAccordoCooperazione(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, acHelper, strutsBean.protocolProperties, 
 						strutsBean.registryReader, strutsBean.configRegistryReader, idAcOLD);
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = acHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
 
@@ -420,19 +419,19 @@ public final class AccordiCooperazioneChange extends Action {
 			if(used && actionConfirm == null){
 
 				// setto la barra del titolo
-				List<Parameter> lstParam = new ArrayList<Parameter>();
+				List<Parameter> lstParam = new ArrayList<>();
 				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
 				lstParam.add(new Parameter(titleAS, null));
 
 				ServletUtils.setPageDataTitle(pd, lstParam);
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 				
 				// update della configurazione 
 				strutsBean.consoleDynamicConfiguration.updateDynamicConfigAccordoCooperazione(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, acHelper, strutsBean.protocolProperties, 
 						strutsBean.registryReader, strutsBean.configRegistryReader, idAcOLD);
 
-				dati.addElement(ServletUtils.getDataElementForEditModeInProgress());
+				dati.add(ServletUtils.getDataElementForEditModeInProgress());
 
 				dati = acHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
 				
@@ -525,20 +524,20 @@ public final class AccordiCooperazioneChange extends Action {
 					pd.setMessage(validazioneException.toString());
 
 					// setto la barra del titolo
-					List<Parameter> lstParam = new ArrayList<Parameter>();
+					List<Parameter> lstParam = new ArrayList<>();
 					lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
 					lstParam.add(new Parameter(titleAS, null));
 
 					ServletUtils.setPageDataTitle(pd, lstParam);
 
 					// preparo i campi
-					Vector<DataElement> dati = new Vector<DataElement>();
+					List<DataElement> dati = new ArrayList<>();
 					
 					// update della configurazione 
 					strutsBean.consoleDynamicConfiguration.updateDynamicConfigAccordoCooperazione(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, acHelper, strutsBean.protocolProperties, 
 							strutsBean.registryReader, strutsBean.configRegistryReader, idAcOLD);
 
-					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+					dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 					dati = acHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
 
@@ -562,7 +561,7 @@ public final class AccordiCooperazioneChange extends Action {
 
 
 			//  Oggetti da modificare
-			List<Object> oggettiDaAggiornare = new ArrayList<Object>();
+			List<Object> oggettiDaAggiornare = new ArrayList<>();
 
 
 			// Update accordo
@@ -572,7 +571,7 @@ public final class AccordiCooperazioneChange extends Action {
 
 			// Aggiornamento accordi di servizio che possiedono tale accordo di cooperazione come riferimento
 			// Essendo servizi composti
-			if(idAccordoCooperazioneFactory.getUriFromAccordo(ac).equals(idAccordoCooperazioneFactory.getUriFromIDAccordo(ac.getOldIDAccordoForUpdate()))==false){
+			if(!idAccordoCooperazioneFactory.getUriFromAccordo(ac).equals(idAccordoCooperazioneFactory.getUriFromIDAccordo(ac.getOldIDAccordoForUpdate()))){
 
 				List<AccordoServizioParteComune> ass = apcCore.accordiServizioWithAccordoCooperazione(ac.getOldIDAccordoForUpdate());
 				for(int i=0; i<ass.size(); i++){
@@ -580,7 +579,7 @@ public final class AccordiCooperazioneChange extends Action {
 					if(as.getServizioComposto()!=null){
 						as.getServizioComposto().setAccordoCooperazione(idAccordoCooperazioneFactory.getUriFromAccordo(ac));
 						oggettiDaAggiornare.add(as);
-						//System.out.println("As SERVIZIO COMPONENTE ["+IDAccordo.getUriFromAccordo(as)+"]");
+						/** System.out.println("As SERVIZIO COMPONENTE ["+IDAccordo.getUriFromAccordo(as)+"]"); */
 					}
 				}
 

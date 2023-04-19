@@ -21,7 +21,8 @@
 package org.openspcoop2.protocol.trasparente.testsuite.units.rest.method.post;
 
 import java.util.Date;
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.openspcoop2.protocol.trasparente.testsuite.units.rest.RESTCore;
 import org.openspcoop2.protocol.trasparente.testsuite.units.rest.RESTCore.RUOLO;
@@ -45,7 +46,7 @@ import org.testng.annotations.Test;
  */
 public class RESTPAPost {
 
-	private final static String ID_GRUPPO = "REST.PA.POST";
+	private static final String ID_GRUPPO = "REST.PA.POST";
 	private HttpRequestMethod method = HttpRequestMethod.POST;
 
 	private RESTCore restCore;
@@ -59,7 +60,7 @@ public class RESTPAPost {
 	public void testOpenspcoopCoreLog_raccoltaTempoAvvioTest() throws Exception{
 		this.dataAvvioGruppoTest = DateManager.getDate();
 	} 	
-	private Vector<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new Vector<ErroreAttesoOpenSPCoopLogCore>();
+	private List<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new ArrayList<ErroreAttesoOpenSPCoopLogCore>();
 	@AfterGroups (alwaysRun=true , groups=ID_GRUPPO)
 	public void testOpenspcoopCoreLog() throws Exception{
 		if(this.erroriAttesiOpenSPCoopCore.size()>0){

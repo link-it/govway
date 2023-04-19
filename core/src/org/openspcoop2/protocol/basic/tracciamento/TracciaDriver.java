@@ -83,7 +83,7 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 
 
 
-	public final static String IDTRACCIA = "@@@@@-----@@@@-----IDTRACCIA-DB----@@@@@-----@@@@";
+	public static final String IDTRACCIA = "@@@@@-----@@@@-----IDTRACCIA-DB----@@@@@-----@@@@";
 	
 	/**
 	 * Properties

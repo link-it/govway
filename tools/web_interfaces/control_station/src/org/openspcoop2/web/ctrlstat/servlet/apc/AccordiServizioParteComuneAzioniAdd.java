@@ -24,7 +24,6 @@ package org.openspcoop2.web.ctrlstat.servlet.apc;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -198,18 +197,16 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 			List<Azione> azioniCorrelate = apcCore.accordiAzioniList(idAccordo, CostantiRegistroServizi.ASINCRONO_ASIMMETRICO.toString() , new ConsoleSearch(true));
 			List<String> azioniCorrelateUniche = null;
 			String[] azioniList = null;
-			if (azioniCorrelate.size() > 0) {
-				azioniCorrelateUniche = new ArrayList<String>();
+			if (!azioniCorrelate.isEmpty()) {
+				azioniCorrelateUniche = new ArrayList<>();
 				azioniCorrelateUniche.add("-");
 				for (Iterator<Azione> iterator = azioniCorrelate.iterator(); iterator.hasNext();) {
 					Azione azione = iterator.next();
-					if (!nomeaz.equals(azione.getNome())) {
-						if ( 
-								(azione.getCorrelata()==null||"".equals(azione.getCorrelata())) &&
-								(!apcCore.isAzioneCorrelata(idAccordo, azione.getNome(), nomeaz))
-								) {
-							azioniCorrelateUniche.add(azione.getNome());
-						}
+					if (!nomeaz.equals(azione.getNome()) &&
+							(azione.getCorrelata()==null||"".equals(azione.getCorrelata())) &&
+							(!apcCore.isAzioneCorrelata(idAccordo, azione.getNome(), nomeaz))
+							) {
+						azioniCorrelateUniche.add(azione.getNome());
 					}
 				}
 			}
@@ -249,9 +246,9 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 				profcoll = profcoll != null && !"".equals(profcoll) ? profcoll : AccordiServizioParteComuneHelper.convertProfiloCollaborazioneDB2View(as.getProfiloCollaborazione());
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				consoleDynamicConfiguration.updateDynamicConfigAzione(consoleConfiguration, consoleOperationType, apcHelper, protocolProperties, 
 						registryReader, configRegistryReader, idAzione);
@@ -320,9 +317,9 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 						);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				consoleDynamicConfiguration.updateDynamicConfigAzione(consoleConfiguration, consoleOperationType, apcHelper, protocolProperties, 
 						registryReader, configRegistryReader, idAzione);
@@ -349,7 +346,7 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 			// utilizzo_senza_azione
 			List<Azione> list = apcCore.accordiAzioniList(idAccordo, new ConsoleSearch(true));
 			boolean modificaUtilizzoSenzaAzione = true;
-			if (list.size() > 0)
+			if (!list.isEmpty())
 				modificaUtilizzoSenzaAzione = false;
 			if (modificaUtilizzoSenzaAzione) {
 				as.setUtilizzoSenzaAzione(false);

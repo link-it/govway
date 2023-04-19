@@ -78,6 +78,7 @@
 	<var name="jsf_api_jar" value="" />
 	<var name="el_impl_jar" value="" />
 	<var name="el-api-1.0.jar" value="" />
+	<var name="stax2-api_jar" value="" />
 	<var name="jsf_module_jar" value="" />
 	<var name="wildfly_module_jar" value="" />
 	<var name="jboss_classloading" value="" />
@@ -195,6 +196,15 @@
 		</or>
 		<then>
 			<var name="el-api-1.0.jar" value="el-api-1.0.jar" />
+		</then>
+	</if>
+	<!-- stax2-api_jar -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+		</or>
+		<then>
+			<var name="stax2-api_jar" value="stax2-api-4.2.1.jar" />
 		</then>
 	</if>
 	

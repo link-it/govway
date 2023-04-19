@@ -43,21 +43,21 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _SearchFilterMessaggioDiagnostico_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "search-filter-messaggio-diagnostico");
-    private final static QName _DominioSoggetto_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "dominio-soggetto");
-    private final static QName _DominioDiagnostico_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "dominio-diagnostico");
-    private final static QName _Protocollo_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "protocollo");
-    private final static QName _DiagnosticaServiceException_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "diagnostica-service-exception");
-    private final static QName _DiagnosticaNotFoundException_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "diagnostica-not-found-exception");
-    private final static QName _DiagnosticaMultipleResultException_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "diagnostica-multiple-result-exception");
-    private final static QName _DiagnosticaNotImplementedException_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "diagnostica-not-implemented-exception");
-    private final static QName _DiagnosticaNotAuthorizedException_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "diagnostica-not-authorized-exception");
-    private final static QName _FindAll_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "findAll");
-    private final static QName _FindAllResponse_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "findAllResponse");
-    private final static QName _Find_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "find");
-    private final static QName _FindResponse_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "findResponse");
-    private final static QName _Count_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "count");
-    private final static QName _CountResponse_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "countResponse");
+    private static final QName _SearchFilterMessaggioDiagnostico_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "search-filter-messaggio-diagnostico");
+    private static final QName _DominioSoggetto_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "dominio-soggetto");
+    private static final QName _DominioDiagnostico_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "dominio-diagnostico");
+    private static final QName _Protocollo_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "protocollo");
+    private static final QName _DiagnosticaServiceException_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "diagnostica-service-exception");
+    private static final QName _DiagnosticaNotFoundException_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "diagnostica-not-found-exception");
+    private static final QName _DiagnosticaMultipleResultException_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "diagnostica-multiple-result-exception");
+    private static final QName _DiagnosticaNotImplementedException_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "diagnostica-not-implemented-exception");
+    private static final QName _DiagnosticaNotAuthorizedException_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "diagnostica-not-authorized-exception");
+    private static final QName _FindAll_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "findAll");
+    private static final QName _FindAllResponse_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "findAllResponse");
+    private static final QName _Find_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "find");
+    private static final QName _FindResponse_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "findResponse");
+    private static final QName _Count_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "count");
+    private static final QName _CountResponse_QNAME = new QName("http://www.openspcoop2.org/core/diagnostica/management", "countResponse");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.openspcoop2.core.diagnostica.ws.client.messaggiodiagnostico.search

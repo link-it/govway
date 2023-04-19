@@ -22,7 +22,6 @@ package org.openspcoop2.web.ctrlstat.servlet.utenti;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -92,17 +91,16 @@ public class UtentiSoggettiAdd extends Action {
 			ConsoleSearch searchSoggetti = new ConsoleSearch(true);
 			List<String> protocolli = user.getProtocolliSupportati();
 			
-			if(protocollo == null) {
-				if(protocolli!=null && protocolli.size()>0) {
-					protocollo = utentiCore.getProtocolloDefault(request, null, protocolli);
-				}
+			if(protocollo == null &&
+				protocolli!=null && !protocolli.isEmpty()) {
+				protocollo = utentiCore.getProtocolloDefault(request, null, protocolli);
 			}
 			
 			searchSoggetti.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, protocollo);
 			searchSoggetti.addFilter(Liste.SOGGETTI, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE);
 			List<Soggetto> listaSoggettiRegistro = soggettiCore.soggettiRegistroList(null, searchSoggetti);
 
-			List<Soggetto> listaSoggettiNonUtilizzati = new ArrayList<Soggetto>();
+			List<Soggetto> listaSoggettiNonUtilizzati = new ArrayList<>();
 
 			for (Soggetto sog : listaSoggettiRegistro) {
 				boolean found = false;
@@ -126,12 +124,12 @@ public class UtentiSoggettiAdd extends Action {
 
 			for (int i = 0; i < listaSoggettiNonUtilizzati.size(); i++) {
 				Soggetto soggetto2 = listaSoggettiNonUtilizzati.get(i);
-				String _protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto2.getTipo());
-				soggettiLabels[(i+1)] = utentiHelper.getLabelNomeSoggetto(_protocollo, soggetto2.getTipo(), soggetto2.getNome());
+				String protocolloTmp = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto2.getTipo());
+				soggettiLabels[(i+1)] = utentiHelper.getLabelNomeSoggetto(protocolloTmp, soggetto2.getTipo(), soggetto2.getNome());
 				soggettiValues[(i+1)] = soggetto2.getId() + "";
 			}
 
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 			lstParam.add(new Parameter(UtentiCostanti.LABEL_UTENTI ,UtentiCostanti.SERVLET_NAME_UTENTI_LIST));
 			lstParam.add(new Parameter(nomesu, UtentiCostanti.SERVLET_NAME_UTENTI_CHANGE, new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, nomesu)));
 			lstParam.add(new Parameter(UtentiCostanti.LABEL_UTENTI_SOGGETTI, UtentiCostanti.SERVLET_NAME_UTENTI_SOGGETTI_LIST, new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, nomesu)));
@@ -141,15 +139,15 @@ public class UtentiSoggettiAdd extends Action {
 				ServletUtils.setPageDataTitle(pd,lstParam);
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				if(soggetto==null){
 					soggetto = "";
 				}
 				
-				if(listaSoggettiNonUtilizzati.size()<=0){
+				if(listaSoggettiNonUtilizzati.isEmpty()){
 					if(protocolli.size() == 1) {
 						pd.setMessage(UtentiCostanti.LABEL_UTENTI_SOGGETTI_DISPONIBILI_ESAURITI, MessageType.INFO);
 						pd.disableEditMode();
@@ -178,9 +176,9 @@ public class UtentiSoggettiAdd extends Action {
 				ServletUtils.setPageDataTitle(pd,lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				utentiHelper.addUtentiSoggettiToDati(dati, TipoOperazione.ADD,nomesu,soggetto,soggettiValues,soggettiLabels,protocolli,protocollo);
 

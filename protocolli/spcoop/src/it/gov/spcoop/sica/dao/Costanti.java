@@ -31,56 +31,56 @@ package it.gov.spcoop.sica.dao;
  */
 public class Costanti {
 
-	public final static String FIRMA_XML = "firma.xml";
+	public static final String FIRMA_XML = "firma.xml";
 
-	public final static String MANIFESTO_XML = "manifesto.xml";
+	public static final String MANIFESTO_XML = "manifesto.xml";
 
-	public final static String SPECIFICA_CONVERSAZIONE_DIR = "specificaConversazione";
-	public final static String SPECIFICA_CONVERSAZIONE_CONCETTUALE_WSBL = 
+	public static final String SPECIFICA_CONVERSAZIONE_DIR = "specificaConversazione";
+	public static final String SPECIFICA_CONVERSAZIONE_CONCETTUALE_WSBL = 
 		"ConversazioneConcettuale.wsbl";
-	public final static String SPECIFICA_CONVERSAZIONE_LOGICA_LATO_EROGATORE_WSBL = 
+	public static final String SPECIFICA_CONVERSAZIONE_LOGICA_LATO_EROGATORE_WSBL = 
 		"ConversazioneLogicaLatoErogatore.wsbl";
-	public final static String SPECIFICA_CONVERSAZIONE_LOGICA_LATO_FRUITORE_WSBL = 
+	public static final String SPECIFICA_CONVERSAZIONE_LOGICA_LATO_FRUITORE_WSBL = 
 		"ConversazioneLogicaLatoFruitore.wsbl";
 
-	public final static String SPECIFICA_INTERFACCIA_DIR = "specificaInterfaccia";
-	public final static String SPECIFICA_INTERFACCIA_CONCETTUALE_WSDL = 
+	public static final String SPECIFICA_INTERFACCIA_DIR = "specificaInterfaccia";
+	public static final String SPECIFICA_INTERFACCIA_CONCETTUALE_WSDL = 
 		"InterfacciaConcettuale.wsdl";
-	public final static String SPECIFICA_INTERFACCIA_LOGICA_EROGATORE_WSDL = 
+	public static final String SPECIFICA_INTERFACCIA_LOGICA_EROGATORE_WSDL = 
 		"InterfacciaLogicaErogatore.wsdl";
-	public final static String SPECIFICA_INTERFACCIA_LOGICA_FRUITORE_WSDL = 
+	public static final String SPECIFICA_INTERFACCIA_LOGICA_FRUITORE_WSDL = 
 		"InterfacciaLogicaFruitore.wsdl";
 	
-	public final static String ALLEGATI_DIR = "allegati";
-	public final static String ALLEGATO_DEFINITORIO_XSD = "InterfacciaDefinitoria.xsd";
+	public static final String ALLEGATI_DIR = "allegati";
+	public static final String ALLEGATO_DEFINITORIO_XSD = "InterfacciaDefinitoria.xsd";
 	
-	public final static String SPECIFICA_SEMIFORMALE_DIR = "specificaSemiformale";		
+	public static final String SPECIFICA_SEMIFORMALE_DIR = "specificaSemiformale";		
 	
-	public final static String SPECIFICA_LIVELLI_SERVIZIO_DIR = "specificaLivelliServizio";	
+	public static final String SPECIFICA_LIVELLI_SERVIZIO_DIR = "specificaLivelliServizio";	
 	
-	public final static String SPECIFICA_PORTI_ACCESSO_DIR = "specificaPortiAccesso";	
-	public final static String SPECIFICA_PORTI_ACCESSO_EROGATORE_WSDL = "PortiAccessoErogatore.wsdl";
-	public final static String SPECIFICA_PORTI_ACCESSO_FRUITORE_WSDL = "PortiAccessoFruitore.wsdl";
+	public static final String SPECIFICA_PORTI_ACCESSO_DIR = "specificaPortiAccesso";	
+	public static final String SPECIFICA_PORTI_ACCESSO_EROGATORE_WSDL = "PortiAccessoErogatore.wsdl";
+	public static final String SPECIFICA_PORTI_ACCESSO_FRUITORE_WSDL = "PortiAccessoFruitore.wsdl";
 	
-	public final static String SPECIFICA_SICUREZZA_DIR = "specificaSicurezza";	
+	public static final String SPECIFICA_SICUREZZA_DIR = "specificaSicurezza";	
 	
-	public final static String SPECIFICA_COORDINAMENTO_DIR = "specificaCoordinamento";	
-	
-	
-	public final static String ESTENSIONE_ACCORDO_SERVIZIO_PARTE_COMUNE = "apc";
-	public final static String ESTENSIONE_ACCORDO_SERVIZIO_PARTE_SPECIFICA = "aps";
-	public final static String ESTENSIONE_ACCORDO_COOPERAZIONE = "adc";
-	public final static String ESTENSIONE_ACCORDO_SERVIZIO_COMPOSTO = "asc";
+	public static final String SPECIFICA_COORDINAMENTO_DIR = "specificaCoordinamento";	
 	
 	
-	public final static String TIPO_ACCORDO_SERVIZIO_PARTE_COMUNE = "adsc";
-	public final static String TIPO_ACCORDO_SERVIZIO_PARTE_SPECIFICA = "ads";
-	public final static String TIPO_ACCORDO_COOPERAZIONE = "adc";
-	public final static String TIPO_ACCORDO_SERVIZIO_COMPOSTO = "sc";
+	public static final String ESTENSIONE_ACCORDO_SERVIZIO_PARTE_COMUNE = "apc";
+	public static final String ESTENSIONE_ACCORDO_SERVIZIO_PARTE_SPECIFICA = "aps";
+	public static final String ESTENSIONE_ACCORDO_COOPERAZIONE = "adc";
+	public static final String ESTENSIONE_ACCORDO_SERVIZIO_COMPOSTO = "asc";
 	
-	public final static String PROJECT_CLIENT_SICA = ".project";
-	public final static String PROJECT_CLIENT_SICA_KEY_NOME = "@NOME@";
-	public final static String PROJECT_CLIENT_SICA_CONTENUTO = 
+	
+	public static final String TIPO_ACCORDO_SERVIZIO_PARTE_COMUNE = "adsc";
+	public static final String TIPO_ACCORDO_SERVIZIO_PARTE_SPECIFICA = "ads";
+	public static final String TIPO_ACCORDO_COOPERAZIONE = "adc";
+	public static final String TIPO_ACCORDO_SERVIZIO_COMPOSTO = "sc";
+	
+	public static final String PROJECT_CLIENT_SICA = ".project";
+	public static final String PROJECT_CLIENT_SICA_KEY_NOME = "@NOME@";
+	public static final String PROJECT_CLIENT_SICA_CONTENUTO = 
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 		"<projectDescription>\n"+
 		"        <name>"+Costanti.PROJECT_CLIENT_SICA_KEY_NOME+"</name>\n"+
@@ -101,7 +101,7 @@ public class Costanti {
 		"</projectDescription>";
 	
 	
-	public final static String WSDL_EMPTY = 
+	public static final String WSDL_EMPTY = 
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 		"<wsdl:definitions xmlns:wsdl=\"http://schemas.xmlsoap.org/wsdl/\"/>";
 }

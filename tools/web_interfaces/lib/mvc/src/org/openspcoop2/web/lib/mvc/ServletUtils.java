@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.Cookie;
@@ -59,6 +58,8 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class ServletUtils {
+	
+	private ServletUtils() {}
 
 
 	/* ------ STRUTS -FORWARD -ERROR */
@@ -223,9 +224,9 @@ public class ServletUtils {
 	}
 	private static void setPageDataTitle(PageData pd, boolean append, Parameter ... param){
 
-		Vector<GeneralLink> titlelist = null;
+		List<GeneralLink> titlelist = null;
 		if(!append){
-			titlelist = new Vector<GeneralLink>();
+			titlelist = new ArrayList<>();
 		}
 		else{
 			titlelist = pd.getTitleList();
@@ -239,7 +240,7 @@ public class ServletUtils {
 			if(param[i].getValue()!=null){
 				tl.setUrl(param[i].getValue());
 			}
-			titlelist.addElement(tl);
+			titlelist.add(tl);
 		}
 
 		pd.setTitleList(titlelist);
@@ -954,10 +955,10 @@ public class ServletUtils {
 		return false;
 	}
 	
-	public static String getIdentificativiTextArea(Vector<?> dati) {
-		StringBuffer sb = new StringBuffer();
+	public static String getIdentificativiTextArea(List<?> dati) {
+		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < dati.size(); i++) {
-			DataElement de = (DataElement) dati.elementAt(i);
+			DataElement de = (DataElement) dati.get(i);
 			String deName = !de.getName().equals("") ? de.getName() : "de_name_"+i;
 			if (de.getType().equals("textarea") || de.getType().equals("textarea-noedit")) {
 				if(sb.length() > 0) {
@@ -971,7 +972,7 @@ public class ServletUtils {
 	}
 	
 	public static String getIdentificativiTextAreaFiltriRicerca(List<DataElement> filterValues) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < filterValues.size(); i++) {
 			DataElement filtro = filterValues.get(i);
 			String filterName = filtro.getName();

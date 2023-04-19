@@ -191,6 +191,10 @@ public class Dump {
 			this.signature = "<"+this.gdo+"> "+this.idModulo+"\n";
 		this.tipoPdD = tipoPdD;
 		this.pddContext = pddContext;
+		if(this.pddContext==null) {
+			throw new DumpException("PdDContext is null");
+		}
+		
 		this.properties = OpenSPCoop2Properties.getInstance();
 		if(stateParam!=null && stateParam instanceof StateMessage){
 			this.statoRichiesta = (StateMessage) stateParam;
@@ -205,7 +209,7 @@ public class Dump {
 		this.dumpHeaderWhiteList = op2Properties.getDumpHeaderWhiteList();
 		this.dumpHeaderBlackList = op2Properties.getDumpHeaderBlackList();
 		
-		if(this.pddContext!=null && this.pddContext.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+		if(this.pddContext.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
 			this.requestInfo = (RequestInfo) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		}
 		
@@ -213,16 +217,11 @@ public class Dump {
 		this.msgDiagErroreDump.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO);
 		this.emitDiagnosticDump = op2Properties.isDumpEmitDiagnostic();
 		
-		if(this.pddContext!=null) {
-			this.idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
-		}
+		this.idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 		
 		// Protocol Factory Manager
 		String protocol = null;
 		try{
-			if(this.pddContext==null) {
-				throw new Exception("PdDContext is null");
-			}
 			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 			protocol = this.protocolFactory.getProtocol();
 			this.msgDiagErroreDump.setPddContext(this.pddContext, this.protocolFactory);
@@ -234,9 +233,8 @@ public class Dump {
 		}
 		
 		try{
-			if(this.pddContext!=null && this.pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) {
-				String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
-				this.transactionNullable = TransactionContext.getTransaction(idTransazione);
+			if(this.idTransazione!=null) {
+				this.transactionNullable = TransactionContext.getTransaction(this.idTransazione);
 			}
 		}catch(Exception e){
 			// La transazione potrebbe essere stata eliminata nelle comunicazioni stateful
@@ -265,17 +263,17 @@ public class Dump {
 
 
 	/** ----------------- METODI DI LOGGING  ---------------- */
-	public void emitDiagnosticStartDumpBinarioRichiestaIngresso() {
-		emitDiagnosticDumpStart(TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO);
+	public void emitDiagnosticStartDumpBinarioRichiestaIngresso(boolean onlyFileTrace) {
+		emitDiagnosticDumpStart(TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO, onlyFileTrace);
 	}
-	public void dumpBinarioRichiestaIngresso(boolean dumpBinarioRegistrazioneDatabase, boolean onlyLogFileTrace_headers, boolean onlyLogFileTrace_body, 
+	public void dumpBinarioRichiestaIngresso(boolean dumpBinarioRegistrazioneDatabase, boolean onlyLogFileTraceHeaders, boolean onlyLogFileTraceBody, 
 			DumpByteArrayOutputStream msg, MessageType messageType, 
 			URLProtocolContext protocolContext) throws DumpException {
 		if(this.transactionNullable!=null) {
 			this.transactionNullable.getTempiElaborazione().startDumpBinarioRichiestaIngresso();
 		}
 		try {
-			dump(dumpBinarioRegistrazioneDatabase, onlyLogFileTrace_headers, onlyLogFileTrace_body, TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO,
+			dump(dumpBinarioRegistrazioneDatabase, onlyLogFileTraceHeaders, onlyLogFileTraceBody, TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO,
 					null,msg,messageType,
 					protocolContext!=null ? protocolContext.getSource() : null,
 					protocolContext!=null ? protocolContext.getHeaders() : null);
@@ -320,17 +318,17 @@ public class Dump {
 		}
 	}
 	
-	public void emitDiagnosticStartDumpBinarioRichiestaUscita() {
-		emitDiagnosticDumpStart(TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO);
+	public void emitDiagnosticStartDumpBinarioRichiestaUscita(boolean onlyFileTrace) {
+		emitDiagnosticDumpStart(TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO, onlyFileTrace);
 	}
-	public void dumpBinarioRichiestaUscita(boolean dumpBinarioRegistrazioneDatabase, boolean onlyLogFileTrace_headers, boolean onlyLogFileTrace_body, 
+	public void dumpBinarioRichiestaUscita(boolean dumpBinarioRegistrazioneDatabase, boolean onlyLogFileTraceHeaders, boolean onlyLogFileTraceBody, 
 			DumpByteArrayOutputStream msg, MessageType messageType, 
 			InfoConnettoreUscita infoConnettore) throws DumpException {
 		if(this.transactionNullable!=null) {
 			this.transactionNullable.getTempiElaborazione().startDumpBinarioRichiestaUscita();
 		}
 		try {
-			dump(dumpBinarioRegistrazioneDatabase, onlyLogFileTrace_headers, onlyLogFileTrace_body, TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO,
+			dump(dumpBinarioRegistrazioneDatabase, onlyLogFileTraceHeaders, onlyLogFileTraceBody, TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO,
 					null,msg,messageType,
 					(infoConnettore!=null ? infoConnettore.getLocation() : null),
 					(infoConnettore!=null ? infoConnettore.getHeaders() : null));
@@ -358,17 +356,17 @@ public class Dump {
 		}
 	}
 
-	public void emitDiagnosticStartDumpBinarioRispostaIngresso() {
-		emitDiagnosticDumpStart(TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO);
+	public void emitDiagnosticStartDumpBinarioRispostaIngresso(boolean onlyFileTrace) {
+		emitDiagnosticDumpStart(TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO, onlyFileTrace);
 	}
-	public void dumpBinarioRispostaIngresso(boolean dumpBinarioRegistrazioneDatabase, boolean onlyLogFileTrace_headers, boolean onlyLogFileTrace_body, 
+	public void dumpBinarioRispostaIngresso(boolean dumpBinarioRegistrazioneDatabase, boolean onlyLogFileTraceHeaders, boolean onlyLogFileTraceBody, 
 			DumpByteArrayOutputStream msg, MessageType messageType, 
 			InfoConnettoreUscita infoConnettore, Map<String, List<String>> transportHeaderRisposta) throws DumpException {
 		if(this.transactionNullable!=null) {
 			this.transactionNullable.getTempiElaborazione().startDumpBinarioRispostaIngresso();
 		}
 		try {
-			dump(dumpBinarioRegistrazioneDatabase, onlyLogFileTrace_headers, onlyLogFileTrace_body, TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO,
+			dump(dumpBinarioRegistrazioneDatabase, onlyLogFileTraceHeaders, onlyLogFileTraceBody, TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO,
 					null,msg,messageType,
 					(infoConnettore!=null ? infoConnettore.getLocation() : null),transportHeaderRisposta);
 		}
@@ -396,17 +394,17 @@ public class Dump {
 	}
 	
 
-	public void emitDiagnosticStartDumpBinarioRispostaUscita() {
-		emitDiagnosticDumpStart(TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO);
+	public void emitDiagnosticStartDumpBinarioRispostaUscita(boolean onlyFileTrace) {
+		emitDiagnosticDumpStart(TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO, onlyFileTrace);
 	}
-	public void dumpBinarioRispostaUscita(boolean dumpBinarioRegistrazioneDatabase, boolean onlyLogFileTrace_headers, boolean onlyLogFileTrace_body, 
+	public void dumpBinarioRispostaUscita(boolean dumpBinarioRegistrazioneDatabase, boolean onlyLogFileTraceHeaders, boolean onlyLogFileTraceBody, 
 			DumpByteArrayOutputStream msg, MessageType messageType, 
 			URLProtocolContext protocolContext, Map<String, List<String>> transportHeaderRisposta) throws DumpException {
 		if(this.transactionNullable!=null) {
 			this.transactionNullable.getTempiElaborazione().startDumpBinarioRispostaUscita();
 		}
 		try {
-			dump(dumpBinarioRegistrazioneDatabase, onlyLogFileTrace_headers, onlyLogFileTrace_body, TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO,
+			dump(dumpBinarioRegistrazioneDatabase, onlyLogFileTraceHeaders, onlyLogFileTraceBody, TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO,
 					null,msg,messageType,
 					protocolContext!=null ? protocolContext.getSource() : null,transportHeaderRisposta);
 		}
@@ -457,7 +455,7 @@ public class Dump {
 	 * @throws TracciamentoException 
 	 * 
 	 */
-	private void dump(boolean dumpBinarioRegistrazioneDatabase, boolean onlyLogFileTrace_headers, boolean onlyLogFileTrace_body, 
+	private void dump(boolean dumpBinarioRegistrazioneDatabase, boolean onlyLogFileTraceHeaders, boolean onlyLogFileTraceBody, 
 			TipoMessaggio tipoMessaggio,OpenSPCoop2Message msg,DumpByteArrayOutputStream msgBytes, MessageType messageType,
 			String location,Map<String, List<String>> transportHeaderParam) throws DumpException {
 
@@ -615,19 +613,24 @@ public class Dump {
 				}
 			}
 			
-			if(!dumpHeaders && !dumpBody && !dumpAttachments && !onlyLogFileTrace_headers && !onlyLogFileTrace_body) {
+			if(!dumpHeaders && !dumpBody && !dumpAttachments && !onlyLogFileTraceHeaders && !onlyLogFileTraceBody) {
 				return; // disabilitato
 			}
 		}
 		boolean dumpMultipartHeaders = dumpHeaders;
+		
+		String identificativoDiagnostico = null;
 		if(dumpNormale) {
-			emitDiagnosticDumpStart(tipoMessaggio, location);
+			identificativoDiagnostico = emitDiagnosticDumpStart(tipoMessaggio, false);
+		}
+		else {
+			boolean onlyFileTrace = !dumpHeaders && !dumpBody && !dumpAttachments;
+			
+			identificativoDiagnostico = getIdentificativoDiagnostico(tipoMessaggio, onlyFileTrace);
 		}
 		
-		String identificativoDiagnostico = getIdentificativoDiagnostico(tipoMessaggio);
-		
 		try {
-			dumpEngine(onlyLogFileTrace_headers, onlyLogFileTrace_body, 
+			dumpEngine(onlyLogFileTraceHeaders, onlyLogFileTraceBody, 
 					tipoMessaggio, msg, msgBytes, messageType,
 					location, transportHeaderParam,
 					dumpHeaders, dumpBody, dumpAttachments, dumpMultipartHeaders, 
@@ -643,7 +646,7 @@ public class Dump {
 				}catch(Throwable t) {
 					if(this.loggerDump!=null) {
 						this.loggerDump.error("Riscontrato errore durante l'emissione del diagnostico per il dump del contenuto applicativo in corso del messaggio ("+tipoMessaggio+
-								") con identificativo di transazione ["+this.idTransazione+"]:"+t.getMessage(),t);
+								") "+getLogIdTransazione()+":"+t.getMessage(),t);
 					}
 				}finally {
 					this.msgDiagErroreDump.setTransazioneApplicativoServer(null, null);
@@ -652,25 +655,45 @@ public class Dump {
 		}
 	}
 	
-	private String getIdentificativoDiagnostico(TipoMessaggio tipoMessaggio) {
+	private String getIdentificativoDiagnostico(TipoMessaggio tipoMessaggio, boolean onlyFileTrace) {
 		String identificativoDiagnostico = null;
 		if(tipoMessaggio!=null) {
 			switch (tipoMessaggio) {
 			case RICHIESTA_INGRESSO:
 			case RICHIESTA_INGRESSO_DUMP_BINARIO:
-				identificativoDiagnostico = "dumpContenutiApplicativi.richiestaIngresso.";
+				if(onlyFileTrace) {
+					identificativoDiagnostico = "dumpContenutiApplicativiFileTrace.richiestaIngresso.";
+				}
+				else {
+					identificativoDiagnostico = "dumpContenutiApplicativi.richiestaIngresso.";
+				}
 				break;
 			case RICHIESTA_USCITA:
 			case RICHIESTA_USCITA_DUMP_BINARIO:
-				identificativoDiagnostico = "dumpContenutiApplicativi.richiestaUscita.";
+				if(onlyFileTrace) {
+					identificativoDiagnostico = "dumpContenutiApplicativiFileTrace.richiestaUscita.";
+				}
+				else {
+					identificativoDiagnostico = "dumpContenutiApplicativi.richiestaUscita.";
+				}
 				break;
 			case RISPOSTA_INGRESSO:
 			case RISPOSTA_INGRESSO_DUMP_BINARIO:
-				identificativoDiagnostico = "dumpContenutiApplicativi.rispostaIngresso.";
+				if(onlyFileTrace) {
+					identificativoDiagnostico = "dumpContenutiApplicativiFileTrace.rispostaIngresso.";
+				}
+				else {
+					identificativoDiagnostico = "dumpContenutiApplicativi.rispostaIngresso.";
+				}
 				break;
 			case RISPOSTA_USCITA:
 			case RISPOSTA_USCITA_DUMP_BINARIO:
-				identificativoDiagnostico = "dumpContenutiApplicativi.rispostaUscita.";
+				if(onlyFileTrace) {
+					identificativoDiagnostico = "dumpContenutiApplicativiFileTrace.rispostaUscita.";
+				}
+				else {
+					identificativoDiagnostico = "dumpContenutiApplicativi.rispostaUscita.";
+				}
 				break;
 			default:
 				break;
@@ -679,9 +702,10 @@ public class Dump {
 		return identificativoDiagnostico;
 	}
 	
-	private void emitDiagnosticDumpStart(TipoMessaggio tipoMessaggio) {
-		String identificativoDiagnostico = getIdentificativoDiagnostico(tipoMessaggio);
+	private String emitDiagnosticDumpStart(TipoMessaggio tipoMessaggio, boolean onlyFileTrace) {
+		String identificativoDiagnostico = getIdentificativoDiagnostico(tipoMessaggio, onlyFileTrace);
 		emitDiagnosticDumpStart(tipoMessaggio, identificativoDiagnostico);
+		return identificativoDiagnostico;
 	}
 	private void emitDiagnosticDumpStart(TipoMessaggio tipoMessaggio, String identificativoDiagnostico) {
 		if(identificativoDiagnostico!=null && this.emitDiagnosticDump) {
@@ -693,7 +717,7 @@ public class Dump {
 			}catch(Throwable t) {
 				if(this.loggerDump!=null) {
 					this.loggerDump.error("Riscontrato errore durante l'emissione del diagnostico per il dump del contenuto applicativo in corso del messaggio ("+tipoMessaggio+
-							") con identificativo di transazione ["+this.idTransazione+"]:"+t.getMessage(),t);
+							") "+getLogIdTransazione()+":"+t.getMessage(),t);
 				}
 			}finally {
 				this.msgDiagErroreDump.setTransazioneApplicativoServer(null, null);
@@ -702,7 +726,7 @@ public class Dump {
 	}
 	
 	
-	private void dumpEngine(boolean onlyLogFileTrace_headers, boolean onlyLogFileTrace_body, 
+	private void dumpEngine(boolean onlyLogFileTraceHeaders, boolean onlyLogFileTraceBody, 
 			TipoMessaggio tipoMessaggio,OpenSPCoop2Message msg,DumpByteArrayOutputStream msgBytes, MessageType messageType,
 			String location,Map<String, List<String>> transportHeaderParam,
 			boolean dumpHeaders, boolean dumpBody, boolean dumpAttachments, boolean dumpMultipartHeaders, 
@@ -787,11 +811,11 @@ public class Dump {
 			// Registro solo l'errore sul file dump.log
 			// Si tratta di un errore che non dovrebbe mai avvenire
 			String messaggioErrore = "Riscontrato errore durante la lettura degli header di trasporto del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
-					") con identificativo di transazione ["+this.idTransazione+"]:"+e.getMessage();
+					") "+getLogIdTransazione()+":"+e.getMessage();
 			this.loggerDump.error(messaggioErrore);
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error(messaggioErrore);
 		}
-		if(dumpHeaders || onlyLogFileTrace_headers) {
+		if(dumpHeaders || onlyLogFileTraceHeaders) {
 			if(transportHeader!=null && transportHeader.size()>0){
 				
 				List<String> filterList = null;
@@ -807,7 +831,7 @@ public class Dump {
 				
 				Iterator<String> keys = transportHeader.keySet().iterator();
 				while (keys.hasNext()) {
-					String key = (String) keys.next();					
+					String key = keys.next();					
 					if(key!=null){
 						
 						boolean add = false;
@@ -850,7 +874,7 @@ public class Dump {
 		DumpMessaggio dumpMessaggio = null;
 		DumpMessaggioConfig dumpMessaggioConfig = null;
 		try {
-			if( (dumpBody || onlyLogFileTrace_body) 
+			if( (dumpBody || onlyLogFileTraceBody) 
 					|| 
 				dumpAttachments
 				) {
@@ -862,12 +886,12 @@ public class Dump {
 				}
 				else {
 					
-					if( dumpBody || onlyLogFileTrace_body ) {
+					if( dumpBody || onlyLogFileTraceBody ) {
 					
 						if(transportHeader!=null && !transportHeader.isEmpty()) {
 							Iterator<String> keys = transportHeader.keySet().iterator();
 							while (keys.hasNext()) {
-								String key = (String) keys.next();
+								String key = keys.next();
 								if(HttpConstants.CONTENT_TYPE.equalsIgnoreCase(key)){
 									List<String> values = transportHeader.get(key);	
 									if(values!=null && !values.isEmpty()) {
@@ -886,12 +910,12 @@ public class Dump {
 			try{
 				// Registro l'errore sul file dump.log
 				this.loggerDump.error("Riscontrato errore durante la preparazione al dump del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
-						") con identificativo di transazione ["+this.idTransazione+"]:"+e.getMessage());
+						") "+getLogIdTransazione()+":"+e.getMessage());
 			}catch(Exception eLog){
 				// ignore
 			}
 			OpenSPCoop2Logger.loggerOpenSPCoopResources.error("Errore durante la preparazione al dump del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
-					") con identificativo di transazione ["+this.idTransazione+"]: "+e.getMessage(),e);
+					") "+getLogIdTransazione()+": "+e.getMessage(),e);
 			try{
 				this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, tipoMessaggio.getValue());
 				this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
@@ -907,7 +931,7 @@ public class Dump {
 		
 		
 		// TransazioneContext
-		if(this.properties.isTransazioniSaveDumpInUniqueTransaction() || onlyLogFileTrace_body || onlyLogFileTrace_headers) {
+		if(this.properties.isTransazioniSaveDumpInUniqueTransaction() || onlyLogFileTraceBody || onlyLogFileTraceHeaders) {
 			
 			
 			if(this.transazioneApplicativoServer!=null) {
@@ -940,7 +964,7 @@ public class Dump {
 					if(messaggio.getBody()!=null) {
 						messaggio.getBody().lock();
 					}
-					tr.addMessaggio(messaggio, onlyLogFileTrace_headers, onlyLogFileTrace_body);
+					tr.addMessaggio(messaggio, onlyLogFileTraceHeaders, onlyLogFileTraceBody);
 				}catch(TransactionDeletedException e){
 					gestioneStateful = true;
 				}catch(TransactionNotExistsException e){
@@ -960,12 +984,12 @@ public class Dump {
 					try{
 						// Registro l'errore sul file dump.log
 						this.loggerDump.error("Riscontrato errore durante la registrazione, nel contesto della transazione, del dump del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
-								") con identificativo di transazione ["+this.idTransazione+"]:"+exc.getMessage());
+								") "+getLogIdTransazione()+":"+exc.getMessage());
 					}catch(Exception eLog){
 						// ignore
 					}
 					OpenSPCoop2Logger.loggerOpenSPCoopResources.error("Errore durante la registrazione, nel contesto della transazione, del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
-							") con identificativo di transazione ["+this.idTransazione+"]: "+exc.getMessage(),exc);
+							") "+getLogIdTransazione()+": "+exc.getMessage(),exc);
 					try{
 						this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, tipoMessaggio.getValue());
 						this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,exc.getMessage());
@@ -1095,12 +1119,12 @@ public class Dump {
 				try{
 					// Registro l'errore sul file dump.log
 					this.loggerDump.error("Riscontrato errore durante il dump su file di log del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
-							") con identificativo di transazione ["+this.idTransazione+"]:"+e.getMessage());
+							") "+getLogIdTransazione()+":"+e.getMessage());
 				}catch(Exception eLog){
 					// ignore
 				}
 				OpenSPCoop2Logger.loggerOpenSPCoopResources.error("Errore durante il dump su file di log del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
-						") con identificativo di transazione ["+this.idTransazione+"]: "+e.getMessage(),e);
+						") "+getLogIdTransazione()+": "+e.getMessage(),e);
 				try{
 					this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, tipoMessaggio.getValue());
 					this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
@@ -1115,10 +1139,9 @@ public class Dump {
 		// Il dump via API lo effettuo solamente se ho davvero un messaggio OpenSPCoop
 		// Senno ottengo errori all'interno delle implementazioni degli appender dump
 		boolean onlyLogFileTrace = false;
-		if(onlyLogFileTrace_headers && !dumpHeaders) {
-			onlyLogFileTrace=true;
-		}
-		else if(onlyLogFileTrace_body && !dumpBody) {
+		if( (onlyLogFileTraceHeaders && !dumpHeaders)
+				||
+			(onlyLogFileTraceBody && !dumpBody) ) {
 			onlyLogFileTrace=true;
 		}
 		if(!onlyLogFileTrace && !dumpIntegrationManager) {
@@ -1128,7 +1151,7 @@ public class Dump {
 					this.loggerDumpOpenSPCoopAppender.get(i).dump(getConnectionFromState(false),messaggio,headersCompact);
 				}catch(Exception e){
 					OpenSPCoop2Logger.loggerOpenSPCoopResources.error("Errore durante il dump personalizzato ["+this.tipoDumpOpenSPCoopAppender.get(i)+
-							"] del contenuto applicativo presente nel messaggio ("+tipoMessaggio+") con identificativo di transazione ["+this.idTransazione+"]: "+e.getMessage(),e);
+							"] del contenuto applicativo presente nel messaggio ("+tipoMessaggio+") "+getLogIdTransazione()+": "+e.getMessage(),e);
 					try{
 						this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, tipoMessaggio.getValue());
 						this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
@@ -1245,6 +1268,10 @@ public class Dump {
 		if(this.properties.isDumpFallito_BloccaCooperazioneInCorso()){
 			throw new DumpException(e);
 		}
+	}
+	
+	private String getLogIdTransazione() {
+		return "con identificativo di transazione ["+this.idTransazione+"]";
 	}
 }
 

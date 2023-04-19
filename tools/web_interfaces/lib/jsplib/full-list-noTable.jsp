@@ -100,7 +100,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 						int labelLength = (labels != null ? labels.length : 1);
 						int colSpanLength = labelLength + baseLength;
 						
-						Vector<?> v = pd.getDati();
+						List<?> v = pd.getDati();
 						String stile= "";
 						
 						int index = pd.getIndex();
@@ -220,10 +220,10 @@ if (hidden!=null && !hidden.isEmpty()) {
 							//stringa contenente l identificativo dell'elemento che verra associato al checkbox per l eliminazione
 							String idToRemove = null;	  
 						  	// prelevo la riga 
-						  	Vector<?> e = (Vector<?>) v.elementAt(i);	  
+						  	List<?> e = (List<?>) v.get(i);	  
 						
 						  	for (int j = 0; j < e.size(); j++) {
-						  	    DataElement de = (DataElement) e.elementAt(j);
+						  	    DataElement de = (DataElement) e.get(j);
 								//if(de.getType().equals("text")) {
 									// setto l'id per la rimozione in caso non sia settato, N.B. spostato qui perche ora le checkbox statnno a sx.
 									if(idToRemove==null) idToRemove = de.getIdToRemove();
@@ -441,14 +441,14 @@ if (hidden!=null && !hidden.isEmpty()) {
 							<td colspan=<%= colSpanLength %> class="buttonrow">
 								<div class="buttonrowlista">
 									<%
-									Vector<?> areaBottoni = pd.getAreaBottoni();
+									List<?> areaBottoni = pd.getAreaBottoni();
 									if (areaBottoni != null) {
 										for (int i = 0; i < areaBottoni.size(); i++) {
-									  		AreaBottoni area = (AreaBottoni) areaBottoni.elementAt(i);
-									  		Vector<?> bottoni = area.getBottoni();
+									  		AreaBottoni area = (AreaBottoni) areaBottoni.get(i);
+									  		List<?> bottoni = area.getBottoni();
 									 		for (int b = 0; b < bottoni.size(); b++) {
 									 			String id = "areaBottonBtn_" + i + "_" + b;
-									   			DataElement bottone = (DataElement) bottoni.elementAt(b);
+									   			DataElement bottone = (DataElement) bottoni.get(b);
 									   			String visualizzaAjaxStatus = bottone.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 									   			%>
 									   			<input id="<%=id %>" type="button" value='<%= bottone.getValue() %>'/>

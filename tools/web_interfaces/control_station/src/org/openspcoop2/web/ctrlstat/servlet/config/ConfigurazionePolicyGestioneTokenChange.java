@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -200,7 +199,7 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 								confCore.getPolicyGestioneTokenPropertiesSourceConfiguration();
 						configManager.leggiConfigurazioni(propertiesSourceConfiguration, true);
 						for (Object oTipo : mapId.keySet()) {
-							if(oTipo!=null && oTipo instanceof String) {
+							if(oTipo instanceof String) {
 								String ti = (String) oTipo;
 								Config config = configManager.getConfigurazione(propertiesSourceConfiguration, ti);
 								ServletUtils.removeConfigurazioneBeanFromSession(request, session, config.getId());
@@ -237,7 +236,7 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 			}
 			
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			String label = attributeAuthority ?
 					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY :
@@ -258,8 +257,8 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 				}
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = confHelper.addPolicyGestioneTokenToDati(tipoOperazione,dati,id,nome,descrizione,tipo,propConfigPolicyGestioneTokenLabelList,propConfigPolicyGestioneTokenList,
 						attributeAuthority, genericProperties);
@@ -285,8 +284,8 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = confHelper.addPolicyGestioneTokenToDati(tipoOperazione,dati,id,nome,descrizione,tipo,propConfigPolicyGestioneTokenLabelList,propConfigPolicyGestioneTokenList,
 						attributeAuthority, genericProperties);

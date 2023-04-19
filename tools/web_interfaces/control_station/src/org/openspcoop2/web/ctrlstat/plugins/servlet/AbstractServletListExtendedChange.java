@@ -22,7 +22,8 @@
 package org.openspcoop2.web.ctrlstat.plugins.servlet;
 
 import java.sql.Connection;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -60,7 +61,7 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public abstract class AbstractServletListExtendedChange extends AbstractServletListUtilities {
 
-	protected abstract void addToHiddenDati(Vector<DataElement> dati,ConsoleHelper consoleHelper) throws ExtendedException;
+	protected abstract void addToHiddenDati(List<DataElement> dati,ConsoleHelper consoleHelper) throws ExtendedException;
 		
 	protected abstract UrlParameters getUrlExtendedList(ConsoleHelper consoleHelper) throws Exception;
 	
@@ -114,8 +115,8 @@ public abstract class AbstractServletListExtendedChange extends AbstractServletL
 						this.getUrlExtendedList(consoleHelper));
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				this.addToHiddenDati(dati,consoleHelper);
 				
@@ -146,8 +147,8 @@ public abstract class AbstractServletListExtendedChange extends AbstractServletL
 						this.getUrlExtendedList(consoleHelper));
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				this.addToHiddenDati(dati,consoleHelper);
 				

@@ -23,8 +23,9 @@
 package org.openspcoop2.protocol.spcoop.testsuite.units.others;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.Vector;
+import java.util.List;
 
 import javax.xml.soap.SOAPException;
 
@@ -90,7 +91,7 @@ public class UrlPrefixRewriter extends GestioneViaJmx {
 	public void testOpenspcoopCoreLog_raccoltaTempoAvvioTest() throws Exception{
 		this.dataAvvioGruppoTest = DateManager.getDate();
 	} 	
-	private Vector<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new Vector<ErroreAttesoOpenSPCoopLogCore>();
+	private List<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new java.util.ArrayList<>();
 	@AfterGroups (alwaysRun=true , groups=ID_GRUPPO)
 	public void testOpenspcoopCoreLog() throws Exception{
 		if(this.erroriAttesiOpenSPCoopCore.size()>0){
@@ -2001,11 +2002,11 @@ public class UrlPrefixRewriter extends GestioneViaJmx {
 	
 	
 	
-	/* ************************ TEST 8   http://127.0.0.3 e  http://127.0.0.3 **************************
+	/* ************************ TEST 8   http://127.0.0.3:1234 e  http://127.0.0.3:1234 **************************
 
 
 	/***
-	 * Test per pd-url-prefix-rewriter="http://127.0.0.3"
+	 * Test per pd-url-prefix-rewriter="http://127.0.0.3:1234"
 	 */
 	Date testPD8StartTime = null;
 	Repository repository_testPD8=new Repository();
@@ -2088,7 +2089,7 @@ public class UrlPrefixRewriter extends GestioneViaJmx {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
 			
 			Reporter.log("Controllo esistenza diagnostico [https://verificaSSLTestPD]");
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD8StartTime,"(location: http://127.0.0.3/govway/spcoop/in)"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD8StartTime,"(location: http://127.0.0.3:1234/govway/spcoop/in)"));
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD8StartTime,"Errore avvenuto durante la consegna HTTP: Connection refused"));
 			
 		}catch(Exception e){
@@ -2111,7 +2112,7 @@ public class UrlPrefixRewriter extends GestioneViaJmx {
 	
 	
 	/***
-	 * Test per pa-url-prefix-rewriter="http://127.0.0.3"
+	 * Test per pa-url-prefix-rewriter="http://127.0.0.3:1234"
 	 */
 	Date testPA8StartTime = null;
 	Repository repository_testPA8=new Repository();
@@ -2270,9 +2271,23 @@ public class UrlPrefixRewriter extends GestioneViaJmx {
 			//Reporter.log("Controllo che la busta abbia generato l'eccezione " + Costanti.ECCEZIONE_PROCESSAMENTO_MESSAGGIO + " rappresentante un servizio applicativo non disponibile");
 			//Assert.assertTrue(data.isTracedEccezione(id, Costanti.ECCEZIONE_PROCESSAMENTO_MESSAGGIO));
 			
-			Reporter.log("Controllo esistenza diagnostico [ https://verificaSSLTestPA]");
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: http://127.0.0.3/govwayTestSuite/server)"));
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"Errore avvenuto durante la consegna HTTP: Connection refused"));
+			String verifica = "(location: http://127.0.0.3:1234/govwayTestSuite/server)";
+			Reporter.log("Controllo esistenza diagnostico ["+verifica+"]");
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,verifica));
+			
+			verifica = "Errore avvenuto durante la consegna HTTP: Connection refused";
+			Reporter.log("Controllo esistenza diagnostico ["+verifica+"]");
+			List<String> listDiagnostici = new ArrayList<>();
+			boolean b = msgDiagComponent.isTracedMessaggioWithLike(id,verifica,listDiagnostici);
+			if(!b) {
+				Reporter.log("Diagnostico atteso (LIKE '%"+org.openspcoop2.utils.sql.SQLQueryObjectCore.getEscapeStringValue(verifica)+"%') non trovato tra i diagnostici presenti ("+listDiagnostici.size()+")");
+				int i = 0;
+				for (String msg : listDiagnostici) {
+					Reporter.log("Diagnostico["+i+"]='"+msg+"'");
+					i++;
+				}
+			}
+			Assert.assertTrue(b);
 			
 		}catch(Exception e){
 			throw e;

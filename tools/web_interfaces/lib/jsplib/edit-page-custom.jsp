@@ -19,7 +19,7 @@
 
 
 
-<%@ page session="true" import="java.util.Vector, org.apache.commons.lang.StringEscapeUtils ,org.openspcoop2.web.lib.mvc.*" %>
+<%@ page session="true" import="java.util.List, java.util.ArrayList, org.apache.commons.lang.StringEscapeUtils ,org.openspcoop2.web.lib.mvc.*" %>
 
 <%
 String iddati = "";
@@ -44,12 +44,12 @@ String customListViewName = pd.getCustomListViewName();
 
 boolean mime = false;
 
-Vector<?> datiConGruppi = pd.getDati();
-Vector<?> dati = datiConGruppi.size() >0 ? (Vector<?>) datiConGruppi.elementAt(0) : new Vector<Object>();
+List<?> datiConGruppi = pd.getDati();
+List<?> dati = datiConGruppi.size() >0 ? (List<?>) datiConGruppi.get(0) : new ArrayList<Object>();
 
 if(dati.size() > 0){
 	for (int i = 0; i < dati.size(); i++) {
-	  DataElement de = (DataElement) dati.elementAt(i);
+	  DataElement de = (DataElement) dati.get(i);
 	  if (de.getType().equals("file") || de.getType().equals("multi-file")) {
 	    mime = true;
 	  }

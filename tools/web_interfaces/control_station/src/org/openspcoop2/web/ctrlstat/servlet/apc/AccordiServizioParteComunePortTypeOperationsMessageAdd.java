@@ -19,8 +19,8 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.apc;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -69,7 +69,7 @@ public class AccordiServizioParteComunePortTypeOperationsMessageAdd extends Acti
 
 		GeneralData gd = generalHelper.initGeneralData(request);
 
-		String userLogin = (String) ServletUtils.getUserLoginFromSession(session);
+		String userLogin = ServletUtils.getUserLoginFromSession(session);
 
 		try {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
@@ -133,7 +133,7 @@ public class AccordiServizioParteComunePortTypeOperationsMessageAdd extends Acti
 			List<Parameter> listaParams = apcHelper.getTitoloApc(TipoOperazione.ADD, as, tipoAccordo, labelASTitle, null, false);
 		
 			// porttypes
-			String labelPortTypes = isModalitaVistaApiCustom ? AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES: AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES + " di " + labelASTitle;
+			String labelPortTypes = (isModalitaVistaApiCustom!=null && isModalitaVistaApiCustom.booleanValue()) ? AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES: AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES + " di " + labelASTitle;
 			listaParams.add(new Parameter(labelPortTypes, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPES_LIST, pIdAccordo, pNomeAccordo, pTipoAccordo));
 
 			// azioni
@@ -149,7 +149,7 @@ public class AccordiServizioParteComunePortTypeOperationsMessageAdd extends Acti
 				labelMessage = AccordiServizioParteComuneCostanti.LABEL_OPERATION_MESSAGE_OUTPUT;
 			}
 			
-			labelMessage = isModalitaVistaApiCustom ? labelMessage : labelMessage + " di " + nomeop;
+			labelMessage = (isModalitaVistaApiCustom!=null && isModalitaVistaApiCustom.booleanValue()) ? labelMessage : labelMessage + " di " + nomeop;
 
 			listaParams.add(new Parameter(labelMessage,AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_MESSAGE_LIST,	pIdAccordo,pNomeAccordo,pNomeOp, pNomePt , pTipoMsg,pTipoAccordo));
 			listaParams.add(ServletUtils.getParameterAggiungi());
@@ -160,9 +160,9 @@ public class AccordiServizioParteComunePortTypeOperationsMessageAdd extends Acti
 				ServletUtils.setPageDataTitle( pd,listaParams);
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = apcHelper.addAccordiPorttypeOperationMessageToDati(TipoOperazione.ADD, dati,
 						id, tipoAccordo, nomept, nomeop, messagePartName, messagePartType, messagePartLocalName, messagePartNs, tipoMessage);
@@ -183,9 +183,9 @@ public class AccordiServizioParteComunePortTypeOperationsMessageAdd extends Acti
 				ServletUtils.setPageDataTitle( pd,listaParams);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = apcHelper.addAccordiPorttypeOperationMessageToDati(TipoOperazione.ADD, dati,
 						id, tipoAccordo, nomept, nomeop, messagePartName, messagePartType, messagePartLocalName, messagePartNs, tipoMessage);

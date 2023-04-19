@@ -31,7 +31,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 */
 public class AuthorizationServerNegoziazioneTest extends ConfigLoader {
 
-	public final static String api_negoziazione = "TestNegoziazioneAuthorizationServer";
+	public static final String api_negoziazione = "TestNegoziazioneAuthorizationServer";
 	
 	
 	@Test

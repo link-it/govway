@@ -57,16 +57,16 @@ public class UtilitiesIntegrazioneWSAddressing {
 										     uuid:<applicationMessageId> in caso di Messaggio di Integrazione (invocazione lato PD o lettura risposta lato PA, es. per correlazione applicativa)
 	   SOAPHeaderElement wsaRelatesTo ->     uuid:<messageId> equivale al riferimento messaggio
 	 */
-	private final static String WSA_TO_FORMAT = "http://<providerType>_<provider>.govway.org/services/<serviceType>_<service>/<serviceVersion>";
-	private final static String WSA_FROM_FORMAT = "http://[<application>.]<senderType>_<sender>.govway.org";
-	private final static String WSA_ACTION_FORMAT = "http://<providerType>_<provider>.govway.org/services/<serviceType>_<service>/<serviceVersion>/<action>";
-	private final static String WSA_ID_FORMAT = "uuid:<id>";
-	private final static String WSA_RELATES_TO_FORMAT = "uuid:<id>";
+	private static final String WSA_TO_FORMAT = "http://<providerType>_<provider>.govway.org/services/<serviceType>_<service>/<serviceVersion>";
+	private static final String WSA_FROM_FORMAT = "http://[<application>.]<senderType>_<sender>.govway.org";
+	private static final String WSA_ACTION_FORMAT = "http://<providerType>_<provider>.govway.org/services/<serviceType>_<service>/<serviceVersion>/<action>";
+	private static final String WSA_ID_FORMAT = "uuid:<id>";
+	private static final String WSA_RELATES_TO_FORMAT = "uuid:<id>";
 	
-	public final static boolean INTERPRETA_COME_ID_BUSTA = true;
-	public final static boolean INTERPRETA_COME_ID_APPLICATIVO = false;
+	public static final boolean INTERPRETA_COME_ID_BUSTA = true;
+	public static final boolean INTERPRETA_COME_ID_APPLICATIVO = false;
 	
-	private final static boolean MUST_UNDERSTAND = false;
+	private static final boolean MUST_UNDERSTAND = false;
 	
 	
 	public static void _readDatiWSAToOrAction(String wsaValue,String format, HeaderIntegrazione integrazione) throws HeaderIntegrazioneException{

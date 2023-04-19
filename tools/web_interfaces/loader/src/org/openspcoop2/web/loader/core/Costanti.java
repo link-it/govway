@@ -39,113 +39,113 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
  */
 public class Costanti {
 
-	public final static String OPENSPCOOP2_LOADER_LOCAL_PATH = "loader_local.properties";
-    public final static String OPENSPCOOP2_LOADER_PROPERTIES = "OPENSPCOOP2_LOADER_PROPERTIES";
+	public static final String OPENSPCOOP2_LOADER_LOCAL_PATH = "loader_local.properties";
+    public static final String OPENSPCOOP2_LOADER_PROPERTIES = "OPENSPCOOP2_LOADER_PROPERTIES";
     
-    public final static String OPENSPCOOP2_DATASOURCE_LOCAL_PATH = "loader_local.datasource.properties";
-    public final static String OPENSPCOOP2_DATASOURCE_PROPERTIES = "OPENSPCOOP2_LOADER_DATASOURCE_PROPERTIES";
+    public static final String OPENSPCOOP2_DATASOURCE_LOCAL_PATH = "loader_local.datasource.properties";
+    public static final String OPENSPCOOP2_DATASOURCE_PROPERTIES = "OPENSPCOOP2_LOADER_DATASOURCE_PROPERTIES";
 	
-    public final static String OPENSPCOOP2_LOGGER_LOCAL_PATH = "loader_local.log4j2.properties";
-    public final static String OPENSPCOOP2_LOGGER_PROPERTIES = "OPENSPCOOP2_LOADER_LOG_PROPERTIES";
+    public static final String OPENSPCOOP2_LOGGER_LOCAL_PATH = "loader_local.log4j2.properties";
+    public static final String OPENSPCOOP2_LOGGER_PROPERTIES = "OPENSPCOOP2_LOADER_LOG_PROPERTIES";
 	
 	/* OTHER */
     
-	public final static String IMAGES_DIR = "images";
-	public final static String CSS_DIR = "css";
-	public final static String JS_DIR = "js";
-	public final static String FONTS_DIR = "fonts";
-	public final static String LOGIN_JSP = "/jsplib/login.jsp";
-	public final static String INFO_JSP ="/jsplib/info.jsp";
+	public static final String IMAGES_DIR = "images";
+	public static final String CSS_DIR = "css";
+	public static final String JS_DIR = "js";
+	public static final String FONTS_DIR = "fonts";
+	public static final String LOGIN_JSP = "/jsplib/login.jsp";
+	public static final String INFO_JSP ="/jsplib/info.jsp";
 	
-	public final static String SCHEMA_REGISTRO_SERVIZI = "registroServizi.xsd";
-	public final static String SCHEMA_CONFIGURAZIONE_PDD = "config.xsd";
+	public static final String SCHEMA_REGISTRO_SERVIZI = "registroServizi.xsd";
+	public static final String SCHEMA_CONFIGURAZIONE_PDD = "config.xsd";
     
     
     /* OBJECT NAME */
 	
-	public final static String OBJECT_NAME_LOGIN = "login";
+	public static final String OBJECT_NAME_LOGIN = "login";
 	
-	public final static String OBJECT_NAME_LOGOUT = "logout";
+	public static final String OBJECT_NAME_LOGOUT = "logout";
 	
-	public final static String OBJECT_NAME_MESSAGE_PAGE = "messagePage";
+	public static final String OBJECT_NAME_MESSAGE_PAGE = "messagePage";
 	
-	public final static String OBJECT_NAME_ARCHIVI_IMPORTA_XML = "importaXml";
-	public final static ForwardParams TIPO_OPERAZIONE_ARCHIVI_IMPORTA_XML = ForwardParams.OTHER("");
+	public static final String OBJECT_NAME_ARCHIVI_IMPORTA_XML = "importaXml";
+	public static final ForwardParams TIPO_OPERAZIONE_ARCHIVI_IMPORTA_XML = ForwardParams.OTHER("");
 	
-	public final static String OBJECT_NAME_ARCHIVI_ELIMINAZIONE_XML = "eliminazioneXml";
-	public final static ForwardParams TIPO_OPERAZIONE_ARCHIVI_ELIMINAZIONE_XML = ForwardParams.OTHER("");
+	public static final String OBJECT_NAME_ARCHIVI_ELIMINAZIONE_XML = "eliminazioneXml";
+	public static final ForwardParams TIPO_OPERAZIONE_ARCHIVI_ELIMINAZIONE_XML = ForwardParams.OTHER("");
 	
 	
 	/* SERVLET NAME */
 	
-	public final static String SERVLET_NAME_LOGIN = OBJECT_NAME_LOGIN+".do";
-	public final static List<String> SERVLET_LOGIN = new ArrayList<String>();
+	public static final String SERVLET_NAME_LOGIN = OBJECT_NAME_LOGIN+".do";
+	public static final List<String> SERVLET_LOGIN = new ArrayList<String>();
 	static{
 		SERVLET_LOGIN.add(SERVLET_NAME_LOGIN);
 	}
 	
-	public final static String SERVLET_NAME_LOGOUT = OBJECT_NAME_LOGOUT+".do";
-	public final static List<String> SERVLET_LOGOUT = new ArrayList<String>();
+	public static final String SERVLET_NAME_LOGOUT = OBJECT_NAME_LOGOUT+".do";
+	public static final List<String> SERVLET_LOGOUT = new ArrayList<String>();
 	static{
 		SERVLET_LOGOUT.add(SERVLET_NAME_LOGOUT);
 	}
 	
-	public final static String SERVLET_NAME_ARCHIVI_IMPORTA_XML = OBJECT_NAME_ARCHIVI_IMPORTA_XML+".do";
-	public final static String SERVLET_NAME_ARCHIVI_ELIMINAZIONE_XML = OBJECT_NAME_ARCHIVI_ELIMINAZIONE_XML+".do";
-	public final static List<String> SERVLET_ARCHIVI = new ArrayList<String>();
+	public static final String SERVLET_NAME_ARCHIVI_IMPORTA_XML = OBJECT_NAME_ARCHIVI_IMPORTA_XML+".do";
+	public static final String SERVLET_NAME_ARCHIVI_ELIMINAZIONE_XML = OBJECT_NAME_ARCHIVI_ELIMINAZIONE_XML+".do";
+	public static final List<String> SERVLET_ARCHIVI = new ArrayList<String>();
 	static{
 		SERVLET_ARCHIVI.add(SERVLET_NAME_ARCHIVI_IMPORTA_XML);
 	}
 	
-	public final static String SERVLET_NAME_MESSAGE_PAGE = OBJECT_NAME_MESSAGE_PAGE+".do";
-	public final static List<String> SERVLET_MESSAGE_PAGE = new ArrayList<String>();
+	public static final String SERVLET_NAME_MESSAGE_PAGE = OBJECT_NAME_MESSAGE_PAGE+".do";
+	public static final List<String> SERVLET_MESSAGE_PAGE = new ArrayList<String>();
 	static{
 		SERVLET_MESSAGE_PAGE.add(SERVLET_NAME_MESSAGE_PAGE);
 	}
 	
 	/* LABEL GENERALI */
 	
-	public final static String LABEL_LINKIT_WEB = "https://link.it";
-	public final static String LABEL_OPENSPCOOP2_WEB = "https://govway.org";
+	public static final String LABEL_LINKIT_WEB = "https://link.it";
+	public static final String LABEL_OPENSPCOOP2_WEB = "https://govway.org";
 	
-	public final static String LABEL_CONFIGURAZIONI_XML = "Strumenti";
-	public final static String LABEL_TIPOLOGIA_XML = "Tipologia";
-	public final static String LABEL_IMPORTA = "Importa";
-	public final static String LABEL_ELIMINA = "Elimina";
-	public final static String LABEL_FILE_NON_VALIDO = "File non valido: ";
-	public final static String LABEL_IMPORTAZIONE_EFFETTUATA_CORRETTAMENTE ="L'importazione dei dati, contenuti nel file xml, è avvenuta con successo";
-	public final static String LABEL_ELIMINAZIONE_EFFETTUATA_CORRETTAMENTE ="L'eliminazione delle configurazioni, contenute nel file xml, è avvenuta con successo";
+	public static final String LABEL_CONFIGURAZIONI_XML = "Strumenti";
+	public static final String LABEL_TIPOLOGIA_XML = "Tipologia";
+	public static final String LABEL_IMPORTA = "Importa";
+	public static final String LABEL_ELIMINA = "Elimina";
+	public static final String LABEL_FILE_NON_VALIDO = "File non valido: ";
+	public static final String LABEL_IMPORTAZIONE_EFFETTUATA_CORRETTAMENTE ="L'importazione dei dati, contenuti nel file xml, è avvenuta con successo";
+	public static final String LABEL_ELIMINAZIONE_EFFETTUATA_CORRETTAMENTE ="L'eliminazione delle configurazioni, contenute nel file xml, è avvenuta con successo";
 	
-	public final static String LABEL_MENU_UTENTE_INFORMAZIONI = "Informazioni";
-	public final static String LABEL_LOGIN = "Login";
-	public final static String LABEL_LOGOUT = "Logout";
-	public final static String LABEL_PASSWORD = "Password";
-	public final static String LABEL_LOGIN_ATTUALMENTE_CONNESSO = "Utente: ";
-	public final static String LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO = "Login effettuato con successo";
-	public final static String LABEL_LOGOUT_EFFETTUATO_CON_SUCCESSO = "Logout effettuato con successo";
-	public final static String LABEL_LOGIN_SESSIONE_SCADUTA = "La sessione &egrave; scaduta. Effettuare il login";
-	public final static String LABEL_LOGIN_AUTORIZZAZIONE_NEGATA = "Autorizzazione negata";
-	public final static String LABEL_LOGIN_ERRORE = "L'ultima operazione effettuata ha provocato un errore che ha reso l'interfaccia non utilizzabile.<BR><BR>Effettuare nuovamente il login";
-	public final static String LABEL_LOGIN_DATI_INCOMPLETI_LOGIN = "Dati incompleti. E' necessario indicare un utente";
-	public final static String LABEL_LOGIN_DATI_INCOMPLETI_PASSWORD = "Dati incompleti. E' necessario indicare una Password";
-	public final static String LABEL_LOGIN_ERRATO = "L'utente fornito non esiste";
-	public final static String LABEL_LOGIN_CON_PW_ERRATO = "Le credenziali fornite non sono corrette";
-	public final static String LABEL_LOGIN_PERMESSI_NON_SUFFICENTI = "L'utente non possiede i diritti per creare configurazioni";
-	public final static String LABEL_CONSOLE_RIPRISTINATA = "Console ripristinata con successo.";
+	public static final String LABEL_MENU_UTENTE_INFORMAZIONI = "Informazioni";
+	public static final String LABEL_LOGIN = "Login";
+	public static final String LABEL_LOGOUT = "Logout";
+	public static final String LABEL_PASSWORD = "Password";
+	public static final String LABEL_LOGIN_ATTUALMENTE_CONNESSO = "Utente: ";
+	public static final String LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO = "Login effettuato con successo";
+	public static final String LABEL_LOGOUT_EFFETTUATO_CON_SUCCESSO = "Logout effettuato con successo";
+	public static final String LABEL_LOGIN_SESSIONE_SCADUTA = "La sessione &egrave; scaduta. Effettuare il login";
+	public static final String LABEL_LOGIN_AUTORIZZAZIONE_NEGATA = "Autorizzazione negata";
+	public static final String LABEL_LOGIN_ERRORE = "L'ultima operazione effettuata ha provocato un errore che ha reso l'interfaccia non utilizzabile.<BR><BR>Effettuare nuovamente il login";
+	public static final String LABEL_LOGIN_DATI_INCOMPLETI_LOGIN = "Dati incompleti. E' necessario indicare un utente";
+	public static final String LABEL_LOGIN_DATI_INCOMPLETI_PASSWORD = "Dati incompleti. E' necessario indicare una Password";
+	public static final String LABEL_LOGIN_ERRATO = "L'utente fornito non esiste";
+	public static final String LABEL_LOGIN_CON_PW_ERRATO = "Le credenziali fornite non sono corrette";
+	public static final String LABEL_LOGIN_PERMESSI_NON_SUFFICENTI = "L'utente non possiede i diritti per creare configurazioni";
+	public static final String LABEL_CONSOLE_RIPRISTINATA = "Console ripristinata con successo.";
 	
 	/* PARAMETRI */
 	
-	public final static String PARAMETRO_UTENTE_LOGIN = "login";
-	public final static String PARAMETRO_UTENTE_PASSWORD = "password";
+	public static final String PARAMETRO_UTENTE_LOGIN = "login";
+	public static final String PARAMETRO_UTENTE_PASSWORD = "password";
 	
-	public final static String PARAMETRO_ARCHIVI_TIPO_XML = "tipoxml";
-	public final static String PARAMETRO_ARCHIVI_FILE = "theFile";
+	public static final String PARAMETRO_ARCHIVI_TIPO_XML = "tipoxml";
+	public static final String PARAMETRO_ARCHIVI_FILE = "theFile";
 	
 
 	
 	/* LABEL PARAMETRI */
 	
-	public final static String LABEL_PARAMETRO_ARCHIVI_FILE = "File";
+	public static final String LABEL_PARAMETRO_ARCHIVI_FILE = "File";
 	
 	/** PARAMETRI MESSAGE PAGE **/
 	

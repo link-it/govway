@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -238,19 +237,18 @@ public final class PorteDelegateWS extends Action {
 			if(pde!=null && pde.getTrasformazioni()!=null && pde.getTrasformazioni().sizeRegolaList()>0) {
 				for (int i = 0; i < pde.getTrasformazioni().sizeRegolaList(); i++) {
 					TrasformazioneRegola tr = pde.getTrasformazioni().getRegola(i);
-					if(StatoFunzionalita.ABILITATO.equals(tr.getStato())) {
-						if(tr.getRichiesta()!=null) {
-							if(ServiceBinding.REST.equals(serviceBindingAPI)) {
-								if(tr.getRichiesta().getTrasformazioneSoap()!=null) {
-									serviceBindingSecurityTransformazioni = ServiceBinding.SOAP;
-									break;
-								}
+					if(StatoFunzionalita.ABILITATO.equals(tr.getStato()) &&
+						tr.getRichiesta()!=null) {
+						if(ServiceBinding.REST.equals(serviceBindingAPI)) {
+							if(tr.getRichiesta().getTrasformazioneSoap()!=null) {
+								serviceBindingSecurityTransformazioni = ServiceBinding.SOAP;
+								break;
 							}
-							else {
-								if(tr.getRichiesta().getTrasformazioneRest()!=null) {
-									serviceBindingSecurityTransformazioni = ServiceBinding.REST;
-									break;
-								}
+						}
+						else {
+							if(tr.getRichiesta().getTrasformazioneRest()!=null) {
+								serviceBindingSecurityTransformazioni = ServiceBinding.REST;
+								break;
 							}
 						}
 					}
@@ -266,14 +264,14 @@ public final class PorteDelegateWS extends Action {
 			}
 			List<String> labelConfigurazioniReq = configManager.convertToLabel(propertiesSourceConfiguration, nomiConfigurazioniReq);
 			
-			List<String> propConfigReqLabelListTmp = new ArrayList<String>(); 
+			List<String> propConfigReqLabelListTmp = new ArrayList<>(); 
 			propConfigReqLabelListTmp.add(PorteDelegateCostanti.LABEL_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO);
 			propConfigReqLabelListTmp.addAll(labelConfigurazioniReq);
 			if(porteDelegateHelper.isModalitaAvanzata())
 				propConfigReqLabelListTmp.add(PorteDelegateCostanti.LABEL_DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME);
 			
 			
-			List<String>  propConfigReqListTmp = new ArrayList<String>(); 
+			List<String>  propConfigReqListTmp = new ArrayList<>(); 
 			propConfigReqListTmp.add(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO);
 			propConfigReqListTmp.addAll(nomiConfigurazioniReq);
 			if(porteDelegateHelper.isModalitaAvanzata())
@@ -289,14 +287,14 @@ public final class PorteDelegateWS extends Action {
 			}
 			List<String> labelConfigurazioniRes = configManager.convertToLabel(propertiesSourceConfiguration, nomiConfigurazioniRes);
 			
-			List<String>  propConfigResLabelListTmp = new ArrayList<String>(); 
+			List<String>  propConfigResLabelListTmp = new ArrayList<>(); 
 			propConfigResLabelListTmp.add(PorteDelegateCostanti.LABEL_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO);
 			propConfigResLabelListTmp.addAll(labelConfigurazioniRes);
 			if(porteDelegateHelper.isModalitaAvanzata())
 				propConfigResLabelListTmp.add(PorteDelegateCostanti.LABEL_DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME);
 			
 			
-			List<String>  propConfigResListTmp = new ArrayList<String>();
+			List<String>  propConfigResListTmp = new ArrayList<>();
 			propConfigResListTmp.add(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO);
 			propConfigResListTmp.addAll(nomiConfigurazioniRes);
 			if(porteDelegateHelper.isModalitaAvanzata())
@@ -329,25 +327,27 @@ public final class PorteDelegateWS extends Action {
 			if(	porteDelegateHelper.isEditModeInProgress() && !applicaModifica){
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				if (pdeMessageSecurity != null) {
 					if(pdeMessageSecurity.getRequestFlow()!=null){
 						StatoFunzionalita applyToMtomRich = pdeMessageSecurity.getRequestFlow().getApplyToMtom();
-						if(applicaMTOMRichiesta == null)
+						if(applicaMTOMRichiesta == null) {
 							if(applyToMtomRich != null && applyToMtomRich.equals(StatoFunzionalita.ABILITATO) && isMTOMAbilitatoReq)
 								applicaMTOMRichiesta = "yes";
 							else
 								applicaMTOMRichiesta = "";
+						}
 					}
 					if(pdeMessageSecurity.getResponseFlow()!=null){
 						StatoFunzionalita applyToMtomRich = pdeMessageSecurity.getResponseFlow().getApplyToMtom();
-						if(applicaMTOMRisposta == null)
+						if(applicaMTOMRisposta == null) {
 							if(applyToMtomRich != null && applyToMtomRich.equals(StatoFunzionalita.ABILITATO) && isMTOMAbilitatoRes)
 								applicaMTOMRisposta = "yes";
 							else
 								applicaMTOMRisposta = "";
+						}
 					}
 				}
 
@@ -378,9 +378,9 @@ public final class PorteDelegateWS extends Action {
 			boolean isOk = porteDelegateHelper.WSCheckData(TipoOperazione.OTHER);
 			if (!isOk) {
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteDelegateHelper.addMessageSecurityToDati(dati, true, idInt, statoMessageSecurity, urlRequestList.getValue(), urlResponseList.getValue() , contaListe, numMessageSecurityReq, numMessageSecurityRes,
 						isMTOMAbilitatoReq, applicaMTOMRichiesta, isMTOMAbilitatoRes, applicaMTOMRisposta,idPropertiesConfigReq,idPropertiesConfigRes,propConfigReqLabelList, propConfigReqList,  propConfigResLabelList, propConfigResList,
@@ -457,7 +457,7 @@ public final class PorteDelegateWS extends Action {
 			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), pde);
 
 			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 
 			// Aggiorno valori MessageSecurity request e response
 			pde = porteDelegateCore.getPortaDelegata(idInt);
@@ -472,22 +472,24 @@ public final class PorteDelegateWS extends Action {
 					oldIdPropertiesConfigReq = pdeMessageSecurity.getRequestFlow().getMode();
 					StatoFunzionalita applyToMtomRich = pdeMessageSecurity.getRequestFlow().getApplyToMtom();
 
-					if(applicaMTOMRichiesta == null)
-					if(applyToMtomRich != null && applyToMtomRich.equals(StatoFunzionalita.ABILITATO) && isMTOMAbilitatoReq)
-						applicaMTOMRichiesta = "yes";
-					else
-						applicaMTOMRichiesta = "";
+					if(applicaMTOMRichiesta == null) {
+						if(applyToMtomRich != null && applyToMtomRich.equals(StatoFunzionalita.ABILITATO) && isMTOMAbilitatoReq)
+							applicaMTOMRichiesta = "yes";
+						else
+							applicaMTOMRichiesta = "";
+					}
 				}
 				if(pdeMessageSecurity.getResponseFlow()!=null){
 					numMessageSecurityRes = pdeMessageSecurity.getResponseFlow().sizeParameterList();
 					oldIdPropertiesConfigRes = pdeMessageSecurity.getResponseFlow().getMode();
 					StatoFunzionalita applyToMtomRich = pdeMessageSecurity.getResponseFlow().getApplyToMtom();
 
-					if(applicaMTOMRisposta ==null)
-					if(applyToMtomRich != null && applyToMtomRich.equals(StatoFunzionalita.ABILITATO) && isMTOMAbilitatoRes)
-						applicaMTOMRisposta = "yes";
-					else
-						applicaMTOMRisposta = "";
+					if(applicaMTOMRisposta ==null) {
+						if(applyToMtomRich != null && applyToMtomRich.equals(StatoFunzionalita.ABILITATO) && isMTOMAbilitatoRes)
+							applicaMTOMRisposta = "yes";
+						else
+							applicaMTOMRisposta = "";
+					}
 				}
 			}
 			
@@ -510,8 +512,7 @@ public final class PorteDelegateWS extends Action {
 			pd.setDati(dati);
 			
 			pd.setMessage(CostantiControlStation.LABEL_AGGIORNAMENTO_EFFETTUATO_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
-			//pd.disableEditMode();
-			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+			dati.add(ServletUtils.getDataElementForEditModeFinished());
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 

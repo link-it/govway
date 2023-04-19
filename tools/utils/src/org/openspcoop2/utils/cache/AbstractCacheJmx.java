@@ -54,7 +54,7 @@ public abstract class AbstractCacheJmx extends NotificationBroadcasterSupport im
 	
 	
 	/** Nomi proprieta' */
-	public final static String CACHE_NAME = "cacheName";
+	public static final String CACHE_NAME = "cacheName";
 	
 	/** getAttribute */
 	@Override

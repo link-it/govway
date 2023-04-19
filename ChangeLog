@@ -1,3 +1,140 @@
+2023-04-19  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 3.3.12
+
+2023-04-16  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2023-20863: aggiornata libreria 'org.springframework:spring-expression' alla versione 5.3.27
+
+2023-04-13  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1581
+	Nelle consegna di una notifica asincrona, attivando una trasformazione, è adesso possibile accedere oltre che alla richiesta e alla risposta della transazione sincrona anche al contesto di tale transazione.
+	È stato inoltre risolta l'anomalia nella quale non veniva eseguita la trasformazione se nei criteri di applicabilità si assegnava il connettore associato all'implementazione dell'API.
+
+2023-04-06  Andrea Poli <apoli@link.it>
+
+	* [Utils]
+	Aggiunta funzionalità OP-1578
+	Aggiunte utility che consentono di processare file PDF al fine di:
+	- firmarli o estrarre le informazioni sulla signature (compreso i certificati)
+	- inserire o estrarre documenti interni al PDF nelle modalità Embedded o XFA
+	- gestire documenti inseriti nel pdf tramite '{http://www.xfa.org/schema/xfa-data/1.0/}datasets'
+
+2023-04-06  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug
+	La verifica dei certificati, su erogazioni/fruizioni ModI, andava in errore se veniva impostata una OCSP Policy.
+
+2023-04-04  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1576
+	Tra le informazioni dinamiche utilizzabili all'interno di trasformazioni è adesso possibile riferire anche l'identificativo di correlazione applicativa.
+
+2023-04-04  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1560
+	È adesso possibile configurare GovWay per utilizzare una configurazione https differente da quella ereditata dalla jvm, 
+	oltre che tramite la configurazione specifica di un connettore https,
+	anche tramite un repository di configurazioni definite tramite file di proprietà.
+	Il nome e la posizione del file di proprietà è configurabile a livello di singola API.
+	Il nome del file indicato può contenere delle macro, risolte a runtime dal gateway, per creare dei path dinamici (es. un keystore differente per ogni applicativo).
+
+2023-04-03  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2022-42003: aggiornata libreria 'com.fasterxml.jackson.core:jackson-databind' alla versione 2.14.2
+
+2023-03-29  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2023-20861: aggiornata libreria 'org.springframework:spring-*' alla versione 5.3.26
+
+2023-03-24  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1573
+	Aggiunta possibilità di definire una token policy di validazione che utilizza per la validazione il certificato presente nel truststore
+	che possiede l'alias corrispondente al valore del claim 'kid' presente nell'header del token.
+
+2023-03-22  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-1571
+	Caricando un'interfaccia OpenAPI 3 contenente una descrizione del corpo della richiesta, di una risposta o di un parametro superiore ai 255 caratteri si otteneva un errore inatteso sulla console.
+
+2023-03-22  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor]
+	Risolto Bug OP-1569
+	I tempi medi di risposta riportati nei report statistici non venivano corretti calcolati 
+	in presenza di campionamenti statistici che presentavano variazioni di risultati importanti tra un campionamento ed un altro 
+	come ad es. in presenza di richieste terminate correttamente e richieste terminate con un 'read timeout' (2 minuti).
+
+2022-03-22  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-1498
+	Durante l'aggiornamento dell'interfaccia OpenAPI o WSDL di una API, se l'utente decideva di annullare l'aggiornamento la console andava in errore.
+	Dal log si evince un bug introdotto con la gestione delle vulnerabilità di tipo CSRF: 'Parametro [_csrf] Duplicato'.
+
+2023-03-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2023-1436: aggiornata libreria 'org.codehaus.jettison:jettison' alla versione 1.5.4
+	- CVE-2023-1370: aggiornata libreria 'net.minidev:json-smart' alla versione 2.4.10
+
+2023-03-15  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1552
+	La diagnostica aggiunta utile ad individuare le fasi di registrazione dei messaggi è stata specializzata per individuarne lo scopo:
+	- la registrazione dei contenuti nelle tracce;
+	- una raccolta dei contenuti utilizzabile dalla funzionalità di 'File Trace'.
+
+2023-03-15  Andrea Poli <apoli@link.it>
+
+	* [Documentazione]
+	Risolto Bug OP-1562
+	Rivista la documentazione degli scenari e anche l'archivio zip contenente le configurazioni per sostituire 
+	l'API pubblica SOAP 'Credit Card Verification' non più disponibile alla url 'https://ws.cdyne.com/creditcardverify/luhnchecker.asmx' 
+	con un altra API SOAP 'Temperature Conversion' disponibile alla url 'https://www.w3schools.com/xml/tempconvert.asmx'.
+
+2023-03-10  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug
+	L'accesso alle maschere di configurazione delle proprietà di sistema, delle regole di proxy pass, delle regole di response caching e dei canali produce un errore inatteso. 
+
+2023-03-10  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 3.3.11
+
+2023-03-09  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1557
+	La traccia prodotta da GovWay è stata arricchita:
+	- di informazioni inerenti il token ricevuto anche in caso di validazione fallita;
+	- delle informazioni inviate e della risposta ricevuta anche in caso di negoziazione token fallita.
+
+2023-03-08  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1557
+	È stata aggiunta la possibilità di individuare una proprietà in una API rispetto all'applicativo chiamante, nella risoluzione dinamica di un valore 
+	(ad es. nel claim di un SignedJWT in una token policy di negoziazione).
+	Analogamente è adesso possibile individuare una proprietà sull'applicativo rispetto all'api invocata.
+
 2023-03-07  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]	

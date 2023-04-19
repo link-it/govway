@@ -19,7 +19,7 @@
 
 
 
-<%@page import="java.util.Vector"%>
+<%@page import="java.util.List"%>
 <%@ page session="true" import="org.openspcoop2.web.lib.mvc.*" %>
 
 <%
@@ -86,7 +86,7 @@ if(csrfTokenFromSession == null)
 	  								<div class="buttonrowform">
 										<%
 										if(generateHiddenForm){
-											Vector<?> dati = pd.getDati();
+											List<?> dati = pd.getDati();
 							
 											for(int i = 0; i < dati.size() ; i++){
 												DataElement de = (DataElement) dati.get(i);

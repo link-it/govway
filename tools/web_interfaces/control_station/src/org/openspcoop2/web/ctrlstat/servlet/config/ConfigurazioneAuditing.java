@@ -21,7 +21,7 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.config;
 
-import java.util.Vector;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -102,7 +102,7 @@ public final class ConfigurazioneAuditing extends Action {
 					Configurazione tmpConf = auditingCore.getConfigurazioneAudit();
 
 					// preparo i campi
-					Vector<DataElement> dati = ah.addAuditingToDati(
+					List<DataElement> dati = ah.addAuditingToDati(
 							statoaudit, stato, dump, formatodump, log4j,
 							tmpConf.sizeFiltri());
 
@@ -119,11 +119,11 @@ public final class ConfigurazioneAuditing extends Action {
 				Configurazione newConfigurazione = auditingCore.getConfigurazioneAudit();
 
 				newConfigurazione.setAuditEngineEnabled(
-						statoaudit.equals(AuditCostanti.DEFAULT_VALUE_ABILITATO) ? true : false);
+						statoaudit.equals(AuditCostanti.DEFAULT_VALUE_ABILITATO));
 				newConfigurazione.setAuditEnabled(
-						stato.equals(AuditCostanti.DEFAULT_VALUE_ABILITATO) ? true : false);
+						stato.equals(AuditCostanti.DEFAULT_VALUE_ABILITATO));
 				newConfigurazione.setDumpEnabled(
-						dump.equals(AuditCostanti.DEFAULT_VALUE_ABILITATO) ? true : false);
+						dump.equals(AuditCostanti.DEFAULT_VALUE_ABILITATO));
 				newConfigurazione.setDumpFormat(formatodump);
 				if (log4j.equals(AuditCostanti.DEFAULT_VALUE_ABILITATO)) {
 					boolean giaPresente = false;
@@ -133,7 +133,7 @@ public final class ConfigurazioneAuditing extends Action {
 							break;
 						}
 					}
-					if (giaPresente==false) {
+					if (!giaPresente) {
 						Appender appender = new Appender();
 						appender.setNome(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_NOME);
 						appender.setClassName(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_CLASS_NAME);
@@ -164,11 +164,11 @@ public final class ConfigurazioneAuditing extends Action {
 
 
 				// preparo i campi
-				Vector<DataElement> dati = ah.addAuditingToDati(
+				List<DataElement> dati = ah.addAuditingToDati(
 						statoaudit, stato, dump, formatodump, log4j,
 						c.sizeFiltri());
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				pd.setDati(dati);
 
@@ -198,7 +198,7 @@ public final class ConfigurazioneAuditing extends Action {
 			}
 
 			// preparo i campi
-			Vector<DataElement> dati = ah.addAuditingToDati(
+			List<DataElement> dati = ah.addAuditingToDati(
 					statoaudit, stato, dump, formatodump, log4j,
 					c.sizeFiltri());
 

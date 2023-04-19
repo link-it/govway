@@ -21,7 +21,6 @@
 package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.List;
-import java.util.Vector;
 
 import org.openspcoop2.web.ctrlstat.core.UrlParameters;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedException;
@@ -39,8 +38,10 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  * @version $Rev$, $Date$
  */
 public class PorteDelegateExtendedUtilities {
+	
+	private PorteDelegateExtendedUtilities() {}
 
-	public static void addToHiddenDati(TipoOperazione tipoOperazione,Vector<DataElement> dati,ConsoleHelper consoleHelper) throws ExtendedException{
+	public static void addToHiddenDati(TipoOperazione tipoOperazione,List<DataElement> dati,ConsoleHelper consoleHelper) throws ExtendedException{
 		try {
 			String id = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			String idsogg = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
@@ -58,9 +59,7 @@ public class PorteDelegateExtendedUtilities {
 		return porteDelegateCore.getPortaDelegata(idInt);
 	}
 	
-	public static List<Parameter> getTitle(Object object, ConsoleHelper consoleHelper) throws Exception {
-		// PortaDelegata pd = (PortaDelegata) object;
-		//List<Parameter> lstParam = new ArrayList<>();
+	public static List<Parameter> getTitle(ConsoleHelper consoleHelper) throws Exception {
 		
 		String idSoggettoFruitore = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 
@@ -78,57 +77,7 @@ public class PorteDelegateExtendedUtilities {
 		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, consoleHelper.getSession(), consoleHelper.getRequest());
 		if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 		
-		List<Parameter> lstParam = pdHelper.getTitoloPD(parentPD, idSoggettoFruitore, idAsps, idFruizione); 
-		
-		/*
-		SoggettiCore soggettiCore = new SoggettiCore(consoleHelper.getCore());
-		String tipoSoggettoFruitore = null;
-		String nomeSoggettoFruitore = null;
-		if(soggettiCore.isRegistroServiziLocale()){
-			org.openspcoop2.core.registry.Soggetto soggettoFruitore = soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggettoFruitore));
-			tipoSoggettoFruitore = soggettoFruitore.getTipo();
-			nomeSoggettoFruitore = soggettoFruitore.getNome();
-		}else{
-			org.openspcoop2.core.config.Soggetto soggettoFruitore = soggettiCore.getSoggetto(Integer.parseInt(idSoggettoFruitore));
-			tipoSoggettoFruitore = soggettoFruitore.getTipo();
-			nomeSoggettoFruitore = soggettoFruitore.getNome();
-		}
-		
-		String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggettoFruitore);
-		
-		switch (parentPD) {
-		case PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE:
-			// Prendo il nome e il tipo del servizio
-			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(consoleHelper.getCore()); 
-			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
-			String servizioTmpTile = consoleHelper.getLabelIdServizio(asps);
-			Parameter pIdServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId()+ "");
-			Parameter pIdSoggettoErogatore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, asps.getIdSoggetto()+"");
-			Parameter pIdFruizione = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID, idFruizione+ "");
-			Parameter pIdSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO, idSoggettoFruitore);
-			Parameter pIdProviderSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE, idSoggettoFruitore);
-			
-			String fruizioneTmpTile = consoleHelper.getLabelNomeSoggetto(protocollo, tipoSoggettoFruitore,nomeSoggettoFruitore);
-			
-			lstParam.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
-			lstParam.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + servizioTmpTile, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST , pIdServizio,pIdSoggettoErogatore));
-			lstParam.add(new Parameter(fruizioneTmpTile, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE, pIdServizio,pIdFruizione,pIdProviderSoggettoFruitore));
-			lstParam.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_DELEGATE, 
-					AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_LIST ,pIdFruizione,pIdServizio,pIdSoggettoFruitore));
-			break;
-		case PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_SOGGETTO:
-			String soggettoTitle =   consoleHelper.getLabelNomeSoggetto(protocollo, tipoSoggettoFruitore,nomeSoggettoFruitore);
-			lstParam.add(new Parameter(SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
-			lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PORTE_DELEGATE_DI + soggettoTitle, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST ,
-					new Parameter( PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idSoggettoFruitore)));
-			break;
-		case PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE:
-		default:
-			lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PORTE_DELEGATE, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST));
-			break;
-		}
-		*/
-		return lstParam;
+		return pdHelper.getTitoloPD(parentPD, idSoggettoFruitore, idAsps, idFruizione); 
 		
 	}
 	

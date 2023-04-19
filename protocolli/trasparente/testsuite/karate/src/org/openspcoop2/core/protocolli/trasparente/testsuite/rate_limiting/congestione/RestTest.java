@@ -29,7 +29,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Vector;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -170,7 +170,7 @@ public class RestTest extends ConfigLoader {
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl(urlServizio);
 						
-		Vector<HttpResponse> responses = Utils.makeRequestsAndCheckPolicy(request, maxRequests+1, idPolicy);
+		List<HttpResponse> responses = Utils.makeRequestsAndCheckPolicy(request, maxRequests+1, idPolicy);
 		
 		// Controllo che non sia scattata la policy
 		assertEquals( maxRequests+1, responses.stream().filter(r -> r.getResultHTTPOperation() == 200).count());
@@ -264,7 +264,7 @@ public class RestTest extends ConfigLoader {
 		requestErogazione.setMethod(HttpRequestMethod.GET);
 		requestErogazione.setUrl(urlServizioErogazione);
 								
-		Vector<HttpResponse> degradoResponsesErogazione = Utils.makeParallelRequests(requestErogazione, maxRequests+1);
+		List<HttpResponse> degradoResponsesErogazione = Utils.makeParallelRequests(requestErogazione, maxRequests+1);
 		assertEquals(maxRequests+1, degradoResponsesErogazione.stream().filter( r -> r.getResultHTTPOperation() == 200).count());
 		logRateLimiting.info(Utils.getPolicy(idPolicyErogazione));
 		
@@ -273,7 +273,7 @@ public class RestTest extends ConfigLoader {
 		requestFruizione.setMethod(HttpRequestMethod.GET);
 		requestFruizione.setUrl(urlServizioFruizione);
 						
-		Vector<HttpResponse> degradoResponsesFruizione = Utils.makeParallelRequests(requestFruizione, maxRequests+1);
+		List<HttpResponse> degradoResponsesFruizione = Utils.makeParallelRequests(requestFruizione, maxRequests+1);
 		assertEquals(maxRequests+1, degradoResponsesFruizione.stream().filter( r -> r.getResultHTTPOperation() == 200).count());
 		
 		logRateLimiting.info(Utils.getPolicy(idPolicyErogazione));
@@ -322,7 +322,7 @@ public class RestTest extends ConfigLoader {
 		request.setUrl(urlServizio);
 				
 		
-		Vector<HttpResponse> degradoResponses = Utils.makeParallelRequests(request, maxRequests);
+		List<HttpResponse> degradoResponses = Utils.makeParallelRequests(request, maxRequests);
 		
 		assertEquals(maxRequests, degradoResponses.stream().filter( r -> r.getResultHTTPOperation() == 200).count());
 		
@@ -332,7 +332,7 @@ public class RestTest extends ConfigLoader {
 		
 		// Faccio n richieste che non devono ancora essere bloccate perchè non in congestione.
 		logRateLimiting.info("Faccio n richieste parallele e nessuna viene bloccata perchè non ancora in congestione...");
-		Vector<HttpResponse> stillNonBlockedResponses = Utils.makeParallelRequests(request, maxRequests);
+		List<HttpResponse> stillNonBlockedResponses = Utils.makeParallelRequests(request, maxRequests);
 
 		assertEquals(maxRequests, stillNonBlockedResponses.stream().filter( r -> r.getResultHTTPOperation() == 200).count());
 		
@@ -345,7 +345,7 @@ public class RestTest extends ConfigLoader {
 		congestionRequest.setUrl(url);
 		
 		// faccio n richieste che devono essere tutte bloccate
-		//Vector<HttpResponse> blockedResponses = Utils.makeParallelRequests(request, maxRequests);
+		//List<HttpResponse> blockedResponses = Utils.makeParallelRequests(request, maxRequests);
 		//org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.numero_richieste_completate_con_successo.RestTest.checkFailedRequests(blockedResponses, windowSize, maxRequests);
 		makeParallelRequests_and_checkFailedRequests(request, windowSize, maxRequests, congestionRequest);
 		
@@ -380,7 +380,7 @@ public class RestTest extends ConfigLoader {
 				}
 			
 				logRateLimiting.info("["+i+"] Invocazione ...");
-				Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
+				List<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
 				
 				if(responses==null || responses.isEmpty() || responses.get(0)==null || responses.get(0).getHeaderFirstValue(Headers.RequestSuccesfulLimit)==null) {
 					logRateLimiting.info("["+i+"] la risposta non contiene l'header '"+Headers.RequestSuccesfulLimit+"' ; riprovo tra 2 secondi attendendo che le statistiche girano");
@@ -482,7 +482,7 @@ public class RestTest extends ConfigLoader {
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl(url);
 		
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, sogliaRichiesteSimultanee+1);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, sogliaRichiesteSimultanee+1);
 
 		assertEquals(sogliaRichiesteSimultanee, responses.stream().filter(r -> r.getResultHTTPOperation() == 200).count());
 		
@@ -512,7 +512,7 @@ public class RestTest extends ConfigLoader {
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl(url);
 		
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, sogliaRichiesteSimultanee+1);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, sogliaRichiesteSimultanee+1);
 		
 		EventiUtils.checkEventiCongestioneAttivaConViolazioneRL(idErogazione, dataSpedizione, Optional.empty(), responses, logRateLimiting);
 	}
@@ -533,7 +533,7 @@ public class RestTest extends ConfigLoader {
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl(url);
 		
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, sogliaCongestione+1);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, sogliaCongestione+1);
 		
 		assertEquals(sogliaCongestione+1, responses.stream().filter(r -> r.getResultHTTPOperation() == 200).count());
 		EventiUtils.checkEventiCongestioneAttiva(dataSpedizione, responses, logRateLimiting);

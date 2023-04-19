@@ -166,8 +166,8 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 	
 	private Logger log;
 	
-	private final static String VALIDATION_STRUCTURE = "VALIDATION_STRUCTURE";
-	private final static String VALIDATION_SWAGGER_REQUEST_VALIDATOR_OPENAPI = "VALIDATION_SWAGGER_REQUEST_VALIDATOR_OPENAPI";
+	private static final String VALIDATION_STRUCTURE = "VALIDATION_STRUCTURE";
+	private static final String VALIDATION_SWAGGER_REQUEST_VALIDATOR_OPENAPI = "VALIDATION_SWAGGER_REQUEST_VALIDATOR_OPENAPI";
 	private org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("OpenAPIValidator");
 	
 	@Override

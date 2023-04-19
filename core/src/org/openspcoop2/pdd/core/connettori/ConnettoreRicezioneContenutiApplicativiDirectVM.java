@@ -47,7 +47,7 @@ import org.openspcoop2.utils.date.DateManager;
 
 public class ConnettoreRicezioneContenutiApplicativiDirectVM extends AbstractConnettoreDirectVM {
 
-	public final static String TIPO = "vmPD";
+	public static final String TIPO = "vmPD";
 	
 	private String pd;
 	

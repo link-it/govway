@@ -54,8 +54,8 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
  */
 public class EngineResponseCaching extends NotificationBroadcasterSupport implements DynamicMBean {
 
-	public final static String CACHE_METHOD_NAME_GET_OBJECT_BY_UUID = "getResponseCached";
-	public final static String CACHE_METHOD_NAME_REMOVE_OBJECT_BY_UUID = "removeResponseCached";
+	public static final String CACHE_METHOD_NAME_GET_OBJECT_BY_UUID = "getResponseCached";
+	public static final String CACHE_METHOD_NAME_REMOVE_OBJECT_BY_UUID = "removeResponseCached";
 	
 	
 	/** Attributi */

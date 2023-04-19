@@ -37,10 +37,10 @@ public class JOSECostanti {
 	
 	// SELECT LIST ID
 	
-	public final static String ID_SIGNATURE_ALGORITHM = "signatureAlgorithm";
+	public static final String ID_SIGNATURE_ALGORITHM = "signatureAlgorithm";
 	
-	public final static String ID_ENCRYPT_KEY_ALGORITHM = "encryptionKeyAlgorithm";
+	public static final String ID_ENCRYPT_KEY_ALGORITHM = "encryptionKeyAlgorithm";
 	
-	public final static String ID_ENCRYPT_CONTENT_ALGORITHM = "encryptionContentAlgorithm";
+	public static final String ID_ENCRYPT_CONTENT_ALGORITHM = "encryptionContentAlgorithm";
 
 }

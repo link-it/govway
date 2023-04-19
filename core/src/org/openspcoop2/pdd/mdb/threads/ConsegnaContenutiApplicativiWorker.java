@@ -34,7 +34,7 @@ import org.openspcoop2.pdd.mdb.GenericMessage;
  */
 public class ConsegnaContenutiApplicativiWorker extends ModuloAlternativoWorker {
 
-	private final static String idModulo = "ConsegnaContenutiApplicativi";
+	private static final String idModulo = "ConsegnaContenutiApplicativi";
 
 	public ConsegnaContenutiApplicativiWorker(MessageIde ide) {
 		super(ConsegnaContenutiApplicativiWorker.idModulo , ide);

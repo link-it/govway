@@ -35,7 +35,7 @@ import javax.faces.convert.Converter;
  */
 public class DurataConverter implements Converter {
 
-	//	private final static String patternDurata = "dd'g' hh'h' mm'm' ss's'";
+	//	private static final String patternDurata = "dd'g' hh'h' mm'm' ss's'";
 
 
 	@Override

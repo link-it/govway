@@ -72,7 +72,7 @@ public final class PorteDelegateExtendedDel extends AbstractServletListExtendedD
 
 	@Override
 	protected List<Parameter> getTitle(Object object, ConsoleHelper consoleHelper) throws Exception {
-		return PorteDelegateExtendedUtilities.getTitle(object, consoleHelper);
+		return PorteDelegateExtendedUtilities.getTitle(consoleHelper);
 	}
 
 	@Override

@@ -30,28 +30,28 @@ import org.openspcoop2.protocol.information_missing.utils.ProjectInfo;
  */
 public class Costanti {
 
-	public final static String ROOT_LOCAL_NAME_INFORMATION_MISSING = "openspcoop2";
-	public final static String LOCAL_NAME_SOGGETTO = "soggetto";
-	public final static String LOCAL_NAME_SERVIZIO_APPLICATIVO = "servizio-applicativo";
-	public final static String TARGET_NAMESPACE = (new ProjectInfo()).getProjectNamespace();
+	public static final String ROOT_LOCAL_NAME_INFORMATION_MISSING = "openspcoop2";
+	public static final String LOCAL_NAME_SOGGETTO = "soggetto";
+	public static final String LOCAL_NAME_SERVIZIO_APPLICATIVO = "servizio-applicativo";
+	public static final String TARGET_NAMESPACE = (new ProjectInfo()).getProjectNamespace();
 	
-	// IL TIPO DEVE ESSERE DEFINITO PER POTER POI COMPRENDERE IL PROTOCOLLO public final static String TIPO_SOGGETTO_DEFAULT = "@OPENSPCOOP2_TIPO_SOGGETTO_DEFAULT@";
-	public final static String NOME_SOGGETTO_DEFAULT = "@OPENSPCOOP2_NOME_SOGGETTO_DEFAULT@";
+	// IL TIPO DEVE ESSERE DEFINITO PER POTER POI COMPRENDERE IL PROTOCOLLO public static final String TIPO_SOGGETTO_DEFAULT = "@OPENSPCOOP2_TIPO_SOGGETTO_DEFAULT@";
+	public static final String NOME_SOGGETTO_DEFAULT = "@OPENSPCOOP2_NOME_SOGGETTO_DEFAULT@";
 	
 	// sinonimi
-	public final static String TIPO_SOGGETTO = "@OPENSPCOOP2_TIPO_SOGGETTO@";
-	public final static String NOME_SOGGETTO = "@OPENSPCOOP2_NOME_SOGGETTO@";
-	public final static String TIPO_SOGGETTO_PROPRIETARIO = "@OPENSPCOOP2_TIPO_SOGGETTO_PROPRIETARIO@";
-	public final static String NOME_SOGGETTO_PROPRIETARIO = "@OPENSPCOOP2_NOME_SOGGETTO_PROPRIETARIO@";
+	public static final String TIPO_SOGGETTO = "@OPENSPCOOP2_TIPO_SOGGETTO@";
+	public static final String NOME_SOGGETTO = "@OPENSPCOOP2_NOME_SOGGETTO@";
+	public static final String TIPO_SOGGETTO_PROPRIETARIO = "@OPENSPCOOP2_TIPO_SOGGETTO_PROPRIETARIO@";
+	public static final String NOME_SOGGETTO_PROPRIETARIO = "@OPENSPCOOP2_NOME_SOGGETTO_PROPRIETARIO@";
 	
-	public final static String TIPO_SOGGETTO_EROGATORE = "@OPENSPCOOP2_TIPO_SOGGETTO_EROGATORE@";
-	public final static String NOME_SOGGETTO_EROGATORE = "@OPENSPCOOP2_NOME_SOGGETTO_EROGATORE@";
+	public static final String TIPO_SOGGETTO_EROGATORE = "@OPENSPCOOP2_TIPO_SOGGETTO_EROGATORE@";
+	public static final String NOME_SOGGETTO_EROGATORE = "@OPENSPCOOP2_NOME_SOGGETTO_EROGATORE@";
 	
-	public final static String TIPO_SERVIZIO = "@OPENSPCOOP2_TIPO_SERVIZIO@";
-	public final static String NOME_SERVIZIO = "@OPENSPCOOP2_NOME_SERVIZIO@";
-	public final static String AZIONE = "@OPENSPCOOP2_AZIONE@";
+	public static final String TIPO_SERVIZIO = "@OPENSPCOOP2_TIPO_SERVIZIO@";
+	public static final String NOME_SERVIZIO = "@OPENSPCOOP2_NOME_SERVIZIO@";
+	public static final String AZIONE = "@OPENSPCOOP2_AZIONE@";
 	
-	public final static String TIPO_FRUITORE = "@OPENSPCOOP2_TIPO_FRUITORE@";
-	public final static String NOME_FRUITORE = "@OPENSPCOOP2_NOME_FRUITORE@";
+	public static final String TIPO_FRUITORE = "@OPENSPCOOP2_TIPO_FRUITORE@";
+	public static final String NOME_FRUITORE = "@OPENSPCOOP2_NOME_FRUITORE@";
 	
 }

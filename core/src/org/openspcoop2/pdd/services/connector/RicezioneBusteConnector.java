@@ -59,8 +59,8 @@ public class RicezioneBusteConnector {
 
 
 	/** Variabile che indica il Nome del modulo dell'architettura di OpenSPCoop rappresentato da questa classe */
-	public final static IDService ID_SERVICE = IDService.PORTA_APPLICATIVA;
-	public final static String ID_MODULO = ID_SERVICE.getValue();
+	public static final IDService ID_SERVICE = IDService.PORTA_APPLICATIVA;
+	public static final String ID_MODULO = ID_SERVICE.getValue();
 
 	
 	public void doEngine(RequestInfo requestInfo, 

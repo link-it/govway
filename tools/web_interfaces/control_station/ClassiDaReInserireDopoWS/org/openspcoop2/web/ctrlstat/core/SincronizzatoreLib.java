@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.xml.ws.BindingProvider;
 
@@ -1821,7 +1820,7 @@ public class SincronizzatoreLib {
 						stmt1.setInt(1, idFruitore);
 						stmt1.setInt(2, idServizio);
 						risultato1 = stmt1.executeQuery();
-						Vector<Integer> idServiziApplicativFruitore = new Vector<Integer>();
+						List<Integer> idServiziApplicativFruitore = new ArrayList<Integer>();
 						while (risultato1.next()) {
 							idServiziApplicativFruitore.add(risultato1.getInt("id_servizio_applicativo"));
 						}

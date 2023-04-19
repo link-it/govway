@@ -33,42 +33,42 @@ import javax.management.MBeanParameterInfo;
 public class JMXUtils {
 
 	/** Nomi attributi */
-	public final static String CACHE_ATTRIBUTE_ABILITATA = "cacheAbilitata";
+	public static final String CACHE_ATTRIBUTE_ABILITATA = "cacheAbilitata";
 	
 	/** Nomi metodi */
-	public final static String CACHE_METHOD_NAME_RESET = "resetCache"; 
-	public final static String CACHE_METHOD_NAME_PREFILL = "prefillCache"; 
-	public final static String CACHE_METHOD_NAME_PRINT_STATS = "printStatsCache"; 
-	public final static String CACHE_METHOD_NAME_ABILITA = "abilitaCache";
-	public final static String CACHE_METHOD_NAME_DISABILITA = "disabilitaCache";
-	public final static String CACHE_METHOD_NAME_LIST_KEYS = "listKeysCache";
-	public final static String CACHE_METHOD_NAME_GET_OBJECT = "getObjectCache";
-	public final static String CACHE_METHOD_NAME_REMOVE_OBJECT = "removeObjectCache";
+	public static final String CACHE_METHOD_NAME_RESET = "resetCache"; 
+	public static final String CACHE_METHOD_NAME_PREFILL = "prefillCache"; 
+	public static final String CACHE_METHOD_NAME_PRINT_STATS = "printStatsCache"; 
+	public static final String CACHE_METHOD_NAME_ABILITA = "abilitaCache";
+	public static final String CACHE_METHOD_NAME_DISABILITA = "disabilitaCache";
+	public static final String CACHE_METHOD_NAME_LIST_KEYS = "listKeysCache";
+	public static final String CACHE_METHOD_NAME_GET_OBJECT = "getObjectCache";
+	public static final String CACHE_METHOD_NAME_REMOVE_OBJECT = "removeObjectCache";
 	
 	/** Messaggi */
-	public final static String MSG_OPERAZIONE_NON_EFFETTUATA = "Operazione non riuscita: ";
-	public final static String MSG_OPERAZIONE_EFFETTUATA_SUCCESSO = "Operazione effettuata con successo";
-	public final static String MSG_RESET_CACHE_EFFETTUATO_SUCCESSO = "Operazione di reset effettuata con successo";
-	public final static String MSG_PREFILL_CACHE_EFFETTUATO_SUCCESSO = "Operazione pre-fill cache effettuata con successo";
-	public final static String MSG_ABILITAZIONE_CACHE_EFFETTUATA = "Abilitazione cache effettuata con successo";
-	public final static String MSG_DISABILITAZIONE_CACHE_EFFETTUATA = "Disabilitazione cache effettuata con successo";
-	public final static String MSG_RIMOZIONE_CACHE_EFFETTUATA = "Rimozione elemento dalla cache effettuata con successo";
+	public static final String MSG_OPERAZIONE_NON_EFFETTUATA = "Operazione non riuscita: ";
+	public static final String MSG_OPERAZIONE_EFFETTUATA_SUCCESSO = "Operazione effettuata con successo";
+	public static final String MSG_RESET_CACHE_EFFETTUATO_SUCCESSO = "Operazione di reset effettuata con successo";
+	public static final String MSG_PREFILL_CACHE_EFFETTUATO_SUCCESSO = "Operazione pre-fill cache effettuata con successo";
+	public static final String MSG_ABILITAZIONE_CACHE_EFFETTUATA = "Abilitazione cache effettuata con successo";
+	public static final String MSG_DISABILITAZIONE_CACHE_EFFETTUATA = "Disabilitazione cache effettuata con successo";
+	public static final String MSG_RIMOZIONE_CACHE_EFFETTUATA = "Rimozione elemento dalla cache effettuata con successo";
 
 	/** Per determinare se l'attributo e' leggibile/scrivibile */
-	public final static boolean JMX_ATTRIBUTE_READABLE = true;
-	public final static boolean JMX_ATTRIBUTE_WRITABLE = true;
+	public static final boolean JMX_ATTRIBUTE_READABLE = true;
+	public static final boolean JMX_ATTRIBUTE_WRITABLE = true;
 	/** Per determinare se l'attributo e' ricavabile nella forma booleana isAttribute() */
-	public final static boolean JMX_ATTRIBUTE_IS_GETTER = true;
+	public static final boolean JMX_ATTRIBUTE_IS_GETTER = true;
 	
 	/** MBean Attribute */
-	public final static MBeanAttributeInfo MBEAN_ATTRIBUTE_INFO_CACHE_ABILITATA = 
+	public static final MBeanAttributeInfo MBEAN_ATTRIBUTE_INFO_CACHE_ABILITATA = 
 			new MBeanAttributeInfo(CACHE_ATTRIBUTE_ABILITATA,boolean.class.getName(),
 					"Indicazione se e' abilita una cache",
 					JMX_ATTRIBUTE_READABLE,JMX_ATTRIBUTE_WRITABLE,!JMX_ATTRIBUTE_IS_GETTER);
 	
 	/** MBean Operation */
 	// Reset Cache
-	public final static MBeanOperationInfo MBEAN_OPERATION_RESET_CACHE 
+	public static final MBeanOperationInfo MBEAN_OPERATION_RESET_CACHE 
 		= new MBeanOperationInfo(CACHE_METHOD_NAME_RESET,"Svuota la cache",
 				null,
 				//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
@@ -76,7 +76,7 @@ public class JMXUtils {
 				MBeanOperationInfo.ACTION);
 	
 	// PreFill Cache
-	public final static MBeanOperationInfo MBEAN_OPERATION_PREFILL_CACHE 
+	public static final MBeanOperationInfo MBEAN_OPERATION_PREFILL_CACHE 
 		= new MBeanOperationInfo(CACHE_METHOD_NAME_PREFILL,"Pre-fill della cache",
 				null,
 				//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
@@ -84,7 +84,7 @@ public class JMXUtils {
 				MBeanOperationInfo.ACTION);
 			
 	// Print Stats Cache
-	public final static MBeanOperationInfo MBEAN_OPERATION_PRINT_STATS_CACHE 
+	public static final MBeanOperationInfo MBEAN_OPERATION_PRINT_STATS_CACHE 
 		= new MBeanOperationInfo(CACHE_METHOD_NAME_PRINT_STATS,"Visualizza le informazioni statistiche sugli oggetti presenti in cache",
 			null,
 			//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
@@ -92,7 +92,7 @@ public class JMXUtils {
 			MBeanOperationInfo.ACTION);
 			
 	// Disabilita Cache
-	public final static MBeanOperationInfo MBEAN_OPERATION_DISABILITA_CACHE 
+	public static final MBeanOperationInfo MBEAN_OPERATION_DISABILITA_CACHE 
 		= new MBeanOperationInfo(CACHE_METHOD_NAME_DISABILITA,"Disabilita la cache",
 			null,
 			//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
@@ -100,7 +100,7 @@ public class JMXUtils {
 			MBeanOperationInfo.ACTION);
 			
 	// Abilita Cache con parametri
-	public final static MBeanOperationInfo MBEAN_OPERATION_ABILITA_CACHE_CON_PARAMETRI 
+	public static final MBeanOperationInfo MBEAN_OPERATION_ABILITA_CACHE_CON_PARAMETRI 
 		= new MBeanOperationInfo(CACHE_METHOD_NAME_ABILITA,"Abilita la cache",
 			new MBeanParameterInfo[]{
 				new MBeanParameterInfo("dimensioneCache",long.class.getName(),"Dimensione della cache"),
@@ -112,7 +112,7 @@ public class JMXUtils {
 			MBeanOperationInfo.ACTION);
 	
 	// List keys Cache
-	public final static MBeanOperationInfo MBEAN_OPERATION_LIST_KEYS_CACHE 
+	public static final MBeanOperationInfo MBEAN_OPERATION_LIST_KEYS_CACHE 
 		= new MBeanOperationInfo(CACHE_METHOD_NAME_LIST_KEYS,"Visualizza le chiavi attualmente presenti nella cache",
 			null,
 			//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
@@ -120,7 +120,7 @@ public class JMXUtils {
 			MBeanOperationInfo.ACTION);
 	
 	// get Object Cache
-	public final static MBeanOperationInfo MBEAN_OPERATION_GET_OBJECT_CACHE 
+	public static final MBeanOperationInfo MBEAN_OPERATION_GET_OBJECT_CACHE 
 		= new MBeanOperationInfo(CACHE_METHOD_NAME_GET_OBJECT,"Recupera l'oggetto registrato nella cache con chiave fornita come parametro",
 			new MBeanParameterInfo[]{
 				new MBeanParameterInfo("key",String.class.getName(),"Chiave dell'oggetto in cache"),
@@ -129,7 +129,7 @@ public class JMXUtils {
 			MBeanOperationInfo.ACTION);
 	
 	// remove Object Cache
-	public final static MBeanOperationInfo MBEAN_OPERATION_REMOVE_OBJECT_CACHE 
+	public static final MBeanOperationInfo MBEAN_OPERATION_REMOVE_OBJECT_CACHE 
 		= new MBeanOperationInfo(CACHE_METHOD_NAME_REMOVE_OBJECT,"Rimuove l'oggetto registrato nella cache con chiave fornita come parametro",
 			new MBeanParameterInfo[]{
 				new MBeanParameterInfo("key",String.class.getName(),"Chiave dell'oggetto in cache"),

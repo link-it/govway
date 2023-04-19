@@ -57,12 +57,12 @@ import org.openspcoop2.utils.certificate.SubjectAlternativeNames;
  */
 public class CertificateTest {
 
-	private final static String ALIAS_1 = "govway_test";
-	private final static String ALIAS_2 = "govway_test_2";
-	private final static String ALIAS_3 = "govway_test_3";
-	private final static String PASSWORD = "123456";
-	public final static String PREFIX = "/org/openspcoop2/utils/certificate/test/";
-	private final static boolean STRICT = true;
+	private static final String ALIAS_1 = "govway_test";
+	private static final String ALIAS_2 = "govway_test_2";
+	private static final String ALIAS_3 = "govway_test_3";
+	private static final String PASSWORD = "123456";
+	public static final String PREFIX = "/org/openspcoop2/utils/certificate/test/";
+	private static final boolean STRICT = true;
 
 	public static void main(String[] args) throws Exception {
 

@@ -22,7 +22,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pdd;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -93,14 +92,14 @@ public class PddHelper extends ConsoleHelper {
 
 	}
 	
-	public Vector<DataElement> addPddToDati(Vector<DataElement> dati, String nome, String id, String ip, String subject, String password, String confpw, PddTipologia tipo, 
+	public List<DataElement> addPddToDati(List<DataElement> dati, String nome, String id, String ip, String subject, String password, String confpw, PddTipologia tipo, 
 			TipoOperazione tipoOp, String[] protocolli, String protocollo, String protocolloGestione, int porta, String descrizione, 
 			String ipGestione, int portaGestione, String implementazione, String clientAuth, boolean singlePdd) throws DriverRegistroServiziException {
 		
 		DataElement de = new DataElement();
 		de.setLabel(PddCostanti.LABEL_PORTA_DI_DOMINIO);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		/** Id della Porta di Dominio */
 		if (tipoOp.equals(TipoOperazione.CHANGE)) {
@@ -109,7 +108,7 @@ public class PddHelper extends ConsoleHelper {
 			de.setValue(id);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(PddCostanti.PARAMETRO_PDD_ID);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		/** Nome della Porta di Dominio */
@@ -124,7 +123,7 @@ public class PddHelper extends ConsoleHelper {
 		de.setName(PddCostanti.PARAMETRO_PDD_NOME);
 		de.setValue(nome);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		/** Descrizione della Porta di Dominio */
 		de = new DataElement();
@@ -133,7 +132,7 @@ public class PddHelper extends ConsoleHelper {
 		de.setName(PddCostanti.PARAMETRO_PDD_DESCRIZIONE);
 		de.setValue(descrizione);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		if (!singlePdd) {
 			
@@ -147,7 +146,7 @@ public class PddHelper extends ConsoleHelper {
 			de.setName(PddCostanti.PARAMETRO_PDD_PROTOCOLLO);
 			de.setValues(protocolli);
 			de.setSelected(protocollo);
-			dati.addElement(de);
+			dati.add(de);
 
 			/** Indirizzo Pubblico (solo in caso di pdd control station) */
 			de = new DataElement();
@@ -160,7 +159,7 @@ public class PddHelper extends ConsoleHelper {
 			de.setName(PddCostanti.PARAMETRO_PDD_INDIRIZZO_PUBBLICO);
 			de.setValue(ip);
 			de.setSize(this.getSize());
-			dati.addElement(de);
+			dati.add(de);
 
 			/** Porta Pubblica (solo in caso di pdd control station) */
 			de = new DataElement();
@@ -173,7 +172,7 @@ public class PddHelper extends ConsoleHelper {
 			de.setName(PddCostanti.PARAMETRO_PDD_PORTA_PUBBLICA);
 			de.setValue(porta <= 0 ? PddCostanti.DEFAULT_PDD_PORTA : "" + porta);
 			de.setSize(this.getSize());
-			dati.addElement(de);
+			dati.add(de);
 
 			/** Protocollo Gestione (solo in caso di pdd control station) */
 			de = new DataElement();
@@ -185,7 +184,7 @@ public class PddHelper extends ConsoleHelper {
 			de.setName(PddCostanti.PARAMETRO_PDD_PROTOCOLLO_GESTIONE);
 			de.setValues(protocolli);
 			de.setSelected(protocolloGestione);
-			dati.addElement(de);
+			dati.add(de);
 			
 			/** Indirizzo Gestione (solo in caso di pdd control station) */
 			de = new DataElement();
@@ -198,7 +197,7 @@ public class PddHelper extends ConsoleHelper {
 			de.setName(PddCostanti.PARAMETRO_PDD_INDIRIZZO_GESTIONE);
 			de.setValue(ipGestione);
 			de.setSize(this.getSize());
-			dati.addElement(de);
+			dati.add(de);
 
 			/** Porta Gestione (solo in caso di pdd control station) */
 			de = new DataElement();
@@ -211,7 +210,7 @@ public class PddHelper extends ConsoleHelper {
 			de.setName(PddCostanti.PARAMETRO_PDD_PORTA_GESTIONE);
 			de.setValue(portaGestione <= 0 ? PddCostanti.DEFAULT_PDD_PORTA : "" + portaGestione);
 			de.setSize(this.getSize());
-			dati.addElement(de);
+			dati.add(de);
 
 			/** Tipologia della Pdd (solo in caso di pdd control station) */
 			// In caso di creazione posso scegliere il tipo che voglio
@@ -221,14 +220,14 @@ public class PddHelper extends ConsoleHelper {
 			de.setType(DataElementType.SELECT);
 			de.setName(PddCostanti.PARAMETRO_PDD_TIPOLOGIA);
 			if (tipoOp.equals(TipoOperazione.ADD)) {
-				de.setLabels(PddCostanti.LABEL_TIPI);
+				de.setLabels(PddCostanti.getLabelTipi());
 				de.setValues(PddTipologia.TIPI);
 			} else if (tipoOp.equals(TipoOperazione.CHANGE)) {
 				if (tipo.equals(PddTipologia.ESTERNO)) {
-					de.setLabels(PddCostanti.LABEL_TIPO_SOLO_ESTERNO);
+					de.setLabels(PddCostanti.getLabelTipoSoloEsterno());
 					de.setValues(PddTipologia.TIPO_SOLO_ESTERNO);
 				} else {
-					de.setLabels(PddCostanti.LABEL_TIPI_SOLO_OPERATIVI);
+					de.setLabels(PddCostanti.getLabelTipiSoloOperativi());
 					de.setValues(PddTipologia.TIPI_SOLO_OPERATIVI);
 				}
 			}
@@ -239,7 +238,7 @@ public class PddHelper extends ConsoleHelper {
 //			else{
 //				de.setOnChangeAlternativePostBack("changePdDType()");
 //			}
-			dati.addElement(de);
+			dati.add(de);
 		}else{
 			
 			/** Tipologia della Pdd */
@@ -250,7 +249,7 @@ public class PddHelper extends ConsoleHelper {
 				de.setType(DataElementType.TEXT);
 				de.setName(PddCostanti.PARAMETRO_PDD_TIPOLOGIA);
 				de.setValue(tipo.toString());
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}
 
@@ -267,7 +266,7 @@ public class PddHelper extends ConsoleHelper {
 		de.setName(PddCostanti.PARAMETRO_PDD_IMPLEMENTAZIONE);
 		de.setValue(implementazione);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		/** ClientAuth della Pdd */
 		String[] tipiAuth = { CostantiConfigurazione.DISABILITATO.toString(), CostantiConfigurazione.ABILITATO.toString() };
@@ -280,7 +279,7 @@ public class PddHelper extends ConsoleHelper {
 		de.setSize(this.getSize());
 //		de.setOnChange("CambiaClientAuth('" + tipoOp + "'," + singlePdd + ")");
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		/** Subject della Pdd */
 		de = new DataElement();
@@ -297,7 +296,7 @@ public class PddHelper extends ConsoleHelper {
 		//}
 		de.setName(PddCostanti.PARAMETRO_PDD_SUBJECT);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		return dati;
 	}
@@ -526,13 +525,13 @@ public class PddHelper extends ConsoleHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			Iterator<PdDControlStation> it = lista.iterator();
 			PdDControlStation pdd = null;
 			while (it.hasNext()) {
 				pdd = it.next();
-				Vector<DataElement> e = new Vector<DataElement>();
+				List<DataElement> e = new ArrayList<>();
 
 				DataElement de = new DataElement();
 				de.setUrl(PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_CHANGE,
@@ -540,15 +539,15 @@ public class PddHelper extends ConsoleHelper {
 						new Parameter(PddCostanti.PARAMETRO_PDD_NOME, pdd.getNome()));
 				de.setValue(pdd.getNome());
 				de.setIdToRemove(pdd.getNome());
-				e.addElement(de);
+				e.add(de);
 
 				de = new DataElement();
 				de.setValue(pdd.getTipo());
-				e.addElement(de);
+				e.add(de);
 
 				de = new DataElement();
 				de.setValue(pdd.getImplementazione());
-				e.addElement(de);
+				e.add(de);
 
 				de = new DataElement();
 				de.setUrl(PddCostanti.SERVLET_NAME_PDD_SOGGETTI_LIST,
@@ -565,9 +564,9 @@ public class PddHelper extends ConsoleHelper {
 					ServletUtils.setDataElementVisualizzaLabel(de,Long.valueOf(numSog));
 				} else
 					ServletUtils.setDataElementVisualizzaLabel(de);
-				e.addElement(de);
+				e.add(de);
 
-				dati.addElement(e);
+				dati.add(e);
 			}
 
 			this.pd.setDati(dati);
@@ -630,13 +629,13 @@ public class PddHelper extends ConsoleHelper {
 			this.pd.setLabels(labels);
 
 			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 
 			Iterator<PdDControlStation> it = lista.iterator();
 			PdDControlStation pdd = null;
 			while (it.hasNext()) {
 				pdd = it.next();
-				Vector<DataElement> e = new Vector<DataElement>();
+				List<DataElement> e = new ArrayList<>();
 
 				DataElement de = new DataElement();
 				de.setUrl(PddCostanti.SERVLET_NAME_PDD_CHANGE,
@@ -644,22 +643,22 @@ public class PddHelper extends ConsoleHelper {
 						new Parameter(PddCostanti.PARAMETRO_PDD_NOME, pdd.getNome()));
 				de.setValue(pdd.getNome());
 				de.setIdToRemove(pdd.getId().toString());
-				e.addElement(de);
+				e.add(de);
 
 				de = new DataElement();
 				if (PddTipologia.ESTERNO.toString().equals(pdd.getTipo()))
 					de.setValue("");
 				else
 					de.setValue(pdd.getIp());
-				e.addElement(de);
+				e.add(de);
 
 				de = new DataElement();
 				de.setValue(pdd.getTipo());
-				e.addElement(de);
+				e.add(de);
 
 				de = new DataElement();
 				de.setValue(pdd.getImplementazione());
-				e.addElement(de);
+				e.add(de);
 
 				if(showConfigurazioneSistema){
 					de = new DataElement();
@@ -672,7 +671,7 @@ public class PddHelper extends ConsoleHelper {
 						de.setType(DataElementType.TEXT);
 						de.setValue("-");
 					}
-					e.addElement(de);
+					e.add(de);
 				}
 				
 				de = new DataElement();
@@ -690,9 +689,9 @@ public class PddHelper extends ConsoleHelper {
 					ServletUtils.setDataElementVisualizzaLabel(de,Long.valueOf(numSog));
 				} else
 					ServletUtils.setDataElementVisualizzaLabel(de);
-				e.addElement(de);				
+				e.add(de);				
 
-				dati.addElement(e);
+				dati.add(e);
 			}
 
 			this.pd.setDati(dati);
@@ -755,14 +754,14 @@ public class PddHelper extends ConsoleHelper {
 			this.pd.setLabels(labels);
 
 
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			List<List<DataElement>> dati = new ArrayList<>();
 			// preparo i dati
 			if (lista != null) {
 				Iterator<org.openspcoop2.core.config.Soggetto> it = lista.iterator();
 				while (it.hasNext()) {
 					org.openspcoop2.core.config.Soggetto sog = it.next();
 
-					Vector<DataElement> e = new Vector<DataElement>();
+					List<DataElement> e = new ArrayList<>();
 
 					DataElement de = new DataElement();
 					//if (idsSogg.contains(sog.getId()))
@@ -771,9 +770,9 @@ public class PddHelper extends ConsoleHelper {
 							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME, sog.getNome()),
 							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO, sog.getTipo()));
 					de.setValue(sog.getTipo() + "/" + sog.getNome());
-					e.addElement(de);
+					e.add(de);
 
-					dati.addElement(e);
+					dati.add(e);
 				}
 			}
 			

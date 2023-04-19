@@ -660,7 +660,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 				if(idBustaRichiesta!=null){
 					if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
 						t = DateUtility.getTimestampIntoIdProtocollo(this.log,protocolBustaBuilder,idBustaRichiesta);
-						if(t==null){
+						if(t==null && (!this.useTransactionIdForTest)){
 							throw new Exception("Estrazione data dall'id busta ["+idBustaRichiesta+"] non riuscita");
 						}
 						pstmt.setTimestamp(index++, t);
@@ -671,7 +671,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 				if(idBustaRisposta!=null){
 					if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
 						t = DateUtility.getTimestampIntoIdProtocollo(this.log,protocolBustaBuilder,idBustaRisposta);
-						if(t==null){
+						if(t==null && (!this.useTransactionIdForTest)){
 							throw new Exception("Estrazione data dall'id busta ["+idBustaRisposta+"] non riuscita");
 						}
 						pstmt.setTimestamp(index++, t);
@@ -682,7 +682,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 				
 				if(this.debug){
 					SimpleDateFormat dateformat = null;
-					if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
+					if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory) && t!=null){
 						dateformat = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd HH:mm");
 					}
 					if(idBustaRichiesta!=null){
@@ -792,7 +792,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 				sqlQueryObject.setANDLogicOperator(true); 
 				
 				Timestamp timestampId = DateUtility.getTimestampIntoIdProtocollo(this.log,protocolBustaBuilder,idBusta);
-				if(timestampId==null && this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
+				if(timestampId==null && this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory) && (!this.useTransactionIdForTest)){
 					throw new Exception("Estrazione data dall'id busta ["+idBusta+"] non riuscita");
 				}
 				

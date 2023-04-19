@@ -29,8 +29,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.List;
 
 import javax.activation.DataHandler;
 import javax.xml.XMLConstants;
@@ -103,7 +104,7 @@ public class Utilities {
 			if(!it2.hasNext()){
 				return false;
 			}
-			if(!equalsSoapElements((SOAPElement)it.next(), (SOAPElement)it2.next(), new Vector<String>())){
+			if(!equalsSoapElements((SOAPElement)it.next(), (SOAPElement)it2.next(), new ArrayList<String>())){
 				return false;
 			}
 		}
@@ -118,7 +119,7 @@ public class Utilities {
 	 * TODO: Un errore non mi permette di individuare tutti i nameSpace in un nodo
 	 * 
 	 */
-	public static boolean equalsSoapElements(SOAPElement el1,SOAPElement el2,Vector<String> namespacePrefixEl1){
+	public static boolean equalsSoapElements(SOAPElement el1,SOAPElement el2,List<String> namespacePrefixEl1){
 		
 		// METODO ANALOGO ESISTENTE IN SOAPUTILS DI org.openspcoop2.message.MessageUtils
 		// PERO' IL METODO NEL PACKAGE SUDDESSO NON USA AXIS.
@@ -133,8 +134,8 @@ public class Utilities {
 		
 		Iterator<?> it=el1.getAllAttributes();
 		Iterator<?> it2=el2.getAllAttributes();
-		Vector <String>vet=new Vector<String>();
-		Vector <String>vet2=new Vector<String>();
+		List<String>vet=new ArrayList<String>();
+		List<String>vet2=new ArrayList<String>();
 		/**************** controllo se gli attributi sono uguali*****************************/
 		while(it.hasNext()){
 			if(!it2.hasNext()){
@@ -174,8 +175,8 @@ public class Utilities {
 		/*****************************Controllo se i namespace sono uguali********************************/
         Iterator<?> nameSp1=el1.getNamespacePrefixes();
         Iterator<?> nameSp2=el2.getNamespacePrefixes();
-        Vector <String>nameSpVet1=new Vector<String>();
-        Vector <String>nameSpVet2=new Vector<String>();
+        List<String>nameSpVet1=new ArrayList<String>();
+        List<String>nameSpVet2=new ArrayList<String>();
         String prefix1, prefix2, urlPrefix1, urlPrefix2;
         while(nameSp1.hasNext() && nameSp2.hasNext())
         {
@@ -258,7 +259,7 @@ public class Utilities {
 					return false;
 				}
 				@SuppressWarnings("unchecked")
-				Vector<String> namespacePrefixEl1Parent = (Vector<String>) namespacePrefixEl1.clone();
+				List<String> namespacePrefixEl1Parent = (List<String>) ((ArrayList<String>)namespacePrefixEl1).clone();
 				if(!equalsSoapElements((SOAPElement)obj, (SOAPElement)obj2 , namespacePrefixEl1Parent)){
 					//System.out.println("CHILD5");
 					return false;

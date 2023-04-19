@@ -42,8 +42,8 @@ import org.slf4j.Logger;
  */
 public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 
-	public final static String GATEWAY_DEFAULT = "Gateway";
-	public final static String ALIAS_DEFAULT = ConfigurazioneNodiRuntime.ALIAS_DEFAULT;
+	public static final String GATEWAY_DEFAULT = "Gateway";
+	public static final String ALIAS_DEFAULT = ConfigurazioneNodiRuntime.ALIAS_DEFAULT;
 	
 	/**
 	 * 

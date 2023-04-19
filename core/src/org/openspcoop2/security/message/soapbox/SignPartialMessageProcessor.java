@@ -79,7 +79,7 @@ import org.w3c.dom.NodeList;
  */
 public class SignPartialMessageProcessor implements Processor {
 
-	public final static QName TIMESTAMP = new QName(SBConstants.WSU, "Timestamp");
+	public static final QName TIMESTAMP = new QName(SBConstants.WSU, "Timestamp");
 	
 	protected List<QName> signQNames;
     protected List<Boolean> elementsSignatureContent;

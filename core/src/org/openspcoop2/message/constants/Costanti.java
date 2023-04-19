@@ -35,11 +35,11 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
 public class Costanti {
 		
 	/** SOAP MESSAGE PROPERTY */
-	public final static String SOAP_MESSAGE_PROPERTY_MESSAGE_TYPE = "OP2_MESSAGE_TYPE";
+	public static final String SOAP_MESSAGE_PROPERTY_MESSAGE_TYPE = "OP2_MESSAGE_TYPE";
 	
 	/** ContentType Speciali */
-	public final static String CONTENT_TYPE_ALL = "*";
-	public final static String CONTENT_TYPE_NOT_DEFINED = "NotDefined";
+	public static final String CONTENT_TYPE_ALL = "*";
+	public static final String CONTENT_TYPE_NOT_DEFINED = "NotDefined";
 	
 	/** SOAP Action */
 	public static final String SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION = HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION;
@@ -86,17 +86,17 @@ public class Costanti {
 	public static final String DEFAULT_SOAP_FAULT_ACTOR = "http://govway.org/fault";
 	
 	/** PROBLEM */
-    public final static MapKey<String> ERRORE_GOVWAY = Map.newMapKey("ERRORE_GOVWAY");
-    public final static String TIPO_GOVWAY = "govway";
-    public final static String TIPO_RFC7807 = "rfc7807";
-    public final static MapKey<String> ERRORE_GOVWAY_PREFIX_CODE = Map.newMapKey("ERRORE_GOVWAY_PREFIX_CODE");
-    public final static MapKey<String> ERRORE_GOVWAY_CODE = Map.newMapKey("ERRORE_GOVWAY_CODE");
-    public final static MapKey<String> ERRORE_GOVWAY_DETAILS = Map.newMapKey("ERRORE_GOVWAY_DETAILS");
+    public static final MapKey<String> ERRORE_GOVWAY = Map.newMapKey("ERRORE_GOVWAY");
+    public static final String TIPO_GOVWAY = "govway";
+    public static final String TIPO_RFC7807 = "rfc7807";
+    public static final MapKey<String> ERRORE_GOVWAY_PREFIX_CODE = Map.newMapKey("ERRORE_GOVWAY_PREFIX_CODE");
+    public static final MapKey<String> ERRORE_GOVWAY_CODE = Map.newMapKey("ERRORE_GOVWAY_CODE");
+    public static final MapKey<String> ERRORE_GOVWAY_DETAILS = Map.newMapKey("ERRORE_GOVWAY_DETAILS");
     
     /** WRITE MODE */
-    public final static String WRITE_MODE_SERIALIZE_BUFFER_WITH_HEADER = "SERIALIZE-BUFFER-WITH-HEADER";
-    public final static String WRITE_MODE_SERIALIZE_BUFFER = "SERIALIZE-BUFFER";
-    public final static String WRITE_MODE_SERIALIZE_CONTENT = "SERIALIZE-CONTENT";
-    public final static String WRITE_MODE_SERIALIZE_STREAM_WITH_HEADER = "SERIALIZE-STREAM-WITH-HEADER";
-    public final static String WRITE_MODE_SERIALIZE_STREAM = "SERIALIZE-STREAM";
+    public static final String WRITE_MODE_SERIALIZE_BUFFER_WITH_HEADER = "SERIALIZE-BUFFER-WITH-HEADER";
+    public static final String WRITE_MODE_SERIALIZE_BUFFER = "SERIALIZE-BUFFER";
+    public static final String WRITE_MODE_SERIALIZE_CONTENT = "SERIALIZE-CONTENT";
+    public static final String WRITE_MODE_SERIALIZE_STREAM_WITH_HEADER = "SERIALIZE-STREAM-WITH-HEADER";
+    public static final String WRITE_MODE_SERIALIZE_STREAM = "SERIALIZE-STREAM";
 }

@@ -47,8 +47,8 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _Risultato_QNAME = new QName("http://openspcoop2.org/example/pdd/server/IdentificaSoggetto", "risultato");
-    private final static QName _RisultatoResponse_QNAME = new QName("http://openspcoop2.org/example/pdd/server/IdentificaSoggetto", "risultatoResponse");
+    private static final QName _Risultato_QNAME = new QName("http://openspcoop2.org/example/pdd/server/IdentificaSoggetto", "risultato");
+    private static final QName _RisultatoResponse_QNAME = new QName("http://openspcoop2.org/example/pdd/server/IdentificaSoggetto", "risultatoResponse");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.openspcoop2.example.pdd.server.stampadocumento

@@ -21,7 +21,7 @@
 		<owasp.output.dir>../../dependency-check-result</owasp.output.dir>
 
 		<!-- Versioni condivise dai moduli -->
-		<module.spring.version>5.3.23</module.spring.version>
+		<module.spring.version>5.3.27</module.spring.version>
 	</properties>
 
 	<modules>
@@ -44,6 +44,7 @@
 		<module>lucene</module>
 		<module>openapi4j</module>
 		<module>opensaml</module>
+		<module>pdf</module>
 		<module>redis</module>
 		<module>reports</module>
 		<module>saaj</module>
@@ -105,6 +106,7 @@
 								<suppressionFile>${owasp.falsePositives.dir}/xercesImpl.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2021-37533.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2022-45688.xml</suppressionFile>
+								<suppressionFile>${owasp.falsePositives.dir}/CVE-2022-40705.xml</suppressionFile>
 							</suppressionFiles>
 						</configuration>
 						<goals>

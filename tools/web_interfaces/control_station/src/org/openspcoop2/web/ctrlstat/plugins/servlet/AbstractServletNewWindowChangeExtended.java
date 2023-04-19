@@ -22,8 +22,8 @@
 package org.openspcoop2.web.ctrlstat.plugins.servlet;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,7 +53,7 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
- * routing
+ * AbstractServletNewWindowChangeExtended
  * 
  * @author Andrea Poli (apoli@link.it)
  * @author Stefano Corallo (corallo@link.it)
@@ -140,15 +140,15 @@ public abstract class AbstractServletNewWindowChangeExtended extends Action {
 				// Controlli sui campi immessi
 				if (!isOk) {
 					// preparo i campi
-					Vector<DataElement> dati = new Vector<DataElement>();
+					List<DataElement> dati = new ArrayList<>();
 
-					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+					dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 					DataElement de = new DataElement();
 					de.setValue(extendedServlet.getUniqueID());
 					de.setType(DataElementType.HIDDEN);
 					de.setName(CostantiControlStation.PARAMETRO_EXTENDED_FORM_ID);
-					dati.addElement(de);
+					dati.add(de);
 					
 					extendedServlet.addToDati(dati, TipoOperazione.CHANGE, consoleHelper, consoleCore, object, extendedBean);
 					
@@ -169,7 +169,7 @@ public abstract class AbstractServletNewWindowChangeExtended extends Action {
 				wrapperExtendedBean.setManageOriginalBean(false);
 				consoleCore.performUpdateOperation(userLogin, consoleHelper.smista(), wrapperExtendedBean);
 
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
 				String testModificaEffettuata = extendedServlet.getTestoModificaEffettuata(TipoOperazione.CHANGE, consoleHelper); // questa chiamata fatta prima della addDati consente di informare la addDati che la gestione è terminata
 				
@@ -177,7 +177,7 @@ public abstract class AbstractServletNewWindowChangeExtended extends Action {
 				de.setValue(extendedServlet.getUniqueID());
 				de.setType(DataElementType.HIDDEN);
 				de.setName(CostantiControlStation.PARAMETRO_EXTENDED_FORM_ID);
-				dati.addElement(de);
+				dati.add(de);
 				
 				extendedServlet.addToDati(dati, TipoOperazione.CHANGE, consoleHelper, consoleCore, object, extendedBean);
 				
@@ -197,7 +197,7 @@ public abstract class AbstractServletNewWindowChangeExtended extends Action {
 			}
 
 			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 
 			dati.add(ServletUtils.getDataElementForEditModeFinished());
 
@@ -205,7 +205,7 @@ public abstract class AbstractServletNewWindowChangeExtended extends Action {
 			de.setValue(extendedServlet.getUniqueID());
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_EXTENDED_FORM_ID);
-			dati.addElement(de);
+			dati.add(de);
 			
 			extendedServlet.addToDati(dati, TipoOperazione.CHANGE, consoleHelper, consoleCore, object, extendedBean);
 			
@@ -225,16 +225,16 @@ public abstract class AbstractServletNewWindowChangeExtended extends Action {
 	}
 
 
-	public static void addToDatiNewWindow(IExtendedFormServlet extendedServlet,Vector<DataElement> dati, ConsoleHelper consoleHelper,
+	public static void addToDatiNewWindow(IExtendedFormServlet extendedServlet,List<DataElement> dati, ConsoleHelper consoleHelper,
 			ControlStationCore core, Object originalObject, IExtendedBean extendedBean, String servletName) throws ExtendedException{
 		
 		DataElement de = new DataElement();
 		de.setValue(extendedServlet.getUniqueID());
 		de.setType(DataElementType.HIDDEN);
 		de.setName(CostantiControlStation.PARAMETRO_EXTENDED_FORM_ID);
-		dati.addElement(de);
+		dati.add(de);
 		
-		String servletNameWithId = new String(servletName);
+		String servletNameWithId = servletName;
 		if(servletNameWithId.contains("?")){
 			servletNameWithId = servletNameWithId + "&";
 		}

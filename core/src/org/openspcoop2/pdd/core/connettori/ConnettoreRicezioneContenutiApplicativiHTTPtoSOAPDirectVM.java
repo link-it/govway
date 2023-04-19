@@ -47,7 +47,7 @@ import org.openspcoop2.utils.date.DateManager;
 
 public class ConnettoreRicezioneContenutiApplicativiHTTPtoSOAPDirectVM extends AbstractConnettoreDirectVM {
 
-	public final static String TIPO = "vmPDtoSOAP";
+	public static final String TIPO = "vmPDtoSOAP";
 	
 	private String pd;
 	

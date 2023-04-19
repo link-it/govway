@@ -28,7 +28,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.axis.Message;
 import org.apache.axis.attachments.AttachmentPart;
 import org.apache.axis.message.MimeHeaders;
@@ -66,11 +67,11 @@ public class UtilitiesGestioneMessaggiSoap {
 	/** Indicazione se la risposta contiene attachments */
 	boolean withAttachments = false;
 	/** Attachments presenti */
-	Vector<byte[]> attachments;
+	List<byte[]> attachments;
 	/** Identificativi degli attachments */
-	Vector<String> idAttachments;
+	List<String> idAttachments;
 	/** Identificativi degli headers */
-	Vector<String> contentTypeAttachments;
+	List<String> contentTypeAttachments;
 	/** MimeBoundary in presenza di attachments */
 	String mimeBoundary; // rappresentazionezione del boundary senza --
 
@@ -81,9 +82,9 @@ public class UtilitiesGestioneMessaggiSoap {
 	public UtilitiesGestioneMessaggiSoap() {
 		this.contentLength = 0;
 		this.withAttachments=false;
-		this.idAttachments=new Vector<String>();
-		this.contentTypeAttachments=new Vector<String>();
-		this.attachments=new Vector<byte[]>();
+		this.idAttachments=new ArrayList<>();
+		this.contentTypeAttachments=new ArrayList<>();
+		this.attachments=new ArrayList<>();
 		this.cursoreHttpInputStream=0;
 		this.testsuiteProperties = TestSuiteProperties.getInstance();
 	}
@@ -520,7 +521,7 @@ public class UtilitiesGestioneMessaggiSoap {
 	 * @param vet
 	 * @return byte[]
 	 */
-	protected byte[] toByte(Vector<?> vet){
+	protected byte[] toByte(List<?> vet){
 		byte[] toRet=new byte[vet.size()];
 		for(int i=0;i<vet.size();i++){
 			toRet[i]=((Byte)vet.get(i)).byteValue();

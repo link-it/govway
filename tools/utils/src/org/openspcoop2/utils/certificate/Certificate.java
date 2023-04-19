@@ -39,14 +39,14 @@ public class Certificate implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private List<CertificateInfo> certificateChain = new ArrayList<>();
-	private CertificateInfo certificate = null;
+	private CertificateInfo certificateInfo = null;
 
 	public Certificate(String name, java.security.cert.X509Certificate cParam) {
 		init(name, cParam, null);
 	}
 	public Certificate(String name, java.security.cert.X509Certificate cParam, List<java.security.cert.X509Certificate> chainParam) {
 		java.security.cert.X509Certificate [] chainParamArray = null;
-		if(chainParam!=null && chainParam.size()>0) {
+		if(chainParam!=null && !chainParam.isEmpty()) {
 			chainParamArray = chainParam.toArray(new java.security.cert.X509Certificate [1] );
 		}
 		init(name, cParam, chainParamArray);
@@ -55,7 +55,7 @@ public class Certificate implements Serializable {
 		init(name, cParam, chainParam);
 	}
 	private void init(String name, java.security.cert.X509Certificate cParam, java.security.cert.X509Certificate [] chainParam) {
-		this.certificate = new CertificateInfo(cParam, name);
+		this.certificateInfo = new CertificateInfo(cParam, name);
 		if(chainParam!=null && chainParam.length>0) {
 			for (int i = 0; i < chainParam.length; i++) {
 				this.certificateChain.add(new CertificateInfo(chainParam[i], name+"-chain-"+i));
@@ -73,21 +73,21 @@ public class Certificate implements Serializable {
 		this.certificateChain = certificateChain;
 	}
 	public CertificateInfo getCertificate() {
-		return this.certificate;
+		return this.certificateInfo;
 	}
 	public void setCertificate(CertificateInfo certificate) {
-		this.certificate = certificate;
+		this.certificateInfo = certificate;
 	}	
 	
 	@Override
 	public String toString() {
 		StringBuilder bf = new StringBuilder();
-		bf.append(this.certificate.toString());
+		bf.append(this.certificateInfo.toString());
 		if(this.certificateChain!=null) {
 			bf.append("\n\n certificate chains:\n");
-			for (CertificateInfo certificateInfo : this.certificateChain) {
+			for (CertificateInfo certificateChainInfo : this.certificateChain) {
 				bf.append("\n");
-				bf.append(certificateInfo.toString());
+				bf.append(certificateChainInfo.toString());
 			}
 		}
 		return bf.toString();

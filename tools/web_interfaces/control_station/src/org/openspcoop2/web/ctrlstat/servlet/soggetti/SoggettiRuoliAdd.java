@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.soggetti;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -100,7 +99,7 @@ public final class SoggettiRuoliAdd extends Action {
 			filtroRuoli.setTipologia(RuoloTipologia.INTERNO);
 			
 			List<String> ruoli = new ArrayList<>();
-			if(soggettoRegistry.getRuoli()!=null && soggettoRegistry.getRuoli().getRuoloList()!=null && soggettoRegistry.getRuoli().getRuoloList().size()>0){
+			if(soggettoRegistry.getRuoli()!=null && soggettoRegistry.getRuoli().getRuoloList()!=null && !soggettoRegistry.getRuoli().getRuoloList().isEmpty()){
 				for (RuoloSoggetto ruoloSoggetto : soggettoRegistry.getRuoli().getRuoloList()) {
 					ruoli.add(ruoloSoggetto.getNome());	
 				}
@@ -146,14 +145,14 @@ public final class SoggettiRuoliAdd extends Action {
 				}
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				DataElement de = new DataElement();
 				de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
 				de.setValue(id);
 				de.setType(DataElementType.HIDDEN);
-				dati.addElement(de);
+				dati.add(de);
 				
 				dati = soggettiHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true, true, accessDaChangeTmp, false);
 				
@@ -178,14 +177,14 @@ public final class SoggettiRuoliAdd extends Action {
 				ServletUtils.setPageDataTitle(pd,lstParm); 
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				DataElement de = new DataElement();
 				de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
 				de.setValue(id);
 				de.setType(DataElementType.HIDDEN);
-				dati.addElement(de);
+				dati.add(de);
 				
 				dati = soggettiHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true, true, accessDaChangeTmp, false);
 

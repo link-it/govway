@@ -31,23 +31,23 @@ import org.openspcoop2.utils.MapKey;
  */
 public class NotifierConstants {
 
-	public final static String NOTIFIER_PREFIX = "NOTIFIER_";
+	public static final String NOTIFIER_PREFIX = "NOTIFIER_";
 	
-	public final static MapKey<String> REQUEST_CONTENT_TYPE = Map.newMapKey( NOTIFIER_PREFIX + "REQUEST_CONTENT_TYPE");
-	public final static MapKey<String> RESPONSE_CONTENT_TYPE = Map.newMapKey( NOTIFIER_PREFIX + "RESPONSE_CONTENT_TYPE");
+	public static final MapKey<String> REQUEST_CONTENT_TYPE = Map.newMapKey( NOTIFIER_PREFIX + "REQUEST_CONTENT_TYPE");
+	public static final MapKey<String> RESPONSE_CONTENT_TYPE = Map.newMapKey( NOTIFIER_PREFIX + "RESPONSE_CONTENT_TYPE");
 	
-	public final static MapKey<String> REQUEST_CONTENT_LENGHT = Map.newMapKey( NOTIFIER_PREFIX + "REQUEST_CONTENT_LENGHT");
-	public final static MapKey<String> RESPONSE_CONTENT_LENGHT = Map.newMapKey( NOTIFIER_PREFIX + "RESPONSE_CONTENT_LENGHT");
+	public static final MapKey<String> REQUEST_CONTENT_LENGHT = Map.newMapKey( NOTIFIER_PREFIX + "REQUEST_CONTENT_LENGHT");
+	public static final MapKey<String> RESPONSE_CONTENT_LENGHT = Map.newMapKey( NOTIFIER_PREFIX + "RESPONSE_CONTENT_LENGHT");
 	
-	public final static MapKey<String> MANAGEMENT_MODE = Map.newMapKey( NOTIFIER_PREFIX + "MANAGEMENT_MODE");
+	public static final MapKey<String> MANAGEMENT_MODE = Map.newMapKey( NOTIFIER_PREFIX + "MANAGEMENT_MODE");
 	
-	public final static MapKey<String> DUMP_POST_PROCESS_ID_CONFIG = Map.newMapKey( NOTIFIER_PREFIX + "DUMP_POST_PROCESS_ID_CONFIG");
-	public final static MapKey<String> REQUEST_DUMP_POST_PROCESS_ENABLED = Map.newMapKey(  NOTIFIER_PREFIX + "REQUEST_DUMP_POST_PROCESS");
-	public final static MapKey<String> RESPONSE_DUMP_POST_PROCESS_ENABLED = Map.newMapKey(  NOTIFIER_PREFIX + "RESPONSE_DUMP_POST_PROCESS");
+	public static final MapKey<String> DUMP_POST_PROCESS_ID_CONFIG = Map.newMapKey( NOTIFIER_PREFIX + "DUMP_POST_PROCESS_ID_CONFIG");
+	public static final MapKey<String> REQUEST_DUMP_POST_PROCESS_ENABLED = Map.newMapKey(  NOTIFIER_PREFIX + "REQUEST_DUMP_POST_PROCESS");
+	public static final MapKey<String> RESPONSE_DUMP_POST_PROCESS_ENABLED = Map.newMapKey(  NOTIFIER_PREFIX + "RESPONSE_DUMP_POST_PROCESS");
 	
-	public final static MapKey<String> REQUEST_DUMP_POST_PROCESS_HEADER_TRASPORTO = Map.newMapKey( NOTIFIER_PREFIX + "REQUEST_DUMP_POST_PROCESS_HEADER_TRASPORTO");
-	public final static MapKey<String> RESPONSE_DUMP_POST_PROCESS_HEADER_TRASPORTO = Map.newMapKey( NOTIFIER_PREFIX + "RESPONSE_DUMP_POST_PROCESS_HEADER_TRASPORTO");
+	public static final MapKey<String> REQUEST_DUMP_POST_PROCESS_HEADER_TRASPORTO = Map.newMapKey( NOTIFIER_PREFIX + "REQUEST_DUMP_POST_PROCESS_HEADER_TRASPORTO");
+	public static final MapKey<String> RESPONSE_DUMP_POST_PROCESS_HEADER_TRASPORTO = Map.newMapKey( NOTIFIER_PREFIX + "RESPONSE_DUMP_POST_PROCESS_HEADER_TRASPORTO");
 	
-	public final static String ID_HANDLER = "PddMonitorStreamingHandler";
+	public static final String ID_HANDLER = "PddMonitorStreamingHandler";
 	
 }

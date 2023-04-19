@@ -61,7 +61,7 @@ public enum TipoLock implements Serializable {
 	CUSTOM ("Custom");
 	
 	
-	private final static String getLockStatistico(TipoIntervalloStatistico tipo) {
+	private static final String getLockStatistico(TipoIntervalloStatistico tipo) {
 		return "Generazione"+tipo.getValue();
 	}
 	

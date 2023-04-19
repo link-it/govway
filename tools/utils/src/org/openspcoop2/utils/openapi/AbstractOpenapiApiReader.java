@@ -370,6 +370,7 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 
 	private ApiOperation getOperation(Operation operation, List<Parameter> listParameter, HttpRequestMethod method, String pathK, OpenapiApi api) {
 		ApiOperation apiOperation = new ApiOperation(method, pathK);
+		apiOperation.setDescription(operation.getDescription());
 		if( (listParameter!=null && !listParameter.isEmpty())
 				||
 				(operation.getParameters() != null)
@@ -491,6 +492,8 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 				if(requestBody.getRequired() != null)
 					bodyParam.setRequired(requestBody.getRequired());
 
+				bodyParam.setDescription(requestBody.getDescription());
+				
 				lst.add(bodyParam);
 
 			}

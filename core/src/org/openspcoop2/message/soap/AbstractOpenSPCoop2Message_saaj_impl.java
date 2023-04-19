@@ -862,7 +862,7 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 		return _getEncryptedDataHeaderBlockClass();
 	}
 	protected static String _getEncryptedDataHeaderBlockClass() {
-		return com.sun.xml.wss.core.EncryptedDataHeaderBlock.class.getName();
+		return "com.sun.xml.wss.core.EncryptedDataHeaderBlock"; // usare la stringa per GPL clean
 	}
 
 	@Override

@@ -22,7 +22,7 @@ package org.openspcoop2.protocol.trasparente.testsuite.units.rest.cors;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Vector;
+import java.util.List;
 
 import org.openspcoop2.protocol.trasparente.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.trasparente.testsuite.core.FileSystemUtilities;
@@ -71,7 +71,7 @@ public class CORSPortaApplicativa {
 			System.out.println("WARN: Tests per CORS Trasparente disabilitati");
 		}
 	} 	
-	private Vector<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new Vector<ErroreAttesoOpenSPCoopLogCore>();
+	private List<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new java.util.ArrayList<>();
 	@AfterGroups (alwaysRun=true , groups={CORSPortaApplicativa.ID_GRUPPO})
 	public void testOpenspcoopCoreLog() throws Exception{
 		if(this.erroriAttesiOpenSPCoopCore.size()>0){

@@ -41,7 +41,7 @@ import org.w3c.dom.Node;
  */
 public class XQueryClientTest {
 
-	private final static String SOAP_XML = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"+
+	private static final String SOAP_XML = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"+
     "        <soapenv:Header/>\n"+
     "        <soapenv:Body>\n"+
     "            <sam:searchResponse xmlns:sam=\"http://www.prova.org\">\n"+
@@ -76,7 +76,7 @@ public class XQueryClientTest {
     "        </soapenv:Body>\n"+
     "    </soapenv:Envelope>\n";
 	
-	private final static String XQUERY = "declare namespace sam=\"http://www.prova.org\";\n"+
+	private static final String XQUERY = "declare namespace sam=\"http://www.prova.org\";\n"+
 	"	<Result>\n"+
 	"	{\n"+
 	"	for $z in //sam:item\n"+
@@ -85,7 +85,7 @@ public class XQueryClientTest {
 	"	}\n"+
 	"	</Result>\n";
 	
-	private final static String XQUERY_WITHOUT_CODE_EXTERNAL = "declare namespace sam=\"http://www.prova.org\";\n"+
+	private static final String XQUERY_WITHOUT_CODE_EXTERNAL = "declare namespace sam=\"http://www.prova.org\";\n"+
 	"	for $z in //sam:item\n"+
 	"	order by $z/id\n"+
 	"	return <price>{data($z/price/text())}</price>\n";

@@ -40,7 +40,7 @@ public class TransactionContentUtils {
 	public static final String KEY_VALUE_TOO_LONG = "_____ValueTooLong_SaveBinaryInfo____";
 	public static final int SOGLIA_VALUE_TOO_LONG = 4000;
 	
-	public final static String KEY_COMPRESSED = "_____Compressed_____";
+	public static final String KEY_COMPRESSED = "_____Compressed_____";
 	
 	public static DumpContenuto createDumpContenuto(String nome, String valore, Date dumpTimestamp){
 		DumpContenuto dumpContenuto = new DumpContenuto();

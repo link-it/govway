@@ -105,9 +105,6 @@ public final class PorteDelegateTrasformazioniServizioApplicativoDel extends Act
 
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
-				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
-				// .elementAt(idToRemove[i])).elementAt(0);
-				// servizioApplicativo = de.getValue();
 				servizioApplicativo = idsToRemove.get(i);
 				for (int j = 0; j < applicabilita.sizeServizioApplicativoList(); j++) {
 					TrasformazioneRegolaApplicabilitaServizioApplicativo sa = applicabilita.getServizioApplicativo(j);

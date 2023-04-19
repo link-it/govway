@@ -40,7 +40,7 @@ import java.rmi.RemoteException;
 public interface TimerGestoreBusteNonRiscontrate extends javax.ejb.EJBObject {	
 
     /** Variabile che indica il Nome del modulo dell'architettura di OpenSPCoop rappresentato da questa classe */
-    public final static String ID_MODULO = "GestoreBusteNonRiscontrate";
+    public static final String ID_MODULO = "GestoreBusteNonRiscontrate";
 
     /**
      * Inizializza il Timer di gestione 

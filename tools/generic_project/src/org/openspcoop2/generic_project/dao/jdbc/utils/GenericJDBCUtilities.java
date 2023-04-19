@@ -777,25 +777,36 @@ public class GenericJDBCUtilities {
 				
 				Function function = union.getFunction(alias);
 				String paramAliasFunction = union.getParamAliasFunction(alias);
+				String customFieldValue = union.getCustomFieldValue(alias);
 				String aliasCheck = null;
 				
 				if(paramAliasFunction==null){
 					// selezionato direttamente una colonna risultato delle espressioni interne
 					// quando arrivo in questo metodo mi viene garantito dal metodo checkUnionExpression(expression ... )
 					// che ogni espressione interna possiede lo stesso alias
-					
-					aliasCheck = alias;
+				
+					if(customFieldValue==null) {
+						aliasCheck = alias;
+					}
+					//else non devo controllare l'alias poiche' potrebbe essere il risultato della combinazione degli elementi ritornati dalle espressioni union  
 				}
 				else{
 					aliasCheck = paramAliasFunction;
 				}
 				
-				if(expressionComparator.getReturnFieldAliases()==null || !expressionComparator.getReturnFieldAliases().contains(aliasCheck)){
-					throw new ServiceException("The alias ["+aliasCheck+"] is unknown. Check the alias used in the internal union expression");
+				if(aliasCheck!=null) {
+					if(expressionComparator.getReturnFieldAliases()==null || !expressionComparator.getReturnFieldAliases().contains(aliasCheck)){
+						throw new ServiceException("The alias ["+aliasCheck+"] is unknown. Check the alias used in the internal union expression");
+					}
 				}
 				
 				if(paramAliasFunction==null){
-					sqlQueryObject.addSelectField(alias);
+					if(customFieldValue==null) {
+						sqlQueryObject.addSelectField(alias);
+					}
+					else {
+						sqlQueryObject.addSelectAliasField(customFieldValue, alias);
+					}
 				}else{
 					ExpressionSQL.setFunction(function, false, paramAliasFunction, alias, sqlQueryObject);
 				}
@@ -829,7 +840,7 @@ public class GenericJDBCUtilities {
 					String aliasOrderBy = uoo.getAlias();
 					SortOrder sortOrder = uoo.getSortOrder();
 					if(aliasExpression.contains(aliasOrderBy)==false && aliasExternalExpression.contains(aliasOrderBy)==false){
-						throw new ServiceException("The alias used in the condition of order by the union must be one of the aliases used in internal or external expressions");
+						throw new ServiceException("The alias '"+aliasOrderBy+"' used in the condition of order by the union must be one of the aliases used in internal or external expressions");
 					}
 					if(sortOrder==null){
 						sqlQueryObject.addOrderBy(aliasOrderBy);

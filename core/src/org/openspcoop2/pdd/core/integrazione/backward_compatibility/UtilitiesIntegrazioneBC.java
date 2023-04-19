@@ -69,36 +69,36 @@ import org.slf4j.Logger;
 public class UtilitiesIntegrazioneBC {
 
     /** Costante che indica il valore dell'header X che indica la versione della PdD*/
-    public final static String OPENSPCOOP2_HEADER_HTTP_X_PDD = "X-OpenSPCoop2-Pdd";
+    public static final String OPENSPCOOP2_HEADER_HTTP_X_PDD = "X-OpenSPCoop2-Pdd";
     /** Costante che indica il valore dell'header X che indica il dettaglio della versione della PdD*/
-    public final static String OPENSPCOOP2_HEADER_HTTP_X_PDD_DETAILS = "X-OpenSPCoop2-PddDetails";
+    public static final String OPENSPCOOP2_HEADER_HTTP_X_PDD_DETAILS = "X-OpenSPCoop2-PddDetails";
     
     /** Costante che indica il valore dell'header X che indica la versione della PdD*/
-    public final static String OPENSPCOOP2_URL_BASED_PDD = "OpenSPCoop2Pdd";
+    public static final String OPENSPCOOP2_URL_BASED_PDD = "OpenSPCoop2Pdd";
     /** Costante che indica il valore dell'header X che indica il dettaglio della versione della PdD*/
-    public final static String OPENSPCOOP2_URL_BASED_PDD_DETAILS = "OpenSPCoop2PddDetails";
+    public static final String OPENSPCOOP2_URL_BASED_PDD_DETAILS = "OpenSPCoop2PddDetails";
     
     /** Costante che indica il valore dell'attributo dell'header di integrazione SOAP proprietario di OpenSPCoop che indica la versione della PdD*/
-    public final static String OPENSPCOOP2_HEADER_INTEGRAZIONE_SOAP_PDD_VERSION = "OpenSPCoop2Pdd";
+    public static final String OPENSPCOOP2_HEADER_INTEGRAZIONE_SOAP_PDD_VERSION = "OpenSPCoop2Pdd";
     /** Costante che indica il valore dell'attributo dell'header di integrazione SOAP proprietario di OpenSPCoop che indica il dettaglio della versione della PdD*/
-    public final static String OPENSPCOOP2_HEADER_INTEGRAZIONE_SOAP_PDD_DETAILS = "OpenSPCoop2PddDetails";
+    public static final String OPENSPCOOP2_HEADER_INTEGRAZIONE_SOAP_PDD_DETAILS = "OpenSPCoop2PddDetails";
     
     
     
     /** Costante che indica il valore dell'header X che indica la versione della PdD*/
-    public final static String OPENSPCOOP1_HEADER_HTTP_X_PDD = "X-SPCoop-Pdd";
+    public static final String OPENSPCOOP1_HEADER_HTTP_X_PDD = "X-SPCoop-Pdd";
     /** Costante che indica il valore dell'header X che indica il dettaglio della versione della PdD*/
-    public final static String OPENSPCOOP1_HEADER_HTTP_X_PDD_DETAILS = "X-SPCoop-PddDetails";
+    public static final String OPENSPCOOP1_HEADER_HTTP_X_PDD_DETAILS = "X-SPCoop-PddDetails";
     
     /** Costante che indica il valore dell'header X che indica la versione della PdD*/
-    public final static String OPENSPCOOP1_URL_BASED_PDD = "SPCoopPdd";
+    public static final String OPENSPCOOP1_URL_BASED_PDD = "SPCoopPdd";
     /** Costante che indica il valore dell'header X che indica il dettaglio della versione della PdD*/
-    public final static String OPENSPCOOP1_URL_BASED_PDD_DETAILS = "SPCoopDettagliPdd";
+    public static final String OPENSPCOOP1_URL_BASED_PDD_DETAILS = "SPCoopDettagliPdd";
     
     /** Costante che indica il valore dell'attributo dell'header di integrazione SOAP proprietario di OpenSPCoop che indica la versione della PdD*/
-    public final static String OPENSPCOOP1_HEADER_INTEGRAZIONE_SOAP_PDD_VERSION = "SPCoopPdd";
+    public static final String OPENSPCOOP1_HEADER_INTEGRAZIONE_SOAP_PDD_VERSION = "SPCoopPdd";
     /** Costante che indica il valore dell'attributo dell'header di integrazione SOAP proprietario di OpenSPCoop che indica il dettaglio della versione della PdD*/
-    public final static String OPENSPCOOP1_HEADER_INTEGRAZIONE_SOAP_PDD_DETAILS = "SPCoopPddDetails";
+    public static final String OPENSPCOOP1_HEADER_INTEGRAZIONE_SOAP_PDD_DETAILS = "SPCoopPddDetails";
     
 
 	

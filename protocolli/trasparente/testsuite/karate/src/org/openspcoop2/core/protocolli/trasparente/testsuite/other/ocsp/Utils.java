@@ -78,18 +78,23 @@ public class Utils {
 			"OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: C=it,O=Esempio,CN=test.esempio.it] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: Connection refused (Connection refused)";
 	public static final String CERTIFICATE_REVOKED_CONNECTION_REFUSED_FORWARD_PROXY = 
 			"OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: C=it,O=Esempio,CN=test.esempio.it] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: OCSP response error (http code: 503)";
+	public static final String CERTIFICATE_REVOKED_CONNECTION_REFUSED_KID = "OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: CN=test.esempio.it, O=Esempio, C=it] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: Connection refused (Connection refused)";
+	
 	public static final String CERTIFICATE_VALID_CONNECTION_REFUSED = "OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: CN=Client-test.esempio.it, O=Esempio, C=it] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: Connection refused (Connection refused)";
 	public static final String CERTIFICATE_VALID_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO = 
 			"OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: C=it,O=Esempio,CN=Client-test.esempio.it] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: Connection refused (Connection refused)";
 	public static final String CERTIFICATE_VALID_CONNECTION_REFUSED_FORWARD_PROXY = 
 			"OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: C=it,O=Esempio,CN=Client-test.esempio.it] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: OCSP response error (http code: 503)";
+	public static final String CERTIFICATE_VALID_CONNECTION_REFUSED_KID = "OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: CN=Client-test.esempio.it, O=Esempio, C=it] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: Connection refused (Connection refused)";
 	
 	public static final String CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED = CERTIFICATE_REVOKED_CONNECTION_REFUSED.replaceAll("PORT", PORT_CASE2+"");
 	public static final String CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO = CERTIFICATE_REVOKED_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO.replaceAll("PORT", PORT_CASE2+"");
 	public static final String CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED_FORWARD_PROXY = CERTIFICATE_REVOKED_CONNECTION_REFUSED_FORWARD_PROXY.replaceAll("PORT", PORT_CASE2+"");
+	public static final String CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED_KID = CERTIFICATE_REVOKED_CONNECTION_REFUSED_KID.replaceAll("PORT", PORT_CASE2+"");
 	public static final String CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED = CERTIFICATE_VALID_CONNECTION_REFUSED.replaceAll("PORT", PORT_CASE2+"");
 	public static final String CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO = CERTIFICATE_VALID_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO.replaceAll("PORT", PORT_CASE2+"");
 	public static final String CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED_FORWARD_PROXY = CERTIFICATE_VALID_CONNECTION_REFUSED_FORWARD_PROXY.replaceAll("PORT", PORT_CASE2+"");
+	public static final String CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED_KID = CERTIFICATE_VALID_CONNECTION_REFUSED_KID.replaceAll("PORT", PORT_CASE2+"");
 	
 	public static final String CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED = CERTIFICATE_REVOKED_CONNECTION_REFUSED.replaceAll("PORT", PORT_CASE3+"");
 	public static final String CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO = CERTIFICATE_REVOKED_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO.replaceAll("PORT", PORT_CASE3+"");
@@ -608,11 +613,11 @@ public class Utils {
 		String password = "123456";
 		String passwordKey = "123456";
 		String file = null;
-		if(operazione.equals("case2") || operazione.equals("case3")) {
+		if(operazione.equals("case2") || operazione.equals("case2-kid") || operazione.equals("case3")) {
 			alias = "testclient";
 			file = "/etc/govway/keys/ocsp/testClient.jks";
 		}
-		else if(operazione.equals("case2-revoked") || operazione.equals("case3-revoked")) {
+		else if(operazione.equals("case2-revoked") || operazione.equals("case2-revoked-kid") || operazione.equals("case3-revoked")) {
 			alias = "test";
 			file = "/etc/govway/keys/ocsp/test.jks";
 		}
@@ -629,7 +634,8 @@ public class Utils {
 			file = "/etc/govway/keys/xca/ExampleClient1.p12";
 		}
 		
-		boolean x5c = operazione.contains("case2") || operazione.startsWith("crl-");
+		boolean kid = (operazione.contains("case2") && operazione.endsWith("-kid"));
+		boolean x5c = (operazione.contains("case2") && !operazione.endsWith("-kid")) || operazione.startsWith("crl-");
 		boolean x5t = operazione.contains("ocsp-crl-") || operazione.startsWith("crl-");
 		String x5u_url = null;
 		if(operazione.contains("case3")) {
@@ -662,6 +668,12 @@ public class Utils {
 		props.put("rs.security.keystore.password",password);
 		props.put("rs.security.key.password",passwordKey);
 		props.put("rs.security.signature.algorithm","RS256");
+		if(kid) {
+			props.put("rs.security.signature.include.key.id","true");
+		}
+		else {
+			props.put("rs.security.signature.include.key.id","false");
+		}
 		if(x5c) {
 			props.put("rs.security.signature.include.cert","true");
 		}

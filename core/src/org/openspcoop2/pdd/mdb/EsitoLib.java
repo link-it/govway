@@ -32,9 +32,9 @@ import java.util.Date;
  */
 public class EsitoLib {
 
-	public final static int OK = 1;
-	public final static int ERRORE_GESTITO = 2;
-	public final static int ERRORE_NON_GESTITO = 3;
+	public static final int OK = 1;
+	public static final int ERRORE_GESTITO = 2;
+	public static final int ERRORE_NON_GESTITO = 3;
 	
 	private Throwable erroreNonGestito = null;
 	private String motivazioneErroreNonGestito = null;

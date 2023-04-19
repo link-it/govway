@@ -24,7 +24,6 @@ package org.openspcoop2.web.ctrlstat.servlet.aps;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -95,8 +94,8 @@ public final class AccordiServizioParteSpecificaAllegatiChange extends Action {
 			String idAllegato = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_ALLEGATO);
 			String idServizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 			String nomeDocumento = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_DOCUMENTO);
-			long idAllegatoLong = Long.valueOf(idAllegato);
-			long idServizioLong = Long.valueOf(idServizio);
+			long idAllegatoLong = Long.parseLong(idAllegato);
+			long idServizioLong = Long.parseLong(idServizio);
 			String tipoFile = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_FILE);
 
 			String modificaAPI = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_API);
@@ -143,7 +142,7 @@ public final class AccordiServizioParteSpecificaAllegatiChange extends Action {
 			
 			Documento doc = archiviCore.getDocumento(idAllegatoLong,false);
 			
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 			
 			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request).getValue();
 			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
@@ -199,8 +198,8 @@ public final class AccordiServizioParteSpecificaAllegatiChange extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam );
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idServizio, null, null, null, null, tipoSoggettoFruitore, nomeSoggettoFruitore, dati);
 
@@ -235,6 +234,8 @@ public final class AccordiServizioParteSpecificaAllegatiChange extends Action {
 			case specificaLivelloServizio:
 				toCheck.setTipo(TipiDocumentoLivelloServizio.toEnumConstant(tipoFile).getNome());
 				break;
+			default:
+				break;
 			}
 			// Controlli sui campi immessi
 			boolean isOk = apsHelper.serviziAllegatiCheckData(TipoOperazione.CHANGE,ff,toCheck,pf);
@@ -243,9 +244,9 @@ public final class AccordiServizioParteSpecificaAllegatiChange extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam );
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 				
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idServizio, null, null, dati);
 

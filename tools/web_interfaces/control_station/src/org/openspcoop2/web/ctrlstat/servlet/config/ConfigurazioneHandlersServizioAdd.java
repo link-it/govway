@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -88,9 +87,7 @@ public class ConfigurazioneHandlersServizioAdd extends Action {
 			
 			// controllo primo accesso
 			boolean first = confHelper.isFirstTimeFromHttpParameters(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_FIRST_TIME);
-			
-			// String idHandlerS = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_ID_HANDLER);
-			
+						
 			TipoPdD ruoloPorta = null;
 			String idPortaS = null;
 			Long idPorta = null;
@@ -106,8 +103,8 @@ public class ConfigurazioneHandlersServizioAdd extends Action {
 			List<String> tipiPluginGiaUtilizzati = null;
 			ConsoleSearch ricercaPluginUilizzati = new ConsoleSearch(true);
 			List<ConfigurazioneHandlerBean> listaEsistenti = confCore.handlersServizioList(ricercaPluginUilizzati, fase); 
-			if(listaEsistenti != null && listaEsistenti.size() > 0) {
-				tipiPluginGiaUtilizzati = new ArrayList<String>();
+			if(listaEsistenti != null && !listaEsistenti.isEmpty()) {
+				tipiPluginGiaUtilizzati = new ArrayList<>();
 				
 				for (ConfigurazioneHandlerBean configurazioneHandlerBean : listaEsistenti) {
 					tipiPluginGiaUtilizzati.add(configurazioneHandlerBean.getPlugin().getTipo());
@@ -117,15 +114,8 @@ public class ConfigurazioneHandlersServizioAdd extends Action {
 			
 			// Preparo il menu
 			confHelper.makeMenu();
-			
-//			String postBackElementName = confHelper.getPostBackElementName();
-//			if (postBackElementName != null) {
-//				// selezione del plugin
-//				if(postBackElementName.equals(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_PLUGIN)) {
-//				}
-//			}
-			
-			List<Parameter> lstParamSession = new ArrayList<Parameter>();
+						
+			List<Parameter> lstParamSession = new ArrayList<>();
 
 			Parameter parTipologia = null;
 			if(fase!=null) {
@@ -151,9 +141,9 @@ public class ConfigurazioneHandlersServizioAdd extends Action {
 			
 			// setto la barra del titolo
 			List<Parameter> lstParam = null;
-			lstParam = new ArrayList<Parameter>();
+			lstParam = new ArrayList<>();
 			
-			if(lstParamSession.size() > 0) {
+			if(!lstParamSession.isEmpty()) {
 				lstParam.add(new Parameter(labelHandler, servletListURL, lstParamSession.toArray(new Parameter[lstParamSession.size()])));
 			} else {
 				lstParam.add(new Parameter(labelHandler, servletListURL));
@@ -172,13 +162,13 @@ public class ConfigurazioneHandlersServizioAdd extends Action {
 				}
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				confHelper.addHandlerServizioToDati(dati, tipoOperazione, null, nomePlugin, stato, ruoloPorta, idPortaS, serviceBinding, fase, tipiPluginGiaUtilizzati, messaggioValoriNonDisponibili); 
 				
 				if(pd.getMessage() != null && pd.isDisableEditMode()) {
-					dati = new Vector<DataElement>();
+					dati = new ArrayList<>();
 				}
 				
 				// Set First is false
@@ -197,8 +187,8 @@ public class ConfigurazioneHandlersServizioAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				confHelper.addHandlerServizioToDati(dati, tipoOperazione, null, nomePlugin, stato, ruoloPorta, idPortaS, serviceBinding, fase, tipiPluginGiaUtilizzati, messaggioValoriNonDisponibili);
 				
@@ -221,7 +211,7 @@ public class ConfigurazioneHandlersServizioAdd extends Action {
 			int posizione = confCore.getMaxPosizioneHandlersServizio(fase) + 1;
 			handler.setPosizione(posizione);
 			
-			List<Object> oggettiDaAggiornare = new ArrayList<Object>();
+			List<Object> oggettiDaAggiornare = new ArrayList<>();
 			Configurazione configurazione = confCore.getConfigurazioneGenerale();
 			
 			if(configurazione.getConfigurazioneHandler() == null)

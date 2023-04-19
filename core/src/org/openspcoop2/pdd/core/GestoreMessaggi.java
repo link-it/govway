@@ -81,6 +81,7 @@ import org.openspcoop2.protocol.engine.driver.Riscontri;
 import org.openspcoop2.protocol.engine.driver.RollbackRepositoryBuste;
 import org.openspcoop2.protocol.engine.driver.repository.IGestoreRepository;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
@@ -1355,6 +1356,31 @@ public class GestoreMessaggi  {
 				msgSoap.updateResponse(message, consumeMessage);
 			} catch (Exception e) {
 				String errorMsg = "GESTORE_MESSAGGI, Errore di aggiornamento (SoapMessage) " + this.tipo + "/" + id + ": " + e.getMessage();
+				if (msgSoap != null) {
+					stato.closePreparedStatement(); // Chiude le PreparedStatement aperte(e non eseguite) per il salvataggio del Msg
+				}
+				this.log.error(errorMsg, e);
+				throw new GestoreMessaggiException(errorMsg, e);
+			}
+		}
+	}
+	
+	public void registraTransactionContext_statelessEngine(String identificativo, Context context) throws GestoreMessaggiException {
+		// Salvo contenuto messaggio 
+		if (context != null) {
+
+			String id = identificativo!=null ? identificativo : this.idBusta;
+			
+			// stato
+			StateMessage stato = (this.isRichiesta) ? ((StateMessage)this.openspcoopstate.getStatoRichiesta()) : ((StateMessage)this.openspcoopstate.getStatoRisposta()) ;
+
+
+			SavedMessage msgSoap = null;
+			try {
+				msgSoap = new SavedMessage(id, this.openspcoopstate, this.tipo, this.workDir, GestoreMessaggi.adapter, this.log);
+				msgSoap.updateTransactionContext(context);
+			} catch (Exception e) {
+				String errorMsg = "GESTORE_MESSAGGI, Errore di aggiornamento (TransactionContext) " + this.tipo + "/" + id + ": " + e.getMessage();
 				if (msgSoap != null) {
 					stato.closePreparedStatement(); // Chiude le PreparedStatement aperte(e non eseguite) per il salvataggio del Msg
 				}
@@ -2660,6 +2686,31 @@ public class GestoreMessaggi  {
 		}
 		
 		return msg;
+	}
+	
+	public Context getSyncTransactionContext() throws GestoreMessaggiException{
+		return getSyncTransactionContext(null);
+	}
+	public Context getSyncTransactionContext(Date oraRegistrazione) throws GestoreMessaggiException{
+
+		Context context = null;
+
+		// Se devo cercare per riferimentoMessaggio, prima cerco un messaggio registrato, che possiede
+		// come riferimento Messaggio l'ID del gestore.
+		// In caso di esistenza uso l'ID del messaggio trovato e non quello del gestore
+		String idBustaSearch = this.idBusta;
+		
+		SavedMessage soapMsg = null;
+		try{
+			soapMsg = new SavedMessage(idBustaSearch, this.openspcoopstate, this.tipo,this.workDir,GestoreMessaggi.adapter,this.log);
+			context = soapMsg.readTransactionContext(oraRegistrazione);
+		}catch(Exception e){
+			String errorMsg = "GESTORE_MESSAGGI, getSyncTransactionContext "+this.tipo+"/"+this.idBusta+": "+e.getMessage();
+			this.log.error(errorMsg,e);
+			throw new GestoreMessaggiException(errorMsg,e);
+		}
+				
+		return context;
 	}
 	
 

@@ -21,7 +21,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -197,7 +196,7 @@ public class PorteDelegateTrasformazioniRispostaHeaderChange extends Action {
 			
 			String labelPag = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE;
 			
-			List<Parameter> parametriInvocazioneServletTrasformazioniRisposta = new ArrayList<Parameter>();
+			List<Parameter> parametriInvocazioneServletTrasformazioniRisposta = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniRisposta.add(pId);
 			parametriInvocazioneServletTrasformazioniRisposta.add(pIdSoggetto);
 			parametriInvocazioneServletTrasformazioniRisposta.add(pIdAsps);
@@ -209,7 +208,7 @@ public class PorteDelegateTrasformazioniRispostaHeaderChange extends Action {
 			lstParam.add(new Parameter(nomeRisposta, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_CHANGE, 
 					pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione, pIdTrasformazioneRisposta));
 			
-			List<Parameter> parametriInvocazioneServletTrasformazioniRispostaHeaders = new ArrayList<Parameter>();
+			List<Parameter> parametriInvocazioneServletTrasformazioniRispostaHeaders = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniRispostaHeaders.add(pId);
 			parametriInvocazioneServletTrasformazioniRispostaHeaders.add(pIdSoggetto);
 			parametriInvocazioneServletTrasformazioniRispostaHeaders.add(pIdAsps);
@@ -228,8 +227,8 @@ public class PorteDelegateTrasformazioniRispostaHeaderChange extends Action {
 			// dati
 			if (porteDelegateHelper.isEditModeInProgress()) {
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				// primo accesso
 				if(nome == null) {
@@ -264,9 +263,9 @@ public class PorteDelegateTrasformazioniRispostaHeaderChange extends Action {
 			if (!isOk) {
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteDelegateHelper.addTrasformazioneRispostaHeaderToDati(TipoOperazione.CHANGE, protocollo, true, dati, idTrasformazioneS, idTrasformazioneRispostaS, idTrasformazioneRispostaHeaderS, nome, tipo, valore, identificazione, apc.getServiceBinding());
 				

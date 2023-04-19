@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.audit;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -108,13 +107,11 @@ public final class AuditingDettaglioInfo extends Action {
 			// setto la barra del titolo
 			String label = "";
 			if (type.equals(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_TYPE_ERROR)){
-				//label = AuditCostanti.LABEL_AUDIT_MOTIVO_ERRORE + " di " + idop;
 				label = AuditCostanti.LABEL_AUDIT_MOTIVO_ERRORE;
 			}else{
-				//label = AuditCostanti.LABEL_AUDIT_DETTAGLIO_OGGETTO + " di " + idop;
 				label = AuditCostanti.LABEL_AUDIT_DETTAGLIO_OGGETTO;
 			}
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT, AuditCostanti.SERVLET_NAME_AUDITING));
 			lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT_OPERAZIONI, AuditCostanti.SERVLET_NAME_AUDITING,
@@ -131,7 +128,7 @@ public final class AuditingDettaglioInfo extends Action {
 			Operation singleOp = auditingCore.getAuditOperation(idlong);
 
 			// preparo i campi
-			Vector<DataElement> dati = null;
+			List<DataElement> dati = null;
 			if (type.equals(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_TYPE_ERROR))
 				dati = auditingHelper.getAuditHelper().addAuditReportInfoToDati(
 						type, singleOp.getError());

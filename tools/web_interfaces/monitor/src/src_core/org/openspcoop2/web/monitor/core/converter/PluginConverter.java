@@ -37,7 +37,7 @@ import javax.faces.model.SelectItem;
  */
 public class PluginConverter implements Converter {
 	
-	protected final static String NONE_STRING = "[Nessuno]";
+	protected static final String NONE_STRING = "[Nessuno]";
 
 	@SuppressWarnings("unchecked")
 	@Override

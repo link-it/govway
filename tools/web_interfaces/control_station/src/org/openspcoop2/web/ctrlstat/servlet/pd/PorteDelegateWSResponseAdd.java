@@ -22,7 +22,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.List;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -128,17 +128,14 @@ public final class PorteDelegateWSResponseAdd extends Action {
 			lstParam.add(ServletUtils.getParameterAggiungi());
 			
 			
-			// Se nome = null, devo visualizzare la pagina per l'inserimento
-			// dati
-			//			if (nome == null) {
 			if(	porteDelegateHelper.isEditModeInProgress()){
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteDelegateHelper.addNomeValoreToDati(TipoOperazione.ADD,dati, "", "",false);
 
@@ -160,9 +157,9 @@ public final class PorteDelegateWSResponseAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteDelegateHelper.addNomeValoreToDati(TipoOperazione.ADD,dati, nome, valore,false);
 

@@ -24,7 +24,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,8 +40,8 @@ import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneSelettoreCondizioneRegola;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
@@ -168,13 +167,11 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniAdd extends Act
 			}
 			
 			String postBackElementName = porteApplicativeHelper.getPostBackElementName();
-			if(postBackElementName != null ){
-				
-				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE)) {
-					identificazioneCondizionalePattern = "";
-					identificazioneCondizionalePrefisso = "";
-					identificazioneCondizionaleSuffisso = ""; 
-				}
+			if(postBackElementName != null &&
+				postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE)) {
+				identificazioneCondizionalePattern = "";
+				identificazioneCondizionalePrefisso = "";
+				identificazioneCondizionaleSuffisso = ""; 
 			}
 			
 			boolean isModalitaCompleta = porteApplicativeHelper.isModalitaCompleta();
@@ -247,8 +244,8 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniAdd extends Act
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addAzioneConnettoriMultipliConfigToDati(dati, TipoOperazione.ADD, protocollo, serviceBinding, null, nome,
 						patternOperazione,  selezioneConnettoreByFiltro, identificazioneCondizionale, identificazioneCondizionalePattern, 
@@ -279,9 +276,9 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniAdd extends Act
 				ServletUtils.setPageDataTitle(pd, lstParam); 
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteApplicativeHelper.addAzioneConnettoriMultipliConfigToDati(dati, TipoOperazione.ADD, protocollo, serviceBinding, null, nome,
 						patternOperazione,  selezioneConnettoreByFiltro, identificazioneCondizionale, identificazioneCondizionalePattern, 

@@ -117,13 +117,13 @@ import org.slf4j.Logger;
 		
 public abstract class IntegrationManager implements IntegrationManagerMessageBoxInterface,IntegrationManagerPDInterface {
 
-	public final static IDService ID_SERVICE = IDService.INTEGRATION_MANAGER_SOAP;
-	public final static String ID_MODULO = ID_SERVICE.getValue();
+	public static final IDService ID_SERVICE = IDService.INTEGRATION_MANAGER_SOAP;
+	public static final String ID_MODULO = ID_SERVICE.getValue();
 	
 	private OpenSPCoop2Properties propertiesReader;
 	private ClassNameProperties className;
 
-	private final static boolean useNewMethod = true; // compatta diverse query e usa le date
+	private static final boolean useNewMethod = true; // compatta diverse query e usa le date
 
 	private boolean inizializzato = false;
 

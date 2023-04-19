@@ -29,7 +29,7 @@ package org.openspcoop2.utils.test;
  */
 public class Costanti {
 
-	public final static String GRUPPO_UTILS = "utils";
-	public final static String GRUPPO_UTILS_SQL = "utils.sql";
+	public static final String GRUPPO_UTILS = "utils";
+	public static final String GRUPPO_UTILS_SQL = "utils.sql";
 	
 }

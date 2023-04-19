@@ -21,7 +21,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.openspcoop2.core.commons.ModalitaIdentificazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -36,6 +35,7 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 
 /**
@@ -46,120 +46,127 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
  * @version $Rev$, $Date$
  */
 public class PorteApplicativeCostanti {
+	
+	private PorteApplicativeCostanti() {}
 
 	/* OBJECT NAME */
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE = "porteApplicative";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE = "porteApplicative";
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY = "porteApplicativeWS";
-	public final static ForwardParams TIPO_OPERAZIONE_MESSAGE_SECURITY = ForwardParams.OTHER("");
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST = "porteApplicativeWSRequest";
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE = "porteApplicativeWSResponse";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY = "porteApplicativeWS";
+	public static final ForwardParams TIPO_OPERAZIONE_MESSAGE_SECURITY = ForwardParams.OTHER("");
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST = "porteApplicativeWSRequest";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE = "porteApplicativeWSResponse";
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO = "porteApplicativeServizioApplicativo";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO = "porteApplicativeServizioApplicativo";
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_RUOLI = "porteApplicativeRuoli";
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_SCOPE = "porteApplicativeScope";
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_AUTENTICAZIONE_CUSTOM_PROPERTIES = "porteApplicativeAutheCustomProperties";
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CUSTOM_PROPERTIES = "porteApplicativeAuthCustomProperties";
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES = "porteApplicativeAuthContenutiCustomProperties";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_RUOLI = "porteApplicativeRuoli";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_SCOPE = "porteApplicativeScope";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_AUTENTICAZIONE_CUSTOM_PROPERTIES = "porteApplicativeAutheCustomProperties";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CUSTOM_PROPERTIES = "porteApplicativeAuthCustomProperties";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES = "porteApplicativeAuthContenutiCustomProperties";
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA = "porteApplicativeCorrelazioneApplicativa";
-	public final static ForwardParams TIPO_OPERAZIONE_CORRELAZIONE_APPLICATIVA = ForwardParams.OTHER("");
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST = "porteApplicativeCorrelazioneApplicativaRequest";
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE = "porteApplicativeCorrelazioneApplicativaResponse";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA = "porteApplicativeCorrelazioneApplicativa";
+	public static final ForwardParams TIPO_OPERAZIONE_CORRELAZIONE_APPLICATIVA = ForwardParams.OTHER("");
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST = "porteApplicativeCorrelazioneApplicativaRequest";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE = "porteApplicativeCorrelazioneApplicativaResponse";
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO = "porteApplicativeProprietaProtocollo";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO = "porteApplicativeProprietaProtocollo";
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_MTOM = "porteApplicativeMTOM";
-	public final static ForwardParams TIPO_OPERAZIONE_MTOM = ForwardParams.OTHER("");
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_MTOM_REQUEST = "porteApplicativeMTOMRequest";
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE = "porteApplicativeMTOMResponse";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_MTOM = "porteApplicativeMTOM";
+	public static final ForwardParams TIPO_OPERAZIONE_MTOM = ForwardParams.OTHER("");
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_MTOM_REQUEST = "porteApplicativeMTOMRequest";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE = "porteApplicativeMTOMResponse";
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_EXTENDED = "porteApplicativeExtended";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_EXTENDED = "porteApplicativeExtended";
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI = "porteApplicativeControlloAccessi";
-	public final static ForwardParams TIPO_OPERAZIONE_CONTROLLO_ACCESSI = ForwardParams.OTHER("");
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI = "porteApplicativeControlloAccessi";
+	public static final ForwardParams TIPO_OPERAZIONE_CONTROLLO_ACCESSI = ForwardParams.OTHER("");
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_AZIONE = "porteApplicativeAzione";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_AZIONE = "porteApplicativeAzione";
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_SOGGETTO = "porteApplicativeSoggetto";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_SOGGETTO = "porteApplicativeSoggetto";
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO = "porteApplicativeServizioApplicativoAutorizzato";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO = "porteApplicativeServizioApplicativoAutorizzato";
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI = "porteApplicativeValidazioneContenuti";
-	public final static ForwardParams TIPO_OPERAZIONE_VALIDAZIONE_CONTENUTI = ForwardParams.OTHER("");
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI = "porteApplicativeValidazioneContenuti";
+	public static final ForwardParams TIPO_OPERAZIONE_VALIDAZIONE_CONTENUTI = ForwardParams.OTHER("");
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_ABILITAZIONE = "porteApplicativeAbilitazione";
-	public final static ForwardParams TIPO_OPERAZIONE_ABILITAZIONE = ForwardParams.OTHER("");
-	public final static ForwardParams TIPO_OPERAZIONE_CONFIGURAZIONE = ForwardParams.OTHER("Configurazione");
+	private static final String CONFIGURAZIONE = "Configurazione";
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORE_DEFAULT = "porteApplicativeConnettoreDefault";
-	public final static ForwardParams TIPO_OPERAZIONE_CONNETTORE_DEFAULT = ForwardParams.OTHER("");
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_ABILITAZIONE = "porteApplicativeAbilitazione";
+	public static final ForwardParams TIPO_OPERAZIONE_ABILITAZIONE = ForwardParams.OTHER("");
+	public static final ForwardParams TIPO_OPERAZIONE_CONFIGURAZIONE = ForwardParams.OTHER(CONFIGURAZIONE);
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO = "porteApplicativeConnettoreRidefinito";
-	public final static ForwardParams TIPO_OPERAZIONE_CONNETTORE_RIDEFINITO = ForwardParams.OTHER("");
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORE_DEFAULT = "porteApplicativeConnettoreDefault";
+	public static final ForwardParams TIPO_OPERAZIONE_CONNETTORE_DEFAULT = ForwardParams.OTHER("");
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE = "porteApplicativeDumpConfigurazione";
-	public final static ForwardParams TIPO_OPERAZIONE_DUMP_CONFIGURAZIONE = ForwardParams.OTHER("");
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO = "porteApplicativeConnettoreRidefinito";
+	public static final ForwardParams TIPO_OPERAZIONE_CONNETTORE_RIDEFINITO = ForwardParams.OTHER("");
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_GESTIONE_CORS = "porteApplicativeGestioneCors";
-	public final static ForwardParams TIPO_OPERAZIONE_GESTIONE_CORS = ForwardParams.OTHER("");
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE = "porteApplicativeDumpConfigurazione";
+	public static final ForwardParams TIPO_OPERAZIONE_DUMP_CONFIGURAZIONE = ForwardParams.OTHER("");
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_GESTIONE_CANALE = "porteApplicativeGestioneCanale";
-	public final static ForwardParams TIPO_OPERAZIONE_GESTIONE_CANALE = ForwardParams.OTHER("");
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_GESTIONE_CORS = "porteApplicativeGestioneCors";
+	public static final ForwardParams TIPO_OPERAZIONE_GESTIONE_CORS = ForwardParams.OTHER("");
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_VERIFICA_CONNETTORE = "porteApplicativeVerificaConnettore";
-	public final static ForwardParams TIPO_OPERAZIONE_VERIFICA_CONNETTORE = ForwardParams.OTHER("");
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_GESTIONE_CANALE = "porteApplicativeGestioneCanale";
+	public static final ForwardParams TIPO_OPERAZIONE_GESTIONE_CANALE = ForwardParams.OTHER("");
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI = "porteApplicativeConnettoriMultipli";
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPERTIES = "porteApplicativeConnettoriMultipliProperties";
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES = "porteApplicativeConnettoriMultipliConfigProperties";
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CONNETTORI_MULTIPLI = "porteApplicativeConnettoriMultipliConfig";
-	public final static ForwardParams TIPO_OPERAZIONE_CONFIGURAZIONE_CONNETTORI_MULTIPLI = ForwardParams.OTHER("");
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ABILITAZIONE = "porteApplicativeConnettoriMultipliAbilitazione";
-	public final static ForwardParams TIPO_OPERAZIONE_CONNETTORI_MULTIPLI_ABILITAZIONE = ForwardParams.OTHER("");
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_FORM = "porteApplicativeConnettoriMultipliConfigProprietaForm";
-	public final static ForwardParams TIPO_OPERAZIONE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_FORM = ForwardParams.OTHER("");
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI = "porteApplicativeConnettoriMultipliConfigAzioni";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_VERIFICA_CONNETTORE = "porteApplicativeVerificaConnettore";
+	public static final ForwardParams TIPO_OPERAZIONE_VERIFICA_CONNETTORE = ForwardParams.OTHER("");
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_NOTIFICHE = "porteApplicativeConnettoriMultipliConfigProprietaNotifiche";
-	public final static ForwardParams TIPO_OPERAZIONE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_NOTIFICHE = ForwardParams.OTHER("");
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI = "porteApplicativeConnettoriMultipli";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPERTIES = "porteApplicativeConnettoriMultipliProperties";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES = "porteApplicativeConnettoriMultipliConfigProperties";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CONNETTORI_MULTIPLI = "porteApplicativeConnettoriMultipliConfig";
+	public static final ForwardParams TIPO_OPERAZIONE_CONFIGURAZIONE_CONNETTORI_MULTIPLI = ForwardParams.OTHER("");
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ABILITAZIONE = "porteApplicativeConnettoriMultipliAbilitazione";
+	public static final ForwardParams TIPO_OPERAZIONE_CONNETTORI_MULTIPLI_ABILITAZIONE = ForwardParams.OTHER("");
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_FORM = "porteApplicativeConnettoriMultipliConfigProprietaForm";
+	public static final ForwardParams TIPO_OPERAZIONE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_FORM = ForwardParams.OTHER("");
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI = "porteApplicativeConnettoriMultipliConfigAzioni";
+	
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_NOTIFICHE = "porteApplicativeConnettoriMultipliConfigProprietaNotifiche";
+	public static final ForwardParams TIPO_OPERAZIONE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_NOTIFICHE = ForwardParams.OTHER("");
 	
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_PROPERTIES_CONFIG = "porteApplicativeWSRequestPropertiesConfig";
-	public final static ForwardParams TIPO_OPERAZIONE_MESSAGE_SECURITY_REQUEST_PROPERTIES_CONFIG = ForwardParams.OTHER("");
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_PROPERTIES_CONFIG = "porteApplicativeWSRequestPropertiesConfig";
+	public static final ForwardParams TIPO_OPERAZIONE_MESSAGE_SECURITY_REQUEST_PROPERTIES_CONFIG = ForwardParams.OTHER("");
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_PROPERTIES_CONFIG = "porteApplicativeWSResponsePropertiesConfig";
-	public final static ForwardParams TIPO_OPERAZIONE_MESSAGE_SECURITY_RESPONSE_PROPERTIES_CONFIG = ForwardParams.OTHER("");
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_PROPERTIES_CONFIG = "porteApplicativeWSResponsePropertiesConfig";
+	public static final ForwardParams TIPO_OPERAZIONE_MESSAGE_SECURITY_RESPONSE_PROPERTIES_CONFIG = ForwardParams.OTHER("");
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CHANGE = "porteApplicativeConfigurazioneChange";
-	public final static ForwardParams TIPO_OPERAZIONEGRUPPO_CAMBIA_NOME = ForwardParams.OTHER("");
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CHANGE = "porteApplicativeConfigurazioneChange";
+	public static final ForwardParams TIPO_OPERAZIONEGRUPPO_CAMBIA_NOME = ForwardParams.OTHER("");
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING = "porteApplicativeResponseCaching";
-	public final static ForwardParams TIPO_OPERAZIONE_RESPONSE_CACHING = ForwardParams.OTHER("");
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING = "porteApplicativeResponseCaching";
+	public static final ForwardParams TIPO_OPERAZIONE_RESPONSE_CACHING = ForwardParams.OTHER("");
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA = "porteApplicativeResponseCachingConfigurazioneRegola";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA = "porteApplicativeResponseCachingConfigurazioneRegola";
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI = "porteApplicativeTrasformazioni";
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA = "porteApplicativeTrasformazioniRichiesta";
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER = "porteApplicativeTrasformazioniRichiestaHeader";
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO = "porteApplicativeTrasformazioniRichiestaUrlParameter";
-	public final static ForwardParams TIPO_OPERAZIONE_TRASFORMAZIONI_RICHIESTA = ForwardParams.OTHER("");
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA = "porteApplicativeTrasformazioniRisposta";
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER = "porteApplicativeTrasformazioniRispostaHeader";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI = "porteApplicativeTrasformazioni";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA = "porteApplicativeTrasformazioniRichiesta";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER = "porteApplicativeTrasformazioniRichiestaHeader";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO = "porteApplicativeTrasformazioniRichiestaUrlParameter";
+	public static final ForwardParams TIPO_OPERAZIONE_TRASFORMAZIONI_RICHIESTA = ForwardParams.OTHER("");
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA = "porteApplicativeTrasformazioniRisposta";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER = "porteApplicativeTrasformazioniRispostaHeader";
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO = "porteApplicativeTrasformazioniSoggetto";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO = "porteApplicativeTrasformazioniSoggetto";
 	
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_AUTORIZZATO = "porteApplicativeTrasformazioniServizioApplicativoAutorizzato";
+	public static final String OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_AUTORIZZATO = "porteApplicativeTrasformazioniServizioApplicativoAutorizzato";
 	
 	/* SERVLET NAME */
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CHANGE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE+"Change.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE+"List.do";
-	public final static Vector<String> SERVLET_PORTE_APPLICATIVE = new Vector<String>();
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CHANGE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_PORTE_APPLICATIVE = new ArrayList<>();
+	public static List<String> getServletPorteApplicative() {
+		return SERVLET_PORTE_APPLICATIVE;
+	}
 	static{
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_ADD);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE);
@@ -167,13 +174,16 @@ public class PorteApplicativeCostanti {
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST);
 	}
 
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY+".do";
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY+".do";
 
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_CHANGE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST+"Change.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST+"List.do";
-	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST = new Vector<String>();
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_CHANGE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST = new ArrayList<>();
+	public static List<String> getServletPorteApplicativeMessageSecurityRequest() {
+		return SERVLET_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST;
+	}
 	static{
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_ADD);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_CHANGE);
@@ -181,11 +191,14 @@ public class PorteApplicativeCostanti {
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_LIST);
 	}
 
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_CHANGE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE+"Change.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE+"List.do";
-	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE = new Vector<String>();
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_CHANGE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE = new ArrayList<>();
+	public static List<String> getServletPorteApplicativeMessageSecurityResponse() {
+		return SERVLET_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE;
+	}
 	static{
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_ADD);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_CHANGE);
@@ -193,73 +206,94 @@ public class PorteApplicativeCostanti {
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_LIST);
 	}
 
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO+"List.do";
-	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO = new Vector<String>();
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO = new ArrayList<>();
+	public static List<String> getServletPorteApplicativeServizioApplicativo() {
+		return SERVLET_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO;
+	}
 	static{
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_ADD);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_DELETE);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_LIST);
 	}
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_RUOLI+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_RUOLI+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_RUOLI+"List.do";
-	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_RUOLI = new Vector<String>();
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_RUOLI+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_RUOLI+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_RUOLI+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_PORTE_APPLICATIVE_RUOLI = new ArrayList<>();
+	public static List<String> getServletPorteApplicativeRuoli() {
+		return SERVLET_PORTE_APPLICATIVE_RUOLI;
+	}
 	static{
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_RUOLI.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_ADD);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_RUOLI.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_DELETE);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_RUOLI.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_LIST);
 	}
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_SCOPE_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SCOPE+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_SCOPE_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SCOPE+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_SCOPE_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SCOPE+"List.do";
-	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_SCOPE = new Vector<String>();
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_SCOPE_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SCOPE+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_SCOPE_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SCOPE+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_SCOPE_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SCOPE+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_PORTE_APPLICATIVE_SCOPE = new ArrayList<>();
+	public static List<String> getServletPorteApplicativeScope() {
+		return SERVLET_PORTE_APPLICATIVE_SCOPE;
+	}
 	static{
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_SCOPE.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SCOPE_ADD);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_SCOPE.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SCOPE_DELETE);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_SCOPE.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SCOPE_LIST);
 	}
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_AUTENTICAZIONE_CUSTOM_PROPERTIES_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AUTENTICAZIONE_CUSTOM_PROPERTIES+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_AUTENTICAZIONE_CUSTOM_PROPERTIES_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AUTENTICAZIONE_CUSTOM_PROPERTIES+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_AUTENTICAZIONE_CUSTOM_PROPERTIES_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AUTENTICAZIONE_CUSTOM_PROPERTIES+"List.do";
-	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_AUTENTICAZIONE_CUSTOM_PROPERTIES = new Vector<String>();
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_AUTENTICAZIONE_CUSTOM_PROPERTIES_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AUTENTICAZIONE_CUSTOM_PROPERTIES+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_AUTENTICAZIONE_CUSTOM_PROPERTIES_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AUTENTICAZIONE_CUSTOM_PROPERTIES+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_AUTENTICAZIONE_CUSTOM_PROPERTIES_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AUTENTICAZIONE_CUSTOM_PROPERTIES+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_PORTE_APPLICATIVE_AUTENTICAZIONE_CUSTOM_PROPERTIES = new ArrayList<>();
+	public static List<String> getServletPorteApplicativeAutenticazioneCustomProperties() {
+		return SERVLET_PORTE_APPLICATIVE_AUTENTICAZIONE_CUSTOM_PROPERTIES;
+	}
 	static{
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_AUTENTICAZIONE_CUSTOM_PROPERTIES.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_AUTENTICAZIONE_CUSTOM_PROPERTIES_ADD);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_AUTENTICAZIONE_CUSTOM_PROPERTIES.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_AUTENTICAZIONE_CUSTOM_PROPERTIES_DELETE);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_AUTENTICAZIONE_CUSTOM_PROPERTIES.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_AUTENTICAZIONE_CUSTOM_PROPERTIES_LIST);
 	}
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CUSTOM_PROPERTIES_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CUSTOM_PROPERTIES+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CUSTOM_PROPERTIES_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CUSTOM_PROPERTIES+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CUSTOM_PROPERTIES_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CUSTOM_PROPERTIES+"List.do";
-	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_AUTORIZZAZIONE_CUSTOM_PROPERTIES = new Vector<String>();
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CUSTOM_PROPERTIES_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CUSTOM_PROPERTIES+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CUSTOM_PROPERTIES_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CUSTOM_PROPERTIES+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CUSTOM_PROPERTIES_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CUSTOM_PROPERTIES+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_PORTE_APPLICATIVE_AUTORIZZAZIONE_CUSTOM_PROPERTIES = new ArrayList<>();
+	public static List<String> getServletPorteApplicativeAutorizzazioneCustomProperties() {
+		return SERVLET_PORTE_APPLICATIVE_AUTORIZZAZIONE_CUSTOM_PROPERTIES;
+	}
 	static{
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_AUTORIZZAZIONE_CUSTOM_PROPERTIES.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CUSTOM_PROPERTIES_ADD);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_AUTORIZZAZIONE_CUSTOM_PROPERTIES.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CUSTOM_PROPERTIES_DELETE);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_AUTORIZZAZIONE_CUSTOM_PROPERTIES.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CUSTOM_PROPERTIES_LIST);
 	}
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES+"List.do";
-	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES = new Vector<String>();
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES = new ArrayList<>();
+	public static List<String> getServletPorteApplicativeAutorizzazioneContenutiCustomProperties() {
+		return SERVLET_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES;
+	}
 	static{
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES_ADD);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES_DELETE);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES_LIST);
 	}
 
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA+".do";
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA+".do";
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST_CHANGE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST+"Change.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST+"List.do";
-	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST = new Vector<String>();
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST_CHANGE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST = new ArrayList<>();
+	public static List<String> getServletPorteApplicativeCorrelazioneApplicativaRequest() {
+		return SERVLET_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST;
+	}
 	static{
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST_ADD);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST_CHANGE);
@@ -267,11 +301,14 @@ public class PorteApplicativeCostanti {
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST_LIST);
 	}
 
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE_CHANGE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE+"Change.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE+"List.do";
-	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE = new Vector<String>();
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE_CHANGE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE = new ArrayList<>();
+	public static List<String> getServletPorteApplicativeCorrelazioneApplicativaResponse() {
+		return SERVLET_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE;
+	}
 	static{
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE_ADD);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE_CHANGE);
@@ -279,11 +316,14 @@ public class PorteApplicativeCostanti {
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE_LIST);
 	}
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_CHANGE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO+"Change.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO+"List.do";
-	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO = new Vector<String>();
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_CHANGE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO = new ArrayList<>();
+	public static List<String> getServletPorteApplicativeProprietaProtocollo() {
+		return SERVLET_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO;
+	}
 	static{
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_ADD);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_CHANGE);
@@ -291,13 +331,16 @@ public class PorteApplicativeCostanti {
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_LIST);
 	}
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_MTOM = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MTOM+".do";
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_MTOM = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MTOM+".do";
 
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_MTOM_REQUEST_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MTOM_REQUEST+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_MTOM_REQUEST_CHANGE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MTOM_REQUEST+"Change.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_MTOM_REQUEST_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MTOM_REQUEST+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_MTOM_REQUEST_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MTOM_REQUEST+"List.do";
-	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_MTOM_REQUEST = new Vector<String>();
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_MTOM_REQUEST_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MTOM_REQUEST+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_MTOM_REQUEST_CHANGE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MTOM_REQUEST+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_MTOM_REQUEST_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MTOM_REQUEST+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_MTOM_REQUEST_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MTOM_REQUEST+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_PORTE_APPLICATIVE_MTOM_REQUEST = new ArrayList<>();
+	public static List<String> getServletPorteApplicativeMtomRequest() {
+		return SERVLET_PORTE_APPLICATIVE_MTOM_REQUEST;
+	}
 	static{
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_MTOM_REQUEST.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM_REQUEST_ADD);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_MTOM_REQUEST.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM_REQUEST_CHANGE);
@@ -305,11 +348,14 @@ public class PorteApplicativeCostanti {
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_MTOM_REQUEST.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM_REQUEST_LIST);
 	}
 
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE_CHANGE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE+"Change.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE+"List.do";
-	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_MTOM_RESPONSE = new Vector<String>();
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE_CHANGE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_PORTE_APPLICATIVE_MTOM_RESPONSE = new ArrayList<>();
+	public static List<String> getServletPorteApplicativeMtomResponse() {
+		return SERVLET_PORTE_APPLICATIVE_MTOM_RESPONSE;
+	}
 	static{
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_MTOM_RESPONSE.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE_ADD);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_MTOM_RESPONSE.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE_CHANGE);
@@ -317,11 +363,14 @@ public class PorteApplicativeCostanti {
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_MTOM_RESPONSE.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE_LIST);
 	}
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_EXTENDED+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_CHANGE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_EXTENDED+"Change.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_EXTENDED+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_EXTENDED+"List.do";
-	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_EXTENDED = new Vector<String>();
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_EXTENDED+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_CHANGE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_EXTENDED+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_EXTENDED+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_EXTENDED+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_PORTE_APPLICATIVE_EXTENDED = new ArrayList<>();
+	public static List<String> getServletPorteApplicativeExtended() {
+		return SERVLET_PORTE_APPLICATIVE_EXTENDED;
+	}
 	static{
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_EXTENDED.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_ADD);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_EXTENDED.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_CHANGE);
@@ -329,99 +378,117 @@ public class PorteApplicativeCostanti {
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_EXTENDED.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_LIST);
 	}
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI+".do";
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI+".do";
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_AZIONE_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AZIONE+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_AZIONE_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AZIONE+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_AZIONE_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AZIONE+"List.do";
-	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_AZIONE = new Vector<String>();
-	
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_AZIONE_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AZIONE+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_AZIONE_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AZIONE+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_AZIONE_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AZIONE+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_PORTE_APPLICATIVE_AZIONE = new ArrayList<>();
+	public static List<String> getServletPorteApplicativeAzione() {
+		return SERVLET_PORTE_APPLICATIVE_AZIONE;
+	}
 	static{
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_AZIONE.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_AZIONE_ADD);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_AZIONE.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_AZIONE_DELETE);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_AZIONE.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_AZIONE_LIST);
 	}
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_SOGGETTO_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SOGGETTO+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_SOGGETTO_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SOGGETTO+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_SOGGETTO_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SOGGETTO+"List.do";
-	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_SOGGETTO = new Vector<String>();
-	
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_SOGGETTO_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SOGGETTO+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_SOGGETTO_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SOGGETTO+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_SOGGETTO_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SOGGETTO+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_PORTE_APPLICATIVE_SOGGETTO = new ArrayList<>();	
+	public static List<String> getServletPorteApplicativeSoggetto() {
+		return SERVLET_PORTE_APPLICATIVE_SOGGETTO;
+	}
 	static{
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_SOGGETTO.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SOGGETTO_ADD);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_SOGGETTO.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SOGGETTO_DELETE);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_SOGGETTO.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SOGGETTO_LIST);
 	}
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO+"List.do";
-	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO = new Vector<String>();
-	
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO = new ArrayList<>();	
+	public static List<String> getServletPorteApplicativeServizioApplicativoAutorizzato() {
+		return SERVLET_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO;
+	}
 	static{
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO_ADD);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO_DELETE);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO_LIST);
 	}
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI+".do";
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI+".do";
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_ABILITAZIONE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_ABILITAZIONE +".do";
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_ABILITAZIONE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_ABILITAZIONE +".do";
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORE_DEFAULT = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORE_DEFAULT +".do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO +".do";
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORE_DEFAULT = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORE_DEFAULT +".do";
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO +".do";
 
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE+".do"; 
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE+".do"; 
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_PROPERTIES_CONFIG = OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_PROPERTIES_CONFIG+".do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_PROPERTIES_CONFIG = OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_PROPERTIES_CONFIG+".do";
-	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_MESSAGE_SECURITY_PROPERTIES_CONFIG = new Vector<String>();
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_PROPERTIES_CONFIG = OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_PROPERTIES_CONFIG+".do";
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_PROPERTIES_CONFIG = OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_PROPERTIES_CONFIG+".do";
+	private static final List<String> SERVLET_PORTE_APPLICATIVE_MESSAGE_SECURITY_PROPERTIES_CONFIG = new ArrayList<>();
+	public static List<String> getServletPorteApplicativeMessageSecurityPropertiesConfig() {
+		return SERVLET_PORTE_APPLICATIVE_MESSAGE_SECURITY_PROPERTIES_CONFIG;
+	}
 	static{
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_MESSAGE_SECURITY_PROPERTIES_CONFIG.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_PROPERTIES_CONFIG);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_MESSAGE_SECURITY_PROPERTIES_CONFIG.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_PROPERTIES_CONFIG);
 	}
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CHANGE = OBJECT_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CHANGE+".do";
-	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_CONFIGURAZIONE_CHANGE = new Vector<String>();
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CHANGE = OBJECT_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CHANGE+".do";
+	private static final List<String> SERVLET_PORTE_APPLICATIVE_CONFIGURAZIONE_CHANGE = new ArrayList<>();
+	public static List<String> getServletPorteApplicativeConfigurazioneChange() {
+		return SERVLET_PORTE_APPLICATIVE_CONFIGURAZIONE_CHANGE;
+	}
 	static{
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CONFIGURAZIONE_CHANGE.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CHANGE);
 	}
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_GESTIONE_CORS = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_GESTIONE_CORS+".do";
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_GESTIONE_CORS = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_GESTIONE_CORS+".do";
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_GESTIONE_CANALE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_GESTIONE_CANALE+".do"; 
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_GESTIONE_CANALE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_GESTIONE_CANALE+".do"; 
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_VERIFICA_CONNETTORE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_VERIFICA_CONNETTORE+".do";
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_VERIFICA_CONNETTORE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_VERIFICA_CONNETTORE+".do";
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CONNETTORI_MULTIPLI = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CONNETTORI_MULTIPLI+".do"; 
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ABILITAZIONE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ABILITAZIONE +".do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_FORM = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_FORM+".do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_NOTIFICHE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_NOTIFICHE+".do";
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CONNETTORI_MULTIPLI = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CONNETTORI_MULTIPLI+".do"; 
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ABILITAZIONE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ABILITAZIONE +".do";
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_FORM = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_FORM+".do";
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_NOTIFICHE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_NOTIFICHE+".do";
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI+"Change.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI+"List.do";
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI+Costanti.STRUTS_ACTION_SUFFIX_LIST;
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES+"List.do";
-	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES = new Vector<String>();
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES = new ArrayList<>();
+	public static List<String> getServletPorteApplicativeConnettoriMultipliConfigProperties() {
+		return SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES;
+	}
 	static{
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES_ADD);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES_DELETE);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES_LIST);
 	}
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI_CHANGE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI+"Change.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI+"List.do";
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI_CHANGE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI+Costanti.STRUTS_ACTION_SUFFIX_LIST;
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPERTIES_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPERTIES+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPERTIES_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPERTIES+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPERTIES_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPERTIES+"List.do";
-	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI = new Vector<String>();
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPERTIES_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPERTIES+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPERTIES_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPERTIES+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPERTIES_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPERTIES+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI = new ArrayList<>();
+	public static List<String> getServletPorteApplicativeConnettoriMultipli() {
+		return SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI;
+	}
 	static{
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ADD);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE);
@@ -439,50 +506,56 @@ public class PorteApplicativeCostanti {
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI_LIST);
 	}
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING +".do"; 
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING +".do"; 
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA+"List.do";
-	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA = new Vector<String>();
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA = new ArrayList<>();
+	public static List<String> getServletPorteApplicativeResponseCachingConfigurazioneRegola() {
+		return SERVLET_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA;
+	}
 	static{
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_ADD);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_DELETE);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_LIST);
 	}
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_ADD = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_CHANGE = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI+"Change.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_DELETE = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_LIST = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI+"List.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA +".do"; 
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_ADD = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CHANGE = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA+"Change.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_DELETE = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_LIST = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA+"List.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER_ADD = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER_CHANGE = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER+"Change.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER_DELETE = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER_LIST = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER+"List.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER_ADD = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER_CHANGE = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER+"Change.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER_DELETE = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER_LIST = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER+"List.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_ADD = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_CHANGE = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO+"Change.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_DELETE = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_LIST = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO+"List.do";
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_ADD = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_CHANGE = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_DELETE = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_LIST = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA +".do"; 
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_ADD = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CHANGE = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_DELETE = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_LIST = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER_ADD = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER_CHANGE = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER_DELETE = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER_LIST = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER_ADD = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER_CHANGE = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER_DELETE = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER_LIST = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_ADD = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_CHANGE = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_DELETE = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_LIST = OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO+Costanti.STRUTS_ACTION_SUFFIX_LIST;
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO+"List.do";
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO+Costanti.STRUTS_ACTION_SUFFIX_LIST;
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_AUTORIZZATO_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_AUTORIZZATO+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_AUTORIZZATO_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_AUTORIZZATO+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_AUTORIZZATO_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_AUTORIZZATO+"List.do";
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_AUTORIZZATO_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_AUTORIZZATO+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_AUTORIZZATO_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_AUTORIZZATO+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_AUTORIZZATO_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_AUTORIZZATO+Costanti.STRUTS_ACTION_SUFFIX_LIST;
 	
 	
-	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_TRASFORMAZIONI = new Vector<String>();
+	private static final List<String> SERVLET_PORTE_APPLICATIVE_TRASFORMAZIONI = new ArrayList<>();
+	public static List<String> getServletPorteApplicativeTrasformazioni() {
+		return SERVLET_PORTE_APPLICATIVE_TRASFORMAZIONI;
+	}
 	static{
 		SERVLET_PORTE_APPLICATIVE_TRASFORMAZIONI.add(SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_ADD);
 		SERVLET_PORTE_APPLICATIVE_TRASFORMAZIONI.add(SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_CHANGE);
@@ -516,854 +589,845 @@ public class PorteApplicativeCostanti {
 	}
 	
 	/* NOMI VISTE */
-	public final static String PORTE_APPLICATIVE_NOME_VISTA_CUSTOM_CONNETTORI_MULTIPLI = "connettoriMultipli";
+	public static final String PORTE_APPLICATIVE_NOME_VISTA_CUSTOM_CONNETTORI_MULTIPLI = "connettoriMultipli";
 	
 	/* LABEL GENERALI */
 	
-	public final static String LABEL_PORTE_APPLICATIVE = "Porte Applicative";
-	public final static String LABEL_PORTE_APPLICATIVE_RISULTATI_RICERCA = "Risultati ricerca";
+	public static final String LABEL_PORTE_APPLICATIVE = "Porte Applicative";
+	public static final String LABEL_PORTE_APPLICATIVE_RISULTATI_RICERCA = "Risultati ricerca";
 
-	public final static String LABEL_PA_MENU_VISUALE_AGGREGATA = "Porte Applicative";
+	public static final String LABEL_PA_MENU_VISUALE_AGGREGATA = "Porte Applicative";
 	
-	public final static String LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_INVOCAZIONE = "URL Invocazione";
-	public final static String LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_GENERALI = "Dati Generali";
-	public final static String LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_SERVIZIO = "Dati Servizio";
-	public final static String LABEL_COLUMN_PORTE_APPLICATIVE_STATO_PORTA = "Abilitato";
+	public static final String LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_INVOCAZIONE = "URL Invocazione";
+	public static final String LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_GENERALI = "Dati Generali";
+	public static final String LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_SERVIZIO = "Dati Servizio";
+	public static final String LABEL_COLUMN_PORTE_APPLICATIVE_STATO_PORTA = "Abilitato";
 	
 	/* PARAMETRI */
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_ID = CostantiControlStation.PARAMETRO_ID;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_STATO_PORTA = "statoPorta";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA = CostantiControlStation.PARAMETRO_NOME_PORTA;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_ID_PORTA = CostantiControlStation.PARAMETRO_ID_PORTA;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO = CostantiControlStation.PARAMETRO_ID_SOGGETTO;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_ID_ASPS = CostantiControlStation.PARAMETRO_ID_ASPS;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_PROVIDER = CostantiControlStation.PARAMETRO_PROVIDER;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TOKEN_AUTHORIZATION = CostantiControlStation.PARAMETRO_TOKEN_AUTHORIZATION;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_ID_CORRELAZIONE_APPLICATIVA =  CostantiControlStation.PARAMETRO_ID_CORRELAZIONE;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TIPO_SOGGETTO = "tipoprov";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_NOME_SOGGETTO = "nomeprov";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_ID = CostantiControlStation.PARAMETRO_ID;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_STATO_PORTA = "statoPorta";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA = CostantiControlStation.PARAMETRO_NOME_PORTA;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_ID_PORTA = CostantiControlStation.PARAMETRO_ID_PORTA;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO = CostantiControlStation.PARAMETRO_ID_SOGGETTO;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_ID_ASPS = CostantiControlStation.PARAMETRO_ID_ASPS;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_PROVIDER = CostantiControlStation.PARAMETRO_PROVIDER;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TOKEN_AUTHORIZATION = CostantiControlStation.PARAMETRO_TOKEN_AUTHORIZATION;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_ID_CORRELAZIONE_APPLICATIVA =  CostantiControlStation.PARAMETRO_ID_CORRELAZIONE;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TIPO_SOGGETTO = "tipoprov";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_NOME_SOGGETTO = "nomeprov";
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_DATI_INVOCAZIONE;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_PORTA = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_ALTRO_PORTA;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_API = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_ALTRO_API;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS = CostantiControlStation.PARAMETRO_CONNETTORE_DA_LISTA_APS;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_DATI_INVOCAZIONE;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_PORTA = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_ALTRO_PORTA;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_API = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_ALTRO_API;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS = CostantiControlStation.PARAMETRO_CONNETTORE_DA_LISTA_APS;
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE = CostantiControlStation.PARAMETRO_MODE_CORRELAZIONE_APPLICATIVA;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML = CostantiControlStation.PARAMETRO_ELEMENTO_XML;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_GESTIONE_IDENTIFICAZIONE_FALLITA = "gif";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_PATTERN = CostantiControlStation.PARAMETRO_PATTERN;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_RIUSO_ID_MESSAGGIO = "riusoIdMessaggio";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_VALORE = "valore";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY = "messageSecurity";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_NOME = "nome";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO = "servizioApplicativo";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_RICEVUTA_ASINCRONA_SIMMETRICA = "ricsim";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_RICEVUTA_ASINCRONA_ASIMMETRICA = "ricasim";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI = CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_STATO = CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROPERTIES = CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_PROPERTIES;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE = CostantiControlStation.PARAMETRO_PORTE_TIPO_VALIDAZIONE;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_XSD = CostantiControlStation.PARAMETRO_PORTE_XSD;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MANIFEST = "gestManifest";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_GESTIONE_BODY = "gestBody";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_LOCAL_FORWARD = "localForward";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_STATELESS = "stateless";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_BEHAVIOUR = "behaviour";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE = "descr";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_VIRTUALE = "soggvirt";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_SERVIZIO = "servizio";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_AZIONE = CostantiControlStation.PARAMETRO_AZIONE;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_AZIONI = CostantiControlStation.PARAMETRO_AZIONI;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_NOME_GRUPPO = CostantiControlStation.PARAMETRO_NOME_GRUPPO;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_OLD_NOME_PA = "oldNomePA";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_SCADENZA_CORRELAZIONE_APPLICATIVA = "scadcorr";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE_STATO = CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE_STATO;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE = CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_IDENTIFICATIVO_MESSAGGIO = "idMessaggio";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_IDENTIFICAZIONE = "identificazione";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA_DELEGANTE = "nomePortaDelegante";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_CREAZIONE = "modeCreazione";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_CREAZIONE_CONNETTORE = "modeCreazioneConnettore";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_MAPPING = "mapping";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_SOGGETTO = CostantiControlStation.PARAMETRO_SOGGETTO;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO = CostantiControlStation.PARAMETRO_SERVIZIO_APPLICATIVO_AUTORIZZATO;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED = "forceInterfaceBased";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_AZIONE = "modeaz";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_AZIONE_ID = "azid";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_SERVICE_BINDING = CostantiControlStation.PARAMETRO_SERVICE_BINDING;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_ABILITA = CostantiControlStation.PARAMETRO_ABILITA;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_SCHEDULING = "cmScheduling";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE = ConnettoriCostanti.PARAMETRO_CONNETTORE_MODALITA;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_LIST_AZIONI_READ_ONLY = "listAzioniReadOnly";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_NOME_PROP = "nomeProp";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_MODE = CostantiControlStation.PARAMETRO_MODE_CORRELAZIONE_APPLICATIVA;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML = CostantiControlStation.PARAMETRO_ELEMENTO_XML;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_GESTIONE_IDENTIFICAZIONE_FALLITA = "gif";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_PATTERN = CostantiControlStation.PARAMETRO_PATTERN;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_RIUSO_ID_MESSAGGIO = "riusoIdMessaggio";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_VALORE = "valore";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY = "messageSecurity";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_NOME = "nome";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO = "servizioApplicativo";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_RICEVUTA_ASINCRONA_SIMMETRICA = "ricsim";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_RICEVUTA_ASINCRONA_ASIMMETRICA = "ricasim";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI = CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_STATO = CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROPERTIES = CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_PROPERTIES;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE = CostantiControlStation.PARAMETRO_PORTE_TIPO_VALIDAZIONE;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_XSD = CostantiControlStation.PARAMETRO_PORTE_XSD;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MANIFEST = "gestManifest";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_GESTIONE_BODY = "gestBody";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_LOCAL_FORWARD = "localForward";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_STATELESS = "stateless";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_BEHAVIOUR = "behaviour";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE = "descr";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_VIRTUALE = "soggvirt";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_SERVIZIO = "servizio";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_AZIONE = CostantiControlStation.PARAMETRO_AZIONE;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_AZIONI = CostantiControlStation.PARAMETRO_AZIONI;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_NOME_GRUPPO = CostantiControlStation.PARAMETRO_NOME_GRUPPO;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_OLD_NOME_PA = "oldNomePA";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_SCADENZA_CORRELAZIONE_APPLICATIVA = "scadcorr";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE_STATO = CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE_STATO;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE = CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_IDENTIFICATIVO_MESSAGGIO = "idMessaggio";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_IDENTIFICAZIONE = "identificazione";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA_DELEGANTE = "nomePortaDelegante";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_MODE_CREAZIONE = "modeCreazione";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_MODE_CREAZIONE_CONNETTORE = "modeCreazioneConnettore";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_MAPPING = "mapping";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_SOGGETTO = CostantiControlStation.PARAMETRO_SOGGETTO;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO = CostantiControlStation.PARAMETRO_SERVIZIO_APPLICATIVO_AUTORIZZATO;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED = "forceInterfaceBased";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_MODE_AZIONE = "modeaz";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_AZIONE_ID = "azid";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_SERVICE_BINDING = CostantiControlStation.PARAMETRO_SERVICE_BINDING;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_ABILITA = CostantiControlStation.PARAMETRO_ABILITA;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_SCHEDULING = "cmScheduling";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE = ConnettoriCostanti.PARAMETRO_CONNETTORE_MODALITA;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_LIST_AZIONI_READ_ONLY = "listAzioniReadOnly";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_NOME_PROP = "nomeProp";
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MESSAGE_ENGINE = "gestMessageEngine";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MESSAGE_ENGINE = "gestMessageEngine";
 	
-	public final static String ATTRIBUTO_PORTE_APPLICATIVE_PARENT = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT;
-	public final static int ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_NONE;
-	public final static int ATTRIBUTO_PORTE_APPLICATIVE_PARENT_SOGGETTO = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_SOGGETTO;
-	public final static int ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_CONFIGURAZIONE;
+	public static final String ATTRIBUTO_PORTE_APPLICATIVE_PARENT = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT;
+	public static final int ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_NONE;
+	public static final int ATTRIBUTO_PORTE_APPLICATIVE_PARENT_SOGGETTO = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_SOGGETTO;
+	public static final int ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_CONFIGURAZIONE;
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_MTOM_RICHIESTA = CostantiControlStation.PARAMETRO_MTOM_RICHIESTA;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_MTOM_RISPOSTA = CostantiControlStation.PARAMETRO_MTOM_RISPOSTA;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_MTOM_RICHIESTA = CostantiControlStation.PARAMETRO_MTOM_RICHIESTA;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_MTOM_RISPOSTA = CostantiControlStation.PARAMETRO_MTOM_RISPOSTA;
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_OBBLIGATORIO = CostantiControlStation.PARAMETRO_OBBLIGATORIO;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONTENT_TYPE = CostantiControlStation.PARAMETRO_CONTENT_TYPE;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_OBBLIGATORIO = CostantiControlStation.PARAMETRO_OBBLIGATORIO;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONTENT_TYPE = CostantiControlStation.PARAMETRO_CONTENT_TYPE;
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM_RICHIESTA = CostantiControlStation.PARAMETRO_APPLICA_MTOM_RICHIESTA;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM_RISPOSTA = CostantiControlStation.PARAMETRO_APPLICA_MTOM_RISPOSTA;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM_RICHIESTA = CostantiControlStation.PARAMETRO_APPLICA_MTOM_RICHIESTA;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM_RISPOSTA = CostantiControlStation.PARAMETRO_APPLICA_MTOM_RISPOSTA;
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM = CostantiControlStation.PARAMETRO_PORTE_APPLICA_MTOM;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_APPLICA_MODIFICA = CostantiControlStation.PARAMETRO_APPLICA_MODIFICA;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM = CostantiControlStation.PARAMETRO_PORTE_APPLICA_MTOM;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_APPLICA_MODIFICA = CostantiControlStation.PARAMETRO_APPLICA_MODIFICA;
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME = CostantiControlStation.PARAMETRO_REQUEST_FLOW_PROPERTIES_CONFIG_NAME;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME = CostantiControlStation.PARAMETRO_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_PROPERTIES_CONFIG_NAME = CostantiControlStation.PARAMETRO_PROPERTIES_CONFIG_NAME;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME = CostantiControlStation.PARAMETRO_REQUEST_FLOW_PROPERTIES_CONFIG_NAME;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME = CostantiControlStation.PARAMETRO_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_PROPERTIES_CONFIG_NAME = CostantiControlStation.PARAMETRO_PROPERTIES_CONFIG_NAME;
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_FAULT = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_FAULT;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_FAULT = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_FAULT;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS;
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE = CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE_RISPOSTA = CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE_RISPOSTA;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE_RICHIESTA_HEADER = CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE_RICHIESTA_HEADER;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE_RICHIESTA_PARAMETRO = CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE_RICHIESTA_PARAMETRO;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE_RISPOSTA_HEADER = CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE_RISPOSTA_HEADER;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_FIRST = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_FIRST;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_NOME = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_NOME;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_STATO = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_STATO;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_AZIONI_ALL = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_AZIONI_ALL;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_AZIONI = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_AZIONI;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_CT = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_CT;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_PATTERN = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_PATTERN;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_CONNETTORI = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_CONNETTORI;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_LIST = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_LIST;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REQ_CONVERSIONE_ENABLED = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_ENABLED;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REQ_CONTENT_TYPE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REST_TRANSFORMATION = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_TRANSFORMATION;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REST_METHOD = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_METHOD;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REST_PATH = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_TRANSFORMATION = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_TRANSFORMATION;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_VERSION = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_VERSION;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_ACTION = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ACTION;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_ENVELOPE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE;
-//	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACH = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACH;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE = CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE_RISPOSTA = CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE_RISPOSTA;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE_RICHIESTA_HEADER = CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE_RICHIESTA_HEADER;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE_RICHIESTA_PARAMETRO = CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE_RICHIESTA_PARAMETRO;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE_RISPOSTA_HEADER = CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE_RISPOSTA_HEADER;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_FIRST = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_FIRST;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_NOME = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_NOME;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_STATO = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_STATO;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_AZIONI_ALL = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_AZIONI_ALL;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_AZIONI = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_AZIONI;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_CT = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_CT;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_PATTERN = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_PATTERN;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_CONNETTORI = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_CONNETTORI;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_LIST = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_LIST;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REQ_CONVERSIONE_ENABLED = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_ENABLED;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REQ_CONTENT_TYPE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REST_TRANSFORMATION = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_TRANSFORMATION;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REST_METHOD = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_METHOD;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REST_PATH = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_TRANSFORMATION = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_TRANSFORMATION;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_VERSION = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_VERSION;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_ACTION = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ACTION;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_ENVELOPE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE;
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_NOME = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_NOME;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MIN = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MIN;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MAX = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MAX;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_CT = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_CT;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_PATTERN = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_PATTERN;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_ENABLED = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_ENABLED;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TIPO = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TIPO;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_SOAP_TRANSFORMATION = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_TRANSFORMATION;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_AS_ATTACH = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_AS_ATTACH;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TEMPLATE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TEMPLATE;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_NOME = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_NOME;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MIN = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MIN;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MAX = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MAX;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_CT = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_CT;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_PATTERN = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_PATTERN;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_ENABLED = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_ENABLED;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TIPO = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TIPO;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_SOAP_TRANSFORMATION = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_TRANSFORMATION;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_AS_ATTACH = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_AS_ATTACH;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TEMPLATE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TEMPLATE;
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER_NOME = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_NOME;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER_TIPO = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_TIPO;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER_IDENTIFICAZIONE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_IDENTIFICAZIONE;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER_NOME = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_NOME;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER_TIPO = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_TIPO;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER_IDENTIFICAZIONE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_IDENTIFICAZIONE;
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER_NOME = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_NOME;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER_TIPO = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_TIPO;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER_IDENTIFICAZIONE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_IDENTIFICAZIONE;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER_NOME = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_NOME;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER_TIPO = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_TIPO;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER_IDENTIFICAZIONE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_IDENTIFICAZIONE;
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_VALORE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_VALORE;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_NOME = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_NOME;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_TIPO = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_TIPO;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_IDENTIFICAZIONE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_IDENTIFICAZIONE;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_VALORE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_VALORE;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_NOME = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_NOME;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_TIPO = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_TIPO;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_IDENTIFICAZIONE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_IDENTIFICAZIONE;
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO = "paCMStato";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA = "paCMModCons";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_TIPO = "paCMModConsTipo";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA = "paCMModConsStrategy";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO = "paCMStato";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA = "paCMModCons";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_TIPO = "paCMModConsTipo";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA = "paCMModConsStrategy";
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY = "paCMModConsSticky";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_TIPO_SELETTORE = "paCMModConsStickyType";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_PATTERN = "paCMModConsStickyPattern";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_MAX_AGE = "paCMModConsStickyMaxAge";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY = "paCMModConsSticky";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_TIPO_SELETTORE = "paCMModConsStickyType";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_PATTERN = "paCMModConsStickyPattern";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_MAX_AGE = "paCMModConsStickyMaxAge";
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK = "paCMModConsPHC";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_EXCLUDE_FOR_SECONDS = "paCMModConsPHCexcSec";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK = "paCMModConsPHC";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_EXCLUDE_FOR_SECONDS = "paCMModConsPHCexcSec";
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONSEGNA_CONDIZIONALE = "paCMConsCond";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_IMPLEMENTA_API = "paCMImplAPI";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CONDIZIONALI_ESITO = "paCMNotCondEsito";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE = "paCMEsitiTransazione";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONSEGNA_CONDIZIONALE = "paCMConsCond";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_IMPLEMENTA_API = "paCMImplAPI";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CONDIZIONALI_ESITO = "paCMNotCondEsito";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE = "paCMEsitiTransazione";
 
-	public final static String VALORE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_DA_NOTIFICARE_RICHIESTA = MessaggioDaNotificare.RICHIESTA.toString();
-	public final static String VALORE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_DA_NOTIFICARE_RISPOSTA = MessaggioDaNotificare.RISPOSTA.toString();
-	public final static String VALORE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_DA_NOTIFICARE_ENTRAMBI = MessaggioDaNotificare.ENTRAMBI.toString();
-	public final static String [] VALORI_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_DA_NOTIFICARE = 
+	public static final String VALORE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_DA_NOTIFICARE_RICHIESTA = MessaggioDaNotificare.RICHIESTA.toString();
+	public static final String VALORE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_DA_NOTIFICARE_RISPOSTA = MessaggioDaNotificare.RISPOSTA.toString();
+	public static final String VALORE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_DA_NOTIFICARE_ENTRAMBI = MessaggioDaNotificare.ENTRAMBI.toString();
+	public static final String [] VALORI_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_DA_NOTIFICARE = 
 			new String [] {VALORE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_DA_NOTIFICARE_RICHIESTA, 
 					VALORE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_DA_NOTIFICARE_RISPOSTA,
 					VALORE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_DA_NOTIFICARE_ENTRAMBI};
 	
-	public final static String VALORE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA_USA_QUELLO_DELLA_RICHIESTA = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_TIPO_HTTP_NOTIFICA_USA_QUELLO_DELLA_RICHIESTA;
-	public final static String VALORE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA_DEFAULT_RICHIESTA = VALORE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA_USA_QUELLO_DELLA_RICHIESTA;
-	public final static String VALORE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA_DEFAULT = HttpRequestMethod.POST.name();	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA_USA_QUELLO_DELLA_RICHIESTA = "Usa metodo della richiesta";
-	public final static List<String> VALORI_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA = new ArrayList<String>();
+	public static final String VALORE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA_USA_QUELLO_DELLA_RICHIESTA = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_TIPO_HTTP_NOTIFICA_USA_QUELLO_DELLA_RICHIESTA;
+	public static final String VALORE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA_DEFAULT_RICHIESTA = VALORE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA_USA_QUELLO_DELLA_RICHIESTA;
+	public static final String VALORE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA_DEFAULT = HttpRequestMethod.POST.name();	
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA_USA_QUELLO_DELLA_RICHIESTA = "Usa metodo della richiesta";
+	public static final List<String> VALORI_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA = new ArrayList<>();
 	static {
 		for (HttpRequestMethod metodo : HttpRequestMethod.values()) {
 			VALORI_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA.add(metodo.name());
 		}
 	}
-	public final static List<String> VALORI_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA_RICHIESTA = new ArrayList<String>();
+	public static final List<String> VALORI_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA_RICHIESTA = new ArrayList<String>();
 	static{
 		VALORI_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA_RICHIESTA.add(VALORE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA_USA_QUELLO_DELLA_RICHIESTA);
 		VALORI_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA_RICHIESTA.addAll(VALORI_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA);
 	}
-	public final static List<String> LABELS_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA_RICHIESTA = new ArrayList<String>();
+	public static final List<String> LABELS_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA_RICHIESTA = new ArrayList<String>();
 	static{
 		LABELS_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA_RICHIESTA.add(LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA_USA_QUELLO_DELLA_RICHIESTA);
 		LABELS_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA_RICHIESTA.addAll(VALORI_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA);
 	}
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SELEZIONE_CONNETTORE_BY = "paCMFilterBy";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE = "paCMIdentifCond";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN = "paCMIdConfPattern";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PREFISSO = "paCMIdConfPrefix";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_SUFFISSO = "paCMIdConfSuffix";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_ABORT_TRANSACTION = "paCMcniAbortTransaction";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_DIAGNOSTICO = "paCMcniDiag";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_CONNETTORE = "paCMcniConn";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_ABORT_TRANSACTION = "paCMcntAbortTransaction";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_DIAGNOSTICO = "paCMcntDiag";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_CONNETTORE = "paCMcntConn";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SELEZIONE_CONNETTORE_BY = "paCMFilterBy";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE = "paCMIdentifCond";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN = "paCMIdConfPattern";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PREFISSO = "paCMIdConfPrefix";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_SUFFISSO = "paCMIdConfSuffix";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_ABORT_TRANSACTION = "paCMcniAbortTransaction";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_DIAGNOSTICO = "paCMcniDiag";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_CONNETTORE = "paCMcniConn";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_ABORT_TRANSACTION = "paCMcntAbortTransaction";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_DIAGNOSTICO = "paCMcntDiag";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_CONNETTORE = "paCMcntConn";
 	
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_DESCRIZIONE = "paCMVDescr";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_DATI_GENERALI = "paCMVDatiG";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_CONNETTORE = "paCMVConn";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_FILTRO = "paCMVFiltro";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_DESCRIZIONE = "paCMVDescr";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_DATI_GENERALI = "paCMVDatiG";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_CONNETTORE = "paCMVConn";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_FILTRO = "paCMVFiltro";
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME_SA = "paCMNomeSA";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME = "paCMNome";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DESCRIZIONE = "paCMDescrizione";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRI = "paCMFiltri";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPRIETA_ID = "paCMPropID";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPRIETA_NOME = "paCMPropNome";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPRIETA_VALORE = "paCMPropValore";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LOAD_BALANCE_WEIGHT = "paCMLBWeight";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME_SA = "paCMNomeSA";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME = "paCMNome";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DESCRIZIONE = "paCMDescrizione";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRI = "paCMFiltri";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPRIETA_ID = "paCMPropID";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPRIETA_NOME = "paCMPropNome";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPRIETA_VALORE = "paCMPropValore";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LOAD_BALANCE_WEIGHT = "paCMLBWeight";
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_NOME = "paCMAzNome";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_OLD_NOME = "paCMAzOldNome";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_OPERAZIONE = "paCMAzPatOp";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE = "paCMAzIdentifCond";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN = "paCMAzIdConfPattern";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_PREFISSO = "paCMAzIdConfPrefix";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_SUFFISSO = "paCMAzIdConfSuffix";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_NOME = "paCMAzNome";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_OLD_NOME = "paCMAzOldNome";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_OPERAZIONE = "paCMAzPatOp";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE = "paCMAzIdentifCond";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN = "paCMAzIdConfPattern";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_PREFISSO = "paCMAzIdConfPrefix";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_SUFFISSO = "paCMAzIdConfSuffix";
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODA = "paCMNotCoda";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA = "paCMNotPriorita";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX = "paCMNotPrioritaMax";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CADENZA_RISPEDIZIONE = "paCMNotCadRisp";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_2XX = "paCMNotCodRisp2xx";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_2XX_VALUE = "paCMNotCodRisp2xxVal";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_2XX_VALUE_MIN = "paCMNotCodRisp2xxValMin";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_2XX_VALUE_MAX = "paCMNotCodRisp2xxValMax";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_3XX = "paCMNotCodRisp3xx";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_3XX_VALUE = "paCMNotCodRisp3xxVal";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_3XX_VALUE_MIN = "paCMNotCodRisp3xxValMin";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_3XX_VALUE_MAX = "paCMNotCodRisp3xxValMax";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_4XX = "paCMNotCodRisp4xx";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_4XX_VALUE = "paCMNotCodRisp4xxVal";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_4XX_VALUE_MIN = "paCMNotCodRisp4xxValMin";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_4XX_VALUE_MAX = "paCMNotCodRisp4xxValMax";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_5XX = "paCMNotCodRisp5xx";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_5XX_VALUE = "paCMNotCodRisp5xxVal";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_5XX_VALUE_MIN = "paCMNotCodRisp5xxValMin";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_5XX_VALUE_MAX = "paCMNotCodRisp5xxValMax";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_GESTIONE = "paCMNotGest";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODE = "paCMNotCode";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_ACTOR = "paCMNotActor";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_MESSAGE = "paCMNotMessage";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODA = "paCMNotCoda";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA = "paCMNotPriorita";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX = "paCMNotPrioritaMax";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CADENZA_RISPEDIZIONE = "paCMNotCadRisp";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_2XX = "paCMNotCodRisp2xx";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_2XX_VALUE = "paCMNotCodRisp2xxVal";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_2XX_VALUE_MIN = "paCMNotCodRisp2xxValMin";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_2XX_VALUE_MAX = "paCMNotCodRisp2xxValMax";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_3XX = "paCMNotCodRisp3xx";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_3XX_VALUE = "paCMNotCodRisp3xxVal";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_3XX_VALUE_MIN = "paCMNotCodRisp3xxValMin";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_3XX_VALUE_MAX = "paCMNotCodRisp3xxValMax";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_4XX = "paCMNotCodRisp4xx";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_4XX_VALUE = "paCMNotCodRisp4xxVal";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_4XX_VALUE_MIN = "paCMNotCodRisp4xxValMin";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_4XX_VALUE_MAX = "paCMNotCodRisp4xxValMax";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_5XX = "paCMNotCodRisp5xx";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_5XX_VALUE = "paCMNotCodRisp5xxVal";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_5XX_VALUE_MIN = "paCMNotCodRisp5xxValMin";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_5XX_VALUE_MAX = "paCMNotCodRisp5xxValMax";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_GESTIONE = "paCMNotGest";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODE = "paCMNotCode";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_ACTOR = "paCMNotActor";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_MESSAGE = "paCMNotMessage";
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_TIPO_MESSAGGIO_DA_NOTIFICARE = "paCMNotMsgTypeNotify";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_TIPO_HTTP_NOTIFICA = "paCMNotHttpTypeNotify";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_TIPO_MESSAGGIO_DA_NOTIFICARE = "paCMNotMsgTypeNotify";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_INIETTA_CONTESTO_SINCRONO = "paCMNotIniettaCtxNotify";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_TIPO_HTTP_NOTIFICA = "paCMNotHttpTypeNotify";
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRO_HIDDEN_TAB_SELEZIONATO = "paCMTabSelezionato";
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRO_HIDDEN_TAB_SELEZIONATO = "paCMTabSelezionato";
 	
 	
 	/* LABEL PARAMETRI */
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ID = "Id";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_STATO_PORTA = "Stato";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO = "IdSogg";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ID_CORRELAZIONE_APPLICATIVA = "idCorr";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTI = "Soggetti";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO = "Servizio";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME = "Nome";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TEMPLATE = "Template";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_URL_INVOCAZIONE = "URL";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_BASE_URL_INVOCAZIONE = "Base URL";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE = "Configurazione";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE = "Opzioni Avanzate";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE_DI = "Opzioni Avanzate di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE = "Descrizione";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI_EROGATORI = "Applicativi Erogatori";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_EROGATORE = "Applicativo Erogatore";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_VALORE = "Valore";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ESPRESSIONE_REGOLARE = ModalitaIdentificazione.URL_BASED.getLabelParametro();
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTENT_PATTERN = ModalitaIdentificazione.CONTENT_BASED.getLabelParametro();
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO = "Applicativo Erogatore";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI = "Applicativi Erogatori";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE = CostantiLabel.LABEL_CONNETTORE;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI = "Connettori";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_VERIFICA_CONNETTORE = CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_CONNETTORI_MULTIPLI = CostantiControlStation.LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ELENCO_CONNETTORI_MULTIPLI = CostantiControlStation.LABEL_ELENCO_CONNETTORI_MULTIPLI;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DI = "Connettore di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DEFAULT = "Connettore Default";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DEFAULT_DI = "Connettore Default di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO = "Connettore Ridefinito";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO_DI = "Connettore Ridefinito di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI = "Ruoli";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SCOPE = "Scope";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES = "Propriet&agrave;";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES_CONFIG_DI = "Propriet&agrave; di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTE_APPLICATIVE_DI = "Porte Applicative di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_CONFIG_DI = "Applicativi Erogatori di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_CONFIG = "Applicativi Erogatori";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_CONFIG_DI = "Soggetti di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_CONFIG = "Soggetti";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_APPLICATIVI_CONFIG_DI = "Applicativi di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_APPLICATIVI_CONFIG = "Applicativi";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI_CONFIG_DI = "Ruoli di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI_CONFIG = "Ruoli";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SCOPE_CONFIG_DI = "Scope di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SCOPE_CONFIG = "Scope";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MESSAGGIO = "Trattamento Messaggio";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY = "Sicurezza Messaggio";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_CONFIG_DI = "Sicurezza Messaggio di ";
-//	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_DI = "Sicurezza Messaggio request-flow di ";
-//	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_DI = "Sicurezza Messaggio response-flow di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_DI = "Parametri della Richiesta";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_DI = "Parametri della Risposta";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG = "Richiesta - Schema Sicurezza";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG = "Risposta - Schema Sicurezza";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM = "MTOM";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_CONFIG_DI = "Configurazione MTOM di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_CONFIG = "Configurazione MTOM";
-//	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_REQUEST_FLOW_DI = "MTOM request-flow di ";
-//	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_RESPONSE_FLOW_DI = "MTOM response-flow di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_REQUEST_FLOW_DI = "Parametri della Richiesta";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_RESPONSE_FLOW_DI = "Parametri della Risposta";
-//	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_CONFIG_DI = "Correlazione Applicativa di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_CONFIG_DI = "Tracciamento di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRACCIAMENTO_CONFIG_DI = "Tracciamento di ";
-//	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI = "Correlazioni Applicative Richiesta di ";
-//	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_RISPOSTA_DI = "Correlazioni Applicative per la risposta di ";
-//	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI = "Regole della Richiesta";
-//	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_RISPOSTA_DI = "Regole della Risposta";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI = "Correlazione Applicativa Richiesta";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_RISPOSTA_DI = "Correlazione Applicativa Risposta";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_IDENTIFICAZIONE_FALLITA = "Identificazione fallita";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_IDENTIFICAZIONE = "Modalit&agrave; identificazione";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML = CostantiControlStation.LABEL_PARAMETRO_PORTE_ELEMENTO_XML;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML_BR = CostantiControlStation.LABEL_PARAMETRO_PORTE_ELEMENTO_XML+"<BR/>(Il campo vuoto indica qualsiasi elemento)";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML_NOTE = "Il campo vuoto indica qualsiasi elemento";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI = "Autorizzazione Contenuti";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI = CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_CONFIG_DI = CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_CONFIG_DI;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE = CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO_VALIDAZIONE;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE = CostantiControlStation.LABEL_INTEGRAZIONE;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE_STATO = CostantiControlStation.LABEL_INTEGRAZIONE_STATO;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_METADATI = CostantiControlStation.LABEL_METADATI;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_STATELESS = CostantiControlStation.LABEL_STATELESS;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_BEHAVIOUR = CostantiControlStation.LABEL_BEHAVIOUR;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOAP_WITH_ATTACHMENTS = "SOAP With Attachments";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_BODY = "Gestione Body";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MANIFEST = CostantiControlStation.LABEL_GESTIONE_MANIFEST;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_ASINCRONA = "Gestione Asincrona";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RICEVUTA_ASINCRONA_SIMMETRICA = CostantiControlStation.LABEL_RICEVUTA_ASINCRONA_SIMMETRICA;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RICEVUTA_ASINCRONA_ASIMMETRICA = CostantiControlStation.LABEL_RICEVUTA_ASINCRONA_ASIMMETRICA;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_VIRTUALE = "Soggetto Virtuale";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_KEYWORD ="Keyword";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_BR_RICHIESTA = "Correlazione applicativa<BR/>Richiesta";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_BR_RISPOSTA = "Correlazione applicativa<BR/>Risposta";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RICHIESTA = "Identificazione Richiesta";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RISPOSTA = "Identificazione Risposta";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA = "Correlazione Applicativa";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRACCIAMENTO = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_ABILITATA = "abilitato";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_DISABILITATA = "disabilitato";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO = CostantiControlStation.LABEL_PARAMETRO_SOGGETTO;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_ABILITATO = "abilitato";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_DISABILITATO = "disabilitato";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RISULTATI_RICERCA = "Risultati Ricerca";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_STATO = CostantiControlStation.LABEL_PARAMETRO_PORTE_STATO;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TIPO = CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM = CostantiControlStation.LABEL_PARAMETRO_APPLICA_MTOM;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ACCETTA_MTOM = CostantiControlStation.LABEL_PARAMETRO_PORTE_ACCETTA_MTOM;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI = "Controllo Accessi";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI_CONFIG_DI = "Controllo Accessi di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AUTENTICAZIONE_PROPRIETA = "Propriet&agrave; Autenticazione";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AUTENTICAZIONE_PROPRIETA_DI = "Propriet&agrave; Autenticazione di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_PROPRIETA = "Propriet&agrave; Autorizzazione";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_PROPRIETA_DI = "Propriet&agrave; Autorizzazione di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTO_PROPRIETA = "Propriet&agrave; Autorizzazione Contenuti";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTO_PROPRIETA_DI = "Propriet&agrave; Autorizzazione Contenuti di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ABILITATO = "Abilitato";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO = "Disabilitato";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT = "Default";
-	//public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_AZIONE_DEFAULT = "*";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_AZIONE_DEFAULT = "default";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_AZIONE_SPECIFIC_PREFIX = "Specific";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE = "Modalità";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA = "Eredita Da";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA = "Nuova";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_GRUPPO = "Gruppo";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED_LEFT = CostantiControlStation.LABEL_PARAMETRO_FORCE_INTERFACE_BASED_LEFT;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED_RIGHT = CostantiControlStation.LABEL_PARAMETRO_FORCE_INTERFACE_BASED_RIGHT;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTA_DELEGANTE = "Porta Delegante";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RICERCA_PORTA_AZIONE_DELEGATA = "Ricerca Azione Delegata";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_CONNETTORE = "Ridefinisci Connettore";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_RIDEFINITO = ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_RIDEFINITO;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_DEFAULT = ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_DEFAULT;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME_GRUPPO = CostantiControlStation.LABEL_PARAMETRO_PORTE_NOME_GRUPPO;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ELENCO_AZIONI_GRUPPI_PREFIX = "Elenco ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_ID = "Id";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_STATO_PORTA = "Stato";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO = "IdSogg";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_ID_CORRELAZIONE_APPLICATIVA = "idCorr";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTI = "Soggetti";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO = "Servizio";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME = "Nome";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TEMPLATE = "Template";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_URL_INVOCAZIONE = "URL";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_BASE_URL_INVOCAZIONE = "Base URL";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE = CONFIGURAZIONE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE = "Opzioni Avanzate";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE_DI = "Opzioni Avanzate di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE = "Descrizione";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI_EROGATORI = "Applicativi Erogatori";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_EROGATORE = "Applicativo Erogatore";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_VALORE = "Valore";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_ESPRESSIONE_REGOLARE = ModalitaIdentificazione.URL_BASED.getLabelParametro();
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTENT_PATTERN = ModalitaIdentificazione.CONTENT_BASED.getLabelParametro();
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO = "Applicativo Erogatore";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI = "Applicativi Erogatori";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE = CostantiLabel.LABEL_CONNETTORE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI = "Connettori";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_VERIFICA_CONNETTORE = CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_CONNETTORI_MULTIPLI = CostantiControlStation.LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_ELENCO_CONNETTORI_MULTIPLI = CostantiControlStation.LABEL_ELENCO_CONNETTORI_MULTIPLI;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DI = "Connettore di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DEFAULT = "Connettore Default";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DEFAULT_DI = "Connettore Default di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO = "Connettore Ridefinito";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO_DI = "Connettore Ridefinito di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI = "Ruoli";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_SCOPE = "Scope";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES = "Propriet&agrave;";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES_CONFIG_DI = "Propriet&agrave; di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTE_APPLICATIVE_DI = "Porte Applicative di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_CONFIG_DI = "Applicativi Erogatori di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_CONFIG = "Applicativi Erogatori";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_CONFIG_DI = "Soggetti di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_CONFIG = "Soggetti";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_APPLICATIVI_CONFIG_DI = "Applicativi di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_APPLICATIVI_CONFIG = "Applicativi";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI_CONFIG_DI = "Ruoli di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI_CONFIG = "Ruoli";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_SCOPE_CONFIG_DI = "Scope di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_SCOPE_CONFIG = "Scope";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MESSAGGIO = "Trattamento Messaggio";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY = "Sicurezza Messaggio";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_CONFIG_DI = "Sicurezza Messaggio di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_DI = "Parametri della Richiesta";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_DI = "Parametri della Risposta";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG = "Richiesta - Schema Sicurezza";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG = "Risposta - Schema Sicurezza";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM = "MTOM";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_CONFIG_DI = "Configurazione MTOM di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_CONFIG = "Configurazione MTOM";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_REQUEST_FLOW_DI = "Parametri della Richiesta";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_RESPONSE_FLOW_DI = "Parametri della Risposta";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_CONFIG_DI = "Tracciamento di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRACCIAMENTO_CONFIG_DI = "Tracciamento di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI = "Correlazione Applicativa Richiesta";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_RISPOSTA_DI = "Correlazione Applicativa Risposta";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_IDENTIFICAZIONE_FALLITA = "Identificazione fallita";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_IDENTIFICAZIONE = "Modalit&agrave; identificazione";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML = CostantiControlStation.LABEL_PARAMETRO_PORTE_ELEMENTO_XML;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML_BR = CostantiControlStation.LABEL_PARAMETRO_PORTE_ELEMENTO_XML+"<BR/>(Il campo vuoto indica qualsiasi elemento)";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML_NOTE = "Il campo vuoto indica qualsiasi elemento";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI = "Autorizzazione Contenuti";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI = CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_CONFIG_DI = CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_CONFIG_DI;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE = CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO_VALIDAZIONE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE = CostantiControlStation.LABEL_INTEGRAZIONE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE_STATO = CostantiControlStation.LABEL_INTEGRAZIONE_STATO;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_METADATI = CostantiControlStation.LABEL_METADATI;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_STATELESS = CostantiControlStation.LABEL_STATELESS;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_BEHAVIOUR = CostantiControlStation.LABEL_BEHAVIOUR;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOAP_WITH_ATTACHMENTS = "SOAP With Attachments";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_BODY = "Gestione Body";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MANIFEST = CostantiControlStation.LABEL_GESTIONE_MANIFEST;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_ASINCRONA = "Gestione Asincrona";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_RICEVUTA_ASINCRONA_SIMMETRICA = CostantiControlStation.LABEL_RICEVUTA_ASINCRONA_SIMMETRICA;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_RICEVUTA_ASINCRONA_ASIMMETRICA = CostantiControlStation.LABEL_RICEVUTA_ASINCRONA_ASIMMETRICA;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_VIRTUALE = "Soggetto Virtuale";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_KEYWORD ="Keyword";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_BR_RICHIESTA = "Correlazione applicativa<BR/>Richiesta";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_BR_RISPOSTA = "Correlazione applicativa<BR/>Risposta";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RICHIESTA = "Identificazione Richiesta";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RISPOSTA = "Identificazione Risposta";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA = "Correlazione Applicativa";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRACCIAMENTO = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_ABILITATA = "abilitato";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_DISABILITATA = "disabilitato";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO = CostantiControlStation.LABEL_PARAMETRO_SOGGETTO;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_ABILITATO = "abilitato";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_DISABILITATO = "disabilitato";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_RISULTATI_RICERCA = "Risultati Ricerca";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_STATO = CostantiControlStation.LABEL_PARAMETRO_PORTE_STATO;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TIPO = CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM = CostantiControlStation.LABEL_PARAMETRO_APPLICA_MTOM;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_ACCETTA_MTOM = CostantiControlStation.LABEL_PARAMETRO_PORTE_ACCETTA_MTOM;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI = "Controllo Accessi";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI_CONFIG_DI = "Controllo Accessi di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_AUTENTICAZIONE_PROPRIETA = "Propriet&agrave; Autenticazione";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_AUTENTICAZIONE_PROPRIETA_DI = "Propriet&agrave; Autenticazione di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_PROPRIETA = "Propriet&agrave; Autorizzazione";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_PROPRIETA_DI = "Propriet&agrave; Autorizzazione di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTO_PROPRIETA = "Propriet&agrave; Autorizzazione Contenuti";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTO_PROPRIETA_DI = "Propriet&agrave; Autorizzazione Contenuti di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_ABILITATO = "Abilitato";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO = "Disabilitato";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT = "Default";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_AZIONE_DEFAULT = "default";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_AZIONE_SPECIFIC_PREFIX = "Specific";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE = "Modalità";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA = "Eredita Da";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA = "Nuova";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_GRUPPO = "Gruppo";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED_LEFT = CostantiControlStation.LABEL_PARAMETRO_FORCE_INTERFACE_BASED_LEFT;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED_RIGHT = CostantiControlStation.LABEL_PARAMETRO_FORCE_INTERFACE_BASED_RIGHT;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTA_DELEGANTE = "Porta Delegante";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_RICERCA_PORTA_AZIONE_DELEGATA = "Ricerca Azione Delegata";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_CONNETTORE = "Ridefinisci Connettore";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_RIDEFINITO = ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_RIDEFINITO;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_DEFAULT = ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_DEFAULT;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME_GRUPPO = CostantiControlStation.LABEL_PARAMETRO_PORTE_NOME_GRUPPO;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_ELENCO_AZIONI_GRUPPI_PREFIX = "Elenco ";
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_ENGINE = "Message Engine";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MESSAGE_ENGINE = CostantiControlStation.LABEL_GESTIONE_MESSAGE_ENGINE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_ENGINE = "Message Engine";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MESSAGE_ENGINE = CostantiControlStation.LABEL_GESTIONE_MESSAGE_ENGINE;
 
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT = ModalitaIdentificazione.REGISTER_BASED.getLabel();
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED = ModalitaIdentificazione.HEADER_BASED.getLabel();
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_URL_BASED = ModalitaIdentificazione.URL_BASED.getLabel();
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_CONTENT_BASED = ModalitaIdentificazione.CONTENT_BASED.getLabel();
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_INPUT_BASED = ModalitaIdentificazione.INPUT_BASED.getLabel();
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED = ModalitaIdentificazione.SOAP_ACTION_BASED.getLabel();
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_WSDL_BASED = ModalitaIdentificazione.INTERFACE_BASED.getLabel();
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED = ModalitaIdentificazione.PROTOCOL_BASED.getLabel();
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT = ModalitaIdentificazione.REGISTER_BASED.getLabel();
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED = ModalitaIdentificazione.HEADER_BASED.getLabel();
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_URL_BASED = ModalitaIdentificazione.URL_BASED.getLabel();
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_CONTENT_BASED = ModalitaIdentificazione.CONTENT_BASED.getLabel();
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_INPUT_BASED = ModalitaIdentificazione.INPUT_BASED.getLabel();
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED = ModalitaIdentificazione.SOAP_ACTION_BASED.getLabel();
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_WSDL_BASED = ModalitaIdentificazione.INTERFACE_BASED.getLabel();
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED = ModalitaIdentificazione.PROTOCOL_BASED.getLabel();
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE = CostantiControlStation.LABEL_REGISTRAZIONE_MESSAGGI;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE_CONFIG_DI = CostantiControlStation.LABEL_REGISTRAZIONE_MESSAGGI_CONFIG_DI;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE = CostantiControlStation.LABEL_REGISTRAZIONE_MESSAGGI;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE_CONFIG_DI = CostantiControlStation.LABEL_REGISTRAZIONE_MESSAGGI_CONFIG_DI;
 	
-	public final static String LABEL_PORTE_APPLICATIVE_ARCHIVIO_MESSAGGI_CON_SUCCESSO = CostantiControlStation.LABEL_REGISTRAZIONE_MESSAGGI_MODIFICATA_CON_SUCCESSO;
+	public static final String LABEL_PORTE_APPLICATIVE_ARCHIVIO_MESSAGGI_CON_SUCCESSO = CostantiControlStation.LABEL_REGISTRAZIONE_MESSAGGI_MODIFICATA_CON_SUCCESSO;
 	
-	public final static String LABEL_DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME = CostantiControlStation.LABEL_CONFIGURAZIONE_PROPERTIES_CONFIGURAZIONE_MANUALE;
-	public final static String LABEL_DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME = CostantiControlStation.LABEL_CONFIGURAZIONE_PROPERTIES_CONFIGURAZIONE_MANUALE;
+	public static final String LABEL_DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME = CostantiControlStation.LABEL_CONFIGURAZIONE_PROPERTIES_CONFIGURAZIONE_MANUALE;
+	public static final String LABEL_DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME = CostantiControlStation.LABEL_CONFIGURAZIONE_PROPERTIES_CONFIGURAZIONE_MANUALE;
 
-	public final static String LABEL_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO = CostantiControlStation.LABEL_NESSUNO;
-	public final static String LABEL_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO = CostantiControlStation.LABEL_NESSUNO;
+	public static final String LABEL_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO = CostantiControlStation.LABEL_NESSUNO;
+	public static final String LABEL_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO = CostantiControlStation.LABEL_NESSUNO;
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORS_CONFIGURAZIONE = CostantiControlStation.LABEL_CONFIGURAZIONE_CORS;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORS_CONFIGURAZIONE_CONFIG_DI = CostantiControlStation.LABEL_CONFIGURAZIONE_CORS_DI;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORS_CONFIGURAZIONE = CostantiControlStation.LABEL_CONFIGURAZIONE_CORS;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORS_CONFIGURAZIONE_CONFIG_DI = CostantiControlStation.LABEL_CONFIGURAZIONE_CORS_DI;
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CANALE = CostantiControlStation.LABEL_CONFIGURAZIONE_CANALE;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CANALE_CONFIG_DI = CostantiControlStation.LABEL_CONFIGURAZIONE_CANALE_DI;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CANALE = CostantiControlStation.LABEL_CONFIGURAZIONE_CANALE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CANALE_CONFIG_DI = CostantiControlStation.LABEL_CONFIGURAZIONE_CANALE_DI;
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_VERIFICA_CONNETTORE_TITLE = CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_TITLE;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_VERIFICA_CONNETTORE_CONFIGURAZIONE = CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_VERIFICA_CONNETTORE_CONFIGURAZIONE_CONFIG_DI = CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_DI;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_VERIFICA_CONNETTORE_TITLE = CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_TITLE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_VERIFICA_CONNETTORE_CONFIGURAZIONE = CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_VERIFICA_CONNETTORE_CONFIGURAZIONE_CONFIG_DI = CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_DI;
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE = CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_CONFIG_DI = CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_DI;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE = CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_CONFIG_DI = CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_DI;
 	
-	public final static String LABEL_PORTE_APPLICATIVE_CORS_CON_SUCCESSO = CostantiControlStation.LABEL_GESTIONE_CORS_MODIFICATA_CON_SUCCESSO;
-	public final static String LABEL_PORTE_APPLICATIVE_RESPONSE_CACHING_CON_SUCCESSO = CostantiControlStation.LABEL_GESTIONE_RESPONSE_CACHING_MODIFICATA_CON_SUCCESSO;
-	public final static String LABEL_PORTE_APPLICATIVE_CANALE_CON_SUCCESSO = CostantiControlStation.LABEL_GESTIONE_CANALE_MODIFICATA_CON_SUCCESSO;
+	public static final String LABEL_PORTE_APPLICATIVE_CORS_CON_SUCCESSO = CostantiControlStation.LABEL_GESTIONE_CORS_MODIFICATA_CON_SUCCESSO;
+	public static final String LABEL_PORTE_APPLICATIVE_RESPONSE_CACHING_CON_SUCCESSO = CostantiControlStation.LABEL_GESTIONE_RESPONSE_CACHING_MODIFICATA_CON_SUCCESSO;
+	public static final String LABEL_PORTE_APPLICATIVE_CANALE_CON_SUCCESSO = CostantiControlStation.LABEL_GESTIONE_CANALE_MODIFICATA_CON_SUCCESSO;
 	
-	public final static String LABEL_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE = CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE;
-	public final static String LABEL_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE_DI = CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE_DI;
+	public static final String LABEL_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE = CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE;
+	public static final String LABEL_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE_DI = CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE_DI;
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_FAULT = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_FAULT;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_FAULT = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_FAULT;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS;
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI = CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_DI = CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_DI;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA = CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_TRASFORMAZIONE = CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_TRASFORMAZIONE;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER ;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADERS = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADERS ;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADERS_DI = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADERS_DI;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO ;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRI = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRI ;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRI_DI = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRI_DI;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI = CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_DI = CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_DI;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA = CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_TRASFORMAZIONE = CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_TRASFORMAZIONE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER ;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADERS = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADERS ;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADERS_DI = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADERS_DI;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO ;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRI = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRI ;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRI_DI = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRI_DI;
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTE;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_DI = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTE_DI;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADERS = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADERS ;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADERS_DI = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADERS_DI;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_DI = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTE_DI;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADERS = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADERS ;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADERS_DI = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADERS_DI;
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_POSIZIONE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_NOME = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_NOME;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_STATO = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_STATO;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_AZIONI = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_AZIONI;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_CT = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_CT;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_PATTERN = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_PATTERN;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_CONNETTORI = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_CONNETTORI;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REQ_CONVERSIONE_ENABLED = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_ENABLED;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REQ_CONTENT_TYPE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REST_TRANSFORMATION = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_TRANSFORMATION;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REST_METHOD = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_METHOD;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REST_PATH = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_TRANSFORMATION = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_TRANSFORMATION;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_VERSION = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_VERSION;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_ACTION = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ACTION;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_ENVELOPE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACH = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACH;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_POSIZIONE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_NOME = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_NOME;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_STATO = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_STATO;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_AZIONI = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_AZIONI;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_CT = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_CT;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_PATTERN = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_PATTERN;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_CONNETTORI = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_CONNETTORI;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REQ_CONVERSIONE_ENABLED = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_ENABLED;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REQ_CONTENT_TYPE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REST_TRANSFORMATION = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_TRANSFORMATION;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REST_METHOD = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_METHOD;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REST_PATH = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_TRANSFORMATION = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_TRANSFORMATION;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_VERSION = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_VERSION;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_ACTION = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ACTION;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_ENVELOPE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACH = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACH;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE;
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MIN = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MIN;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MAX = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MAX;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_CT = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_CT;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_PATTERN = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_PATTERN;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_ENABLED = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_ENABLED;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TIPO = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TIPO;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_AS_ATTACH = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_AS_ATTACH;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TEMPLATE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TEMPLATE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MIN = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MIN;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MAX = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MAX;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_CT = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_CT;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_PATTERN = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_PATTERN;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_ENABLED = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_ENABLED;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TIPO = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TIPO;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_AS_ATTACH = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_AS_ATTACH;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TEMPLATE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TEMPLATE;
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER_NOME = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_NOME;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER_TIPO = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_TIPO;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER_NOME = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_NOME;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER_TIPO = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_TIPO;
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER_NOME = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_NOME;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER_TIPO = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_TIPO;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER_NOME = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_NOME;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER_TIPO = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_TIPO;
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_VALORE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_VALORE;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_NOME = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_NOME;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_TIPO = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_TIPO;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_VALORE = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_VALORE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_NOME = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_NOME;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_TIPO = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_TIPO;
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO_CONFIG_DI = "Soggetti di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO_CONFIG = "Soggetti";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICATIVI_CONFIG_DI = "Applicativi di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICATIVI_CONFIG = "Applicativi";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO_CONFIG_DI = "Soggetti di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO_CONFIG = "Soggetti";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICATIVI_CONFIG_DI = "Applicativi di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICATIVI_CONFIG = "Applicativi";
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_DI = "Configurazione Connettori Multipli di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG = "Configurazione Connettori Multipli";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_DI = "Configurazione Connettori Multipli di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG = "Configurazione Connettori Multipli";
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DI = "Connettori Multipli di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI = "Connettori Multipli";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DI = "Connettori Multipli di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI = "Connettori Multipli";
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DATI_GENERALI = "Dati Generali";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME = "Nome";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DESCRIZIONE = "Descrizione";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE = "Connettore";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRI = "Filtri";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPRIETA = "Propriet&agrave;";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPRIETA_DI = "Propriet&agrave; di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LOAD_BALANCE = "Load Balance";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO = "Stato";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LOAD_BALANCE_WEIGHT = "Weight";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA = "Modalit&agrave; Consegna";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_TIPO = "Tipo Personalizzato";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_PROPRIETA = "Propriet&agrave;";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA = "Strategia";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DATI_GENERALI = "Dati Generali";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME = "Nome";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DESCRIZIONE = "Descrizione";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE = "Connettore";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRI = "Filtri";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPRIETA = "Propriet&agrave;";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPRIETA_DI = "Propriet&agrave; di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LOAD_BALANCE = "Load Balance";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO = "Stato";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LOAD_BALANCE_WEIGHT = "Weight";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA = "Modalit&agrave; Consegna";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_TIPO = "Tipo Personalizzato";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_PROPRIETA = "Propriet&agrave;";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA = "Strategia";
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY = "Sessione Sticky";
-	public final static String LABEL_RIGHT_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY = "Tutte le richieste che presentano lo stesso id di sessione vengono servite tramite lo stesso connettore";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_INFO = "Se abilitato, viene ricercato nella richiesta pervenuta l'identificativo di sessione.<BR/>"+
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY = "Sessione Sticky";
+	public static final String LABEL_RIGHT_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY = "Tutte le richieste che presentano lo stesso id di sessione vengono servite tramite lo stesso connettore";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_INFO = "Se abilitato, viene ricercato nella richiesta pervenuta l'identificativo di sessione.<BR/>"+
 	"Se l'identificativo di sessione si riferisce ad una nuova sessione viene selezionato un connettore rispetto alla strategia indicata.<BR/>"+
 	"Tutte le successive richieste relative al medesimo identificativo di sessione vengono servite con il medesimo connettore.";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_TIPO_SELETTORE = "Identificativo Sessione";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_MAX_AGE = "Max Age";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_MAX_AGE_NOTE = "È possibile indicare la durata della sessione in secondi";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_TIPO_SELETTORE = "Identificativo Sessione";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_MAX_AGE = "Max Age";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_MAX_AGE_NOTE = "È possibile indicare la durata della sessione in secondi";
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK = "Health Check";
-	public final static String LABEL_TITLE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK = "Passive Health Check";
-	public final static String LABEL_RIGHT_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK = "Un utilizzo di un connettore che provoca un errore di connettività comporta la sua esclusione dal pool";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_INFO = "Permette di attivare un 'Passive Health Check' per verificare la connettività verso i connettori configurati.<BR/>"+
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK = "Health Check";
+	public static final String LABEL_TITLE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK = "Passive Health Check";
+	public static final String LABEL_RIGHT_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK = "Un utilizzo di un connettore che provoca un errore di connettività comporta la sua esclusione dal pool";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_INFO = "Permette di attivare un 'Passive Health Check' per verificare la connettività verso i connettori configurati.<BR/>"+
 	"Un utilizzo di un connettore che provoca un errore di connettività comporta la sua esclusione dal pool dei connettori utilizzabili per un intervallo di tempo configurabile.<BR/>"+
 	"L'esclusione dei connettori viene meno nell'istante in cui tutti i connettori del pool risulterebbero esclusi a causa di errori di connettività; in questa circostanza tutti i connettori ritornano a competere rispetto alla strategia indicata."; 
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_EXCLUDE_FOR_SECONDS = "Intervallo Esclusione";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_EXCLUDE_FOR_SECONDS_NOTE = "Indicare in secondi la durata dell'esclusione del connettore dal pool";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_EXCLUDE_FOR_SECONDS = "Intervallo Esclusione";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_EXCLUDE_FOR_SECONDS_NOTE = "Indicare in secondi la durata dell'esclusione del connettore dal pool";
 
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_LEFT = "Consegna Condizionale";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_NOTIFICA_LEFT = "Connettori";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_SINGOLO_CONNETTORE_RIGHT = "La consegna avviene sul connettore che corrisponde alla condizione indicata";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_PIU_CONNETTORI_RIGHT = "La consegna avviene solamente sui connettori che corrispondono alla condizione indicata";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_NOTIFICHE_CONNETTORI_RIGHT = "Solo i connettori che corrispondono alla condizione indicata vengono utilizzati per le notifiche";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_LOAD_BALANCER_RIGHT = "Solo i connettori che corrispondono alla condizione indicata concorrono per la consegna";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_CONDIZIONALITA = "Configurazione Condizionalit&agrave;";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SEZIONE_NOTIFICHE = "Notifiche Condizionali";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_IMPLEMENTA_API = "Connettore Implementa API";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CONDIZIONALI_ESITO = "Esito";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CONDIZIONALI_ESITO_RIGHT = "Le notifiche avvengono solamente se la transazione termina con uno degli esiti indicati";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE_LABEL = "";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODA = "Coda";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA = "Priorita";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_COMPORTAMENTO = "";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_LABEL = "LABEL";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_PERCENTUALE = "PERCENTUALE";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_INFO_NESSUNA_PRIORITA = "<b>"+LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_LABEL+"</b>: nessuna risorsa garantita per la consegna della notifica";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_INFO_PRIORITA = "<b>"+LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_LABEL+"</b>: il "+LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_PERCENTUALE+"% dei threads di consegna sono garantiti";	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX_LEFT = "Consegna Immediata";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX_RIGHT = "Il 100% dei threads di consegna sono garantiti";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX_NOTE = "<b>Attenzione</b>: da utilizzare in situazioni di emergenza";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX_INFO = "Da utilizzare solamente in situazioni di emergenza, permette di associare l'intero pool di threads dedicato alla consegna delle notifiche per questo connettore bypassando il sistema di priorità.";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_REGOLE_CONSEGNA = "Regole di Consegna";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_REGOLE_CONSEGNA_NOTIFICA_MODALITA = "Notifica";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_REGOLE_CONSEGNA_NOTIFICA = "Regole di Consegna della Notifica";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PRIORITA_CONSEGNA_NOTIFICA = "Priorità di Consegna della Notifica";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP = "Codice Risposta HTTP";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_SOAP_FAULT = "SOAP Fault";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PROBLEM_DETAIL = "Problem Detail";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CADENZA_RISPEDIZIONE = "Cadenza Rispedizione";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CADENZA_RISPEDIZIONE_NOTE = "Indicare i minuti dopo i quali verr&agrave; riprovata una consegna precedentemente fallita";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_2XX = "2xx";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_3XX = "3xx";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_4XX = "4xx";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_5XX = "5xx";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_GESTIONE = "Gestione";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_GESTIONE_CUSTOM_NOTE = "Indicare almeno uno tra: {0}";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODE = GestioneConsegnaNotificheUtils.LABEL_CODE;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_ACTOR = GestioneConsegnaNotificheUtils.LABEL_ACTOR;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_MESSAGE = GestioneConsegnaNotificheUtils.LABEL_MESSAGE;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_TYPE = GestioneConsegnaNotificheUtils.LABEL_TYPE;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_STATUS = GestioneConsegnaNotificheUtils.LABEL_STATUS;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CLAIMS = GestioneConsegnaNotificheUtils.LABEL_CLAIMS;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CLAIMS_NOTE  = "Indicare per riga i claims richiesti (nome=valore)";//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_NOTE;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CONSEGNA_FALLITA = "Consegna Notifica Fallita";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_LEFT = "Consegna Condizionale";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_NOTIFICA_LEFT = "Connettori";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_SINGOLO_CONNETTORE_RIGHT = "La consegna avviene sul connettore che corrisponde alla condizione indicata";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_PIU_CONNETTORI_RIGHT = "La consegna avviene solamente sui connettori che corrispondono alla condizione indicata";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_NOTIFICHE_CONNETTORI_RIGHT = "Solo i connettori che corrispondono alla condizione indicata vengono utilizzati per le notifiche";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_LOAD_BALANCER_RIGHT = "Solo i connettori che corrispondono alla condizione indicata concorrono per la consegna";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_CONDIZIONALITA = "Configurazione Condizionalit&agrave;";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SEZIONE_NOTIFICHE = "Notifiche Condizionali";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_IMPLEMENTA_API = "Connettore Implementa API";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CONDIZIONALI_ESITO = "Esito";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CONDIZIONALI_ESITO_RIGHT = "Le notifiche avvengono solamente se la transazione termina con uno degli esiti indicati";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE_LABEL = "";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODA = "Coda";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA = "Priorita";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_COMPORTAMENTO = "";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_LABEL = "LABEL";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_PERCENTUALE = "PERCENTUALE";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_INFO_NESSUNA_PRIORITA = "<b>"+LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_LABEL+"</b>: nessuna risorsa garantita per la consegna della notifica";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_INFO_PRIORITA = "<b>"+LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_LABEL+"</b>: il "+LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_PERCENTUALE+"% dei threads di consegna sono garantiti";	
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX_LEFT = "Consegna Immediata";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX_RIGHT = "Il 100% dei threads di consegna sono garantiti";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX_NOTE = "<b>Attenzione</b>: da utilizzare in situazioni di emergenza";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX_INFO = "Da utilizzare solamente in situazioni di emergenza, permette di associare l'intero pool di threads dedicato alla consegna delle notifiche per questo connettore bypassando il sistema di priorità.";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_REGOLE_CONSEGNA = "Regole di Consegna";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_REGOLE_CONSEGNA_NOTIFICA_MODALITA = "Notifica";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_REGOLE_CONSEGNA_NOTIFICA = "Regole di Consegna della Notifica";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PRIORITA_CONSEGNA_NOTIFICA = "Priorità di Consegna della Notifica";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP = "Codice Risposta HTTP";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_SOAP_FAULT = "SOAP Fault";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PROBLEM_DETAIL = "Problem Detail";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CADENZA_RISPEDIZIONE = "Cadenza Rispedizione";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CADENZA_RISPEDIZIONE_NOTE = "Indicare i minuti dopo i quali verr&agrave; riprovata una consegna precedentemente fallita";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_2XX = "2xx";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_3XX = "3xx";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_4XX = "4xx";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_5XX = "5xx";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_GESTIONE = "Gestione";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_GESTIONE_CUSTOM_NOTE = "Indicare almeno uno tra: {0}";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODE = GestioneConsegnaNotificheUtils.LABEL_CODE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_ACTOR = GestioneConsegnaNotificheUtils.LABEL_ACTOR;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_MESSAGE = GestioneConsegnaNotificheUtils.LABEL_MESSAGE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_TYPE = GestioneConsegnaNotificheUtils.LABEL_TYPE;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_STATUS = GestioneConsegnaNotificheUtils.LABEL_STATUS;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CLAIMS = GestioneConsegnaNotificheUtils.LABEL_CLAIMS;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CLAIMS_NOTE  = "Indicare per riga i claims richiesti (nome=valore)";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CONSEGNA_FALLITA = "Consegna Notifica Fallita";
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODE_INFO_HEADER = "Indicare un valore oppure un'espressione regolare";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_ACTOR_INFO_HEADER = "Indicare un valore oppure un'espressione regolare";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_MESSAGE_INFO_HEADER = "Indicare un valore oppure un'espressione regolare";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_TYPE_INFO_HEADER = "Indicare un valore oppure un'espressione regolare";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_STATUS_INFO_HEADER = "Indicare un valore oppure un'espressione regolare";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CLAIMS_INFO_HEADER = "Indicare un valore oppure un'espressione regolare";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODE_INFO_HEADER = "Indicare un valore oppure un'espressione regolare";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_ACTOR_INFO_HEADER = "Indicare un valore oppure un'espressione regolare";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_MESSAGE_INFO_HEADER = "Indicare un valore oppure un'espressione regolare";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_TYPE_INFO_HEADER = "Indicare un valore oppure un'espressione regolare";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_STATUS_INFO_HEADER = "Indicare un valore oppure un'espressione regolare";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CLAIMS_INFO_HEADER = "Indicare un valore oppure un'espressione regolare";
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_TIPO_MESSAGGIO_DA_NOTIFICARE = "Messaggio Notificato";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_TIPO_HTTP_NOTIFICA = "HTTP Method";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_TIPO_MESSAGGIO_DA_NOTIFICARE = "Messaggio Notificato";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_TIPO_HTTP_NOTIFICA = "HTTP Method";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_INIETTA_CONTESTO_SINCRONO = "Accesso Contesto Richiesta";
 	
-	private final static String LABEL_RIGA_1 = "CHANGE_ME";
-	private final static String LABEL_RIGA_2 = "CHANGE_ME_2";
+	private static final String LABEL_RIGA_1 = "CHANGE_ME";
+	private static final String LABEL_RIGA_2 = "CHANGE_ME_2";
 	
-	public final static List<String> LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODE_INFO_LIST = new ArrayList<>();
+	public static final List<String> LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODE_INFO_LIST = new ArrayList<>();
 	static {
 		LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODE_INFO_LIST.add(LABEL_RIGA_1);
 		LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODE_INFO_LIST.add(LABEL_RIGA_2);
 	}
-	public final static List<String> LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_ACTOR_INFO_LIST = new ArrayList<>();
+	public static final List<String> LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_ACTOR_INFO_LIST = new ArrayList<>();
 	static {
 		LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_ACTOR_INFO_LIST.add(LABEL_RIGA_1);
 		LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_ACTOR_INFO_LIST.add(LABEL_RIGA_2);
 	}
-	public final static List<String> LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_MESSAGE_INFO_LIST = new ArrayList<>();
+	public static final List<String> LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_MESSAGE_INFO_LIST = new ArrayList<>();
 	static {
 		LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_MESSAGE_INFO_LIST.add(LABEL_RIGA_1);
 		LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_MESSAGE_INFO_LIST.add(LABEL_RIGA_2);
 	}
-	public final static List<String> LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_TYPE_INFO_LIST = new ArrayList<>();
+	public static final List<String> LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_TYPE_INFO_LIST = new ArrayList<>();
 	static {
 		LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_TYPE_INFO_LIST.add(LABEL_RIGA_1);
 		LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_TYPE_INFO_LIST.add(LABEL_RIGA_2);
 	}
-	public final static List<String> LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_STATUS_INFO_LIST = new ArrayList<>();
+	public static final List<String> LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_STATUS_INFO_LIST = new ArrayList<>();
 	static {
 		LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_STATUS_INFO_LIST.add(LABEL_RIGA_1);
 		LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_STATUS_INFO_LIST.add(LABEL_RIGA_2);
 	}
-	public final static List<String> LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CLAIMS_INFO_LIST = new ArrayList<>();
+	public static final List<String> LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CLAIMS_INFO_LIST = new ArrayList<>();
 	static {
 		LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CLAIMS_INFO_LIST.add(LABEL_RIGA_1);
 		LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CLAIMS_INFO_LIST.add(LABEL_RIGA_2);
 	}
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STICKY = "Sticky";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STICKY = "Sticky";
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONSEGNA_CONDIZIONALE = " (consegna condizionale)";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CONDIZIONALI = " (notifiche condizionali)";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONSEGNA_CONDIZIONALE = " (consegna condizionale)";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CONDIZIONALI = " (notifiche condizionali)";
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SELEZIONE_CONNETTORE_BY = "Selezione Connettore By";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE = "Identificazione Condizione";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PREFISSO = "Prefisso";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_SUFFISSO = "Suffisso";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA = "Identificazione Condizione Fallita";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_ABORT_TRANSACTION = "Termina con Errore";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_DIAGNOSTICO = "Emissione Diagnostico";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_CONNETTORE = "Utilizza Connettore";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_LOAD_BALANCER_WARNING = "Nel pool di connettori da bilanciare verranno inseriti tutti i connettori indiscriminatamente";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_MULTI_WARNING = "La consegna avverrà su tutti i connettori indiscriminatamente";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO = "Nessun Connettore Utilizzabile";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_ABORT_TRANSACTION = "Termina con Errore";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_DIAGNOSTICO = "Emissione Diagnostico";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_CONNETTORE = "Utilizza Connettore";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_LOAD_BALANCER_WARNING = "Nel pool di connettori da bilanciare verranno inseriti tutti i connettori indiscriminatamente";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_MULTI_WARNING = "La consegna avverrà su tutti i connettori indiscriminatamente";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_NESSUNA_CONSEGNA = "Non verrà effettuata alcuna notifica";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SELEZIONE_CONNETTORE_BY = "Selezione Connettore By";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE = "Identificazione Condizione";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PREFISSO = "Prefisso";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_SUFFISSO = "Suffisso";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA = "Identificazione Condizione Fallita";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_ABORT_TRANSACTION = "Termina con Errore";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_DIAGNOSTICO = "Emissione Diagnostico";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_CONNETTORE = "Utilizza Connettore";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_LOAD_BALANCER_WARNING = "Nel pool di connettori da bilanciare verranno inseriti tutti i connettori indiscriminatamente";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_MULTI_WARNING = "La consegna avverrà su tutti i connettori indiscriminatamente";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO = "Nessun Connettore Utilizzabile";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_ABORT_TRANSACTION = "Termina con Errore";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_DIAGNOSTICO = "Emissione Diagnostico";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_CONNETTORE = "Utilizza Connettore";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_LOAD_BALANCER_WARNING = "Nel pool di connettori da bilanciare verranno inseriti tutti i connettori indiscriminatamente";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_MULTI_WARNING = "La consegna avverrà su tutti i connettori indiscriminatamente";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_NESSUNA_CONSEGNA = "Non verrà effettuata alcuna notifica";
 	
-	public final static String LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI_INFO_PATTERN_REST = "Espressione utilizzata sul messaggio per estrarre un identificativo.<br/>I tipi di espressione utilizzabili sono:";
-	public final static String LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI_INFO_PATTERN_SOAP = "Espressione utilizzata sul messaggio per estrarre un identificativo.";
-	public final static String LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI_INFO_PATTERN_XPATH = "<b>XPath</b>: utilizzabile con messaggi XML";
-	public final static String LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI_INFO_PATTERN_JSONPATH = "<b>JSONPath</b>: utilizzabile con messaggi JSON";
-	public final static List<String> LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI_INFO_PATTERN_VALORI_REST = new ArrayList<>();
+	public static final String LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI_INFO_PATTERN_REST = "Espressione utilizzata sul messaggio per estrarre un identificativo.<br/>I tipi di espressione utilizzabili sono:";
+	public static final String LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI_INFO_PATTERN_SOAP = "Espressione utilizzata sul messaggio per estrarre un identificativo.";
+	public static final String LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI_INFO_PATTERN_XPATH = "<b>XPath</b>: utilizzabile con messaggi XML";
+	public static final String LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI_INFO_PATTERN_JSONPATH = "<b>JSONPath</b>: utilizzabile con messaggi JSON";
+	public static final List<String> LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI_INFO_PATTERN_VALORI_REST = new ArrayList<>();
 	static {
 		LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI_INFO_PATTERN_VALORI_REST.add(LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI_INFO_PATTERN_XPATH);
 		LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI_INFO_PATTERN_VALORI_REST.add(LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI_INFO_PATTERN_JSONPATH);
 	}
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_REGOLA = "Regola";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_REGOLA = "Regola";
 
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_IDENTIFICATO_QUALSIASI = "[Qualsiasi]";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_IDENTIFICATO_NESSUNO = "[Nessuno]";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_IDENTIFICATO_QUALSIASI = "[Qualsiasi]";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_IDENTIFICATO_NESSUNO = "[Nessuno]";
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_NOME_FORM = "Nome Regola";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_NOME_LIST = "Nome";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_HEADER = "Indicare una espressione regolare che individui una o più operazioni.<br/>I tipi di espressione utilizzabili sono:";
-	public final static List<String> LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_BODY_LIST_REST = new ArrayList<>();
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_NOME_FORM = "Nome Regola";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_NOME_LIST = "Nome";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_HEADER = "Indicare una espressione regolare che individui una o più operazioni.<br/>I tipi di espressione utilizzabili sono:";
+	public static final List<String> LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_BODY_LIST_REST = new ArrayList<>();
 	static {
 		LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_BODY_LIST_REST.add(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_ACTION_REST_METHOD_PATH);
 		LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_BODY_LIST_REST.add(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_ACTION_REST_BY_EXPR_REGULAR);
 	}
-	public final static List<String> LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_BODY_LIST_SOAP = new ArrayList<>();
+	public static final List<String> LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_BODY_LIST_SOAP = new ArrayList<>();
 	static {
 		LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_BODY_LIST_SOAP.add(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_ACTION_SOAP_BY_EXPR_REGULAR);
 	}
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE = "Identificazione Condizione";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_PREFISSO = "Prefisso";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_SUFFISSO = "Suffisso";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_FILTRO = "Filtro";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_CONNETTORE = "Connettore";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE = "Identificazione Condizione";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_PREFISSO = "Prefisso";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_SUFFISSO = "Suffisso";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_FILTRO = "Filtro";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_CONNETTORE = "Connettore";
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_REGOLE_PER_AZIONI = "Regole";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_REGOLE_PER_AZIONI = "Regole";
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO_TOOLTIP = "Connettore abilitato (Clicca per disabilitare)";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_DISABILITATO_TOOLTIP = "Connettore disabilitato (Clicca per abilitare)";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO_TOOLTIP_NO_ACTION = "Connettore abilitato";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_DISABILITATO_TOOLTIP_NO_ACTION = "Connettore disabilitato";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_CONFERMA_ABILITAZIONE_CONFIG_DI = "Conferma abilitazione di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_CONFERMA_DISABILITAZIONE_CONFIG_DI = "Conferma disabilitazione di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO_TOOLTIP = "Connettore abilitato (Clicca per disabilitare)";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_DISABILITATO_TOOLTIP = "Connettore disabilitato (Clicca per abilitare)";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO_TOOLTIP_NO_ACTION = "Connettore abilitato";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_DISABILITATO_TOOLTIP_NO_ACTION = "Connettore disabilitato";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_CONFERMA_ABILITAZIONE_CONFIG_DI = "Conferma abilitazione di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_CONFERMA_DISABILITAZIONE_CONFIG_DI = "Conferma disabilitazione di ";
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_ABILITATO_TOOLTIP = "Scheduling consegna abilitata (Clicca per disabilitare)";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_DISABILITATO_TOOLTIP = "Scheduling consegna disabilitata (Clicca per abilitare)";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_ABILITATO_TOOLTIP_NO_ACTION = "Scheduling consegna abilitata";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_DISABILITATO_TOOLTIP_NO_ACTION = "Scheduling consegna disabilitata";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_CONFERMA_ABILITAZIONE_CONFIG_DI = "Conferma abilitazione di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_CONFERMA_DISABILITAZIONE_CONFIG_DI = "Conferma disabilitazione di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_ABILITATO_TOOLTIP = "Scheduling consegna abilitata (Clicca per disabilitare)";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_DISABILITATO_TOOLTIP = "Scheduling consegna disabilitata (Clicca per abilitare)";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_ABILITATO_TOOLTIP_NO_ACTION = "Scheduling consegna abilitata";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_DISABILITATO_TOOLTIP_NO_ACTION = "Scheduling consegna disabilitata";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_CONFERMA_ABILITAZIONE_CONFIG_DI = "Conferma abilitazione di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_CONFERMA_DISABILITAZIONE_CONFIG_DI = "Conferma disabilitazione di ";
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SAX_PREFIX = ConnettoriCostanti.PARAMETRO_CONNETTORI_MULTIPLI_SAX_PREFIX;
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SAX_PREFIX = ConnettoriCostanti.PARAMETRO_CONNETTORI_MULTIPLI_SAX_PREFIX;
 	
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_LOAD_BALANCE_DI = "Configurazione Load Balance di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_LOAD_BALANCE = "Configurazione Load Balance";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_LOAD_BALANCE_DI = "Configurazione Load Balance di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_LOAD_BALANCE = "Configurazione Load Balance";
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPRIETA = "Propriet&agrave; Modalit&agrave; Consegna";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPRIETA_DI = "Propriet&agrave; Modalit&agrave; Consegna di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPRIETA = "Propriet&agrave; Modalit&agrave; Consegna";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPRIETA_DI = "Propriet&agrave; Modalit&agrave; Consegna di ";
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_GESTIONE_CONSEGNA = "Gestione Consegna";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_GESTIONE_CONSEGNA_DI = "Gestione Consegna di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_GESTIONE_CONSEGNA = "Gestione Consegna";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_GESTIONE_CONSEGNA_DI = "Gestione Consegna di ";
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_GESTIONE_NOTIFICHE = "Gestione Notifiche";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_GESTIONE_NOTIFICHE_DI = "Gestione Notifiche di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_GESTIONE_NOTIFICHE = "Gestione Notifiche";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_GESTIONE_NOTIFICHE_DI = "Gestione Notifiche di ";
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI_REGOLE = "Regole";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI_REGOLE_DI = "Regole di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI_REGOLE = "Regole";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI_REGOLE_DI = "Regole di ";
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ALLARMI = "Allarmi";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ALLARMI_DI = "Allarmi di ";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_ALLARMI = "Allarmi";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_ALLARMI_DI = "Allarmi di ";
 	
 	
 	
 	/* DEFAULT VALUE PARAMETRI */
 	
-	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_TEMPLATE = CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_TEMPLATE;
-	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_FREEMARKER_TEMPLATE = CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_FREEMARKER_TEMPLATE;
-	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_VELOCITY_TEMPLATE = CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_VELOCITY_TEMPLATE;
-	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_INPUT_BASED = CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_INPUT_BASED;
-	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_URL_BASED = CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED;
-	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_HEADER_BASED = CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_HEADER_BASED;
-	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED = CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED;
-	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_DISABILITATO = CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO;
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_DISABILITATO = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_DISABILITATO;
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_ABILITATO = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_ABILITATO;
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_WARNING_ONLY = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_WARNING_ONLY;
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_XSD =  CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_XSD;
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_INTERFACE = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_INTERFACE;
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_OPENSPCOOP = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_OPENSPCOOP;
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_STATELESS_DEFAULT = "default";
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_STATELESS_ABILITATO = CostantiConfigurazione.ABILITATO.toString();
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_STATELESS_DISABILITATO = CostantiConfigurazione.DISABILITATO.toString();
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_LOCAL_FORWARD_DISABILITATO = CostantiConfigurazione.DISABILITATO.toString();
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_LOCAL_FORWARD_ABILITATO = CostantiConfigurazione.ABILITATO.toString();
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_BODY_NONE = "none";
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_BODY_ALLEGA = "allega";  
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_BODY_SCARTA = "scarta";
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_MANIFEST_ABILITATO = CostantiConfigurazione.ABILITATO.toString();
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_MANIFEST_DISABILITATO = CostantiConfigurazione.DISABILITATO.toString();
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_MANIFEST_DEFAULT = "default";
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO = CostantiConfigurazione.DISABILITATO.toString();
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_ABILITATO = CostantiConfigurazione.ABILITATO.toString();
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_AUTENTICAZIONE =  TipoAutenticazione.SSL.getValue();
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE = TipoAutorizzazione.AUTHENTICATED.getValue();
+	public static final String VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_TEMPLATE = CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_TEMPLATE;
+	public static final String VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_FREEMARKER_TEMPLATE = CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_FREEMARKER_TEMPLATE;
+	public static final String VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_VELOCITY_TEMPLATE = CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_VELOCITY_TEMPLATE;
+	public static final String VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_INPUT_BASED = CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_INPUT_BASED;
+	public static final String VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_URL_BASED = CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED;
+	public static final String VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_HEADER_BASED = CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_HEADER_BASED;
+	public static final String VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED = CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED;
+	public static final String VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_DISABILITATO = CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO;
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_DISABILITATO = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_DISABILITATO;
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_ABILITATO = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_ABILITATO;
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_WARNING_ONLY = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_WARNING_ONLY;
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_XSD =  CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_XSD;
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_INTERFACE = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_INTERFACE;
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_OPENSPCOOP = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_OPENSPCOOP;
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_STATELESS_DEFAULT = "default";
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_STATELESS_ABILITATO = CostantiConfigurazione.ABILITATO.toString();
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_STATELESS_DISABILITATO = CostantiConfigurazione.DISABILITATO.toString();
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_LOCAL_FORWARD_DISABILITATO = CostantiConfigurazione.DISABILITATO.toString();
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_LOCAL_FORWARD_ABILITATO = CostantiConfigurazione.ABILITATO.toString();
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_BODY_NONE = "none";
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_BODY_ALLEGA = "allega";  
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_BODY_SCARTA = "scarta";
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_MANIFEST_ABILITATO = CostantiConfigurazione.ABILITATO.toString();
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_MANIFEST_DISABILITATO = CostantiConfigurazione.DISABILITATO.toString();
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_MANIFEST_DEFAULT = "default";
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO = CostantiConfigurazione.DISABILITATO.toString();
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_ABILITATO = CostantiConfigurazione.ABILITATO.toString();
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_AUTENTICAZIONE =  TipoAutenticazione.SSL.getValue();
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE = TipoAutorizzazione.AUTHENTICATED.getValue();
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT = PortaApplicativaAzioneIdentificazione.STATIC.toString();
-	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED = PortaApplicativaAzioneIdentificazione.HEADER_BASED.toString();
-	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_URL_BASED = PortaApplicativaAzioneIdentificazione.URL_BASED.toString();
-	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_CONTENT_BASED = PortaApplicativaAzioneIdentificazione.CONTENT_BASED.toString();
-	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_INPUT_BASED = PortaApplicativaAzioneIdentificazione.INPUT_BASED.toString();
-	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED = PortaApplicativaAzioneIdentificazione.SOAP_ACTION_BASED.toString();
-	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_INTERFACE_BASED = PortaApplicativaAzioneIdentificazione.INTERFACE_BASED.toString();
-	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED = PortaApplicativaAzioneIdentificazione.PROTOCOL_BASED.toString();
-	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_DELEGATED_BY = PortaApplicativaAzioneIdentificazione.DELEGATED_BY.toString();
+	public static final String PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT = PortaApplicativaAzioneIdentificazione.STATIC.toString();
+	public static final String PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED = PortaApplicativaAzioneIdentificazione.HEADER_BASED.toString();
+	public static final String PARAMETRO_PORTE_APPLICATIVE_MODE_URL_BASED = PortaApplicativaAzioneIdentificazione.URL_BASED.toString();
+	public static final String PARAMETRO_PORTE_APPLICATIVE_MODE_CONTENT_BASED = PortaApplicativaAzioneIdentificazione.CONTENT_BASED.toString();
+	public static final String PARAMETRO_PORTE_APPLICATIVE_MODE_INPUT_BASED = PortaApplicativaAzioneIdentificazione.INPUT_BASED.toString();
+	public static final String PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED = PortaApplicativaAzioneIdentificazione.SOAP_ACTION_BASED.toString();
+	public static final String PARAMETRO_PORTE_APPLICATIVE_MODE_INTERFACE_BASED = PortaApplicativaAzioneIdentificazione.INTERFACE_BASED.toString();
+	public static final String PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED = PortaApplicativaAzioneIdentificazione.PROTOCOL_BASED.toString();
+	public static final String PARAMETRO_PORTE_APPLICATIVE_MODE_DELEGATED_BY = PortaApplicativaAzioneIdentificazione.DELEGATED_BY.toString();
 	
-	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO = CostantiConfigurazione.ABILITATO.toString();
-	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_DISABILITATO = CostantiConfigurazione.DISABILITATO.toString();
+	public static final String VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO = CostantiConfigurazione.ABILITATO.toString();
+	public static final String VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_DISABILITATO = CostantiConfigurazione.DISABILITATO.toString();
 	
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA = "eredita";
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA = "nuova";
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA = "eredita";
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA = "nuova";
 	
-	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_DEFAULT = ConnettoriCostanti.VALUE_PARAMETRO_MODALITA_CONNETTORE_DEFAULT;
-	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_RIDEFINITO = ConnettoriCostanti.VALUE_PARAMETRO_MODALITA_CONNETTORE_RIDEFINITO;
+	public static final String VALUE_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_DEFAULT = ConnettoriCostanti.VALUE_PARAMETRO_MODALITA_CONNETTORE_DEFAULT;
+	public static final String VALUE_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_RIDEFINITO = ConnettoriCostanti.VALUE_PARAMETRO_MODALITA_CONNETTORE_RIDEFINITO;
 	
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME = CostantiControlStation.VALUE_PARAMETRO_PROPERTIES_MODE_DEFAULT;
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME = CostantiControlStation.VALUE_PARAMETRO_PROPERTIES_MODE_DEFAULT;
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME = CostantiControlStation.VALUE_PARAMETRO_PROPERTIES_MODE_DEFAULT;
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME = CostantiControlStation.VALUE_PARAMETRO_PROPERTIES_MODE_DEFAULT;
 	
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
 	
 	public static final String TAG_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE = "RESPONSE";
 	public static final String TAG_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST = "REQUEST";
 	public static final String TAG_PORTE_APPLICATIVE_MESSAGE_SECURITY_PA = "IN";
 	
-	public final static String [] VALUES_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA = LoadBalancerType.getValues();
-	public final static String [] LABELS_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA = LoadBalancerType.getLabels();
-	public final static List<String> LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_INFO = new ArrayList<>();
+	public static final String [] VALUES_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA = LoadBalancerType.getValues();
+	public static final String [] LABELS_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA = LoadBalancerType.getLabels();
+	public static final List<String> LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_INFO = new ArrayList<>();
 	static {
 		for (LoadBalancerType type : LoadBalancerType.values()) {
 			LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_INFO.add("<b>"+type.getLabel()+"</b>: "+type.getDescrizione());
 		}
 	}
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE_MULTI_DELIVER_NOTIFICHE_BY_ESITO_OK = "Completate con Successo";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE_MULTI_DELIVER_NOTIFICHE_BY_ESITO_FAULT = "Fault Applicativo";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE_MULTI_DELIVER_NOTIFICHE_BY_ESITO_ERRORI_CONSEGNA = "Errore di Consegna";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE_MULTI_DELIVER_NOTIFICHE_BY_ESITO_ERRORI_PROCESSAMENTO = "Errore di Processamento";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE_MULTI_DELIVER_NOTIFICHE_BY_ESITO_RICHIESTA_SCARTATE = "Richieste Scartate";
-	public final static List<String> LABELS_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE = new ArrayList<>();
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE_MULTI_DELIVER_NOTIFICHE_BY_ESITO_OK = "Completate con Successo";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE_MULTI_DELIVER_NOTIFICHE_BY_ESITO_FAULT = "Fault Applicativo";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE_MULTI_DELIVER_NOTIFICHE_BY_ESITO_ERRORI_CONSEGNA = "Errore di Consegna";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE_MULTI_DELIVER_NOTIFICHE_BY_ESITO_ERRORI_PROCESSAMENTO = "Errore di Processamento";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE_MULTI_DELIVER_NOTIFICHE_BY_ESITO_RICHIESTA_SCARTATE = "Richieste Scartate";
+	public static final List<String> LABELS_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE = new ArrayList<>();
 	static {
 		LABELS_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE.add(LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE_MULTI_DELIVER_NOTIFICHE_BY_ESITO_OK);
 		LABELS_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE.add(LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE_MULTI_DELIVER_NOTIFICHE_BY_ESITO_FAULT);
@@ -1372,33 +1436,32 @@ public class PorteApplicativeCostanti {
 		LABELS_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE.add(LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE_MULTI_DELIVER_NOTIFICHE_BY_ESITO_RICHIESTA_SCARTATE);
 	}
 	
-	public final static List<String> VALUES_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE = new ArrayList<>();
+	public static final List<String> VALUES_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE = new ArrayList<>();
 	static {
 		VALUES_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE.add(org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_OK);
 		VALUES_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE.add(org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_FAULT);
 		VALUES_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE.add(org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_ERRORI_CONSEGNA);
 		VALUES_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE.add(org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_ERRORI_PROCESSAMENTO);
-		//VALUES_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE.add(org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_RICHIESTA_SCARTATE);
 	}
 	
-	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SELEZIONE_CONNETTORE_BY_FILTRO = "Filtro";
-	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SELEZIONE_CONNETTORE_BY_NOME = "Nome";
+	public static final String VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SELEZIONE_CONNETTORE_BY_FILTRO = "Filtro";
+	public static final String VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SELEZIONE_CONNETTORE_BY_NOME = "Nome";
 	
-	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_DIAGNOSTICO_ERROR = "Error";
-	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_DIAGNOSTICO_INFO = "Info";
-	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_DIAGNOSTICO_ERROR = "Error";
-	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_DIAGNOSTICO_INFO = "Info";
+	public static final String VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_DIAGNOSTICO_ERROR = "Error";
+	public static final String VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_DIAGNOSTICO_INFO = "Info";
+	public static final String VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_DIAGNOSTICO_ERROR = "Error";
+	public static final String VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_DIAGNOSTICO_INFO = "Info";
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_DIAGNOSTICO_ERROR = "con livello di severità 'error'";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_DIAGNOSTICO_INFO = "con livello di severità 'info'";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_DIAGNOSTICO_ERROR = "con livello di severità 'error'";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_DIAGNOSTICO_INFO = "con livello di severità 'info'";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_DIAGNOSTICO_ERROR = "con livello di severità 'error'";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_DIAGNOSTICO_INFO = "con livello di severità 'info'";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_DIAGNOSTICO_ERROR = "con livello di severità 'error'";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_DIAGNOSTICO_INFO = "con livello di severità 'info'";
 	
-	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_STATIC_INFO = "staticInfo";
-	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_2XX_CARATTERI_CONSENTITI = ",0123456789";
+	public static final String VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_STATIC_INFO = "staticInfo";
+	public static final String VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_2XX_CARATTERI_CONSENTITI = ",0123456789";
 	
-	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO_MA_NON_SCHEDULATO = "NotScheduling";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO_MA_NON_SCHEDULATO = "abilitato - scheduling disabilitato";
+	public static final String VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO_MA_NON_SCHEDULATO = "NotScheduling";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO_MA_NON_SCHEDULATO = "abilitato - scheduling disabilitato";
 	
 	/* MESSAGGI */
 	
@@ -1439,7 +1502,7 @@ public class PorteApplicativeCostanti {
 	public static final String MESSAGGIO_ERRORE_IL_SERVIZIO_APPLICATIVO_XX_E_GIA_STATO_ASSOCIATO_ALLA_PORTA_APPLICATIVA_YY = "Il Servizio Applicativo {0} &egrave; gi&agrave; stato associato alla porta applicativa {1}";
 	public static final String MESSAGGIO_ERRORE_IL_SERVIZIO_APPLICATIVO_DEV_ESSERE_SCELTO_TRA_QUELLI_DEFINITI_NEL_PANNELLO_SERVIZI_APPLICATIVI_ED_ASSOCIATI_AL_SOGGETTO_XX = "Il Servizio Applicativo dev''essere scelto tra quelli definiti nel pannello Servizi Applicativi ed associati al soggetto {0}";
 	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_UN_SERVIZIO_APPLICATIVO = "Dati incompleti. &Egrave; necessario indicare un Servizio Applicativo";
-	public static final String MESSAGGIO_ERRORE_NON_E_POSSIBILE_MODIFICARE_IL_TIPO_DI_AUTENTICAZIONE_DA_XX_A_YY_POICHÈ_RISULTANO_ASSOCIATI_AL_SERVIZIO_DEI_FRUITORI_CON_CREDENZIALI_NON_COMPATIBILI_NELLA_MODALITA_DI_ACCESSO_CON_IL_NUOVO_TIPO_DI_AUTENTICAZIONE = "Non &egrave; possibile modificare il tipo di autenticazione da [{0}] a [{1}], poichè risultano associati al servizio dei fruitori con credenziali non compatibili, nella modalit&agrave; di accesso, con il nuovo tipo di autenticazione";
+	public static final String MESSAGGIO_ERRORE_NON_E_POSSIBILE_MODIFICARE_IL_TIPO_DI_AUTENTICAZIONE_DA_XX_A_YY_POICHE_RISULTANO_ASSOCIATI_AL_SERVIZIO_DEI_FRUITORI_CON_CREDENZIALI_NON_COMPATIBILI_NELLA_MODALITA_DI_ACCESSO_CON_IL_NUOVO_TIPO_DI_AUTENTICAZIONE = "Non &egrave; possibile modificare il tipo di autenticazione da [{0}] a [{1}], poichè risultano associati al servizio dei fruitori con credenziali non compatibili, nella modalit&agrave; di accesso, con il nuovo tipo di autenticazione";
 	public static final String MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_L_AUTORIZZAZIONE_XX = "Indicare un nome per l'autorizzazione ''{0}''";
 	public static final String MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_L_AUTENTICAZIONE_XX = "Indicare un nome per l'autenticazione ''{0}''";
 	public static final String MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO = "Non inserire spazi nei campi di testo";

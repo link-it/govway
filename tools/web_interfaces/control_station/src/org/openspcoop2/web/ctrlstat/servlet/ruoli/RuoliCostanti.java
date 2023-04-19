@@ -21,12 +21,12 @@ package org.openspcoop2.web.ctrlstat.servlet.ruoli;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.lib.mvc.Costanti;
 
 /**
  * RuoliCostanti
@@ -36,14 +36,19 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
  * @version $Rev$, $Date$
  */
 public class RuoliCostanti {
+	
+	private RuoliCostanti() {}
 
-	public final static String OBJECT_NAME_RUOLI = "ruoli";
+	public static final String OBJECT_NAME_RUOLI = "ruoli";
 
-	public final static String SERVLET_NAME_RUOLI_ADD = OBJECT_NAME_RUOLI+"Add.do";
-	public final static String SERVLET_NAME_RUOLI_CHANGE = OBJECT_NAME_RUOLI+"Change.do";
-	public final static String SERVLET_NAME_RUOLI_DELETE = OBJECT_NAME_RUOLI+"Del.do";
-	public final static String SERVLET_NAME_RUOLI_LIST = OBJECT_NAME_RUOLI+"List.do";
-	public final static Vector<String> SERVLET_RUOLI = new Vector<String>();
+	public static final String SERVLET_NAME_RUOLI_ADD = OBJECT_NAME_RUOLI+Costanti.STRUTS_ACTION_SUFFIX_ADD;
+	public static final String SERVLET_NAME_RUOLI_CHANGE = OBJECT_NAME_RUOLI+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
+	public static final String SERVLET_NAME_RUOLI_DELETE = OBJECT_NAME_RUOLI+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
+	public static final String SERVLET_NAME_RUOLI_LIST = OBJECT_NAME_RUOLI+Costanti.STRUTS_ACTION_SUFFIX_LIST;
+	private static final List<String> SERVLET_RUOLI = new ArrayList<>();
+	public static List<String> getServletRuoli() {
+		return SERVLET_RUOLI;
+	}
 	static{
 		SERVLET_RUOLI.add(SERVLET_NAME_RUOLI_ADD);
 		SERVLET_RUOLI.add(SERVLET_NAME_RUOLI_CHANGE);
@@ -54,74 +59,86 @@ public class RuoliCostanti {
 	
 	
 	
-	public final static String LABEL_RUOLO = "Ruolo";
-	public final static String LABEL_RUOLI = "Ruoli";
+	public static final String LABEL_RUOLO = "Ruolo";
+	public static final String LABEL_RUOLI = "Ruoli";
 	
 	/* NOME VISTA CUSTOM */
-	public final static String RUOLI_NOME_VISTA_CUSTOM_LISTA = "ruoli";
+	public static final String RUOLI_NOME_VISTA_CUSTOM_LISTA = "ruoli";
 	
 	
 	/* PARAMETRI */
 	
-	public final static String PARAMETRO_RUOLO_ID = "ruoloId";
-	public final static String PARAMETRO_RUOLO_NOME = "ruoloNome";
-	public final static String PARAMETRO_RUOLO_DESCRIZIONE = "ruoloDescrizione";
-	public final static String PARAMETRO_RUOLO_TIPOLOGIA = "ruoloTipologia";
-	public final static String PARAMETRO_RUOLO_NOME_ESTERNO = "ruoloNomeEsterno";
-	public final static String PARAMETRO_RUOLO_CONTESTO = "ruoloContesto";
+	public static final String PARAMETRO_RUOLO_ID = "ruoloId";
+	public static final String PARAMETRO_RUOLO_NOME = "ruoloNome";
+	public static final String PARAMETRO_RUOLO_DESCRIZIONE = "ruoloDescrizione";
+	public static final String PARAMETRO_RUOLO_TIPOLOGIA = "ruoloTipologia";
+	public static final String PARAMETRO_RUOLO_NOME_ESTERNO = "ruoloNomeEsterno";
+	public static final String PARAMETRO_RUOLO_CONTESTO = "ruoloContesto";
 	
 	
 	/* LABEL PARAMETRI */
 	
-	public final static String LABEL_PARAMETRO_RUOLO_NOME = "Nome";
-	public final static String LABEL_PARAMETRO_RUOLO_DESCRIZIONE = "Descrizione";
-	public final static String LABEL_PARAMETRO_RUOLO_TIPOLOGIA = CostantiControlStation.LABEL_PARAMETRO_RUOLO_TIPOLOGIA;
-	public final static String LABEL_PARAMETRO_RUOLO_NOME_ESTERNO = "Identificativo Esterno";
-	public final static String LABEL_PARAMETRO_RUOLO_CONTESTO = CostantiControlStation.LABEL_PARAMETRO_RUOLO_CONTESTO;
+	public static final String LABEL_PARAMETRO_RUOLO_NOME = "Nome";
+	public static final String LABEL_PARAMETRO_RUOLO_DESCRIZIONE = "Descrizione";
+	public static final String LABEL_PARAMETRO_RUOLO_TIPOLOGIA = CostantiControlStation.LABEL_PARAMETRO_RUOLO_TIPOLOGIA;
+	public static final String LABEL_PARAMETRO_RUOLO_NOME_ESTERNO = "Identificativo Esterno";
+	public static final String LABEL_PARAMETRO_RUOLO_CONTESTO = CostantiControlStation.LABEL_PARAMETRO_RUOLO_CONTESTO;
 	
-	public final static String LABEL_RUOLI_ESPORTA_SELEZIONATI = "Esporta";
-	public final static String LABEL_RUOLI_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.RUOLO.name()+"')";
-	
-	
-	public final static String DEFAULT_VALUE_PARAMETRO_RUOLO_TIPOLOGIA = RuoloTipologia.QUALSIASI.getValue();
-	public final static String DEFAULT_VALUE_PARAMETRO_RUOLO_CONTESTO_UTILIZZO = RuoloContesto.QUALSIASI.getValue();
+	public static final String LABEL_RUOLI_ESPORTA_SELEZIONATI = "Esporta";
+	public static final String LABEL_RUOLI_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.RUOLO.name()+"')";
 	
 	
-	public final static List<String> RUOLI_TIPOLOGIA = new ArrayList<String>();
+	public static final String DEFAULT_VALUE_PARAMETRO_RUOLO_TIPOLOGIA = RuoloTipologia.QUALSIASI.getValue();
+	public static final String DEFAULT_VALUE_PARAMETRO_RUOLO_CONTESTO_UTILIZZO = RuoloContesto.QUALSIASI.getValue();
+	
+	
+	private static final List<String> RUOLI_TIPOLOGIA = new ArrayList<>();
+	public static List<String> getRuoliTipologia() {
+		return RUOLI_TIPOLOGIA;
+	}
 	static {
 		RUOLI_TIPOLOGIA.add(RuoloTipologia.QUALSIASI.getValue());
 		RUOLI_TIPOLOGIA.add(RuoloTipologia.INTERNO.getValue());
 		RUOLI_TIPOLOGIA.add(RuoloTipologia.ESTERNO.getValue());
 	}
 	
-	public final static String RUOLI_TIPOLOGIA_LABEL_INTERNO = CostantiControlStation.RUOLI_TIPOLOGIA_LABEL_INTERNO;
-	public final static String RUOLI_TIPOLOGIA_LABEL_ESTERNO = CostantiControlStation.RUOLI_TIPOLOGIA_LABEL_ESTERNO;
-	public final static String RUOLI_TIPOLOGIA_LABEL_QUALSIASI = CostantiControlStation.LABEL_PARAMETRO_RUOLO_TIPOLOGIA_QUALSIASI;
-	public final static List<String> RUOLI_TIPOLOGIA_LABEL = new ArrayList<String>();
+	public static final String RUOLI_TIPOLOGIA_LABEL_INTERNO = CostantiControlStation.RUOLI_TIPOLOGIA_LABEL_INTERNO;
+	public static final String RUOLI_TIPOLOGIA_LABEL_ESTERNO = CostantiControlStation.RUOLI_TIPOLOGIA_LABEL_ESTERNO;
+	public static final String RUOLI_TIPOLOGIA_LABEL_QUALSIASI = CostantiControlStation.LABEL_PARAMETRO_RUOLO_TIPOLOGIA_QUALSIASI;
+	private static final List<String> RUOLI_TIPOLOGIA_LABEL = new ArrayList<>();
+	public static List<String> getRuoliTipologiaLabel() {
+		return RUOLI_TIPOLOGIA_LABEL;
+	}
 	static {
 		RUOLI_TIPOLOGIA_LABEL.add(RUOLI_TIPOLOGIA_LABEL_QUALSIASI);
 		RUOLI_TIPOLOGIA_LABEL.add(RUOLI_TIPOLOGIA_LABEL_INTERNO);
 		RUOLI_TIPOLOGIA_LABEL.add(RUOLI_TIPOLOGIA_LABEL_ESTERNO);
 	}
 	
-	public final static List<String> RUOLI_CONTESTO_UTILIZZO = new ArrayList<String>();
+	private static final List<String> RUOLI_CONTESTO_UTILIZZO = new ArrayList<>();
+	public static List<String> getRuoliContestoUtilizzo() {
+		return RUOLI_CONTESTO_UTILIZZO;
+	}
 	static {
 		RUOLI_CONTESTO_UTILIZZO.add(RuoloContesto.QUALSIASI.getValue());
 		RUOLI_CONTESTO_UTILIZZO.add(RuoloContesto.PORTA_APPLICATIVA.getValue());
 		RUOLI_CONTESTO_UTILIZZO.add(RuoloContesto.PORTA_DELEGATA.getValue());
 	}
-	public final static String RUOLI_CONTESTO_UTILIZZO_LABEL_EROGAZIONE = CostantiControlStation.RUOLI_CONTESTO_UTILIZZO_LABEL_EROGAZIONE;
-	public final static String RUOLI_CONTESTO_UTILIZZO_LABEL_FRUIZIONE = CostantiControlStation.RUOLI_CONTESTO_UTILIZZO_LABEL_FRUIZIONE;
-	public final static String RUOLI_CONTESTO_UTILIZZO_LABEL_QUALSIASI = CostantiControlStation.LABEL_PARAMETRO_RUOLO_CONTESTO_QUALSIASI;
-	public final static List<String> RUOLI_CONTESTO_UTILIZZO_LABEL = new ArrayList<String>();
+	public static final String RUOLI_CONTESTO_UTILIZZO_LABEL_EROGAZIONE = CostantiControlStation.RUOLI_CONTESTO_UTILIZZO_LABEL_EROGAZIONE;
+	public static final String RUOLI_CONTESTO_UTILIZZO_LABEL_FRUIZIONE = CostantiControlStation.RUOLI_CONTESTO_UTILIZZO_LABEL_FRUIZIONE;
+	public static final String RUOLI_CONTESTO_UTILIZZO_LABEL_QUALSIASI = CostantiControlStation.LABEL_PARAMETRO_RUOLO_CONTESTO_QUALSIASI;
+	private static final List<String> RUOLI_CONTESTO_UTILIZZO_LABEL = new ArrayList<>();
+	public static List<String> getRuoliContestoUtilizzoLabel() {
+		return RUOLI_CONTESTO_UTILIZZO_LABEL;
+	}
 	static {
 		RUOLI_CONTESTO_UTILIZZO_LABEL.add(RUOLI_CONTESTO_UTILIZZO_LABEL_QUALSIASI);
 		RUOLI_CONTESTO_UTILIZZO_LABEL.add(RUOLI_CONTESTO_UTILIZZO_LABEL_EROGAZIONE);
 		RUOLI_CONTESTO_UTILIZZO_LABEL.add(RUOLI_CONTESTO_UTILIZZO_LABEL_FRUIZIONE);
 	}
 	
-	public final static String MESSAGE_METADATI_RUOLO_IDENTIFICATIVO_ESTERNO = RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME_ESTERNO + ": {0}, ";
-	public final static String MESSAGE_METADATI_RUOLO_TIPO_E_CONTESTO = CostantiControlStation.LABEL_PARAMETRO_RUOLO_TIPOLOGIA + ": {0}, "+ CostantiControlStation.LABEL_PARAMETRO_RUOLO_CONTESTO +": {1}";
+	public static final String MESSAGE_METADATI_RUOLO_IDENTIFICATIVO_ESTERNO = RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME_ESTERNO + ": {0}, ";
+	public static final String MESSAGE_METADATI_RUOLO_TIPO_E_CONTESTO = CostantiControlStation.LABEL_PARAMETRO_RUOLO_TIPOLOGIA + ": {0}, "+ CostantiControlStation.LABEL_PARAMETRO_RUOLO_CONTESTO +": {1}";
 	
-	public final static String LABEL_IN_USO_BODY_HEADER_NESSUN_RISULTATO = "Il ruolo non risulta utilizzato in alcuna configurazione";
+	public static final String LABEL_IN_USO_BODY_HEADER_NESSUN_RISULTATO = "Il ruolo non risulta utilizzato in alcuna configurazione";
 }

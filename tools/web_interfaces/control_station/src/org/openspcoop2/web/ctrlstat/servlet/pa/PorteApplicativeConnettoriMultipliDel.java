@@ -94,14 +94,6 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 			String idAsps = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
 			if(idAsps == null) 
 				idAsps = "";
-			// Elimino le properties della porta applicativa dal db
-			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
-			// int[] idToRemove = new int[objTok.countTokens()];
-			//
-			// int k = 0;
-			// while (objTok.hasMoreElements()) {
-			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
-			// }
 
 			String idConnTab = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB);
 			if(StringUtils.isNotEmpty(idConnTab)) {
@@ -123,11 +115,11 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 			AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
 			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(apc.getServiceBinding());
 
-			List<Object> listaOggettiDaEliminare = new ArrayList<Object>();
+			List<Object> listaOggettiDaEliminare = new ArrayList<>();
 			boolean eseguiOperazione = true;
 
 			boolean connettoreUtilizzatiConfig = false;
-			List<String> messaggiSezioniConnettore = new ArrayList<String>();
+			List<String> messaggiSezioniConnettore = new ArrayList<>();
 			int numeroElementiDaControllare = idsToRemove.size();
 			for (int i = 0; i < idsToRemove.size(); i++) {
 				nome = idsToRemove.get(i);
@@ -202,29 +194,25 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 				}
 			}
 
-			if(!eseguiOperazione) {
-				if(actionConferma == null) {
-					String messaggio = sbErrore.toString();
-					String title = "Attenzione";
-					String[][] bottoni = { 
-							{ Costanti.LABEL_MONITOR_BUTTON_CHIUDI, 
-								Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_PREFIX +
-								Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_SUFFIX
+			if(!eseguiOperazione &&
+				actionConferma == null) {
+				String messaggio = sbErrore.toString();
+				String title = "Attenzione";
+				String[][] bottoni = { 
+						{ Costanti.LABEL_MONITOR_BUTTON_CHIUDI, 
+							Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_PREFIX +
+							Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_SUFFIX
 
-							}
-					};
-					pd.setBottoni(bottoni );
-					pd.setMessage(messaggio, title, MessageType.CONFIRM);
-				}
+						}
+				};
+				pd.setBottoni(bottoni );
+				pd.setMessage(messaggio, title, MessageType.CONFIRM);
 			}
 
 
 			if(eseguiOperazione) {
 				for (int i = 0; i < idsToRemove.size(); i++) {
 
-					// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
-					// .elementAt(idToRemove[i])).elementAt(0);
-					// nome = de.getValue();
 					nome = idsToRemove.get(i);
 
 					for (int j = 0; j < pa.sizeServizioApplicativoList(); j++) {

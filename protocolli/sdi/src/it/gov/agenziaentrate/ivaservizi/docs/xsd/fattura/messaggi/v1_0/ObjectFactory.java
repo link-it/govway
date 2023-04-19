@@ -117,7 +117,7 @@ public class ObjectFactory {
         return new ErroreType();
     }
 
-    private final static QName _RicevutaConsegna = new QName("http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fattura/messaggi/v1.0", "RicevutaConsegna");
+    private static final QName _RicevutaConsegna = new QName("http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fattura/messaggi/v1.0", "RicevutaConsegna");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RicevutaConsegnaType }{@code >}}
@@ -130,7 +130,7 @@ public class ObjectFactory {
         return new JAXBElement<RicevutaConsegnaType>(_RicevutaConsegna, RicevutaConsegnaType.class, null, ricevutaConsegna);
     }
 
-    private final static QName _RicevutaImpossibilitaRecapito = new QName("http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fattura/messaggi/v1.0", "RicevutaImpossibilitaRecapito");
+    private static final QName _RicevutaImpossibilitaRecapito = new QName("http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fattura/messaggi/v1.0", "RicevutaImpossibilitaRecapito");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RicevutaImpossibilitaRecapitoType }{@code >}}
@@ -143,7 +143,7 @@ public class ObjectFactory {
         return new JAXBElement<RicevutaImpossibilitaRecapitoType>(_RicevutaImpossibilitaRecapito, RicevutaImpossibilitaRecapitoType.class, null, ricevutaImpossibilitaRecapito);
     }
 
-    private final static QName _RicevutaScarto = new QName("http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fattura/messaggi/v1.0", "RicevutaScarto");
+    private static final QName _RicevutaScarto = new QName("http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fattura/messaggi/v1.0", "RicevutaScarto");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RicevutaScartoType }{@code >}}
@@ -156,7 +156,7 @@ public class ObjectFactory {
         return new JAXBElement<RicevutaScartoType>(_RicevutaScarto, RicevutaScartoType.class, null, ricevutaScarto);
     }
 
-    private final static QName _FileMetadati = new QName("http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fattura/messaggi/v1.0", "FileMetadati");
+    private static final QName _FileMetadati = new QName("http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fattura/messaggi/v1.0", "FileMetadati");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FileMetadatiType }{@code >}}

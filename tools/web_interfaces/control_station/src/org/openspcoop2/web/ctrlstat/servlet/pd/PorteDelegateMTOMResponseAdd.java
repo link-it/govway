@@ -20,7 +20,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.List;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -98,8 +98,6 @@ public class PorteDelegateMTOMResponseAdd extends Action {
 			PortaDelegata pde = porteDelegateCore.getPortaDelegata(idInt);
 			String idporta = pde.getNome();
 
-			// String pdd = soggetto.getServer();
-
 			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
 			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
@@ -127,18 +125,14 @@ public class PorteDelegateMTOMResponseAdd extends Action {
 			
 			lstParam.add(ServletUtils.getParameterAggiungi());
 			
-			
-			
-			// Se nome = null, devo visualizzare la pagina per l'inserimento
-			// dati
-//			if (nome == null) {
-				if(	porteDelegateHelper.isEditModeInProgress()){
+
+			if(	porteDelegateHelper.isEditModeInProgress()){
 					// setto la barra del titolo
 					ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteDelegateHelper.addMTOMParameterToDati(TipoOperazione.ADD, dati, true, nome, pattern, contentType, obbligatorio,
 						pde.getMtomProcessor().getResponseFlow().getMode());
@@ -161,9 +155,9 @@ public class PorteDelegateMTOMResponseAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteDelegateHelper.addMTOMParameterToDati(TipoOperazione.ADD, dati, true, nome, pattern, contentType, obbligatorio,
 						pde.getMtomProcessor().getResponseFlow().getMode());

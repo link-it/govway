@@ -3,10 +3,13 @@
 Autenticazione Https
 ~~~~~~~~~~~~~~~~~~~~
 
-Il connettore HTTPS permette di personalizzare i parametri SSL per ogni
-connessione che utilizza questo protocollo.
+Per un endpoint https viene utilizzata per default la configurazione https impostata nella JVM dell'Application Server (proprietà javax.net.ssl.*) descritta nella sezione :ref:`install_ssl_client_direct`.
 
-Il connettore HTTPS supporta:
+È possibile configurare GovWay in modo che utilizzi una configurazione https differente da quella ereditata dalla JVM (es. keystore e truststore, versione TLS ...) attraverso l'abilitazione dell'autenticazione https come mostrata in figura :numref:`configAutenticazioneHTTPSFig`.  
+
+Un'alternativa alla soluzione descritta in questa sezione viene documentata nella sezione :ref:`avanzate_connettori_https_override_jvm`, dove la configurazione avviene tramite file di proprietà.
+
+L'autenticazione https personalizzata consente di agire ai seguenti livelli di autenticazione:
 
 -  **Autenticazione Server**, è possibile definire le trusted keys e
    indicare se si desidera verificare l'hostname rispetto al certificato
@@ -16,12 +19,11 @@ Il connettore HTTPS supporta:
    definire il keystore contenente la chiave privata che si deve
    utilizzare durante la sessione SSL.
 
-   .. figure:: ../../_figure_console/ConnettoreHTTPS.jpg
-    :scale: 100%
-    :align: center
-    :name: configAutenticazioneHTTPSFig
+.. figure:: ../../_figure_console/ConnettoreHTTPS.jpg
+  :scale: 100%
+  :name: configAutenticazioneHTTPSFig
 
-    Dati di configurazione di un'autenticazione Https
+  Dati di configurazione di un'autenticazione Https
 
 Facendo riferimento alla maschera raffigurata in :numref:`configAutenticazioneHTTPSFig` andiamo a descrivere
 il significato dei parametri:
@@ -41,10 +43,9 @@ il significato dei parametri:
 
    I certificati server saranno validati tramite la configurazione indicata di seguito. Per accettare qualsiasi certificato restituito dal server è possibile disattivare la **Verifica**.
 
-   -  **Path**: Path dove è localizzato il truststore contenente i
-      certificati server trusted.
-
    -  **Tipo** (jks, pkcs12): Tipologia del TrustStore (default: jks). Se registrati saranno disponibili anche i tipi di keystore PKCS11; per ulteriori dettagli si rimanda alla sezione :ref:`pkcs11`.
+
+   -  **Path**: Path dove è localizzato il truststore contenente i certificati server trusted.
 
    -  **Password**: Password per l'accesso al TrustStore.
 
@@ -62,8 +63,9 @@ il significato dei parametri:
 
    -  **Tipo (solo se Dati di Accesso ridefiniti)** (jks, pkcs12): Tipologia del Keystore (default: jks). Se registrati saranno disponibili anche i tipi di keystore PKCS11; per ulteriori dettagli si rimanda alla sezione :ref:`pkcs11`.
 
-   -  **Password (solo se Dati di Accesso ridefiniti)**: Password per
-      l'accesso al Keystore.
+   -  **Path (solo se Dati di Accesso ridefiniti)**: Path dove è localizzato il Keystore.
+
+   -  **Password (solo se Dati di Accesso ridefiniti)**: Password per l'accesso al Keystore.
 
    -  **Password Chiave Privata**: Password per accedere alla chiave
       privata presente nel keystore.

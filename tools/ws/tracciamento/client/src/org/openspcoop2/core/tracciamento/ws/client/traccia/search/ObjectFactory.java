@@ -43,32 +43,32 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _SearchFilterTraccia_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "search-filter-traccia");
-    private final static QName _DominioSoggetto_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "dominio-soggetto");
-    private final static QName _Dominio_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "dominio");
-    private final static QName _SoggettoIdentificativo_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "soggetto-identificativo");
-    private final static QName _Soggetto_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "soggetto");
-    private final static QName _ProfiloCollaborazione_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "profilo-collaborazione");
-    private final static QName _Servizio_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "servizio");
-    private final static QName _Protocollo_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "protocollo");
-    private final static QName _Busta_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "busta");
-    private final static QName _TracciamentoServiceException_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "tracciamento-service-exception");
-    private final static QName _TracciamentoNotFoundException_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "tracciamento-not-found-exception");
-    private final static QName _TracciamentoMultipleResultException_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "tracciamento-multiple-result-exception");
-    private final static QName _TracciamentoNotImplementedException_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "tracciamento-not-implemented-exception");
-    private final static QName _TracciamentoNotAuthorizedException_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "tracciamento-not-authorized-exception");
-    private final static QName _FindAll_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "findAll");
-    private final static QName _FindAllResponse_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "findAllResponse");
-    private final static QName _Find_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "find");
-    private final static QName _FindResponse_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "findResponse");
-    private final static QName _Count_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "count");
-    private final static QName _CountResponse_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "countResponse");
-    private final static QName _Get_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "get");
-    private final static QName _GetResponse_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "getResponse");
-    private final static QName _Exists_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "exists");
-    private final static QName _ExistsResponse_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "existsResponse");
-    private final static QName _FindAllIds_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "findAllIds");
-    private final static QName _FindAllIdsResponse_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "findAllIdsResponse");
+    private static final QName _SearchFilterTraccia_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "search-filter-traccia");
+    private static final QName _DominioSoggetto_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "dominio-soggetto");
+    private static final QName _Dominio_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "dominio");
+    private static final QName _SoggettoIdentificativo_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "soggetto-identificativo");
+    private static final QName _Soggetto_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "soggetto");
+    private static final QName _ProfiloCollaborazione_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "profilo-collaborazione");
+    private static final QName _Servizio_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "servizio");
+    private static final QName _Protocollo_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "protocollo");
+    private static final QName _Busta_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "busta");
+    private static final QName _TracciamentoServiceException_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "tracciamento-service-exception");
+    private static final QName _TracciamentoNotFoundException_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "tracciamento-not-found-exception");
+    private static final QName _TracciamentoMultipleResultException_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "tracciamento-multiple-result-exception");
+    private static final QName _TracciamentoNotImplementedException_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "tracciamento-not-implemented-exception");
+    private static final QName _TracciamentoNotAuthorizedException_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "tracciamento-not-authorized-exception");
+    private static final QName _FindAll_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "findAll");
+    private static final QName _FindAllResponse_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "findAllResponse");
+    private static final QName _Find_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "find");
+    private static final QName _FindResponse_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "findResponse");
+    private static final QName _Count_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "count");
+    private static final QName _CountResponse_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "countResponse");
+    private static final QName _Get_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "get");
+    private static final QName _GetResponse_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "getResponse");
+    private static final QName _Exists_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "exists");
+    private static final QName _ExistsResponse_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "existsResponse");
+    private static final QName _FindAllIds_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "findAllIds");
+    private static final QName _FindAllIdsResponse_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "findAllIdsResponse");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.openspcoop2.core.tracciamento.ws.client.traccia.search

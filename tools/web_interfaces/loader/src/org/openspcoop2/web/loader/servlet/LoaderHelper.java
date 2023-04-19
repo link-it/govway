@@ -22,7 +22,8 @@
 package org.openspcoop2.web.loader.servlet;
 
 import java.io.ByteArrayInputStream;
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -69,7 +70,7 @@ public class LoaderHelper {
 	public ICrypt getPasswordManager() {
 		return this.passwordManager;
 	}
-	protected ICrypt passwordManager_backwardCompatibility;
+	protected ICrypt passwordManagerBackwardCompatibility;
 
 	/** Logger utilizzato per debug. */
 	private Logger log = null;
@@ -106,7 +107,7 @@ public class LoaderHelper {
 			CryptConfig config = new CryptConfig(consoleProperties.getConsoleUtenzePassword());
 			this.passwordManager = CryptFactory.getCrypt(this.log, config);
 			if(config.isBackwardCompatibility()) {
-				this.passwordManager_backwardCompatibility = CryptFactory.getOldMD5Crypt(this.log);
+				this.passwordManagerBackwardCompatibility = CryptFactory.getOldMD5Crypt(this.log);
 			}
 			
 		} catch (Exception e) {
@@ -120,9 +121,8 @@ public class LoaderHelper {
 	
 	// Prepara il menu'
 	public void makeMenu() {
-		//String logAdm = (String) this.session.getAttribute("Login");
 
-		Vector<MenuEntry> menu = new Vector<MenuEntry>();
+		List<MenuEntry> menu = new ArrayList<>();
 
 		// Preparo il menu per il generalsu
 		MenuEntry me1 = new MenuEntry();
@@ -133,7 +133,7 @@ public class LoaderHelper {
 		entries1[1][0] = Costanti.LABEL_ELIMINA;
 		entries1[1][1] = Costanti.SERVLET_NAME_ARCHIVI_ELIMINAZIONE_XML;
 		me1.setEntries(entries1);
-		menu.addElement(me1);
+		menu.add(me1);
 
 		this.pd.setMenu(menu);
 	}
@@ -148,11 +148,10 @@ public class LoaderHelper {
 			this.pd.setMessage(Costanti.LABEL_LOGIN_DATI_INCOMPLETI_LOGIN,MessageType.ERROR_SINTETICO);
 			return false;
 		}
-		if (verificaPassword) {
-			if (password.equals("")) {
-				this.pd.setMessage(Costanti.LABEL_LOGIN_DATI_INCOMPLETI_PASSWORD,MessageType.ERROR_SINTETICO);
-				return false;
-			}
+		if (verificaPassword &&
+			password.equals("")) {
+			this.pd.setMessage(Costanti.LABEL_LOGIN_DATI_INCOMPLETI_PASSWORD,MessageType.ERROR_SINTETICO);
+			return false;
 		}
 
 		// FARE PROPRIETA SU FILE PER INDICARE DOVE CERCARE L'UTENTE
@@ -181,14 +180,14 @@ public class LoaderHelper {
 			if ((pwcrypt != null) && (!pwcrypt.equals(""))) {
 				// Controlla se utente e password corrispondono
 				trovato = this.passwordManager.check(password, pwcrypt);
-				if(!trovato && this.passwordManager_backwardCompatibility!=null) {
-					trovato = this.passwordManager_backwardCompatibility.check(password, pwcrypt);
+				if(!trovato && this.passwordManagerBackwardCompatibility!=null) {
+					trovato = this.passwordManagerBackwardCompatibility.check(password, pwcrypt);
 				}
 			}
 		}
 
 		if (!trovato) {
-			if (verificaPassword==false) {
+			if (!verificaPassword) {
 				this.pd.setMessage(Costanti.LABEL_LOGIN_ERRATO,MessageType.ERROR_SINTETICO);
 			} else {
 				this.pd.setMessage(Costanti.LABEL_LOGIN_CON_PW_ERRATO,MessageType.ERROR_SINTETICO);
@@ -196,7 +195,7 @@ public class LoaderHelper {
 			return false;
 		}
 
-		if(u.getPermessi().isServizi()==false){
+		if(!u.getPermessi().isServizi()){
 			this.pd.setMessage(Costanti.LABEL_LOGIN_PERMESSI_NON_SUFFICENTI,MessageType.ERROR_SINTETICO);
 			return false;
 		}
@@ -208,12 +207,12 @@ public class LoaderHelper {
 	}
 
 	
-	public void addImportaXMLtoDati(Vector<DataElement> dati,String tipoxml){
+	public void addImportaXMLtoDati(List<DataElement> dati,String tipoxml){
 		
 		DataElement de = new DataElement();
 		de.setLabel(Costanti.LABEL_IMPORTA);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(Costanti.LABEL_TIPOLOGIA_XML);
@@ -224,24 +223,23 @@ public class LoaderHelper {
 		de.setValues(stati);
 		de.setSelected(tipoxml);
 		de.setName(Costanti.PARAMETRO_ARCHIVI_TIPO_XML);
-		dati.addElement(de);
+		dati.add(de);
 
-		de = new DataElement();
 		de = new DataElement();
 		de.setValue("");
 		de.setLabel(Costanti.LABEL_PARAMETRO_ARCHIVI_FILE);
 		de.setType(DataElementType.FILE);
 		de.setName(Costanti.PARAMETRO_ARCHIVI_FILE);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 	}
 	
-	public void addEliminazioneXMLtoDati(Vector<DataElement> dati,String tipoxml){
+	public void addEliminazioneXMLtoDati(List<DataElement> dati,String tipoxml){
 		
 		DataElement de = new DataElement();
 		de.setLabel(Costanti.LABEL_ELIMINA);
 		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(Costanti.LABEL_TIPOLOGIA_XML);
@@ -252,16 +250,15 @@ public class LoaderHelper {
 		de.setValues(stati);
 		de.setSelected(tipoxml);
 		de.setName(Costanti.PARAMETRO_ARCHIVI_TIPO_XML);
-		dati.addElement(de);
+		dati.add(de);
 
-		de = new DataElement();
 		de = new DataElement();
 		de.setValue("");
 		de.setLabel(Costanti.LABEL_PARAMETRO_ARCHIVI_FILE);
 		de.setType(DataElementType.FILE);
 		de.setName(Costanti.PARAMETRO_ARCHIVI_FILE);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 	}
 	
 	public boolean validateFileXml(Logger log,FormFile ff,StringBuilder errorBuffer,String tipologiaXML){
@@ -278,7 +275,6 @@ public class LoaderHelper {
 			}
 			byte[] data = ff.getFileData();
 			
-			//log.debug(new String(data));
 			ByteArrayInputStream bin = new ByteArrayInputStream(data);
 
 			validatore.valida(bin);

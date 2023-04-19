@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -96,14 +95,14 @@ public final class ConfigurazioneRouteAdd extends Action {
 			SoggettiCore soggettiCore = new SoggettiCore(confCore);
 
 			// Soggetti
-			List<String> tipiSoggetti = new ArrayList<String>();
+			List<String> tipiSoggetti = new ArrayList<>();
 			tipiSoggetti.add("-");
 			tipiSoggetti.addAll(soggettiCore.getTipiSoggettiGestiti());
 			String[] tipiSoggettiLabel = tipiSoggetti.toArray(new String[1]);
 			
 			String[] tipiSoggettiLabelPerProtocollo = tipiSoggettiLabel;
 			if(tipo!=null && !"".equals(tipo) && !"-".equals(tipo)){
-				List<String> tipiSoggettiPerRotta = new ArrayList<String>();
+				List<String> tipiSoggettiPerRotta = new ArrayList<>();
 				tipiSoggettiPerRotta.add("-");
 				tipiSoggettiPerRotta.addAll(soggettiCore.getTipiSoggettiGestitiProtocollo(soggettiCore.getProtocolloAssociatoTipoSoggetto(tipo)));
 				tipiSoggettiLabelPerProtocollo = tipiSoggettiPerRotta.toArray(new String[1]);
@@ -121,7 +120,6 @@ public final class ConfigurazioneRouteAdd extends Action {
 			registriListLabel[0] = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRO_ROTTA_ALL;
 			int i = 1;
 			for (AccessoRegistroRegistro arr : list) {
-				// registriList[i] = arr.getId().toString();
 				registriList[i] = arr.getNome();
 				registriListLabel[i] = arr.getNome();
 				i++;
@@ -131,7 +129,7 @@ public final class ConfigurazioneRouteAdd extends Action {
 			// dati
 			if (confHelper.isEditModeInProgress()) {
 				// setto la barra del titolo
-				List<Parameter> lstParam = new ArrayList<Parameter>();
+				List<Parameter> lstParam = new ArrayList<>();
 
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TABELLA_DI_ROUTING, 
@@ -143,8 +141,8 @@ public final class ConfigurazioneRouteAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = confHelper.addValoriRottaToDati(TipoOperazione.ADD,  nome, tipo, tiporotta,
 						ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRO_ROTTA_ALL, 
@@ -164,7 +162,7 @@ public final class ConfigurazioneRouteAdd extends Action {
 			boolean isOk = confHelper.routingListCheckData(TipoOperazione.ADD, registriList);
 			if (!isOk) {
 				// setto la barra del titolo
-				List<Parameter> lstParam = new ArrayList<Parameter>();
+				List<Parameter> lstParam = new ArrayList<>();
 
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TABELLA_DI_ROUTING, 
@@ -176,9 +174,9 @@ public final class ConfigurazioneRouteAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati =  confHelper.addValoriRottaToDati(TipoOperazione.ADD, nome, tipo, tiporotta,
 						registrorotta,  registriList,

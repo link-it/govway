@@ -38,10 +38,10 @@ import javax.xml.ws.Service;
                   targetNamespace = "http://www.openspcoop2.org/core/tracciamento/management") 
 public class TracciaSoap11Service extends Service {
 
-    public final static URL WSDL_LOCATION;
+    public static final URL WSDL_LOCATION;
 
-    public final static QName SERVICE = new QName("http://www.openspcoop2.org/core/tracciamento/management", "TracciaSoap11Service");
-    public final static QName TracciaPortSoap11 = new QName("http://www.openspcoop2.org/core/tracciamento/management", "TracciaPortSoap11");
+    public static final QName SERVICE = new QName("http://www.openspcoop2.org/core/tracciamento/management", "TracciaSoap11Service");
+    public static final QName TracciaPortSoap11 = new QName("http://www.openspcoop2.org/core/tracciamento/management", "TracciaPortSoap11");
     static {
         URL url = null;
         try {

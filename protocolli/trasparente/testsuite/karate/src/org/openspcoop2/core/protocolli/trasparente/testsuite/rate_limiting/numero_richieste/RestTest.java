@@ -27,7 +27,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -76,7 +75,7 @@ public class RestTest extends ConfigLoader {
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl( System.getProperty("govway_base_path") + "/SoggettoInternoTest/NumeroRichiesteRest/v1/minuto");
 						
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
 		
 		Utils.waitForZeroActiveRequests(idPolicy, maxRequests);
 		
@@ -126,7 +125,7 @@ public class RestTest extends ConfigLoader {
 			
 			Utils.waitForNewMinute();
 							
-			Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
+			List<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
 			
 			Utils.waitForZeroActiveRequests(idPolicy, maxRequests, policyType);
 			
@@ -178,7 +177,7 @@ public class RestTest extends ConfigLoader {
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl( System.getProperty("govway_base_path") + "/SoggettoInternoTest/NumeroRichiesteRest/v1/orario");
 						
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
 		
 		Utils.waitForZeroActiveRequests(idPolicy, maxRequests);
 		
@@ -219,7 +218,7 @@ public class RestTest extends ConfigLoader {
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl( System.getProperty("govway_base_path") + "/SoggettoInternoTest/NumeroRichiesteRest/v1/giornaliero");
 						
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
 		
 		Utils.waitForZeroActiveRequests(idPolicy, maxRequests);
 		
@@ -263,7 +262,7 @@ public class RestTest extends ConfigLoader {
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl( System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/NumeroRichiesteRest/v1/minuto");
 						
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
 		
 		Utils.waitForZeroActiveRequests(idPolicy, maxRequests);
 		
@@ -313,7 +312,7 @@ public class RestTest extends ConfigLoader {
 			
 			Utils.waitForNewMinute();
 							
-			Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
+			List<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
 			
 			Utils.waitForZeroActiveRequests(idPolicy, maxRequests, policyType);
 			
@@ -369,7 +368,7 @@ public class RestTest extends ConfigLoader {
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl( System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/NumeroRichiesteRest/v1/orario");
 						
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
 		
 		Utils.waitForZeroActiveRequests(idPolicy, maxRequests);
 		
@@ -413,7 +412,7 @@ public class RestTest extends ConfigLoader {
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl( System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/NumeroRichiesteRest/v1/giornaliero");
 						
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
 		
 		Utils.waitForZeroActiveRequests(idPolicy, maxRequests);
 		
@@ -474,7 +473,7 @@ public class RestTest extends ConfigLoader {
 			idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", "NumeroRichiesteRest", PolicyAlias.RICHIESTE_SIMULTANEE);
 			Commons.checkPreConditionsRichiesteSimultanee(idPolicy, policyType);
 			
-			Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxConcurrentRequests + 1);
+			List<HttpResponse> responses = Utils.makeParallelRequests(request, maxConcurrentRequests + 1);
 			
 			checkAssertionsRichiesteSimultanee(responses, maxConcurrentRequests, policyType);
 			Commons.checkPostConditionsRichiesteSimultanee(idPolicy, policyType);
@@ -526,7 +525,7 @@ public class RestTest extends ConfigLoader {
 			idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "NumeroRichiesteRest", PolicyAlias.RICHIESTE_SIMULTANEE);
 			Commons.checkPreConditionsRichiesteSimultanee(idPolicy, policyType);
 	
-			Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxConcurrentRequests + 1);
+			List<HttpResponse> responses = Utils.makeParallelRequests(request, maxConcurrentRequests + 1);
 			
 			checkAssertionsRichiesteSimultanee(responses, maxConcurrentRequests, policyType);
 			Commons.checkPostConditionsRichiesteSimultanee(idPolicy, policyType);
@@ -556,7 +555,7 @@ public class RestTest extends ConfigLoader {
 		request.setContentType("application/json");
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/NumeroRichiesteRest/v1/no-policy?sleep="+durata_simultanee);
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxConcurrentRequests + 1);
+		List<HttpResponse> responses = Utils.makeParallelRequests(request, maxConcurrentRequests + 1);
 		
 		HttpResponse failedResponse = responses.stream().filter(r -> r.getResultHTTPOperation() == 429).findAny()
 				.orElse(null);
@@ -592,7 +591,7 @@ public class RestTest extends ConfigLoader {
 	}*/
 
 	
-	private void checkAssertionsRichiesteSimultanee(Vector<HttpResponse> responses, int maxConcurrentRequests, PolicyGroupByActiveThreadsType policyType) throws Exception {
+	private void checkAssertionsRichiesteSimultanee(List<HttpResponse> responses, int maxConcurrentRequests, PolicyGroupByActiveThreadsType policyType) throws Exception {
 		// Tutte le richieste tranne 1 devono restituire 200
 		
 		long numeroRichieste = responses.stream().filter(r -> r.getResultHTTPOperation() == 200).count();
@@ -636,10 +635,10 @@ public class RestTest extends ConfigLoader {
 	}
 
 	
-	private void checkAssertionsNumeroRichieste(Vector<HttpResponse> responses, int maxRequests, int windowSize, boolean disclosure) throws Exception {
+	private void checkAssertionsNumeroRichieste(List<HttpResponse> responses, int maxRequests, int windowSize, boolean disclosure) throws Exception {
 		checkAssertionsNumeroRichieste(responses, maxRequests, windowSize, disclosure, PolicyGroupByActiveThreadsType.LOCAL);
 	}
-	private void checkAssertionsNumeroRichieste(Vector<HttpResponse> responses, int maxRequests, int windowSize, boolean disclosure, PolicyGroupByActiveThreadsType policyType) throws Exception {
+	private void checkAssertionsNumeroRichieste(List<HttpResponse> responses, int maxRequests, int windowSize, boolean disclosure, PolicyGroupByActiveThreadsType policyType) throws Exception {
 
 		if(policyType!=null && policyType.isInconsistent()) {
 			// numero troppo casuali
@@ -660,7 +659,7 @@ public class RestTest extends ConfigLoader {
 			}
 		}
 	}
-	private void _checkAssertionsNumeroRichieste(Vector<HttpResponse> responses, int maxRequests, int windowSize, boolean disclosure, PolicyGroupByActiveThreadsType policyType) throws Exception {
+	private void _checkAssertionsNumeroRichieste(List<HttpResponse> responses, int maxRequests, int windowSize, boolean disclosure, PolicyGroupByActiveThreadsType policyType) throws Exception {
 		
 		// Tutte le richieste devono avere lo header X-RateLimit-Reset impostato ad un numero
 		// Tutte le richieste devono avere lo header X-RateLimit-Limit

@@ -54,16 +54,16 @@ import org.slf4j.Logger;
 public class JmxDataSource extends NotificationBroadcasterSupport implements DynamicMBean {
 
 	/** Nomi attributi */
-	public final static String NUMERO_DATASOURCE = "datasources";
+	public static final String NUMERO_DATASOURCE = "datasources";
 	
 	/** Nomi metodi */
-	public final static String CONNESSIONI_ALLOCATE = "getUsedConnections";
-	public final static String INFORMAZIONI_DATABASE = "getInformazioniDatabase";
-	public final static String DATASOURCE_CREATI = "getDatasources";
-	public final static String DATASOURCE_CREATI_METHOD2 = "listDatasources"; // per farlo comparire in jmx-console
+	public static final String CONNESSIONI_ALLOCATE = "getUsedConnections";
+	public static final String INFORMAZIONI_DATABASE = "getInformazioniDatabase";
+	public static final String DATASOURCE_CREATI = "getDatasources";
+	public static final String DATASOURCE_CREATI_METHOD2 = "listDatasources"; // per farlo comparire in jmx-console
 
 	
-	public final static String MSG_OPERAZIONE_NON_EFFETTUATA = "Operazione non riuscita: ";
+	public static final String MSG_OPERAZIONE_NON_EFFETTUATA = "Operazione non riuscita: ";
 	
 	/** getAttribute */
 	@Override
@@ -281,11 +281,11 @@ public class JmxDataSource extends NotificationBroadcasterSupport implements Dyn
 	
 	/* Metodi di management JMX */
 
-	public final static String MSG_NESSUNA_CONNESSIONE_ALLOCATA = "Nessuna connessione allocata";
-	public final static String MSG_CONNESSIONI_ALLOCATE = " connessioni allocate: ";
+	public static final String MSG_NESSUNA_CONNESSIONE_ALLOCATA = "Nessuna connessione allocata";
+	public static final String MSG_CONNESSIONI_ALLOCATE = " connessioni allocate: ";
 	
-	public final static String MSG_NESSUN_DATASOURCE_ALLOCATO = "Nessun datasource allocato";
-	public final static String MSG_DATASOURCE_ALLOCATI = " datasource allocati: ";
+	public static final String MSG_NESSUN_DATASOURCE_ALLOCATO = "Nessun datasource allocato";
+	public static final String MSG_DATASOURCE_ALLOCATI = " datasource allocati: ";
 
 	public String getUsedDBConnections(String uuidDataSource){
 		String[] risorse = null;

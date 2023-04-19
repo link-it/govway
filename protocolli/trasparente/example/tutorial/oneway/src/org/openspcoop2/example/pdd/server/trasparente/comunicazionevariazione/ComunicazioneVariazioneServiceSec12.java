@@ -38,10 +38,10 @@ import javax.xml.ws.Service;
                   targetNamespace = "http://openspcoop2.org/example/pdd/server/ComunicazioneVariazione") 
 public class ComunicazioneVariazioneServiceSec12 extends Service {
 
-    public final static URL WSDL_LOCATION;
+    public static final URL WSDL_LOCATION;
 
-    public final static QName SERVICE = new QName("http://openspcoop2.org/example/pdd/server/ComunicazioneVariazione", "ComunicazioneVariazioneSOAP12SecService");
-    public final static QName ComunicazioneVariazioneInterfaceEndpointSec12 = new QName("http://openspcoop2.org/example/pdd/server/ComunicazioneVariazione", "ComunicazioneVariazioneSOAP12SecInterfaceEndpoint");
+    public static final QName SERVICE = new QName("http://openspcoop2.org/example/pdd/server/ComunicazioneVariazione", "ComunicazioneVariazioneSOAP12SecService");
+    public static final QName ComunicazioneVariazioneInterfaceEndpointSec12 = new QName("http://openspcoop2.org/example/pdd/server/ComunicazioneVariazione", "ComunicazioneVariazioneSOAP12SecInterfaceEndpoint");
     static {
         URL url = ComunicazioneVariazioneServiceSec12.class.getResource("configurazionePdD/wsdl/implementazioneErogatoreSoap12Security.wsdl");
         if (url == null) {

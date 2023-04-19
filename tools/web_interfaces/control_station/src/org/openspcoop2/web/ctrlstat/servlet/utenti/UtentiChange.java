@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -96,7 +95,7 @@ public final class UtentiChange extends Action {
 			
 			String nomesu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
 			String pwsu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_PW);
-			String confpwsu = null; //utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_CONFERMA_PASSWORD);
+			String confpwsu = null; 
 			String tipoGui = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
 
 			String isServizi = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SERVIZI);
@@ -155,7 +154,7 @@ public final class UtentiChange extends Action {
 					oldProtocolliSupportati = user.getProtocolliSupportati();
 					// dal db ho letto un utente che non ha associato nessun protocollo, glieli associo tutti di default
 					if(oldProtocolliSupportati == null) {
-						oldProtocolliSupportati = new ArrayList<String>();
+						oldProtocolliSupportati = new ArrayList<>();
 						for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
 							String protocolloName = protocolliRegistratiConsole.get(i);
 							oldProtocolliSupportati.add(protocolloName);
@@ -164,7 +163,7 @@ public final class UtentiChange extends Action {
 					}
 				} else {
 					// utente configurato solo per gestire gli utenti
-					oldProtocolliSupportati = new ArrayList<String>();
+					oldProtocolliSupportati = new ArrayList<>();
 				}
 				protocolliSupportati  = oldProtocolliSupportati;
 				first = true;
@@ -238,7 +237,6 @@ public final class UtentiChange extends Action {
 				}
 			}
 			
-//			tipoGui = (tipoGui==null) ? user.getInterfaceType().toString() : tipoGui;
 			InterfaceType interfaceType = InterfaceType.convert(tipoGui, true);
 			
 			String postBackElementName = utentiHelper.getPostBackElementName();
@@ -276,9 +274,6 @@ public final class UtentiChange extends Action {
 			if(utentiHelper.isEditModeInProgress()){
 
 				// setto la barra del titolo
-				//				ServletUtils.setPageDataTitle_ServletChange(pd, UtentiCostanti.LABEL_UTENTI, 
-				//						UtentiCostanti.SERVLET_NAME_UTENTI_LIST,
-				//						nomesu);
 
 				ServletUtils.setPageDataTitle(pd, 
 						new Parameter(UtentiCostanti.LABEL_UTENTI ,UtentiCostanti.SERVLET_NAME_UTENTI_LIST),
@@ -304,19 +299,18 @@ public final class UtentiChange extends Action {
 				if(first) {
 					for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
 						String protocolloName = protocolliRegistratiConsole.get(i);
-						if(modalitaScelte[i] == null) {
-							if(protocolliSupportati.contains(protocolloName)) {
-								modalitaScelte[i] = Costanti.CHECK_BOX_ENABLED;
-							} 
+						if(modalitaScelte[i] == null &&
+							protocolliSupportati.contains(protocolloName)) {
+							modalitaScelte[i] = Costanti.CHECK_BOX_ENABLED;
 						} 
 					}
 				}
 
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.CHANGE, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
@@ -327,14 +321,13 @@ public final class UtentiChange extends Action {
 
 				pd.setDati(dati);
 
-				if(first) {
-					if(!user.isConfigurazioneValidaAbilitazioni()) {
-						if(!user.isConfigurazioneValidaSoggettiAbilitati()) {
-							pd.setMessage(UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SOGGETTI_DEFINIZIONE_UPDATE_NOTE,MessageType.INFO);
-						}
-						else if(!user.isConfigurazioneValidaServiziAbilitati()) {
-							pd.setMessage(UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SERVIZI_DEFINIZIONE_UPDATE_NOTE,MessageType.INFO);
-						}
+				if(first &&
+					!user.isConfigurazioneValidaAbilitazioni()) {
+					if(!user.isConfigurazioneValidaSoggettiAbilitati()) {
+						pd.setMessage(UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SOGGETTI_DEFINIZIONE_UPDATE_NOTE,MessageType.INFO);
+					}
+					else if(!user.isConfigurazioneValidaServiziAbilitati()) {
+						pd.setMessage(UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SERVIZI_DEFINIZIONE_UPDATE_NOTE,MessageType.INFO);
 					}
 				}
 				
@@ -349,18 +342,15 @@ public final class UtentiChange extends Action {
 			if (!isOk) {
 
 				// setto la barra del titolo
-				//				ServletUtils.setPageDataTitle_ServletChange(pd, UtentiCostanti.LABEL_UTENTI, 
-				//						UtentiCostanti.SERVLET_NAME_UTENTI_LIST,
-				//						nomesu);
 
 				ServletUtils.setPageDataTitle(pd, 
 						new Parameter(UtentiCostanti.LABEL_UTENTI, UtentiCostanti.SERVLET_NAME_UTENTI_LIST),
 						new Parameter(nomesu,null));
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.CHANGE, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
@@ -383,16 +373,16 @@ public final class UtentiChange extends Action {
 			List<String> usersWithS = utentiCore.getUsersWithType(Permessi.SERVIZI.toString());
 
 			String[] uws = null;
-			if (usersWithS != null && usersWithS.size() > 0) {
-				Vector<String> usersWithPermessoS = new Vector<String>();
+			if (usersWithS != null && !usersWithS.isEmpty()) {
+				List<String> usersWithPermessoS = new ArrayList<>();
 				Iterator<String> itUWS = usersWithS.iterator();
 				while (itUWS.hasNext()) {
 					String singleUWS = itUWS.next();
-					if (nomesu.equals(singleUWS) == false) {
+					if (!nomesu.equals(singleUWS)) {
 						usersWithPermessoS.add(singleUWS);
 					}
 				}
-				if(usersWithPermessoS.size()>0){
+				if(!usersWithPermessoS.isEmpty()){
 					uws = new String[1];
 					uws = usersWithPermessoS.toArray(uws);
 				}
@@ -402,16 +392,16 @@ public final class UtentiChange extends Action {
 			List<String> usersWithP = utentiCore.getUsersWithType(Permessi.ACCORDI_COOPERAZIONE.toString());
 
 			String[] uwp = null;
-			if (usersWithP != null && usersWithP.size() > 0) {
-				Vector<String> usersWithPermessoP = new Vector<String>();
+			if (usersWithP != null && !usersWithP.isEmpty()) {
+				List<String> usersWithPermessoP = new ArrayList<>();
 				Iterator<String> itUWS = usersWithP.iterator();
 				while (itUWS.hasNext()) {
 					String singleUWP = itUWS.next();
-					if (nomesu.equals(singleUWP) == false) {
+					if (!nomesu.equals(singleUWP)) {
 						usersWithPermessoP.add(singleUWP);
 					}
 				}
-				if(usersWithPermessoP.size()>0){
+				if(!usersWithPermessoP.isEmpty()){
 					uwp = new String[1];
 					uwp = usersWithPermessoP.toArray(uwp);
 				}
@@ -432,9 +422,9 @@ public final class UtentiChange extends Action {
 							usersWithS.contains(nomesu)) {
 						if(uws==null){
 	
-							Vector<DataElement> dati = new Vector<DataElement>();
+							List<DataElement> dati = new ArrayList<>();
 	
-							dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+							dati.add(ServletUtils.getDataElementForEditModeFinished());
 	
 							pd.disableEditMode();
 	
@@ -498,18 +488,15 @@ public final class UtentiChange extends Action {
 				utentiHelper.makeMenu();
 
 				// setto la barra del titolo
-				//				ServletUtils.setPageDataTitle_ServletChange(pd, UtentiCostanti.LABEL_UTENTI, 
-				//						UtentiCostanti.SERVLET_NAME_UTENTI_LIST,
-				//						nomesu);
 
 				ServletUtils.setPageDataTitle(pd, 
 						new Parameter(UtentiCostanti.LABEL_UTENTI, UtentiCostanti.SERVLET_NAME_UTENTI_LIST),
 						new Parameter(nomesu,null));
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				utentiHelper.addChangeUtenteInfoToDati(dati, nomesu, changepwd, pwsu, confpwsu, interfaceType, 
 						isServizi, isDiagnostica, isReportistica, isSistema, isMessaggi, isUtenti, isAuditing,isAccordiCooperazione,paginaSuServizi, 
@@ -526,9 +513,9 @@ public final class UtentiChange extends Action {
 			} else {
 
 				boolean secret = false;
-				String secret_password  = pwsu;
-				String secret_user = nomesu;
-				boolean secret_appId = false;
+				String secretPassword  = pwsu;
+				String secretUser = nomesu;
+				boolean secretAppId = false;
 				
 				// Modifico l'utente
 				PasswordVerifier passwordVerifier = utentiCore.getUtenzePasswordVerifier();
@@ -541,7 +528,6 @@ public final class UtentiChange extends Action {
 				// Cripto la password
 				boolean cpwd = ServletUtils.isCheckBoxEnabled(changepwd);
 				if(cpwd && !"".equals(pwsu)){
-//					String pswuChiaro = pwsu;
 					if(utentiCore.isUtenzePasswordEncryptEnabled()) {
 						secret = true;
 						pwsu = utentiCore.getUtenzePasswordManager().crypt(pwsu);
@@ -626,23 +612,23 @@ public final class UtentiChange extends Action {
 							user.addProtocolloSupportato(protocolloName);
 						} 
 					}
-					if(user.getProtocolloSelezionatoPddConsole() != null) {
-						if(!user.getProtocolliSupportati().contains(user.getProtocolloSelezionatoPddConsole()))
-							user.setProtocolloSelezionatoPddConsole(null); 
+					if(user.getProtocolloSelezionatoPddConsole() != null &&
+						!user.getProtocolliSupportati().contains(user.getProtocolloSelezionatoPddConsole())) {
+						user.setProtocolloSelezionatoPddConsole(null); 
 					}
 				}
 				
 				if (ServletUtils.isCheckBoxEnabled(isDiagnostica) || ServletUtils.isCheckBoxEnabled(isReportistica)) {
 					user.setPermitAllSoggetti(ServletUtils.isCheckBoxEnabled(isSoggettiAll));
 					// se seleziono il permitall devo cancellare i soggetti selezionati
-					if(user.isPermitAllSoggetti()) {
-						if(user.getSoggetti() != null && !user.getSoggetti().isEmpty())
+					if(user.isPermitAllSoggetti() &&
+						user.getSoggetti() != null && !user.getSoggetti().isEmpty()) {
 						user.getSoggetti().clear();
 					}
 					user.setPermitAllServizi(ServletUtils.isCheckBoxEnabled(isServiziAll));
 					// se seleziono il permitall devo cancellare i servizi selezionati
-					if(user.isPermitAllServizi()) {
-						if(user.getServizi() != null && !user.getServizi().isEmpty())
+					if(user.isPermitAllServizi() &&
+						user.getServizi() != null && !user.getServizi().isEmpty()) {
 						user.getServizi().clear();
 					}
 					
@@ -685,41 +671,39 @@ public final class UtentiChange extends Action {
 
 				// Se singleSu != null, devo recuperare gli oggetti
 				// dell'utente ed assegnarli a singleSu
-				List<Object> oggetti = new ArrayList<Object>();
-				List<Integer> tipoModifica = new ArrayList<Integer>();
-				if(soggettiCore.isRegistroServiziLocale()){
-					if (singleSuServizi != null && !singleSuServizi.equals("")) {
-						UserObjects results = utentiCore.updateUserServizi(nomesu, singleSuServizi);
-						ControlStationCore.logInfo("Modificata utenza ["+nomesu+"]->["+singleSuServizi+"] per permesso relativo ai servizi (L'utenza '"+nomesu+"' verrà modificata per non avere più la gestione dei servizi). Risultati modifica: "+results.toString(false));
-					}
+				List<Object> oggetti = new ArrayList<>();
+				List<Integer> tipoModifica = new ArrayList<>();
+				if(soggettiCore.isRegistroServiziLocale() &&
+					singleSuServizi != null && !singleSuServizi.equals("")) {
+					UserObjects results = utentiCore.updateUserServizi(nomesu, singleSuServizi);
+					ControlStationCore.logInfo("Modificata utenza ["+nomesu+"]->["+singleSuServizi+"] per permesso relativo ai servizi (L'utenza '"+nomesu+"' verrà modificata per non avere più la gestione dei servizi). Risultati modifica: "+results.toString(false));
 				}
 
-				if(soggettiCore.isRegistroServiziLocale()){
-					if ((singleSuAccordiCooperazione != null && !singleSuAccordiCooperazione.equals("")) || checkOggettiAccordi) {
+				if(soggettiCore.isRegistroServiziLocale() &&
+					(singleSuAccordiCooperazione != null && !singleSuAccordiCooperazione.equals("")) || checkOggettiAccordi) {
 						
-						if(checkOggettiAccordi){
-							UserObjects results = utentiCore.countUserCooperazione(nomesu);
-							if(results.accordi_accoperazione>0 || results.accordi_parte_comune>0) {
-								Vector<DataElement> dati = new Vector<DataElement>();
-								
-								dati.addElement(ServletUtils.getDataElementForEditModeFinished());
-	
-								pd.disableEditMode();
-	
-								pd.setDati(dati);
-	
-								// Preparo il menu
-								pd.setMessage("Non è possibile eliminare il permesso 'Accordi Cooperazione', poichè non esistono altri utenti con tale permesso");
-	
-								ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
-	
-								return ServletUtils.getStrutsForwardGeneralError(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE());
-							}
+					if(checkOggettiAccordi){
+						UserObjects results = utentiCore.countUserCooperazione(nomesu);
+						if(results.accordi_accoperazione>0 || results.accordi_parte_comune>0) {
+							List<DataElement> dati = new ArrayList<>();
+							
+							dati.add(ServletUtils.getDataElementForEditModeFinished());
+
+							pd.disableEditMode();
+
+							pd.setDati(dati);
+
+							// Preparo il menu
+							pd.setMessage("Non è possibile eliminare il permesso 'Accordi Cooperazione', poichè non esistono altri utenti con tale permesso");
+
+							ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
+
+							return ServletUtils.getStrutsForwardGeneralError(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE());
 						}
-						
-						UserObjects results = utentiCore.updateUserCooperazione(nomesu, singleSuAccordiCooperazione);
-						ControlStationCore.logInfo("Modificata utenza ["+nomesu+"]->["+singleSuAccordiCooperazione+"] per permesso relativo agli accordi di cooperazione (L'utenza '"+nomesu+"' verrà modificata per non avere più la gestione degli accordi di cooperazione). Risultati modifica: "+results.toString(true));
 					}
+					
+					UserObjects results = utentiCore.updateUserCooperazione(nomesu, singleSuAccordiCooperazione);
+					ControlStationCore.logInfo("Modificata utenza ["+nomesu+"]->["+singleSuAccordiCooperazione+"] per permesso relativo agli accordi di cooperazione (L'utenza '"+nomesu+"' verrà modificata per non avere più la gestione degli accordi di cooperazione). Risultati modifica: "+results.toString(true));
 				}
 
 				// Alla fine, modifico l'utente
@@ -750,7 +734,7 @@ public final class UtentiChange extends Action {
 				
 				// Messaggio 'Please Copy'
 				if(!isLoggedUser && secret) {
-					utentiHelper.setSecretPleaseCopy(secret_password, secret_user, secret_appId, ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC, OggettoDialogEnum.UTENTE, nomesu);
+					utentiHelper.setSecretPleaseCopy(secretPassword, secretUser, secretAppId, ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC, OggettoDialogEnum.UTENTE, nomesu);
 				}
 
 				// Se ho modificato l'utente loggato non faccio caricare la lista, degli utente ma una
@@ -771,10 +755,10 @@ public final class UtentiChange extends Action {
 
 				} else {
 
-					if(user.isConfigurazioneValidaSoggettiAbilitati()==false) {
+					if(!user.isConfigurazioneValidaSoggettiAbilitati()) {
 						pd.setMessage(UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SOGGETTI_DEFINIZIONE_UPDATE_NOTE, MessageType.INFO);
 					}
-					else if(user.isConfigurazioneValidaServiziAbilitati()==false) {
+					else if(!user.isConfigurazioneValidaServiziAbilitati()) {
 						pd.setMessage(UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SERVIZI_DEFINIZIONE_UPDATE_NOTE, MessageType.INFO);
 					}
 					

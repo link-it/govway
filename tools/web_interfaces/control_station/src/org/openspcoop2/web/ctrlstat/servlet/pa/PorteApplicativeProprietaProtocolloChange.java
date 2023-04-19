@@ -22,7 +22,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.List;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -125,15 +125,15 @@ public final class PorteApplicativeProprietaProtocolloChange extends Action {
 					Proprieta ssp = pa.getProprieta(i);
 					if (nome.equals(ssp.getNome())) {
 						if(ssp.getValore()!=null){
-							valore = ssp.getValore().toString();
+							valore = ssp.getValore();
 						}
 						break;
 					}
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addProprietaProtocolloToDati(TipoOperazione.CHANGE, porteApplicativeHelper.getSize(), nome, valore, dati);
 
@@ -154,9 +154,9 @@ public final class PorteApplicativeProprietaProtocolloChange extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteApplicativeHelper.addProprietaProtocolloToDati(TipoOperazione.CHANGE, porteApplicativeHelper.getSize(), nome, valore,dati);
 

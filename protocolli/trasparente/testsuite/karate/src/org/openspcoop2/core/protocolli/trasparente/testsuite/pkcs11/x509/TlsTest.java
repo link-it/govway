@@ -31,8 +31,8 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 */
 public class TlsTest extends ConfigLoader {
 
-	public final static String api = "TestTLS";
-	public final static String Trust_NoKeyAlias = "Trust-NoKeyAlias";
+	public static final String api = "TestTLS";
+	public static final String Trust_NoKeyAlias = "Trust-NoKeyAlias";
 	
 	@Test
 	public void trustAll_keyServerAlias() throws Exception {

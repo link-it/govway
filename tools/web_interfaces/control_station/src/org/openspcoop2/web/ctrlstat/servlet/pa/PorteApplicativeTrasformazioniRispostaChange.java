@@ -22,7 +22,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -206,7 +205,6 @@ public class PorteApplicativeTrasformazioniRispostaChange extends Action {
 				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_ENABLED)) {
 					trasformazioneContenutoRispostaTipo = org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
 					trasformazioneContenutoRispostaContentType = "";
-					//trasformazioneContenutoRispostaReturnCode = "";
 					trasformazioneRispostaSoapAbilitato = false;
 					trasformazioneRispostaSoapEnvelope = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_DISABILITATO;
 					trasformazioneRispostaSoapEnvelopeTipo = org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
@@ -219,9 +217,9 @@ public class PorteApplicativeTrasformazioniRispostaChange extends Action {
 					porteApplicativeHelper.deleteBinaryParameters(trasformazioneContenutoRispostaTemplate);
 				}
 				
-				if(postBackElementName.equals(trasformazioneContenutoRispostaTemplate.getName())) {
-					if(StringUtils.isEmpty(trasformazioneContenutoRispostaTipoCheck))
-						trasformazioneContenutoRispostaTipoCheck = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_FILE;
+				if(postBackElementName.equals(trasformazioneContenutoRispostaTemplate.getName()) &&
+					StringUtils.isEmpty(trasformazioneContenutoRispostaTipoCheck)) {
+					trasformazioneContenutoRispostaTipoCheck = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_FILE;
 				}
 				
 				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_SOAP_TRANSFORMATION)) {
@@ -244,9 +242,9 @@ public class PorteApplicativeTrasformazioniRispostaChange extends Action {
 					porteApplicativeHelper.deleteBinaryParameters(trasformazioneRispostaSoapEnvelopeTemplate);
 				}
 				
-				if(postBackElementName.equals(trasformazioneRispostaSoapEnvelopeTemplate.getName())) {
-					if(StringUtils.isEmpty(trasformazioneRispostaSoapEnvelopeTipoCheck))
-						trasformazioneRispostaSoapEnvelopeTipoCheck = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_FILE;
+				if(postBackElementName.equals(trasformazioneRispostaSoapEnvelopeTemplate.getName()) &&
+					StringUtils.isEmpty(trasformazioneRispostaSoapEnvelopeTipoCheck)) {
+					trasformazioneRispostaSoapEnvelopeTipoCheck = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_FILE;
 				}
 			}
 			
@@ -254,7 +252,7 @@ public class PorteApplicativeTrasformazioniRispostaChange extends Action {
 			String servletTrasformazioniRispostaHeadersList = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER_LIST;
 			int numeroTrasformazioniRispostaHeaders = oldRisposta.sizeHeaderList();
 			
-			List<Parameter> parametriInvocazioneServletTrasformazioniRispostaHeaders = new ArrayList<Parameter>();
+			List<Parameter> parametriInvocazioneServletTrasformazioniRispostaHeaders = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniRispostaHeaders.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta));
 			parametriInvocazioneServletTrasformazioniRispostaHeaders.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg));
 			parametriInvocazioneServletTrasformazioniRispostaHeaders.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
@@ -289,7 +287,7 @@ public class PorteApplicativeTrasformazioniRispostaChange extends Action {
 			
 			String labelPag = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE;
 			
-			List<Parameter> parametriInvocazioneServletTrasformazioniRisposta = new ArrayList<Parameter>();
+			List<Parameter> parametriInvocazioneServletTrasformazioniRisposta = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniRisposta.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta));
 			parametriInvocazioneServletTrasformazioniRisposta.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg));
 			parametriInvocazioneServletTrasformazioniRisposta.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
@@ -305,8 +303,8 @@ public class PorteApplicativeTrasformazioniRispostaChange extends Action {
 			// dati
 			if (porteApplicativeHelper.isEditModeInProgress()) {
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				// primo accesso
 				if(first == null) {
@@ -415,15 +413,15 @@ public class PorteApplicativeTrasformazioniRispostaChange extends Action {
 					statusMaxDBCheck = statusMinDBCheck;
 				String patternDBCheck = StringUtils.isNotEmpty(pattern) ? pattern : null;
 				String contentTypeDBCheck = StringUtils.isNotEmpty(contentType) ? contentType : null;
-				TrasformazioneRegolaRisposta regolaRispostaDBCheck_applicabilita = porteApplicativeCore.getTrasformazioneRisposta(Long.parseLong(idPorta), idTrasformazione, statusMinDBCheck, statusMaxDBCheck, patternDBCheck, contentTypeDBCheck);
-				TrasformazioneRegolaRisposta regolaRispostaDBCheck_nome = porteApplicativeCore.getTrasformazioneRisposta(Long.parseLong(idPorta), idTrasformazione, nomeRisposta);
+				TrasformazioneRegolaRisposta regolaRispostaDBCheckApplicabilita = porteApplicativeCore.getTrasformazioneRisposta(Long.parseLong(idPorta), idTrasformazione, statusMinDBCheck, statusMaxDBCheck, patternDBCheck, contentTypeDBCheck);
+				TrasformazioneRegolaRisposta regolaRispostaDBCheckNome = porteApplicativeCore.getTrasformazioneRisposta(Long.parseLong(idPorta), idTrasformazione, nomeRisposta);
 				
 				// controllo che le modifiche ai parametri non coincidano con altre regole gia' presenti
-				if(regolaRispostaDBCheck_applicabilita != null && regolaRispostaDBCheck_applicabilita.getId().longValue() != oldRisposta.getId().longValue()) {
+				if(regolaRispostaDBCheckApplicabilita != null && regolaRispostaDBCheckApplicabilita.getId().longValue() != oldRisposta.getId().longValue()) {
 					pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_DUPLICATA);
 					isOk = false;
 				}
-				if(isOk && regolaRispostaDBCheck_nome != null && regolaRispostaDBCheck_nome.getId().longValue() != oldRisposta.getId().longValue()) {
+				if(isOk && regolaRispostaDBCheckNome != null && regolaRispostaDBCheckNome.getId().longValue() != oldRisposta.getId().longValue()) {
 					pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_NOME);
 					isOk = false;
 				}
@@ -432,9 +430,9 @@ public class PorteApplicativeTrasformazioniRispostaChange extends Action {
 			if (!isOk) {
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteApplicativeHelper.addTrasformazioneRispostaToDati(TipoOperazione.CHANGE, protocollo, dati, idInt, oldRisposta, false, idTrasformazioneS, idTrasformazioneRispostaS, 
 						apc.getServiceBinding(),

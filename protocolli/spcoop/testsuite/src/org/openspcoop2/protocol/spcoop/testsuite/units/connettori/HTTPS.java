@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
 
 import javax.xml.soap.SOAPException;
 
@@ -110,7 +109,7 @@ public class HTTPS extends GestioneViaJmx {
 	public void testOpenspcoopCoreLog_raccoltaTempoAvvioTest() throws Exception{
 		this.dataAvvioGruppoTest = DateManager.getDate();
 	} 	
-	private Vector<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new Vector<ErroreAttesoOpenSPCoopLogCore>();
+	private List<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new java.util.ArrayList<>();
 	@AfterGroups (alwaysRun=true , groups=ID_GRUPPO)
 	public void testOpenspcoopCoreLog() throws Exception{
 		if(this.erroriAttesiOpenSPCoopCore.size()>0){
@@ -2131,7 +2130,7 @@ public class HTTPS extends GestioneViaJmx {
 						dataMsg.isTracedMessaggio(id, DB2_inCache)  ;
 				if(!esito) {
 					Reporter.log("Controllo fallito, recupero diagnostici... ");
-					Vector<String> diag = dataMsg.getMessaggiDiagnostici(id);
+					List<String> diag = dataMsg.getMessaggiDiagnostici(id);
 					if(diag!=null) {
 						Reporter.log("Controllo fallito recuperati diagnostici ["+diag.size()+"] ");
 						if(!diag.isEmpty()) {

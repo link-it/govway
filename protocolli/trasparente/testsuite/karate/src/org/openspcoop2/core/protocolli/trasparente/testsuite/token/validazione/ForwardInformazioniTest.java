@@ -49,7 +49,7 @@ import org.openspcoop2.utils.transport.http.HttpResponse;
 */
 public class ForwardInformazioniTest extends ConfigLoader {
 
-	public final static String forward = "TestForwardInformazioniToken";
+	public static final String forward = "TestForwardInformazioniToken";
 		
 	@Test
 	public void govwayHeaders() throws Exception {

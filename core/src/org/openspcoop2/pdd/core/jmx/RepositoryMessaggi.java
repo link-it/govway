@@ -53,7 +53,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 public class RepositoryMessaggi extends NotificationBroadcasterSupport implements DynamicMBean {
 
 	/** Nomi proprieta' */
-	public final static String TIPO_REPOSITORY = "tipoRepository";
+	public static final String TIPO_REPOSITORY = "tipoRepository";
 
 	
 	

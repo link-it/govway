@@ -406,14 +406,14 @@ public class RegistroServiziManager {
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && idService!=null && infoWsdlSource!=null;
 		if(useRequestInfo) {
-			org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper w = requestInfo.getRequestConfig().getAsWrapper_soap(infoWsdlSource, buildSchemaXSD, readDatiRegistro);
+			org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper w = requestInfo.getRequestConfig().getAsWrapperSoap(infoWsdlSource, buildSchemaXSD, readDatiRegistro);
 			if(w!=null) {
 				return w;
 			}
 		}
 		org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper w = this.registroServiziReader.getWsdlAccordoServizio(this.getConnection(), idService, infoWsdlSource,buildSchemaXSD, readDatiRegistro);
-		if(useRequestInfo && requestInfo!=null && requestInfo.getRequestConfig().getAsWrapper_soap(infoWsdlSource, buildSchemaXSD, readDatiRegistro)==null) {
-			requestInfo.getRequestConfig().setAsWrapper_soap(w, infoWsdlSource, buildSchemaXSD, readDatiRegistro,
+		if(useRequestInfo && requestInfo!=null && requestInfo.getRequestConfig().getAsWrapperSoap(infoWsdlSource, buildSchemaXSD, readDatiRegistro)==null) {
+			requestInfo.getRequestConfig().setAsWrapperSoap(w, infoWsdlSource, buildSchemaXSD, readDatiRegistro,
 					requestInfo.getIdTransazione());
 		}
 		return w;
@@ -423,14 +423,14 @@ public class RegistroServiziManager {
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && idService!=null && infoWsdlSource!=null;
 		if(useRequestInfo) {
-			org.openspcoop2.core.registry.rest.AccordoServizioWrapper w = requestInfo.getRequestConfig().getAsWrapper_rest(infoWsdlSource, buildSchemaXSD, processIncludeForOpenApi, readDatiRegistro);
+			org.openspcoop2.core.registry.rest.AccordoServizioWrapper w = requestInfo.getRequestConfig().getAsWrapperRest(infoWsdlSource, buildSchemaXSD, processIncludeForOpenApi, readDatiRegistro);
 			if(w!=null) {
 				return w;
 			}
 		}
 		org.openspcoop2.core.registry.rest.AccordoServizioWrapper w = this.registroServiziReader.getRestAccordoServizio(this.getConnection(), idService, infoWsdlSource,buildSchemaXSD, processIncludeForOpenApi, readDatiRegistro);
-		if(useRequestInfo && requestInfo!=null && requestInfo.getRequestConfig().getAsWrapper_rest(infoWsdlSource, buildSchemaXSD, processIncludeForOpenApi, readDatiRegistro)==null) {
-			requestInfo.getRequestConfig().setAsWrapper_rest(w, infoWsdlSource, buildSchemaXSD, processIncludeForOpenApi, readDatiRegistro,
+		if(useRequestInfo && requestInfo!=null && requestInfo.getRequestConfig().getAsWrapperRest(infoWsdlSource, buildSchemaXSD, processIncludeForOpenApi, readDatiRegistro)==null) {
+			requestInfo.getRequestConfig().setAsWrapperRest(w, infoWsdlSource, buildSchemaXSD, processIncludeForOpenApi, readDatiRegistro,
 					requestInfo.getIdTransazione());
 		}
 		return w;

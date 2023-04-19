@@ -54,7 +54,7 @@ import org.openspcoop2.utils.resources.Loader;
 
 public class NodeSenderDB extends AbstractCore implements INodeSender{
 
-	private final static String ID_MODULO= "NODE_SENDER_DB";
+	private static final String ID_MODULO= "NODE_SENDER_DB";
 
 	/** adapterJDBC di OpenSPCoop di OpenSPCoop */
 	private static IJDBCAdapter adapter=null;

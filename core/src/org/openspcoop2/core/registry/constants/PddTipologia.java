@@ -65,7 +65,7 @@ public enum PddTipologia {
 		}
 	}
 	
-	public final static String[] TIPI = { OPERATIVO.toString(), NONOPERATIVO.toString(), ESTERNO.toString() };
-	public final static String[] TIPI_SOLO_OPERATIVI = { OPERATIVO.toString(), NONOPERATIVO.toString() };
-	public final static String[] TIPO_SOLO_ESTERNO = { ESTERNO.toString() };
+	public static final String[] TIPI = { OPERATIVO.toString(), NONOPERATIVO.toString(), ESTERNO.toString() };
+	public static final String[] TIPI_SOLO_OPERATIVI = { OPERATIVO.toString(), NONOPERATIVO.toString() };
+	public static final String[] TIPO_SOLO_ESTERNO = { ESTERNO.toString() };
 }

@@ -693,7 +693,7 @@ public class ModIUtilities {
 		}
 	}
 	
-	private final static MapKey<String> DYNAMIC_MAP_REQUEST = org.openspcoop2.utils.Map.newMapKey("MODI_DYNAMIC_MAP_REQUEST");
+	private static final MapKey<String> DYNAMIC_MAP_REQUEST = org.openspcoop2.utils.Map.newMapKey("MODI_DYNAMIC_MAP_REQUEST");
 	public static void saveDynamicMapRequest(Context context, Map<String, Object> map){
 		if(context!=null && map!=null) {
 			context.addObject(DYNAMIC_MAP_REQUEST, map);

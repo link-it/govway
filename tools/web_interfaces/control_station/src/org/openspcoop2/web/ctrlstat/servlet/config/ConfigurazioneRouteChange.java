@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -95,13 +94,13 @@ public final class ConfigurazioneRouteChange extends Action {
 			SoggettiCore soggettiCore = new SoggettiCore(confCore);
 			
 			// Soggetti
-			List<String> tipiSoggetti = new ArrayList<String>();
+			List<String> tipiSoggetti = new ArrayList<>();
 			tipiSoggetti.addAll(soggettiCore.getTipiSoggettiGestiti());
 			String[] tipiSoggettiLabel = tipiSoggetti.toArray(new String[1]);
 			
 			String[] tipiSoggettiLabelPerProtocollo = tipiSoggettiLabel;
 			if(tipo!=null && !"".equals(tipo) && !"-".equals(tipo)){
-				List<String> tipiSoggettiPerRotta = new ArrayList<String>();
+				List<String> tipiSoggettiPerRotta = new ArrayList<>();
 				tipiSoggettiPerRotta.add("-");
 				tipiSoggettiPerRotta.addAll(soggettiCore.getTipiSoggettiGestitiProtocollo(soggettiCore.getProtocolloAssociatoTipoSoggetto(tipo)));
 				tipiSoggettiLabelPerProtocollo = tipiSoggettiPerRotta.toArray(new String[1]);
@@ -140,7 +139,6 @@ public final class ConfigurazioneRouteChange extends Action {
 			registriListLabel[0] = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRO_ROTTA_ALL;
 			int i = 1;
 			for (AccessoRegistroRegistro arr : list) {
-				// registriList[i] = arr.getId().toString();
 				registriList[i] = arr.getNome();
 				registriListLabel[i] = arr.getNome();
 				i++;
@@ -150,7 +148,7 @@ public final class ConfigurazioneRouteChange extends Action {
 			// modifica dati
 			if (confHelper.isEditModeInProgress()) {
 				// setto la barra del titolo
-				List<Parameter> lstParam = new ArrayList<Parameter>();
+				List<Parameter> lstParam = new ArrayList<>();
 
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TABELLA_DI_ROUTING, 
@@ -189,8 +187,8 @@ public final class ConfigurazioneRouteChange extends Action {
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = confHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, null, null, dati);
 
@@ -211,7 +209,7 @@ public final class ConfigurazioneRouteChange extends Action {
 			boolean isOk = confHelper.routingListCheckData(TipoOperazione.CHANGE, registriList);
 			if (!isOk) {
 				// setto la barra del titolo
-				List<Parameter> lstParam = new ArrayList<Parameter>();
+				List<Parameter> lstParam = new ArrayList<>();
 
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TABELLA_DI_ROUTING, 
@@ -223,9 +221,9 @@ public final class ConfigurazioneRouteChange extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = confHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, null, null, dati);
 
@@ -256,32 +254,18 @@ public final class ConfigurazioneRouteChange extends Action {
 			rtdToUpdate.setNome(nome);
 			rtdToUpdate.setTipo(tipo);
 
-			// Route oldRotta = rtdToUpdate.sizeRouteList()>0 ?
-			// rtdToUpdate.getRoute(0) : new Route();
-
 			Route tmpR = new Route();
 			if (tiporotta.equals(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA_GATEWAY)) {
-				// RouteGateway rg = oldRotta.getGateway()!=null ?
-				// oldRotta.getGateway() : new RouteGateway();
 				RouteGateway rg = new RouteGateway();
 				rg.setTipo(tiposoggrotta);
 				rg.setNome(nomesoggrotta);
 				tmpR.setGateway(rg);
-				// oldRotta.setGateway(rg);
-				// oldRotta.setRegistro(null);
 			} else {
-				// RouteRegistro rr = oldRotta.getRegistro()!=null ?
-				// oldRotta.getRegistro() : new RouteRegistro();
 				RouteRegistro rr = new RouteRegistro();
 				rr.setNome(registrorotta);
 				tmpR.setRegistro(rr);
-				// oldRotta.setRegistro(rr);
-				// oldRotta.setGateway(null);
 			}
-			// newRtd.addRoute(tmpR);
-			// rtdToUpdate.addRoute(oldRotta);
 			rtdToUpdate.addRoute(tmpR);
-			// rt.addDestinazione(newRtd);
 			rt.addDestinazione(rtdToUpdate);
 
 			confCore.performUpdateOperation(userLogin, confHelper.smista(), rt);

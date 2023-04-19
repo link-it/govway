@@ -40,7 +40,7 @@ public class Costanti {
 	/* ******** Costanti pubbliche PdD ************* */
 	
 	/** default protocol name */
-	public final static String DEFAULT_PROTOCOL = "basic";
+	public static final String DEFAULT_PROTOCOL = "basic";
 	
 
 	
@@ -129,27 +129,27 @@ public class Costanti {
 	    
 	
     /** Attesa attiva di default effettuata per la gestione del livello serializable nel DB, in millisecondi */
-    public final static long GESTIONE_SERIALIZABLE_ATTESA_ATTIVA = 60l * 1000l; // 1 minuto
+    public static final long GESTIONE_SERIALIZABLE_ATTESA_ATTIVA = 60l * 1000l; // 1 minuto
     /** Intervallo maggiore per frequenza di check nell'attesa attiva effettuata per la gestione del livello serializable nel DB, in millisecondi */
-    public final static int GESTIONE_SERIALIZABLE_CHECK_INTERVAL = 100; 
+    public static final int GESTIONE_SERIALIZABLE_CHECK_INTERVAL = 100; 
 	
     /** Variabile che indica un tipo di scenario gestito */
-	public final static String SCENARIO_ONEWAY_INVOCAZIONE_SERVIZIO = org.openspcoop2.core.constants.Costanti.SCENARIO_ONEWAY_INVOCAZIONE_SERVIZIO;
+	public static final String SCENARIO_ONEWAY_INVOCAZIONE_SERVIZIO = org.openspcoop2.core.constants.Costanti.SCENARIO_ONEWAY_INVOCAZIONE_SERVIZIO;
 	/** Variabile che indica un tipo di scenario gestito */
-	public final static String SCENARIO_SINCRONO_INVOCAZIONE_SERVIZIO = org.openspcoop2.core.constants.Costanti.SCENARIO_SINCRONO_INVOCAZIONE_SERVIZIO;
+	public static final String SCENARIO_SINCRONO_INVOCAZIONE_SERVIZIO = org.openspcoop2.core.constants.Costanti.SCENARIO_SINCRONO_INVOCAZIONE_SERVIZIO;
 	/** Variabile che indica un tipo di scenario gestito */
-	public final static String SCENARIO_ASINCRONO_SIMMETRICO_INVOCAZIONE_SERVIZIO = org.openspcoop2.core.constants.Costanti.SCENARIO_ASINCRONO_SIMMETRICO_INVOCAZIONE_SERVIZIO;
+	public static final String SCENARIO_ASINCRONO_SIMMETRICO_INVOCAZIONE_SERVIZIO = org.openspcoop2.core.constants.Costanti.SCENARIO_ASINCRONO_SIMMETRICO_INVOCAZIONE_SERVIZIO;
 	/** Variabile che indica un tipo di scenario gestito */
-	public final static String SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA = org.openspcoop2.core.constants.Costanti.SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA;
+	public static final String SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA = org.openspcoop2.core.constants.Costanti.SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA;
 	/** Variabile che indica un tipo di scenario gestito */
-	public final static String SCENARIO_ASINCRONO_ASIMMETRICO_INVOCAZIONE_SERVIZIO = org.openspcoop2.core.constants.Costanti.SCENARIO_ASINCRONO_ASIMMETRICO_INVOCAZIONE_SERVIZIO;
+	public static final String SCENARIO_ASINCRONO_ASIMMETRICO_INVOCAZIONE_SERVIZIO = org.openspcoop2.core.constants.Costanti.SCENARIO_ASINCRONO_ASIMMETRICO_INVOCAZIONE_SERVIZIO;
 	/** Variabile che indica un tipo di scenario gestito */
-	public final static String SCENARIO_ASINCRONO_ASIMMETRICO_POLLING = org.openspcoop2.core.constants.Costanti.SCENARIO_ASINCRONO_ASIMMETRICO_POLLING;
+	public static final String SCENARIO_ASINCRONO_ASIMMETRICO_POLLING = org.openspcoop2.core.constants.Costanti.SCENARIO_ASINCRONO_ASIMMETRICO_POLLING;
 	/** Variabile che indica un tipo di scenario gestito */
-	public final static String SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI = org.openspcoop2.core.constants.Costanti.SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI;
+	public static final String SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI = org.openspcoop2.core.constants.Costanti.SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI;
 
     
-    public final static String REQUISITI_INPUT_RACCOLTI = "[[InformationMissingRequisiti]]";
+    public static final String REQUISITI_INPUT_RACCOLTI = "[[InformationMissingRequisiti]]";
     
     public static final String TRASPARENTE_PROTOCOL_NAME = CostantiLabel.TRASPARENTE_PROTOCOL_NAME;
     public static final String TRASPARENTE_PROTOCOL_LABEL = CostantiLabel.TRASPARENTE_PROTOCOL_LABEL;
@@ -173,34 +173,34 @@ public class Costanti {
     public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA = CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA;
     
     
-	public final static String CONSOLE_PARAMETRO_SOGGETTO_DOMINIO = "dominio";
+	public static final String CONSOLE_PARAMETRO_SOGGETTO_DOMINIO = "dominio";
 	
-	public final static String CONSOLE_PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SA = "tipoSA";
+	public static final String CONSOLE_PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SA = "tipoSA";
 	
 	public static final String CONSOLE_PARAMETRO_PP_CHANGE_BINARY = "changeBinary";
 	public static final String CONSOLE_PARAMETRO_PP_CHANGE_BINARY_VALUE_TRUE = "true";
 	
-	public final static String CONSOLE_PARAMETRO_SERVICE_BINDING = "serviceBinding";
+	public static final String CONSOLE_PARAMETRO_SERVICE_BINDING = "serviceBinding";
 	
-	public final static String CONSOLE_PARAMETRO_APC_API_GESTIONE_PARZIALE = "apiGestioneParziale";
-	public final static String CONSOLE_VALORE_PARAMETRO_APC_API_INFORMAZIONI_GENERALI = "apiInfoGenerali";
+	public static final String CONSOLE_PARAMETRO_APC_API_GESTIONE_PARZIALE = "apiGestioneParziale";
+	public static final String CONSOLE_VALORE_PARAMETRO_APC_API_INFORMAZIONI_GENERALI = "apiInfoGenerali";
 	
-	public final static String CONSOLE_PARAMETRO_APC_NOME = "nome";
-	public final static String CONSOLE_PARAMETRO_APC_VERSIONE = "versione";
+	public static final String CONSOLE_PARAMETRO_APC_NOME = "nome";
+	public static final String CONSOLE_PARAMETRO_APC_VERSIONE = "versione";
 	
-	public final static String CONSOLE_PARAMETRO_APS_PORT_TYPE = "port_type";
+	public static final String CONSOLE_PARAMETRO_APS_PORT_TYPE = "port_type";
 	
 	public static final String CONSOLE_ATTRIBUTO_TAB_SESSION_KEY_PREFIX ="_tabKey_";
 	
-	public final static String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VIA_PARAM = Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE+"_VIA_PARAM";
-	public final static String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE = CONSOLE_ATTRIBUTO_TAB_SESSION_KEY_PREFIX + "tipologiaErogazione";
-	public final static String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE = "erogazione";
-	public final static String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE = "fruizione";
-	public final static String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_COMPLETA = "completa";
+	public static final String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VIA_PARAM = Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE+"_VIA_PARAM";
+	public static final String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE = CONSOLE_ATTRIBUTO_TAB_SESSION_KEY_PREFIX + "tipologiaErogazione";
+	public static final String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE = "erogazione";
+	public static final String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE = "fruizione";
+	public static final String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_COMPLETA = "completa";
 	
-	public final static String CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO = "connettore_token_policy_stat";
-	public final static String CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY = "connettore_token_policy";
-	public final static String CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY_VIA_API = "connettore_token_policy_via_api";
+	public static final String CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO = "connettore_token_policy_stat";
+	public static final String CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY = "connettore_token_policy";
+	public static final String CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY_VIA_API = "connettore_token_policy_via_api";
 	
 	public static final String CONSOLE_DEFAULT_VALUE_NON_SELEZIONATO = "-";
 }

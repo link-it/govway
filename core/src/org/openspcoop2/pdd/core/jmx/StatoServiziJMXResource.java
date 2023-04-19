@@ -55,34 +55,34 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 public class StatoServiziJMXResource extends NotificationBroadcasterSupport implements DynamicMBean {
 
 	/** Nomi proprieta' */
-	public final static String COMPONENTE_PD = "Servizio PortaDelegata";
-	public final static String COMPONENTE_PD_ABILITAZIONI = "Servizio PortaDelegata (Abilitazioni Puntuali)";
-	public final static String COMPONENTE_PD_DISABILITAZIONI = "Servizio PortaDelegata (Disabilitazioni Puntuali)";
-	public final static String COMPONENTE_PA = "Servizio PortaApplicativa";
-	public final static String COMPONENTE_PA_ABILITAZIONI = "Servizio PortaApplicativa (Abilitazioni Puntuali)";
-	public final static String COMPONENTE_PA_DISABILITAZIONI = "Servizio PortaApplicativa (Disabilitazioni Puntuali)";
-	public final static String COMPONENTE_IM = "Servizio IntegrationManager";
+	public static final String COMPONENTE_PD = "Servizio PortaDelegata";
+	public static final String COMPONENTE_PD_ABILITAZIONI = "Servizio PortaDelegata (Abilitazioni Puntuali)";
+	public static final String COMPONENTE_PD_DISABILITAZIONI = "Servizio PortaDelegata (Disabilitazioni Puntuali)";
+	public static final String COMPONENTE_PA = "Servizio PortaApplicativa";
+	public static final String COMPONENTE_PA_ABILITAZIONI = "Servizio PortaApplicativa (Abilitazioni Puntuali)";
+	public static final String COMPONENTE_PA_DISABILITAZIONI = "Servizio PortaApplicativa (Disabilitazioni Puntuali)";
+	public static final String COMPONENTE_IM = "Servizio IntegrationManager";
 
 	/** Nomi metodi */
-	public final static String ABILITA_COMPONENTE_PD = "abilitaServizioPortaDelegata"; 
-	public final static String ABILITA_COMPONENTE_PA = "abilitaServizioPortaApplicativa"; 
-	public final static String ABILITA_COMPONENTE_IM = "abilitaServizioIntegrationManager"; 
-	public final static String ABILITA_SERVIZI = "abilitazioneCompletaServizi";
+	public static final String ABILITA_COMPONENTE_PD = "abilitaServizioPortaDelegata"; 
+	public static final String ABILITA_COMPONENTE_PA = "abilitaServizioPortaApplicativa"; 
+	public static final String ABILITA_COMPONENTE_IM = "abilitaServizioIntegrationManager"; 
+	public static final String ABILITA_SERVIZI = "abilitazioneCompletaServizi";
 
-	public final static String DISABILITA_COMPONENTE_PD = "disabilitaServizioPortaDelegata"; 
-	public final static String DISABILITA_COMPONENTE_PA = "disabilitaServizioPortaApplicativa"; 
-	public final static String DISABILITA_COMPONENTE_IM = "disabilitaServizioIntegrationManager"; 
-	public final static String DISABILITA_SERVIZI = "disabilitazioneCompletaServizi";
+	public static final String DISABILITA_COMPONENTE_PD = "disabilitaServizioPortaDelegata"; 
+	public static final String DISABILITA_COMPONENTE_PA = "disabilitaServizioPortaApplicativa"; 
+	public static final String DISABILITA_COMPONENTE_IM = "disabilitaServizioIntegrationManager"; 
+	public static final String DISABILITA_SERVIZI = "disabilitazioneCompletaServizi";
 
-	public final static String ABILITA_ADD_FILTRO_ABILITAZIONE_PD = "addFiltroAbilitazioneServizioPortaDelegata";
-	public final static String ABILITA_ADD_FILTRO_DISABILITAZIONE_PD = "addFiltroDisabilitazioneServizioPortaDelegata";
-	public final static String ABILITA_ADD_FILTRO_ABILITAZIONE_PA = "addFiltroAbilitazioneServizioPortaApplicativa";
-	public final static String ABILITA_ADD_FILTRO_DISABILITAZIONE_PA = "addFiltroDisabilitazioneServizioPortaApplicativa";
+	public static final String ABILITA_ADD_FILTRO_ABILITAZIONE_PD = "addFiltroAbilitazioneServizioPortaDelegata";
+	public static final String ABILITA_ADD_FILTRO_DISABILITAZIONE_PD = "addFiltroDisabilitazioneServizioPortaDelegata";
+	public static final String ABILITA_ADD_FILTRO_ABILITAZIONE_PA = "addFiltroAbilitazioneServizioPortaApplicativa";
+	public static final String ABILITA_ADD_FILTRO_DISABILITAZIONE_PA = "addFiltroDisabilitazioneServizioPortaApplicativa";
 
-	public final static String ABILITA_REMOVE_FILTRO_ABILITAZIONE_PD = "removeFiltroAbilitazioneServizioPortaDelegata";
-	public final static String ABILITA_REMOVE_FILTRO_DISABILITAZIONE_PD = "removeFiltroDisabilitazioneServizioPortaDelegata";
-	public final static String ABILITA_REMOVE_FILTRO_ABILITAZIONE_PA = "removeFiltroAbilitazioneServizioPortaApplicativa";
-	public final static String ABILITA_REMOVE_FILTRO_DISABILITAZIONE_PA = "removeFiltroDisabilitazioneServizioPortaApplicativa";
+	public static final String ABILITA_REMOVE_FILTRO_ABILITAZIONE_PD = "removeFiltroAbilitazioneServizioPortaDelegata";
+	public static final String ABILITA_REMOVE_FILTRO_DISABILITAZIONE_PD = "removeFiltroDisabilitazioneServizioPortaDelegata";
+	public static final String ABILITA_REMOVE_FILTRO_ABILITAZIONE_PA = "removeFiltroAbilitazioneServizioPortaApplicativa";
+	public static final String ABILITA_REMOVE_FILTRO_DISABILITAZIONE_PA = "removeFiltroDisabilitazioneServizioPortaApplicativa";
 
 
 

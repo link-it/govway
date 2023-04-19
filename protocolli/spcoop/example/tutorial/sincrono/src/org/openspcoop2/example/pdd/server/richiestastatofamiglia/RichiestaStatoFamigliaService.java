@@ -39,10 +39,10 @@ import javax.xml.ws.Service;
                   targetNamespace = "http://openspcoop2.org/example/pdd/server/RichiestaStatoFamiglia") 
 public class RichiestaStatoFamigliaService extends Service {
 	
-    public final static URL WSDL_LOCATION;
+    public static final URL WSDL_LOCATION;
 
-    public final static QName SERVICE = new QName("http://openspcoop2.org/example/pdd/server/RichiestaStatoFamiglia", "RichiestaStatoFamigliaService");
-    public final static QName RichiestaStatoFamigliaInterfaceEndpoint = new QName("http://openspcoop2.org/example/pdd/server/RichiestaStatoFamiglia", "RichiestaStatoFamigliaInterfaceEndpoint");
+    public static final QName SERVICE = new QName("http://openspcoop2.org/example/pdd/server/RichiestaStatoFamiglia", "RichiestaStatoFamigliaService");
+    public static final QName RichiestaStatoFamigliaInterfaceEndpoint = new QName("http://openspcoop2.org/example/pdd/server/RichiestaStatoFamiglia", "RichiestaStatoFamigliaInterfaceEndpoint");
     static {
         URL url = null;
         try {

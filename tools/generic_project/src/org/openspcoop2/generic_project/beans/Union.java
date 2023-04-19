@@ -42,6 +42,7 @@ public class Union {
 	private List<String> fields = new ArrayList<String>();
 	private Map<String, Function> mapFieldsToFunction = new HashMap<String, Function>();
 	private Map<String, String> mapFieldsToAliasFunction = new HashMap<String, String>();
+	private Map<String, String> mapFieldsToCustomUnionField = new HashMap<String, String>();
 	
 	private SortOrder sortOrder = null;
 	private List<UnionOrderedColumn> orderByList = new ArrayList<UnionOrderedColumn>();
@@ -67,11 +68,21 @@ public class Union {
 	public String getParamAliasFunction(String alias){
 		return this.mapFieldsToAliasFunction.get(alias);
 	}
+	public String getCustomFieldValue(String alias) {
+		return this.mapFieldsToCustomUnionField.get(alias);
+	}
 	public void addField(String alias) throws ExpressionException{
 		if(this.fields.contains(alias)){
 			throw new ExpressionException("Alias["+alias+"] already used");
 		}
 		this.fields.add(alias);
+	}
+	public void addCustomField(String alias,String customValue) throws ExpressionException{
+		if(this.fields.contains(alias)){
+			throw new ExpressionException("Alias["+alias+"] already used");
+		}
+		this.fields.add(alias);
+		this.mapFieldsToCustomUnionField.put(alias, customValue);
 	}
 	public void addField(String alias,Function function,String functionParamAlias) throws ExpressionException{
 		if(this.fields.contains(alias)){

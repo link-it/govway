@@ -51,22 +51,22 @@ import org.w3c.dom.Element;
 */
 public class Utilities extends ConfigLoader {
 	
-	public final static String PREFIX_HEADER = "GovWay-TestSuite-";
-	public final static String CLIENT_ID_HEADER = "Client-ID";
-	public final static String CLIENT_ID_VALUE_TEST = "Id-Test";
-	public final static String CLIENT_SECRET_HEADER = "Client-Secret";
-	public final static String CLIENT_SECRET_VALUE_TEST = "Id-XXX-Test";
-	public final static String SECURITY_TOKEN = "X-Security-Token";
-	public final static String TOKEN = "TOKENESEMPIOXXX";
-	public final static String TOKEN_TYPE_COOKIE = "COOKIE";
-	public final static String TOKEN_TYPE_JWT = "JWT";
-	public final static String TOKEN_TYPE_JWT_BEARER = "Bearer";
-	public final static String TOKEN_TYPE_HEADER_SOAP = "HEADER-SOAP";
-	public final static String TOKEN_TYPE_HEADER_SOAP_VALUE = "3.3.6";
-	public final static String COOKIE_NAME = "GovWayCookieExample";
+	public static final String PREFIX_HEADER = "GovWay-TestSuite-";
+	public static final String CLIENT_ID_HEADER = "Client-ID";
+	public static final String CLIENT_ID_VALUE_TEST = "Id-Test";
+	public static final String CLIENT_SECRET_HEADER = "Client-Secret";
+	public static final String CLIENT_SECRET_VALUE_TEST = "Id-XXX-Test";
+	public static final String SECURITY_TOKEN = "X-Security-Token";
+	public static final String TOKEN = "TOKENESEMPIOXXX";
+	public static final String TOKEN_TYPE_COOKIE = "COOKIE";
+	public static final String TOKEN_TYPE_JWT = "JWT";
+	public static final String TOKEN_TYPE_JWT_BEARER = "Bearer";
+	public static final String TOKEN_TYPE_HEADER_SOAP = "HEADER-SOAP";
+	public static final String TOKEN_TYPE_HEADER_SOAP_VALUE = "3.3.6";
+	public static final String COOKIE_NAME = "GovWayCookieExample";
 	
-	public final static String TOKEN_RISPOSTA = "TOKENESEMPIORISPOSTAXXX";
-	public final static String SECURITY_TOKEN_RESPONSE = CLIENT_ID_HEADER;
+	public static final String TOKEN_RISPOSTA = "TOKENESEMPIORISPOSTAXXX";
+	public static final String SECURITY_TOKEN_RESPONSE = CLIENT_ID_HEADER;
 
 	
 	public static HttpResponse _test(MessageType messageType,

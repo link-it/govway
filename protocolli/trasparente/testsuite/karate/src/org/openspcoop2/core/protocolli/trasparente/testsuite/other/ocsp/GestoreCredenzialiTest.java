@@ -34,16 +34,16 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class GestoreCredenzialiTest extends ConfigLoader {
 
-	public final static String api = "TestOCSPGestoreCredeziali";
-	public final static String soggetto_case2 = "SoggettoInternoTestOCSPCase2";
-	public final static String soggetto_case3 = "SoggettoInternoTestOCSPCase3";
-	public final static String soggetto_caseCRL = "SoggettoInternoTestOCSPCaseCRL";
+	public static final String api = "TestOCSPGestoreCredeziali";
+	public static final String soggetto_case2 = "SoggettoInternoTestOCSPCase2";
+	public static final String soggetto_case3 = "SoggettoInternoTestOCSPCase3";
+	public static final String soggetto_caseCRL = "SoggettoInternoTestOCSPCaseCRL";
 	
-	public final static String opensslCommand = System.getProperty(Utils.PROPERTY_OCSP_OPENSSL_COMMAND);
+	public static final String opensslCommand = System.getProperty(Utils.PROPERTY_OCSP_OPENSSL_COMMAND);
 	
-	public final static int waitStartupServer = Integer.valueOf(System.getProperty(Utils.PROPERTY_OCSP_WAIT_STARTUP_SERVER));
+	public static final int waitStartupServer = Integer.valueOf(System.getProperty(Utils.PROPERTY_OCSP_WAIT_STARTUP_SERVER));
 	
-	public final static int waitStopServer = Integer.valueOf(System.getProperty(Utils.PROPERTY_OCSP_WAIT_STOP_SERVER));
+	public static final int waitStopServer = Integer.valueOf(System.getProperty(Utils.PROPERTY_OCSP_WAIT_STOP_SERVER));
 	
 
 	@Test

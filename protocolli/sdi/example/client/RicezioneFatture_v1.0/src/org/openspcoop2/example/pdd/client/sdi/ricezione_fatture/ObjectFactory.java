@@ -47,12 +47,12 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _NotificaEsito_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types", "notificaEsito");
-    private final static QName _FileSdI_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types", "fileSdI");
-    private final static QName _NotificaDecorrenzaTermini_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types", "notificaDecorrenzaTermini");
-    private final static QName _RispostaRiceviFatture_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types", "rispostaRiceviFatture");
-    private final static QName _RispostaSdINotificaEsito_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types", "rispostaSdINotificaEsito");
-    private final static QName _FileSdIConMetadati_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types", "fileSdIConMetadati");
+    private static final QName _NotificaEsito_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types", "notificaEsito");
+    private static final QName _FileSdI_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types", "fileSdI");
+    private static final QName _NotificaDecorrenzaTermini_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types", "notificaDecorrenzaTermini");
+    private static final QName _RispostaRiceviFatture_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types", "rispostaRiceviFatture");
+    private static final QName _RispostaSdINotificaEsito_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types", "rispostaSdINotificaEsito");
+    private static final QName _FileSdIConMetadati_QNAME = new QName("http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types", "fileSdIConMetadati");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.openspcoop2.example.pdd.client.sdi.ricezione_fatture

@@ -44,10 +44,10 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _Nominativo_QNAME = new QName("http://openspcoop2.org/ValidazioneContenutiWS/Service/types", "nominativo");
-    private final static QName _Indirizzo_QNAME = new QName("http://openspcoop2.org/ValidazioneContenutiWS/Service/types", "indirizzo");
-    private final static QName _OraRegistrazione_QNAME = new QName("http://openspcoop2.org/ValidazioneContenutiWS/Service/types", "ora-registrazione");
-    private final static QName _Esito_QNAME = new QName("http://openspcoop2.org/ValidazioneContenutiWS/Service/types", "esito");
+    private static final QName _Nominativo_QNAME = new QName("http://openspcoop2.org/ValidazioneContenutiWS/Service/types", "nominativo");
+    private static final QName _Indirizzo_QNAME = new QName("http://openspcoop2.org/ValidazioneContenutiWS/Service/types", "indirizzo");
+    private static final QName _OraRegistrazione_QNAME = new QName("http://openspcoop2.org/ValidazioneContenutiWS/Service/types", "ora-registrazione");
+    private static final QName _Esito_QNAME = new QName("http://openspcoop2.org/ValidazioneContenutiWS/Service/types", "esito");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.openspcoop2.example.server.rpc.literal.skeleton_namespace_ridefinito

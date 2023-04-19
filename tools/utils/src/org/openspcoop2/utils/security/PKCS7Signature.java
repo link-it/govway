@@ -53,7 +53,7 @@ import org.openspcoop2.utils.certificate.KeyStore;
  */
 public class PKCS7Signature {
 
-	public final static String DEFAULT_SIGNATURE_METHOD = SignatureMethod.RSA_SHA256;
+	public static final String DEFAULT_SIGNATURE_METHOD = SignatureMethod.RSA_SHA256;
 	
 	private KeyStore keystore;
 	private PrivateKey privateKey;

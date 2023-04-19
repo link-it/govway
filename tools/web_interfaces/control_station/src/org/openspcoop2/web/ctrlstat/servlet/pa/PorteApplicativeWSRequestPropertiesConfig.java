@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -150,11 +149,9 @@ public class PorteApplicativeWSRequestPropertiesConfig  extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
-//				configurazioneBean.updateConfigurazione(configurazione);
-
 				dati = porteApplicativeHelper.addPropertiesConfigToDati(tipoOperazione,dati, configName, configurazioneBean);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, id, idsogg, null,idAsps, dati);
@@ -176,11 +173,9 @@ public class PorteApplicativeWSRequestPropertiesConfig  extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
-//				configurazioneBean.updateConfigurazione(configurazione);
-
 				dati = porteApplicativeHelper.addPropertiesConfigToDati(tipoOperazione,dati, configName, configurazioneBean);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, id, idsogg, null, idAsps, dati);
@@ -199,7 +194,7 @@ public class PorteApplicativeWSRequestPropertiesConfig  extends Action {
 			Map<String, String> map = DBPropertiesUtils.toMap(mappaDestinazione);
 			
 			if(pa.getMessageSecurity().getRequestFlow().getParameterList() == null)
-				pa.getMessageSecurity().getRequestFlow().setParameterList(new ArrayList<MessageSecurityFlowParameter>());
+				pa.getMessageSecurity().getRequestFlow().setParameterList(new ArrayList<>());
 			
 			pa.getMessageSecurity().getRequestFlow().getParameterList().clear();
 			
@@ -223,8 +218,8 @@ public class PorteApplicativeWSRequestPropertiesConfig  extends Action {
 			ServletUtils.setPageDataTitle(pd, lstParam);
 			
 			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
-			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+			List<DataElement> dati = new ArrayList<>();
+			dati.add(ServletUtils.getDataElementForEditModeFinished());
 			
 			configurazioneBean.updateConfigurazione(configurazione);
 			ServletUtils.saveConfigurazioneBeanIntoSession(request, session, configurazioneBean, configurazioneBean.getId());

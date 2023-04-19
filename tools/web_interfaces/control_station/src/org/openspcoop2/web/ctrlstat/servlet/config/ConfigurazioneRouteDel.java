@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -91,17 +90,17 @@ public final class ConfigurazioneRouteDel extends Action {
 				idToRemove[k++] = Integer.parseInt(objTok.nextToken());
 			}
 
-			String tipo = "", nome = "", tipoNome;
+			String tipo = "";
+			String nome = "";
+			String tipoNome;
 
 			// Prendo la routing table
 			RoutingTable rt = confCore.getRoutingTable();
 
 			for (int i = 0; i < idToRemove.length; i++) {
 
-				DataElement de = (DataElement) ((Vector<?>) pdold.getDati().elementAt(idToRemove[i])).elementAt(0);
+				DataElement de = (DataElement) ((List<?>) pdold.getDati().get(idToRemove[i])).get(0);
 				tipoNome = de.getValue();
-				//de = (DataElement) ((Vector<?>) pdold.getDati().elementAt(idToRemove[i])).elementAt(1);
-				//tipologia = de.getValue();
 
 				if(tipoNome.contains("/")){
 					tipo = tipoNome.split("/")[0];

@@ -1807,7 +1807,7 @@ public class ZIPReadUtils  {
 		}
 	}
 	
-	public final static String USE_VERSION_XML_BEAN = "USE_VERSION_XML_BEAN";
+	public static final String USE_VERSION_XML_BEAN = "USE_VERSION_XML_BEAN";
 	
 	public void readAccordoServizioParteComune(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,
 			String nomeFileSenzaAccordo,String nomeAccordo,String versioneAccordo, boolean servizioComposto,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione,

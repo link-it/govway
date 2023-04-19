@@ -21,9 +21,12 @@ package org.openspcoop2.core.statistiche.utils;
 
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.statistiche.model.StatisticaModel;
+import org.openspcoop2.generic_project.beans.FunctionField;
+import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
 import org.openspcoop2.generic_project.expression.IExpression;
+import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
 
 /**     
  * StatisticheUtils
@@ -38,4 +41,22 @@ public class StatisticheUtils {
 		expr.greaterEquals(model.STATO_RECORD, CostantiDB.STATISTICHE_STATO_RECORD_VALIDO);
 	}
 	
+	public static FunctionField calcolaMedia(ISQLFieldConverter fieldConverter, IField latenza, IField numeroRichieste, String alias) throws ExpressionException{
+		// (SUM(latenza_servizio*richieste))/SUM(richieste)
+		String columnLatenza = fieldConverter.toColumn(latenza, false);
+		String columnRichieste = fieldConverter.toColumn(numeroRichieste, false);
+		String  sbFunctionValue = getSqlCalcolaMedia(columnLatenza, columnRichieste);
+		Class<?> functionValueType = Long.class;
+		
+		return new FunctionField(sbFunctionValue.toString(),functionValueType,"","",alias);
+	}
+	
+	public static String getSqlCalcolaMedia(String columnLatenza, String columnRichieste) {
+		StringBuilder sbFunctionValue = new StringBuilder("(");
+		sbFunctionValue.append("SUM(").append(columnLatenza).append("*").append(columnRichieste).append(")");
+		sbFunctionValue.append("/");
+		sbFunctionValue.append("SUM(").append(columnRichieste).append(")");
+		sbFunctionValue.append(")");
+		return sbFunctionValue.toString();
+	}
 }

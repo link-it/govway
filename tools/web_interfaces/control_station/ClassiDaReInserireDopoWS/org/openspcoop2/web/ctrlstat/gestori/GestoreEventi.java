@@ -26,7 +26,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
-import java.util.Vector;
+import java.util.List;
 
 import javax.jms.JMSException;
 import javax.jms.ObjectMessage;
@@ -287,7 +287,7 @@ public class GestoreEventi extends GestoreGeneral {
 				}
 
 				/* ----- filtro per mantenimento ordine operazioni ----- */
-				Vector<FilterParameter> filtroOrdine = new Vector<FilterParameter>();
+				List<FilterParameter> filtroOrdine = new ArrayList<FilterParameter>();
 
 				FilterParameter idTableFiltro = new FilterParameter();
 				idTableFiltro.addFilterParameter(new Parameter(OperationsParameter.ID_TABLE.getNome(), idTable + ""));

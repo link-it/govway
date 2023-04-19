@@ -24,7 +24,6 @@ package org.openspcoop2.web.ctrlstat.servlet.sa;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -97,7 +96,7 @@ public final class ServiziApplicativiCredenzialiAdd extends Action {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
 			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session, request);
 			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
-			Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
+			boolean useIdSogg = (parentSA!=null && parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO);
 			
 			String id = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
 			int idServizioApplicativo = Integer.parseInt(id);
@@ -130,7 +129,7 @@ public final class ServiziApplicativiCredenzialiAdd extends Action {
 						
 			BinaryParameter tipoCredenzialiSSLFileCertificato = saHelper.getBinaryParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO);
 			String tipoCredenzialiSSLFileCertificatoPassword = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
-			List<String> listaAliasEstrattiCertificato = new ArrayList<String>();
+			List<String> listaAliasEstrattiCertificato = new ArrayList<>();
 			String tipoCredenzialiSSLAliasCertificato = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO);
 			if (tipoCredenzialiSSLAliasCertificato == null) {
 				tipoCredenzialiSSLAliasCertificato = "";
@@ -169,7 +168,6 @@ public final class ServiziApplicativiCredenzialiAdd extends Action {
 			boolean visualizzaPromuoviCertificato = true; // ADD sempre true per far spuntare la checkbox
 			String servletCredenzialiChange = null;
 			List<Parameter> parametersServletCredenzialiChange = null;
-//			Integer numeroCertificati = null;
 			String toCall = ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CREDENZIALI_ADD;
 			
 			// Prendo il nome e il provider del servizioApplicativo
@@ -183,24 +181,6 @@ public final class ServiziApplicativiCredenzialiAdd extends Action {
 			oldIdServizioApplicativo.setIdSoggettoProprietario(oldIdSoggetto);
 			oldIdServizioApplicativo.setNome(oldNome);
 			int idProv = sa.getIdSoggetto().intValue();
-
-//			InvocazionePorta ip = sa.getInvocazionePorta();
-//			InvocazionePortaGestioneErrore ipge = null;
-//			Credenziali credenziali = null;
-//			Credenziali oldCredenziali = null;
-//			if (ip != null) {
-//				ipge = ip.getGestioneErrore();
-//				numeroCertificati = ip.sizeCredenzialiList();
-//				if(ip.sizeCredenzialiList()>0) {
-//					credenziali = ip.getCredenziali(0);
-//					oldCredenziali = ip.getCredenziali(0);
-//					
-//					visualizzaAddCertificato = true;
-//					if(ip.sizeCredenzialiList() == 1) {  // se ho definito solo un certificato c'e' il link diretto alla modifica
-//						visualizzaModificaCertificato = true;
-//					}
-//				}
-//			}
 						
 			String postBackElementName = saHelper.getPostBackElementName();
 			String labelButtonSalva = Costanti.LABEL_MONITOR_BUTTON_INVIA;
@@ -227,7 +207,7 @@ public final class ServiziApplicativiCredenzialiAdd extends Action {
 						tipoCredenzialiSSLAliasCertificatoSelfSigned= "";
 						tipoCredenzialiSSLAliasCertificatoNotBefore= "";
 						tipoCredenzialiSSLAliasCertificatoNotAfter = "";
-						listaAliasEstrattiCertificato = new ArrayList<String>();
+						listaAliasEstrattiCertificato = new ArrayList<>();
 						tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_CARICA_CERTIFICATO;
 					} else {
 						tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_NO_WIZARD;
@@ -237,7 +217,7 @@ public final class ServiziApplicativiCredenzialiAdd extends Action {
 				// tipo di configurazione SSL
 				if(postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL) || 
 						postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_LINK_MODIFICA)) {
-					listaAliasEstrattiCertificato = new ArrayList<String>();
+					listaAliasEstrattiCertificato = new ArrayList<>();
 					tipoCredenzialiSSLTipoArchivio = ArchiveType.CER;
 					tipoCredenzialiSSLVerificaTuttiICampi = ConnettoriCostanti.DEFAULT_VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI;
 					tipoCredenzialiSSLAliasCertificato = "";
@@ -272,7 +252,7 @@ public final class ServiziApplicativiCredenzialiAdd extends Action {
 					tipoCredenzialiSSLAliasCertificatoSelfSigned= "";
 					tipoCredenzialiSSLAliasCertificatoNotBefore= "";
 					tipoCredenzialiSSLAliasCertificatoNotAfter = "";
-					listaAliasEstrattiCertificato = new ArrayList<String>();
+					listaAliasEstrattiCertificato = new ArrayList<>();
 					tipoCredenzialiSSLVerificaTuttiICampi = ConnettoriCostanti.DEFAULT_VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI;
 					tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_CARICA_CERTIFICATO;
 				}
@@ -318,7 +298,7 @@ public final class ServiziApplicativiCredenzialiAdd extends Action {
 
 			String labelApplicativi = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
 			String labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI;
-			if(saHelper.isModalitaCompleta()==false) {
+			if(!saHelper.isModalitaCompleta()) {
 				labelApplicativi = ServiziApplicativiCostanti.LABEL_APPLICATIVI;
 				labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_APPLICATIVI_DI;
 			}
@@ -453,7 +433,7 @@ public final class ServiziApplicativiCredenzialiAdd extends Action {
 			idSA.setNome(nome);
 			idSA.setIdSoggettoProprietario(idSoggetto);
 			
-			List<Parameter> parametersServletSAChange = new ArrayList<Parameter>();
+			List<Parameter> parametersServletSAChange = new ArrayList<>();
 			Parameter pIdSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId()+"");
 			parametersServletSAChange.add(pIdSA);
 			Parameter pIdSoggettoSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, idProv+"");
@@ -468,7 +448,7 @@ public final class ServiziApplicativiCredenzialiAdd extends Action {
 			if(saHelper.isEditModeInProgress() || checkWizard){
 				
 				// setto la barra del titolo
-				List<Parameter> listParameter = new ArrayList<Parameter>();
+				List<Parameter> listParameter = new ArrayList<>();
 				if(useIdSogg){
 					listParameter.add(new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
 					listParameter.add(new Parameter(labelApplicativiDi + tipoENomeSoggetto, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST, new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,provider)));
@@ -488,9 +468,9 @@ public final class ServiziApplicativiCredenzialiAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, listParameter.toArray(new Parameter[1]));
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				
 				dati = saHelper.addServizioApplicativoHiddenToDati(dati, id, idProv+"", dominio, sa.getNome());
@@ -518,7 +498,7 @@ public final class ServiziApplicativiCredenzialiAdd extends Action {
 			if (!isOk) {
 				
 				// setto la barra del titolo
-				List<Parameter> listParameter = new ArrayList<Parameter>();
+				List<Parameter> listParameter = new ArrayList<>();
 				if(useIdSogg){
 					listParameter.add(new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
 					listParameter.add(new Parameter(labelApplicativiDi + tipoENomeSoggetto, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST, new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,provider)));
@@ -538,9 +518,9 @@ public final class ServiziApplicativiCredenzialiAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, listParameter.toArray(new Parameter[1]));
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = saHelper.addServizioApplicativoHiddenToDati(dati, id, idProv+"", dominio, sa.getNome());
 				

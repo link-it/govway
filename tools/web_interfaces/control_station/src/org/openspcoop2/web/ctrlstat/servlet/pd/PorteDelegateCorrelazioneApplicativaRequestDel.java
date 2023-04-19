@@ -75,22 +75,10 @@ public final class PorteDelegateCorrelazioneApplicativaRequestDel extends Action
 
 			String id = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			int idInt = Integer.parseInt(id);
-			// String idsogg = porteDelegateHelper.getParameter("idsogg");
-			// int soggInt = Integer.parseInt(idsogg);
+
 			String objToRemove = porteDelegateHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore( );
-
-			// Elimino la correlazione applicativa della porta delegata dal db
-			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
-			// int[] idToRemove = new int[objTok.countTokens()];
-			//
-			// int k = 0;
-			// while (objTok.hasMoreElements()) {
-			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
-			// }
-
-			String idcorrString = "0";
 
 			// Prendo la porta delegata
 			PortaDelegata pde = porteDelegateCore.getPortaDelegata(idInt);
@@ -98,10 +86,7 @@ public final class PorteDelegateCorrelazioneApplicativaRequestDel extends Action
 
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
-				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
-				// .elementAt(idToRemove[i])).elementAt(0);
-				// idcorrString = de.getValue();
-				idcorrString = idsToRemove.get(i);
+				String idcorrString = idsToRemove.get(i);
 				int idcorr = Integer.parseInt(idcorrString);
 
 				for (int j = 0; j < ca.sizeElementoList(); j++) {

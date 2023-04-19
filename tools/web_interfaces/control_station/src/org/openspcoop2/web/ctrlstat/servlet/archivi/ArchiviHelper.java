@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -125,7 +124,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 	}
 
 
-	public void addExportToDati(Vector<DataElement> dati,
+	public void addExportToDati(List<DataElement> dati,
 			List<String> protocolliSelectList,String protocollo,
 			List<ExportMode> exportModes,String exportMode,
 			ArchiveType servletSourceExport, String objToExport, 
@@ -155,7 +154,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO);
 		de.setSize(this.getSize());
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setType(DataElementType.TEXT);
@@ -168,7 +167,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			de.setValue(UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL);
 			tutti_protocolli = true;
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(!tutti_protocolli && this.archiviCore.isMultitenant()) {
 			de = new DataElement();
@@ -186,7 +185,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					!ArchiveType.CONFIGURAZIONE.equals(servletSourceExport)) {
 				de.setType(DataElementType.HIDDEN);
 			}
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		de = new DataElement();
@@ -207,7 +206,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO);
 		de.setSize(this.getSize());
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 					
 		if(ArchiveType.CONFIGURAZIONE.equals(servletSourceExport)){
 			de = new DataElement();
@@ -222,12 +221,12 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			else{
 				// opzioni di export avanzate
 				de.setType(DataElementType.SELECT);
-				de.setLabels(ArchiviCostanti.PARAMETRO_LABEL_ARCHIVI_EXPORT_TIPO_DUMP);
-				de.setValues(ArchiviCostanti.PARAMETRO_VALORI_ARCHIVI_EXPORT_TIPO_DUMP);
+				de.setLabels(ArchiviCostanti.getParametroLabelArchiviExportTipoDump());
+				de.setValues(ArchiviCostanti.getParametroValoriArchiviExportTipoDump());
 				de.setSelected(configurazioneType);
 				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
 			}
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		boolean cascadeEnabled = false;
@@ -282,7 +281,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		else {
 			de.setValue(Costanti.CHECK_BOX_DISABLED);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		boolean showPluginConfigOption = this.archiviCore.isConfigurazionePluginsEnabled();
@@ -317,7 +316,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		else {
 			de.setValue(Costanti.CHECK_BOX_DISABLED);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		
 		boolean showIncludiElementiRiferitiOption = true;
@@ -352,7 +351,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		else {
 			de.setValue(Costanti.CHECK_BOX_DISABLED);
 		}
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(!this.archiviCore.isExportArchive_servizi_standard() && 
 				ServletUtils.isCheckBoxEnabled(cascade) &&
@@ -361,7 +360,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
 			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_SEZIONE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(cascadeConfig.isCascadePdd()){
 				de = new DataElement();
@@ -370,7 +369,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setType(DataElementType.CHECKBOX);
 				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
 				de.setSelected(cascadePdd);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			if(cascadeConfig.isCascadeRuoli()){
@@ -380,7 +379,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setType(DataElementType.CHECKBOX);
 				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
 				de.setSelected(cascadeRuoli);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			if(cascadeConfig.isCascadeScope()){
@@ -390,7 +389,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setType(DataElementType.CHECKBOX);
 				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
 				de.setSelected(cascadeScope);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			if(cascadeConfig.isCascadeSoggetti()){
@@ -400,7 +399,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setType(DataElementType.CHECKBOX);
 				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
 				de.setSelected(cascadeSoggetti);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			if(cascadeConfig.isCascadeServiziApplicativi()){
@@ -410,7 +409,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setType(DataElementType.CHECKBOX);
 				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
 				de.setSelected(cascadeServiziApplicativi);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			if(cascadeConfig.isCascadePorteDelegate()){
 				de = new DataElement();
@@ -419,7 +418,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setType(DataElementType.CHECKBOX);
 				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
 				de.setSelected(cascadePorteDelegate);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			if(cascadeConfig.isCascadePorteApplicative()){
 				de = new DataElement();
@@ -428,7 +427,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setType(DataElementType.CHECKBOX);
 				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
 				de.setSelected(cascadePorteApplicative);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			if(cascadeConfig.isCascadeAccordoCooperazione()){
@@ -438,7 +437,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setType(DataElementType.CHECKBOX);
 				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
 				de.setSelected(cascadeAc);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			if(cascadeConfig.isCascadeAccordoServizioParteComune()){
 				de = new DataElement();
@@ -447,7 +446,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setType(DataElementType.CHECKBOX);
 				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
 				de.setSelected(cascadeAspc);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			if(cascadeConfig.isCascadeAccordoServizioComposto()){
 				de = new DataElement();
@@ -456,7 +455,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setType(DataElementType.CHECKBOX);
 				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
 				de.setSelected(cascadeAsc);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			if(cascadeConfig.isCascadeAccordoServizioParteSpecifica()){
 				de = new DataElement();
@@ -465,7 +464,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setType(DataElementType.CHECKBOX);
 				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
 				de.setSelected(cascadeAsps);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			if(cascadeConfig.isCascadeFruizioni()){
 				de = new DataElement();
@@ -474,7 +473,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setType(DataElementType.CHECKBOX);
 				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
 				de.setSelected(cascadeFruizioni);
-				dati.addElement(de);
+				dati.add(de);
 			}
 		}	
 		
@@ -483,13 +482,13 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO);
 		de.setValue(servletSourceExport.toString());
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setType(DataElementType.HIDDEN);
 		de.setName(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 		de.setValue(objToExport);
-		dati.addElement(de);
+		dati.add(de);
 	}
 	
 
@@ -802,7 +801,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		return true;
 	}
 
-	public void addImportToDati(Vector<DataElement> dati,
+	public void addImportToDati(List<DataElement> dati,
 			boolean validazioneDocumenti,boolean updateEnabled,
 			boolean importDeletePolicyConfig, 
 			boolean importDeletePluginConfig,
@@ -845,7 +844,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO);
 		de.setSize(this.getSize());
 		de.setPostBack(true);
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO);
@@ -869,7 +868,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		if(importModes.size()>1){
 			de.setPostBack(true);
 		}
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_TIPO);
@@ -888,7 +887,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		}
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_VALIDAZIONE_DOCUMENTI_LEFT);
@@ -903,7 +902,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		}
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_VALIDAZIONE_DOCUMENTI);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_UPDATE_ENABLED_LEFT);
@@ -922,7 +921,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		//}
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_UPDATE_ENABLED);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(deleter ? ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_DELETE_POLICY_CONFIG_LEFT : ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_POLICY_CONFIG_LEFT);
@@ -946,7 +945,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		//}
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_DELETE_POLICY_CONFIG_ENABLED);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(deleter ? ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_DELETE_PLUGIN_CONFIG_LEFT : ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_PLUGIN_CONFIG_LEFT);
@@ -965,7 +964,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		//}
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_DELETE_PLUGIN_CONFIG_ENABLED);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_CONFIG_LEFT);
@@ -984,7 +983,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		//}
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_CONFIG_ENABLED);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 		de = new DataElement();
 		de.setValue("");
@@ -992,7 +991,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_PACKAGE_FILE);
 		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_PACKAGE_FILE);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 
 	}
 
@@ -1026,7 +1025,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			int contatoreServizio = 1;
 			String servizioParam = ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE+contatoreServizio;
 			String serviziTmpInput = this.getParameter(servizioParam);
-			List<PortType> portTypes = new Vector<PortType>();
+			List<PortType> portTypes = new ArrayList<>();
 			while(serviziTmpInput!=null && !"".equals(serviziTmpInput)){
 				//System.out.println("TROVATO SERVIZIO ["+contatoreServizio+"] = "+serviziTmpInput);
 				
@@ -1534,7 +1533,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		}
 	}
 	
-	public void addImportInformationMissingToDati(Vector<DataElement> dati,ImporterUtils importerUtils, FormFile ff,
+	public void addImportInformationMissingToDati(List<DataElement> dati,ImporterUtils importerUtils, FormFile ff,
 			String protocolloSelect,String inputMode,String protocolloEffettivo,String inputType,
 			boolean validazioneDocumenti,boolean updateEnabled,
 			boolean importDeletePolicyConfig, 
@@ -1615,7 +1614,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				DataElement de = new DataElement();
 				de.setLabel(importInformationMissingException.getIdObjectDescription());
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			showSection = false;
@@ -1647,56 +1646,56 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setValue(inputMode);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setValue(inputType);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setValue(""+validazioneDocumenti);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_VALIDAZIONE_DOCUMENTI);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setValue(""+updateEnabled);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_UPDATE_ENABLED);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setValue(""+importDeletePolicyConfig);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_DELETE_POLICY_CONFIG_ENABLED);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setValue(""+importDeletePluginConfig);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_DELETE_PLUGIN_CONFIG_ENABLED);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		de = new DataElement();
 		de.setValue(""+importConfig);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_CONFIG_ENABLED);
 		de.setSize(this.getSize());
-		dati.addElement(de);
+		dati.add(de);
 		
 		if(importInformationMissingException!=null) {
 			de = new DataElement();
@@ -1704,7 +1703,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_ID);
 			de.setSize(this.getSize());
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		File fileFormFile = importerUtils.writeFormFile(sessionId, ff);
@@ -1712,7 +1711,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		de.setValue(fileFormFile.getAbsolutePath());
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_PACKAGE_FILE_PATH);
-		dati.addElement(de);
+		dati.add(de);
 		
 		File fileImportInformationMissingCollection = null;
 		if(importInformationMissingCollection!=null){
@@ -1721,7 +1720,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			de.setValue(fileImportInformationMissingCollection.getAbsolutePath());
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_COLLECTION_FILE_PATH);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		de = new DataElement();
@@ -1733,7 +1732,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		}
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_CLASS);
-		dati.addElement(de);
+		dati.add(de);
 	
 		File fileImportInformationMissingObject = null;
 		if(importInformationMissingException!=null && importInformationMissingException.getObject()!=null){
@@ -1748,7 +1747,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		}
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_FILE_PATH);
-		dati.addElement(de);
+		dati.add(de);
 		
 		// inizio della grafica effettiva
 		
@@ -1756,7 +1755,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			de = new DataElement();
 			de.setLabel(ArchiviCostanti.LABEL_ARCHIVIO);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		de = new DataElement();
@@ -1769,7 +1768,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		}
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_PACKAGE_FILE_SIMPLE_NAME);
 		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_PACKAGE_FILE_SIMPLE_NAME);
-		dati.addElement(de);
+		dati.add(de);
 
 		if(importInformationMissingException!=null) {
 			de = new DataElement();
@@ -1782,7 +1781,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			}
 			de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_ID_DESCRIPTION);
 			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_ID_DESCRIPTION);
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 		
@@ -1809,7 +1808,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de = new DataElement();
 				de.setLabel(requisitoInput.getDescrizione());
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			HashMap<String, String> mapRequisitiInput = this.readRequisitiInput();
@@ -1876,25 +1875,25 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				}
 				de.setLabel(p.getLabel());
 				de.setSize(this.getSize());
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_REQUISITO_INPUT_PROPRIETA_PREFIX_HIDDEN+indexParam);
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(required+"");
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_REQUISITO_INPUT_PROPRIETA_PREFIX_NAME_HIDDEN+indexParam);
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(p.getNome());
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_REQUISITO_INPUT_PROPRIETA_PREFIX_STEP_INCREMENT_HIDDEN+indexParam);
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(p.getStepIncrementCondition()==null ? "1 N.D." : p.getStepIncrement() + " "+p.getStepIncrementCondition());
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(p.getFooter()!=null) {
 					this.addDescriptionInformationMissingToDati(dati,  p.getFooter() );
@@ -1945,7 +1944,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de = new DataElement();
 				de.setLabel(labelSection);
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 
 			if ( importInformationMissingException.getMissingInfoHeader()!=null ){
@@ -1998,7 +1997,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setSelected(selected);
 				
 				de.setSize(this.getSize());
-				dati.addElement(de);
+				dati.add(de);
 				
 			}
 	
@@ -2019,7 +2018,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				}
 				de.setValue(version.intValue()+"");
 				de.setSize(30);
-				dati.addElement(de);
+				dati.add(de);
 				
 			}
 			
@@ -2053,7 +2052,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setSelected(selected);
 
 				de.setSize(this.getSize());
-				dati.addElement(de);
+				dati.add(de);
 				
 			}
 			
@@ -2087,7 +2086,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setSelected(selected);
 				
 				de.setSize(this.getSize());
-				dati.addElement(de);
+				dati.add(de);
 				
 			}
 			
@@ -2112,7 +2111,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de = new DataElement();
 				de.setLabel(input.getDescrizione());
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			for (int i = 0; i < input.sizeProprietaList(); i++) {
@@ -2132,7 +2131,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(p.getPlaceholder());
 				de.setSize(30);
-				dati.addElement(de);
+				dati.add(de);
 				
 				de = new DataElement();
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INPUT_PROPRIETA_PREFIX_VALUE+i);
@@ -2141,7 +2140,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setLabel(p.getNome());
 				de.setValue(p.getDefault());
 				de.setSize(this.getSize());
-				dati.addElement(de);
+				dati.add(de);
 				
 				if(p.getFooter()!=null) {
 					this.addDescriptionInformationMissingToDati(dati,  p.getFooter() );
@@ -2163,7 +2162,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de = new DataElement();
 				de.setLabel(ArchiviCostanti.LABEL_IMPORT_ERROR_INFORMAZIONI_PROTOCOLLO_MANCANTI);
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 
 			if ( importInformationMissingException.getMissingInfoHeader()!=null ){
@@ -2180,7 +2179,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			de.setValues(modalitaAcquisizione);
 			de.setSelected(modalitaAcquisizioneInformazioniProtocollo);
 			de.setPostBack(true);
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(modalitaAcquisizioneInformazioniProtocollo!=null && 
 					ArchiviCostanti.LABEL_IMPORT_ERROR_INFORMAZIONI_PROTOCOLLO_MANCANTI_RICONOSCIMENTO_USER_INPUT.equals(modalitaAcquisizioneInformazioniProtocollo)){
@@ -2220,13 +2219,13 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 						de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE_TITLE.
 								replace(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE_TITLE_KEY, ptWSDL.getNome()));
 						de.setType(DataElementType.TITLE);
-						dati.addElement(de);
+						dati.add(de);
 					
 						de = new DataElement();
 						de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE_IS_DEFINED+contatoreServizio);
 						de.setType(DataElementType.HIDDEN);
 						de.setValue(CostantiConfigurazione.ABILITATO.toString());
-						dati.addElement(de);	
+						dati.add(de);	
 	
 						String nomeFieldServizio = ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE+contatoreServizio;
 						de = new DataElement();
@@ -2238,7 +2237,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 							de.setValue(ptWSDL.getNome());
 						de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE);
 						de.setSize(this.getSize());
-						dati.addElement(de);						
+						dati.add(de);						
 						contatoreServizio++;
 	
 						//System.out.println("		  PortType="+pt.getQName().toString()+" ("+pt.getOperations().size()+" operations)");
@@ -2257,14 +2256,14 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 							de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_OPERATION_TITLE.
 									replace(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_OPERATION_TITLE_KEY, opWSDL.getNome()));
 							de.setSize(this.getSize());
-							dati.addElement(de);
+							dati.add(de);
 
 							de = new DataElement();
 							de.setName(nomeFieldServizio+
 									ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE_OPERATION_IS_DEFINED+contatoreAzione);
 							de.setType(DataElementType.HIDDEN);
 							de.setValue(CostantiConfigurazione.ABILITATO.toString());
-							dati.addElement(de);	
+							dati.add(de);	
 							
 							de = new DataElement();
 							de.setName(nomeFieldServizio+
@@ -2276,7 +2275,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 								de.setValue(opWSDL.getNome());
 							de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE_OPERATION);
 							de.setSize(this.getSize());
-							dati.addElement(de);
+							dati.add(de);
 	
 							String profiloCollaborazione = null;
 							if(opOpenSPCoop!=null){
@@ -2299,7 +2298,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 							if(this.archiviCore.isShowCorrelazioneAsincronaInAccordi()){
 								de.setPostBack(true);
 							}
-							dati.addElement(de);
+							dati.add(de);
 	
 							if( AccordiServizioParteComuneCostanti.TIPO_PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO.equals(profiloCollaborazione) || 
 									AccordiServizioParteComuneCostanti.TIPO_PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO.equals(profiloCollaborazione)  ){
@@ -2314,7 +2313,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 									de.setValue("");
 								de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE_OPERATION_SERVIZIO_CORRELATO);
 								de.setSize(this.getSize());
-								dati.addElement(de);
+								dati.add(de);
 
 								de = new DataElement();
 								de.setName(nomeFieldServizio+
@@ -2326,7 +2325,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 									de.setValue("");
 								de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE_OPERATION_CORRELATA);
 								de.setSize(this.getSize());
-								dati.addElement(de);
+								dati.add(de);
 
 							}
 	
@@ -2347,7 +2346,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT);
 			de.setType(DataElementType.HIDDEN);
 			de.setValue("");
-			dati.addElement(de);
+			dati.add(de);
 		}
 		
 		
@@ -2362,7 +2361,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de = new DataElement();
 				de.setLabel(ArchiviCostanti.LABEL_IMPORT_ERROR_INFORMAZIONI_PORT_TYPE_RIFERITO);
 				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
+				dati.add(de);
 			}
 			
 			if ( importInformationMissingException.getMissingInfoHeader()!=null ){
@@ -2374,7 +2373,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			de.setValue(ArchiviCostanti.LABEL_IMPORT_ERROR_INFORMAZIONI_PORT_TYPE_RIFERITO_MESSAGGIO.
 					replace(ArchiviCostanti.LABEL_IMPORT_ERROR_INFORMAZIONI_PORT_TYPE_RIFERITO_MESSAGGIO_KEY, 
 							importInformationMissingException.getMismatchPortTypeRifServiziParteComune_nome()));
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_PORT_TYPE_IMPLEMENTED_INPUT);
@@ -2385,7 +2384,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			de.setValues(listServizi);
 			de.setSelected(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_SOGGETTO_INPUT_UNDEFINDED);
 			de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_PORT_TYPE_IMPLEMENTED_INPUT);
-			dati.addElement(de);
+			dati.add(de);
 
 			if ( importInformationMissingException.getMissingInfoFooter()!=null ){
 				this.addDescriptionInformationMissingToDati(dati,  importInformationMissingException.getMissingInfoFooter() );
@@ -2592,7 +2591,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		}
 	}
 	
-	private void addDescriptionInformationMissingToDati(Vector<DataElement> dati, Description header) {
+	private void addDescriptionInformationMissingToDati(List<DataElement> dati, Description header) {
 		
 		for (DescriptionType item : header.getItemList()) {
 			DataElement de = new DataElement();
@@ -2619,12 +2618,12 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			if(item.isBold()) {
 				de.setBold(true);
 			}
-			dati.addElement(de);
+			dati.add(de);
 		}
 
 	}
 	
-	private void addDatiCredenzialiAccesso(Vector<DataElement> dati, boolean readedDatiConnettori, Default defaultProperties, boolean showSectionTitle) throws Exception{
+	private void addDatiCredenzialiAccesso(List<DataElement> dati, boolean readedDatiConnettori, Default defaultProperties, boolean showSectionTitle) throws Exception{
 				
 		String tipoauth = null;
 		String utente = null;
@@ -2763,7 +2762,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				false, null); 
 	}
 	
-	private void addDatiConnettore(Vector<DataElement> dati, boolean readedDatiConnettori, Default defaultProperties,
+	private void addDatiConnettore(List<DataElement> dati, boolean readedDatiConnettori, Default defaultProperties,
 			boolean showSectionTitle,ConnettoreServletType connettoreServletType,
 			boolean forceEnabled, TipologiaConnettori tipologiaConnettoriInfoMissing) throws Exception{
 		

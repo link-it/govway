@@ -82,7 +82,7 @@ public class ObjectFactory {
         return new Dominio();
     }
 
-    private final static QName _RouterDetails = new QName("http://govway.org/integration/fault/router_details", "router-details");
+    private static final QName _RouterDetails = new QName("http://govway.org/integration/fault/router_details", "router-details");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DettaglioRouting }{@code >}}

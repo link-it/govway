@@ -31,34 +31,34 @@ import java.awt.Color;
  */
 public class Colors {
 
-	public final static String CODE_FAULT_APPLICATIVO = org.openspcoop2.core.transazioni.constants.Colors.CODE_FAULT_APPLICATIVO;
-	public final static String CODE_ERROR = org.openspcoop2.core.transazioni.constants.Colors.CODE_ERROR;
-	public final static String CODE_OK = org.openspcoop2.core.transazioni.constants.Colors.CODE_OK;
-	public final static String CODE_TOTALE = "3B83B7";
-	public final static String CODE_BANDA_COMPLESSIVA = "3B83B7";
-	public final static String CODE_BANDA_INTERNA = "FF8F52";
-	public final static String CODE_BANDA_ESTERNA = "95B964";
-	public final static String CODE_LATENZA_TOTALE = "3B83B7";
-	public final static String CODE_LATENZA_SERVIZIO = "FF8F52";
-	public final static String CODE_LATENZA_PORTA = "95B964";
+	public static final String CODE_FAULT_APPLICATIVO = org.openspcoop2.core.transazioni.constants.Colors.CODE_FAULT_APPLICATIVO;
+	public static final String CODE_ERROR = org.openspcoop2.core.transazioni.constants.Colors.CODE_ERROR;
+	public static final String CODE_OK = org.openspcoop2.core.transazioni.constants.Colors.CODE_OK;
+	public static final String CODE_TOTALE = "3B83B7";
+	public static final String CODE_BANDA_COMPLESSIVA = "3B83B7";
+	public static final String CODE_BANDA_INTERNA = "FF8F52";
+	public static final String CODE_BANDA_ESTERNA = "95B964";
+	public static final String CODE_LATENZA_TOTALE = "3B83B7";
+	public static final String CODE_LATENZA_SERVIZIO = "FF8F52";
+	public static final String CODE_LATENZA_PORTA = "95B964";
 	
-	public final static String CSS_COLOR_FAULT_APPLICATIVO = org.openspcoop2.core.transazioni.constants.Colors.CSS_COLOR_FAULT_APPLICATIVO;
-	public final static String CSS_COLOR_ERROR = org.openspcoop2.core.transazioni.constants.Colors.CSS_COLOR_ERROR;
-	public final static String CSS_COLOR_OK = org.openspcoop2.core.transazioni.constants.Colors.CSS_COLOR_OK;
-	public final static String CSS_COLOR_TOTALE = "#"+CODE_TOTALE;
-	public final static String CSS_COLOR_BANDA_COMPLESSIVA = "#"+ CODE_BANDA_COMPLESSIVA;
-	public final static String CSS_COLOR_BANDA_INTERNA = "#"+ CODE_BANDA_INTERNA;
-	public final static String CSS_COLOR_BANDA_ESTERNA = "#"+ CODE_BANDA_ESTERNA;
-	public final static String CSS_COLOR_LATENZA_TOTALE = "#"+CODE_LATENZA_TOTALE;
-	public final static String CSS_COLOR_LATENZA_SERVIZIO = "#"+CODE_LATENZA_SERVIZIO;
-	public final static String CSS_COLOR_LATENZA_PORTA = "#"+CODE_LATENZA_PORTA;
+	public static final String CSS_COLOR_FAULT_APPLICATIVO = org.openspcoop2.core.transazioni.constants.Colors.CSS_COLOR_FAULT_APPLICATIVO;
+	public static final String CSS_COLOR_ERROR = org.openspcoop2.core.transazioni.constants.Colors.CSS_COLOR_ERROR;
+	public static final String CSS_COLOR_OK = org.openspcoop2.core.transazioni.constants.Colors.CSS_COLOR_OK;
+	public static final String CSS_COLOR_TOTALE = "#"+CODE_TOTALE;
+	public static final String CSS_COLOR_BANDA_COMPLESSIVA = "#"+ CODE_BANDA_COMPLESSIVA;
+	public static final String CSS_COLOR_BANDA_INTERNA = "#"+ CODE_BANDA_INTERNA;
+	public static final String CSS_COLOR_BANDA_ESTERNA = "#"+ CODE_BANDA_ESTERNA;
+	public static final String CSS_COLOR_LATENZA_TOTALE = "#"+CODE_LATENZA_TOTALE;
+	public static final String CSS_COLOR_LATENZA_SERVIZIO = "#"+CODE_LATENZA_SERVIZIO;
+	public static final String CSS_COLOR_LATENZA_PORTA = "#"+CODE_LATENZA_PORTA;
 	
-	public final static Color COLOR_FAULT_APPLICATIVO = org.openspcoop2.core.transazioni.constants.Colors.COLOR_FAULT_APPLICATIVO;
-	public final static Color COLOR_ERROR = org.openspcoop2.core.transazioni.constants.Colors.COLOR_ERROR;
-	public final static Color COLOR_OK = org.openspcoop2.core.transazioni.constants.Colors.COLOR_OK;
-	public final static Color COLOR_TOTALE = Color.decode(CSS_COLOR_TOTALE);
-	public final static Color COLOR_LATENZA_TOTALE = Color.decode(CSS_COLOR_LATENZA_TOTALE);
-	public final static Color COLOR_LATENZA_SERVIZIO = Color.decode(CSS_COLOR_LATENZA_SERVIZIO);
-	public final static Color COLOR_LATENZA_PORTA = Color.decode(CSS_COLOR_LATENZA_PORTA);
+	public static final Color COLOR_FAULT_APPLICATIVO = org.openspcoop2.core.transazioni.constants.Colors.COLOR_FAULT_APPLICATIVO;
+	public static final Color COLOR_ERROR = org.openspcoop2.core.transazioni.constants.Colors.COLOR_ERROR;
+	public static final Color COLOR_OK = org.openspcoop2.core.transazioni.constants.Colors.COLOR_OK;
+	public static final Color COLOR_TOTALE = Color.decode(CSS_COLOR_TOTALE);
+	public static final Color COLOR_LATENZA_TOTALE = Color.decode(CSS_COLOR_LATENZA_TOTALE);
+	public static final Color COLOR_LATENZA_SERVIZIO = Color.decode(CSS_COLOR_LATENZA_SERVIZIO);
+	public static final Color COLOR_LATENZA_PORTA = Color.decode(CSS_COLOR_LATENZA_PORTA);
 	
 }

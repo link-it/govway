@@ -143,9 +143,9 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 				  addHidden(document.form, '<%=Costanti.PARAMETRO_AZIONE %>' , '<%=Costanti.VALUE_PARAMETRO_AZIONE_ANNULLA %>');
 				  
 				  //aggiungo parametro csfr
-// 				  if(csrfToken != ''){
-// 				  	addHidden(document.form, csrfTokenKey , csrfToken);
-// 				  }
+				  //if(csrfToken != ''){
+				  //	addHidden(document.form, csrfTokenKey , csrfToken);
+				  //}
 				
 				document.form.submit();
 			} else {

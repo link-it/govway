@@ -46,33 +46,33 @@ import org.slf4j.Logger;
  */
 public class KeystoreTest {
 
-	private final static String ALIAS_1 = "govway_test";
-	private final static String DN_1 = "CN=govway_test, OU=govway_test_ou, O=govway_test_o, L=govway_test_l, ST=Italy, C=IT, EMAILADDRESS=info@link.it";
+	public static final String ALIAS_1 = "govway_test";
+	public static final String DN_1 = "CN=govway_test, OU=govway_test_ou, O=govway_test_o, L=govway_test_l, ST=Italy, C=IT, EMAILADDRESS=info@link.it";
 	
-	public final static String PASSWORD = "123456";
-	public final static String PREFIX = "/org/openspcoop2/utils/certificate/test/";
+	public static final String PASSWORD = "123456";
+	public static final String PREFIX = "/org/openspcoop2/utils/certificate/test/";
 	
-	public final static String PKCS11_CLIENT1 = "pkcs11-client1";
-	public final static String PKCS11_CLIENT2 = "pkcs11-client2";
-	public final static String PKCS11_SERVER = "pkcs11-server";
-	public final static String PKCS11_MODI_CLIENT = "pkcs11-modi-client";
+	public static final String PKCS11_CLIENT1 = "pkcs11-client1";
+	public static final String PKCS11_CLIENT2 = "pkcs11-client2";
+	public static final String PKCS11_SERVER = "pkcs11-server";
+	public static final String PKCS11_MODI_CLIENT = "pkcs11-modi-client";
 	
-	public final static String ALIAS_PKCS11_CLIENT1 = "client1_hsm";
-	public final static String ALIAS_PKCS11_CLIENT_SYMMETRIC = "client_symmetric_hsm";
-	public final static String ALIAS_PKCS11_CLIENT2 = "client2_hsm";
-	public final static String ALIAS_PKCS11_SERVER = "server_hsm";
-	public final static String ALIAS_PKCS11_SERVER2 = "server2_hsm";
-	public final static String ALIAS_PKCS11_MODI_CLIENT1 = "modi_client1_hsm";
-	public final static String ALIAS_PKCS11_MODI_CLIENT2 = "modi_client2_hsm";
-	public final static String ALIAS_PKCS11_MODI_CLIENT3 = "modi_client3_hsm";
+	public static final String ALIAS_PKCS11_CLIENT1 = "client1_hsm";
+	public static final String ALIAS_PKCS11_CLIENT_SYMMETRIC = "client_symmetric_hsm";
+	public static final String ALIAS_PKCS11_CLIENT2 = "client2_hsm";
+	public static final String ALIAS_PKCS11_SERVER = "server_hsm";
+	public static final String ALIAS_PKCS11_SERVER2 = "server2_hsm";
+	public static final String ALIAS_PKCS11_MODI_CLIENT1 = "modi_client1_hsm";
+	public static final String ALIAS_PKCS11_MODI_CLIENT2 = "modi_client2_hsm";
+	public static final String ALIAS_PKCS11_MODI_CLIENT3 = "modi_client3_hsm";
 	
-	public final static String DN_PKCS11_CLIENT1 = "CN=ExampleClient1HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT";
-	public final static String DN_PKCS11_CLIENT2 = "CN=ExampleClient2HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT";
-	public final static String DN_PKCS11_SERVER = "CN=ExampleServerHSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT";
-	public final static String DN_PKCS11_SERVER2 = "CN=ExampleServer2HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT";
-	public final static String DN_PKCS11_MODI_CLIENT1 = "CN=ExampleModIClient1HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT";
-	public final static String DN_PKCS11_MODI_CLIENT2 = "CN=ExampleModIClient2HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT";
-	public final static String DN_PKCS11_MODI_CLIENT3 = "CN=ExampleModIClient3HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT";
+	public static final String DN_PKCS11_CLIENT1 = "CN=ExampleClient1HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT";
+	public static final String DN_PKCS11_CLIENT2 = "CN=ExampleClient2HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT";
+	public static final String DN_PKCS11_SERVER = "CN=ExampleServerHSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT";
+	public static final String DN_PKCS11_SERVER2 = "CN=ExampleServer2HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT";
+	public static final String DN_PKCS11_MODI_CLIENT1 = "CN=ExampleModIClient1HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT";
+	public static final String DN_PKCS11_MODI_CLIENT2 = "CN=ExampleModIClient2HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT";
+	public static final String DN_PKCS11_MODI_CLIENT3 = "CN=ExampleModIClient3HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT";
 	
 	public static void main(String[] args) throws Exception {
 		

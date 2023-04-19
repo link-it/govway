@@ -30,7 +30,7 @@
 					<execution>
 						<phase>${testsuite.utils}</phase>
 						<configuration>
-							<target>
+							<target xmlns:jacoco="antlib:org.jacoco.ant">
 								<property name="rootDir" location="../../../" />
 								<path id="classpath_run" >
 									<pathelement path="../src"/>
@@ -63,16 +63,46 @@
 
 								<delete dir="${testsuite.output}"/>
 
+								<if>
+									<istrue value="${testsuite.utils.coverage}"/>
+									<then>
+										<path id="classpath_jacoco">
+											<fileset dir="${rootDir}/lib/coverage">
+												<include name="org.jacoco.*.jar"/>
+											</fileset>
+										</path>
+										<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" classpathref="classpath_jacoco"/>
+									</then>
+								</if>
+
 								<echo message="Avvio TestSuite (gruppo: ${testsuite.utils.group}) (haltOnFailure:${testsuite.haltOnFailure})" />
-								<testng classpathref="classpath_run"
-									outputdir="${testsuite.output}"
-									haltonfailure="${testsuite.haltOnFailure}" groups="${testsuite.utils.group}">
-									<classfileset dir="build_testunits" includes="**/*.class"/>
-									<jvmarg value="-Dtestng.show.stack.frames=${testsuite.showStackFrames}" />
-									<jvmarg value="-Djenkins=${testsuite.env.jenkins}" />
-                        						<jvmarg value="-DopensslCmd=${testsuite.utils.openssl.cmd}" />
-                        						<jvmarg value="-DwaitStartupServerMs=${testsuite.utils.openssl.waitStartupServerOcspMs}" />
-								</testng>
+								<if>
+									<istrue value="${testsuite.utils.coverage}"/>
+									<then>
+										<jacoco:coverage destfile="${testsuite.output}/coverage/jacoco.exec">
+											<testng classpathref="classpath_run"
+												outputdir="${testsuite.output}"
+												haltonfailure="${testsuite.haltOnFailure}" groups="${testsuite.utils.group}">
+												<classfileset dir="build_testunits" includes="**/*.class"/>
+												<jvmarg value="-Dtestng.show.stack.frames=${testsuite.showStackFrames}" />
+												<jvmarg value="-Djenkins=${testsuite.env.jenkins}" />
+												<jvmarg value="-DopensslCmd=${testsuite.utils.openssl.cmd}" />
+												<jvmarg value="-DwaitStartupServerMs=${testsuite.utils.openssl.waitStartupServerOcspMs}" />
+											</testng>
+										</jacoco:coverage>
+									</then>
+									<else>
+										<testng classpathref="classpath_run"
+											outputdir="${testsuite.output}"
+											haltonfailure="${testsuite.haltOnFailure}" groups="${testsuite.utils.group}">
+											<classfileset dir="build_testunits" includes="**/*.class"/>
+											<jvmarg value="-Dtestng.show.stack.frames=${testsuite.showStackFrames}" />
+											<jvmarg value="-Djenkins=${testsuite.env.jenkins}" />
+				        						<jvmarg value="-DopensslCmd=${testsuite.utils.openssl.cmd}" />
+				        						<jvmarg value="-DwaitStartupServerMs=${testsuite.utils.openssl.waitStartupServerOcspMs}" />
+										</testng>
+									</else>
+								</if>
 
 								<delete dir="build_testunits"/>
 

@@ -40,6 +40,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.io.ZipUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -195,7 +196,14 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 	
 	public static void checkRuntime(String msgId, boolean expectedRequest, String expectedRequestContentType, 
 			boolean expectedResponse, String expectedResponseContentType) throws Exception {
-
+		checkRuntime(msgId, expectedRequest, expectedRequestContentType, 
+				expectedResponse, expectedResponseContentType,
+				false);
+	}
+	public static void checkRuntime(String msgId, boolean expectedRequest, String expectedRequestContentType, 
+			boolean expectedResponse, String expectedResponseContentType,
+			boolean expectedTransactionContext) throws Exception {
+		
 		String query = "select CONTENT_TYPE, RESPONSE_CONTENT_TYPE from DEFINIZIONE_MESSAGGI where ID_MESSAGGIO='"+msgId+"' AND TIPO='INBOX'";
 		if(expectedRequest) {
 			query+=" AND "+buildCondition("MSG_BYTES", false)+" AND "+buildCondition("MSG_CONTEXT", false)+"";
@@ -209,23 +217,69 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 		else {
 			query+=" AND "+buildCondition("RESPONSE_MSG_BYTES", true)+" AND "+buildCondition("RESPONSE_MSG_CONTEXT", true)+"";
 		}
+		if(expectedTransactionContext) {
+			query+=" AND "+buildCondition("TRANSACTION_CONTEXT", false)+"";
+		}
+		else {
+			query+=" AND "+buildCondition("TRANSACTION_CONTEXT", true)+"";
+		}
 		ConfigLoader.getLoggerCore().info("Checking stato messaggi runtime:  " + msgId);
 		ConfigLoader.getLoggerCore().info("Query: " + query);
-		List<Map<String, Object>> readRows = ConfigLoader.getDbUtils().readRows(query);
-		
-		if(readRows==null || readRows.isEmpty()) {
-			throw new Exception("Attesa riga con id '"+msgId+"'");
-		}
-		if(readRows.size()!=1) {
-			throw new Exception("Attesa 1 riga con id '"+msgId+"' (trovate: "+readRows.size()+")");
-		}
-		
-		Map<String, Object> map = readRows.get(0);
-		if(map==null || map.isEmpty()) {
-			throw new Exception("Attesa riga con id '"+msgId+"'");
-		}
-		if(map.size()!=2) {
-			throw new Exception("Attese 2 info per l'id '"+msgId+"' (trovate: "+map.size()+")");
+		Map<String, Object> map = null;
+		try {		
+			List<Map<String, Object>> readRows = ConfigLoader.getDbUtils().readRows(query);
+			if(readRows==null || readRows.isEmpty()) {
+				
+				if(expectedTransactionContext) {
+					for (int i = 0; i < 50; i++) {
+						Utilities.sleep(200); // Aspetto PostOutResponseHandler
+						readRows = ConfigLoader.getDbUtils().readRows(query);
+						if(readRows!=null && !readRows.isEmpty()) {
+							break;
+						}
+					}
+					if(readRows==null || readRows.isEmpty()) {
+						throw new Exception("Attesa riga con id '"+msgId+"'");
+					}
+				}
+				else {
+					throw new Exception("Attesa riga con id '"+msgId+"'");
+				}
+			}
+			if(readRows.size()!=1) {
+				throw new Exception("Attesa 1 riga con id '"+msgId+"' (trovate: "+readRows.size()+")");
+			}
+			
+			map = readRows.get(0);
+			if(map==null || map.isEmpty()) {
+				throw new Exception("Attesa riga con id '"+msgId+"'");
+			}
+			if(map.size()!=2) {
+				throw new Exception("Attese 2 info per l'id '"+msgId+"' (trovate: "+map.size()+")");
+			}
+		}catch(Exception e) {
+			
+			String queryDebug = "select CONTENT_TYPE, RESPONSE_CONTENT_TYPE, MSG_BYTES, RESPONSE_MSG_BYTES , TRANSACTION_CONTEXT from DEFINIZIONE_MESSAGGI where ID_MESSAGGIO='"+msgId+"' AND TIPO='INBOX'";
+			ConfigLoader.getLoggerCore().info("Checking DEBUG prima di sollevare errore per stato messaggi runtime:  " + msgId);
+			ConfigLoader.getLoggerCore().info("Query DEBUG: " + queryDebug);
+			List<Map<String, Object>> readRows = ConfigLoader.getDbUtils().readRows(queryDebug);
+			if(readRows==null || readRows.isEmpty()) {
+				ConfigLoader.getLoggerCore().info("Query DEBUG: no results");
+			}
+			else {
+				for (int i = 0; i < readRows.size(); i++) {
+					map = readRows.get(i);
+					StringBuilder sb = new StringBuilder("[Raw-"+i+"] ");
+					sb.append("CONTENT_TYPE='").append(map.get("CONTENT_TYPE")).append("' ");
+					sb.append("RESPONSE_CONTENT_TYPE='").append(map.get("RESPONSE_CONTENT_TYPE")).append("' ");
+					sb.append("MSG_BYTES='").append(map.get("MSG_BYTES")!=null).append("' ");
+					sb.append("RESPONSE_MSG_BYTES='").append(map.get("RESPONSE_MSG_BYTES")!=null).append("' ");
+					sb.append("TRANSACTION_CONTEXT='").append(map.get("TRANSACTION_CONTEXT")!=null).append("' ");
+					ConfigLoader.getLoggerCore().info(sb.toString());
+				}
+			}
+			
+			throw e;
 		}
 		
 		String ctRequest = null;

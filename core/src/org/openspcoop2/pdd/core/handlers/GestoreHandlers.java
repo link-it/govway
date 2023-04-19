@@ -1052,7 +1052,7 @@ public class GestoreHandlers  {
 		return null;
 	}
 	
-	private final static boolean printOrderInfo = false;
+	private static final boolean printOrderInfo = false;
 	private static <T> T[] reorder(T [] handlers, T[] bufferReturn){
 		if(handlers!=null && handlers.length>0){
 			

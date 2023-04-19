@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -348,11 +347,11 @@ public final class Importer extends Action {
 						new Parameter(nomeFunzionalita,null));
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(modalitaDataElement);
+				dati.add(modalitaDataElement);
 				
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				archiviHelper.addImportToDati(dati, strutsBean.validazioneDocumenti, strutsBean.updateEnabled,
 						strutsBean.importDeletePolicyConfig, 
@@ -584,11 +583,11 @@ public final class Importer extends Action {
 						new Parameter(ArchiviCostanti.LABEL_ARCHIVI_IMPORT,null));
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(modalitaDataElement);
+				dati.add(modalitaDataElement);
 				
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				if(importInformationMissingException!=null){
 				
@@ -647,9 +646,9 @@ public final class Importer extends Action {
 			
 			
 			
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 
-			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+			dati.add(ServletUtils.getDataElementForEditModeFinished());
 			
 			/*
 			System.out.println("IMPORT COME PROTOCOL["+protocolloEffettivo+"] MODE["+strutsBean.importMode+"] TIPO["+
@@ -684,12 +683,12 @@ public final class Importer extends Action {
 						archiviHelper);
 			}
 									
-			dati.addElement(modalitaDataElement);
+			dati.add(modalitaDataElement);
 			
 			DataElement de = new DataElement();
 			de.setLabel("Riepilogo Configurazioni Effettuate");
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			dati.add(de);
 			
 			de = new DataElement();
 			de.setLabel("");
@@ -698,7 +697,7 @@ public final class Importer extends Action {
 			de.setName("Resoconto");
 			de.setRows(30);
 			de.setCols(130);
-			dati.addElement(de);
+			dati.add(de);
 			
 			if(esito!=null && !"".equals(esito)){
 				

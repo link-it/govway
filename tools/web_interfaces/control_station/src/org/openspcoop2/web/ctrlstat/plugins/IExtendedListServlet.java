@@ -21,7 +21,6 @@
 package org.openspcoop2.web.ctrlstat.plugins;
 
 import java.util.List;
-import java.util.Vector;
 
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.UrlParameters;
@@ -57,12 +56,12 @@ public interface IExtendedListServlet extends IExtendedCoreServlet {
 	
 	public String getListItemTitle(TipoOperazione tipoOperazione,ConsoleHelper consoleHelper);
 	
-	public void addToDati(Vector<DataElement> dati,TipoOperazione tipoOperazione,ConsoleHelper consoleHelper, ControlStationCore core, 
+	public void addToDati(List<DataElement> dati,TipoOperazione tipoOperazione,ConsoleHelper consoleHelper, ControlStationCore core, 
 			Object originalObject,IExtendedBean extendedBean) throws ExtendedException;
 	public void checkDati(TipoOperazione tipoOperazione, ConsoleHelper consoleHelper, ControlStationCore core, 
 			Object originalObject,IExtendedBean extendedBean) throws ExtendedException;
 	
-	public void addDatiToList(Vector<DataElement> dati,TipoOperazione tipoOperazione,ConsoleHelper consoleHelper, ControlStationCore core, 
+	public void addDatiToList(List<DataElement> dati,TipoOperazione tipoOperazione,ConsoleHelper consoleHelper, ControlStationCore core, 
 			Object originalObject, IExtendedBean extendedBean, UrlParameters urlExtendedChange);
 	
 	public int sizeList(Object originalObject);

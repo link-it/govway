@@ -8,6 +8,8 @@ Release Notes del prodotto GovWay
         :maxdepth: 2
 	:caption: Release Notes
 
+	3.3.12/index
+	3.3.11/index
 	3.3.10/index
 	3.3.9/index
 	3.3.8/index

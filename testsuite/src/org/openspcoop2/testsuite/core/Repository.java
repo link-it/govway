@@ -22,7 +22,10 @@
 
 package org.openspcoop2.testsuite.core;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.openspcoop2.utils.Semaphore;
 
 /**
  * Repository degli id utilizzati nelle istanze di profili non asincroni.
@@ -33,34 +36,54 @@ import java.util.Vector;
  */
 
 public class Repository {
-	private Vector<String> vet;
+	private List<String> vet;
 	private int index;
+	private org.openspcoop2.utils.Semaphore semaphore = new Semaphore("Repository");
 
 	public Repository(){
-		this.vet=new Vector<String>();
+		this.vet=new ArrayList<>();
 		this.index=0;
 	}
 
-	public synchronized int add(String id){
-		this.vet.add(id);
-		return this.vet.indexOf(id);
+	public int add(String id){
+		this.semaphore.acquireThrowRuntime("add");
+		try {
+			this.vet.add(id);
+			//System.out.println("ADD (size:"+this.vet.size()+") indexOf("+this.vet.indexOf(id)+") index("+this.index+")");
+			return this.vet.indexOf(id);
+		}finally {
+			this.semaphore.release("add");
+		}
 	}
 
 
-	public synchronized String getNext(){
+	public String getNext(){
+		this.semaphore.acquireThrowRuntime("getNext");
 		String str;
 		try{
-			str= this.vet.elementAt(this.index);
+			//System.out.println("GET NEXT (size:"+this.vet.size()+") index("+this.index+") ...");
+			str= this.vet.get(this.index);
 			this.index++;
+			//System.out.println("GET NEXT (size:"+this.vet.size()+") index("+this.index+")");
 		}
-		catch(ArrayIndexOutOfBoundsException nil){
+		catch(IndexOutOfBoundsException nil){
+			//System.out.println("GET NEXT (size:"+this.vet.size()+") index("+this.index+") ERROR OUT OF BOUND");
 			return null;
+		}
+		finally {
+			this.semaphore.release("add");
 		}
 		return str;
 	}
 	
-	public synchronized void setIndex(int i){
-		this.index = i;
+	public void setIndex(int i){
+		this.semaphore.acquireThrowRuntime("setIndex");
+		try {
+			//System.out.println("SET INDEX (size:"+this.vet.size()+") index("+i+") ...");
+			this.index = i;
+		}finally {
+			this.semaphore.release("setIndex");
+		}
 	}
 
 }

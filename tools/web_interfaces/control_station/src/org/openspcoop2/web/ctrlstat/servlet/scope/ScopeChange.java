@@ -24,7 +24,6 @@ package org.openspcoop2.web.ctrlstat.servlet.scope;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,7 +38,6 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.constants.ScopeContesto;
-//import org.openspcoop2.core.registry.constants.ScopeTipologia;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -192,8 +190,8 @@ public final class ScopeChange extends Action {
 
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = scopeHelper.addScopeToDati(TipoOperazione.CHANGE, scopeId, nome, descrizione, tipologia, nomeEsterno, contesto, dati, scope.getNome());
 
@@ -215,9 +213,9 @@ public final class ScopeChange extends Action {
 						ScopeCostanti.SERVLET_NAME_SCOPE_LIST, scope.getNome());
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = scopeHelper.addScopeToDati(TipoOperazione.CHANGE, scopeId, nome, descrizione, tipologia, nomeEsterno, contesto, dati, scope.getNome());
 
@@ -250,7 +248,7 @@ public final class ScopeChange extends Action {
 			
 			listOggettiDaAggiornare.add(scopeNEW);
 			
-			if(scope.getNome().equals(nome)==false){
+			if(!scope.getNome().equals(nome)){
 				
 				// e' stato modificato il nome
 				
@@ -264,7 +262,7 @@ public final class ScopeChange extends Action {
 			
 			scopeCore.performUpdateOperation(userLogin, scopeHelper.smista(), listOggettiDaAggiornare.toArray());
 
-			if(scope.getNome().equals(nome)==false){
+			if(!scope.getNome().equals(nome)){
 				ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.SCOPE);
 			}
 			

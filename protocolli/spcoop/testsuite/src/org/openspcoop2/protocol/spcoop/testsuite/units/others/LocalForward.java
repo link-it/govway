@@ -24,7 +24,6 @@ package org.openspcoop2.protocol.spcoop.testsuite.units.others;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.axis.AxisFault;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -116,7 +115,7 @@ public class LocalForward extends GestioneViaJmx {
 			this.doTestStateful = false;
 		}
 	} 	
-	private Vector<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new Vector<ErroreAttesoOpenSPCoopLogCore>();
+	private List<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new java.util.ArrayList<>();
 	@AfterGroups (alwaysRun=true , groups=ID_GRUPPO)
 	public void testOpenspcoopCoreLog() throws Exception{
 		if(this.erroriAttesiOpenSPCoopCore.size()>0){

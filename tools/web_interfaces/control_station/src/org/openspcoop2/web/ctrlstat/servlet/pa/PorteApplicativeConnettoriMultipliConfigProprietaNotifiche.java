@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -135,6 +134,7 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 			String faultMessage = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_MESSAGE); 
 
 			String connettoreTipoMessaggioDaNotificare = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_TIPO_MESSAGGIO_DA_NOTIFICARE);
+			String connettoreIniettaContestoSincrono = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_INIETTA_CONTESTO_SINCRONO);
 			String httpMethodDaNotificare = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_TIPO_HTTP_NOTIFICA);
 			
 			boolean accessoDaListaAPS = false;
@@ -187,7 +187,7 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 			boolean consegnaSincrona = connettoreDefault && TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType);
 			
 			ConfigurazioneGestioneConsegnaNotifiche oldConfigurazioneGestioneConsegnaNotifiche =
-					org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(oldPaSA, ControlStationCore.getLog());
+					org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(oldPaSA);
 			
 			
 			String postBackElementName = porteApplicativeHelper.getPostBackElementName();
@@ -339,6 +339,10 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 						if(connettoreTipoMessaggioDaNotificare==null) {
 							connettoreTipoMessaggioDaNotificare = PorteApplicativeCostanti.VALORE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_DA_NOTIFICARE_RICHIESTA;
 						}
+					}
+					if(connettoreIniettaContestoSincrono==null &&
+						oldConfigurazioneGestioneConsegnaNotifiche!=null && oldConfigurazioneGestioneConsegnaNotifiche.isInjectTransactionSyncContext()) {
+						connettoreIniettaContestoSincrono = Costanti.CHECK_BOX_ENABLED;
 					}
 					if(httpMethodDaNotificare==null) {
 						if(oldConfigurazioneGestioneConsegnaNotifiche!=null && oldConfigurazioneGestioneConsegnaNotifiche.getHttpMethod()!=null) {
@@ -546,8 +550,8 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 				}
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addConnettoriMultipliNotificheToDati(dati, TipoOperazione.OTHER, beaBehaviourType, nomeSAConnettore, serviceBinding, cadenzaRispedizione, 
 						codiceRisposta2xx, codiceRisposta2xxValueMin, codiceRisposta2xxValueMax, codiceRisposta2xxValue, 
@@ -557,7 +561,7 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 						gestioneFault, faultCode, faultActor, faultMessage,
 						consegnaSincrona,
 						coda, priorita, prioritaMax,
-						connettoreTipoMessaggioDaNotificare, httpMethodDaNotificare);
+						connettoreTipoMessaggioDaNotificare, connettoreIniettaContestoSincrono, httpMethodDaNotificare);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, idPorta,idAsps, dati);
 
@@ -583,9 +587,9 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 			if (!isOk) {
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addConnettoriMultipliNotificheToDati(dati, TipoOperazione.OTHER, beaBehaviourType, nomeSAConnettore, serviceBinding, cadenzaRispedizione, 
 						codiceRisposta2xx, codiceRisposta2xxValueMin, codiceRisposta2xxValueMax, codiceRisposta2xxValue, 
@@ -595,7 +599,7 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 						gestioneFault, faultCode, faultActor, faultMessage,
 						consegnaSincrona,
 						coda, priorita, prioritaMax,
-						connettoreTipoMessaggioDaNotificare, httpMethodDaNotificare);
+						connettoreTipoMessaggioDaNotificare, connettoreIniettaContestoSincrono, httpMethodDaNotificare);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, idPorta, idAsps, dati);
 
@@ -645,7 +649,7 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 					codiceRisposta5xx, codiceRisposta5xxValueMin, codiceRisposta5xxValueMax, codiceRisposta5xxValue,
 					gestioneFault, faultCode, faultActor, faultMessage,
 					consegnaSincrona,
-					connettoreTipoMessaggioDaNotificare, httpMethodDaNotificare);
+					connettoreTipoMessaggioDaNotificare, connettoreIniettaContestoSincrono, httpMethodDaNotificare);
 			
 			org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.save(paSA, nuovaConfigurazioneGestioneConsegnaNotifiche);
 
@@ -683,7 +687,7 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 				}
 				
 				ConfigurazioneGestioneConsegnaNotifiche configurazioneGestioneConsegnaNotifiche =
-						org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(paSA, ControlStationCore.getLog());
+						org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(paSA);
 	
 				if(configurazioneGestioneConsegnaNotifiche != null) {
 					// cadenza rispedizione
@@ -856,9 +860,9 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 				}
 	
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 	
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 	
 				dati = porteApplicativeHelper.addConnettoriMultipliNotificheToDati(dati, TipoOperazione.OTHER, beaBehaviourType, nomeSAConnettore, serviceBinding, cadenzaRispedizione, 
 						codiceRisposta2xx, codiceRisposta2xxValueMin, codiceRisposta2xxValueMax, codiceRisposta2xxValue, 
@@ -868,7 +872,7 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 						gestioneFault, faultCode, faultActor, faultMessage,
 						consegnaSincrona,
 						coda, priorita, prioritaMax,
-						connettoreTipoMessaggioDaNotificare, httpMethodDaNotificare);
+						connettoreTipoMessaggioDaNotificare, connettoreIniettaContestoSincrono, httpMethodDaNotificare);
 	
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, idPorta, idAsps, dati);
 	

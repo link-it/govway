@@ -31,104 +31,104 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
  */
 public class Costanti {
 
-	public final static String AA_SAVE_ERROR_IN_CACHE = "policy.saveErrorInCache";
+	public static final String AA_SAVE_ERROR_IN_CACHE = "policy.saveErrorInCache";
 	
-	public final static String AA_URL = "policy.endpoint.url";
+	public static final String AA_URL = "policy.endpoint.url";
 	
-	public final static String AA_AUTH_BASIC_STATO = "policy.endpoint.basic.stato";
-	public final static String AA_AUTH_BASIC_USERNAME = "policy.endpoint.basic.username";
-	public final static String AA_AUTH_BASIC_PASSWORD = "policy.endpoint.basic.password";
-	public final static String AA_AUTH_BEARER_STATO = "policy.endpoint.bearer.stato";
-	public final static String AA_AUTH_BEARER_TOKEN = "policy.endpoint.bearer.token";
-	public final static String AA_AUTH_SSL_STATO = "policy.endpoint.https.stato";
-	public final static String AA_AUTH_SSL_CLIENT_STATO = "policy.endpoint.https.client.stato";
+	public static final String AA_AUTH_BASIC_STATO = "policy.endpoint.basic.stato";
+	public static final String AA_AUTH_BASIC_USERNAME = "policy.endpoint.basic.username";
+	public static final String AA_AUTH_BASIC_PASSWORD = "policy.endpoint.basic.password";
+	public static final String AA_AUTH_BEARER_STATO = "policy.endpoint.bearer.stato";
+	public static final String AA_AUTH_BEARER_TOKEN = "policy.endpoint.bearer.token";
+	public static final String AA_AUTH_SSL_STATO = "policy.endpoint.https.stato";
+	public static final String AA_AUTH_SSL_CLIENT_STATO = "policy.endpoint.https.client.stato";
 	
-	public final static String AA_REQUEST_POSITION = "policy.attributeAuthority.request.position";
-	public final static String AA_REQUEST_POSITION_VALUE_BEARER = "bearer";
-	public final static String AA_REQUEST_POSITION_VALUE_PAYLOAD = "payload";
-	public final static String AA_REQUEST_POSITION_VALUE_HEADER = "header";
-	public final static String AA_REQUEST_POSITION_VALUE_QUERY = "query";
-	public final static String AA_REQUEST_POSITION_HEADER_NAME = "policy.attributeAuthority.request.position.header";
-	public final static String AA_REQUEST_POSITION_QUERY_PARAMETER_NAME = "policy.attributeAuthority.request.position.queryParameter";
+	public static final String AA_REQUEST_POSITION = "policy.attributeAuthority.request.position";
+	public static final String AA_REQUEST_POSITION_VALUE_BEARER = "bearer";
+	public static final String AA_REQUEST_POSITION_VALUE_PAYLOAD = "payload";
+	public static final String AA_REQUEST_POSITION_VALUE_HEADER = "header";
+	public static final String AA_REQUEST_POSITION_VALUE_QUERY = "query";
+	public static final String AA_REQUEST_POSITION_HEADER_NAME = "policy.attributeAuthority.request.position.header";
+	public static final String AA_REQUEST_POSITION_QUERY_PARAMETER_NAME = "policy.attributeAuthority.request.position.queryParameter";
 	
-	public final static String AA_REQUEST_HTTPMETHOD = "policy.attributeAuthority.httpMethod";
+	public static final String AA_REQUEST_HTTPMETHOD = "policy.attributeAuthority.httpMethod";
 	
-	public final static String AA_REQUEST_TYPE = "policy.attributeAuthority.request.type";
-	public final static String AA_REQUEST_TYPE_VALUE_JSON = "json";
-	public final static String AA_REQUEST_TYPE_VALUE_JWS = "jws";
-	public final static String AA_REQUEST_TYPE_VALUE_CUSTOM = "custom";
+	public static final String AA_REQUEST_TYPE = "policy.attributeAuthority.request.type";
+	public static final String AA_REQUEST_TYPE_VALUE_JSON = "json";
+	public static final String AA_REQUEST_TYPE_VALUE_JWS = "jws";
+	public static final String AA_REQUEST_TYPE_VALUE_CUSTOM = "custom";
 	
-	public final static String AA_REQUEST_CONTENT_TYPE = "policy.attributeAuthority.request.contentType";
+	public static final String AA_REQUEST_CONTENT_TYPE = "policy.attributeAuthority.request.contentType";
 	
-	public final static String AA_REQUEST_DYNAMIC_PAYLOAD_TYPE = "policy.attributeAuthority.request.templateType";
-	public final static String AA_REQUEST_DYNAMIC_PAYLOAD_TYPE_JWT = "jwt";
-	public final static String AA_REQUEST_DYNAMIC_PAYLOAD_TYPE_TEMPLATE = "template";
-	public final static String AA_REQUEST_DYNAMIC_PAYLOAD_TYPE_FREEMARKER_TEMPLATE = "freemarker-template";
-	public final static String AA_REQUEST_DYNAMIC_PAYLOAD_TYPE_VELOCITY_TEMPLATE = "velocity-template";
-	public final static String AA_REQUEST_DYNAMIC_PAYLOAD = "policy.attributeAuthority.request.template";
+	public static final String AA_REQUEST_DYNAMIC_PAYLOAD_TYPE = "policy.attributeAuthority.request.templateType";
+	public static final String AA_REQUEST_DYNAMIC_PAYLOAD_TYPE_JWT = "jwt";
+	public static final String AA_REQUEST_DYNAMIC_PAYLOAD_TYPE_TEMPLATE = "template";
+	public static final String AA_REQUEST_DYNAMIC_PAYLOAD_TYPE_FREEMARKER_TEMPLATE = "freemarker-template";
+	public static final String AA_REQUEST_DYNAMIC_PAYLOAD_TYPE_VELOCITY_TEMPLATE = "velocity-template";
+	public static final String AA_REQUEST_DYNAMIC_PAYLOAD = "policy.attributeAuthority.request.template";
 	
-	public final static String AA_REQUEST_JWT_ISSUER = "policy.attributeAuthority.request.jwt.issuer";
-	public final static String AA_REQUEST_JWT_SUBJECT = "policy.attributeAuthority.request.jwt.subject";
-	public final static String AA_REQUEST_JWT_AUDIENCE = "policy.attributeAuthority.request.jwt.audience";
-	public final static String AA_REQUEST_JWT_EXPIRED_TTL_SECONDS = "policy.attributeAuthority.request.jwt.expired";
-	public final static String AA_REQUEST_JWT_EXPIRED_TTL_SECONDS_DEFAULT_VALUE = "300";
-	public final static String AA_REQUEST_JWT_CLAIMS = "policy.attributeAuthority.request.jwt.claims";
+	public static final String AA_REQUEST_JWT_ISSUER = "policy.attributeAuthority.request.jwt.issuer";
+	public static final String AA_REQUEST_JWT_SUBJECT = "policy.attributeAuthority.request.jwt.subject";
+	public static final String AA_REQUEST_JWT_AUDIENCE = "policy.attributeAuthority.request.jwt.audience";
+	public static final String AA_REQUEST_JWT_EXPIRED_TTL_SECONDS = "policy.attributeAuthority.request.jwt.expired";
+	public static final String AA_REQUEST_JWT_EXPIRED_TTL_SECONDS_DEFAULT_VALUE = "300";
+	public static final String AA_REQUEST_JWT_CLAIMS = "policy.attributeAuthority.request.jwt.claims";
 	
-	public final static String AA_REQUEST_JWT_SIGN_ALGORITHM = "policy.attributeAuthority.request.jws.signature.algorithm";
-	public final static String AA_REQUEST_JWT_SIGN_INCLUDE_KEY_ID = "policy.attributeAuthority.request.jws.signature.include.key.id";
-	public final static String AA_REQUEST_JWT_SIGN_INCLUDE_KEY_ID_MODE_NOT_PRESENT = "false"; // per backward compatibility
-	public final static String AA_REQUEST_JWT_SIGN_INCLUDE_KEY_ID_MODE_ALIAS = "true"; // per backward compatibility
-	public final static String AA_REQUEST_JWT_SIGN_INCLUDE_KEY_ID_MODE_CUSTOM = "custom";
-	public final static String AA_REQUEST_JWT_SIGN_INCLUDE_KEY_ID_VALUE = "policy.attributeAuthority.request.jws.signature.include.key.id.value";
-	public final static String AA_REQUEST_JWT_SIGN_INCLUDE_X509_CERT = "policy.attributeAuthority.request.jws.signature.include.cert";
-	public final static String AA_REQUEST_JWT_SIGN_INCLUDE_X509_URL = "policy.attributeAuthority.request.jws.signature.include.x509url";
-	public final static String AA_REQUEST_JWT_SIGN_INCLUDE_X509_SHA1 = "policy.attributeAuthority.request.jws.signature.include.cert.sha1";
-	public final static String AA_REQUEST_JWT_SIGN_INCLUDE_X509_SHA256 = "policy.attributeAuthority.request.jws.signature.include.cert.sha256";
-	public final static String AA_REQUEST_JWT_SIGN_JOSE_CONTENT_TYPE = "policy.attributeAuthority.request.jwsHeader.joseContentType";
-	public final static String AA_REQUEST_JWT_SIGN_JOSE_TYPE = "policy.attributeAuthority.request.jwsHeader.joseType";
+	public static final String AA_REQUEST_JWT_SIGN_ALGORITHM = "policy.attributeAuthority.request.jws.signature.algorithm";
+	public static final String AA_REQUEST_JWT_SIGN_INCLUDE_KEY_ID = "policy.attributeAuthority.request.jws.signature.include.key.id";
+	public static final String AA_REQUEST_JWT_SIGN_INCLUDE_KEY_ID_MODE_NOT_PRESENT = "false"; // per backward compatibility
+	public static final String AA_REQUEST_JWT_SIGN_INCLUDE_KEY_ID_MODE_ALIAS = "true"; // per backward compatibility
+	public static final String AA_REQUEST_JWT_SIGN_INCLUDE_KEY_ID_MODE_CUSTOM = "custom";
+	public static final String AA_REQUEST_JWT_SIGN_INCLUDE_KEY_ID_VALUE = "policy.attributeAuthority.request.jws.signature.include.key.id.value";
+	public static final String AA_REQUEST_JWT_SIGN_INCLUDE_X509_CERT = "policy.attributeAuthority.request.jws.signature.include.cert";
+	public static final String AA_REQUEST_JWT_SIGN_INCLUDE_X509_URL = "policy.attributeAuthority.request.jws.signature.include.x509url";
+	public static final String AA_REQUEST_JWT_SIGN_INCLUDE_X509_SHA1 = "policy.attributeAuthority.request.jws.signature.include.cert.sha1";
+	public static final String AA_REQUEST_JWT_SIGN_INCLUDE_X509_SHA256 = "policy.attributeAuthority.request.jws.signature.include.cert.sha256";
+	public static final String AA_REQUEST_JWT_SIGN_JOSE_CONTENT_TYPE = "policy.attributeAuthority.request.jwsHeader.joseContentType";
+	public static final String AA_REQUEST_JWT_SIGN_JOSE_TYPE = "policy.attributeAuthority.request.jwsHeader.joseType";
 	
-	public final static String AA_REQUEST_JWT_SIGN_KEYSTORE_TYPE = "policy.attributeAuthority.request.jws.keystore.type";
-	public final static String AA_REQUEST_JWT_SIGN_KEYSTORE_FILE = "policy.attributeAuthority.request.jws.keystore.file";
-	public final static String AA_REQUEST_JWT_SIGN_KEYSTORE_PASSWORD = "policy.attributeAuthority.request.jws.keystore.password";
-	public final static String AA_REQUEST_JWT_SIGN_KEY_ALIAS = "policy.attributeAuthority.request.jws.key.alias";
-	public final static String AA_REQUEST_JWT_SIGN_KEY_PASSWORD = "policy.attributeAuthority.request.jws.key.password";
+	public static final String AA_REQUEST_JWT_SIGN_KEYSTORE_TYPE = "policy.attributeAuthority.request.jws.keystore.type";
+	public static final String AA_REQUEST_JWT_SIGN_KEYSTORE_FILE = "policy.attributeAuthority.request.jws.keystore.file";
+	public static final String AA_REQUEST_JWT_SIGN_KEYSTORE_PASSWORD = "policy.attributeAuthority.request.jws.keystore.password";
+	public static final String AA_REQUEST_JWT_SIGN_KEY_ALIAS = "policy.attributeAuthority.request.jws.key.alias";
+	public static final String AA_REQUEST_JWT_SIGN_KEY_PASSWORD = "policy.attributeAuthority.request.jws.key.password";
 	
-	public final static String AA_RESPONSE_TYPE = CostantiConfigurazione.AA_RESPONSE_TYPE; //"policy.attributeAuthority.response.type";
-	public final static String AA_RESPONSE_TYPE_VALUE_JSON = CostantiConfigurazione.AA_RESPONSE_TYPE_VALUE_JSON; //"json";
-	public final static String AA_RESPONSE_TYPE_VALUE_JWS = CostantiConfigurazione.AA_RESPONSE_TYPE_VALUE_JWS; //"jws";
-	public final static String AA_RESPONSE_TYPE_VALUE_CUSTOM = CostantiConfigurazione.AA_RESPONSE_TYPE_VALUE_CUSTOM; //"custom";
+	public static final String AA_RESPONSE_TYPE = CostantiConfigurazione.AA_RESPONSE_TYPE; //"policy.attributeAuthority.response.type";
+	public static final String AA_RESPONSE_TYPE_VALUE_JSON = CostantiConfigurazione.AA_RESPONSE_TYPE_VALUE_JSON; //"json";
+	public static final String AA_RESPONSE_TYPE_VALUE_JWS = CostantiConfigurazione.AA_RESPONSE_TYPE_VALUE_JWS; //"jws";
+	public static final String AA_RESPONSE_TYPE_VALUE_CUSTOM = CostantiConfigurazione.AA_RESPONSE_TYPE_VALUE_CUSTOM; //"custom";
 	
-	public final static String AA_RESPONSE_PARSER_CLASS_NAME = CostantiConfigurazione.AA_RESPONSE_PARSER_CLASS_NAME; //"policy.attributeAuthority.claimsParser.className";
-	public final static String AA_RESPONSE_PARSER_PLUGIN_TYPE = CostantiConfigurazione.AA_RESPONSE_PARSER_PLUGIN_TYPE;//"policy.attributeAuthority.claimsParser.pluginType";
-	public final static String AA_RESPONSE_ATTRIBUTES = "policy.attributeAuthority.response.jwt.attributes";
+	public static final String AA_RESPONSE_PARSER_CLASS_NAME = CostantiConfigurazione.AA_RESPONSE_PARSER_CLASS_NAME; //"policy.attributeAuthority.claimsParser.className";
+	public static final String AA_RESPONSE_PARSER_PLUGIN_TYPE = CostantiConfigurazione.AA_RESPONSE_PARSER_PLUGIN_TYPE;//"policy.attributeAuthority.claimsParser.pluginType";
+	public static final String AA_RESPONSE_ATTRIBUTES = "policy.attributeAuthority.response.jwt.attributes";
 	
-	public final static String AA_RESPONSE_AUDIENCE = "policy.attributeAuthority.response.jwt.audience";
+	public static final String AA_RESPONSE_AUDIENCE = "policy.attributeAuthority.response.jwt.audience";
 	
-	public final static String POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID = "signatureVerifyPropRefId";
+	public static final String POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID = "signatureVerifyPropRefId";
 
 	
 	
 	// ELEMENTI ID
 	
-	public final static String ID_AA_ENDPOINT_URL = "endpointURL";
-	public final static String ID_AA_AUTENTICAZIONE_ENDPOINT_BASIC_USERNAME = "autenticazioneEndpointBasicUsername";
-	public final static String ID_AA_AUTENTICAZIONE_ENDPOINT_BASIC_PASSWORD = "autenticazioneEndpointBasicPassword";
-	public final static String ID_AA_AUTENTICAZIONE_ENDPOINT_BEARER_TOKEN = "autenticazioneEndpointBearerToken";
-	public final static String ID_AA_RICHIESTA_JWS_PAYLOAD_TEMPLATE = "aaRichiestaJwsPayloadTemplate";
-	public final static String ID_AA_RICHIESTA_JWS_PAYLOAD_TEMPLATE_FREEMARKER = "aaRichiestaJwsPayloadTemplateFreemarker";
-	public final static String ID_AA_RICHIESTA_JWS_PAYLOAD_TEMPLATE_VELOCITY = "aaRichiestaJwsPayloadTemplateVelocity";
-	public final static String ID_AA_RICHIESTA_JWS_PAYLOAD_ISSUER = "aaRichiestaPayloadIssuer";
-	public final static String ID_AA_RICHIESTA_JWS_PAYLOAD_SUBJECT = "aaRichiestaPayloadSubject";
-	public final static String ID_AA_RICHIESTA_JWS_PAYLOAD_AUDIENCE = "aaRichiestaPayloadAudience";
-	public final static String ID_AA_RICHIESTA_JWS_PAYLOAD_CLAIMS = "aaRichiestaJwsPayloadClaims";
-	public final static String ID_AA_RICHIESTA_PAYLOAD_TEMPLATE = "aaRichiestaPayloadTemplate";
-	public final static String ID_AA_RICHIESTA_PAYLOAD_TEMPLATE_FREEMARKER = "aaRichiestaPayloadTemplateFreemarker";
-	public final static String ID_AA_RICHIESTA_PAYLOAD_TEMPLATE_VELOCITY = "aaRichiestaPayloadTemplateVelocity";
-	public final static String ID_AA_RISPOSTA_JWS_PAYLOAD_AUDIENCE = "aaResponseAudience";
+	public static final String ID_AA_ENDPOINT_URL = "endpointURL";
+	public static final String ID_AA_AUTENTICAZIONE_ENDPOINT_BASIC_USERNAME = "autenticazioneEndpointBasicUsername";
+	public static final String ID_AA_AUTENTICAZIONE_ENDPOINT_BASIC_PASSWORD = "autenticazioneEndpointBasicPassword";
+	public static final String ID_AA_AUTENTICAZIONE_ENDPOINT_BEARER_TOKEN = "autenticazioneEndpointBearerToken";
+	public static final String ID_AA_RICHIESTA_JWS_PAYLOAD_TEMPLATE = "aaRichiestaJwsPayloadTemplate";
+	public static final String ID_AA_RICHIESTA_JWS_PAYLOAD_TEMPLATE_FREEMARKER = "aaRichiestaJwsPayloadTemplateFreemarker";
+	public static final String ID_AA_RICHIESTA_JWS_PAYLOAD_TEMPLATE_VELOCITY = "aaRichiestaJwsPayloadTemplateVelocity";
+	public static final String ID_AA_RICHIESTA_JWS_PAYLOAD_ISSUER = "aaRichiestaPayloadIssuer";
+	public static final String ID_AA_RICHIESTA_JWS_PAYLOAD_SUBJECT = "aaRichiestaPayloadSubject";
+	public static final String ID_AA_RICHIESTA_JWS_PAYLOAD_AUDIENCE = "aaRichiestaPayloadAudience";
+	public static final String ID_AA_RICHIESTA_JWS_PAYLOAD_CLAIMS = "aaRichiestaJwsPayloadClaims";
+	public static final String ID_AA_RICHIESTA_PAYLOAD_TEMPLATE = "aaRichiestaPayloadTemplate";
+	public static final String ID_AA_RICHIESTA_PAYLOAD_TEMPLATE_FREEMARKER = "aaRichiestaPayloadTemplateFreemarker";
+	public static final String ID_AA_RICHIESTA_PAYLOAD_TEMPLATE_VELOCITY = "aaRichiestaPayloadTemplateVelocity";
+	public static final String ID_AA_RISPOSTA_JWS_PAYLOAD_AUDIENCE = "aaResponseAudience";
 	
-	public final static String ID_AA_SIGNATURE_ALGORITHM = "aaSignatureAlgorithm";
-	public final static String ID_AA_TOKEN_JWT_EXPIRED_TTL_SECONDS= "aaRichiestaPayloadExpTtl";
+	public static final String ID_AA_SIGNATURE_ALGORITHM = "aaSignatureAlgorithm";
+	public static final String ID_AA_TOKEN_JWT_EXPIRED_TTL_SECONDS= "aaRichiestaPayloadExpTtl";
 	
-	public final static String ID_AA_PARSER_TOKEN_CUSTOM_PLUGIN_CLASSNAME = "aaResponseParserCustom";
-	public final static String ID_AA_PARSER_TOKEN_CUSTOM_PLUGIN_CHOICE = "aaResponseParserCustomPluginChoice";
+	public static final String ID_AA_PARSER_TOKEN_CUSTOM_PLUGIN_CLASSNAME = "aaResponseParserCustom";
+	public static final String ID_AA_PARSER_TOKEN_CUSTOM_PLUGIN_CHOICE = "aaResponseParserCustomPluginChoice";
 }

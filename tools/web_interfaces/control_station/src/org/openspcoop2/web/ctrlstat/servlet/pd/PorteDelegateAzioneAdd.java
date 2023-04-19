@@ -24,7 +24,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pd;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -125,22 +124,21 @@ public final class PorteDelegateAzioneAdd extends Action {
 				idServizio = Integer.parseInt(idAsps);
 				asps = apsCore.getAccordoServizioParteSpecifica(idServizio);
 			} else {
-				// long idPorta = pa.getId();
 				PortaDelegataServizio pds = portaDelegata.getServizio();
 				  idServizio = -1;
-				String tipo_servizio = null;
-				String nome_servizio = null;
-				Integer versione_servizio = null;
+				String tipoServizio = null;
+				String nomeServizio = null;
+				Integer versioneServizio = null;
 				if (pds != null) {
 					idServizio = pds.getId().intValue();
-					tipo_servizio = pds.getTipo();
-					nome_servizio = pds.getNome();
-					versione_servizio = pds.getVersione();
+					tipoServizio = pds.getTipo();
+					nomeServizio = pds.getNome();
+					versioneServizio = pds.getVersione();
 				}
 				
 				if (idServizio <= 0) {
 				PortaDelegataSoggettoErogatore soggettoErogatore = portaDelegata.getSoggettoErogatore();
-				idServizio = (int) apsCore.getIdAccordoServizioParteSpecifica(nome_servizio, tipo_servizio, versione_servizio, soggettoErogatore.getNome(), soggettoErogatore.getTipo()); 
+				idServizio = (int) apsCore.getIdAccordoServizioParteSpecifica(nomeServizio, tipoServizio, versioneServizio, soggettoErogatore.getNome(), soggettoErogatore.getTipo()); 
 				}
 				asps = apsCore.getAccordoServizioParteSpecifica(idServizio);
 			}
@@ -211,8 +209,8 @@ public final class PorteDelegateAzioneAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				List<DataElement> dati = new ArrayList<>();
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				if(azioniDisponibiliList==null || azioniDisponibiliList.length <= sogliaAzioni) {
 					// si controlla 1 poiche' c'e' il trattino nelle azioni disponibili
@@ -239,9 +237,9 @@ public final class PorteDelegateAzioneAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteDelegateHelper.addPorteAzioneToDati(TipoOperazione.ADD,dati, "", azioniDisponibiliList,azioniDisponibiliLabelList, azionis, serviceBinding);
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps, 
@@ -255,7 +253,7 @@ public final class PorteDelegateAzioneAdd extends Action {
 						ForwardParams.ADD());
 			}
 
-			List<Object> listaOggettiDaModificare = new ArrayList<Object>();
+			List<Object> listaOggettiDaModificare = new ArrayList<>();
 			
 			String azioneGiaEsistente = portaDelegata.getAzione().getAzioneDelegata(0); // prendo la prima
 			
@@ -278,14 +276,13 @@ public final class PorteDelegateAzioneAdd extends Action {
 			}
 			for (int j = 0; j < fruitore.sizeConfigurazioneAzioneList(); j++) {
 				ConfigurazioneServizioAzione config = fruitore.getConfigurazioneAzione(j);
-				if(config!=null) {
-					if(config.getAzioneList().contains(azioneGiaEsistente)) {
-						for(String azione: azionis) {
-							config.addAzione(azione);
-						}
-						updateASPS = true;
-						break;
+				if(config!=null &&
+						config.getAzioneList().contains(azioneGiaEsistente)) {
+					for(String azione: azionis) {
+						config.addAzione(azione);
 					}
+					updateASPS = true;
+					break;
 				}
 			}
 			if(updateASPS) {

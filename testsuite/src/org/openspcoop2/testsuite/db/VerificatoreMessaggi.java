@@ -24,7 +24,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.openspcoop2.pdd.core.GestoreCorrelazioneApplicativa;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
@@ -864,12 +865,12 @@ public class VerificatoreMessaggi {
 	
 	/* ----------------------- UTILITY --------------------------- */
 	
-	public Vector<String> getTabelleNonCorrettamenteSvuotate(String tipoRepositoryBuste)
+	public List<String> getTabelleNonCorrettamenteSvuotate(String tipoRepositoryBuste)
 			throws TestSuiteException {
 
 		ResultSet res = null;
 		PreparedStatement pstmt = null;
-		Vector<String> resultsVector = new Vector<String>();
+		List<String> resultsList = new ArrayList<String>();
 		try {
 
 			// REPOSITORY
@@ -884,7 +885,7 @@ public class VerificatoreMessaggi {
 				findRepositoryBusteMalformato = true;
 				String entryNonGestitaCorrettamente = 
 						Costanti.REPOSITORY+"."+ res.getString(Costanti.REPOSITORY_COLUMN_TIPO_MESSAGGIO) +"/"+ res.getString(Costanti.REPOSITORY_COLUMN_ID_MESSAGGIO);
-				resultsVector.add(entryNonGestitaCorrettamente);
+				resultsList.add(entryNonGestitaCorrettamente);
 			}
 			res.close();
 			pstmt.close();
@@ -902,7 +903,7 @@ public class VerificatoreMessaggi {
 				while (res.next()) {
 					String entryNonGestitaCorrettamente = 
 							Costanti.LISTA_TRASMISSIONI+"."+ res.getString(Costanti.LISTA_TRASMISSIONI_COLUMN_TIPO_MESSAGGIO) +"/"+ res.getString(Costanti.LISTA_TRASMISSIONI_COLUMN_ID_MESSAGGIO);
-					resultsVector.add(entryNonGestitaCorrettamente);
+					resultsList.add(entryNonGestitaCorrettamente);
 				}
 				res.close();
 				pstmt.close();
@@ -917,7 +918,7 @@ public class VerificatoreMessaggi {
 				while (res.next()) {
 					String entryNonGestitaCorrettamente = 
 							Costanti.LISTA_TRASMISSIONI+"."+ res.getString(Costanti.LISTA_TRASMISSIONI_COLUMN_TIPO_MESSAGGIO) +"/"+ res.getString(Costanti.LISTA_TRASMISSIONI_COLUMN_ID_MESSAGGIO);
-					resultsVector.add(entryNonGestitaCorrettamente);
+					resultsList.add(entryNonGestitaCorrettamente);
 				}
 				res.close();
 				pstmt.close();
@@ -934,7 +935,7 @@ public class VerificatoreMessaggi {
 				while (res.next()) {
 					String entryNonGestitaCorrettamente = 
 							Costanti.LISTA_RISCONTRI+"."+ res.getString(Costanti.LISTA_RISCONTRI_COLUMN_TIPO_MESSAGGIO) +"/"+ res.getString(Costanti.LISTA_RISCONTRI_COLUMN_ID_MESSAGGIO);
-					resultsVector.add(entryNonGestitaCorrettamente);
+					resultsList.add(entryNonGestitaCorrettamente);
 				}
 				res.close();
 				pstmt.close();
@@ -949,7 +950,7 @@ public class VerificatoreMessaggi {
 				while (res.next()) {
 					String entryNonGestitaCorrettamente = 
 							Costanti.LISTA_RISCONTRI+"."+ res.getString(Costanti.LISTA_RISCONTRI_COLUMN_TIPO_MESSAGGIO) +"/"+ res.getString(Costanti.LISTA_RISCONTRI_COLUMN_ID_MESSAGGIO);
-					resultsVector.add(entryNonGestitaCorrettamente);
+					resultsList.add(entryNonGestitaCorrettamente);
 				}
 				res.close();
 				pstmt.close();
@@ -966,7 +967,7 @@ public class VerificatoreMessaggi {
 				while (res.next()) {
 					String entryNonGestitaCorrettamente = 
 							Costanti.LISTA_ECCEZIONI+"."+ res.getString(Costanti.LISTA_ECCEZIONI_COLUMN_TIPO_MESSAGGIO) +"/"+ res.getString(Costanti.LISTA_ECCEZIONI_COLUMN_ID_MESSAGGIO);
-					resultsVector.add(entryNonGestitaCorrettamente);
+					resultsList.add(entryNonGestitaCorrettamente);
 				}
 				res.close();
 				pstmt.close();
@@ -981,7 +982,7 @@ public class VerificatoreMessaggi {
 				while (res.next()) {
 					String entryNonGestitaCorrettamente = 
 							Costanti.LISTA_ECCEZIONI+"."+ res.getString(Costanti.LISTA_ECCEZIONI_COLUMN_TIPO_MESSAGGIO) +"/"+ res.getString(Costanti.LISTA_ECCEZIONI_COLUMN_ID_MESSAGGIO);
-					resultsVector.add(entryNonGestitaCorrettamente);
+					resultsList.add(entryNonGestitaCorrettamente);
 				}
 				res.close();
 				pstmt.close();
@@ -994,7 +995,7 @@ public class VerificatoreMessaggi {
 			while (res.next()) {
 				String entryNonGestitaCorrettamente = 
 						Costanti.RISCONTRI_DA_RICEVERE+"."+ res.getString(Costanti.RISCONTRI_COLUMN_ID_MESSAGGIO);
-				resultsVector.add(entryNonGestitaCorrettamente);
+				resultsList.add(entryNonGestitaCorrettamente);
 			}
 			res.close();
 			pstmt.close();
@@ -1015,7 +1016,7 @@ public class VerificatoreMessaggi {
 			while (res.next()) {
 				String entryNonGestitaCorrettamente = 
 						Costanti.PROFILO_ASINCRONO+"."+ res.getString(Costanti.PROFILO_ASINCRONO_COLUMN_TIPO_MESSAGGIO) +"/"+ res.getString(Costanti.PROFILO_ASINCRONO_COLUMN_ID_MESSAGGIO);
-				resultsVector.add(entryNonGestitaCorrettamente);
+				resultsList.add(entryNonGestitaCorrettamente);
 			}
 			res.close();
 			pstmt.close();
@@ -1031,7 +1032,7 @@ public class VerificatoreMessaggi {
 				findRepositoryMessaggiMalformato = true;
 				String entryNonGestitaCorrettamente = 
 						GestoreMessaggi.MESSAGGI+"."+ res.getString(GestoreMessaggi.MESSAGGI_COLUMN_TIPO_MESSAGGIO) +"/"+ res.getString(GestoreMessaggi.MESSAGGI_COLUMN_ID_MESSAGGIO);
-				resultsVector.add(entryNonGestitaCorrettamente);
+				resultsList.add(entryNonGestitaCorrettamente);
 			}
 			res.close();
 			pstmt.close();
@@ -1046,7 +1047,7 @@ public class VerificatoreMessaggi {
 			while (res.next()) {
 				String entryNonGestitaCorrettamente = 
 						GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+"."+ res.getString(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ID_MESSAGGIO) +" , SA:"+res.getString(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_SERVIZIO_APPLICATIVO);
-				resultsVector.add(entryNonGestitaCorrettamente);
+				resultsList.add(entryNonGestitaCorrettamente);
 			}
 			res.close();
 			pstmt.close();
@@ -1058,7 +1059,7 @@ public class VerificatoreMessaggi {
 			while (res.next()) {
 				String entryNonGestitaCorrettamente = 
 						GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+"."+ res.getString(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ID_MESSAGGIO) +" , (messaggio non esistente) SA:"+res.getString(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_SERVIZIO_APPLICATIVO);
-				resultsVector.add(entryNonGestitaCorrettamente);
+				resultsList.add(entryNonGestitaCorrettamente);
 			}
 			res.close();
 			pstmt.close();
@@ -1077,7 +1078,7 @@ public class VerificatoreMessaggi {
 				while (res.next()) {
 					String entryNonGestitaCorrettamente = 
 							GestoreMessaggi.DEFINIZIONE_MESSAGGI+"."+ res.getString(GestoreMessaggi.DEFINIZIONE_MESSAGGI_COLUMN_TIPO_MESSAGGIO) +"/"+ res.getString(GestoreMessaggi.DEFINIZIONE_MESSAGGI_COLUMN_ID_MESSAGGIO);
-					resultsVector.add(entryNonGestitaCorrettamente);
+					resultsList.add(entryNonGestitaCorrettamente);
 				}
 				res.close();
 				pstmt.close();
@@ -1093,7 +1094,7 @@ public class VerificatoreMessaggi {
 				while (res.next()) {
 					String entryNonGestitaCorrettamente = 
 							GestoreMessaggi.DEFINIZIONE_MESSAGGI+"."+ res.getString(GestoreMessaggi.DEFINIZIONE_MESSAGGI_COLUMN_TIPO_MESSAGGIO) +"/"+ res.getString(GestoreMessaggi.DEFINIZIONE_MESSAGGI_COLUMN_ID_MESSAGGIO);
-					resultsVector.add(entryNonGestitaCorrettamente);
+					resultsList.add(entryNonGestitaCorrettamente);
 				}
 				res.close();
 				pstmt.close();
@@ -1112,6 +1113,6 @@ public class VerificatoreMessaggi {
 			}catch(Exception e){}
 		}
 
-		return resultsVector;
+		return resultsList;
 	}
 }

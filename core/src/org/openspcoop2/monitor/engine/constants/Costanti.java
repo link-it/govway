@@ -55,8 +55,8 @@ public class Costanti {
 	public static final Integer INFORMAZIONE_LATENZA_NON_DISPONIBILE = -1;
 	public static final String TRANSAZIONE_SENZA_STATO = "Senza Stato";
 	
-	public final static String LABEL_ALLARMI_PARAMETRI = "Parametri";
-	public final static String LABEL_ALLARMI_VALORI_DI_SOGLIA = "Valori di Soglia";
+	public static final String LABEL_ALLARMI_PARAMETRI = "Parametri";
+	public static final String LABEL_ALLARMI_VALORI_DI_SOGLIA = "Valori di Soglia";
 	
 	
 

@@ -37,43 +37,43 @@ import org.openspcoop2.utils.MapKey;
 
 public class AS4Costanti {
    
-	public final static String OPENSPCOOP2_LOCAL_HOME = "GOVWAY_HOME";
+	public static final String OPENSPCOOP2_LOCAL_HOME = "GOVWAY_HOME";
 	
-	public final static String PROTOCOL_NAME = "as4";
+	public static final String PROTOCOL_NAME = "as4";
 	
-    public final static String AS4_PROPERTIES_LOCAL_PATH = "as4_local.properties";
-    public final static String AS4_PROPERTIES = "AS4_PROPERTIES";
+    public static final String AS4_PROPERTIES_LOCAL_PATH = "as4_local.properties";
+    public static final String AS4_PROPERTIES = "AS4_PROPERTIES";
     
-    public final static String AS4_SUFFIX_ID_OPENSPCOOP2 = "@openspcoop.org";
+    public static final String AS4_SUFFIX_ID_OPENSPCOOP2 = "@openspcoop.org";
     
-    public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_BASE = "ebmsUserMessagePartyId";
-    public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_TYPE_NAME = "ebmsUserMessagePartyIdTypeName";
+    public static final String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_BASE = "ebmsUserMessagePartyId";
+    public static final String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_TYPE_NAME = "ebmsUserMessagePartyIdTypeName";
 	public static final String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_TYPE_VALUE = "ebmsUserMessagePartyIdTypeValue";
-	public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ENDPOINT = "ebmsUserMessagePartyEndpoint";
-	public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_COMMON_NAME = "ebmsUserMessagePartyCommonName";
+	public static final String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ENDPOINT = "ebmsUserMessagePartyEndpoint";
+	public static final String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_COMMON_NAME = "ebmsUserMessagePartyCommonName";
     
-    public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_BASE = "ebmsUserMessageCollaborationInfoService";
-    public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_TYPE = "ebmsUserMessageCollaborationInfoServiceType";
-    public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION = "ebmsUserMessageCollaborationInfoAction";
-    public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING = "ebmsUserMessageCollaborationInfoActionBinding";
+    public static final String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_BASE = "ebmsUserMessageCollaborationInfoService";
+    public static final String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_TYPE = "ebmsUserMessageCollaborationInfoServiceType";
+    public static final String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION = "ebmsUserMessageCollaborationInfoAction";
+    public static final String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING = "ebmsUserMessageCollaborationInfoActionBinding";
     
-    public final static String AS4_PROTOCOL_PROPERTIES_SECURITY_PROFILE = "ebmsSecurityProfile";
+    public static final String AS4_PROTOCOL_PROPERTIES_SECURITY_PROFILE = "ebmsSecurityProfile";
     
-    public final static String AS4_PROTOCOL_PROPERTIES_RELIABILITY_NON_REPUDIATION = "ebmsReliabilityNonRepudiation";
-    public final static String AS4_PROTOCOL_PROPERTIES_RELIABILITY_REPLY_PATTERN = "ebmsReliabilityReplyPattern";
+    public static final String AS4_PROTOCOL_PROPERTIES_RELIABILITY_NON_REPUDIATION = "ebmsReliabilityNonRepudiation";
+    public static final String AS4_PROTOCOL_PROPERTIES_RELIABILITY_REPLY_PATTERN = "ebmsReliabilityReplyPattern";
     
-    public final static String AS4_PROTOCOL_PROPERTIES_SERVICE_PAYLOAD_PROFILE = "ebmsServicePayloadProfile";
+    public static final String AS4_PROTOCOL_PROPERTIES_SERVICE_PAYLOAD_PROFILE = "ebmsServicePayloadProfile";
     public static final String AS4_PROTOCOL_PROPERTIES_ACTION_PAYLOAD_PROFILE = "ebmsActionPayloadProfile";
     public static final String AS4_PROTOCOL_PROPERTIES_ACTION_COMPRESS_PAYLOAD = "ebmsActionCompressPayload";
     
-    public final static String AS4_PROTOCOL_PROPERTIES_SERVICE_PROPERTIES = "ebmsServiceProperties";
+    public static final String AS4_PROTOCOL_PROPERTIES_SERVICE_PROPERTIES = "ebmsServiceProperties";
     public static final String AS4_PROTOCOL_PROPERTIES_ACTION_PROPERTY_SET = "ebmsActionPropertySet";
     
     
-    public final static String AS4_USER_MESSAGE_FROM_ROLE_INITIATOR = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/initiator";
-    public final static String AS4_USER_MESSAGE_FROM_ROLE_RESPONDER = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder";
+    public static final String AS4_USER_MESSAGE_FROM_ROLE_INITIATOR = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/initiator";
+    public static final String AS4_USER_MESSAGE_FROM_ROLE_RESPONDER = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder";
     
-    public final static String AS4_USER_MESSAGE_PAYLOAD_INFO_PROPERTIES_MIME_TYPE = "MimeType";
+    public static final String AS4_USER_MESSAGE_PAYLOAD_INFO_PROPERTIES_MIME_TYPE = "MimeType";
     
     public static final String AS4_NAMESPACE_CID_MESSAGGIO = "http://www.openspcoop2.org/protocol/as4";
         
@@ -124,30 +124,30 @@ public class AS4Costanti {
 	public static final String JMS_NOTIFICA_NOTIFICATION_TYPE = "NOTIFICATION_TYPE";
 	
 	
-	public final static MapKey<String> AS4_CONTEXT_USER_MESSAGE = Map.newMapKey("AS4_CONTEXT_USER_MESSAGE");
-	public final static MapKey<String> AS4_CONTEXT_CONTENT = Map.newMapKey("AS4_CONTEXT_CONTENT");
+	public static final MapKey<String> AS4_CONTEXT_USER_MESSAGE = Map.newMapKey("AS4_CONTEXT_USER_MESSAGE");
+	public static final MapKey<String> AS4_CONTEXT_CONTENT = Map.newMapKey("AS4_CONTEXT_CONTENT");
 
 	
 	/** Properties per oggetto Busta */
 	
-	public final static String AS4_BUSTA_PREFIX = "ebmsUserMessage";
+	public static final String AS4_BUSTA_PREFIX = "ebmsUserMessage";
 	
-    public final static String AS4_BUSTA_MITTENTE_PARTY_ID_BASE = AS4_BUSTA_PREFIX+"FromPartyId";
+    public static final String AS4_BUSTA_MITTENTE_PARTY_ID_BASE = AS4_BUSTA_PREFIX+"FromPartyId";
 	public static final String AS4_BUSTA_MITTENTE_PARTY_ID_TYPE = AS4_BUSTA_PREFIX+"FromPartyIdType";
 	
-    public final static String AS4_BUSTA_DESTINATARIO_PARTY_ID_BASE = AS4_BUSTA_PREFIX+"ToPartyId";
+    public static final String AS4_BUSTA_DESTINATARIO_PARTY_ID_BASE = AS4_BUSTA_PREFIX+"ToPartyId";
 	public static final String AS4_BUSTA_DESTINATARIO_PARTY_ID_TYPE = AS4_BUSTA_PREFIX+"ToPartyIdType";
 	
-	public final static String AS4_BUSTA_SERVIZIO_COLLABORATION_INFO_SERVICE_BASE = AS4_BUSTA_PREFIX+"CollaborationInfoService";
+	public static final String AS4_BUSTA_SERVIZIO_COLLABORATION_INFO_SERVICE_BASE = AS4_BUSTA_PREFIX+"CollaborationInfoService";
 	public static final String AS4_BUSTA_SERVIZIO_COLLABORATION_INFO_SERVICE_TYPE = AS4_BUSTA_PREFIX+"CollaborationInfoServiceType";
-	public final static String AS4_BUSTA_SERVIZIO_COLLABORATION_INFO_ACTION = AS4_BUSTA_PREFIX+"CollaborationInfoAction";
-	public final static String AS4_BUSTA_SERVIZIO_COLLABORATION_INFO_CONVERSATION_ID = AS4_BUSTA_PREFIX+"CollaborationInfoConversationId";
+	public static final String AS4_BUSTA_SERVIZIO_COLLABORATION_INFO_ACTION = AS4_BUSTA_PREFIX+"CollaborationInfoAction";
+	public static final String AS4_BUSTA_SERVIZIO_COLLABORATION_INFO_CONVERSATION_ID = AS4_BUSTA_PREFIX+"CollaborationInfoConversationId";
 	
-	public final static String AS4_BUSTA_SERVIZIO_MESSAGE_INFO_ID = AS4_BUSTA_PREFIX+"Id";
-	public final static String AS4_BUSTA_SERVIZIO_MESSAGE_INFO_REF_TO_MESSAGE_ID = AS4_BUSTA_PREFIX+"RefToMessageId";
-	public final static String AS4_BUSTA_SERVIZIO_MESSAGE_INFO_SEND_STATUS = AS4_BUSTA_PREFIX+"SendStatus";
+	public static final String AS4_BUSTA_SERVIZIO_MESSAGE_INFO_ID = AS4_BUSTA_PREFIX+"Id";
+	public static final String AS4_BUSTA_SERVIZIO_MESSAGE_INFO_REF_TO_MESSAGE_ID = AS4_BUSTA_PREFIX+"RefToMessageId";
+	public static final String AS4_BUSTA_SERVIZIO_MESSAGE_INFO_SEND_STATUS = AS4_BUSTA_PREFIX+"SendStatus";
 	
-	public final static String AS4_BUSTA_SERVIZIO_COLLABORATION_MESSAGE_PROPERTY_PREFIX = AS4_BUSTA_PREFIX+"Property_";
+	public static final String AS4_BUSTA_SERVIZIO_COLLABORATION_MESSAGE_PROPERTY_PREFIX = AS4_BUSTA_PREFIX+"Property_";
 	
 	
 	/** Tabelle */
@@ -160,21 +160,21 @@ public class AS4Costanti {
 	 * );
 	 **/
 	
-	public final static String AS4_MESSAGE_SEND_SUCCESS = "MESSAGE_SEND_SUCCESS";
+	public static final String AS4_MESSAGE_SEND_SUCCESS = "MESSAGE_SEND_SUCCESS";
 	
-	public final static String AS4_TABELLA_RICEVUTA = "TB_RECEIPT_DATA";
-	public final static String AS4_TABELLA_RICEVUTA_COLONNA_ID_RICEVUTA = "RECEIPT_ID";
-	public final static String AS4_TABELLA_RICEVUTA_COLONNA_XML = "RAW_XML";
+	public static final String AS4_TABELLA_RICEVUTA = "TB_RECEIPT_DATA";
+	public static final String AS4_TABELLA_RICEVUTA_COLONNA_ID_RICEVUTA = "RECEIPT_ID";
+	public static final String AS4_TABELLA_RICEVUTA_COLONNA_XML = "RAW_XML";
 	
-	public final static String AS4_TABELLA_SIGNAL_MESSAGE = "TB_SIGNAL_MESSAGE";
-	public final static String AS4_TABELLA_SIGNAL_MESSAGE_COLONNA_ID_RICEVUTA = "receipt_ID_PK";
-	public final static String AS4_TABELLA_SIGNAL_MESSAGE_COLONNA_ID_MESSAGE = "messageInfo_ID_PK";
+	public static final String AS4_TABELLA_SIGNAL_MESSAGE = "TB_SIGNAL_MESSAGE";
+	public static final String AS4_TABELLA_SIGNAL_MESSAGE_COLONNA_ID_RICEVUTA = "receipt_ID_PK";
+	public static final String AS4_TABELLA_SIGNAL_MESSAGE_COLONNA_ID_MESSAGE = "messageInfo_ID_PK";
 	
-	public final static String AS4_TABELLA_MESSAGE_INFO = "TB_MESSAGE_INFO";
-	public final static String AS4_TABELLA_MESSAGE_INFO_ID_PK = "ID_PK";
-	public final static String AS4_TABELLA_MESSAGE_INFO_REF_ID_MESSAGE = "REF_TO_MESSAGE_ID";
-	public final static String AS4_TABELLA_MESSAGE_INFO_ID_MESSAGE = "MESSAGE_ID";
-	public final static String AS4_TABELLA_MESSAGE_INFO_TIMESTAMP = "TIME_STAMP";
+	public static final String AS4_TABELLA_MESSAGE_INFO = "TB_MESSAGE_INFO";
+	public static final String AS4_TABELLA_MESSAGE_INFO_ID_PK = "ID_PK";
+	public static final String AS4_TABELLA_MESSAGE_INFO_REF_ID_MESSAGE = "REF_TO_MESSAGE_ID";
+	public static final String AS4_TABELLA_MESSAGE_INFO_ID_MESSAGE = "MESSAGE_ID";
+	public static final String AS4_TABELLA_MESSAGE_INFO_TIMESTAMP = "TIME_STAMP";
 	
 	
 }

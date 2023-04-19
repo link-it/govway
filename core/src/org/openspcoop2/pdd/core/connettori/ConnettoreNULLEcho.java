@@ -97,7 +97,7 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
     	return "";
     }
 	
-	public final static String LOCATION = "govway://echo";
+	public static final String LOCATION = "govway://echo";
     
 	private DumpByteArrayOutputStream requestBout = null;
 	

@@ -351,15 +351,36 @@
 				</conditions>
 				<property name="rs.security.keystore.alias.mode" properties="signatureVerificationPropRefId" />
 			</item>
+			<item type="select" name="validazioneJwtTruststoreTypeSelectJWKPublicKey" label="Riferimento Chiave Pubblica" default="alias" reloadOnChange="true">
+				<conditions>
+					<condition and="true">
+						<equals name="validazioneJwtTruststoreType" value="jwk"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.keystore.alias.mode" properties="signatureVerificationPropRefId" />
+			</item>
 			<item type="text" name="validazioneJwtTruststoreCertificateAlias" label="Alias Certificato" required="true">
-				<conditions and="false">
-					<condition>
+				<conditions and="true">
+					<condition not="true">
 						<equals name="validazioneJwtTruststoreType" value="jwk"/>
 					</condition>
 					<condition and="false">
 						<defined not="true" name="validazioneJwtTruststoreTypeSelectCertificate"/>
 						<equals name="validazioneJwtTruststoreTypeSelectCertificate" value=""/>
 						<equals name="validazioneJwtTruststoreTypeSelectCertificate" value="alias"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.keystore.alias" properties="signatureVerificationPropRefId" />
+			</item>
+			<item type="text" name="validazioneJwtTruststoreKidAlias" label="Kid Chiave Pubblica" required="true">
+				<conditions and="true">
+					<condition>
+						<equals name="validazioneJwtTruststoreType" value="jwk"/>
+					</condition>
+					<condition and="false">
+						<defined not="true" name="validazioneJwtTruststoreTypeSelectJWKPublicKey"/>
+						<equals name="validazioneJwtTruststoreTypeSelectJWKPublicKey" value=""/>
+						<equals name="validazioneJwtTruststoreTypeSelectJWKPublicKey" value="alias"/>
 					</condition>
 				</conditions>
 				<property name="rs.security.keystore.alias" properties="signatureVerificationPropRefId" />

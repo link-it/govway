@@ -21,7 +21,6 @@ package org.openspcoop2.web.ctrlstat.servlet.about;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -78,13 +77,13 @@ public class About extends Action{
 			aHelper.makeMenu();
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 			lstParam.add(new Parameter(AboutCostanti.LABEL_ABOUT, null));
 
 			ServletUtils.setPageDataTitle(pd, lstParam);
 			
 			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 
 			BinaryParameter infoP = aHelper.getBinaryParameter(AboutCostanti.PARAMETRO_ABOUT_INFO);
 			

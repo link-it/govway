@@ -36,7 +36,7 @@ import org.openspcoop2.utils.transport.http.HttpRequest;
 */
 public class AutenticazioneTest extends ConfigLoader {
 
-	private final static String API = "TestApplicativiEsterni";
+	private static final String API = "TestApplicativiEsterni";
 	
 	@Test
 	public void autenticazioneBasic() throws Exception {

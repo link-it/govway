@@ -21,9 +21,9 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.apc;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -69,7 +69,6 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public final class AccordiServizioParteComuneAllegatiChange extends Action {
 
-	@SuppressWarnings("incomplete-switch")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -83,7 +82,7 @@ public final class AccordiServizioParteComuneAllegatiChange extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
-		String userLogin = (String) ServletUtils.getUserLoginFromSession(session);
+		String userLogin = ServletUtils.getUserLoginFromSession(session);
 
 		try {
 			
@@ -97,8 +96,8 @@ public final class AccordiServizioParteComuneAllegatiChange extends Action {
 			String nomeDocumento = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_NOME_DOCUMENTO);
 			String tipoFile = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_TIPO_FILE);
 			
-			long idAllegatoLong = Long.valueOf(idAllegato);
-			long idAccordoLong = Long.valueOf(idAccordo);
+			long idAllegatoLong = Long.parseLong(idAllegato);
+			long idAccordoLong = Long.parseLong(idAccordo);
 			
 			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
@@ -128,7 +127,7 @@ public final class AccordiServizioParteComuneAllegatiChange extends Action {
 			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false).getValue();
 			List<Parameter> listaParams = apcHelper.getTitoloApc(TipoOperazione.ADD, as, tipoAccordo, labelASTitle, null, false);
 			
-			String labelAllegati = isModalitaVistaApiCustom ? AccordiServizioParteComuneCostanti.LABEL_ALLEGATI : AccordiServizioParteComuneCostanti.LABEL_ALLEGATI + " di " + labelASTitle;
+			String labelAllegati = (isModalitaVistaApiCustom!=null && isModalitaVistaApiCustom.booleanValue()) ? AccordiServizioParteComuneCostanti.LABEL_ALLEGATI : AccordiServizioParteComuneCostanti.LABEL_ALLEGATI + " di " + labelASTitle;
 			 
 			listaParams.add(new Parameter(labelAllegati, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_ALLEGATI_LIST, pIdAccordo, pNomeAccordo, pTipoAccordo));
 			listaParams.add(new Parameter(nomeDocumento, null));
@@ -141,9 +140,9 @@ public final class AccordiServizioParteComuneAllegatiChange extends Action {
 				ServletUtils.setPageDataTitle(pd, listaParams);
 				
 				// preparo i campi
-				Vector<Object> dati = new Vector<Object>();
+				List<Object> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				apcHelper.addAccordiAllegatiToDati(dati,TipoOperazione.CHANGE,idAccordo,
 						null,null,null,null,tipoAccordo,tipoFile,
@@ -170,6 +169,8 @@ public final class AccordiServizioParteComuneAllegatiChange extends Action {
 				case specificaCoordinamento:
 					toCheck.setTipo(TipiDocumentoCoordinamento.toEnumConstant(tipoFile).getNome());
 					break;
+				default:
+					break;
 			}
 			toCheck.setIdProprietarioDocumento(as.getId());
 			toCheck.setOraRegistrazione(new Date());
@@ -183,9 +184,9 @@ public final class AccordiServizioParteComuneAllegatiChange extends Action {
 				ServletUtils.setPageDataTitle(pd, listaParams);
 				
 				// preparo i campi
-				Vector<Object> dati = new Vector<Object>();
+				List<Object> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				apcHelper.addAccordiAllegatiToDati(dati,TipoOperazione.CHANGE,idAccordo,
 						null,null,null,null,tipoAccordo,tipoFile,

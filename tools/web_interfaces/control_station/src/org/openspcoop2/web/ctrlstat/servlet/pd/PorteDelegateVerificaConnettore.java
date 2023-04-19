@@ -21,7 +21,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -102,7 +101,7 @@ public class PorteDelegateVerificaConnettore extends Action {
 			ConnettoriCore connettoriCore = new ConnettoriCore(porteDelegateCore);
 
 			String tmpIdConnettore = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ID);
-			long idConnettore = Long.valueOf(tmpIdConnettore);
+			long idConnettore = Long.parseLong(tmpIdConnettore);
 			
 			String tmpAccessoDaGruppi = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI);
 			boolean accessoDaGruppi = "true".equalsIgnoreCase(tmpAccessoDaGruppi);
@@ -114,7 +113,7 @@ public class PorteDelegateVerificaConnettore extends Action {
 						
 			// Prendo la lista di aliases
 			List<String> aliases = confCore.getJmxPdD_aliases();
-			if(aliases==null || aliases.size()<=0){
+			if(aliases==null || aliases.isEmpty()){
 				throw new Exception("Pagina non prevista, la sezione configurazione non permette di accedere a questa pagina, se la configurazione non e' corretta");
 			}
 			
@@ -148,10 +147,9 @@ public class PorteDelegateVerificaConnettore extends Action {
 				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VERIFICA_CONNETTORE_CONFIGURAZIONE_CONFIG_DI+idporta;
 			}
 			
-			if(!accessoDaGruppi) {
-				if(labelPerPorta.contains(CostantiControlStation.LABEL_DEL_GRUPPO)) {
-					labelPerPorta = labelPerPorta.substring(0, labelPerPorta.indexOf(CostantiControlStation.LABEL_DEL_GRUPPO));
-				}
+			if(!accessoDaGruppi &&
+				labelPerPorta.contains(CostantiControlStation.LABEL_DEL_GRUPPO)) {
+				labelPerPorta = labelPerPorta.substring(0, labelPerPorta.indexOf(CostantiControlStation.LABEL_DEL_GRUPPO));
 			}
 			
 			lstParam.add(new Parameter(labelPerPorta,  null));
@@ -161,8 +159,8 @@ public class PorteDelegateVerificaConnettore extends Action {
 			ServletUtils.setPageDataTitle(pd, lstParam);
 			
 			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
-			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+			List<DataElement> dati = new ArrayList<>();
+			dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 			DataElement deTestConnettivita = new DataElement();
 			deTestConnettivita.setType(DataElementType.TITLE);
@@ -177,21 +175,21 @@ public class PorteDelegateVerificaConnettore extends Action {
 				
 				if (!porteDelegateHelper.isEditModeInProgress()) {
 				
-					List<String> aliases_for_check = new ArrayList<>();
+					List<String> aliasesForCheck = new ArrayList<>();
 					if(aliases.size()==1) {
-						aliases_for_check.add(aliases.get(0));
+						aliasesForCheck.add(aliases.get(0));
 					}
 					else if(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI.equals(alias)) {
-						aliases_for_check.addAll(aliases);
+						aliasesForCheck.addAll(aliases);
 					}
 					else {
-						aliases_for_check.add(alias);
+						aliasesForCheck.add(alias);
 					}
 									
 					boolean rilevatoErrore = false;
 					String messagePerOperazioneEffettuata = "";
 					int index = 0;
-					for (String aliasForVerificaConnettore : aliases_for_check) {
+					for (String aliasForVerificaConnettore : aliasesForCheck) {
 						
 						String risorsa = null;
 						if(connettoreRegistro) {

@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pdd;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -115,16 +114,16 @@ public final class PddSinglePdDChange extends Action {
 					implementazione = pdd.getImplementazione();
 				if(subject==null)
 					subject = pdd.getSubject();
-				if(clientAuth==null){
-					if(pdd.getClientAuth()!=null)
-						clientAuth = pdd.getClientAuth().toString();
+				if(clientAuth==null &&
+					pdd.getClientAuth()!=null) {
+					clientAuth = pdd.getClientAuth().toString();
 				}
 				tipo = pdd.getTipo();
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = pddHelper.addPddToDati(dati, nome, id, "", subject, "", "", PddTipologia.toPddTipologia(tipo), TipoOperazione.CHANGE, 
 						null, "", "", 0, descr, "", 0, implementazione, clientAuth, true);
@@ -145,9 +144,9 @@ public final class PddSinglePdDChange extends Action {
 						PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_LIST, pdd.getNome());
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = pddHelper.addPddToDati(dati, nome, id, "", subject, "", "", PddTipologia.toPddTipologia(tipo), TipoOperazione.CHANGE, 
 						null, "", "", 0, descr, "", 0, implementazione, clientAuth, true);
@@ -168,10 +167,10 @@ public final class PddSinglePdDChange extends Action {
 				pdd.setSubject(null);
 			pdd.setClientAuth(StatoFunzionalita.toEnumConstant(clientAuth));
 			
-			ArrayList<Object> oggettiDaAggiornare = new ArrayList<Object>();
+			ArrayList<Object> oggettiDaAggiornare = new ArrayList<>();
 			
 			// Se e' stato modificato il nome della pdd, modifico i soggetti
-			if(pdd.getNome().equals(nome)==false){
+			if(!pdd.getNome().equals(nome)){
 				List<SoggettoCtrlStat> soggetti = pddCore.soggettiWithServer(pdd.getNome());
 				for (SoggettoCtrlStat soggettoCtrlStat : soggetti) {
 					if(soggettoCtrlStat.getSoggettoReg()!=null)

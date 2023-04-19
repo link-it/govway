@@ -20,7 +20,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.protocol_properties;
 
 import java.util.List;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -117,7 +117,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			strutsBean.registryReader = ppCore.getRegistryReader(strutsBean.protocolFactory); 
 			strutsBean.configRegistryReader = ppCore.getConfigIntegrationReader(strutsBean.protocolFactory);
 
-			long idProtocolPropertyLong = Long.valueOf(strutsBean.id);
+			long idProtocolPropertyLong = Long.parseLong(strutsBean.id);
 
 			// prelevo l'oggetto proprietario
 			Object oggettoProprietario = ppHelper.getOggettoProprietario(strutsBean.idProprietario, strutsBean.nomeProprietario, strutsBean.nomeParentProprietario, strutsBean.tipoProprietario, strutsBean.tipoAccordo);
@@ -212,9 +212,9 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 				ServletUtils.setPageDataTitle(pd,lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = ppHelper.addProtocolPropertyChangeToDati(tipoOp, dati, strutsBean.protocollo, strutsBean.id, strutsBean.nome, strutsBean.idProprietario,strutsBean.tipoProprietario,strutsBean.tipoAccordo,strutsBean.nomeProprietario,strutsBean.nomeParentProprietario,strutsBean.urlChange, label,
 						oldContenutoDocumento,contenutoDocumentoStringBuilder,errore,tipologiaDocumentoScaricare,binaryConsoleItem, readOnly, noteAggiornamento);
@@ -265,9 +265,9 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				contenutoDocumentoStringBuilder = new StringBuilder();
 				errore = null;
@@ -312,9 +312,9 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			ServletUtils.setPageDataTitle(pd, lstParam);
 
 			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
+			List<DataElement> dati = new ArrayList<>();
 
-			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+			dati.add(ServletUtils.getDataElementForEditModeFinished());
 			
 			// ricaricare il valore dell'id property
 			oggettoProprietario = ppHelper.getOggettoProprietario(strutsBean.idProprietario, strutsBean.nomeProprietario, strutsBean.nomeParentProprietario, strutsBean.tipoProprietario, strutsBean.tipoAccordo);

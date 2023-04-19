@@ -318,7 +318,7 @@ public class RicezioneBusteServiceUtils {
 			// Verifico che la modalità di riconoscimento dell'azione sia compatibile
 			RequestInfoConfigUtilities.checkRequestInfoConfig(paDefault, logCore, protocolServiceBinding, soapStreamReader, requestInfo);
 			// Aggiorno chiave per considerare anche il soapStreamReader
-			GestoreRichieste.updateRequestConfig(logCore, requestInfo, protocolServiceBinding, soapStreamReader);
+			GestoreRichieste.updateRequestConfig(requestInfo, protocolServiceBinding, soapStreamReader);
 			if(requestInfo!=null && requestInfo.getRequestConfig()!=null && requestInfo.getRequestConfig().getIdServizio()!=null) {
 				idServizio = requestInfo.getRequestConfig().getIdServizio(); // se ho fatto lo switch per chiave più specifica per soap, uso il nuovo oggetto per evitare che nella chiave precedente venga memorizzata l'azione
 			}

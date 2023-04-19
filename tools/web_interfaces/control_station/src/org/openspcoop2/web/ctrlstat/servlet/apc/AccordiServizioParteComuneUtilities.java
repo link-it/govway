@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.id.IDAccordo;
@@ -676,8 +675,8 @@ public class AccordiServizioParteComuneUtilities {
 			getServCorrList.add(as.getPortType(k));
 		}
 
-		if (getServCorrList.size() > 0) {
-			servCorrUniche = new ArrayList<String>();
+		if (!getServCorrList.isEmpty()) {
+			servCorrUniche = new ArrayList<>();
 			servCorrUniche.add("-");
 			for (Iterator<PortType> iterator = getServCorrList.iterator(); iterator.hasNext();) {
 				PortType myPT = iterator.next();
@@ -685,7 +684,7 @@ public class AccordiServizioParteComuneUtilities {
 				if(myPT.sizeAzioneList()<=0)
 					continue;
 				// Devono possedere almeno un'azione con profilo di collaborazione uguale a quello selezionato 
-				List<Operation> opList = new Vector<Operation>();
+				List<Operation> opList = new ArrayList<>();
 				for(int j=0; j<myPT.sizeAzioneList();j++){
 					Operation op = myPT.getAzione(j);
 					// ridefinito sull'azione
@@ -734,16 +733,16 @@ public class AccordiServizioParteComuneUtilities {
 		for(int k=0;k<as.sizePortTypeList();k++){
 			getServCorrList.add(as.getPortType(k));
 		}
-		Map<String, List<Operation>> operationsListSelezionate = new HashMap<String, List<Operation>>();
+		Map<String, List<Operation>> operationsListSelezionate = new HashMap<>();
 
-		if (getServCorrList.size() > 0) {
+		if (!getServCorrList.isEmpty()) {
 			for (Iterator<PortType> iterator = getServCorrList.iterator(); iterator.hasNext();) {
 				PortType myPT = iterator.next();
 				// Devono possedere almeno un'azione
 				if(myPT.sizeAzioneList()<=0)
 					continue;
 				// Devono possedere almeno un'azione con profilo di collaborazione uguale a quello selezionato 
-				List<Operation> opList = new Vector<Operation>();
+				List<Operation> opList = new ArrayList<>();
 				for(int j=0; j<myPT.sizeAzioneList();j++){
 					Operation op = myPT.getAzione(j);
 					// ridefinito sull'azione

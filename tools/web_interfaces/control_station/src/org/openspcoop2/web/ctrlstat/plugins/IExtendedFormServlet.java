@@ -20,7 +20,7 @@
 
 package org.openspcoop2.web.ctrlstat.plugins;
 
-import java.util.Vector;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -45,11 +45,11 @@ public interface IExtendedFormServlet extends IExtendedCoreServlet {
 		
 	public String getFormTitle(TipoOperazione tipoOperazione,ConsoleHelper consoleHelper);
 	
-	public void addToDati(Vector<DataElement> dati,TipoOperazione tipoOperazione,ConsoleHelper consoleHelper, ControlStationCore core, 
+	public void addToDati(List<DataElement> dati,TipoOperazione tipoOperazione,ConsoleHelper consoleHelper, ControlStationCore core, 
 			Object originalObject,IExtendedBean extendedBean) throws ExtendedException;
 	
 	// metodi utilizzati solo se extendedUpdateToNewWindow() == 'true'
-	public void addToDatiNewWindow(Vector<DataElement> dati,ConsoleHelper consoleHelper, ControlStationCore core, 
+	public void addToDatiNewWindow(List<DataElement> dati,ConsoleHelper consoleHelper, ControlStationCore core, 
 			Object originalObject, IExtendedBean extendedBean, String urlExtendedPage) throws ExtendedException;
 	
 	public void checkDati(TipoOperazione tipoOperazione, ConsoleHelper consoleHelper, ControlStationCore core, 

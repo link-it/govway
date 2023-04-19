@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,7 +37,6 @@ import org.openspcoop2.core.config.AutorizzazioneScope;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Scope;
 import org.openspcoop2.core.registry.constants.ScopeContesto;
-//import org.openspcoop2.core.registry.constants.ScopeTipologia;
 import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
@@ -113,7 +111,7 @@ public final class PorteDelegateScopeAdd extends Action {
 			filtroScope.setTipologia("");
 						
 			List<String> scopes = new ArrayList<>();
-			if(pde.getScope()!=null && pde.getScope().getScopeList()!=null && pde.getScope().getScopeList().size()>0){
+			if(pde.getScope()!=null && pde.getScope().getScopeList()!=null && !pde.getScope().getScopeList().isEmpty()){
 				for (Scope scope : pde.getScope().getScopeList()) {
 					scopes.add(scope.getNome());	
 				}
@@ -157,9 +155,9 @@ public final class PorteDelegateScopeAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 				
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteDelegateHelper.addScopeToDati(TipoOperazione.ADD, dati, false, filtroScope, nome, scopes, false, true, true);
 
@@ -182,9 +180,9 @@ public final class PorteDelegateScopeAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteDelegateHelper.addScopeToDati(TipoOperazione.ADD, dati, false, filtroScope, nome, scopes, false, true, true);
 

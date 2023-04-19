@@ -70,6 +70,7 @@ connettore built-in JMS e File.
         http
 	tokenPolicy
         https
+	https_override_jvm
         proxy
 	tempiRisposta
 	httpOpzioniAvanzate

@@ -61,7 +61,7 @@ public class ObjectFactory {
         return new EsitoRichiesta();
     }
 
-    private final static QName _Result = new QName("http://govway.org/integration", "result");
+    private static final QName _Result = new QName("http://govway.org/integration", "result");
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link EsitoRichiesta }{@code >}}

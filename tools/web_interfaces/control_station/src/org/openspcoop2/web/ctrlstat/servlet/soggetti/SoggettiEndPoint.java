@@ -23,7 +23,7 @@ package org.openspcoop2.web.ctrlstat.servlet.soggetti;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
@@ -91,7 +91,7 @@ public final class SoggettiEndPoint extends Action {
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
 			
 			String id = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID);
-			int idInt = Integer.parseInt(id);
+			long idLong = Long.parseLong(id);
 				
 			String endpointtype = soggettiHelper.readEndPointType();
 			String tipoconn = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
@@ -104,27 +104,27 @@ public final class SoggettiEndPoint extends Action {
 			// token policy
 			String autenticazioneTokenS = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
-			String token_policy = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
+			String tokenPolicy = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 			
 			// proxy
-			String proxy_enabled = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
-			String proxy_hostname = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
-			String proxy_port = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
-			String proxy_username = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
-			String proxy_password = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+			String proxyEnabled = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
+			String proxyHostname = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
+			String proxyPort = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
+			String proxyUsername = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
+			String proxyPassword = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
 			
 			// tempi risposta
-			String tempiRisposta_enabled = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
-			String tempiRisposta_connectionTimeout = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
-			String tempiRisposta_readTimeout = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
-			String tempiRisposta_tempoMedioRisposta = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
+			String tempiRispostaEnabled = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
+			String tempiRispostaConnectionTimeout = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
+			String tempiRispostaReadTimeout = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
+			String tempiRispostaTempoMedioRisposta = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
 			
 			// opzioni avanzate
-			String transfer_mode = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
-			String transfer_mode_chunk_size = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
-			String redirect_mode = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
-			String redirect_max_hop = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
-			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(soggettiHelper,transfer_mode, redirect_mode);
+			String transferMode = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
+			String transferModeChunkSize = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
+			String redirectMode = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
+			String redirectMaxHop = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
+			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(soggettiHelper,transferMode, redirectMode);
 			
 			// http
 			String url = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
@@ -176,9 +176,9 @@ public final class SoggettiEndPoint extends Action {
 			
 			// file
 			String requestOutputFileName = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
-			String requestOutputFileName_permissions = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
+			String requestOutputFileNamePermissions = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
 			String requestOutputFileNameHeaders = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
-			String requestOutputFileNameHeaders_permissions = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
+			String requestOutputFileNameHeadersPermissions = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
 			String requestOutputParentDirCreateIfNotExists = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
 			String requestOutputOverwriteIfExists = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME);
 			String responseInputMode = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE);
@@ -194,14 +194,13 @@ public final class SoggettiEndPoint extends Action {
 			// Prendo nome, tipo e pdd dal db
 			SoggettiCore soggettiCore = new SoggettiCore();			
 			
-			SoggettoCtrlStat scs = soggettiCore.getSoggettoCtrlStat(idInt);
+			SoggettoCtrlStat scs = soggettiCore.getSoggettoCtrlStat(idLong);
 			Soggetto ss = scs.getSoggettoReg();
 			org.openspcoop2.core.config.Soggetto ssconf = scs.getSoggettoConf();
 			String nomeprov = scs.getNome();
 			String tipoprov = scs.getTipo();
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoprov);
 			String tmpTitle = soggettiHelper.getLabelNomeSoggetto(protocollo, tipoprov , nomeprov);
-			// String pdd = ss.getServer();
 			Connettore c = ss.getConnettore();
 			
 			Boolean isConnettoreCustomUltimaImmagineSalvata = c.getCustom();
@@ -241,134 +240,134 @@ public final class SoggettiEndPoint extends Action {
 					}
 				}
 				
-				if(proxy_enabled==null && props!=null){
+				if(proxyEnabled==null && props!=null){
 					String v = props.get(CostantiDB.CONNETTORE_PROXY_TYPE);
 					if(v!=null && !"".equals(v)){
-						proxy_enabled = Costanti.CHECK_BOX_ENABLED_TRUE;
+						proxyEnabled = Costanti.CHECK_BOX_ENABLED_TRUE;
 						
 						// raccolgo anche altre proprietà
 						v = props.get(CostantiDB.CONNETTORE_PROXY_HOSTNAME);
 						if(v!=null && !"".equals(v)){
-							proxy_hostname = v.trim();
+							proxyHostname = v.trim();
 						}
 						v = props.get(CostantiDB.CONNETTORE_PROXY_PORT);
 						if(v!=null && !"".equals(v)){
-							proxy_port = v.trim();
+							proxyPort = v.trim();
 						}
 						v = props.get(CostantiDB.CONNETTORE_PROXY_USERNAME);
 						if(v!=null && !"".equals(v)){
-							proxy_username = v.trim();
+							proxyUsername = v.trim();
 						}
 						v = props.get(CostantiDB.CONNETTORE_PROXY_PASSWORD);
 						if(v!=null && !"".equals(v)){
-							proxy_password = v.trim();
+							proxyPassword = v.trim();
 						}
 					}
 				}
 				
-				if(tempiRisposta_enabled == null ||
-						tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) 
+				if(tempiRispostaEnabled == null ||
+						tempiRispostaConnectionTimeout==null || "".equals(tempiRispostaConnectionTimeout) 
 						|| 
-						tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) 
+						tempiRispostaReadTimeout==null || "".equals(tempiRispostaReadTimeout) 
 						|| 
-						tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ){
+						tempiRispostaTempoMedioRisposta==null || "".equals(tempiRispostaTempoMedioRisposta) ){
 					
 					ConfigurazioneCore configCore = new ConfigurazioneCore(soggettiCore);
 					ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
 					
 					if( props!=null ) {
-						if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) ) {
+						if(tempiRispostaConnectionTimeout==null || "".equals(tempiRispostaConnectionTimeout) ) {
 							String v = props.get(CostantiDB.CONNETTORE_CONNECTION_TIMEOUT);
 							if(v!=null && !"".equals(v)){
-								tempiRisposta_connectionTimeout = v.trim();
-								tempiRisposta_enabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
+								tempiRispostaConnectionTimeout = v.trim();
+								tempiRispostaEnabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
 							}
 							else {
-								tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaFruizione().getConnectionTimeout().intValue()+"";
+								tempiRispostaConnectionTimeout = configGenerale.getTempiRispostaFruizione().getConnectionTimeout().intValue()+"";
 							}
 						}
-						if(tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) ) {
+						if(tempiRispostaReadTimeout==null || "".equals(tempiRispostaReadTimeout) ) {
 							String v = props.get(CostantiDB.CONNETTORE_READ_CONNECTION_TIMEOUT);
 							if(v!=null && !"".equals(v)){
-								tempiRisposta_readTimeout = v.trim();
-								tempiRisposta_enabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
+								tempiRispostaReadTimeout = v.trim();
+								tempiRispostaEnabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
 							}
 							else {
-								tempiRisposta_readTimeout = configGenerale.getTempiRispostaFruizione().getReadTimeout().intValue()+"";
+								tempiRispostaReadTimeout = configGenerale.getTempiRispostaFruizione().getReadTimeout().intValue()+"";
 							}
 						}
-						if(tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ) {
+						if(tempiRispostaTempoMedioRisposta==null || "".equals(tempiRispostaTempoMedioRisposta) ) {
 							String v = props.get(CostantiDB.CONNETTORE_TEMPO_MEDIO_RISPOSTA);
 							if(v!=null && !"".equals(v)){
-								tempiRisposta_tempoMedioRisposta = v.trim();
-								tempiRisposta_enabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
+								tempiRispostaTempoMedioRisposta = v.trim();
+								tempiRispostaEnabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
 							}
 							else {
-								tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaFruizione().getTempoMedioRisposta().intValue()+"";
+								tempiRispostaTempoMedioRisposta = configGenerale.getTempiRispostaFruizione().getTempoMedioRisposta().intValue()+"";
 							}
 						}
 					}
 					else {
-						if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) ) {
-							tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaFruizione().getConnectionTimeout().intValue()+"";
+						if(tempiRispostaConnectionTimeout==null || "".equals(tempiRispostaConnectionTimeout) ) {
+							tempiRispostaConnectionTimeout = configGenerale.getTempiRispostaFruizione().getConnectionTimeout().intValue()+"";
 						}
-						if(tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) ) {
-							tempiRisposta_readTimeout = configGenerale.getTempiRispostaFruizione().getReadTimeout().intValue()+"";
+						if(tempiRispostaReadTimeout==null || "".equals(tempiRispostaReadTimeout) ) {
+							tempiRispostaReadTimeout = configGenerale.getTempiRispostaFruizione().getReadTimeout().intValue()+"";
 						}
-						if(tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ) {
-							tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaFruizione().getTempoMedioRisposta().intValue()+"";
+						if(tempiRispostaTempoMedioRisposta==null || "".equals(tempiRispostaTempoMedioRisposta) ) {
+							tempiRispostaTempoMedioRisposta = configGenerale.getTempiRispostaFruizione().getTempoMedioRisposta().intValue()+"";
 						}
 					}
 				}
 				
-				if(transfer_mode==null && props!=null){
+				if(transferMode==null && props!=null){
 					String v = props.get(CostantiDB.CONNETTORE_HTTP_DATA_TRANSFER_MODE);
 					if(v!=null && !"".equals(v)){
 						
-						transfer_mode = v.trim();
+						transferMode = v.trim();
 						
-						if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome().equals(transfer_mode)){
+						if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome().equals(transferMode)){
 							// raccolgo anche altra proprietà correlata
 							v = props.get(CostantiDB.CONNETTORE_HTTP_DATA_TRANSFER_MODE_CHUNK_SIZE);
 							if(v!=null && !"".equals(v)){
-								transfer_mode_chunk_size = v.trim();
+								transferModeChunkSize = v.trim();
 							}
 						}
 						
 					}
 				}
 				
-				if(redirect_mode==null && props!=null){
+				if(redirectMode==null && props!=null){
 					String v = props.get(CostantiDB.CONNETTORE_HTTP_REDIRECT_FOLLOW);
 					if(v!=null && !"".equals(v)){
 						
 						if("true".equalsIgnoreCase(v.trim()) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v.trim())){
-							redirect_mode = CostantiConfigurazione.ABILITATO.getValue();
+							redirectMode = CostantiConfigurazione.ABILITATO.getValue();
 						}
 						else{
-							redirect_mode = CostantiConfigurazione.DISABILITATO.getValue();
+							redirectMode = CostantiConfigurazione.DISABILITATO.getValue();
 						}					
 						
-						if(CostantiConfigurazione.ABILITATO.getValue().equals(redirect_mode)){
+						if(CostantiConfigurazione.ABILITATO.getValue().equals(redirectMode)){
 							// raccolgo anche altra proprietà correlata
 							v = props.get(CostantiDB.CONNETTORE_HTTP_REDIRECT_MAX_HOP);
 							if(v!=null && !"".equals(v)){
-								redirect_max_hop = v.trim();
+								redirectMaxHop = v.trim();
 							}
 						}
 						
 					}
 				}
 				
-				if(token_policy==null && props!=null){
+				if(tokenPolicy==null && props!=null){
 					String v = props.get(CostantiDB.CONNETTORE_TOKEN_POLICY);
 					if(v!=null && !"".equals(v)){
-						token_policy = v;
+						tokenPolicy = v;
 						autenticazioneToken = true;
 					}
 				}
 				
-				opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(soggettiHelper,transfer_mode, redirect_mode);
+				opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(soggettiHelper,transferMode, redirectMode);
 				
 				if (url == null) {
 					url = props.get(CostantiDB.CONNETTORE_HTTP_LOCATION);
@@ -458,9 +457,9 @@ public final class SoggettiEndPoint extends Action {
 				if(responseInputMode==null && props!=null){
 					
 					requestOutputFileName = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE);	
-					requestOutputFileName_permissions = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_PERMISSIONS);
+					requestOutputFileNamePermissions = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_PERMISSIONS);
 					requestOutputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS);	
-					requestOutputFileNameHeaders_permissions = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS_PERMISSIONS);
+					requestOutputFileNameHeadersPermissions = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS_PERMISSIONS);
 					String v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
 					if(v!=null && !"".equals(v)){
 						if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
@@ -495,16 +494,16 @@ public final class SoggettiEndPoint extends Action {
 				}
 				
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
 				DataElement de = new DataElement();
 				de.setLabel(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID);
 				de.setValue(id);
 				de.setType(DataElementType.HIDDEN);
 				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID);
-				dati.addElement(de);
+				dati.add(de);
 
 				dati = soggettiHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
@@ -520,13 +519,13 @@ public final class SoggettiEndPoint extends Action {
 						tipoconn, SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT, id, nomeprov,
 						tipoprov, null, null, null, null, null, true, 
 						isConnettoreCustomUltimaImmagineSalvata, 
-						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-						requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+						proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+						tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+						opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+						requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						autenticazioneToken,token_policy,
+						autenticazioneToken,tokenPolicy,
 						listExtendedConnettore, false,
 						protocollo, false, false
 						, false, false, null, null
@@ -548,16 +547,16 @@ public final class SoggettiEndPoint extends Action {
 						SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST, "Connettore di " + tmpTitle);
 
 				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
+				List<DataElement> dati = new ArrayList<>();
 
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				DataElement de = new DataElement();
 				de.setLabel(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID);
 				de.setValue(id);
 				de.setType(DataElementType.HIDDEN);
 				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID);
-				dati.addElement(de);
+				dati.add(de);
 
 				dati = soggettiHelper.addEndPointToDati(dati,  connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
@@ -573,13 +572,13 @@ public final class SoggettiEndPoint extends Action {
 						tipoconn, SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT, id, nomeprov,
 						tipoprov, null, null, null, null, null, true,
 						isConnettoreCustomUltimaImmagineSalvata, 
-						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-						requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+						proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+						tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+						opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+						requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						autenticazioneToken,token_policy,
+						autenticazioneToken,tokenPolicy,
 						listExtendedConnettore, false,
 						protocollo, false, false
 						, false, false, null, null
@@ -606,13 +605,13 @@ public final class SoggettiEndPoint extends Action {
 					httpstipokey, httpspwdkey, 
 					httpspwdprivatekey,	httpsalgoritmokey,
 					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
-					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-					requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+					proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+					tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+					requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-					token_policy,
+					tokenPolicy,
 					listExtendedConnettore);
 			ss.setConnettore(c);
 			SoggettoCtrlStat newCsc = new SoggettoCtrlStat(ss, ssconf);

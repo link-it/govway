@@ -24,7 +24,7 @@ package org.openspcoop2.protocol.spcoop.testsuite.units.buste;
 
 import java.io.File;
 import java.util.Date;
-import java.util.Vector;
+import java.util.List;
 
 import javax.xml.soap.SOAPException;
 
@@ -73,7 +73,7 @@ public class BusteEGovCampiDuplicati {
 	public void testOpenspcoopCoreLog_raccoltaTempoAvvioTest() throws Exception{
 		this.dataAvvioGruppoTest = DateManager.getDate();
 	} 	
-	private Vector<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new Vector<ErroreAttesoOpenSPCoopLogCore>();
+	private List<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new java.util.ArrayList<>();
 	@AfterGroups (alwaysRun=true , groups=ID_GRUPPO)
 	public void testOpenspcoopCoreLog() throws Exception{
 		if(this.erroriAttesiOpenSPCoopCore.size()>0){
@@ -99,7 +99,7 @@ public class BusteEGovCampiDuplicati {
 	public void  init() throws Exception{
 		try{
 			File[] dir =  new java.io.File(Utilities.testSuiteProperties.getPathBusteConCampiDuplicati()).listFiles();
-			Vector<File> dirV = new Vector<File>();
+			List<File> dirV = new java.util.ArrayList<>();
 			for(int i=0; i<dir.length; i++){
 					dirV.add(dir[i]);
 			}

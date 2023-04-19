@@ -21,7 +21,7 @@ package org.openspcoop2.protocol.trasparente.testsuite.units.soap.mtom;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.Vector;
+import java.util.List;
 
 import org.openspcoop2.protocol.trasparente.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.trasparente.testsuite.core.FileSystemUtilities;
@@ -74,7 +74,7 @@ public class MTOMPortaDelegata extends GestioneViaJmx {
 		this.threadSoap12 = new MTOMThread(Utilities.testSuiteProperties.getMtomSoap12Socket(), false, Integer.MAX_VALUE);
 		this.threadSoap12.start();
 	} 	
-	private Vector<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new Vector<ErroreAttesoOpenSPCoopLogCore>();
+	private List<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new java.util.ArrayList<>();
 	@AfterGroups (alwaysRun=true , groups=MTOMPortaDelegata.ID_GRUPPO)
 	public void testOpenspcoopCoreLog() throws Exception{
 		if(this.threadSoap11!=null){

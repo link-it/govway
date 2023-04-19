@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.axis.AxisFault;
@@ -126,7 +125,7 @@ public class TunnelSOAP {
 		boolean value = org.openspcoop2.testsuite.core.Utilities.
 		equalsSoapElements(xmlRichiestaAxis, 
 				   xmlRispostaAxis,
-				   new Vector<String>());
+				   new java.util.ArrayList<String>());
 		if(!value){
 			System.out.println("RICHIESTA ["+xmlRichiestaAxis.getAsString()+"]");
 			System.out.println("RISPOSTA  ["+xmlRispostaAxis.getAsString()+"]");

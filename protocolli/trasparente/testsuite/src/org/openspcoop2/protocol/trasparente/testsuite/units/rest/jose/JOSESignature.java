@@ -23,7 +23,8 @@ package org.openspcoop2.protocol.trasparente.testsuite.units.rest.jose;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.openspcoop2.protocol.trasparente.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.trasparente.testsuite.core.FileSystemUtilities;
@@ -68,7 +69,7 @@ public class JOSESignature {
 //		System.out.println("JSONUtils: configure(com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true)");
 //		org.openspcoop2.utils.json.JSONUtils.getObjectMapper().configure(Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
 	} 	
-	private Vector<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new Vector<ErroreAttesoOpenSPCoopLogCore>();
+	private List<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new ArrayList<>();
 	@AfterGroups (alwaysRun=true , groups={JOSESignature.ID_GRUPPO})
 	public void testOpenspcoopCoreLog() throws Exception{
 		if(this.erroriAttesiOpenSPCoopCore.size()>0){
