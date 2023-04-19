@@ -142,7 +142,7 @@ public final class PorteDelegateProprietaProtocolloChange extends Action {
 				dati = porteDelegateHelper.addProprietaProtocolloToDati(TipoOperazione.CHANGE, porteDelegateHelper.getSize(), nome, valore, dati);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idSoggFruitore,  null,idAsps, 
-						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
+						idFruizione, null, null, dati);
 
 				pd.setDati(dati);
 
@@ -166,7 +166,7 @@ public final class PorteDelegateProprietaProtocolloChange extends Action {
 				dati = porteDelegateHelper.addProprietaProtocolloToDati(TipoOperazione.CHANGE, porteDelegateHelper.getSize(), nome, valore,dati);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idSoggFruitore,  null,idAsps, 
-						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
+						idFruizione, null, null, dati);
 
 				pd.setDati(dati);
 

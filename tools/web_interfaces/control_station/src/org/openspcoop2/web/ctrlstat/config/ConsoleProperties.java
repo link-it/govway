@@ -1569,6 +1569,10 @@ public class ConsoleProperties {
 		return this.readProperty(true, "console.xXssProtection.header.value");
 	}
 	
+	public Properties getConsoleSecurityConfiguration() throws UtilsException{
+		return this.reader.readProperties_convertEnvProperties("console.security.");
+	}
+	
 	/* ---------------- Gestione govwayConsole centralizzata ----------------------- */
 
 	public Boolean isGestioneCentralizzata_SincronizzazionePdd() throws UtilsException{

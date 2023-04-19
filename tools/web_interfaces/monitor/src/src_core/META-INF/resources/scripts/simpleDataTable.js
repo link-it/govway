@@ -2,7 +2,7 @@ function checkAllCheckboxesInTable( inputId, state ){
     var size = 0;
     var tid = ":"+inputId+"_tbl";
     if(state){
-    	size = jQuery("table [id$='"+tid+"'] input:checkbox[id$='#{id}_column_ckb']").not("[id$='selectedAllChbx']").attr("checked","on").size();
+    	size = jQuery("table [id$='"+tid+"'] input:checkbox[id$='#{id}_column_ckb']").not("[id$='selectedAllChbx']").attr("checked","on").length;
     }else{
     	jQuery("table [id$='"+tid+"'] input:checkbox[id$='#{id}_column_ckb']").removeAttr("checked");
     	size=0;

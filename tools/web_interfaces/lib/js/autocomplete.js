@@ -72,7 +72,7 @@ function autocomplete(inp, suggestionList) {
         /*and and make the current item more visible:*/
         addActive(x);
       } else if (e.keyCode == 13) {
-        /*If the ENTER key is pressed, prevent the form from being submitted,*/
+        /*If the ENTER key is pressed, prevent the form f r o m being submitted,*/
         e.preventDefault();
         if (currentFocus > -1) {
           /*and simulate a click on the "active" item:*/
@@ -91,7 +91,7 @@ function autocomplete(inp, suggestionList) {
     x[currentFocus].classList.add("autocomplete-active");
   }
   function removeActive(x) {
-    /*a function to remove the "active" class from all autocomplete items:*/
+    /*a function to remove the "active" class f r o m all autocomplete items:*/
     for (var i = 0; i < x.length; i++) {
       x[i].classList.remove("autocomplete-active");
     }

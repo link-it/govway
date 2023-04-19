@@ -2,8 +2,8 @@ function singleCheckboxListener( inputId, state , showSelectAll, _totRows , _row
 	 //var tid = ":"+inputId+"_tbl";
 	 var tid = inputId+"_tbl";
 
-	 var allSize = jQuery("table [id$='"+tid+"'] input:checkbox[id$='"+inputId+"_column_ckb']").not("[id$='selectedAllChbx']").size();
-	 var size = jQuery("table [id$='"+tid+"'] input:checkbox[id$='"+inputId+"_column_ckb']:checked").not("[id$='selectedAllChbx']").size();
+	 var allSize = jQuery("table [id$='"+tid+"'] input:checkbox[id$='"+inputId+"_column_ckb']").not("[id$='selectedAllChbx']").length;
+	 var size = jQuery("table [id$='"+tid+"'] input:checkbox[id$='"+inputId+"_column_ckb']:checked").not("[id$='selectedAllChbx']").length;
 	 if(showSelectAll){
 		 if(_useCount){
 	    	if(state && _totRows>_rows ){
@@ -57,7 +57,7 @@ function checkAllCheckboxesInTable( inputId, state ,showSelectAll, _totRows, _ro
   //var tid = ":"+inputId+"_tbl";
 	 var tid = inputId+"_tbl";
     if(state){
-    	size = jQuery("table [id$='"+tid+"'] input:checkbox[id$='"+inputId+"_column_ckb']").not("[id$='selectedAllChbx']").attr("checked","on").size();
+    	size = jQuery("table [id$='"+tid+"'] input:checkbox[id$='"+inputId+"_column_ckb']").not("[id$='selectedAllChbx']").attr("checked","on").length;
     }else{
     	jQuery("table [id$='"+tid+"'] input:checkbox[id$='"+inputId+"_column_ckb']").removeAttr("checked");
     	size=0;

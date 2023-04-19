@@ -108,7 +108,7 @@ function RemoveEntries() {
 	//addTabID
 	destinazione = addTabIdParam(destinazione,true);
 	
-	destinazione = addParamToURL(destinazione, '<%=Costanti.PARAMETRO_AZIONE %>' , 'removeEntries');
+	destinazione = addParamToURL(destinazione, '<%=Costanti.PARAMETRO_AZIONE %>' , '<%=Costanti.VALUE_PARAMETRO_AZIONE_REMOVE_ENTRIES %>');
 	
 	//aggiungo parametro csfr
 	if(csrfToken != ''){

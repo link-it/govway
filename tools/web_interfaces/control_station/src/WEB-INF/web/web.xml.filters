@@ -4,13 +4,13 @@
     <filter-name>MultipartFilter</filter-name>
     <filter-class>org.openspcoop2.utils.transport.http.MultipartFilter</filter-class>
   </filter>
+    <filter>
+    <filter-name>HeadersFilter</filter-name>
+    <filter-class>org.openspcoop2.web.ctrlstat.servlet.login.HeadersFilter</filter-class>
+  </filter>
   <filter>
     <filter-name>AuthorizationFilter</filter-name>
     <filter-class>org.openspcoop2.web.ctrlstat.servlet.login.AuthorizationFilter</filter-class>
-  </filter>
-  <filter>
-    <filter-name>HeadersFilter</filter-name>
-    <filter-class>org.openspcoop2.web.ctrlstat.servlet.login.HeadersFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>MultipartFilter</filter-name>

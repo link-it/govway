@@ -77,7 +77,7 @@ const HtmlSanitizer = new (function () {
 					newNode.appendChild(subCopy, false);
 				}
 
-				//remove useless empty spans (lots of those when pasting from MS Outlook)
+				//remove useless empty spans (lots of those when pasting f r o m MS Outlook)
 				if ((newNode.tagName == "SPAN" || newNode.tagName == "B" || newNode.tagName == "I" || newNode.tagName == "U")
 					&& newNode.innerHTML.trim() == "") {
 					return doc.createDocumentFragment();

@@ -6,7 +6,6 @@
       xmlns:a4j="http://richfaces.org/a4j"
       xmlns:c="http://java.sun.com/jstl/core"
       xmlns:link="http://www.link.it">
-		<a4j:loadScript src="resource://jquery.js"/>
 		<a4j:loadStyle src="resource:///css/dataTable.css" />
 		<a4j:loadScript src="resource:///scripts/extendedDataTable.min.js"  />
 	
@@ -52,7 +51,6 @@
 		<a4j:outputPanel id="#{id}" layout="block">
 			<script type="text/javascript" nonce="#{_csp_random_nonce}">
 				 jQuery(document).ready(function() {
-					checkBrowser();
 					visualizzaTastoRimuovi('#{id}','#{id}_deleteBtn');
 					abilitaColonnaSelectAll('#{id}');
 					visualizzaMessaggioNoData('#{id}');
@@ -69,7 +67,7 @@
 							   pagesVar="pages" 
 							   pageIndexVar="page" 
 							   reRender="#{id}_ds_down" fastControls="hide" 
-							   oncomplete="checkBrowser(); attivaScroll();" align="#{not empty topScrollerAlign ? topScrollerAlign : 'center'}">
+							   oncomplete="attivaScroll();" align="#{not empty topScrollerAlign ? topScrollerAlign : 'center'}">
 							   
 					<f:facet name="pages">
 						<h:panelGrid columns="3">
@@ -225,7 +223,7 @@
 						   maxPages="15"
 						   renderIfSinglePage="false" 
 						   pagesVar="pages" 
-						   pageIndexVar="page" reRender="#{id}_ds_top" fastControls="hide" oncomplete="checkBrowser(); attivaScroll();">
+						   pageIndexVar="page" reRender="#{id}_ds_top" fastControls="hide" oncomplete="attivaScroll();">
 						   
 						<f:facet name="previous">
 							<h:graphicImage id="#{id}_prev" value="/images/tema_link/go_prev.png" >

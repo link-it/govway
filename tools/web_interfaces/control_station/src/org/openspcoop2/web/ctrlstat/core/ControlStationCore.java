@@ -1238,6 +1238,7 @@ public class ControlStationCore {
 	private String xContentTypeOptionsHeaderValue = null;
 	private String xXssProtectionHeaderValue = null;
 	private String xFrameOptionsHeaderValue = null;
+	private Properties consoleSecurityConfiguration = null;
 	
 	public boolean isShowCorrelazioneAsincronaInAccordi() {
 		return this.showCorrelazioneAsincronaInAccordi;
@@ -1370,6 +1371,9 @@ public class ControlStationCore {
 	}
 	public String getXXssProtectionHeaderValue() {
 		return this.xXssProtectionHeaderValue;
+	}
+	public Properties getConsoleSecurityConfiguration() {
+		return this.consoleSecurityConfiguration;
 	}
 	public boolean showCodaMessage() {
 		return this.isShowJ2eeOptions() || this.isIntegrationManagerEnabled();
@@ -2623,6 +2627,7 @@ public class ControlStationCore {
 		this.xContentTypeOptionsHeaderValue = core.xContentTypeOptionsHeaderValue;
 		this.xFrameOptionsHeaderValue = core.xFrameOptionsHeaderValue;
 		this.xXssProtectionHeaderValue = core.xXssProtectionHeaderValue;
+		this.consoleSecurityConfiguration = core.consoleSecurityConfiguration;
 
 		/** Motori di Sincronizzazione */
 		this.sincronizzazionePddEngineEnabled = core.sincronizzazionePddEngineEnabled;
@@ -3075,6 +3080,7 @@ public class ControlStationCore {
 			this.xContentTypeOptionsHeaderValue = consoleProperties.getXContentTypeOptionsHeaderValue();
 			this.xFrameOptionsHeaderValue = consoleProperties.getXFrameOptionsHeaderValue();
 			this.xXssProtectionHeaderValue = consoleProperties.getXXssProtectionHeaderValue();
+			this.consoleSecurityConfiguration = consoleProperties.getConsoleSecurityConfiguration();
 			
 			// Gestione govwayConsole centralizzata
 			if(this.singlePdD == false){

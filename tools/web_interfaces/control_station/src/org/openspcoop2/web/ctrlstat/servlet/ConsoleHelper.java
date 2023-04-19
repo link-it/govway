@@ -327,6 +327,7 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.mvc.properties.beans.BaseItemBean;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
 import org.openspcoop2.web.lib.mvc.properties.exception.UserInputValidationException;
+import org.openspcoop2.web.lib.mvc.security.Validatore;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 import org.openspcoop2.web.lib.users.dao.User;
@@ -734,6 +735,9 @@ public class ConsoleHelper implements IConsoleHelper {
 		if(idTabObj == null) {
 			log.trace("CHECKTABID: non trovato come attributo");
 			String idTab = helper != null ? helper.getParameter(Costanti.PARAMETER_TAB_KEY) : request.getParameter(Costanti.PARAMETER_TAB_KEY);
+
+			// validazione sintassi idTab ricevuto se non viene rispettato il pattern lo ricreo 
+			idTab = Validatore.getInstance().validateTabId(idTab);
 			
 			if(idTab == null) { // nuovoTab o nuova finestra o primo accesso
 				log.trace("CHECKTABID: non trovato come parametro");
@@ -750,6 +754,19 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		log.trace("CHECKTABID: trovato come attributo: ["+((String)idTabObj)+"]");
 		return (String) idTabObj;
+	}
+	
+	public String getPrevTabId() throws Exception {
+		return getPrevTabId(this.log, this, this.request);
+	}
+	
+	public static String getPrevTabId(Logger log, ConsoleHelper helper, HttpServletRequest request) throws Exception {
+		
+		String idTab = helper != null ? helper.getParameter(Costanti.PARAMETER_PREV_TAB_KEY) : request.getParameter(Costanti.PARAMETER_PREV_TAB_KEY);
+		
+		idTab = Validatore.getInstance().validateTabId(idTab);
+		
+		return idTab;
 	}
 	
 //	public boolean isUseIdSogg() {

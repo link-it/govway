@@ -72,6 +72,10 @@ if (mime) {
 String csrfTokenFromSession = ServletUtils.leggiTokenCSRF(request, session);
 if(csrfTokenFromSession == null)
 	csrfTokenFromSession = "";
+
+String idsTextArea = ServletUtils.getIdentificativiTextArea(dati);
+if(idsTextArea == null)
+	idsTextArea = "";
 %>
 
 
@@ -84,6 +88,13 @@ if(csrfTokenFromSession == null)
 		if(!csrfTokenFromSession.equals("")){
 			%>
 			<input type="hidden" name="<%=Costanti.PARAMETRO_CSRF_TOKEN%>" id="<%=Costanti.PARAMETRO_CSRF_TOKEN%>"  value="<%= csrfTokenFromSession %>"/>
+			<%			
+		}
+		%>
+		<%
+		if(!idsTextArea.equals("")){
+			%>
+			<input type="hidden" name="<%=Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA%>" id="<%=Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA%>"  value="<%= idsTextArea %>"/>
 			<%			
 		}
 		%>

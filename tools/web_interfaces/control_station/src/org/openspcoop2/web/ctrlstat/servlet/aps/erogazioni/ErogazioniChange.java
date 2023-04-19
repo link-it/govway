@@ -80,6 +80,11 @@ public final class ErogazioniChange extends Action {
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idInt);
 			
+			String idSoggettoErogatoreDelServizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
+			if(idSoggettoErogatoreDelServizio != null) {
+				Long.parseLong(idSoggettoErogatoreDelServizio);
+			}
+			
 			String tipoSoggettoFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE);
 			String nomeSoggettoFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE);
 			IDSoggetto idSoggettoFruitore = null;

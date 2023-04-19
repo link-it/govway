@@ -133,7 +133,7 @@ public final class PorteDelegateProprietaProtocolloAdd extends Action {
 						nome, valore, dati);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idSoggFruitore,  null,idAsps, 
-						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
+						idFruizione, null, null, dati);
 
 				pd.setDati(dati);
 
@@ -158,7 +158,7 @@ public final class PorteDelegateProprietaProtocolloAdd extends Action {
 						nome, valore, dati);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idSoggFruitore,  null,idAsps, 
-						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
+						idFruizione, null, null, dati);
 
 				pd.setDati(dati);
 

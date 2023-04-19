@@ -183,8 +183,6 @@ public class GeneralHelper {
 								new Parameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_GUI, InterfaceType.AVANZATA.toString()),
 								new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END),
 								new Parameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_GUI,Costanti.CHECK_BOX_ENABLED)
-//								,
-//								new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, request.ge)
 								);
 	
 					} else {

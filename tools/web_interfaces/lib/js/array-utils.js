@@ -1,6 +1,6 @@
 // Production steps of ECMA-262, Edition 6, 22.1.2.1
 /*
-Aggiunge ai browser che non la possiedono la funzionalita' Array.from
+Aggiunge ai browser che non la possiedono la funzionalita' Array.f r o m
 che consente di creare un array a partire dall'oggetto passato come parametro
 nella console viene utilizzata per creare un array a partire dalla nodelist restituita dalla funzione document.querySelectorAll: 
  

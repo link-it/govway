@@ -96,7 +96,7 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 			  	addHidden(document.form, prevTabSessionKey , tabValue);
 			  }
 				
-			  addHidden(document.form, '<%=Costanti.PARAMETRO_AZIONE %>' , 'conferma');
+			  addHidden(document.form, '<%=Costanti.PARAMETRO_AZIONE %>' , '<%=Costanti.VALUE_PARAMETRO_AZIONE_CONFERMA %>');
 			  
 			  //aggiungo parametro csfr
 			  //if(csrfToken != ''){
@@ -109,7 +109,7 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 				//addTabID
 				destinazione = addTabIdParam(destinazione,true);
 				
-				destinazione = addParamToURL(destinazione, '<%=Costanti.PARAMETRO_AZIONE %>' , 'conferma');
+				destinazione = addParamToURL(destinazione, '<%=Costanti.PARAMETRO_AZIONE %>' , '<%=Costanti.VALUE_PARAMETRO_AZIONE_CONFERMA %>');
 				//aggiungo parametro csfr
 				if(csrfToken != ''){
 				  destinazione = addParamToURL(destinazione, csrfTokenKey , csrfToken);
@@ -140,7 +140,7 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 				  	addHidden(document.form, prevTabSessionKey , tabValue);
 				  }
 				
-				  addHidden(document.form, '<%=Costanti.PARAMETRO_AZIONE %>' , 'annulla');
+				  addHidden(document.form, '<%=Costanti.PARAMETRO_AZIONE %>' , '<%=Costanti.VALUE_PARAMETRO_AZIONE_ANNULLA %>');
 				  
 				  //aggiungo parametro csfr
 // 				  if(csrfToken != ''){
@@ -153,7 +153,7 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 				//addTabID
 				destinazione = addTabIdParam(destinazione,true);
 				
-				destinazione = addParamToURL(destinazione, '<%=Costanti.PARAMETRO_AZIONE %>' , 'annulla');
+				destinazione = addParamToURL(destinazione, '<%=Costanti.PARAMETRO_AZIONE %>' , '<%=Costanti.VALUE_PARAMETRO_AZIONE_ANNULLA %>');
 				//aggiungo parametro csfr
 				if(csrfToken != ''){
 				  destinazione = addParamToURL(destinazione, csrfTokenKey , csrfToken);

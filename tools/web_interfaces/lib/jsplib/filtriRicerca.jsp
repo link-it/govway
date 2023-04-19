@@ -154,6 +154,17 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 								searchPresente = true;
 							}
 							
+							String idsTextAreaFiltriRicerca = ServletUtils.getIdentificativiTextAreaFiltriRicerca(pd.getFilterValues());
+							if(idsTextAreaFiltriRicerca == null)
+								idsTextAreaFiltriRicerca = "";
+							
+							
+							if(!idsTextAreaFiltriRicerca.equals("")){
+								%>
+								<input type="hidden" name="<%=Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA%>" id="<%=Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA%>"  value="<%= idsTextAreaFiltriRicerca %>"/>
+								<%			
+							}
+							
 							// cerco il primo subtitle e conservo la posizione perche' deve essere preceduto da eventuali search;
 							int idxSubtitle =-1;
 							for(int iPD=0; iPD<pd.getFilterValues().size(); iPD++){

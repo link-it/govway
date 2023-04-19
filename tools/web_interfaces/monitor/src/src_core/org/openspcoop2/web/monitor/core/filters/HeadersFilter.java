@@ -87,7 +87,7 @@ public class HeadersFilter implements Filter {
 
 			// Aggiungo header
 			this.gestioneXContentTypeOptions(request, response);
-			
+            
 			// faccio proseguire le chiamate ai filtri
 			chain.doFilter(request, response);
 		} catch (IOException e) {

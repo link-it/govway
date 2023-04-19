@@ -111,7 +111,7 @@ function CheckDati() {
   	addHidden(document.form, prevTabSessionKey , tabValue);
   }
 
-  addHidden(document.form, '<%=Costanti.PARAMETRO_AZIONE %>' , 'salva');
+  addHidden(document.form, '<%=Costanti.PARAMETRO_AZIONE %>' , '<%=Costanti.VALUE_PARAMETRO_AZIONE_SALVA %>');
 
   document.form.submit();
 };

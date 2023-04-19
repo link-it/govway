@@ -8,8 +8,8 @@
 	markupType="html5" contentType="text/html" sidebarPosition="left"
 	theme="simple" sidebarWidth="275">
 	<f:loadBundle var="msg" basename="messages" />
-	<a4j:loadScript src="resource://jquery.js"/>
 	<a4j:loadScript src="resource://org/richfaces/renderkit/html/scripts/jquery.hotkeys.js"/>
+	<a4j:loadScript src="resource://scripts/utils.min.js" />
 	<ui:debug hotkey="X"/>
 	<f:facet name="pageHeader">
 		<title>#{loginBean.title}</title>
@@ -63,7 +63,7 @@
 		<link
 			href="#{facesContext.externalContext.request.contextPath}/css/bootstrap-tagsinput.css"
 			rel="stylesheet" type="text/css" nonce="#{_csp_random_nonce}" />
-		<script type="text/javascript" nonce="#{_csp_random_nonce}" id="expiredMsgScript">
+		<script type="text/javascript" nonce="#{_csp_random_nonce}" id="expiredMsgScript">	
 	       A4J.AJAX.onExpired = function(loc, expiredMsg){
 				return loc;
 	    	}
@@ -81,48 +81,9 @@
 	<!-- Body -->
 	<ui:include src="/commons/includes/status.xhtml" />
 	<rich:panel id="bodyWrapper" styleClass="noborder">
-		<rich:jQuery name="activeRow" 
-						timing="onJScall" 
-						query="hover(function(){jQuery(this).addClass('active')},function(){jQuery(this).removeClass('active')})" />
-		<rich:jQuery name="checkBrowser" timing="onJScall" selector="a[id*='iconLink']" query="addClass((jQuery.browser.msie &amp;&amp; jQuery.browser.version=='6.0') ? 'iconLinkie' : '')" />
+		<rich:jQuery name="activeRow" timing="onJScall" query="hover(function(){jQuery(this).addClass('active')},function(){jQuery(this).removeClass('active')})" />
 		
 		<script type="text/javascript" nonce="#{_csp_random_nonce}">
-			 jQuery(document).ready(function() {
-				if(jQuery.browser.msie){
-					if(jQuery.browser.version=="6.0")
-						jQuery("a[id*='iconLink']").addClass('iconLink');
-				}
-			 });
-
-			 function IEVersione (){
-	            var ua = window.navigator.userAgent;
-	        
-	            var msie = ua.indexOf('MSIE ');
-	            if (msie > 0) {
-	              // IE 10 or older => return version number
-	              return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
-	            }
-	        
-	            var trident = ua.indexOf('Trident/');
-	            if (trident > 0) {
-	              // IE 11 => version
-	              var rv = ua.indexOf('rv:');
-	              return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
-	            }
-	        
-	            var edge = ua.indexOf('Edge/');
-	            if (edge > 0) {
-	              // Edge (IE 12+) => version
-	              return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
-	            }
-	        
-	            return -1;
-	        }
-	        
-	        function isIE(){
-	            return IEVersione() > -1;
-	        }
-
 			function aggiornaTitoloPagina(){
 				var nuovoTitolo = jQuery("[id='licenseOutputText']").text();
 				

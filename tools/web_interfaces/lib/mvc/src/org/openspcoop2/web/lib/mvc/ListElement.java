@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * ImporterInformationMissingUtils
+ * ListElement
  * 
  * @author Andrea Poli (apoli@link.it)
  * @author $Author$

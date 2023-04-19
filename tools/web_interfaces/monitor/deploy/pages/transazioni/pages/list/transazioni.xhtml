@@ -35,7 +35,6 @@ xmlns="http://www.w3.org/1999/xhtml"
 			</style>
 		</a4j:outputPanel>
 		<a4j:loadStyle src="resource:///css/transazioni.css" rendered="#{not(searchFormTransazioni.periodo eq 'Live')}" />
-		<a4j:loadScript src="resource://scripts/utils.min.js" rendered="#{searchFormTransazioni.periodo eq 'Live'}" />
 		<a4j:outputPanel id="panelPaginaTransazioniCtr" layout="block">
 			<rich:simpleTogglePanel id="panelTransazioni" opened="#{searchFormTransazioni.visualizzaFiltroAperto}" 
 				label="#{(searchFormTransazioni.periodo eq 'Live') ? 'Visualizza Transazioni (Live)' : searchFormTransazioni.tipoStoricoLabel}" switchType="client">
@@ -212,7 +211,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 					   jQuery(document).ready(nascondiChk);
 					   
 					   function nascondiChk(){
-						   jQuery("div[id$='chkClmnPg']").attr('style', '');
+						   //jQuery("div[id$='chkClmnPg']").attr('style', '');
 						   jQuery("th[id$='ckbClmnheader']").css('padding','8px');
 						   jQuery("th[id$='ckbClmnheader']").css('width','16px');
 						   jQuery("input[id$='msgDt_column_ckb']").parent().attr('width','16px');
@@ -682,7 +681,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 								var pol = 'true';
 								// non disponibile su IE 
 								// vedi OPPT-732
-								if(getIEVersion() == -1)
+								if(!isIE())
 									pol = jQuery("[id='sessioneAttivaHidden']").val();
 								
 								

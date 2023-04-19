@@ -6,7 +6,6 @@
       xmlns:a4j="http://richfaces.org/a4j"
       xmlns:c="http://java.sun.com/jstl/core"
       xmlns:link="http://www.link.it">
-		<a4j:loadScript src="resource://jquery.js"/>
 		<a4j:loadScript src="resource:///scripts/simpleDataTable.min.js" />
 	
 		<c:if test="#{empty width}">
@@ -26,7 +25,6 @@
 		<a4j:outputPanel id="#{id}" layout="block">
 		<script type="text/javascript" nonce="#{_csp_random_nonce}">
 			 jQuery(document).ready(function() {
-				checkBrowser();
 				visualizzaTastoRimuovi('#{id}','#{id}_deleteBtn');
 				visualizzaColonnaSelectAll('#{id}');
 			 });

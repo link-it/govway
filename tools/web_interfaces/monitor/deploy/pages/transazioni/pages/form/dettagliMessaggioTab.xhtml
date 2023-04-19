@@ -36,12 +36,6 @@
 	</ui:define>
 	
 	<ui:define name="body">
-		<a4j:loadScript src="resource://jquery.js"/>
-			<script type="text/javascript" nonce="#{_csp_random_nonce}">
-				 jQuery(document).ready(function() {
-					checkBrowser();
-				 });
-			</script>
 		<a4j:keepAlive beanName="dettagliBean" />
 		
 		<rich:panel id="panelDettaglioTransazione" rendered="#{not empty dettagliBean.dettaglio}">

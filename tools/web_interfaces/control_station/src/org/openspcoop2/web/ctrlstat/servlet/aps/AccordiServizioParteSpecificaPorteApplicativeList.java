@@ -86,6 +86,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeList extends Act
 	
 				idSoggettoErogatoreDelServizio = oldPD.getHidden(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
 			}
+			@SuppressWarnings("unused")
+			Long idSoggEro = Long.parseLong(idSoggettoErogatoreDelServizio);
 	
 			String paramGestioneGruppi = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_GRUPPI);
 			if(paramGestioneGruppi!=null && !"".equals(paramGestioneGruppi)) {

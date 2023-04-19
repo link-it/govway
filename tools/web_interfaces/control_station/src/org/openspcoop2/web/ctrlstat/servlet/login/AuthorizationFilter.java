@@ -41,9 +41,9 @@ import org.openspcoop2.utils.transport.http.credential.IPrincipalReader;
 import org.openspcoop2.utils.transport.http.credential.PrincipalReaderException;
 import org.openspcoop2.utils.transport.http.credential.PrincipalReaderFactory;
 import org.openspcoop2.utils.transport.http.credential.PrincipalReaderType;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
-import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.gestori.GestoreConsistenzaDati;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -59,6 +59,7 @@ import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.mvc.security.exception.ValidationException;
 import org.slf4j.Logger;
 
 /**
@@ -223,6 +224,14 @@ public final class AuthorizationFilter implements Filter {
 								
 								// Check Reset delle ricerche
 								String resetSearch = request.getParameter(CostantiControlStation.PARAMETRO_RESET_SEARCH);
+								// validazione del parametro resetSearch
+								if(!ServletUtils.checkParametroResetSearch(request, CostantiControlStation.PARAMETRO_RESET_SEARCH)) {
+									ControlStationCore.logError("Autorizzazione negata all'utente "+userLogin+" per la servlet ["+servletRichiesta+"]: parametro resetSearch non valido.");
+									setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA,MessageType.ERROR_SINTETICO, this.filterConfig);
+									// return so that we do not chain to other filters
+									return;
+								}
+								
 								String postBackElement = request.getParameter(Costanti.POSTBACK_ELEMENT_NAME);
 								if(ServletUtils.isCheckBoxEnabled(resetSearch) && (postBackElement==null || "".equals(postBackElement))) {
 									
@@ -243,7 +252,22 @@ public final class AuthorizationFilter implements Filter {
 										}
 										ControlStationCore.logDebug("Effettuato reset della ricerca");					
 									}
-								}					
+								}	
+								
+								// Validazione identificativi tab 
+								if(!ServletUtils.checkParametro(request, Costanti.PARAMETER_PREV_TAB_KEY)) {
+									ControlStationCore.logError("Autorizzazione negata all'utente "+userLogin+" per la servlet ["+servletRichiesta+"]: identificativo tab sorgente non valido.");
+									setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA,MessageType.ERROR_SINTETICO, this.filterConfig);
+									// return so that we do not chain to other filters
+									return;
+								}
+								
+								if(!ServletUtils.checkParametro(request, Costanti.PARAMETER_TAB_KEY)) {
+									ControlStationCore.logError("Autorizzazione negata all'utente "+userLogin+" per la servlet ["+servletRichiesta+"]: identificativo tab corrente non valido.");
+									setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA,MessageType.ERROR_SINTETICO, this.filterConfig);
+									// return so that we do not chain to other filters
+									return;
+								}
 								
 								if("".equals(servletRichiesta) || "/".equals(servletRichiesta))
 									response.sendRedirect(getRedirectToMessageServlet());
@@ -273,9 +297,16 @@ public final class AuthorizationFilter implements Filter {
 						}
 						
 						// Controllo CSFR
-						String msgErroreCSFR = verificaCSRF(generalHelper, session, request, loginHelper);
-						if(msgErroreCSFR != null) {
-							AuthorizationFilter.setErrorCSRFMsg(generalHelper, session, request, response, msgErroreCSFR, this.filterConfig);
+						try {
+							String msgErroreCSFR = verificaCSRF(generalHelper, session, request, loginHelper);
+							if(msgErroreCSFR != null) {
+								AuthorizationFilter.setErrorCSRFMsg(generalHelper, session, request, response, msgErroreCSFR, this.filterConfig);
+								// return so that we do not chain to other filters
+								return;
+							}
+						} catch(ValidationException e) {
+							ControlStationCore.logError("Autorizzazione negata all'utente "+userLogin+" per la servlet ["+servletRichiesta+"]: " + e.getMessage(), e);
+							setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA,MessageType.ERROR_SINTETICO, this.filterConfig);
 							// return so that we do not chain to other filters
 							return;
 						}
@@ -285,6 +316,27 @@ public final class AuthorizationFilter implements Filter {
 					//	System.out.println("NON ENTRO ["+request.getRequestURI()+"]");
 					// genero l'idTab
 					ConsoleHelper.getTabId(log, null, request);
+					
+					// richiesta la pagina di login ma l'utente e' loggato visualizzo messaggio di errore
+					if ( (urlRichiesta.indexOf(LoginCostanti.SERVLET_NAME_LOGIN) != -1) ){
+						// se l'utente e' loggato faccio vedere il menu' e il messaggio di errore
+						String userLogin = ServletUtils.getUserLoginFromSession(session);
+						if(userLogin != null){
+							if(generalHelper==null) {
+								try{
+									generalHelper = new GeneralHelper(session);
+								}catch(Exception eClose){
+									ControlStationCore.logError("Errore rilevato durante l'authorizationFilter (reInit General Helper)",eClose);
+								}
+							}
+							
+							String servletRichiesta = urlRichiesta.substring((contextPath+"/").length());
+							ControlStationCore.logError("Autorizzazione negata all'utente "+userLogin+" per la servlet ["+servletRichiesta+"]: l'utenza autenticata non puo' visualizzare la schermata di login.");
+							setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA,MessageType.ERROR_SINTETICO, this.filterConfig);
+							// return so that we do not chain to other filters
+							return;
+						}
+					}
 				}
 			} else {
 				HttpSession session = request.getSession();
@@ -460,6 +512,14 @@ public final class AuthorizationFilter implements Filter {
 								
 								// Check Reset delle ricerche
 								String resetSearch = request.getParameter(CostantiControlStation.PARAMETRO_RESET_SEARCH);
+								// validazione del parametro resetSearch
+								if(!ServletUtils.checkParametroResetSearch(request, CostantiControlStation.PARAMETRO_RESET_SEARCH)) {
+									ControlStationCore.logError("Autorizzazione negata all'utente "+userLogin+" per la servlet ["+servletRichiesta+"]: parametro resetSearch non valido.");
+									setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA,MessageType.ERROR_SINTETICO, this.filterConfig);
+									// return so that we do not chain to other filters
+									return;
+								}
+								
 								String postBackElement = request.getParameter(Costanti.POSTBACK_ELEMENT_NAME);
 								if(ServletUtils.isCheckBoxEnabled(resetSearch) && (postBackElement==null || "".equals(postBackElement))) {
 									
@@ -480,7 +540,22 @@ public final class AuthorizationFilter implements Filter {
 										}
 										ControlStationCore.logDebug("Effettuato reset della ricerca");					
 									}
-								}					
+								}		
+								
+								// Validazione identificativi tab 
+								if(!ServletUtils.checkParametro(request, Costanti.PARAMETER_PREV_TAB_KEY)) {
+									ControlStationCore.logError("Autorizzazione negata all'utente "+userLogin+" per la servlet ["+servletRichiesta+"]: identificativo tab sorgente non valido.");
+									setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA,MessageType.ERROR_SINTETICO, this.filterConfig);
+									// return so that we do not chain to other filters
+									return;
+								}
+								
+								if(!ServletUtils.checkParametro(request, Costanti.PARAMETER_TAB_KEY)) {
+									ControlStationCore.logError("Autorizzazione negata all'utente "+userLogin+" per la servlet ["+servletRichiesta+"]: identificativo tab corrente non valido.");
+									setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA,MessageType.ERROR_SINTETICO, this.filterConfig);
+									// return so that we do not chain to other filters
+									return;
+								}
 								
 								if("".equals(servletRichiesta) || "/".equals(servletRichiesta))
 									response.sendRedirect(getRedirectToMessageServlet());
@@ -510,9 +585,16 @@ public final class AuthorizationFilter implements Filter {
 						}
 						
 						// Controllo CSFR
-						String msgErroreCSFR = verificaCSRF(generalHelper, session, request, loginHelper);
-						if(msgErroreCSFR != null) {
-							AuthorizationFilter.setErrorCSRFMsg(generalHelper, session, request, response, msgErroreCSFR, this.filterConfig);
+						try {
+							String msgErroreCSFR = verificaCSRF(generalHelper, session, request, loginHelper);
+							if(msgErroreCSFR != null) {
+								AuthorizationFilter.setErrorCSRFMsg(generalHelper, session, request, response, msgErroreCSFR, this.filterConfig);
+								// return so that we do not chain to other filters
+								return;
+							}
+						} catch(ValidationException e) {
+							ControlStationCore.logError("Autorizzazione negata all'utente "+userLogin+" per la servlet ["+servletRichiesta+"]: " + e.getMessage(), e);
+							setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA,MessageType.ERROR_SINTETICO, this.filterConfig);
 							// return so that we do not chain to other filters
 							return;
 						}
@@ -737,8 +819,17 @@ public final class AuthorizationFilter implements Filter {
 	private boolean isRichiestaScrittura(HttpServletRequest request, LoginHelper loginHelper) throws Exception{
 		// Per le operazioni di scrittura si cerca il parametro azione
 		// scarto le chiamate in postback
-		if(!loginHelper.isPostBack() && loginHelper.getParameter(Costanti.PARAMETRO_AZIONE) != null)  {
-			return true;
+		
+		if(!loginHelper.isPostBack())  {
+			// validazione del parametro azione
+			if(!ServletUtils.checkParametroAzione(loginHelper.getRequest(), Costanti.PARAMETRO_AZIONE)) {
+				throw new ValidationException("Il parametro " + Costanti.PARAMETRO_AZIONE + " contiene un valore non valido.");
+			}
+			
+			String azione = loginHelper.getParameter(Costanti.PARAMETRO_AZIONE);
+			if(azione != null) {
+				return true;
+			}
 		}
 		
 		return false;

@@ -135,7 +135,7 @@ function RemoveEntries(tipo) {
 	 	// addTabID
 		destinazione = addTabIdParam(destinazione,true);
 	 	
-		destinazione = addParamToURL(destinazione, '<%=Costanti.PARAMETRO_AZIONE %>' , 'removeEntries');
+		destinazione = addParamToURL(destinazione, '<%=Costanti.PARAMETRO_AZIONE %>' , '<%=Costanti.VALUE_PARAMETRO_AZIONE_REMOVE_ENTRIES %>');
 		
 		//aggiungo parametro csfr
 		if(csrfToken != ''){
@@ -184,7 +184,7 @@ function RemoveEntries(tipo) {
    	 	addHidden(deleteForm, prevTabSessionKey , tabValue);
    	  }
    	  
-   	  addHidden(deleteForm, '<%=Costanti.PARAMETRO_AZIONE %>' , 'removeEntries');
+   	  addHidden(deleteForm, '<%=Costanti.PARAMETRO_AZIONE %>' , '<%=Costanti.VALUE_PARAMETRO_AZIONE_REMOVE_ENTRIES %>');
    	  
    	  //aggiungo parametro csfr
 	  if(csrfToken != ''){

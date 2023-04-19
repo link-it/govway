@@ -228,6 +228,10 @@ public class Costanti {
 	public final static String PARAMETRO_AGGIORNA_RICERCA = "aggiornaRicerca";
 	public final static String PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE = "rmElFromCache";
 	public final static String PARAMETRO_AZIONE = "azione";
+	public final static String VALUE_PARAMETRO_AZIONE_SALVA = "salva";
+	public final static String VALUE_PARAMETRO_AZIONE_REMOVE_ENTRIES = "removeEntries";
+	public final static String VALUE_PARAMETRO_AZIONE_CONFERMA = "conferma";
+	public final static String VALUE_PARAMETRO_AZIONE_ANNULLA = "annulla";
 	
 	public final static String LABEL_MONITOR_BUTTON_OK = "Ok";
 	public final static String LABEL_MONITOR_BUTTON_CONFERMA = "Conferma";
@@ -368,7 +372,12 @@ public class Costanti {
 	
 	public final static String SA_TIPO_DEFAULT_VALUE = "clientORserver";	
 	
-	/* CSP */
+	/** CSP */
 	public static final String REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE = "_csp_random_nonce";
 	public static final String SESSION_ATTRIBUTE_CSP_RANDOM_NONCE =  REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE;
+	
+	/** VALIDAZIONE INPUT */
+	
+	public final static String PARAMETRO_IDENTIFICATIVI_TEXT_AREA = "__ta__";
+	public final static String VALUE_PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SEPARATORE = ",";
 }

@@ -20,6 +20,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.login;
 
 import java.text.MessageFormat;
+import java.util.Properties;
 import java.util.UUID;
 
 import javax.servlet.Filter;
@@ -37,6 +38,10 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
+import org.openspcoop2.web.lib.mvc.security.SecurityProperties;
+import org.openspcoop2.web.lib.mvc.security.Validatore;
+import org.openspcoop2.web.lib.mvc.security.SecurityWrappedHttpServletRequest;
+import org.openspcoop2.web.lib.mvc.security.SecurityWrappedHttpServletResponse;
 import org.slf4j.Logger;
 
 /**     
@@ -58,6 +63,10 @@ public class HeadersFilter implements Filter {
 		this.filterConfig = filterConfig;
 		try {
 			this.core = new ControlStationCore();
+			Properties consoleSecurityConfiguration = this.core.getConsoleSecurityConfiguration();
+			SecurityProperties.init(consoleSecurityConfiguration, log);
+			Validatore.init(SecurityProperties.getInstance(), log);
+			
 		} catch (Exception e) {
 			log.error("Errore durante il caricamento iniziale: " + e.getMessage(), e);
 		}
@@ -69,12 +78,17 @@ public class HeadersFilter implements Filter {
 		HttpServletResponse response = (HttpServletResponse) res;
 		GeneralHelper generalHelper = null;
 		try {	
+			SecurityWrappedHttpServletRequest seqReq = new SecurityWrappedHttpServletRequest(request, log);
+			
+			SecurityWrappedHttpServletResponse seqRes = new SecurityWrappedHttpServletResponse(response, log);
+			
 			// Gestione vulnerabilita' Content Security Policy
-			this.gestioneContentSecurityPolicy(request, response);
+			this.gestioneContentSecurityPolicy(request, response); 
+
 			// Aggiungo header
 			this.gestioneXContentTypeOptions(request, response);
-
-			chain.doFilter(request, response);
+			
+			chain.doFilter(seqReq, seqRes);
 		} catch (Exception e) {
 			ControlStationCore.logError("Errore rilevato durante l'headersFilter",e);
 			try{
