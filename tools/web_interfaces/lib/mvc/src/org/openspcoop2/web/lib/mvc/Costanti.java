@@ -383,6 +383,6 @@ public class Costanti {
 	
 	/** VALIDAZIONE INPUT */
 	
-	public final static String PARAMETRO_IDENTIFICATIVI_TEXT_AREA = "__ta__";
-	public final static String VALUE_PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SEPARATORE = ",";
+	public static final String PARAMETRO_IDENTIFICATIVI_TEXT_AREA = "__ta__";
+	public static final String VALUE_PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SEPARATORE = ",";
 }
