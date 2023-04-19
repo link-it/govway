@@ -25,6 +25,9 @@
 	<archive path="/op2_3.3.dev/lib/commons/commons-validator-1.7.jar"/>
 	<archive path="/op2_3.3.dev/lib/commons/commons-compress-1.21.jar"/>
 	<archive path="/op2_3.3.dev/lib/commons/commons-math3-3.6.1.jar"/>
+	<!-- console -->
+	<archive path="/op2_3.3.dev/lib/console/jquery-3.6.4.jar"/>
+	<archive path="/op2_3.3.dev/lib/console/jquery-ui-1.13.2.jar"/>
 	<!-- cxf -->
         <archive path="/op2_3.3.dev/lib/cxf/cxf-core-3.5.5-gov4j-1.jar"/>
 	<archive path="/op2_3.3.dev/lib/cxf/cxf-rt-bindings-soap-3.5.5.jar"/>

@@ -871,6 +871,52 @@ public class ServletUtils {
 		return true;
 	}
 	
+	/***
+	 * Validazione del valore ricevuto per il parametro di tipo integer
+	 * 
+	 * @param request
+	 * @param parameterToCheck
+	 * @return
+	 */
+	public static boolean checkIntegerParameter(HttpServletRequest request, String parameterToCheck) {
+		String parameterValueFiltrato = request.getParameter(parameterToCheck);
+		
+		if(StringUtils.isEmpty(parameterValueFiltrato)) { // puo' essere null perche' non presente o perche' e' stato filtrato dall'utility di sicurezza
+			String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(request, parameterToCheck);
+			return parameterValueOriginale == null;
+		}
+		
+		try {
+			Integer.parseInt(parameterValueFiltrato);
+		}catch(IllegalArgumentException e) {
+			return false;
+		}
+
+		return true;
+	}
+	
+	/***
+	 * Validazione del valore ricevuto per il parametro di tipo boolean
+	 * 
+	 * @param request
+	 * @param parameterToCheck
+	 * @return
+	 */
+	public static boolean checkBooleanParameter(HttpServletRequest request, String parameterToCheck) {
+		String parameterValueFiltrato = request.getParameter(parameterToCheck);
+		
+		if(StringUtils.isEmpty(parameterValueFiltrato)) { // puo' essere null perche' non presente o perche' e' stato filtrato dall'utility di sicurezza
+			String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(request, parameterToCheck);
+			return parameterValueOriginale == null;
+		}
+		
+		// i valori accettati sono solo i seguenti
+		return  Costanti.CHECK_BOX_ENABLED.equals(parameterValueFiltrato) ||  Costanti.CHECK_BOX_DISABLED.equals(parameterValueFiltrato) 
+				|| Costanti.CHECK_BOX_ENABLED_ABILITATO.equals(parameterValueFiltrato) ||  Costanti.CHECK_BOX_DISABLED_DISABILITATO.equals(parameterValueFiltrato)
+				|| Costanti.CHECK_BOX_ENABLED_TRUE.equals(parameterValueFiltrato) ||  Costanti.CHECK_BOX_DISABLED_FALSE.equals(parameterValueFiltrato)
+				;
+	}
+	
 	/**
 	 * Controlla che il parametro richiesto sia valido, l'utility di validazione restituisce null per i parametri che violano le condizioni di validazione, 
 	 * l'applicazione ha bisogno di sapere se si tratta di un valore originale non valido o non presente. 

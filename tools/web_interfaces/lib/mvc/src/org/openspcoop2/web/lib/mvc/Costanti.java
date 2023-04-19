@@ -107,16 +107,17 @@ public class Costanti {
 	
 	/** CHECK BOX */
 	
-	public static final String CHECK_BOX_ENABLED = "yes";
-	public static final String CHECK_BOX_ENABLED_TRUE = "true";
-	public static final String CHECK_BOX_ENABLED_ABILITATO = "abilitato";
-	public static final String CHECK_BOX_DISABLED = "no";
-	public static final String CHECK_BOX_DISABLED_FALSE = "false";
-	public static final String CHECK_BOX_WARN = "warn";
-	public static final String CHECK_BOX_CONFIG_ENABLE = "config_enable";
-	public static final String CHECK_BOX_CONFIG_WARNING = "config_warning";
-	public static final String CHECK_BOX_CONFIG_ERROR = "config_error";
-	public static final String CHECK_BOX_CONFIG_DISABLE = "config_disable";
+	public final static String CHECK_BOX_ENABLED = "yes";
+	public final static String CHECK_BOX_ENABLED_TRUE = "true";
+	public final static String CHECK_BOX_ENABLED_ABILITATO = "abilitato";
+	public final static String CHECK_BOX_DISABLED = "no";
+	public final static String CHECK_BOX_DISABLED_FALSE = "false";
+	public final static String CHECK_BOX_DISABLED_DISABILITATO = "disabilitato";
+	public final static String CHECK_BOX_WARN = "warn";
+	public final static String CHECK_BOX_CONFIG_ENABLE = "config_enable";
+	public final static String CHECK_BOX_CONFIG_WARNING = "config_warning";
+	public final static String CHECK_BOX_CONFIG_ERROR = "config_error";
+	public final static String CHECK_BOX_CONFIG_DISABLE = "config_disable";
 	
 	
 	/** PAGE DATA TITLE */

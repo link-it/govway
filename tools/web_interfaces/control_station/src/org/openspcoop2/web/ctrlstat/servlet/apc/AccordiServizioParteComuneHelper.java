@@ -6967,7 +6967,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_REPRESENTATIONS_LIST, 
 						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, idAccordo),
 						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa),
-						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST, "true"),
+						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST, Costanti.CHECK_BOX_ENABLED_TRUE),
 						AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
 						);
 				if (contaListe) {
@@ -6991,7 +6991,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_PARAMETERS_LIST, 
 						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, idAccordo),
 						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa),
-						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST, "true"),
+						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST, Costanti.CHECK_BOX_ENABLED_TRUE),
 						AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
 						);
 				if (contaListe) {
@@ -7940,7 +7940,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_REPRESENTATIONS_LIST, 
 						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
 						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa),
-						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST, "false"),
+						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST, Costanti.CHECK_BOX_DISABLED_FALSE),
 						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS, status),
 						AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
 						);
@@ -7966,7 +7966,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_PARAMETERS_LIST, 
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST, "false"),
+							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST, Costanti.CHECK_BOX_DISABLED_FALSE),
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS, status),
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
 							);

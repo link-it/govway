@@ -687,6 +687,7 @@ public final class AuthorizationFilter implements Filter {
 				&& (urlRichiesta.indexOf("/"+CostantiControlStation.JS_DIR) == -1)
 				&& (urlRichiesta.indexOf("/"+AboutCostanti.SERVLET_NAME_ABOUT) == -1) 
 				&& (urlRichiesta.indexOf("/"+CostantiControlStation.PUBLIC_DIR) == -1) // risorse public
+				&& (urlRichiesta.indexOf("/"+CostantiControlStation.WEBJARS_DIR) == -1) // jquery da jar
 				) {
 			return true;
 		}

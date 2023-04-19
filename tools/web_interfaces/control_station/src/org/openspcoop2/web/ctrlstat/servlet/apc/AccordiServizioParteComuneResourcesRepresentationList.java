@@ -92,6 +92,12 @@ public final class AccordiServizioParteComuneResourcesRepresentationList extends
 			}
 
 			String isReq = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST);
+			boolean isReqValid = ServletUtils.checkParametroBooleanParameter(apcHelper.getRequest(), AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST);
+			if(!isReqValid) {
+				
+			}
+			
+			
 			boolean isRequest = ServletUtils.isCheckBoxEnabled(isReq);
 
 			// Preparo il menu
