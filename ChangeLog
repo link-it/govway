@@ -1,3 +1,8 @@
+2023-04-20  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	Aggiunti script di svecchiamento delle tracce per tipo di database postgresql e oracle.
+
 2023-04-19  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.12

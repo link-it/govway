@@ -122,6 +122,10 @@
 		<copy todir="./as">
 			<fileset dir="${deploy_sql}/as"/>
 		</copy>
+		<mkdir dir="./svecchiamento" />
+		<copy todir="./svecchiamento">
+			<fileset dir="${deploy_sql}/svecchiamento"/>
+		</copy>
 		<delete dir="${deploy_sql}" />
 		<mkdir dir="${deploy_sql}" />
 		<move file="./init.sql" todir="${deploy_sql}" />
@@ -133,6 +137,11 @@
 			<fileset dir="./as"/>
 		</move>
 		<delete dir="./as"/>
+		<mkdir dir="${deploy_sql}/svecchiamento" />
+		<move todir="${deploy_sql}/svecchiamento">
+			<fileset dir="./svecchiamento"/>
+		</move>
+		<delete dir="./svecchiamento"/>
 		<copy todir="${deploy_sql}/sql_upgrade">
 			<fileset dir="${sql_update}"/>
 		</copy>

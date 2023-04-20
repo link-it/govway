@@ -1111,36 +1111,67 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
 			</then>
 		</if>
 			
-		<mkdir dir="${dist}/sql/utilities"/>
+		<if>
+			<or>
+				<equals arg1="${build_sql_script_drop}" arg2="true"/>
+				<equals arg1="${build_sql_script_delete}" arg2="true"/>
+				<equals arg1="${antinstaller_modalita_installazione}" arg2="aggiornamento"/>
+			</or>
+			<then>
+				<mkdir dir="${dist}/sql/utilities"/>
+			</then>
+		</if>
 		<if>
 			<equals arg1="${antinstaller_modalita_installazione}" arg2="nuova"/>
 			<then>
-				<mkdir dir="${dist}/sql/utilities/drop"/>
-				<copy todir="${dist}/sql/utilities/drop">
-					<fileset dir="${tmp_sql}">
-				    		<include name="govway-*drop.sql"/>
-					</fileset>
-				</copy>
-				<mkdir dir="${dist}/sql/utilities/delete"/>
-				<copy todir="${dist}/sql/utilities/delete">
-					<fileset dir="${tmp_sql}">
-						<include name="govway-*delete.sql"/>
-					</fileset>
-				</copy>
+				<if>
+					<equals arg1="${build_sql_script_drop}" arg2="true"/>
+					<then>
+						<mkdir dir="${dist}/sql/utilities/drop"/>
+						<copy todir="${dist}/sql/utilities/drop">
+							<fileset dir="${tmp_sql}">
+						    		<include name="govway-*drop.sql"/>
+							</fileset>
+						</copy>
+					</then>
+				</if>
+
+				<if>
+					<equals arg1="${build_sql_script_delete}" arg2="true"/>
+					<then>
+						<mkdir dir="${dist}/sql/utilities/delete"/>
+						<copy todir="${dist}/sql/utilities/delete">
+							<fileset dir="${tmp_sql}">
+								<include name="govway-*delete.sql"/>
+							</fileset>
+						</copy>
+					</then>
+				</if>
 			</then>
 			<else>
-				<mkdir dir="${dist}/sql/utilities/drop"/>
-				<copy todir="${dist}/sql/utilities/drop">
-					<fileset dir="${tmp_sql_completi}">
-				    		<include name="govway-*drop.sql"/>
-					</fileset>
-				</copy>
-				<mkdir dir="${dist}/sql/utilities/delete"/>
-				<copy todir="${dist}/sql/utilities/delete">
-					<fileset dir="${tmp_sql_completi}">
-						<include name="govway-*delete.sql"/>
-					</fileset>
-				</copy>
+				<if>
+					<equals arg1="${build_sql_script_drop}" arg2="true"/>
+					<then>
+						<mkdir dir="${dist}/sql/utilities/drop"/>
+						<copy todir="${dist}/sql/utilities/drop">
+							<fileset dir="${tmp_sql_completi}">
+						    		<include name="govway-*drop.sql"/>
+							</fileset>
+						</copy>
+					</then>
+				</if>
+
+				<if>
+					<equals arg1="${build_sql_script_delete}" arg2="true"/>
+					<then>
+						<mkdir dir="${dist}/sql/utilities/delete"/>
+						<copy todir="${dist}/sql/utilities/delete">
+							<fileset dir="${tmp_sql_completi}">
+								<include name="govway-*delete.sql"/>
+							</fileset>
+						</copy>
+					</then>
+				</if>
 
 				<mkdir dir="${dist}/sql/utilities/as"/>
 				<copy todir="${dist}/sql/utilities/as">
@@ -1149,6 +1180,28 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
 					</fileset>
 				</copy>
 			</else>
+		</if>
+		<if>
+			<equals arg1="${antinstaller_tipo_database}" arg2="postgresql"/>
+			<then>
+				<mkdir dir="${dist}/sql/utilities/svecchiamento"/>
+				<copy todir="${dist}/sql/utilities/svecchiamento">
+					<fileset dir="${deploy_sql}/svecchiamento/postgresql">
+				    		<include name="*"/>
+					</fileset>
+				</copy>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${antinstaller_tipo_database}" arg2="oracle"/>
+			<then>
+				<mkdir dir="${dist}/sql/utilities/svecchiamento"/>
+				<copy todir="${dist}/sql/utilities/svecchiamento">
+					<fileset dir="${deploy_sql}/svecchiamento/oracle">
+				    		<include name="*"/>
+					</fileset>
+				</copy>
+			</then>
 		</if>
 		<if>
 			<equals arg1="${antinstaller_modalita_installazione}" arg2="aggiornamento"/>

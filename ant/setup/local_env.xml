@@ -10,6 +10,8 @@
 	<property name="build_govwayConsole_consoleIntegrataEAR" value="false" />
 	<property name="build_govwayMonitor_consoleIntegrataEAR" value="false" />
 	<property name="build_govwayLoader_consoleIntegrataEAR" value="false" />
+	<property name="build_sql_script_delete" value="false" />
+	<property name="build_sql_script_drop" value="false" />
 
 	<!-- Funzionalità in preparazione -->
 	<property name="build_monitoraggio" value="false" />
