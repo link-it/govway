@@ -1,5 +1,11 @@
 2023-04-20  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2023-20862: aggiornata libreria 'org.springframework.security:spring-security-*' alla versione 5.8.3
+
+2023-04-20  Andrea Poli <apoli@link.it>
+
 	* [InstallerVersioneBinaria]
 	Aggiunti script di svecchiamento delle tracce per tipo di database postgresql e oracle.
 

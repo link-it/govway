@@ -22,6 +22,7 @@ package org.openspcoop2.utils.crypt;
 
 import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
+import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 
 /**
  * SpringCrypt
@@ -55,7 +56,7 @@ public class SpringCrypt implements ICrypt {
 			org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder b = new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
 			return b.encode(password);
 		case S_CRYPT:
-			org.springframework.security.crypto.scrypt.SCryptPasswordEncoder s = new org.springframework.security.crypto.scrypt.SCryptPasswordEncoder();
+			org.springframework.security.crypto.scrypt.SCryptPasswordEncoder s = SCryptPasswordEncoder.defaultsForSpringSecurity_v5_8();
 			return s.encode(password);
 		}
 		throw new UtilsException("Unsupported type '"+this.type+"'");
@@ -71,7 +72,7 @@ public class SpringCrypt implements ICrypt {
 				org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder b = new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
 				return b.matches(password, pwcrypt);
 			case S_CRYPT:
-				org.springframework.security.crypto.scrypt.SCryptPasswordEncoder s = new org.springframework.security.crypto.scrypt.SCryptPasswordEncoder();
+				org.springframework.security.crypto.scrypt.SCryptPasswordEncoder s = SCryptPasswordEncoder.defaultsForSpringSecurity_v5_8();
 				return s.matches(password, pwcrypt);
 			}
 			throw new UtilsException("Unsupported type '"+this.type+"'");

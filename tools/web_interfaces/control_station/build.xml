@@ -92,8 +92,8 @@
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
-			<var name="xalan_jar" value="xalan-2.7.3-rc5.jar" />
-			<var name="xalan_serializer_jar" value="serializer-2.7.3-rc5.jar" />
+			<var name="xalan_jar" value="xalan-2.7.3.jar" />
+			<var name="xalan_serializer_jar" value="serializer-2.7.3.jar" />
 		</then>
 	</if>
 	<!-- xerces -->

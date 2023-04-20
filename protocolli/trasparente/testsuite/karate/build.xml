@@ -54,7 +54,7 @@
 			<include name="joda-time-2.12.0.jar"/>
 			<include name="mailapi-1.6.7.jar"/>
 			<include name="jakarta.activation-1.2.2.jar"/>
-			<include name="serializer-2.7.3-rc5.jar"/>
+			<include name="serializer-2.7.3.jar"/>
 			<include name="wsdl4j-1.6.3.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/cxf">
