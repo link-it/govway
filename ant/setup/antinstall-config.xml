@@ -557,6 +557,8 @@
         <checkbox defaultValue="false" property="antinstaller_rs_rest_status" value="rsRestStatus" displayText="API REST"/>
         <checkbox defaultValue="false" property="antinstaller_rs_soap_status" value="rsSoapStatus" displayText="API SOAP"/>
 
+	<hidden property="antinstaller_token_google" value="true"/>
+
     </page>
 
     <page name="profili_nuovaInstallazione" type="input" displayText="Profili di Interoperabilità"

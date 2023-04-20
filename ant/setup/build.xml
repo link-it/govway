@@ -154,6 +154,7 @@
 			antinstaller_rs_monitor=true/false
 			antinstaller_rs_rest_status=true/false
 			antinstaller_rs_soap_status=true/false
+			antinstaller_token_google=true/false
 
 		Cooperazione Applicativa
 			antinstaller_protocollo_trasparente=true
