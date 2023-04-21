@@ -82,6 +82,7 @@
 	  ifProperty="${antinstaller_modalita_installazione}==aggiornamento">
 
 	<large-select defaultValue="" property="antinstaller_versione_precedente" displayText="Versione Precedente">
+	    <!-- NOTA: non inserire più di 18 elementi, altrimenti la modalità './install.sh text' non esce da questa selezione -->
 	    <option value="3.3.11" text="3.3.11"/>
 	    <option value="3.3.10" text="3.3.10"/>
 	    <option value="3.3.9" text="3.3.9"/>
@@ -100,7 +101,7 @@
 	    <option value="3.1.1" text="3.1.1"/>
 	    <option value="3.1.0" text="3.1.0"/>
 	    <option value="3.0.1" text="3.0.1"/>
-	    <option value="3.0.0" text="3.0.0"/>
+	    <!-- <option value="3.0.0" text="3.0.0"/> -->
         </large-select>
     </page>
 

@@ -1,5 +1,10 @@
 2023-04-21  Andrea Poli <apoli@link.it>
 
+	* [InstallerVersioneBinaria]
+	L'esecuzione in modalità testuale ('./install.sh text') rimaneva bloccata in caso di tipologia d'installazione 'Aggiornamento' durante la sezione della 'Versione Precedente'.
+
+2023-04-21  Andrea Poli <apoli@link.it>
+
 	* [Utils]
 	Aggiunta funzionalità OP-1580
 	Aggiunte utility che consentono di leggere chiavi private nei formati PKCS1 e PKCS8 (PEM/DER) in chiaro e cifrate.
