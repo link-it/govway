@@ -83,10 +83,10 @@ public class HeadersFilter implements Filter {
 			SecurityWrappedHttpServletResponse seqRes = new SecurityWrappedHttpServletResponse(response, log);
 			
 			// Gestione vulnerabilita' Content Security Policy
-			this.gestioneContentSecurityPolicy(request, response); 
+			this.gestioneContentSecurityPolicy(seqReq, seqRes); 
 
 			// Aggiungo header
-			this.gestioneXContentTypeOptions(request, response);
+			this.gestioneXContentTypeOptions(seqReq, seqRes);
 			
 			chain.doFilter(seqReq, seqRes);
 		} catch (Exception e) {

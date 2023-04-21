@@ -54,6 +54,7 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+import org.openspcoop2.web.lib.mvc.security.exception.ValidationException;
 
 /**
  * AccordiServizioParteComuneResourcesParametersAdd
@@ -90,6 +91,9 @@ public final class AccordiServizioParteComuneResourcesParametersAdd extends Acti
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 
+			// Preparo il menu
+			apcHelper.makeMenu();
+
 			String editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			
 			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
@@ -99,6 +103,10 @@ public final class AccordiServizioParteComuneResourcesParametersAdd extends Acti
 				nomeRisorsa = "";
 			}
 			String statusS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
+			boolean isStatusValid = ServletUtils.checkIntegerParameter(apcHelper.getRequest(), AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
+			if(!isStatusValid) {
+				throw new ValidationException("Il parametro [" + AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS + "] contiene un valore non valido.");
+			}
 			Integer status = null;
 			try {
 				if(statusS!=null)
@@ -107,6 +115,10 @@ public final class AccordiServizioParteComuneResourcesParametersAdd extends Acti
 				// ignore
 			}
 			String isReq = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST);
+			boolean isReqValid = ServletUtils.checkBooleanParameter(apcHelper.getRequest(), AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST);
+			if(!isReqValid) {
+				throw new ValidationException("Il parametro [" + AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST + "] contiene un valore non valido.");
+			}
 			boolean isRequest = ServletUtils.isCheckBoxEnabled(isReq);
 			
 			String descr = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_DESCRIZIONE);
@@ -125,9 +137,6 @@ public final class AccordiServizioParteComuneResourcesParametersAdd extends Acti
 			String requiredS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_REQUIRED);
 			boolean required = ServletUtils.isCheckBoxEnabled(requiredS);
 			
-			// Preparo il menu
-			apcHelper.makeMenu();
-
 			// Prendo il nome
 			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAccordoLong);
 			String uriAS = idAccordoFactory.getUriFromAccordo(as);
