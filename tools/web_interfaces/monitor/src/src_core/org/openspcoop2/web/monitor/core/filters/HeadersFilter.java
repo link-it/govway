@@ -21,6 +21,7 @@ package org.openspcoop2.web.monitor.core.filters;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Properties;
 import java.util.UUID;
 
 import javax.servlet.Filter;
@@ -36,6 +37,10 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.web.lib.mvc.Costanti;
+import org.openspcoop2.web.lib.mvc.security.SecurityProperties;
+import org.openspcoop2.web.lib.mvc.security.SecurityWrappedHttpServletRequest;
+import org.openspcoop2.web.lib.mvc.security.SecurityWrappedHttpServletResponse;
+import org.openspcoop2.web.lib.mvc.security.Validatore;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.slf4j.Logger;
@@ -71,6 +76,10 @@ public class HeadersFilter implements Filter {
 			this.xContentTypeOptionsHeaderValue = pddMonitorProperties.getXContentTypeOptionsHeaderValue();
 			this.xFrameOptionsHeaderValue = pddMonitorProperties.getXFrameOptionsHeaderValue();
 			this.xXssProtectionHeaderValue = pddMonitorProperties.getXXssProtectionHeaderValue();
+			
+			Properties consoleSecurityConfiguration = pddMonitorProperties.getConsoleSecurityConfiguration();
+			SecurityProperties.init(consoleSecurityConfiguration, log);
+			Validatore.init(SecurityProperties.getInstance(), log);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -82,14 +91,17 @@ public class HeadersFilter implements Filter {
 			HttpServletRequest request = (HttpServletRequest) req;
 			HttpServletResponse response = (HttpServletResponse) res;
 			
+			SecurityWrappedHttpServletRequest seqReq = new SecurityWrappedHttpServletRequest(request, log);
+			
+			SecurityWrappedHttpServletResponse seqRes = new SecurityWrappedHttpServletResponse(response, log);
+			
 			// Gestione vulnerabilita' Content Security Policy
-			this.gestioneContentSecurityPolicy(request, response); 
+			this.gestioneContentSecurityPolicy(seqReq, seqRes); 
 
 			// Aggiungo header
-			this.gestioneXContentTypeOptions(request, response);
-            
-			// faccio proseguire le chiamate ai filtri
-			chain.doFilter(request, response);
+			this.gestioneXContentTypeOptions(seqReq, seqRes);
+			
+			chain.doFilter(seqReq, seqRes);
 		} catch (IOException e) {
 			log.error(e.getMessage());
 		} catch (ServletException e) {

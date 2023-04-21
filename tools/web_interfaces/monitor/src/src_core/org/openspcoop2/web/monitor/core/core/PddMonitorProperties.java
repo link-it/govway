@@ -1146,6 +1146,10 @@ public class PddMonitorProperties {
 		return this.appProperties.getProperty("console.xXssProtection.header.value", false, true);
 	}
 	
+	public Properties getConsoleSecurityConfiguration() throws Exception{
+		return this.appProperties.readProperties("console.security.");
+	}
+	
 	// allarmi
 	
 	public boolean isAllarmiEnabled() throws Exception{
