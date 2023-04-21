@@ -65,11 +65,13 @@ public class HeadersFilter implements Filter {
 	private String xContentTypeOptionsHeaderValue = null;
 	private String xXssProtectionHeaderValue = null;
 	private String xFrameOptionsHeaderValue = null;
+	private String jQueryVersion = null; 
 
 	@Override
 	public void init(FilterConfig filterConfig) {
 
 		this.filterConfig = filterConfig;
+		this.jQueryVersion = this.filterConfig.getInitParameter(Costanti.FILTER_INIT_PARAMETER_JQUERY_VERSION);
 		try {
 			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(log);
 			this.cspHeaderValue = pddMonitorProperties.getCspHeaderValue();
@@ -94,6 +96,9 @@ public class HeadersFilter implements Filter {
 			SecurityWrappedHttpServletRequest seqReq = new SecurityWrappedHttpServletRequest(request, log);
 			
 			SecurityWrappedHttpServletResponse seqRes = new SecurityWrappedHttpServletResponse(response, log);
+			
+			// set versione jQuery
+			seqReq.setAttribute(Costanti.REQUEST_ATTRIBUTE_JQUERY_VERSION, this.jQueryVersion);
 			
 			// Gestione vulnerabilita' Content Security Policy
 			this.gestioneContentSecurityPolicy(seqReq, seqRes); 

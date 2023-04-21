@@ -381,6 +381,8 @@ public class Costanti {
 	/** CSP */
 	public static final String REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE = "_csp_random_nonce";
 	public static final String SESSION_ATTRIBUTE_CSP_RANDOM_NONCE =  REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE;
+	public static final String REQUEST_ATTRIBUTE_JQUERY_VERSION = "__jquery_version__";
+	public static final String FILTER_INIT_PARAMETER_JQUERY_VERSION = "jquery_version";
 	
 	/** VALIDAZIONE INPUT */
 	
