@@ -110,7 +110,7 @@ public class InfoMittenteFormatUtils {
 		if(StringUtils.isNotEmpty(sTrasportoMittente) && StringUtils.isNotEmpty(sTipoTrasportoMittente)) {
 			if(sTipoTrasportoMittente.endsWith("_"+TipoAutenticazione.SSL.getValue())) {
 				try {
-					Map<String, List<String>> l = CertificateUtils.getPrincipalIntoMap(sTrasportoMittente, PrincipalType.subject);
+					Map<String, List<String>> l = CertificateUtils.getPrincipalIntoMap(sTrasportoMittente, PrincipalType.SUBJECT);
 					if(l!=null && !l.isEmpty()) {
 						List<String> cnList = l.get("CN");
 						if(cnList==null || cnList.isEmpty()) {

@@ -259,7 +259,7 @@ public class RicezioneBuste {
 	 * 
 	 * @throws Exception
 	 */
-	public synchronized static void initializeService(ConfigurazionePdDManager configReader,ClassNameProperties className,OpenSPCoop2Properties propertiesReader,Logger logCore) throws Exception{
+	public static synchronized void initializeService(ConfigurazionePdDManager configReader,ClassNameProperties className,OpenSPCoop2Properties propertiesReader,Logger logCore) throws Exception{
 		if(RicezioneBuste.initializeService)
 			return; // inizializzato da un altro thread
 

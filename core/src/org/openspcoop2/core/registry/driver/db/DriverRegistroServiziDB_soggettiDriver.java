@@ -512,10 +512,10 @@ public class DriverRegistroServiziDB_soggettiDriver {
 					if(filtroRicerca.getCredenzialiSoggetto().getSubject()!=null){
 						
 						// Autenticazione SSL deve essere LIKE
-						Map<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoMap(filtroRicerca.getCredenzialiSoggetto().getSubject(), PrincipalType.subject);
+						Map<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoMap(filtroRicerca.getCredenzialiSoggetto().getSubject(), PrincipalType.SUBJECT);
 						Map<String, List<String>> hashIssuer = null;
 						if(filtroRicerca.getCredenzialiSoggetto().getIssuer()!=null) {
-							hashIssuer = CertificateUtils.getPrincipalIntoMap(filtroRicerca.getCredenzialiSoggetto().getIssuer(), PrincipalType.issuer);
+							hashIssuer = CertificateUtils.getPrincipalIntoMap(filtroRicerca.getCredenzialiSoggetto().getIssuer(), PrincipalType.ISSUER);
 						}
 						
 						for (String key : hashSubject.keySet()) {
@@ -667,13 +667,13 @@ public class DriverRegistroServiziDB_soggettiDriver {
 					// Possono esistere piu' soggetti che hanno una porzione di subject uguale, devo quindi verificare che sia proprio quello che cerco
 										
 					String subjectPotenziale =  rs.getString("subject");
-					boolean subjectValid = CertificateUtils.sslVerify(subjectPotenziale, filtroRicerca.getCredenzialiSoggetto().getSubject(), PrincipalType.subject, this.driver.log);
+					boolean subjectValid = CertificateUtils.sslVerify(subjectPotenziale, filtroRicerca.getCredenzialiSoggetto().getSubject(), PrincipalType.SUBJECT, this.driver.log);
 					
 					boolean issuerValid = true;
 					if(filtroRicerca.getCredenzialiSoggetto().getIssuer()!=null) {
 						String issuerPotenziale =  rs.getString("issuer");
 						if(StringUtils.isNotEmpty(issuerPotenziale)) {
-							issuerValid = CertificateUtils.sslVerify(issuerPotenziale, filtroRicerca.getCredenzialiSoggetto().getIssuer(), PrincipalType.issuer, this.driver.log);
+							issuerValid = CertificateUtils.sslVerify(issuerPotenziale, filtroRicerca.getCredenzialiSoggetto().getIssuer(), PrincipalType.ISSUER, this.driver.log);
 						}
 						else {
 							issuerValid = false;

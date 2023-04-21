@@ -19,7 +19,6 @@
  */
 package org.openspcoop2.utils.certificate;
 
-import java.security.cert.CertificateParsingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,63 +46,76 @@ public class CRLDistributionPoints {
 		return this.distributionPoints!=null && (this.distributionPoints.size()>index) ? this.distributionPoints.get(index) : null;
 	}
 	
-	public static CRLDistributionPoints getCRLDistributionPoints(byte[]encoded) throws CertificateParsingException{
+	public static CRLDistributionPoints getCRLDistributionPoints(byte[]encoded) {
 		
 		org.bouncycastle.asn1.x509.Certificate c =org.bouncycastle.asn1.x509.Certificate.getInstance(encoded);
 		Extensions exts = c.getTBSCertificate().getExtensions();
 		if (exts != null){
 			org.bouncycastle.asn1.x509.CRLDistPoint crlDistPoint = org.bouncycastle.asn1.x509.CRLDistPoint.fromExtensions(exts);
 			if(crlDistPoint!=null) {
-				CRLDistributionPoints crls = null;
-				if(crlDistPoint.getDistributionPoints()!=null && crlDistPoint.getDistributionPoints().length>0) {
-					
-					crls = new CRLDistributionPoints();
-					
-					for (int i = 0; i < crlDistPoint.getDistributionPoints().length; i++) {
-						DistributionPoint dt = crlDistPoint.getDistributionPoints()[i];
-						if(dt!=null) {
-							
-							CRLDistributionPoint crl = new CRLDistributionPoint();
-							
-							if(dt.getCRLIssuer()!=null && dt.getCRLIssuer().getNames()!=null && dt.getCRLIssuer().getNames().length>0) {
-								for (GeneralName gn : dt.getCRLIssuer().getNames()) {
-									crl.crlIssuers.add(gn);
-								}
-							}
-							if(dt.getReasons()!=null) {
-								crl.reasonFlags = dt.getReasons();
-							}
-							if(dt.getDistributionPoint()!=null) {
-								crl.distributionPointName = dt.getDistributionPoint();
-								if(dt.getDistributionPoint().getName()!=null && (dt.getDistributionPoint().getName() instanceof GeneralNames)) {
-									GeneralNames gns = (GeneralNames) dt.getDistributionPoint().getName();
-									if(gns.getNames()!=null && gns.getNames().length>0) {
-										for (GeneralName gn : gns.getNames()) {
-											crl.distributionPointNames.add(gn);
-										}
-									}
-								}
-							}
-							
-							crls.distributionPoints.add(crl);
-						}
-					}
+				return readCRLDistributionPoints(crlDistPoint);
+				
+				/**CRLDistributionPoints crls = readCRLDistributionPoints(crlDistPoint);
+				
+				System.out.println("======================");
+				//System.out.println("CRLDistributionPoints '"+crlDistPoint.toString()+"'");
+				for (int i = 0; i < crlDistPoint.getDistributionPoints().length; i++) {
+					DistributionPoint dt = crlDistPoint.getDistributionPoints()[i];
+					System.out.println("Issuer '"+dt.getCRLIssuer()+"'");
+					System.out.println("Point '"+dt.getDistributionPoint()+"'");
+					System.out.println("Reasons '"+dt.getReasons()+"'");
 				}
+				System.out.println("======================");
 				
-//				System.out.println("======================");
-//				//System.out.println("CRLDistributionPoints '"+crlDistPoint.toString()+"'");
-//				for (int i = 0; i < crlDistPoint.getDistributionPoints().length; i++) {
-//					DistributionPoint dt = crlDistPoint.getDistributionPoints()[i];
-//					System.out.println("Issuer '"+dt.getCRLIssuer()+"'");
-//					System.out.println("Point '"+dt.getDistributionPoint()+"'");
-//					System.out.println("Reasons '"+dt.getReasons()+"'");
-//				}
-//				System.out.println("======================");
-				
-				return crls;
+				return crls;*/
 			}
 		}
 		return null;
 		
+	}
+	private static CRLDistributionPoints readCRLDistributionPoints(org.bouncycastle.asn1.x509.CRLDistPoint crlDistPoint) {
+		CRLDistributionPoints crls = null;
+		if(crlDistPoint.getDistributionPoints()!=null && crlDistPoint.getDistributionPoints().length>0) {
+			
+			crls = new CRLDistributionPoints();
+			
+			for (int i = 0; i < crlDistPoint.getDistributionPoints().length; i++) {
+				DistributionPoint dt = crlDistPoint.getDistributionPoints()[i];
+				if(dt!=null) {
+					
+					CRLDistributionPoint crl = readCRLDistributionPoint(dt);
+					
+					crls.distributionPoints.add(crl);
+				}
+			}
+		}
+		return crls;
+	}
+	private static CRLDistributionPoint readCRLDistributionPoint(DistributionPoint dt) {
+		CRLDistributionPoint crl = new CRLDistributionPoint();
+		
+		if(dt.getCRLIssuer()!=null && dt.getCRLIssuer().getNames()!=null && dt.getCRLIssuer().getNames().length>0) {
+			for (GeneralName gn : dt.getCRLIssuer().getNames()) {
+				crl.crlIssuers.add(gn);
+			}
+		}
+		if(dt.getReasons()!=null) {
+			crl.reasonFlags = dt.getReasons();
+		}
+		if(dt.getDistributionPoint()!=null) {
+			setCRLDistributionPoint(crl, dt);
+		}
+		return crl;
+	}
+	private static void setCRLDistributionPoint(CRLDistributionPoint crl, DistributionPoint dt) {
+		crl.distributionPointName = dt.getDistributionPoint();
+		if(dt.getDistributionPoint().getName() instanceof GeneralNames) {
+			GeneralNames gns = (GeneralNames) dt.getDistributionPoint().getName();
+			if(gns.getNames()!=null && gns.getNames().length>0) {
+				for (GeneralName gn : gns.getNames()) {
+					crl.distributionPointNames.add(gn);
+				}
+			}
+		}
 	}
 }

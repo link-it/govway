@@ -105,7 +105,7 @@ public class CertificateReaderTest {
 		config = new CertificateDecodeConfig();
 		config.setBase64Decode(false);
 		config.setUrlDecode(false);
-		config.setEnrich_BEGIN_END(true);
+		config.setEnrichPEMBeginEnd(true);
 		System.out.println("PEM senza BEGIN e END ...");
 		certDecoded = CertificateUtils.readCertificate(config , cert);
 		System.out.println("PEM senza BEGIN e END: "+certDecoded.getCertificate().toString());
@@ -128,7 +128,7 @@ public class CertificateReaderTest {
 		config = new CertificateDecodeConfig();
 		config.setBase64Decode(false);
 		config.setUrlDecode(false);
-		config.setUrlDecode_or_base64Decode(true);
+		config.setUrlDecodeOrBase64Decode(true);
 		System.out.println("PEM + URL Encoded (config UrlDecode_or_base64Decode) ...");
 		certDecoded = CertificateUtils.readCertificate(config , cert);
 		System.out.println("PEM + URL Encoded (config UrlDecode_or_base64Decode): "+certDecoded.getCertificate().toString());
@@ -142,7 +142,7 @@ public class CertificateReaderTest {
 		config = new CertificateDecodeConfig();
 		config.setBase64Decode(false);
 		config.setUrlDecode(false);
-		config.setUrlDecode_or_base64Decode(true);
+		config.setUrlDecodeOrBase64Decode(true);
 		System.out.println("PEM + URL Encoded (corrupted) ...");
 		try {
 			certDecoded = CertificateUtils.readCertificate(config , cert);
@@ -166,7 +166,7 @@ public class CertificateReaderTest {
 		cert = "MIICgDCCAekCBE6Vnp0wDQYJKoZIhvcNAQEFBQAwgYYxHDAaBgkqhkiG9w0BCQEW%0ADWFwb2xpQGxpbmsuaXQxCzAJBgNVBAYTAklUMQ4wDAYDVQQIDAVJdGFseTENMAsG%0AA1UEBwwEUGlzYTEXMBUGA1UECgwOb3BlbnNwY29vcC5vcmcxDTALBgNVBAsMBHRl%0Ac3QxEjAQBgNVBAMMCVNvZ2dldHRvMTAeFw0xMTEwMTIxNDA1MTdaFw0yMTEwMDkx%0ANDA1MTdaMIGGMRwwGgYJKoZIhvcNAQkBFg1hcG9saUBsaW5rLml0MQswCQYDVQQG%0AEwJJVDEOMAwGA1UECAwFSXRhbHkxDTALBgNVBAcMBFBpc2ExFzAVBgNVBAoMDm9w%0AZW5zcGNvb3Aub3JnMQ0wCwYDVQQLDAR0ZXN0MRIwEAYDVQQDDAlTb2dnZXR0bzEw%0AgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAI7Zy01BmPwitnoX%2BrOc%2BzUHpOSt%0A8JXndItBQVOfNGZ8i%2BqFV564eLYPHOS5pyNlG0xpivNYokO12CAANrnv4lkqG7W3%0Alv2hX0qLlq0h%2BIdhV7jqTxOOVfwMiYMaI9IRiRs26Af%2F1RMMH3Q3KhiM4blW6q%2FJ%0AKkQeVPeBYqyffIZlAgMBAAEwDQYJKoZIhvcNAQEFBQADgYEATeUM8Flh3BmhArqZ%0AGVntBS3tEaGzHimyMUjMDncpKxR9aSIMib4t0Fq8jBCNsnQRPoUWObrdbMm7Yknm%0AzK86buXUG6n%2FnJruzAM1Wp8Tqc4dN9XX7F%2FMAszxOLxr4Acr4jbHExsTSPD1yEo9%0A9yRr%2FonMnZurvTMTwzcJgpRjheE";
 		config = new CertificateDecodeConfig();
 		config.setBase64Decode(false);
-		config.setEnrich_BEGIN_END(true);
+		config.setEnrichPEMBeginEnd(true);
 		config.setUrlDecode(true);
 		System.out.println("PEM + URL Encoded senza BEGIN e END ...");
 		certDecoded = CertificateUtils.readCertificate(config , cert);
@@ -190,7 +190,7 @@ public class CertificateReaderTest {
 		config = new CertificateDecodeConfig();
 		config.setBase64Decode(false);
 		config.setUrlDecode(false);
-		config.setUrlDecode_or_base64Decode(true);
+		config.setUrlDecodeOrBase64Decode(true);
 		System.out.println("DER + BASE64 (config UrlDecode_or_base64Decode) ...");
 		certDecoded = CertificateUtils.readCertificate(config , cert);
 		System.out.println("DER + BASE64 (config UrlDecode_or_base64Decode): "+certDecoded.getCertificate().toString());
@@ -231,7 +231,7 @@ public class CertificateReaderTest {
 		config = new CertificateDecodeConfig();
 		config.setBase64Decode(false);
 		config.setUrlDecode(false);
-		config.setUrlDecode_or_base64Decode(true);
+		config.setUrlDecodeOrBase64Decode(true);
 		System.out.println("PEM + BASE64 (config UrlDecode_or_base64Decode) ...");
 		certDecoded = CertificateUtils.readCertificate(config , cert);
 		System.out.println("PEM + BASE64 (config UrlDecode_or_base64Decode): "+certDecoded.getCertificate().toString());
@@ -245,7 +245,7 @@ public class CertificateReaderTest {
 		config = new CertificateDecodeConfig();
 		config.setBase64Decode(false);
 		config.setUrlDecode(false);
-		config.setUrlDecode_or_base64Decode(true);
+		config.setUrlDecodeOrBase64Decode(true);
 		System.out.println("PEM + BASE64 (corrupted) ...");
 		try {
 			certDecoded = CertificateUtils.readCertificate(config , cert);

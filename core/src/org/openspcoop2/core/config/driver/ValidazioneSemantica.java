@@ -2990,14 +2990,14 @@ public class ValidazioneSemantica {
 			}else{
 				if(c.getSubject()!=null && !"".equals(c.getSubject())) {
 					try{
-						CertificateUtils.validaPrincipal(c.getSubject(), PrincipalType.subject);
+						CertificateUtils.validaPrincipal(c.getSubject(), PrincipalType.SUBJECT);
 					}catch(Exception e){
 						this.errori.add("Le credenziali di tipo ssl del "+oggetto+" possiedono un subject non valido: "+e.getMessage());
 					}
 				}
 				if(c.getIssuer()!=null && !"".equals(c.getIssuer())) {
 					try{
-						CertificateUtils.validaPrincipal(c.getIssuer(), PrincipalType.issuer);
+						CertificateUtils.validaPrincipal(c.getIssuer(), PrincipalType.ISSUER);
 					}catch(Exception e){
 						this.errori.add("Le credenziali di tipo ssl del "+oggetto+" possiedono un issuer non valido: "+e.getMessage());
 					}

@@ -5120,7 +5120,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 				
 				try{
-					org.openspcoop2.utils.certificate.CertificateUtils.validaPrincipal(subject, PrincipalType.subject);
+					org.openspcoop2.utils.certificate.CertificateUtils.validaPrincipal(subject, PrincipalType.SUBJECT);
 				}catch(Exception e){
 					this.pd.setMessage("Le credenziali di tipo ssl  possiedono un subject non valido: "+e.getMessage());
 					return false;
@@ -5142,7 +5142,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					
 					if(StringUtils.isNotEmpty(issuer)) {
 						try{
-							org.openspcoop2.utils.certificate.CertificateUtils.validaPrincipal(issuer, PrincipalType.issuer);
+							org.openspcoop2.utils.certificate.CertificateUtils.validaPrincipal(issuer, PrincipalType.ISSUER);
 						}catch(Exception e){
 							this.pd.setMessage("Le credenziali di tipo ssl possiedono un issuer non valido: "+e.getMessage());
 							return false;

@@ -363,10 +363,10 @@ public class DriverRegistroServiziDB_soggettiCredenzialiDriver {
 					sqlQueryObject.addSelectAliasField(tabella, "issuer", "soggettoIssuer");				
 					
 					// Autenticazione SSL deve essere LIKE
-					Map<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoMap(aSubject, PrincipalType.subject);
+					Map<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoMap(aSubject, PrincipalType.SUBJECT);
 					Map<String, List<String>> hashIssuer = null;
 					if(StringUtils.isNotEmpty(aIssuer)) {
-						hashIssuer = CertificateUtils.getPrincipalIntoMap(aIssuer, PrincipalType.issuer);
+						hashIssuer = CertificateUtils.getPrincipalIntoMap(aIssuer, PrincipalType.ISSUER);
 					}
 					
 					for (String key : hashSubject.keySet()) {
@@ -504,13 +504,13 @@ public class DriverRegistroServiziDB_soggettiCredenzialiDriver {
 						// Possono esistere piu' soggetti che hanno una porzione di subject uguale, devo quindi verificare che sia proprio quello che cerco
 											
 						String subjectPotenziale =  rs.getString("soggettoSubject");
-						boolean subjectValid = CertificateUtils.sslVerify(subjectPotenziale, aSubject, PrincipalType.subject, this.driver.log);
+						boolean subjectValid = CertificateUtils.sslVerify(subjectPotenziale, aSubject, PrincipalType.SUBJECT, this.driver.log);
 						
 						boolean issuerValid = true;
 						if(StringUtils.isNotEmpty(aIssuer)) {
 							String issuerPotenziale =  rs.getString("soggettoIssuer");
 							if(StringUtils.isNotEmpty(issuerPotenziale)) {
-								issuerValid = CertificateUtils.sslVerify(issuerPotenziale, aIssuer, PrincipalType.issuer, this.driver.log);
+								issuerValid = CertificateUtils.sslVerify(issuerPotenziale, aIssuer, PrincipalType.ISSUER, this.driver.log);
 							}
 							else {
 								issuerValid = false;

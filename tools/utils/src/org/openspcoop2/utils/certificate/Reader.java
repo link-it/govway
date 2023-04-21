@@ -21,14 +21,19 @@
 package org.openspcoop2.utils.certificate;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.security.cert.CertificateParsingException;
 import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.logging.log4j.Level;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.SystemDate;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.slf4j.Logger;
 
 /**
  * ClientTest
@@ -39,13 +44,16 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
  */
 public class Reader {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws UtilsException, FileNotFoundException, CertificateParsingException {
 		
-		DateManager.initializeDataManager(SystemDate.class.getName(), new Properties(), LoggerWrapperFactory.getLogger(Reader.class));
+		LoggerWrapperFactory.setDefaultConsoleLogConfiguration(Level.ALL);
+		Logger log = LoggerWrapperFactory.getLogger(Reader.class);
+		
+		DateManager.initializeDataManager(SystemDate.class.getName(), new Properties(), log);
 		
 		String usage = "\n\nUsage: java "+Reader.class.getName()+" TYPE PATH [PASSWORD]\n\tTypes: "+ArrayUtils.toString(ArchiveType.values());
 		if(args==null || args.length<2) {
-			throw new Exception("Errore: parametri non forniti"+usage);
+			throw new UtilsException("Errore: parametri non forniti"+usage);
 		}
 		
 		String typeArg = args[0];
@@ -53,81 +61,89 @@ public class Reader {
 		try {
 			type = ArchiveType.valueOf(typeArg.toUpperCase());
 		}catch(Exception e) {
-			throw new Exception("Errore: tipo archivio '"+typeArg+"' non supportato"+usage);
+			throw new UtilsException("Errore: tipo archivio '"+typeArg+"' non supportato"+usage);
 		}
 		
 		String pathArg = args[1];
 		File f = new File(pathArg);
-		if(f.exists()==false) {
-			throw new Exception("Errore: file '"+f.getAbsolutePath()+"' non esistente"+usage);
+		if(!f.exists()) {
+			throw new UtilsException("Errore: file '"+f.getAbsolutePath()+"' non esistente"+usage);
 		}
-		if(f.canRead()==false) {
-			throw new Exception("Errore: file '"+f.getAbsolutePath()+"' non accessibile in lettura"+usage);
+		if(!f.canRead()) {
+			throw new UtilsException("Errore: file '"+f.getAbsolutePath()+"' non accessibile in lettura"+usage);
 		}
 		byte[] content = FileSystemUtilities.readBytesFromFile(f);
 		
 		String password = null;
 		if(ArchiveType.JKS.equals(type) || ArchiveType.PKCS12.equals(type)) {
 			if(args.length<3) {
-				throw new Exception("Errore: password non fornita, obbligatoria per il tipo di archivio '"+type.name()+"' indicato"+usage);
+				throw new UtilsException("Errore: password non fornita, obbligatoria per il tipo di archivio '"+type.name()+"' indicato"+usage);
 			}
 			password = args[2];
 		}
-		
-		Certificate c = ArchiveLoader.load(type, content, 0, password);
 		
 		boolean printOnlySubjectNormalizzato = false;
 		if(args.length>100) {
 			printOnlySubjectNormalizzato = Boolean.valueOf(args[99]);
 		}
 		
+		StringBuilder sb = new StringBuilder();
+		read(type, content, password, printOnlySubjectNormalizzato, sb);
+		String debug = sb.toString();
+		log.info(debug);
+	}
+	
+	public static void read(ArchiveType type, byte[] content, String password, boolean printOnlySubjectNormalizzato, StringBuilder sb) throws UtilsException, CertificateParsingException {
+		
+		Certificate c = ArchiveLoader.load(type, content, 0, password);
+		
 		if(printOnlySubjectNormalizzato) {
 			
-			System.out.println(c.getCertificate().getSubject().getNameNormalized());
+			sb.append(c.getCertificate().getSubject().getNameNormalized());
 			
 		}
 		else {
 		
-			System.out.println("CERT Class: "+c.getCertificate().getCertificate().getClass().getName());
-			System.out.println("CERT S.N.: "+c.getCertificate().getSerialNumber());
-			System.out.println("CERT SigAlgName: "+c.getCertificate().getSigAlgName());
-			System.out.println("CERT Type: "+c.getCertificate().getType());
-			System.out.println("CERT Version: "+c.getCertificate().getVersion());
-			System.out.println("CERT Valid: "+c.getCertificate().isValid());
-			System.out.println("CERT SelfIssued: "+c.getCertificate().isSelfIssued());
-			System.out.println("CERT SelfSigned: "+c.getCertificate().isSelfSigned());
-			System.out.println("\n");
-			System.out.println("CERT Subject.CN: "+c.getCertificate().getSubject().getCN());
-			System.out.println("CERT Subject.toString: "+c.getCertificate().getSubject().toString());
-			System.out.println("CERT Subject.name: "+c.getCertificate().getSubject().getName());
-			System.out.println("CERT Subject.canonicalName: "+c.getCertificate().getSubject().getCanonicalName());
-			System.out.println("CERT Subject.RFC1779Name: "+c.getCertificate().getSubject().getRFC1779Name());
-			System.out.println("CERT Subject.RFC2253Name: "+c.getCertificate().getSubject().getRFC2253Name());
-			System.out.println("CERT Subject.nameNormalized: "+c.getCertificate().getSubject().getNameNormalized());
-			System.out.println("\n");
-			System.out.println("CERT Issuer.CN: "+c.getCertificate().getIssuer().getCN());
-			System.out.println("CERT Issuer.toString: "+c.getCertificate().getIssuer().toString());
-			System.out.println("CERT Issuer.name: "+c.getCertificate().getIssuer().getName());
-			System.out.println("CERT Issuer.canonicalName: "+c.getCertificate().getIssuer().getCanonicalName());
-			System.out.println("CERT Issuer.RFC1779Name: "+c.getCertificate().getIssuer().getRFC1779Name());
-			System.out.println("CERT Issuer.RFC2253Name: "+c.getCertificate().getIssuer().getRFC2253Name());
-			System.out.println("CERT Issuer.nameNormalized: "+c.getCertificate().getIssuer().getNameNormalized());
-			System.out.println("\n");
-			System.out.println("CERT NotBefore: "+c.getCertificate().getNotBefore());
-			System.out.println("CERT NotAfter: "+c.getCertificate().getNotAfter());
-			System.out.println("\n");
+			sb.append("CERT Class: "+c.getCertificate().getCertificate().getClass().getName()).append("\n");
+			sb.append("CERT S.N.: "+c.getCertificate().getSerialNumber()).append("\n");
+			sb.append("CERT SigAlgName: "+c.getCertificate().getSigAlgName()).append("\n");
+			sb.append("CERT Type: "+c.getCertificate().getType()).append("\n");
+			sb.append("CERT Version: "+c.getCertificate().getVersion()).append("\n");
+			sb.append("CERT Valid: "+c.getCertificate().isValid()).append("\n");
+			sb.append("CERT SelfIssued: "+c.getCertificate().isSelfIssued()).append("\n");
+			sb.append("CERT SelfSigned: "+c.getCertificate().isSelfSigned()).append("\n");
+			sb.append("\n").append("\n");
+			sb.append("CERT Subject.CN: "+c.getCertificate().getSubject().getCN()).append("\n");
+			sb.append("CERT Subject.toString: "+c.getCertificate().getSubject().toString()).append("\n");
+			sb.append("CERT Subject.name: "+c.getCertificate().getSubject().getName()).append("\n");
+			sb.append("CERT Subject.canonicalName: "+c.getCertificate().getSubject().getCanonicalName()).append("\n");
+			sb.append("CERT Subject.RFC1779Name: "+c.getCertificate().getSubject().getRFC1779Name()).append("\n");
+			sb.append("CERT Subject.RFC2253Name: "+c.getCertificate().getSubject().getRFC2253Name()).append("\n");
+			sb.append("CERT Subject.nameNormalized: "+c.getCertificate().getSubject().getNameNormalized()).append("\n");
+			sb.append("\n").append("\n");
+			sb.append("CERT Issuer.CN: "+c.getCertificate().getIssuer().getCN()).append("\n");
+			sb.append("CERT Issuer.toString: "+c.getCertificate().getIssuer().toString()).append("\n");
+			sb.append("CERT Issuer.name: "+c.getCertificate().getIssuer().getName()).append("\n");
+			sb.append("CERT Issuer.canonicalName: "+c.getCertificate().getIssuer().getCanonicalName()).append("\n");
+			sb.append("CERT Issuer.RFC1779Name: "+c.getCertificate().getIssuer().getRFC1779Name()).append("\n");
+			sb.append("CERT Issuer.RFC2253Name: "+c.getCertificate().getIssuer().getRFC2253Name()).append("\n");
+			sb.append("CERT Issuer.nameNormalized: "+c.getCertificate().getIssuer().getNameNormalized()).append("\n");
+			sb.append("\n").append("\n");
+			sb.append("CERT NotBefore: "+c.getCertificate().getNotBefore()).append("\n");
+			sb.append("CERT NotAfter: "+c.getCertificate().getNotAfter()).append("\n");
+			sb.append("\n").append("\n");
 			List<ExtendedKeyUsage> extendedKeyUsage = c.getCertificate().getExtendedKeyUsage();
 			if(extendedKeyUsage!=null) {
 				for (ExtendedKeyUsage usageEx : extendedKeyUsage) {
-					System.out.println("CERT ExtendedKeyUsage: "+usageEx);
-					System.out.println("\n");
+					sb.append("CERT ExtendedKeyUsage: "+usageEx).append("\n");
+					sb.append("\n").append("\n");
 				}
 			}
 			List<KeyUsage> keyUsage = c.getCertificate().getKeyUsage();
 			if(keyUsage!=null) {
 				for (KeyUsage usageEx : keyUsage) {
-					System.out.println("CERT KeyUsage: "+usageEx);
-					System.out.println("\n");
+					sb.append("CERT KeyUsage: "+usageEx).append("\n");
+					sb.append("\n").append("\n");
 					
 				}
 			}

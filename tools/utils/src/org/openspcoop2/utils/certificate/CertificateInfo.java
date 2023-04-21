@@ -83,14 +83,14 @@ public class CertificateInfo implements Serializable {
 	
 	public CertificatePrincipal getSubject() {
 		if(this.certificate.getSubjectX500Principal()!=null) {
-			return new CertificatePrincipal(this.certificate.getSubjectX500Principal(), PrincipalType.subject);
+			return new CertificatePrincipal(this.certificate.getSubjectX500Principal(), PrincipalType.SUBJECT);
 		}
 		return null;
 	}
 	
 	public CertificatePrincipal getIssuer() {
 		if(this.certificate.getIssuerX500Principal()!=null) {
-			return new CertificatePrincipal(this.certificate.getIssuerX500Principal(), PrincipalType.issuer);
+			return new CertificatePrincipal(this.certificate.getIssuerX500Principal(), PrincipalType.ISSUER);
 		}
 		return null;
 	}
@@ -129,7 +129,8 @@ public class CertificateInfo implements Serializable {
 		byte[] bytes = bi.toByteArray();
 	    StringBuilder sb = new StringBuilder();
 	    for (byte b : bytes) {
-	        sb.append(String.format("%02X"+delimiter, b));
+	    	String f = "%02X"+delimiter;
+	        sb.append(String.format(f, b));
 	    }
 	    String s = sb.toString();
 	    if(s.endsWith(delimiter) && s.length()>delimiter.length()) {
@@ -167,9 +168,9 @@ public class CertificateInfo implements Serializable {
 	private synchronized void initDigest(String algoritmo) throws CertificateException {
 		try {
 			if(this.digest==null) {
-				MessageDigest digest = org.openspcoop2.utils.digest.MessageDigestFactory.getMessageDigest(algoritmo);
-				digest.update(this.certificate.getEncoded());
-				this.digest = digest.digest();
+				MessageDigest digestEngine = org.openspcoop2.utils.digest.MessageDigestFactory.getMessageDigest(algoritmo);
+				digestEngine.update(this.certificate.getEncoded());
+				this.digest = digestEngine.digest();
 			}
 		}catch(Exception e) {
 			throw new CertificateException(e.getMessage(),e);
@@ -253,7 +254,7 @@ public class CertificateInfo implements Serializable {
 		return ExtendedKeyUsage.existsKeyUsageByBouncycastleKeyPurposeId(this.certificate.getEncoded(),oid);
 	}
 	
-	public List<CertificatePolicy> getCertificatePolicies() throws CertificateParsingException, CertificateEncodingException {
+	public List<CertificatePolicy> getCertificatePolicies() throws CertificateEncodingException {
 		return CertificatePolicy.getCertificatePolicies(this.certificate.getEncoded());
 	}
 	public CertificatePolicy getCertificatePolicy(String oid) throws CertificateParsingException, CertificateEncodingException {
@@ -285,7 +286,7 @@ public class CertificateInfo implements Serializable {
 	}
 	public boolean isCA() throws CertificateParsingException, CertificateEncodingException {
 		BasicConstraints bc = this.getBasicConstraints();
-		return bc !=null ? bc.isCA() : false;
+		return bc !=null && bc.isCA();
 	}
 	public long getPathLen() throws CertificateParsingException, CertificateEncodingException {
 		BasicConstraints bc = this.getBasicConstraints();
@@ -300,19 +301,19 @@ public class CertificateInfo implements Serializable {
 		return AuthorityInformationAccess.getAuthorityInformationAccess(this.certificate.getEncoded());
 	}
 	
-	public CRLDistributionPoints getCRLDistributionPoints() throws CertificateParsingException, CertificateEncodingException {
+	public CRLDistributionPoints getCRLDistributionPoints() throws CertificateEncodingException {
 		return CRLDistributionPoints.getCRLDistributionPoints(this.certificate.getEncoded());
 	}
 	
-	public SubjectAlternativeNames getSubjectAlternativeNames() throws CertificateParsingException, CertificateEncodingException {
+	public SubjectAlternativeNames getSubjectAlternativeNames() throws CertificateEncodingException {
 		return SubjectAlternativeNames.getSubjectAlternativeNames(this.certificate.getEncoded());
 	}
-	public List<String> getAlternativeNames() throws CertificateParsingException, CertificateEncodingException {
+	public List<String> getAlternativeNames() throws CertificateEncodingException {
 		SubjectAlternativeNames subjectAlternativeNames = this.getSubjectAlternativeNames();
 		return subjectAlternativeNames !=null ? subjectAlternativeNames.getAlternativeNames() : null;
 	}
 	
-	public Extensions getExtensions() throws CertificateParsingException, CertificateEncodingException {
+	public Extensions getExtensions() throws CertificateEncodingException {
 		return Extensions.getExtensions(this.certificate.getEncoded());
 	}
 	
@@ -383,7 +384,7 @@ public class CertificateInfo implements Serializable {
 		pkixParameters.addCertStore(crlCertstore);
 		pkixParameters.setRevocationEnabled(true);
 		CertPathValidator certPathValidator = org.openspcoop2.utils.certificate.CertificateFactory.getCertPathValidator();
-		List<java.security.cert.Certificate> lCertificate = new ArrayList<java.security.cert.Certificate>();
+		List<java.security.cert.Certificate> lCertificate = new ArrayList<>();
 		lCertificate.add(this.certificate);
 		CertificateFactory certificateFactory = org.openspcoop2.utils.certificate.CertificateFactory.getCertificateFactory();
 		certPathValidator.validate(certificateFactory.generateCertPath(lCertificate), pkixParameters);
@@ -393,18 +394,17 @@ public class CertificateInfo implements Serializable {
 		try {
 			Enumeration<String> aliasesEnum = trustStore.aliases();
 			while (aliasesEnum.hasMoreElements()) {
-				String alias = (String) aliasesEnum.nextElement();
-				java.security.cert.Certificate certificate = trustStore.getCertificate(alias);
-				if(checkSameCertificateInTrustStore) {
-					if(this._equals(certificate)) {
-						return true;
-					}
+				String alias = aliasesEnum.nextElement();
+				java.security.cert.Certificate certificateReaded = trustStore.getCertificate(alias);
+				if(checkSameCertificateInTrustStore && this.equalsEngine(certificateReaded)) {
+					return true;
 				}
-				if(this.isVerified(certificate)) {
+				if(this.isVerified(certificateReaded)) {
 					return true;
 				}
 			}
 		}catch(Exception e) {
+			// ignore
 		}
 		return false;
 	}
@@ -428,9 +428,9 @@ public class CertificateInfo implements Serializable {
 	
 	@Override
 	public boolean equals(Object certificate) {
-		return this._equals(certificate);
+		return this.equalsEngine(certificate);
 	}
-	private boolean _equals(Object certificate) {
+	private boolean equalsEngine(Object certificate) {
 		if(certificate instanceof java.security.cert.X509Certificate) {
 			java.security.cert.X509Certificate x509 = (java.security.cert.X509Certificate) certificate;
 			return this.equals(x509, true);
@@ -447,7 +447,7 @@ public class CertificateInfo implements Serializable {
 		}
 		return false;
 	}
-	/* Già gestite nell'equals(Object)
+	/** Già gestite nell'equals(Object)
 	public boolean equals(java.security.cert.X509Certificate certificate) {
 		return this.equals(certificate, true);
 	}

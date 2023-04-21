@@ -5636,7 +5636,7 @@ public class ControlStationCore {
 			_verificaConsistenzaProtocolli(core);
 		}
 	}
-	private synchronized static void _verificaConsistenzaProtocolli(ControlStationCore core) {
+	private static synchronized void _verificaConsistenzaProtocolli(ControlStationCore core) {
 		if(verificaConsistenzaProtocolli==null) {
 			StringBuilder verificaConfigurazioneProtocolliBuilder = new StringBuilder();
 			boolean configurazioneCorretta = core.verificaConfigurazioneProtocolliRispettoSoggettiDefault(verificaConfigurazioneProtocolliBuilder); 

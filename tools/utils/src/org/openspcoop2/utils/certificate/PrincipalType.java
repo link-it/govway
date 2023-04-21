@@ -29,6 +29,6 @@ package org.openspcoop2.utils.certificate;
  */
 public enum PrincipalType{
 	
-	subject, issuer
+	SUBJECT, ISSUER
 	
 }

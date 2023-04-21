@@ -19,8 +19,8 @@
  */
 package org.openspcoop2.utils.certificate;
 
-import java.security.cert.CertificateParsingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -55,57 +55,43 @@ public class Extensions {
 	}
 	
 	public List<String> getOIDs(){
-		return _getExtensionOIDs(this.getASN1OIDs());
+		return getExtensionOIDsEngine(this.getASN1OIDs());
 	}
 	public List<org.bouncycastle.asn1.ASN1ObjectIdentifier> getASN1OIDs(){
-		if(this.exts!=null) {
-			return _getExtensionASN1OIDs(this.exts.getExtensionOIDs());
-			
-		}
-		return null;
+		return getExtensionASN1OIDsEngine(this.exts!=null ? this.exts.getExtensionOIDs() : null);
 	}
 	
 	public List<String> getCriticalOIDs(){
-		return _getExtensionOIDs(this.getCriticalASN1OIDs());
+		return getExtensionOIDsEngine(this.getCriticalASN1OIDs());
 	}
 	public List<org.bouncycastle.asn1.ASN1ObjectIdentifier> getCriticalASN1OIDs(){
-		if(this.exts!=null) {
-			return _getExtensionASN1OIDs(this.exts.getCriticalExtensionOIDs());
-			
-		}
-		return null;
+		return getExtensionASN1OIDsEngine(this.exts!=null ? this.exts.getCriticalExtensionOIDs() : null);
 	}
 	
 	public List<String> getNonCriticalOIDs(){
-		return _getExtensionOIDs(this.getNonCriticalASN1OIDs());
+		return getExtensionOIDsEngine(this.getNonCriticalASN1OIDs());
 	}
 	public List<org.bouncycastle.asn1.ASN1ObjectIdentifier> getNonCriticalASN1OIDs(){
-		if(this.exts!=null) {
-			return _getExtensionASN1OIDs(this.exts.getNonCriticalExtensionOIDs());
-			
-		}
-		return null;
+		return getExtensionASN1OIDsEngine(this.exts!=null ? this.exts.getNonCriticalExtensionOIDs() : null);
 	}
 	
-	private List<String> _getExtensionOIDs(List<org.bouncycastle.asn1.ASN1ObjectIdentifier> l){
+	private List<String> getExtensionOIDsEngine(List<org.bouncycastle.asn1.ASN1ObjectIdentifier> l){
+		List<String> lR = null;
 		if(l!=null && !l.isEmpty()) {
-			List<String> lR = new ArrayList<>();
+			lR = new ArrayList<>();
 			for (org.bouncycastle.asn1.ASN1ObjectIdentifier asn1 : l) {
 				lR.add(asn1.getId());
 			}
-			return lR;
 		}
-		return null;
+		return lR;
 	}
-	private List<org.bouncycastle.asn1.ASN1ObjectIdentifier> _getExtensionASN1OIDs(org.bouncycastle.asn1.ASN1ObjectIdentifier [] ids){
+	private List<org.bouncycastle.asn1.ASN1ObjectIdentifier> getExtensionASN1OIDsEngine(org.bouncycastle.asn1.ASN1ObjectIdentifier [] ids){
+		List<org.bouncycastle.asn1.ASN1ObjectIdentifier> l = null;
 		if(ids!=null && ids.length>0) {
-			List<org.bouncycastle.asn1.ASN1ObjectIdentifier> l = new ArrayList<>();
-			for (ASN1ObjectIdentifier asn1ObjectIdentifier : ids) {
-				l.add(asn1ObjectIdentifier);
-			}
-			return l;
+			l = new ArrayList<>();
+			l.addAll(Arrays.asList(ids));
 		}
-		return null;
+		return l;
 	}
 	
 	public boolean hasExtension(String id) {
@@ -145,7 +131,7 @@ public class Extensions {
 		return false;
 	}
 	
-	public static Extensions getExtensions(byte[]encoded) throws CertificateParsingException{
+	public static Extensions getExtensions(byte[]encoded) {
 		
 		Extensions extObj = new Extensions();
 		

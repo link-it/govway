@@ -68,31 +68,25 @@ public class CRLDistributionPoint {
 		return s;
 	}
 	public String getDistributionPointName(int index) {
-		return this.distributionPointNames!=null && (this.distributionPointNames.size()>index) ? (this.distributionPointNames.get(index)!=null && this.distributionPointNames.get(index).getName()!=null) ? this.distributionPointNames.get(index).getName().toString() : null : null;
+		if(this.distributionPointNames!=null && (this.distributionPointNames.size()>index)) {
+			return (this.distributionPointNames.get(index)!=null && this.distributionPointNames.get(index).getName()!=null) ? this.distributionPointNames.get(index).getName().toString() : null;
+		}
+		return null;
 	}
 	public boolean containsDistributionPointName(String name) throws CertificateParsingException {
-		return _containsDistributionPointName(null, name);
+		return containsDistributionPointNameEngine(null, name);
 	}
 	public boolean containsDistributionPointName(int tagNum, String name) throws CertificateParsingException {
-		return _containsDistributionPointName(tagNum, name);
+		return containsDistributionPointNameEngine(tagNum, name);
 	}
-	private boolean _containsDistributionPointName(Integer tagNum, String name) throws CertificateParsingException {
+	private boolean containsDistributionPointNameEngine(Integer tagNum, String name) throws CertificateParsingException {
 		if(name==null) {
 			throw new CertificateParsingException("Param name undefined");
 		}
 		if(this.distributionPointNames!=null && !this.distributionPointNames.isEmpty()) {
 			for (GeneralName o : this.distributionPointNames) {
-				if(o.getName()!=null) {
-					if(name.equals(o.getName().toString())) {
-						if(tagNum==null) {
-							return true;
-						}
-						else {
-							if(tagNum.intValue() == o.getTagNo()) {
-								return true;
-							}
-						}
-					}
+				if(isEquals(o, tagNum, name)) {
+					return true;
 				}
 			}
 		}
@@ -122,31 +116,39 @@ public class CRLDistributionPoint {
 		return s;
 	}
 	public String getCRLIssuer(int index) {
-		return this.crlIssuers!=null && (this.crlIssuers.size()>index) ? (this.crlIssuers.get(index)!=null && this.crlIssuers.get(index).getName()!=null) ? this.crlIssuers.get(index).getName().toString() : null : null;
+		if(this.crlIssuers!=null && (this.crlIssuers.size()>index)) {
+			return (this.crlIssuers.get(index)!=null && this.crlIssuers.get(index).getName()!=null) ? this.crlIssuers.get(index).getName().toString() : null;
+		}
+		return null;
 	}
 	public boolean containsCRLIssuer(String name) throws CertificateParsingException {
-		return _containsCRLIssuer(null, name);
+		return containsCRLIssuerEngine(null, name);
 	}
 	public boolean containsCRLIssuer(int tagNum, String name) throws CertificateParsingException {
-		return _containsCRLIssuer(tagNum, name);
+		return containsCRLIssuerEngine(tagNum, name);
 	}
-	private boolean _containsCRLIssuer(Integer tagNum, String name) throws CertificateParsingException {
+	private boolean containsCRLIssuerEngine(Integer tagNum, String name) throws CertificateParsingException {
 		if(name==null) {
 			throw new CertificateParsingException("Param name undefined");
 		}
 		if(this.crlIssuers!=null && !this.crlIssuers.isEmpty()) {
 			for (GeneralName o : this.crlIssuers) {
-				if(o.getName()!=null) {
-					if(name.equals(o.getName().toString())) {
-						if(tagNum==null) {
-							return true;
-						}
-						else {
-							if(tagNum.intValue() == o.getTagNo()) {
-								return true;
-							}
-						}
-					}
+				if(isEquals(o, tagNum, name)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	private boolean isEquals(GeneralName o, Integer tagNum, String name) {
+		if(o.getName()!=null && name.equals(o.getName().toString())) {
+			if(tagNum==null) {
+				return true;
+			}
+			else {
+				if(tagNum.intValue() == o.getTagNo()) {
+					return true;
 				}
 			}
 		}

@@ -1,3 +1,9 @@
+2023-04-21  Andrea Poli <apoli@link.it>
+
+	* [Utils]
+	Aggiunta funzionalità OP-1580
+	Aggiunte utility che consentono di leggere chiavi private nei formati PKCS1 e PKCS8 (PEM/DER) in chiaro e cifrate.
+
 2023-04-20  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

@@ -23,6 +23,7 @@ package org.openspcoop2.utils.certificate;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.security.cert.CertStore;
@@ -114,21 +115,21 @@ public class CRLCertstore implements Serializable {
 	}
 	public CRLCertstore(String crlPaths, Map<String, byte[]> localResources) throws UtilsException {
 		List<String> crlPathsList = readCrlPaths(crlPaths);
-		this._init(crlPathsList, localResources);
+		this.initEngine(crlPathsList, localResources);
 	}
 	
 	public CRLCertstore(List<String> crlPaths) throws UtilsException{
 		this(crlPaths, null);
 	}
 	public CRLCertstore(List<String> crlPaths, Map<String, byte[]> localResources) throws UtilsException{
-		this._init(crlPaths, localResources);
+		this.initEngine(crlPaths, localResources);
 	}
 	
-	private void _init(List<String> crlPaths, Map<String, byte[]> localResources) throws UtilsException{
+	private void initEngine(List<String> crlPaths, Map<String, byte[]> localResources) throws UtilsException{
 		
 		try{
 			if(crlPaths==null || crlPaths.isEmpty()){
-				throw new Exception("crlPaths non indicato");
+				throw new UtilsException("crlPaths non indicato");
 			}
 		
 			this.crlPaths = crlPaths;
@@ -146,32 +147,7 @@ public class CRLCertstore implements Serializable {
 					continue;
 				}
 				
-				InputStream isStore = null;
-				try{
-					File fStore = new File(crlPath);
-					if(fStore.exists()){
-						isStore = new FileInputStream(fStore);
-					}else{
-						isStore = CRLCertstore.class.getResourceAsStream(crlPath);
-						if(isStore==null){
-							isStore = CRLCertstore.class.getResourceAsStream("/"+crlPath);
-						}
-						if(isStore==null){
-							throw new Exception("Store ["+crlPath+"] not found");
-						}
-					}
-					
-					byte[] crlBytes = Utilities.getAsByteArray(isStore);
-					this.crlBytes.add(crlBytes);
-				}finally{
-					try{
-						if(isStore!=null){
-							isStore.close();
-						}
-					}catch(Exception eClose){
-						// close
-					}
-				}
+				initEngineCrl(crlPath);
 			}
 			
 
@@ -182,6 +158,29 @@ public class CRLCertstore implements Serializable {
 		}
 		
 	}
+	private void initEngineCrl(String crlPath) throws UtilsException, IOException {
+		
+		byte[] crlBytesAdd = null;
+		File fStore = new File(crlPath);
+		boolean fStoreExists = fStore.exists();
+		try(InputStream isStore = fStoreExists ? new FileInputStream(fStore) : CRLCertstore.class.getResourceAsStream(crlPath);){
+			if(isStore!=null) {
+				crlBytesAdd = Utilities.getAsByteArray(isStore);
+			}
+		}
+		if(crlBytesAdd==null && !fStoreExists) {
+			try(InputStream isStore = CRLCertstore.class.getResourceAsStream("/"+crlPath);){
+				if(isStore!=null) {
+					crlBytesAdd = Utilities.getAsByteArray(isStore);
+				}
+			}
+		}
+		if(crlBytesAdd==null) {
+			throw new UtilsException("Store ["+crlPath+"] not found");
+		}
+		this.crlBytes.add(crlBytesAdd);
+	}
+	
 	
 	private void checkInit() throws UtilsException{
 		if(this.caCrls==null) {

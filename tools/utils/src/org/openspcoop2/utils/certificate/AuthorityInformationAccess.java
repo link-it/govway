@@ -36,8 +36,8 @@ import org.bouncycastle.asn1.x509.GeneralName;
  */
 public class AuthorityInformationAccess {
 
-	private static String CA_ISSUERS = "1.3.6.1.5.5.7.48.2";
-	private static String OCSP = "1.3.6.1.5.5.7.48.1";
+	private static final String CA_ISSUERS = "1.3.6.1.5.5.7.48.2";
+	private static final String OCSP = "1.3.6.1.5.5.7.48.1";
 	
 	private List<GeneralName> caIssuers = new ArrayList<>();
 	private List<GeneralName> ocsps = new ArrayList<>();
@@ -61,31 +61,25 @@ public class AuthorityInformationAccess {
 		return s;
 	}
 	public String getCAIssuer(int index) {
-		return this.caIssuers!=null && (this.caIssuers.size()>index) ? (this.caIssuers.get(index)!=null && this.caIssuers.get(index).getName()!=null) ? this.caIssuers.get(index).getName().toString() : null : null;
+		if(this.caIssuers!=null && (this.caIssuers.size()>index)) {
+			return (this.caIssuers.get(index)!=null && this.caIssuers.get(index).getName()!=null) ? this.caIssuers.get(index).getName().toString() : null;
+		}
+		return null;
 	}
 	public boolean containsCAIssuer(String name) throws CertificateParsingException {
-		return _containsCAIssuer(null, name);
+		return containsCAIssuerEngine(null, name);
 	}
 	public boolean containsCAIssuer(int tagNum, String name) throws CertificateParsingException {
-		return _containsCAIssuer(tagNum, name);
+		return containsCAIssuerEngine(tagNum, name);
 	}
-	private boolean _containsCAIssuer(Integer tagNum, String name) throws CertificateParsingException {
+	private boolean containsCAIssuerEngine(Integer tagNum, String name) throws CertificateParsingException {
 		if(name==null) {
 			throw new CertificateParsingException("Param name undefined");
 		}
 		if(this.caIssuers!=null && !this.caIssuers.isEmpty()) {
 			for (GeneralName o : this.caIssuers) {
-				if(o.getName()!=null) {
-					if(name.equals(o.getName().toString())) {
-						if(tagNum==null) {
-							return true;
-						}
-						else {
-							if(tagNum.intValue() == o.getTagNo()) {
-								return true;
-							}
-						}
-					}
+				if(isEquals(o, tagNum, name)) {
+					return true;
 				}
 			}
 		}
@@ -111,77 +105,90 @@ public class AuthorityInformationAccess {
 		return s;
 	}
 	public String getOCSP(int index) {
-		return this.ocsps!=null && (this.ocsps.size()>index) ? (this.ocsps.get(index)!=null && this.ocsps.get(index).getName()!=null) ? this.ocsps.get(index).getName().toString() : null : null;
+		if(this.ocsps!=null && (this.ocsps.size()>index)) {
+			return (this.ocsps.get(index)!=null && this.ocsps.get(index).getName()!=null) ? this.ocsps.get(index).getName().toString() : null;
+		}
+		return null;
 	}
 	public boolean containsOCSP(String name) throws CertificateParsingException {
-		return _containsOCSP(null, name);
+		return containsOCSPEngine(null, name);
 	}
 	public boolean containsOCSP(int tagNum, String name) throws CertificateParsingException {
-		return _containsOCSP(tagNum, name);
+		return containsOCSPEngine(tagNum, name);
 	}
-	private boolean _containsOCSP(Integer tagNum, String name) throws CertificateParsingException {
+	private boolean containsOCSPEngine(Integer tagNum, String name) throws CertificateParsingException {
 		if(name==null) {
 			throw new CertificateParsingException("Param name undefined");
 		}
 		if(this.ocsps!=null && !this.ocsps.isEmpty()) {
 			for (GeneralName o : this.ocsps) {
-				if(o.getName()!=null) {
-					if(name.equals(o.getName().toString())) {
-						if(tagNum==null) {
-							return true;
-						}
-						else {
-							if(tagNum.intValue() == o.getTagNo()) {
-								return true;
-							}
-						}
-					}
+				if(isEquals(o, tagNum, name)) {
+					return true;
 				}
 			}
 		}
 		return false;
 	}
 	
-	public static AuthorityInformationAccess getAuthorityInformationAccess(byte[]encoded) throws CertificateParsingException{
+	public static AuthorityInformationAccess getAuthorityInformationAccess(byte[]encoded) {
 		
 		org.bouncycastle.asn1.x509.Certificate c =org.bouncycastle.asn1.x509.Certificate.getInstance(encoded);
 		Extensions exts = c.getTBSCertificate().getExtensions();
 		if (exts != null){
 			org.bouncycastle.asn1.x509.AuthorityInformationAccess auth = org.bouncycastle.asn1.x509.AuthorityInformationAccess.fromExtensions(exts);
 			if(auth!=null) {
-				AuthorityInformationAccess aia = null;
+				return readAIA(auth);
+				/**AuthorityInformationAccess aia = readAIA(auth);
+				
+				System.out.println("======================");
+				System.out.println("AuthorityInformationAccess '"+auth.toString()+"'");
 				if(auth.getAccessDescriptions()!=null && auth.getAccessDescriptions().length>0) {
-					
-					aia = new AuthorityInformationAccess();
-					
+					System.out.println("Len '"+auth.getAccessDescriptions().length+"'");
 					for (int i = 0; i < auth.getAccessDescriptions().length; i++) {
 						AccessDescription ad = auth.getAccessDescriptions()[i];
-						if(ad.getAccessMethod()!=null) {
-							if(CA_ISSUERS.equals(ad.getAccessMethod().getId())) {
-								aia.caIssuers.add(ad.getAccessLocation());
-							}
-							else if(OCSP.equals(ad.getAccessMethod().getId())) {
-								aia.ocsps.add(ad.getAccessLocation());
-							}
-						}
+						System.out.println("AD["+i+"]=["+ad.getAccessMethod()+"]["+ad.getAccessLocation()+"]["+ad.getAccessLocation().getTagNo()+"]["+ad.getAccessLocation().getName()+"]");
 					}
 				}
+				System.out.println("======================");
 				
-//				System.out.println("======================");
-//				System.out.println("AuthorityInformationAccess '"+auth.toString()+"'");
-//				if(auth.getAccessDescriptions()!=null && auth.getAccessDescriptions().length>0) {
-//					System.out.println("Len '"+auth.getAccessDescriptions().length+"'");
-//					for (int i = 0; i < auth.getAccessDescriptions().length; i++) {
-//						AccessDescription ad = auth.getAccessDescriptions()[i];
-//						System.out.println("AD["+i+"]=["+ad.getAccessMethod()+"]["+ad.getAccessLocation()+"]["+ad.getAccessLocation().getTagNo()+"]["+ad.getAccessLocation().getName()+"]");
-//					}
-//				}
-//				System.out.println("======================");
-				
-				return aia;
+				return aia;*/
 			}
 		}
 		return null;
 		
+	}
+	private static AuthorityInformationAccess readAIA(org.bouncycastle.asn1.x509.AuthorityInformationAccess auth) {
+		AuthorityInformationAccess aia = null;
+		if(auth.getAccessDescriptions()!=null && auth.getAccessDescriptions().length>0) {
+			
+			aia = new AuthorityInformationAccess();
+			
+			for (int i = 0; i < auth.getAccessDescriptions().length; i++) {
+				AccessDescription ad = auth.getAccessDescriptions()[i];
+				if(ad.getAccessMethod()!=null) {
+					if(CA_ISSUERS.equals(ad.getAccessMethod().getId())) {
+						aia.caIssuers.add(ad.getAccessLocation());
+					}
+					else if(OCSP.equals(ad.getAccessMethod().getId())) {
+						aia.ocsps.add(ad.getAccessLocation());
+					}
+				}
+			}
+		}
+		return aia;
+	}
+	
+	private boolean isEquals(GeneralName o, Integer tagNum, String name) {
+		if(o.getName()!=null && name.equals(o.getName().toString())) {
+			if(tagNum==null) {
+				return true;
+			}
+			else {
+				if(tagNum.intValue() == o.getTagNo()) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

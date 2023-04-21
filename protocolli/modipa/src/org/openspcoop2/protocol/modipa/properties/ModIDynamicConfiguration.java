@@ -5726,7 +5726,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 					ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE);
 			((StringConsoleItem)modeItem).addLabelValue(ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_LABEL_PATH,
 					ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_VALUE_PATH);
-			if(HSMUtils.existsTIPOLOGIE_KEYSTORE_HSM(false, false)) {
+			if(HSMUtils.existsTipologieKeystoreHSM(false, false)) {
 				((StringConsoleItem)modeItem).addLabelValue(ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_LABEL_HSM,
 						ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_VALUE_HSM);
 			}
@@ -5927,7 +5927,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		if(typeItem!=null) {
 			if(hsm) {
 				List<String> l = new ArrayList<String>();
-				HSMUtils.fillTIPOLOGIE_KEYSTORE(false, false, l);
+				HSMUtils.fillTipologieKeystore(false, false, l);
 				if(l!=null && !l.isEmpty()) {
 					for (String hsmType : l) {
 						((StringConsoleItem)typeItem).addLabelValue(hsmType, hsmType);
@@ -5983,7 +5983,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		AbstractConsoleItem<?> keyPasswordItem = 	
 				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_KEY_PASSWORD_ID);
 		if(keyPasswordItem!=null) {
-			if(ridefinisci && (!hsm || HSMUtils.HSM_CONFIGURABLE_KEY_PASSWORD)) {
+			if(ridefinisci && (!hsm || HSMUtils.isHsmConfigurableKeyPassword())) {
 				keyPasswordItem.setType(ConsoleItemType.TEXT_EDIT);
 			}
 			else {
@@ -6311,9 +6311,9 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				((StringConsoleItem)typeItem).addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_LABEL_JKS,
 						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_VALUE_JKS);
 			}
-			if(HSMUtils.existsTIPOLOGIE_KEYSTORE_HSM(true, false)) {
+			if(HSMUtils.existsTipologieKeystoreHSM(true, false)) {
 				List<String> l = new ArrayList<String>();
-				HSMUtils.fillTIPOLOGIE_KEYSTORE(true, false, l);
+				HSMUtils.fillTipologieKeystore(true, false, l);
 				if(l!=null && !l.isEmpty()) {
 					typeItem.setReloadOnChange(true);
 					for (String hsmType : l) {

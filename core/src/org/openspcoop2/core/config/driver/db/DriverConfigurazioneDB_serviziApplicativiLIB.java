@@ -251,7 +251,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				String subject = null;
 				if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getSubject()!=null && !"".equals(credenzialiInvocazionePorta.getSubject()))
 					subject = credenzialiInvocazionePorta.getSubject();
-				stm.setString(index++, (subject != null ? CertificateUtils.formatPrincipal(subject, PrincipalType.subject) : null));
+				stm.setString(index++, (subject != null ? CertificateUtils.formatPrincipal(subject, PrincipalType.SUBJECT) : null));
 				String subjectCN = null;
 				if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getCnSubject()!=null && !"".equals(credenzialiInvocazionePorta.getCnSubject()))
 					subjectCN = credenzialiInvocazionePorta.getCnSubject();
@@ -264,7 +264,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				else {
 					if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getIssuer()!=null && !"".equals(credenzialiInvocazionePorta.getIssuer()))
 						issuer = credenzialiInvocazionePorta.getIssuer();
-					stm.setString(index++, (issuer != null ? CertificateUtils.formatPrincipal(issuer, PrincipalType.issuer) : null));
+					stm.setString(index++, (issuer != null ? CertificateUtils.formatPrincipal(issuer, PrincipalType.ISSUER) : null));
 				}
 				String issuerCN = null;
 				if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getCnIssuer()!=null && !"".equals(credenzialiInvocazionePorta.getCnIssuer()))
@@ -434,7 +434,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 						String subjectCredenziale = null;
 						if(credenziale!=null && credenziale.getSubject()!=null && !"".equals(credenziale.getSubject()))
 							subjectCredenziale = credenziale.getSubject();
-						stm.setString(index++, (subjectCredenziale != null ? CertificateUtils.formatPrincipal(subjectCredenziale, PrincipalType.subject) : null));
+						stm.setString(index++, (subjectCredenziale != null ? CertificateUtils.formatPrincipal(subjectCredenziale, PrincipalType.SUBJECT) : null));
 						String subjectCredenzialeCN = null;
 						if(credenziale!=null && credenziale.getCnSubject()!=null && !"".equals(credenziale.getCnSubject()))
 							subjectCredenzialeCN = credenziale.getCnSubject();
@@ -447,7 +447,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 						else {
 							if(credenziale!=null && credenziale.getIssuer()!=null && !"".equals(credenziale.getIssuer()))
 								issuerCredenziale = credenziale.getIssuer();
-							stm.setString(index++, (issuerCredenziale != null ? CertificateUtils.formatPrincipal(issuerCredenziale, PrincipalType.issuer) : null));
+							stm.setString(index++, (issuerCredenziale != null ? CertificateUtils.formatPrincipal(issuerCredenziale, PrincipalType.ISSUER) : null));
 						}
 						String issuerCredenzialeCN = null;
 						if(credenziale!=null && credenziale.getCnIssuer()!=null && !"".equals(credenziale.getCnIssuer()))
@@ -696,7 +696,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				subject = null;
 				if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getSubject()!=null && !"".equals(credenzialiInvocazionePorta.getSubject()))
 					subject = credenzialiInvocazionePorta.getSubject();
-				stm.setString(index++, (subject != null ? CertificateUtils.formatPrincipal(subject, PrincipalType.subject) : null));
+				stm.setString(index++, (subject != null ? CertificateUtils.formatPrincipal(subject, PrincipalType.SUBJECT) : null));
 				subjectCN = null;
 				if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getCnSubject()!=null && !"".equals(credenzialiInvocazionePorta.getCnSubject()))
 					subjectCN = credenzialiInvocazionePorta.getCnSubject();
@@ -709,7 +709,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				else {
 					if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getIssuer()!=null && !"".equals(credenzialiInvocazionePorta.getIssuer()))
 						issuer = credenzialiInvocazionePorta.getIssuer();
-					stm.setString(index++, (issuer != null ? CertificateUtils.formatPrincipal(issuer, PrincipalType.issuer) : null));
+					stm.setString(index++, (issuer != null ? CertificateUtils.formatPrincipal(issuer, PrincipalType.ISSUER) : null));
 				}
 				issuerCN = null;
 				if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getCnIssuer()!=null && !"".equals(credenzialiInvocazionePorta.getCnIssuer()))
@@ -852,7 +852,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 						String subjectCredenziale = null;
 						if(credenziale!=null && credenziale.getSubject()!=null && !"".equals(credenziale.getSubject()))
 							subjectCredenziale = credenziale.getSubject();
-						stm.setString(index++, (subjectCredenziale != null ? CertificateUtils.formatPrincipal(subjectCredenziale, PrincipalType.subject) : null));
+						stm.setString(index++, (subjectCredenziale != null ? CertificateUtils.formatPrincipal(subjectCredenziale, PrincipalType.SUBJECT) : null));
 						String subjectCredenzialeCN = null;
 						if(credenziale!=null && credenziale.getCnSubject()!=null && !"".equals(credenziale.getCnSubject()))
 							subjectCredenzialeCN = credenziale.getCnSubject();
@@ -865,7 +865,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 						else {
 							if(credenziale!=null && credenziale.getIssuer()!=null && !"".equals(credenziale.getIssuer()))
 								issuerCredenziale = credenziale.getIssuer();
-							stm.setString(index++, (issuerCredenziale != null ? CertificateUtils.formatPrincipal(issuerCredenziale, PrincipalType.issuer) : null));
+							stm.setString(index++, (issuerCredenziale != null ? CertificateUtils.formatPrincipal(issuerCredenziale, PrincipalType.ISSUER) : null));
 						}
 						String issuerCredenzialeCN = null;
 						if(credenziale!=null && credenziale.getCnIssuer()!=null && !"".equals(credenziale.getCnIssuer()))

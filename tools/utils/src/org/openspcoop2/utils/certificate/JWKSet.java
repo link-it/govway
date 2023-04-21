@@ -28,6 +28,7 @@ import org.apache.cxf.rs.security.jose.jwk.JsonWebKey;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
 import org.apache.cxf.rs.security.jose.jwk.JwkReaderWriter;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.json.JSONUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -42,27 +43,27 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class JWKSet {
 
 	private JwkReaderWriter engineCxf = new JwkReaderWriter();
-	private String jwk_set_json;
-	private String jwk_set_json_pretty;
-	private JsonWebKeys jwk_set_cxf;
-	private com.nimbusds.jose.jwk.JWKSet jwk_set_nimbusds;
-	private JsonNode jwk_set_node;
-	private List<JWK> jwk_set = new ArrayList<>();
+	private String jwkSetJson;
+	private String jwkSetJsonPretty;
+	private JsonWebKeys jwkSetCxf;
+	private com.nimbusds.jose.jwk.JWKSet jwkSetNimbusds;
+	private JsonNode jwkSetNode;
+	private List<JWK> jwkSetList = new ArrayList<>();
 	
 	public JWKSet(String json) {
-		this.jwk_set_json = json;
+		this.jwkSetJson = json;
 	}
 	
 	public JWKSet(JsonWebKeys jwk) {
-		this.jwk_set_cxf = jwk;
+		this.jwkSetCxf = jwk;
 	}
 	
 	public JWKSet(com.nimbusds.jose.jwk.JWKSet jwk) {
-		this.jwk_set_nimbusds = jwk;
+		this.jwkSetNimbusds = jwk;
 	}
 	
 	public JWKSet(List<JWK> list) {
-		this.jwk_set = list;
+		this.jwkSetList = list;
 	}
 	
 	public JWKSet() {
@@ -71,161 +72,176 @@ public class JWKSet {
 	
 	
 	public void addJwk(JWK jwk) {
-		this.jwk_set.add(jwk);
+		this.jwkSetList.add(jwk);
 		
 		// forzo rebuild
-		this.jwk_set_json = null;
-		this.jwk_set_json_pretty = null;
-		this.jwk_set_cxf = null;
-		this.jwk_set_nimbusds = null;
-		this.jwk_set_node = null;
+		this.jwkSetJson = null;
+		this.jwkSetJsonPretty = null;
+		this.jwkSetCxf = null;
+		this.jwkSetNimbusds = null;
+		this.jwkSetNode = null;
 				
 	}
 	
 	private synchronized void initJwks() throws UtilsException {
-		if(this.jwk_set==null || this.jwk_set.isEmpty()) {
+		if(this.jwkSetList==null || this.jwkSetList.isEmpty()) {
 			if(this.getJsonWebKeys()==null && this.getJWKSet()==null){
 				throw new UtilsException("JWK Set not defined");
 			}
-			if(this.jwk_set_cxf!=null) {
-				try {
-					Iterator<JsonWebKey> it = this.jwk_set_cxf.getKeys().iterator();
-					while (it.hasNext()) {
-						JsonWebKey jsonWebKey = (JsonWebKey) it.next();
-						this.jwk_set.add(new JWK(jsonWebKey));
-					}
-				}catch(Exception e) {
-					throw new UtilsException(e.getMessage(),e);
-				}
+			if(this.jwkSetCxf!=null) {
+				initJwksFromSetCxf();
 			}
 			else {
-				try {
-					Iterator<com.nimbusds.jose.jwk.JWK> it = this.jwk_set_nimbusds.getKeys().iterator();
-					while (it.hasNext()) {
-						com.nimbusds.jose.jwk.JWK jwk = (com.nimbusds.jose.jwk.JWK) it.next();
-						this.jwk_set.add(new JWK(jwk));
-					}
-				}catch(Exception e) {
-					throw new UtilsException(e.getMessage(),e);
-				}
+				initJwksFromSetNimbusds();
 			}
 		}
 	}
+	private synchronized void initJwksFromSetCxf() throws UtilsException {
+		try {
+			Iterator<JsonWebKey> it = this.jwkSetCxf.getKeys().iterator();
+			while (it.hasNext()) {
+				JsonWebKey jsonWebKey = it.next();
+				this.jwkSetList.add(new JWK(jsonWebKey));
+			}
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	private synchronized void initJwksFromSetNimbusds() throws UtilsException {
+		try {
+			Iterator<com.nimbusds.jose.jwk.JWK> it = this.jwkSetNimbusds.getKeys().iterator();
+			while (it.hasNext()) {
+				com.nimbusds.jose.jwk.JWK jwk = it.next();
+				this.jwkSetList.add(new JWK(jwk));
+			}
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
 	public List<JWK> getJwks() throws UtilsException {
-		if(this.jwk_set==null || this.jwk_set.isEmpty()) {
+		if(this.jwkSetList==null || this.jwkSetList.isEmpty()) {
 			this.initJwks();
 		}
-		return this.jwk_set;
+		return this.jwkSetList;
 	}
 	
 	
 	
 	private synchronized void initCxf() throws UtilsException {
-		if(this.jwk_set_cxf==null) {
-			if(this.jwk_set_json==null){
+		if(this.jwkSetCxf==null) {
+			if(this.jwkSetJson==null){
 				throw new UtilsException("Json not defined");
 			}
-			this.jwk_set_cxf = this.engineCxf.jsonToJwkSet(this.jwk_set_json);
+			this.jwkSetCxf = this.engineCxf.jsonToJwkSet(this.jwkSetJson);
 		}
 	}
 	public JsonWebKeys getJsonWebKeys() throws UtilsException {
-		if(this.jwk_set_cxf==null) {
+		if(this.jwkSetCxf==null) {
 			this.initCxf();
 		}
-		return this.jwk_set_cxf;
+		return this.jwkSetCxf;
 	}
 	
 	private synchronized void initNimbusds() throws UtilsException {
-		if(this.jwk_set_nimbusds==null) {
-			if(this.jwk_set_json==null){
+		if(this.jwkSetNimbusds==null) {
+			if(this.jwkSetJson==null){
 				throw new UtilsException("Json not defined");
 			}
 			try {
-				this.jwk_set_nimbusds = com.nimbusds.jose.jwk.JWKSet.parse(this.jwk_set_json);
+				this.jwkSetNimbusds = com.nimbusds.jose.jwk.JWKSet.parse(this.jwkSetJson);
 			}catch(Exception e) {
 				throw new UtilsException(e.getMessage(),e);
 			}
 		}
 	}
 	public com.nimbusds.jose.jwk.JWKSet getJWKSet() throws UtilsException {
-		if(this.jwk_set_nimbusds==null) {
+		if(this.jwkSetNimbusds==null) {
 			this.initNimbusds();
 		}
-		return this.jwk_set_nimbusds;
+		return this.jwkSetNimbusds;
 	}
 	
 	private synchronized void initJson() throws UtilsException {
-		if(this.jwk_set_json==null) {
-			if( (this.jwk_set==null || this.jwk_set.isEmpty()) && this.jwk_set_cxf==null && this.jwk_set_nimbusds==null){
+		if(this.jwkSetJson==null) {
+			if( (this.jwkSetList==null || this.jwkSetList.isEmpty()) && this.jwkSetCxf==null && this.jwkSetNimbusds==null){
 				throw new UtilsException("JWK Set not defined");
 			}
-			if(this.jwk_set!=null && !this.jwk_set.isEmpty()) {
-				List<com.nimbusds.jose.jwk.JWK> list = new ArrayList<>();
-				for (JWK jwkOp : this.jwk_set) {
-					list.add(jwkOp.getJWK());
-				}
-				com.nimbusds.jose.jwk.JWKSet set = new com.nimbusds.jose.jwk.JWKSet(list);
-				this.jwk_set_json = set.toString();
+			if(this.jwkSetList!=null && !this.jwkSetList.isEmpty()) {
+				initJsonFromJwkSetList();
 			}
-			else if(this.jwk_set_cxf!=null) {
-				try {
-					this.jwk_set_json = this.engineCxf.jwkSetToJson(this.jwk_set_cxf);
-				}catch(Exception e) {
-					throw new UtilsException(e.getMessage(),e);
-				}
+			else if(this.jwkSetCxf!=null) {
+				initJsonFromJwkSetCxf();
 			}
 			else {
-				try {
-					this.jwk_set_json = this.jwk_set_nimbusds.toString();
-				}catch(Exception e) {
-					throw new UtilsException(e.getMessage(),e);
-				}
+				initJsonFromJwkSetNimbusds();
 			}
+		}
+	}
+	private synchronized void initJsonFromJwkSetList() throws UtilsException {
+		List<com.nimbusds.jose.jwk.JWK> list = new ArrayList<>();
+		for (JWK jwkOp : this.jwkSetList) {
+			list.add(jwkOp.getJWK());
+		}
+		com.nimbusds.jose.jwk.JWKSet set = new com.nimbusds.jose.jwk.JWKSet(list);
+		this.jwkSetJson = set.toString();
+	}
+	private synchronized void initJsonFromJwkSetCxf() throws UtilsException {
+		try {
+			this.jwkSetJson = this.engineCxf.jwkSetToJson(this.jwkSetCxf);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	private synchronized void initJsonFromJwkSetNimbusds() throws UtilsException {
+		try {
+			this.jwkSetJson = this.jwkSetNimbusds.toString();
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
 		}
 	}
 	public String getJson() throws UtilsException {
-		if(this.jwk_set_json==null) {
+		if(this.jwkSetJson==null) {
 			this.initJson();
 		}
-		return this.jwk_set_json;
+		return this.jwkSetJson;
 	}
 	
 	private synchronized void initJsonPretty() throws UtilsException {
-		if(this.jwk_set_json_pretty==null) {
+		if(this.jwkSetJsonPretty==null) {
 			try {
-				if(this.jwk_set_node==null) {
+				if(this.jwkSetNode==null) {
 					initNode();
 				}
-				this.jwk_set_json_pretty = JSONUtils.getInstance(true).toString(this.jwk_set_node);
+				this.jwkSetJsonPretty = JSONUtils.getInstance(true).toString(this.jwkSetNode);
 			}catch(Exception e) {
 				throw new UtilsException(e.getMessage(),e);
 			}
 		}
 	}
 	public String getJsonPretty() throws UtilsException {
-		if(this.jwk_set_json_pretty==null) {
+		if(this.jwkSetJsonPretty==null) {
 			this.initJsonPretty();
 		}
-		return this.jwk_set_json_pretty;
+		return this.jwkSetJsonPretty;
 	}
 	
 	private synchronized void initNode() throws UtilsException {
-		if(this.jwk_set_node==null) {
+		if(this.jwkSetNode==null) {
 			try {
-				if(this.jwk_set_json==null) {
+				if(this.jwkSetJson==null) {
 					initJson();
 				}
-				this.jwk_set_node = JSONUtils.getInstance().getAsNode(this.jwk_set_json);
+				this.jwkSetNode = JSONUtils.getInstance().getAsNode(this.jwkSetJson);
 			}catch(Exception e) {
 				throw new UtilsException(e.getMessage(),e);
 			}
 		}
 	}
 	public JsonNode getNode() throws UtilsException {
-		if(this.jwk_set_node==null) {
+		if(this.jwkSetNode==null) {
 			this.initNode();
 		}
-		return this.jwk_set_node;
+		return this.jwkSetNode;
 	}
 
 	@Override
@@ -233,7 +249,7 @@ public class JWKSet {
 		try {
 			return this.getJsonPretty();
 		}catch(Exception e) {
-			throw new RuntimeException(e.getMessage(),e);
+			throw new UtilsRuntimeException(e.getMessage(),e);
 		}
 	}
 }

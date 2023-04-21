@@ -56,7 +56,7 @@ public class CredenzialeTrasporto extends AbstractCredenziale {
 	@Override
 	public String getCredenziale() throws UtilsException {
 		if(isSsl(this.tipoAutenticazione)) {
-			return CertificateUtils.formatPrincipal(this.credential, PrincipalType.subject);
+			return CertificateUtils.formatPrincipal(this.credential, PrincipalType.SUBJECT);
 		}
 		else {
 			return this.credential;

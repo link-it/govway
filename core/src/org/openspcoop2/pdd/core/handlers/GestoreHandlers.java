@@ -158,7 +158,7 @@ public class GestoreHandlers  {
 	private static void initialize(Logger logCore,Logger logConsoleInit){
 		initialize(null,logCore,logConsoleInit, null);
 	}
-	private synchronized static void initialize(MsgDiagnostico msgDiag,Logger logCore, Logger logConsoleInit,IState state){
+	private static synchronized void initialize(MsgDiagnostico msgDiag,Logger logCore, Logger logConsoleInit,IState state){
 		if(GestoreHandlers.initialize==false){
 			
 			GestoreHandlers.properties = OpenSPCoop2Properties.getInstance();

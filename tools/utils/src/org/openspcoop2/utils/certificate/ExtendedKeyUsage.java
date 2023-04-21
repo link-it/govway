@@ -88,9 +88,6 @@ public enum ExtendedKeyUsage {
 		this.oid = purposeId.getId();
 		this.purposeId = purposeId;
 	}
-	ExtendedKeyUsage(String oid ) {
-		this.oid = oid;
-	}
 	
 	private String oid;
 	private org.bouncycastle.asn1.x509.KeyPurposeId purposeId;
@@ -179,13 +176,13 @@ public enum ExtendedKeyUsage {
 		if(x509.getCertificate()!=null) {
 			return getKeyUsage(x509.getCertificate());
 		}
-		return new ArrayList<ExtendedKeyUsage>();
+		return new ArrayList<>();
 	}
 	public static List<ExtendedKeyUsage> getKeyUsage(CertificateInfo x509) throws CertificateParsingException{
 		return getKeyUsage(x509.getCertificate());
 	}
 	public static List<ExtendedKeyUsage> getKeyUsage(X509Certificate x509) throws CertificateParsingException{
-		List<ExtendedKeyUsage> l = new ArrayList<ExtendedKeyUsage>();
+		List<ExtendedKeyUsage> l = new ArrayList<>();
 		ExtendedKeyUsage [] values = ExtendedKeyUsage.values();
 		for (ExtendedKeyUsage keyUsage : values) {
 			if(keyUsage.hasKeyUsage(x509)) {
@@ -195,7 +192,7 @@ public enum ExtendedKeyUsage {
 		return l;
 	}
 	public static List<ExtendedKeyUsage> getKeyUsage(byte[]encoded){
-		List<ExtendedKeyUsage> l = new ArrayList<ExtendedKeyUsage>();
+		List<ExtendedKeyUsage> l = new ArrayList<>();
 		ExtendedKeyUsage [] values = ExtendedKeyUsage.values();
 		for (ExtendedKeyUsage keyUsage : values) {
 			if(keyUsage.hasKeyUsage(encoded)) {

@@ -86,7 +86,7 @@ public class JacksonXmlUtils extends AbstractUtils {
 	
 
 	private static ObjectMapper mapper;
-	private synchronized static void initMapper()  {
+	private static synchronized void initMapper()  {
 		if(mapper==null){
 			mapper = JacksonXmlProviderCustomized.getObjectMapper(false, timeZone);
 			mapper.setSerializationInclusion(Include.NON_NULL);
@@ -100,7 +100,7 @@ public class JacksonXmlUtils extends AbstractUtils {
 	}
 	
 	private static ObjectWriter writer;
-	private synchronized static void initWriter()  {
+	private static synchronized void initWriter()  {
 		if(mapper==null){
 			initMapper();
 		}
@@ -116,7 +116,7 @@ public class JacksonXmlUtils extends AbstractUtils {
 	}
 	
 	private static ObjectWriter writerPrettyPrint;
-	private synchronized static void initWriterPrettyPrint()  {
+	private static synchronized void initWriterPrettyPrint()  {
 		if(mapper==null){
 			initMapper();
 		}

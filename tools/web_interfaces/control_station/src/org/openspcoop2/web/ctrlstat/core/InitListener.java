@@ -402,7 +402,7 @@ public class InitListener implements ServletContextListener {
 				if(StringUtils.isNotEmpty(hsmConfig)) {
 					File f = new File(hsmConfig);
 					HSMManager.init(f, consoleProperties.isHSMRequired(), log, false);
-					HSMUtils.HSM_CONFIGURABLE_KEY_PASSWORD = consoleProperties.isHSMKeyPasswordConfigurable();
+					HSMUtils.setHsmConfigurableKeyPassword(consoleProperties.isHSMKeyPasswordConfigurable());
 				}
 			} catch (Exception e) {
 				String msgErrore = "Errore durante l'inizializzazione del manager HSM: " + e.getMessage();

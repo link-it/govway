@@ -25,6 +25,7 @@ package org.openspcoop2.utils;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**	
@@ -38,7 +39,7 @@ import java.util.List;
 
 public class UtilsMultiException extends Exception {
 
-	private List<Throwable> exceptions = new ArrayList<>();
+	private final List<Throwable> exceptions = new ArrayList<>();
 	
 	public List<Throwable> getExceptions() {
 		return this.exceptions;
@@ -75,8 +76,7 @@ public class UtilsMultiException extends Exception {
 	
 	@Override
 	public void printStackTrace(PrintStream s) {
-		if(this.exceptions!=null && !this.exceptions.isEmpty()) {
-			//for (int i = 0; i < this.exceptions.size(); i++) {
+		if(!this.exceptions.isEmpty()) {
 			for (int i = (this.exceptions.size()-1); i >= 0; i--) {
 				if(i>0) {
 					s.print("\n");
@@ -92,8 +92,7 @@ public class UtilsMultiException extends Exception {
 
 	@Override
 	public void printStackTrace(PrintWriter s) {
-		if(this.exceptions!=null && !this.exceptions.isEmpty()) {
-			//for (int i = 0; i < this.exceptions.size(); i++) {
+		if(!this.exceptions.isEmpty()) {
 			for (int i = (this.exceptions.size()-1); i >= 0; i--) {
 				if(i>0) {
 					s.print("\n");
@@ -109,17 +108,14 @@ public class UtilsMultiException extends Exception {
 	
 	@Override
 	public StackTraceElement[] getStackTrace() {
-		if(this.exceptions!=null && !this.exceptions.isEmpty()) {
+		if(!this.exceptions.isEmpty()) {
 			List<StackTraceElement> listStackTraceElement = new ArrayList<>();
-			//for (int i = 0; i < this.exceptions.size(); i++) {
 			for (int i = (this.exceptions.size()-1); i >= 0; i--) {
 				StackTraceElement sElement = new StackTraceElement(UtilsMultiException.class.getName(), "Position_"+(i+1), "MultiException_"+(i+1), (i+1));
 				listStackTraceElement.add(sElement);
 				StackTraceElement[] tmp = this.exceptions.get(i).getStackTrace();
 				if(tmp!=null && tmp.length>0) {
-					for (int j = 0; j < tmp.length; j++) {
-						listStackTraceElement.add(tmp[j]);		
-					}
+					listStackTraceElement.addAll(Arrays.asList(tmp));
 				}
 			}
 			return listStackTraceElement.toArray(new StackTraceElement[1]);

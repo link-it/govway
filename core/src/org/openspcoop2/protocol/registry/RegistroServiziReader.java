@@ -2543,7 +2543,7 @@ public class RegistroServiziReader {
 						esitoAutorizzazione.setDetails(error);
 						return esitoAutorizzazione;
 					}
-					if(CertificateUtils.sslVerify(portaDominio.getSubject(), pdd, PrincipalType.subject, this.log)==false){
+					if(CertificateUtils.sslVerify(portaDominio.getSubject(), pdd, PrincipalType.SUBJECT, this.log)==false){
 					//if(pdd.equals(portaDominio.getSubject())==false){
 						String error = "subject estratto dal certificato client ["+pdd+"] diverso da quello registrato per la porta di dominio "+portaDominio.getNome()+" del mittente ["+portaDominio.getSubject()+"]";
 						this.log.error("Autorizzazione ("+soggetto.toString()+" -> "+servizio.toString()+") fallita: "+error);

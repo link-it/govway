@@ -42,7 +42,7 @@ public class MessageDigestFactory {
 	}
 	
 	private static Provider provider = null;
-	private synchronized static Provider _getProvider() {
+	private static synchronized Provider _getProvider() {
 		if ( provider == null )
 			provider = Security.getProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
 		return provider;

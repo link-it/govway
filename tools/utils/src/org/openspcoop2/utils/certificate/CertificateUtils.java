@@ -46,12 +46,14 @@ import org.springframework.web.util.UriUtils;
  * @version $Rev$, $Date$
  */
 public class CertificateUtils {
+	
+	private CertificateUtils() {}
 
 	public static void printCertificate(StringBuilder bf,List<java.security.cert.X509Certificate> certs){
 		printCertificate(bf, certs, false);
 	}
 	public static void printCertificate(StringBuilder bf,List<java.security.cert.X509Certificate> certs, boolean addPrefix){
-		if(certs.size()>0) {
+		if(!certs.isEmpty()) {
 			java.security.cert.X509Certificate[] certsArray = certs.toArray(new java.security.cert.X509Certificate[1]);
 			printCertificate(bf, certsArray, addPrefix);
 		}
@@ -98,17 +100,17 @@ public class CertificateUtils {
 			bf.append("\t"+prefix+"getIssuerX500Principal().getName(X500Principal.CANONICAL)="+cert.getIssuerX500Principal().getName(X500Principal.CANONICAL)+"\n");
 			bf.append("\t"+prefix+"getIssuerX500Principal().getName(X500Principal.RFC1779)="+cert.getIssuerX500Principal().getName(X500Principal.RFC1779)+"\n");
 			bf.append("\t"+prefix+"getIssuerX500Principal().getName(X500Principal.RFC2253)="+cert.getIssuerX500Principal().getName(X500Principal.RFC2253)+"\n");
-//				Map<String,String> oidMapCanonical = new HashMap<String, String>();
-//				bf.append("\t"+prefix+"getIssuerX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical)="+
-//						cert.getIssuerX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical));
-//				if(oidMapCanonical!=null && oidMapCanonical.size()>0){
-//					Iterator<String> it = oidMapCanonical.keySet().iterator();
-//					while (it.hasNext()) {
-//						String key = (String) it.next();
-//						String value = oidMapCanonical.get(key);
-//						bf.append("\t"+prefix+"getIssuerX500Principal() ["+key+"]=["+value+"]"+"\n");
-//					}
-//				}
+			/**	Map<String,String> oidMapCanonical = new HashMap<String, String>();
+				bf.append("\t"+prefix+"getIssuerX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical)="+
+						cert.getIssuerX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical));
+				if(oidMapCanonical!=null && oidMapCanonical.size()>0){
+					Iterator<String> it = oidMapCanonical.keySet().iterator();
+					while (it.hasNext()) {
+						String key = (String) it.next();
+						String value = oidMapCanonical.get(key);
+						bf.append("\t"+prefix+"getIssuerX500Principal() ["+key+"]=["+value+"]"+"\n");
+					}
+				}*/
 		}
 		else{
 			bf.append("\t"+prefix+"cert.getIssuerX500Principal() is null"+"\n");
@@ -132,17 +134,17 @@ public class CertificateUtils {
 			bf.append("\t"+prefix+"getSubjectX500Principal().getName(X500Principal.CANONICAL)="+cert.getSubjectX500Principal().getName(X500Principal.CANONICAL)+"\n");
 			bf.append("\t"+prefix+"getSubjectX500Principal().getName(X500Principal.RFC1779)="+cert.getSubjectX500Principal().getName(X500Principal.RFC1779)+"\n");
 			bf.append("\t"+prefix+"getSubjectX500Principal().getName(X500Principal.RFC2253)="+cert.getSubjectX500Principal().getName(X500Principal.RFC2253)+"\n");
-//				Map<String,String> oidMapCanonical = new HashMap<String, String>();
-//				bf.append("\t"+prefix+"getSubjectX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical)="+
-//						cert.getSubjectX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical));
-//				if(oidMapCanonical!=null && oidMapCanonical.size()>0){
-//					Iterator<String> it = oidMapCanonical.keySet().iterator();
-//					while (it.hasNext()) {
-//						String key = (String) it.next();
-//						String value = oidMapCanonical.get(key);
-//						bf.append("\t"+prefix+"getSubjectX500Principal() ["+key+"]=["+value+"]"+"\n");
-//					}
-//				}
+			/**	Map<String,String> oidMapCanonical = new HashMap<String, String>();
+				bf.append("\t"+prefix+"getSubjectX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical)="+
+						cert.getSubjectX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical));
+				if(oidMapCanonical!=null && oidMapCanonical.size()>0){
+					Iterator<String> it = oidMapCanonical.keySet().iterator();
+					while (it.hasNext()) {
+						String key = (String) it.next();
+						String value = oidMapCanonical.get(key);
+						bf.append("\t"+prefix+"getSubjectX500Principal() ["+key+"]=["+value+"]"+"\n");
+					}
+				}*/
 		}
 		else{
 			bf.append("\t"+prefix+"cert.getSubjectX500Principal() is null"+"\n");
@@ -156,102 +158,129 @@ public class CertificateUtils {
 	
 	/* UTILITY SSL */
 	
-	private static final boolean _trimValue_beforeSaveDB = true;
+	private static final boolean TRIM_VALUE_BEFORE_SAVE_DB = true;
+	
+	private static void debug(Logger log, String msg) {
+		if(log!=null) {
+			log.debug(msg);
+		}
+	}
+	private static String getAnalisiTypePrefixString(String principal, PrincipalType type) {
+		return "("+principal+") Analisi "+type+" ";
+	}
 	
 	public static boolean sslVerify(String principalPresenteNellaConfigurazione, String principalArrivatoConnessioneSSL, PrincipalType type, Logger log) throws UtilsException{
 
 		if(log!=null) {
-			log.debug("SSL VERIFY CONF["+principalPresenteNellaConfigurazione+"] SSL["+principalArrivatoConnessioneSSL+"]");
+			debug(log, "SSL VERIFY CONF["+principalPresenteNellaConfigurazione+"] SSL["+principalArrivatoConnessioneSSL+"]");
 		}
-		//System.out.println("SSL VERIFY CONF["+principalPresenteNellaConfigurazione+"] SSL["+principalArrivatoConnessioneSSL+"]");
+		/** System.out.println("SSL VERIFY CONF["+principalPresenteNellaConfigurazione+"] SSL["+principalArrivatoConnessioneSSL+"]"); */
 
 		// Costruzione key=value
 		Map<String, List<String>> hashPrincipalArrivatoConnessioneSSL = CertificateUtils.getPrincipalIntoMap(principalArrivatoConnessioneSSL, type);
 		Map<String, List<String>> hashPrincipalPresenteNellaConfigurazione = CertificateUtils.getPrincipalIntoMap(principalPresenteNellaConfigurazione, type);
 
-		if(hashPrincipalArrivatoConnessioneSSL.size() != hashPrincipalPresenteNellaConfigurazione.size()){
-			//System.out.println("LUNGHEZZA DIVERSA");
-			if(log!=null) {
-				log.debug("sslVerify "+type+" Configurazione["+principalPresenteNellaConfigurazione+"]("+hashPrincipalPresenteNellaConfigurazione.size()+
-					") SSL["+principalArrivatoConnessioneSSL+"]("+hashPrincipalArrivatoConnessioneSSL.size()+"): lunghezza differente");
-			}
+		if(!sslVerifyCheckSize(principalPresenteNellaConfigurazione, principalArrivatoConnessioneSSL, type, 
+				hashPrincipalArrivatoConnessioneSSL, hashPrincipalPresenteNellaConfigurazione, log)) {
 			return false;
 		}
 
-		for (String key : hashPrincipalArrivatoConnessioneSSL.keySet()) {
+		for (Map.Entry<String,List<String>> entry : hashPrincipalArrivatoConnessioneSSL.entrySet()) {
 
-			if(hashPrincipalPresenteNellaConfigurazione.containsKey(key)==false){
-				//System.out.println("KEY ["+key+"] non presente");
+			String key = entry.getKey();
+			
+			if(!hashPrincipalPresenteNellaConfigurazione.containsKey(key)){
+				/** System.out.println("KEY ["+key+"] non presente"); */
 				if(log!=null) {
-					List<String> lKeys = new ArrayList<String>();
+					List<String> lKeys = new ArrayList<>();
 					lKeys.addAll(hashPrincipalPresenteNellaConfigurazione.keySet());
-					log.debug("sslVerify key["+key+"] non trovata in "+type+" Configurazione["+principalPresenteNellaConfigurazione+"], key riscontrate: "+
+					debug(log, "sslVerify key["+key+"] non trovata in "+type+" "+"Configurazione["+principalPresenteNellaConfigurazione+"]"+", key riscontrate: "+
 							lKeys);
 				}
 				return false;
 			}
 
 			// Prendo valori
-			List<String> connessioneSSLValue_list = hashPrincipalArrivatoConnessioneSSL.get(key);
-			List<String> configurazioneInternaValue_list = hashPrincipalPresenteNellaConfigurazione.get(key);
-			if(connessioneSSLValue_list.size() != configurazioneInternaValue_list.size()){
-				//System.out.println("LUNGHEZZA DIVERSA KEY ["+key+"]");
+			List<String> connessioneSSLValueList = hashPrincipalArrivatoConnessioneSSL.get(key);
+			List<String> configurazioneInternaValueList = hashPrincipalPresenteNellaConfigurazione.get(key);
+			if(connessioneSSLValueList.size() != configurazioneInternaValueList.size()){
+				/** System.out.println("LUNGHEZZA DIVERSA KEY ["+key+"]"); */
 				if(log!=null) {
-					log.debug("sslVerify "+type+" key["+key+"] trovata in Configurazione["+principalPresenteNellaConfigurazione+"]("+configurazioneInternaValue_list.size()+
-						") SSL["+principalArrivatoConnessioneSSL+"]("+connessioneSSLValue_list.size()+"): lunghezza differente");
+					debug(log, "sslVerify "+type+" key["+key+"] trovata in Configurazione["+principalPresenteNellaConfigurazione+"]("+configurazioneInternaValueList.size()+
+						") SSL["+principalArrivatoConnessioneSSL+"]("+connessioneSSLValueList.size()+"): lunghezza differente");
 				}
 				return false;
 			}
 			
 			// Ordino Valori
-			Collections.sort(connessioneSSLValue_list);
-			Collections.sort(configurazioneInternaValue_list);
+			Collections.sort(connessioneSSLValueList);
+			Collections.sort(configurazioneInternaValueList);
 			
 			// confronto valori
-			for (int i = 0; i < connessioneSSLValue_list.size(); i++) {
-				String connessioneSSLValue = connessioneSSLValue_list.get(i);
-				String configurazioneInternaValue = configurazioneInternaValue_list.get(i);
-				
-				// Normalizzo caratteri escape
-				while(connessioneSSLValue.contains("\\/")){
-					connessioneSSLValue = connessioneSSLValue.replace("\\/", "/");
-				}
-				while(connessioneSSLValue.contains("\\,")){
-					connessioneSSLValue = connessioneSSLValue.replace("\\,", ",");
-				}
-				while(configurazioneInternaValue.contains("\\/")){
-					configurazioneInternaValue = configurazioneInternaValue.replace("\\/", "/");
-				}
-				while(configurazioneInternaValue.contains("\\,")){
-					configurazioneInternaValue = configurazioneInternaValue.replace("\\,", ",");
-				}
-				
-				if(connessioneSSLValue.equals(configurazioneInternaValue)==false){
-					if(log!=null) {
-						log.debug("sslVerify key["+key+"] "+type+" Configurazione["+configurazioneInternaValue+"] SSL["+connessioneSSLValue+"] not match");
-					}
-					//System.out.println("VALUE SSL["+connessioneSSLValue+"]=CONF["+configurazioneInternaValue+"] non match");
-					return false;
-				}
+			if(!sslVerifyCheckValues(key, type, connessioneSSLValueList, configurazioneInternaValueList, log)) {
+				return false;
 			}
 			
 		}
 
-		//System.out.println("SSL RETURN TRUE");
+		/** System.out.println("SSL RETURN TRUE"); */
 		return true;
 
+	}
+	private static boolean sslVerifyCheckSize(String principalPresenteNellaConfigurazione, String principalArrivatoConnessioneSSL, PrincipalType type, 
+			Map<String, List<String>> hashPrincipalArrivatoConnessioneSSL, Map<String, List<String>> hashPrincipalPresenteNellaConfigurazione, Logger log) {
+		if(hashPrincipalArrivatoConnessioneSSL.size() != hashPrincipalPresenteNellaConfigurazione.size()){
+			/** System.out.println("LUNGHEZZA DIVERSA"); */
+			if(log!=null) {
+				debug(log, "sslVerify "+type+" "+"Configurazione["+principalPresenteNellaConfigurazione+"]"+"("+hashPrincipalPresenteNellaConfigurazione.size()+
+					") SSL["+principalArrivatoConnessioneSSL+"]("+hashPrincipalArrivatoConnessioneSSL.size()+"): lunghezza differente");
+			}
+			return false;
+		}
+		return true;
+	}
+	private static boolean sslVerifyCheckValues(String key, PrincipalType type, List<String> connessioneSSLValueList, List<String> configurazioneInternaValueList, Logger log) {
+		for (int i = 0; i < connessioneSSLValueList.size(); i++) {
+			String connessioneSSLValue = connessioneSSLValueList.get(i);
+			String configurazioneInternaValue = configurazioneInternaValueList.get(i);
+			
+			// Normalizzo caratteri escape
+			while(connessioneSSLValue.contains("\\/")){
+				connessioneSSLValue = connessioneSSLValue.replace("\\/", "/");
+			}
+			while(connessioneSSLValue.contains("\\,")){
+				connessioneSSLValue = connessioneSSLValue.replace("\\,", ",");
+			}
+			while(configurazioneInternaValue.contains("\\/")){
+				configurazioneInternaValue = configurazioneInternaValue.replace("\\/", "/");
+			}
+			while(configurazioneInternaValue.contains("\\,")){
+				configurazioneInternaValue = configurazioneInternaValue.replace("\\,", ",");
+			}
+			
+			if(!connessioneSSLValue.equals(configurazioneInternaValue)){
+				if(log!=null) {
+					debug(log, "sslVerify key["+key+"] "+type+" Configurazione["+configurazioneInternaValue+"] SSL["+connessioneSSLValue+"] not match");
+				}
+				/** System.out.println("VALUE SSL["+connessioneSSLValue+"]=CONF["+configurazioneInternaValue+"] non match"); */
+				return false;
+			}
+		}
+		return true;
 	}
 
 
 	public static String formatPrincipal(String principal, PrincipalType type) throws UtilsException{
 
-		//System.out.println("PRIMA ["+principal+"]");
+		/** System.out.println("PRIMA ["+principal+"]"); */
 		
 		// Autenticazione SSL deve essere LIKE
 		Map<String, List<String>> hashPrincipal = CertificateUtils.getPrincipalIntoMap(principal, type);
 		StringBuilder bf = new StringBuilder();
 		bf.append("/");
-		for (String key : hashPrincipal.keySet()) {
+		for (Map.Entry<String,List<String>> entry : hashPrincipal.entrySet()) {
+			
+			String key = entry.getKey();
 			
 			List<String> listValues = hashPrincipal.get(key);
 			for (String value : listValues) {
@@ -262,14 +291,16 @@ public class CertificateUtils {
 			}
 			
 		}
-		//System.out.println("DOPO ["+bf.toString()+"]");
+		/** System.out.println("DOPO ["+bf.toString()+"]"); */
 		return bf.toString();
 	}
 	
 	public static Map<String, String> formatPrincipalToMap(String principal, PrincipalType type) throws UtilsException{
-		Map<String, String> returnMap = new HashMap<String, String>();
+		Map<String, String> returnMap = new HashMap<>();
 		Map<String, List<String>> hashPrincipal = CertificateUtils.getPrincipalIntoMap(principal, type);
-		for (String key : hashPrincipal.keySet()) {
+		for (Map.Entry<String,List<String>> entry : hashPrincipal.entrySet()) {
+			
+			String key = entry.getKey();
 			
 			List<String> listValues = hashPrincipal.get(key);
 			for (String value : listValues) {
@@ -284,7 +315,7 @@ public class CertificateUtils {
 
 	public static void validaPrincipal(String principalParam, PrincipalType type) throws UtilsException{
 		
-		//System.out.println("PRIMA VALIDAZIONE ["+principalParam+"]");
+		/** System.out.println("PRIMA VALIDAZIONE ["+principalParam+"]"); */
 		
 		String principal = principalParam;
 		UtilsException normalizedException = null;
@@ -292,23 +323,30 @@ public class CertificateUtils {
 			String tmp = normalizePrincipal(principalParam);
 			principal = tmp;
 		}catch(UtilsException e){
-			//System.out.println("ERRORE: "+e.getMessage());
+			/** System.out.println("ERRORE: "+e.getMessage());
 			// non voglio rilanciare l'eccezione, verra' segnalata l'eccezione puntuale.
-			// Se cosi' non fosse solo in fondo viene sollevata l'eccezione.
+			// Se cosi' non fosse solo in fondo viene sollevata l'eccezione. */
 			normalizedException = e;
 		}
 		
-		//System.out.println("DOPOP VALIDAZIONE ["+principal+"]");
+		/** System.out.println("DOPOP VALIDAZIONE ["+principal+"]"); */
 		
 		boolean commaFound = contains(principal, ",");
 		boolean slashFound = contains(principal, "/");
 		if(commaFound && slashFound){
 			throw new UtilsException("("+principal+") Non possono coesistere i separatore \",\" e \"/\", solo uno dei due tipi deve essere utilizzato come delimitatore (usare eventualmente come carattere di escape '\\')");
 		}
-		if(commaFound==false && slashFound==false && principal.contains("=")==false){
+		if(!commaFound && !slashFound && !principal.contains("=")){
 			throw new UtilsException("("+principal+") "+type+" non valido, nemmeno una coppia nome=valore trovata");
 		}
 		String [] valoriPrincipal = CertificateUtils.getValoriPrincipal(principal, type);
+		validaPrincipal(valoriPrincipal, principal, type);
+		
+		if(normalizedException!=null){
+			throw normalizedException;
+		}
+	}
+	private static void validaPrincipal(String [] valoriPrincipal, String principal, PrincipalType type) throws UtilsException {
 		boolean campoObbligatorioCN = false;
 		boolean campoObbligatorioOU = false;
 		boolean campoObbligatorioO = false;
@@ -318,10 +356,10 @@ public class CertificateUtils {
 		boolean campoObbligatorioE = false;
 		for(int i=0; i<valoriPrincipal.length; i++){
 			
-			String [] keyValue = _getKeyValuePair(valoriPrincipal[i], principal, type);
+			String [] keyValue = getKeyValuePairEngine(valoriPrincipal[i], principal, type);
 
 			if(keyValue[0].trim().contains(" ")){
-				throw new UtilsException("("+principal+") Analisi "+type+" fallita: il campo ["+valoriPrincipal[i]+"] contiene spazi nella chiave identificativa ["+keyValue[0].trim()+"]");
+				throw new UtilsException(getAnalisiTypePrefixString(principal, type)+"fallita: il campo ["+valoriPrincipal[i]+"] contiene spazi nella chiave identificativa ["+keyValue[0].trim()+"]");
 			}
 			
 			if(CertificateUtils.formatKeyPrincipal(keyValue[0]).equalsIgnoreCase("CN")){
@@ -349,10 +387,6 @@ public class CertificateUtils {
 		if(!campoObbligatorioCN && !campoObbligatorioOU && !campoObbligatorioO && !campoObbligatorioL && !campoObbligatorioST && !campoObbligatorioC && !campoObbligatorioE){
 			throw new UtilsException("("+principal+") Almeno un attributo di certificato tra 'CN', 'OU', 'O', 'L', 'ST', 'C' e 'E' deve essere valorizzato.");
 		}
-		
-		if(normalizedException!=null){
-			throw normalizedException;
-		}
 	}
 
 	
@@ -376,9 +410,10 @@ public class CertificateUtils {
 			// Esempio di formato "human readable": /C=IT/ST=Italiy/OU=PROVA di Bari, di Como/CN=SPC/SOGGETTO
 			// Esempio di formato "RFC 1779": CN=SPC/SOGGETTO, OU="PROVA di Bari, di Como", ST=Italiy, C=IT
 			// Esempio di formato "RFC 2253": CN=SPC/SOGGETTO,OU=PROVA di Bari\, di Como,ST=Italiy,C=IT
-			String principal = RFC2253Parser.normalize(principalParam);
-			//System.out.println(" ORIGINALE ["+principalParam+"]  NORMALIZZATO ["+principal+"]");
-			return principal;
+			return RFC2253Parser.normalize(principalParam);
+			/**String principal = RFC2253Parser.normalize(principalParam);
+			System.out.println(" ORIGINALE ["+principalParam+"]  NORMALIZZATO ["+principal+"]");
+			return principal;*/
 		}catch(Exception e){
 			throw new UtilsException("("+principalParam+") Normalizzazione RFC2253 non riuscita: "+e.getMessage(),e);
 		}
@@ -386,47 +421,47 @@ public class CertificateUtils {
 
 	public static String [] getValoriPrincipal(String principalParam, PrincipalType type) throws UtilsException{
 		try{
-			//System.out.println("PRINCIPAL getValoriPrincipal["+principalParam+"]");
+			/** System.out.println("PRINCIPAL getValoriPrincipal["+principalParam+"]"); */
 			String principal = normalizePrincipal(principalParam);
-			//System.out.println("PRINCIPAL dopo normalize getValoriPrincipal["+principal+"]");
+			/** System.out.println("PRINCIPAL dopo normalize getValoriPrincipal["+principal+"]"); */
 			
-			return _getValoriPrincipal(principal, type);
+			return getValoriPrincipalEngine(principal, type);
 			
 		}catch(Exception e){
 			
-			//System.out.println("PRINCIPAL getValoriPrincipal["+principalParam+"] errore: "+e.getMessage());
+			/** System.out.println("PRINCIPAL getValoriPrincipal["+principalParam+"] errore: "+e.getMessage()); */
 			
 			try{
 			
 				javax.naming.ldap.LdapName prova = new javax.naming.ldap.LdapName(principalParam);
 				Enumeration<String> ens = prova.getAll();
-				List<String> values = new ArrayList<String>();
+				List<String> values = new ArrayList<>();
 				while (ens.hasMoreElements()) {
-					String name = (String) ens.nextElement();
+					String name = ens.nextElement();
 					values.add(name);
 				}
 				
-				if(values.size()>0){
+				if(!values.isEmpty()){
 					return values.toArray(new String[1]);
 				}
 				else{
-					throw new Exception("Coppie nome/valore non trovate");
+					throw new UtilsException("Coppie nome/valore non trovate");
 				}
 				
 			}catch(Exception e2Level){
-				//e2Level.printStackTrace(System.out);
+				/**e2Level.printStackTrace(System.out); */
 				throw new UtilsException("("+principalParam+") javax.naming.ldap.LdapName reader failed: "+e2Level.getMessage()+". \nFirst method error: "+e.getMessage(),e);
 			}
 				
 		}
 	}
 		
-	private static String [] _getValoriPrincipal(String principal, PrincipalType type) throws UtilsException{
+	private static String [] getValoriPrincipalEngine(String principal, PrincipalType type) throws UtilsException{
 			
 		String [] valori;
 		boolean commaFound = contains(principal, ",");
 		boolean slashFound = contains(principal, "/");
-		//System.out.println("PRINCIPAL _getValoriPrincipal commaFound["+commaFound+"] slashFound["+slashFound+"]");
+		/**System.out.println("PRINCIPAL _getValoriPrincipal commaFound["+commaFound+"] slashFound["+slashFound+"]"); */
 		if(commaFound){
 			if(principal.startsWith(",")){
 				principal = principal.substring(1);
@@ -434,80 +469,87 @@ public class CertificateUtils {
 			if(principal.endsWith(",")){
 				principal = principal.substring(0,principal.length()-1);
 			}
-			//System.out.println("PRINCIPAL _getValoriPrincipal preSplit , ["+principal+"] ..");
-			//valori =  principal.split(",");
+			/**System.out.println("PRINCIPAL _getValoriPrincipal preSplit , ["+principal+"] ..");*/
 			valori = Utilities.split(principal, ',');
 		}else{
-			//System.out.println("PRINCIPAL _getValoriPrincipal comma not found ["+principal+"] ..");
-			if(slashFound==false){
-				//System.out.println("PRINCIPAL _getValoriPrincipal slash not found ["+principal+"] ..");
-				int indexOf = principal.indexOf("=");
-				if(indexOf<=0){
-					throw new UtilsException("("+principal+") Separatore validi per il "+type+" interno alla configurazione di OpenSPCoop non trovati:  \",\" o \"/\" e carattere \"=\" non presente");
-				}
-				if(principal.indexOf("=",indexOf+1)>=0){
-					throw new UtilsException("("+principal+") Separatore validi per il "+type+" interno alla configurazione di OpenSPCoop non trovati:  \",\" o \"/\"");
-				}
-				valori =  new String[1];
-				valori[0] = principal;
-			}else{
-				if(principal.startsWith("/")){
-					principal = principal.substring(1);
-				}
-				if(principal.endsWith("/")){
-					principal = principal.substring(0,principal.length()-1);
-				}
-				//System.out.println("PRINCIPAL _getValoriPrincipal preSplit / ["+principal+"] ..");
-				//valori =  principal.split("/");
-				String [] tmp_valori = Utilities.split(principal, '/');
-				
-				// Bug Fix OP-670 certificato formato come:
-				// C=IT/ST= /O=Esempio di Agenzia/OU=Servizi Informatici/CN=Ministero dell'Interno/prova/23234234554/DEMO
-				List<String> normalize = new ArrayList<>();
-				StringBuilder bf = new StringBuilder();
-				for (String tmp : tmp_valori) {
-					if(tmp.contains("=")) {
-						if(bf.length()>0) {
-							normalize.add(bf.toString());
-							bf.delete(0, bf.length());
-						}
-						bf.append(tmp);
-					}
-					else {
-						bf.append("/").append(tmp);
-					}
-				}
-				if(bf.length()>0) {
-					normalize.add(bf.toString());
-					bf.delete(0, bf.length());
-				}
-				valori = normalize.toArray(new String[1]);
-			}
+			valori = getValoriPrincipalEngine(principal, type, slashFound);
 		}
 		if(valori==null || valori.length<1){
-			throw new UtilsException("("+principal+") Analisi "+type+" interno alla configurazione di OpenSPCoop non riuscita: null??");
+			throw new UtilsException(getAnalisiTypePrefixString(principal, type)+"interno alla configurazione di OpenSPCoop non riuscita: null??");
 		}
 		
 		// validazione
 		for(int i=0; i<valori.length; i++){
-			_getKeyValuePair(valori[i], principal, type);
+			getKeyValuePairEngine(valori[i], principal, type);
 		}
 				
 		return valori;
 	}
+	private static String [] getValoriPrincipalEngine(String principal, PrincipalType type, boolean slashFound) throws UtilsException {
+		/**System.out.println("PRINCIPAL _getValoriPrincipal comma not found ["+principal+"] .."); */
+		String [] valori = null;
+		if(!slashFound){
+			/** System.out.println("PRINCIPAL _getValoriPrincipal slash not found ["+principal+"] .."); */
+			int indexOf = principal.indexOf("=");
+			if(indexOf<=0){
+				throw new UtilsException("("+principal+") Separatore validi per il "+type+" interno alla configurazione di OpenSPCoop non trovati:  \",\" o \"/\" e carattere \"=\" non presente");
+			}
+			if(principal.indexOf("=",indexOf+1)>=0){
+				throw new UtilsException("("+principal+") Separatore validi per il "+type+" interno alla configurazione di OpenSPCoop non trovati:  \",\" o \"/\"");
+			}
+			valori =  new String[1];
+			valori[0] = principal;
+		}else{
+			valori = getValoriSlashPrincipalEngine(principal);
+		}
+		return valori;
+	}
+	private static String [] getValoriSlashPrincipalEngine(String principal) throws UtilsException {
+		if(principal.startsWith("/")){
+			principal = principal.substring(1);
+		}
+		if(principal.endsWith("/")){
+			principal = principal.substring(0,principal.length()-1);
+		}
+		/**System.out.println("PRINCIPAL _getValoriPrincipal preSplit / ["+principal+"] .."); */
+		String [] tmpValori = Utilities.split(principal, '/');
+		
+		// Bug Fix OP-670 certificato formato come:
+		// C=IT/ST= /O=Esempio di Agenzia/OU=Servizi Informatici/CN=Ministero dell'Interno/prova/23234234554/DEMO
+		List<String> normalize = new ArrayList<>();
+		StringBuilder bf = new StringBuilder();
+		for (String tmp : tmpValori) {
+			if(tmp.contains("=")) {
+				if(bf.length()>0) {
+					normalize.add(bf.toString());
+					bf.delete(0, bf.length());
+				}
+				bf.append(tmp);
+			}
+			else {
+				bf.append("/").append(tmp);
+			}
+		}
+		if(bf.length()>0) {
+			normalize.add(bf.toString());
+			bf.delete(0, bf.length());
+		}
+		return normalize.toArray(new String[1]);
+	}
 	
 	public static Map<String, List<String>> getPrincipalIntoMap(String principal, PrincipalType type) throws UtilsException{
-		Map<String, List<String>> hashPrincipal = new HashMap<String, List<String>>();
+		Map<String, List<String>> hashPrincipal = new HashMap<>();
 		String [] valoriPrincipal = CertificateUtils.getValoriPrincipal(principal, type);
 		for(int i=0; i<valoriPrincipal.length; i++){
 			
 			// override eccezione in caso '=' non rpesente
-			if(valoriPrincipal[i].contains("=")==false){
-				throw new UtilsException("("+principal+") Analisi "+type+" fallita: ["+valoriPrincipal[i]+"] non separata dal carattere \"=\"");
+			if(!valoriPrincipal[i].contains("=")){
+				String fallita = "fallita"+": ["+valoriPrincipal[i]+"] ";
+				throw new UtilsException(getAnalisiTypePrefixString(principal, type)+fallita+"non separata dal carattere \"=\"");
 			}
-			String [] keyValue = _getKeyValuePair(valoriPrincipal[i], principal, type);
+			String [] keyValue = getKeyValuePairEngine(valoriPrincipal[i], principal, type);
 			
-			//System.out.println("CONF INTERNA ["+Utilities.formatKeyPrincipal(keyValue[0])+"] ["+Utilities.formatValuePrincipal(keyValue[1])+"]");
+			/**System.out.println("CONF INTERNA ["+Utilities.formatKeyPrincipal(keyValue[0])+"] ["+Utilities.formatValuePrincipal(keyValue[1])+"]");*/
 			String formatKey = CertificateUtils.formatKeyPrincipal(keyValue[0]);
 			String formatValue = CertificateUtils.formatValuePrincipal(keyValue[1]);
 			List<String> listValue = null;
@@ -545,24 +587,24 @@ public class CertificateUtils {
 			bf.append(valuePrincipal.charAt(i));
 		}
 		String value = bf.toString();
-		if(_trimValue_beforeSaveDB) {
+		if(TRIM_VALUE_BEFORE_SAVE_DB) {
 			value = value.trim();
 		}
 		return value;
 	}
 
-	private static String[] _getKeyValuePair(String keyValue, String principal, PrincipalType type) throws UtilsException {
+	private static String[] getKeyValuePairEngine(String keyValue, String principal, PrincipalType type) throws UtilsException {
 		
-		if(keyValue.contains("=")==false){
-			throw new UtilsException("("+principal+") Analisi "+type+" fallita: ["+keyValue+"] non separata dal carattere \"=\". Verificare che non esistano coppie che possiedono valori che contengono il carattere separatore (usare eventualmente come carattere di escape '\\')");
+		if(!keyValue.contains("=")){
+			throw new UtilsException(getAnalisiTypePrefixString(principal, type)+"fallita: ["+keyValue+"] non separata dal carattere \"=\". Verificare che non esistano coppie che possiedono valori che contengono il carattere separatore (usare eventualmente come carattere di escape '\\')");
 		}
 		
 		// Bug Fix OP-664
 		// Per non bruciare gli spazi presenti nei valori della chiave che sono ammessi. Ad esempio e' capitato un "C=IT,ST= ,CN=XXESEMPIOXX"
-		//String [] keyValue = keyValue.trim().split("=");
+		/**String [] keyValue = keyValue.trim().split("=");*/
 		String [] keyValueReturn = keyValue.split("="); // lo spazio è ammesso nel valore.		
 		if(keyValueReturn.length<2){
-			if(_trimValue_beforeSaveDB && keyValueReturn.length==1) {
+			if(TRIM_VALUE_BEFORE_SAVE_DB && keyValueReturn.length==1) {
 				// Serve per i valori inseriti che poi vengono comunque normalizzati con il trim. Se il valore era ' ' viene normalizzato a ''
 				// una volta riletto poi si ottiene l'errore.
 				// Che ci sia l'uguale e' garantito dai controlli sopra. In pratica keyValue.endsWith("=")
@@ -572,30 +614,30 @@ public class CertificateUtils {
 				keyValueReturn[1] = "";
 			}
 			else {
-				throw new UtilsException("("+principal+") Analisi "+type+" fallita: ["+keyValue+"] non contiene un valore? Verificare che non esistano coppie che possiedono valori che contengono il carattere separatore (usare eventualmente come carattere di escape '\\')");
+				throw new UtilsException(getAnalisiTypePrefixString(principal, type)+"fallita: ["+keyValue+"] non contiene un valore? Verificare che non esistano coppie che possiedono valori che contengono il carattere separatore (usare eventualmente come carattere di escape '\\')");
 			}
 		}
 		
 		// Lo spazio e' ammesso nel valore, ma non nella chiave
 		keyValueReturn[0] = keyValueReturn[0].trim();
-		//System.out.println("KEY["+keyValueReturn[0]+"]=VALUE["+keyValueReturn[1]+"]");
+		/**System.out.println("KEY["+keyValueReturn[0]+"]=VALUE["+keyValueReturn[1]+"]");*/
 		
 		// Questo controllo non deve essere fatto poiche' il valore puo' contenere il '='.
-//		if(keyValue.length!=2){
-//			throw new UtilsException("("+principal+") Analisi "+type+" fallita: ["+keyValue+"] contiene piu' di un carattere \"=\"");
-//		}
+/**		if(keyValue.length!=2){
+//			throw new UtilsException(getAnalisiTypePrefixString(principal, type)+"fallita: ["+keyValue+"] contiene piu' di un carattere \"=\"");
+//		}*/
 		if(keyValueReturn.length==2) {
 			return keyValueReturn;
 		}
 		else {
 			String[] keyValueReturnNormalized = new String[2];
 			keyValueReturnNormalized[0] = keyValueReturn[0];
-			keyValueReturnNormalized[1] = _extractValueFromKeyPair(keyValue);
+			keyValueReturnNormalized[1] = extractValueFromKeyPairEngine(keyValue);
 			return keyValueReturnNormalized;
 		}
 		
 	}
-	private static String _extractValueFromKeyPair(String keyValue) throws UtilsException {
+	private static String extractValueFromKeyPairEngine(String keyValue) throws UtilsException {
 		// Questo metodo server poiche' il valore puo' contenere il '=' ed il carattere ' ' anche all'inizio o alla fine.
 		// Quindi uno split con il carattere '=' non puo' essere usato.
 		// Deve quindi essere estratto dopo il primo uguale
@@ -603,9 +645,10 @@ public class CertificateUtils {
 		if(indexOf<=0) {
 			throw new UtilsException("Carattere '=' non presente in ["+keyValue+"]");
 		}
-		String valoreEstratto = keyValue.substring(indexOf+1);
-		//System.out.println("VALORE ESTRATTO ["+valoreEstratto+"]");
-		return valoreEstratto;
+		return keyValue.substring(indexOf+1);
+		/**String valoreEstratto = keyValue.substring(indexOf+1);
+		System.out.println("VALORE ESTRATTO ["+valoreEstratto+"]");
+		return valoreEstratto;*/
 	}
 	
 	
@@ -616,11 +659,12 @@ public class CertificateUtils {
 			found = true;
 		}
 		else{
-			while(indexOf>0){
+			boolean itera = true;
+			while(indexOf>0 && itera){
 				char precedente = value.charAt(indexOf-1);
 				if(precedente == '\\'){
 					if(indexOf+1>value.length()){
-						break;
+						itera=false;
 					}
 					else{
 						indexOf = value.indexOf(separator,indexOf+1);
@@ -628,7 +672,7 @@ public class CertificateUtils {
 				}
 				else{
 					found = true;
-					break;
+					itera=false;
 				}
 			}
 		}
@@ -636,21 +680,21 @@ public class CertificateUtils {
 	}
 	
 	public static Certificate readCertificate(CertificateDecodeConfig config, String certificateParam) throws UtilsException {
-		return _readCertificate(config, certificateParam, Charset.UTF_8.getValue());
+		return readCertificateEngine(config, certificateParam, Charset.UTF_8.getValue());
 	}
 	public static Certificate readCertificate(CertificateDecodeConfig config, String certificateParam, String charset) throws UtilsException {
-		return _readCertificate(config, certificateParam, charset);
+		return readCertificateEngine(config, certificateParam, charset);
 	}
 	
-	private static Certificate _readCertificate(CertificateDecodeConfig config, String certificateParam, String charset) throws UtilsException {
-		if(config.isUrlDecode_or_base64Decode()) {
+	private static Certificate readCertificateEngine(CertificateDecodeConfig config, String certificateParam, String charset) throws UtilsException {
+		if(config.isUrlDecodeOrBase64Decode()) {
 			
 			Throwable tUrlDecode = null;
 			try {
 				config.setUrlDecode(true);
 				config.setBase64Decode(false);
-				return _readCertificateEngine(config, certificateParam, charset);
-			}catch(Throwable t) {
+				return readCertificateEngineEngine(config, certificateParam, charset);
+			}catch(Exception t) {
 				tUrlDecode = t;
 			}
 			
@@ -658,8 +702,8 @@ public class CertificateUtils {
 			try {
 				config.setUrlDecode(false);
 				config.setBase64Decode(true);
-				return _readCertificateEngine(config, certificateParam, charset);
-			}catch(Throwable t) {
+				return readCertificateEngineEngine(config, certificateParam, charset);
+			}catch(Exception t) {
 				tBase64Decode = t;
 			}
 			
@@ -667,10 +711,10 @@ public class CertificateUtils {
 			throw new UtilsException(uMulti.getMessage(),uMulti);
 		}
 		else {
-			return _readCertificateEngine(config, certificateParam, charset);
+			return readCertificateEngineEngine(config, certificateParam, charset);
 		}
 	}
-	private static Certificate _readCertificateEngine(CertificateDecodeConfig config, String certificateParam, String charset) throws UtilsException {
+	private static Certificate readCertificateEngineEngine(CertificateDecodeConfig config, String certificateParam, String charset) throws UtilsException {
 		
 		if(certificateParam==null || "".equals(certificateParam)){
 			throw new UtilsException("Certificate non fornito");
@@ -692,14 +736,14 @@ public class CertificateUtils {
 				}
 			}
 			
-			if(config.isEnrich_BEGIN_END()) {
-				String BEGIN = "-----BEGIN CERTIFICATE-----";
-				String END = "-----END CERTIFICATE-----";
-				if(certificate.startsWith(BEGIN)==false) {
-					certificate = BEGIN+"\n"+certificate;
+			if(config.isEnrichPEMBeginEnd()) {
+				String bEGIN = "-----BEGIN CERTIFICATE-----";
+				String eND = "-----END CERTIFICATE-----";
+				if(!certificate.startsWith(bEGIN)) {
+					certificate = bEGIN+"\n"+certificate;
 				}
-				if(certificate.endsWith(END)==false) {
-					certificate = certificate+ "\n"+END;
+				if(!certificate.endsWith(eND)) {
+					certificate = certificate+ "\n"+eND;
 				}
 			}
 			

@@ -35,7 +35,7 @@ public class SPCoopTestsuiteLogger {
 	/**  Logger log4j utilizzato per scrivere i tracciamenti */
 	protected static Logger logger = null;
 
-	public synchronized static void initialize(){
+	public static synchronized void initialize(){
 		if(logger == null){
 			InputStream is = null;
 			try{

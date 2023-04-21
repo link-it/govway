@@ -901,7 +901,7 @@ public class DriverRegistroServiziDB_pddDriver {
 
 		try {
 
-			Map<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoMap(subject, PrincipalType.subject);
+			Map<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoMap(subject, PrincipalType.SUBJECT);
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PDD);
@@ -924,7 +924,7 @@ public class DriverRegistroServiziDB_pddDriver {
 
 				// Possono esistere piu' pdd che hanno una porzione di subject uguale, devo quindi verificare che sia proprio quello che cerco
 				String subjectPotenziale =  risultato.getString("subject");
-				if(CertificateUtils.sslVerify(subjectPotenziale, subject, PrincipalType.subject, this.driver.log)){
+				if(CertificateUtils.sslVerify(subjectPotenziale, subject, PrincipalType.SUBJECT, this.driver.log)){
 					pdd=this.getPortaDominio(risultato.getString("nome"));
 					lista.add(pdd);
 				}

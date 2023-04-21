@@ -326,7 +326,7 @@ public class PddHelper extends ConsoleHelper {
 
 			if(subject!=null && !"".equals(subject)){
 				try{
-					org.openspcoop2.utils.certificate.CertificateUtils.validaPrincipal(subject, PrincipalType.subject);
+					org.openspcoop2.utils.certificate.CertificateUtils.validaPrincipal(subject, PrincipalType.SUBJECT);
 				}catch(Exception e){
 					this.pd.setMessage("Il subject fornito non è valido: "+e.getMessage());
 					return false;

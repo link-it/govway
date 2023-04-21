@@ -172,7 +172,7 @@ public class ModIProperties {
 					getSicurezzaMessaggio_certificati_keyStore_password();
 				}
 				getSicurezzaMessaggio_certificati_key_alias();
-				if(!HSMUtils.isKeystoreHSM(keystoreType) || HSMUtils.HSM_CONFIGURABLE_KEY_PASSWORD) {
+				if(!HSMUtils.isKeystoreHSM(keystoreType) || HSMUtils.isHsmConfigurableKeyPassword()) {
 					getSicurezzaMessaggio_certificati_key_password();
 				}
 			}

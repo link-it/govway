@@ -1864,10 +1864,10 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 								if(credenziali.getSubject()==null){
 									continue;
 								}
-								boolean subjectValid = CertificateUtils.sslVerify(credenziali.getSubject(), filtroRicerca.getCredenzialiSoggetto().getSubject(), PrincipalType.subject, this.log);
+								boolean subjectValid = CertificateUtils.sslVerify(credenziali.getSubject(), filtroRicerca.getCredenzialiSoggetto().getSubject(), PrincipalType.SUBJECT, this.log);
 								boolean issuerValid = true;
 								if(filtroRicerca.getCredenzialiSoggetto().getIssuer()!=null) {
-									issuerValid = CertificateUtils.sslVerify(credenziali.getIssuer(), filtroRicerca.getCredenzialiSoggetto().getIssuer(), PrincipalType.issuer, this.log);
+									issuerValid = CertificateUtils.sslVerify(credenziali.getIssuer(), filtroRicerca.getCredenzialiSoggetto().getIssuer(), PrincipalType.ISSUER, this.log);
 								}
 								else {
 									issuerValid = (credenziali.getIssuer() == null);

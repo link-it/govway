@@ -119,7 +119,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 				updateStmt.setString(1, nome);
 				updateStmt.setString(2, descrizione);
 				updateStmt.setString(3, implementazione);
-				updateStmt.setString(4, (subject != null ? CertificateUtils.formatPrincipal(subject, PrincipalType.subject) : null));
+				updateStmt.setString(4, (subject != null ? CertificateUtils.formatPrincipal(subject, PrincipalType.SUBJECT) : null));
 				updateStmt.setString(5, DriverRegistroServiziDB_LIB.getValue(client_auth));
 				updateStmt.setString(6, superuser);
 				if(pdd.getOraRegistrazione()!=null)
@@ -181,7 +181,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 				updateStmt.setString(1, nome);
 				updateStmt.setString(2, descrizione);
 				updateStmt.setString(3, implementazione);
-				updateStmt.setString(4, (subject != null ? CertificateUtils.formatPrincipal(subject, PrincipalType.subject) : null));
+				updateStmt.setString(4, (subject != null ? CertificateUtils.formatPrincipal(subject, PrincipalType.SUBJECT) : null));
 				updateStmt.setString(5, DriverRegistroServiziDB_LIB.getValue(client_auth));
 				updateStmt.setString(6, superuser);
 
@@ -356,7 +356,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 				String subject = null;
 				if(credenziali!=null && credenziali.getSubject()!=null && !"".equals(credenziali.getSubject()))
 					subject = credenziali.getSubject();
-				updateStmt.setString(index++, (subject != null ? CertificateUtils.formatPrincipal(subject, PrincipalType.subject) : null));
+				updateStmt.setString(index++, (subject != null ? CertificateUtils.formatPrincipal(subject, PrincipalType.SUBJECT) : null));
 				String subjectCN = null;
 				if(credenziali!=null && credenziali.getCnSubject()!=null && !"".equals(credenziali.getCnSubject()))
 					subjectCN = credenziali.getCnSubject();
@@ -369,7 +369,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 				else {
 					if(credenziali!=null && credenziali.getIssuer()!=null && !"".equals(credenziali.getIssuer()))
 						issuer = credenziali.getIssuer();
-					updateStmt.setString(index++, (issuer != null ? CertificateUtils.formatPrincipal(issuer, PrincipalType.issuer) : null));
+					updateStmt.setString(index++, (issuer != null ? CertificateUtils.formatPrincipal(issuer, PrincipalType.ISSUER) : null));
 				}
 				String issuerCN = null;
 				if(credenziali!=null && credenziali.getCnIssuer()!=null && !"".equals(credenziali.getCnIssuer()))
@@ -479,7 +479,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 						String subjectCredenziali = null;
 						if(credenzialiSoggetto!=null && credenzialiSoggetto.getSubject()!=null && !"".equals(credenzialiSoggetto.getSubject()))
 							subjectCredenziali = credenzialiSoggetto.getSubject();
-						updateStmt.setString(index++, (subjectCredenziali != null ? CertificateUtils.formatPrincipal(subjectCredenziali, PrincipalType.subject) : null));
+						updateStmt.setString(index++, (subjectCredenziali != null ? CertificateUtils.formatPrincipal(subjectCredenziali, PrincipalType.SUBJECT) : null));
 						String subjectCredenzialiCN = null;
 						if(credenzialiSoggetto!=null && credenzialiSoggetto.getCnSubject()!=null && !"".equals(credenzialiSoggetto.getCnSubject()))
 							subjectCredenzialiCN = credenzialiSoggetto.getCnSubject();
@@ -492,7 +492,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 						else {
 							if(credenzialiSoggetto!=null && credenzialiSoggetto.getIssuer()!=null && !"".equals(credenzialiSoggetto.getIssuer()))
 								issuerCredenziali = credenzialiSoggetto.getIssuer();
-							updateStmt.setString(index++, (issuerCredenziali != null ? CertificateUtils.formatPrincipal(issuerCredenziali, PrincipalType.issuer) : null));
+							updateStmt.setString(index++, (issuerCredenziali != null ? CertificateUtils.formatPrincipal(issuerCredenziali, PrincipalType.ISSUER) : null));
 						}
 						String issuerCredenzialiCN = null;
 						if(credenzialiSoggetto!=null && credenzialiSoggetto.getCnIssuer()!=null && !"".equals(credenzialiSoggetto.getCnIssuer()))
@@ -626,7 +626,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 				subject = null;
 				if(credenziali!=null && credenziali.getSubject()!=null && !"".equals(credenziali.getSubject()))
 					subject = credenziali.getSubject();
-				updateStmt.setString(index++, (subject != null ? CertificateUtils.formatPrincipal(subject, PrincipalType.subject) : null));
+				updateStmt.setString(index++, (subject != null ? CertificateUtils.formatPrincipal(subject, PrincipalType.SUBJECT) : null));
 				subjectCN = null;
 				if(credenziali!=null && credenziali.getCnSubject()!=null && !"".equals(credenziali.getCnSubject()))
 					subjectCN = credenziali.getCnSubject();
@@ -639,7 +639,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 				else {
 					if(credenziali!=null && credenziali.getIssuer()!=null && !"".equals(credenziali.getIssuer()))
 						issuer = credenziali.getIssuer();
-					updateStmt.setString(index++, (issuer != null ? CertificateUtils.formatPrincipal(issuer, PrincipalType.issuer) : null));
+					updateStmt.setString(index++, (issuer != null ? CertificateUtils.formatPrincipal(issuer, PrincipalType.ISSUER) : null));
 				}
 				issuerCN = null;
 				if(credenziali!=null && credenziali.getCnIssuer()!=null && !"".equals(credenziali.getCnIssuer()))
@@ -752,7 +752,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 						String subjectCredenziali = null;
 						if(credenzialiSoggetto!=null && credenzialiSoggetto.getSubject()!=null && !"".equals(credenzialiSoggetto.getSubject()))
 							subjectCredenziali = credenzialiSoggetto.getSubject();
-						updateStmt.setString(index++, (subjectCredenziali != null ? CertificateUtils.formatPrincipal(subjectCredenziali, PrincipalType.subject) : null));
+						updateStmt.setString(index++, (subjectCredenziali != null ? CertificateUtils.formatPrincipal(subjectCredenziali, PrincipalType.SUBJECT) : null));
 						String subjectCredenzialiCN = null;
 						if(credenzialiSoggetto!=null && credenzialiSoggetto.getCnSubject()!=null && !"".equals(credenzialiSoggetto.getCnSubject()))
 							subjectCredenzialiCN = credenzialiSoggetto.getCnSubject();
@@ -765,7 +765,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 						else {
 							if(credenzialiSoggetto!=null && credenzialiSoggetto.getIssuer()!=null && !"".equals(credenzialiSoggetto.getIssuer()))
 								issuerCredenziali = credenzialiSoggetto.getIssuer();
-							updateStmt.setString(index++, (issuerCredenziali != null ? CertificateUtils.formatPrincipal(issuerCredenziali, PrincipalType.issuer) : null));
+							updateStmt.setString(index++, (issuerCredenziali != null ? CertificateUtils.formatPrincipal(issuerCredenziali, PrincipalType.ISSUER) : null));
 						}
 						String issuerCredenzialiCN = null;
 						if(credenzialiSoggetto!=null && credenzialiSoggetto.getCnIssuer()!=null && !"".equals(credenzialiSoggetto.getCnIssuer()))

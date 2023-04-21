@@ -26,6 +26,7 @@ import java.security.PublicKey;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKey;
 import org.apache.cxf.rs.security.jose.jwk.JwkReaderWriter;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.json.JSONUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -43,22 +44,22 @@ import com.nimbusds.jose.jwk.RSAKey;
 public class JWK {
 
 	private JwkReaderWriter engineCxf = new JwkReaderWriter();
-	private String jwk_json;
-	private String jwk_json_pretty;
-	private JsonWebKey jwk_cxf;
-	private com.nimbusds.jose.jwk.JWK jwk_nimbusds;
-	private JsonNode jwk_node;
+	private String jwkJson;
+	private String jwkJsonPretty;
+	private JsonWebKey jwkCxf;
+	private com.nimbusds.jose.jwk.JWK jwkNimbusds;
+	private JsonNode jwkNode;
 	
 	public JWK(String json) {
-		this.jwk_json = json;
+		this.jwkJson = json;
 	}
 	
 	public JWK(JsonWebKey jwk) {
-		this.jwk_cxf = jwk;
+		this.jwkCxf = jwk;
 	}
 	
 	public JWK(com.nimbusds.jose.jwk.JWK jwk) {
-		this.jwk_nimbusds = jwk;
+		this.jwkNimbusds = jwk;
 	}
 	
 	public JWK(KeyStore keystore, String alias) throws UtilsException {
@@ -68,10 +69,10 @@ public class JWK {
 		this(keystore, alias, null, use, true);
 	}
 	public JWK(KeyStore keystore, String alias, boolean kid) throws UtilsException {
-		this(keystore, alias, null, null, true);
+		this(keystore, alias, null, null, kid);
 	}
 	public JWK(KeyStore keystore, String alias, KeyUse use, boolean kid) throws UtilsException {
-		this(keystore, alias, null, use, true);
+		this(keystore, alias, null, use, kid);
 	}
 	public JWK(KeyStore keystore, String alias, String passwordPrivateKey) throws UtilsException {
 		this(keystore, alias, passwordPrivateKey, null, true);
@@ -80,28 +81,27 @@ public class JWK {
 		this(keystore, alias, passwordPrivateKey, use, true);
 	}
 	public JWK(KeyStore keystore, String alias, String passwordPrivateKey, boolean kid) throws UtilsException {
-		this(keystore, alias, passwordPrivateKey, null, true);
+		this(keystore, alias, passwordPrivateKey, null, kid);
 	}
 	public JWK(KeyStore keystore, String alias, String passwordPrivateKey, KeyUse use, boolean kid) throws UtilsException {
 		try {
-			if(keystore.existsAlias(alias)==false) {
-				throw new Exception("Alias '"+alias+"' undefined");
+			if(!keystore.existsAlias(alias)) {
+				throw new UtilsException("Alias '"+alias+"' undefined");
 			}
 			PublicKey publicKey = keystore.getPublicKey(alias);
 			if(publicKey instanceof java.security.interfaces.RSAPublicKey) {
 				PrivateKey privateKey = null;
 				if(passwordPrivateKey!=null) {
-					privateKey = 
-							(PrivateKey) keystore.getPrivateKey(alias, passwordPrivateKey);
+					privateKey = keystore.getPrivateKey(alias, passwordPrivateKey);
 				}
 				String aliasP = alias;
 				if(!kid) {
 					aliasP = null;
 				}
-				_init(publicKey, privateKey, aliasP, use);
+				initEngine(publicKey, privateKey, aliasP, use);
 			}
 			else {
-				throw new Exception("Unsupported type '"+publicKey.getClass().getName()+"'");
+				throw new UtilsException("Unsupported type '"+publicKey.getClass().getName()+"'");
 			}
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
@@ -117,6 +117,9 @@ public class JWK {
 	public JWK(PublicKey publicKey, KeyUse use) throws UtilsException {
 		this(publicKey, null, null, use);
 	}
+	public JWK(PublicKey publicKey, String kid, KeyUse use) throws UtilsException {
+		this(publicKey, null, kid, use);
+	}
 	public JWK(PublicKey publicKey, PrivateKey privateKey) throws UtilsException {
 		this(publicKey, privateKey, null, null);
 	}
@@ -127,9 +130,9 @@ public class JWK {
 		this(publicKey, privateKey, null, use);
 	}
 	public JWK(PublicKey publicKey, PrivateKey privateKey, String kid, KeyUse use) throws UtilsException {
-		_init(publicKey, privateKey, kid, use);
+		initEngine(publicKey, privateKey, kid, use);
 	}
-	private void _init(PublicKey publicKey, PrivateKey privateKey, String kid, KeyUse use) throws UtilsException {
+	private void initEngine(PublicKey publicKey, PrivateKey privateKey, String kid, KeyUse use) throws UtilsException {
 		try {
 			if(publicKey instanceof java.security.interfaces.RSAPublicKey) {
 				java.security.interfaces.RSAPublicKey p = (java.security.interfaces.RSAPublicKey) publicKey;
@@ -143,10 +146,10 @@ public class JWK {
 				if(use!=null) {
 					builder.keyUse(use);
 				}
-				this.jwk_nimbusds = builder.build();
+				this.jwkNimbusds = builder.build();
 			}
 			else {
-				throw new Exception("Unsupported type '"+publicKey.getClass().getName()+"'");
+				throw new UtilsException("Unsupported type '"+publicKey.getClass().getName()+"'");
 			}
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
@@ -171,61 +174,61 @@ public class JWK {
 			if(use!=null) {
 				builder.keyUse(use);
 			}
-			this.jwk_nimbusds = builder.build();
+			this.jwkNimbusds = builder.build();
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
 	
 	private synchronized void initCxf() throws UtilsException {
-		if(this.jwk_cxf==null) {
-			if(this.jwk_json==null){
+		if(this.jwkCxf==null) {
+			if(this.jwkJson==null){
 				throw new UtilsException("Json not defined");
 			}
-			this.jwk_cxf = this.engineCxf.jsonToJwk(this.jwk_json);
+			this.jwkCxf = this.engineCxf.jsonToJwk(this.jwkJson);
 		}
 	}
 	public JsonWebKey getJsonWebKey() throws UtilsException {
-		if(this.jwk_cxf==null) {
+		if(this.jwkCxf==null) {
 			this.initCxf();
 		}
-		return this.jwk_cxf;
+		return this.jwkCxf;
 	}
 	
 	private synchronized void initNimbusds() throws UtilsException {
-		if(this.jwk_nimbusds==null) {
-			if(this.jwk_json==null){
+		if(this.jwkNimbusds==null) {
+			if(this.jwkJson==null){
 				throw new UtilsException("Json not defined");
 			}
 			try {
-				this.jwk_nimbusds = RSAKey.parse(this.jwk_json);
+				this.jwkNimbusds = RSAKey.parse(this.jwkJson);
 			}catch(Exception e) {
 				throw new UtilsException(e.getMessage(),e);
 			}
 		}
 	}
 	public com.nimbusds.jose.jwk.JWK getJWK() throws UtilsException {
-		if(this.jwk_nimbusds==null) {
+		if(this.jwkNimbusds==null) {
 			this.initNimbusds();
 		}
-		return this.jwk_nimbusds;
+		return this.jwkNimbusds;
 	}
 	
 	private synchronized void initJson() throws UtilsException {
-		if(this.jwk_json==null) {
-			if(this.jwk_cxf==null && this.jwk_nimbusds==null){
+		if(this.jwkJson==null) {
+			if(this.jwkCxf==null && this.jwkNimbusds==null){
 				throw new UtilsException("JWK not defined");
 			}
-			if(this.jwk_cxf!=null) {
+			if(this.jwkCxf!=null) {
 				try {
-					this.jwk_json = this.engineCxf.jwkToJson(this.jwk_cxf);
+					this.jwkJson = this.engineCxf.jwkToJson(this.jwkCxf);
 				}catch(Exception e) {
 					throw new UtilsException(e.getMessage(),e);
 				}
 			}
 			else {
 				try {
-					this.jwk_json = this.jwk_nimbusds.toJSONString();
+					this.jwkJson = this.jwkNimbusds.toJSONString();
 				}catch(Exception e) {
 					throw new UtilsException(e.getMessage(),e);
 				}
@@ -233,48 +236,48 @@ public class JWK {
 		}
 	}
 	public String getJson() throws UtilsException {
-		if(this.jwk_json==null) {
+		if(this.jwkJson==null) {
 			this.initJson();
 		}
-		return this.jwk_json;
+		return this.jwkJson;
 	}
 	
 	private synchronized void initJsonPretty() throws UtilsException {
-		if(this.jwk_json_pretty==null) {
+		if(this.jwkJsonPretty==null) {
 			try {
-				if(this.jwk_node==null) {
+				if(this.jwkNode==null) {
 					initNode();
 				}
-				this.jwk_json_pretty = JSONUtils.getInstance(true).toString(this.jwk_node);
+				this.jwkJsonPretty = JSONUtils.getInstance(true).toString(this.jwkNode);
 			}catch(Exception e) {
 				throw new UtilsException(e.getMessage(),e);
 			}
 		}
 	}
 	public String getJsonPretty() throws UtilsException {
-		if(this.jwk_json_pretty==null) {
+		if(this.jwkJsonPretty==null) {
 			this.initJsonPretty();
 		}
-		return this.jwk_json_pretty;
+		return this.jwkJsonPretty;
 	}
 	
 	private synchronized void initNode() throws UtilsException {
-		if(this.jwk_node==null) {
+		if(this.jwkNode==null) {
 			try {
-				if(this.jwk_json==null) {
+				if(this.jwkJson==null) {
 					initJson();
 				}
-				this.jwk_node = JSONUtils.getInstance().getAsNode(this.jwk_json);
+				this.jwkNode = JSONUtils.getInstance().getAsNode(this.jwkJson);
 			}catch(Exception e) {
 				throw new UtilsException(e.getMessage(),e);
 			}
 		}
 	}
 	public JsonNode getNode() throws UtilsException {
-		if(this.jwk_node==null) {
+		if(this.jwkNode==null) {
 			this.initNode();
 		}
-		return this.jwk_node;
+		return this.jwkNode;
 	}
 	
 	@Override
@@ -282,7 +285,7 @@ public class JWK {
 		try {
 			return this.getJsonPretty();
 		}catch(Exception e) {
-			throw new RuntimeException(e.getMessage(),e);
+			throw new UtilsRuntimeException(e.getMessage(),e);
 		}
 	}
 }

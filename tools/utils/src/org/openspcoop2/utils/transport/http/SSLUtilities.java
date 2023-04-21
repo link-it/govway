@@ -312,7 +312,7 @@ public class SSLUtilities {
 	}
 	
 	private static TrustManager[] trustAllCertsManager;
-	private synchronized static void initTrustAllCertsManager() {
+	private static synchronized void initTrustAllCertsManager() {
 		if(trustAllCertsManager==null) {
 			// Create a trust manager that does not validate certificate chains
 			trustAllCertsManager = new TrustManager[]{

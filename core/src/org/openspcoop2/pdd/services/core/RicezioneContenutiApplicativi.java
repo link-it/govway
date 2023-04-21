@@ -230,7 +230,7 @@ public class RicezioneContenutiApplicativi {
 	 * 
 	 * @throws Exception
 	 */
-	public synchronized static void initializeService(
+	public static synchronized void initializeService(
 			ConfigurazionePdDManager configReader,
 			ClassNameProperties className,
 			OpenSPCoop2Properties propertiesReader, Logger logCore)

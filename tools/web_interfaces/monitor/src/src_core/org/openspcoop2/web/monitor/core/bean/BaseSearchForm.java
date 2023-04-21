@@ -1331,7 +1331,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 				boolean ricercaEsatta = TipoMatch.EQUALS.equals(match);
 				if(TipoAutenticazione.SSL.getValue().equalsIgnoreCase(this.getAutenticazione()) && ricercaEsatta) {
 					try {
-						CertificateUtils.validaPrincipal(this.getValoreRiconoscimento(), PrincipalType.subject);
+						CertificateUtils.validaPrincipal(this.getValoreRiconoscimento(), PrincipalType.SUBJECT);
 					} catch (UtilsException e) {
 						MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.SEARCH_MISSING_PARAMETERS_SSL_SUBJECT_LABEL_KEY));
 						return false;

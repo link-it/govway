@@ -367,10 +367,10 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 			case TYPE_SSL_SUBJECT_ISSUER:{
 
 				// Autenticazione SSL deve essere LIKE
-				Map<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoMap(aSubject, PrincipalType.subject);
+				Map<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoMap(aSubject, PrincipalType.SUBJECT);
 				Map<String, List<String>> hashIssuer = null;
 				if(StringUtils.isNotEmpty(aIssuer)) {
-					hashIssuer = CertificateUtils.getPrincipalIntoMap(aIssuer, PrincipalType.issuer);
+					hashIssuer = CertificateUtils.getPrincipalIntoMap(aIssuer, PrincipalType.ISSUER);
 				}
 
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -421,13 +421,13 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 					// Possono esistere piu' sil che hanno una porzione di subject uguale, devo quindi verificare che sia proprio quello che cerco
 					
 					String subjectPotenziale =  rs.getString("saSubject");
-					boolean subjectValid = CertificateUtils.sslVerify(subjectPotenziale, aSubject, PrincipalType.subject, this.driver.log);
+					boolean subjectValid = CertificateUtils.sslVerify(subjectPotenziale, aSubject, PrincipalType.SUBJECT, this.driver.log);
 					
 					boolean issuerValid = true;
 					if(hashIssuer!=null) {
 						String issuerPotenziale =  rs.getString("saIssuer");
 						if(StringUtils.isNotEmpty(issuerPotenziale)) {
-							issuerValid = CertificateUtils.sslVerify(issuerPotenziale, aIssuer, PrincipalType.issuer, this.driver.log);
+							issuerValid = CertificateUtils.sslVerify(issuerPotenziale, aIssuer, PrincipalType.ISSUER, this.driver.log);
 						}
 						else {
 							issuerValid = false;
@@ -497,13 +497,13 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 						// Possono esistere piu' sil che hanno una porzione di subject uguale, devo quindi verificare che sia proprio quello che cerco
 						
 						String subjectPotenziale =  rs.getString("saSubject");
-						boolean subjectValid = CertificateUtils.sslVerify(subjectPotenziale, aSubject, PrincipalType.subject, this.driver.log);
+						boolean subjectValid = CertificateUtils.sslVerify(subjectPotenziale, aSubject, PrincipalType.SUBJECT, this.driver.log);
 						
 						boolean issuerValid = true;
 						if(hashIssuer!=null) {
 							String issuerPotenziale =  rs.getString("saIssuer");
 							if(StringUtils.isNotEmpty(issuerPotenziale)) {
-								issuerValid = CertificateUtils.sslVerify(issuerPotenziale, aIssuer, PrincipalType.issuer, this.driver.log);
+								issuerValid = CertificateUtils.sslVerify(issuerPotenziale, aIssuer, PrincipalType.ISSUER, this.driver.log);
 							}
 							else {
 								issuerValid = false;
@@ -1463,10 +1463,10 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 					sqlQueryObject.addWhereIsNullCondition(CostantiDB.SERVIZI_APPLICATIVI+".token_policy");
 				}
 				
-				Map<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoMap(subject, PrincipalType.subject);
+				Map<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoMap(subject, PrincipalType.SUBJECT);
 				Map<String, List<String>> hashIssuer = null;
 				if(StringUtils.isNotEmpty(issuer)) {
-					hashIssuer = CertificateUtils.getPrincipalIntoMap(issuer, PrincipalType.issuer);
+					hashIssuer = CertificateUtils.getPrincipalIntoMap(issuer, PrincipalType.ISSUER);
 				}
 				
 				for (String key : hashSubject.keySet()) {					
@@ -1503,13 +1503,13 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 					// Possono esistere piu' sil che hanno una porzione di subject uguale, devo quindi verificare che sia proprio quello che cerco
 					
 					String subjectPotenziale =  risultato.getString("saSubject");
-					boolean subjectValid = CertificateUtils.sslVerify(subjectPotenziale, subject, PrincipalType.subject, this.driver.log);
+					boolean subjectValid = CertificateUtils.sslVerify(subjectPotenziale, subject, PrincipalType.SUBJECT, this.driver.log);
 					
 					boolean issuerValid = true;
 					if(hashIssuer!=null) {
 						String issuerPotenziale =  risultato.getString("saIssuer");
 						if(StringUtils.isNotEmpty(issuerPotenziale)) {
-							issuerValid = CertificateUtils.sslVerify(issuerPotenziale, issuer, PrincipalType.issuer, this.driver.log);
+							issuerValid = CertificateUtils.sslVerify(issuerPotenziale, issuer, PrincipalType.ISSUER, this.driver.log);
 						}
 						else {
 							issuerValid = false;

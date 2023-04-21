@@ -35,13 +35,40 @@ public class TestJWK {
 
 	private static final String ID_TEST = "JWKs";
 	
-	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST})
-	public void testJWK() throws Exception{
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST+".jwtSet"})
+	public void testJWKset() throws Exception{
 		
-		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.certificate.test.JWKTest.test();
-		TestLogger.info("Run test '"+ID_TEST+"' ok");
+		TestLogger.info("Run test '"+ID_TEST+".jwtSet' ...");
+		org.openspcoop2.utils.certificate.test.JWKTest.testJWKset();
+		TestLogger.info("Run test '"+ID_TEST+".jwtSet' ok");
 		
 	}
 	
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST+".keystore"})
+	public void testKeystore() throws Exception{
+		
+		TestLogger.info("Run test '"+ID_TEST+".keystore' ...");
+		org.openspcoop2.utils.certificate.test.JWKTest.testKeystore();
+		TestLogger.info("Run test '"+ID_TEST+".keystore' ok");
+		
+	}
+	
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST+".secretKey"})
+	public void testSecretKey() throws Exception{
+		
+		TestLogger.info("Run test '"+ID_TEST+".secretKey' ...");
+		org.openspcoop2.utils.certificate.test.JWKTest.testSecretKey();
+		TestLogger.info("Run test '"+ID_TEST+".secretKey' ok");
+		
+	}
+	
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST+".privatePublicKey"})
+	public void testPrivatePublicKey() throws Exception{
+		
+		TestLogger.info("Run test '"+ID_TEST+".privatePublicKey' ...");
+		org.openspcoop2.utils.certificate.test.JWKTest.testPrivatePublicKey();
+		TestLogger.info("Run test '"+ID_TEST+".privatePublicKey' ok");
+		
+	}
+
 }

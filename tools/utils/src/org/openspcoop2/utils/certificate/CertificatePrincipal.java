@@ -269,19 +269,17 @@ public class CertificatePrincipal {
 		List<String> l = null;
 		if(rdnArray!=null && rdnArray.length>0) {
 			for (RDN rdn : rdnArray) {
-				if(rdn!=null) {
-					if(rdn.getFirst()!=null && rdn.getFirst().getValue()!=null) {
-						if(l==null) {
-							l = new ArrayList<String>();
-						}
-						l.add(rdn.getFirst().getValue().toString());
+				if(rdn!=null && rdn.getFirst()!=null && rdn.getFirst().getValue()!=null) {
+					if(l==null) {
+						l = new ArrayList<>();
 					}
+					l.add(rdn.getFirst().getValue().toString());
 				}
 			}
 		}
 		
 		if(l==null && defaultEmptyValue!=null) {
-			l = new ArrayList<String>();
+			l = new ArrayList<>();
 			l.add(defaultEmptyValue);
 		}
 		return l;
@@ -291,7 +289,7 @@ public class CertificatePrincipal {
 	// ******* ID OID **********
 	
 	public List<String> getIdOID(){
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(this.x500name==null) {
 			this.initX500Name();
 		}
@@ -361,28 +359,27 @@ public class CertificatePrincipal {
 		return getInfosByIdOID(oid, null);
 	}
 	public List<String> getInfosByIdOID(org.bouncycastle.asn1.ASN1ObjectIdentifier oid, String defaultEmptyValue) {
-		if(this.x500name==null) {
+		return getInfosByOID(oid, defaultEmptyValue);
+		/**if(this.x500name==null) {
 			this.initX500Name();
 		}
 		RDN [] rdnArray = this.x500name.getRDNs(oid);
 		List<String> l = null;
 		if(rdnArray!=null && rdnArray.length>0) {
 			for (RDN rdn : rdnArray) {
-				if(rdn!=null) {
-					if(rdn.getFirst()!=null && rdn.getFirst().getValue()!=null) {
-						if(l==null) {
-							l = new ArrayList<String>();
-						}
-						l.add(rdn.getFirst().getValue().toString());
+				if(rdn!=null && rdn.getFirst()!=null && rdn.getFirst().getValue()!=null) {
+					if(l==null) {
+						l = new ArrayList<>();
 					}
+					l.add(rdn.getFirst().getValue().toString());
 				}
 			}
 		}
 		
 		if(l==null && defaultEmptyValue!=null) {
-			l = new ArrayList<String>();
+			l = new ArrayList<>();
 			l.add(defaultEmptyValue);
 		}
-		return l;
+		return l;*/
 	}
 }

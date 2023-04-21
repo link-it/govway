@@ -33,6 +33,8 @@ import java.security.cert.CertificateException;
  * @version $Rev$, $Date$
  */
 public class CertificateFactory {
+	
+	private CertificateFactory() {}
 
 	private static boolean useBouncyCastleProvider = false;
 	public static boolean isUseBouncyCastleProvider() {
@@ -43,17 +45,18 @@ public class CertificateFactory {
 	}
 	
 	private static Provider provider = null;
-	private synchronized static Provider _getProvider() {
+	private static synchronized Provider getProviderEngine() {
 		if ( provider == null )
 			provider = Security.getProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
 		return provider;
 	}
 	private static Provider getProvider() {
+		Provider p = null;
 		if(!useBouncyCastleProvider) {
-			return null;
+			return p;
 		}
 		if ( provider == null )
-			return _getProvider();
+			return getProviderEngine();
 		return provider;
 	}
 	
@@ -69,14 +72,14 @@ public class CertificateFactory {
 	}
 	
 	private static String certPathDefaultType = null;
-	private synchronized static String _getCertPathDefaultType() {
+	private static synchronized String getCertPathDefaultTypeEngine() {
 		if ( certPathDefaultType == null )
 			certPathDefaultType = CertPathValidator.getDefaultType();
 		return certPathDefaultType;
 	}
 	private static String getCertPathDefaultType() {
 		if ( certPathDefaultType == null )
-			return _getCertPathDefaultType();
+			return getCertPathDefaultTypeEngine();
 		return certPathDefaultType;
 	}
 	

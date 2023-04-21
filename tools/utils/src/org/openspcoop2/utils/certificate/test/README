@@ -22,3 +22,74 @@ Per verificare X509v3 CRL Distribution Points:
 openssl x509 -text -noout -in govway_test_oid_auth.cer | grep -A 6 "X509v3 CRL Distribution Points"
 
 Per entrambi usare come password 123456 e lasciare i default proposti
+
+
+
+Per creare chiavi private e pubbliche:
+
+# formato PKCS1 private key (unencrypted) nel formato PEM: -----BEGIN RSA PRIVATE KEY-----
+openssl genrsa -out client-test.rsa.pkcs1.privateKey.pem 2048
+# formato PKCS1 private key (unencrypted) nel formato DER
+openssl rsa -inform PEM -in client-test.rsa.pkcs1.privateKey.pem -outform DER -out client-test.rsa.pkcs1.privateKey.der
+
+# formato PKCS1 private key (encrypted) nel formato PEM: -----BEGIN RSA PRIVATE KEY----- con Proc-Type: 4,ENCRYPTED
+openssl genrsa -aes128 -passout pass:123456 -out client-test.rsa.pkcs1_encrypted.privateKey.pem 2048
+
+# Estrae la chiave pubblica dalla chiave privata, nel formato PEM
+openssl rsa -in client-test.rsa.pkcs1.privateKey.pem -pubout -out client-test.rsa.publicKey.pem
+# Estrae la chiave pubblica dalla chiave privata, nel formato DER
+openssl rsa -in client-test.rsa.pkcs1.privateKey.pem -pubout -out client-test.rsa.publicKey.der --outform DER
+
+# converte la chiave privata nel formato PKCS8 non cifrato PEM: -----BEGIN PRIVATE KEY-----
+openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in client-test.rsa.pkcs1.privateKey.pem -out client-test.rsa.pkcs8.privateKey.pem
+# converte la chiave privata nel formato PKCS8 non cifrato DER
+openssl pkcs8 -topk8 -inform PEM -outform DER -nocrypt -in client-test.rsa.pkcs1.privateKey.pem -out client-test.rsa.pkcs8.privateKey.der
+
+# converte la chiave privata nel formato PKCS8 cifrato PEM: -----BEGIN ENCRYPTED PRIVATE KEY-----
+openssl pkcs8 -topk8 -inform PEM -outform PEM -in client-test.rsa.pkcs1.privateKey.pem -out client-test.rsa.pkcs8_encrypted.privateKey.pem
+# converte la chiave privata nel formato PKCS8 cifrato DER
+openssl pkcs8 -topk8 -inform PEM -outform DER -in client-test.rsa.pkcs1.privateKey.pem -out client-test.rsa.pkcs8_encrypted.privateKey.der
+
+Per tutte le chiavi cifrate usare come password 123456
+
+Di seguito i comandi per ottenere file che contengono sia la chiave privata che quella pubblica:
+
+cat client-test.rsa.pkcs1.privateKey.pem > client-test.rsa.pkcs1.privatePublicKey.pem
+cat client-test.rsa.publicKey.pem >> client-test.rsa.pkcs1.privatePublicKey.pem
+
+cat client-test.rsa.publicKey.pem > client-test.rsa.pkcs1.publicPrivateKey.pem
+cat client-test.rsa.pkcs1.privateKey.pem >> client-test.rsa.pkcs1.publicPrivateKey.pem
+
+cat client-test.rsa.pkcs1_encrypted.privateKey.pem > client-test.rsa.pkcs1_encrypted.privatePublicKey.pem
+cat client-test.rsa.publicKey.pem >> client-test.rsa.pkcs1_encrypted.privatePublicKey.pem
+
+cat client-test.rsa.publicKey.pem > client-test.rsa.pkcs1_encrypted.publicPrivateKey.pem
+cat client-test.rsa.pkcs1_encrypted.privateKey.pem >> client-test.rsa.pkcs1_encrypted.publicPrivateKey.pem
+
+cat client-test.rsa.pkcs8.privateKey.pem > client-test.rsa.pkcs8.privatePublicKey.pem
+cat client-test.rsa.publicKey.pem >> client-test.rsa.pkcs8.privatePublicKey.pem
+
+cat client-test.rsa.publicKey.pem > client-test.rsa.pkcs8.publicPrivateKey.pem
+cat client-test.rsa.pkcs8.privateKey.pem >> client-test.rsa.pkcs8.publicPrivateKey.pem
+
+cat client-test.rsa.pkcs8_encrypted.privateKey.pem > client-test.rsa.pkcs8_encrypted.privatePublicKey.pem
+cat client-test.rsa.publicKey.pem >> client-test.rsa.pkcs8_encrypted.privatePublicKey.pem
+
+cat client-test.rsa.publicKey.pem > client-test.rsa.pkcs8_encrypted.publicPrivateKey.pem
+cat client-test.rsa.pkcs8_encrypted.privateKey.pem >> client-test.rsa.pkcs8_encrypted.publicPrivateKey.pem
+
+cat client-test.rsa.pkcs1.privateKey.pem > client-test.rsa.pkcs1.privateCertificate.pem
+cat govway_test.pem >> client-test.rsa.pkcs1.privateCertificate.pem
+
+cat govway_test.pem > client-test.rsa.pkcs1.certificatePrivateKey.pem
+cat client-test.rsa.pkcs1.privateKey.pem >> client-test.rsa.pkcs1.certificatePrivateKey.pem
+
+cat client-test.rsa.pkcs8.privateKey.pem > client-test.rsa.pkcs8.privateCertificates.pem
+cat govway_test.pem >> client-test.rsa.pkcs8.privateCertificates.pem
+cat govway_test_2.pem >> client-test.rsa.pkcs8.privateCertificates.pem
+cat govway_test_3.pem >> client-test.rsa.pkcs8.privateCertificates.pem
+
+cat govway_test.pem > client-test.rsa.pkcs8.certificatesPrivateKey.pem
+cat govway_test_2.pem >> client-test.rsa.pkcs8.certificatesPrivateKey.pem
+cat govway_test_3.pem >> client-test.rsa.pkcs8.certificatesPrivateKey.pem
+cat client-test.rsa.pkcs8.privateKey.pem >> client-test.rsa.pkcs8.certificatesPrivateKey.pem

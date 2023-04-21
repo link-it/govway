@@ -57,9 +57,9 @@ public enum OID {
 	PSEUDONYM(BCStyle.PSEUDONYM), // [2.5.4.65] RFC 3039 Pseudonym
 	ROLE(BCStyle.ROLE), // [2.5.4.72]
 	DMD_NAME(BCStyle.DMD_NAME), // [2.5.4.54] RFC 2256 dmdName
-	@SuppressWarnings("deprecation")
+	/**@SuppressWarnings("deprecation")
 	@Deprecated
-	SN(BCStyle.SN), // [2.5.4.5] use SERIALNUMBER or SURNAME
+	SN(BCStyle.SN), // [2.5.4.5] use SERIALNUMBER or SURNAME */
 	
 	UID(BCStyle.UID), // [0.9.2342.19200300.100.1.1]
 	DC(BCStyle.DC), // [0.9.2342.19200300.100.1.25]
@@ -79,26 +79,23 @@ public enum OID {
 
 	
 	
-	private String oid;
+	private String oidValue;
 	private org.bouncycastle.asn1.ASN1ObjectIdentifier oidBC;
 	
-	OID(String oid) {
-		this.oid = oid;
-	}
 	OID(org.bouncycastle.asn1.ASN1ObjectIdentifier oid) {
-		this.oid = oid.getId();
+		this.oidValue = oid.getId();
 		this.oidBC = oid;
 	}
 	
 	public String getID() {
-		return this.oid;
+		return this.oidValue;
 	}
 	public org.bouncycastle.asn1.ASN1ObjectIdentifier getOID() {
 		if(this.oidBC!=null) {
 			return this.oidBC;
 		}
 		else {
-			return new org.bouncycastle.asn1.ASN1ObjectIdentifier(this.oid);
+			return new org.bouncycastle.asn1.ASN1ObjectIdentifier(this.oidValue);
 		}
 	}
 	
@@ -108,7 +105,7 @@ public enum OID {
 	}
 	public String toString(boolean printOID) {
 		if(printOID) {
-			return this.name()+" ("+this.oid+")";
+			return this.name()+" ("+this.oidValue+")";
 		}
 		else {
 			return this.name();
@@ -118,7 +115,7 @@ public enum OID {
 	public static OID toOID(String id) {
 		OID [] v = OID.values();
 		for (OID oid : v) {
-			if(oid.oid.equals(id)) {
+			if(oid.oidValue.equals(id)) {
 				return oid;
 			}
 		}

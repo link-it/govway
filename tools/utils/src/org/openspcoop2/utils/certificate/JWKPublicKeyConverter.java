@@ -19,13 +19,10 @@
  */
 package org.openspcoop2.utils.certificate;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
-import java.security.KeyFactory;
 import java.security.PublicKey;
-import java.security.spec.X509EncodedKeySpec;
+import java.util.UUID;
 
-import org.bouncycastle.util.io.pem.PemReader;
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 
@@ -38,10 +35,12 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
  */
 public class JWKPublicKeyConverter {
 
+	public static final String KID_NULL = "#none#";
+	
 	public static void main(String [] args) throws UtilsException {
 		
 		if(args==null || args.length<2) {
-			throw new UtilsException("ERROR: argomenti non forniti (USAGE: JWKPublicKeyConverter pathPublicKey pathJWK [jwkset] [pretty])");
+			throw new UtilsException("ERROR: argomenti non forniti (USAGE: JWKPublicKeyConverter pathPublicKey pathJWK [kid] [jwkset(true/false)] [pretty(true/false)])");
 		}
 		
 		try {
@@ -53,39 +52,37 @@ public class JWKPublicKeyConverter {
 			String pathPublicKey = args[0];
 			byte[] publicKey = FileSystemUtilities.readBytesFromFile(pathPublicKey);
 			
-			X509EncodedKeySpec spec = new X509EncodedKeySpec(publicKey);
-			KeyFactory kf = KeyFactory.getInstance("RSA");
-				    
-			PublicKey pKey = null;
-			try {
-				pKey = kf.generatePublic(spec);
-			}catch(Throwable t) {
-				// provo PEM
-				try (ByteArrayInputStream bin = new ByteArrayInputStream(publicKey);
-					 InputStreamReader ir = new InputStreamReader(bin);
-					 PemReader pemReader = new PemReader(ir);){
-		            byte [] encoded = pemReader.readPemObject().getContent();
-		            spec = new X509EncodedKeySpec(encoded);
-		            pKey = kf.generatePublic(spec);
-		        } 
-			}
-			JWK jwk = new JWK(pKey);
+			KeyUtils keyUtils = new KeyUtils(KeyUtils.ALGO_RSA);
+			
+			PublicKey pKey = keyUtils.getPublicKey(publicKey);
 			
 			String pathJWK = args[1];
-			
-			String json = null;
+						
+			String kid = null;
+			if(args.length>2) {
+				kid = args[2];
+			}
+			if(kid==null || StringUtils.isEmpty(kid)) {
+				kid = UUID.randomUUID().toString();
+			}
+			if(KID_NULL.equals(kid)) {
+				kid = null;
+			}
 			
 			boolean jwks = true;
-			if(args.length>2) {
-				String tmp = args[2];
+			if(args.length>3) {
+				String tmp = args[3];
 				jwks = "true".equals(tmp);
 			}
 			
 			boolean pretty = false;
-			if(args.length>3) {
-				String tmp = args[3];
+			if(args.length>4) {
+				String tmp = args[4];
 				pretty = "true".equals(tmp);
 			}
+			
+			JWK jwk = new JWK(pKey, kid);
+			String json = null;
 			
 			if(jwks) {
 				JWKSet jwkSet = new JWKSet();
@@ -98,7 +95,7 @@ public class JWKPublicKeyConverter {
 			
 			FileSystemUtilities.writeFile(pathJWK, json.getBytes());
 			
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw new UtilsException(t.getMessage(),t);
 		}
 		

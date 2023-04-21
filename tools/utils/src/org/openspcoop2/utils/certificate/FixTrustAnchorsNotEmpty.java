@@ -26,7 +26,9 @@ import java.security.KeyStore;
 import java.security.cert.CertificateFactory;
 import java.util.Enumeration;
 
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
+import org.slf4j.Logger;
 
 /**
  * FixTrustAnchorsNotEmpty
@@ -37,9 +39,13 @@ import org.openspcoop2.utils.UtilsException;
  */
 public class FixTrustAnchorsNotEmpty {
 	
+	private FixTrustAnchorsNotEmpty() {}
+	
+	private static Logger log = LoggerWrapperFactory.getLogger(FixTrustAnchorsNotEmpty.class);
+	
 	private static CertificateFactory cf = null;
 	private static java.security.cert.Certificate certFix = null;
-	private static String PEM = "-----BEGIN CERTIFICATE-----\n"+
+	private static final String PEM = "-----BEGIN CERTIFICATE-----\n"+
 			"MIIC9TCCAd0CBE/Ior8wDQYJKoZIhvcNAQEFBQAwPjELMAkGA1UEBhMCSVQxLzAt\n"+
 			"BgNVBAMMJkZpeFRydXN0QW5jaG9yc1BhcmFtZXRlck11c3RCZU5vbkVtcHR5MCAX\n"+
 			"DTEyMDYwMTExMDg0N1oYDzIyODYwMzE2MTEwODQ3WjA+MQswCQYDVQQGEwJJVDEv\n"+
@@ -59,21 +65,11 @@ public class FixTrustAnchorsNotEmpty {
 			"-----END CERTIFICATE-----";
 	private static synchronized void initCertificateFactory(){
 		if(FixTrustAnchorsNotEmpty.cf==null){
-			InputStream is = null;
-			try{
+			try (InputStream is = new ByteArrayInputStream(PEM.getBytes());){
 				FixTrustAnchorsNotEmpty.cf = org.openspcoop2.utils.certificate.CertificateFactory.getCertificateFactory();
-				is = new ByteArrayInputStream(PEM.getBytes());
 				FixTrustAnchorsNotEmpty.certFix = FixTrustAnchorsNotEmpty.cf.generateCertificate(is);
 			}catch(Exception e){
-				e.printStackTrace(System.out);
-			}finally{
-				try{
-					if(is!=null){
-						is.close();
-					}
-				}catch(Exception eClose){
-					// close
-				}
+				log.error(e.getMessage(),e);
 			}
 		}
 	}
@@ -86,22 +82,22 @@ public class FixTrustAnchorsNotEmpty {
 			Enumeration<String> aliases = keystore.aliases();
 			while (aliases.hasMoreElements()) {
 				String alias = aliases.nextElement();
-				//System.out.println("ALIAS["+alias+"] ...");
+				/** System.out.println("ALIAS["+alias+"] ..."); */
 				if(keystore.isCertificateEntry(alias)){
-					//System.out.println("TROVATO!!!!");
+					/** System.out.println("TROVATO!!!!"); */
 					return;
 				}
 			}
-			//System.out.println("NON TROVATO!");
+			/** System.out.println("NON TROVATO!"); */
 			
 			if(FixTrustAnchorsNotEmpty.cf==null){
 				FixTrustAnchorsNotEmpty.initCertificateFactory();
 			}
 			keystore.setCertificateEntry("FixTrustAnchorsParameterMustBeNonEmpty", FixTrustAnchorsNotEmpty.certFix);
-			//System.out.println("AGGIUNTO");
+			/** System.out.println("AGGIUNTO"); */
 
 		}catch(Exception e){
-			throw new SecurityException(e.getMessage(),e);
+			throw new UtilsException(e.getMessage(),e);
 		}
 
 	}

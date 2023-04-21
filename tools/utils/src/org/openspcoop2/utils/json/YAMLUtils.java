@@ -84,7 +84,7 @@ public class YAMLUtils extends AbstractUtils {
 
 	private static org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("JSONUtils");
 	private static YAMLMapper _mapper;
-	private synchronized static void initMapper()  {
+	private static synchronized void initMapper()  {
 		semaphore.acquireThrowRuntime("initMapper");
 		try {
 			if(_mapper==null){
@@ -149,7 +149,7 @@ public class YAMLUtils extends AbstractUtils {
 	}
 	
 	private static ObjectWriter writer;
-	private synchronized static void initWriter()  {
+	private static synchronized void initWriter()  {
 		if(_mapper==null){
 			initMapper();
 		}
@@ -165,7 +165,7 @@ public class YAMLUtils extends AbstractUtils {
 	}
 	
 	private static ObjectWriter writerPrettyPrint;
-	private synchronized static void initWriterPrettyPrint()  {
+	private static synchronized void initWriterPrettyPrint()  {
 		if(_mapper==null){
 			initMapper();
 		}

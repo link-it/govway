@@ -484,7 +484,7 @@ public class ConnettoriCostanti {
 	public static final String DEFAULT_CONNETTORE_HTTPS_PATH_HSM_PREFIX = HSMUtils.KEYSTORE_HSM_PREFIX;
 	public static final String DEFAULT_CONNETTORE_HTTPS_HSM_STORE_PASSWORD_UNDEFINED = HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED;
 	public static final String DEFAULT_CONNETTORE_HTTPS_HSM_PRIVATE_KEY_PASSWORD_UNDEFINED = HSMUtils.KEYSTORE_HSM_PRIVATE_KEY_PASSWORD_UNDEFINED;
-	public static boolean DEFAULT_CONNETTORE_HTTPS_HSM_CONFIGURABLE_KEY_PASSWORD = HSMUtils.HSM_CONFIGURABLE_KEY_PASSWORD;
+	public static boolean DEFAULT_CONNETTORE_HTTPS_HSM_CONFIGURABLE_KEY_PASSWORD = HSMUtils.isHsmConfigurableKeyPassword();
 	
 	public static final String DEFAULT_CONNETTORE_HTTPS_TIPOLOGIA_KEYSTORE_TYPE = SecurityConstants.KEYSTORE_TYPE_JKS_VALUE;
 	public static final String[] TIPOLOGIE_KEYSTORE_OLD = { SecurityConstants.KEYSTORE_TYPE_JKS_VALUE, 
@@ -496,11 +496,11 @@ public class ConnettoriCostanti {
 		List<String> l = new ArrayList<String>();
 		l.add(label ? SecurityConstants.KEYSTORE_TYPE_JKS_LABEL : SecurityConstants.KEYSTORE_TYPE_JKS_VALUE);
 		l.add(label ? SecurityConstants.KEYSTORE_TYPE_PKCS12_LABEL : SecurityConstants.KEYSTORE_TYPE_PKCS12_VALUE);
-		HSMUtils.fillTIPOLOGIE_KEYSTORE(truststore, false, l);
+		HSMUtils.fillTipologieKeystore(truststore, false, l);
 		return l;
 	}
 	public static boolean existsTIPOLOGIE_KEYSTORE_HSM(boolean truststore){
-		return HSMUtils.existsTIPOLOGIE_KEYSTORE_HSM(truststore, false);
+		return HSMUtils.existsTipologieKeystoreHSM(truststore, false);
 	}
 	
 	

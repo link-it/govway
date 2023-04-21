@@ -393,12 +393,12 @@ public class IdentificazioneApplicativoMittenteUtils {
 						// 4. solo per subject
 						if(c.getSubject()!=null) {
 						
-							boolean subjectValid = CertificateUtils.sslVerify(c.getSubject(), subjectSicurezzaMessaggio, PrincipalType.subject, log);
+							boolean subjectValid = CertificateUtils.sslVerify(c.getSubject(), subjectSicurezzaMessaggio, PrincipalType.SUBJECT, log);
 							boolean issuerValid = true;
 							if(subjectValid) {
 								if(c.getIssuer()!=null) {
 									if(issuerSicurezzaMessaggio!=null) {
-										issuerValid = CertificateUtils.sslVerify(c.getIssuer(), issuerSicurezzaMessaggio, PrincipalType.issuer, log);
+										issuerValid = CertificateUtils.sslVerify(c.getIssuer(), issuerSicurezzaMessaggio, PrincipalType.ISSUER, log);
 									}
 								}
 							}

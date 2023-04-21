@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.openspcoop2.utils.Utilities;
@@ -71,92 +72,101 @@ public class HSMManager {
 	 * 
 	 **/
 	
-	private HashMap<String, HSMKeystore> hsmKeystoreMapIDtoConfig = new HashMap<String, HSMKeystore>();
+	private HashMap<String, HSMKeystore> hsmKeystoreMapIDtoConfig = new HashMap<>();
 	
-	private HashMap<String, String> hsmKeystoreMapKeystoreTypeLabelToID = new HashMap<String, String>();
+	private HashMap<String, String> hsmKeystoreMapKeystoreTypeLabelToID = new HashMap<>();
 	
 	private HSMManager(File f, boolean throwNotExists, Logger log, boolean accessKeystore) throws UtilsException {
+		String prefixFile = "File '"+f.getAbsolutePath()+"'";
 		if(!f.exists()) {
 			if(throwNotExists) {
-				throw new UtilsException("File '"+f.getAbsolutePath()+"' not exists");
+				throw new UtilsException(prefixFile+" not exists");
 			}
 		}
 		else {
 			if(!f.canRead()) {
-				throw new UtilsException("File '"+f.getAbsolutePath()+"' cannot read");
+				throw new UtilsException(prefixFile+" cannot read");
 			}
 			Properties p = new Properties();
 			try {
 				try(FileInputStream fin = new FileInputStream(f)){
 					p.load(fin);
 				}
-			}catch(Throwable t) {
-				throw new UtilsException("File '"+f.getAbsolutePath()+"'; initialize error: "+t.getMessage(),t);
+			}catch(Exception t) {
+				throw new UtilsException(prefixFile+"; initialize error: "+t.getMessage(),t);
 			}
 			init(p, log, accessKeystore);
 		}
 	}
-	private HSMManager(Properties p, Logger log, boolean accessKeystore) throws UtilsException {
+	/**private HSMManager(Properties p, Logger log, boolean accessKeystore) throws UtilsException {
 		init(p, log, accessKeystore);
-	}
+	}*/
 	private void init(Properties p, Logger log, boolean accessKeystore) throws UtilsException {
 		
-		List<String> idKeystore = new ArrayList<String>();
+		List<String> idKeystore = new ArrayList<>();
 		
 		if(p!=null && !p.isEmpty()) {
-			
-			Enumeration<?> enKeys = p.keys();
-			while (enKeys.hasMoreElements()) {
-				Object object = (Object) enKeys.nextElement();
-				if(object instanceof String) {
-					String key = (String) object;
-					
-					if(key.startsWith(HSMCostanti.PROPERTY_PREFIX) && key.length()>(HSMCostanti.PROPERTY_PREFIX.length())) {
-						String tmp = key.substring(HSMCostanti.PROPERTY_PREFIX.length());
-						if(tmp!=null && tmp.contains(".")) {
-							int indeoOf = tmp.indexOf(".");
-							if(indeoOf>0) {
-								String idK = tmp.substring(0,indeoOf);
-								if(!idKeystore.contains(idK)) {
-									idKeystore.add(idK);
-								}
-							}
-						}
-					}
-				}
-			}
-			
+			init(p, idKeystore);
 		}
 		
 		if(!idKeystore.isEmpty()) {
 			for (String idK : idKeystore) {
-				String prefix = HSMCostanti.PROPERTY_PREFIX + idK + ".";
-				Properties pKeystore = Utilities.readProperties(prefix, p);
-				HSMKeystore hsmKeystore = new HSMKeystore(idK, pKeystore, log, accessKeystore);
-				
-				boolean alreadyExists = false;
-				for (String type : this.hsmKeystoreMapKeystoreTypeLabelToID.keySet()) {
-					if(hsmKeystore.getKeystoreTypeLabel().equalsIgnoreCase(type)) {
-						alreadyExists = true;
-					}
-				}
-				if(alreadyExists) {
-					throw new UtilsException("Same keystore type label found for keystore '"+this.hsmKeystoreMapKeystoreTypeLabelToID.get(hsmKeystore.getKeystoreTypeLabel())+"' e '"+idK+"'");
-				}
-				this.hsmKeystoreMapKeystoreTypeLabelToID.put(hsmKeystore.getKeystoreTypeLabel(), idK);
-				
-				this.hsmKeystoreMapIDtoConfig.put(idK, hsmKeystore);
-				log.info("HSMKeystore "+idK+" registrato (keystoreType:"+hsmKeystore.getKeystoreTypeLabel()+")");				
+				init(p, log, accessKeystore, idK);		
 			}
 		}
 		else {
 			log.warn("La configurazione fornita per HSM non contiene alcun keystore");
 		}
 	}
+	private void init(Properties p, List<String> idKeystore) {
+		Enumeration<?> enKeys = p.keys();
+		while (enKeys.hasMoreElements()) {
+			Object object = enKeys.nextElement();
+			if(object instanceof String) {
+				String key = (String) object;
+				init(key, idKeystore);	
+			}
+		}
+	}
+	private void init(String key, List<String> idKeystore) {
+		if(key.startsWith(HSMCostanti.PROPERTY_PREFIX) && key.length()>(HSMCostanti.PROPERTY_PREFIX.length())) {
+			String tmp = key.substring(HSMCostanti.PROPERTY_PREFIX.length());
+			if(tmp!=null && tmp.contains(".")) {
+				int indeoOf = tmp.indexOf(".");
+				if(indeoOf>0) {
+					String idK = tmp.substring(0,indeoOf);
+					if(!idKeystore.contains(idK)) {
+						idKeystore.add(idK);
+					}
+				}
+			}
+		}
+	}
+	private void init(Properties p, Logger log, boolean accessKeystore, String idK) throws UtilsException {
+		String prefix = HSMCostanti.PROPERTY_PREFIX + idK + ".";
+		Properties pKeystore = Utilities.readProperties(prefix, p);
+		HSMKeystore hsmKeystore = new HSMKeystore(idK, pKeystore, log, accessKeystore);
+		
+		boolean alreadyExists = false;
+		for (String type : this.hsmKeystoreMapKeystoreTypeLabelToID.keySet()) {
+			if(hsmKeystore.getKeystoreTypeLabel().equalsIgnoreCase(type)) {
+				alreadyExists = true;
+			}
+		}
+		if(alreadyExists) {
+			throw new UtilsException("Same keystore type label found for keystore '"+this.hsmKeystoreMapKeystoreTypeLabelToID.get(hsmKeystore.getKeystoreTypeLabel())+"' e '"+idK+"'");
+		}
+		this.hsmKeystoreMapKeystoreTypeLabelToID.put(hsmKeystore.getKeystoreTypeLabel(), idK);
+		
+		this.hsmKeystoreMapIDtoConfig.put(idK, hsmKeystore);
+		String d = "HSMKeystore "+idK+" registrato (keystoreType:"+hsmKeystore.getKeystoreTypeLabel()+")";
+		log.info(d);	
+	}
 	
 	public void providerInit(Logger log, boolean uniqueProviderInstance) throws UtilsException {
 		if(this.hsmKeystoreMapIDtoConfig!=null && !this.hsmKeystoreMapIDtoConfig.isEmpty()) {
-			for (String idK : this.hsmKeystoreMapIDtoConfig.keySet()) {
+			for (Map.Entry<String,HSMKeystore> entry : this.hsmKeystoreMapIDtoConfig.entrySet()) {
+				String idK = entry.getKey();
 				HSMKeystore hsmKeystore = this.hsmKeystoreMapIDtoConfig.get(idK);
 				hsmKeystore.init(log, uniqueProviderInstance);
 			}
@@ -171,8 +181,7 @@ public class HSMManager {
 		if(!this.hsmKeystoreMapIDtoConfig.containsKey(idK)) {
 			throw new UtilsException("Keystore config for type '"+keystoreTypeLabel+"' unknown ? (id:"+idK+")");
 		}
-		HSMKeystore hsmKeystore = this.hsmKeystoreMapIDtoConfig.get(idK);
-		return hsmKeystore;
+		return this.hsmKeystoreMapIDtoConfig.get(idK);
 	}
 	
 	public KeyStore getKeystore(String keystoreTypeLabel) throws UtilsException {
@@ -191,7 +200,7 @@ public class HSMManager {
 	}
 	
 	public List<String> getKeystoreTypes() {
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(!this.hsmKeystoreMapKeystoreTypeLabelToID.isEmpty()) {
 			for (String type : this.hsmKeystoreMapKeystoreTypeLabelToID.keySet()) {
 				l.add(type);

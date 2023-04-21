@@ -44,8 +44,8 @@ public class HSMKeystore implements Serializable {
 	 */
 	private static final long serialVersionUID = -3572589461109860459L;
 
-	private transient Boolean _uniqueProviderInstance;
-	private transient Provider _providerInstance;
+	private transient Boolean uniqueProviderInstance;
+	private transient Provider providerInstance;
 		
 	private String id;
 
@@ -63,6 +63,13 @@ public class HSMKeystore implements Serializable {
 		this.id = id;
 		
 		if(p==null || p.isEmpty()) {
+			log.error("Properties is null");
+		}
+		
+		String prefix = "Property '"+HSMCostanti.PROPERTY_PREFIX+id;
+		String uncorrect = "' uncorrect: ";
+		
+		if(p==null || p.isEmpty()) {
 			throw new UtilsException("Properties '"+HSMCostanti.PROPERTY_PREFIX+id+".*' undefined");
 		}
 		
@@ -72,8 +79,8 @@ public class HSMKeystore implements Serializable {
 		if(tmp!=null) {
 			try {
 				this.providerAdd = Boolean.parseBoolean(tmp);
-			}catch(Throwable e) {
-				throw new UtilsException("Property '"+HSMCostanti.PROPERTY_PREFIX+id+"."+HSMCostanti.PROPERTY_SUFFIX_PROVIDER_ADD+"' uncorrect: "+e.getMessage(),e);
+			}catch(Exception e) {
+				throw new UtilsException(prefix+"."+HSMCostanti.PROPERTY_SUFFIX_PROVIDER_ADD+uncorrect+e.getMessage(),e);
 			}
 		}
 		
@@ -89,8 +96,8 @@ public class HSMKeystore implements Serializable {
 		if(tmp!=null) {
 			try {
 				this.usableAsTrustStore = Boolean.parseBoolean(tmp);
-			}catch(Throwable e) {
-				throw new UtilsException("Property '"+HSMCostanti.PROPERTY_PREFIX+id+"."+HSMCostanti.PROPERTY_SUFFIX_USABLE_AS_TRUST_STORE+"' uncorrect: "+e.getMessage(),e);
+			}catch(Exception e) {
+				throw new UtilsException(prefix+"."+HSMCostanti.PROPERTY_SUFFIX_USABLE_AS_TRUST_STORE+uncorrect+e.getMessage(),e);
 			}
 		}
 		
@@ -98,8 +105,8 @@ public class HSMKeystore implements Serializable {
 		if(tmp!=null) {
 			try {
 				this.usableAsSecretKeyStore = Boolean.parseBoolean(tmp);
-			}catch(Throwable e) {
-				throw new UtilsException("Property '"+HSMCostanti.PROPERTY_PREFIX+id+"."+HSMCostanti.PROPERTY_SUFFIX_USABLE_AS_SECRET_KEY_STORE+"' uncorrect: "+e.getMessage(),e);
+			}catch(Exception e) {
+				throw new UtilsException(prefix+"."+HSMCostanti.PROPERTY_SUFFIX_USABLE_AS_SECRET_KEY_STORE+uncorrect+e.getMessage(),e);
 			}
 		}
 	}
@@ -152,38 +159,43 @@ public class HSMKeystore implements Serializable {
 	// ******* Keystore engine ********
 	
 	public void init(Logger log, boolean uniqueProviderInstance) throws UtilsException {
-		if(this._uniqueProviderInstance==null) {
+		if(this.uniqueProviderInstance==null) {
 			initInstance(log, uniqueProviderInstance);
 		}
 	}
 	private synchronized void initInstance(Logger log, boolean uniqueProviderInstance) throws UtilsException {
-		if(this._uniqueProviderInstance==null) {
-			Provider provider = newProviderInstance();
+		if(this.uniqueProviderInstance==null) {
+			Provider providerNew = newProviderInstance();
 			if(this.isProviderAdd()) {
 				Provider providerCheck = null;
 				try {
-					providerCheck = Security.getProvider(provider.getName());
-				}catch(Throwable t) {}
+					providerCheck = Security.getProvider(providerNew.getName());
+				}catch(Throwable t) {
+					// ignore
+				}
 				if(providerCheck==null) {
-					Security.addProvider(provider);
-					log.info("Registered provider: "+provider.getName());
+					Security.addProvider(providerNew);
+					String d = "Registered provider: "+providerNew.getName();
+					log.info(d);
 				}
 				else {
-					log.info("Loaded provider (not registered, already exists): "+provider.getName());
+					String d = "Loaded provider (not registered, already exists): "+providerNew.getName();
+					log.info(d);
 				}
 			}
 			else {
-				log.info("Loaded provider: "+provider.getName());
+				String d = "Loaded provider: "+providerNew.getName();
+				log.info(d);
 			}
 			
-			this._uniqueProviderInstance = uniqueProviderInstance;
-			if(this._uniqueProviderInstance) {
-				this._providerInstance = provider;
+			this.uniqueProviderInstance = uniqueProviderInstance;
+			if(this.uniqueProviderInstance!=null && this.uniqueProviderInstance.booleanValue()) {
+				this.providerInstance = providerNew;
 			}
 		}
 	}
 	private Provider newProviderInstance() throws UtilsException{
-		Provider provider = Security.getProvider(this.getProvider());
+		Provider providerNew = Security.getProvider(this.getProvider());
 		String prefix = this.getPrefixForLog();
 		if(this.getConfigFile()!=null) {
 			File f = new File(this.getConfigFile());
@@ -195,34 +207,34 @@ public class HSMKeystore implements Serializable {
 					throw new UtilsException(prefix+"Configuration file '"+f.getAbsolutePath()+"' cannot read");
 				}
 			}
-			provider = provider.configure(this.getConfigFile());
+			providerNew = providerNew.configure(this.getConfigFile());
 		}
 		else if(this.getConfig()!=null) {
-			provider = provider.configure(this.getConfig());
+			providerNew = providerNew.configure(this.getConfig());
 		}
-		return provider;
+		return providerNew;
 	}
 	
 	public KeyStore getInstance() throws UtilsException {
 		String prefix = this.getPrefixForLog();
 		
-		Provider providerInstance = null;
-		if(this._uniqueProviderInstance==null) {
+		Provider providerInstanceGet = null;
+		if(this.uniqueProviderInstance==null) {
 			throw new UtilsException(prefix+"Provider not initialized");
 		}
-		if(this._uniqueProviderInstance) {
-			if(this._providerInstance==null) {
+		if(this.uniqueProviderInstance.booleanValue()) {
+			if(this.providerInstance==null) {
 				throw new UtilsException(prefix+"Provider not initialized");
 			}
-			providerInstance = this._providerInstance;
+			providerInstanceGet = this.providerInstance;
 		}
 		else {
-			providerInstance = newProviderInstance();
+			providerInstanceGet = newProviderInstance();
 		}
 		
 		java.security.KeyStore hsmKeyStore = null;
 		try {
-			hsmKeyStore = java.security.KeyStore.getInstance(this.keystoreType, providerInstance);
+			hsmKeyStore = java.security.KeyStore.getInstance(this.keystoreType, providerInstanceGet);
 			hsmKeyStore.load(null, this.pin.toCharArray());
 		}catch(Throwable t) {
 			throw new UtilsException(prefix+t.getMessage(),t);

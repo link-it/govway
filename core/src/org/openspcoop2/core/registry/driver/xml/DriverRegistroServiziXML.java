@@ -1593,7 +1593,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 					
 						boolean subjectValid = false;
 						if(credenziali.getSubject()!=null) {
-							subjectValid = CertificateUtils.sslVerify(credenziali.getSubject(), aSubject, PrincipalType.subject, this.log);
+							subjectValid = CertificateUtils.sslVerify(credenziali.getSubject(), aSubject, PrincipalType.SUBJECT, this.log);
 						}
 						
 						boolean issuerValid = true;
@@ -1602,7 +1602,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 								issuerValid = false;
 							}
 							else {
-								issuerValid = CertificateUtils.sslVerify(credenziali.getIssuer(), aIssuer, PrincipalType.issuer, this.log);
+								issuerValid = CertificateUtils.sslVerify(credenziali.getIssuer(), aIssuer, PrincipalType.ISSUER, this.log);
 							}
 						}
 						else {
@@ -1797,14 +1797,14 @@ public class DriverRegistroServiziXML extends BeanUtilities
 								if(credenziali.getSubject()==null){
 									continue;
 								}
-								boolean subjectValid = CertificateUtils.sslVerify(credenziali.getSubject(), filtroRicerca.getCredenzialiSoggetto().getSubject(), PrincipalType.subject, this.log);
+								boolean subjectValid = CertificateUtils.sslVerify(credenziali.getSubject(), filtroRicerca.getCredenzialiSoggetto().getSubject(), PrincipalType.SUBJECT, this.log);
 								boolean issuerValid = true;
 								if(filtroRicerca.getCredenzialiSoggetto().getIssuer()!=null) {
 									if(credenziali.getIssuer()==null) {
 										issuerValid = false;
 									}
 									else {
-										issuerValid = CertificateUtils.sslVerify(credenziali.getIssuer(), filtroRicerca.getCredenzialiSoggetto().getIssuer(), PrincipalType.issuer, this.log);
+										issuerValid = CertificateUtils.sslVerify(credenziali.getIssuer(), filtroRicerca.getCredenzialiSoggetto().getIssuer(), PrincipalType.ISSUER, this.log);
 									}
 								}
 								else {

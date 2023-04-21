@@ -229,7 +229,7 @@ public class InoltroBuste extends GenericLib{
 	 * 
 	 * @throws Exception
 	 */
-	public synchronized static void initializeService(ClassNameProperties className,OpenSPCoop2Properties propertiesReader) {
+	public static synchronized void initializeService(ClassNameProperties className,OpenSPCoop2Properties propertiesReader) {
 
 		if(InoltroBuste.initializeService)
 			return;

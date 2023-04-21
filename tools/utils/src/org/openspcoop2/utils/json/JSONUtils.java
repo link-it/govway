@@ -150,7 +150,7 @@ public class JSONUtils extends AbstractUtils {
 	}
 	
 	private static ObjectWriter writer;
-	private synchronized static void initWriter()  {
+	private static synchronized void initWriter()  {
 		if(_mapper==null){
 			initMapper();
 		}
@@ -166,7 +166,7 @@ public class JSONUtils extends AbstractUtils {
 	}
 	
 	private static ObjectWriter writerPrettyPrint;
-	private synchronized static void initWriterPrettyPrint()  {
+	private static synchronized void initWriterPrettyPrint()  {
 		if(_mapper==null){
 			initMapper();
 		}

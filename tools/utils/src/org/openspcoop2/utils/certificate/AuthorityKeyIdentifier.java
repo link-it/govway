@@ -38,13 +38,13 @@ import org.openspcoop2.utils.io.HexBinaryUtilities;
  */
 public class AuthorityKeyIdentifier {
 
-	private org.bouncycastle.asn1.x509.AuthorityKeyIdentifier authorityKeyIdentifier;
+	private org.bouncycastle.asn1.x509.AuthorityKeyIdentifier authorityKeyIdentifierBC;
 	private long certSerialNumber;
 	private byte[] keyIdentifier;
 	private List<GeneralName> certIssuers = new ArrayList<>();
 
 	public org.bouncycastle.asn1.x509.AuthorityKeyIdentifier getAuthorityKeyIdentifier() {
-		return this.authorityKeyIdentifier;
+		return this.authorityKeyIdentifierBC;
 	}
 
 	public long getCertSerialNumber() {
@@ -79,50 +79,57 @@ public class AuthorityKeyIdentifier {
 		return s;
 	}
 	public String getCertIssuer(int index) {
-		return this.certIssuers!=null && (this.certIssuers.size()>index) ? (this.certIssuers.get(index)!=null && this.certIssuers.get(index).getName()!=null) ? this.certIssuers.get(index).getName().toString() : null : null;
+		if( this.certIssuers!=null && (this.certIssuers.size()>index) ) {
+			return (this.certIssuers.get(index)!=null && this.certIssuers.get(index).getName()!=null) ? this.certIssuers.get(index).getName().toString() : null;
+		}
+		return null;
 	}
 	public boolean containsCertIssuer(String name) throws CertificateParsingException {
-		return _containsCertIssuer(null, name);
+		return containsCertIssuerEngine(null, name);
 	}
 	public boolean containsCertIssuer(int tagNum, String name) throws CertificateParsingException {
-		return _containsCertIssuer(tagNum, name);
+		return containsCertIssuerEngine(tagNum, name);
 	}
-	private boolean _containsCertIssuer(Integer tagNum, String name) throws CertificateParsingException {
+	private boolean containsCertIssuerEngine(Integer tagNum, String name) throws CertificateParsingException {
 		if(name==null) {
 			throw new CertificateParsingException("Param name undefined");
 		}
 		if(this.certIssuers!=null && !this.certIssuers.isEmpty()) {
 			for (GeneralName o : this.certIssuers) {
-				if(o.getName()!=null) {
-					if(name.equals(o.getName().toString())) {
-						if(tagNum==null) {
-							return true;
-						}
-						else {
-							if(tagNum.intValue() == o.getTagNo()) {
-								return true;
-							}
-						}
-					}
+				if(isEquals(o, tagNum, name)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	private boolean isEquals(GeneralName o, Integer tagNum, String name) {
+		if(o.getName()!=null && name.equals(o.getName().toString())) {
+			if(tagNum==null) {
+				return true;
+			}
+			else {
+				if(tagNum.intValue() == o.getTagNo()) {
+					return true;
 				}
 			}
 		}
 		return false;
 	}
 	
-	public static AuthorityKeyIdentifier getAuthorityKeyIdentifier(byte[]encoded) throws CertificateParsingException{
+	public static AuthorityKeyIdentifier getAuthorityKeyIdentifier(byte[]encoded) {
 		
 		org.bouncycastle.asn1.x509.Certificate c =org.bouncycastle.asn1.x509.Certificate.getInstance(encoded);
 		Extensions exts = c.getTBSCertificate().getExtensions();
 		if (exts != null){
 			org.bouncycastle.asn1.x509.AuthorityKeyIdentifier authorityKeyIdentifier = org.bouncycastle.asn1.x509.AuthorityKeyIdentifier.fromExtensions(exts);
 			if(authorityKeyIdentifier!=null) {
-//				System.out.println("======================");
-//				System.out.println("AuthorityKeyIdentifier '"+authorityKeyIdentifier.toString()+"'");
-//				System.out.println("======================");
+				/**System.out.println("======================");
+				System.out.println("AuthorityKeyIdentifier '"+authorityKeyIdentifier.toString()+"'");
+				System.out.println("======================");*/
 				
 				AuthorityKeyIdentifier aki = new AuthorityKeyIdentifier();
-				aki.authorityKeyIdentifier = authorityKeyIdentifier;
+				aki.authorityKeyIdentifierBC = authorityKeyIdentifier;
 				if(authorityKeyIdentifier.getAuthorityCertSerialNumber()!=null) {
 					aki.certSerialNumber = authorityKeyIdentifier.getAuthorityCertSerialNumber().longValue();
 				}

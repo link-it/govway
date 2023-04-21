@@ -47,7 +47,7 @@ public class Jsf1Utils extends org.openspcoop2.generic_project.web.core.Utils {
 		return Jsf1Utils.instance;
 	}
 
-	private synchronized static void init(){
+	private static synchronized void init(){
 		if(Jsf1Utils.instance == null)
 			Jsf1Utils.instance = new Jsf1Utils();
 	}

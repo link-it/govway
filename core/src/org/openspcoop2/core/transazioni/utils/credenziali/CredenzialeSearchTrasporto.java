@@ -76,7 +76,7 @@ public class CredenzialeSearchTrasporto extends AbstractSearchCredenziale {
 			pagEpression.equals(CredenzialeMittente.model().TIPO, CredenzialeTrasporto.getTipoTrasporto(this.tipo, this.tipoAutenticazione));
 			
 			if(CredenzialeTrasporto.isSsl(this.tipoAutenticazione) && ricercaEsatta) {
-				Map<String,  List<String>> hashSubject = CertificateUtils.getPrincipalIntoMap(credential, PrincipalType.subject);
+				Map<String,  List<String>> hashSubject = CertificateUtils.getPrincipalIntoMap(credential, PrincipalType.SUBJECT);
 				for (String key : hashSubject.keySet()) {
 					List<String> listValues = hashSubject.get(key);
 					for (String value : listValues) {
@@ -120,7 +120,7 @@ public class CredenzialeSearchTrasporto extends AbstractSearchCredenziale {
 			for (CredenzialeMittente credenzialeMittentePotenziale : originalList) {
 				String subjectPotenziale =  credenzialeMittentePotenziale.getCredenziale();
 				try {
-					boolean subjectValid = CertificateUtils.sslVerify(subjectPotenziale, credenziale, PrincipalType.subject, log);
+					boolean subjectValid = CertificateUtils.sslVerify(subjectPotenziale, credenziale, PrincipalType.SUBJECT, log);
 					if(subjectValid) {
 						filteredList.add(credenzialeMittentePotenziale);
 					}

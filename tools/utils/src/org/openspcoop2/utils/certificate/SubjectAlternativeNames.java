@@ -57,38 +57,45 @@ public class SubjectAlternativeNames {
 		return s;
 	}
 	public String getAlternativeName(int index) {
-		return this.alternativeNames!=null && (this.alternativeNames.size()>index) ? (this.alternativeNames.get(index)!=null && this.alternativeNames.get(index).getName()!=null) ? this.alternativeNames.get(index).getName().toString() : null : null;
+		if(this.alternativeNames!=null && (this.alternativeNames.size()>index)) {
+			return (this.alternativeNames.get(index)!=null && this.alternativeNames.get(index).getName()!=null) ? this.alternativeNames.get(index).getName().toString() : null;
+		}
+		return null;
 	}
 	public boolean containsAlternativeName(String name) throws CertificateParsingException {
-		return _containsAlternativeName(null, name);
+		return containsAlternativeNameEngine(null, name);
 	}
 	public boolean containsAlternativeName(int tagNum, String name) throws CertificateParsingException {
-		return _containsAlternativeName(tagNum, name);
+		return containsAlternativeNameEngine(tagNum, name);
 	}
-	private boolean _containsAlternativeName(Integer tagNum, String name) throws CertificateParsingException {
+	private boolean containsAlternativeNameEngine(Integer tagNum, String name) throws CertificateParsingException {
 		if(name==null) {
 			throw new CertificateParsingException("Param name undefined");
 		}
 		if(this.alternativeNames!=null && !this.alternativeNames.isEmpty()) {
 			for (GeneralName o : this.alternativeNames) {
-				if(o.getName()!=null) {
-					if(name.equals(o.getName().toString())) {
-						if(tagNum==null) {
-							return true;
-						}
-						else {
-							if(tagNum.intValue() == o.getTagNo()) {
-								return true;
-							}
-						}
-					}
+				if(equalsAlternativeName(tagNum, name, o)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	private boolean equalsAlternativeName(Integer tagNum, String name, GeneralName o) {
+		if(o.getName()!=null && name.equals(o.getName().toString())) {
+			if(tagNum==null) {
+				return true;
+			}
+			else {
+				if(tagNum.intValue() == o.getTagNo()) {
+					return true;
 				}
 			}
 		}
 		return false;
 	}
 	
-	public static SubjectAlternativeNames getSubjectAlternativeNames(byte[]encoded) throws CertificateParsingException{
+	public static SubjectAlternativeNames getSubjectAlternativeNames(byte[]encoded) {
 		
 		org.bouncycastle.asn1.x509.Certificate c =org.bouncycastle.asn1.x509.Certificate.getInstance(encoded);
 		Extensions exts = c.getTBSCertificate().getExtensions();
@@ -108,16 +115,16 @@ public class SubjectAlternativeNames {
 					}
 				}
 				
-//				System.out.println("======================");
-//				System.out.println("GeneralNames '"+gns.toString()+"'");
-//				if(names!=null && names.length>0) {
-//					System.out.println("Len '"+names.length+"'");
-//					for (int i = 0; i < names.length; i++) {
-//						GeneralName gn = names[i];
-//						System.out.println("gn["+i+"]=["+gn.getName()+"]["+gn.getTagNo()+"]");
-//					}
-//				}
-//				System.out.println("======================");
+				/**System.out.println("======================");
+				System.out.println("GeneralNames '"+gns.toString()+"'");
+				if(names!=null && names.length>0) {
+					System.out.println("Len '"+names.length+"'");
+					for (int i = 0; i < names.length; i++) {
+						GeneralName gn = names[i];
+						System.out.println("gn["+i+"]=["+gn.getName()+"]["+gn.getTagNo()+"]");
+					}
+				}
+				System.out.println("======================");*/
 				
 				return san;
 			}

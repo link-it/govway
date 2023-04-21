@@ -97,7 +97,7 @@ public class ModIKeystoreUtils {
 		
 		this.securityMessageKeyAlias = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), CostantiDB.MODIPA_KEY_ALIAS);
 		
-		if(!this.securityMessageKeystoreHSM || HSMUtils.HSM_CONFIGURABLE_KEY_PASSWORD) {
+		if(!this.securityMessageKeystoreHSM || HSMUtils.isHsmConfigurableKeyPassword()) {
 			this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), CostantiDB.MODIPA_KEY_PASSWORD);
 		}
 		else {
@@ -156,7 +156,7 @@ public class ModIKeystoreUtils {
 				
 				this.securityMessageKeyAlias = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, CostantiDB.MODIPA_KEY_ALIAS);
 				
-				if(!this.securityMessageKeystoreHSM || HSMUtils.HSM_CONFIGURABLE_KEY_PASSWORD) {
+				if(!this.securityMessageKeystoreHSM || HSMUtils.isHsmConfigurableKeyPassword()) {
 					this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, CostantiDB.MODIPA_KEY_PASSWORD);
 				}
 				else {
@@ -194,7 +194,7 @@ public class ModIKeystoreUtils {
 					
 					this.securityMessageKeyAlias = modIproperties_securityMessageKeyAlias;
 					
-					if(!this.securityMessageKeystoreHSM || HSMUtils.HSM_CONFIGURABLE_KEY_PASSWORD) {
+					if(!this.securityMessageKeystoreHSM || HSMUtils.isHsmConfigurableKeyPassword()) {
 						this.securityMessageKeyPassword = modIproperties_securityMessageKeyPassword;
 					}
 					else {

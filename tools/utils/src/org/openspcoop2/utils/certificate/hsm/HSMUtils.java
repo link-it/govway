@@ -33,36 +33,31 @@ import org.openspcoop2.utils.certificate.KeyStore;
  * @version $Rev$, $Date$
  */
 public class HSMUtils {
+	
+	private HSMUtils() {}
 
 	public static final String KEYSTORE_HSM_PREFIX = "HSM-";
 	public static final String KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED = "-";
 	public static final String KEYSTORE_HSM_PRIVATE_KEY_PASSWORD_UNDEFINED = "-";
-    public static boolean HSM_CONFIGURABLE_KEY_PASSWORD = false;
 	
-    public static void fillTIPOLOGIE_KEYSTORE(boolean trustStore, boolean secretKeyStore, List<String> l){
+    private static boolean hsmConfigurableKeyPassword = false;
+	public static boolean isHsmConfigurableKeyPassword() {
+		return hsmConfigurableKeyPassword;
+	}
+	public static void setHsmConfigurableKeyPassword(boolean hsmConfigurableKeyPassword) {
+		HSMUtils.hsmConfigurableKeyPassword = hsmConfigurableKeyPassword;
+	}
+	
+	public static void fillTipologieKeystore(boolean trustStore, boolean secretKeyStore, List<String> l){
 		HSMManager hsmManager = HSMManager.getInstance();
 		if(hsmManager!=null) {
 			List<String> typeHsm = hsmManager.getKeystoreTypes();
 			if(typeHsm!=null && !typeHsm.isEmpty()) {
 				if(secretKeyStore) {
-					for (String type : typeHsm) {
-						try {
-							if(hsmManager.isUsableAsSecretKeyStore(type)) {
-								l.add(type);
-							}
-						}catch(Exception e) { // ignore 
-						}
-					}
+					initSecretKeyStore(typeHsm, hsmManager, l);
 				}
 				else if(trustStore) {
-					for (String type : typeHsm) {
-						try {
-							if(hsmManager.isUsableAsTrustStore(type)) {
-								l.add(type);
-							}
-						}catch(Exception e) { // ignore 
-						}
-					}
+					initTrustStore(typeHsm, hsmManager, l);
 				}
 				else {
 					l.addAll(typeHsm);
@@ -70,34 +65,74 @@ public class HSMUtils {
 			}
 		}
 	}
-	public static boolean existsTIPOLOGIE_KEYSTORE_HSM(boolean trustStore, boolean secretKeyStore){
+    private static void initSecretKeyStore(List<String> typeHsm, HSMManager hsmManager, List<String> l) {
+    	for (String type : typeHsm) {
+			try {
+				if(hsmManager.isUsableAsSecretKeyStore(type)) {
+					l.add(type);
+				}
+			}catch(Exception e) { // ignore 
+			}
+		}
+    }
+    private static void initTrustStore(List<String> typeHsm, HSMManager hsmManager, List<String> l) {
+    	for (String type : typeHsm) {
+			try {
+				if(hsmManager.isUsableAsTrustStore(type)) {
+					l.add(type);
+				}
+			}catch(Exception e) { // ignore 
+			}
+		}
+    }
+	public static boolean existsTipologieKeystoreHSM(boolean trustStore, boolean secretKeyStore){
 		HSMManager hsmManager = HSMManager.getInstance();
 		if(hsmManager!=null) {
 			List<String> typeHsm = hsmManager.getKeystoreTypes();
-			if(typeHsm!=null && !typeHsm.isEmpty()) {
-				if(secretKeyStore) {
-					for (String type : typeHsm) {
-						try {
-							if(hsmManager.isUsableAsSecretKeyStore(type)) {
-								return true;
-							}
-						}catch(Exception e) { // ignore 
-						}
-					}
-				}
-				else if(trustStore) {
-					for (String type : typeHsm) {
-						try {
-							if(hsmManager.isUsableAsTrustStore(type)) {
-								return true;
-							}
-						}catch(Exception e) { // ignore 
-						}
-					}
-				}
-				else {
+			if(existsTipologieKeystoreHSM(typeHsm, hsmManager,
+					trustStore, secretKeyStore)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	private static boolean existsTipologieKeystoreHSM(List<String> typeHsm, HSMManager hsmManager,
+			boolean trustStore, boolean secretKeyStore) {
+		if(typeHsm!=null && !typeHsm.isEmpty()) {
+			if(secretKeyStore) {
+				if(existsSecretKeyStore(typeHsm, hsmManager)) {
 					return true;
 				}
+			}
+			else if(trustStore) {
+				if(existsTrustStore(typeHsm, hsmManager)) {
+					return true;
+				}
+			}
+			else {
+				return true;
+			}
+		}
+		return false;
+	}
+	private static boolean existsSecretKeyStore(List<String> typeHsm, HSMManager hsmManager) {
+		for (String type : typeHsm) {
+			try {
+				if(hsmManager.isUsableAsSecretKeyStore(type)) {
+					return true;
+				}
+			}catch(Exception e) { // ignore 
+			}
+		}
+		return false;
+	}
+	private static boolean existsTrustStore(List<String> typeHsm, HSMManager hsmManager) {
+		for (String type : typeHsm) {
+			try {
+				if(hsmManager.isUsableAsTrustStore(type)) {
+					return true;
+				}
+			}catch(Exception e) { // ignore 
 			}
 		}
 		return false;

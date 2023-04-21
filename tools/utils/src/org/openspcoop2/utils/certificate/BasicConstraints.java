@@ -19,8 +19,6 @@
  */
 package org.openspcoop2.utils.certificate;
 
-import java.security.cert.CertificateParsingException;
-
 import org.bouncycastle.asn1.x509.Extensions;
 
 /**
@@ -38,25 +36,25 @@ public class BasicConstraints {
 	public long getPathLen() {
 		return this.pathLen;
 	}
-	public boolean isCa() {
+	/**public boolean isCa() {
 		return this.ca;
-	}
+	}*/
 	public boolean isCA() {
 		return this.ca;
 	}
 
-	public static BasicConstraints getBasicConstraints(byte[]encoded) throws CertificateParsingException{
+	public static BasicConstraints getBasicConstraints(byte[]encoded) {
 		
 		org.bouncycastle.asn1.x509.Certificate c =org.bouncycastle.asn1.x509.Certificate.getInstance(encoded);
 		Extensions exts = c.getTBSCertificate().getExtensions();
 		if (exts != null){
 			org.bouncycastle.asn1.x509.BasicConstraints basicConstraints = org.bouncycastle.asn1.x509.BasicConstraints.fromExtensions(exts);
 			if(basicConstraints!=null) {
-//				System.out.println("======================");
-//				System.out.println("BasicConstraints '"+basicConstraints.toString()+"'");
-//				System.out.println("Len '"+basicConstraints.getPathLenConstraint()+"'");
-//				System.out.println("Qual '"+basicConstraints.isCA()+"'");
-//				System.out.println("======================");
+				/**System.out.println("======================");
+				System.out.println("BasicConstraints '"+basicConstraints.toString()+"'");
+				System.out.println("Len '"+basicConstraints.getPathLenConstraint()+"'");
+				System.out.println("Qual '"+basicConstraints.isCA()+"'");
+				System.out.println("======================");*/
 				
 				BasicConstraints bc = new BasicConstraints();
 				bc.ca = basicConstraints.isCA();

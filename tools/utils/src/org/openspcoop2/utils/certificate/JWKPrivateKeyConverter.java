@@ -19,15 +19,11 @@
  */
 package org.openspcoop2.utils.certificate;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
-import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
+import java.util.UUID;
 
-import org.bouncycastle.util.io.pem.PemReader;
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 
@@ -43,7 +39,7 @@ public class JWKPrivateKeyConverter {
 	public static void main(String [] args) throws UtilsException {
 		
 		if(args==null || args.length<3) {
-			throw new UtilsException("ERROR: argomenti non forniti (USAGE: JWKPrivateKeyConverter pathPublicKey pathPrivateKey pathJWK [jwkset] [pretty])");
+			throw new UtilsException("ERROR: argomenti non forniti (USAGE: JWKPrivateKeyConverter pathPublicKey pathPrivateKey pathJWK [kid] [jwkset(true/false)] [pretty(true/false)])");
 		}
 		
 		try {
@@ -58,55 +54,39 @@ public class JWKPrivateKeyConverter {
 			String pathPrivateKey = args[1];
 			byte[] privateKey = FileSystemUtilities.readBytesFromFile(pathPrivateKey);
 			
-			KeyFactory kf = KeyFactory.getInstance("RSA");
+			KeyUtils keyUtils = new KeyUtils(KeyUtils.ALGO_RSA);
 			
-			X509EncodedKeySpec specPub = new X509EncodedKeySpec(publicKey);
-			PublicKey pKey = null;
-			try {
-				pKey = kf.generatePublic(specPub);
-			}catch(Throwable t) {
-				// provo PEM
-				try (ByteArrayInputStream bin = new ByteArrayInputStream(publicKey);
-					 InputStreamReader ir = new InputStreamReader(bin);
-					 PemReader pemReader = new PemReader(ir);){
-		            byte [] encoded = pemReader.readPemObject().getContent();
-		            specPub = new X509EncodedKeySpec(encoded);
-		            pKey = kf.generatePublic(specPub);
-		        } 
-			}
+			PublicKey pKey = keyUtils.getPublicKey(publicKey);
 			
-			PKCS8EncodedKeySpec specPriv = new PKCS8EncodedKeySpec(privateKey);
-			PrivateKey privKey = null;
-			try {
-				privKey = kf.generatePrivate(specPriv);
-			}catch(Throwable t) {
-				// provo PEM
-				try (ByteArrayInputStream bin = new ByteArrayInputStream(privateKey);
-					 InputStreamReader ir = new InputStreamReader(bin);
-					 PemReader pemReader = new PemReader(ir);){
-		            byte [] encoded = pemReader.readPemObject().getContent();
-		            specPriv = new PKCS8EncodedKeySpec(encoded);
-		            privKey = kf.generatePrivate(specPriv);
-		        } 
-			}
-			
-			JWK jwk = new JWK(pKey,privKey);
+			PrivateKey privKey = keyUtils.getPrivateKey(privateKey);
 			
 			String pathJWK = args[2];
-			
-			String json = null;
+						
+			String kid = null;
+			if(args.length>3) {
+				kid = args[3];
+			}
+			if(kid==null || StringUtils.isEmpty(kid)) {
+				kid = UUID.randomUUID().toString();
+			}
+			if(JWKPublicKeyConverter.KID_NULL.equals(kid)) {
+				kid = null;
+			}
 			
 			boolean jwks = true;
-			if(args.length>3) {
-				String tmp = args[3];
+			if(args.length>4) {
+				String tmp = args[4];
 				jwks = "true".equals(tmp);
 			}
 			
 			boolean pretty = false;
-			if(args.length>4) {
-				String tmp = args[4];
+			if(args.length>5) {
+				String tmp = args[5];
 				pretty = "true".equals(tmp);
 			}
+			
+			JWK jwk = new JWK(pKey,privKey,kid);
+			String json = null;
 			
 			if(jwks) {
 				JWKSet jwkSet = new JWKSet();
@@ -120,7 +100,7 @@ public class JWKPrivateKeyConverter {
 			
 			FileSystemUtilities.writeFile(pathJWK, json.getBytes());
 			
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw new UtilsException(t.getMessage(),t);
 		}
 		

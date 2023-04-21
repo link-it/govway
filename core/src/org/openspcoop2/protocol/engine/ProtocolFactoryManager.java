@@ -83,7 +83,7 @@ import org.slf4j.Logger;
 public class ProtocolFactoryManager {
 
 	private static ProtocolFactoryManager protocolFactoryManager = null;
-	public synchronized static void initialize(Logger log,ConfigurazionePdD configPdD,String protocolDefault) throws ProtocolException {
+	public static synchronized void initialize(Logger log,ConfigurazionePdD configPdD,String protocolDefault) throws ProtocolException {
 		if(ProtocolFactoryManager.protocolFactoryManager==null){
 			ProtocolFactoryManager.protocolFactoryManager = new ProtocolFactoryManager(log,configPdD,protocolDefault,false);
 			// Inizializzo anche Esiti.properties
@@ -92,7 +92,7 @@ public class ProtocolFactoryManager {
 			protocolFactoryManager.initStaticInstance();
 		}
 	}
-	public synchronized static void initializeSingleProtocol(Logger log,ConfigurazionePdD configPdD,String protocol) throws ProtocolException {
+	public static synchronized void initializeSingleProtocol(Logger log,ConfigurazionePdD configPdD,String protocol) throws ProtocolException {
 		if(ProtocolFactoryManager.protocolFactoryManager==null){
 			ProtocolFactoryManager.protocolFactoryManager = new ProtocolFactoryManager(log,configPdD,protocol,true);
 			// Inizializzo anche Esiti.properties

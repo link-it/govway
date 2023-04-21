@@ -342,7 +342,7 @@ public class CertificateTest {
 				}
 				System.out.println("Compare con equals not strict ha dato risultato atteso true");
 				
-				Map<String, List<String>> c1_valori = CertificateUtils.getPrincipalIntoMap(c1.getCertificate().getSubject().getName(), PrincipalType.subject);
+				Map<String, List<String>> c1_valori = CertificateUtils.getPrincipalIntoMap(c1.getCertificate().getSubject().getName(), PrincipalType.SUBJECT);
 				if(!c1_valori.containsKey("ou")) {
 					throw new Exception("OU non trovato");
 				}

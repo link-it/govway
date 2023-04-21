@@ -177,7 +177,7 @@ public class GestoreCredenzialiEngine {
 				throw new GestoreCredenzialiException("Richiesta autenticazione ssl del gestore delle credenziali, ma subject non definito");
 			}
 			try{
-				org.openspcoop2.utils.certificate.CertificateUtils.validaPrincipal(subjectGateway, PrincipalType.subject);
+				org.openspcoop2.utils.certificate.CertificateUtils.validaPrincipal(subjectGateway, PrincipalType.SUBJECT);
 			}catch(Exception e){
 				throw new GestoreCredenzialiException("Richiesta autenticazione ssl del gestore delle credenziali, ma subject fornito ["+subjectGateway+"] non valido: "+e.getMessage());
 			}
@@ -187,7 +187,7 @@ public class GestoreCredenzialiEngine {
 						"Autenticazione ssl del Gestore delle Credenziali '"+this.identita+ "' fallita, nessun tipo di credenziali ssl riscontrata nel trasporto");
 			}
 			try{
-				if( ! org.openspcoop2.utils.certificate.CertificateUtils.sslVerify(subjectGateway, credenzialiTrasporto.getSubject(), PrincipalType.subject, OpenSPCoop2Logger.getLoggerOpenSPCoopCore()) ){
+				if( ! org.openspcoop2.utils.certificate.CertificateUtils.sslVerify(subjectGateway, credenzialiTrasporto.getSubject(), PrincipalType.SUBJECT, OpenSPCoop2Logger.getLoggerOpenSPCoopCore()) ){
 					String credenzialiPresenti = credenzialiTrasporto.toString();
 					if(credenzialiPresenti==null || credenzialiPresenti.equals("")){
 						throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_INVALID_CREDENTIALS, 
@@ -478,7 +478,7 @@ public class GestoreCredenzialiEngine {
 							"Subject value non fornito nell'header del trasporto "+headerNameSSLSubject);
 				}
 				try{
-					org.openspcoop2.utils.certificate.CertificateUtils.formatPrincipal(subject, PrincipalType.subject);
+					org.openspcoop2.utils.certificate.CertificateUtils.formatPrincipal(subject, PrincipalType.SUBJECT);
 					// Non posso validare, verra' fornito un certificato nel formato RFC 2253 o RFC 1779
 					// Sicuramente puo' contenere sia il carattere '/' che ',' ma uno dei due sara' escaped tramite il formato richiesto.
 					//org.openspcoop.utils.Utilities.validaSubject(subject);
@@ -496,7 +496,7 @@ public class GestoreCredenzialiEngine {
 							"Issuer value non fornito nell'header del trasporto "+headerNameSSLIssuer);
 				}
 				try{
-					org.openspcoop2.utils.certificate.CertificateUtils.formatPrincipal(issuer, PrincipalType.issuer);
+					org.openspcoop2.utils.certificate.CertificateUtils.formatPrincipal(issuer, PrincipalType.ISSUER);
 					// Non posso validare, verra' fornito un certificato nel formato RFC 2253 o RFC 1779
 					// Sicuramente puo' contenere sia il carattere '/' che ',' ma uno dei due sara' escaped tramite il formato richiesto.
 					//org.openspcoop.utils.Utilities.validaSubject(subject);
@@ -517,8 +517,8 @@ public class GestoreCredenzialiEngine {
 				CertificateDecodeConfig config = new CertificateDecodeConfig();
 				config.setUrlDecode(sslCertificate_urlDecode);
 				config.setBase64Decode(sslCertificate_base64Decode);
-				config.setUrlDecode_or_base64Decode(sslCertificate_urlDecode_or_base64Decode);
-				config.setEnrich_BEGIN_END(sslCertificate_enrich_BEGIN_END);
+				config.setUrlDecodeOrBase64Decode(sslCertificate_urlDecode_or_base64Decode);
+				config.setEnrichPEMBeginEnd(sslCertificate_enrich_BEGIN_END);
 				config.setReplace(sslCertificate_replace);
 				if(sslCertificate_replace) {
 					if(sslCertificate_replaceSource!=null && !StringUtils.isEmpty(sslCertificate_replaceSource)) {

@@ -34,7 +34,7 @@ import org.bouncycastle.asn1.x509.Extensions;
  */
 public enum KeyUsage {
 
-	/*
+	/**
 	 *  KeyUsage ::= BIT STRING {
 		     digitalSignature        (0),
 		     nonRepudiation          (1),
@@ -132,13 +132,13 @@ public enum KeyUsage {
 		if(x509.getCertificate()!=null) {
 			return getKeyUsage(x509.getCertificate());
 		}
-		return new ArrayList<KeyUsage>();
+		return new ArrayList<>();
 	}
 	public static List<KeyUsage> getKeyUsage(CertificateInfo x509){
 		return getKeyUsage(x509.getCertificate());
 	}
 	public static List<KeyUsage> getKeyUsage(X509Certificate x509){
-		List<KeyUsage> l = new ArrayList<KeyUsage>();
+		List<KeyUsage> l = new ArrayList<>();
 		KeyUsage [] values = KeyUsage.values();
 		for (KeyUsage keyUsage : values) {
 			if(keyUsage.hasKeyUsage(x509)) {
@@ -148,7 +148,7 @@ public enum KeyUsage {
 		return l;
 	}
 	public static List<KeyUsage> getKeyUsage(byte[]encoded){
-		List<KeyUsage> l = new ArrayList<KeyUsage>();
+		List<KeyUsage> l = new ArrayList<>();
 		KeyUsage [] values = KeyUsage.values();
 		for (KeyUsage keyUsage : values) {
 			if(keyUsage.hasKeyUsage(encoded)) {

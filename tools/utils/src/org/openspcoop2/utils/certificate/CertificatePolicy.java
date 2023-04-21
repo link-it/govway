@@ -39,6 +39,8 @@ import org.bouncycastle.asn1.x509.PolicyInformation;
  */
 public class CertificatePolicy {
 
+	private static final String PARAM_OID_UNDEFINED = "Param oid undefined";
+	
 	private ASN1ObjectIdentifier asn1ObjectIdentifier;
 	private List<CertificatePolicyEntry> qualifiers = new ArrayList<>();
 	public ASN1ObjectIdentifier getAsn1ObjectIdentifier() {
@@ -60,7 +62,7 @@ public class CertificatePolicy {
 	}
 	public CertificatePolicyEntry getQualifierByOID(String oid) throws CertificateParsingException {
 		if(oid==null) {
-			throw new CertificateParsingException("Param oid undefined");
+			throw new CertificateParsingException(PARAM_OID_UNDEFINED);
 		}
 		if(this.qualifiers!=null && !this.qualifiers.isEmpty()) {
 			for (CertificatePolicyEntry certificatePolicyQualifier : this.qualifiers) {
@@ -73,7 +75,7 @@ public class CertificatePolicy {
 	}
 	public boolean hasCertificatePolicyQualifier(String oid) throws CertificateParsingException {
 		if(oid==null) {
-			throw new CertificateParsingException("Param oid undefined");
+			throw new CertificateParsingException(PARAM_OID_UNDEFINED);
 		}
 		return this.getQualifierByOID(oid)!=null;
 	}
@@ -81,10 +83,10 @@ public class CertificatePolicy {
 	
 	public static boolean existsCertificatePolicy(X509Certificate x509, String oid) throws CertificateParsingException, CertificateEncodingException {
 		if(oid==null) {
-			throw new CertificateParsingException("Param oid undefined");
+			throw new CertificateParsingException(PARAM_OID_UNDEFINED);
 		}
 		List<CertificatePolicy> list = CertificatePolicy.getCertificatePolicies(x509.getEncoded());
-		if(list!=null && !list.isEmpty()) {
+		if(!list.isEmpty()) {
 			for (CertificatePolicy certificatePolicy : list) {
 				if(oid.equals(certificatePolicy.getOID())) {
 					return true;
@@ -116,7 +118,7 @@ public class CertificatePolicy {
 		return sb.toString();
 	}
 	
-	public static List<CertificatePolicy> getCertificatePolicies(byte[]encoded) throws CertificateParsingException{
+	public static List<CertificatePolicy> getCertificatePolicies(byte[]encoded) {
 		
 		List<CertificatePolicy> l = new ArrayList<>();
 		
@@ -127,31 +129,34 @@ public class CertificatePolicy {
 			if(certPolicies!=null) {
 				PolicyInformation [] pi = certPolicies.getPolicyInformation();
 				if(pi!=null && pi.length>0) {
-					for (PolicyInformation policyInformation : pi) {
-						CertificatePolicy cp = new CertificatePolicy();
-						cp.asn1ObjectIdentifier = policyInformation.getPolicyIdentifier();
-						if(policyInformation.getPolicyQualifiers()!=null) {
-							for (int i = 0; i < policyInformation.getPolicyQualifiers().size(); i++) {
-								ASN1Encodable e = policyInformation.getPolicyQualifiers().getObjectAt(i);
-								if(e instanceof org.bouncycastle.asn1.DLSequence) {
-									org.bouncycastle.asn1.DLSequence dl = (org.bouncycastle.asn1.DLSequence) e;
-									CertificatePolicyEntry cpe = new CertificatePolicyEntry(dl);
-									cp.qualifiers.add(cpe);
-								}								
-							}
-						}
-						l.add(cp);
-						 
-//						System.out.println("======================");
-//						System.out.println("PolicyInformation '"+policyInformation.toString()+"'");
-//						System.out.println("Id '"+policyInformation.getPolicyIdentifier()+"'");
-//						System.out.println("Qual '"+policyInformation.getPolicyQualifiers()+"'");
-//						System.out.println("======================");
-					}
+					read(pi, l);
 				}
 			}
 		}
 		return l;
 		
+	}
+	private static void read(PolicyInformation [] pi, List<CertificatePolicy> l) {
+		for (PolicyInformation policyInformation : pi) {
+			CertificatePolicy cp = new CertificatePolicy();
+			cp.asn1ObjectIdentifier = policyInformation.getPolicyIdentifier();
+			if(policyInformation.getPolicyQualifiers()!=null) {
+				for (int i = 0; i < policyInformation.getPolicyQualifiers().size(); i++) {
+					ASN1Encodable e = policyInformation.getPolicyQualifiers().getObjectAt(i);
+					if(e instanceof org.bouncycastle.asn1.DLSequence) {
+						org.bouncycastle.asn1.DLSequence dl = (org.bouncycastle.asn1.DLSequence) e;
+						CertificatePolicyEntry cpe = new CertificatePolicyEntry(dl);
+						cp.qualifiers.add(cpe);
+					}								
+				}
+			}
+			l.add(cp);
+			 
+			/**System.out.println("======================");
+			System.out.println("PolicyInformation '"+policyInformation.toString()+"'");
+			System.out.println("Id '"+policyInformation.getPolicyIdentifier()+"'");
+			System.out.println("Qual '"+policyInformation.getPolicyQualifiers()+"'");
+			System.out.println("======================");*/
+		}
 	}
 }

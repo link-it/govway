@@ -50,48 +50,40 @@ import org.openspcoop2.utils.UtilsException;
  */
 public class KeyStore {
 
-	private java.security.KeyStore keystore;
+	public static final String TYPE_JKS = "JKS";
+	public static final String TYPE_PKCS12 = "PKCS12";
+	
+	private java.security.KeyStore keystoreArchive;
 	private boolean keystoreHsm;
 	
 	public KeyStore(String keystorePath,String passwordKeystore) throws UtilsException{
-		this(keystorePath,"JKS",passwordKeystore);
+		this(keystorePath,TYPE_JKS,passwordKeystore);
 	}
 	public KeyStore(String keystorePath,String tipoKeystore, String passwordKeystore) throws UtilsException{
 		this(new File(keystorePath),tipoKeystore,passwordKeystore);
 	}
 	public KeyStore(File keystorePath,String passwordKeystore) throws UtilsException{
-		this(keystorePath,"JKS",passwordKeystore);
+		this(keystorePath,TYPE_JKS,passwordKeystore);
 	}
 	public KeyStore(File keystorePath,String tipoKeystore, String passwordKeystore) throws UtilsException{
 		
-		if(keystorePath.exists()==false){
+		if(!keystorePath.exists()){
 			throw new UtilsException("Keystore ["+keystorePath+"] not exists");
 		}
-		if(keystorePath.canRead()==false){
+		if(!keystorePath.canRead()){
 			throw new UtilsException("Keystore ["+keystorePath+"] cannot read");
 		}
 		
-		InputStream fin = null;
-		try{
-			fin = new FileInputStream(keystorePath);
-			_init(fin, tipoKeystore, passwordKeystore);
+		try (InputStream fin = new FileInputStream(keystorePath);){
+			initEngine(fin, tipoKeystore, passwordKeystore);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
-		}
-		finally{
-			try{
-				if(fin!=null){
-					fin.close();
-				}
-			}catch(Throwable eClose){
-				// ignore
-			}
 		}
 		
 	}
 	
 	public KeyStore(byte[] keystore,String passwordKeystore) throws UtilsException{
-		this(keystore,"JKS",passwordKeystore);
+		this(keystore,TYPE_JKS,passwordKeystore);
 	}
 	public KeyStore(byte[] keystore,String tipoKeystore, String passwordKeystore) throws UtilsException{
 		
@@ -99,30 +91,19 @@ public class KeyStore {
 			throw new UtilsException("Keystore undefined");
 		}
 		
-		InputStream fin = null;
-		try{
-			fin = new ByteArrayInputStream(keystore);
-			_init(fin, tipoKeystore, passwordKeystore);
+		try (InputStream fin = new ByteArrayInputStream(keystore);){
+			initEngine(fin, tipoKeystore, passwordKeystore);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
-		}
-		finally{
-			try{
-				if(fin!=null){
-					fin.close();
-				}
-			}catch(Throwable eClose){
-				// ignore
-			}
 		}
 		
 	}
 	
-	private void _init(InputStream is, String tipoKeystore, String passwordKeystore) throws UtilsException{
+	private void initEngine(InputStream is, String tipoKeystore, String passwordKeystore) throws UtilsException{
 		try{
 			java.security.KeyStore keystore = java.security.KeyStore.getInstance(tipoKeystore);
 			keystore.load(is, passwordKeystore.toCharArray());
-			this.keystore = keystore;
+			this.keystoreArchive = keystore;
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -132,18 +113,18 @@ public class KeyStore {
 		this(keystore, false);
 	}
 	public KeyStore(java.security.KeyStore keystore, boolean keystoreHsm) {
-		this.keystore = keystore;
+		this.keystoreArchive = keystore;
 		this.keystoreHsm = keystoreHsm;
 	}
 	
-	private Map<String, Key> keys = new HashMap<String, Key>(); // effettuo il cache delle chiavi essendo costoso accederci tutte le volte
+	private Map<String, Key> keys = new HashMap<>(); // effettuo il cache delle chiavi essendo costoso accederci tutte le volte
 	private synchronized void initKey(String alias, String password) throws UtilsException {
 		if(!this.keys.containsKey(alias)) {
 			try{
-				//System.out.println("******** AGGIUNGO CHIAVE '"+alias+"' IN CACHE!!!!!!!!");
-				Key key = this.keystore.getKey(alias, password.toCharArray());
+				/** System.out.println("******** AGGIUNGO CHIAVE '"+alias+"' IN CACHE!!!!!!!!"); */
+				Key key = this.keystoreArchive.getKey(alias, password.toCharArray());
 				if(key==null) {
-					throw new Exception("Not found");
+					throw new UtilsException("Not found");
 				}
 				this.keys.put(alias, key);
 			}catch(Exception e){
@@ -157,9 +138,9 @@ public class KeyStore {
 			if(!this.keys.containsKey(alias)) {
 				initKey(alias, passwordPrivateKey);
 			}
-//			else {
+/**			else {
 //				System.out.println("GET KEY '"+alias+"' FROM CACHE");
-//			}
+//			} */
 			return (PrivateKey) this.keys.get(alias);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
@@ -178,14 +159,14 @@ public class KeyStore {
 
 	public Certificate getCertificate() throws UtilsException{
 		try{
-			Enumeration<String> aliases = this.keystore.aliases();
+			Enumeration<String> aliases = this.keystoreArchive.aliases();
 			Certificate cer = null;
 			while (aliases.hasMoreElements()) {
-				String alias = (String) aliases.nextElement();
+				String alias = aliases.nextElement();
 				if(cer!=null){
-					throw new Exception("More than one certificate, use alias");
+					throw new UtilsException("More than one certificate, use alias");
 				}
-				cer = this.keystore.getCertificate(alias);
+				cer = this.keystoreArchive.getCertificate(alias);
 			}
 			return cer;
 		}catch(Exception e){
@@ -194,14 +175,14 @@ public class KeyStore {
 	}
 	public Certificate getCertificate(String alias) throws UtilsException{
 		try{
-			return this.keystore.getCertificate(alias);
+			return this.keystoreArchive.getCertificate(alias);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}	
 	}
 	public Certificate[] getCertificateChain(String alias) throws UtilsException{
 		try{
-			return this.keystore.getCertificateChain(alias);
+			return this.keystoreArchive.getCertificateChain(alias);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}	
@@ -218,10 +199,10 @@ public class KeyStore {
 	}
 	public Certificate getCertificateByDigestUrlEncoded(String digest, String digestAlgo) throws UtilsException{
 		try{
-			Enumeration<String> aliases = this.keystore.aliases();
+			Enumeration<String> aliases = this.keystoreArchive.aliases();
 			while (aliases.hasMoreElements()) {
-				String alias = (String) aliases.nextElement();
-				Certificate cer = this.keystore.getCertificate(alias);
+				String alias = aliases.nextElement();
+				Certificate cer = this.keystoreArchive.getCertificate(alias);
 				String digestCer = this.buildDigestUrlEncoded(cer, digestAlgo);
 				if(digestCer.equals(digest)) {
 					return cer;
@@ -238,10 +219,10 @@ public class KeyStore {
 			if(principal==null) {
 				return null;
 			}
-			Enumeration<String> aliases = this.keystore.aliases();
+			Enumeration<String> aliases = this.keystoreArchive.aliases();
 			while (aliases.hasMoreElements()) {
-				String alias = (String) aliases.nextElement();
-				Certificate cer = this.keystore.getCertificate(alias);
+				String alias = aliases.nextElement();
+				Certificate cer = this.keystoreArchive.getCertificate(alias);
 				if(cer instanceof X509Certificate) {
 					X509Certificate x509 = (X509Certificate) cer;
 					X500Principal subject = x509.getSubjectX500Principal();
@@ -268,10 +249,10 @@ public class KeyStore {
 			if(publicKey==null) {
 				return null;
 			}
-			Enumeration<String> aliases = this.keystore.aliases();
+			Enumeration<String> aliases = this.keystoreArchive.aliases();
 			while (aliases.hasMoreElements()) {
-				String alias = (String) aliases.nextElement();
-				Certificate cer = this.keystore.getCertificate(alias);
+				String alias = aliases.nextElement();
+				Certificate cer = this.keystoreArchive.getCertificate(alias);
 				PublicKey pk = cer.getPublicKey();
 				if(pk!=null && pk.equals(publicKey)) {
 					return cer;
@@ -303,7 +284,7 @@ public class KeyStore {
 		try{
 			Certificate cer = getCertificate(alias);
 			if(cer==null) {
-				throw new Exception("Certificate '"+alias+"' not exists");
+				throw new UtilsException("Certificate '"+alias+"' not exists");
 			}
 			return this.buildDigestUrlEncoded(cer, digestAlgo);
 		}catch(Exception e){
@@ -321,14 +302,14 @@ public class KeyStore {
 	
 	public boolean existsAlias(String alias) throws UtilsException{
 		try{
-			return this.keystore.containsAlias(alias);
+			return this.keystoreArchive.containsAlias(alias);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}	
 	}
 	public Enumeration<String> aliases() throws UtilsException{
 		try{
-			return this.keystore.aliases();
+			return this.keystoreArchive.aliases();
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -341,27 +322,27 @@ public class KeyStore {
 	}
 	
 	public java.security.KeyStore getKeystore() {
-		return this.keystore;
+		return this.keystoreArchive;
 	}
 	public boolean isKeystoreHsm() {
 		return this.keystoreHsm;
 	}
 	public String getKeystoreType() {
-		if(this.keystore==null) {
+		if(this.keystoreArchive==null) {
 			return null;
 		}
-		return this.keystore.getType();
+		return this.keystoreArchive.getType();
 	}
 	public java.security.Provider getKeystoreProvider() {
-		return this.keystore.getProvider();
+		return this.keystoreArchive.getProvider();
 	}
 	
 	public void putCertificate(String alias, Certificate cert, boolean overwriteIfExists) throws UtilsException {
 		if(this.existsAlias(alias)) {
 			if(overwriteIfExists) {
 				try {
-					this.keystore.deleteEntry(alias);
-				}catch(Throwable t) {
+					this.keystoreArchive.deleteEntry(alias);
+				}catch(Exception t) {
 					throw new UtilsException(t.getMessage(),t);
 				}
 			}
@@ -370,8 +351,8 @@ public class KeyStore {
 			}
 		}
 		try {
-			this.keystore.setCertificateEntry(alias, cert);
-		}catch(Throwable t) {
+			this.keystoreArchive.setCertificateEntry(alias, cert);
+		}catch(Exception t) {
 			throw new UtilsException(t.getMessage(),t);
 		}
 	}
@@ -380,25 +361,9 @@ public class KeyStore {
 			Enumeration<String> aliases = keystore.aliases();
 			if(aliases!=null) {
 				while (aliases.hasMoreElements()) {
-					String alias = (String) aliases.nextElement();
-					if(this.existsAlias(alias)) {
-						if(overwriteIfExists) {
-							try {
-								this.keystore.deleteEntry(alias);
-							}catch(Throwable t) {
-								throw new UtilsException(t.getMessage(),t);
-							}
-						}
-						else {
-							continue;
-						}
-					}
+					String alias = aliases.nextElement();
 					Certificate cert = keystore.getCertificate(alias);
-					try {
-						this.keystore.setCertificateEntry(alias, cert);
-					}catch(Throwable t) {
-						throw new UtilsException(t.getMessage(),t);
-					}
+					putCertificate(alias, cert, overwriteIfExists);
 				}
 			}
 		}

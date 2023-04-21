@@ -580,12 +580,12 @@ public class NegoziazioneTokenProvider implements IProvider {
 				Costanti.ID_HTTPS_KEYSTORE_TYPE.equals(id)) {
 			trustStore = false;
 		}
-		HSMUtils.fillTIPOLOGIE_KEYSTORE(trustStore, false, l);
+		HSMUtils.fillTipologieKeystore(trustStore, false, l);
 		
 		if(secret) {
 			// aggiunto info mancanti come secret
 			List<String> lSecret = new ArrayList<String>();
-			HSMUtils.fillTIPOLOGIE_KEYSTORE(false, true, l);
+			HSMUtils.fillTipologieKeystore(false, true, l);
 			if(lSecret!=null && !lSecret.isEmpty()) {
 				for (String type : lSecret) {
 					if(!l.contains(type)) {

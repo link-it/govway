@@ -33,9 +33,9 @@ public class CertificateDecodeConfig {
 	
 	private boolean base64Decode = false;
 	
-	private boolean urlDecode_or_base64Decode = false;
+	private boolean urlDecodeOrBase64Decode = false;
 	
-	private boolean enrich_BEGIN_END = false;
+	private boolean enrichPEMBeginEnd = false;
 	
 	private boolean replace = false;
 	private String replaceSource= "\t";
@@ -53,17 +53,17 @@ public class CertificateDecodeConfig {
 	public void setBase64Decode(boolean base64Decode) {
 		this.base64Decode = base64Decode;
 	}
-	public boolean isUrlDecode_or_base64Decode() {
-		return this.urlDecode_or_base64Decode;
+	public boolean isUrlDecodeOrBase64Decode() {
+		return this.urlDecodeOrBase64Decode;
 	}
-	public void setUrlDecode_or_base64Decode(boolean urlDecode_or_base64Decode) {
-		this.urlDecode_or_base64Decode = urlDecode_or_base64Decode;
+	public void setUrlDecodeOrBase64Decode(boolean urlDecodeOrBase64Decode) {
+		this.urlDecodeOrBase64Decode = urlDecodeOrBase64Decode;
 	}
-	public boolean isEnrich_BEGIN_END() {
-		return this.enrich_BEGIN_END;
+	public boolean isEnrichPEMBeginEnd() {
+		return this.enrichPEMBeginEnd;
 	}
-	public void setEnrich_BEGIN_END(boolean enrich_BEGIN_END) {
-		this.enrich_BEGIN_END = enrich_BEGIN_END;
+	public void setEnrichPEMBeginEnd(boolean enrich) {
+		this.enrichPEMBeginEnd = enrich;
 	}
 	public boolean isReplace() {
 		return this.replace;

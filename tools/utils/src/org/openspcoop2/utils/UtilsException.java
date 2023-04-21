@@ -36,12 +36,10 @@ public class UtilsException extends Exception {
 	 public UtilsException(String message, Throwable cause)
 		{
 			super(message, cause);
-			// TODO Auto-generated constructor stub
 		}
 		public UtilsException(Throwable cause)
 		{
 			super(cause);
-			// TODO Auto-generated constructor stub
 		}
 		/**
 		 * serialVersionUID

@@ -28,6 +28,8 @@ package org.openspcoop2.utils.certificate.hsm;
  * @version $Rev$, $Date$
  */
 public class HSMCostanti {
+	
+	private HSMCostanti() {}
 
 	public static final String PROPERTY_PREFIX = "hsm.";
 	

@@ -41,20 +41,23 @@ public class CertificatePolicyEntry {
 		for (int j = 0; j < dl.size(); j++) {
 			Object o = dl.getObjectAt(j);
 			if(o!=null) {
-				if(o instanceof org.bouncycastle.asn1.ASN1ObjectIdentifier) {
-					this.asn1ObjectIdentifier = (org.bouncycastle.asn1.ASN1ObjectIdentifier) o;
+				init(o, level);
+			}
+		}
+	}
+	private void init(Object o, int level) {
+		if(o instanceof org.bouncycastle.asn1.ASN1ObjectIdentifier) {
+			this.asn1ObjectIdentifier = (org.bouncycastle.asn1.ASN1ObjectIdentifier) o;
+		}
+		else {
+			if(o instanceof org.bouncycastle.asn1.DLSequence) {
+				if(level<10) {
+					CertificatePolicyEntry cpe = new CertificatePolicyEntry((org.bouncycastle.asn1.DLSequence)o,(level+1));
+					this.entries.add(cpe);
 				}
-				else {
-					if(o instanceof org.bouncycastle.asn1.DLSequence) {
-						if(level<10) {
-							CertificatePolicyEntry cpe = new CertificatePolicyEntry((org.bouncycastle.asn1.DLSequence)o,(level+1));
-							this.entries.add(cpe);
-						}
-					}
-					else {
-						this.value.add(o);
-					}
-				}
+			}
+			else {
+				this.value.add(o);
 			}
 		}
 	}
@@ -86,7 +89,10 @@ public class CertificatePolicyEntry {
 		return s;
 	}
 	public String getValue(int index) {
-		return this.value!=null && (this.value.size()>index) ? this.value.get(index)!=null ? this.value.get(index).toString() : null : null;
+		if(this.value!=null && (this.value.size()>index)) {
+			return this.value.get(index)!=null ? this.value.get(index).toString() : null;
+		}
+		return null;
 	}
 	public boolean containsValue(String value) throws CertificateParsingException {
 		if(value==null) {

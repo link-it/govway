@@ -477,7 +477,7 @@ public class SecurityConstants {
 		List<String> l = new ArrayList<String>();
 		l.add(KEYSTORE_TYPE_JKS_VALUE);
 		l.add(KEYSTORE_TYPE_PKCS12_VALUE);
-		HSMUtils.fillTIPOLOGIE_KEYSTORE(truststore, false, l);
+		HSMUtils.fillTipologieKeystore(truststore, false, l);
 		return l;
     }
     public static List<String> getTIPOLOGIE_KEYSTORE_labels(boolean truststore){
@@ -485,7 +485,7 @@ public class SecurityConstants {
 		List<String> l = new ArrayList<String>();
 		l.add(KEYSTORE_TYPE_JKS_LABEL);
 		l.add(KEYSTORE_TYPE_PKCS12_LABEL);
-		HSMUtils.fillTIPOLOGIE_KEYSTORE(truststore, false, l);
+		HSMUtils.fillTipologieKeystore(truststore, false, l);
 		return l;
     }
     
@@ -495,14 +495,14 @@ public class SecurityConstants {
 		// NOTA:far ricreare la lista ogni volta, poiche' poi viene modificata
 		List<String> l = new ArrayList<String>();
 		l.add(KEYSTORE_TYPE_JCEKS_VALUE);
-		HSMUtils.fillTIPOLOGIE_KEYSTORE(false, true, l);
+		HSMUtils.fillTipologieKeystore(false, true, l);
 		return l;
     }
     public static List<String> getTIPOLOGIE_SECRETKEYSTORE_labels(){
 		// NOTA:far ricreare la lista ogni volta, poiche' poi viene modificata
 		List<String> l = new ArrayList<String>();
 		l.add(KEYSTORE_TYPE_JCEKS_LABEL);
-		HSMUtils.fillTIPOLOGIE_KEYSTORE(false, true, l);
+		HSMUtils.fillTipologieKeystore(false, true, l);
 		return l;
     }
 

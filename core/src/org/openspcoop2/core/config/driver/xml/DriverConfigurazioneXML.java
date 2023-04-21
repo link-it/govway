@@ -1862,13 +1862,13 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 								if(sa.getInvocazionePorta().getCredenziali(z).getSubject()==null) {
 									continue;
 								}
-								boolean subjectValid = CertificateUtils.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject, PrincipalType.subject, this.log);
+								boolean subjectValid = CertificateUtils.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject, PrincipalType.SUBJECT, this.log);
 								boolean issuerValid = true;
 								if(aIssuer!=null) {
 									if(sa.getInvocazionePorta().getCredenziali(z).getIssuer()==null) {
 										issuerValid = false;
 									}else {
-										issuerValid = CertificateUtils.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getIssuer(), aIssuer, PrincipalType.issuer, this.log);
+										issuerValid = CertificateUtils.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getIssuer(), aIssuer, PrincipalType.ISSUER, this.log);
 									}
 								}
 								else {
@@ -1889,13 +1889,13 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 								if(sa.getInvocazionePorta().getCredenziali(z).getSubject()==null) {
 									continue;
 								}
-								boolean subjectValid = CertificateUtils.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject, PrincipalType.subject, this.log);
+								boolean subjectValid = CertificateUtils.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject, PrincipalType.SUBJECT, this.log);
 								boolean issuerValid = true;
 								if(aIssuer!=null) {
 									if(sa.getInvocazionePorta().getCredenziali(z).getIssuer()==null) {
 										issuerValid = false;
 									}else {
-										issuerValid = CertificateUtils.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getIssuer(), aIssuer, PrincipalType.issuer, this.log);
+										issuerValid = CertificateUtils.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getIssuer(), aIssuer, PrincipalType.ISSUER, this.log);
 									}
 								}
 								else {

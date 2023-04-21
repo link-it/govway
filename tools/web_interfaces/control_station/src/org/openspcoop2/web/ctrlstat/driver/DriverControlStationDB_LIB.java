@@ -141,7 +141,7 @@ public class DriverControlStationDB_LIB {
 					updateStmt.setString(index++, protocolloGestione);
 					updateStmt.setString(index++, tipo);
 					updateStmt.setString(index++, implementazione);
-					updateStmt.setString(index++, (subject != null ? CertificateUtils.formatPrincipal(subject, PrincipalType.subject) : null));
+					updateStmt.setString(index++, (subject != null ? CertificateUtils.formatPrincipal(subject, PrincipalType.SUBJECT) : null));
 					updateStmt.setString(index++, password);
 					updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(client_auth));
 					updateStmt.setString(index++, superuser);
@@ -208,7 +208,7 @@ public class DriverControlStationDB_LIB {
 					updateStmt.setString(index++, protocolloGestione);
 					updateStmt.setString(index++, tipo);
 					updateStmt.setString(index++, implementazione);
-					updateStmt.setString(index++, (subject != null ? CertificateUtils.formatPrincipal(subject, PrincipalType.subject) : null));
+					updateStmt.setString(index++, (subject != null ? CertificateUtils.formatPrincipal(subject, PrincipalType.SUBJECT) : null));
 					updateStmt.setString(index++, password);
 					updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(client_auth));
 					updateStmt.setString(index++, superuser);

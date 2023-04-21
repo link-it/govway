@@ -55,7 +55,7 @@ public class MessageManager {
 		return MessageManager.instance;
 	}
 
-	private synchronized static void init(){
+	private static synchronized void init(){
 		if(MessageManager.instance == null)
 			MessageManager.instance = new MessageManager();
 	}

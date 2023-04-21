@@ -143,7 +143,7 @@ public abstract class AbstractSecurityProvider implements IProvider {
 		}
 		else if(SecurityConstants.KEYSTORE_PRIVATE_KEY_PASSWORD.equals(item.getName()) ||
 				SecurityConstants.SECRETKEYSTORE_PRIVATE_KEY_PASSWORD.equals(item.getName())) {
-			if(!HSMUtils.HSM_CONFIGURABLE_KEY_PASSWORD) {
+			if(!HSMUtils.isHsmConfigurableKeyPassword()) {
 				
 				String type = SecurityConstants.KEYSTORE_TYPE;
 				if(SecurityConstants.SECRETKEYSTORE_PRIVATE_KEY_PASSWORD.equals(item.getName())) {
