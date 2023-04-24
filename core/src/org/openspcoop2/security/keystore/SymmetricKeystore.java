@@ -85,10 +85,10 @@ public class SymmetricKeystore implements Serializable {
 	private synchronized void initKS() throws SecurityException{
 		if(this.keyStore==null) {
 			try {
-				java.security.KeyStore keyStore = java.security.KeyStore.getInstance("JCEKS");
-				keyStore.load(null);
-				keyStore.setKeyEntry(this.alias, this.key,this.pwKey.toCharArray(), null);
-				this.keyStore = new KeyStore(keyStore);
+				java.security.KeyStore keyStoreJCEKS = java.security.KeyStore.getInstance("JCEKS");
+				keyStoreJCEKS.load(null);
+				keyStoreJCEKS.setKeyEntry(this.alias, this.key,this.pwKey.toCharArray(), null);
+				this.keyStore = new KeyStore(keyStoreJCEKS);
 				FixTrustAnchorsNotEmpty.addCertificate(this.keyStore.getKeystore());			
 			}
 			catch(Exception e){
@@ -98,7 +98,7 @@ public class SymmetricKeystore implements Serializable {
 	}
 	
 	
-	public Key getKey() throws SecurityException {
+	public Key getKey() {
 		return this.key;
 	}
 

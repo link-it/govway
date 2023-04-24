@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.core.protocolli.trasparente.testsuite.token.validazione;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,9 +31,13 @@ import java.util.Properties;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
+import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.utils.certificate.JWKPublicKeyConverter;
+import org.openspcoop2.utils.certificate.KeyUtils;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWSOptions;
 import org.openspcoop2.utils.security.JWTOptions;
@@ -50,6 +56,7 @@ import org.openspcoop2.utils.transport.http.HttpResponse;
 public class ForwardInformazioniTest extends ConfigLoader {
 
 	public static final String forward = "TestForwardInformazioniToken";
+	public static final String forwardAlternativeSigner = "TestForwardInformazioniTokenKeystoreNonX509";
 		
 	@Test
 	public void govwayHeaders() throws Exception {
@@ -140,6 +147,71 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		
 		checkGovWayJson("govway-testsuite-custom-json", response, values, false);
 	}
+	
+	
+	
+	@Test
+	public void govwayJws_jwkSigner() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		Map<String, List<String>> values = new HashMap<String, List<String>>();
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				buildJWT(values));
+		
+		HttpResponse response = Utilities._test(logCore, forwardAlternativeSigner, "jwk", headers,  null,
+				null,
+				null);
+		
+		checkGovWayJwt("govway-testsuite-govway-jwt", response, values, true,
+				SecurityConstants.KEYSTORE_TYPE_JWK_VALUE);
+	}
+	
+	
+	
+	@Test
+	public void govwayJws_keyPairProtectedSigner() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		Map<String, List<String>> values = new HashMap<String, List<String>>();
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				buildJWT(values));
+		
+		HttpResponse response = Utilities._test(logCore, forwardAlternativeSigner, "keyPairProtected", headers,  null,
+				null,
+				null);
+		
+		checkGovWayJwt("govway-testsuite-govway-jwt", response, values, true,
+				SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE);
+	}
+	
+	
+	@Test
+	public void govwayJws_keyPairUnprotectedSigner() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		Map<String, List<String>> values = new HashMap<String, List<String>>();
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				buildJWT(values));
+		
+		HttpResponse response = Utilities._test(logCore, forwardAlternativeSigner, "keyPairUnprotected", headers,  null,
+				null,
+				null);
+		
+		checkGovWayJwt("govway-testsuite-govway-jwt", response, values, true,
+				SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE);
+	}
+	
+	
+	
 	
 	private static String ID = "ID";
 	private static String TIME = "TIME";
@@ -247,6 +319,11 @@ public class ForwardInformazioniTest extends ConfigLoader {
 	}
 	
 	private static void checkGovWayJwt(String hdrAtteso, HttpResponse response, Map<String, List<String>> values, boolean govway) throws Exception {
+		checkGovWayJwt(hdrAtteso, response, values, govway, 
+				null);
+	}
+	private static void checkGovWayJwt(String hdrAtteso, HttpResponse response, Map<String, List<String>> values, boolean govway, 
+			String keystoreType) throws Exception {
 		
 		if(response==null || response.getHeadersValues()==null || response.getHeadersValues().isEmpty()) {
 			throw new Exception("Header non ritornati");
@@ -257,39 +334,65 @@ public class ForwardInformazioniTest extends ConfigLoader {
 			throw new Exception("Header atteso '"+hdrAtteso+"' non presente");
 		}
 		
-		Properties props = new Properties();
-		props.put("rs.security.keystore.type","JKS");
-		String password = "openspcoop";
-		props.put("rs.security.keystore.file", "/etc/govway/keys/erogatore.jks");
-		props.put("rs.security.keystore.alias","erogatore");
-		props.put("rs.security.keystore.password",password);
-		props.put("rs.security.key.password",password);
-		
-		JWTOptions options = new JWTOptions(JOSESerialization.COMPACT);
-			
-		props.put("rs.security.signature.algorithm","RS256");
-		props.put("rs.security.signature.include.cert","false");
-		props.put("rs.security.signature.include.key.id","true");
-		props.put("rs.security.signature.include.public.key","false");
-		props.put("rs.security.signature.include.cert.sha1","false");
-		props.put("rs.security.signature.include.cert.sha256","false");
-			
-		JsonVerifySignature jsonSignature = new JsonVerifySignature(props, options);
-		if(!jsonSignature.verify(v)) {
-			throw new Exception("Token non valido ?");
-		}
-		//System.out.println(token);
-		
-		
-		byte[] vDecoded = jsonSignature.getDecodedPayloadAsByte();
-		String json = new String(vDecoded);
-		//System.out.println("RICEVUTO: "+json);
-		
+		File f = null;
 		try {
-			checkJsonValues(json, values, govway);
-		}catch(Exception e) {
-			System.out.println("RICEVUTO: "+json);
-			throw e;
+			Properties props = new Properties();
+			if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equals(keystoreType) || SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equals(keystoreType)) {
+				props.put("rs.security.keystore.type",SecurityConstants.KEYSTORE_TYPE_JWK_VALUE);
+			}
+			else {
+				props.put("rs.security.keystore.type","JKS");
+			}
+			String password = "openspcoop";
+			String file = "/etc/govway/keys/erogatore.jks";
+			String alias = "erogatore";
+			if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equals(keystoreType)) {
+				file = "/etc/govway/keys/testJWKpublic.jwk";
+				alias = "c98fda52-9a37-41c0-8696-65e5022e9e44";
+			}
+			else if(SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equals(keystoreType)) {
+				f = File.createTempFile("test", ".jwk");
+				alias = "testsuite-govway";
+				String jwks = JWKPublicKeyConverter.convert(KeyUtils.getInstance().getPublicKey(FileSystemUtilities.readBytesFromFile("/etc/govway/keys/keyPair-test.rsa.publicKey.pem")), alias, true, false);
+				FileSystemUtilities.writeFile(f, jwks.getBytes());
+				file = f.getAbsolutePath();
+			}
+			
+			props.put("rs.security.keystore.file", file);
+			props.put("rs.security.keystore.alias",alias);
+			props.put("rs.security.keystore.password",password);
+			props.put("rs.security.key.password",password);
+			
+			JWTOptions options = new JWTOptions(JOSESerialization.COMPACT);
+				
+			props.put("rs.security.signature.algorithm","RS256");
+			props.put("rs.security.signature.include.cert","false");
+			props.put("rs.security.signature.include.key.id","true");
+			props.put("rs.security.signature.include.public.key","false");
+			props.put("rs.security.signature.include.cert.sha1","false");
+			props.put("rs.security.signature.include.cert.sha256","false");
+				
+			JsonVerifySignature jsonSignature = new JsonVerifySignature(props, options);
+			if(!jsonSignature.verify(v)) {
+				throw new Exception("Token non valido ?");
+			}
+			//System.out.println(token);
+			
+			
+			byte[] vDecoded = jsonSignature.getDecodedPayloadAsByte();
+			String json = new String(vDecoded);
+			//System.out.println("RICEVUTO: "+json);
+			
+			try {
+				checkJsonValues(json, values, govway);
+			}catch(Exception e) {
+				System.out.println("RICEVUTO: "+json);
+				throw e;
+			}
+		}finally {
+			if(f!=null) {
+				Files.delete(f.toPath());
+			}
 		}
 		
 	}

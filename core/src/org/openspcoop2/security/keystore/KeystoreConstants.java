@@ -30,6 +30,8 @@ import org.apache.wss4j.common.crypto.Merlin;
  */
 public class KeystoreConstants {
 
+	private KeystoreConstants(){}
+	
 	// https://ws.apache.org/wss4j/config.html
 
 	// the property names ${PREFIX} below is "org.apache.wss4j.crypto". 

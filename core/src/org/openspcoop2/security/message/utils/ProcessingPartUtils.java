@@ -83,7 +83,7 @@ public class ProcessingPartUtils {
 			}
 			else {
 				// caso speciale wss4j {}cid:Attachments ?
-				if(SecurityConstants.CID_ATTACH_WSS4j.equalsIgnoreCase(split2[1].trim())){
+				if(SecurityConstants.CID_ATTACH_WSS4J.equalsIgnoreCase(split2[1].trim())){
 					lst.add(getAttachmentProcessingPart(tipo, SecurityConstants.ATTACHMENT_INDEX_ALL, i));
 				}
 				else{

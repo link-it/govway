@@ -30,6 +30,8 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
  * @version $Rev$, $Date$
  */
 public class Costanti {
+	
+	private Costanti() {}
 
 	public static final String AA_SAVE_ERROR_IN_CACHE = "policy.saveErrorInCache";
 	
@@ -89,17 +91,19 @@ public class Costanti {
 	
 	public static final String AA_REQUEST_JWT_SIGN_KEYSTORE_TYPE = "policy.attributeAuthority.request.jws.keystore.type";
 	public static final String AA_REQUEST_JWT_SIGN_KEYSTORE_FILE = "policy.attributeAuthority.request.jws.keystore.file";
+	public static final String AA_REQUEST_JWT_SIGN_KEYSTORE_FILE_PUBLIC = "policy.attributeAuthority.request.jws.keystore.file.public";
+	public static final String AA_REQUEST_JWT_SIGN_KEYSTORE_FILE_ALGORITHM = "policy.attributeAuthority.request.jws.keystore.file.algorithm";
 	public static final String AA_REQUEST_JWT_SIGN_KEYSTORE_PASSWORD = "policy.attributeAuthority.request.jws.keystore.password";
 	public static final String AA_REQUEST_JWT_SIGN_KEY_ALIAS = "policy.attributeAuthority.request.jws.key.alias";
 	public static final String AA_REQUEST_JWT_SIGN_KEY_PASSWORD = "policy.attributeAuthority.request.jws.key.password";
 	
-	public static final String AA_RESPONSE_TYPE = CostantiConfigurazione.AA_RESPONSE_TYPE; //"policy.attributeAuthority.response.type";
-	public static final String AA_RESPONSE_TYPE_VALUE_JSON = CostantiConfigurazione.AA_RESPONSE_TYPE_VALUE_JSON; //"json";
-	public static final String AA_RESPONSE_TYPE_VALUE_JWS = CostantiConfigurazione.AA_RESPONSE_TYPE_VALUE_JWS; //"jws";
-	public static final String AA_RESPONSE_TYPE_VALUE_CUSTOM = CostantiConfigurazione.AA_RESPONSE_TYPE_VALUE_CUSTOM; //"custom";
+	public static final String AA_RESPONSE_TYPE = CostantiConfigurazione.AA_RESPONSE_TYPE; 
+	public static final String AA_RESPONSE_TYPE_VALUE_JSON = CostantiConfigurazione.AA_RESPONSE_TYPE_VALUE_JSON;
+	public static final String AA_RESPONSE_TYPE_VALUE_JWS = CostantiConfigurazione.AA_RESPONSE_TYPE_VALUE_JWS; 
+	public static final String AA_RESPONSE_TYPE_VALUE_CUSTOM = CostantiConfigurazione.AA_RESPONSE_TYPE_VALUE_CUSTOM; 
 	
-	public static final String AA_RESPONSE_PARSER_CLASS_NAME = CostantiConfigurazione.AA_RESPONSE_PARSER_CLASS_NAME; //"policy.attributeAuthority.claimsParser.className";
-	public static final String AA_RESPONSE_PARSER_PLUGIN_TYPE = CostantiConfigurazione.AA_RESPONSE_PARSER_PLUGIN_TYPE;//"policy.attributeAuthority.claimsParser.pluginType";
+	public static final String AA_RESPONSE_PARSER_CLASS_NAME = CostantiConfigurazione.AA_RESPONSE_PARSER_CLASS_NAME; 
+	public static final String AA_RESPONSE_PARSER_PLUGIN_TYPE = CostantiConfigurazione.AA_RESPONSE_PARSER_PLUGIN_TYPE;
 	public static final String AA_RESPONSE_ATTRIBUTES = "policy.attributeAuthority.response.jwt.attributes";
 	
 	public static final String AA_RESPONSE_AUDIENCE = "policy.attributeAuthority.response.jwt.audience";

@@ -311,12 +311,12 @@ public class ConnettoreCheck {
 				//addProperty(connettore, POLICY_TIPO_ENDPOINT, "Negoziazione"); // solo 1 tipo
 				addProperty(connettore, CostantiConnettori.CONNETTORE_LOCATION, endpoint);
 				
-				if(policy.isBasicAuthentication() && StringUtils.isNotEmpty(policy.getBasicAuthentication_username()) && policy.getBasicAuthentication_password()!=null) {
-					addProperty(connettore, CostantiConnettori.CONNETTORE_USERNAME, policy.getBasicAuthentication_username());
-					addProperty(connettore, CostantiConnettori.CONNETTORE_PASSWORD, policy.getBasicAuthentication_password());
+				if(policy.isBasicAuthentication() && StringUtils.isNotEmpty(policy.getBasicAuthenticationUsername()) && policy.getBasicAuthenticationPassword()!=null) {
+					addProperty(connettore, CostantiConnettori.CONNETTORE_USERNAME, policy.getBasicAuthenticationUsername());
+					addProperty(connettore, CostantiConnettori.CONNETTORE_PASSWORD, policy.getBasicAuthenticationPassword());
 				}
-				if(policy.isBearerAuthentication() && StringUtils.isNotEmpty(policy.getBeareAuthentication_token())) {
-					addProperty(connettore, CostantiConnettori.CONNETTORE_BEARER_TOKEN, policy.getBeareAuthentication_token());
+				if(policy.isBearerAuthentication() && StringUtils.isNotEmpty(policy.getBeareAuthenticationToken())) {
+					addProperty(connettore, CostantiConnettori.CONNETTORE_BEARER_TOKEN, policy.getBeareAuthenticationToken());
 				}
 
 				Map<String,String> mapProperties = connettore.getProperties();
@@ -367,12 +367,12 @@ public class ConnettoreCheck {
 				//addProperty(connettore, POLICY_TIPO_ENDPOINT, "Negoziazione"); // solo 1 tipo
 				addProperty(connettore, CostantiConnettori.CONNETTORE_LOCATION, endpoint);
 				
-				if(policy.isBasicAuthentication() && StringUtils.isNotEmpty(policy.getBasicAuthentication_username()) && policy.getBasicAuthentication_password()!=null) {
-					addProperty(connettore, CostantiConnettori.CONNETTORE_USERNAME, policy.getBasicAuthentication_username());
-					addProperty(connettore, CostantiConnettori.CONNETTORE_PASSWORD, policy.getBasicAuthentication_password());
+				if(policy.isBasicAuthentication() && StringUtils.isNotEmpty(policy.getBasicAuthenticationUsername()) && policy.getBasicAuthenticationPassword()!=null) {
+					addProperty(connettore, CostantiConnettori.CONNETTORE_USERNAME, policy.getBasicAuthenticationUsername());
+					addProperty(connettore, CostantiConnettori.CONNETTORE_PASSWORD, policy.getBasicAuthenticationPassword());
 				}
-				if(policy.isBearerAuthentication() && StringUtils.isNotEmpty(policy.getBeareAuthentication_token())) {
-					addProperty(connettore, CostantiConnettori.CONNETTORE_BEARER_TOKEN, policy.getBeareAuthentication_token());
+				if(policy.isBearerAuthentication() && StringUtils.isNotEmpty(policy.getBeareAuthenticationToken())) {
+					addProperty(connettore, CostantiConnettori.CONNETTORE_BEARER_TOKEN, policy.getBeareAuthenticationToken());
 				}
 				
 				Map<String,String> mapProperties = connettore.getProperties();
@@ -633,8 +633,8 @@ public class ConnettoreCheck {
 			String username = null;
 			String password = null;
 			if(basic) {
-				username = policyNegoziazioneToken.getBasicAuthentication_username();
-				password = policyNegoziazioneToken.getBasicAuthentication_password();
+				username = policyNegoziazioneToken.getBasicAuthenticationUsername();
+				password = policyNegoziazioneToken.getBasicAuthenticationPassword();
 			}
 			
 			Connettore connettoreTestPolicy = new Connettore();

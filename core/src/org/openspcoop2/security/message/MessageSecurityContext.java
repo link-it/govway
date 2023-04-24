@@ -364,7 +364,6 @@ public abstract class MessageSecurityContext{
     	}
     	this.setActor(true);
     	this.readMessageSecurityEngine(true);
-    	this.readSignatureEngine(true);
     	this.resolvePWCallback(true);
     }
     public Map<String,Object> getIncomingProperties() {
@@ -390,7 +389,6 @@ public abstract class MessageSecurityContext{
     	}
     	this.setActor(false);
     	this.readMessageSecurityEngine(false);
-    	this.readSignatureEngine(false);
     	this.resolvePWCallback(false);
     }
     public Map<String,Object> getOutgoingProperties() {
@@ -574,38 +572,9 @@ public abstract class MessageSecurityContext{
     
     
     
+       
     
-    /** SignatureEngine */
-    @SuppressWarnings("deprecation")
-	private void readSignatureEngine(boolean incoming) throws SecurityException{
-    	try{
-    		
-    		String engineProperty = null;
-    		if(incoming){
-    			engineProperty = (String) this.incomingProperties.get(SecurityConstants.SIGNATURE_ENGINE);
-    		}else{
-    			engineProperty = (String) this.outgoingProperties.get(SecurityConstants.SIGNATURE_ENGINE);
-    		}
-    		if(engineProperty!=null){
-    			engineProperty = engineProperty.trim();
-    			if(SecurityConstants.SIGNATURE_ENGINE_SUN.equalsIgnoreCase(engineProperty)){
-    				throw new SecurityException("Funzionalità non supportata in java 11");
-    			}
-    			else if(SecurityConstants.SIGNATURE_ENGINE_XMLSEC.equalsIgnoreCase(engineProperty)){
-    				// nop
-    			}
-    			else{
-    				throw new SecurityException("Signature engine impostato ["+engineProperty+"] non supportato");
-    			}
-    		}
-    		
-    	}catch(Exception e){
-    		throw new SecurityException(e.getMessage(),e);
-    	}
-    }
-        
-    
-    /** SignatureEngine */
+    /** resolvePWCallback */
     private void resolvePWCallback(boolean incoming) throws SecurityException{
     	try{
     		Map<String, Object> props = null;

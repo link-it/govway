@@ -738,7 +738,7 @@ public class ErogazioniVerificaCertificati  extends Action {
 								boolean signedJwt = false;
 								KeystoreParams keystoreParams = null;
 								try {
-									if(policyNegoziazione.isRfc7523_x509_Grant()) {
+									if(policyNegoziazione.isRfc7523x509Grant()) {
 										// JWS Compact   			
 										keystoreParams = TokenUtilities.getSignedJwtKeystoreParams(policyNegoziazione);
 									}

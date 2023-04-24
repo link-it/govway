@@ -33,6 +33,8 @@ import org.openspcoop2.security.SecurityException;
  */
 public class FixTrustAnchorsNotEmpty {
 	
+	private FixTrustAnchorsNotEmpty() {}
+	
 	public static void addCertificate(KeyStore keystore) throws SecurityException{
 
 		try{

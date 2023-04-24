@@ -242,6 +242,10 @@
   cp jwks/testJWKprivate.jwk /etc/govway/keys/
   cp jwks/testJWKpublic.jwk /etc/govway/keys/
 
+- Copiare le chiavi definite nel file keyPair/keyPair.README in /etc/govway/keys:
+  cp keyPair/*.pem /etc/govway/keys/
+  cp keyPair/*.der /etc/govway/keys/
+
 - Impostare in govway_local.properties per i test sulla sovrascrittura della configurazione https della jvm:
 
 	org.openspcoop2.pdd.connettori.inoltroBuste.http.urlHttps.overrideDefaultConfiguration=true

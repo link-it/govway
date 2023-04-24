@@ -28,8 +28,8 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.crypto.SecretKey;
@@ -75,7 +75,7 @@ public class JsonDecrypt {
 	
 	private JsonWebKeys jsonWebKeys; // dove prendere la chiave privata
 	private KeyStore keyStore; // dove prendere la chiave privata
-	private HashMap<String, String> keystore_mapAliasPassword;
+	private Map<String, String> keystore_mapAliasPassword;
 	private KeyStore trustStoreVerificaCertificatiX509; // per verificare i certificati presenti nell'header 
 	public void setTrustStoreVerificaCertificatiX509(KeyStore trustStoreVerificaCertificatiX509) {
 		this.trustStoreVerificaCertificatiX509 = trustStoreVerificaCertificatiX509;
@@ -265,7 +265,7 @@ public class JsonDecrypt {
 
 
 	public JsonDecrypt(Properties propsTrustStoreHttps, java.security.KeyStore trustStoreVerificaCertificato, 
-			java.security.KeyStore keyStore, HashMap<String, String> keystore_mapAliasPassword, 
+			java.security.KeyStore keyStore, Map<String, String> keystore_mapAliasPassword, 
 			JWTOptions options) throws UtilsException{
 		_initDecryptHeaderJWT(propsTrustStoreHttps, null, 
 				new KeyStore(trustStoreVerificaCertificato), 
@@ -273,7 +273,7 @@ public class JsonDecrypt {
 				options);
 	}
 	public JsonDecrypt(KeyStore trustStoreHttps, java.security.KeyStore trustStoreVerificaCertificato, 
-			java.security.KeyStore keyStore, HashMap<String, String> keystore_mapAliasPassword, 
+			java.security.KeyStore keyStore, Map<String, String> keystore_mapAliasPassword, 
 			JWTOptions options) throws UtilsException{
 		_initDecryptHeaderJWT(null, trustStoreHttps, 
 				new KeyStore(trustStoreVerificaCertificato), 
@@ -281,7 +281,7 @@ public class JsonDecrypt {
 				options);
 	}
 	public JsonDecrypt(Properties propsTrustStoreHttps, KeyStore trustStore, 
-			KeyStore keyStore, HashMap<String, String> keystore_mapAliasPassword, 
+			KeyStore keyStore, Map<String, String> keystore_mapAliasPassword, 
 			JWTOptions options) throws UtilsException{
 		_initDecryptHeaderJWT(propsTrustStoreHttps, null, 
 				trustStore, 
@@ -289,7 +289,7 @@ public class JsonDecrypt {
 				options);
 	}
 	public JsonDecrypt(KeyStore trustStoreHttps, KeyStore trustStore, 
-			KeyStore keyStore, HashMap<String, String> keystore_mapAliasPassword, 
+			KeyStore keyStore, Map<String, String> keystore_mapAliasPassword, 
 			JWTOptions options) throws UtilsException{
 		_initDecryptHeaderJWT(null, trustStoreHttps, 
 				trustStore, 
@@ -297,7 +297,7 @@ public class JsonDecrypt {
 				options);
 	}
 	public JsonDecrypt(java.security.KeyStore trustStoreVerificaCertificato, 
-			java.security.KeyStore keyStore, HashMap<String, String> keystore_mapAliasPassword, 
+			java.security.KeyStore keyStore, Map<String, String> keystore_mapAliasPassword, 
 			JWTOptions options) throws UtilsException{
 		_initDecryptHeaderJWT(null, null, 
 				new KeyStore(trustStoreVerificaCertificato), 
@@ -305,7 +305,7 @@ public class JsonDecrypt {
 				options);
 	}
 	public JsonDecrypt(KeyStore trustStore, 
-			KeyStore keyStore, HashMap<String, String> keystore_mapAliasPassword, 
+			KeyStore keyStore, Map<String, String> keystore_mapAliasPassword, 
 			JWTOptions options) throws UtilsException{
 		_initDecryptHeaderJWT(null, null, 
 				trustStore, 
@@ -314,7 +314,7 @@ public class JsonDecrypt {
 	}
 	private void _initDecryptHeaderJWT(Properties propsTrustStoreHttps, KeyStore trustStoreHttps,
 			KeyStore trustStoreVerificaCertificato, 
-			KeyStore keyStore, HashMap<String, String> keystore_mapAliasPassword, 
+			KeyStore keyStore, Map<String, String> keystore_mapAliasPassword, 
 			JWTOptions options) throws UtilsException{
 		// verra usato l'header per validare ed ottenere il certificato
 		this.options=options;

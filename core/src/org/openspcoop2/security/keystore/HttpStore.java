@@ -106,25 +106,23 @@ public class HttpStore implements Serializable {
 		
 		try{
 			if(endpoint==null){
-				throw new Exception("Endpoint per lo Store non indicato");
+				throw new SecurityException("Endpoint per lo Store non indicato");
 			}
 			
 			HttpResponse httpResponse = null;
 			if( (this.endpoint.startsWith("https:") && this.trustStoreSsl==null) || this.endpoint.startsWith("http:") ) {
-				//System.out.println("http");
 				httpResponse = HttpUtilities.getHTTPResponse(this.endpoint,this.readTimeout, this.connectionTimeout);
 			}
 			else {
-				//System.out.println("https");
 				httpResponse = HttpUtilities.getHTTPSResponse(this.endpoint, this.readTimeout, this.connectionTimeout, 
 						this.trustStoreSsl.getTrustStore().getKeystore(), 
 						this.crlTrustStoreSsl!=null ? this.crlTrustStoreSsl.getCertStore() : null);
 			}
 			if(httpResponse==null || httpResponse.getContent()==null) {
-				throw new Exception("Store '"+this.endpoint+"' unavailable");
+				throw new SecurityException("Store '"+this.endpoint+"' unavailable");
 			}
 			if(httpResponse.getResultHTTPOperation()!=200) {
-				throw new Exception("Retrieve store '"+this.endpoint+"' failed (returnCode:"+httpResponse.getResultHTTPOperation()+")");
+				throw new SecurityException("Retrieve store '"+this.endpoint+"' failed (returnCode:"+httpResponse.getResultHTTPOperation()+")");
 			}
 			this.storeBytes = httpResponse.getContent();
 

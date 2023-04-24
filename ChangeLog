@@ -1,3 +1,13 @@
+2023-04-24  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1580
+	Aggiunta possibilità di definire, all'interno di una token policy di negoziazione, una firma dell'asserzione jwt effettuata tramite una chiave privata, 
+	protetta da password o meno, nei formati pkcs1 o pkcs8 in codifica PEM o DER. 
+	La medesima possibilità è stata aggiunta anche per produrre il token JWT in una richiesta verso un Attribute Authority.
+	Nella fase di validazione di un token JWT, all'interno di una token policy di validazione o per la risposta proveniente da un Attribute Authority,
+	è inoltre adesso possibile indicare un file contenente una chiave pubblica da utilizzare per la validazione.	
+
 2023-04-21  Andrea Poli <apoli@link.it>
 
 	* [InstallerVersioneBinaria]

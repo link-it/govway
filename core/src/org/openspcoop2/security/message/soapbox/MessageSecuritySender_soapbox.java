@@ -86,7 +86,7 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 
 			String[]actions = ((String)messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ACTION)).split(" ");
 			for (int i = 0; i < actions.length; i++) {
-				if(SecurityConstants.is_ACTION_ENCRYPTION(actions[i].trim())){
+				if(SecurityConstants.isActionEncryption(actions[i].trim())){
 					encrypt = true;
 				}
 				else if(SecurityConstants.SIGNATURE_ACTION.equals(actions[i].trim())){
@@ -429,7 +429,7 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 			actions = ((String)messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ACTION)).split(" ");
 			boolean actionSignatureOrEncryptDo = false;
 			for (int i = 0; i < actions.length; i++) {
-				if(SecurityConstants.is_ACTION_ENCRYPTION(actions[i].trim())){
+				if(SecurityConstants.isActionEncryption(actions[i].trim())){
 					if(actionSignatureOrEncryptDo){
 						// Refresh serve anche per la encrypt ??
 						//byte[]xmlCifrato=this.xmlUtils.toByteArray(msgSecCtx.getDocument().getDocumentElement());

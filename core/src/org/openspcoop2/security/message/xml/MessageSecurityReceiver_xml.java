@@ -83,7 +83,7 @@ public class MessageSecurityReceiver_xml extends AbstractRESTMessageSecurityRece
 
 			String[]actions = ((String)messageSecurityContext.getIncomingProperties().get(SecurityConstants.ACTION)).split(" ");
 			for (int i = 0; i < actions.length; i++) {
-				if(SecurityConstants.is_ACTION_ENCRYPTION(actions[i].trim()) || SecurityConstants.is_ACTION_DECRYPTION(actions[i].trim())){
+				if(SecurityConstants.isActionEncryption(actions[i].trim()) || SecurityConstants.isActionDecryption(actions[i].trim())){
 					encrypt = true;
 				}
 				else if(SecurityConstants.SIGNATURE_ACTION.equals(actions[i].trim())){

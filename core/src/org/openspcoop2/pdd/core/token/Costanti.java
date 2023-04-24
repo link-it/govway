@@ -37,6 +37,8 @@ import org.openspcoop2.utils.MapKey;
  * @version $Rev$, $Date$
  */
 public class Costanti {
+	
+	private Costanti() {}
 
 	public static final String TIPOLOGIA = CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION;
 	public static final String TIPOLOGIA_RETRIEVE = CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE;
@@ -152,10 +154,10 @@ public class Costanti {
 	public static final String POLICY_VALIDAZIONE_SAVE_ERROR_IN_CACHE = "policy.validazioneJWT.saveErrorInCache";
 	public static final String POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID = SecurityConstants.SIGNATURE_VERIFICATION_PROPERTY_REF_ID;
 	public static final String POLICY_VALIDAZIONE_JWE_DECRYPT_PROP_REF_ID = SecurityConstants.DECRYPTION_PROPERTY_REF_ID;
-	public static final String POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE = CostantiConfigurazione.POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE; //"policy.validazioneJWT.claimsParser";
-	public static final String POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE_CUSTOM = CostantiConfigurazione.POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE_CUSTOM; //"CUSTOM";
-	public static final String POLICY_VALIDAZIONE_CLAIMS_PARSER_CLASS_NAME = CostantiConfigurazione.POLICY_VALIDAZIONE_CLAIMS_PARSER_CLASS_NAME; //"policy.validazioneJWT.claimsParser.className";
-	public static final String POLICY_VALIDAZIONE_CLAIMS_PARSER_PLUGIN_TYPE = CostantiConfigurazione.POLICY_VALIDAZIONE_CLAIMS_PARSER_PLUGIN_TYPE; //"policy.validazioneJWT.claimsParser.pluginType";
+	public static final String POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE = CostantiConfigurazione.POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE; 
+	public static final String POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE_CUSTOM = CostantiConfigurazione.POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE_CUSTOM;
+	public static final String POLICY_VALIDAZIONE_CLAIMS_PARSER_CLASS_NAME = CostantiConfigurazione.POLICY_VALIDAZIONE_CLAIMS_PARSER_CLASS_NAME;
+	public static final String POLICY_VALIDAZIONE_CLAIMS_PARSER_PLUGIN_TYPE = CostantiConfigurazione.POLICY_VALIDAZIONE_CLAIMS_PARSER_PLUGIN_TYPE; 
 	
 	public static final String POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5C = "##useX5C##";
 	public static final String POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5T = "##useX5T##";
@@ -176,10 +178,10 @@ public class Costanti {
 	public static final String POLICY_INTROSPECTION_REQUEST_TOKEN_POSITION_URL_PROPERTY_NAME = "policy.introspection.requestTokenPosition.queryParameter";
 	public static final String POLICY_INTROSPECTION_REQUEST_TOKEN_POSITION_FORM_PROPERTY_NAME = "policy.introspection.requestTokenPosition.formParameter";
 	public static final String POLICY_INTROSPECTION_CONTENT_TYPE = "policy.introspection.contentType";	
-	public static final String POLICY_INTROSPECTION_CLAIMS_PARSER_TYPE = CostantiConfigurazione.POLICY_INTROSPECTION_CLAIMS_PARSER_TYPE; //"policy.introspection.claimsParser";
-	public static final String POLICY_INTROSPECTION_CLAIMS_PARSER_TYPE_CUSTOM = CostantiConfigurazione.POLICY_INTROSPECTION_CLAIMS_PARSER_TYPE_CUSTOM; //"CUSTOM";
-	public static final String POLICY_INTROSPECTION_CLAIMS_PARSER_CLASS_NAME = CostantiConfigurazione.POLICY_INTROSPECTION_CLAIMS_PARSER_CLASS_NAME; //"policy.introspection.claimsParser.className";
-	public static final String POLICY_INTROSPECTION_CLAIMS_PARSER_PLUGIN_TYPE = CostantiConfigurazione.POLICY_INTROSPECTION_CLAIMS_PARSER_PLUGIN_TYPE; //"policy.introspection.claimsParser.pluginType";
+	public static final String POLICY_INTROSPECTION_CLAIMS_PARSER_TYPE = CostantiConfigurazione.POLICY_INTROSPECTION_CLAIMS_PARSER_TYPE; 
+	public static final String POLICY_INTROSPECTION_CLAIMS_PARSER_TYPE_CUSTOM = CostantiConfigurazione.POLICY_INTROSPECTION_CLAIMS_PARSER_TYPE_CUSTOM; 
+	public static final String POLICY_INTROSPECTION_CLAIMS_PARSER_CLASS_NAME = CostantiConfigurazione.POLICY_INTROSPECTION_CLAIMS_PARSER_CLASS_NAME; 
+	public static final String POLICY_INTROSPECTION_CLAIMS_PARSER_PLUGIN_TYPE = CostantiConfigurazione.POLICY_INTROSPECTION_CLAIMS_PARSER_PLUGIN_TYPE; 
 	public static final String POLICY_INTROSPECTION_AUTH_BASIC_STATO = "policy.introspection.endpoint.basic.stato";
 	public static final String POLICY_INTROSPECTION_AUTH_BASIC_USERNAME = "policy.introspection.endpoint.basic.username";
 	public static final String POLICY_INTROSPECTION_AUTH_BASIC_PASSWORD = "policy.introspection.endpoint.basic.password";
@@ -197,10 +199,10 @@ public class Costanti {
 	public static final String POLICY_USER_INFO_REQUEST_TOKEN_POSITION_URL_PROPERTY_NAME = "policy.userInfo.requestTokenPosition.queryParameter";
 	public static final String POLICY_USER_INFO_REQUEST_TOKEN_POSITION_FORM_PROPERTY_NAME = "policy.userInfo.requestTokenPosition.formParameter";
 	public static final String POLICY_USER_INFO_CONTENT_TYPE = "policy.userInfo.contentType";	
-	public static final String POLICY_USER_INFO_CLAIMS_PARSER_TYPE = CostantiConfigurazione.POLICY_USER_INFO_CLAIMS_PARSER_TYPE; //"policy.userInfo.claimsParser";
-	public static final String POLICY_USER_INFO_CLAIMS_PARSER_TYPE_CUSTOM = CostantiConfigurazione.POLICY_USER_INFO_CLAIMS_PARSER_TYPE_CUSTOM; //"CUSTOM";
-	public static final String POLICY_USER_INFO_CLAIMS_PARSER_CLASS_NAME = CostantiConfigurazione.POLICY_USER_INFO_CLAIMS_PARSER_CLASS_NAME; //"policy.userInfo.claimsParser.className";
-	public static final String POLICY_USER_INFO_CLAIMS_PARSER_PLUGIN_TYPE = CostantiConfigurazione.POLICY_USER_INFO_CLAIMS_PARSER_PLUGIN_TYPE; //"policy.userInfo.claimsParser.pluginType";
+	public static final String POLICY_USER_INFO_CLAIMS_PARSER_TYPE = CostantiConfigurazione.POLICY_USER_INFO_CLAIMS_PARSER_TYPE; 
+	public static final String POLICY_USER_INFO_CLAIMS_PARSER_TYPE_CUSTOM = CostantiConfigurazione.POLICY_USER_INFO_CLAIMS_PARSER_TYPE_CUSTOM; 
+	public static final String POLICY_USER_INFO_CLAIMS_PARSER_CLASS_NAME = CostantiConfigurazione.POLICY_USER_INFO_CLAIMS_PARSER_CLASS_NAME; 
+	public static final String POLICY_USER_INFO_CLAIMS_PARSER_PLUGIN_TYPE = CostantiConfigurazione.POLICY_USER_INFO_CLAIMS_PARSER_PLUGIN_TYPE; 
 	public static final String POLICY_USER_INFO_AUTH_BASIC_STATO = "policy.userInfo.endpoint.basic.stato";
 	public static final String POLICY_USER_INFO_AUTH_BASIC_USERNAME = "policy.userInfo.endpoint.basic.username";
 	public static final String POLICY_USER_INFO_AUTH_BASIC_PASSWORD = "policy.userInfo.endpoint.basic.password";
@@ -258,10 +260,10 @@ public class Costanti {
 	public static final String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_ENCRYP_PROP_REF_ID = SecurityConstants.ENCRYPTION_PROPERTY_REF_ID;
 	
 	public static final String POLICY_RETRIEVE_TOKEN_PARSER_TYPE = "policy.retrieveToken.claimsParser";
-	public static final String POLICY_RETRIEVE_TOKEN_PARSER_TYPE_CUSTOM = CostantiConfigurazione.POLICY_RETRIEVE_TOKEN_PARSER_TYPE_CUSTOM; //"policy.retrieveToken.claimsParser.custom";
-	public static final String POLICY_RETRIEVE_TOKEN_PARSER_TYPE_CUSTOM_CYSTOM = CostantiConfigurazione.POLICY_RETRIEVE_TOKEN_PARSER_TYPE_CUSTOM_CYSTOM; //"CUSTOM";
-	public static final String POLICY_RETRIEVE_TOKEN_PARSER_CLASS_NAME = CostantiConfigurazione.POLICY_RETRIEVE_TOKEN_PARSER_CLASS_NAME; //"policy.retrieveToken.claimsParser.className";
-	public static final String POLICY_RETRIEVE_TOKEN_PARSER_PLUGIN_TYPE = CostantiConfigurazione.POLICY_RETRIEVE_TOKEN_PARSER_PLUGIN_TYPE; //"policy.retrieveToken.claimsParser.pluginType";
+	public static final String POLICY_RETRIEVE_TOKEN_PARSER_TYPE_CUSTOM = CostantiConfigurazione.POLICY_RETRIEVE_TOKEN_PARSER_TYPE_CUSTOM; 
+	public static final String POLICY_RETRIEVE_TOKEN_PARSER_TYPE_CUSTOM_CYSTOM = CostantiConfigurazione.POLICY_RETRIEVE_TOKEN_PARSER_TYPE_CUSTOM_CYSTOM; 
+	public static final String POLICY_RETRIEVE_TOKEN_PARSER_CLASS_NAME = CostantiConfigurazione.POLICY_RETRIEVE_TOKEN_PARSER_CLASS_NAME; 
+	public static final String POLICY_RETRIEVE_TOKEN_PARSER_PLUGIN_TYPE = CostantiConfigurazione.POLICY_RETRIEVE_TOKEN_PARSER_PLUGIN_TYPE; 
 	public static final String POLICY_RETRIEVE_TOKEN_MODE = "policy.retrieveToken.mode";
 	public static final String POLICY_RETRIEVE_TOKEN_MODE_PDND = "policy.retrieveToken.jwt.pdnd";
 	public static final String POLICY_RETRIEVE_TOKEN_URL = "policy.retrieveToken.endpoint.url";
@@ -323,6 +325,8 @@ public class Costanti {
 	
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_TYPE= "policy.retrieveToken.jwt.signature.keystoreType";
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_FILE= "policy.retrieveToken.jwt.signature.keystoreFile";
+	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_FILE_PUBLIC_KEY= "policy.retrieveToken.jwt.signature.keystoreFilePublicKey";
+	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYPAIR_ALGORITHM= "policy.retrieveToken.jwt.signature.keyPairAlgorithm";
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_PASSWORD= "policy.retrieveToken.jwt.signature.keystorePassword";
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_ALIAS= "policy.retrieveToken.jwt.signature.keyAlias";
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_PASSWORD= "policy.retrieveToken.jwt.signature.keyPassword";
@@ -455,7 +459,10 @@ public class Costanti {
 	public static final String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_KID = "kid";
 	public static final String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABEL_KID = "Key ID 'kid' in Token";
 	public static final String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_NOTE_KID = "Per la validazione viene utilizzato il certificato nel truststore con alias corrispondente al 'kid' presente nel token";
-	public static final List<String> ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUES = new ArrayList<>();
+	private static final List<String> ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUES = new ArrayList<>();
+	public static List<String> getIdValidazioneJwtTruststoreTypeSelectCertificateValues() {
+		return ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUES;
+	}
 	static {
 		ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUES.add(ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_ALIAS);
 		ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUES.add(ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5C);
@@ -464,7 +471,10 @@ public class Costanti {
 		ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUES.add(ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_KID);
 		ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUES.add(ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5U);
 	}
-	public static final List<String> ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABELS = new ArrayList<>();
+	private static final List<String> ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABELS = new ArrayList<>();
+	public static List<String> getIdValidazioneJwtTruststoreTypeSelectCertificateLabels() {
+		return ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABELS;
+	}
 	static {
 		ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABELS.add(ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABEL_ALIAS);
 		ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABELS.add(ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_LABEL_X5C);
@@ -481,12 +491,18 @@ public class Costanti {
 	public static final String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY_VALUE_KID = "kid";
 	public static final String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY_LABEL_KID = "Key ID 'kid' in Token";
 	public static final String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY_NOTE_KID = "Per la validazione viene utilizzata la chiave pubblica nel truststore JWKs corrispondente al 'kid' presente nel token";
-	public static final List<String> ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY_VALUES = new ArrayList<>();
+	private static final List<String> ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY_VALUES = new ArrayList<>();
+	public static List<String> getIdValidazioneJwtTruststoreTypeSelectJwkPublicKeyValues() {
+		return ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY_VALUES;
+	}
 	static {
 		ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY_VALUES.add(ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY_VALUE_ALIAS);
 		ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY_VALUES.add(ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY_VALUE_KID);
 	}
-	public static final List<String> ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY_LABELS = new ArrayList<>();
+	private static final List<String> ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY_LABELS = new ArrayList<>();
+	public static List<String> getIdValidazioneJwtTruststoreTypeSelectJwkPublicKeyLabels() {
+		return ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY_LABELS;
+	}
 	static {
 		ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY_LABELS.add(ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY_LABEL_ALIAS);
 		ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY_LABELS.add(ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY_LABEL_KID);

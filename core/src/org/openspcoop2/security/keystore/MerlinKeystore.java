@@ -20,9 +20,6 @@
 
 package org.openspcoop2.security.keystore;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.security.Key;
 import java.security.KeyStore;
@@ -30,7 +27,6 @@ import java.security.cert.Certificate;
 import java.util.Properties;
 
 import org.openspcoop2.security.SecurityException;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 
 /**
@@ -65,62 +61,29 @@ public class MerlinKeystore implements Serializable {
 	}
 	
 	public MerlinKeystore(String propertyFilePath) throws SecurityException{
-		this._initMerlinKeystore(propertyFilePath, null, false);
+		this.initMerlinKeystoreEngine(propertyFilePath, null, false);
 	}
 	public MerlinKeystore(String propertyFilePath,String passwordPrivateKey) throws SecurityException{
-		this._initMerlinKeystore(propertyFilePath, passwordPrivateKey, true);
+		this.initMerlinKeystoreEngine(propertyFilePath, passwordPrivateKey, true);
 	}
-	private void _initMerlinKeystore(String propertyFilePath,String passwordPrivateKey, boolean privatePasswordRequired) throws SecurityException{
+	private void initMerlinKeystoreEngine(String propertyFilePath,String passwordPrivateKey, boolean privatePasswordRequired) throws SecurityException{
 		
-		InputStream isStore = null;
-		try{
-			if(propertyFilePath==null){
-				throw new Exception("PropertyFilePath per lo Store non indicato");
-			}
-			
-			File fStore = new File(propertyFilePath);
-			if(fStore.exists()){
-				isStore = new FileInputStream(fStore);
-			}else{
-				isStore = MerlinKeystore.class.getResourceAsStream(propertyFilePath);
-				if(isStore==null){
-					isStore = MerlinKeystore.class.getResourceAsStream("/"+propertyFilePath);
-				}
-				if(isStore==null){
-					throw new Exception("Store ["+propertyFilePath+"] not found");
-				}
-			}
-			Properties propStore = new Properties();
-			propStore.load(isStore);
-			isStore.close();
-			
-			this._initMerlinKeystore(propStore,passwordPrivateKey, privatePasswordRequired);
-			
-		}catch(Exception e){
-			throw new SecurityException(e.getMessage(),e);
-		}finally{
-			try{
-				if(isStore!=null){
-					isStore.close();
-				}
-			}catch(Exception eClose){
-				// close
-			}
-		}
-		
+		Properties propStore = StoreUtils.readProperties("PropertyFilePath", propertyFilePath);
+		this.initMerlinKeystoreEngine(propStore,passwordPrivateKey, privatePasswordRequired);
+				
 	}
 	
 	public MerlinKeystore(Properties propStore) throws SecurityException{
-		this._initMerlinKeystore(propStore,null, false);
+		this.initMerlinKeystoreEngine(propStore,null, false);
 	}
 	public MerlinKeystore(Properties propStore,String passwordPrivateKey) throws SecurityException{
-		this._initMerlinKeystore(propStore,passwordPrivateKey, true);
+		this.initMerlinKeystoreEngine(propStore,passwordPrivateKey, true);
 	}
-	private void _initMerlinKeystore(Properties propStore,String passwordPrivateKey, boolean privatePasswordRequired) throws SecurityException{
+	private void initMerlinKeystoreEngine(Properties propStore,String passwordPrivateKey, boolean privatePasswordRequired) throws SecurityException{
 		
 		try{
 			if(propStore==null){
-				throw new Exception("Properties per lo Store non indicato");
+				throw new SecurityException("Properties per lo Store non indicato");
 			}
 			
 			this.tipoStore = propStore.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_TYPE);
@@ -143,12 +106,12 @@ public class MerlinKeystore implements Serializable {
 	}
 		
 	public MerlinKeystore(String pathStore,String tipoStore,String passwordStore) throws SecurityException{
-		_initMerlinKeystore(pathStore,tipoStore,passwordStore,null, false);
+		initMerlinKeystoreEngine(pathStore,tipoStore,passwordStore,null, false);
 	}
 	public MerlinKeystore(String pathStore,String tipoStore,String passwordStore,String passwordPrivateKey) throws SecurityException{
-		_initMerlinKeystore(pathStore,tipoStore,passwordStore,passwordPrivateKey, true);
+		initMerlinKeystoreEngine(pathStore,tipoStore,passwordStore,passwordPrivateKey, true);
 	}
-	public void _initMerlinKeystore(String pathStore,String tipoStore,String passwordStore,String passwordPrivateKey, boolean privatePasswordRequired) throws SecurityException{
+	public void initMerlinKeystoreEngine(String pathStore,String tipoStore,String passwordStore,String passwordPrivateKey, boolean privatePasswordRequired) throws SecurityException{
 			
 		this.pathStore = pathStore;
 		this.tipoStore = tipoStore;
@@ -159,12 +122,12 @@ public class MerlinKeystore implements Serializable {
 	}
 	
 	public MerlinKeystore(byte[]bytesKeystore,String tipoStore,String passwordStore) throws SecurityException{
-		_initMerlinKeystore(bytesKeystore,tipoStore,passwordStore,null, false);
+		initMerlinKeystoreEngine(bytesKeystore,tipoStore,passwordStore,null, false);
 	}
 	public MerlinKeystore(byte[]bytesKeystore,String tipoStore,String passwordStore,String passwordPrivateKey) throws SecurityException{
-		_initMerlinKeystore(bytesKeystore,tipoStore,passwordStore,passwordPrivateKey, true);
+		initMerlinKeystoreEngine(bytesKeystore,tipoStore,passwordStore,passwordPrivateKey, true);
 	}
-	public void _initMerlinKeystore(byte[]bytesKeystore,String tipoStore,String passwordStore,String passwordPrivateKey, boolean privatePasswordRequired) throws SecurityException{
+	public void initMerlinKeystoreEngine(byte[]bytesKeystore,String tipoStore,String passwordStore,String passwordPrivateKey, boolean privatePasswordRequired) throws SecurityException{
 			
 		this.ksBytes = bytesKeystore;
 		this.tipoStore = tipoStore;
@@ -177,10 +140,10 @@ public class MerlinKeystore implements Serializable {
 	private void init(String passwordPrivateKey, boolean privatePasswordRequired) throws SecurityException{
 		try{
 			if(this.tipoStore==null){
-				throw new Exception("Tipo dello Store non indicato");
+				throw new SecurityException("Tipo dello Store non indicato");
 			}
 			if(this.passwordStore==null){
-				throw new Exception("Password dello Store non indicata");
+				throw new SecurityException("Password dello Store non indicata");
 			}
 			
 			HSMManager hsmManager = HSMManager.getInstance();
@@ -191,34 +154,11 @@ public class MerlinKeystore implements Serializable {
 			if(!this.hsm) {
 
 				if(this.ksBytes==null && this.pathStore==null){
-					throw new Exception("Path per lo Store non indicato");
+					throw new SecurityException("Path per lo Store non indicato");
 				}
 	
 				if(this.ksBytes==null) {
-					InputStream isStore = null;
-					try{
-						File fPathStore = new File(this.pathStore);
-						if(fPathStore.exists()){
-							isStore = new FileInputStream(fPathStore);
-						}else{
-							isStore = MerlinKeystore.class.getResourceAsStream(this.pathStore);
-							if(isStore==null){
-								isStore = MerlinKeystore.class.getResourceAsStream("/"+this.pathStore);
-							}
-							if(isStore==null){
-								throw new Exception("Keystore ["+this.pathStore+"] not found");
-							}
-						}
-						this.ksBytes = Utilities.getAsByteArray(isStore);
-					}finally{
-						try{
-							if(isStore!=null){
-								isStore.close();
-							}
-						}catch(Exception eClose){
-							// close
-						}
-					}
+					this.ksBytes = StoreUtils.readContent("Path", this.pathStore);
 				}
 	
 			}
@@ -227,10 +167,10 @@ public class MerlinKeystore implements Serializable {
 			
 			if(passwordPrivateKey==null && privatePasswordRequired){
 				if(this.pathStore!=null) {
-					throw new Exception("Password chiave privata non indicata per lo Store ["+this.pathStore+"] ");
+					throw new SecurityException("Password chiave privata non indicata per lo Store ["+this.pathStore+"] ");
 				}
 				else {
-					throw new Exception("Password chiave privata non indicata per lo Store ");
+					throw new SecurityException("Password chiave privata non indicata per lo Store ");
 				}
 			}
 			this.passwordPrivateKey = passwordPrivateKey;

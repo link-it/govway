@@ -59,7 +59,7 @@ public class ExternalResource implements Serializable {
 		if(UniqueIdentifierManager.isInitialized()) {
 			try {
 				uniqueId = UniqueIdentifierManager.newUniqueIdentifier().getAsString();
-			}catch (Throwable e) {
+			}catch (Exception e) {
 				throw new SecurityException(e.getMessage(),e);
 			}
 		}

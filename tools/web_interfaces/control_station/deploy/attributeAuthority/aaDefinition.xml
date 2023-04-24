@@ -352,21 +352,70 @@
 				<property name="policy.attributeAuthority.request.jws.keystore.type" />
 			</item>
 			<item type="textarea" name="aaJWSKeystoreFile" label="File" required="true">
-			     <property name="policy.attributeAuthority.request.jws.keystore.file" />
+				<conditions and="true">
+					<condition not="true" and="false">
+						<equals name="aaJWSKeystoreType" value="keys"/>
+					</condition>
+				</conditions>
+				<property name="policy.attributeAuthority.request.jws.keystore.file" />
+			</item>
+			<item type="textarea" name="aaJWSKeystorePrivateKey" label="Chiave Privata" required="true">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="aaJWSKeystoreType" value="keys"/>
+					</condition>
+				</conditions>
+				<property name="policy.attributeAuthority.request.jws.keystore.file" />
+			</item>
+			<item type="textarea" name="aaJWSKeystorePublicKey" label="Chiave Pubblica" required="true">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="aaJWSKeystoreType" value="keys"/>
+					</condition>
+				</conditions>
+				<property name="policy.attributeAuthority.request.jws.keystore.file.public" />
+			</item>
+			<item type="hidden" name="aaJWSKeystoreKeyPairAlgorithm" value="RSA">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="aaJWSKeystoreType" value="keys"/>
+					</condition>
+				</conditions>
+				<property name="policy.attributeAuthority.request.jws.keystore.file.algorithm" />
 			</item>
 			<item type="text" name="aaJWSKeystorePassword" label="Password" required="true">
 				<conditions>
-					<condition not="true" and="true">
+					<condition not="true" and="false">
 						<equals name="aaJWSKeystoreType" value="jwk"/>
+						<equals name="aaJWSKeystoreType" value="keys"/>
 					</condition>
 				</conditions>
 		      		<property name="policy.attributeAuthority.request.jws.keystore.password" />
 			</item>
 			<item type="text" name="aaJWSKeystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
-			    <property name="policy.attributeAuthority.request.jws.key.alias" />
+				<conditions and="true">
+					<condition not="true" and="false">
+						<equals name="aaJWSKeystoreType" value="keys"/>
+					</condition>
+				</conditions>
+				<property name="policy.attributeAuthority.request.jws.key.alias" />
 			</item>
 			<item type="text" name="aaJWSKeystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
-			    <property name="policy.attributeAuthority.request.jws.key.password" />
+				<conditions and="true">
+					<condition not="true" and="false">
+						<equals name="aaJWSKeystoreType" value="jwk"/>
+						<equals name="aaJWSKeystoreType" value="keys"/>
+					</condition>
+				</conditions>	
+				<property name="policy.attributeAuthority.request.jws.key.password" />
+			</item>
+			<item type="text" name="aaJWSKeystorePrivateKeyPasswordOpzionale" label="Password Chiave Privata" required="false">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="aaJWSKeystoreType" value="keys"/>
+					</condition>
+				</conditions>				
+				<property name="policy.attributeAuthority.request.jws.key.password" />
 			</item>
 
 		</subsection>
@@ -696,10 +745,19 @@
 			<item type="textarea" name="aaJWSTruststoreFile" label="File" required="true">
 				<property name="rs.security.keystore.file" properties="signatureVerifyPropRefId" />
 			</item>
+			<item type="hidden" name="aaJWSTruststorePublicKeyAlgorithm" value="RSA">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="aaJWSTruststoreType" value="public"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.keystore.file.algorithm" properties="signatureVerifyPropRefId" />
+			</item>
 			<item type="text" name="aaJWSTruststorePassword" label="Password" required="true">
 				<conditions>
-					<condition not="true" and="true">
+					<condition not="true" and="false">
 						<equals name="aaJWSTruststoreType" value="jwk"/>
+						<equals name="aaJWSTruststoreType" value="public"/>
 					</condition>
 				</conditions>
 				<property name="rs.security.keystore.password" properties="signatureVerifyPropRefId" />
@@ -710,6 +768,7 @@
 					<condition not="true" and="false">
 						<equals name="aaJWSTruststoreType" value="jceks"/>
 						<equals name="aaJWSTruststoreType" value="jwk"/>
+						<equals name="aaJWSTruststoreType" value="public"/>
 					</condition>
 				</conditions>
 				<property name="rs.security.keystore.alias.mode" properties="signatureVerifyPropRefId"/>
@@ -728,6 +787,7 @@
 					<condition not="true" and="false">
 						<equals name="aaJWSTruststoreType" value="jceks"/>
 						<equals name="aaJWSTruststoreType" value="jwk"/>
+						<equals name="aaJWSTruststoreType" value="public"/>
 					</condition>
 					<condition and="false">
 						<defined not="true" name="aaJWSTruststoreTypeSelectCertificate"/>
@@ -772,6 +832,7 @@
 					<condition not="true" and="false">
 						<equals name="aaJWSTruststoreType" value="jceks"/>
 						<equals name="aaJWSTruststoreType" value="jwk"/>
+						<equals name="aaJWSTruststoreType" value="public"/>
 					</condition>
 					<condition not="true" and="false">
 						<defined not="true" name="aaJWSTruststoreTypeSelectCertificate"/>
@@ -786,6 +847,7 @@
 					<condition not="true" and="false">
 						<equals name="aaJWSTruststoreType" value="jceks"/>
 						<equals name="aaJWSTruststoreType" value="jwk"/>
+						<equals name="aaJWSTruststoreType" value="public"/>
 					</condition>
 					<condition not="true" and="false">
 						<defined not="true" name="aaJWSTruststoreTypeSelectCertificate"/>

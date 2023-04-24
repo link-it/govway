@@ -241,7 +241,7 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 					else if(negoziazione) {
 						PolicyNegoziazioneToken policy = TokenUtilities.convertTo(genericProperties);
 						https = policy.isEndpointHttps();
-						if(policy.isRfc7523_x509_Grant()) {
+						if(policy.isRfc7523x509Grant()) {
 							KeystoreParams keystoreParams = TokenUtilities.getSignedJwtKeystoreParams(policy);
 							if(keystoreParams!=null && !"jwk".equalsIgnoreCase(keystoreParams.getType())) {
 								if(!org.openspcoop2.pdd.core.token.Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equalsIgnoreCase(keystoreParams.getPath())

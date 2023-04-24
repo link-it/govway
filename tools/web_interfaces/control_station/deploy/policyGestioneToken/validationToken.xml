@@ -334,19 +334,29 @@
 			<item type="textarea" name="validazioneJwtTruststoreFile" label="File" required="true">
 			    <property name="rs.security.keystore.file" properties="signatureVerificationPropRefId" />
 			</item>
-			<item type="text" name="validazioneJwtTruststorePassword" label="Password" required="true">
-				<conditions>
-					<condition not="true" and="true">
-						<equals name="validazioneJwtTruststoreType" value="jwk"/>
+			<item type="hidden" name="validazioneJwtTruststorePublicKeyAlgorithm" value="RSA">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="validazioneJwtTruststoreType" value="public"/>
 					</condition>
 				</conditions>
-		      	<property name="rs.security.keystore.password" properties="signatureVerificationPropRefId" />
+				<property name="rs.security.keystore.file.algorithm" properties="signatureVerificationPropRefId" />
+			</item>
+			<item type="text" name="validazioneJwtTruststorePassword" label="Password" required="true">
+				<conditions>
+					<condition not="true" and="false">
+						<equals name="validazioneJwtTruststoreType" value="jwk"/>
+						<equals name="validazioneJwtTruststoreType" value="public"/>
+					</condition>
+				</conditions>
+		      		<property name="rs.security.keystore.password" properties="signatureVerificationPropRefId" />
 			</item>
 
 			<item type="select" name="validazioneJwtTruststoreTypeSelectCertificate" label="Riferimento X.509" default="alias" reloadOnChange="true">
 				<conditions>
-					<condition not="true" and="true">
+					<condition not="true" and="false">
 						<equals name="validazioneJwtTruststoreType" value="jwk"/>
+						<equals name="validazioneJwtTruststoreType" value="public"/>
 					</condition>
 				</conditions>
 				<property name="rs.security.keystore.alias.mode" properties="signatureVerificationPropRefId" />
@@ -361,8 +371,9 @@
 			</item>
 			<item type="text" name="validazioneJwtTruststoreCertificateAlias" label="Alias Certificato" required="true">
 				<conditions and="true">
-					<condition not="true">
+					<condition not="true" and="false">
 						<equals name="validazioneJwtTruststoreType" value="jwk"/>
+						<equals name="validazioneJwtTruststoreType" value="public"/>
 					</condition>
 					<condition and="false">
 						<defined not="true" name="validazioneJwtTruststoreTypeSelectCertificate"/>
@@ -388,8 +399,9 @@
 
 			<item type="select" name="validazioneJwtTruststoreOcspPolicy" label="OCSP Policy" default="" reloadOnChange="true">
 				<conditions and="true">
-					<condition not="true" and="true">
+					<condition not="true" and="false">
 						<equals name="validazioneJwtTruststoreType" value="jwk"/>
+						<equals name="validazioneJwtTruststoreType" value="public"/>
 					</condition>
 					<condition not="true" and="false">
 						<defined not="true" name="validazioneJwtTruststoreTypeSelectCertificate"/>
@@ -401,8 +413,9 @@
 			</item>
 			<item type="checkbox" name="validazioneJwtTruststoreEnableRevocation" label="CRL" reloadOnChange="true" defaultSelected="false">
 				<conditions and="true">
-					<condition not="true" and="true">
+					<condition not="true" and="false">
 						<equals name="validazioneJwtTruststoreType" value="jwk"/>
+						<equals name="validazioneJwtTruststoreType" value="public"/>
 					</condition>
 					<condition not="true" and="false">
 						<defined not="true" name="validazioneJwtTruststoreTypeSelectCertificate"/>
@@ -1877,21 +1890,70 @@
 				<property name="rs.security.keystore.type" properties="signaturePropRefId" />
 			</item>
 			<item type="textarea" name="tokenForwardInfoRaccolteModeJWSKeystoreFile" label="File" required="true">
-			     <property name="rs.security.keystore.file" properties="signaturePropRefId" />
+				<conditions and="true">
+					<condition not="true" and="false">
+						<equals name="tokenForwardInfoRaccolteModeJWSKeystoreType" value="keys"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.keystore.file" properties="signaturePropRefId" />
+			</item>
+			<item type="textarea" name="tokenForwardInfoRaccolteModeJWSKeystorePrivateKey" label="Chiave Privata" required="true">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="tokenForwardInfoRaccolteModeJWSKeystoreType" value="keys"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.keystore.file" properties="signaturePropRefId" />
+			</item>
+			<item type="textarea" name="tokenForwardInfoRaccolteModeJWSKeystorePublicKey" label="Chiave Pubblica" required="true">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="tokenForwardInfoRaccolteModeJWSKeystoreType" value="keys"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.keystore.file.public" properties="signaturePropRefId" />
+			</item>
+			<item type="hidden" name="jwtKeystoreKeyPairAlgorithm" value="RSA">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="tokenForwardInfoRaccolteModeJWSKeystoreType" value="keys"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.keystore.file.algorithm" properties="signaturePropRefId" />
 			</item>
 			<item type="text" name="tokenForwardInfoRaccolteModeJWSKeystorePassword" label="Password" required="true">
 				<conditions>
-					<condition not="true" and="true">
+					<condition not="true" and="false">
 						<equals name="tokenForwardInfoRaccolteModeJWSKeystoreType" value="jwk"/>
+						<equals name="tokenForwardInfoRaccolteModeJWSKeystoreType" value="keys"/>
 					</condition>
 				</conditions>
-		      	<property name="rs.security.keystore.password" properties="signaturePropRefId" />
+		      		<property name="rs.security.keystore.password" properties="signaturePropRefId" />
 			</item>
 			<item type="text" name="tokenForwardInfoRaccolteModeJWSKeystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
-			    <property name="rs.security.keystore.alias" properties="signaturePropRefId" />
+				<conditions and="true">
+					<condition not="true" and="false">
+						<equals name="tokenForwardInfoRaccolteModeJWSKeystoreType" value="keys"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.keystore.alias" properties="signaturePropRefId" />
 			</item>
 			<item type="text" name="tokenForwardInfoRaccolteModeJWSKeystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
-			    <property name="rs.security.key.password" properties="signaturePropRefId" />
+				<conditions and="true">
+					<condition not="true" and="false">
+						<equals name="tokenForwardInfoRaccolteModeJWSKeystoreType" value="jwk"/>
+						<equals name="tokenForwardInfoRaccolteModeJWSKeystoreType" value="keys"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.key.password" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="tokenForwardInfoRaccolteModeJWSKeystorePrivateKeyPasswordOpzionale" label="Password Chiave Privata" required="false">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="tokenForwardInfoRaccolteModeJWSKeystoreType" value="keys"/>
+					</condition>
+				</conditions>				
+				<property name="rs.security.key.password" properties="signaturePropRefId" />
 			</item>
 
 		</subsection>

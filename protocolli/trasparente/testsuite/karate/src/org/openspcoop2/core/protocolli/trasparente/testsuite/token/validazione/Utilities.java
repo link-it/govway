@@ -177,7 +177,7 @@ public class Utilities extends ConfigLoader {
 			verifyOk(response, 200, contentType);
 		}
 					
-		if(!ForwardInformazioniTest.forward.equals(api)) {
+		if(!ForwardInformazioniTest.forward.equals(api) && !ForwardInformazioniTest.forwardAlternativeSigner.equals(api)) {
 			DBVerifier.verify(idTransazione, esitoExpected, msgError,
 					mapExpectedTokenInfo);
 		}

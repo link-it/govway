@@ -52,7 +52,7 @@ public class SecurityProvider extends AbstractSecurityProvider {
 	public void validate(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
 
 		JWTOptions jwtOptions = new JWTOptions(JOSESerialization.COMPACT); // una qualsaisi per la validazione
-		boolean useHeaders = JOSEUtils.useJwtHeaders_mapProperties(mapProperties, jwtOptions);
+		boolean useHeaders = JOSEUtils.useJwtHeadersMapProperties(mapProperties, jwtOptions);
 		if(useHeaders) {
 			if(!jwtOptions.isPermitUseHeaderJKU() &&
 					!jwtOptions.isPermitUseHeaderJWK() &&

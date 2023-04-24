@@ -51,7 +51,7 @@ public class CRLCertstoreCache extends AbstractKeystoreCache<CRLCertstore> {
 			Map<String, byte[]>  localResources = null;
 			try {
 				localResources = (Map<String, byte[]> ) params[0];
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				throw new SecurityException("Param[0] must be Map<String, byte[]>: "+t.getMessage(),t);
 			}
 			String propertyCrlPath = key;

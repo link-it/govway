@@ -2060,7 +2060,7 @@ public class OpenSPCoop2Properties {
 			this.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_transazioniRegistrazioneInformazioniNormalizzate();
 			this.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_excludeJwtSignature();
 			this.isGestioneRetrieveToken_saveTokenInfo_retrieveFailed();
-			this.initGestioneRetrieveToken_cacheKey();
+			this.initGestioneRetrieveTokenCacheKey();
 						
 			// Gestione AttributeAuthority
 			this.isGestioneAttributeAuthority_debug();
@@ -22921,26 +22921,26 @@ public class OpenSPCoop2Properties {
 		return this.isGestioneRetrieveToken_saveTokenInfo_retrieveFailed;
 	}
 
-	private Map<String, Boolean> gestioneRetrieveToken_cacheKey = null;
-	private void initGestioneRetrieveToken_cacheKey() throws Exception {
+	private Map<String, Boolean> gestioneRetrieveTokenCacheKey = null;
+	private void initGestioneRetrieveTokenCacheKey() throws Exception {
 		Properties p = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.retrieveToken.cacheKey.");
 		if(p!=null) {
-			this.gestioneRetrieveToken_cacheKey = new HashMap<String, Boolean>();
+			this.gestioneRetrieveTokenCacheKey = new HashMap<String, Boolean>();
 			for (Object oKey : p.keySet()) {
 				if(oKey!=null && oKey instanceof String) {
 					String key = (String) oKey;
 					String v = p.getProperty(key);
 					if(v!=null) {
 						boolean b = Boolean.valueOf(v.trim());
-						this.gestioneRetrieveToken_cacheKey.put(key,b);
+						this.gestioneRetrieveTokenCacheKey.put(key,b);
 					}
 				}
 			}
 		}
 	}
-	public boolean isGestioneRetrieveToken_cacheKey(String tipo) {
-		if(this.gestioneRetrieveToken_cacheKey!=null && !this.gestioneRetrieveToken_cacheKey.isEmpty() && this.gestioneRetrieveToken_cacheKey.containsKey(tipo)) {
-			return this.gestioneRetrieveToken_cacheKey.get(tipo);
+	public boolean isGestioneRetrieveTokenCacheKey(String tipo) {
+		if(this.gestioneRetrieveTokenCacheKey!=null && !this.gestioneRetrieveTokenCacheKey.isEmpty() && this.gestioneRetrieveTokenCacheKey.containsKey(tipo)) {
+			return this.gestioneRetrieveTokenCacheKey.get(tipo);
 		}
 		
 		// logica di default

@@ -59,17 +59,16 @@ public class GestioneToken {
 		this.protocolFactory = protocolFactory;
 	}
 	
-    public EsitoPresenzaTokenPortaApplicativa verificaPresenzaToken(DatiInvocazionePortaApplicativa datiInvocazione) throws TokenException{
+    public EsitoPresenzaTokenPortaApplicativa verificaPresenzaToken(DatiInvocazionePortaApplicativa datiInvocazione) {
 
-    	EsitoPresenzaTokenPortaApplicativa esito = (EsitoPresenzaTokenPortaApplicativa) GestoreToken.verificaPosizioneToken(this.log, datiInvocazione, GestoreToken.PORTA_APPLICATIVA);
+    	EsitoPresenzaTokenPortaApplicativa esito = (EsitoPresenzaTokenPortaApplicativa) GestoreToken.verificaPosizioneToken(datiInvocazione, GestoreToken.PORTA_APPLICATIVA);
     	
     	if(esito.getEccezioneProcessamento()!=null) {
     		esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
     	}
-    	else if(esito.isPresente()==false) {
-    		if(esito.getErrorMessage()==null) {
-    			esito.setErroreCooperazione(ErroriCooperazione.TOKEN_NON_PRESENTE.getErroreCooperazione());
-    		}
+    	else if(!esito.isPresente() &&
+    		esito.getErrorMessage()==null) {
+    		esito.setErroreCooperazione(ErroriCooperazione.TOKEN_NON_PRESENTE.getErroreCooperazione());
     	}
     	
     	return esito;
@@ -80,16 +79,15 @@ public class GestioneToken {
     	try {
     	
     		EsitoGestioneTokenPortaApplicativa esito = (EsitoGestioneTokenPortaApplicativa) GestoreToken.validazioneJWTToken(this.log, datiInvocazione, 
-    				this.pddContext, this.protocolFactory,
+    				this.pddContext, 
     				token, GestoreToken.PORTA_APPLICATIVA);
     		
         	if(esito.getEccezioneProcessamento()!=null) {
         		esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
         	}
-        	else if(esito.isValido()==false) {
-        		if(esito.getErrorMessage()==null) {
-        			esito.setErroreCooperazione(ErroriCooperazione.TOKEN_NON_VALIDO.getErroreCooperazione());
-        		}
+        	else if(!esito.isValido() &&
+        		esito.getErrorMessage()==null) {
+        		esito.setErroreCooperazione(ErroriCooperazione.TOKEN_NON_VALIDO.getErroreCooperazione());
         	}
         	
         	return esito;
@@ -110,10 +108,9 @@ public class GestioneToken {
         	if(esito.getEccezioneProcessamento()!=null) {
         		esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
         	}
-        	else if(esito.isValido()==false) {
-        		if(esito.getErrorMessage()==null) {
-        			esito.setErroreCooperazione(ErroriCooperazione.TOKEN_NON_VALIDO.getErroreCooperazione());
-        		}
+        	else if(!esito.isValido() &&
+        		esito.getErrorMessage()==null) {
+        		esito.setErroreCooperazione(ErroriCooperazione.TOKEN_NON_VALIDO.getErroreCooperazione());
         	}
         	
         	return esito;
@@ -134,10 +131,9 @@ public class GestioneToken {
         	if(esito.getEccezioneProcessamento()!=null) {
         		esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
         	}
-        	else if(esito.isValido()==false) {
-        		if(esito.getErrorMessage()==null) {
-        			esito.setErroreCooperazione(ErroriCooperazione.TOKEN_NON_VALIDO.getErroreCooperazione());
-        		}
+        	else if(!esito.isValido() &&
+        		esito.getErrorMessage()==null) {
+        		esito.setErroreCooperazione(ErroriCooperazione.TOKEN_NON_VALIDO.getErroreCooperazione());
         	}
         	
         	return esito;

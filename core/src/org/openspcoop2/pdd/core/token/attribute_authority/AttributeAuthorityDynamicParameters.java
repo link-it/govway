@@ -67,12 +67,12 @@ public class AttributeAuthorityDynamicParameters extends AbstractDynamicParamete
 		
 		boolean basic = policyAttributeAuthority.isBasicAuthentication();
 		if(basic) {
-			this.basicUsername = policyAttributeAuthority.getBasicAuthentication_username();
+			this.basicUsername = policyAttributeAuthority.getBasicAuthenticationUsername();
 			if(this.basicUsername!=null && !"".equals(this.basicUsername)) {
 				this.basicUsername = DynamicUtils.convertDynamicPropertyValue("username.gwt", this.basicUsername, dynamicMap, pddContext);	
 			}
 			
-			this.basicPassword = policyAttributeAuthority.getBasicAuthentication_password();
+			this.basicPassword = policyAttributeAuthority.getBasicAuthenticationPassword();
 			if(this.basicPassword!=null && !"".equals(this.basicPassword)) {
 				this.basicPassword = DynamicUtils.convertDynamicPropertyValue("password.gwt", this.basicPassword, dynamicMap, pddContext);	
 			}
@@ -80,7 +80,7 @@ public class AttributeAuthorityDynamicParameters extends AbstractDynamicParamete
 		
 		boolean bearer = policyAttributeAuthority.isBearerAuthentication();
 		if(bearer) {
-			this.bearerToken = policyAttributeAuthority.getBeareAuthentication_token();
+			this.bearerToken = policyAttributeAuthority.getBeareAuthenticationToken();
 			if(this.bearerToken!=null && !"".equals(this.bearerToken)) {
 				this.bearerToken = DynamicUtils.convertDynamicPropertyValue("bearerToken.gwt", this.bearerToken, dynamicMap, pddContext);	
 			}

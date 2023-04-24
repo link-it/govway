@@ -68,36 +68,85 @@ public class NegoziazioneTokenProvider implements IProvider {
 		boolean ssl = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_RETRIEVE_TOKEN_AUTH_SSL_STATO);
 		
 		if(endpointSSL || ssl) {
-			Properties p = mapProperties.get(Costanti.POLICY_ENDPOINT_SSL_CONFIG);
-			if(p==null || p.size()<=0) {
-				throw new ProviderValidationException("Nonostante sia stato indicato un endpoint 'https', non è stata fornita una configurazione dei parametri ssl da utilizzare");
-			}
-			
-			String trustAllCerts = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_ALL_CERTS);
-			boolean trustAll = false;
-			if(trustAllCerts!=null && StringUtils.isNotEmpty(trustAllCerts)) {
-				trustAll = Boolean.valueOf(trustAllCerts);
-			}
-			
-			if(!trustAll) {
-				String location = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
-				InputValidationUtils.validateTextAreaInput(location, "Https - Autenticazione Server - File (TrustStore per l'autenticazione server)");
-				
-				String algo = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITHM);
-				if(algo==null || "".equals(algo)) {
-					throw new ProviderValidationException("Indicare un algoritmo per l'autenticazione server");
-				}
-				if(algo.contains(" ")) {
-					throw new ProviderValidationException("Non indicare spazi nell'algoritmo per l'autenticazione server");
-				}
-				
-				String location_crl = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
-				if(location_crl!=null && !"".equals(location_crl)) {
-					InputValidationUtils.validateTextAreaInput(location_crl, "Https - Autenticazione Server - CRL File(s)");
-				}
-			}
+			validateEndpointSsl(mapProperties);
 		}
 		
+		validateUrl(pDefault);
+		
+		String retMode = validateRetrieveMode(pDefault);
+		
+		boolean pdnd = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_RETRIEVE_TOKEN_MODE_PDND);
+			
+					
+		boolean basic = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_RETRIEVE_TOKEN_AUTH_BASIC_STATO);
+		if(basic) {
+			validateBasicCredentials(pDefault);
+		}
+		
+		boolean bearer = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_RETRIEVE_TOKEN_AUTH_BEARER_STATO);
+		if(bearer) {
+			String token = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AUTH_BEARER_TOKEN);
+			InputValidationUtils.validateTextAreaInput(token, "Token Endpoint - Autenticazione Client - Token");
+		}
+		
+		if(ssl) {
+			validateSslCredentials(mapProperties);
+		}
+		
+		boolean proxy = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_ENDPOINT_PROXY_STATO);
+		if(proxy) {
+			validateProxy(mapProperties);
+		}
+		
+		if(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509.equals(retMode) ||
+				Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET.equals(retMode)) {
+			validateJWTSigned(pDefault, retMode, pdnd);
+		}
+		
+		validateFormParameters(pDefault, pdnd);
+		
+		validateCustomFormParameters(pDefault, pdnd);
+		
+		validateHeaders(pDefault);
+				
+		if(Costanti.ID_RETRIEVE_TOKEN_METHOD_CUSTOM.equals(retMode)) {
+			validateTokenParser(pDefault);
+		}
+		
+		validateForward(pDefault);
+		
+	}
+	private void validateEndpointSsl(Map<String, Properties> mapProperties) throws ProviderValidationException {
+		Properties p = mapProperties.get(Costanti.POLICY_ENDPOINT_SSL_CONFIG);
+		if(p==null || p.size()<=0) {
+			throw new ProviderValidationException("Nonostante sia stato indicato un endpoint 'https', non è stata fornita una configurazione dei parametri ssl da utilizzare");
+		}
+		
+		String trustAllCerts = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_ALL_CERTS);
+		boolean trustAll = false;
+		if(trustAllCerts!=null && StringUtils.isNotEmpty(trustAllCerts)) {
+			trustAll = Boolean.valueOf(trustAllCerts);
+		}
+		
+		if(!trustAll) {
+			String location = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
+			InputValidationUtils.validateTextAreaInput(location, "Https - Autenticazione Server - File (TrustStore per l'autenticazione server)");
+			
+			String algo = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITHM);
+			if(algo==null || "".equals(algo)) {
+				throw new ProviderValidationException("Indicare un algoritmo per l'autenticazione server");
+			}
+			if(algo.contains(" ")) {
+				throw new ProviderValidationException("Non indicare spazi nell'algoritmo per l'autenticazione server");
+			}
+			
+			String locationCRL = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+			if(locationCRL!=null && !"".equals(locationCRL)) {
+				InputValidationUtils.validateTextAreaInput(locationCRL, "Https - Autenticazione Server - CRL File(s)");
+			}
+		}
+	}
+	private void validateUrl(Properties pDefault) throws ProviderValidationException {
 		String url = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_URL);
 		InputValidationUtils.validateTextAreaInput(url, "Token Endpoint - URL");
 		try{
@@ -105,7 +154,8 @@ public class NegoziazioneTokenProvider implements IProvider {
 		}catch(Exception e){
 			throw new ProviderValidationException("La URL fornita non è valida: "+e.getMessage());
 		}	
-		
+	}
+	private String validateRetrieveMode(Properties pDefault) throws ProviderValidationException {
 		String retMode = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_MODE);
 		if(Costanti.ID_RETRIEVE_TOKEN_METHOD_USERNAME_PASSWORD.equals(retMode)) {
 			String username = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_USERNAME);
@@ -123,233 +173,240 @@ public class NegoziazioneTokenProvider implements IProvider {
 				throw new ProviderValidationException("Non indicare spazi nella password");
 			}
 		}
+		return retMode;
+	}
+	private void validateBasicCredentials(Properties pDefault) throws ProviderValidationException {
+		String username = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AUTH_BASIC_USERNAME);
+		if(username==null || "".equals(username)) {
+			throw new ProviderValidationException("Nonostante sia richiesta una autenticazione 'HttpBasic', non è stato fornito un 'Client ID' da utilizzare durante la connessione verso il servizio");
+		}
+		if(username.contains(" ")) {
+			throw new ProviderValidationException("Non indicare spazi nel 'Client ID'");
+		}
+		String password = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AUTH_BASIC_PASSWORD);
+		if(password==null || "".equals(password)) {
+			throw new ProviderValidationException("Nonostante sia richiesta una autenticazione 'HttpBasic', non è stato fornita un 'Client Secret' da utilizzare durante la connessione verso il servizio");
+		}
+		if(password.contains(" ")) {
+			throw new ProviderValidationException("Non indicare spazi nel 'Client Secret'");
+		}
+	}
+	private void validateSslCredentials(Map<String, Properties> mapProperties) throws ProviderValidationException {
+		Properties p = mapProperties.get(Costanti.POLICY_ENDPOINT_SSL_CLIENT_CONFIG);
+		if(p==null || p.size()<=0) {
+			throw new ProviderValidationException("Nonostante sia richiesta una autenticazione 'Https', non sono stati forniti i parametri di connessione ssl client da utilizzare verso il servizio");
+		}
 		
-		boolean pdnd = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_RETRIEVE_TOKEN_MODE_PDND);
+		String location = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION);
+		if(location!=null && !"".equals(location)) {
+			InputValidationUtils.validateTextAreaInput(location, "Https - Autenticazione Client - File (KeyStore per l'autenticazione client)");
+		}
+		
+		String algo = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITHM);
+		if(algo==null || "".equals(algo)) {
+			throw new ProviderValidationException("Indicare un algoritmo per l'autenticazione client");
+		}
+		if(algo.contains(" ")) {
+			throw new ProviderValidationException("Non indicare spazi nell'algoritmo per l'autenticazione client");
+		}
+	}
+	private void validateProxy(Map<String, Properties> mapProperties) throws ProviderValidationException {
+		Properties p = mapProperties.get(Costanti.POLICY_ENDPOINT_CONFIG);
+		if(p==null || p.size()<=0) {
+			throw new ProviderValidationException("Nonostante sia richiesta un proxy, non sono stati forniti i parametri di connessione");
+		}
+		
+		String hostname = p.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME);
+		if(hostname==null || "".equals(hostname)) {
+			throw new ProviderValidationException("Indicare un hostname per il Proxy");
+		}
+		if(hostname.contains(" ")) {
+			throw new ProviderValidationException("Non indicare spazi nell'hostname del Proxy");
+		}
+		
+		String username = p.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_USERNAME);
+		if(username!=null && !"".equals(username) &&
+			username.contains(" ")) {
+			throw new ProviderValidationException("Non indicare spazi nell'username del Proxy");
+		}
+		
+		String password = p.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD);
+		if(password!=null && !"".equals(password) &&
+			password.contains(" ")) {
+			throw new ProviderValidationException("Non indicare spazi nella password del Proxy");
+		}
+	}
+	private void validateJWTSigned(Properties pDefault, String retMode, boolean pdnd) throws ProviderValidationException {
+		if(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509.equals(retMode)) {
+			validateJWTSignedx509(pDefault);
+		}
+		else {
+			/**
+			// Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET.equals(retMode)) {
+		
+			// Una password può contenere gli spazi, i controlli di inizio e fine vengono gia' fatti dal framework
 			
-					
-		boolean basic = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_RETRIEVE_TOKEN_AUTH_BASIC_STATO);
-		if(basic) {
-			String username = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AUTH_BASIC_USERNAME);
-			if(username==null || "".equals(username)) {
-				throw new ProviderValidationException("Nonostante sia richiesta una autenticazione 'HttpBasic', non è stato fornito un 'Client ID' da utilizzare durante la connessione verso il servizio");
+//			String clientSecret = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLIENT_SECRET);
+//			if(clientSecret!=null && clientSecret.contains(" ")) {
+//				throw new ProviderValidationException("Non indicare spazi nel campo 'Client Secret'");
+//			}
+			*/
+		}
+		
+		// NOTA: i controlli seguenti di inizio e fine, vengono fatti gia' in automatico dal framework
+		
+		validateJWTSignedHeader(pDefault);
+							
+		validateJWTSignedPayload(pDefault, pdnd);
+		
+	}
+	private void validateJWTSignedx509(Properties pDefault) throws ProviderValidationException {
+		validateJWTSignedx509Keystore(pDefault);
+		validateJWTSignedx509Key(pDefault);
+	}
+	private void validateJWTSignedx509Keystore(Properties pDefault) throws ProviderValidationException {
+		String file = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_FILE);
+		InputValidationUtils.validateTextAreaInput(file, "Token Endpoint - JWT KeyStore - File");
+		
+		String fileChiavePubblica = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_FILE_PUBLIC_KEY);
+		if(fileChiavePubblica!=null && StringUtils.isNotEmpty(fileChiavePubblica)) {
+			InputValidationUtils.validateTextAreaInput(file, "Token Endpoint - JWT KeyStore - Chiave Pubblica");
+		}
+		
+		// NOTA: i controlli seguenti di inizio e fine, vengono fatti gia' in automatico dal framework
+		String p = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_PASSWORD);
+		if(p!=null) {
+			if(p.startsWith(" ")) {
+				throw new ProviderValidationException("Il valore indicato nel campo 'JWT KeyStore - Password', non deve iniziare con uno spazio");
 			}
-			if(username.contains(" ")) {
-				throw new ProviderValidationException("Non indicare spazi nel 'Client ID'");
+			if(p.endsWith(" ")) {
+				throw new ProviderValidationException("Il valore indicato nel campo 'JWT KeyStore - Password', non deve terminare con uno spazio");
 			}
-			String password = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AUTH_BASIC_PASSWORD);
-			if(password==null || "".equals(password)) {
-				throw new ProviderValidationException("Nonostante sia richiesta una autenticazione 'HttpBasic', non è stato fornita un 'Client Secret' da utilizzare durante la connessione verso il servizio");
+		}
+	}
+	private void validateJWTSignedx509Key(Properties pDefault) throws ProviderValidationException {
+		
+		// NOTA: i controlli seguenti di inizio e fine, vengono fatti gia' in automatico dal framework
+		String p = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_ALIAS);
+		if(p!=null) {
+			if(p.startsWith(" ")) {
+				throw new ProviderValidationException("Il valore indicato nel campo 'JWT KeyStore - Alias Chiave Privata', non deve iniziare con uno spazio");
 			}
-			if(password.contains(" ")) {
-				throw new ProviderValidationException("Non indicare spazi nel 'Client Secret'");
+			if(p.endsWith(" ")) {
+				throw new ProviderValidationException("Il valore indicato nel campo 'JWT KeyStore - Alias Chiave Privata', non deve terminare con uno spazio");
 			}
 		}
 		
-		boolean bearer = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_RETRIEVE_TOKEN_AUTH_BEARER_STATO);
-		if(bearer) {
-			String token = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AUTH_BEARER_TOKEN);
-			InputValidationUtils.validateTextAreaInput(token, "Token Endpoint - Autenticazione Client - Token");
+		p = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_PASSWORD);
+		if(p!=null) {
+			if(p.startsWith(" ")) {
+				throw new ProviderValidationException("Il valore indicato nel campo 'JWT KeyStore - Password Chiave Privata', non deve iniziare con uno spazio");
+			}
+			if(p.endsWith(" ")) {
+				throw new ProviderValidationException("Il valore indicato nel campo 'JWT KeyStore - Password Chiave Privata', non deve terminare con uno spazio");
+			}
 		}
-		
-		if(ssl) {
-			Properties p = mapProperties.get(Costanti.POLICY_ENDPOINT_SSL_CLIENT_CONFIG);
-			if(p==null || p.size()<=0) {
-				throw new ProviderValidationException("Nonostante sia richiesta una autenticazione 'Https', non sono stati forniti i parametri di connessione ssl client da utilizzare verso il servizio");
-			}
-			
-			String location = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION);
-			if(location!=null && !"".equals(location)) {
-				InputValidationUtils.validateTextAreaInput(location, "Https - Autenticazione Client - File (KeyStore per l'autenticazione client)");
-			}
-			
-			String algo = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITHM);
-			if(algo==null || "".equals(algo)) {
-				throw new ProviderValidationException("Indicare un algoritmo per l'autenticazione client");
-			}
-			if(algo.contains(" ")) {
-				throw new ProviderValidationException("Non indicare spazi nell'algoritmo per l'autenticazione client");
-			}
-
-		}
-		
-		boolean proxy = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_ENDPOINT_PROXY_STATO);
-		if(proxy) {
-			Properties p = mapProperties.get(Costanti.POLICY_ENDPOINT_CONFIG);
-			if(p==null || p.size()<=0) {
-				throw new ProviderValidationException("Nonostante sia richiesta un proxy, non sono stati forniti i parametri di connessione");
-			}
-			
-			String hostname = p.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME);
-			if(hostname==null || "".equals(hostname)) {
-				throw new ProviderValidationException("Indicare un hostname per il Proxy");
-			}
-			if(hostname.contains(" ")) {
-				throw new ProviderValidationException("Non indicare spazi nell'hostname del Proxy");
-			}
-			
-			String username = p.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_USERNAME);
-			if(username!=null && !"".equals(username)) {
-				if(username.contains(" ")) {
-					throw new ProviderValidationException("Non indicare spazi nell'username del Proxy");
+	}
+	private void validateJWTSignedHeader(Properties pDefault) throws ProviderValidationException {
+		String kidMode = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID);
+		if(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_CUSTOM.equals(kidMode)) {
+			String kidValue = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_VALUE);
+			if(kidValue!=null) {
+				if(kidValue.startsWith(" ")) {
+					throw new ProviderValidationException("Il valore indicato nel campo 'JWT Header - Key Id (kid)', non deve iniziare con uno spazio");
 				}
-			}
-			
-			String password = p.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD);
-			if(password!=null && !"".equals(password)) {
-				if(password.contains(" ")) {
-					throw new ProviderValidationException("Non indicare spazi nella password del Proxy");
+				if(kidValue.endsWith(" ")) {
+					throw new ProviderValidationException("Il valore indicato nel campo 'JWT Header - Key Id (kid)', non deve terminare con uno spazio");
 				}
 			}
 		}
 		
-		if(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509.equals(retMode) ||
-				Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET.equals(retMode)) {
-			
-			if(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509.equals(retMode)) {
-			
-				String file = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_FILE);
-				InputValidationUtils.validateTextAreaInput(file, "Token Endpoint - JWT KeyStore - File");
-				
-				// NOTA: i controlli seguenti di inizio e fine, vengono fatti gia' in automatico dal framework
-				String p = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_PASSWORD);
-				if(p!=null) {
-					if(p.startsWith(" ")) {
-						throw new ProviderValidationException("Il valore indicato nel campo 'JWT KeyStore - Password', non deve iniziare con uno spazio");
-					}
-					if(p.endsWith(" ")) {
-						throw new ProviderValidationException("Il valore indicato nel campo 'JWT KeyStore - Password', non deve terminare con uno spazio");
-					}
-				}
-				
-				p = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_ALIAS);
-				if(p!=null) {
-					if(p.startsWith(" ")) {
-						throw new ProviderValidationException("Il valore indicato nel campo 'JWT KeyStore - Alias Chiave Privata', non deve iniziare con uno spazio");
-					}
-					if(p.endsWith(" ")) {
-						throw new ProviderValidationException("Il valore indicato nel campo 'JWT KeyStore - Alias Chiave Privata', non deve terminare con uno spazio");
-					}
-				}
-				
-				p = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_PASSWORD);
-				if(p!=null) {
-					if(p.startsWith(" ")) {
-						throw new ProviderValidationException("Il valore indicato nel campo 'JWT KeyStore - Password Chiave Privata', non deve iniziare con uno spazio");
-					}
-					if(p.endsWith(" ")) {
-						throw new ProviderValidationException("Il valore indicato nel campo 'JWT KeyStore - Password Chiave Privata', non deve terminare con uno spazio");
-					}
-				}
-				
-			}
-			else {
-					// Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET.equals(retMode)) {
-			
-				// Una password può contenere gli spazi, i controlli di inizio e fine vengono gia' fatti dal framework
-//				String clientSecret = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLIENT_SECRET);
-//				if(clientSecret!=null && clientSecret.contains(" ")) {
-//					throw new ProviderValidationException("Non indicare spazi nel campo 'Client Secret'");
-//				}
-				
-			}
-			
-			// NOTA: i controlli seguenti di inizio e fine, vengono fatti gia' in automatico dal framework
-			String kidMode = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID);
-			if(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_CUSTOM.equals(kidMode)) {
-				String kidValue = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_VALUE);
-				if(kidValue!=null) {
-					if(kidValue.startsWith(" ")) {
-						throw new ProviderValidationException("Il valore indicato nel campo 'JWT Header - Key Id (kid)', non deve iniziare con uno spazio");
-					}
-					if(kidValue.endsWith(" ")) {
-						throw new ProviderValidationException("Il valore indicato nel campo 'JWT Header - Key Id (kid)', non deve terminare con uno spazio");
-					}
-				}
-			}
-			
-			String type = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_JOSE_TYPE);
-			if(type!=null && type.contains(" ")) {
-				throw new ProviderValidationException("Non indicare spazi nel campo 'JWT Header - Type (typ)'");
-			}
-			
-			String x5u = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_X509_URL);
-			if(x5u!=null && !"".equals(x5u)) {
-				InputValidationUtils.validateTextAreaInput(x5u, "Token Endpoint - JWT Header - URL");
-			}
-						
-			String clientId = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLIENT_ID);
-			if(clientId!=null && clientId.contains(" ")) {
-				throw new ProviderValidationException("Non indicare spazi nel campo 'JWT Payload - Client ID'");
-			}
-			
-			String audience = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_AUDIENCE);
-			if(audience!=null && audience.contains(" ")) {
-				throw new ProviderValidationException("Non indicare spazi nel campo 'JWT Payload - Audience'");
-			}
-			
-			String issuer = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_ISSUER);
-			if(issuer!=null && issuer.contains(" ")) {
-				throw new ProviderValidationException("Non indicare spazi nel campo 'JWT Payload - Issuer'");
-			}
-			
-			String subject = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SUBJECT);
-			if(subject!=null && subject.contains(" ")) {
-				throw new ProviderValidationException("Non indicare spazi nel campo 'JWT Payload - Subject'");
-			}
-			
-			String jti = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_IDENTIFIER);
-			if(jti!=null && jti.contains(" ")) {
-				throw new ProviderValidationException("Non indicare spazi nel campo 'JWT Payload - Identifier'");
-			}
-			
+		String type = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_JOSE_TYPE);
+		if(type!=null && type.contains(" ")) {
+			throw new ProviderValidationException("Non indicare spazi nel campo 'JWT Header - Type (typ)'");
+		}
+		
+		String x5u = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_X509_URL);
+		if(x5u!=null && !"".equals(x5u)) {
+			InputValidationUtils.validateTextAreaInput(x5u, "Token Endpoint - JWT Header - URL");
+		}
+	}
+	private void validateJWTSignedPayload(Properties pDefault, boolean pdnd) throws ProviderValidationException {
+		String clientId = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLIENT_ID);
+		if(clientId!=null && clientId.contains(" ")) {
+			throw new ProviderValidationException("Non indicare spazi nel campo 'JWT Payload - Client ID'");
+		}
+		
+		String audience = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_AUDIENCE);
+		if(audience!=null && audience.contains(" ")) {
+			throw new ProviderValidationException("Non indicare spazi nel campo 'JWT Payload - Audience'");
+		}
+		
+		String issuer = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_ISSUER);
+		if(issuer!=null && issuer.contains(" ")) {
+			throw new ProviderValidationException("Non indicare spazi nel campo 'JWT Payload - Issuer'");
+		}
+		
+		String subject = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SUBJECT);
+		if(subject!=null && subject.contains(" ")) {
+			throw new ProviderValidationException("Non indicare spazi nel campo 'JWT Payload - Subject'");
+		}
+		
+		String jti = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_IDENTIFIER);
+		if(jti!=null && jti.contains(" ")) {
+			throw new ProviderValidationException("Non indicare spazi nel campo 'JWT Payload - Identifier'");
+		}
+		
+		if(pdnd) {
+			validateJWTSignedPayloadPDND(pDefault);			
+		}
+		
+		validateJWTSignedClaims(pDefault, pdnd);
+	}
+	private void validateJWTSignedPayloadPDND(Properties pDefault) throws ProviderValidationException {
+		String purposeId = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_PURPOSE_ID);
+		if(purposeId!=null && purposeId.contains(" ")) {
+			throw new ProviderValidationException("Non indicare spazi nel campo 'JWT Payload - Purpose ID'");
+		}
+		
+		String session = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SESSION_INFO);
+		if(session!=null && !"".equals(session)) {
+			Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(session);
+			List<String> deny = new ArrayList<>();
+			TokenUtilities.checkClaims("claim", convertTextToProperties, "Informazioni Sessione", deny, false);
+		}
+	}
+	private void validateJWTSignedClaims(Properties pDefault, boolean pdnd) throws ProviderValidationException {
+		String claims = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIMS);
+		if(claims!=null && !"".equals(claims)) {
+			Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(claims);
+			List<String> deny = new ArrayList<>();
+			deny.add(Claims.OIDC_ID_TOKEN_ISSUER);
+			deny.add(Claims.OIDC_ID_TOKEN_SUBJECT);
+			deny.add(Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID);
+			deny.add(Claims.OIDC_ID_TOKEN_AUDIENCE);
+			deny.add(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT);
+			deny.add(Claims.JSON_WEB_TOKEN_RFC_7519_NOT_TO_BE_USED_BEFORE);
+			deny.add(Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED);
+			deny.add(Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID);
 			if(pdnd) {
-				
-				String purposeId = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_PURPOSE_ID);
-				if(purposeId!=null && purposeId.contains(" ")) {
-					throw new ProviderValidationException("Non indicare spazi nel campo 'JWT Payload - Purpose ID'");
-				}
-				
-				String session = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SESSION_INFO);
-				if(session!=null && !"".equals(session)) {
-					Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(session);
-					List<String> deny = new ArrayList<String>();
-					TokenUtilities.checkClaims("claim", convertTextToProperties, "Informazioni Sessione", deny, false);
-				}
+				deny.add(Costanti.PDND_PURPOSE_ID);
+				deny.add(Costanti.PDND_SESSION_INFO);
 			}
-			
-			String claims = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIMS);
-			if(claims!=null && !"".equals(claims)) {
-				Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(claims);
-				List<String> deny = new ArrayList<String>();
-				deny.add(Claims.OIDC_ID_TOKEN_ISSUER);
-				deny.add(Claims.OIDC_ID_TOKEN_SUBJECT);
-				deny.add(Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID);
-				deny.add(Claims.OIDC_ID_TOKEN_AUDIENCE);
-				deny.add(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT);
-				deny.add(Claims.JSON_WEB_TOKEN_RFC_7519_NOT_TO_BE_USED_BEFORE);
-				deny.add(Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED);
-				deny.add(Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID);
-				if(pdnd) {
-					deny.add(Costanti.PDND_PURPOSE_ID);
-					deny.add(Costanti.PDND_SESSION_INFO);
-				}
-				TokenUtilities.checkClaims("claim", convertTextToProperties, "Claims", deny, false);
-			}
-			
+			TokenUtilities.checkClaims("claim", convertTextToProperties, "Claims", deny, false);
 		}
-		
+	}
+	private void validateFormParameters(Properties pDefault, boolean pdnd) throws ProviderValidationException {
 		String scopes = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_SCOPES);
-		if(scopes!=null && !"".equals(scopes)) {
-			if(scopes.contains(" ")) {
-				throw new ProviderValidationException("Non indicare spazi tra gli scope forniti");
-			}
+		if(scopes!=null && !"".equals(scopes) &&
+			scopes.contains(" ")) {
+			throw new ProviderValidationException("Non indicare spazi tra gli scope forniti");
 		}
 		
 		String audience = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AUDIENCE);
-		if(audience!=null && !"".equals(audience)) {
-			if(audience.contains(" ")) {
-				throw new ProviderValidationException("Non indicare spazi nel valore dell'audience");
-			}
+		if(audience!=null && !"".equals(audience) &&
+			audience.contains(" ")) {
+			throw new ProviderValidationException("Non indicare spazi nel valore dell'audience");
 		}
 		
 		if(pdnd) {
@@ -363,11 +420,12 @@ public class NegoziazioneTokenProvider implements IProvider {
 				throw new ProviderValidationException("Non indicare spazi nel campo 'Resource'");
 			}
 		}
-		
+	}
+	private void validateCustomFormParameters(Properties pDefault, boolean pdnd) throws ProviderValidationException {
 		String parameters = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORM_PARAMETERS);
 		if(parameters!=null && !"".equals(parameters)) {
 			Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(parameters);
-			List<String> deny = new ArrayList<String>();
+			List<String> deny = new ArrayList<>();
 			deny.add(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE);
 			deny.add(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_ASSERTION_TYPE);
 			deny.add(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_ASSERTION);
@@ -377,38 +435,42 @@ public class NegoziazioneTokenProvider implements IProvider {
 				deny.add(Costanti.PDND_OAUTH2_RFC_6749_REQUEST_CLIENT_ID);
 			}
 			TokenUtilities.checkClaims("parametro", convertTextToProperties, "Parametri", deny, false);
-		}
-		
+		}	
+	}
+	private void validateHeaders(Properties pDefault) throws ProviderValidationException {
 		String headers = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_HTTP_HEADERS);
 		if(headers!=null && !"".equals(headers)) {
 			Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(headers);
-			List<String> deny = new ArrayList<String>();
+			List<String> deny = new ArrayList<>();
 			deny.add(HttpConstants.AUTHORIZATION);
 			deny.add(HttpConstants.CONTENT_TYPE);
 			TokenUtilities.checkClaims("header http", convertTextToProperties, "Header HTTP", deny, false);
 		}
-		
-		if(Costanti.ID_RETRIEVE_TOKEN_METHOD_CUSTOM.equals(retMode)) {
-			String parser = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_PARSER_TYPE_CUSTOM);
-			if(parser!=null && Costanti.POLICY_RETRIEVE_TOKEN_PARSER_TYPE_CUSTOM_CYSTOM.equals(parser)) {
-				String pluginType = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_PARSER_PLUGIN_TYPE);
-				if(pluginType!=null && StringUtils.isNotEmpty(pluginType) && CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(pluginType)) {
-					String className = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_PARSER_CLASS_NAME);
-					if(CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(className)) {
-						throw new ProviderValidationException("Deve essere selezionato un plugin per il 'Formato Risposta'");	
-					}
-					else {
-						if(className==null || "".equals(className)) {
-							throw new ProviderValidationException("Non è stata fornita la classe del parser dei claims della risposta");
-						}
-						if(className.contains(" ")) {
-							throw new ProviderValidationException("Non indicare spazi nella classe del parser dei claims della risposta");
-						}
-					}
+	}
+	private void validateTokenParser(Properties pDefault) throws ProviderValidationException {
+		String parser = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_PARSER_TYPE_CUSTOM);
+		if(parser!=null && Costanti.POLICY_RETRIEVE_TOKEN_PARSER_TYPE_CUSTOM_CYSTOM.equals(parser)) {
+			String pluginType = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_PARSER_PLUGIN_TYPE);
+			validateTokenParser(pDefault, pluginType);
+		}
+	}
+	private void validateTokenParser(Properties pDefault, String pluginType) throws ProviderValidationException {
+		if(pluginType!=null && StringUtils.isNotEmpty(pluginType) && CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(pluginType)) {
+			String className = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_PARSER_CLASS_NAME);
+			if(CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(className)) {
+				throw new ProviderValidationException("Deve essere selezionato un plugin per il 'Formato Risposta'");	
+			}
+			else {
+				if(className==null || "".equals(className)) {
+					throw new ProviderValidationException("Non è stata fornita la classe del parser dei claims della risposta");
+				}
+				if(className.contains(" ")) {
+					throw new ProviderValidationException("Non indicare spazi nella classe del parser dei claims della risposta");
 				}
 			}
 		}
-		
+	}
+	private void validateForward(Properties pDefault) throws ProviderValidationException {
 		String mode = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_MODE);
 		if(mode==null) {
 			throw new ProviderValidationException("Nessuna modalità di forward indicata");
@@ -438,7 +500,6 @@ public class NegoziazioneTokenProvider implements IProvider {
 				throw new ProviderValidationException("Non indicare spazi nel nome della proprietà della url indicata per la modalità di forward");
 			}
 		}
-		
 	}
 
 
@@ -448,6 +509,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 	}
 	@Override
 	public List<String> getValues(String id, ExternalResources externalResources) throws ProviderException{
+		List<String> values = null;
 		if(Costanti.ID_RETRIEVE_TOKEN_METHOD.equals(id)) {
 			List<String> methodsList = new ArrayList<>();
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_CLIENT_CREDENTIAL);
@@ -468,24 +530,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 		}
 		else if(Costanti.ID_RETRIEVE_TOKEN_JWT_SYMMETRIC_SIGN_ALGORITHM.equals(id) ||
 				Costanti.ID_RETRIEVE_TOKEN_JWT_ASYMMETRIC_SIGN_ALGORITHM.equals(id)) {
-			List<String> l = new ArrayList<>();
-			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm [] tmp = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.values();
-			for (int i = 0; i < tmp.length; i++) {
-				if(org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.NONE.equals(tmp[i])) {
-					continue;
-				}
-				if(Costanti.ID_RETRIEVE_TOKEN_JWT_SYMMETRIC_SIGN_ALGORITHM.equals(id)) {
-					if(tmp[i].name().toLowerCase().startsWith("hs")) {
-						l.add(tmp[i].name());
-					}
-				}
-				else {
-					if(!tmp[i].name().toLowerCase().startsWith("hs")) {
-						l.add(tmp[i].name());
-					}
-				}
-			}
-			return l;
+			return getValuesSignatureAlgorithm(id);
 		}
 		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(id) || 
 				Costanti.ID_HTTPS_TRUSTSTORE_TYPE.equals(id) ||
@@ -503,7 +548,27 @@ public class NegoziazioneTokenProvider implements IProvider {
 		else if(Costanti.ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)) {
 			return TokenUtilities.getTokenPluginValues(externalResources, TipoPlugin.TOKEN_NEGOZIAZIONE);
 		}
-		return null;
+		return values;
+	}
+	private List<String> getValuesSignatureAlgorithm(String id) {
+		List<String> l = new ArrayList<>();
+		org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm [] tmp = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.values();
+		for (int i = 0; i < tmp.length; i++) {
+			if(org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.NONE.equals(tmp[i])) {
+				continue;
+			}
+			if(Costanti.ID_RETRIEVE_TOKEN_JWT_SYMMETRIC_SIGN_ALGORITHM.equals(id)) {
+				if(tmp[i].name().toLowerCase().startsWith("hs")) {
+					l.add(tmp[i].name());
+				}
+			}
+			else {
+				if(!tmp[i].name().toLowerCase().startsWith("hs")) {
+					l.add(tmp[i].name());
+				}
+			}
+		}
+		return l;
 	}
 
 	@Override
@@ -523,21 +588,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 		}
 		else if(Costanti.ID_RETRIEVE_TOKEN_JWT_SYMMETRIC_SIGN_ALGORITHM.equals(id) ||
 				Costanti.ID_RETRIEVE_TOKEN_JWT_ASYMMETRIC_SIGN_ALGORITHM.equals(id)) {
-			List<String> l = this.getValues(id);
-			List<String> labels = new ArrayList<>();
-			for (String value : l) {
-				if(value.contains("_")) {
-					String t = new String(value);
-					while(t.contains("_")) {
-						t = t.replace("_", "-");
-					}
-					labels.add(t);
-				}
-				else {
-					labels.add(value);
-				}
-			}
-			return labels;
+			return getLabelsSignatureAlgorithm(id);
 		}
 		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(id) || 
 				Costanti.ID_HTTPS_TRUSTSTORE_TYPE.equals(id) ||
@@ -548,6 +599,23 @@ public class NegoziazioneTokenProvider implements IProvider {
 			return TokenUtilities.getTokenPluginLabels(externalResources, TipoPlugin.TOKEN_NEGOZIAZIONE);
 		}
 		return this.getValues(id); // torno uguale ai valori negli altri casi
+	}
+	private List<String> getLabelsSignatureAlgorithm(String id) throws ProviderException{
+		List<String> l = this.getValues(id);
+		List<String> labels = new ArrayList<>();
+		for (String value : l) {
+			if(value.contains("_")) {
+				String t = "" + value;
+				while(t.contains("_")) {
+					t = t.replace("_", "-");
+				}
+				labels.add(t);
+			}
+			else {
+				labels.add(value);
+			}
+		}
+		return labels;
 	}
 	
 	private static boolean secret = false;
@@ -560,17 +628,18 @@ public class NegoziazioneTokenProvider implements IProvider {
 
 	private List<String> getStoreType(String id,boolean value){
 		boolean trustStore = true;
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		l.add(value ? SecurityConstants.KEYSTORE_TYPE_JKS_VALUE : SecurityConstants.KEYSTORE_TYPE_JKS_LABEL);
 		l.add(value ? SecurityConstants.KEYSTORE_TYPE_PKCS12_VALUE : SecurityConstants.KEYSTORE_TYPE_PKCS12_LABEL);
 		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(id)) {
 			l.add(value ? SecurityConstants.KEYSTORE_TYPE_JWK_VALUE: SecurityConstants.KEYSTORE_TYPE_JWK_LABEL);
+			l.add(value ? SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE: SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_LABEL);
 		}
-//		if(Costanti.XXX.equals(id)) {
+/**		if(Costanti.UNKNOWN.equals(id)) {
 //			l.add(value ? SecurityConstants.KEYSTORE_TYPE_JCEKS_VALUE : SecurityConstants.KEYSTORE_TYPE_JCEKS_LABEL);
 //			secret = true;
 //		}
-		
+		**/
 		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(id)) {
 			l.add(value ? Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE: Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_LABEL);
 			l.add(value ? Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE: Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_LABEL);
@@ -584,17 +653,20 @@ public class NegoziazioneTokenProvider implements IProvider {
 		
 		if(secret) {
 			// aggiunto info mancanti come secret
-			List<String> lSecret = new ArrayList<String>();
-			HSMUtils.fillTipologieKeystore(false, true, l);
-			if(lSecret!=null && !lSecret.isEmpty()) {
-				for (String type : lSecret) {
-					if(!l.contains(type)) {
-						l.add(type);
-					}
+			addStoreTypeSecret(l);
+		}
+		return l;
+	}
+	private void addStoreTypeSecret(List<String> l) {
+		List<String> lSecret = new ArrayList<>();
+		HSMUtils.fillTipologieKeystore(false, true, lSecret);
+		if(!lSecret.isEmpty()) {
+			for (String type : lSecret) {
+				if(!l.contains(type)) {
+					l.add(type);
 				}
 			}
 		}
-		return l;
 	}
 	
 
@@ -625,25 +697,29 @@ public class NegoziazioneTokenProvider implements IProvider {
 		return null;
 	}
 
+	private boolean isProviderInfoStandard(String id) {
+		return 
+			Costanti.ID_RETRIEVE_ENDPOINT_URL.equals(id) ||
+			Costanti.ID_RETRIEVE_AUTENTICAZIONE_USERNAME.equals(id) ||
+			Costanti.ID_RETRIEVE_AUTENTICAZIONE_PASSWORD.equals(id) ||
+			Costanti.ID_RETRIEVE_CLIENT_ID.equals(id) ||
+			Costanti.ID_RETRIEVE_CLIENT_ID_CUSTOM.equals(id) ||
+			Costanti.ID_RETRIEVE_CLIENT_SECRET.equals(id) ||
+			Costanti.ID_RETRIEVE_CLIENT_SECRET_CUSTOM.equals(id) ||
+			Costanti.ID_RETRIEVE_BEARER_TOKEN.equals(id) ||
+			Costanti.ID_RETRIEVE_JWT_X5U.equals(id) ||
+			Costanti.ID_RETRIEVE_JWT_KID_VALUE.equals(id) ||
+			Costanti.ID_RETRIEVE_JWT_PURPOSE_ID.equals(id) ||
+			Costanti.ID_RETRIEVE_SCOPE.equals(id) ||
+			Costanti.ID_RETRIEVE_AUDIENCE.equals(id) ||
+			Costanti.ID_RETRIEVE_FORM_PARAMETERS.equals(id) ||
+			Costanti.ID_RETRIEVE_HTTP_CONTENT_TYPE.equals(id) ||
+			Costanti.ID_RETRIEVE_HTTP_HEADERS.equals(id) ||
+			Costanti.ID_RETRIEVE_HTTP_TEMPLATE_PAYLOAD.equals(id);
+	}
 	@Override
 	public ProviderInfo getProviderInfo(String id) throws ProviderException{
-		if(Costanti.ID_RETRIEVE_ENDPOINT_URL.equals(id) ||
-				Costanti.ID_RETRIEVE_AUTENTICAZIONE_USERNAME.equals(id) ||
-				Costanti.ID_RETRIEVE_AUTENTICAZIONE_PASSWORD.equals(id) ||
-				Costanti.ID_RETRIEVE_CLIENT_ID.equals(id) ||
-				Costanti.ID_RETRIEVE_CLIENT_ID_CUSTOM.equals(id) ||
-				Costanti.ID_RETRIEVE_CLIENT_SECRET.equals(id) ||
-				Costanti.ID_RETRIEVE_CLIENT_SECRET_CUSTOM.equals(id) ||
-				Costanti.ID_RETRIEVE_BEARER_TOKEN.equals(id) ||
-				Costanti.ID_RETRIEVE_JWT_X5U.equals(id) ||
-				Costanti.ID_RETRIEVE_JWT_KID_VALUE.equals(id) ||
-				Costanti.ID_RETRIEVE_JWT_PURPOSE_ID.equals(id) ||
-				Costanti.ID_RETRIEVE_SCOPE.equals(id) ||
-				Costanti.ID_RETRIEVE_AUDIENCE.equals(id) ||
-				Costanti.ID_RETRIEVE_FORM_PARAMETERS.equals(id) ||
-				Costanti.ID_RETRIEVE_HTTP_CONTENT_TYPE.equals(id) ||
-				Costanti.ID_RETRIEVE_HTTP_HEADERS.equals(id)
-				) {
+		if(isProviderInfoStandard(id)) {
 			ProviderInfo pInfo = new ProviderInfo();
 			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
 			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI);
@@ -674,7 +750,8 @@ public class NegoziazioneTokenProvider implements IProvider {
 		}
 		else if(Costanti.ID_RETRIEVE_JWT_CLIENT_ID.equals(id) ||
 				Costanti.ID_RETRIEVE_JWT_CLIENT_ID_APPLICATIVO_MODI_CUSTOM.equals(id) ||
-				Costanti.ID_RETRIEVE_JWT_AUDIENCE.equals(id)
+				Costanti.ID_RETRIEVE_JWT_AUDIENCE.equals(id) ||
+				Costanti.ID_RETRIEVE_FORM_RESOURCE.equals(id)
 				) {
 			ProviderInfo pInfo = new ProviderInfo();
 			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
@@ -689,24 +766,11 @@ public class NegoziazioneTokenProvider implements IProvider {
 			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI_CON_OPZIONE_VALORE_NON_DEFINITO);
 			return pInfo;
 		}
-		else if(Costanti.ID_RETRIEVE_FORM_RESOURCE.equals(id)
-				) {
-			ProviderInfo pInfo = new ProviderInfo();
-			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
-			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI_CON_OPZIONE_VALORE_NON_DEFINITO);
-			return pInfo;
-		}
 		else if(Costanti.ID_RETRIEVE_JWT_CLAIMS.equals(id) ||
 				Costanti.ID_RETRIEVE_JWT_SESSION_INFO.equals(id)
 				) {
 			ProviderInfo pInfo = new ProviderInfo();
 			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_CLAIMS);
-			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI);
-			return pInfo;
-		}
-		else if(Costanti.ID_RETRIEVE_HTTP_TEMPLATE_PAYLOAD.equals(id)) {
-			ProviderInfo pInfo = new ProviderInfo();
-			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
 			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI);
 			return pInfo;
 		}
@@ -723,14 +787,17 @@ public class NegoziazioneTokenProvider implements IProvider {
 			return pInfo;
 		}
 		else if(Costanti.ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CLASSNAME.equals(id)) {
-			ProviderInfo pInfo = new ProviderInfo();
-			pInfo.setHeaderBody(DynamicHelperCostanti.PLUGIN_CLASSNAME_INFO_SINGOLA);
-			pInfo.setListBody(new ArrayList<>());
-			pInfo.getListBody().add(INegoziazioneTokenParser.class.getName());
-			return pInfo;
+			return getProviderInfoCustomParserPluginClassname();
 		}
 		
 		return null;
+	}
+	private ProviderInfo getProviderInfoCustomParserPluginClassname() {
+		ProviderInfo pInfo = new ProviderInfo();
+		pInfo.setHeaderBody(DynamicHelperCostanti.PLUGIN_CLASSNAME_INFO_SINGOLA);
+		pInfo.setListBody(new ArrayList<>());
+		pInfo.getListBody().add(INegoziazioneTokenParser.class.getName());
+		return pInfo;
 	}
 	
 	@Override
@@ -743,73 +810,21 @@ public class NegoziazioneTokenProvider implements IProvider {
 		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_FILE.equals(item.getName()) ||
 				Costanti.ID_HTTPS_TRUSTSTORE_FILE.equals(item.getName()) ||
 				Costanti.ID_HTTPS_KEYSTORE_FILE.equals(item.getName())) {
-			
-			String type = Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE;
-			if(Costanti.ID_HTTPS_TRUSTSTORE_FILE.equals(item.getName())) {
-				type = Costanti.ID_HTTPS_TRUSTSTORE_TYPE;
-			}
-			else if(Costanti.ID_HTTPS_KEYSTORE_FILE.equals(item.getName())) {
-				type = Costanti.ID_HTTPS_KEYSTORE_TYPE;
-			}
-			
-			if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type)) {
-				String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
-				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue) || Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equals(typeValue)) {
-					item.setValue(typeValue);
-					item.setType(ItemType.HIDDEN);
-					return item.getValue();
-				}
-			}
-			
-			return AbstractSecurityProvider.processStoreFile(type, items, mapNameValue, item, actualValue);
+			dynamicUpdateStoreFile(items, mapNameValue, item, actualValue);
 		}
 		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD.equals(item.getName()) ||
 				Costanti.ID_HTTPS_TRUSTSTORE_PASSWORD.equals(item.getName()) ||
 				Costanti.ID_HTTPS_KEYSTORE_PASSWORD.equals(item.getName())) {
-			
-			String type = Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE;
-			if(Costanti.ID_HTTPS_TRUSTSTORE_PASSWORD.equals(item.getName())) {
-				type = Costanti.ID_HTTPS_TRUSTSTORE_TYPE;
-			}
-			else if(Costanti.ID_HTTPS_KEYSTORE_PASSWORD.equals(item.getName())) {
-				type = Costanti.ID_HTTPS_KEYSTORE_TYPE;
-			}
-			
-			if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type)) {
-				String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
-				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue) || Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equals(typeValue)) {
-					item.setValue("-");
-					item.setType(ItemType.HIDDEN);
-					return item.getValue();
-				}
-			}
-			
-			return AbstractSecurityProvider.processStorePassword(type, items, mapNameValue, item, actualValue);
+			dynamicUpdateStorePassword(items, mapNameValue, item, actualValue);
 		}
 		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD_PRIVATE_KEY.equals(item.getName()) ||
 				Costanti.ID_HTTPS_KEYSTORE_PASSWORD_PRIVATE_KEY.equals(item.getName()) ) {
-			
-			String type = Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE;
-			if(Costanti.ID_HTTPS_KEYSTORE_PASSWORD_PRIVATE_KEY.equals(item.getName())) {
-				type = Costanti.ID_HTTPS_KEYSTORE_TYPE;
-			}
-			
-			if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type)) {
-				String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
-				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue) || Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equals(typeValue)) {
-					item.setValue("-");
-					item.setType(ItemType.HIDDEN);
-					return item.getValue();
-				}
-			}
-			
-			return AbstractSecurityProvider.processStoreKeyPassword(type, items, mapNameValue, item, actualValue);
+			dynamicUpdateStoreKeyPassword(items, mapNameValue, item, actualValue);	
 		}
 		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_ALIAS_PRIVATE_KEY.equals(item.getName()) ) {
 			
 			String type = Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE;
 			
-			//if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type)) {
 			String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
 			if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue) || Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equals(typeValue)) {
 				item.setValue("-");
@@ -819,10 +834,6 @@ public class NegoziazioneTokenProvider implements IProvider {
 			else {
 				item.setType(ItemType.TEXT);
 			}
-			//}
-			//else {
-			//	item.setType(ItemType.TEXT);
-			//}
 			
 		}		
 		else if(Costanti.ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CHOICE.equals(item.getName())) {
@@ -835,5 +846,62 @@ public class NegoziazioneTokenProvider implements IProvider {
 		}
 		
 		return actualValue;
+	}
+	private String dynamicUpdateStoreFile(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
+		String type = Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE;
+		if(Costanti.ID_HTTPS_TRUSTSTORE_FILE.equals(item.getName())) {
+			type = Costanti.ID_HTTPS_TRUSTSTORE_TYPE;
+		}
+		else if(Costanti.ID_HTTPS_KEYSTORE_FILE.equals(item.getName())) {
+			type = Costanti.ID_HTTPS_KEYSTORE_TYPE;
+		}
+		
+		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type)) {
+			String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
+			if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue) || Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equals(typeValue)) {
+				item.setValue(typeValue);
+				item.setType(ItemType.HIDDEN);
+				return item.getValue();
+			}
+		}
+		
+		return AbstractSecurityProvider.processStoreFile(type, items, mapNameValue, item, actualValue);
+	}
+	private String dynamicUpdateStorePassword(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
+		String type = Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE;
+		if(Costanti.ID_HTTPS_TRUSTSTORE_PASSWORD.equals(item.getName())) {
+			type = Costanti.ID_HTTPS_TRUSTSTORE_TYPE;
+		}
+		else if(Costanti.ID_HTTPS_KEYSTORE_PASSWORD.equals(item.getName())) {
+			type = Costanti.ID_HTTPS_KEYSTORE_TYPE;
+		}
+		
+		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type)) {
+			String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
+			if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue) || Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equals(typeValue)) {
+				item.setValue("-");
+				item.setType(ItemType.HIDDEN);
+				return item.getValue();
+			}
+		}
+		
+		return AbstractSecurityProvider.processStorePassword(type, items, mapNameValue, item, actualValue);
+	}
+	private String dynamicUpdateStoreKeyPassword(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
+		String type = Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE;
+		if(Costanti.ID_HTTPS_KEYSTORE_PASSWORD_PRIVATE_KEY.equals(item.getName())) {
+			type = Costanti.ID_HTTPS_KEYSTORE_TYPE;
+		}
+		
+		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type)) {
+			String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
+			if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue) || Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equals(typeValue)) {
+				item.setValue("-");
+				item.setType(ItemType.HIDDEN);
+				return item.getValue();
+			}
+		}
+		
+		return AbstractSecurityProvider.processStoreKeyPassword(type, items, mapNameValue, item, actualValue);
 	}
 }

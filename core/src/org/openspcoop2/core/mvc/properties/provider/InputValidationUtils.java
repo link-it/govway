@@ -27,6 +27,8 @@ package org.openspcoop2.core.mvc.properties.provider;
  * @version $Rev$, $Date$
  */
 public class InputValidationUtils {
+	
+	private InputValidationUtils() {}
 
 	public static void validateTextAreaInput(String input, String fieldName) throws ProviderValidationException {
 		validateTextAreaInput(input, fieldName, false, false, false);
@@ -36,28 +38,31 @@ public class InputValidationUtils {
 	}
 	public static void validateTextAreaInput(String input, String fieldName,
 			boolean spaceEnabled, boolean tabEnabled, boolean newLineEnabled) throws ProviderValidationException {
+		
+		String prefix = "Il valore indicato nel campo '";
+		
 		if(input==null || "".equals(input)) {
 			throw new ProviderValidationException("Non è stato fornito un valore nel campo '"+fieldName+"'");
 		}
 		if(spaceEnabled) {
 			if(input.startsWith(" ")) {
-				throw new ProviderValidationException("Il valore indicato nel campo '"+fieldName+"' non deve iniziare con uno spazio");
+				throw new ProviderValidationException(prefix+fieldName+"' non deve iniziare con uno spazio");
 			}
 			if(input.endsWith(" ")) {
-				throw new ProviderValidationException("Il valore indicato nel campo '"+fieldName+"' non deve terminare con uno spazio");
+				throw new ProviderValidationException(prefix+fieldName+"' non deve terminare con uno spazio");
 			}
 		}
 		else {
 			if(input.contains(" ")) {
-				throw new ProviderValidationException("Il valore indicato nel campo '"+fieldName+"' non deve contenere spazi");
+				throw new ProviderValidationException(prefix+fieldName+"' non deve contenere spazi");
 			}
 		}
 		if(!tabEnabled && input.contains("\t")) {
-			throw new ProviderValidationException("Il valore indicato nel campo '"+fieldName+"' non deve contenere tab (\\t)");
+			throw new ProviderValidationException(prefix+fieldName+"' non deve contenere tab (\\t)");
 		}
 		if(!newLineEnabled && 
 				(input.contains("\n") || input.contains("\r"))) {
-			throw new ProviderValidationException("Il valore indicato nel campo '"+fieldName+"' non deve contenere ritorni a capo (\\n o \\r)");
+			throw new ProviderValidationException(prefix+fieldName+"' non deve contenere ritorni a capo (\\n o \\r)");
 		}
 	}
 	

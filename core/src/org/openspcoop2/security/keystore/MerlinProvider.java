@@ -23,11 +23,7 @@ package org.openspcoop2.security.keystore;
 import java.io.IOException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.cert.X509Certificate;
 import java.util.Properties;
-
-import javax.security.auth.callback.CallbackHandler;
 
 import org.apache.wss4j.common.crypto.PasswordEncryptor;
 import org.apache.wss4j.common.ext.WSSecurityException;
@@ -66,6 +62,13 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 
 	private org.openspcoop2.utils.certificate.KeyStore op2KeyStore;
 	private org.openspcoop2.utils.certificate.KeyStore op2TrustStore;
+	public org.openspcoop2.utils.certificate.KeyStore getOp2KeyStore() {
+		return this.op2KeyStore;
+	}
+	public org.openspcoop2.utils.certificate.KeyStore getOp2TrustStore() {
+		return this.op2TrustStore;
+	}
+
 	private Boolean useBouncyCastleProviderDirective = null;
 	
 	public static String readPrefix(Properties properties) {
@@ -82,6 +85,17 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 			}
 		}
 		return prefix;
+	}
+	
+	private static final String TRUST_STORE_REF = "truststore";
+	private static final String KEY_STORE_REF = "keystore";
+	private String getError(String tipoStore, String location) {
+		if(location!=null) {
+			return "Accesso al "+tipoStore+" '"+location+"' non riuscito";
+		}
+		else {
+			return "Accesso al "+tipoStore+" non riuscito";
+		}
 	}
 	
 	@Override
@@ -102,7 +116,7 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 		//
 		RequestInfo requestInfo = null;
 		Object requestInfoObject = properties.get(KeystoreConstants.PROPERTY_REQUEST_INFO);
-		if(requestInfoObject!=null && requestInfoObject instanceof RequestInfo) {
+		if(requestInfoObject instanceof RequestInfo) {
 			requestInfo = (RequestInfo) requestInfoObject;
 		}
 		
@@ -116,7 +130,7 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 		}
 		Object keyStoreArchiveObject = properties.get(prefix + KeystoreConstants.KEYSTORE);
 		byte [] keyStoreArchive = null;
-		if(keyStoreArchiveObject!=null && keyStoreArchiveObject instanceof byte[]) {
+		if(keyStoreArchiveObject instanceof byte[]) {
 			keyStoreArchive = (byte[]) keyStoreArchiveObject;
 		}
 		
@@ -149,10 +163,10 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 				MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(requestInfo, keyStoreLocation, keyStoreType, 
 						keyStorePassword);
 				if(merlinKs==null) {
-					throw new Exception("Accesso al keystore '"+keyStoreLocation+"' non riuscito");
+					throw new IOException(getError(KEY_STORE_REF,keyStoreLocation));
 				}
 				if(merlinKs.getKeyStore()==null) {
-					throw new Exception("Accesso al keystore '"+keyStoreLocation+"' non riuscito");
+					throw new IOException(getError(KEY_STORE_REF,keyStoreLocation));
 				}
 				this.op2KeyStore = merlinKs.getKeyStore();
 				this.keystore = this.op2KeyStore.getKeystore();
@@ -166,10 +180,10 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 				MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(requestInfo, keyStoreArchive, keyStoreType, 
 						keyStorePassword);
 				if(merlinKs==null) {
-					throw new Exception("Accesso al keystore non riuscito");
+					throw new IOException(getError(KEY_STORE_REF,null));
 				}
 				if(merlinKs.getKeyStore()==null) {
-					throw new Exception("Accesso al keystore non riuscito");
+					throw new IOException(getError(KEY_STORE_REF,null));
 				}
 				this.op2KeyStore = merlinKs.getKeyStore();
 				this.keystore = this.op2KeyStore.getKeystore();
@@ -186,7 +200,7 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 		String trustStoreLocation = properties.getProperty(prefix + TRUSTSTORE_FILE);
 		Object trustStoreArchiveObject = properties.get(prefix + KeystoreConstants.TRUSTSTORE);
 		byte [] trustStoreArchive = null;
-		if(trustStoreArchiveObject!=null && trustStoreArchiveObject instanceof byte[]) {
+		if(trustStoreArchiveObject instanceof byte[]) {
 			trustStoreArchive = (byte[]) trustStoreArchiveObject;
 		}
 		
@@ -214,10 +228,10 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 				MerlinTruststore merlinTs = GestoreKeystoreCache.getMerlinTruststore(requestInfo, trustStoreLocation, trustStoreType, 
 						trustStorePassword);
 				if(merlinTs==null) {
-					throw new Exception("Accesso al truststore '"+trustStoreLocation+"' non riuscito");
+					throw new IOException(getError(TRUST_STORE_REF,trustStoreLocation));
 				}
 				if(merlinTs.getTrustStore()==null) {
-					throw new Exception("Accesso al truststore '"+trustStoreLocation+"' non riuscito");
+					throw new IOException(getError(TRUST_STORE_REF,trustStoreLocation));
 				}
 				this.op2TrustStore = merlinTs.getTrustStore();
 				this.truststore = this.op2TrustStore.getKeystore();
@@ -231,10 +245,10 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 				MerlinTruststore merlinTs = GestoreKeystoreCache.getMerlinTruststore(requestInfo, trustStoreArchive, trustStoreType, 
 						trustStorePassword);
 				if(merlinTs==null) {
-					throw new Exception("Accesso al truststore non riuscito");
+					throw new IOException(getError(TRUST_STORE_REF,null));
 				}
 				if(merlinTs.getTrustStore()==null) {
-					throw new Exception("Accesso al truststore non riuscito");
+					throw new IOException(getError(TRUST_STORE_REF,null));
 				}
 				this.op2TrustStore = merlinTs.getTrustStore();
 				this.truststore = this.op2TrustStore.getKeystore();
@@ -266,19 +280,19 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 			try {
 				CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(requestInfo, crlLocations);
 				if(crlCertstore==null) {
-					throw new Exception("Accesso alle crl '"+crlLocations+"' non riuscito");
+					throw new IOException("Accesso alle crl '"+crlLocations+"' non riuscito");
 				}
 				this.crlCertStore = crlCertstore.getCertStore();
 			}catch(Exception e) {
 				throw new IOException("[CRLCertstore] "+e.getMessage(),e);
 			}
 
-			String useBouncyCastleProvider = properties.getProperty(prefix + "useBouncyCastleProvider");
-			if (useBouncyCastleProvider != null) {
-				if("true".equalsIgnoreCase(useBouncyCastleProvider.trim())) {
+			String useBouncyCastleProviderProperty = properties.getProperty(prefix + "useBouncyCastleProvider");
+			if (useBouncyCastleProviderProperty != null) {
+				if("true".equalsIgnoreCase(useBouncyCastleProviderProperty.trim())) {
 					this.useBouncyCastleProviderDirective = true;
 				}
-				else if("false".equalsIgnoreCase(useBouncyCastleProvider.trim())) {
+				else if("false".equalsIgnoreCase(useBouncyCastleProviderProperty.trim())) {
 					this.useBouncyCastleProviderDirective = false;
 				}
 			}
@@ -292,15 +306,15 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 		super.loadProperties(properties, loader, passwordEncryptor);
 	}
 
-	@Override
+	/**@Override
 	public PrivateKey getPrivateKey(PublicKey publicKey, CallbackHandler callbackHandler) throws WSSecurityException {
-		//System.out.println("@@@ getPrivateKey PUBLIC KEY, CALLBACK");
+		System.out.println("@@@ getPrivateKey PUBLIC KEY, CALLBACK");
 		return super.getPrivateKey(publicKey, callbackHandler);
-	}
+	}*/
 
 	@Override
 	public PrivateKey getPrivateKey(String alias, String password) throws WSSecurityException {
-		//System.out.println("@@@ getPrivateKey arg0["+alias+"] arg1["+password+"]");
+		/**System.out.println("@@@ getPrivateKey arg0["+alias+"] arg1["+password+"]");*/
 		if(this.op2KeyStore!=null) {
 			try {
 				return this.op2KeyStore.getPrivateKey(alias, password);
@@ -311,11 +325,11 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 		return super.getPrivateKey(alias, password);
 	}
 
-	@Override
+	/**@Override
 	public PrivateKey getPrivateKey(X509Certificate x509, CallbackHandler callbackHandler) throws WSSecurityException {
-		//System.out.println("@@@ getPrivateKey X509Certificatw, CALLBACK");
+		System.out.println("@@@ getPrivateKey X509Certificatw, CALLBACK");
 		return super.getPrivateKey(x509, callbackHandler);
-	}
+	}*/
 	
 	@Override
 	public String getCryptoProvider() {
@@ -341,21 +355,28 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 	public static void correctProviderName(MessageSecurity messageSecurity){
 		if(messageSecurity!=null) {
 			MessageSecurityFlow request = messageSecurity.getRequestFlow();
-			if(request!=null && request.sizeParameterList()>0) {
-				for (MessageSecurityFlowParameter param : request.getParameterList()) {
-					if(param.getNome()!=null && param.getNome().trim().endsWith(KeystoreConstants.PROPERTY_PROVIDER) && 
-							param.getValore()!=null && KeystoreConstants.OLD_PROVIDER_GOVWAY.equals(param.getValore().trim()) ) {
-						param.setValore(KeystoreConstants.PROVIDER_GOVWAY);
-					}
+			correctProviderNameRequestFlow(request);
+			
+			MessageSecurityFlow response = messageSecurity.getResponseFlow();
+			correctProviderNameResponseFlow(response);
+		}
+	}
+	private static void correctProviderNameRequestFlow(MessageSecurityFlow request){
+		if(request!=null && request.sizeParameterList()>0) {
+			for (MessageSecurityFlowParameter param : request.getParameterList()) {
+				if(param.getNome()!=null && param.getNome().trim().endsWith(KeystoreConstants.PROPERTY_PROVIDER) && 
+						param.getValore()!=null && KeystoreConstants.OLD_PROVIDER_GOVWAY.equals(param.getValore().trim()) ) {
+					param.setValore(KeystoreConstants.PROVIDER_GOVWAY);
 				}
 			}
-			MessageSecurityFlow response = messageSecurity.getResponseFlow();
-			if(response!=null && response.sizeParameterList()>0) {
-				for (MessageSecurityFlowParameter param : response.getParameterList()) {
-					if(param.getNome()!=null && param.getNome().trim().endsWith(KeystoreConstants.PROPERTY_PROVIDER) && 
-							param.getValore()!=null && KeystoreConstants.OLD_PROVIDER_GOVWAY.equals(param.getValore().trim()) ) {
-						param.setValore(KeystoreConstants.PROVIDER_GOVWAY);
-					}
+		}
+	}
+	private static void correctProviderNameResponseFlow(MessageSecurityFlow response){
+		if(response!=null && response.sizeParameterList()>0) {
+			for (MessageSecurityFlowParameter param : response.getParameterList()) {
+				if(param.getNome()!=null && param.getNome().trim().endsWith(KeystoreConstants.PROPERTY_PROVIDER) && 
+						param.getValore()!=null && KeystoreConstants.OLD_PROVIDER_GOVWAY.equals(param.getValore().trim()) ) {
+					param.setValore(KeystoreConstants.PROVIDER_GOVWAY);
 				}
 			}
 		}

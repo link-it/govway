@@ -85,18 +85,7 @@ public class JWKPrivateKeyConverter {
 				pretty = "true".equals(tmp);
 			}
 			
-			JWK jwk = new JWK(pKey,privKey,kid);
-			String json = null;
-			
-			if(jwks) {
-				JWKSet jwkSet = new JWKSet();
-				jwkSet.addJwk(jwk);
-				json = pretty? jwk.getJsonPretty() : jwk.getJson();
-				json = "{\"keys\":[" + json + "]}";
-			}
-			else {
-				json = pretty? jwk.getJsonPretty() : jwk.getJson(); 
-			}
+			String json = convert(pKey, privKey, kid, jwks, pretty);
 			
 			FileSystemUtilities.writeFile(pathJWK, json.getBytes());
 			
@@ -106,4 +95,20 @@ public class JWKPrivateKeyConverter {
 		
 	}
 	
+	public static String convert(PublicKey pKey, PrivateKey privKey, String kid, boolean jwks, boolean pretty) throws UtilsException {
+		JWK jwk = new JWK(pKey,privKey,kid);
+		String json = null;
+		
+		if(jwks) {
+			JWKSet jwkSet = new JWKSet();
+			jwkSet.addJwk(jwk);
+			json = pretty? jwk.getJsonPretty() : jwk.getJson();
+			json = "{\"keys\":[" + json + "]}";
+		}
+		else {
+			json = pretty? jwk.getJsonPretty() : jwk.getJson(); 
+		}
+		
+		return json;
+	}
 }

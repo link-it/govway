@@ -52,10 +52,12 @@ public class GestoreOCSPResource implements IOCSPResourceReader {
 		this.config = config;
 	}
 
+	private static final String OCSP_CONFIG_NULL = "OCSPConfig is null";
+	
 	@Override
 	public KeyStore getIssuerAlternativeTrustStore() throws UtilsException {
 		if(this.config==null) {
-			throw new UtilsException("OCSPConfig is null");
+			throw new UtilsException(OCSP_CONFIG_NULL);
 		}
 		if(this.config.getAlternativeTrustStoreCA_path()!=null) {
 			try {
@@ -63,7 +65,7 @@ public class GestoreOCSPResource implements IOCSPResourceReader {
 						this.config.getAlternativeTrustStoreCA_path(), 
 						this.config.getAlternativeTrustStoreCA_type(),
 						this.config.getAlternativeTrustStoreCA_password()).getTrustStore();
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				throw new UtilsException(t.getMessage(),t);
 			}
 		}
@@ -73,7 +75,7 @@ public class GestoreOCSPResource implements IOCSPResourceReader {
 	@Override
 	public void readExternalResource(String resource, Map<String, byte[]> holderResource) throws UtilsException {
 		if(this.config==null) {
-			throw new UtilsException("OCSPConfig is null");
+			throw new UtilsException(OCSP_CONFIG_NULL);
 		}
 		try {
 			ExternalResourceConfig externalConfig = new ExternalResourceConfig();
@@ -86,7 +88,7 @@ public class GestoreOCSPResource implements IOCSPResourceReader {
 							this.config.getExternalResources_trustStorePath(), 
 							this.config.getExternalResources_trustStoreType(),
 							this.config.getExternalResources_trustStorePassword()).getTrustStore().getKeystore());
-				}catch(Throwable t) {
+				}catch(Exception t) {
 					throw new UtilsException(t.getMessage(),t);
 				}
 			}
@@ -97,7 +99,7 @@ public class GestoreOCSPResource implements IOCSPResourceReader {
 							this.config.getExternalResources_keyStorePath(), 
 							this.config.getExternalResources_keyStoreType(),
 							this.config.getExternalResources_keyStorePassword()).getKeyStore().getKeystore());
-				}catch(Throwable t) {
+				}catch(Exception t) {
 					throw new UtilsException(t.getMessage(),t);
 				}
 				externalConfig.setKeyAlias(this.config.getExternalResources_keyAlias());
@@ -118,7 +120,7 @@ public class GestoreOCSPResource implements IOCSPResourceReader {
 			if(externalResource!=null && externalResource.getId()!=null) {
 				holderResource.put(externalResource.getId(), externalResource.getResource());
 			}
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw new UtilsException(t.getMessage(),t);
 		}
 	}
@@ -126,11 +128,11 @@ public class GestoreOCSPResource implements IOCSPResourceReader {
 	@Override
 	public CRLCertstore readCRL(List<String> crl, Map<String, byte[]> localResources) throws UtilsException {
 		if(this.config==null) {
-			throw new UtilsException("OCSPConfig is null");
+			throw new UtilsException(OCSP_CONFIG_NULL);
 		}
 		try {
 			return GestoreKeystoreCache.getCRLCertstore(this.requestInfo, CRLCertstore.convertToCrlPaths(crl), localResources).getWrappedCRLCertStore();
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw new UtilsException(t.getMessage(),t);
 		}
 	}
@@ -138,7 +140,7 @@ public class GestoreOCSPResource implements IOCSPResourceReader {
 	@Override
 	public KeyStore getSignerTrustStore() throws UtilsException {
 		if(this.config==null) {
-			throw new UtilsException("OCSPConfig is null");
+			throw new UtilsException(OCSP_CONFIG_NULL);
 		}
 		if(this.config.getTrustStoreSigner_path()!=null) {
 			try {
@@ -146,7 +148,7 @@ public class GestoreOCSPResource implements IOCSPResourceReader {
 						this.config.getTrustStoreSigner_path(), 
 						this.config.getTrustStoreSigner_type(),
 						this.config.getTrustStoreSigner_password()).getTrustStore();
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				throw new UtilsException(t.getMessage(),t);
 			}
 		}
@@ -156,7 +158,7 @@ public class GestoreOCSPResource implements IOCSPResourceReader {
 	@Override
 	public KeyStore getHttpsTrustStore() throws UtilsException {
 		if(this.config==null) {
-			throw new UtilsException("OCSPConfig is null");
+			throw new UtilsException(OCSP_CONFIG_NULL);
 		}
 		if(this.config.getExternalResources_trustStorePath()!=null) {
 			try {
@@ -164,7 +166,7 @@ public class GestoreOCSPResource implements IOCSPResourceReader {
 						this.config.getExternalResources_trustStorePath(), 
 						this.config.getExternalResources_trustStoreType(),
 						this.config.getExternalResources_trustStorePassword()).getTrustStore();
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				throw new UtilsException(t.getMessage(),t);
 			}
 		}
@@ -174,7 +176,7 @@ public class GestoreOCSPResource implements IOCSPResourceReader {
 	@Override
 	public KeyStore getHttpsKeyStore() throws UtilsException {
 		if(this.config==null) {
-			throw new UtilsException("OCSPConfig is null");
+			throw new UtilsException(OCSP_CONFIG_NULL);
 		}
 		if(this.config.getExternalResources_keyStorePath()!=null) {
 			try {
@@ -182,7 +184,7 @@ public class GestoreOCSPResource implements IOCSPResourceReader {
 						this.config.getExternalResources_keyStorePath(), 
 						this.config.getExternalResources_keyStoreType(),
 						this.config.getExternalResources_keyStorePassword()).getKeyStore();
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				throw new UtilsException(t.getMessage(),t);
 			}
 		}
@@ -192,7 +194,7 @@ public class GestoreOCSPResource implements IOCSPResourceReader {
 	@Override
 	public KeyStore getCrlAlternativeTrustStore() throws UtilsException{
 		if(this.config==null) {
-			throw new UtilsException("OCSPConfig is null");
+			throw new UtilsException(OCSP_CONFIG_NULL);
 		}
 		if(this.config.getAlternativeTrustStoreCRL_path()!=null) {
 			try {
@@ -200,7 +202,7 @@ public class GestoreOCSPResource implements IOCSPResourceReader {
 						this.config.getAlternativeTrustStoreCRL_path(), 
 						this.config.getAlternativeTrustStoreCRL_type(),
 						this.config.getAlternativeTrustStoreCRL_password()).getTrustStore();
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				throw new UtilsException(t.getMessage(),t);
 			}
 		}

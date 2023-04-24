@@ -70,13 +70,13 @@ public abstract class AbstractSecurityProvider implements IProvider {
 	@Override
 	public List<String> getValues(String id) throws ProviderException {
 		if(SecurityConstants.KEYSTORE_TYPE.equals(id)) {
-			return SecurityConstants.getTIPOLOGIE_KEYSTORE_values(this.asTruststore);
+			return SecurityConstants.getTipologieKeystoreValues(this.asTruststore);
 		}
 		else if(SecurityConstants.SECRETKEYSTORE_TYPE.equals(id)) {
-			return SecurityConstants.getTIPOLOGIE_SECRETKEYSTORE_values();
+			return SecurityConstants.getTipologieSecretKeystoreValues();
 		}
 		else if(SecurityConstants.TRUSTSTORE_TYPE.equals(id)) {
-			return SecurityConstants.getTIPOLOGIE_KEYSTORE_values(true);
+			return SecurityConstants.getTipologieKeystoreValues(true);
 		}
 		else if(SecurityConstants.TRUSTSTORE_OCSP_POLICY.equals(id) ||
 				SecurityConstants.KEYSTORE_OCSP_POLICY.equals(id)) {
@@ -89,13 +89,13 @@ public abstract class AbstractSecurityProvider implements IProvider {
 	@Override
 	public List<String> getLabels(String id) throws ProviderException {
 		if(SecurityConstants.KEYSTORE_TYPE.equals(id)) {
-			return SecurityConstants.getTIPOLOGIE_KEYSTORE_labels(this.asTruststore);
+			return SecurityConstants.getTipologieKeystoreLabels(this.asTruststore);
 		}
 		else if(SecurityConstants.SECRETKEYSTORE_TYPE.equals(id)) {
-			return SecurityConstants.getTIPOLOGIE_SECRETKEYSTORE_labels();
+			return SecurityConstants.getTipologieSecretKeystoreLabels();
 		}
 		else if(SecurityConstants.TRUSTSTORE_TYPE.equals(id)) {
-			return SecurityConstants.getTIPOLOGIE_KEYSTORE_labels(true);
+			return SecurityConstants.getTipologieKeystoreLabels(true);
 		}
 		else if(SecurityConstants.TRUSTSTORE_OCSP_POLICY.equals(id) ||
 				SecurityConstants.KEYSTORE_OCSP_POLICY.equals(id)) {

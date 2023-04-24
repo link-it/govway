@@ -42,49 +42,53 @@ import org.openspcoop2.utils.digest.Constants;
  * @version $Rev$, $Date$
  */
 public class SecurityConstants {
+	
+	private SecurityConstants() {}
 
 	public static final String ACTION = ConfigurationConstants.ACTION;
 		
 	public static final String TIPO_SECURITY_ENGINE_SEPARATOR = " ";
 	public static final String TIPO_SECURITY_ACTION_SEPARATOR = ",";
 	public static String convertActionToString(Map<String, Object> flow){
-		if(flow!=null){
-			if(flow.containsKey(ACTION)){
+		if(flow!=null &&
+			flow.containsKey(ACTION)){
 				
-				String engine = SECURITY_ENGINE_WSS4J;
-				if(flow.containsKey(SECURITY_ENGINE)){
-					Object o = flow.get(SECURITY_ENGINE);
-					if(o!=null && o instanceof String){
-						engine = (String) o;
-					}
+			String engine = SECURITY_ENGINE_WSS4J;
+			if(flow.containsKey(SECURITY_ENGINE)){
+				Object o = flow.get(SECURITY_ENGINE);
+				if(o instanceof String){
+					engine = (String) o;
 				}
-				
-				Object o = flow.get(ACTION);
-				if(o!=null && o instanceof String){
-					String actions = (String) o;
-					actions = actions.trim();
-					if(actions.contains(" ")){
-						String [] tmp = actions.split(" ");
-						StringBuilder bf = new StringBuilder();
-						bf.append(engine);
-						bf.append(TIPO_SECURITY_ENGINE_SEPARATOR);
-						for (int i = 0; i < tmp.length; i++) {
-							if(tmp[i]!=null){
-								if(i>0){
-									bf.append(TIPO_SECURITY_ACTION_SEPARATOR);
-								}
-								bf.append(tmp[i].trim());
-							}
-						}
-						return bf.toString();
-					}
-					else{
-						return engine + TIPO_SECURITY_ENGINE_SEPARATOR + actions; // una sola azione presente
-					}
-				}
+			}
+			
+			Object o = flow.get(ACTION);
+			if(o instanceof String){
+				String actions = (String) o;
+				return getActionValue(actions, engine);
 			}
 		}
 		return null;
+	}
+	private static String getActionValue(String actions, String engine) {
+		actions = actions.trim();
+		if(actions.contains(" ")){
+			String [] tmp = actions.split(" ");
+			StringBuilder bf = new StringBuilder();
+			bf.append(engine);
+			bf.append(TIPO_SECURITY_ENGINE_SEPARATOR);
+			for (int i = 0; i < tmp.length; i++) {
+				if(tmp[i]!=null){
+					if(i>0){
+						bf.append(TIPO_SECURITY_ACTION_SEPARATOR);
+					}
+					bf.append(tmp[i].trim());
+				}
+			}
+			return bf.toString();
+		}
+		else{
+			return engine + TIPO_SECURITY_ENGINE_SEPARATOR + actions; // una sola azione presente
+		}
 	}
 	
 	public static final String SECURITY_ENGINE = "securityEngine";
@@ -96,18 +100,10 @@ public class SecurityConstants {
 	
 	public static final String NORMALIZE_TO_SAAJ_IMPL = "normalizeToSaajImpl";
 	
-	@Deprecated
-	public static final String SIGNATURE_ENGINE = "signatureEngine";
-	@Deprecated
-	public static final String SIGNATURE_ENGINE_SUN = "sun";
-	@Deprecated
-	public static final String SIGNATURE_ENGINE_XMLSEC = "xmlSec";
-
-	public static QName QNAME_WSS_ELEMENT_SECURITY = new QName("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd","Security");
-	
 	public static final String WSS_HEADER_ELEMENT = "Security";
     public static final String WSS_HEADER_ELEMENT_NAMESPACE = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
-    public static final String WSS_HEADER_UTILITY_NAMESPACE = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";					  
+    public static final String WSS_HEADER_UTILITY_NAMESPACE = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
+    public static final QName QNAME_WSS_ELEMENT_SECURITY = new QName(WSS_HEADER_ELEMENT_NAMESPACE,WSS_HEADER_ELEMENT);
     public static final String WSS_HEADER_ATTRIBUTE_REFERENCE_ID_WSSECURITY = "Id";
     public static final String WSS_HEADER_DS_NAMESPACE = Constants.DS_NAMESPACE;
     public static final String WSS_HEADER_DS_REFERENCE_ELEMENT = Constants.DS_REFERENCE_ELEMENT;
@@ -123,7 +119,7 @@ public class SecurityConstants {
     
     public static final String USER = ConfigurationConstants.USER;
     
-    public static final String CID_ATTACH_WSS4j = "cid:Attachments";
+    public static final String CID_ATTACH_WSS4J = "cid:Attachments";
     public static final String NAMESPACE_ATTACH = "Attach";
     public static final String PART_CONTENT = "Content";
     public static final String PART_COMPLETE = "Complete";
@@ -162,10 +158,10 @@ public class SecurityConstants {
     public static final String ENCRYPTION_PROBLEM_DETAILS = "encryptionProblemDetails";
     public static final String ENCRYPTION_PARTS = ConfigurationConstants.ENCRYPTION_PARTS;
     public static final String ENCRYPTION_PARTS_VERIFY = "encryptionPartsVerify";
-    // ENCRYPTION_ATTACHMENTS_PARTS: {Content/Complete}{indice} 
+    /** ENCRYPTION_ATTACHMENTS_PARTS: {Content/Complete}{indice} 
     // utilizzo: {Content}{Attach}{*}
     // o sintassi wss4j {}cid:Attachments
-    // Il valore * o '' puo' essere usato come indice per indicare qualsiasi, altrimenti l'indice indica la posizione dell'attachment
+    // Il valore * o '' puo' essere usato come indice per indicare qualsiasi, altrimenti l'indice indica la posizione dell'attachment*/
     public static final String ENCRYPTION_NAMESPACE_ATTACH = NAMESPACE_ATTACH;
     public static final String ENCRYPTION_PART_CONTENT = PART_CONTENT;
     public static final String ENCRYPTION_PART_COMPLETE = PART_COMPLETE;
@@ -223,10 +219,10 @@ public class SecurityConstants {
     public static final String SIGNATURE_PROBLEM_DETAILS = "signatureProblemDetails";
     public static final String SIGNATURE_PARTS = ConfigurationConstants.SIGNATURE_PARTS;
     public static final String SIGNATURE_PARTS_VERIFY = "signaturePartsVerify";
-    // SIGNATURE_ATTACHMENTS_PARTS: {Content/Complete}{indice} 
+    /** SIGNATURE_ATTACHMENTS_PARTS: {Content/Complete}{indice} 
     // utilizzo: {Content}{Attach}{*}
     // o sintassi wss4j {}cid:Attachments
-    // Il valore * o '' puo' essere usato come indice per indicare qualsiasi, altrimenti l'indice indica la posizione dell'attachment
+    // Il valore * o '' puo' essere usato come indice per indicare qualsiasi, altrimenti l'indice indica la posizione dell'attachment*/
     public static final String SIGNATURE_NAMESPACE_ATTACH = NAMESPACE_ATTACH;
     public static final String SIGNATURE_PART_CONTENT = PART_CONTENT;
     public static final String SIGNATURE_PART_COMPLETE = PART_COMPLETE;
@@ -257,7 +253,7 @@ public class SecurityConstants {
     public static final String SIGNATURE_DETACHED_BASE64 = "signatureDetachedBase64";
     public static final String SIGNATURE_DETACHED_BASE64_TRUE = "true";
     public static final String SIGNATURE_DETACHED_BASE64_FALSE = "false";
-    public static final boolean SIGNATURE_DETACHED_BASE64_DEFAULT = Boolean.valueOf(SIGNATURE_DETACHED_BASE64_TRUE);
+    public static final boolean SIGNATURE_DETACHED_BASE64_DEFAULT = Boolean.parseBoolean(SIGNATURE_DETACHED_BASE64_TRUE);
     public static final String SIGNATURE_DETACHED_HEADER = "signatureDetachedHeader";
     public static final String SIGNATURE_DETACHED_PROPERTY_URL = "signatureDetachedPropertyURL";
     public static final String SIGNATURE_XML_KEY_INFO = "keyInfo";
@@ -400,7 +396,7 @@ public class SecurityConstants {
 	// Add a "Custom" token from a CallbackHandler
 	public static final String ACTION_CUSTOM_TOKEN = ConfigurationConstants.CUSTOM_TOKEN;
 	
-	public static boolean is_ACTION_ENCRYPTION(String action) {
+	public static boolean isActionEncryption(String action) {
 		return 
 				SecurityConstants.ACTION_ENCRYPTION.equals(action) || 
 				SecurityConstants.ACTION_ENCRYPT_OLD.equals(action) || 
@@ -409,7 +405,7 @@ public class SecurityConstants {
 				SecurityConstants.ACTION_ENCRYPTION_WITH_KERBEROS_TOKEN.equals(action) || 
 				SecurityConstants.ACTION_ENCRYPT_WITH_KERBEROS_TOKEN_OLD.equals(action);
 	}
-	public static boolean contains_ACTION_ENCRYPTION(String action) {
+	public static boolean containsActionEncryption(String action) {
 		if(action==null) {
 			return false;
 		}
@@ -421,12 +417,12 @@ public class SecurityConstants {
 				action.contains(SecurityConstants.ACTION_ENCRYPTION_WITH_KERBEROS_TOKEN) || 
 				action.contains(SecurityConstants.ACTION_ENCRYPT_WITH_KERBEROS_TOKEN_OLD);
 	}
-	public static boolean is_ACTION_DECRYPTION(String action) {
+	public static boolean isActionDecryption(String action) {
 		return 
 				SecurityConstants.ACTION_DECRYPTION.equals(action) || 
 				SecurityConstants.ACTION_DECRYPT_OLD.equals(action);
 	}
-	public static boolean contains_ACTION_DECRYPTION(String action) {
+	public static boolean containsActionDecryption(String action) {
 		if(action==null) {
 			return false;
 		}
@@ -465,6 +461,12 @@ public class SecurityConstants {
     public static final String TRUE = "true";
     public static final String FALSE = "false";
     
+    public static final String KEYSTORE_TYPE_KEY_PAIR_VALUE = "keys";
+    public static final String KEYSTORE_TYPE_KEY_PAIR_LABEL = "Key Pair";
+    
+    public static final String KEYSTORE_TYPE_PUBLIC_KEY_VALUE = "public";
+    public static final String KEYSTORE_TYPE_PUBLIC_KEY_LABEL = "Public Key";
+    
     public static final String KEYSTORE_TYPE_JWK_VALUE = "jwk";
     public static final String KEYSTORE_TYPE_JWK_LABEL = "JWK Set";
     
@@ -472,17 +474,17 @@ public class SecurityConstants {
     public static final String KEYSTORE_TYPE_JKS_LABEL = "JKS";
     public static final String KEYSTORE_TYPE_PKCS12_VALUE = "pkcs12";
     public static final String KEYSTORE_TYPE_PKCS12_LABEL = "PKCS12";
-    public static List<String> getTIPOLOGIE_KEYSTORE_values(boolean truststore){
+    public static List<String> getTipologieKeystoreValues(boolean truststore){
 		// NOTA:far ricreare la lista ogni volta, poiche' poi viene modificata
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		l.add(KEYSTORE_TYPE_JKS_VALUE);
 		l.add(KEYSTORE_TYPE_PKCS12_VALUE);
 		HSMUtils.fillTipologieKeystore(truststore, false, l);
 		return l;
     }
-    public static List<String> getTIPOLOGIE_KEYSTORE_labels(boolean truststore){
+    public static List<String> getTipologieKeystoreLabels(boolean truststore){
 		// NOTA:far ricreare la lista ogni volta, poiche' poi viene modificata
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		l.add(KEYSTORE_TYPE_JKS_LABEL);
 		l.add(KEYSTORE_TYPE_PKCS12_LABEL);
 		HSMUtils.fillTipologieKeystore(truststore, false, l);
@@ -491,16 +493,16 @@ public class SecurityConstants {
     
     public static final String KEYSTORE_TYPE_JCEKS_VALUE = "jceks";
     public static final String KEYSTORE_TYPE_JCEKS_LABEL = "JCEKS";
-    public static List<String> getTIPOLOGIE_SECRETKEYSTORE_values(){
+    public static List<String> getTipologieSecretKeystoreValues(){
 		// NOTA:far ricreare la lista ogni volta, poiche' poi viene modificata
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		l.add(KEYSTORE_TYPE_JCEKS_VALUE);
 		HSMUtils.fillTipologieKeystore(false, true, l);
 		return l;
     }
-    public static List<String> getTIPOLOGIE_SECRETKEYSTORE_labels(){
+    public static List<String> getTipologieSecretKeystoreLabels(){
 		// NOTA:far ricreare la lista ogni volta, poiche' poi viene modificata
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		l.add(KEYSTORE_TYPE_JCEKS_LABEL);
 		HSMUtils.fillTipologieKeystore(false, true, l);
 		return l;

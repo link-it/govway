@@ -50,7 +50,7 @@ public class SSLSocketFactory implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private SSLConfig sslConfig;
-	private transient javax.net.ssl.SSLSocketFactory sslSocketFactory;
+	private transient javax.net.ssl.SSLSocketFactory sslSocketFactoryObject;
 	
 
 	@Override
@@ -66,12 +66,15 @@ public class SSLSocketFactory implements Serializable {
 	}
 	
 	private void checkInit(RequestInfo requestInfo) throws SecurityException{
-		if(this.sslSocketFactory==null) {
+		if(this.sslSocketFactoryObject==null) {
 			this.initFactory(requestInfo);
 		}
 	}
+	private String getErrorMessage(String location, Exception e, boolean keystore) {
+		return "Lettura "+(keystore?"keystore":"truststore")+" '"+location+"' dalla cache fallita: "+e.getMessage();
+	}
 	private synchronized void initFactory(RequestInfo requestInfo) throws SecurityException{
-		if(this.sslSocketFactory==null) {
+		if(this.sslSocketFactoryObject==null) {
 			try{
 				// Gestione https
 				if(this.sslConfig!=null){
@@ -83,7 +86,7 @@ public class SSLSocketFactory implements Serializable {
 									this.sslConfig.getKeyStoreType(), this.sslConfig.getKeyStorePassword()).getKeyStore();
 							this.sslConfig.setKeyStore(keystore.getKeystore(), keystore.isKeystoreHsm());
 						}catch(Exception e) {
-							String msgError = "Lettura keystore '"+this.sslConfig.getKeyStoreLocation()+"' dalla cache fallita: "+e.getMessage();
+							String msgError = getErrorMessage(this.sslConfig.getKeyStoreLocation(),e,true);
 							this.sslConfig.getLoggerBuffer().error(msgError, e);
 						}
 					}
@@ -93,7 +96,7 @@ public class SSLSocketFactory implements Serializable {
 									this.sslConfig.getTrustStoreType(), this.sslConfig.getTrustStorePassword()).getTrustStore();
 							this.sslConfig.setTrustStore(truststore.getKeystore(), truststore.isKeystoreHsm());
 						}catch(Exception e) {
-							String msgError = "Lettura truststore '"+this.sslConfig.getTrustStoreLocation()+"' dalla cache fallita: "+e.getMessage();
+							String msgError = getErrorMessage(this.sslConfig.getTrustStoreLocation(),e,false);
 							this.sslConfig.getLoggerBuffer().error(msgError, e);
 						}
 					}
@@ -126,7 +129,7 @@ public class SSLSocketFactory implements Serializable {
 					
 					StringBuilder bfSSLConfig = new StringBuilder();
 					SSLContext sslContext = SSLUtilities.generateSSLContext(this.sslConfig, ocspValidator, bfSSLConfig);
-					this.sslSocketFactory = sslContext.getSocketFactory();
+					this.sslSocketFactoryObject = sslContext.getSocketFactory();
 					
 					if(this.sslConfig.getLoggerBuffer()!=null) {
 						String msgDebug = bfSSLConfig.toString();
@@ -142,7 +145,7 @@ public class SSLSocketFactory implements Serializable {
 	
 	public javax.net.ssl.SSLSocketFactory getSslSocketFactory(RequestInfo requestInfo) throws SecurityException {
 		this.checkInit(requestInfo); // per ripristino da Serializable
-		return this.sslSocketFactory;
+		return this.sslSocketFactoryObject;
 	}	
 
 

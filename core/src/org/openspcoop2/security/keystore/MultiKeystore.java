@@ -20,9 +20,6 @@
 
 package org.openspcoop2.security.keystore;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.security.Key;
 import java.util.ArrayList;
@@ -58,47 +55,32 @@ public class MultiKeystore implements Serializable  {
 	private static final String KEY_VALUE = ".key.value";
 	private static final String KEY_ALGORITHM = ".key.algorithm";
 	
-	private List<String> aliases = new ArrayList<String>();
-	private Map<String, Serializable> keystores = new HashMap<String, Serializable>();
-	private Map<String, String> mappingAliasToKeyAlias = new HashMap<String, String>();
-	private Map<String, String> mappingAliasToKeyPassword = new HashMap<String, String>();
+	private List<String> aliasesList = new ArrayList<>();
+	private Map<String, Serializable> keystores = new HashMap<>();
+	private Map<String, String> mappingAliasToKeyAlias = new HashMap<>();
+	private Map<String, String> mappingAliasToKeyPassword = new HashMap<>();
 	
 	@Override
 	public String toString() {
 		StringBuilder bf = new StringBuilder();
-		bf.append("MultiKeystore ").append(this.aliases);
+		bf.append("MultiKeystore ").append(this.aliasesList);
 		return bf.toString();
 	}
 	
 	
 	public MultiKeystore(String propertyFilePath) throws SecurityException{
 		
-		InputStream isStore = null;
 		try{
-			File fStore = new File(propertyFilePath);
-			if(fStore.exists()){
-				isStore = new FileInputStream(fStore);
-			}else{
-				isStore = MerlinKeystore.class.getResourceAsStream(propertyFilePath);
-				if(isStore==null){
-					isStore = MerlinKeystore.class.getResourceAsStream("/"+propertyFilePath);
-				}
-				if(isStore==null){
-					throw new Exception("Store ["+propertyFilePath+"] not found");
-				}
-			}
-			Properties multiProperties = new Properties();
-			multiProperties.load(isStore);
-			isStore.close();
+			Properties multiProperties = StoreUtils.readProperties("MultiProperties", propertyFilePath);
 			
 			String keyAliases = getProperty(multiProperties, MultiKeystore.ALIASES);
 			String [] tmp = keyAliases.split(",");
 			for (int i = 0; i < tmp.length; i++) {
-				if(this.aliases.contains(tmp[i].trim())==false)
-					this.aliases.add(tmp[i].trim());
+				if(!this.aliasesList.contains(tmp[i].trim()))
+					this.aliasesList.add(tmp[i].trim());
 			}
 			
-			for (String alias : this.aliases) {
+			for (String alias : this.aliasesList) {
 				String keyAlias = null;
 				try{
 					keyAlias = getProperty(multiProperties, alias+MultiKeystore.KEY_ALIAS);
@@ -114,7 +96,7 @@ public class MultiKeystore implements Serializable  {
 					String keyAlgorithm = getProperty(multiProperties, alias+MultiKeystore.KEY_ALGORITHM);
 					try {
 						this.keystores.put(alias, new SymmetricKeystore(keyAlias, keyValue, keyAlgorithm));
-					}catch(Throwable e) {
+					}catch(Exception e) {
 						String idKeystore = "!!! Errore durante il caricamento del SymmetricKeystore !!! [keyAlias:"+keyAlias+"] ";
 						LoggerWrapperFactory.getLogger(MultiKeystore.class).error(idKeystore+e.getMessage(),e);
 					}
@@ -126,7 +108,7 @@ public class MultiKeystore implements Serializable  {
 					String keystorePassword = getProperty(multiProperties, alias+MultiKeystore.KEYSTORE_PASSWORD);
 					try {
 						this.keystores.put(alias, new MerlinKeystore(keystorePath, keystoreType, keystorePassword, keyPassword));
-					}catch(Throwable e) {
+					}catch(Exception e) {
 						String idKeystore = "!!! Errore durante il caricamento del MerlinKeystore !!! [keyAlias:"+keyAlias+"] ";
 						LoggerWrapperFactory.getLogger(MultiKeystore.class).error(idKeystore+e.getMessage(),e);
 					}
@@ -139,14 +121,6 @@ public class MultiKeystore implements Serializable  {
 		}catch(Exception e){
 			throw new SecurityException(e.getMessage(),e);
 		}
-		finally{
-			try{
-				if(isStore!=null)
-					isStore.close();
-			}catch(Exception eClose){
-				// close
-			}
-		}
 	}
 	
 	private String getProperty(Properties multiProperties,String property)throws SecurityException{
@@ -158,15 +132,19 @@ public class MultiKeystore implements Serializable  {
 		}
 	}
 	
+	private String getErrorAlias(String alias) {
+		return "Alias["+alias+"] non trovato nella configurazione MultiKeystore";
+	}
+	
 	public Key getKey(String alias) throws SecurityException {
 		try{
-			if(this.aliases.contains(alias)==false){
-				throw new Exception("Alias["+alias+"] non trovato nella configurazione MultiKeystore");
+			if(!this.aliasesList.contains(alias)){
+				throw new SecurityException(getErrorAlias(alias));
 			}
 			
 			Object keystore = this.keystores.get(alias);
 			if(keystore==null) {
-				throw new Exception("Non esiste un keystore per l'alias["+alias+"]; verificare che non sia avvenuti errori durante l'inizializzazione (MultiKeystore)");
+				throw new SecurityException("Non esiste un keystore per l'alias["+alias+"]; verificare che non sia avvenuti errori durante l'inizializzazione (MultiKeystore)");
 			}
 			if(keystore instanceof MerlinKeystore){
 				return ((MerlinKeystore)keystore).getKey(this.mappingAliasToKeyAlias.get(alias));
@@ -175,7 +153,7 @@ public class MultiKeystore implements Serializable  {
 				return ((SymmetricKeystore)keystore).getKey();
 			}
 			else{
-				throw new Exception("Tipo di Keystore non supportato: "+keystore.getClass().getName());
+				throw new SecurityException("Tipo di Keystore non supportato: "+keystore.getClass().getName());
 			}
 		}catch(Exception e){
 			throw new SecurityException(e.getMessage(),e);
@@ -183,18 +161,18 @@ public class MultiKeystore implements Serializable  {
 	}
 
 	public boolean existsAlias(String alias){
-		return this.aliases.contains(alias);
+		return this.aliasesList.contains(alias);
 	}
 	
 	public KeyStore getKeyStore(String alias) throws SecurityException {
 		try{
-			if(this.aliases.contains(alias)==false){
-				throw new Exception("Alias["+alias+"] non trovato nella configurazione MultiKeystore");
+			if(!this.aliasesList.contains(alias)){
+				throw new SecurityException(getErrorAlias(alias));
 			}
 			
 			Object keystore = this.keystores.get(alias);
 			if(keystore==null) {
-				throw new Exception("Non esiste un keystore per l'alias["+alias+"]; verificare che non sia avvenuti errori durante l'inizializzazione (MultiKeystore)");
+				throw new SecurityException("Non esiste un keystore per l'alias["+alias+"]; verificare che non sia avvenuti errori durante l'inizializzazione (MultiKeystore)");
 			}
 			if(keystore instanceof MerlinKeystore){
 				return ((MerlinKeystore)keystore).getKeyStore();
@@ -203,7 +181,7 @@ public class MultiKeystore implements Serializable  {
 				return ((SymmetricKeystore)keystore).getKeyStore();
 			}
 			else{
-				throw new Exception("Tipo di Keystore non supportato: "+keystore.getClass().getName());
+				throw new SecurityException("Tipo di Keystore non supportato: "+keystore.getClass().getName());
 			}
 			
 		}catch(Exception e){
@@ -213,8 +191,8 @@ public class MultiKeystore implements Serializable  {
 
 	public String getKeyAlias(String alias) throws SecurityException {
 		try{
-			if(this.aliases.contains(alias)==false){
-				throw new Exception("Alias["+alias+"] non trovato nella configurazione MultiKeystore");
+			if(!this.aliasesList.contains(alias)){
+				throw new SecurityException(getErrorAlias(alias));
 			}
 			
 			return this.mappingAliasToKeyAlias.get(alias);
@@ -225,8 +203,8 @@ public class MultiKeystore implements Serializable  {
 	
 	public String getKeyPassword(String alias) throws SecurityException {
 		try{
-			if(this.aliases.contains(alias)==false){
-				throw new Exception("Alias["+alias+"] non trovato nella configurazione MultiKeystore");
+			if(!this.aliasesList.contains(alias)){
+				throw new SecurityException(getErrorAlias(alias));
 			}
 			
 			return this.mappingAliasToKeyPassword.get(alias);

@@ -1,0 +1,41 @@
+Generazione delle chiavi di test utilizzate poi nelle configurazioni:
+
+# formato PKCS1 private key (unencrypted) nel formato PEM: -----BEGIN RSA PRIVATE KEY-----
+openssl genrsa -out keyPair-test.rsa.pkcs1.privateKey.pem 2048
+# formato PKCS1 private key (unencrypted) nel formato DER
+openssl rsa -inform PEM -in keyPair-test.rsa.pkcs1.privateKey.pem -outform DER -out keyPair-test.rsa.pkcs1.privateKey.der
+
+# Estrae la chiave pubblica dalla chiave privata, nel formato PEM
+openssl rsa -in keyPair-test.rsa.pkcs1.privateKey.pem -pubout -out keyPair-test.rsa.publicKey.pem
+# Estrae la chiave pubblica dalla chiave privata, nel formato DER
+openssl rsa -in keyPair-test.rsa.pkcs1.privateKey.pem -pubout -out keyPair-test.rsa.publicKey.der --outform DER
+
+# converte la chiave privata nel formato PKCS8 non cifrato PEM: -----BEGIN PRIVATE KEY-----
+openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in keyPair-test.rsa.pkcs1.privateKey.pem -out keyPair-test.rsa.pkcs8.privateKey.pem
+# converte la chiave privata nel formato PKCS8 non cifrato DER
+openssl pkcs8 -topk8 -inform PEM -outform DER -nocrypt -in keyPair-test.rsa.pkcs1.privateKey.pem -out keyPair-test.rsa.pkcs8.privateKey.der
+
+# converte la chiave privata nel formato PKCS8 cifrato PEM: -----BEGIN ENCRYPTED PRIVATE KEY-----
+openssl pkcs8 -topk8 -inform PEM -outform PEM -in keyPair-test.rsa.pkcs1.privateKey.pem -out keyPair-test.rsa.pkcs8_encrypted.privateKey.pem
+# converte la chiave privata nel formato PKCS8 cifrato DER
+openssl pkcs8 -topk8 -inform PEM -outform DER -in keyPair-test.rsa.pkcs1.privateKey.pem -out keyPair-test.rsa.pkcs8_encrypted.privateKey.der
+
+# Test per la chiave pubblica 'keyPair-test.rsa.publicKey.pem'
+TEST 1pem (formato PKCS1 private key (unencrypted)): keyPair-test.rsa.pkcs1.privateKey.pem
+TEST 2pem (formato PKCS8 non cifrato): keyPair-test.rsa.pkcs8.privateKey.pem
+TEST 3pem (formato PKCS8 cifrato): keyPair-test.rsa.pkcs8_encrypted.privateKey.pem
+
+# Test per la chiave pubblica 'keyPair-test.rsa.publicKey.der'
+TEST 1der (formato PKCS1 private key (unencrypted)): keyPair-test.rsa.pkcs1.privateKey.der
+TEST 2der (formato PKCS8 non cifrato): keyPair-test.rsa.pkcs8.privateKey.der
+TEST 3der (formato PKCS8 cifrato): keyPair-test.rsa.pkcs8_encrypted.privateKey.der
+
+
+# formato PKCS1 private key (encrypted) nel formato PEM: -----BEGIN RSA PRIVATE KEY----- con Proc-Type: 4,ENCRYPTED
+openssl genrsa -aes128 -passout pass:123456 -out keyPair-test.rsa.pkcs1_encrypted.privateKey.pem 2048
+openssl rsa -in keyPair-test.rsa.pkcs1_encrypted.privateKey.pem -pubout -out keyPair-test.rsa.pkcs1_encrypted.publicKey.pem
+
+TEST 4 con chiave pubblica 'keyPair-test.rsa.pkcs1_encrypted.publicKey.pem' e privata keyPair-test.rsa.pkcs1_encrypted.privateKey.pem
+
+
+Per tutte le chiavi cifrate usare come password 123456

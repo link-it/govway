@@ -150,7 +150,7 @@ public class MessageUtilities {
 						}
 						else{
 							// caso speciale wss4j {}cid:Attachments ?
-							if(SecurityConstants.CID_ATTACH_WSS4j.equalsIgnoreCase(split2[1].trim())){
+							if(SecurityConstants.CID_ATTACH_WSS4J.equalsIgnoreCase(split2[1].trim())){
 								namespace = SecurityConstants.ENCRYPTION_NAMESPACE_ATTACH;
 								nome = SecurityConstants.ATTACHMENT_INDEX_ALL;
 								attach = true;
@@ -288,7 +288,7 @@ public class MessageUtilities {
 						}
 						else{
 							// caso speciale wss4j {}cid:Attachments ?
-							if(SecurityConstants.CID_ATTACH_WSS4j.equalsIgnoreCase(split2[1].trim())){
+							if(SecurityConstants.CID_ATTACH_WSS4J.equalsIgnoreCase(split2[1].trim())){
 								namespace = SecurityConstants.ENCRYPTION_NAMESPACE_ATTACH;
 								nome = SecurityConstants.ATTACHMENT_INDEX_ALL;
 							}
@@ -385,7 +385,7 @@ public class MessageUtilities {
 						}
 						else{
 							// caso speciale wss4j {}cid:Attachments ?
-							if(SecurityConstants.CID_ATTACH_WSS4j.equalsIgnoreCase(split2[1].trim())){
+							if(SecurityConstants.CID_ATTACH_WSS4J.equalsIgnoreCase(split2[1].trim())){
 								namespace = SecurityConstants.SIGNATURE_NAMESPACE_ATTACH;
 								nome = SecurityConstants.ATTACHMENT_INDEX_ALL;
 							}
@@ -484,7 +484,7 @@ public class MessageUtilities {
 						}
 						else{
 							// caso speciale wss4j {}cid:Attachments ?
-							if(SecurityConstants.CID_ATTACH_WSS4j.equalsIgnoreCase(split2[1].trim())){
+							if(SecurityConstants.CID_ATTACH_WSS4J.equalsIgnoreCase(split2[1].trim())){
 								namespace = SecurityConstants.SIGNATURE_NAMESPACE_ATTACH;
 								nome = SecurityConstants.ATTACHMENT_INDEX_ALL;
 							}

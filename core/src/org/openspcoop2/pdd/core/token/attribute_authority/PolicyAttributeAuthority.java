@@ -31,6 +31,7 @@ import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.pdd.config.dynamic.PddPluginLoader;
 import org.openspcoop2.pdd.core.token.AbstractPolicyToken;
+import org.openspcoop2.pdd.core.token.TokenException;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
@@ -52,32 +53,36 @@ public class PolicyAttributeAuthority extends AbstractPolicyToken implements Ser
 	private static final long serialVersionUID = 1L;
 	
 	
-	public IRetrieveAttributeAuthorityResponseParser getRetrieveAttributeAuthorityResponseParser(Logger log) throws Exception {
+	public IRetrieveAttributeAuthorityResponseParser getRetrieveAttributeAuthorityResponseParser(Logger log) throws TokenException {
 		IRetrieveAttributeAuthorityResponseParser parser = null;
 		TipologiaResponseAttributeAuthority tipologiaResponse = TipologiaResponseAttributeAuthority.valueOf(this.defaultProperties.getProperty(Costanti.AA_RESPONSE_TYPE));
 		if(TipologiaResponseAttributeAuthority.custom.equals(tipologiaResponse)) {
 			String className = this.defaultProperties.getProperty(Costanti.AA_RESPONSE_PARSER_CLASS_NAME);
 			if(className!=null && StringUtils.isNotEmpty(className) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(className)) {
-				parser = (IRetrieveAttributeAuthorityResponseParser) ClassLoaderUtilities.newInstance(className);
+				try {
+					parser = (IRetrieveAttributeAuthorityResponseParser) ClassLoaderUtilities.newInstance(className);
+				}catch(Exception e) {
+					throw new TokenException(e.getMessage(),e);
+				}
 			}
 			else {
 				String tipo = this.defaultProperties.getProperty(Costanti.AA_RESPONSE_PARSER_PLUGIN_TYPE);
 				if(tipo!=null && StringUtils.isNotEmpty(tipo) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(tipo)) {
 			    	try{
 						PddPluginLoader pluginLoader = PddPluginLoader.getInstance();
-						parser = (IRetrieveAttributeAuthorityResponseParser) pluginLoader.newAttributeAuthority(tipo);
+						parser = pluginLoader.newAttributeAuthority(tipo);
 					}catch(Exception e){
-						throw e; // descrizione errore già corretta
+						throw new TokenException(e.getMessage(),e); // descrizione errore già corretta
 					}
 				}
 				else {
-					throw new Exception("Deve essere selezionato un plugin per la risposta");
+					throw new TokenException("Deve essere selezionato un plugin per la risposta");
 				}
 			}
 		}
 		else {
 			String claims = this.defaultProperties.getProperty(Costanti.AA_RESPONSE_ATTRIBUTES);
-			List<String> attributesClaims = new ArrayList<String>();
+			List<String> attributesClaims = new ArrayList<>();
 			if(claims!=null && !"".equals(claims)) {
 				if(claims.contains(",")) {
 					String [] tmp = claims.split(",");
@@ -117,17 +122,17 @@ public class PolicyAttributeAuthority extends AbstractPolicyToken implements Ser
 	public boolean isBasicAuthentication() throws ProviderException, ProviderValidationException{
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.AA_AUTH_BASIC_STATO);	
 	}
-	public String getBasicAuthentication_username() {
+	public String getBasicAuthenticationUsername() {
 		return this.defaultProperties.getProperty(Costanti.AA_AUTH_BASIC_USERNAME);
 	}
-	public String getBasicAuthentication_password() {
+	public String getBasicAuthenticationPassword() {
 		return this.defaultProperties.getProperty(Costanti.AA_AUTH_BASIC_PASSWORD);
 	}
 	
 	public boolean isBearerAuthentication() throws ProviderException, ProviderValidationException{
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.AA_AUTH_BEARER_STATO);	
 	}
-	public String getBeareAuthentication_token() {
+	public String getBeareAuthenticationToken() {
 		return this.defaultProperties.getProperty(Costanti.AA_AUTH_BEARER_TOKEN);
 	}
 	
@@ -223,33 +228,33 @@ public class PolicyAttributeAuthority extends AbstractPolicyToken implements Ser
 	}
 	public boolean isRequestJwtSignIncludeKeyIdWithKeyAlias() {
 		String tmp = this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_INCLUDE_KEY_ID);
-		return tmp!=null ? Costanti.AA_REQUEST_JWT_SIGN_INCLUDE_KEY_ID_MODE_ALIAS.equals(tmp) : false;
+		return tmp!=null && Costanti.AA_REQUEST_JWT_SIGN_INCLUDE_KEY_ID_MODE_ALIAS.equals(tmp);
 	}
 	public boolean isRequestJwtSignIncludeKeyIdCustom() {
 		String tmp = this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_INCLUDE_KEY_ID);
-		return tmp!=null ? Costanti.AA_REQUEST_JWT_SIGN_INCLUDE_KEY_ID_MODE_CUSTOM.equals(tmp) : false;
+		return tmp!=null && Costanti.AA_REQUEST_JWT_SIGN_INCLUDE_KEY_ID_MODE_CUSTOM.equals(tmp);
 	}
 	public String getRequestJwtSignIncludeKeyIdCustom() {
 		return this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_INCLUDE_KEY_ID_VALUE);
 	}
 	public boolean isRequestJwtSignIncludeX509Cert() {
 		String tmp = this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_INCLUDE_X509_CERT);
-		return tmp!=null ? Boolean.valueOf(tmp) : false;
+		return tmp!=null && Boolean.valueOf(tmp);
 	}
 	public String getRequestJwtSignIncludeX509URL() {
 		return this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_INCLUDE_X509_URL);
 	}
 	public boolean isRequestJwtSignIncludeX509CertSha1() {
 		String tmp = this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_INCLUDE_X509_SHA1);
-		return tmp!=null ? Boolean.valueOf(tmp) : false;
+		return tmp!=null && Boolean.valueOf(tmp);
 	}
 	public boolean isRequestJwtSignIncludeX509CertSha256() {
 		String tmp = this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_INCLUDE_X509_SHA256);
-		return tmp!=null ? Boolean.valueOf(tmp) : false;
+		return tmp!=null && Boolean.valueOf(tmp);
 	}
 	public boolean isRequestJwtSignJoseContentType() {
 		String tmp = this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_JOSE_CONTENT_TYPE);
-		return tmp!=null ? Boolean.valueOf(tmp) : false;
+		return tmp!=null && Boolean.valueOf(tmp);
 	}
 	public String getRequestJwtSignJoseType() {
 		return this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_JOSE_TYPE);
@@ -260,6 +265,12 @@ public class PolicyAttributeAuthority extends AbstractPolicyToken implements Ser
 	}
 	public String getRequestJwtSignKeystoreFile() {
 		return this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_KEYSTORE_FILE);
+	}
+	public String getRequestJwtSignKeystoreFilePublicKey() {
+		return this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_KEYSTORE_FILE_PUBLIC);
+	}
+	public String getRequestJwtSignKeystoreFileAlgorithm() {
+		return this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_KEYSTORE_FILE_ALGORITHM);
 	}
 	public String getRequestJwtSignKeystorePassword() {
 		return this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_KEYSTORE_PASSWORD);
@@ -284,10 +295,10 @@ public class PolicyAttributeAuthority extends AbstractPolicyToken implements Ser
 		return Costanti.AA_RESPONSE_TYPE_VALUE_CUSTOM.equals(this.getResponseType());
 	}
 	
-	public String getResponseJws_ocspPolicy() {
+	public String getResponseJwsOcspPolicy() {
 		return this.defaultProperties.getProperty(SecurityConstants.SIGNATURE_OCSP);
 	}
-	public String getResponseJws_crl() {
+	public String getResponseJwsCrl() {
 		return this.defaultProperties.getProperty(SecurityConstants.SIGNATURE_CRL);
 	}
 	

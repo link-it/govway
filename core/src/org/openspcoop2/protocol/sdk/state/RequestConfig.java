@@ -154,6 +154,8 @@ public class RequestConfig implements java.io.Serializable {
 	private Map<String, Serializable> symmetricKeystore = null;
 	private Map<String, Serializable> multiKeystore = null;
 	private Map<String, Serializable> jwkSetStore = null;
+	private Map<String, Serializable> keyPairStore = null;
+	private Map<String, Serializable> publicKeyStore = null;
 	private Map<String, Serializable> httpStore = null;
 	private Map<String, Serializable> crlCertstore = null;
 	private Map<String, Serializable> sslSocketFactory = null;
@@ -396,6 +398,12 @@ public class RequestConfig implements java.io.Serializable {
 		}
 		if(source.jwkSetStore!=null) {
 			this.jwkSetStore = source.jwkSetStore;
+		}
+		if(source.keyPairStore!=null) {
+			this.keyPairStore = source.keyPairStore;
+		}
+		if(source.publicKeyStore!=null) {
+			this.publicKeyStore = source.publicKeyStore;
 		}
 		if(source.httpStore!=null) {
 			this.httpStore = source.httpStore;
@@ -1274,6 +1282,56 @@ public class RequestConfig implements java.io.Serializable {
 			return null;
 		}
 		return this.jwkSetStore.get(key);
+	}
+	
+	public void addKeyPairStore(String key, Serializable keyPairStore, String idTransazione) {
+		 
+		
+		if(this.semaphoreStore==null) {
+			// serializzazione da transient
+			initSemaphoreStore();
+		}
+		
+		this.semaphoreStore.acquireThrowRuntime("addKeyPairStore", idTransazione);
+		try {
+			if(this.keyPairStore==null) {
+				this.keyPairStore = new HashMap<>(3);
+			}
+			this.keyPairStore.put(key, keyPairStore);
+		}finally {
+			this.semaphoreStore.release("addKeyPairStore", idTransazione);
+		}
+	}
+	public Serializable getKeyPairStore(String key) {
+		if(this.keyPairStore==null) {
+			return null;
+		}
+		return this.keyPairStore.get(key);
+	}
+	
+	public void addPublicKeyStore(String key, Serializable publicKeyStore, String idTransazione) {
+		 
+		
+		if(this.semaphoreStore==null) {
+			// serializzazione da transient
+			initSemaphoreStore();
+		}
+		
+		this.semaphoreStore.acquireThrowRuntime("addPublicKeyStore", idTransazione);
+		try {
+			if(this.publicKeyStore==null) {
+				this.publicKeyStore = new HashMap<>(3);
+			}
+			this.publicKeyStore.put(key, publicKeyStore);
+		}finally {
+			this.semaphoreStore.release("addPublicKeyStore", idTransazione);
+		}
+	}
+	public Serializable getPublicKeyStore(String key) {
+		if(this.publicKeyStore==null) {
+			return null;
+		}
+		return this.publicKeyStore.get(key);
 	}
 
 	public void addHttpStore(String key, Serializable httpStore, String idTransazione) {

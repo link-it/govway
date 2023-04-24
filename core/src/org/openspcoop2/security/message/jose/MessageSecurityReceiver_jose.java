@@ -23,7 +23,7 @@ package org.openspcoop2.security.message.jose;
 
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
@@ -109,7 +109,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 
 			String[]actions = ((String)messageSecurityContext.getIncomingProperties().get(SecurityConstants.ACTION)).split(" ");
 			for (int i = 0; i < actions.length; i++) {
-				if(SecurityConstants.is_ACTION_ENCRYPTION(actions[i].trim()) || SecurityConstants.is_ACTION_DECRYPTION(actions[i].trim())){
+				if(SecurityConstants.isActionEncryption(actions[i].trim()) || SecurityConstants.isActionDecryption(actions[i].trim())){
 					encrypt = true;
 				}
 				else if(SecurityConstants.SIGNATURE_ACTION.equals(actions[i].trim())){
@@ -145,7 +145,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 					throw new SecurityException(JOSECostanti.JOSE_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION+", '"+SecurityConstants.SIGNATURE_MODE+"' property error: "+e.getMessage(),e);
 				}
 				JWTOptions options = new JWTOptions(this.joseSerialization);
-				boolean useHeaders = JOSEUtils.useJwtHeaders_map(messageSecurityContext.getIncomingProperties(), options);
+				boolean useHeaders = JOSEUtils.useJwtHeadersMap(messageSecurityContext.getIncomingProperties(), options);
 				
 				SignatureBean bean = null;
 				NotFoundException notFound = null;
@@ -342,7 +342,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 					throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+", '"+SecurityConstants.DECRYPTION_MODE+"' property error: "+e.getMessage(),e);
 				}
 				JWTOptions options = new JWTOptions(this.joseSerialization);
-				boolean useHeaders = JOSEUtils.useJwtHeaders_map(messageSecurityContext.getIncomingProperties(), options);
+				boolean useHeaders = JOSEUtils.useJwtHeadersMap(messageSecurityContext.getIncomingProperties(), options);
 				
 				EncryptionBean bean = null;
 				NotFoundException notFound = null;
@@ -370,7 +370,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 					else {
 						KeyStore trustStore = JOSEUtils.readTrustStoreJwtX509Cert(requestInfo, messageSecurityContext.getIncomingProperties());
 						KeyStore keyStore = JOSEUtils.readKeyStoreJwtX509Cert(requestInfo, messageSecurityContext.getIncomingProperties());
-						HashMap<String, String> keystore_mapAliasPassword = JOSEUtils.readJwtX509Cert_mapAliasPassword(messageSecurityContext.getIncomingProperties());						
+						Map<String, String> keystore_mapAliasPassword = JOSEUtils.covertToJwtX509CertMapAliasPassword(messageSecurityContext.getIncomingProperties());						
 						this.jsonDecrypt = new JsonDecrypt(trustStoreSsl, trustStore, keyStore, keystore_mapAliasPassword, options);
 					}
 				}

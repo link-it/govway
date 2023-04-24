@@ -22,6 +22,7 @@ package org.openspcoop2.security.keystore.cache;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -45,17 +46,17 @@ public abstract class AbstractKeystoreCache<T extends Serializable> {
 	private int cacheLifeSecond = -1;
 	private int cacheSize = -1;
 	
-	private Map<String, KeystoreCacheEntry<T>> cache_map = new ConcurrentHashMap<String, KeystoreCacheEntry<T>>();
-	private Cache cache_jcs = null;
-	private final org.openspcoop2.utils.Semaphore lock_cache = new org.openspcoop2.utils.Semaphore(this.getClass().getSimpleName());
+	private Map<String, KeystoreCacheEntry<T>> cacheMap = new ConcurrentHashMap<>();
+	private Cache cacheJCS = null;
+	private final org.openspcoop2.utils.Semaphore lockCache = new org.openspcoop2.utils.Semaphore(this.getClass().getSimpleName());
 
 	public void setKeystoreCacheParameters(int cacheLifeSecond,int cacheSize){
 		this.cacheLifeSecond = cacheLifeSecond;
 		this.cacheSize = cacheSize;
 	}
-	public void setCacheJCS(int cacheLifeSecond,Cache cache_jcs) {
+	public void setCacheJCS(int cacheLifeSecond,Cache cacheJCS) {
 		this.cacheLifeSecond = cacheLifeSecond;
-		this.cache_jcs = cache_jcs;
+		this.cacheJCS = cacheJCS;
 	}
 	public void updateCacheLifeSecond(int cacheLifeSecond) {
 		this.cacheLifeSecond = cacheLifeSecond;
@@ -75,11 +76,11 @@ public abstract class AbstractKeystoreCache<T extends Serializable> {
 	public T getKeystoreAndCreateIfNotExists(String keyParam,Object ... params) throws SecurityException{
 		KeystoreCacheEntry<T> o = this.getObjectFromCache(keyParam);
 		if(o==null){
-			//System.out.println("NON trovato ["+key+"], creo...");
+			/**System.out.println("NON trovato ["+key+"], creo...");*/
 			return initKeystore(keyParam, params);
 		}
 		else {
-			//System.out.println("GIA PRESENTE ["+key+"] ESTRAGGO");
+			/**System.out.println("GIA PRESENTE ["+key+"] ESTRAGGO");*/
 			return estraiKeystore(o);
 		}
 	}
@@ -90,12 +91,10 @@ public abstract class AbstractKeystoreCache<T extends Serializable> {
 	}
 	public T getKeystoreAndCreateIfNotExists(byte[] keystore,Object ... params) throws SecurityException{
 		String keyParam = buildKeyCacheFromBytes(keystore);
-		List<Object> lArgs = new ArrayList<Object>();
+		List<Object> lArgs = new ArrayList<>();
 		lArgs.add(keystore);
 		if(params!=null && params.length>0) {
-			for (Object param : params) {
-				lArgs.add(param);
-			}
+			lArgs.add(Arrays.asList(params));
 		}
 		return getKeystoreAndCreateIfNotExists(keyParam, lArgs.toArray());
 	}
@@ -117,84 +116,68 @@ public abstract class AbstractKeystoreCache<T extends Serializable> {
 	private KeystoreCacheEntry<T> getObjectFromCache(String keyParam) {
 		String keyCache = this.getPrefixKey() + keyParam;
 		KeystoreCacheEntry<T> o = null;
-		if(this.cache_jcs!=null) {
-			Object object = this.cache_jcs.get(keyCache);
+		if(this.cacheJCS!=null) {
+			Object object = this.cacheJCS.get(keyCache);
 			if(object!=null) {
 				o = (KeystoreCacheEntry<T>) object;
 			}
 		}
 		else {
-			o = this.cache_map.get(keyCache);
+			o = this.cacheMap.get(keyCache);
 		}
 		return o;
 	}
 	
 	private T initKeystore(String keyParam,Object ... params) throws SecurityException{
 		
-		//Object sincronizedObject = null;
-		//if(this.cache_jcs!=null) {
-		//	sincronizedObject = this.cache_jcs;
-		//}
-		//else {
-		//	sincronizedObject = this.cache_hashtable;
-		//}
-		//synchronized (sincronizedObject) {
-		this.lock_cache.acquireThrowRuntime("initKeystore");
+		this.lockCache.acquireThrowRuntime("initKeystore");
 		try {
 			String keyCache = this.getPrefixKey() + keyParam;
 			KeystoreCacheEntry<T> o = this.getObjectFromCache(keyCache);
 			if(o==null) {
 				T keystore = createKeystore(keyParam, params);
-				KeystoreCacheEntry<T> cacheEntry = new KeystoreCacheEntry<T>();
+				KeystoreCacheEntry<T> cacheEntry = new KeystoreCacheEntry<>();
 				cacheEntry.setKey(keyCache);
 				cacheEntry.setKeystore(keystore);
 				cacheEntry.setDate(DateManager.getDate());
-				if(this.cache_jcs!=null) {
+				if(this.cacheJCS!=null) {
 					try {
-						this.cache_jcs.put(keyCache, cacheEntry);
+						this.cacheJCS.put(keyCache, cacheEntry);
 					}catch(Exception e) {
 						throw new SecurityException(e.getMessage(),e);
 					}
 				}
 				else {
-					this.cache_map.put(keyCache, cacheEntry);
+					this.cacheMap.put(keyCache, cacheEntry);
 				}
-				//System.out.println("CREATO ["+key+"] !!!! DATA["+cacheEntry.getDate()+"]");
+				/**System.out.println("CREATO ["+key+"] !!!! DATA["+cacheEntry.getDate()+"]"); */
 				return keystore;
 			}
 			else {
 				return estraiKeystore(o);
 			}
 		}finally {
-			this.lock_cache.release("initKeystore");
+			this.lockCache.release("initKeystore");
 		}
 		
 	}
 	
 	private void removeKeystore(String key) throws SecurityException{
 		
-		//Object sincronizedObject = null;
-		//if(this.cache_jcs!=null) {
-		//	sincronizedObject = this.cache_jcs;
-		//}
-		//else {
-		//	sincronizedObject = this.cache_hashtable;
-		//}
-		//synchronized (sincronizedObject) {
-		this.lock_cache.acquireThrowRuntime("removeKeystore");
+		this.lockCache.acquireThrowRuntime("removeKeystore");
 		try {
-			if(this.cache_jcs!=null) {
+			if(this.cacheJCS!=null) {
 				try {
-					this.cache_jcs.remove(key);
+					this.cacheJCS.remove(key);
 				}catch(Exception e) {
 					throw new SecurityException(e.getMessage(),e);
 				}
 			}
 			else {
-				this.cache_map.remove(key);
+				this.cacheMap.remove(key);
 			}
 		}finally {
-			this.lock_cache.release("removeKeystore");
+			this.lockCache.release("removeKeystore");
 		}
 		
 	}
@@ -206,27 +189,24 @@ public abstract class AbstractKeystoreCache<T extends Serializable> {
 			long scadenza = entry.getDate().getTime()+this.cacheLifeSecond*1000;
 			long now = DateManager.getTimeMillis();
 			if(scadenza<now){
-				//System.out.println("SCADUTO PER DATA ["+entry.getKey()+"] ["+scadenza+"] ["+now+"]");
+				/**System.out.println("SCADUTO PER DATA ["+entry.getKey()+"] ["+scadenza+"] ["+now+"]");*/
 				removeKeystore(entry.getKey());
 			}
 		}
-		if(this.cache_jcs==null) {
-			if(this.cacheSize>-1){
-				if(this.cache_map.size()>this.cacheSize){
-					//System.out.println("ECCEDUTA DIMENSIONE ["+entry.getKey()+"]");
-					clearCacheMap();
-				}
-			}
+		if(this.cacheJCS==null &&
+			this.cacheSize>-1 &&
+			this.cacheMap.size()>this.cacheSize){
+			/**System.out.println("ECCEDUTA DIMENSIONE ["+entry.getKey()+"]");*/
+			clearCacheMap();
 		}
 		return keystore;
 	}
 	private void clearCacheMap(){
-		//synchronized (this.cache_hashtable) {
-		this.lock_cache.acquireThrowRuntime("clearCacheMap");
+		this.lockCache.acquireThrowRuntime("clearCacheMap");
 		try {
-			this.cache_map.clear();
+			this.cacheMap.clear();
 		}finally {
-			this.lock_cache.release("clearCacheMap");
+			this.lockCache.release("clearCacheMap");
 		}
 	}
 	

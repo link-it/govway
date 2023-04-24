@@ -59,14 +59,14 @@ public class GestoreOCSPValidator implements IOCSPValidator {
 	}
 	
 	@Override
-	public void valid(X509Certificate cert) throws OCSPResponseException, UtilsException {
+	public void valid(X509Certificate cert) throws UtilsException {
 		OCSPResponse response = null;
 		try {
 			response = GestoreKeystoreCache.getOCSPResponse(this.requestInfo, this.validatorImpl, cert);
 			if(response==null) {
-				throw new Exception("OCSPResponse unavailable");
+				throw new UtilsException("OCSPResponse unavailable");
 			}
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw new UtilsException(t.getMessage(),t);
 		}
 		if(!response.isValid()) {

@@ -30,7 +30,6 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.pdd.config.dynamic.PddPluginLoader;
-import org.openspcoop2.pdd.core.dynamic.DynamicException;
 import org.openspcoop2.pdd.core.token.parser.BasicNegoziazioneTokenParser;
 import org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser;
 import org.openspcoop2.pdd.core.token.parser.TipologiaClaimsNegoziazione;
@@ -52,7 +51,7 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 	private static final long serialVersionUID = 1L;
 	
 	
-	public INegoziazioneTokenParser getNegoziazioneTokenParser() throws Exception {
+	public INegoziazioneTokenParser getNegoziazioneTokenParser() throws TokenException {
 		INegoziazioneTokenParser parser = null;
 		TipologiaClaimsNegoziazione tipologiaClaims = TipologiaClaimsNegoziazione.valueOf(this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_PARSER_TYPE));
 		
@@ -64,27 +63,36 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 		}
 		
 		if(TipologiaClaimsNegoziazione.CUSTOM.equals(tipologiaClaims)) {
-			String className = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_PARSER_CLASS_NAME);
-			if(className!=null && StringUtils.isNotEmpty(className) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(className)) {
-				parser = (INegoziazioneTokenParser) ClassLoaderUtilities.newInstance(className);
-			}
-			else {
-				String tipo = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_PARSER_PLUGIN_TYPE);
-				if(tipo!=null && StringUtils.isNotEmpty(tipo) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(tipo)) {
-			    	try{
-						PddPluginLoader pluginLoader = PddPluginLoader.getInstance();
-						parser = (INegoziazioneTokenParser) pluginLoader.newTokenNegoziazione(tipo);
-					}catch(Exception e){
-						throw e; // descrizione errore già corretta
-					}
-				}
-				else {
-					throw new Exception("Deve essere selezionato un plugin per il 'Formato Risposta'");
-				}
-			}
+			return getNegoziazioneTokenCustomParser();
 		}
 		else{
 			parser = new BasicNegoziazioneTokenParser(tipologiaClaims, TokenUtilities.getRetrieveResponseClaimsMappingProperties(this.properties));
+		}
+		return parser;
+	}
+	private INegoziazioneTokenParser getNegoziazioneTokenCustomParser() throws TokenException {
+		INegoziazioneTokenParser parser = null;
+		String className = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_PARSER_CLASS_NAME);
+		if(className!=null && StringUtils.isNotEmpty(className) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(className)) {
+			try {
+				parser = (INegoziazioneTokenParser) ClassLoaderUtilities.newInstance(className);
+			}catch(Exception e) {
+				throw new TokenException(e.getMessage(),e);
+			}
+		}
+		else {
+			String tipo = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_PARSER_PLUGIN_TYPE);
+			if(tipo!=null && StringUtils.isNotEmpty(tipo) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(tipo)) {
+		    	try{
+					PddPluginLoader pluginLoader = PddPluginLoader.getInstance();
+					parser = pluginLoader.newTokenNegoziazione(tipo);
+				}catch(Exception e){
+					throw new TokenException(e.getMessage(),e); // descrizione errore già corretta
+				}
+			}
+			else {
+				throw new TokenException("Deve essere selezionato un plugin per il 'Formato Risposta'");
+			}
 		}
 		return parser;
 	}
@@ -103,10 +111,10 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 	public boolean isBasicAuthentication() throws ProviderException, ProviderValidationException{
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_RETRIEVE_TOKEN_AUTH_BASIC_STATO);	
 	}
-	public String getBasicAuthentication_username() {
+	public String getBasicAuthenticationUsername() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AUTH_BASIC_USERNAME);
 	}
-	public String getBasicAuthentication_password() {
+	public String getBasicAuthenticationPassword() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AUTH_BASIC_PASSWORD);
 	}
 	public boolean isBasicAuthenticationAsAuthorizationHeader() throws ProviderException, ProviderValidationException{
@@ -116,41 +124,41 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 	public boolean isBearerAuthentication() throws ProviderException, ProviderValidationException{
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_RETRIEVE_TOKEN_AUTH_BEARER_STATO);	
 	}
-	public String getBeareAuthentication_token() {
+	public String getBeareAuthenticationToken() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AUTH_BEARER_TOKEN);
 	}
 	
-	public boolean isClientCredentialsGrant() throws ProviderException, ProviderValidationException{
+	public boolean isClientCredentialsGrant() {
 		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_MODE);
 		return Costanti.ID_RETRIEVE_TOKEN_METHOD_CLIENT_CREDENTIAL.equals(mode);
 	}
-	public boolean isRfc7523_x509_Grant() throws ProviderException, ProviderValidationException{
+	public boolean isRfc7523x509Grant() {
 		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_MODE);
 		return Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509.equals(mode);
 	}
-	public boolean isRfc7523_clientSecret_Grant() throws ProviderException, ProviderValidationException{
+	public boolean isRfc7523ClientSecretGrant() {
 		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_MODE);
 		return Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET.equals(mode);
 	}
-	public boolean isUsernamePasswordGrant() throws ProviderException, ProviderValidationException{
+	public boolean isUsernamePasswordGrant() {
 		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_MODE);
 		return Costanti.ID_RETRIEVE_TOKEN_METHOD_USERNAME_PASSWORD.equals(mode);
 	}
-	public boolean isCustomGrant() throws ProviderException, ProviderValidationException{
+	public boolean isCustomGrant() {
 		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_MODE);
 		return Costanti.ID_RETRIEVE_TOKEN_METHOD_CUSTOM.equals(mode);
 	}
-	public String getLabelGrant() throws ProviderException, ProviderValidationException {
+	public String getLabelGrant() {
 		if(this.isClientCredentialsGrant()) {
 			return Costanti.ID_RETRIEVE_TOKEN_METHOD_CLIENT_CREDENTIAL_LABEL;
 		}
 		else if(this.isUsernamePasswordGrant()) {
 			return Costanti.ID_RETRIEVE_TOKEN_METHOD_USERNAME_PASSWORD_LABEL;
 		}
-		else if(this.isRfc7523_x509_Grant()) {
+		else if(this.isRfc7523x509Grant()) {
 			return Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509_LABEL;
 		}
-		else if(this.isRfc7523_clientSecret_Grant()) {
+		else if(this.isRfc7523ClientSecretGrant()) {
 			return Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET_LABEL;
 		}
 		else if(this.isCustomGrant()) {
@@ -158,22 +166,22 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 		}
 		return "Non definita";
 	} 
-	public boolean isPDND() throws ProviderException, ProviderValidationException{
+	public boolean isPDND() {
 		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_MODE_PDND);
 		return "true".equalsIgnoreCase(mode);
 	}
 	
-	public String getUsernamePasswordGrant_username() {
+	public String getUsernamePasswordGrantUsername() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_USERNAME);
 	}
-	public String getUsernamePasswordGrant_password() {
+	public String getUsernamePasswordGrantPassword() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_PASSWORD);
 	}
 	
 	public String getScopeString() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_SCOPES);
 	}
-	public List<String> getScopes(NegoziazioneTokenDynamicParameters dynamicParameters) throws DynamicException{
+	public List<String> getScopes(NegoziazioneTokenDynamicParameters dynamicParameters) {
 		List<String> l = new ArrayList<>();
 		String scopes = dynamicParameters.getScope();
 		if(scopes!=null) {
@@ -194,17 +202,11 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 	}
 	public boolean isFormClientIdApplicativoModI() {
 		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORM_CLIENT_ID_MODE);
-		if(mode!=null && Costanti.CHOICE_APPLICATIVO_MODI_VALUE.equals(mode)) {
-			return true;
-		}
-		return false;
+		return mode!=null && Costanti.CHOICE_APPLICATIVO_MODI_VALUE.equals(mode);
 	}
 	public boolean isFormClientIdFruizioneModI() {
 		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORM_CLIENT_ID_MODE);
-		if(mode!=null && Costanti.CHOICE_FRUIZIONE_MODI_VALUE.equals(mode)) {
-			return true;
-		}
-		return false;
+		return mode!=null && Costanti.CHOICE_FRUIZIONE_MODI_VALUE.equals(mode);
 	}
 	public String getFormClientId() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORM_CLIENT_ID);
@@ -216,7 +218,7 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORM_PARAMETERS);
 	}
 	
-	public String getHttpMethod() throws ProviderException, ProviderValidationException {
+	public String getHttpMethod() {
 		if(this.isCustomGrant()) {
 			String httpMethod = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_HTTP_METHOD);
 			if(httpMethod!=null && StringUtils.isNotEmpty(httpMethod)) {
@@ -266,17 +268,11 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 	
 	public boolean isJwtClientIdApplicativoModI() {
 		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLIENT_ID_MODE);
-		if(mode!=null && Costanti.CHOICE_APPLICATIVO_MODI_VALUE.equals(mode)) {
-			return true;
-		}
-		return false;
+		return mode!=null && Costanti.CHOICE_APPLICATIVO_MODI_VALUE.equals(mode);
 	}
 	public boolean isJwtClientIdFruizioneModI() {
 		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLIENT_ID_MODE);
-		if(mode!=null && Costanti.CHOICE_FRUIZIONE_MODI_VALUE.equals(mode)) {
-			return true;
-		}
-		return false;
+		return mode!=null && Costanti.CHOICE_FRUIZIONE_MODI_VALUE.equals(mode);
 	}
 	public String getJwtClientId() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLIENT_ID);
@@ -286,34 +282,22 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 	}
 	public boolean isJwtIssuerApplicativoModI() {
 		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_ISSUER_MODE);
-		if(mode!=null && Costanti.CHOICE_APPLICATIVO_MODI_VALUE.equals(mode)) {
-			return true;
-		}
-		return false;
+		return mode!=null && Costanti.CHOICE_APPLICATIVO_MODI_VALUE.equals(mode);
 	}
 	public boolean isJwtIssuerFruizioneModI() {
 		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_ISSUER_MODE);
-		if(mode!=null && Costanti.CHOICE_FRUIZIONE_MODI_VALUE.equals(mode)) {
-			return true;
-		}
-		return false;
+		return mode!=null && Costanti.CHOICE_FRUIZIONE_MODI_VALUE.equals(mode);
 	}
 	public String getJwtIssuer() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_ISSUER);
 	}
 	public boolean isJwtSubjectApplicativoModI() {
 		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SUBJECT_MODE);
-		if(mode!=null && Costanti.CHOICE_APPLICATIVO_MODI_VALUE.equals(mode)) {
-			return true;
-		}
-		return false;
+		return mode!=null && Costanti.CHOICE_APPLICATIVO_MODI_VALUE.equals(mode);
 	}
 	public boolean isJwtSubjectFruizioneModI() {
 		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SUBJECT_MODE);
-		if(mode!=null && Costanti.CHOICE_FRUIZIONE_MODI_VALUE.equals(mode)) {
-			return true;
-		}
-		return false;
+		return mode!=null && Costanti.CHOICE_FRUIZIONE_MODI_VALUE.equals(mode);
 	}
 	public String getJwtSubject() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SUBJECT);
@@ -345,45 +329,45 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 	}
 	public boolean isJwtSignIncludeKeyIdWithKeyAlias() {
 		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID);
-		return tmp!=null ? Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_ALIAS.equals(tmp) : false;
+		return tmp!=null && Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_ALIAS.equals(tmp);
 	}
 	public boolean isJwtSignIncludeKeyIdWithClientId() {
 		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID);
-		return tmp!=null ? Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_CLIENT_ID.equals(tmp) : false;
+		return tmp!=null && Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_CLIENT_ID.equals(tmp);
 	}
 	public boolean isJwtSignIncludeKeyIdApplicativoModI() {
 		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID);
-		return tmp!=null ? Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_APPLICATIVO_MODI.equals(tmp) : false;
+		return tmp!=null && Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_APPLICATIVO_MODI.equals(tmp);
 	}
 	public boolean isJwtSignIncludeKeyIdFruizioneModI() {
 		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID);
-		return tmp!=null ? Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_FRUIZIONE_MODI.equals(tmp) : false;
+		return tmp!=null && Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_FRUIZIONE_MODI.equals(tmp);
 	}
 	public boolean isJwtSignIncludeKeyIdCustom() {
 		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID);
-		return tmp!=null ? Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_CUSTOM.equals(tmp) : false;
+		return tmp!=null && Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_CUSTOM.equals(tmp);
 	}
 	public String getJwtSignIncludeKeyIdCustom() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_VALUE);
 	}
 	public boolean isJwtSignIncludeX509Cert() {
 		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_X509_CERT);
-		return tmp!=null ? Boolean.valueOf(tmp) : false;
+		return tmp!=null && Boolean.valueOf(tmp);
 	}
 	public String getJwtSignIncludeX509URL() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_X509_URL);
 	}
 	public boolean isJwtSignIncludeX509CertSha1() {
 		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_X509_SHA1);
-		return tmp!=null ? Boolean.valueOf(tmp) : false;
+		return tmp!=null && Boolean.valueOf(tmp);
 	}
 	public boolean isJwtSignIncludeX509CertSha256() {
 		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_X509_SHA256);
-		return tmp!=null ? Boolean.valueOf(tmp) : false;
+		return tmp!=null && Boolean.valueOf(tmp);
 	}
 	public boolean isJwtSignJoseContentType() {
 		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_JOSE_CONTENT_TYPE);
-		return tmp!=null ? Boolean.valueOf(tmp) : false;
+		return tmp!=null && Boolean.valueOf(tmp);
 	}
 	public String getJwtSignJoseType() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_JOSE_TYPE);
@@ -399,6 +383,12 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 	}
 	public String getJwtSignKeystoreFile() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_FILE);
+	}
+	public String getJwtSignKeystoreFilePublicKey() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_FILE_PUBLIC_KEY);
+	}
+	public String getJwtSignKeyPairAlgorithm() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYPAIR_ALGORITHM);
 	}
 	public String getJwtSignKeystorePassword() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_PASSWORD);

@@ -282,10 +282,10 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 			String n = split[i].trim();
 			if(n.contains("{"+SecurityConstants.NAMESPACE_ATTACH+"}")){
 				if(n.startsWith("{"+SecurityConstants.PART_ELEMENT+"}")){
-					bf.append("{"+SecurityConstants.PART_ELEMENT+"}"+SecurityConstants.CID_ATTACH_WSS4j);
+					bf.append("{"+SecurityConstants.PART_ELEMENT+"}"+SecurityConstants.CID_ATTACH_WSS4J);
 				}
 				else {
-					bf.append("{"+SecurityConstants.PART_CONTENT+"}"+SecurityConstants.CID_ATTACH_WSS4j);
+					bf.append("{"+SecurityConstants.PART_CONTENT+"}"+SecurityConstants.CID_ATTACH_WSS4J);
 				}
 			}
 			else{

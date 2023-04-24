@@ -398,7 +398,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			// setProperties
 			messageSecurityContext.setIncomingProperties(secProperties, false);
 			if(signAttachments) {
-				messageSecurityContext.setManualAttachmentsSignaturePart("{}"+SecurityConstants.CID_ATTACH_WSS4j);
+				messageSecurityContext.setManualAttachmentsSignaturePart("{}"+SecurityConstants.CID_ATTACH_WSS4J);
 			}
 			
 			

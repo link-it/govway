@@ -447,7 +447,7 @@ public class ModIImbustamentoSoap {
 				if(bf.length()>0) {
 					bf.append(";");
 				}
-				bf.append("{}"+SecurityConstants.CID_ATTACH_WSS4j);
+				bf.append("{}"+SecurityConstants.CID_ATTACH_WSS4J);
 				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_SOAP_PREFIX+"Attachments", "tutti");
 			}
 		}

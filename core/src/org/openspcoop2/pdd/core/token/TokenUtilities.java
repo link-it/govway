@@ -37,7 +37,6 @@ import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
-import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.mvc.properties.Item;
 import org.openspcoop2.core.mvc.properties.constants.ItemType;
 import org.openspcoop2.core.mvc.properties.provider.ExternalResources;
@@ -48,6 +47,7 @@ import org.openspcoop2.core.mvc.properties.utils.MultiPropertiesUtilities;
 import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.core.plugins.utils.PluginsDriverUtils;
+import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.utils.AbstractSecurityProvider;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 
@@ -59,27 +59,29 @@ import org.openspcoop2.utils.certificate.KeystoreParams;
  * @version $Rev$, $Date$
  */
 public class TokenUtilities {
+	
+	private TokenUtilities() {}
 
 	public static Properties getDefaultProperties(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
 		return MultiPropertiesUtilities.getDefaultProperties(mapProperties);
 	}
-	public static Properties getValidazioneJwtClaimsMappingProperties(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
+	public static Properties getValidazioneJwtClaimsMappingProperties(Map<String, Properties> mapProperties) {
 		return mapProperties.get(Costanti.VALIDAZIONE_JWT_TOKEN_PARSER_COLLECTION_ID);
 	}
-	public static Properties getIntrospectionClaimsMappingProperties(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
+	public static Properties getIntrospectionClaimsMappingProperties(Map<String, Properties> mapProperties) {
 		return mapProperties.get(Costanti.INTROSPECTION_TOKEN_PARSER_COLLECTION_ID);
 	}
-	public static Properties getUserInfoClaimsMappingProperties(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
+	public static Properties getUserInfoClaimsMappingProperties(Map<String, Properties> mapProperties) {
 		return mapProperties.get(Costanti.USERINFO_TOKEN_PARSER_COLLECTION_ID);
 	}
 	
-	public static Properties getRetrieveResponseClaimsMappingProperties(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
+	public static Properties getRetrieveResponseClaimsMappingProperties(Map<String, Properties> mapProperties) {
 		return mapProperties.get(Costanti.RETRIEVE_TOKEN_PARSER_COLLECTION_ID);
 	}
 	
 	public static List<String> getClaims(Properties p, String name) {
 		String v = p.getProperty(name);
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(v.contains(",")) {
 			String [] tmp = v.split(",");
 			for (String s : tmp) {
@@ -94,7 +96,7 @@ public class TokenUtilities {
 		return l;
 	}
 	
-	public static Map<String, Properties> getMultiProperties(GenericProperties gp) throws ProviderException, ProviderValidationException {
+	public static Map<String, Properties> getMultiProperties(GenericProperties gp) throws ProviderException {
 		Map<String, Properties> multiProperties = null;
 		try {
 			HashMap<String, String> properties = new HashMap<>();
@@ -156,15 +158,18 @@ public class TokenUtilities {
 		return MultiPropertiesUtilities.isEnabled(p, propertyName);
 	}
 	
+	private static String getPrefixPolicy(GenericProperties gp) {
+		return "La configurazione nella policy "+gp.getNome();
+	}
 	
-	public static KeystoreParams getValidazioneJwtKeystoreParams(GenericProperties gp) throws Exception {
+	public static KeystoreParams getValidazioneJwtKeystoreParams(GenericProperties gp) throws TokenException, ProviderException, ProviderValidationException {
 		PolicyGestioneToken policy = TokenUtilities.convertTo(gp, new GestioneToken());
 		if(!TokenUtilities.isValidazioneEnabled(gp)) {
-			throw new Exception("La configurazione nella policy "+gp.getNome()+" non utilizza la funzionalità di validazione JWT");
+			throw new TokenException(getPrefixPolicy(gp)+" non utilizza la funzionalità di validazione JWT");
 		}
 		return getValidazioneJwtKeystoreParams(policy);
 	}
-	public static KeystoreParams getValidazioneJwtKeystoreParams(PolicyGestioneToken policy) throws Exception {
+	public static KeystoreParams getValidazioneJwtKeystoreParams(PolicyGestioneToken policy) {
 		String tokenType = policy.getTipoToken();
 		Properties p = null;
 		if(org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_TYPE_JWS.equals(tokenType)) {
@@ -191,14 +196,14 @@ public class TokenUtilities {
 		return null;
 	}
 	
-	public static KeystoreParams getForwardToJwtKeystoreParams(GenericProperties gp) throws Exception {
+	public static KeystoreParams getForwardToJwtKeystoreParams(GenericProperties gp) throws TokenException, ProviderException, ProviderValidationException {
 		PolicyGestioneToken policy = TokenUtilities.convertTo(gp, new GestioneToken());
 		if(!TokenUtilities.isTokenForwardEnabled(gp) || !policy.isForwardToken_informazioniRaccolte()) {
-			throw new DriverConfigurazioneException("La configurazione nella policy "+gp.getNome()+" non utilizza la funzionalità di forward delle informazioni raccolte del token");
+			throw new TokenException(getPrefixPolicy(gp)+" non utilizza la funzionalità di forward delle informazioni raccolte del token");
 		}
 		return getForwardToJwtKeystoreParams(policy);
 	}
-	public static KeystoreParams getForwardToJwtKeystoreParams(PolicyGestioneToken policy) throws Exception {
+	public static KeystoreParams getForwardToJwtKeystoreParams(PolicyGestioneToken policy) {
 		String forwardInformazioniRaccolteMode = policy.getForwardToken_informazioniRaccolteMode();
 		Properties p = null;
 		if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JWS.equals(forwardInformazioniRaccolteMode) ||
@@ -226,7 +231,7 @@ public class TokenUtilities {
 		return null;
 	}
 	
-	public static PolicyGestioneToken convertTo(GenericProperties gp, GestioneToken gestioneToken) throws Exception { 
+	public static PolicyGestioneToken convertTo(GenericProperties gp, GestioneToken gestioneToken) throws ProviderException, ProviderValidationException { 
 	
 		PolicyGestioneToken policy = new PolicyGestioneToken();
 		policy.setName(gp.getNome());
@@ -249,114 +254,88 @@ public class TokenUtilities {
 		policy.setForwardToken(false);
 		
 		if(gestioneToken!=null) {
-			
-			if(gestioneToken.getTokenOpzionale()!=null) {
-				switch (gestioneToken.getTokenOpzionale()) {
-				case ABILITATO:
-					policy.setTokenOpzionale(true);
-					break;
-				case DISABILITATO:
-					policy.setTokenOpzionale(false);
-					break;
-				}
-			}
-			
-			boolean validazioneEnabledDaPolicy = isValidazioneEnabled(multiProperties);
-			if(validazioneEnabledDaPolicy) {
-				if(gestioneToken.getValidazione()!=null) {
-					switch (gestioneToken.getValidazione()) {
-					case ABILITATO:
-						policy.setValidazioneJWT(true);
-						policy.setValidazioneJWT_warningOnly(false);
-						break;
-					case WARNING_ONLY:
-						policy.setValidazioneJWT(true);
-						policy.setValidazioneJWT_warningOnly(true);
-						break;
-					case DISABILITATO:
-						policy.setValidazioneJWT(false);
-						policy.setValidazioneJWT_warningOnly(false);
-						break;
-					}
-				}
-			}
-			
-			boolean introspectionEnabledDaPolicy = isIntrospectionEnabled(multiProperties);
-			if(introspectionEnabledDaPolicy) {
-				if(gestioneToken.getIntrospection()!=null) {
-					switch (gestioneToken.getIntrospection()) {
-					case ABILITATO:
-						policy.setIntrospection(true);
-						policy.setIntrospection_warningOnly(false);
-						break;
-					case WARNING_ONLY:
-						policy.setIntrospection(true);
-						policy.setIntrospection_warningOnly(true);
-						break;
-					case DISABILITATO:
-						policy.setIntrospection(false);
-						policy.setIntrospection_warningOnly(false);
-						break;
-					}
-				}
-			}
-			
-			boolean userInfoEnabledDaPolicy = isUserInfoEnabled(multiProperties);
-			if(userInfoEnabledDaPolicy) {
-				if(gestioneToken.getUserInfo()!=null) {
-					switch (gestioneToken.getUserInfo()) {
-					case ABILITATO:
-						policy.setUserInfo(true);
-						policy.setUserInfo_warningOnly(false);
-						break;
-					case WARNING_ONLY:
-						policy.setUserInfo(true);
-						policy.setUserInfo_warningOnly(true);
-						break;
-					case DISABILITATO:
-						policy.setUserInfo(false);
-						policy.setUserInfo_warningOnly(false);
-						break;
-					}
-				}
-			}
-			
-			boolean forwardEnabledDaPolicy = isTokenForwardEnabled(multiProperties);
-			if(forwardEnabledDaPolicy) {
-				if(gestioneToken.getForward()!=null) {
-					switch (gestioneToken.getForward()) {
-					case ABILITATO:
-						policy.setForwardToken(true);
-						break;
-					case DISABILITATO:
-						policy.setForwardToken(false);
-						break;
-					}
-				}
-			}
-			
+			fill(policy, gestioneToken, multiProperties);
 		}
 		
 		return policy;
 
 	}
+	private static void fill(PolicyGestioneToken policy, GestioneToken gestioneToken, Map<String, Properties> multiProperties) throws ProviderException, ProviderValidationException {
+		if(gestioneToken.getTokenOpzionale()!=null) {
+			policy.setTokenOpzionale(org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(gestioneToken.getTokenOpzionale()));
+		}
+		
+		boolean validazioneEnabledDaPolicy = isValidazioneEnabled(multiProperties);
+		if(validazioneEnabledDaPolicy &&
+			gestioneToken.getValidazione()!=null) {
+			switch (gestioneToken.getValidazione()) {
+			case ABILITATO:
+				policy.setValidazioneJWT(true);
+				policy.setValidazioneJWT_warningOnly(false);
+				break;
+			case WARNING_ONLY:
+				policy.setValidazioneJWT(true);
+				policy.setValidazioneJWT_warningOnly(true);
+				break;
+			case DISABILITATO:
+				policy.setValidazioneJWT(false);
+				policy.setValidazioneJWT_warningOnly(false);
+				break;
+			}
+		}
+		
+		boolean introspectionEnabledDaPolicy = isIntrospectionEnabled(multiProperties);
+		if(introspectionEnabledDaPolicy &&
+			gestioneToken.getIntrospection()!=null) {
+			switch (gestioneToken.getIntrospection()) {
+			case ABILITATO:
+				policy.setIntrospection(true);
+				policy.setIntrospection_warningOnly(false);
+				break;
+			case WARNING_ONLY:
+				policy.setIntrospection(true);
+				policy.setIntrospection_warningOnly(true);
+				break;
+			case DISABILITATO:
+				policy.setIntrospection(false);
+				policy.setIntrospection_warningOnly(false);
+				break;
+			}
+		}
+		
+		boolean userInfoEnabledDaPolicy = isUserInfoEnabled(multiProperties);
+		if(userInfoEnabledDaPolicy &&
+			gestioneToken.getUserInfo()!=null) {
+			switch (gestioneToken.getUserInfo()) {
+			case ABILITATO:
+				policy.setUserInfo(true);
+				policy.setUserInfo_warningOnly(false);
+				break;
+			case WARNING_ONLY:
+				policy.setUserInfo(true);
+				policy.setUserInfo_warningOnly(true);
+				break;
+			case DISABILITATO:
+				policy.setUserInfo(false);
+				policy.setUserInfo_warningOnly(false);
+				break;
+			}
+		}
+		
+		boolean forwardEnabledDaPolicy = isTokenForwardEnabled(multiProperties);
+		if(forwardEnabledDaPolicy &&
+			gestioneToken.getForward()!=null) {
+			policy.setForwardToken(org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(gestioneToken.getForward()));
+		}
+	}
 	
 	
 	public static List<String> getClaimValues(Object value) {
+		List<String> lRet = null;
 		if(value!=null) {
 			if(value instanceof List<?>) {
 				List<?> l = (List<?>) value;
-				if(!l.isEmpty()) {
-					List<String> lString = new ArrayList<>();
-					for (Object o : l) {
-						if(o!=null) {
-							lString.add(o.toString());
-						}
-					}
-					if(!lString.isEmpty()) {
-						return lString;
-					}
-				}
+				return getClaimValues(l);
 			}
 			else {
 				String sValue = value.toString();
@@ -365,28 +344,41 @@ public class TokenUtilities {
 				return l;
 			}
 		}
-		return null;
+		return lRet;
+	}
+	private static List<String> getClaimValues(List<?> l) {
+		List<String> lRet = null;
+		if(!l.isEmpty()) {
+			List<String> lString = new ArrayList<>();
+			for (Object o : l) {
+				if(o!=null) {
+					lString.add(o.toString());
+				}
+			}
+			if(!lString.isEmpty()) {
+				return lString;
+			}
+		}
+		return lRet;
 	}
 	
 	public static String getClaimValuesAsString(List<String> claimValues) {
-		String claimValue = null;
+		StringBuilder claimValueSB = new StringBuilder();
 		if(claimValues==null || claimValues.isEmpty()) {
 			return null;
 		}
 		if(claimValues.size()>1) {
 			for (String c : claimValues) {
-				if(claimValue!=null) {
-					claimValue = claimValue +","+c;
+				if(claimValueSB.length()>0) {
+					claimValueSB.append(",");
 				}
-				else {
-					claimValue = c;
-				}
+				claimValueSB.append(c);
 			}
 		}
 		else {
-			claimValue = claimValues.get(0);
+			claimValueSB.append(claimValues.get(0));
 		}
-		return claimValue;
+		return claimValueSB.length()>0 ? claimValueSB.toString() : null;
 	}
 	
 	public static String getClaimAsString(Map<String, Object> claims, String claim) {
@@ -394,17 +386,18 @@ public class TokenUtilities {
 		if(l==null || l.isEmpty()) {
 			return null;
 		}
-		String claimValue = TokenUtilities.getClaimValuesAsString(l);
-		return claimValue;
+		return TokenUtilities.getClaimValuesAsString(l);
 	}
 	public static List<String> getClaimAsList(Map<String, Object> claims, String claim) {
+		List<String> l = null;
 		Object o = claims.get(claim);
 		if(o==null) {
-			return null;
+			return l;
 		}
-		List<String> l = TokenUtilities.getClaimValues(o);
-		if(l==null || l.isEmpty()) {
-			return null;
+		l = TokenUtilities.getClaimValues(o);
+		List<String> lRet = null;
+		if(l!=null && l.isEmpty()) {
+			return lRet;
 		}
 		return l;
 	}
@@ -419,44 +412,47 @@ public class TokenUtilities {
 		return null;
 	}
 	public static List<String> getFirstClaimAsList(Map<String, Object> claims, List<String> names) {
+		List<String> lRet = null;
 		for (String name : names) {
 			List<String> l = getClaimAsList(claims, name);
 			if(l!=null && !l.isEmpty()) {
 				return l;
 			}
 		}
-		return null;
+		return lRet;
 	}
 	
 	public static KeystoreParams getSignedJwtKeystoreParams(GenericProperties gp) throws Exception {
 		PolicyNegoziazioneToken policy = TokenUtilities.convertTo(gp);
 		return getSignedJwtKeystoreParams(policy);
 	}
-	public static KeystoreParams getSignedJwtKeystoreParams(PolicyNegoziazioneToken policy) throws Exception {
+	public static KeystoreParams getSignedJwtKeystoreParams(PolicyNegoziazioneToken policy) throws TokenException {
 	
-		if(!policy.isRfc7523_x509_Grant()) {
-			throw new DriverConfigurazioneException("La configurazione nella policy "+policy.getName()+" non utilizza la funzionalità SignedJWT (RFC 7523)");
+		if(!policy.isRfc7523x509Grant()) {
+			throw new TokenException("La configurazione nella policy "+policy.getName()+" non utilizza la funzionalità SignedJWT (RFC 7523)");
 		}
 		
 		String keystoreType = policy.getJwtSignKeystoreType();
 		if(keystoreType==null) {
-			throw new Exception("JWT Signature keystore type undefined");
+			throw new TokenException("JWT Signature keystore type undefined");
 		}
 		String keystoreFile = policy.getJwtSignKeystoreFile();
 		if(keystoreFile==null) {
-			throw new Exception("JWT Signature keystore file undefined");
+			throw new TokenException("JWT Signature keystore file undefined");
 		}
 		String keystorePassword = policy.getJwtSignKeystorePassword();
-		if(keystorePassword==null && !"jwk".equalsIgnoreCase(keystoreType)) {
-			throw new Exception("JWT Signature keystore password undefined");
+		if(keystorePassword==null && !SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType)) {
+			throw new TokenException("JWT Signature keystore password undefined");
 		}
 		String keyAlias = policy.getJwtSignKeyAlias();
 		if(keyAlias==null) {
-			throw new Exception("JWT Signature key alias undefined");
+			throw new TokenException("JWT Signature key alias undefined");
 		}
 		String keyPassword = policy.getJwtSignKeyPassword();
-		if(keyPassword==null) {
-			throw new Exception("JWT Signature key password undefined");
+		if(keystorePassword==null && 
+				!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) && 
+				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
+			throw new TokenException("JWT Signature key password undefined");
 		}
 		
 		KeystoreParams keystoreParams = new KeystoreParams();
@@ -489,30 +485,34 @@ public class TokenUtilities {
 	public static void checkClaims(String oggetto, Properties claims, String elemento, List<String> denyClaims, boolean checkSpazi) throws ProviderValidationException {
 		if(claims!=null && !claims.isEmpty()) {
 			for (Object oClaim : claims.keySet()) {
-				if(oClaim !=null && oClaim instanceof String) {
+				if(oClaim instanceof String) {
 					String claim = (String) oClaim;
 					String value = claims.getProperty(claim);
-					
-					if(denyClaims.contains(claim) || denyClaims.contains(claim.toLowerCase())) {
-						throw new ProviderValidationException(oggetto+" '"+claim+"', indicato nel campo '"+elemento+"', non può essere configurato");
-					}
-					if(value==null || StringUtils.isEmpty(value)) {
-						throw new ProviderValidationException(oggetto+" '"+claim+"', indicato nel campo '"+elemento+"', non è valorizzato");
-					}
-					if(checkSpazi) {
-						if(value.contains(" ")) {
-							throw new ProviderValidationException("Non indicare spazi nel "+oggetto+" '"+claim+"', indicato nel campo '"+elemento+"'");
-						}
-					}
-					else {
-						if(value.startsWith(" ")) {
-							throw new ProviderValidationException("Il valore del "+oggetto+" '"+claim+"', indicato nel campo '"+elemento+"', non deve iniziare con uno spazio");
-						}
-						if(value.endsWith(" ")) {
-							throw new ProviderValidationException("Il valore del "+oggetto+" '"+claim+"', indicato nel campo '"+elemento+"', non deve terminare con uno spazio");
-						}
-					}
+					validateClaims(oggetto, elemento, denyClaims, checkSpazi, claim, value);
 				}
+			}
+		}
+	}
+	private static void validateClaims(String oggetto, String elemento, List<String> denyClaims, boolean checkSpazi,
+			String claim, String value) throws ProviderValidationException {
+		String indicato = "indicato nel campo '"+elemento+"'";
+		if(denyClaims.contains(claim) || denyClaims.contains(claim.toLowerCase())) {
+			throw new ProviderValidationException(oggetto+" '"+claim+"', "+indicato+", non può essere configurato");
+		}
+		if(value==null || StringUtils.isEmpty(value)) {
+			throw new ProviderValidationException(oggetto+" '"+claim+"', "+indicato+", non è valorizzato");
+		}
+		if(checkSpazi) {
+			if(value.contains(" ")) {
+				throw new ProviderValidationException("Non indicare spazi nel "+oggetto+" '"+claim+"', "+indicato+"");
+			}
+		}
+		else {
+			if(value.startsWith(" ")) {
+				throw new ProviderValidationException("Il valore del "+oggetto+" '"+claim+"', "+indicato+", non deve iniziare con uno spazio");
+			}
+			if(value.endsWith(" ")) {
+				throw new ProviderValidationException("Il valore del "+oggetto+" '"+claim+"', "+indicato+", non deve terminare con uno spazio");
 			}
 		}
 	}
@@ -521,20 +521,19 @@ public class TokenUtilities {
 		// verifico che sia un JWT
 		if(token.contains(".")) {
 			String [] tmp = token.split("\\.");
-			if(tmp!=null && tmp.length==3) {
-				if(tmp[2]!=null) {
-					if(tmp[0]!=null && tmp[1]!=null) {
-						return tmp[0]+"."+tmp[1]+".==SIGNATURE==";
-					}
-					else if(tmp[0]==null && tmp[1]!=null) {
-						return "."+tmp[1]+".==SIGNATURE==";
-					}
-					else if(tmp[0]!=null && tmp[1]==null) {
-						return tmp[0]+"..==SIGNATURE==";
-					}
-					else {
-						return "..==SIGNATURE==";
-					}
+			if(tmp!=null && tmp.length==3 &&
+				tmp[2]!=null) {
+				if(tmp[0]!=null && tmp[1]!=null) {
+					return tmp[0]+"."+tmp[1]+".==SIGNATURE==";
+				}
+				else if(tmp[0]==null && tmp[1]!=null) {
+					return "."+tmp[1]+".==SIGNATURE==";
+				}
+				else if(tmp[0]!=null && tmp[1]==null) {
+					return tmp[0]+"..==SIGNATURE==";
+				}
+				else {
+					return "..==SIGNATURE==";
 				}
 			}
 		}
@@ -542,20 +541,24 @@ public class TokenUtilities {
 	}
 	public static void replaceTokenInMap(Map<String, Object> claims, String originale, String newToken) {
 		if(claims!=null && !claims.isEmpty()) {
-			List<String> keyDaSostituire = new ArrayList<String>();
-			for (String key : claims.keySet()) {
+			List<String> keyDaSostituire = new ArrayList<>();
+			for (Map.Entry<String,Object> entry : claims.entrySet()) {
+				String key = entry.getKey();
 				Object o = claims.get(key);
-				if(o !=null && o instanceof String && originale.equals(o)) {
+				if(o instanceof String && originale.equals(o)) {
 					keyDaSostituire.add(key);
 				}
 			}
-			while(keyDaSostituire.size()>0) {
+			while(!keyDaSostituire.isEmpty()) {
 				String key = keyDaSostituire.remove(0);
 				claims.remove(key);
 				claims.put(key, newToken);
 			}
 		}
 	}
+	
+	private static final String EXTERNAL_RESOURCE_UNDEFINED = "External resource undefined";
+	private static final String RECUPERO_PLUGIN_REGISTRATI_FALLITO_PREFIX = "Recupero plugin registrati fallito: ";
 	
 	public static List<String> getTokenPluginValues(ExternalResources externalResources, TipoPlugin tipoPlugin) throws ProviderException{
 		return getTokenPluginList(externalResources, tipoPlugin, true);
@@ -565,15 +568,15 @@ public class TokenUtilities {
 	}
 	private static List<String> getTokenPluginList(ExternalResources externalResources, TipoPlugin tipoPlugin, boolean value) throws ProviderException{
 		if(externalResources==null) {
-			throw new ProviderException("External resource undefined");
+			throw new ProviderException(EXTERNAL_RESOURCE_UNDEFINED);
 		}
 		ISearch ricerca = new Search(true);
 		ricerca.addFilter(Liste.CONFIGURAZIONE_PLUGINS_CLASSI,  Filtri.FILTRO_TIPO_PLUGIN_CLASSI, tipoPlugin.toString());
 		List<Plugin> list = null;
 		try {
 			list = PluginsDriverUtils.pluginsClassiList(ricerca, externalResources.getConnection(), externalResources.getLog(), externalResources.getTipoDB());
-		}catch(Throwable t) {
-			throw new ProviderException("Recupero plugin registrati fallito: "+t.getMessage(),t);
+		}catch(Exception t) {
+			throw new ProviderException(RECUPERO_PLUGIN_REGISTRATI_FALLITO_PREFIX+t.getMessage(),t);
 		}
 		List<String> values = new ArrayList<>();
 		values.add(CostantiConfigurazione.POLICY_ID_NON_DEFINITA);
@@ -596,16 +599,11 @@ public class TokenUtilities {
 	public static String dynamicUpdateTokenPluginChoice(ExternalResources externalResources, TipoPlugin tipoPlugin, Item item, String actualValue) {
 		try {
 			if(externalResources==null) {
-				throw new ProviderException("External resource undefined");
+				throw new ProviderException(EXTERNAL_RESOURCE_UNDEFINED);
 			}
 			ISearch ricerca = new Search(true);
 			ricerca.addFilter(Liste.CONFIGURAZIONE_PLUGINS_CLASSI,  Filtri.FILTRO_TIPO_PLUGIN_CLASSI, tipoPlugin.toString());
-			List<Plugin> listTmp = null;
-			try {
-				listTmp = PluginsDriverUtils.pluginsClassiList(ricerca, externalResources.getConnection(), externalResources.getLog(), externalResources.getTipoDB());
-			}catch(Throwable t) {
-				throw new ProviderException("Recupero plugin registrati fallito: "+t.getMessage(),t);
-			}
+			List<Plugin> listTmp = pluginsClassiList(ricerca, externalResources);
 			List<Plugin> list = null;
 			if(listTmp!=null && !listTmp.isEmpty()) {
 				list = new ArrayList<>();
@@ -625,9 +623,16 @@ public class TokenUtilities {
 				item.setValue(actualValue);
 				return actualValue;
 			}
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			// ignore
 			return actualValue;
+		}
+	}
+	private static List<Plugin> pluginsClassiList(ISearch ricerca, ExternalResources externalResources) throws ProviderException{
+		try {
+			return PluginsDriverUtils.pluginsClassiList(ricerca, externalResources.getConnection(), externalResources.getLog(), externalResources.getTipoDB());
+		}catch(Exception t) {
+			throw new ProviderException(RECUPERO_PLUGIN_REGISTRATI_FALLITO_PREFIX+t.getMessage(),t);
 		}
 	}
 	public static String dynamicUpdateTokenPluginClassName(ExternalResources externalResources, TipoPlugin tipoPlugin, 
@@ -635,52 +640,62 @@ public class TokenUtilities {
 			String idChoice, String actualValue) {
 		try {
 			if(externalResources==null) {
-				throw new ProviderException("External resource undefined");
+				throw new ProviderException(EXTERNAL_RESOURCE_UNDEFINED);
 			}
-			ISearch ricerca = new Search(true);
-			ricerca.addFilter(Liste.CONFIGURAZIONE_PLUGINS_CLASSI,  Filtri.FILTRO_TIPO_PLUGIN_CLASSI, tipoPlugin.toString());
-			List<Plugin> listTmp = null;
-			try {
-				listTmp = PluginsDriverUtils.pluginsClassiList(ricerca, externalResources.getConnection(), externalResources.getLog(), externalResources.getTipoDB());
-			}catch(Throwable t) {
-				throw new ProviderException("Recupero plugin registrati fallito: "+t.getMessage(),t);
-			}
-			List<Plugin> list = null;
-			if(listTmp!=null && !listTmp.isEmpty()) {
-				list = new ArrayList<>();
-				for (Plugin p : listTmp) {
-					if(p.isStato()) {	
-						list.add(p);
-					}
+			
+			List<Plugin> list = fillListTipoPlugin(externalResources, tipoPlugin);
+			
+			return dynamicUpdateTokenPluginClassName(list, 
+					items, mapNameValue, item, 
+					idChoice, actualValue);
+			
+		}catch(Exception t) {
+			// ignore
+		}
+		return actualValue;
+	}
+	private static List<Plugin> fillListTipoPlugin(ExternalResources externalResources, TipoPlugin tipoPlugin) throws ProviderException {
+		ISearch ricerca = new Search(true);
+		ricerca.addFilter(Liste.CONFIGURAZIONE_PLUGINS_CLASSI,  Filtri.FILTRO_TIPO_PLUGIN_CLASSI, tipoPlugin.toString());
+		List<Plugin> listTmp = pluginsClassiList(ricerca, externalResources);
+		List<Plugin> list = null;
+		if(listTmp!=null && !listTmp.isEmpty()) {
+			list = new ArrayList<>();
+			for (Plugin p : listTmp) {
+				if(p.isStato()) {	
+					list.add(p);
 				}
 			}
-			if(list!=null && !list.isEmpty()) {
-				item.setRequired(false);
-				
-				if(actualValue==null) {
+		}
+		return list;
+	}
+	private static String dynamicUpdateTokenPluginClassName(List<Plugin> list, 
+			List<?> items, Map<String, String> mapNameValue, Item item, 
+			String idChoice, String actualValue) {
+		if(list!=null && !list.isEmpty()) {
+			item.setRequired(false);
+			
+			if(actualValue==null) {
+				item.setType(ItemType.HIDDEN);
+				item.setValue(CostantiConfigurazione.POLICY_ID_NON_DEFINITA);
+				return CostantiConfigurazione.POLICY_ID_NON_DEFINITA;
+			}
+			else {
+				String pluginSelected = AbstractSecurityProvider.readValue(idChoice, items, mapNameValue);
+				if(pluginSelected!=null && !StringUtils.isEmpty(pluginSelected) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(pluginSelected)) {
 					item.setType(ItemType.HIDDEN);
 					item.setValue(CostantiConfigurazione.POLICY_ID_NON_DEFINITA);
 					return CostantiConfigurazione.POLICY_ID_NON_DEFINITA;
 				}
-				else {
-					String pluginSelected = AbstractSecurityProvider.readValue(idChoice, items, mapNameValue);
-					if(pluginSelected!=null && !StringUtils.isEmpty(pluginSelected) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(pluginSelected)) {
-						item.setType(ItemType.HIDDEN);
-						item.setValue(CostantiConfigurazione.POLICY_ID_NON_DEFINITA);
-						return CostantiConfigurazione.POLICY_ID_NON_DEFINITA;
-					}
-				}
-				
-				if(actualValue!=null && StringUtils.isNotEmpty(actualValue) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(actualValue)) {
-					item.setType(ItemType.TEXT);
-				}
 			}
-			else {
+			
+			if(StringUtils.isNotEmpty(actualValue) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(actualValue)) {
 				item.setType(ItemType.TEXT);
-				item.setRequired(true);
 			}
-		}catch(Throwable t) {
-			// ignore
+		}
+		else {
+			item.setType(ItemType.TEXT);
+			item.setRequired(true);
 		}
 		return actualValue;
 	}

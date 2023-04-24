@@ -52,7 +52,7 @@ public class OCSPResponse implements Serializable {
 			this.valid = false;
 			this.exception = t;
 		}
-		catch(Throwable t) { 
+		catch(Exception t) { 
 			// Devo rilanciare le altre eccezioni per non cacharle (es. non voglio cachare connection refused)
 			throw new SecurityException(t.getMessage(),t);
 		}

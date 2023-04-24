@@ -20,13 +20,9 @@
 
 package org.openspcoop2.security.keystore;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.Serializable;
 
 import org.openspcoop2.security.SecurityException;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.resources.Charset;
 
@@ -59,38 +55,12 @@ public class JWKSetStore implements Serializable {
 	public JWKSetStore(String path) throws SecurityException{
 
 		this.jwkSetPath = path;
-				
-		InputStream isStore = null;
-		try{
-			if(this.jwkSetPath==null){
-				throw new Exception("PropertyFilePath per lo Store non indicato");
-			}
-			
-			File fStore = new File(this.jwkSetPath);
-			if(fStore.exists()){
-				isStore = new FileInputStream(fStore);
-			}else{
-				isStore = MerlinTruststore.class.getResourceAsStream(this.jwkSetPath);
-				if(isStore==null){
-					isStore = MerlinTruststore.class.getResourceAsStream("/"+this.jwkSetPath);
-				}
-				if(isStore==null){
-					throw new Exception("Store ["+this.jwkSetPath+"] not found");
-				}
-			}
-			
-			this.jwkSetContent = Utilities.getAsString(isStore, Charset.UTF_8.getValue());
-			
+						
+		byte [] archive = StoreUtils.readContent("FilePath", this.jwkSetPath);
+		try {
+			this.jwkSetContent = new String(archive, Charset.UTF_8.getValue());
 		}catch(Exception e){
 			throw new SecurityException(e.getMessage(),e);
-		}finally{
-			try{
-				if(isStore!=null){
-					isStore.close();
-				}
-			}catch(Exception eClose){
-				// close
-			}
 		}
 		
 	}
@@ -99,7 +69,7 @@ public class JWKSetStore implements Serializable {
 
 		try{
 			if(archive==null){
-				throw new Exception("Store non indicato");
+				throw new SecurityException("Store non indicato");
 			}
 			
 			this.jwkSetContent = new String(archive, Charset.UTF_8.getValue());

@@ -137,7 +137,7 @@ public class WSSUtilities {
 			
 			if(wssContext.isFunctionAsClient() == false){
 				
-				if ( (SecurityConstants.contains_ACTION_ENCRYPTION(action) || SecurityConstants.contains_ACTION_DECRYPTION(action)) 
+				if ( (SecurityConstants.containsActionEncryption(action) || SecurityConstants.containsActionDecryption(action)) 
 						&& 
 						wssProperties.containsKey(SecurityConstants.ENCRYPTION_PARTS) 
 					){

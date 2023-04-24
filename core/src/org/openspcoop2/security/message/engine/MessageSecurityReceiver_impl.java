@@ -125,8 +125,8 @@ public class MessageSecurityReceiver_impl extends MessageSecurityReceiver{
 					if(action.contains(SecurityConstants.ACTION_SIGNATURE)){
 						this.codiceErrore = CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_PRESENTE;
 					}
-					else if(SecurityConstants.contains_ACTION_ENCRYPTION(action) ||
-							SecurityConstants.contains_ACTION_DECRYPTION(action)){
+					else if(SecurityConstants.containsActionEncryption(action) ||
+							SecurityConstants.containsActionDecryption(action)){
 						this.codiceErrore = CodiceErroreCooperazione.SICUREZZA_CIFRATURA_NON_PRESENTE;
 					}
 					else{

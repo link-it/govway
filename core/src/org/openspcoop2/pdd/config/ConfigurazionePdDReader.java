@@ -196,6 +196,7 @@ import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
+import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.cache.CacheType;
@@ -2046,7 +2047,7 @@ public class ConfigurazionePdDReader {
 	protected MessageSecurityConfig getPD_MessageSecurityForSender(PortaDelegata pd) throws DriverConfigurazioneException{
 
 		MessageSecurityConfig securityConfig = new MessageSecurityConfig();
-		java.util.Map<String,Object> table = new java.util.HashMap<String,Object>();
+		java.util.Map<String,Object> table = new java.util.HashMap<>();
 		securityConfig.setFlowParameters(table);
 
 		if(pd == null)
@@ -2088,7 +2089,7 @@ public class ConfigurazionePdDReader {
 	protected MessageSecurityConfig getPD_MessageSecurityForReceiver(PortaDelegata pd) throws DriverConfigurazioneException{
 
 		MessageSecurityConfig securityConfig = new MessageSecurityConfig();
-		java.util.Map<String,Object> table = new java.util.HashMap<String,Object>();
+		java.util.Map<String,Object> table = new java.util.HashMap<>();
 		securityConfig.setFlowParameters(table);
 
 		if(pd == null)
@@ -3128,7 +3129,7 @@ public class ConfigurazionePdDReader {
 	protected MessageSecurityConfig getPA_MessageSecurityForSender(PortaApplicativa pa)throws DriverConfigurazioneException{
 
 		MessageSecurityConfig securityConfig = new MessageSecurityConfig();
-		java.util.Map<String,Object> table = new java.util.HashMap<String,Object>();
+		java.util.Map<String,Object> table = new java.util.HashMap<>();
 		securityConfig.setFlowParameters(table);
 
 		if(pa == null)
@@ -3170,7 +3171,7 @@ public class ConfigurazionePdDReader {
 	protected MessageSecurityConfig getPA_MessageSecurityForReceiver(PortaApplicativa pa)throws DriverConfigurazioneException{
 
 		MessageSecurityConfig securityConfig = new MessageSecurityConfig();
-		java.util.Map<String,Object> table = new java.util.HashMap<String,Object>();
+		java.util.Map<String,Object> table = new java.util.HashMap<>();
 		securityConfig.setFlowParameters(table);
 
 		if(pa == null)
@@ -5410,7 +5411,7 @@ public class ConfigurazionePdDReader {
 		
 		if(keystoreParams!=null) {
 			try {
-				if("jwk".equalsIgnoreCase(keystoreParams.getType())) {
+				if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
 					throw new DriverConfigurazioneException("Nella configurazione della policy "+gp.getNome()+" la funzionalità di validazione JWT utilizza un keystore jwk non compatibile con il criterio di validazione dei certificati");
 				}
 				
@@ -5433,7 +5434,7 @@ public class ConfigurazionePdDReader {
 		if(check==null || StatoCheck.OK.equals(check.getStatoCheck())) {
 			if(truststoreParams!=null) {
 				try {
-					if("jwk".equalsIgnoreCase(truststoreParams.getType())) {
+					if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(truststoreParams.getType())) {
 						throw new DriverConfigurazioneException("Nella configurazione della policy "+gp.getNome()+" la funzionalità di validazione JWT utilizza un keystore jwk non compatibile con il criterio di validazione dei certificati");
 					}
 					
@@ -5542,7 +5543,7 @@ public class ConfigurazionePdDReader {
 		
 		if(keystoreParams!=null) {
 			try {
-				if("jwk".equalsIgnoreCase(keystoreParams.getType())) {
+				if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
 					throw new DriverConfigurazioneException("Nella configurazione della policy "+gp.getNome()+" la funzionalità di forward delle informazioni raccolte come JWT utilizza un keystore jwk non compatibile con il criterio di validazione dei certificati");
 				}
 				
@@ -5565,7 +5566,7 @@ public class ConfigurazionePdDReader {
 		if(check==null || StatoCheck.OK.equals(check.getStatoCheck())) {
 			if(truststoreParams!=null) {
 				try {
-					if("jwk".equalsIgnoreCase(truststoreParams.getType())) {
+					if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(truststoreParams.getType())) {
 						throw new DriverConfigurazioneException("Nella configurazione della policy "+gp.getNome()+" la funzionalità di forward delle informazioni raccolte come JWT utilizza un keystore jwk non compatibile con il criterio di validazione dei certificati");
 					}
 					
@@ -5682,7 +5683,7 @@ public class ConfigurazionePdDReader {
 		KeystoreParams keystoreParams = null;
 		try {
 			PolicyNegoziazioneToken policy = TokenUtilities.convertTo(gp);
-			if(!policy.isRfc7523_x509_Grant()) {
+			if(!policy.isRfc7523x509Grant()) {
 				throw new DriverConfigurazioneException("La configurazione nella policy "+gp.getNome()+" non utilizza la funzionalità SignedJWT (RFC 7523)");
 			}
 			// JWS Compact   			
@@ -5698,8 +5699,11 @@ public class ConfigurazionePdDReader {
 		
 		if(keystoreParams!=null) {
 			try {
-				if("jwk".equalsIgnoreCase(keystoreParams.getType())) {
-					throw new DriverConfigurazioneException("Nella configurazione della policy "+gp.getNome()+" la funzionalità di SignedJWT utilizza un keystore jwk non compatibile con il criterio di validazione dei certificati");
+				if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+					throw new DriverConfigurazioneException("Nella configurazione della policy "+gp.getNome()+" la funzionalità di SignedJWT utilizza un keystore "+SecurityConstants.KEYSTORE_TYPE_JWK_LABEL+" non compatibile con il criterio di validazione dei certificati");
+				}
+				if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+					throw new DriverConfigurazioneException("Nella configurazione della policy "+gp.getNome()+" la funzionalità di SignedJWT utilizza un keystore "+SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_LABEL+" non compatibile con il criterio di validazione dei certificati");
 				}
 				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equalsIgnoreCase(keystoreParams.getPath())) {
 					throw new DriverConfigurazioneException("Nella configurazione della policy "+gp.getNome()+" la funzionalità di SignedJWT utilizza la modalità '"+Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_LABEL+"'; la validazione dei certificati verrà effettuata su ogni singolo applicativo");
@@ -5835,7 +5839,7 @@ public class ConfigurazionePdDReader {
 		
 		if(keystoreParams!=null) {
 			try {
-				if("jwk".equalsIgnoreCase(keystoreParams.getType())) {
+				if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
 					throw new DriverConfigurazioneException("Nella policy "+gp.getNome()+" la configurazione della richiesta JWS utilizza un keystore jwk non compatibile con il criterio di validazione dei certificati");
 				}
 				
@@ -5917,7 +5921,7 @@ public class ConfigurazionePdDReader {
 		
 		if(keystoreParams!=null) {
 			try {
-				if("jwk".equalsIgnoreCase(keystoreParams.getType())) {
+				if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
 					throw new DriverConfigurazioneException("Nella policy "+gp.getNome()+" la configurazione della risposta JWS utilizza un keystore jwk non compatibile con il criterio di validazione dei certificati");
 				}
 				

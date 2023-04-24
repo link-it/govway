@@ -175,20 +175,69 @@
 				<property name="policy.retrieveToken.jwt.signature.keystoreType" />
 			</item>
 			<item type="textarea" name="jwtKeystoreFile" label="File" required="true">
+				<conditions and="true">
+					<condition not="true" and="false">
+						<equals name="jwtKeystoreType" value="keys"/>
+					</condition>
+				</conditions>
 				<property name="policy.retrieveToken.jwt.signature.keystoreFile" />
+			</item>
+			<item type="textarea" name="jwtKeystorePrivateKey" label="Chiave Privata" required="true">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="jwtKeystoreType" value="keys"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.jwt.signature.keystoreFile" />
+			</item>
+			<item type="textarea" name="jwtKeystorePublicKey" label="Chiave Pubblica" required="true">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="jwtKeystoreType" value="keys"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.jwt.signature.keystoreFilePublicKey" />
+			</item>
+			<item type="hidden" name="jwtKeystoreKeyPairAlgorithm" value="RSA">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="jwtKeystoreType" value="keys"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.jwt.signature.keyPairAlgorithm" />
 			</item>
 			<item type="text" name="jwtKeystorePassword" label="Password" required="true">
 				<conditions and="true">
 					<condition not="true" and="false">
 						<equals name="jwtKeystoreType" value="jwk"/>
+						<equals name="jwtKeystoreType" value="keys"/>
 					</condition>
 				</conditions>
 				<property name="policy.retrieveToken.jwt.signature.keystorePassword" />
 			</item>
 			<item type="text" name="jwtAliasChiavePrivata" label="Alias Chiave Privata" required="true">
+				<conditions and="true">
+					<condition not="true" and="false">
+						<equals name="jwtKeystoreType" value="keys"/>
+					</condition>
+				</conditions>
 				<property name="policy.retrieveToken.jwt.signature.keyAlias" />
 			</item>
 			<item type="text" name="jwtPasswordChiavePrivata" label="Password Chiave Privata" required="true">
+				<conditions and="true">
+					<condition not="true" and="false">
+						<equals name="jwtKeystoreType" value="jwk"/>
+						<equals name="jwtKeystoreType" value="keys"/>
+					</condition>
+				</conditions>				
+				<property name="policy.retrieveToken.jwt.signature.keyPassword" />
+			</item>
+			<item type="text" name="jwtPasswordChiavePrivataOpzionale" label="Password Chiave Privata" required="false">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="jwtKeystoreType" value="keys"/>
+					</condition>
+				</conditions>				
 				<property name="policy.retrieveToken.jwt.signature.keyPassword" />
 			</item>
 
@@ -258,6 +307,7 @@
 					<condition not="true" and="false">
 						<equals name="jwtKeystoreType" value="applicativoModi"/>
 						<equals name="jwtKeystoreType" value="fruizioneModi"/>
+						<equals name="jwtKeystoreType" value="keys"/>
 					</condition>
 				</conditions>
 				<values>
@@ -299,6 +349,22 @@
 					<value value="false" label="-"/>
 					<value value="fruizioneModi" label="Definito nella fruizione ModI"/>
 					<value value="true" label="Alias Chiave Privata"/>
+					<value value="client_id" label="Client ID"/>
+					<value value="custom" label="Personalizzato"/>
+				</values>
+			      	<property name="policy.retrieveToken.jwt.signature.include.key.id"/>
+			</item>
+			<item type="select" name="jwtAsymmetricSignatureKidKeyPair" label="Key Id (kid)" reloadOnChange="true" >
+				<conditions and="true">
+					<condition>
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					</condition>
+					<condition>
+						<equals name="jwtKeystoreType" value="keys"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="false" label="-"/>
 					<value value="client_id" label="Client ID"/>
 					<value value="custom" label="Personalizzato"/>
 				</values>

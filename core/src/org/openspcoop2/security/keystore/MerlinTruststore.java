@@ -20,16 +20,12 @@
 
 package org.openspcoop2.security.keystore;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.util.Properties;
 
 import org.openspcoop2.security.SecurityException;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 
 /**
@@ -63,54 +59,21 @@ public class MerlinTruststore implements Serializable {
 	
 	public MerlinTruststore(String propertyFilePath) throws SecurityException{
 		
-		InputStream isStore = null;
-		try{
-			if(propertyFilePath==null){
-				throw new Exception("PropertyFilePath per lo Store non indicato");
-			}
-			
-			File fStore = new File(propertyFilePath);
-			if(fStore.exists()){
-				isStore = new FileInputStream(fStore);
-			}else{
-				isStore = MerlinTruststore.class.getResourceAsStream(propertyFilePath);
-				if(isStore==null){
-					isStore = MerlinTruststore.class.getResourceAsStream("/"+propertyFilePath);
-				}
-				if(isStore==null){
-					throw new Exception("Store ["+propertyFilePath+"] not found");
-				}
-			}
-			Properties propStore = new Properties();
-			propStore.load(isStore);
-			isStore.close();
-			
-			_initMerlinTruststore(propStore);
-			
-		}catch(Exception e){
-			throw new SecurityException(e.getMessage(),e);
-		}finally{
-			try{
-				if(isStore!=null){
-					isStore.close();
-				}
-			}catch(Exception eClose){
-				// close
-			}
-		}
-		
+		Properties propStore = StoreUtils.readProperties("PropertyFilePath", propertyFilePath);
+		initMerlinTruststoreEngine(propStore);
+				
 	}
 	public MerlinTruststore(Properties propStore) throws SecurityException{
 		
-		_initMerlinTruststore(propStore);
+		initMerlinTruststoreEngine(propStore);
 		
 	}
 	
-	private void _initMerlinTruststore(Properties propStore) throws SecurityException{
+	private void initMerlinTruststoreEngine(Properties propStore) throws SecurityException{
 		
 		try{
 			if(propStore==null){
-				throw new Exception("Properties per lo Store non indicato");
+				throw new SecurityException("Properties per lo Store non indicato");
 			}
 			
 			this.tipoStore = propStore.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_TYPE);
@@ -155,10 +118,10 @@ public class MerlinTruststore implements Serializable {
 	private void init() throws SecurityException{
 		try{
 			if(this.tipoStore==null){
-				throw new Exception("Tipo dello Store non indicato");
+				throw new SecurityException("Tipo dello Store non indicato");
 			}
 			if(this.passwordStore==null){
-				throw new Exception("Password dello Store non indicata");
+				throw new SecurityException("Password dello Store non indicata");
 			}
 			
 			HSMManager hsmManager = HSMManager.getInstance();
@@ -169,34 +132,11 @@ public class MerlinTruststore implements Serializable {
 			if(!this.hsm) {
 			
 				if(this.ksBytes==null && this.pathStore==null){
-					throw new Exception("Path per lo Store non indicato");
+					throw new SecurityException("Path per lo Store non indicato");
 				}
 				
 				if(this.ksBytes==null) {
-					InputStream isStore = null;
-					try{
-						File fPathStore = new File(this.pathStore);
-						if(fPathStore.exists()){
-							isStore = new FileInputStream(fPathStore);
-						}else{
-							isStore = MerlinTruststore.class.getResourceAsStream(this.pathStore);
-							if(isStore==null){
-								isStore = MerlinTruststore.class.getResourceAsStream("/"+this.pathStore);
-							}
-							if(isStore==null){
-								throw new Exception("Keystore ["+this.pathStore+"] not found");
-							}
-						}
-						this.ksBytes = Utilities.getAsByteArray(isStore);
-					}finally{
-						try{
-							if(isStore!=null){
-								isStore.close();
-							}
-						}catch(Exception eClose){
-							// close
-						}
-					}
+					this.ksBytes = StoreUtils.readContent("Path", this.pathStore);
 				}
 				
 			}

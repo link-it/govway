@@ -149,7 +149,12 @@ public class JWK {
 				this.jwkNimbusds = builder.build();
 			}
 			else {
-				throw new UtilsException("Unsupported type '"+publicKey.getClass().getName()+"'");
+				if(publicKey==null) {
+					throw new UtilsException("PublicKey undefined");
+				}
+				else {
+					throw new UtilsException("Unsupported type '"+publicKey.getClass().getName()+"'");
+				}
 			}
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
