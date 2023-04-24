@@ -107,12 +107,12 @@ public class OpenAPI30_HeaderQueryValoriMultipliTest extends ConfigLoader {
 		_header(TipoServizio.FRUIZIONE, true); // https://tools.ietf.org/html/rfc7230#section-3.2.2
 	}
 	private void _header(TipoServizio tipo, boolean setCookie) throws Exception {
-		List<String> requestValues = new ArrayList<String>();
+		List<String> requestValues = new ArrayList<>();
 		requestValues.add("valoreRichiesta1");
 		requestValues.add("valoreRichiesta2");
 		requestValues.add("valoreRichiesta3Uguale");
 		requestValues.add("valoreRichiesta3Uguale");
-		List<String> responseValues = new ArrayList<String>();
+		List<String> responseValues = new ArrayList<>();
 		if(setCookie) {
 			responseValues.add("id=V1");
 			responseValues.add("JSESSION_ID=V2XXXX; "+HttpConstants.SET_COOKIE_MAX_AGE_PARAMETER+"=22");

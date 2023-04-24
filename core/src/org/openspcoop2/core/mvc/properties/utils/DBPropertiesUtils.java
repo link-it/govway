@@ -44,7 +44,7 @@ public class DBPropertiesUtils {
 
 	public static Map<String, String> readProperties(Connection con, String tipoDB, String nomeTabella, String nomeColonnaKey, String nomeColonnaValue, String nomeColonnaParent, Long idParent) throws CoreException{
 		String methodName = "readProperties Tabella["+nomeTabella+"], NomeColonnaKey["+nomeColonnaKey+"], NomeColonnaValue["+nomeColonnaValue+"], NomeColonnaParent["+nomeColonnaParent+"], IDParent["+idParent+"]";
-		Map<String, String> map = new HashMap<String,String>();
+		Map<String, String> map = new HashMap<>();
 
 		PreparedStatement stmt = null;
 		ResultSet risultato = null;
@@ -172,7 +172,7 @@ public class DBPropertiesUtils {
 		if(propertiesMap == null)
 			return null;
 
-		Map<String, String> map = new HashMap<String,String>();
+		Map<String, String> map = new HashMap<>();
 
 		for (String nomeProperties : propertiesMap.keySet()) {
 			Properties properties = propertiesMap.get(nomeProperties);
@@ -192,7 +192,7 @@ public class DBPropertiesUtils {
 	}
 
 	public static Map<String, Properties> toMultiMap(Map<String, String> dbMap) throws Exception {
-		List<String> nomiProperties = new ArrayList<String>();
+		List<String> nomiProperties = new ArrayList<>();
 		
 		for (String key : dbMap.keySet()) {
 			String keyToAdd = key;

@@ -285,7 +285,7 @@ public class RicezioneContenutiApplicativi {
 			String protocol = (String) enumProtocols.nextElement();
 			String[] tipiIntegrazionePD = propertiesReader.getTipoIntegrazionePD(protocol);
 			if(tipiIntegrazionePD!=null && tipiIntegrazionePD.length>0){
-				List<String> tipiIntegrazionePerProtocollo = new ArrayList<String>();
+				List<String> tipiIntegrazionePerProtocollo = new ArrayList<>();
 				for (int i = 0; i < tipiIntegrazionePD.length; i++) {
 					try {
 						IGestoreIntegrazionePD gestore = (IGestoreIntegrazionePD) pluginLoader.newIntegrazionePortaDelegata(tipiIntegrazionePD[i]);
@@ -596,7 +596,7 @@ public class RicezioneContenutiApplicativi {
 					
 					Dump dumpApplicativo = getDump(configurazionePdDReader, protocolFactory, internalObjects, msgDiag.getPorta());
 					if(outResponseContext.getResponseHeaders()==null) {
-						outResponseContext.setResponseHeaders(new HashMap<String, List<String>>());
+						outResponseContext.setResponseHeaders(new HashMap<>());
 					}
 					Map<String, List<String>> propertiesTrasporto = outResponseContext.getResponseHeaders();
 					ServicesUtils.setGovWayHeaderResponse(requestMessage.getServiceBinding(),
@@ -1531,7 +1531,7 @@ public class RicezioneContenutiApplicativi {
 					CORSWrappedHttpServletResponse res = new CORSWrappedHttpServletResponse(false);
 					corsFilter.doCORS(httpServletRequest, res, CORSRequestType.PRE_FLIGHT, true);
 					if(this.msgContext.getResponseHeaders()==null) {
-						this.msgContext.setResponseHeaders(new HashMap<String, List<String>>());
+						this.msgContext.setResponseHeaders(new HashMap<>());
 					}
 					this.msgContext.getResponseHeaders().putAll(res.getHeadersValues());
 					this.msgContext.setMessageResponse(res.buildMessage());
@@ -2458,7 +2458,7 @@ public class RicezioneContenutiApplicativi {
 		if (containsHeaderIntegrazioneTrasporto
 				|| this.msgContext.getIdModulo().startsWith(RicezioneContenutiApplicativi.ID_MODULO+ IntegrationManager.ID_MODULO)) {
 			try {
-				Map<String, List<String>> propertiesIntegrazioneRisposta = new HashMap<String, List<String>>();
+				Map<String, List<String>> propertiesIntegrazioneRisposta = new HashMap<>();
 
 				IGestoreIntegrazionePD gestore = null;
 				try {
@@ -5263,7 +5263,7 @@ public class RicezioneContenutiApplicativi {
 		}
 		outResponsePDMessage.setMessage(responseMessage);
 		outResponsePDMessage.setPortaDelegata(parametriGestioneRisposta.getPortaDelegata());
-		Map<String, List<String>> propertiesIntegrazioneRisposta = new HashMap<String, List<String>>();
+		Map<String, List<String>> propertiesIntegrazioneRisposta = new HashMap<>();
 		outResponsePDMessage.setHeaders(propertiesIntegrazioneRisposta);
 		outResponsePDMessage.setServizio(parametriGestioneRisposta.getIdServizio());
 		outResponsePDMessage.setSoggettoMittente(parametriGestioneRisposta.getSoggettoMittente());

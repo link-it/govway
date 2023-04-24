@@ -105,7 +105,7 @@ public class ConfigLoader {
 	
 	@BeforeClass
 	public static void setupDbUtils() {
-		Map<String, String> dbConfig = new HashMap<String, String>();
+		Map<String, String> dbConfig = new HashMap<>();
 		dbConfig.put("username", System.getProperty("db_username"));
 		dbConfig.put("password", System.getProperty("db_password"));
 		dbConfig.put("url", System.getProperty("db_url"));

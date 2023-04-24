@@ -45,7 +45,7 @@ public class IntegrationContext {
 	/** Identita' del servizio applicativo fruitore */
 	private String servizioApplicativoFruitore = null;
 	/** Identita' dei servizi applicativi erogatori */
-	private List<String> serviziApplicativiErogatori = new ArrayList<String>();
+	private List<String> serviziApplicativiErogatori = new ArrayList<>();
 	
 	/** Indicazione se la gestione e' stateless/stateful (Null se non ancora definita) */
 	private Boolean gestioneStateless;
@@ -278,7 +278,7 @@ public class IntegrationContext {
 	}
 	public void setAttributeAuthoritiesFromObjectList(List<AttributeAuthority> attributeAuthorities) {
 		if(attributeAuthorities!=null) {
-			this.attributeAuthorities = new ArrayList<String>();
+			this.attributeAuthorities = new ArrayList<>();
 			if(!attributeAuthorities.isEmpty()) {
 				for (AttributeAuthority attributeAuthority : attributeAuthorities) {
 					this.attributeAuthorities.add(attributeAuthority.getNome());

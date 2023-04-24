@@ -646,7 +646,7 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 				} else {
 					// se ho selezionato un protocollo devo filtrare per protocollo
 					List<IDSoggetto> tipiNomiSoggettiAssociati = loggedUser.getUtenteSoggettoProtocolliMap().containsKey(tipoProtocollo) ? loggedUser.getUtenteSoggettoProtocolliMap().get(tipoProtocollo) : new ArrayList<>();
-					List<String> lstTmp = new ArrayList<String>();
+					List<String> lstTmp = new ArrayList<>();
 					if(tipiNomiSoggettiAssociati !=null && tipiNomiSoggettiAssociati.size() > 0)
 						for (IDSoggetto utenteSoggetto : tipiNomiSoggettiAssociati) {
 							String tipoNome = utenteSoggetto.getTipo() + "/" + utenteSoggetto.getNome();
@@ -695,7 +695,7 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 //			List<IDSoggetto> tipiNomiSoggettiAssociati = loggedUser.getUtenteSoggettoList();
 //			if(tipiNomiSoggettiAssociati !=null && tipiNomiSoggettiAssociati.size() > 0){
 //				List<Soggetto> listaFiltrata = new ArrayList<Soggetto>();
-//				List<String> listaTipi = new ArrayList<String>();
+//				List<String> listaTipi = new ArrayList<>();
 //
 //				// controllo soggetto locale
 //				String tipoSoggettoLocale = Utility.parseTipoSoggetto(this.search.getTipoNomeSoggettoLocale());

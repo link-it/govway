@@ -312,7 +312,7 @@ public class ConsoleProperties {
 	}
 	
 	public List<String> getPolicyGestioneTokenPDND() throws UtilsException{
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		String p = this.readProperty(false, "policyGestioneToken.policy");
 		if(p!=null && !"".equals(p.trim())){
 			String [] tmp = p.trim().split(",");
@@ -402,7 +402,7 @@ public class ConsoleProperties {
 	}
 	
 	public List<String> getApiResourcePathQualsiasiSpecialChar() throws UtilsException{
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		String p = this.readProperty(false, "api.resource.pathQualsiasi.specialChar");
 		if(p!=null && !"".equals(p.trim())){
 			String [] tmp = p.trim().split(",");
@@ -525,7 +525,7 @@ public class ConsoleProperties {
 	}
 	
 	public List<String> getConsegnaNotificaCode() throws UtilsException{
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		String p = this.readProperty(true, "consegnaNotifiche.code");
 		if(p!=null && !"".equals(p.trim())){
 			String [] tmp = p.trim().split(",");
@@ -541,7 +541,7 @@ public class ConsoleProperties {
 	}
 	
 	public List<String> getConsegnaNotificaPriorita() throws UtilsException{
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		String p = this.readProperty(true, "consegnaNotifiche.priorita");
 		if(p!=null && !"".equals(p.trim())){
 			String [] tmp = p.trim().split(",");
@@ -1349,7 +1349,7 @@ public class ConsoleProperties {
 		return this.read_jmx_caches(alias, "risorseJmxPdd.caches.prefill");
 	}
 	private List<String> read_jmx_caches(String alias,String property) throws UtilsException {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		String tipo = _getJmxPdD_value(false, alias, property);
 		if(tipo!=null && !"".equals(tipo)){
 			String [] tmp = tipo.split(",");
@@ -1815,7 +1815,7 @@ public class ConsoleProperties {
 	
 	public List<String> getUtentiConVisibilitaGlobale() throws UtilsException{
 		String utenti = this.readProperty(false, "utentiConVisibilitaGlobale");
-		List<String> lista = new ArrayList<String>();
+		List<String> lista = new ArrayList<>();
 		if(utenti!=null){
 			String [] tmp = utenti.trim().split(",");
 			if(tmp!=null){

@@ -353,7 +353,7 @@ public class FileTraceTest {
 			
 		Map<String, Object> attributes = new HashMap<String, Object>();
 		attributes.put("a1", "v1");
-		List<String> l2 = new ArrayList<String>();
+		List<String> l2 = new ArrayList<>();
 		l2.add("v2a");
 		l2.add("v2b");
 		attributes.put("a2", l2);
@@ -467,7 +467,7 @@ public class FileTraceTest {
 		}
 		else {
 		
-			Map<String, String> outputMap = new HashMap<String, String>();
+			Map<String, String> outputMap = new HashMap<>();
 			manager.invoke(tipoPdD, context, outputMap);
 			
 			int res = outputMap.size();
@@ -484,7 +484,7 @@ public class FileTraceTest {
 			}
 			
 			if(outputMap.size()>0) {
-				List<String> l = new ArrayList<String>();
+				List<String> l = new ArrayList<>();
 				for (String topic : outputMap.keySet()) {
 					l.add(topic);
 				}

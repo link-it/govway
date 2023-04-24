@@ -402,7 +402,7 @@ public class XMLUtils  {
 			throw new XMLUtilsException("Documento con informazione egov non leggibile: "+e.getMessage(),e);
 		}
 		// Lettura specifica come document
-		Map<String, String> mapPrefixNamespaces = new HashMap<String, String>();
+		Map<String, String> mapPrefixNamespaces = new HashMap<>();
 		try{
 			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;		
 			Document docXML = xmlUtils.newDocument(doc);

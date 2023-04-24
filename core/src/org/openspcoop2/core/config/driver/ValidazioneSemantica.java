@@ -125,14 +125,14 @@ public class ValidazioneSemantica {
 	/** ConfigurazionePdD */
 	private org.openspcoop2.core.config.Openspcoop2 configurazione = null;
 	/** Lista in cui scrivo le anomalie riscontrate */
-	private List<String> errori = new ArrayList<String>();
+	private List<String> errori = new ArrayList<>();
 	/** Logger */
 	private Logger log = null;
 	/** Indicazione se deve essere validata la configurazione */
 	private boolean validazioneConfigurazione = false;
 
 	/** Lista di tipi di connettori validi */
-	private List<String> tipoConnettori = new ArrayList<String>();
+	private List<String> tipoConnettori = new ArrayList<>();
 	/** Lista dei tipi di connettori ammessi */
 	private String getTipoConnettori(){
 		StringBuilder bf = new StringBuilder();
@@ -145,7 +145,7 @@ public class ValidazioneSemantica {
 	}
 
 	/** Lista di tipi di soggetti validi */
-	private List<String> tipoSoggetti = new ArrayList<String>();
+	private List<String> tipoSoggetti = new ArrayList<>();
 	/** Lista dei tipi di soggetti ammessi */
 	private String getTipoSoggetti(){
 		StringBuilder bf = new StringBuilder();
@@ -158,7 +158,7 @@ public class ValidazioneSemantica {
 	}
 
 	/** Lista di tipi di servizi (soap) validi */
-	private List<String> tipoServiziSoap = new ArrayList<String>();
+	private List<String> tipoServiziSoap = new ArrayList<>();
 	/** Lista dei tipi di servizi ammessi */
 	private String getTipoServiziSoap(){  
 		StringBuilder bf = new StringBuilder();
@@ -171,7 +171,7 @@ public class ValidazioneSemantica {
 	}
 	
 	/** Lista di tipi di servizi (rest) validi */
-	private List<String> tipoServiziRest = new ArrayList<String>();
+	private List<String> tipoServiziRest = new ArrayList<>();
 	/** Lista dei tipi di servizi ammessi */
 	private String getTipoServiziRest(){
 		StringBuilder bf = new StringBuilder();
@@ -202,7 +202,7 @@ public class ValidazioneSemantica {
 	}
 	
 	/** Lista di tipi di msg diagnostici appender validi */
-	private List<String> tipoMsgDiagnosticiAppender = new ArrayList<String>();
+	private List<String> tipoMsgDiagnosticiAppender = new ArrayList<>();
 	/** Lista dei tipi di msg diagnostici appender ammessi */
 	private String getTipoMsgDiagnosticiAppender(){
 		StringBuilder bf = new StringBuilder();
@@ -215,7 +215,7 @@ public class ValidazioneSemantica {
 	}
 	
 	/** Lista di tipi di tracciamento appender validi */
-	private List<String> tipoTracciamentoAppender = new ArrayList<String>();
+	private List<String> tipoTracciamentoAppender = new ArrayList<>();
 	/** Lista dei tipi di tracciamento appender ammessi */
 	private String getTipoTracciamentoAppender(){
 		StringBuilder bf = new StringBuilder();
@@ -228,7 +228,7 @@ public class ValidazioneSemantica {
 	}
 	
 	/** Lista di tipi di dump appender validi */
-	private List<String> tipoDumpAppender = new ArrayList<String>();
+	private List<String> tipoDumpAppender = new ArrayList<>();
 	/** Lista dei tipi di dump appender ammessi */
 	private String getTipoDumpAppender(){
 		StringBuilder bf = new StringBuilder();
@@ -241,7 +241,7 @@ public class ValidazioneSemantica {
 	}
 
 	/** Lista di tipi di autenticazione porta delegata validi */
-	private List<String> tipoAutenticazionePortaDelegata = new ArrayList<String>();
+	private List<String> tipoAutenticazionePortaDelegata = new ArrayList<>();
 	/** Lista dei tipi di autenticazione porta delegata ammessi */
 	private String getTipoAutenticazionePortaDelegata(){
 		StringBuilder bf = new StringBuilder();
@@ -254,7 +254,7 @@ public class ValidazioneSemantica {
 	}
 	
 	/** Lista di tipi di autenticazione porta applicativa validi */
-	private List<String> tipoAutenticazionePortaApplicativa = new ArrayList<String>();
+	private List<String> tipoAutenticazionePortaApplicativa = new ArrayList<>();
 	/** Lista dei tipi di autenticazione porta applicativa ammessi */
 	private String getTipoAutenticazionePortaApplicativa(){
 		StringBuilder bf = new StringBuilder();
@@ -267,7 +267,7 @@ public class ValidazioneSemantica {
 	}
 	
 	/** Lista di tipi di autorizzazione porta delegata validi */
-	private List<String> tipoAutorizzazionePortaDelegata = new ArrayList<String>();
+	private List<String> tipoAutorizzazionePortaDelegata = new ArrayList<>();
 	/** Lista dei tipi di autorizzazione porta delegata ammessi */
 	private String getTipoAutorizzazionePortaDelegata(){
 		StringBuilder bf = new StringBuilder();
@@ -280,7 +280,7 @@ public class ValidazioneSemantica {
 	}
 	
 	/** Lista di tipi di autorizzazione porta applicativa validi */
-	private List<String> tipoAutorizzazionePortaApplicativa = new ArrayList<String>();
+	private List<String> tipoAutorizzazionePortaApplicativa = new ArrayList<>();
 	/** Lista dei tipi di autorizzazione porta applicativa ammessi */
 	private String getTipoAutorizzazionePortaApplicativa(){
 		StringBuilder bf = new StringBuilder();
@@ -293,7 +293,7 @@ public class ValidazioneSemantica {
 	}
 	
 	/** Lista di tipi di autorizzazione per contenuto porta delegata validi */
-	private List<String> tipoAutorizzazioneContenutoPortaDelegata = new ArrayList<String>();
+	private List<String> tipoAutorizzazioneContenutoPortaDelegata = new ArrayList<>();
 	/** Lista dei tipi di autorizzazione per contenuto porta delegata  ammessi */
 	private String getTipoAutorizzazioneContenutoPortaDelegata(){
 		StringBuilder bf = new StringBuilder();
@@ -306,7 +306,7 @@ public class ValidazioneSemantica {
 	}
 	
 	/** Lista di tipi di autorizzazione per contenuto porta applicativa validi */
-	private List<String> tipoAutorizzazioneContenutoPortaApplicativa = new ArrayList<String>();
+	private List<String> tipoAutorizzazioneContenutoPortaApplicativa = new ArrayList<>();
 	/** Lista dei tipi di autorizzazione per contenuto porta applicativa  ammessi */
 	private String getTipoAutorizzazioneContenutoPortaApplicativa(){
 		StringBuilder bf = new StringBuilder();
@@ -319,7 +319,7 @@ public class ValidazioneSemantica {
 	}
 	
 	/** Lista di tipi di integrazionePD validi */
-	private List<String> tipoIntegrazionePD = new ArrayList<String>();
+	private List<String> tipoIntegrazionePD = new ArrayList<>();
 	/** Lista dei tipi di integrazionePD ammessi */
 	private String getTipoIntegrazionePD(){
 		StringBuilder bf = new StringBuilder();
@@ -332,7 +332,7 @@ public class ValidazioneSemantica {
 	}
 	
 	/** Lista di tipi di integrazionePA validi */
-	private List<String> tipoIntegrazionePA = new ArrayList<String>();
+	private List<String> tipoIntegrazionePA = new ArrayList<>();
 	/** Lista dei tipi di integrazionePA ammessi */
 	private String getTipoIntegrazionePA(){
 		StringBuilder bf = new StringBuilder();
@@ -643,7 +643,7 @@ public class ValidazioneSemantica {
 		// Una volta identificata la sua stringa di identificazione DEVE essere univoca tra tutte le porte delegate di TUTTA la configurazione 
 		// (e non solo tra quelle del soggetto proprietario)
 		int numPD = 0;
-		List<String> pdTrovate = new ArrayList<String>();
+		List<String> pdTrovate = new ArrayList<>();
 		for(int j=0; j<this.configurazione.sizeSoggettoList();j++){
 			Soggetto s = this.configurazione.getSoggetto(j);
 			for(int k =0; k<s.sizePortaDelegataList(); k++){
@@ -993,7 +993,7 @@ public class ValidazioneSemantica {
 		// Una volta identificata la sua stringa di identificazione DEVE essere univoca tra tutte le porte applicative di TUTTA la configurazione 
 		// (e non solo tra quelle del soggetto proprietario)
 		int numPD = 0;
-		List<String> paTrovate = new ArrayList<String>();
+		List<String> paTrovate = new ArrayList<>();
 		for(int j=0; j<this.configurazione.sizeSoggettoList();j++){
 			Soggetto s = this.configurazione.getSoggetto(j);
 			for(int k =0; k<s.sizePortaApplicativaList(); k++){

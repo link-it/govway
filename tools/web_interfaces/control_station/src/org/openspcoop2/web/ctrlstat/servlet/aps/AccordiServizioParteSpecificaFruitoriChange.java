@@ -436,8 +436,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 //			List<Soggetto> soggList = soggettiCore.soggettiRegistroList("", new Search(true));
 //			String[] soggettiList = null;
 //			String[] soggettiListLabel = null;
-//			List<String> soggettiListList = new ArrayList<String>();
-//			List<String> soggettiListLabelList = new ArrayList<String>();
+//			List<String> soggettiListList = new ArrayList<>();
+//			List<String> soggettiListLabelList = new ArrayList<>();
 //			for (int i = 0; i < soggList.size(); i++) {
 //				Soggetto fru = soggList.get(i);
 //				if(tipiSoggettiCompatibiliAccordo.contains(fru.getTipo())){

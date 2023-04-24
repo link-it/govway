@@ -1255,7 +1255,7 @@ public abstract class FilterImpl implements IStatisticFilter {
 			throws SearchException {
 		try{
 			
-			List<String> collectionString = new ArrayList<String>();
+			List<String> collectionString = new ArrayList<>();
 			for (Object o : values) {
 				collectionString.add(ContentFormatter.toString(o));	
 			}

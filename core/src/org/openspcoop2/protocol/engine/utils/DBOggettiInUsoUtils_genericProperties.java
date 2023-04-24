@@ -78,29 +78,29 @@ public class DBOggettiInUsoUtils_genericProperties {
 				List<String> tokenSA_MODI_list = whereIsInUso.get(ErrorsHandlerCostant.TOKEN_SA_MODI);
 				
 				if (tokenPA_list == null) {
-					tokenPA_list = new ArrayList<String>();
+					tokenPA_list = new ArrayList<>();
 					whereIsInUso.put(ErrorsHandlerCostant.TOKEN_PA, tokenPA_list);
 				}
 				if (tokenPD_list == null) {
-					tokenPD_list = new ArrayList<String>();
+					tokenPD_list = new ArrayList<>();
 					whereIsInUso.put(ErrorsHandlerCostant.TOKEN_PD, tokenPD_list);
 				}
 				
 				if (mapping_tokenPA_list == null) {
-					mapping_tokenPA_list = new ArrayList<String>();
+					mapping_tokenPA_list = new ArrayList<>();
 					whereIsInUso.put(ErrorsHandlerCostant.TOKEN_MAPPING_PA, mapping_tokenPA_list);
 				}
 				if (mapping_tokenPD_list == null) {
-					mapping_tokenPD_list = new ArrayList<String>();
+					mapping_tokenPD_list = new ArrayList<>();
 					whereIsInUso.put(ErrorsHandlerCostant.TOKEN_MAPPING_PD, mapping_tokenPD_list);
 				}
 				
 				if (tokenSA_list == null) {
-					tokenSA_list = new ArrayList<String>();
+					tokenSA_list = new ArrayList<>();
 					whereIsInUso.put(ErrorsHandlerCostant.TOKEN_SA, tokenSA_list);
 				}
 				if (tokenSA_MODI_list == null) {
-					tokenSA_MODI_list = new ArrayList<String>();
+					tokenSA_MODI_list = new ArrayList<>();
 					whereIsInUso.put(ErrorsHandlerCostant.TOKEN_SA_MODI, tokenSA_MODI_list);
 				}
 				
@@ -285,20 +285,20 @@ public class DBOggettiInUsoUtils_genericProperties {
 				List<String> mapping_aaPD_list = whereIsInUso.get(ErrorsHandlerCostant.ATTRIBUTE_AUTHORITY_MAPPING_PD);
 				
 				if (aaPA_list == null) {
-					aaPA_list = new ArrayList<String>();
+					aaPA_list = new ArrayList<>();
 					whereIsInUso.put(ErrorsHandlerCostant.TOKEN_PA, aaPA_list);
 				}
 				if (aaPD_list == null) {
-					aaPD_list = new ArrayList<String>();
+					aaPD_list = new ArrayList<>();
 					whereIsInUso.put(ErrorsHandlerCostant.TOKEN_PD, aaPD_list);
 				}
 				
 				if (mapping_aaPA_list == null) {
-					mapping_aaPA_list = new ArrayList<String>();
+					mapping_aaPA_list = new ArrayList<>();
 					whereIsInUso.put(ErrorsHandlerCostant.TOKEN_MAPPING_PA, mapping_aaPA_list);
 				}
 				if (mapping_aaPD_list == null) {
-					mapping_aaPD_list = new ArrayList<String>();
+					mapping_aaPD_list = new ArrayList<>();
 					whereIsInUso.put(ErrorsHandlerCostant.TOKEN_MAPPING_PD, mapping_aaPD_list);
 				}
 				

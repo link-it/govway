@@ -46,7 +46,7 @@ public class Attachment implements Serializable{
 	
 	private byte[] content;
 	
-	private Map<String, List<String>> headers = new HashMap<String, List<String>>();
+	private Map<String, List<String>> headers = new HashMap<>();
 	
 	public String getContentId() {
 		return this.contentId;

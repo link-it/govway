@@ -68,7 +68,7 @@ public class JavaxPersistenceSqlGenerator {
 	}
 
 	private static Map<String, String> getMap(String persistenceId, String create, String drop, TipiDatabase tipoDatabase) throws IOException {
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 
         map.put("javax.persistence.schema-generation.scripts.action", "drop-and-create");
         map.put("javax.persistence.schema-generation.scripts.create-target", create);

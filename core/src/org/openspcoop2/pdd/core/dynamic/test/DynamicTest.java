@@ -251,14 +251,14 @@ public class DynamicTest {
 		
 		ConnettoreMsg connettoreMsg = new ConnettoreMsg();
 		
-		connettoreMsg.setPropertiesTrasporto(new HashMap<String, List<String>>());
+		connettoreMsg.setPropertiesTrasporto(new HashMap<>());
 		TransportUtils.addHeader(connettoreMsg.getPropertiesTrasporto(),"Header1", "Valore1");
 		TransportUtils.addHeader(connettoreMsg.getPropertiesTrasporto(),"Header2", "Valore2");
 		TransportUtils.addHeader(connettoreMsg.getPropertiesTrasporto(),"Header3.1", "Valore3.1");
 		TransportUtils.addHeader(connettoreMsg.getPropertiesTrasporto(),"Header3.(2)", "Valore3.(2)");
 		TransportUtils.addHeader(connettoreMsg.getPropertiesTrasporto(),"Header3.[\"3\"4\"]", "Valore3.[\"3\"4\"]");
 		
-		connettoreMsg.setPropertiesUrlBased(new HashMap<String, List<String>>());
+		connettoreMsg.setPropertiesUrlBased(new HashMap<>());
 		TransportUtils.addParameter(connettoreMsg.getPropertiesUrlBased(),"P1", "Valore1URL");
 		TransportUtils.addParameter(connettoreMsg.getPropertiesUrlBased(),"P2", "Valore2URL");
 		
@@ -1668,7 +1668,7 @@ public class DynamicTest {
 		mapLivello3.put("attr31", "value31");
 		mapLivello3.put("attr32", "value32");
 		mapLivello2.put("attr3", mapLivello3);
-		List<String> arrayLivello4 = new ArrayList<String>();
+		List<String> arrayLivello4 = new ArrayList<>();
 		arrayLivello4.add("41");
 		arrayLivello4.add("42");
 		arrayLivello4.add("43");

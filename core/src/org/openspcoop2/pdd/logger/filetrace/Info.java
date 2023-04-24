@@ -109,7 +109,7 @@ public class Info {
 	
 	private boolean base64;
 	
-	private Map<String, String> properties = new HashMap<String, String>();
+	private Map<String, String> properties = new HashMap<>();
 	
 	public Info(Logger log,
 			IProtocolFactory<?> protocolFactory,
@@ -3498,7 +3498,7 @@ public class Info {
 	private Map<String, List<String>> filterHeaders(boolean white, List<String> filterList, Map<String, List<String>> sourceHeaders) {
 		Map<String, List<String>> map = null;
 		if(filterList!=null && !filterList.isEmpty()) {
-			map = new HashMap<String, List<String>>();
+			map = new HashMap<>();
 			for (String hdr : sourceHeaders.keySet()) {
 				boolean find = false;
 				for (String filterHdr : filterList) {

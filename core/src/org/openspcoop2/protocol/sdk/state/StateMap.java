@@ -77,7 +77,7 @@ public class StateMap {
 	public List<String> keys(){
 		List<String> keys = null;
 		if(!this.tablePstmt.isEmpty()) {
-			keys = new ArrayList<String>();
+			keys = new ArrayList<>();
 			for (String key : this.tablePstmt.keySet()) {
 				keys.add(key);
 			}

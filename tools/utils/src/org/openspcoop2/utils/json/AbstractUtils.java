@@ -403,7 +403,7 @@ public abstract class AbstractUtils {
 								if(array.size()>0) {
 									JsonNode arrayFirstChildNode = array.get(0);
 									if(arrayFirstChildNode instanceof ValueNode) {
-										List<Object> l = new ArrayList<Object>();
+										List<Object> l = new ArrayList<>();
 										for (int i = 0; i < array.size(); i++) {
 											JsonNode arrayChildNode = array.get(i);
 											Map<String, Object> readClaims = this.convertToSimpleMap(arrayChildNode);
@@ -794,7 +794,7 @@ public abstract class AbstractUtils {
 			//System.out.println("  parentNode:"+parentNode+")");
 			
 			if(forceReorder) {
-				List<String> nomi = new ArrayList<String>();
+				List<String> nomi = new ArrayList<>();
 				Iterator<String> it = ((ObjectNode)parentNode).fieldNames();
 				if(it!=null) {
 					while (it.hasNext()) {
@@ -1191,7 +1191,7 @@ public abstract class AbstractUtils {
 		if(parsV.startsWith(SPECIAL_KEY_ORDER_ELEMENTS_PREFIX)) {
 			parsV = parsV.substring(SPECIAL_KEY_ORDER_ELEMENTS_PREFIX.length());
 		}
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(parsV.contains(SPECIAL_KEY_ORDER_ELEMENTS_SEPARATOR)) {
 			String [] tmp = parsV.split(SPECIAL_KEY_ORDER_ELEMENTS_SEPARATOR);
 			if(tmp!=null && tmp.length>0) {

@@ -57,8 +57,8 @@ public class OCSPManager {
 	
 	private HashMap<String, OCSPConfig> hsmOCSPConfigMapIDtoConfig = new HashMap<String, OCSPConfig>();
 	
-	private HashMap<String, String> hsmOCSPConfigMapTypeToID = new HashMap<String, String>();
-	private HashMap<String, String> hsmOCSPConfigMapLabelToID = new HashMap<String, String>();
+	private HashMap<String, String> hsmOCSPConfigMapTypeToID = new HashMap<>();
+	private HashMap<String, String> hsmOCSPConfigMapLabelToID = new HashMap<>();
 	
 	private SortedMap<String> hsmOCSPConfigSortedMapTypeLabel = new SortedMap<>();
 	
@@ -107,7 +107,7 @@ public class OCSPManager {
 	}
 	private void init(Properties p, Logger log) throws UtilsException {
 		
-		List<String> idKeystore = new ArrayList<String>();
+		List<String> idKeystore = new ArrayList<>();
 		
 		if(p!=null && !p.isEmpty()) {
 			
@@ -208,7 +208,7 @@ public class OCSPManager {
 	
 
 	public List<String> getOCSPConfigTypes() {
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(!this.hsmOCSPConfigMapTypeToID.isEmpty()) {
 			for (String type : this.hsmOCSPConfigMapTypeToID.keySet()) {
 				l.add(type);
@@ -217,7 +217,7 @@ public class OCSPManager {
 		return l;
 	}
 	public List<String> getOCSPConfigLabels() {
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(!this.hsmOCSPConfigMapLabelToID.isEmpty()) {
 			for (String label : this.hsmOCSPConfigMapLabelToID.keySet()) {
 				l.add(label);

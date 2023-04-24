@@ -87,7 +87,7 @@ public class DataSourceFactory {
 	
 		Collection<org.openspcoop2.utils.datasource.DataSource> list = mapUUIDtoDatasources.values();
 		Iterator<org.openspcoop2.utils.datasource.DataSource> it = list.iterator();
-		List<String> listResource = new ArrayList<String>();
+		List<String> listResource = new ArrayList<>();
 		while (it.hasNext()) {
 			org.openspcoop2.utils.datasource.DataSource datasource = (org.openspcoop2.utils.datasource.DataSource) it.next();
 			StringBuilder bf = new StringBuilder();

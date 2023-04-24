@@ -80,7 +80,7 @@ public class AzioniUtils {
 									throw new Exception("Servizio ["+idServizio.toString()+"] possiede il port type ["+asps.getPortType()+"] che non risulta essere registrato nell'accordo di servizio ["+asps.getAccordoServizioParteComune()+"]");
 								}
 								if(pt.getAzione().size()>0){
-									azioniList = new ArrayList<String>();
+									azioniList = new ArrayList<>();
 									for (int i = 0; i < pt.getAzione().size(); i++) {
 										if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(pt.getAzione().get(i).getNome())) {
 											azioniList.add(pt.getAzione().get(i).getNome());
@@ -89,7 +89,7 @@ public class AzioniUtils {
 								}
 							}else{
 								if(aspc.getAzione().size()>0){
-									azioniList = new ArrayList<String>();
+									azioniList = new ArrayList<>();
 									for (int i = 0; i < aspc.getAzione().size(); i++) {
 										if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(aspc.getAzione().get(i).getNome())) {
 											azioniList.add(aspc.getAzione().get(i).getNome());
@@ -102,7 +102,7 @@ public class AzioniUtils {
 
 					case REST:
 						if(aspc.getResource().size()>0){
-							azioniList = new ArrayList<String>();
+							azioniList = new ArrayList<>();
 							for (int i = 0; i < aspc.getResource().size(); i++) {
 								if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(aspc.getResource().get(i).getNome())) {
 									azioniList.add(aspc.getResource().get(i).getNome());
@@ -123,7 +123,7 @@ public class AzioniUtils {
 			if(azioniList!=null && azioniList.size()>0) {
 				Collections.sort(azioniList);
 				
-				azioniListReturn = new ArrayList<String>();
+				azioniListReturn = new ArrayList<>();
 				if(addTrattinoSelezioneNonEffettuata) {
 					azioniListReturn.add(DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA);
 				}
@@ -172,8 +172,8 @@ public class AzioniUtils {
 									throw new Exception("Servizio ["+idServizio.toString()+"] possiede il port type ["+asps.getPortType()+"] che non risulta essere registrato nell'accordo di servizio ["+asps.getAccordoServizioParteComune()+"]");
 								}
 								if(pt.getAzione().size()>0){
-									azioniMap = new HashMap<String,String>();
-									sortList = new ArrayList<String>();
+									azioniMap = new HashMap<>();
+									sortList = new ArrayList<>();
 									for (int i = 0; i < pt.getAzione().size(); i++) {
 										if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(pt.getAzione().get(i).getNome())) {
 											sortList.add(pt.getAzione().get(i).getNome());
@@ -183,8 +183,8 @@ public class AzioniUtils {
 								}
 							}else{
 								if(aspc.getAzione().size()>0){
-									azioniMap = new HashMap<String,String>();
-									sortList = new ArrayList<String>();
+									azioniMap = new HashMap<>();
+									sortList = new ArrayList<>();
 									for (int i = 0; i < aspc.getAzione().size(); i++) {
 										if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(aspc.getAzione().get(i).getNome())) {
 											sortList.add(aspc.getAzione().get(i).getNome());
@@ -198,8 +198,8 @@ public class AzioniUtils {
 
 					case REST:
 						if(aspc.getResource().size()>0){
-							azioniMap = new HashMap<String,String>();
-							sortList = new ArrayList<String>();
+							azioniMap = new HashMap<>();
+							sortList = new ArrayList<>();
 							if(sortByLabel) {
 								sortMap = new HashMap<>();
 							}

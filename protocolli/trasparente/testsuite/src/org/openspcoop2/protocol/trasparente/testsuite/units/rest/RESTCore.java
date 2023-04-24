@@ -598,7 +598,7 @@ public class RESTCore {
 					bf.append("/service/").append(action);
 				}
 			}
-			Map<String,String> propertiesURLBased = new HashMap<String,String>();
+			Map<String,String> propertiesURLBased = new HashMap<>();
 			if(propertiesRequest!=null && !propertiesRequest.isEmpty()) {
 				propertiesURLBased.putAll(propertiesRequest);
 			}
@@ -745,10 +745,10 @@ public class RESTCore {
 					urlAttesa = "/";
 				}
 				else if(returnCodeAtteso==307) {
-					urlAttesa = buildUrl(new HashMap<String,String>(), urlBaseSenzaHostPort);
+					urlAttesa = buildUrl(new HashMap<>(), urlBaseSenzaHostPort);
 				}
 				else {
-					urlAttesa = buildUrl(new HashMap<String,String>(), urlBase);
+					urlAttesa = buildUrl(new HashMap<>(), urlBase);
 				}
 				if(urlAttesa.contains("govway/api/in/")) {
 					//urlAttesa = urlAttesa.replace("govway/api/in/", "govway/in/"); // la url ritornata e' normalizzata

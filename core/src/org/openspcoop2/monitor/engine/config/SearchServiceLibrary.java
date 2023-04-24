@@ -171,7 +171,7 @@ public class SearchServiceLibrary implements Serializable {
 
 		List<ConfigurazioneRicerca> list = new ArrayList<ConfigurazioneRicerca>();
 		if(orderByLabel){
-			List<String> sortedKey = new ArrayList<String>();
+			List<String> sortedKey = new ArrayList<>();
 			Map<String, ConfigurazioneRicerca> mapLabelToCorrelazioneRicerca = new HashMap<String, ConfigurazioneRicerca>();
 			int count = 0; // lo uso per gestire eventuali label identiche.
 			for (String className : plugins.keySet()) {

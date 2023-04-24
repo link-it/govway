@@ -1525,7 +1525,7 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<String> lista = new ArrayList<String>();
+		ArrayList<String> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
@@ -1581,7 +1581,7 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<String> lista = new ArrayList<String>();
+		ArrayList<String> lista = new ArrayList<>();
 		String aliasSoggettiFruitori = "soggettoFruitore";
 
 		if (this.driver.atomica) {
@@ -2312,7 +2312,7 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 				}
 			}
 			rs = stm.executeQuery();
-			nomiPD = new ArrayList<String>();
+			nomiPD = new ArrayList<>();
 			while (rs.next()) {
 				nomiPD.add(rs.getString("nome_porta"));
 			}

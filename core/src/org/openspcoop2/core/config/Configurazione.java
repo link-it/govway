@@ -426,7 +426,7 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBeanWithId i
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected List<Object> extendedInfo = new ArrayList<Object>();
+  protected List<Object> extendedInfo = new ArrayList<>();
 
   /**
    * @deprecated Use method getExtendedInfoList

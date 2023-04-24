@@ -353,8 +353,8 @@ public final class AccordiServizioParteComuneChange extends Action {
 				listaSoggetti = soggettiCore.soggettiList(userLogin, new ConsoleSearch(true));
 			}
 
-			List<String> soggettiListTmp = new ArrayList<String>();
-			List<String> soggettiListLabelTmp = new ArrayList<String>();
+			List<String> soggettiListTmp = new ArrayList<>();
+			List<String> soggettiListLabelTmp = new ArrayList<>();
 			soggettiListTmp.add("-");
 			soggettiListLabelTmp.add("-");
 

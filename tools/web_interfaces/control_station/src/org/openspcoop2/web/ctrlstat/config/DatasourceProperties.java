@@ -195,7 +195,7 @@ public class DatasourceProperties {
 	/* ----- Database di Monitoraggio ------- */
 	
 	public List<String> getSinglePdD_MonitorSorgentiDati() throws UtilsException{
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		String p = this.readProperty(false, "singlePdD.monitor.sorgentiDati");
 		if(p!=null && !"".equals(p.trim())){
 			String [] tmp = p.trim().split(",");

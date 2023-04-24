@@ -346,7 +346,7 @@ public class DriverRegistroServiziWS extends BeanUtilities
 			if(ids==null || ids.size()<=0){
 				throw new org.openspcoop2.core.registry.ws.client.portadominio.search.RegistryNotFoundException_Exception("La ricerca non ha trovato pdd");
 			}
-			List<String> idsOpenSPCoop = new ArrayList<String>();
+			List<String> idsOpenSPCoop = new ArrayList<>();
 			for (IdPortaDominio idPortaDominio : ids) {
 				String idPortaDominioOpenSPCoop = idPortaDominio.getNome();
 				idsOpenSPCoop.add(idPortaDominioOpenSPCoop);

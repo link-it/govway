@@ -130,7 +130,7 @@ public class InformazioniUtilizzoOggettoRegistro extends HttpServlet{
 			
 			ExporterUtils exporterUtils = new ExporterUtils(archiviCore);
 			List<?> identificativi = null; 
-			List<String> risultatiRicerca = new ArrayList<String>();
+			List<String> risultatiRicerca = new ArrayList<>();
 			switch (inUsoType) {
 			case ACCORDO_SERVIZIO_PARTE_COMUNE:
 				identificativi = exporterUtils.getIdsAccordiServizioParteComune(identificativoOggetto);

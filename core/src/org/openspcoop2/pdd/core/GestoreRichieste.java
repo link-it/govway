@@ -270,7 +270,7 @@ public class GestoreRichieste {
 	@Deprecated
 	public static List<String> listKeysCache() throws CoreException{
 		if(GestoreRichieste.cacheKeys!=null && !GestoreRichieste.cacheKeys.isEmpty()){
-			List<String> keys = new ArrayList<String>();
+			List<String> keys = new ArrayList<>();
 			for (String cacheKey : GestoreRichieste.cacheKeys) {
 				Cache cache = GestoreRichieste.caches.get(cacheKey);
 				if(cache!=null) {

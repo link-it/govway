@@ -71,7 +71,7 @@ public class DBOggettiInUsoUtils_accordiCooperazione {
 			List<String> accordi_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_ACCORDI);
 
 			if (accordi_list == null) {
-				accordi_list = new ArrayList<String>();
+				accordi_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_ACCORDI, accordi_list);
 			}
 

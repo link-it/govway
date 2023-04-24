@@ -60,11 +60,11 @@ public class GestoreRisorseSistema {
 	private RisorseSistema risorseSistema;
 
 	/** Variabile che contiene i DataSource costruiti da OpenSPCoop */
-	private List<String> jndi_ds = new ArrayList<String>();
+	private List<String> jndi_ds = new ArrayList<>();
 	private List<SharedPoolDataSource> dsList = new ArrayList<SharedPoolDataSource>(); 
 
 	/** Variabile che contiene i ConnectionSessionJMSPool costruiti da OpenSPCoop */
-	private List<String> jndi_qm = new ArrayList<String>();
+	private List<String> jndi_qm = new ArrayList<>();
 	private List<javax.jms.ConnectionFactory> qmList = new ArrayList<javax.jms.ConnectionFactory>(); 
 
 	/** Logger utilizzato per debug. */

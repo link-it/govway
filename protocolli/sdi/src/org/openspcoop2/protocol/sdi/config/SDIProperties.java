@@ -1274,7 +1274,7 @@ public class SDIProperties {
 			try{  
 				String value = this.reader.getValue_convertEnvProperties(propertyName); 
 
-				this.soggettiWhiteList = new ArrayList<String>();
+				this.soggettiWhiteList = new ArrayList<>();
 				
 				if (value != null){
 					value = value.trim();
@@ -1303,7 +1303,7 @@ public class SDIProperties {
 			try{  
 				String value = this.reader.getValue_convertEnvProperties(propertyName); 
 
-				this.serviziWhiteList = new ArrayList<String>();
+				this.serviziWhiteList = new ArrayList<>();
 				
 				if (value != null){
 					value = value.trim();
@@ -1332,7 +1332,7 @@ public class SDIProperties {
 			try{  
 				String value = this.reader.getValue_convertEnvProperties(propertyName); 
 
-				this.azioniWhiteList = new ArrayList<String>();
+				this.azioniWhiteList = new ArrayList<>();
 				
 				if (value != null){
 					value = value.trim();
@@ -1361,7 +1361,7 @@ public class SDIProperties {
 			try{  
 				String value = this.reader.getValue_convertEnvProperties(propertyName); 
 
-				this.namespaceWhiteList = new ArrayList<String>();
+				this.namespaceWhiteList = new ArrayList<>();
 				
 				if (value != null){
 					value = value.trim();

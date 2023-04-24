@@ -655,7 +655,7 @@ public class ClassQueue {
 		
 		filtroSel = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_UTENTE, "*");
 		
-		List<String> newUtenti = new ArrayList<String>();
+		List<String> newUtenti = new ArrayList<>();
 		if (filtroSel.equals("*")) {
 			newUtenti.add(logAdm);
 			for (int i = 0; i < utenti.size(); i++)

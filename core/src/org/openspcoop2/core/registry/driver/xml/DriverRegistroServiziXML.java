@@ -996,7 +996,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 	public List<String> getAllIdPorteDominio(FiltroRicerca filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		try{
 
-			List<String> nomiPorteDiDominio = new ArrayList<String>();
+			List<String> nomiPorteDiDominio = new ArrayList<>();
 			for(int i=0; i<this.registro.sizePortaDominioList(); i++){
 				org.openspcoop2.core.registry.PortaDominio pd = this.registro.getPortaDominio(i);
 				if(filtroRicerca!=null){

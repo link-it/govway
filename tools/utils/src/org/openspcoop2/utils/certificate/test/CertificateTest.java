@@ -411,7 +411,7 @@ public class CertificateTest {
 		List<OID> oid = cp.getOID();
 		System.out.println("Subject con i seguenti elementi: ["+oid+"]");
 		String attesi = "C, ST, L, O, OU, CN, EMAIL_ADDRESS, ORGANIZATION_IDENTIFIER";
-		Map<String, String> valoriAttesi = new HashMap<String, String>();
+		Map<String, String> valoriAttesi = new HashMap<>();
 		valoriAttesi.put("C", "IT");
 		valoriAttesi.put("ST", "Pisa");
 		valoriAttesi.put("L", "Pisa");
@@ -677,7 +677,7 @@ public class CertificateTest {
 		System.out.println("Subject con i seguenti elementi by id ["+id_oid+"]");
 		String attesi_id = OID.C.getID()+", "+OID.ST.getID()+", "+OID.L.getID()+", "+OID.O.getID()+", "+OID.OU.getID()+", "+OID.CN.getID()+", "+OID.EMAIL_ADDRESS.getID()+", "+OID.ORGANIZATION_IDENTIFIER.getID()+
 				", 2.9.9.98, 2.9.9.99";
-		Map<String, String> valoriAttesiById = new HashMap<String, String>();
+		Map<String, String> valoriAttesiById = new HashMap<>();
 		valoriAttesiById.put(OID.C.getID(), "IT");
 		valoriAttesiById.put(OID.ST.getID(), "Pisa");
 		valoriAttesiById.put(OID.L.getID(), "Pisa");

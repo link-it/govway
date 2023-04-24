@@ -48,8 +48,8 @@ public class SemaphoreMapping {
 	private String lockDate;
 	private String updateDate;
 	private String details;
-	private List<String> uniqueConditions = new ArrayList<String>();
-	private List<Object> uniqueConditionsValues = new ArrayList<Object>();
+	private List<String> uniqueConditions = new ArrayList<>();
+	private List<Object> uniqueConditionsValues = new ArrayList<>();
 	private List<Class<?>> uniqueConditionsTypes = new ArrayList<Class<?>>();
 	
 	public String getTable() {

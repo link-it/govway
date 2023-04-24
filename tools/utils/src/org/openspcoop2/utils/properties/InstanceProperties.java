@@ -120,7 +120,7 @@ public abstract class InstanceProperties {
 	public java.util.Enumeration<?> propertyNames(){
 		
 		java.util.Enumeration<?> enumProp = this.propertiesOriginale.propertyNames();
-		List<String> object = new ArrayList<String>();
+		List<String> object = new ArrayList<>();
 		while(enumProp.hasMoreElements()){
 			object.add((String)enumProp.nextElement());		
 		}
@@ -274,7 +274,7 @@ public abstract class InstanceProperties {
 			// 5. Se sono state fornite proprieta' con il + le gestisco.
 			// In caso di valori uguali utilizzo quelli dell'object, poi quelli del file e infine quelli dell'originale
 			StringBuilder bf = new StringBuilder();
-			List<String> valoriAggiunti = new ArrayList<String>();
+			List<String> valoriAggiunti = new ArrayList<>();
 			if(addObject!=null){
 				for (int i = 0; i < addObject.length; i++) {
 					if(valoriAggiunti.contains(addObject[i])==false){

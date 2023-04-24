@@ -33,7 +33,7 @@ import java.util.Map;
  */
 public class SortedMap<T> {
 
-	protected List<String> list = new ArrayList<String>(); // per preservare l'ordine
+	protected List<String> list = new ArrayList<>(); // per preservare l'ordine
 	protected Map<String, T> map = new HashMap<String, T>();
 	
 	public int size(){

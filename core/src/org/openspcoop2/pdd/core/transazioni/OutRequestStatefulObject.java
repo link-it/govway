@@ -36,9 +36,9 @@ public class OutRequestStatefulObject {
 	private String scenarioCooperazione;
 	private String tipoConnettore;
 	private String location;
-	private List<String> serviziApplicativiErogatore = new ArrayList<String>();
+	private List<String> serviziApplicativiErogatore = new ArrayList<>();
 	
-	private List<String> eventiGestione = new ArrayList<String>();
+	private List<String> eventiGestione = new ArrayList<>();
 	
 	public List<String> getServiziApplicativiErogatore() {
 		return this.serviziApplicativiErogatore;

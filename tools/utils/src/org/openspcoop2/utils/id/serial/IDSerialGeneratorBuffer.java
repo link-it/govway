@@ -35,7 +35,7 @@ import java.util.Map;
 public class IDSerialGeneratorBuffer {
 
 	private static org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("IDSerialGeneratorBuffer");
-	private static Map<String, List<String>> buffer = new HashMap<String, List<String>>();
+	private static Map<String, List<String>> buffer = new HashMap<>();
 	
 	private static String getPrefix(Class<?> cIdSerialGenerator){
 		if(cIdSerialGenerator.isAssignableFrom(IDSerialGenerator_alphanumeric.class)){
@@ -99,7 +99,7 @@ public class IDSerialGeneratorBuffer {
 				//System.out.println("ADD BUFFER ["+valuesGenerated.size()+"] to exists (size:"+l.size()+") key["+key+"]");
 			}
 			else{
-				l = new ArrayList<String>();
+				l = new ArrayList<>();
 				buffer.put(key, l);
 				//System.out.println("CREATE BUFFER ["+valuesGenerated.size()+"] from Buffer key["+key+"]");
 			}
@@ -127,7 +127,7 @@ public class IDSerialGeneratorBuffer {
 		semaphore.acquireThrowRuntime("clearBuffer_class");
 		try {
 			if(buffer!=null && buffer.size()>0){
-				List<String> remove = new ArrayList<String>();
+				List<String> remove = new ArrayList<>();
 				for (String key : buffer.keySet()) {
 					if(key.startsWith(prefix)){
 						remove.add(key);

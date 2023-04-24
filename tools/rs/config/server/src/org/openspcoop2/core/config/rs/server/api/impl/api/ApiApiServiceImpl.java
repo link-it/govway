@@ -2056,7 +2056,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			// Sono i Servizi e le Azioni ad avere un profilo di collaborazione
 
 			as.setOldIDAccordoForUpdate(oldIdAccordo);
-			List<Object> operazioniList = new ArrayList<Object>(Arrays.asList(as));
+			List<Object> operazioniList = new ArrayList<>(Arrays.asList(as));
 
 			// Questa roba non serve qui perchè la updateDescrizione non cambia il nome e
 			// quindi nemmeno l'ID.
@@ -2181,7 +2181,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			// Sono i Servizi e le Azioni ad avere un profilo di collaborazione
 
 			as.setOldIDAccordoForUpdate(oldIdAccordo);
-			List<Object> operazioniList = new ArrayList<Object>(Arrays.asList(as));
+			List<Object> operazioniList = new ArrayList<>(Arrays.asList(as));
 
 			// Questa roba non serve qui perchè la updateDescrizione non cambia il nome e
 			// quindi nemmeno l'ID.
@@ -2290,7 +2290,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			}
 
 			as.setOldIDAccordoForUpdate(oldIdAccordo);
-			List<Object> operazioniList = new ArrayList<Object>(Arrays.asList(as));
+			List<Object> operazioniList = new ArrayList<>(Arrays.asList(as));
 
 			IDAccordo idNEW = env.idAccordoFactory.getIDAccordoFromAccordo(as);
 			if (idNEW.equals(oldIdAccordo) == false) {
@@ -2685,7 +2685,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			// Sono i Servizi e le Azioni ad avere un profilo di collaborazione
 
 			as.setOldIDAccordoForUpdate(oldIdAccordo);
-			List<Object> operazioniList = new ArrayList<Object>(Arrays.asList(as));
+			List<Object> operazioniList = new ArrayList<>(Arrays.asList(as));
 
 			// Questa roba non serve qui perchè la updateDescrizione non cambia il nome e
 			// quindi nemmeno l'ID.

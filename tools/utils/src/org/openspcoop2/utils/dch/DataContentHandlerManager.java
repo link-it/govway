@@ -102,7 +102,7 @@ public class DataContentHandlerManager {
 		MailcapCommandMap mcap = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
 		
 		String [] gestiti = mcap.getMimeTypes();
-		List<String> gestitiAsList = new ArrayList<String>();
+		List<String> gestitiAsList = new ArrayList<>();
 		if(gestiti!=null){
 			if(debug) {
 				this.log.info("MimeTypes registrati: ["+gestiti.length+"]");
@@ -154,7 +154,7 @@ public class DataContentHandlerManager {
 		MailcapCommandMap mcap = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
 		
 		String [] gestiti = mcap.getMimeTypes();
-		Map<String,String> map = new HashMap<String,String>();
+		Map<String,String> map = new HashMap<>();
 		if(gestiti!=null){
 			if(debug) {
 				this.log.info("MimeTypes ("+commandName+") registrati: ["+gestiti.length+"]");

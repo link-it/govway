@@ -171,20 +171,20 @@ public class DBOggettiInUsoUtils_plugins {
 				
 				if(!behaviour) {
 					if (PD_mapping_list == null) {
-						PD_mapping_list = new ArrayList<String>();
+						PD_mapping_list = new ArrayList<>();
 						whereIsInUso.put(PD_tipoControllo_mapping, PD_mapping_list);
 					}
 					if (PD_list == null) {
-						PD_list = new ArrayList<String>();
+						PD_list = new ArrayList<>();
 						whereIsInUso.put(PD_tipoControllo, PD_list);
 					}
 				}
 				if (PA_mapping_list == null) {
-					PA_mapping_list = new ArrayList<String>();
+					PA_mapping_list = new ArrayList<>();
 					whereIsInUso.put(PA_tipoControllo_mapping, PA_mapping_list);
 				}
 				if (PA_list == null) {
-					PA_list = new ArrayList<String>();
+					PA_list = new ArrayList<>();
 					whereIsInUso.put(PA_tipoControllo, PA_list);
 				}
 				
@@ -256,7 +256,7 @@ public class DBOggettiInUsoUtils_plugins {
 				
 				List<String> ct_list = whereIsInUso.get(ErrorsHandlerCostant.CONTROLLO_TRAFFICO);
 				if (ct_list == null) {
-					ct_list = new ArrayList<String>();
+					ct_list = new ArrayList<>();
 					whereIsInUso.put(ErrorsHandlerCostant.CONTROLLO_TRAFFICO, ct_list);
 				}	
 				
@@ -346,23 +346,23 @@ public class DBOggettiInUsoUtils_plugins {
 				List<String> allarmi_list = whereIsInUso.get(ErrorsHandlerCostant.ALLARMI);
 				
 				if (allarmiPD_mapping_list == null) {
-					allarmiPD_mapping_list = new ArrayList<String>();
+					allarmiPD_mapping_list = new ArrayList<>();
 					whereIsInUso.put(ErrorsHandlerCostant.ALLARMI_MAPPING_PD, allarmiPD_mapping_list);
 				}
 				if (allarmiPD_list == null) {
-					allarmiPD_list = new ArrayList<String>();
+					allarmiPD_list = new ArrayList<>();
 					whereIsInUso.put(ErrorsHandlerCostant.ALLARMI_PD, allarmiPD_list);
 				}
 				if (allarmiPA_mapping_list == null) {
-					allarmiPA_mapping_list = new ArrayList<String>();
+					allarmiPA_mapping_list = new ArrayList<>();
 					whereIsInUso.put(ErrorsHandlerCostant.ALLARMI_MAPPING_PA, allarmiPA_mapping_list);
 				}
 				if (allarmiPA_list == null) {
-					allarmiPA_list = new ArrayList<String>();
+					allarmiPA_list = new ArrayList<>();
 					whereIsInUso.put(ErrorsHandlerCostant.ALLARMI_PA, allarmiPA_list);
 				}
 				if (allarmi_list == null) {
-					allarmi_list = new ArrayList<String>();
+					allarmi_list = new ArrayList<>();
 					whereIsInUso.put(ErrorsHandlerCostant.ALLARMI, allarmi_list);
 				}
 				
@@ -450,23 +450,23 @@ public class DBOggettiInUsoUtils_plugins {
 				List<String> messageHandler_list = whereIsInUso.get(ErrorsHandlerCostant.MESSAGE_HANDLER);
 				
 				if (messageHandlerPD_mapping_list == null) {
-					messageHandlerPD_mapping_list = new ArrayList<String>();
+					messageHandlerPD_mapping_list = new ArrayList<>();
 					whereIsInUso.put(ErrorsHandlerCostant.MESSAGE_HANDLER_MAPPING_PD, messageHandlerPD_mapping_list);
 				}
 				if (messageHandlerPD_list == null) {
-					messageHandlerPD_list = new ArrayList<String>();
+					messageHandlerPD_list = new ArrayList<>();
 					whereIsInUso.put(ErrorsHandlerCostant.MESSAGE_HANDLER_PD, messageHandlerPD_list);
 				}
 				if (messageHandlerPA_mapping_list == null) {
-					messageHandlerPA_mapping_list = new ArrayList<String>();
+					messageHandlerPA_mapping_list = new ArrayList<>();
 					whereIsInUso.put(ErrorsHandlerCostant.MESSAGE_HANDLER_MAPPING_PA, messageHandlerPA_mapping_list);
 				}
 				if (messageHandlerPA_list == null) {
-					messageHandlerPA_list = new ArrayList<String>();
+					messageHandlerPA_list = new ArrayList<>();
 					whereIsInUso.put(ErrorsHandlerCostant.MESSAGE_HANDLER_PA, messageHandlerPA_list);
 				}
 				if (messageHandler_list == null) {
-					messageHandler_list = new ArrayList<String>();
+					messageHandler_list = new ArrayList<>();
 					whereIsInUso.put(ErrorsHandlerCostant.MESSAGE_HANDLER, messageHandler_list);
 				}
 				
@@ -557,7 +557,7 @@ public class DBOggettiInUsoUtils_plugins {
 				List<String> serviceHandler_list = whereIsInUso.get(ErrorsHandlerCostant.SERVICE_HANDLER);
 				
 				if (serviceHandler_list == null) {
-					serviceHandler_list = new ArrayList<String>();
+					serviceHandler_list = new ArrayList<>();
 					whereIsInUso.put(ErrorsHandlerCostant.SERVICE_HANDLER, serviceHandler_list);
 				}
 				
@@ -608,7 +608,7 @@ public class DBOggettiInUsoUtils_plugins {
 								
 				List<String> gp_list = whereIsInUso.get(constants);
 				if (gp_list == null) {
-					gp_list = new ArrayList<String>();
+					gp_list = new ArrayList<>();
 					whereIsInUso.put(constants, gp_list);
 				}	
 				

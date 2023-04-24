@@ -1133,7 +1133,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, aspc.getIdReferente().getNome());
 			gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO, aspc.getIdReferente().getTipo());
 			List<IdAccordoServizioParteComuneGruppo> lGruppi = this.utilsServiceManager.getAccordoServizioParteComuneGruppoServiceSearch().findAllIds(gruppiExpr);
-			tags = new ArrayList<String>();
+			tags = new ArrayList<>();
 			if(lGruppi!=null && !lGruppi.isEmpty()) {
 				for (IdAccordoServizioParteComuneGruppo gruppoCheck : lGruppi) {
 					tags.add(gruppoCheck.getIdGruppo().getNome());
@@ -1223,7 +1223,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				org.openspcoop2.core.registry.AccordoServizioParteComune aspc = this.driverRegistroDB.getAccordoServizioParteComune(idAccordo, false, false);
 				Map<String, String> map = ModIUtils.configToMap(aspc, asps, urlInvocazione, fruitore, urlConnettoreFruitoreModI);
 				if(map!=null && !map.isEmpty()) {
-					List<String> keys = new ArrayList<String>();
+					List<String> keys = new ArrayList<>();
 					keys.addAll(map.keySet());
 					Collections.sort(keys);
 					StringBuilder sb = new StringBuilder();
@@ -1460,7 +1460,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, aspc.getIdReferente().getNome());
 			gruppiExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO, aspc.getIdReferente().getTipo());
 			List<IdAccordoServizioParteComuneGruppo> lGruppi = this.utilsServiceManager.getAccordoServizioParteComuneGruppoServiceSearch().findAllIds(gruppiExpr);
-			tags = new ArrayList<String>();
+			tags = new ArrayList<>();
 			if(lGruppi!=null && !lGruppi.isEmpty()) {
 				for (IdAccordoServizioParteComuneGruppo gruppoCheck : lGruppi) {
 					tags.add(gruppoCheck.getIdGruppo().getNome());
@@ -1537,7 +1537,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				org.openspcoop2.core.registry.AccordoServizioParteComune aspc = this.driverRegistroDB.getAccordoServizioParteComune(idAccordo, false, false);
 				Map<String, String> map = ModIUtils.configToMap(aspc, asps, urlInvocazione, null, null);
 				if(map!=null && !map.isEmpty()) {
-					List<String> keys = new ArrayList<String>();
+					List<String> keys = new ArrayList<>();
 					keys.addAll(map.keySet());
 					Collections.sort(keys);
 					StringBuilder sb = new StringBuilder();

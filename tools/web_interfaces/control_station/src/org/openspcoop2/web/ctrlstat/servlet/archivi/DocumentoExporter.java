@@ -982,7 +982,7 @@ public class DocumentoExporter extends HttpServlet {
 					}
 					
 					String metodo = null;
-					List<Object> parameters = new ArrayList<Object>();
+					List<Object> parameters = new ArrayList<>();
 					if(idConnettore!=null) {
 						metodo = archiviCore.getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById(aliasForVerificaConnettore);
 						parameters.add(idConnettore+"");

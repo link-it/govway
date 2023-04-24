@@ -43,7 +43,7 @@ import org.openspcoop2.utils.transport.http.WrappedHttpServletResponse;
  */
 public class CORSWrappedHttpServletResponse extends WrappedHttpServletResponse {
 
-	private Map<String, List<String>> properties = new HashMap<String, List<String>>();
+	private Map<String, List<String>> properties = new HashMap<>();
 	private boolean portaApplicativa;
 	
 	public CORSWrappedHttpServletResponse(boolean portaApplicativa) {

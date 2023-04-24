@@ -45,7 +45,7 @@ public class AliasTableRicerchePersonalizzate {
 	
 	public static List<String> addFromTable(IExpression expression, ISQLQueryObject sqlQueryObject,ISQLFieldConverter fieldConverter) throws ExpressionNotImplementedException, ExpressionException, SQLQueryObjectException{
 		List<IField> iFields = expression.getFields(true);
-		List<String> tabelleAggiunteAlias = new ArrayList<String>();
+		List<String> tabelleAggiunteAlias = new ArrayList<>();
 		if(iFields!=null && iFields.size()>0){
 			for (IField iField : iFields) {
 				if(iField instanceof IAliasTableField){

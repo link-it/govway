@@ -506,12 +506,12 @@ public class Proxy extends HttpServlet {
 	}
 	
 	private Map<String, List<String>> buildParameters(HttpServletRequest req) {
-		Map<String, List<String>> parameters = new HashMap<String, List<String>>();	       
+		Map<String, List<String>> parameters = new HashMap<>();	       
 		java.util.Enumeration<?> en = req.getParameterNames();
 		while(en.hasMoreElements()){
 			String nomeProperty = (String)en.nextElement();
 			String [] s = req.getParameterValues(nomeProperty);
-			List<String> values = new ArrayList<String>();
+			List<String> values = new ArrayList<>();
 			if(s!=null && s.length>0) {
 				for (int i = 0; i < s.length; i++) {
 					String value = s[i];
@@ -590,14 +590,14 @@ class ResultAggregate {
 	
 	private String resourceName;
 	private String methodName;
-	private List<String> list1 = new ArrayList<String>();
-	private List<String> list2 = new ArrayList<String>();
-	private List<String> list3 = new ArrayList<String>();
-	private List<String> list4 = new ArrayList<String>();
-	private List<String> list5 = new ArrayList<String>();
-	private List<String> list6 = new ArrayList<String>();
-	private List<String> list7 = new ArrayList<String>();
-	private List<String> list8 = new ArrayList<String>();
+	private List<String> list1 = new ArrayList<>();
+	private List<String> list2 = new ArrayList<>();
+	private List<String> list3 = new ArrayList<>();
+	private List<String> list4 = new ArrayList<>();
+	private List<String> list5 = new ArrayList<>();
+	private List<String> list6 = new ArrayList<>();
+	private List<String> list7 = new ArrayList<>();
+	private List<String> list8 = new ArrayList<>();
 	
 	ResultAggregate(String resourceName, String methodName){
 		this.resourceName = resourceName;

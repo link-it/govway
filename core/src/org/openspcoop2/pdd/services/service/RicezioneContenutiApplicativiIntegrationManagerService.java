@@ -564,13 +564,13 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			// Properties Trasporto
 			Map<String, List<String>> headerTrasporto = null;
 			if(openSPCoopProperties.integrationManager_readInformazioniTrasporto()){
-				headerTrasporto = new HashMap<String, List<String>>();
+				headerTrasporto = new HashMap<>();
 				java.util.Enumeration<?> enTrasporto = req.getHeaderNames();
 				while(enTrasporto.hasMoreElements()){
 					String nomeHeader = (String)enTrasporto.nextElement();
 
 					Enumeration<String> enValues = req.getHeaders(nomeHeader);
-					List<String> values = new ArrayList<String>();
+					List<String> values = new ArrayList<>();
 					if(enValues!=null) {
 						@SuppressWarnings("unused")
 						int i = 0;

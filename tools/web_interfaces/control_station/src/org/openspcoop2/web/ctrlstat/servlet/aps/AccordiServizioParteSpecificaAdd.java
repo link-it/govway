@@ -768,8 +768,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 			boolean existsAPCCompatibili = false;
 			if (listSoggetti.size() > 0) {
-				List<String> soggettiListTmp = new ArrayList<String>();
-				List<String> soggettiListLabelTmp = new ArrayList<String>();
+				List<String> soggettiListTmp = new ArrayList<>();
+				List<String> soggettiListLabelTmp = new ArrayList<>();
 				for (Soggetto soggetto : listSoggetti) {
 					soggettiListTmp.add(soggetto.getId().toString());
 					soggettiListLabelTmp.add(apsHelper.getLabelNomeSoggetto(strutsBean.tipoProtocollo, soggetto.getTipo() , soggetto.getNome()));
@@ -851,8 +851,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				}
 				
 				if (listFruitori.size() > 0) {
-					List<String> soggettiListTmp = new ArrayList<String>();
-					List<String> soggettiListLabelTmp = new ArrayList<String>();
+					List<String> soggettiListTmp = new ArrayList<>();
+					List<String> soggettiListLabelTmp = new ArrayList<>();
 					for (Soggetto soggetto : listFruitori) {
 						soggettiListTmp.add(soggetto.getId().toString());
 						soggettiListLabelTmp.add(apsHelper.getLabelNomeSoggetto(strutsBean.tipoProtocollo, soggetto.getTipo() , soggetto.getNome()));
@@ -930,8 +930,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					}
 					
 					// aggiorno soggetti
-					List<String> soggettiListTmp = new ArrayList<String>();
-					List<String> soggettiListLabelTmp = new ArrayList<String>();
+					List<String> soggettiListTmp = new ArrayList<>();
+					List<String> soggettiListLabelTmp = new ArrayList<>();
 					for (Soggetto soggetto : listSoggetti) {
 						soggettiListTmp.add(soggetto.getId().toString());
 						soggettiListLabelTmp.add(apsHelper.getLabelNomeSoggetto(strutsBean.tipoProtocollo, soggetto.getTipo() , soggetto.getNome()));
@@ -1013,7 +1013,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			boolean escludiSAServer = saCore.isApplicativiServerEnabled(apsHelper);
 			String filtroTipoSA = escludiSAServer ? ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT : null;
 						
-			List<String> saFruitoriList = new ArrayList<String>();
+			List<String> saFruitoriList = new ArrayList<>();
 			saFruitoriList.add("-");
 			IDSoggetto idSoggettoFruitoreSelected = null;
 			if(gestioneFruitori && strutsBean.nomeSoggettoFruitore!=null && strutsBean.tipoSoggettoFruitore!=null){
@@ -1056,8 +1056,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 			}
 			
-			List<String> soggettiAutenticati = new ArrayList<String>();
-			List<String> soggettiAutenticatiLabel = new ArrayList<String>();
+			List<String> soggettiAutenticati = new ArrayList<>();
+			List<String> soggettiAutenticatiLabel = new ArrayList<>();
 			// lista soggetti autenticati per la creazione automatica
 			CredenzialeTipo credenziale =  null;
 			Boolean appIdSoggetti = null;
@@ -1331,8 +1331,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				if(strutsBean.erogazioneAutenticazione==null || "".equals(strutsBean.erogazioneAutenticazione)) {
 					strutsBean.erogazioneAutenticazione = apsCore.getAutenticazione_generazioneAutomaticaPorteApplicative();
 					
-					soggettiAutenticati = new ArrayList<String>();
-					soggettiAutenticatiLabel = new ArrayList<String>();
+					soggettiAutenticati = new ArrayList<>();
+					soggettiAutenticatiLabel = new ArrayList<>();
 					if(erogazioneIsSupportatoAutenticazioneSoggetti) {
 						TipoAutenticazione tipoAutenticazione = TipoAutenticazione.toEnumConstant(strutsBean.erogazioneAutenticazione);
 						credenziale = !tipoAutenticazione.equals(TipoAutenticazione.DISABILITATO) ? CredenzialeTipo.toEnumConstant(strutsBean.erogazioneAutenticazione) : null;

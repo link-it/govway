@@ -112,7 +112,7 @@ public class ModIUtils {
 		boolean gestioneErogatori = (fruitore==null);
 		boolean gestioneFruitori = !gestioneErogatori;
 		
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 				
 		List<ProtocolProperty> protocolPropertyList = gestioneErogatori ? asps.getProtocolPropertyList() : fruitore.getProtocolPropertyList();
 		

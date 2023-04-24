@@ -635,7 +635,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			
 			if(signAttachments) {
 				
-				List<String> cidAttachments = new ArrayList<String>();
+				List<String> cidAttachments = new ArrayList<>();
 				if(msg.castAsSoap().hasAttachments()){
 					Iterator<?> itAttach = msg.castAsSoap().getAttachments();
 					while (itAttach.hasNext()) {

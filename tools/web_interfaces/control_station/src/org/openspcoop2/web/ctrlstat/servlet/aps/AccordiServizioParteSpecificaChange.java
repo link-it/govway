@@ -696,8 +696,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			}
 			
 			if (list!=null && !list.isEmpty()) {
-				List<String> soggettiListTmp = new ArrayList<String>();
-				List<String> soggettiListLabelTmp = new ArrayList<String>();
+				List<String> soggettiListTmp = new ArrayList<>();
+				List<String> soggettiListLabelTmp = new ArrayList<>();
 				if(cambiaErogatore) {
 					soggettiListTmp.add("");
 					soggettiListLabelTmp.add("-");

@@ -143,8 +143,8 @@ public class DynamicPdDBeanUtils implements Serializable {
 		if(StringUtils.isBlank(tipo1) || StringUtils.isBlank(tipo2))
 			return true;
 
-		List<String> tipiDisponibili1 = new ArrayList<String>();
-		List<String> tipiDisponibili2 = new ArrayList<String>();
+		List<String> tipiDisponibili1 = new ArrayList<>();
+		List<String> tipiDisponibili2 = new ArrayList<>();
 
 		if(!tipo1.equals("*") ){
 			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByOrganizationType(tipo1);
@@ -156,7 +156,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 			tipiDisponibili2.add(protocolFactory.getProtocol());
 		}
 
-		Map<String, String> mappaTipi = new HashMap<String, String>();
+		Map<String, String> mappaTipi = new HashMap<>();
 		if(tipiDisponibili1 != null && tipiDisponibili1.size() > 0)
 			for (String tipo : tipiDisponibili1) {
 				if(!mappaTipi.containsKey(tipo))
@@ -219,7 +219,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 		if(StringUtils.isBlank(accordo) || StringUtils.isBlank(tipoProtocollo))
 			return true;
 
-		List<String> tipiDisponibili1 = new ArrayList<String>();
+		List<String> tipiDisponibili1 = new ArrayList<>();
 
 		if(!accordo.equals("*") ){
 			List<AccordoServizioParteSpecifica> servizi2 = this.dynamicUtilsService.getServizi(tipoProtocollo,accordo, tipoErogatore, nomeErogatore);
@@ -262,7 +262,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 	}
 	
 	public List<Object> findElencoServiziApplicativiFromSoggettoLocale(String tipoProtocollo,String tipoSoggetto,String nomeSoggetto, boolean trasporto, boolean token){
-		List<Object> list = new ArrayList<Object>();
+		List<Object> list = new ArrayList<>();
 		Soggetto erogatore = this.dynamicUtilsService.findSoggettoByTipoNome(tipoSoggetto, nomeSoggetto);
 
 		if(erogatore != null)
@@ -305,7 +305,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 		String idPorta = null;
 		List<Soggetto> list = this.dynamicUtilsService.findElencoSoggetti(tipoProtocollo ,idPorta);
 
-		List<String> checkContains = new ArrayList<String>();
+		List<String> checkContains = new ArrayList<>();
 		for (Soggetto soggetto : list) {
 			if(checkContains.contains(soggetto.getIdentificativoPorta())==false){
 				idPorte.add(new SelectItem(soggetto.getIdentificativoPorta()));
@@ -370,7 +370,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 		return getListaNomiGruppi(null);
 	}
 	public List<String> getListaNomiGruppi(String tipoProtocollo){
-		List<String> gruppi = new ArrayList<String>();
+		List<String> gruppi = new ArrayList<>();
 
 		try{
 			List<IDGruppo>  lista = this.dynamicUtilsService.getGruppi(tipoProtocollo);
@@ -415,7 +415,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 	 * @return Azioni dell'Accordo di servizio
 	 */
 	public Map<String, String> findAzioniFromServizio(String tipoProtocollo,String tipoServizio,String nomeServizio,  String tipoErogatore, String nomeErogatore,Integer versioneServizio, String val){
-		Map<String, String>  map = new HashMap<String, String>();
+		Map<String, String>  map = new HashMap<>();
 
 		//		if(idAccordo != null && nomeServizio != null){
 		this.log.debug("Get Lista Azioni from Servizio [nome: " + nomeServizio + "]");

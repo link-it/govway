@@ -407,7 +407,7 @@ public class ModIUtilities {
 	public static String getUrlInvocazione(IProtocolFactory<?> protocolFactory, IState state, RequestInfo requestInfo,
 			boolean rest, AccordoServizioParteComune aspc, RuoloContesto ruoloContesto, String nomePorta, IDSoggetto proprietarioPorta) throws Exception {
 		
-		List<String> tags = new ArrayList<String>();
+		List<String> tags = new ArrayList<>();
 		if(aspc!=null && aspc.getGruppi()!=null && aspc.getGruppi().sizeGruppoList()>0) {
 			for (int i = 0; i < aspc.getGruppi().sizeGruppoList(); i++) {
 				tags.add(aspc.getGruppi().getGruppo(i).getNome());

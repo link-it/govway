@@ -43,7 +43,7 @@ public abstract class Parameter<T> {
 	protected Parameter(String id, ParameterType type){
 		this.id = id;
 		this.type = type;
-		this.refreshParamIds = new ArrayList<String>();
+		this.refreshParamIds = new ArrayList<>();
 		this.rendering = new ParameterRendering<T>();
 	}
 	protected Parameter(Parameter<T> p){

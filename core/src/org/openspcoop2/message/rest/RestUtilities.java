@@ -108,7 +108,7 @@ public class RestUtilities {
 			String [] split = parameterOriginalUrl.split("&");
 			if(split!=null){
 				if(p==null){
-					p = new HashMap<String, List<String>> ();
+					p = new HashMap<> ();
 				}
 				
 				// elimino tutte le proprieta' che sono poi indicate nella base url

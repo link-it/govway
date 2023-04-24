@@ -261,7 +261,7 @@ public class ReportExporter extends HttpServlet{
 			String tipologiaTransazione = req.getParameter(CostantiExporter.TIPOLOGIA);
 			if(tipologiaTransazione!=null){
 				tipologiaTransazione = tipologiaTransazione.trim();
-				List<String> l = new ArrayList<String>();
+				List<String> l = new ArrayList<>();
 				l.add(CostantiExporter.TIPOLOGIA_EROGAZIONE);
 				l.add(CostantiExporter.TIPOLOGIA_FRUIZIONE);
 				if(l.contains(tipologiaTransazione) == false){
@@ -1089,7 +1089,7 @@ public class ReportExporter extends HttpServlet{
 			modalitaTemporale = modalitaTemporale.trim();
 			modalitaTemporaleEnum = StatisticType.valueOf(modalitaTemporale.toUpperCase());
 			if(modalitaTemporaleEnum==null){
-				List<String> types = new ArrayList<String>();
+				List<String> types = new ArrayList<>();
 				for (StatisticType type: StatisticType.values()) {
 					types.add(type.name().toLowerCase());
 				}

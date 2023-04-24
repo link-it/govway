@@ -50,7 +50,7 @@ public class ServiziApplicativiUpdateUtilities {
 	public ServiziApplicativiUpdateUtilities(ServiziApplicativiCore saCore,
 			IDServizioApplicativo oldIdServizioApplicativo,
 			ServizioApplicativo sa) throws Exception{
-		this.oggettiDaAggiornare = new ArrayList<Object>();
+		this.oggettiDaAggiornare = new ArrayList<>();
 		this.saCore = saCore;
 		this.confCore = new ConfigurazioneCore(this.saCore);
 		this.oldIdServizioApplicativo = oldIdServizioApplicativo;

@@ -121,9 +121,9 @@ public class DriverRegistroServiziDB_connettoriLIB {
 		if (endpointtype == null || endpointtype.trim().equals(""))
 			endpointtype = TipiConnettore.DISABILITATO.getNome();
 
-		Map<String, String> extendedProperties = new HashMap<String, String>();
+		Map<String, String> extendedProperties = new HashMap<>();
 		
-		List<String> propertiesGestiteAttraversoColonneAdHoc = new ArrayList<String>();
+		List<String> propertiesGestiteAttraversoColonneAdHoc = new ArrayList<>();
 		
 		for (int i = 0; i < connettore.sizePropertyList(); i++) {
 			// prop=connettore.getProperty(i);

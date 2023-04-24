@@ -253,7 +253,7 @@ public class GestoreLoadBalancerCaching {
 				porta_normalized = _toKey_getKeyCacheNomePorta(nomePorta_normalized);
 			}
 			
-			List<String> keyForClean = new ArrayList<String>();
+			List<String> keyForClean = new ArrayList<>();
 			List<String> keys = GestoreLoadBalancerCaching.keysCache();
 			if(keys!=null && !keys.isEmpty()) {
 				for (String key : keys) {

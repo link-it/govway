@@ -41,7 +41,7 @@ public class AutorizzazioneUtilities {
 	public static final String STATO_DISABILITATO = StatoFunzionalita.DISABILITATO.getValue();
 	public static final String STATO_XACML_POLICY = "xacml-Policy";
 	public static List<String> getStati(){
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		l.add(STATO_DISABILITATO);
 		l.add(STATO_ABILITATO);
 		l.add(STATO_XACML_POLICY);

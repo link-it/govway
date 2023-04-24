@@ -65,7 +65,7 @@ public abstract class AbstractMediaTypeCollection implements Serializable {
 	}
 	
 	// Vengono utilizzate due liste per preservare l'ordine di inserimento che si perde in una hashtable,
-	private List<String> map_status_mediaTypes = new ArrayList<String>();
+	private List<String> map_status_mediaTypes = new ArrayList<>();
 	private List<MessageType> map_messageProcessor = new ArrayList<MessageType>();
 	private List<Boolean> map_useRegularExpression = new ArrayList<Boolean>();
 
@@ -105,7 +105,7 @@ public abstract class AbstractMediaTypeCollection implements Serializable {
 	}
 	
 	public List<String> getContentTypes() {
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		for (String key : this.map_status_mediaTypes) {
 			String mediaType = extractMediaTypeFromKey(key);
 			if(l.contains(mediaType)==false) {

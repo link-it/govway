@@ -45,7 +45,7 @@ public class NegoziazioneCustomTest extends ConfigLoader {
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 	
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String host = "127.0.0.1";
 		headers.put("test_hostname", host);
 		headers.put("test_azure_param_2", "vAzureValue2");
@@ -145,7 +145,7 @@ public class NegoziazioneCustomTest extends ConfigLoader {
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 	
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test_get_param", "vGetValue");
 		headers.put("test_get_header", "vTestGet");
 		
@@ -202,7 +202,7 @@ public class NegoziazioneCustomTest extends ConfigLoader {
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 	
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test_put_param", "vPutValue");
 		headers.put("test_put_header", "vTestPut");
 		headers.put("test_elem", "vCustom2");
@@ -268,7 +268,7 @@ public class NegoziazioneCustomTest extends ConfigLoader {
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 	
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test_post_param", "vPostValueFreemarker");
 		headers.put("test_post_header", "vTestPostFreemarker");
 		headers.put("test_elem", "vCustom2Freemarker");
@@ -335,7 +335,7 @@ public class NegoziazioneCustomTest extends ConfigLoader {
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 	
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test_put_param", "vPutValueVelocity");
 		headers.put("test_put_header", "vTestPutVelocity");
 		headers.put("test_elem", "vCustom2Velocity");
@@ -406,7 +406,7 @@ public class NegoziazioneCustomTest extends ConfigLoader {
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 	
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test_put_param", "vPutValue");
 		headers.put("test_put_header", "vTestPut");
 		headers.put("test_elem", "vCustom2");
@@ -493,7 +493,7 @@ public class NegoziazioneCustomTest extends ConfigLoader {
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 	
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String host = "127.0.0.1";
 		headers.put("test_hostname", host);
 		headers.put("test_azure_param_2", "vAzureValue2");
@@ -618,7 +618,7 @@ public class NegoziazioneCustomTest extends ConfigLoader {
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 	
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test_post_param", "vPostValue");
 		headers.put("test_post_header", "vTestPost");
 		headers.put("post_bearer_token", "ApplicativoVerificaNegoziazioneTokenCustomBearer");
@@ -684,7 +684,7 @@ public class NegoziazioneCustomTest extends ConfigLoader {
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 	
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test_delete_param", "vDeleteValueFreemarker");
 		headers.put("test_delete_header", "vTestDeleteFreemarker");
 		headers.put("test_elem", "vCustom2Freemarker");

@@ -240,7 +240,7 @@ public class InformazioniIntegrazione extends org.openspcoop2.utils.beans.BaseBe
 	}
 	public List<String> getIntegrationInfoNames(){
 		if(this.integrationInfo!=null && !this.integrationInfo.isEmpty()) {
-			List<String> attributesNames = new ArrayList<String>();
+			List<String> attributesNames = new ArrayList<>();
 			for (String attrName : this.integrationInfo.keySet()) {
 				attributesNames.add(attrName);
 			}

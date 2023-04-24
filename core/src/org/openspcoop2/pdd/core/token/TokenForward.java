@@ -40,8 +40,8 @@ public class TokenForward implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private Map<String, List<String>> trasporto = new HashMap<String, List<String>>();
-	private Map<String, List<String>> url = new HashMap<String, List<String>>();
+	private Map<String, List<String>> trasporto = new HashMap<>();
+	private Map<String, List<String>> url = new HashMap<>();
 	
 	public Map<String, List<String>> getTrasporto() {
 		return this.trasporto;

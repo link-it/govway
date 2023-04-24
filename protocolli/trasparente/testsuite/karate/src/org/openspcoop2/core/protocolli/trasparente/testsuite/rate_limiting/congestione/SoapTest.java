@@ -530,7 +530,7 @@ public class SoapTest extends ConfigLoader {
 		//  della soglia di richieste simultanee globali
 			
 
-		var credenzialiToMatch = new ArrayList<String>(Arrays.asList(
+		var credenzialiToMatch = new ArrayList<>(Arrays.asList(
 				"##ControlloTraffico_SogliaCongestione_Violazione##",
 				"##ControlloTraffico_NumeroMassimoRichiesteSimultanee_Violazione##"
 				));

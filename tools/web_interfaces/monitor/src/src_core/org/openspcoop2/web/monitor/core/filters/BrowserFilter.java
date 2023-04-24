@@ -193,7 +193,7 @@ public class BrowserFilter implements Filter {
 				else if(browserInfo.getBrowserFamily().equals(BrowserFamily.FIREFOX)){
 					// solo sui path /a4j/*
 
-					List<String> lst = new ArrayList<String>();
+					List<String> lst = new ArrayList<>();
 					lst.add("/a4j/");
 					if(ContentAuthorizationManager.getInstance().contains(urlRichiesta, lst )){
 						log.debug("Applico Fix per le risorse A4j in firefox.");
@@ -243,7 +243,7 @@ public class BrowserFilter implements Filter {
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}
-//		this.excludedPaths = new ArrayList<String>();
+//		this.excludedPaths = new ArrayList<>();
 //		this.excludedPaths.addAll(Arrays.asList(ContentAuthorizationCostanti.listaPathConsentiti));
 		// welcome contiene un grafico che puo' essere visualizzato in modalita' ie>8
 //		this.excludedPaths.remove("/pages/welcome.jList<String> listaPagineNoIE8 =sf");

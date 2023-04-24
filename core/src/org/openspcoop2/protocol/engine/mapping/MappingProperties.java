@@ -71,7 +71,7 @@ public class MappingProperties {
 		Openspcoop2 manifestProtocol = pf.getManifest();
 		String urlWithoutContext = null;
 		
-		List<String> paContexts = new ArrayList<String>();
+		List<String> paContexts = new ArrayList<>();
 		if(IDService.PORTA_APPLICATIVA.equals(idService) || IDService.PORTA_APPLICATIVA_NIO.equals(idService)){
 			paContexts.add("/PA");
 			if(customContexts!=null) {

@@ -312,7 +312,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			// Collezione header di trasporto per dump
 			Map<String, List<String>> propertiesTrasportoDebug = null;
 			if(this.isDumpBinarioRichiesta()) {
-				propertiesTrasportoDebug = new HashMap<String, List<String>>();
+				propertiesTrasportoDebug = new HashMap<>();
 			}
 
 			
@@ -562,7 +562,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			    	}
 					
 					if(this.encodingRFC2047){
-						List<String> valuesEncoded = new ArrayList<String>();
+						List<String> valuesEncoded = new ArrayList<>();
 						if(values!=null && !values.isEmpty()) {
 			        		for (String value : values) {
 			        			if(RFC2047Utilities.isAllCharactersInCharset(value, this.charsetRFC2047)==false){
@@ -705,7 +705,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			boolean protocolHttp10 = false;
 			if(mapHeaderHttpResponse!=null && mapHeaderHttpResponse.size()>0){
 				if(this.propertiesTrasportoRisposta==null){
-					this.propertiesTrasportoRisposta = new HashMap<String, List<String>>();
+					this.propertiesTrasportoRisposta = new HashMap<>();
 				}
 				Iterator<String> itHttpResponse = mapHeaderHttpResponse.keySet().iterator();
 				while(itHttpResponse.hasNext()){
@@ -1085,7 +1085,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
     			this.requestMsg.getTransportRequestContext().removeParameter(nv.getName()); // Fix: senno sovrascriveva il vecchio token
     		}
     		if(this.propertiesUrlBased==null) {
-    			this.propertiesUrlBased = new HashMap<String, List<String>>();
+    			this.propertiesUrlBased = new HashMap<>();
     		}
     		TransportUtils.setParameter(this.propertiesUrlBased, nv.getName(), nv.getValue());
     	}

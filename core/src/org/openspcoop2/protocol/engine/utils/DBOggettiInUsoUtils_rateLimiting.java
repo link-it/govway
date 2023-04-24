@@ -62,7 +62,7 @@ public class DBOggettiInUsoUtils_rateLimiting {
 			
 			List<String> ct_list = whereIsInUso.get(ErrorsHandlerCostant.CONTROLLO_TRAFFICO);
 			if (ct_list == null) {
-				ct_list = new ArrayList<String>();
+				ct_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.CONTROLLO_TRAFFICO, ct_list);
 			}	
 			

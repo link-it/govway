@@ -88,7 +88,7 @@ public class ValidazioneSemantica {
 	/** Registro servizi */
 	private org.openspcoop2.core.registry.RegistroServizi registro = null;
 	/** Lista in cui scrivo le anomalie riscontrate */
-	private List<String> errori = new ArrayList<String>();
+	private List<String> errori = new ArrayList<>();
 	/** Logger */
 	private Logger log = null;
 	/** Controllo url */
@@ -101,7 +101,7 @@ public class ValidazioneSemantica {
 
 
 	/** Lista di tipi di connettori validi */
-	private List<String> tipoConnettori = new ArrayList<String>();
+	private List<String> tipoConnettori = new ArrayList<>();
 	/** Lista dei tipi di connettori ammessi */
 	private String getTipoConnettori(){
 		StringBuilder bf = new StringBuilder();
@@ -114,7 +114,7 @@ public class ValidazioneSemantica {
 	}
 
 	/** Lista di tipi di soggetti validi */
-	private List<String> tipoSoggetti = new ArrayList<String>();
+	private List<String> tipoSoggetti = new ArrayList<>();
 	/** Lista dei tipi di soggetti ammessi */
 	private String getTipoSoggetti(){
 		StringBuilder bf = new StringBuilder();
@@ -127,7 +127,7 @@ public class ValidazioneSemantica {
 	}
 
 	/** Lista di tipi di servizi SOAP validi */
-	private List<String> tipoServiziSoap = new ArrayList<String>();
+	private List<String> tipoServiziSoap = new ArrayList<>();
 	/** Lista dei tipi di servizi SOAP ammessi */
 	private String getTipoServiziSoap(){
 		StringBuilder bf = new StringBuilder();
@@ -140,7 +140,7 @@ public class ValidazioneSemantica {
 	}
 	
 	/** Lista di tipi di servizi REST validi */
-	private List<String> tipoServiziRest = new ArrayList<String>();
+	private List<String> tipoServiziRest = new ArrayList<>();
 	/** Lista dei tipi di servizi REST ammessi */
 	private String getTipoServiziRest(){
 		StringBuilder bf = new StringBuilder();

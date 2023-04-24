@@ -156,7 +156,7 @@ public class LimitedHashMapCacheImpl extends AbstractCacheImpl {
 	@Override
 	public List<String> keys() throws UtilsException {
 		try{
-			List<String> keys = new ArrayList<String>();
+			List<String> keys = new ArrayList<>();
 			keys.addAll(this.cache.keySet());
 			return keys;
 		}catch(Exception e){

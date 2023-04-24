@@ -110,7 +110,7 @@ public class SplitWSDL {
 	/** Schemi */
 	private List<SchemaXSDAccordoServizio> schemiErogatore = new ArrayList<SchemaXSDAccordoServizio>();
 	private List<SchemaXSDAccordoServizio> schemiFruitore = new ArrayList<SchemaXSDAccordoServizio>();
-	private List<String> schemiNames = new ArrayList<String>();
+	private List<String> schemiNames = new ArrayList<>();
 	/** Import degli schemi (xsd) */
 	private List<Schema> importsSchemiErogatore = new ArrayList<Schema>();
 	private List<Schema> importsSchemiFruitore = new ArrayList<Schema>();
@@ -1215,7 +1215,7 @@ public class SplitWSDL {
 			if (found){
 				List<?> ops = now.getBindingOperations();
 				String[] myops = operations[i].split(",");
-				List<String> toDel = new ArrayList<String>();
+				List<String> toDel = new ArrayList<>();
 				for (int h=0, k=ops.size(); h<k; h++){
 					String curName = ((BindingOperation)ops.get(h)).getName();
 					boolean rem = true;

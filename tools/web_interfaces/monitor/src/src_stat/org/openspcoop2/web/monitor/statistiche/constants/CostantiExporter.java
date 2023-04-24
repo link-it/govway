@@ -61,7 +61,7 @@ public class CostantiExporter {
 	public static final String TIPO_DISTRIBUZIONE_INDIRIZZO_IP = "indirizzo_ip";
 	public static final String TIPO_DISTRIBUZIONE_TOKEN_INFO = "token_info";
 	public static final String TIPO_DISTRIBUZIONE_PERSONALIZZATA = "personalizzata";
-	public static final List<String> TIPI_DISTRIBUZIONE = new ArrayList<String> ();
+	public static final List<String> TIPI_DISTRIBUZIONE = new ArrayList<> ();
 	static{
 		TIPI_DISTRIBUZIONE.add(TIPO_DISTRIBUZIONE_TEMPORALE);
 		TIPI_DISTRIBUZIONE.add(TIPO_DISTRIBUZIONE_ESITI);
@@ -83,7 +83,7 @@ public class CostantiExporter {
 	public static final String TIPO_FORMATO_PDF = "pdf";
 	public static final String TIPO_FORMATO_XML = "xml";
 	public static final String TIPO_FORMATO_JSON = "json";
-	public static final List<String> TIPI_FORMATO = new ArrayList<String> ();
+	public static final List<String> TIPI_FORMATO = new ArrayList<> ();
 	static{
 		TIPI_FORMATO.add(TIPO_FORMATO_CSV);
 		TIPI_FORMATO.add(TIPO_FORMATO_XLS);
@@ -115,7 +115,7 @@ public class CostantiExporter {
 	public static final String TIPOLOGIA_EROGAZIONE  = "Erogazione";
 	public static final String TIPOLOGIA_FRUIZIONE  = "Fruizione";
 	public static final String TIPOLOGIA_EROGAZIONE_FRUIZIONE  = "Erogazione/Fruizione";
-	public static final List<String> TIPOLOGIE = new ArrayList<String> ();
+	public static final List<String> TIPOLOGIE = new ArrayList<> ();
 	static{
 		TIPOLOGIE.add(TIPOLOGIA_EROGAZIONE);
 		TIPOLOGIE.add(TIPOLOGIA_FRUIZIONE);
@@ -130,7 +130,7 @@ public class CostantiExporter {
 	public static final String TIPO_RICERCA_MITTENTE_INDIRIZZO_IP = Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP;
 	public static final String TIPO_RICERCA_MITTENTE_APPLICATIVO = Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO;
 	public static final String TIPO_RICERCA_MITTENTE_SOGGETTO = Costanti.VALUE_TIPO_RICONOSCIMENTO_SOGGETTO;
-	public static final List<String> TIPI_RICERCA_MITTENTE = new ArrayList<String> ();
+	public static final List<String> TIPI_RICERCA_MITTENTE = new ArrayList<> ();
 	static{
 		TIPI_RICERCA_MITTENTE.add(TIPO_RICERCA_MITTENTE_TOKEN_INFO);
 		TIPI_RICERCA_MITTENTE.add(TIPO_RICERCA_MITTENTE_IDENTIFICATIVO_AUTENTICATO);
@@ -142,7 +142,7 @@ public class CostantiExporter {
 	public static final String TIPO_IDENTIFICAZIONE_APPLICATIVO  = "tipo_identificazione_applicativo";
 	public static final String TIPO_IDENTIFICAZIONE_APPLICATIVO_TRASPORTO = "trasporto";
 	public static final String TIPO_IDENTIFICAZIONE_APPLICATIVO_TOKEN = "token";
-	public static final List<String> TIPI_IDENTIFICAZIONE_APPLICATIVO = new ArrayList<String> ();
+	public static final List<String> TIPI_IDENTIFICAZIONE_APPLICATIVO = new ArrayList<> ();
 	static{
 		TIPI_IDENTIFICAZIONE_APPLICATIVO.add(TIPO_IDENTIFICAZIONE_APPLICATIVO_TRASPORTO);
 		TIPI_IDENTIFICAZIONE_APPLICATIVO.add(TIPO_IDENTIFICAZIONE_APPLICATIVO_TOKEN);
@@ -154,7 +154,7 @@ public class CostantiExporter {
 	public static final String TIPO_AUTENTICAZIONE_BASIC  = TipoAutenticazione.BASIC.getValue();
 	public static final String TIPO_AUTENTICAZIONE_SSL  = TipoAutenticazione.SSL.getValue();
 	public static final String TIPO_AUTENTICAZIONE_PRINCIPAL  = TipoAutenticazione.PRINCIPAL.getValue();
-	public static final List<String> TIPI_AUTENTICAZIONE = new ArrayList<String> ();
+	public static final List<String> TIPI_AUTENTICAZIONE = new ArrayList<> ();
 	static{
 		TIPI_AUTENTICAZIONE.add(TIPO_AUTENTICAZIONE_BASIC);
 		TIPI_AUTENTICAZIONE.add(TIPO_AUTENTICAZIONE_SSL);
@@ -164,7 +164,7 @@ public class CostantiExporter {
 	public static final String TIPO_INDIRIZZO_IP  = "tipoIndirizzoIP";
 	public static final String TIPO_INDIRIZZO_IP_SOCKET  = org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_CLIENT_ADDRESS_SOCKET;
 	public static final String TIPO_INDIRIZZO_IP_TRANSPORT  = org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_CLIENT_ADDRESS_TRASPORTO;
-	public static final List<String> TIPI_INDIRIZZI_IP = new ArrayList<String> ();
+	public static final List<String> TIPI_INDIRIZZI_IP = new ArrayList<> ();
 	static{
 		TIPI_INDIRIZZI_IP.add(TIPO_INDIRIZZO_IP_SOCKET);
 		TIPI_INDIRIZZI_IP.add(TIPO_INDIRIZZO_IP_TRANSPORT);
@@ -194,7 +194,7 @@ public class CostantiExporter {
 	public static final String ESITO_GRUPPO_ERRORI_CONSEGNA  = "errori_consegna";
 	public static final String ESITO_GRUPPO_RICHIESTE_SCARTATE  = "richieste_scartate";
 
-	public static final List<String> ESITI_GRUPPO = new ArrayList<String> ();
+	public static final List<String> ESITI_GRUPPO = new ArrayList<> ();
 	static{
 		ESITI_GRUPPO.add(ESITO_GRUPPO_OK);
 		ESITI_GRUPPO.add(ESITO_GRUPPO_FAULT_APPLICATIVO);
@@ -234,7 +234,7 @@ public class CostantiExporter {
 	public static final String CLAIM_USERNAME = "username";
 	public static final String CLAIM_EMAIL = "eMail";
 	public static final String CLAIM_CLIENT_ID = "clientId";
-	public static final List<String> CLAIMS = new ArrayList<String> ();
+	public static final List<String> CLAIMS = new ArrayList<> ();
 	static{
 		CLAIMS.add(CLAIM_SUBJECT);
 		CLAIMS.add(CLAIM_ISSUER);

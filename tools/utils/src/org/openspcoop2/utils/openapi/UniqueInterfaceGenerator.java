@@ -116,7 +116,7 @@ public class UniqueInterfaceGenerator {
 			
 			String blackListParametersArgs = args[4].trim();
 			if(blackListParametersArgs!=null) {
-				blackListParameters = new ArrayList<String>();
+				blackListParameters = new ArrayList<>();
 				if(blackListParametersArgs.contains(",")) {
 					String [] tmp = blackListParametersArgs.split(",");
 					for (String s : tmp) {
@@ -129,7 +129,7 @@ public class UniqueInterfaceGenerator {
 			
 			String blackListComponentsArgs = args[5].trim();
 			if(blackListComponentsArgs!=null) {
-				blackListComponents = new ArrayList<String>();
+				blackListComponents = new ArrayList<>();
 				if(blackListComponentsArgs.contains(",")) {
 					String [] tmp = blackListComponentsArgs.split(",");
 					for (String s : tmp) {

@@ -122,7 +122,7 @@ public class Transaction {
 	private String correlazioneApplicativaRisposta;
 	
 	/** ServizioApplicativoErogatore */
-	private List<String> serviziApplicativiErogatore = new ArrayList<String>();
+	private List<String> serviziApplicativiErogatore = new ArrayList<>();
 	
 	/** Tempo di accettazione del messaggio iniziale */
 	private Date dataAccettazioneRichiesta;
@@ -140,7 +140,7 @@ public class Transaction {
 	private Date dataUscitaRisposta;
 
 	/** Indicazione se la busta e' duplicata */
-	private List<String> idProtocolloDuplicati = new ArrayList<String>();
+	private List<String> idProtocolloDuplicati = new ArrayList<>();
 	
 	/** Stato */
 	private String stato = null;
@@ -150,7 +150,7 @@ public class Transaction {
 	private TransactionServiceLibrary transactionServiceLibrary;
 	
 	/** EventiGestione */
-	private List<String> eventiGestione = new ArrayList<String>();
+	private List<String> eventiGestione = new ArrayList<>();
 	
 	/** InformazioniToken */
 	private InformazioniToken informazioniToken;

@@ -60,7 +60,7 @@ public class SAMLUtilities {
 		if (wssProperties != null && wssProperties.size() > 0) {
 			
 			// preprocess per saml
-			List<String> keys = new ArrayList<String>();
+			List<String> keys = new ArrayList<>();
 			keys.addAll(wssProperties.keySet());
 			for (String key : keys) {
 				Object oValue = wssProperties.get(key);

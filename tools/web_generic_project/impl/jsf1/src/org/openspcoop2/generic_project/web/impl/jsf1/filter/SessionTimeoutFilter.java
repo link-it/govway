@@ -57,7 +57,7 @@ public class SessionTimeoutFilter implements Filter {
 
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
-		this.excludedPages = new ArrayList<String>();
+		this.excludedPages = new ArrayList<>();
 	}
 
 	@Override

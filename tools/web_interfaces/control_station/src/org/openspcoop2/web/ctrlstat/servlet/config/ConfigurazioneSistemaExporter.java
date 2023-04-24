@@ -528,7 +528,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 												confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW(alias),
 												idDS);
 										if(infoConnessioneAltriDB==null) {
-											infoConnessioneAltriDB = new HashMap<String, String>();
+											infoConnessioneAltriDB = new HashMap<>();
 										}
 										infoConnessioneAltriDB.put(nomeDS,statoInfo);
 										
@@ -537,7 +537,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 												confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getUsedConnectionsDatasourcesGW(alias),
 												idDS);
 										if(statoConnessioniAltriDB==null) {
-											statoConnessioniAltriDB = new HashMap<String, String>();
+											statoConnessioniAltriDB = new HashMap<>();
 										}
 										statoConnessioniAltriDB.put(nomeDS,statoConnessioni);
 										
@@ -545,12 +545,12 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 										ControlStationCore.logError("Errore durante la lettura delle informazioni verso il database "+nomeDS+" (jmxResourcePdD): "+e.getMessage(),e);
 										
 										if(infoConnessioneAltriDB==null) {
-											infoConnessioneAltriDB = new HashMap<String, String>();
+											infoConnessioneAltriDB = new HashMap<>();
 										}
 										infoConnessioneAltriDB.put(nomeDS,ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
 										
 										if(statoConnessioniAltriDB==null) {
-											statoConnessioniAltriDB = new HashMap<String, String>();
+											statoConnessioniAltriDB = new HashMap<>();
 										}
 										statoConnessioniAltriDB.put(nomeDS,ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
 									}		
@@ -564,12 +564,12 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 			ControlStationCore.logError("Errore durante la lettura delle informazioni verso altri database (jmxResourcePdD): "+e.getMessage(),e);
 			
 			if(infoConnessioneAltriDB==null) {
-				infoConnessioneAltriDB = new HashMap<String, String>();
+				infoConnessioneAltriDB = new HashMap<>();
 			}
 			infoConnessioneAltriDB.put("GovWayDatasources",ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
 			
 			if(statoConnessioniAltriDB==null) {
-				statoConnessioniAltriDB = new HashMap<String, String>();
+				statoConnessioniAltriDB = new HashMap<>();
 			}
 			statoConnessioniAltriDB.put("GovWayDatasources",ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
 		}

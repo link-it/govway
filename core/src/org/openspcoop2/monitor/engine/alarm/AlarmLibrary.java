@@ -251,7 +251,7 @@ public class AlarmLibrary {
 	
 	public String getAlarmsImages() throws AlarmException{
 		if(this.activeThreads!=null && this.activeThreads.size()>0){
-			List<String> list = new ArrayList<String>();
+			List<String> list = new ArrayList<>();
 			for (String idAllarme : this.activeThreads.keySet()) {
 				list.add(idAllarme);
 			}

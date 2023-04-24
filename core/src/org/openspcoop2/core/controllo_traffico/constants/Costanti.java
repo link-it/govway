@@ -99,7 +99,7 @@ public class Costanti {
 				distribuita = true;
 			}
 		}
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		l.add(values ? VALUE_MODALITA_SINCRONIZZAZIONE_DEFAULT : LABEL_MODALITA_SINCRONIZZAZIONE_DEFAULT);
 		if(locale) {
 			l.add(values ? VALUE_MODALITA_SINCRONIZZAZIONE_LOCALE : LABEL_MODALITA_SINCRONIZZAZIONE_LOCALE);
@@ -147,7 +147,7 @@ public class Costanti {
 				redis = true;
 			}
 		}
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(hazelcast) {
 			l.add(values ? VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST : LABEL_MODALITA_IMPLEMENTAZIONE_HAZELCAST);
 		}
@@ -218,7 +218,7 @@ public class Costanti {
 				}
 			}
 		}
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(exact) {
 			l.add(values ? VALUE_MODALITA_CONTATORI_EXACT : LABEL_MODALITA_CONTATORI_EXACT);
 		}
@@ -276,7 +276,7 @@ public class Costanti {
 	}
 	
 	private static final List<String> _getMODALITA_TIPOLOGIA(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl, String counter, boolean values){
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST.equals(impl)) {
 			for (PolicyGroupByActiveThreadsType tipo : tipiSupportati) {
 				if(VALUE_MODALITA_CONTATORI_EXACT.equals(counter)) {
@@ -365,7 +365,7 @@ public class Costanti {
 	
 	
 	public static final String MODALITA_GENERAZIONE_HEADER_HTTP = "ctHttpMode";	
-	public static final List<String> VALUES_MODALITA_GENERAZIONE_HEADER_HTTP = new ArrayList<String>();
+	public static final List<String> VALUES_MODALITA_GENERAZIONE_HEADER_HTTP = new ArrayList<>();
 	static {
 		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP.add(VALUE_HTTP_HEADER_DEFAULT);
 		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP.add(VALUE_HTTP_HEADER_DISABILITATO);
@@ -373,7 +373,7 @@ public class Costanti {
 	}
 	
 	public static final String LABEL_MODALITA_GENERAZIONE_HEADER_HTTP = "HTTP Headers";	
-	public static final List<String> LABELS_MODALITA_GENERAZIONE_HEADER_HTTP = new ArrayList<String>();
+	public static final List<String> LABELS_MODALITA_GENERAZIONE_HEADER_HTTP = new ArrayList<>();
 	static {
 		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP.add(LABEL_HTTP_HEADER_DEFAULT);
 		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP.add(LABEL_HTTP_HEADER_DISABILITATO);
@@ -382,7 +382,7 @@ public class Costanti {
 	
 	
 	public static final String MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT = "ctHttpQuota";	
-	public static final List<String> VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT = new ArrayList<String>();
+	public static final List<String> VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT = new ArrayList<>();
 	static {
 		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT.add(VALUE_HTTP_HEADER_DEFAULT);
 		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT.add(VALUE_HTTP_HEADER_ABILITATO_NO_WINDOWS);
@@ -391,7 +391,7 @@ public class Costanti {
 	}
 	
 	public static final String LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT = "Limiti di Quota";	
-	public static final List<String> LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT = new ArrayList<String>();
+	public static final List<String> LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT = new ArrayList<>();
 	static {
 		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT.add(LABEL_HTTP_HEADER_DEFAULT);
 		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT.add(LABEL_HTTP_HEADER_ABILITATO_NO_WINDOWS);
@@ -401,7 +401,7 @@ public class Costanti {
 	
 
 	public static final String MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING = "ctHttpRemaining";	
-	public static final List<String> VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING = new ArrayList<String>();
+	public static final List<String> VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING = new ArrayList<>();
 	static {
 		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING.add(VALUE_HTTP_HEADER_DEFAULT);
 		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING.add(VALUE_HTTP_HEADER_ABILITATO);
@@ -409,7 +409,7 @@ public class Costanti {
 	}
 	
 	public static final String LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING = "Rimanenza della Quota";	
-	public static final List<String> LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING = new ArrayList<String>();
+	public static final List<String> LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING = new ArrayList<>();
 	static {
 		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING.add(LABEL_HTTP_HEADER_DEFAULT);
 		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING.add(LABEL_HTTP_HEADER_ABILITATO);
@@ -418,7 +418,7 @@ public class Costanti {
 	
 	
 	public static final String MODALITA_GENERAZIONE_HEADER_HTTP_RESET = "ctHttpReset";	
-	public static final List<String> VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RESET = new ArrayList<String>();
+	public static final List<String> VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RESET = new ArrayList<>();
 	static {
 		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RESET.add(VALUE_HTTP_HEADER_DEFAULT);
 		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RESET.add(VALUE_HTTP_HEADER_ABILITATO);
@@ -426,7 +426,7 @@ public class Costanti {
 	}
 	
 	public static final String LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_RESET = "Reset della Quota (secondi)";	
-	public static final List<String> LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RESET = new ArrayList<String>();
+	public static final List<String> LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RESET = new ArrayList<>();
 	static {
 		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RESET.add(LABEL_HTTP_HEADER_DEFAULT);
 		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RESET.add(LABEL_HTTP_HEADER_ABILITATO);
@@ -435,7 +435,7 @@ public class Costanti {
 	
 	
 	public static final String MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER = "ctHttpRetryAfter";	
-	public static final List<String> VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER = new ArrayList<String>();
+	public static final List<String> VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER = new ArrayList<>();
 	static {
 		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER.add(VALUE_HTTP_HEADER_DEFAULT);
 		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER.add(VALUE_HTTP_HEADER_ABILITATO_NO_BACKOFF);
@@ -444,7 +444,7 @@ public class Costanti {
 	}
 	
 	public static final String LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER = "Retry-After";	
-	public static final List<String> LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER = new ArrayList<String>();
+	public static final List<String> LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER = new ArrayList<>();
 	static {
 		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER.add(LABEL_HTTP_HEADER_DEFAULT);
 		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER.add(LABEL_HTTP_HEADER_ABILITATO_NO_BACKOFF);

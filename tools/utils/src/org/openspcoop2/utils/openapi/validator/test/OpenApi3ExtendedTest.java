@@ -692,7 +692,7 @@ public class OpenApi3ExtendedTest {
 		httpEntityGET.setUrl(testUrl5);	
 		apiValidatorOpenApi.validate(httpEntityGET);	
 		
-		List<String> contentTypes_test5 = new ArrayList<String>();
+		List<String> contentTypes_test5 = new ArrayList<>();
 		contentTypes_test5.add(HttpConstants.CONTENT_TYPE_JSON);
 		contentTypes_test5.add("jsonUncorrect");
 		contentTypes_test5.add(HttpConstants.CONTENT_TYPE_PLAIN);
@@ -845,7 +845,7 @@ public class OpenApi3ExtendedTest {
 		
 		System.out.println("Test #8 (Richiesta POST con parametro /documenti/mixed/send e elemento valido/nonValido secondo il pattern)");
 		String testUrl8 = baseUri+"/documenti/mixed/send";
-		List<String> valori_test8 = new ArrayList<String>();
+		List<String> valori_test8 = new ArrayList<>();
 		List<Boolean> esiti_test8 = new ArrayList<Boolean>();
 		valori_test8.add("234567");esiti_test8.add(true);
 		valori_test8.add("2345676");esiti_test8.add(false);
@@ -953,7 +953,7 @@ public class OpenApi3ExtendedTest {
 		
 		System.out.println("Test #9 (Richiesta POST con parametro /documenti/mixed/send e elemento valido/nonValido secondo il pattern definito in OR)");
 		String testUrl9 = baseUri+"/documenti/mixed/send";
-		List<String> valori_test9 = new ArrayList<String>();
+		List<String> valori_test9 = new ArrayList<>();
 		List<Boolean> esiti_test9 = new ArrayList<Boolean>();
 		valori_test9.add("NGRLLI04L54D969B");esiti_test9.add(true); // CF1
 		valori_test9.add("brtBGI06c16d612D");esiti_test9.add(true); // CF2
@@ -1103,7 +1103,7 @@ public class OpenApi3ExtendedTest {
 		apiValidatorOpenApi.validate(httpEntityResponseTest10);	
 		System.out.println("\t Validazione senza content-type ok");
 		
-		List<String> contentTypeTest10List = new ArrayList<String>();
+		List<String> contentTypeTest10List = new ArrayList<>();
 		contentTypeTest10List.add(HttpConstants.CONTENT_TYPE_PLAIN);
 		contentTypeTest10List.add(HttpConstants.CONTENT_TYPE_TEXT_XML);
 		contentTypeTest10List.add(HttpConstants.CONTENT_TYPE_XML_PROBLEM_DETAILS_RFC_7807);
@@ -1182,7 +1182,7 @@ public class OpenApi3ExtendedTest {
 		System.out.println("Test #11 (Richiesta POST con parametro /documenti/norequestresponse/send)");
 		String testUrl11 = baseUri+"/documenti/norequestresponse/send";
 		
-		List<String> contentTypeTest11List = new ArrayList<String>();
+		List<String> contentTypeTest11List = new ArrayList<>();
 		contentTypeTest11List.add(HttpConstants.CONTENT_TYPE_PLAIN);
 		contentTypeTest11List.add(HttpConstants.CONTENT_TYPE_TEXT_XML);
 		contentTypeTest11List.add(HttpConstants.CONTENT_TYPE_XML_PROBLEM_DETAILS_RFC_7807);
@@ -1385,7 +1385,7 @@ public class OpenApi3ExtendedTest {
 		Map<String, List<String>> parametersTrasporto12_required = new HashMap<>();
 		httpEntity12_required.setHeaders(parametersTrasporto12_required);
 		
-		List<String> contentTypeTest12List = new ArrayList<String>();
+		List<String> contentTypeTest12List = new ArrayList<>();
 		contentTypeTest12List.add(null);
 		contentTypeTest12List.add(HttpConstants.CONTENT_TYPE_PLAIN);
 		contentTypeTest12List.add(HttpConstants.CONTENT_TYPE_JSON);
@@ -1547,7 +1547,7 @@ public class OpenApi3ExtendedTest {
 		System.out.println("Test #13 (Richiesta POST con parametro /documenti/datetest e elemento valido/nonValido secondo il pattern definito per la data in RFC 3339, section 5.6)");
 		
 		String testUrl13= baseUri+"/documenti/datetest/";
-		List<String> valori_test13 = new ArrayList<String>();
+		List<String> valori_test13 = new ArrayList<>();
 		List<Boolean> esiti_test13 = new ArrayList<Boolean>();
 		valori_test13.add("2020-07-22");esiti_test13.add(true); // ok
 		valori_test13.add("2020 07 21");esiti_test13.add(false); // ko
@@ -1947,7 +1947,7 @@ public class OpenApi3ExtendedTest {
 		System.out.println("Test #14 (Richiesta POST con parametro /documenti/datetimetest e elemento valido/nonValido secondo il pattern definito per la data in RFC 3339, section 5.6)");
 		
 		String testUrl14= baseUri+"/documenti/datetimetest/";
-		List<String> valori_test14 = new ArrayList<String>();
+		List<String> valori_test14 = new ArrayList<>();
 		List<Boolean> esiti_test14 = new ArrayList<Boolean>();
 		// Lasciare i primi sopra, poiche' la validazione json non si accorge dell'errore che manca Z o offset.
 		valori_test14.add("2017-07-21T17:32:28");esiti_test14.add(false); // manca o l'offset o Z
@@ -2436,8 +2436,8 @@ public class OpenApi3ExtendedTest {
 		
 		String testUrl15= baseUri+"/oggetti/"+UUID.randomUUID().toString();
 		List<Integer> valori_test15 = new ArrayList<Integer>();
-		List<String> msg_test15 = new ArrayList<String>();
-		List<String> ct_test15 = new ArrayList<String>();
+		List<String> msg_test15 = new ArrayList<>();
+		List<String> ct_test15 = new ArrayList<>();
 		List<Boolean> esiti_test15 = new ArrayList<Boolean>();
 		
 		valori_test15.add(200);msg_test15.add(json15RispostaOK);ct_test15.add(HttpConstants.CONTENT_TYPE_JSON);esiti_test15.add(true); 
@@ -2585,7 +2585,7 @@ public class OpenApi3ExtendedTest {
 		
 		String json16RispostaOK = "{\"esito\": \"OK\"}";
 				
-		List<String> url_test16 = new ArrayList<String>();
+		List<String> url_test16 = new ArrayList<>();
 		List<Boolean> esiti_test16 = new ArrayList<Boolean>();
 		
 		url_test16.add("/oggettislashfinale/");esiti_test16.add(true); 
@@ -2696,7 +2696,7 @@ public class OpenApi3ExtendedTest {
 		
 		String testUrl17= baseUri+"/problem/"+UUID.randomUUID().toString();
 		List<Integer> valori_test17 = new ArrayList<Integer>();
-		List<String> msg_test17 = new ArrayList<String>();
+		List<String> msg_test17 = new ArrayList<>();
 		List<Boolean> esiti_test17 = new ArrayList<Boolean>();
 		
 		// ricade in 400 dove vi e' il problem detail rivisto per far si che almeno un elemento tra type, title e status sia required
@@ -2837,7 +2837,7 @@ public class OpenApi3ExtendedTest {
 		valori_test18.add(500);
 		valori_test18.add(501); // default
 		
-		List<String> contentTypes_test18 = new ArrayList<String>();
+		List<String> contentTypes_test18 = new ArrayList<>();
 		contentTypes_test18.add(HttpConstants.CONTENT_TYPE_JSON);
 		contentTypes_test18.add("jsonUncorrect");
 		contentTypes_test18.add(HttpConstants.CONTENT_TYPE_PLAIN);
@@ -2972,7 +2972,7 @@ public class OpenApi3ExtendedTest {
 		System.out.println("Test #19 (Enumeration con valori NO, YES ...) ...");
 		String testUrl19 = baseUri+"/test-enum-no-yes";
 		
-		List<Object> valori_test19 = new ArrayList<Object>();
+		List<Object> valori_test19 = new ArrayList<>();
 		List<Boolean> esito_test19 = new ArrayList<Boolean>();
 		valori_test19.add("SI"); esito_test19.add(true);
 		valori_test19.add("NO"); esito_test19.add(true);
@@ -3335,10 +3335,10 @@ public class OpenApi3ExtendedTest {
 				", \"object_required\": null,\"object_optional\": null"+
 				"}";
 		
-		List<String> valori_test20 = new ArrayList<String>();
+		List<String> valori_test20 = new ArrayList<>();
 		List<Boolean> esito_test20 = new ArrayList<Boolean>();
-		List<String> tipoTest_test20 = new ArrayList<String>();
-		List<String> path_test20 = new ArrayList<String>();
+		List<String> tipoTest_test20 = new ArrayList<>();
+		List<String> path_test20 = new ArrayList<>();
 		
 		tipoTest_test20.add("ValorizzazioneCompleta"); valori_test20.add(json20_messaggio_valorizzato); esito_test20.add(true); path_test20.add("test-nullable");
 		tipoTest_test20.add("ValorizzazioneCompleta"); valori_test20.add(json20_messaggio_valorizzato); esito_test20.add(true); path_test20.add("test-not-nullable");
@@ -3449,7 +3449,7 @@ public class OpenApi3ExtendedTest {
 		String cat = "{\"pet_type\": \"Cat\",  \"age\": 3}";
 		String dog1 = "{\"pet_type\": \"Dog\",  \"bark\": false,  \"breed\": \"Dingo\" }";
 		String dog2 = "{\"pet_type\": \"Dog\",  \"bark\": true }";
-		List<String> tipoTest_test21 = new ArrayList<String>();
+		List<String> tipoTest_test21 = new ArrayList<>();
 		tipoTest_test21.add(cat);
 		tipoTest_test21.add(dog1);
 		tipoTest_test21.add(dog2);
@@ -4194,8 +4194,8 @@ public class OpenApi3ExtendedTest {
 		
 		
 		
-		List<String> macroTest_path = new ArrayList<String>();
-		List<String> macroTest_subtype = new ArrayList<String>();
+		List<String> macroTest_path = new ArrayList<>();
+		List<String> macroTest_subtype = new ArrayList<>();
 		
 		macroTest_path.add("/documenti/multipart/form-data/strict");
 		macroTest_subtype.add(HttpConstants.CONTENT_TYPE_MULTIPART_FORM_DATA_SUBTYPE);
@@ -4221,38 +4221,38 @@ public class OpenApi3ExtendedTest {
 			String macroTestSubtype = macroTest_subtype.get(j);
 			
 
-			List<String> tipoTest = new ArrayList<String>();
+			List<String> tipoTest = new ArrayList<>();
 			List<Boolean> erroreAttesoTest = new ArrayList<Boolean>();
-			List<String> msgErroreAttesoTest = new ArrayList<String>();
-			List<String> msgErroreAttesoRispostaTest = new ArrayList<String>();
-			List<String> pathTest = new ArrayList<String>();
+			List<String> msgErroreAttesoTest = new ArrayList<>();
+			List<String> msgErroreAttesoRispostaTest = new ArrayList<>();
+			List<String> pathTest = new ArrayList<>();
 			List<HttpRequestMethod> methodTest = new ArrayList<HttpRequestMethod>();
-			List<String> attachment_subtype = new ArrayList<String>();
+			List<String> attachment_subtype = new ArrayList<>();
 			
-			List<String> attachment1_name = new ArrayList<String>();
-			List<String> attachment1_content = new ArrayList<String>();
-			List<String> attachment1_contentType = new ArrayList<String>();
-			List<String> attachment1_fileName = new ArrayList<String>();
+			List<String> attachment1_name = new ArrayList<>();
+			List<String> attachment1_content = new ArrayList<>();
+			List<String> attachment1_contentType = new ArrayList<>();
+			List<String> attachment1_fileName = new ArrayList<>();
 			
-			List<String> attachment2_name = new ArrayList<String>();
-			List<String> attachment2_content = new ArrayList<String>();
-			List<String> attachment2_contentType = new ArrayList<String>();
-			List<String> attachment2_fileName = new ArrayList<String>();
+			List<String> attachment2_name = new ArrayList<>();
+			List<String> attachment2_content = new ArrayList<>();
+			List<String> attachment2_contentType = new ArrayList<>();
+			List<String> attachment2_fileName = new ArrayList<>();
 			
-			List<String> attachment3_name = new ArrayList<String>();
+			List<String> attachment3_name = new ArrayList<>();
 			List<byte[]> attachment3_content = new ArrayList<byte[]>();
-			List<String> attachment3_contentType = new ArrayList<String>();
-			List<String> attachment3_fileName = new ArrayList<String>();
+			List<String> attachment3_contentType = new ArrayList<>();
+			List<String> attachment3_fileName = new ArrayList<>();
 			
-			List<String> attachment4_name = new ArrayList<String>();
+			List<String> attachment4_name = new ArrayList<>();
 			List<byte[]> attachment4_content = new ArrayList<byte[]>();
-			List<String> attachment4_contentType = new ArrayList<String>();
-			List<String> attachment4_fileName = new ArrayList<String>();
+			List<String> attachment4_contentType = new ArrayList<>();
+			List<String> attachment4_fileName = new ArrayList<>();
 			
-			List<String> attachment5_name = new ArrayList<String>();
+			List<String> attachment5_name = new ArrayList<>();
 			List<byte[]> attachment5_content = new ArrayList<byte[]>();
-			List<String> attachment5_contentType = new ArrayList<String>();
-			List<String> attachment5_fileName = new ArrayList<String>();
+			List<String> attachment5_contentType = new ArrayList<>();
+			List<String> attachment5_fileName = new ArrayList<>();
 			
 			
 			// *** Test1: corretto ***
@@ -5014,8 +5014,8 @@ public class OpenApi3ExtendedTest {
 		byte [] pdf = Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test/test.pdf"));
 				
 		
-		List<String> macroTest_path = new ArrayList<String>();
-		List<String> macroTest_subtype = new ArrayList<String>();
+		List<String> macroTest_path = new ArrayList<>();
+		List<String> macroTest_subtype = new ArrayList<>();
 		
 		macroTest_path.add("/documenti/multipart/form-data/array-binary");
 		macroTest_subtype.add(HttpConstants.CONTENT_TYPE_MULTIPART_FORM_DATA_SUBTYPE);
@@ -5037,18 +5037,18 @@ public class OpenApi3ExtendedTest {
 			String macroTestSubtype = macroTest_subtype.get(j);
 			
 
-			List<String> tipoTest = new ArrayList<String>();
+			List<String> tipoTest = new ArrayList<>();
 			List<Boolean> erroreAttesoTest = new ArrayList<Boolean>();
-			List<String> msgErroreAttesoTest = new ArrayList<String>();
-			List<String> msgErroreAttesoRispostaTest = new ArrayList<String>();
-			List<String> pathTest = new ArrayList<String>();
+			List<String> msgErroreAttesoTest = new ArrayList<>();
+			List<String> msgErroreAttesoRispostaTest = new ArrayList<>();
+			List<String> pathTest = new ArrayList<>();
 			List<HttpRequestMethod> methodTest = new ArrayList<HttpRequestMethod>();
-			List<String> attachment_subtype = new ArrayList<String>();
+			List<String> attachment_subtype = new ArrayList<>();
 			
-			List<String> attachment_name = new ArrayList<String>();
+			List<String> attachment_name = new ArrayList<>();
 			List<List<byte[]>> attachment_content = new ArrayList<List<byte[]>>();
-			List<String> attachment_contentType = new ArrayList<String>();
-			List<String> attachment_fileName = new ArrayList<String>();
+			List<String> attachment_contentType = new ArrayList<>();
+			List<String> attachment_fileName = new ArrayList<>();
 			String templateNumero = MultipartUtilities.templateNumero;
 						
 			
@@ -5293,15 +5293,15 @@ public class OpenApi3ExtendedTest {
 
 		
 
-		List<String> tipoTest = new ArrayList<String>();
-		List<String> messagggioTest = new ArrayList<String>();
+		List<String> tipoTest = new ArrayList<>();
+		List<String> messagggioTest = new ArrayList<>();
 		List<Boolean> erroreAttesoTest = new ArrayList<Boolean>();
-		List<String> msgErroreAttesoTest_request_openapi4j = new ArrayList<String>();
-		List<String> msgErroreAttesoTest_response_openapi4j = new ArrayList<String>();
-		List<String> msgErroreAttesoTest_request_swagger_request= new ArrayList<String>();
-		List<String> msgErroreAttesoTest_response_swagger_request = new ArrayList<String>();
-		List<String> msgErroreAttesoTest_request_json_schema= new ArrayList<String>();
-		List<String> msgErroreAttesoTest_response_json_schema = new ArrayList<String>();
+		List<String> msgErroreAttesoTest_request_openapi4j = new ArrayList<>();
+		List<String> msgErroreAttesoTest_response_openapi4j = new ArrayList<>();
+		List<String> msgErroreAttesoTest_request_swagger_request= new ArrayList<>();
+		List<String> msgErroreAttesoTest_response_swagger_request = new ArrayList<>();
+		List<String> msgErroreAttesoTest_request_json_schema= new ArrayList<>();
+		List<String> msgErroreAttesoTest_response_json_schema = new ArrayList<>();
 		
 		
 		// *** Test1: corretto ***
@@ -5616,14 +5616,14 @@ public class OpenApi3ExtendedTest {
 		String parameterIllegalForUrl = "prova\\=fr"; 
 		String parameterIllegalForUrl_url_encoded = "prova%5C%3Dfr"; 
 		
-		List<String> tipoTest = new ArrayList<String>();
+		List<String> tipoTest = new ArrayList<>();
 		List<HttpRequestMethod> methodTest = new ArrayList<HttpRequestMethod>();
-		List<String> parametroTest = new ArrayList<String>();
+		List<String> parametroTest = new ArrayList<>();
 		List<Boolean> erroreAttesoTest = new ArrayList<Boolean>();
 		List<Boolean> erroreAttesoProcessingTest = new ArrayList<Boolean>();
-		List<String> erroreAtteso_openapi4j = new ArrayList<String>();
-		List<String> erroreAtteso_swagger_request = new ArrayList<String>();
-		List<String> erroreAtteso_json_schema = new ArrayList<String>();
+		List<String> erroreAtteso_openapi4j = new ArrayList<>();
+		List<String> erroreAtteso_swagger_request = new ArrayList<>();
+		List<String> erroreAtteso_json_schema = new ArrayList<>();
 		
 		
 		// *** Test: corretto GET ***
@@ -5963,22 +5963,22 @@ public class OpenApi3ExtendedTest {
 
 	
 	
-		List<String> tipoTest = new ArrayList<String>();
-		List<String> complexTypeTest = new ArrayList<String>();
-		List<String> pathTest = new ArrayList<String>();
-		List<String> queryTest = new ArrayList<String>();
-		List<String> headerTest = new ArrayList<String>();
-		List<String> cookieTest = new ArrayList<String>();
-		List<String> pathInLineTest = new ArrayList<String>();
-		List<String> queryInLineTest = new ArrayList<String>();
-		List<String> headerInLineTest = new ArrayList<String>();
-		List<String> cookieInLineTest = new ArrayList<String>();
+		List<String> tipoTest = new ArrayList<>();
+		List<String> complexTypeTest = new ArrayList<>();
+		List<String> pathTest = new ArrayList<>();
+		List<String> queryTest = new ArrayList<>();
+		List<String> headerTest = new ArrayList<>();
+		List<String> cookieTest = new ArrayList<>();
+		List<String> pathInLineTest = new ArrayList<>();
+		List<String> queryInLineTest = new ArrayList<>();
+		List<String> headerInLineTest = new ArrayList<>();
+		List<String> cookieInLineTest = new ArrayList<>();
 		List<Boolean> erroreAttesoRichiestaTest = new ArrayList<Boolean>();
 		List<Boolean> erroreAttesoRispostaTest = new ArrayList<Boolean>();
-		List<String> msgErroreAttesoTest_openapi4j = new ArrayList<String>();
-		List<String> msgErroreAttesoTest_swagger_request= new ArrayList<String>();
-		List<String> msgErroreAttesoTest_swagger_response= new ArrayList<String>();
-		List<String> msgErroreAttesoTest_json_schema= new ArrayList<String>();
+		List<String> msgErroreAttesoTest_openapi4j = new ArrayList<>();
+		List<String> msgErroreAttesoTest_swagger_request= new ArrayList<>();
+		List<String> msgErroreAttesoTest_swagger_response= new ArrayList<>();
+		List<String> msgErroreAttesoTest_json_schema= new ArrayList<>();
 		
 		
 		
@@ -7565,7 +7565,7 @@ public class OpenApi3ExtendedTest {
 		HttpRequestMethod method = HttpRequestMethod.GET;
 		String contentType = HttpConstants.CONTENT_TYPE_PLAIN;
 
-		List<String> tipoTest = new ArrayList<String>();
+		List<String> tipoTest = new ArrayList<>();
 		
 		tipoTest.add("text/xml");
 		tipoTest.add("application/json ");

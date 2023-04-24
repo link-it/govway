@@ -113,7 +113,7 @@ public class ExpressionSQL extends ExpressionImpl {
 		}
 	}
 
-	private List<Object> fieldsManuallyAdd = new ArrayList<Object>();
+	private List<Object> fieldsManuallyAdd = new ArrayList<>();
 	public List<Object> getFieldsManuallyAdd() {
 		return this.fieldsManuallyAdd;
 	}
@@ -281,10 +281,10 @@ public class ExpressionSQL extends ExpressionImpl {
 						sqlQueryObject.addOrderBy(columnOrderBy,SortOrder.ASC.equals(orderedField.getSortOrder()));
 						
 						// Search by alias
-						List<String> v = new ArrayList<String>();
+						List<String> v = new ArrayList<>();
 						try{
 							v = sqlQueryObject.getFieldsName();
-						}catch(Exception e){v = new ArrayList<String>();}
+						}catch(Exception e){v = new ArrayList<>();}
 						boolean contains = false;
 						//System.out.println("SEARCH ALIAS ["+columnOrderAlias+"] ...");
 						if(v.contains(columnOrderAlias)){
@@ -500,7 +500,7 @@ public class ExpressionSQL extends ExpressionImpl {
 			List<Object> fieldsManuallyAdd, List<OrderedField> orderByFields, List<IField> groupByFields,
 			boolean ignoreAlreadyExistsException) throws ExpressionException{
 		try{
-			List<String> tables = new ArrayList<String>();
+			List<String> tables = new ArrayList<>();
 			
 			if(fields!=null){
 				for (IField iField : fields) {
@@ -1194,7 +1194,7 @@ public class ExpressionSQL extends ExpressionImpl {
 	}
 	@Override
 	protected InExpressionImpl getInExpression(IField field, Object... values) throws ExpressionException {
-		List<Object> lista = new ArrayList<Object>();
+		List<Object> lista = new ArrayList<>();
 		if(values!=null){
 			for (int i = 0; i < values.length; i++) {
 				lista.add(values[i]);

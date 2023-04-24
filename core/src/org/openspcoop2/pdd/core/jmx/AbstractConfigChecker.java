@@ -53,7 +53,7 @@ public abstract class AbstractConfigChecker {
 			l.add(nomeNodoRuntime);
 		}
 		else {
-			List<String> l = new ArrayList<String>();
+			List<String> l = new ArrayList<>();
 			l.add(nomeNodoRuntime);
 			mapErrori.put(errore, l);
 		}
@@ -586,14 +586,14 @@ public abstract class AbstractConfigChecker {
 			throw new Exception("Classe '"+o.getClass().getName()+"' non gestita");
 		}
 		
-		Map<String,List<String>> mapErrori = new HashMap<String,List<String>>();
-		Map<String,List<String>> mapWarning = new HashMap<String,List<String>>();
+		Map<String,List<String>> mapErrori = new HashMap<>();
+		Map<String,List<String>> mapWarning = new HashMap<>();
 		
 		String error = StatoCheck.ERROR.toString();
 		String warn = StatoCheck.WARN.toString();
 		String ok = StatoCheck.OK.toString();
 		
-		List<String> nodiRuntime = new ArrayList<String>();
+		List<String> nodiRuntime = new ArrayList<>();
 		if(useApi) {
 			nodiRuntime.add("SDK");
 		}
@@ -728,8 +728,8 @@ public abstract class AbstractConfigChecker {
 			throw new Exception("Classe '"+o.getClass().getName()+"' non gestita");
 		}
 		
-		Map<String,List<String>> mapErrori = new HashMap<String,List<String>>();
-		Map<String,List<String>> mapWarning = new HashMap<String,List<String>>();
+		Map<String,List<String>> mapErrori = new HashMap<>();
+		Map<String,List<String>> mapWarning = new HashMap<>();
 		
 		String error = StatoCheck.ERROR.toString();
 		String warn = StatoCheck.WARN.toString();
@@ -806,8 +806,8 @@ public abstract class AbstractConfigChecker {
 		
 		String risorsa = this.getJmxResourceNomeRisorsaConfigurazionePdD();
 				
-		Map<String,List<String>> mapErrori = new HashMap<String,List<String>>();
-		Map<String,List<String>> mapWarning = new HashMap<String,List<String>>();
+		Map<String,List<String>> mapErrori = new HashMap<>();
+		Map<String,List<String>> mapWarning = new HashMap<>();
 		
 		String error = StatoCheck.ERROR.toString();
 		String warn = StatoCheck.WARN.toString();

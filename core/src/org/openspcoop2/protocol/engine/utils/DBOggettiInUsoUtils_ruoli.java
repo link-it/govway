@@ -93,70 +93,70 @@ public class DBOggettiInUsoUtils_ruoli {
 			List<String> allarme_list = whereIsInUso.get(ErrorsHandlerCostant.ALLARMI);
 			
 			if (soggetti_list == null) {
-				soggetti_list = new ArrayList<String>();
+				soggetti_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_SOGGETTI, soggetti_list);
 			}
 			if (servizi_applicativi_list == null) {
-				servizi_applicativi_list = new ArrayList<String>();
+				servizi_applicativi_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_SERVIZI_APPLICATIVI, servizi_applicativi_list);
 			}
 			
 			if (porte_applicative_list == null) {
-				porte_applicative_list = new ArrayList<String>();
+				porte_applicative_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE, porte_applicative_list);
 			}
 			if (porte_applicative_modi_list == null) {
-				porte_applicative_modi_list = new ArrayList<String>();
+				porte_applicative_modi_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE_MODI, porte_applicative_modi_list);
 			}
 			if (porte_delegate_list == null) {
-				porte_delegate_list = new ArrayList<String>();
+				porte_delegate_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_PORTE_DELEGATE, porte_delegate_list);
 			}
 			if (mappingErogazionePA_list == null) {
-				mappingErogazionePA_list = new ArrayList<String>();
+				mappingErogazionePA_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_MAPPING_EROGAZIONE_PA, mappingErogazionePA_list);
 			}
 			if (mappingErogazionePA_modi_list == null) {
-				mappingErogazionePA_modi_list = new ArrayList<String>();
+				mappingErogazionePA_modi_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_MAPPING_EROGAZIONE_PA_MODI, mappingErogazionePA_modi_list);
 			}
 			if (mappingFruizionePD_list == null) {
-				mappingFruizionePD_list = new ArrayList<String>();
+				mappingFruizionePD_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_MAPPING_FRUIZIONE_PD, mappingFruizionePD_list);
 			}
 			
 			if (porte_applicative_token_list == null) {
-				porte_applicative_token_list = new ArrayList<String>();
+				porte_applicative_token_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.RUOLI_TOKEN_PA, porte_applicative_token_list);
 			}
 			if (porte_applicative_token_modi_list == null) {
-				porte_applicative_token_modi_list = new ArrayList<String>();
+				porte_applicative_token_modi_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.RUOLI_TOKEN_PA_MODI, porte_applicative_token_modi_list);
 			}
 			if (porte_delegate_token_list == null) {
-				porte_delegate_token_list = new ArrayList<String>();
+				porte_delegate_token_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.RUOLI_TOKEN_PD, porte_delegate_token_list);
 			}
 			if (mappingErogazioneTokenPA_list == null) {
-				mappingErogazioneTokenPA_list = new ArrayList<String>();
+				mappingErogazioneTokenPA_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.RUOLI_TOKEN_MAPPING_PA, mappingErogazioneTokenPA_list);
 			}
 			if (mappingErogazioneTokenPA_modi_list == null) {
-				mappingErogazioneTokenPA_modi_list = new ArrayList<String>();
+				mappingErogazioneTokenPA_modi_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.RUOLI_TOKEN_MAPPING_PA_MODI, mappingErogazioneTokenPA_modi_list);
 			}
 			if (mappingFruizioneTokenPD_list == null) {
-				mappingFruizioneTokenPD_list = new ArrayList<String>();
+				mappingFruizioneTokenPD_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.RUOLI_TOKEN_MAPPING_PD, mappingFruizioneTokenPD_list);
 			}
 			
 			if (ct_list == null) {
-				ct_list = new ArrayList<String>();
+				ct_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.CONTROLLO_TRAFFICO, ct_list);
 			}
 			if (allarme_list == null) {
-				allarme_list = new ArrayList<String>();
+				allarme_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.ALLARMI, allarme_list);
 			}
 			

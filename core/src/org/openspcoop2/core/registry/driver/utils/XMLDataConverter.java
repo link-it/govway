@@ -946,7 +946,7 @@ public class XMLDataConverter {
 		
 		// Accordi Servizio Parte Comune
 		List<AccordoServizioParteComune> accordiServizioComposti = new ArrayList<AccordoServizioParteComune>();
-		List<String> accordiServizioCompostiID = new ArrayList<String>();
+		List<String> accordiServizioCompostiID = new ArrayList<>();
 		try{
 			for(int i=0; i<this.sorgenteRegistro.sizeAccordoServizioParteComuneList(); i++){
 				AccordoServizioParteComune as = this.sorgenteRegistro.getAccordoServizioParteComune(i);

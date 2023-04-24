@@ -693,7 +693,7 @@ public class StatsSearchForm extends BaseSearchForm{
 
 	public Map<String,String> getHeaderColonneTipiLatenzaImpostati(){
 
-		Map<String,String>  map = new HashMap<String, String>();
+		Map<String,String>  map = new HashMap<>();
 
 		if(this.getTipiLatenza()!=null){
 			int i = 0;
@@ -755,7 +755,7 @@ public class StatsSearchForm extends BaseSearchForm{
 
 	public Map<String,String> getHeaderColonneTipiBandaImpostati(){
 
-		Map<String,String>  map = new HashMap<String, String>();
+		Map<String,String>  map = new HashMap<>();
 
 		if(this.getTipiBanda()!=null){
 			int i = 0;
@@ -778,7 +778,7 @@ public class StatsSearchForm extends BaseSearchForm{
 
 	public Map<String,String> getHeaderColonneEsiti(){
 
-		Map<String,String>  map = new HashMap<String, String>();
+		Map<String,String>  map = new HashMap<>();
 		map.put(""+0,"Ok");
 		map.put(""+1,"Fault Applicativo");
 		map.put(""+2,"Fallite");

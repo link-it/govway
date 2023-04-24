@@ -113,7 +113,7 @@ public final class ConfigurazioneHandlersRispostaDel extends Action {
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 
-			List<Object> oggettiDaAggiornare = new ArrayList<Object>();
+			List<Object> oggettiDaAggiornare = new ArrayList<>();
 			List<ConfigurazioneHandler> listaDaAggiornare = null;
 			if(ruoloPorta !=null) {
 				if(ruoloPorta.equals(TipoPdD.DELEGATA)) {

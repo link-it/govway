@@ -58,7 +58,7 @@ public class PolicyGroupByActiveThreadsWS implements IPolicyGroupByActiveThreads
 	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx)
 			throws PolicyException {
 		try{
-			java.util.Map<String, List<String>> p = new HashMap<String, List<String>>();
+			java.util.Map<String, List<String>> p = new HashMap<>();
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_ACTIVE_ID, this.activeId);
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_GROUP_BY_ID, IDUnivocoGroupByPolicy.serialize(datiGroupBy));
 			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_REGISTER_START_REQUEST, this.log);
@@ -83,7 +83,7 @@ public class PolicyGroupByActiveThreadsWS implements IPolicyGroupByActiveThreads
 	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx)
 			throws PolicyException, PolicyNotFoundException {
 		try{
-			java.util.Map<String, List<String>> p = new HashMap<String, List<String>>();
+			java.util.Map<String, List<String>> p = new HashMap<>();
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_ACTIVE_ID, this.activeId);
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_GROUP_BY_ID, IDUnivocoGroupByPolicy.serialize(datiGroupBy));
 			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_UPDATE_START_REQUEST, this.log);
@@ -108,7 +108,7 @@ public class PolicyGroupByActiveThreadsWS implements IPolicyGroupByActiveThreads
 	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx, MisurazioniTransazione dati,
 			boolean isApplicabile, boolean isViolata) throws PolicyException, PolicyNotFoundException {
 		try{
-			java.util.Map<String, List<String>> p = new HashMap<String, List<String>>();
+			java.util.Map<String, List<String>> p = new HashMap<>();
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_ACTIVE_ID, this.activeId);
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_GROUP_BY_ID, IDUnivocoGroupByPolicy.serialize(datiGroupBy));
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_MISURAZIONI_TRANSAZIONE, MisurazioniTransazione.serialize(dati));

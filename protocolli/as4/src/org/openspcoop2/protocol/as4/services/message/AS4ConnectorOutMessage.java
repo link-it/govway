@@ -74,12 +74,12 @@ public class AS4ConnectorOutMessage implements ConnectorOutMessage {
 	}
 	
 	
-	private Map<String, List<String>> headers = new HashMap<String, List<String>>();
+	private Map<String, List<String>> headers = new HashMap<>();
 	public String getHeaderFirstValue(String key) throws ConnectorException{
 		return TransportUtils.getFirstValue(this.headers, key);
 	}
 	public Map<String, List<String>> getHeaders(){
-		Map<String, List<String>> map = new HashMap<String, List<String>>();
+		Map<String, List<String>> map = new HashMap<>();
 		map.putAll(this.headers);
 		return map;
 	}

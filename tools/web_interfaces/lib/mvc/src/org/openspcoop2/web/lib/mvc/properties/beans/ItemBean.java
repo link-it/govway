@@ -156,8 +156,8 @@ public class ItemBean extends BaseItemBean<Item>{
 			de.setSelected(this.value);
 			de.setType(DataElementType.SELECT);
 
-			List<String> valuesList = new ArrayList<String>();
-			List<String> labelsList = new ArrayList<String>();
+			List<String> valuesList = new ArrayList<>();
+			List<String> labelsList = new ArrayList<>();
 			ItemValues values = this.getItem().getValues();
 			if(values!=null && values.sizeValueList()>0) {
 				for (ItemValue itemValue : values.getValueList()) {

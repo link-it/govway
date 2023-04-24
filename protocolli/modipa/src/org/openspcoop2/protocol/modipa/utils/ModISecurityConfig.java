@@ -91,7 +91,7 @@ public class ModISecurityConfig {
 	private String clientId;
 	private String issuer;
 	private String subject;
-	private List<String> httpHeaders = new ArrayList<String>();
+	private List<String> httpHeaders = new ArrayList<>();
 	private List<SOAPHeader> soapHeaders = new ArrayList<SOAPHeader>();
 	
 	private boolean multipleHeaderUseSameJti = true;
@@ -705,7 +705,7 @@ public class ModISecurityConfig {
 				}
 				if(this.audience==null) {
 					
-					List<String> tags = new ArrayList<String>();
+					List<String> tags = new ArrayList<>();
 					if(aspc!=null && aspc.getGruppi()!=null && aspc.getGruppi().sizeGruppoList()>0) {
 						for (int i = 0; i < aspc.getGruppi().sizeGruppoList(); i++) {
 							tags.add(aspc.getGruppi().getGruppo(i).getNome());
@@ -995,7 +995,7 @@ public class ModISecurityConfig {
 			if("".equals(value)) {
 				throw new Exception("non definita");
 			}
-			l = new ArrayList<String>();
+			l = new ArrayList<>();
 			if(value.contains(",")) {
 				String [] tmp = value.split(",");
 				if(tmp==null || tmp.length<=0) {

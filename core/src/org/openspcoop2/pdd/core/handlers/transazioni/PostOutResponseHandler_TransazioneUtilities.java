@@ -227,7 +227,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 		try {
 
 			if(times!=null) {
-				times.fillTransaction_details = new ArrayList<String>();
+				times.fillTransaction_details = new ArrayList<>();
 				timeStart = DateManager.getTimeMillis();
 			}
 			
@@ -870,7 +870,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					
 					String conflict = "0";
 					if(aspc.getGruppi()!=null && aspc.getGruppi().sizeGruppoList()>0) {
-						List<String> gruppi = new ArrayList<String>();
+						List<String> gruppi = new ArrayList<>();
 						int count = 0;
 						int maxLengthCredenziali = op2Properties.getTransazioniCredenzialiMittenteMaxLength()-AbstractCredenzialeList.PREFIX.length();
 						for (int i=0; i<aspc.getGruppi().sizeGruppoList(); i++) {
@@ -1032,7 +1032,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					}
 					if(this.transazioniRegistrazioneTracceProtocolPropertiesEnabled){
 						if(tracciaRichiesta.getBusta().sizeProperties()>0){
-							Map<String, List<String>> propertiesBusta = new HashMap<String, List<String>>();
+							Map<String, List<String>> propertiesBusta = new HashMap<>();
 							String [] pNames = tracciaRichiesta.getBusta().getPropertiesNames();
 							if(pNames!=null){
 								for (int i = 0; i < pNames.length; i++) {
@@ -1084,7 +1084,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					}
 					if(this.transazioniRegistrazioneTracceProtocolPropertiesEnabled){
 						if(tracciaRisposta.getBusta().sizeProperties()>0){
-							Map<String, List<String>> propertiesBusta = new HashMap<String, List<String>>();
+							Map<String, List<String>> propertiesBusta = new HashMap<>();
 							String [] pNames = tracciaRisposta.getBusta().getPropertiesNames();
 							if(pNames!=null){
 								for (int i = 0; i < pNames.length; i++) {
@@ -1444,7 +1444,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			}
 			
 			// ** eventi di gestione **
-			List<String> eventiGestione = new ArrayList<String>();
+			List<String> eventiGestione = new ArrayList<>();
 			int count = 0;
 			int maxLengthCredenziali = op2Properties.getTransazioniCredenzialiMittenteMaxLength()-AbstractCredenzialeList.PREFIX.length();
 			

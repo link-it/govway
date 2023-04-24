@@ -290,7 +290,7 @@ public class RicezioneBuste {
 
 		// Inizializzo IGestoreIntegrazionePA list
 		String [] tipiIntegrazioneDefault = propertiesReader.getTipoIntegrazionePA();
-		List<String> s = new ArrayList<String>();
+		List<String> s = new ArrayList<>();
 		for (int i = 0; i < tipiIntegrazioneDefault.length; i++) {
 			try {
 				IGestoreIntegrazionePA gestore = pluginLoader.newIntegrazionePortaApplicativa(tipiIntegrazioneDefault[i]);
@@ -313,7 +313,7 @@ public class RicezioneBuste {
 			String protocol = (String) enumProtocols.nextElement();
 			String [] tipiIntegrazionePA = propertiesReader.getTipoIntegrazionePA(protocol);
 			if(tipiIntegrazionePA!=null && tipiIntegrazionePA.length>0){
-				List<String> tipiIntegrazionePerProtocollo = new ArrayList<String>();
+				List<String> tipiIntegrazionePerProtocollo = new ArrayList<>();
 				for (int i = 0; i < tipiIntegrazionePA.length; i++) {
 					try {
 						IGestoreIntegrazionePA gestore = pluginLoader.newIntegrazionePortaApplicativa(tipiIntegrazionePA[i]);
@@ -632,7 +632,7 @@ public class RicezioneBuste {
 					
 					Dump dumpApplicativo = getDump(configurazionePdDReader, protocolFactory, internalObjects, msgDiag.getPorta());
 					if(outResponseContext.getResponseHeaders()==null) {
-						outResponseContext.setResponseHeaders(new HashMap<String, List<String>>());
+						outResponseContext.setResponseHeaders(new HashMap<>());
 					}
 					Map<String, List<String>> propertiesTrasporto = outResponseContext.getResponseHeaders();
 					ServiceBinding sb = requestMessage!=null ? requestMessage.getServiceBinding() : this.msgContext.getRequestInfo().getProtocolServiceBinding();
@@ -1109,7 +1109,7 @@ public class RicezioneBuste {
 		}
 		
 		// Imposto header di risposta
-		Map<String, List<String>> headerRisposta = new HashMap<String, List<String>>();
+		Map<String, List<String>> headerRisposta = new HashMap<>();
 		UtilitiesIntegrazione utilitiesHttpRisposta = UtilitiesIntegrazione.getInstancePAResponse(logCore);
 		try{
 			utilitiesHttpRisposta.setInfoProductTransportProperties(headerRisposta);
@@ -2096,7 +2096,7 @@ public class RicezioneBuste {
 					CORSWrappedHttpServletResponse res = new CORSWrappedHttpServletResponse(true);
 					corsFilter.doCORS(httpServletRequest, res, CORSRequestType.PRE_FLIGHT, true);
 					if(this.msgContext.getResponseHeaders()==null) {
-						this.msgContext.setResponseHeaders(new HashMap<String, List<String>>());
+						this.msgContext.setResponseHeaders(new HashMap<>());
 					}
 					this.msgContext.getResponseHeaders().putAll(res.getHeadersValues());
 					this.msgContext.setMessageResponse(res.buildMessage());
@@ -7485,7 +7485,7 @@ public class RicezioneBuste {
 			OutResponsePAMessage outResponsePAMessage = new OutResponsePAMessage();
 			outResponsePAMessage.setBustaRichiesta(bustaRichiesta);
 			outResponsePAMessage.setMessage(responseMessage);
-			Map<String, List<String>> propertiesIntegrazioneRisposta = new HashMap<String, List<String>>();
+			Map<String, List<String>> propertiesIntegrazioneRisposta = new HashMap<>();
 			outResponsePAMessage.setHeaders(propertiesIntegrazioneRisposta);
 			outResponsePAMessage.setPortaDelegata(pd);
 			outResponsePAMessage.setPortaApplicativa(pa);

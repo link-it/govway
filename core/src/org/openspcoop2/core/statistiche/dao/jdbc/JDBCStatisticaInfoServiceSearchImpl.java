@@ -247,7 +247,7 @@ public class JDBCStatisticaInfoServiceSearchImpl implements IJDBCServiceSearchWi
 	protected List<Map<String,Object>> _select(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
 												IExpression expression, ISQLQueryObject sqlQueryObjectDistinct) throws ServiceException,NotFoundException,NotImplementedException,Exception {
 		
-		List<Object> listaQuery = new ArrayList<Object>();
+		List<Object> listaQuery = new ArrayList<>();
 		List<JDBCObject> listaParams = new ArrayList<JDBCObject>();
 		List<Object> returnField = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareSelect(jdbcProperties, log, connection, sqlQueryObject, 
         						expression, this.getStatisticaInfoFieldConverter(), StatisticaInfo.model(), 
@@ -491,7 +491,7 @@ public class JDBCStatisticaInfoServiceSearchImpl implements IJDBCServiceSearchWi
 		
 		List<Object> listObjects = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.findAll(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression,
 																			this.getStatisticaInfoFieldConverter(), StatisticaInfo.model(), objectIdClass, listaQuery);
-		List<Object> newList = new ArrayList<Object>();
+		List<Object> newList = new ArrayList<>();
 		for (int i = 0; i < listObjects.size(); i++) {
 			newList.add(TipoIntervalloStatistico.toEnumConstant((String)listObjects.get(i)));
 		}

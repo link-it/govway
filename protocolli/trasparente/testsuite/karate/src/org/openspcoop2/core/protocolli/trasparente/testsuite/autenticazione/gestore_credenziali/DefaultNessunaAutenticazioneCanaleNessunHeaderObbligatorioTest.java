@@ -41,7 +41,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 
 	@Test
 	public void erogazione_public() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		Utilities._test(TipoServizio.EROGAZIONE,
 				"SoggettoInternoTest",
 				"public",
@@ -57,7 +57,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 	// autenticazioneBasic [EROGAZIONE]
 	@Test
 	public void erogazione_autenticazioneBasic() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Erogazione-BASIC-Username", "ApplicativoSoggettoInternoTestFruitore1");
 		headers.put("X-Erogazione-BASIC-Password", "123456");
 		Utilities._test(TipoServizio.EROGAZIONE,
@@ -73,7 +73,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 	}
 	@Test
 	public void erogazione_autenticazioneBasic_errate() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Erogazione-BASIC-Username", "ApplicativoSoggettoInternoTestFruitore1Errate");
 		headers.put("X-Erogazione-BASIC-Password", "123456Errate");
 		Utilities._test(TipoServizio.EROGAZIONE,
@@ -91,7 +91,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 	}
 	@Test
 	public void erogazione_autenticazioneBasic_nonPresenti() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		Utilities._test(TipoServizio.EROGAZIONE,
 				"SoggettoInternoTest",
 				"basic",
@@ -108,7 +108,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 	// autenticazioneBasic [FRUIZIONE]
 	@Test
 	public void fruizione_autenticazioneBasic() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Fruizione-BASIC-Username", "ApplicativoSoggettoInternoTestFruitore1");
 		headers.put("X-Fruizione-BASIC-Password", "123456");
 		Utilities._test(TipoServizio.FRUIZIONE,
@@ -124,7 +124,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 	}
 	@Test
 	public void fruizione_autenticazioneBasic_errate() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Fruizione-BASIC-Username", "ApplicativoSoggettoInternoTestFruitore1Errate");
 		headers.put("X-Fruizione-BASIC-Password", "123456Errate");
 		Utilities._test(TipoServizio.FRUIZIONE,
@@ -142,7 +142,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 	}
 	@Test
 	public void fruizione_autenticazioneBasic_nonPresenti() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		Utilities._test(TipoServizio.FRUIZIONE,
 				"SoggettoInternoTestFruitore",
 				"basic",
@@ -159,7 +159,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 	// autenticazioneHttps [EROGAZIONE]
 	@Test
 	public void erogazione_autenticazioneHttps() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Erogazione-SSL-Subject", "l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM");
 		headers.put("X-Erogazione-SSL-Issuer", "/l=Pisa/st=Italy/ou=Test/o=Test/c=IT/cn=ExampleClient1HSM/");
 		Utilities._test(TipoServizio.EROGAZIONE,
@@ -175,7 +175,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 	}
 	@Test
 	public void erogazione_autenticazioneHttps_noIssuer() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Erogazione-SSL-Subject", "l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM");
 		// Manca l'issuer
 		Utilities._test(TipoServizio.EROGAZIONE,
@@ -193,7 +193,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 	}
 	@Test
 	public void erogazione_autenticazioneHttps_certs() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Erogazione-SSL-Cert",Utilities.getCertificate(false));
 		Utilities._test(TipoServizio.EROGAZIONE,
 				"SoggettoInternoTest",
@@ -208,7 +208,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 	}
 	@Test
 	public void erogazione_autenticazioneHttps_certs_non_inserito_truststore() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Erogazione-SSL-Cert",Utilities.getCertificate2(false));
 		Utilities._test(TipoServizio.EROGAZIONE,
 				"SoggettoInternoTest",
@@ -223,7 +223,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 	}
 	@Test
 	public void erogazione_autenticazioneHttps_errate() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Erogazione-SSL-Subject", "l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM, Altro=errato");
 		headers.put("X-Erogazione-SSL-Issuer", "/l=Pisa/st=Italy/ou=Test/o=Test/c=IT/cn=ExampleClient1HSM/Altro=errato/");
 		Utilities._test(TipoServizio.EROGAZIONE,
@@ -241,7 +241,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 	}
 	@Test
 	public void erogazione_autenticazioneHttps_nonPresenti() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		Utilities._test(TipoServizio.EROGAZIONE,
 				"SoggettoInternoTest",
 				"https",
@@ -262,7 +262,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 
 	@Test
 	public void fruizione_public() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		Utilities._test(TipoServizio.FRUIZIONE,
 				"SoggettoInternoTestFruitore",
 				"public",
@@ -277,7 +277,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 	// autenticazioneHttps [FRUIZIONE]
 	@Test
 	public void fruizione_autenticazioneHttps() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Fruizione-SSL-Subject", "l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM");
 		headers.put("X-Fruizione-SSL-Issuer", "/l=Pisa/st=Italy/ou=Test/o=Test/c=IT/cn=ExampleClient1HSM/");
 		Utilities._test(TipoServizio.FRUIZIONE,
@@ -293,7 +293,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 	}
 	@Test
 	public void fruizione_autenticazioneHttps_noIssuer() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Fruizione-SSL-Subject", "l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM");
 		// Manca l'issuer
 		Utilities._test(TipoServizio.FRUIZIONE,
@@ -311,7 +311,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 	}
 	@Test
 	public void fruizione_autenticazioneHttps_certs() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Fruizione-SSL-Cert", Utilities.getCertificate(true));
 		Utilities._test(TipoServizio.FRUIZIONE,
 				"SoggettoInternoTestFruitore",
@@ -327,7 +327,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 	
 	@Test
 	public void fruizione_autenticazioneHttps_certs2_non_in_truststore_ma_truststore_non_attivato() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Fruizione-SSL-Cert", Utilities.getCertificate2(true));
 		Utilities._test(TipoServizio.FRUIZIONE,
 				"SoggettoInternoTestFruitore",
@@ -343,7 +343,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 	
 	@Test
 	public void fruizione_autenticazioneHttps_errate() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Fruizione-SSL-Subject", "l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM, Altro=errato");
 		headers.put("X-Fruizione-SSL-Issuer", "/l=Pisa/st=Italy/ou=Test/o=Test/c=IT/cn=ExampleClient1HSM/Altro=errato/");
 		Utilities._test(TipoServizio.FRUIZIONE,
@@ -361,7 +361,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 	}
 	@Test
 	public void fruizione_autenticazioneHttps_nonPresenti() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		Utilities._test(TipoServizio.FRUIZIONE,
 				"SoggettoInternoTestFruitore",
 				"https",
@@ -379,7 +379,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 	// autenticazionePrincipal [EROGAZIONE]
 	@Test
 	public void erogazione_autenticazionePrincipal() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Erogazione-Principal", "ApplicativoSoggettoInternoTestFruitore1");
 		Utilities._test(TipoServizio.EROGAZIONE,
 				"SoggettoInternoTest",
@@ -394,7 +394,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 	}
 	@Test
 	public void erogazione_autenticazionePrincipal_errate() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Erogazione-Principal", "ApplicativoSoggettoInternoTestFruitore1Errate");
 		Utilities._test(TipoServizio.EROGAZIONE,
 				"SoggettoInternoTest",
@@ -411,7 +411,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 	}
 	@Test
 	public void erogazione_autenticazionePrincipal_nonPresenti() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		Utilities._test(TipoServizio.EROGAZIONE,
 				"SoggettoInternoTest",
 				"principal",
@@ -428,7 +428,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 	// autenticazionePrincipal [FRUIZIONE]
 	@Test
 	public void fruizione_autenticazionePrincipal() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Fruizione-Principal", "ApplicativoSoggettoInternoTestFruitore1");
 		Utilities._test(TipoServizio.FRUIZIONE,
 				"SoggettoInternoTestFruitore",
@@ -443,7 +443,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 	}
 	@Test
 	public void fruizione_autenticazionePrincipal_errate() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Fruizione-Principal", "ApplicativoSoggettoInternoTestFruitore1Errate");
 		Utilities._test(TipoServizio.FRUIZIONE,
 				"SoggettoInternoTestFruitore",
@@ -460,7 +460,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 	}
 	@Test
 	public void fruizione_autenticazionePrincipal_nonPresenti() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		Utilities._test(TipoServizio.FRUIZIONE,
 				"SoggettoInternoTestFruitore",
 				"principal",

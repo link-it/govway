@@ -70,7 +70,7 @@ public abstract class AbstractCredenzialeList extends AbstractCredenziale {
 	
 	public static List<String> normalizeToList(String dbValue){
 		if(dbValue.contains(PREFIX)) {
-			List<String> l = new ArrayList<String>();
+			List<String> l = new ArrayList<>();
 			String [] tmp = dbValue.split(PREFIX);
 			if(tmp!=null && tmp.length>0) {
 				for (String t : tmp) {

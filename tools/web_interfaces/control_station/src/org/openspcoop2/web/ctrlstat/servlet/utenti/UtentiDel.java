@@ -368,7 +368,7 @@ public final class UtentiDel extends Action {
 							User mySU = utentiCore.getUser(nomesu);
 							// Se singleSu != null, devo recuperare gli oggetti
 							// dell'utente ed assegnarli a singleSu
-					        List<Object> oggetti = new ArrayList<Object>();
+					        List<Object> oggetti = new ArrayList<>();
 					        List<Integer> tipoModifica = new ArrayList<Integer>();
 					        if(soggettiCore.isRegistroServiziLocale()){
 					        	if (singleSuServizi != null && !singleSuServizi.equals("")) {

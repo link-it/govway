@@ -130,7 +130,7 @@ public class RegistroOpenSPCoopUtilities {
 			Element wsdlElement = documentLogico.getDocumentElement();
 			String prefix = wsdlElement.getPrefix();
 			ByteArrayOutputStream xsd = new ByteArrayOutputStream();
-			HashMap<String,String> prefixForWSDL = new HashMap<String, String>();
+			HashMap<String,String> prefixForWSDL = new HashMap<>();
 						
 			
 			
@@ -427,8 +427,8 @@ public class RegistroOpenSPCoopUtilities {
 			// Associazione path dei files per risoluzione include:
 			// - nome del file singolo
 			// - nome del file con il parent.
-			HashMap<String, String> targetNamespacesXSD = new HashMap<String, String>();
-			HashMap<String, String> includePath = new HashMap<String, String>();
+			HashMap<String, String> targetNamespacesXSD = new HashMap<>();
+			HashMap<String, String> includePath = new HashMap<>();
 			if(wsdlDefinitorio!=null){
 				String file = CostantiRegistroServizi.ALLEGATO_DEFINITORIO_XSD;
 				if(strutturaPackageCNIPA){
@@ -618,7 +618,7 @@ public class RegistroOpenSPCoopUtilities {
 			byte[]wsdlImplementativoErogatore = servizioOpenspcoop.getByteWsdlImplementativoErogatore();
 			byte[]wsdlImplementativoFruitore = servizioOpenspcoop.getByteWsdlImplementativoFruitore();
 			
-			HashMap<String, String> targetNamespacesXSD = new HashMap<String, String>();
+			HashMap<String, String> targetNamespacesXSD = new HashMap<>();
 			IDAccordo idAccordoParteComune = this.idAccordoFactory.getIDAccordoFromUri(servizioOpenspcoop.getAccordoServizioParteComune());			
 			
 			if(wsdlImplementativoErogatore!=null){

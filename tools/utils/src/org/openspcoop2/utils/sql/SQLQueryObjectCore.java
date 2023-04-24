@@ -56,27 +56,27 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	}
 	
 	/** List di Field esistenti: i nomi dei fields impostati (se e' stato utilizzato un alias ritorna comunque il nome della colonna) */
-	List<String> fields = new ArrayList<String>();
+	List<String> fields = new ArrayList<>();
 	/** List di NomiField esistenti: i nomi dei fields impostati (se e' stato utilizzato un alias ritorna il valore dell'alias) */
-	List<String> fieldNames = new ArrayList<String>();
+	List<String> fieldNames = new ArrayList<>();
 	/** Mapping tra alias e indicazione se e' una function: i nomi dei fields impostati (se e' stato utilizzato un alias ritorna il valore dell'alias) */
 	Map<String, Boolean> fieldNameIsFunction = new HashMap<String, Boolean>();
 	/** Mapping tra alias (key) e field names (value) (sono presenti i mapping solo per le colonne per cui e' stato definito un alias) */
-	Map<String, String> alias = new HashMap<String, String>();
+	Map<String, String> alias = new HashMap<>();
 	
 	/** List di Tabelle esistenti */
-	List<String> tables = new ArrayList<String>();
-	List<String> tableNames = new ArrayList<String>();
-	List<String> tableAlias = new ArrayList<String>();
+	List<String> tables = new ArrayList<>();
+	List<String> tableNames = new ArrayList<>();
+	List<String> tableAlias = new ArrayList<>();
 	
 	/** List di Field esistenti */
-	List<String> conditions = new ArrayList<String>();
+	List<String> conditions = new ArrayList<>();
 	public int sizeConditions(){
 		return this.conditions.size();
 	}
 	
 	/** List di indici forzati */
-	List<String> forceIndexTableNames = new ArrayList<String>();
+	List<String> forceIndexTableNames = new ArrayList<>();
 	
 	/** OperatorLogic */
 	boolean andLogicOperator = false;
@@ -85,10 +85,10 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	boolean notBeforeConditions = false;
 	
 	/** GroupBy di Field esistenti */
-	private List<String> groupBy = new ArrayList<String>();
+	private List<String> groupBy = new ArrayList<>();
 	
 	/** OrderBy di Field esistenti */
-	List<String> orderBy = new ArrayList<String>();
+	List<String> orderBy = new ArrayList<>();
 	Map<String, Boolean> orderBySortType = new HashMap<String, Boolean>();
 	
 	/** Tipo di ordinamento */
@@ -107,15 +107,15 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	
 	/* UPDATE */
 	/** List di Field per l'update */
-	List<String> updateFieldsName = new ArrayList<String>();
-	List<String> updateFieldsValue = new ArrayList<String>();
+	List<String> updateFieldsName = new ArrayList<>();
+	List<String> updateFieldsValue = new ArrayList<>();
 	/** Tabella per l'update */
 	String updateTable = null;
 
 	/* INSERT */
 	/** List di Field per l'insert */
-	List<String> insertFieldsName = new ArrayList<String>();
-	List<String> insertFieldsValue = new ArrayList<String>();
+	List<String> insertFieldsName = new ArrayList<>();
+	List<String> insertFieldsValue = new ArrayList<>();
 	/** Tabella per l'insert */
 	String insertTable = null;
 
@@ -289,7 +289,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 
 		// 3. Anche se ho eliminato il prefisso della tabella, potrei avere come field una stringa tipo 'colonna as alias'
 		// In tal caso devo tornare solo alias.
-		List<String> aliasModeSupportati = new ArrayList<String>();
+		List<String> aliasModeSupportati = new ArrayList<>();
 		for (Iterator<?> iterator = this.getSupportedAliasesField().iterator(); iterator.hasNext();) {
 			aliasModeSupportati.add((String)iterator.next());
 		}
@@ -1082,7 +1082,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 */
 	@Override
 	public List<String> getSupportedAliasesField(){
-		List<String> lista = new ArrayList<String>();
+		List<String> lista = new ArrayList<>();
 		lista.add(" as ");
 		lista.add(" ");
 		return lista;
@@ -1095,7 +1095,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 */
 	@Override
 	public List<String> getSupportedAliasesTable(){
-		List<String> lista = new ArrayList<String>();
+		List<String> lista = new ArrayList<>();
 		lista.add(" as ");
 		lista.add(" ");
 		return lista;

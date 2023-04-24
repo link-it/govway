@@ -486,7 +486,7 @@ public class UtilitiesIntegrazioneBC {
 		try {
 			this.govway2openspcoop_Mapping_trasparente_soggetto = this.openspcoopProperties.getNewOldMapping_backward_compatibility_trasparente_soggetto();
 			if(this.govway2openspcoop_Mapping_trasparente_soggetto!=null && !this.govway2openspcoop_Mapping_trasparente_soggetto.isEmpty()) {
-				this.openspcoop2govway_Mapping_trasparente_soggetto = new HashMap<String, String>();
+				this.openspcoop2govway_Mapping_trasparente_soggetto = new HashMap<>();
 				for (String govway : this.govway2openspcoop_Mapping_trasparente_soggetto.keySet()) {
 					String openspcoop = this.govway2openspcoop_Mapping_trasparente_soggetto.get(govway);
 					this.openspcoop2govway_Mapping_trasparente_soggetto.put(openspcoop, govway);
@@ -498,7 +498,7 @@ public class UtilitiesIntegrazioneBC {
 		try {
 			this.govway2openspcoop_Mapping_trasparente_servizio = this.openspcoopProperties.getNewOldMapping_backward_compatibility_trasparente_servizio();
 			if(this.govway2openspcoop_Mapping_trasparente_servizio!=null && !this.govway2openspcoop_Mapping_trasparente_servizio.isEmpty()) {
-				this.openspcoop2govway_Mapping_trasparente_servizio = new HashMap<String, String>();
+				this.openspcoop2govway_Mapping_trasparente_servizio = new HashMap<>();
 				for (String govway : this.govway2openspcoop_Mapping_trasparente_servizio.keySet()) {
 					String openspcoop = this.govway2openspcoop_Mapping_trasparente_servizio.get(govway);
 					this.openspcoop2govway_Mapping_trasparente_servizio.put(openspcoop, govway);
@@ -511,7 +511,7 @@ public class UtilitiesIntegrazioneBC {
 		try {
 			this.govway2openspcoop_Mapping_spcoop_soggetto = this.openspcoopProperties.getNewOldMapping_backward_compatibility_spcoop_soggetto();
 			if(this.govway2openspcoop_Mapping_spcoop_soggetto!=null && !this.govway2openspcoop_Mapping_spcoop_soggetto.isEmpty()) {
-				this.openspcoop2govway_Mapping_spcoop_soggetto = new HashMap<String, String>();
+				this.openspcoop2govway_Mapping_spcoop_soggetto = new HashMap<>();
 				for (String govway : this.govway2openspcoop_Mapping_spcoop_soggetto.keySet()) {
 					String openspcoop = this.govway2openspcoop_Mapping_spcoop_soggetto.get(govway);
 					this.openspcoop2govway_Mapping_spcoop_soggetto.put(openspcoop, govway);
@@ -523,7 +523,7 @@ public class UtilitiesIntegrazioneBC {
 		try {
 			this.govway2openspcoop_Mapping_spcoop_servizio = this.openspcoopProperties.getNewOldMapping_backward_compatibility_spcoop_servizio();
 			if(this.govway2openspcoop_Mapping_spcoop_servizio!=null && !this.govway2openspcoop_Mapping_spcoop_servizio.isEmpty()) {
-				this.openspcoop2govway_Mapping_spcoop_servizio = new HashMap<String, String>();
+				this.openspcoop2govway_Mapping_spcoop_servizio = new HashMap<>();
 				for (String govway : this.govway2openspcoop_Mapping_spcoop_servizio.keySet()) {
 					String openspcoop = this.govway2openspcoop_Mapping_spcoop_servizio.get(govway);
 					this.openspcoop2govway_Mapping_spcoop_servizio.put(openspcoop, govway);
@@ -536,7 +536,7 @@ public class UtilitiesIntegrazioneBC {
 		try {
 			this.govway2openspcoop_Mapping_sdi_soggetto = this.openspcoopProperties.getNewOldMapping_backward_compatibility_sdi_soggetto();
 			if(this.govway2openspcoop_Mapping_sdi_soggetto!=null && !this.govway2openspcoop_Mapping_sdi_soggetto.isEmpty()) {
-				this.openspcoop2govway_Mapping_sdi_soggetto = new HashMap<String, String>();
+				this.openspcoop2govway_Mapping_sdi_soggetto = new HashMap<>();
 				for (String govway : this.govway2openspcoop_Mapping_sdi_soggetto.keySet()) {
 					String openspcoop = this.govway2openspcoop_Mapping_sdi_soggetto.get(govway);
 					this.openspcoop2govway_Mapping_sdi_soggetto.put(openspcoop, govway);
@@ -548,7 +548,7 @@ public class UtilitiesIntegrazioneBC {
 		try {
 			this.govway2openspcoop_Mapping_sdi_servizio = this.openspcoopProperties.getNewOldMapping_backward_compatibility_sdi_servizio();
 			if(this.govway2openspcoop_Mapping_sdi_servizio!=null && !this.govway2openspcoop_Mapping_sdi_servizio.isEmpty()) {
-				this.openspcoop2govway_Mapping_sdi_servizio = new HashMap<String, String>();
+				this.openspcoop2govway_Mapping_sdi_servizio = new HashMap<>();
 				for (String govway : this.govway2openspcoop_Mapping_sdi_servizio.keySet()) {
 					String openspcoop = this.govway2openspcoop_Mapping_sdi_servizio.get(govway);
 					this.openspcoop2govway_Mapping_sdi_servizio.put(openspcoop, govway);

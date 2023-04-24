@@ -188,7 +188,7 @@ public class ConnettoreUtils {
 				Map<String, List<String>>  p = propertiesURLBased;
 				if(forwardParameter!=null && forwardParameter.size()>0){
 					if(p==null){
-						p = new HashMap<String, List<String>> ();
+						p = new HashMap<> ();
 					}
 					Iterator<String> keys = forwardParameter.getKeys();
 					while (keys.hasNext()) {

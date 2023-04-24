@@ -67,7 +67,7 @@ public class Filter {
 	
 	
 	
-	private List<String> filterByName = new ArrayList<String>();
+	private List<String> filterByName = new ArrayList<>();
 	
 	public List<String> getFilterByName() {
 		return this.filterByName;

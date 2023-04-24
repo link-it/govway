@@ -624,8 +624,8 @@ public class DriverRegistroServiziDB_scopeDriver {
 
 			/* === Filtro Gruppo, Tipo Erogazione/Fruizione, Implementazione API === */
 			
-			List<String> existsConditions = new ArrayList<String>();
-			List<Object> existsParameters = new ArrayList<Object>();
+			List<String> existsConditions = new ArrayList<>();
+			List<Object> existsParameters = new ArrayList<>();
 			String alias_PD_SCOPE = "pdscope";
 			String alias_PD = "pd";
 			String alias_PA_SCOPE = "pascope";

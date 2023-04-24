@@ -2718,7 +2718,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				boolean profiloModipaSelezionato = false;
 				// solo se il protocollo modipa e' caricato faccio la verifica
 				if(this.core.getProtocolli().contains(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_MODIPA)) {
-					List<String> profiloModipaSelezionato_opzioniAccettate = new ArrayList<String>();
+					List<String> profiloModipaSelezionato_opzioniAccettate = new ArrayList<>();
 					profiloModipaSelezionato_opzioniAccettate.add(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_MODIPA);
 					if(this.core.isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi()) {
 						profiloModipaSelezionato_opzioniAccettate.add(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI);
@@ -3303,13 +3303,13 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 	
 	private void setLabelColonne(boolean modalitaCompleta, boolean useIdSogg, boolean multitenant, boolean supportatoAutenticazioneApplicativiEsterni, boolean showProtocolli, boolean supportAsincroni) {
 		if(!modalitaCompleta && !useIdSogg) {
-			List<String> labels = new ArrayList<String>();
+			List<String> labels = new ArrayList<>();
 			//			labels.add("");//ServiziApplicativiCostanti.LABEL_SA_STATO); // colonna info
 			labels.add(ServiziApplicativiCostanti.LABEL_APPLICATIVI);
 			
 			this.pd.setLabels(labels.toArray(new String[1]));
 		} else {
-			List<String> labels = new ArrayList<String>();
+			List<String> labels = new ArrayList<>();
 			labels.add(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME);
 			if(!useIdSogg && (
 					(multitenant && !this.isSoggettoMultitenantSelezionato())
@@ -4463,7 +4463,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			}
 
 			// setto le label delle colonne
-			List<String> labels = new ArrayList<String>();
+			List<String> labels = new ArrayList<>();
 			
 			labels.add(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_PRINCIPALE);
 			labels.add(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SUBJECT);

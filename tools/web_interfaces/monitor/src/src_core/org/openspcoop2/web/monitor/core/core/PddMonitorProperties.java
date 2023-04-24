@@ -229,7 +229,7 @@ public class PddMonitorProperties {
 	public List<String> getTransazioniAllegatiDecodeBase64_noDecodeList() throws Exception{
 		String tmp = this.appProperties.getProperty("transazioni.allegati.decodeBase64.noDecode", true, true);
 		String [] tmpList = tmp.split(",");
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		for (int i = 0; i < tmpList.length; i++) {
 			l.add(tmpList[i].trim());
 		}
@@ -516,7 +516,7 @@ public class PddMonitorProperties {
 		}
 		
 		if(s!=null){
-			List<String> l = new ArrayList<String>();
+			List<String> l = new ArrayList<>();
 			if(s.contains(",")){
 				String [] split = s.split(",");
 				for (int i = 0; i < split.length; i++) {
@@ -691,7 +691,7 @@ public class PddMonitorProperties {
 	}
 	
 	public List<String> getListaPdDMonitorate_StatusPdD() throws Exception{
-		List<String> lista = new ArrayList<String>();
+		List<String> lista = new ArrayList<>();
 		String tmp = this.appProperties.getProperty("statoPdD.sonde.standard.nodi", this.isStatusPdDEnabled(), true);
 		if(tmp!=null && !"".equals(tmp)){
 			String[]split = tmp.split(",");
@@ -724,7 +724,7 @@ public class PddMonitorProperties {
 	}
 
 	public List<String> getListaSondePdd() throws Exception{
-		List<String> lista = new ArrayList<String>();
+		List<String> lista = new ArrayList<>();
 		String tmp = this.appProperties.getProperty("statoPdD.sonde", this.isStatusPdDEnabled(), true);
 		if(tmp!=null && !"".equals(tmp)){
 			String[]split = tmp.split(",");
@@ -923,7 +923,7 @@ public class PddMonitorProperties {
 	}
 	
 	public List<String> getListaFiltri(String tipo) throws Exception{
-		List<String> lista = new ArrayList<String>();
+		List<String> lista = new ArrayList<>();
 		String tmp = this.appProperties.getProperty(("gestoreFiltri.filters."+tipo), this.isGestoreFiltriEnabled(), true);
 		if(tmp!=null && !"".equals(tmp)){
 			String[]split = tmp.split(",");

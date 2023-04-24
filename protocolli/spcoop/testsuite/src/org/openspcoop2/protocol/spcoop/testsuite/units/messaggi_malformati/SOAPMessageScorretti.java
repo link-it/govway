@@ -757,11 +757,11 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 			xml = xml.replace("</soapenv:Body>", "<soapenv:Body>"); // imposto struttura xml errata
 			params[index][0] = xml.getBytes();
 			params[index][1] = "Chiusura SOAPBody non Effettuata";
-			List<String> motivoErroreParser = new ArrayList<String>();
+			List<String> motivoErroreParser = new ArrayList<>();
 			motivoErroreParser.add("Unexpected close tag </soapenv:Envelope>; expected </soapenv:Body>");
 			motivoErroreParser.add("The element type \"soapenv:Body\" must be terminated by the matching end-tag \"</soapenv:Body>\"");
 			params[index][2] = motivoErroreParser;
-			List<String> listErroriAttesi = new ArrayList<String>();
+			List<String> listErroriAttesi = new ArrayList<>();
 			listErroriAttesi.add("parsingExceptionRichiesta");
 			listErroriAttesi.add("Unexpected close tag </soapenv:Envelope>; expected </soapenv:Body>");
 			listErroriAttesi.add("Unexpected EOF; was expecting a close tag for element <soapenv:Body>");
@@ -781,11 +781,11 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 			xml = xml.replace("<soapenv:Body>", "</soapenv:Body>"); // imposto struttura xml errata
 			params[index][0] = xml.getBytes();
 			params[index][1] = "Apertura SOAPBody non Effettuata";
-			List<String> motivoErroreParser = new ArrayList<String>();
+			List<String> motivoErroreParser = new ArrayList<>();
 			motivoErroreParser.add("Unexpected close tag </soapenv:Body>; expected </soapenv:Envelope>");
 			motivoErroreParser.add("The element type \"soapenv:Envelope\" must be terminated by the matching end-tag \"</soapenv:Envelope>\"");
 			params[index][2] = motivoErroreParser;
-			List<String> listErroriAttesi = new ArrayList<String>();
+			List<String> listErroriAttesi = new ArrayList<>();
 			listErroriAttesi.add("parsingExceptionRichiesta");
 			listErroriAttesi.add("Unexpected close tag </soapenv:Body>; expected </soapenv:Envelope>");
 			listErroriAttesi.add("ErroreGenerale");
@@ -805,11 +805,11 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 			xml = xml.replace("</soapenv:Header>", "<soapenv:Header>"); // imposto struttura xml errata
 			params[index][0] = xml.getBytes();
 			params[index][1] = "Chiusura SOAPHeader non Effettuata";
-			List<String> motivoErroreParser = new ArrayList<String>();
+			List<String> motivoErroreParser = new ArrayList<>();
 			motivoErroreParser.add("Unexpected close tag </soapenv:Envelope>; expected </soapenv:Header>");
 			motivoErroreParser.add("The element type \"soapenv:Header\" must be terminated by the matching end-tag \"</soapenv:Header>\"");
 			params[index][2] = motivoErroreParser;
-			List<String> listErroriAttesi = new ArrayList<String>();
+			List<String> listErroriAttesi = new ArrayList<>();
 			listErroriAttesi.add("parsingExceptionRichiesta");
 			listErroriAttesi.add("Unexpected close tag </soapenv:Envelope>; expected </soapenv:Header>");
 			listErroriAttesi.add("ErroreGenerale");
@@ -827,11 +827,11 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 			xml = xml.replace("<soapenv:Header>", "</soapenv:Header>"); // imposto struttura xml errata
 			params[index][0] = xml.getBytes();
 			params[index][1] = "Apertura SOAPHeader non Effettuata";
-			List<String> motivoErroreParser = new ArrayList<String>();
+			List<String> motivoErroreParser = new ArrayList<>();
 			motivoErroreParser.add("Unexpected close tag </soapenv:Header>; expected </soapenv:Envelope>");
 			motivoErroreParser.add("The element type \"soapenv:Envelope\" must be terminated by the matching end-tag \"</soapenv:Envelope>\"");
 			params[index][2] = motivoErroreParser;
-			List<String> listErroriAttesi = new ArrayList<String>();
+			List<String> listErroriAttesi = new ArrayList<>();
 			listErroriAttesi.add("parsingExceptionRichiesta");
 			listErroriAttesi.add("Unexpected close tag </soapenv:Header>; expected </soapenv:Envelope>");
 			listErroriAttesi.add("ErroreGenerale");
@@ -849,14 +849,14 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 			xml = xml.replace("</soapenv:Envelope>", "<soapenv:Envelope>"); // imposto struttura xml errata
 			params[index][0] = xml.getBytes();
 			params[index][1] = "Chiusura SOAPEnvelope non Effettuata";
-			List<String> motivoErroreParser = new ArrayList<String>();
+			List<String> motivoErroreParser = new ArrayList<>();
 			motivoErroreParser.add("Unexpected EOF; was expecting a close tag for element <soapenv:Envelope>");
 			motivoErroreParser.add("Envelope is not supported here. Envelope can not have elements other than Header and Body");
 			motivoErroreParser.add("Unexpected close tag </SOAP-ENV:Body>; expected </soapenv:Envelope>");
 			motivoErroreParser.add("XML document structures must start and end within the same entity");
 			motivoErroreParser.add("The element type \"soapenv:Envelope\" must be terminated by the matching end-tag \"</soapenv:Envelope");
 			params[index][2] = motivoErroreParser;
-			List<String> listErroriAttesi = new ArrayList<String>();
+			List<String> listErroriAttesi = new ArrayList<>();
 			listErroriAttesi.add("parsingExceptionRichiesta");
 			listErroriAttesi.add("Unexpected EOF; was expecting a close tag for element <soapenv:Envelope>");
 			listErroriAttesi.add("Envelope is not supported here. Envelope can not have elements other than Header and Body");
@@ -877,11 +877,11 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 			xml = xml.replace("<soapenv:Envelope ", "</soapenv:Envelope "); // imposto struttura xml errata
 			params[index][0] = xml.getBytes();
 			params[index][1] = "Apertura SOAPEnvelope non Effettuata";
-			List<String> motivoErroreParser = new ArrayList<String>();
+			List<String> motivoErroreParser = new ArrayList<>();
 			motivoErroreParser.add("Unexpected character combination '</' in prolog");
 			motivoErroreParser.add("The markup in the document preceding the root element must be well-formed");
 			params[index][2] = motivoErroreParser;
-			List<String> listErroriAttesi = new ArrayList<String>();
+			List<String> listErroriAttesi = new ArrayList<>();
 			listErroriAttesi.add("parsingExceptionRichiesta");
 			listErroriAttesi.add("Unexpected character combination '</' in prolog");
 			listErroriAttesi.add("ErroreGenerale");
@@ -898,11 +898,11 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 			xml = xml.replace("<soapenv:Envelope ", "CARATTERI INIZIALI <soapenv:Envelope "); // imposto struttura xml errata
 			params[index][0] = xml.getBytes();
 			params[index][1] = "Caratteri prima dell'Apertura della SOAPEnvelope";
-			List<String> motivoErroreParser = new ArrayList<String>();
+			List<String> motivoErroreParser = new ArrayList<>();
 			motivoErroreParser.add("Unexpected character 'C'");
 			motivoErroreParser.add("Content is not allowed in prolog");
 			params[index][2] = motivoErroreParser;
-			List<String> listErroriAttesi = new ArrayList<String>();
+			List<String> listErroriAttesi = new ArrayList<>();
 			listErroriAttesi.add("parsingExceptionRichiesta");
 			listErroriAttesi.add("Unexpected character 'C'");
 			listErroriAttesi.add("ErroreGenerale");
@@ -920,11 +920,11 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 			xml = xml.replace("</ns1:getQuote>", "<ns1:getQuote>"); // imposto struttura xml errata
 			params[index][0] = xml.getBytes();
 			params[index][1] = "Primo elemento del Body non viene chiuso";
-			List<String> motivoErroreParser = new ArrayList<String>();
+			List<String> motivoErroreParser = new ArrayList<>();
 			motivoErroreParser.add("Unexpected close tag </soapenv:Body>; expected </ns1:getQuote>");
 			motivoErroreParser.add("The element type \"ns1:getQuote\" must be terminated by the matching end-tag \"</ns1:getQuote>\"");
 			params[index][2] = motivoErroreParser;
-			List<String> listErroriAttesi = new ArrayList<String>();
+			List<String> listErroriAttesi = new ArrayList<>();
 			listErroriAttesi.add("parsingExceptionRichiesta");
 			listErroriAttesi.add("Unexpected close tag </soapenv:Body>; expected </ns1:getQuote>");
 			listErroriAttesi.add("Unexpected close tag </soapenv:Envelope>; expected </ns1:getQuote>");
@@ -943,11 +943,11 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 			xml = xml.replace("<ns1:getQuote ", "</ns1:getQuote "); // imposto struttura xml errata
 			params[index][0] = xml.getBytes();
 			params[index][1] = "Primo elemento del Body non viene aperto";
-			List<String> motivoErroreParser = new ArrayList<String>();
+			List<String> motivoErroreParser = new ArrayList<>();
 			motivoErroreParser.add("Unexpected close tag </ns1:getQuote>; expected </soapenv:Body>");
 			motivoErroreParser.add("The element type \"soapenv:Body\" must be terminated by the matching end-tag \"</soapenv:Body>\"");
 			params[index][2] = motivoErroreParser;
-			List<String> listErroriAttesi = new ArrayList<String>();
+			List<String> listErroriAttesi = new ArrayList<>();
 			listErroriAttesi.add("parsingExceptionRichiesta");
 			listErroriAttesi.add("Unexpected close tag </ns1:getQuote>; expected </soapenv:Body>");
 			listErroriAttesi.add("ErroreGenerale");
@@ -965,11 +965,11 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 			xml = xml.replace("</symbol>", "<symbol>"); // imposto struttura xml errata
 			params[index][0] = xml.getBytes();
 			params[index][1] = "Elemento interno del Body non viene chiuso";
-			List<String> motivoErroreParser = new ArrayList<String>();
+			List<String> motivoErroreParser = new ArrayList<>();
 			motivoErroreParser.add("Unexpected close tag </ns1:getQuote>; expected </symbol>");
 			motivoErroreParser.add("The element type \"symbol\" must be terminated by the matching end-tag \"</symbol>\"");
 			params[index][2] = motivoErroreParser;
-			List<String> listErroriAttesi = new ArrayList<String>();
+			List<String> listErroriAttesi = new ArrayList<>();
 			listErroriAttesi.add("parsingExceptionRichiesta");
 			listErroriAttesi.add("Unexpected close tag </ns1:getQuote>; expected </symbol>");
 			listErroriAttesi.add("Unexpected close tag </soapenv:Body>; expected </symbol>");
@@ -988,11 +988,11 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 			xml = xml.replace("<symbol ", "</symbol "); // imposto struttura xml errata
 			params[index][0] = xml.getBytes();
 			params[index][1] = "Elemento interno del Body non viene aperto";
-			List<String> motivoErroreParser = new ArrayList<String>();
+			List<String> motivoErroreParser = new ArrayList<>();
 			motivoErroreParser.add("Unexpected close tag </symbol>; expected </ns1:getQuote>");
 			motivoErroreParser.add("The element type \"ns1:getQuote\" must be terminated by the matching end-tag \"</ns1:getQuote>\"");
 			params[index][2] = motivoErroreParser;
-			List<String> listErroriAttesi = new ArrayList<String>();
+			List<String> listErroriAttesi = new ArrayList<>();
 			listErroriAttesi.add("parsingExceptionRichiesta");
 			listErroriAttesi.add("Unexpected close tag </symbol>; expected </ns1:getQuote>");
 			listErroriAttesi.add("ErroreGenerale");
@@ -1009,11 +1009,11 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 			String xml = readFile(Utilities.testSuiteProperties.getSoapTestSOAPScorretto_erroreInCima());
 			params[index][0] = xml.getBytes();
 			params[index][1] = "Elemento grande (50K) con errore all'inizio del soap body";
-			List<String> motivoErroreParser = new ArrayList<String>();
+			List<String> motivoErroreParser = new ArrayList<>();
 			motivoErroreParser.add("Unexpected character 'E' ");
 			motivoErroreParser.add("Attribute name \"VOLUTAMENTE\" associated with an element type \"ELEMENTO\" must be followed by the ' = ' character");
 			params[index][2] = motivoErroreParser;
-			List<String> listErroriAttesi = new ArrayList<String>();
+			List<String> listErroriAttesi = new ArrayList<>();
 			listErroriAttesi.add("parsingExceptionRichiesta");
 			listErroriAttesi.add("Unexpected character 'E' ");
 			listErroriAttesi.add("Unexpected close tag </soapenv:Body>; expected </ELEMENTO>");
@@ -1031,11 +1031,11 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 			String xml = readFile(Utilities.testSuiteProperties.getSoapTestSOAPScorretto_erroreInMezzo());
 			params[index][0] = xml.getBytes();
 			params[index][1] = "Elemento grande (50K) con errore in mezzo del soap body";
-			List<String> motivoErroreParser = new ArrayList<String>();
+			List<String> motivoErroreParser = new ArrayList<>();
 			motivoErroreParser.add("Unexpected character 'E' ");
 			motivoErroreParser.add("Attribute name \"VOLUTAMENTE\" associated with an element type \"ELEMENTO\" must be followed by the ' = ' character");
 			params[index][2] = motivoErroreParser;
-			List<String> listErroriAttesi = new ArrayList<String>();
+			List<String> listErroriAttesi = new ArrayList<>();
 			listErroriAttesi.add("parsingExceptionRichiesta");
 			listErroriAttesi.add("Unexpected character 'E' ");
 			listErroriAttesi.add("Unexpected close tag </soapenv:Body>; expected </ELEMENTO>");
@@ -1055,11 +1055,11 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 			String xml = readFile(Utilities.testSuiteProperties.getSoapTestSOAPScorretto_erroreInFondo());
 			params[index][0] = xml.getBytes();
 			params[index][1] = "Elemento grande (50K) con errore in fondo del soap body";
-			List<String> motivoErroreParser = new ArrayList<String>();
+			List<String> motivoErroreParser = new ArrayList<>();
 			motivoErroreParser.add("Unexpected character 'E' ");
 			motivoErroreParser.add("Attribute name \"VOLUTAMENTE\" associated with an element type \"ELEMENTO\" must be followed by the ' = ' character");
 			params[index][2] = motivoErroreParser;
-			List<String> listErroriAttesi = new ArrayList<String>();
+			List<String> listErroriAttesi = new ArrayList<>();
 			listErroriAttesi.add("parsingExceptionRichiesta");
 			listErroriAttesi.add("Unexpected character 'E' ");
 			listErroriAttesi.add("Unexpected close tag </soapenv:Body>; expected </ELEMENTO>");

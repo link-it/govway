@@ -76,11 +76,11 @@ public class CSVTest {
 		System.out.println("============================================================");
 		String  file = "/tmp/prova.csv";
 		Printer printer = new Printer(format, new File(file));
-		List<String> header = new ArrayList<String>();
+		List<String> header = new ArrayList<>();
 		header.add("Valore1");
 		header.add("Valore2");
 		header.add("Valore3");
-		List<String> valori = new ArrayList<String>();
+		List<String> valori = new ArrayList<>();
 		valori.add("V1");
 		valori.add("V2");
 		valori.add("V3,AltroValoreConVirgola");
@@ -92,7 +92,7 @@ public class CSVTest {
 		printer.printRecord(valori);
 		printer.printRecord(valori);
 		printer.printRecord(valori);
-		List<String> valoriWithNull = new ArrayList<String>();
+		List<String> valoriWithNull = new ArrayList<>();
 		valoriWithNull.add("V1");
 		valoriWithNull.add("");
 		valoriWithNull.add(null);

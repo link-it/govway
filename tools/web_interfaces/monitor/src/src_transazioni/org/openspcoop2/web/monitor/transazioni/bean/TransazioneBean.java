@@ -522,7 +522,7 @@ public class TransazioneBean extends Transazione{
 	
 	public List<String> getEventiGestioneAsList(){
 		String tmp = this.getEventiGestione();
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(tmp!=null){
 			tmp = tmp.trim();
 			if(tmp.contains(",")){
@@ -1248,7 +1248,7 @@ public class TransazioneBean extends Transazione{
 				
 				FiltroRicercaDiagnosticiConPaginazione filter = new FiltroRicercaDiagnosticiConPaginazione();
 				
-				Map<String, String> properties = new HashMap<String, String>();
+				Map<String, String> properties = new HashMap<>();
 				properties.put("id_transazione",
 						this.getIdTransazione());
 				filter.setProperties(properties);

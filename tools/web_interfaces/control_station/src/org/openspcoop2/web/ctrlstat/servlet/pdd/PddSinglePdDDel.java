@@ -101,7 +101,7 @@ public final class PddSinglePdDDel extends Action {
 					pddOperative.append(pddControlStation.getNome());
 				}
 				else{
-					ArrayList<String> infos = new ArrayList<String>();
+					ArrayList<String> infos = new ArrayList<>();
 					boolean normalizeObjectIds = !pddHelper.isModalitaCompleta();
 					if (pddCore.isPddInUso(pddControlStation, infos, normalizeObjectIds)) {
 						isInUso = true;

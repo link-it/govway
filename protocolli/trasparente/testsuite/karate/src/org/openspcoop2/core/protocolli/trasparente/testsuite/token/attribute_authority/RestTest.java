@@ -1066,10 +1066,10 @@ public class RestTest extends ConfigLoader {
 
 class AAHeaderMap{
 	
-	Map<String, String> httpHeaders = new HashMap<String, String>();
+	Map<String, String> httpHeaders = new HashMap<>();
 	String applicativo = null;
 	
-	Map<String, String> expectedAttributes = new HashMap<String, String>();
+	Map<String, String> expectedAttributes = new HashMap<>();
 	
 	public AAHeaderMap() {
 		

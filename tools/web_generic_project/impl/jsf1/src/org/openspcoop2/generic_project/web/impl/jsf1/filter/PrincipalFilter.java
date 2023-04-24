@@ -80,7 +80,7 @@ public class PrincipalFilter implements Filter {
 
 	@Override
 	public void init(FilterConfig config) throws ServletException {
-		this.excludedPages = new ArrayList<String>();
+		this.excludedPages = new ArrayList<>();
 		this.excludedPages.add("public");
 
 		String usePrincipalProp = config.getInitParameter(LOGIN_APPLICATION);

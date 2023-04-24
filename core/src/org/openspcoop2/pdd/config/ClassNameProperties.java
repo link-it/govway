@@ -1380,7 +1380,7 @@ public class ClassNameProperties {
 	private String[] getTipiGestiti(String prefix,String ... defaults) throws Exception{
 		Properties prop = this.reader.readProperties(prefix);
 		Enumeration<?> en = prop.keys();
-		List<String> tipi = new ArrayList<String>();
+		List<String> tipi = new ArrayList<>();
 		if(defaults!=null && defaults.length>0){
 			for(int i=0; i<defaults.length; i++){
 				tipi.add(defaults[i]);

@@ -49,7 +49,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		request.setKeyAlias("soggetto2");
 		request.setKeyPassword("openspcoop");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Erogazione-SSL-Subject", "l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM");
 		headers.put("X-Erogazione-SSL-Issuer", "/l=Pisa/st=Italy/ou=Test/o=Test/c=IT/cn=ExampleClient1HSM/");
 		Utilities._test(request, 
@@ -67,7 +67,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 
 	@Test
 	public void erogazione_autenticazioneHttps_credenzialiNonFornite() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Erogazione-SSL-Subject", "l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM");
 		headers.put("X-Erogazione-SSL-Issuer", "/l=Pisa/st=Italy/ou=Test/o=Test/c=IT/cn=ExampleClient1HSM/");
 		Utilities._test(TipoServizio.EROGAZIONE,
@@ -93,7 +93,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		request.setKeyAlias("soggetto1");
 		request.setKeyPassword("openspcoop");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Erogazione-SSL-Subject", "l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM");
 		headers.put("X-Erogazione-SSL-Issuer", "/l=Pisa/st=Italy/ou=Test/o=Test/c=IT/cn=ExampleClient1HSM/");
 		Utilities._test(request,
@@ -120,7 +120,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		request.setKeyAlias("soggetto2");
 		request.setKeyPassword("openspcoop");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Erogazione-BASIC-Username", "ApplicativoSoggettoInternoTestFruitore1");
 		headers.put("X-Erogazione-BASIC-Password", "123456");
 		Utilities._test(request, 
@@ -147,7 +147,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		request.setKeyAlias("soggetto2");
 		request.setKeyPassword("openspcoop");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Erogazione-Principal", "ApplicativoSoggettoInternoTestFruitore1");
 		Utilities._test(request, 
 				TipoServizio.EROGAZIONE,
@@ -173,7 +173,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		request.setKeyAlias("soggetto2");
 		request.setKeyPassword("openspcoop");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		Utilities._test(request, 
 				TipoServizio.EROGAZIONE,
 				"SoggettoInternoTestGestoreCredenzialeSsl",
@@ -203,7 +203,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		request.setKeyAlias("soggetto2");
 		request.setKeyPassword("openspcoop");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Fruizione-SSL-Subject", "/cn=ApplicativoSoggettoInternoTestGestoreCredenzialiSsl/");
 		Utilities._test(request, 
 				TipoServizio.FRUIZIONE,
@@ -220,7 +220,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 
 	@Test
 	public void fruizione_autenticazioneHttps_credenzialiNonFornite() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Fruizione-SSL-Subject", "/cn=ApplicativoSoggettoInternoTestGestoreCredenzialiSsl/");
 		Utilities._test(TipoServizio.FRUIZIONE,
 				"SoggettoInternoTestGestoreCredenzialeSsl",
@@ -245,7 +245,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		request.setKeyAlias("soggetto1");
 		request.setKeyPassword("openspcoop");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Fruizione-SSL-Subject", "/cn=ApplicativoSoggettoInternoTestGestoreCredenzialiSsl/");
 		Utilities._test(request,
 				TipoServizio.FRUIZIONE,
@@ -271,7 +271,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		request.setKeyAlias("soggetto2");
 		request.setKeyPassword("openspcoop");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Fruizione-BASIC-Username", "ApplicativoSoggettoInternoTestFruitore1");
 		headers.put("X-Fruizione-BASIC-Password", "123456");
 		Utilities._test(request, 
@@ -298,7 +298,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		request.setKeyAlias("soggetto2");
 		request.setKeyPassword("openspcoop");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Fruizione-Principal", "ApplicativoSoggettoInternoTestFruitore1");
 		Utilities._test(request, 
 				TipoServizio.FRUIZIONE,
@@ -324,7 +324,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		request.setKeyAlias("soggetto2");
 		request.setKeyPassword("openspcoop");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Fruizione-Principal", "ApplicativoSoggettoInternoTestFruitore1");
 		Utilities._test(request, 
 				TipoServizio.FRUIZIONE,

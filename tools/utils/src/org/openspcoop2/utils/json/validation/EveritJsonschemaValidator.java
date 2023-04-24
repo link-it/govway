@@ -118,7 +118,7 @@ public class EveritJsonschemaValidator implements IJsonSchemaValidator {
 		String allAny = all ? "allOf" : "anyOf";
 		JSONArray array = new JSONArray();
 		for(String nome: nomi) {
-			Map<String, String> map = new HashMap<String, String>();
+			Map<String, String> map = new HashMap<>();
 			map.put("$ref", nome);
 			JSONObject obj = new JSONObject(map);
 			array.element(obj);

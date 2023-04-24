@@ -804,7 +804,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			if(all){
 				java.util.Locale [] l = java.util.Locale.getAvailableLocales();
 				if(l!=null){
-					List<String> ll = new ArrayList<String>();
+					List<String> ll = new ArrayList<>();
 					Map<String,java.util.Locale> llMap = new HashMap<String,java.util.Locale>();
 					for (int i = 0; i < l.length; i++) {
 						ll.add(l[i].getDisplayName());
@@ -848,7 +848,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			if(all){
 				String [] ids = java.util.TimeZone.getAvailableIDs();
 				if(ids!=null){
-					List<String> ll = new ArrayList<String>();
+					List<String> ll = new ArrayList<>();
 					for (int i = 0; i < ids.length; i++) {
 						ll.add(ids[i]);
 					}
@@ -916,7 +916,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			
 			Properties p = System.getProperties();
 			Iterator<Object> keys = p.keySet().iterator();
-			List<String> ll = new ArrayList<String>();
+			List<String> ll = new ArrayList<>();
 			while (keys.hasNext()) {
 				Object o = keys.next();
 				if(!(o instanceof String)) {
@@ -981,7 +981,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			
 			Map<String, String> map = System.getenv();
 			Iterator<String> keys = map.keySet().iterator();
-			List<String> ll = new ArrayList<String>();
+			List<String> ll = new ArrayList<>();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
 				ll.add(key);
@@ -1112,7 +1112,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			}
 			StringBuilder bf = new StringBuilder();
 			// raccolto id
-			List<String> ids = new ArrayList<String>();
+			List<String> ids = new ArrayList<>();
 			for (int i = 0; i < installerProperties.size(); i++) {
 				ids.add(installerProperties.get(i).getNome());
 			}
@@ -1126,7 +1126,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 						bf.append(gp.getDescrizione());
 						bf.append("\n");
 						
-						List<String> idParams = new ArrayList<String>();
+						List<String> idParams = new ArrayList<>();
 						for (Property p : gp.getPropertyList()) {
 							idParams.add(p.getNome());
 						}

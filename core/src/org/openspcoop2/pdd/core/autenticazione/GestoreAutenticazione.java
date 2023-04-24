@@ -471,7 +471,7 @@ public class GestoreAutenticazione {
 	
 	public static void removePortaApplicativa(IDPortaApplicativa idPA) throws Exception {
 		if(GestoreAutenticazione.isCacheAbilitata()) {
-			List<String> keyForClean = new ArrayList<String>();
+			List<String> keyForClean = new ArrayList<>();
 			List<String> keys = GestoreAutenticazione.listKeysCache();
 			if(keys!=null && !keys.isEmpty()) {
 				String match = IDPortaApplicativa.PORTA_APPLICATIVA_PREFIX+idPA.getNome()+IDPortaApplicativa.PORTA_APPLICATIVA_SUFFIX;
@@ -491,7 +491,7 @@ public class GestoreAutenticazione {
 	
 	public static void removePortaDelegata(IDPortaDelegata idPD) throws Exception {
 		if(GestoreAutenticazione.isCacheAbilitata()) {
-			List<String> keyForClean = new ArrayList<String>();
+			List<String> keyForClean = new ArrayList<>();
 			List<String> keys = GestoreAutenticazione.listKeysCache();
 			if(keys!=null && !keys.isEmpty()) {
 				String match = IDPortaDelegata.PORTA_DELEGATA_PREFIX+idPD.getNome()+IDPortaDelegata.PORTA_DELEGATA_SUFFIX;
@@ -511,7 +511,7 @@ public class GestoreAutenticazione {
 	
 	public static void removeSoggetto(IDSoggetto idSoggetto) throws Exception {
 		if(GestoreAutenticazione.isCacheAbilitata()) {
-			List<String> keyForClean = new ArrayList<String>();
+			List<String> keyForClean = new ArrayList<>();
 			List<String> keys = GestoreAutenticazione.listKeysCache();
 			if(keys!=null && !keys.isEmpty()) {
 				for (String key : keys) {
@@ -538,7 +538,7 @@ public class GestoreAutenticazione {
 	
 	public static void removeApplicativo(IDServizioApplicativo idApplicativo) throws Exception {
 		if(GestoreAutenticazione.isCacheAbilitata()) {
-			List<String> keyForClean = new ArrayList<String>();
+			List<String> keyForClean = new ArrayList<>();
 			List<String> keys = GestoreAutenticazione.listKeysCache();
 			if(keys!=null && !keys.isEmpty()) {
 				for (String key : keys) {

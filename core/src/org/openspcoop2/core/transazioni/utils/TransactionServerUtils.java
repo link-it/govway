@@ -830,7 +830,7 @@ public class TransactionServerUtils {
 			
 			pstmt = connectionDB.prepareStatement(updateCommand);
 			int index = 1;
-			List<Object> params = new ArrayList<Object>();
+			List<Object> params = new ArrayList<>();
 			
 			if(consegnaInErrore_rilevatoEsitoTransazioneConsegnaInCoda) {
 				pstmt.setInt(index++, esitoConsegnaMultiplaInCorso);
@@ -965,7 +965,7 @@ public class TransactionServerUtils {
 			
 			pstmt = connectionDB.prepareStatement(select);
 			int index = 1;
-			List<Object> params = new ArrayList<Object>();
+			List<Object> params = new ArrayList<>();
 			
 			if(leftValue!=null && rightValue!=null) {
 				pstmt.setTimestamp(index++, leftValue);
@@ -1067,7 +1067,7 @@ public class TransactionServerUtils {
 			
 			pstmt = connectionDB.prepareStatement(select);
 			int index = 1;
-			List<Object> params = new ArrayList<Object>();
+			List<Object> params = new ArrayList<>();
 			
 			pstmt.setString(index++, idTransaction);
 			params.add(idTransaction);

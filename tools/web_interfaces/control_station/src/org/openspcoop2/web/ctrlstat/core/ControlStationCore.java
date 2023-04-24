@@ -433,7 +433,7 @@ public class ControlStationCore {
 
 	/** Visione oggetti globale o per utenti */
 	private boolean visioneOggettiGlobale = true;
-	private List<String> utentiConVisioneGlobale = new ArrayList<String>();
+	private List<String> utentiConVisioneGlobale = new ArrayList<>();
 	public boolean isVisioneOggettiGlobale(String user) {
 		if(this.visioneOggettiGlobale){
 			return true;
@@ -1063,7 +1063,7 @@ public class ControlStationCore {
 
 	/** Gestione Consegne Asincrone */
 	private List<String> consegnaNotificaCode;
-	private Map<String, String> consegnaNotificaCodaLabel = new HashMap<String, String>();
+	private Map<String, String> consegnaNotificaCodaLabel = new HashMap<>();
 	private List<String> consegnaNotificaPriorita;
 	private Map<String, ConfigurazionePriorita> consegnaNotificaConfigurazionePriorita = new HashMap<String, ConfigurazionePriorita>();
 	public List<String> getConsegnaNotificaCode() {
@@ -1551,151 +1551,151 @@ public class ControlStationCore {
 	private boolean isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus = false;
 	private InvokerNodiRuntime invoker = null;
 	private ConfigurazioneNodiRuntime configurazioneNodiRuntime = null;
-	private List<String> jmxPdD_aliases = new ArrayList<String>();
-	private Map<String,List<String>>  jmxPdD_gruppi_aliases = new HashMap<String, List<String>>();
-	private Map<String, String> jmxPdD_descrizioni = new HashMap<String, String>();
+	private List<String> jmxPdD_aliases = new ArrayList<>();
+	private Map<String,List<String>>  jmxPdD_gruppi_aliases = new HashMap<>();
+	private Map<String, String> jmxPdD_descrizioni = new HashMap<>();
 	private CertificateChecker jmxPdD_certificateChecker;
-	private Map<String, String> jmxPdD_configurazioneSistema_type = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsa = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_versionePdD = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_versioneBaseDati = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_versioneJava = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_vendorJava = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_tipoDatabase = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniSSL = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_type = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsa = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_versionePdD = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_versioneBaseDati = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_versioneJava = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_vendorJava = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_tipoDatabase = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniSSL = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL = new HashMap<>();
 	private boolean jmxPdD_configurazioneSistema_showInformazioniCryptographyKeyLength = false;
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCharset = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaNetworking = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteProprietaJavaNetworking = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaAltro = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaSistema = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_messageFactory = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniInstallazione = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getFileTrace = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_updateFileTrace = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_connessioniDB = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_idTransazioniAttive = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_idProtocolloTransazioniAttive = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_connessioniPD = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_connessioniPA = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnostici = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnosticiLog4j = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_tracciamento = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_dumpPD = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_dumpPA = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_log4j_diagnostica = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_log4j_openspcoop = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_log4j_integrationManager = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_log4j_dump = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorStatusCode = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorInstanceId = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeBadResponse = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalResponseError = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalRequestError = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalError = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorDetails = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorUseStatusCodeAsFaultCode = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorGenerateHttpHeaderGovWayCode = new HashMap<String, String>();	
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerConsegnaContenutiApplicativi = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerEventi = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerFileSystemRecovery = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteOnewayNonRiscontrate = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteAsincroneNonRiscontrate = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiEliminati = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiScaduti = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiNonGestiti = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaCorrelazioneApplicativa = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiVerificaConnessioniAttive = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestorePuliziaMessaggiAnomali = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreRepositoryBuste = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerMonitoraggioRisorseThread = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerRepositoryStatefulThread = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheOrarie = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheGiornaliere = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheSettimanali = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheMensili = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyValidazione = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyNegoziazione = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreAttributeAuthority = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyValidazione = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyNegoziazione = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreAttributeAuthority = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_enableConnettoreMultiplo = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disableConnettoreMultiplo = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiplo = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiplo = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiploRuntimeRepository = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAccordoCooperazione = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApi = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheErogazione = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheFruizione = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheSoggetto = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApplicativo = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheRuolo = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheScope = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyValidazione = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyNegoziazione = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAttributeAuthority = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataAbilitazioniPuntuali = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataDisabilitazioniPuntuali = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativa = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaAbilitazioniPuntuali = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaDisabilitazioniPuntuali = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioIntegrationManager = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaDelegata = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaDelegata = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaApplicativa = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaApplicativa = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_numeroDatasourceGW = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getDatasourcesGW = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getUsedConnectionsDatasourcesGW = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus  = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getQueueConfig  = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getApplicativiPrioritari  = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getConnettoriPrioritari  = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_updateConnettoriPrioritari  = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_resetConnettoriPrioritari  = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaDatiRichieste = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingGlobalConfigCache = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingAPIConfigCache = new HashMap<String, String>();
-	private Map<String, List<String>> jmxPdD_caches = new HashMap<String, List<String>>();
-	private Map<String, List<String>> jmxPdD_caches_prefill = new HashMap<String, List<String>>();
-	private Map<String, String> jmxPdD_cache_type = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_cache_nomeAttributo_cacheAbilitata = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_cache_nomeMetodo_statoCache = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_cache_nomeMetodo_resetCache = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_cache_nomeMetodo_prefillCache = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCharset = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaNetworking = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteProprietaJavaNetworking = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaAltro = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaSistema = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_messageFactory = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniInstallazione = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getFileTrace = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_updateFileTrace = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_connessioniDB = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_idTransazioniAttive = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_idProtocolloTransazioniAttive = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_connessioniPD = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_connessioniPA = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnostici = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnosticiLog4j = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_tracciamento = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_dumpPD = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_dumpPA = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_log4j_diagnostica = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_log4j_openspcoop = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_log4j_integrationManager = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_log4j_dump = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorStatusCode = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorInstanceId = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeBadResponse = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalResponseError = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalRequestError = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalError = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorDetails = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorUseStatusCodeAsFaultCode = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorGenerateHttpHeaderGovWayCode = new HashMap<>();	
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerConsegnaContenutiApplicativi = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerEventi = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerFileSystemRecovery = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteOnewayNonRiscontrate = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteAsincroneNonRiscontrate = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiEliminati = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiScaduti = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiNonGestiti = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaCorrelazioneApplicativa = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiVerificaConnessioniAttive = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestorePuliziaMessaggiAnomali = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreRepositoryBuste = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerMonitoraggioRisorseThread = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerRepositoryStatefulThread = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheOrarie = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheGiornaliere = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheSettimanali = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheMensili = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyValidazione = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyNegoziazione = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreAttributeAuthority = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyValidazione = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyNegoziazione = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreAttributeAuthority = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_enableConnettoreMultiplo = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disableConnettoreMultiplo = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiplo = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiplo = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiploRuntimeRepository = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAccordoCooperazione = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApi = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheErogazione = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheFruizione = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheSoggetto = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApplicativo = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheRuolo = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheScope = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyValidazione = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyNegoziazione = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAttributeAuthority = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataAbilitazioniPuntuali = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataDisabilitazioniPuntuali = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativa = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaAbilitazioniPuntuali = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaDisabilitazioniPuntuali = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioIntegrationManager = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaDelegata = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaDelegata = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaApplicativa = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaApplicativa = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_numeroDatasourceGW = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getDatasourcesGW = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getUsedConnectionsDatasourcesGW = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus  = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getQueueConfig  = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getApplicativiPrioritari  = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getConnettoriPrioritari  = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_updateConnettoriPrioritari  = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_resetConnettoriPrioritari  = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaDatiRichieste = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingGlobalConfigCache = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingAPIConfigCache = new HashMap<>();
+	private Map<String, List<String>> jmxPdD_caches = new HashMap<>();
+	private Map<String, List<String>> jmxPdD_caches_prefill = new HashMap<>();
+	private Map<String, String> jmxPdD_cache_type = new HashMap<>();
+	private Map<String, String> jmxPdD_cache_nomeAttributo_cacheAbilitata = new HashMap<>();
+	private Map<String, String> jmxPdD_cache_nomeMetodo_statoCache = new HashMap<>();
+	private Map<String, String> jmxPdD_cache_nomeMetodo_resetCache = new HashMap<>();
+	private Map<String, String> jmxPdD_cache_nomeMetodo_prefillCache = new HashMap<>();
 	
 	public boolean isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus() {
 		return this.isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus;
@@ -3166,7 +3166,7 @@ public class ControlStationCore {
 			if(this.singlePdD==false){
 				// se esistono degli alias allora assegno poi come alias i nomi delle pdd operative
 				if(this.jmxPdD_aliases!=null && this.jmxPdD_aliases.size()>0){
-					this.jmxPdD_aliases = new ArrayList<String>();
+					this.jmxPdD_aliases = new ArrayList<>();
 					PddCore pddCore = new PddCore(this);
 					try{
 						List<PdDControlStation> pddList = pddCore.pddList(null, new ConsoleSearch(true));
@@ -5617,7 +5617,7 @@ public class ControlStationCore {
 	}
 
 	private <Type> ArrayList<String> getClassNames(Type[] array) {
-		ArrayList<String> c = new ArrayList<String>();
+		ArrayList<String> c = new ArrayList<>();
 		for (Type type : array) {
 			c.add(type.getClass().getName());
 		}
@@ -6893,7 +6893,7 @@ public class ControlStationCore {
 		String getProtocolli = "getProtocolli";
 		try{
 
-			List<String> protocolliList = new ArrayList<String>();
+			List<String> protocolliList = new ArrayList<>();
 			
 			User u =ServletUtils.getUserFromSession(request, session);
 			
@@ -6925,7 +6925,7 @@ public class ControlStationCore {
 	}
 	public List<String> getProtocolli(){
 		
-		List<String> protocolliList = new ArrayList<String>();
+		List<String> protocolliList = new ArrayList<>();
 		
 		MapReader<String, IProtocolFactory<?>> protocolFactories = this.protocolFactoryManager.getProtocolFactories();
 		Enumeration<String> protocolli = protocolFactories.keys();
@@ -7627,7 +7627,7 @@ public class ControlStationCore {
 	
 	public String[] getProfiliDiCollaborazioneSupportatiDalProtocollo(String protocollo,ServiceBinding serviceBinding) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		String nomeMetodo = "getProfiliDiCollaborazioneSupportatiDalProtocollo";
-		List<String> lstProt = new ArrayList<String>();
+		List<String> lstProt = new ArrayList<>();
 		try{
 			if(isProfiloDiCollaborazioneSupportatoDalProtocollo(protocollo, serviceBinding, ProfiloDiCollaborazione.ONEWAY))
 				lstProt.add(CostantiRegistroServizi.ONEWAY.toString());
@@ -7650,7 +7650,7 @@ public class ControlStationCore {
 	
 	public String[] getProfiliDiCollaborazioneSupportatiDalProtocolloDefault(ServiceBinding serviceBinding) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		String nomeMetodo = "getProfiliDiCollaborazioneSupportatiDalProtocolloDefault";
-		List<String> lstProt = new ArrayList<String>();
+		List<String> lstProt = new ArrayList<>();
 		try{
 			if(isProfiloDiCollaborazioneSupportatoDalProtocolloDefault(serviceBinding, ProfiloDiCollaborazione.ONEWAY))
 				lstProt.add(CostantiRegistroServizi.ONEWAY.toString());
@@ -8183,7 +8183,7 @@ public class ControlStationCore {
 		if(list==null || list.isEmpty()) {
 			return null;
 		}
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		for (AttributeAuthority attributeAuthority : list) {
 			l.add(attributeAuthority.getNome());
 		}

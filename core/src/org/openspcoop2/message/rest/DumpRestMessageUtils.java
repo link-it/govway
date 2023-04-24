@@ -164,7 +164,7 @@ public class DumpRestMessageUtils {
 						    		if(keyO instanceof String) {
 						    			String key = (String) keyO;
 						    			String [] values = bodyPart.getHeader(key);
-						    			List<String> lValues = new ArrayList<String>();
+						    			List<String> lValues = new ArrayList<>();
 						    			if(values!=null && values.length>0) {
 						    				for (int j = 0; j < values.length; j++) {
 						    					lValues.add(values[j]);
@@ -188,7 +188,7 @@ public class DumpRestMessageUtils {
 						    						lValues = multipartInfoBody.getHeadersValues().get(hdr.getName());
 						    					}
 						    					else {
-						    						lValues = new ArrayList<String>();
+						    						lValues = new ArrayList<>();
 						    						multipartInfoBody.getHeadersValues().put(hdr.getName(), lValues);
 						    					}
 						    					lValues.add(hdr.getValue());
@@ -199,7 +199,7 @@ public class DumpRestMessageUtils {
 						    						lValues = dumpAttach.getHeadersValues().get(hdr.getName());
 						    					}
 						    					else {
-						    						lValues = new ArrayList<String>();
+						    						lValues = new ArrayList<>();
 						    						dumpAttach.getHeadersValues().put(hdr.getName(), lValues);
 						    					}
 						    					lValues.add(hdr.getValue());

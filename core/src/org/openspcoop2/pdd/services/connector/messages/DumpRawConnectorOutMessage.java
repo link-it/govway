@@ -60,7 +60,7 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 	private DumpByteArrayOutputStream bout = null;
 	private MessageType messageType = null;
 	private ParseException parseException = null;
-	private Map<String, List<String>> trasporto = new HashMap<String, List<String>>();
+	private Map<String, List<String>> trasporto = new HashMap<>();
 	private Integer contentLenght;
 	private String contentType;
 	private Integer status;

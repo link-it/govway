@@ -432,7 +432,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				azTmp.add(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT); // era stata impostata precedentemente
 			}
 			else {
-				Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, aspc, false, true, new ArrayList<String>());
+				Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, aspc, false, true, new ArrayList<>());
 				if(azioni==null || azioni.size()<=1) {
 					azTmp.add(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT);
 				}
@@ -661,7 +661,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					de = new DataElement();
 					de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_LIST_AZIONI_READ_ONLY);
 					de.setLabel(this.getLabelAzioni(serviceBinding));
-					Map<String,String> azioni = this.porteDelegateCore.getAzioniConLabel(asps, aspc, false, true, new ArrayList<String>());
+					Map<String,String> azioni = this.porteDelegateCore.getAzioniConLabel(asps, aspc, false, true, new ArrayList<>());
 					StringBuilder bf = new StringBuilder();
 					for (String az : azioni.keySet()) {
 						if(bf.length()>0) {
@@ -1266,7 +1266,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_MESSAGE_ENGINE);
 		if(!this.isModalitaStandard() && datiAltroApi) {
 			de.setType(DataElementType.SELECT);
-			List<String> lS = new ArrayList<String>();
+			List<String> lS = new ArrayList<>();
 			lS.add(CostantiControlStation.GESTIONE_MESSAGE_ENGINE_DEFAULT);
 			lS.addAll(this.porteDelegateCore.getMessageEngines());
 			de.setValues(lS);
@@ -2297,7 +2297,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			boolean showProtocolli = this.core.countProtocolli(this.request, this.session)>1;
 			
 			// setto le label delle colonne
-			List<String> labelsList= new ArrayList<String>();
+			List<String> labelsList= new ArrayList<>();
 
 			labelsList.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME); 
 			if(useIdSogg==false){
@@ -4151,7 +4151,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 	
 	public String getMessaggioConfermaModificaRegolaMappingFruizionePortaDelegata(boolean fromAPI,PortaDelegata pd, ServiceBinding serviceBinding, boolean abilitazione, boolean multiline,boolean listElement) throws DriverConfigurazioneException {
 		MappingFruizionePortaDelegata mapping = this.porteDelegateCore.getMappingFruizionePortaDelegata(pd);
-		List<String> listaAzioni = pd.getAzione()!= null ?  pd.getAzione().getAzioneDelegataList() : new ArrayList<String>();
+		List<String> listaAzioni = pd.getAzione()!= null ?  pd.getAzione().getAzioneDelegataList() : new ArrayList<>();
 		return this.getMessaggioConfermaModificaRegolaMapping(fromAPI, mapping.isDefault(), listaAzioni, serviceBinding, mapping.getDescrizione(), abilitazione, multiline, listElement);
 	}
 	
@@ -4391,7 +4391,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			// Prendo il nome e il tipo del servizio
 			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
 			AccordoServizioParteComuneSintetico apc = this.apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
-			Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<String>());
+			Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<>());
 
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 			boolean autenticazione = !TipoAutenticazione.DISABILITATO.equals(myPD.getAutenticazione());

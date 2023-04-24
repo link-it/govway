@@ -40,7 +40,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void erogazione_json_default() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(Utilities.DEFAULT_HTTP_HEADER, Utilities.getBase64IntegrazioneJson());
 		
 		Utilities._test(logCore, MessageType.JSON,
@@ -54,7 +54,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void fruizione_json_default() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(Utilities.DEFAULT_HTTP_HEADER, Utilities.getBase64IntegrazioneJson());
 		
 		Utilities._test(logCore, MessageType.JSON,
@@ -71,7 +71,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void erogazione_json_default_info_corrotta_richiesta() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(Utilities.DEFAULT_HTTP_HEADER, Utilities.getBase64IntegrazioneJsonCorrotto());
 		
 		Utilities._test(logCore, MessageType.JSON,
@@ -85,7 +85,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void fruizione_json_default_info_corrotta_richiesta() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(Utilities.DEFAULT_HTTP_HEADER, Utilities.getBase64IntegrazioneJsonCorrotto());
 		
 		Utilities._test(logCore, MessageType.JSON,
@@ -99,7 +99,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void erogazione_json_default_info_corrotta_risposta() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(Utilities.DEFAULT_HTTP_HEADER, Utilities.getBase64IntegrazioneJson());
 		
 		Utilities._test(logCore, MessageType.JSON,
@@ -113,7 +113,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void fruizione_json_default_info_corrotta_risposta() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(Utilities.DEFAULT_HTTP_HEADER, Utilities.getBase64IntegrazioneJson());
 		
 		Utilities._test(logCore, MessageType.JSON,
@@ -130,7 +130,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void erogazione_json_default_info_required_richiesta() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		
 		Utilities._test(logCore, MessageType.JSON,
 				TipoServizio.EROGAZIONE,
@@ -143,7 +143,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void fruizione_json_default_info_required_richiesta() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		
 		Utilities._test(logCore, MessageType.JSON,
 				TipoServizio.FRUIZIONE,
@@ -156,7 +156,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void erogazione_json_default_info_required_risposta() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(Utilities.DEFAULT_HTTP_HEADER, Utilities.getBase64IntegrazioneJson());
 		
 		Utilities._test(logCore, MessageType.JSON,
@@ -170,7 +170,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void fruizione_json_default_info_required_risposta() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(Utilities.DEFAULT_HTTP_HEADER, Utilities.getBase64IntegrazioneJson());
 		
 		Utilities._test(logCore, MessageType.JSON,
@@ -187,7 +187,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void erogazione_json_default_all_optional() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(Utilities.DEFAULT_HTTP_HEADER, Utilities.getBase64IntegrazioneJson());
 		
 		Utilities._test(logCore, MessageType.JSON,
@@ -201,7 +201,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void fruizione_json_default_all_optional() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(Utilities.DEFAULT_HTTP_HEADER, Utilities.getBase64IntegrazioneJson());
 		
 		Utilities._test(logCore, MessageType.JSON,
@@ -215,7 +215,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void erogazione_json_default_all_optional_senza_info() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		
 		Utilities._test(logCore, MessageType.JSON,
 				TipoServizio.EROGAZIONE,
@@ -228,7 +228,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void fruizione_json_default_all_optional_senza_info() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		
 		Utilities._test(logCore, MessageType.JSON,
 				TipoServizio.FRUIZIONE,
@@ -244,7 +244,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void erogazione_json_header_hex() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(Utilities.HTTP_HEADER_CUSTOM, Utilities.getHexIntegrazioneJson());
 		
 		Utilities._test(logCore, MessageType.JSON,
@@ -258,7 +258,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void fruizione_json_header_hex() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(Utilities.HTTP_HEADER_CUSTOM, Utilities.getHexIntegrazioneJson());
 		
 		Utilities._test(logCore, MessageType.JSON,
@@ -274,7 +274,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void erogazione_json_url_jwt() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(Utilities.HTTP_HEADER_CUSTOM, Utilities.getJWTIntegrazioneJson());
 		
 		Utilities._test(logCore, MessageType.JSON,
@@ -288,7 +288,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void fruizione_json_url_jwt() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(Utilities.HTTP_HEADER_CUSTOM, Utilities.getJWTIntegrazioneJson());
 		
 		Utilities._test(logCore, MessageType.JSON,
@@ -304,7 +304,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void erogazione_json_plain() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(Utilities.DEFAULT_HTTP_HEADER, Utilities.getIntegrazioneJsonShort());
 		
 		Utilities._test(logCore, MessageType.JSON,
@@ -318,7 +318,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void fruizione_json_plain() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(Utilities.DEFAULT_HTTP_HEADER, Utilities.getIntegrazioneJsonShort());
 		
 		Utilities._test(logCore, MessageType.JSON,
@@ -337,7 +337,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void erogazione_json_default_freemarker() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(Utilities.DEFAULT_HTTP_HEADER, Utilities.getBase64IntegrazioneJson());
 		
 		Utilities._test(logCore, MessageType.JSON,
@@ -351,7 +351,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void fruizione_json_default_freemarker() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(Utilities.DEFAULT_HTTP_HEADER, Utilities.getBase64IntegrazioneJson());
 		
 		Utilities._test(logCore, MessageType.JSON,
@@ -370,7 +370,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void erogazione_json_default_velocity() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(Utilities.DEFAULT_HTTP_HEADER, Utilities.getBase64IntegrazioneJson());
 		
 		Utilities._test(logCore, MessageType.JSON,
@@ -384,7 +384,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void fruizione_json_default_velocity() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(Utilities.DEFAULT_HTTP_HEADER, Utilities.getBase64IntegrazioneJson());
 		
 		Utilities._test(logCore, MessageType.JSON,

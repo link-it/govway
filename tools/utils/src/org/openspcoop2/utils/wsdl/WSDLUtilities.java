@@ -1165,7 +1165,7 @@ public class WSDLUtilities {
 		DynamicNamespaceContext dnc = null;
 		String exprType = "//*/@type";
 		String exprRef = "//*/@ref";
-		List<String> exprs = new ArrayList<String>();
+		List<String> exprs = new ArrayList<>();
 		exprs.add(exprType);
 		exprs.add(exprRef);
 		

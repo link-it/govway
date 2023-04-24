@@ -237,7 +237,7 @@ public class TransazioniCsvExporter extends HttpServlet{
 				//transazioni = service.findAll(start, limit);
 				sfe.export();
 			}else{
-				List<String> idTransazioni = new ArrayList<String>();
+				List<String> idTransazioni = new ArrayList<>();
 				for (int j = 0; j < ids.length; j++) {
 					idTransazioni.add(ids[j]);					
 				}

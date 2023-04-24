@@ -187,7 +187,7 @@ public class LikeExpressionImpl extends AbstractBaseExpressionImpl {
 			return null;
 		}
 		if(this.field.equals(field)){
-			List<Object> lista = new ArrayList<Object>();
+			List<Object> lista = new ArrayList<>();
 			lista.add(this.value);
 			return lista;
 		}

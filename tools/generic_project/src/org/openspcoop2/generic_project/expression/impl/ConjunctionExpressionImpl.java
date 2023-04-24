@@ -111,7 +111,7 @@ public class ConjunctionExpressionImpl extends AbstractBaseExpressionImpl {
 		if(this.lista==null){
 			return null;
 		}
-		List<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<>();
 		for (Iterator<AbstractBaseExpressionImpl> iterator = this.lista.iterator(); iterator.hasNext();) {
 			AbstractBaseExpressionImpl expr = iterator.next();
 			List<Object> tmp = expr.getFieldValues(field);

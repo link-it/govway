@@ -54,7 +54,7 @@ public class XMLDeserializer implements IDeserializer{
 
 	private net.sf.json.xml.XMLSerializer xmlSerializer;
 	private JsonConfig jsonConfig;
-	private List<String> morpherPackage = new ArrayList<String>();
+	private List<String> morpherPackage = new ArrayList<>();
 	private boolean throwExceptionMorpherFailed = true;
 	
 	public XMLDeserializer(){
@@ -333,7 +333,7 @@ public class XMLDeserializer implements IDeserializer{
 		this.jsonConfig.setRootClass(classType);
 		
 		MorpherRegistry morpherRegistry = JSONUtils.getMorpherRegistry();
-		org.openspcoop2.utils.serialization.Utilities.registerMorpher(classType, morpherRegistry, new ArrayList<String>(), this.morpherPackage);
+		org.openspcoop2.utils.serialization.Utilities.registerMorpher(classType, morpherRegistry, new ArrayList<>(), this.morpherPackage);
 		
 		Object o = JSONObject.toBean( jsonObject, this.jsonConfig );
 

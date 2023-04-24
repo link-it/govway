@@ -952,7 +952,7 @@ public class GeneralInstanceProperties {
 				}
 			}
 			
-			List<String> entries = new ArrayList<String>();
+			List<String> entries = new ArrayList<>();
 			List<byte[]> entriesBytes = new ArrayList<byte[]>();
 			
 			// Inizializzo List

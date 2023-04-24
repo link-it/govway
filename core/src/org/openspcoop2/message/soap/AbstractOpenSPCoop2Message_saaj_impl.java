@@ -720,7 +720,7 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 								}
 							}
 								
-							List<String> prefixesToRemoveContent = new ArrayList<String>();
+							List<String> prefixesToRemoveContent = new ArrayList<>();
 							Iterator<?> prefixes = elementToClean.getNamespacePrefixes();
 							while(prefixes.hasNext()){
 								String prefix = (String) prefixes.next();
@@ -737,7 +737,7 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 						break;
 		
 					case ElementReference.TYPE_ENCRYPT_CONTENT:
-						List<String> prefixesToRemoveContent = new ArrayList<String>();
+						List<String> prefixesToRemoveContent = new ArrayList<>();
 						Iterator<?> prefixesContent = elementToClean.getNamespacePrefixes();
 						while(prefixesContent.hasNext()){
 							String prefix = (String) prefixesContent.next();
@@ -769,7 +769,7 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 							}
 						}
 							
-						prefixesToRemoveContent = new ArrayList<String>();
+						prefixesToRemoveContent = new ArrayList<>();
 						prefixesContent = elementToClean.getNamespacePrefixes();
 						while(prefixesContent.hasNext()){
 							String prefix = (String) prefixesContent.next();
@@ -794,7 +794,7 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 							Object next = childrenToClean.next();
 							if(next instanceof SOAPElement) {
 								SOAPElement childToClean = (SOAPElement) next;
-								List<String> prefixesToRemoveElement = new ArrayList<String>();
+								List<String> prefixesToRemoveElement = new ArrayList<>();
 								Iterator<?> prefixesElement = childToClean.getNamespacePrefixes();
 								while(prefixesElement.hasNext()){
 									String prefix = (String) prefixesElement.next();
@@ -826,7 +826,7 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 									}
 								}
 									
-								prefixesToRemoveElement = new ArrayList<String>();
+								prefixesToRemoveElement = new ArrayList<>();
 								prefixesElement = childToClean.getNamespacePrefixes();
 								while(prefixesElement.hasNext()){
 									String prefix = (String) prefixesElement.next();

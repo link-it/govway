@@ -35,7 +35,7 @@ import org.openspcoop2.utils.logger.beans.Property;
  */
 public class Contenitore{
 	
-	private List<String> listPrimitive = new ArrayList<String>();
+	private List<String> listPrimitive = new ArrayList<>();
 	
 	private List<Property> listProperty = new ArrayList<Property>();
 		

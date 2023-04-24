@@ -74,7 +74,7 @@ public class Cache {
 	public static void printStatistics(OutputStream out, String separatorStat, String separatorCache) throws UtilsException {
 		try{
 			if(Cache.caches!=null && !Cache.caches.isEmpty()) {
-				List<String> keys = new ArrayList<String>();
+				List<String> keys = new ArrayList<>();
 				keys.addAll(Cache.caches.keySet());
 				Collections.sort(keys);
 				for (String key : keys) {

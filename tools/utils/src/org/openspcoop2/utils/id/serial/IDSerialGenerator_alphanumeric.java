@@ -90,7 +90,7 @@ public class IDSerialGenerator_alphanumeric {
 		
 		int iteration = 0;
 		
-		List<String> messageException = new ArrayList<String>();
+		List<String> messageException = new ArrayList<>();
 		
 		String table = param.getTableName();
 		if(table==null){
@@ -129,14 +129,14 @@ public class IDSerialGenerator_alphanumeric {
 		
 		boolean maxValueAndWrapDisabled = false;
 		
-		List<String> valuesGenerated = new ArrayList<String>();
+		List<String> valuesGenerated = new ArrayList<>();
 		
 		boolean rowNotExistsAndSerializableLevelNotFound = false;
 		
 		while(maxValueAndWrapDisabled==false && rowNotExistsAndSerializableLevelNotFound==false && idBuildOK==false && 
 				DateManager.getTimeMillis() < scadenzaWhile){
 
-			valuesGenerated = new ArrayList<String>();
+			valuesGenerated = new ArrayList<>();
 			
 			iteration++;
 			

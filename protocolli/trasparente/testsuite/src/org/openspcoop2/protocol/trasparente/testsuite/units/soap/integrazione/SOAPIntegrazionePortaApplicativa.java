@@ -98,7 +98,7 @@ public class SOAPIntegrazionePortaApplicativa {
 		if(contentType.contains("application")) {
 			tipo = "soap12";
 		}
-		HashMap<String, String> headersRequest = new HashMap<String, String>();
+		HashMap<String, String> headersRequest = new HashMap<>();
 		if("soap11".equals(tipo)) {
 			headersRequest.put(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, "\"test\"");
 		}
@@ -164,7 +164,7 @@ public class SOAPIntegrazionePortaApplicativa {
 		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_APPLICATIVA_AUTH_BASIC_NO_INTEGRAZIONE_SOAP);
 		restCore.setCredenziali("testsuiteOp2","12345678");
 		String tipo = "soap12";
-		HashMap<String, String> headersRequest = new HashMap<String, String>();
+		HashMap<String, String> headersRequest = new HashMap<>();
 		restCore.invoke(tipo, 200, repository, true, true, contentType, headersRequest);
 		restCore.postInvoke(repository);
 	}

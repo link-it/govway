@@ -412,7 +412,7 @@ public class AlarmManager {
 			throw new Exception("Configurazione Mail non fornita, utilizzare il metodo AlarmManager.setAlarmEngineConfig(...)");
 		}
 		
-		List<String> destinatari = new ArrayList<String>();
+		List<String> destinatari = new ArrayList<>();
 		if(configAllarme.getMail()!=null && configAllarme.getMail().getDestinatari()!=null){
 			String [] tmp = configAllarme.getMail().getDestinatari().split(",");
 			if(tmp!=null && tmp.length>0){
@@ -551,7 +551,7 @@ public class AlarmManager {
 		
 		ScriptInvoker invoker = new ScriptInvoker(path);
 		
-		List<String> arguments = new ArrayList<String>();
+		List<String> arguments = new ArrayList<>();
 		StringBuilder bfUtils = null;
 		if(args!=null && !"".equals(args)){
 			String [] tmp = args.trim().split(" ");
@@ -793,7 +793,7 @@ public class AlarmManager {
 		try {
 			if(sendMail){
 				alarmLogger.debug(prefix+"notifica mail ...");
-				List<String> logEvents = new ArrayList<String>();
+				List<String> logEvents = new ArrayList<>();
 				AlarmManager.sendMail(allarme, alarmLogger, logEvents);
 				if(logEvents!=null && !logEvents.isEmpty()) {
 					for (String logEvent : logEvents) {
@@ -815,7 +815,7 @@ public class AlarmManager {
 		try {
 			if(invokeScript){
 				alarmLogger.debug(prefix+"notifica via script ...");
-				List<String> logEvents = new ArrayList<String>();
+				List<String> logEvents = new ArrayList<>();
 				AlarmManager.invokeScript(allarme, alarmLogger, logEvents);
 				if(logEvents!=null && !logEvents.isEmpty()) {
 					for (String logEvent : logEvents) {

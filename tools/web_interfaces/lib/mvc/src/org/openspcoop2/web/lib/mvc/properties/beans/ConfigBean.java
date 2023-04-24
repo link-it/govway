@@ -59,8 +59,8 @@ public class ConfigBean {
 	private IProvider provider;
 
 	public ConfigBean(IProvider provider) {
-		this.listaNomiProperties = new ArrayList<String>();
-		this.listaKeysItem = new ArrayList<String>();
+		this.listaNomiProperties = new ArrayList<>();
+		this.listaKeysItem = new ArrayList<>();
 		this.mapItem = new HashMap<String, BaseItemBean<?>>();
 		this.mapPropertyItem = new HashMap<String, List<BaseItemBean<?>>>();
 		this.provider = provider;
@@ -117,7 +117,7 @@ public class ConfigBean {
 	public List<?> getListaItemSDK(){
 		List<BaseItemBean<?>> list = getListaItem();
 		if(list!=null && !list.isEmpty()) {
-			List<Object> l = new ArrayList<Object>();
+			List<Object> l = new ArrayList<>();
 			for (BaseItemBean<?> base : list) {
 				l.add(base.getItem());
 			}

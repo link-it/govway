@@ -44,7 +44,7 @@ public class DettaglioRateLimiting implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	private List<String> policyName = new ArrayList<String>();
+	private List<String> policyName = new ArrayList<>();
 	private Map<String, AttivazionePolicy> policyMap = new HashMap<String, AttivazionePolicy>();
 	private Map<String, ConfigurazionePolicy> configPolicyMap = new HashMap<String, ConfigurazionePolicy>();
 	

@@ -64,17 +64,17 @@ public class InfoConfigurazione implements Serializable {
 	protected static final String PROPERTY_SEPARATOR = " ";
 	protected static final String VALUE_SEPARATOR = "=";
 	
-	private Map<String, String> context = new HashMap<String, String>();
+	private Map<String, String> context = new HashMap<>();
 	
-	private Map<String, String> apiImplProperties = new HashMap<String, String>();
+	private Map<String, String> apiImplProperties = new HashMap<>();
 	
-	private Map<String, String> soggettoFruitoreProperties = new HashMap<String, String>();
-	private Map<String, String> soggettoErogatoreProperties = new HashMap<String, String>();
+	private Map<String, String> soggettoFruitoreProperties = new HashMap<>();
+	private Map<String, String> soggettoErogatoreProperties = new HashMap<>();
 	
-	private Map<String, String> applicativoFruitoreProperties = new HashMap<String, String>();
+	private Map<String, String> applicativoFruitoreProperties = new HashMap<>();
 	
-	private Map<String, String> tokenClientApplicationProperties = new HashMap<String, String>();
-	private Map<String, String> tokenClientOrganizationProperties = new HashMap<String, String>();
+	private Map<String, String> tokenClientApplicationProperties = new HashMap<>();
+	private Map<String, String> tokenClientOrganizationProperties = new HashMap<>();
 	
 	private String nomeConnettoriMultipli = null;
 	
@@ -350,7 +350,7 @@ public class InfoConfigurazione implements Serializable {
 	}
 	private List<String> _getPropertiesKeys(Map<String, String> p){
 		if(p!=null && !p.isEmpty()) {
-			List<String> l = new ArrayList<String>();
+			List<String> l = new ArrayList<>();
 			l.addAll(p.keySet());
 			return l;
 		}

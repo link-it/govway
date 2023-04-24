@@ -42,7 +42,7 @@ public class AbstractMappedConverter {
 	protected boolean camelCase_firstLower = false;
 	protected SortedMap<String> renameFields = new SortedMap<String>();
 	
-	protected List<String> arrays = new ArrayList<String>();
+	protected List<String> arrays = new ArrayList<>();
 
 	protected SortedMap<String[]> reorderChildren = new SortedMap<String[]>();
 	protected boolean forceReorder = false;
@@ -195,8 +195,8 @@ public class AbstractMappedConverter {
 	}
 	
 	protected List<String> correctPath(String tipologia, List<String> params) throws UtilsException {
-		List<String> newListArray = new ArrayList<String>();
-		List<String> removePath = new ArrayList<String>();
+		List<String> newListArray = new ArrayList<>();
+		List<String> removePath = new ArrayList<>();
 		if(!params.isEmpty()) {
 			
 			for (String path : params) {
@@ -324,7 +324,7 @@ public class AbstractMappedConverter {
 	}
 	
 	protected List<String> toList(String param){
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(param!=null && param.contains(",")) {
 			String [] tmp = param.split(",");
 			if(tmp!=null && tmp.length>0) {

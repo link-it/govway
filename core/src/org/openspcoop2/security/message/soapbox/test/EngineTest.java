@@ -153,7 +153,7 @@ public class EngineTest {
 
 			
 			// Password Manager			
-			Map<String, String> pdPasswordMap = new HashMap<String, String>();
+			Map<String, String> pdPasswordMap = new HashMap<>();
 			pdPasswordMap.put("pd", "certpd");
 			pdPasswordMap.put("symmetric", "changeit");
 			
@@ -286,7 +286,7 @@ public class EngineTest {
 			}
 			
 			// Password Manager			
-			Map<String, String> paPasswordMap = new HashMap<String, String>();
+			Map<String, String> paPasswordMap = new HashMap<>();
 			paPasswordMap.put("pa", "certpa");
 			paPasswordMap.put("symmetric", "changeit");
 			

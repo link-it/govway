@@ -176,13 +176,13 @@ public final class ConfigurazioneSistemaAdd extends Action {
 					
 					if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES.equals(nomeCache) &&
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO_RESET_ALL_CACHE_ALL_NODES.equals(nomeMetodo)) {
-						aliasesForResetAllCaches = new ArrayList<String>();
+						aliasesForResetAllCaches = new ArrayList<>();
 						aliasesForResetAllCaches.addAll(aliases);
 						aliasNodi = null; // svuoto per non creare confusione
 					}
 					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_SELECTED_CACHES.equals(nomeCache) &&
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO_RESET_ALL_CACHE_SELECTED_NODES.equals(nomeMetodo)) {
-						aliasesForResetAllCaches = new ArrayList<String>();
+						aliasesForResetAllCaches = new ArrayList<>();
 						for (int i = 0; i < aliasNodi.length; i++) {
 							aliasesForResetAllCaches.add(aliasNodi[i]);
 						}

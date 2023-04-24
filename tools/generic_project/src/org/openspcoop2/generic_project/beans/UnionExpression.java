@@ -39,7 +39,7 @@ public class UnionExpression {
 
 	private IExpression expression;
 	private Map<String,Object> returnFieldMap = new HashMap<String, Object>();
-	private List<String> keys = new ArrayList<String>(); // contiene le keys della mappa per preservare l'ordine di inserimento.
+	private List<String> keys = new ArrayList<>(); // contiene le keys della mappa per preservare l'ordine di inserimento.
 	
 	public UnionExpression(IExpression expression){
 		this.expression = expression;

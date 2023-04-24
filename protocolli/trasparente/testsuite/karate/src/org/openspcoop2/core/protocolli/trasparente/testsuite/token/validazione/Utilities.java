@@ -54,7 +54,7 @@ import net.minidev.json.JSONObject;
 public class Utilities extends ConfigLoader {
 
 	public static List<String> getMapExpectedTokenInfoInvalid() {
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
 		mapExpectedTokenInfo.add("\"valid\":false");
 		return mapExpectedTokenInfo;
 	}
@@ -474,7 +474,7 @@ public class Utilities extends ConfigLoader {
 		String iss ="  \""+"iss\":\""+issuer+"\"";
 		jsonInput = jsonInput+
 				iss+" ,\n ";
-		List<String> issList = new ArrayList<String>();
+		List<String> issList = new ArrayList<>();
 		issList.add(issuer);
 		values.put("iss", issList);
 		
@@ -482,7 +482,7 @@ public class Utilities extends ConfigLoader {
 		String sub = "  \"sub\":\""+subject+"\"";
 		jsonInput = jsonInput+
 				sub+" ,\n ";
-		List<String> subList = new ArrayList<String>();
+		List<String> subList = new ArrayList<>();
 		subList.add(subject);
 		values.put("sub", subList);
 		
@@ -491,7 +491,7 @@ public class Utilities extends ConfigLoader {
 		String aud = "  \"aud\":[\""+audience+"\",\""+audience2+"\"]";
 		jsonInput = jsonInput+
 				aud+" ,\n ";
-		List<String> audList = new ArrayList<String>();
+		List<String> audList = new ArrayList<>();
 		audList.add(audience);
 		audList.add(audience2);
 		values.put("aud", audList);
@@ -500,7 +500,7 @@ public class Utilities extends ConfigLoader {
 		String cId = "\"client_id\":\""+cliendId+"\"";
 		jsonInput = jsonInput+
 				cId+" ,\n ";
-		List<String> clientIdList = new ArrayList<String>();
+		List<String> clientIdList = new ArrayList<>();
 		clientIdList.add(cliendId);
 		values.put("clientId", clientIdList);
 		
@@ -511,7 +511,7 @@ public class Utilities extends ConfigLoader {
 		String iatJson = "  \"iat\":"+iatV+""; 
 		jsonInput = jsonInput +
 				iatJson + " ,\n ";
-		List<String> iatList = new ArrayList<String>();
+		List<String> iatList = new ArrayList<>();
 		iatList.add(iatV);
 		values.put("iat", iatList);
 		
@@ -520,7 +520,7 @@ public class Utilities extends ConfigLoader {
 		String nbfJson = "  \"nbf\":"+nbfV+"";
 		jsonInput = jsonInput +
 				nbfJson+ " ,\n ";
-		List<String> nbfList = new ArrayList<String>();
+		List<String> nbfList = new ArrayList<>();
 		nbfList.add(nbfV);
 		values.put("nbf", nbfList);
 		
@@ -529,7 +529,7 @@ public class Utilities extends ConfigLoader {
 		String expJson = "  \"exp\":"+expV+"";
 		jsonInput = jsonInput +
 				expJson + " ,\n  ";
-		List<String> expList = new ArrayList<String>();
+		List<String> expList = new ArrayList<>();
 		expList.add(expV);
 		values.put("exp", expList);
 		
@@ -559,7 +559,7 @@ public class Utilities extends ConfigLoader {
 			String r = "  \"role\":"+roleValue+"]";
 			jsonInput = jsonInput +
 					r+" ,\n";
-			List<String> roleList = new ArrayList<String>();
+			List<String> roleList = new ArrayList<>();
 			roleList.add(r1);
 			roleList.add(r2);
 			roleList.add(r3);
@@ -583,7 +583,7 @@ public class Utilities extends ConfigLoader {
 			String s = "  \"scope\":\""+scopeValue+"\"";
 			jsonInput = jsonInput +
 					s+" ,\n";
-			List<String> scopeList = new ArrayList<String>();
+			List<String> scopeList = new ArrayList<>();
 			scopeList.add(s1);
 			scopeList.add(s2);
 			scopeList.add(s3);
@@ -596,10 +596,10 @@ public class Utilities extends ConfigLoader {
 		jsonInput = jsonInput+
 				u+" ,\n"+
 				name+" ,\n ";
-		List<String> usernameList = new ArrayList<String>();
+		List<String> usernameList = new ArrayList<>();
 		usernameList.add(username);
 		values.put("username", usernameList);
-		List<String> nameList = new ArrayList<String>();
+		List<String> nameList = new ArrayList<>();
 		nameList.add(fullName);
 		values.put("fullName", nameList);
 		
@@ -607,7 +607,7 @@ public class Utilities extends ConfigLoader {
 		String gName = "  \"given_name\":\""+firstName+"\"";
 		jsonInput = jsonInput +
 				gName+" ,\n ";
-		List<String> firstNameList = new ArrayList<String>();
+		List<String> firstNameList = new ArrayList<>();
 		firstNameList.add(firstName);
 		values.put("firstName", firstNameList);
 		
@@ -615,7 +615,7 @@ public class Utilities extends ConfigLoader {
 		String mName = "  \"middle_name\":\""+middleName+"\"";
 		jsonInput = jsonInput +
 				mName+" ,\n ";
-		List<String> middleNameList = new ArrayList<String>();
+		List<String> middleNameList = new ArrayList<>();
 		middleNameList.add(middleName);
 		values.put("middleName", middleNameList);
 		
@@ -623,7 +623,7 @@ public class Utilities extends ConfigLoader {
 		String fName = "  \"family_name\":\""+familyName+"\"";
 		jsonInput = jsonInput +
 				fName+" ,\n ";
-		List<String> familyNameList = new ArrayList<String>();
+		List<String> familyNameList = new ArrayList<>();
 		familyNameList.add(familyName);
 		values.put("familyName", familyNameList);
 		
@@ -631,7 +631,7 @@ public class Utilities extends ConfigLoader {
 		String mail = "  \"email\":\""+email+"\"";
 		jsonInput = jsonInput+
 				mail+" ,\n ";
-		List<String> emailList = new ArrayList<String>();
+		List<String> emailList = new ArrayList<>();
 		emailList.add(email);
 		values.put("email", emailList);
 		
@@ -639,7 +639,7 @@ public class Utilities extends ConfigLoader {
 		String jtiS = "  \"jti\":\""+jti+"\"";
 		jsonInput = jsonInput +
 				" "+jtiS+" ,\n";
-		List<String> jtiList = new ArrayList<String>();
+		List<String> jtiList = new ArrayList<>();
 		jtiList.add(jti);
 		values.put("jti", jtiList);
 
@@ -647,7 +647,7 @@ public class Utilities extends ConfigLoader {
 		String purposeIdS = "  \"purposeId\":\""+purposeId+"\"";
 		jsonInput = jsonInput +
 				" "+purposeIdS+" ,\n";
-		List<String> purposeIdList = new ArrayList<String>();
+		List<String> purposeIdList = new ArrayList<>();
 		purposeIdList.add(purposeId);
 		values.put("purposeId", purposeIdList);
 		
@@ -655,7 +655,7 @@ public class Utilities extends ConfigLoader {
 		String customclaimS = "  \"customClaim\":\""+customclaim+"\"";
 		jsonInput = jsonInput +
 				" "+customclaimS+" ";
-		List<String> customclaimList = new ArrayList<String>();
+		List<String> customclaimList = new ArrayList<>();
 		customclaimList.add(customclaim);
 		values.put("customclaim", customclaimList);
 		

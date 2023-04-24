@@ -114,7 +114,7 @@ public class CollectionProperties {
 	
 	private List<String> _keys(){
 	
-		List<String> keys = new ArrayList<String>();
+		List<String> keys = new ArrayList<>();
 		
 		if(this.systemVariable!=null){
 			java.util.Enumeration<?> enumProp = this.systemVariable.propertyNames();

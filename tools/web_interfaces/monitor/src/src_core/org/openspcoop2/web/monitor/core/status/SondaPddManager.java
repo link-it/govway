@@ -68,7 +68,7 @@ public class SondaPddManager {
 		Map<String, ISondaPdd> tmp_modules = new HashMap<String, ISondaPdd>();
 		try{
 			this.log.debug("Inizializzazione Sonda Pdd Manager in corso...");
-			this.listaSonde = new ArrayList<String>();
+			this.listaSonde = new ArrayList<>();
 
 			// controllo se il monitoraggio e' attivo
 			this.enable = PddMonitorProperties.getInstance(log).isStatusPdDEnabled();

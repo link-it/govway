@@ -1086,7 +1086,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 				
 				boolean findDigestInClaimSignedHeader = false;
 				
-				Map<String, List<String>> headerHttpAttesi = new HashMap<String, List<String>>();
+				Map<String, List<String>> headerHttpAttesi = new HashMap<>();
 				
 				Object signedHeaders = objectNode.get(claimSignedHeader);
 				if(signedHeaders==null) {

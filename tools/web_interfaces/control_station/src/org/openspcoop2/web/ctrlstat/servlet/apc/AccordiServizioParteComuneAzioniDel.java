@@ -123,7 +123,7 @@ public final class AccordiServizioParteComuneAzioniDel extends Action {
 				// Controllo che l'azione non sia stata correlata da un'altra azione
 				if (apcCore.isAzioneCorrelata(as.getId(), nomeaz, nomeaz)) {
 					// non rimuovo in quanto correlata
-					ArrayList<String> tmp = new ArrayList<String>();
+					ArrayList<String> tmp = new ArrayList<>();
 					// cerco le azioni che contengono quella che
 					// vorrei eliminare
 					// come correlata

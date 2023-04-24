@@ -36,7 +36,7 @@ import org.openspcoop2.utils.transport.TransportUtils;
  */
 public class OpenSPCoop2MessageProperties {
 
-	private Map<String, List<String>> props = new HashMap<String, List<String>>();	
+	private Map<String, List<String>> props = new HashMap<>();	
 
 	private boolean initialize = false;
 	

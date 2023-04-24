@@ -21,7 +21,6 @@
 package org.openspcoop2.message.utils;
 
 import java.util.HashMap;
-import java.util.List;
 
 import org.openspcoop2.message.ForcedResponseMessage;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -40,6 +39,8 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
  */
 public class WWWAuthenticateGenerator {
 	
+	private WWWAuthenticateGenerator() {}
+	
 	public static OpenSPCoop2Message buildErrorMessage(WWWAuthenticateErrorCode errorCode, String realm, boolean genericError, String error, String ... scope) {
 		
 		OpenSPCoop2Message errorMessage = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createEmptyMessage(MessageType.BINARY, MessageRole.FAULT);
@@ -47,7 +48,7 @@ public class WWWAuthenticateGenerator {
 		forcedResponseMessage.setContent(null); // vuoto
 		forcedResponseMessage.setContentType(null); // vuoto
 		forcedResponseMessage.setResponseCode(getReturnCode(errorCode)+"");	
-		forcedResponseMessage.setHeadersValues(new HashMap<String, List<String>>());
+		forcedResponseMessage.setHeadersValues(new HashMap<>());
 		String headerValue = buildHeaderValue(errorCode, realm, genericError, error, scope);
 		TransportUtils.addHeader(forcedResponseMessage.getHeadersValues(), HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE, headerValue);
 		errorMessage.forceResponse(forcedResponseMessage);
@@ -75,7 +76,7 @@ public class WWWAuthenticateGenerator {
 		bf.append("\", error=\"");
 		bf.append(errorCode.name());
 		bf.append("\", error_description=\"");
-		if(genericError==false) {
+		if(!genericError) {
 			bf.append(error);
 		}
 		switch (errorCode) {
@@ -119,10 +120,10 @@ public class WWWAuthenticateGenerator {
 		return bf.toString();
 	}
 	
-	public static String buildCustomHeaderValue(String auth, String realm, WWWAuthenticateErrorCode errorCode, String error_description) {
-		return buildCustomHeaderValue(auth, realm, errorCode!=null ? errorCode.name() : null, error_description);
+	public static String buildCustomHeaderValue(String auth, String realm, WWWAuthenticateErrorCode errorCode, String errorDescription) {
+		return buildCustomHeaderValue(auth, realm, errorCode!=null ? errorCode.name() : null, errorDescription);
 	}
-	public static String buildCustomHeaderValue(String auth, String realm, String errorCode, String error_description) {
+	public static String buildCustomHeaderValue(String auth, String realm, String errorCode, String errorDescription) {
 		
 		StringBuilder bf = new StringBuilder(auth);
 		bf.append(" realm=\"");
@@ -133,9 +134,9 @@ public class WWWAuthenticateGenerator {
 			bf.append(errorCode);
 			bf.append("\"");
 		}
-		if(error_description!=null) {
+		if(errorDescription!=null) {
 			bf.append(", error_description=\"");
-			bf.append(error_description);
+			bf.append(errorDescription);
 			bf.append("\"");
 		}
 		return bf.toString();

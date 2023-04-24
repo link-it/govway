@@ -371,7 +371,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 				}
 			}
 			
-			Map<String, List<String>> queryParameters = new HashMap<String, List<String>>();
+			Map<String, List<String>> queryParameters = new HashMap<>();
 			if(config.getQuery()!=null) {
 				if(config.isQueryBase64()) {
 					if(base64Location==null) {
@@ -590,16 +590,16 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 							boolean modify = false;
 							if(cookieValues!=null && !cookieValues.isEmpty()) {
 								
-								newCookieValues = new ArrayList<String>();
+								newCookieValues = new ArrayList<>();
 								
 								for (String cookieValue : cookieValues) {
 									if(cookieValue!=null) {
 										if(this.debug)
 											this.logger.debug("Trovato CookieHeader '"+header+"':["+cookieValue+"] ...");
 											
-										List<String> cookieNames = new ArrayList<String>();
-										List<String> cookiePaths = new ArrayList<String>();
-										List<String> cookieDomains = new ArrayList<String>();
+										List<String> cookieNames = new ArrayList<>();
+										List<String> cookiePaths = new ArrayList<>();
+										List<String> cookieDomains = new ArrayList<>();
 										try {
 											List<HttpCookie> l = java.net.HttpCookie.parse(cookieValue);
 											for (HttpCookie httpCookie : l) {

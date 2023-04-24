@@ -2310,7 +2310,7 @@ public abstract class AbstractArchiveEngine {
 	public List<String> getAllIdPluginArchivio() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		try {
 			RegistroPlugins registroPlugins = this.driverConfigurazione.getRegistroPlugins();
-			List<String> l = new ArrayList<String>();
+			List<String> l = new ArrayList<>();
 			if(registroPlugins!=null && registroPlugins.sizePluginList()>0) {
 				for (RegistroPlugin registroPlugin : registroPlugins.getPluginList()) {
 					l.add(registroPlugin.getNome());
@@ -2422,7 +2422,7 @@ public abstract class AbstractArchiveEngine {
 	public List<String> getAllIdUrlInvocazioneRegola() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		try {
 			ConfigurazioneUrlInvocazione configurazioneUrlInvocazione = this.driverConfigurazione.getConfigurazioneGenerale().getUrlInvocazione();
-			List<String> l = new ArrayList<String>();
+			List<String> l = new ArrayList<>();
 			if(configurazioneUrlInvocazione!=null && configurazioneUrlInvocazione.sizeRegolaList()>0) {
 				for (ConfigurazioneUrlInvocazioneRegola regola : configurazioneUrlInvocazione.getRegolaList()) {
 					l.add(regola.getNome());

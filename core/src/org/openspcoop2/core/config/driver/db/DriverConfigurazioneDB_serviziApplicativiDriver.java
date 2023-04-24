@@ -2086,7 +2086,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<String> lista = new ArrayList<String>();
+		ArrayList<String> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
@@ -2400,7 +2400,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 			} else
 				con = this.driver.globalConnection;
 			
-			ArrayList<String> nomiPorteApplicative = new ArrayList<String>();
+			ArrayList<String> nomiPorteApplicative = new ArrayList<>();
 			boolean isInUso=false;
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SA);

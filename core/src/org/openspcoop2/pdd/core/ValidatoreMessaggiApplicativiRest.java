@@ -676,7 +676,7 @@ public class ValidatoreMessaggiApplicativiRest {
 		YAMLUtils yamlUtils = YAMLUtils.getInstance();
 		JSONUtils jsonUtils = JSONUtils.getInstance();
 								
-		Map<String, String> attachments = new HashMap<String, String>();
+		Map<String, String> attachments = new HashMap<>();
 		if(api.getSchemas()!=null && api.getSchemas().size()>0) {
 
 			for (ApiSchema apiSchema : api.getSchemas()) {
@@ -1032,7 +1032,7 @@ public class ValidatoreMessaggiApplicativiRest {
 			boolean default_not = false; 
 			boolean not = readBooleanValueWithDefault(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_RETURN_CODE_NOT, default_not);
 			
-			List<String> codici = new ArrayList<String>();
+			List<String> codici = new ArrayList<>();
 			if(valueS.contains(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_RETURN_CODE_LIST_SEPARATOR)) {
 				String [] tmp = valueS.split(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_RETURN_CODE_LIST_SEPARATOR);
 				if(tmp!=null && tmp.length>0) {
@@ -1114,7 +1114,7 @@ public class ValidatoreMessaggiApplicativiRest {
 			boolean default_not = false; 
 			boolean not = readBooleanValueWithDefault(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_CONTENT_TYPE_NOT, default_not);
 			
-			List<String> contentTypes = new ArrayList<String>();
+			List<String> contentTypes = new ArrayList<>();
 			if(valueS.contains(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_CONTENT_TYPE_LIST_SEPARATOR)) {
 				String [] tmp = valueS.split(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_CONTENT_TYPE_LIST_SEPARATOR);
 				if(tmp!=null && tmp.length>0) {

@@ -323,7 +323,7 @@ public class LoginBean extends AbstractLoginBean {
 	}
 
 	public List<String> getIdentificativiPorta(User user){
-		List<String> lst = new ArrayList<String>();
+		List<String> lst = new ArrayList<>();
 
 		for (IDSoggetto idSog : user.getSoggetti()) {
 			IdSoggetto idsoggetto = new IdSoggetto();
@@ -614,7 +614,7 @@ public class LoginBean extends AbstractLoginBean {
 	}	
 
 	public List<String> getProtocolliSelezionati() {
-		List<String> protocolliList = new ArrayList<String>();
+		List<String> protocolliList = new ArrayList<>();
 		try{
 			User utente = this.getUtente();
 			
@@ -632,7 +632,7 @@ public class LoginBean extends AbstractLoginBean {
 
 		}catch (Exception e) {
 			this.log.error(e.getMessage(),e);
-			protocolliList = new ArrayList<String>();
+			protocolliList = new ArrayList<>();
 			return protocolliList;
 		}
 	}
@@ -1132,7 +1132,7 @@ public class LoginBean extends AbstractLoginBean {
 		try {
 			this.listaNomiGruppi = DynamicPdDBeanUtils.getInstance(LoggerManager.getPddMonitorCoreLogger()).getListaNomiGruppi();
 		} catch (Exception e) {
-			this.listaNomiGruppi =new ArrayList<String>();
+			this.listaNomiGruppi =new ArrayList<>();
 		}
 		} 
 		return this.listaNomiGruppi;

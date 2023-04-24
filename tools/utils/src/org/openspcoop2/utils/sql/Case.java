@@ -31,8 +31,8 @@ import java.util.List;
  */
 public class Case {
 
-	private List<String> condizioni = new ArrayList<String>();
-	private List<String> valori = new ArrayList<String>();
+	private List<String> condizioni = new ArrayList<>();
+	private List<String> valori = new ArrayList<>();
 	private CastColumnType tipoColonna;
 	private int dimensioneColonna = 255;
 	private String valoreDefault;

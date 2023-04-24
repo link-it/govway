@@ -384,7 +384,7 @@ public class ConnectorDispatcherUtils {
 		
 		IProtocolFactory<?> protocolFactory = requestInfo.getProtocolFactory();
 		
-		Map<String, List<String>> trasporto = new HashMap<String, List<String>>();
+		Map<String, List<String>> trasporto = new HashMap<>();
 		try {
 			UtilitiesIntegrazione utilitiesIntegrazione = null;
 			if(portaDelegata) {

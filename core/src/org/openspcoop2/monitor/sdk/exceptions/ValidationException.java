@@ -38,7 +38,7 @@ public class ValidationException extends Exception {
 	
 	public void addFieldErrorMessage(String paramId, String errorMessage){
 		if(this.errors==null)
-			this.errors = new HashMap<String, String>();
+			this.errors = new HashMap<>();
 		
 		this.errors.put(paramId, errorMessage);
 	}

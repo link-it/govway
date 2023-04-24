@@ -37,7 +37,7 @@ public class TransportHeaderResource extends AbstractContentResource {
 	private HashMap<String,String> header = null;
 	public TransportHeaderResource(MessageType messageType) {
 		super(messageType);
-		this.header = new HashMap<String, String>();
+		this.header = new HashMap<>();
 	}
 	
 	public void setProperty(String name, String value) {

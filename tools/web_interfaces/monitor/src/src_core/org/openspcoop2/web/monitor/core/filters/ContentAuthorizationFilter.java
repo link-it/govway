@@ -249,7 +249,7 @@ public class ContentAuthorizationFilter implements Filter {
 	public void init(FilterConfig config) throws ServletException {
 		this.filterConfig = config;
 		
-		this.excludedPaths = new ArrayList<String>();
+		this.excludedPaths = new ArrayList<>();
 		try {
 			this.excludedPaths.addAll(Arrays.asList(ContentAuthorizationManager.getInstance().getListaPathConsentiti()));
 		} catch (Exception e) {

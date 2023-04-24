@@ -242,7 +242,7 @@ public class Utilities {
 	public static String Ruolo2FonteRegistro = "Ruolo2TestAutenticazioneTokenFonteRegistro";
 	public static String Ruolo3FonteEsterna_idEsterno = "role3Esterno";
 	public static String Ruolo3FonteEsterna_idGovWay = "Ruolo3TestAutenticazioneTokenFonteEsterna";
-	public static List<String> listaRuolo3 = new ArrayList<String>();
+	public static List<String> listaRuolo3 = new ArrayList<>();
 	static {
 		listaRuolo3.add(Ruolo3FonteEsterna_idEsterno);
 	}
@@ -515,8 +515,8 @@ public class Utilities {
 		boolean utente = false;
 		String token = Utilities.buildJWT(clientId, roles, utente);
 		
-		Map<String, String> queryParameters = new HashMap<String, String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> queryParameters = new HashMap<>();
+		Map<String, String> headers = new HashMap<>();
 		if(authBasic!=null) {
 			queryParameters.put(Costanti.RFC6750_URI_QUERY_PARAMETER_ACCESS_TOKEN,token);
 			request.setUsername(authBasic);

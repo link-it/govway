@@ -85,7 +85,7 @@ public class NotifierInputStream extends InputStream {
 	 * StreamingHandler
 	 */
 	private Map<String,StreamingHandler> streamingHandlers = new HashMap<String, StreamingHandler>();
-	private List<String> streamingHandlersIds = new ArrayList<String>(); // Per preservare l'ordine di inserimento
+	private List<String> streamingHandlersIds = new ArrayList<>(); // Per preservare l'ordine di inserimento
 
 	
 	/**

@@ -73,7 +73,7 @@ public class EsitiConfigUtils {
 			List<Integer> esitiCodes = esiti.getEsitiCode();
 			
 			if(esitiCodes!=null && esitiCodes.size()>0){
-				List<String> esitiDaRegistrare = new ArrayList<String>();
+				List<String> esitiDaRegistrare = new ArrayList<>();
 				for (Integer esito : esitiCodes) {
 					checkInitEsiti(esiti);
 					if(esito!=esitoMaxThreads && esito!=esitoCorsGateway && esito!=esitoCorsTrasparente){
@@ -95,7 +95,7 @@ public class EsitiConfigUtils {
 			
 			String [] tmp = esitiConfig.split(",");
 			if(tmp!=null && tmp.length>0){
-				List<String> esitiDaRegistrare = new ArrayList<String>();
+				List<String> esitiDaRegistrare = new ArrayList<>();
 				for (int i = 0; i < tmp.length; i++) {
 					String t = tmp[i];
 					if(t!=null){

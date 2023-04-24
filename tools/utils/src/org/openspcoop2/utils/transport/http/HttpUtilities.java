@@ -92,7 +92,7 @@ public class HttpUtilities {
 	public static List<String> getClientAddressHeaders() throws UtilsException{
 		// X-Forwarded-For: A de facto standard for identifying the originating IP address of a client connecting to a web server through an HTTP proxy or load balancer
 		// Forwarded: Disclose original information of a client connecting to a web server through an HTTP proxy.'
-		List<String> possibiliHeaders = new ArrayList<String>();
+		List<String> possibiliHeaders = new ArrayList<>();
 		possibiliHeaders.add("X-Forwarded-For");
 		possibiliHeaders.add("Forwarded-For"); // senza la 'X-' nel caso l'header venga fatto rendere uno standard
 		possibiliHeaders.add("X-Forwarded");

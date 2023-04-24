@@ -319,7 +319,7 @@ public class ZipUtilities {
 		// L'Enumeration ritornato dal metodo standard java.util.zip.ZipFile.entries() 
 		// attraversa le entries presenti nello zip nello stesso ordine in cui sono state salvate.
 		
-		List<String> entryNames = new ArrayList<String>();
+		List<String> entryNames = new ArrayList<>();
 		Map<String, ZipEntry> map = new HashMap<String, ZipEntry>();
 		Enumeration<?> e = zip.entries();
 		while(e.hasMoreElements()) {

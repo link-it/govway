@@ -974,7 +974,7 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 	}
 	private String getActiveConnections(Map<String, IConnettore> connettoriParam){
 		
-		List<String> cConnettori = new ArrayList<String>();
+		List<String> cConnettori = new ArrayList<>();
 		for (String id : connettoriParam.keySet()) {
 			IConnettore c = connettoriParam.get(id);
 			String location = null;

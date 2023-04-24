@@ -571,7 +571,7 @@ public class DynamicStringReplace {
 		//System.out.println("Invocato con oggetto["+o.getClass().getName()+"] nome["+name+"]");
 		String fieldName = name;
 		//String position = null;
-		List<String> arrayMapPosition = new ArrayList<String>();
+		List<String> arrayMapPosition = new ArrayList<>();
 		boolean nameContainsPoint = name.contains(".");
 		if(nameContainsPoint && complexField){
 			
@@ -708,7 +708,7 @@ public class DynamicStringReplace {
 				}
 				//System.out.println("METODO getMethod["+getMethod+"] PARAMS["+sP+"] ");
 				if(sP.contains(",")) {
-					parametersObject = new ArrayList<String>();
+					parametersObject = new ArrayList<>();
 					parametersClass = new ArrayList<Class<?>>();
 					StringBuilder sb = new StringBuilder();
 					for (int i = 0; i < sP.length(); i++) {
@@ -738,7 +738,7 @@ public class DynamicStringReplace {
 					parametersClass.add(String.class);
 				}
 				else {
-					parametersObject = new ArrayList<String>();
+					parametersObject = new ArrayList<>();
 					parametersClass = new ArrayList<Class<?>>();
 					String paramString = sP;
 					//System.out.println("paramString '"+paramString+"'");

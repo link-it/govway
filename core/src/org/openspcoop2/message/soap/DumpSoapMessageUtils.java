@@ -117,7 +117,7 @@ public class DumpSoapMessageUtils {
 				    				continue;
 				    			}
 				    			
-				    			List<String> l = new ArrayList<String>();
+				    			List<String> l = new ArrayList<>();
 				    			String [] values = soapPart.getMimeHeader(key);
 				    			if(values!=null && values.length>0) {
 				    				for (String value : values) {
@@ -185,7 +185,7 @@ public class DumpSoapMessageUtils {
 					    			javax.xml.soap.MimeHeader mh = (javax.xml.soap.MimeHeader) keyO;
 					    			String key = mh.getName();
 					    			
-					    			List<String> l = new ArrayList<String>();
+					    			List<String> l = new ArrayList<>();
 					    			String [] values = ap.getMimeHeader(key);
 					    			if(values!=null && values.length>0) {
 					    				for (String value : values) {
@@ -326,7 +326,7 @@ public class DumpSoapMessageUtils {
 				    				continue;
 				    			}
 				    			
-				    			List<String> l = new ArrayList<String>();
+				    			List<String> l = new ArrayList<>();
 				    			String [] values = soapPart.getMimeHeader(key);
 				    			if(values!=null && values.length>0) {
 				    				for (String value : values) {

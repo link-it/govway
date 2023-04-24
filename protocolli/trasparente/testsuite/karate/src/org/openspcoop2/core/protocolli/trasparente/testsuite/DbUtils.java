@@ -223,7 +223,7 @@ public class DbUtils {
     }
     
     private Map<String, String> fillMapPolicyGroupByActiveThreadsType(PolicyGroupByActiveThreadsType type) {
-    	Map<String, String> map = new HashMap<String, String>();
+    	Map<String, String> map = new HashMap<>();
     	if(type!=null) {
     		map.put(Costanti.GESTORE, type.name());
     		map.put(Costanti.GESTORE_CONFIG_DATE, DateManager.getTimeMillis()+"");

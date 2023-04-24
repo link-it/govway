@@ -477,7 +477,7 @@ public class ExporterUtils {
 	}
 	
 	public List<?> getIdsPluginArchivi(String ids) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		List<String> idsPlugins = new ArrayList<String>();
+		List<String> idsPlugins = new ArrayList<>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
 		for (String id : idsToExport) {
 			idsPlugins.add(id);
@@ -489,7 +489,7 @@ public class ExporterUtils {
 		
 		ConfigurazioneUrlInvocazione urlInvocazione = this.confCore.getConfigurazioneGenerale().getUrlInvocazione();
 		
-		List<String> idsRegole = new ArrayList<String>();
+		List<String> idsRegole = new ArrayList<>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
 		for (String id : idsToExport) {
 			long idRegolaLong = Long.parseLong(id);

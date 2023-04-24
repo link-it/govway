@@ -80,7 +80,7 @@ public class PropertiesSerializator {
 	
 	public static Map<String, List<String>> convertoFromDBColumnValue(String dbValue) throws Exception{
 		
-		Map<String, List<String>> map = new HashMap<String, List<String>>();
+		Map<String, List<String>> map = new HashMap<>();
 		
 		if(dbValue!=null && !"".equals(dbValue)){
 			

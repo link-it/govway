@@ -84,7 +84,7 @@ public class Utilities {
 	}
 	
     public static List<?> newList(Object ... object){
-        List<Object> list = new ArrayList<Object>();
+        List<Object> list = new ArrayList<>();
         for (int i = 0; i < object.length; i++) {
                 list.add(object[i]);
         }

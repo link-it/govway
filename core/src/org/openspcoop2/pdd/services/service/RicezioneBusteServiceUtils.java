@@ -777,7 +777,7 @@ public class RicezioneBusteServiceUtils {
 			postOutResponseContext.setResponseHeaders(info.getTrasporto());
 			if(info.getContentType()!=null) {
 				if(postOutResponseContext.getResponseHeaders()==null) {
-					postOutResponseContext.setResponseHeaders(new HashMap<String, List<String>>());
+					postOutResponseContext.setResponseHeaders(new HashMap<>());
 				}
 				TransportUtils.setHeader(postOutResponseContext.getResponseHeaders(),HttpConstants.CONTENT_TYPE, info.getContentType());
 			}

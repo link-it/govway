@@ -240,7 +240,7 @@ public class ConfigurazioneUtilities {
 				List<Allarme> allarmiObjectUtilizzanoPolicy = confCore.allarmiForPolicyRateLimiting(attivazionePolicy.getIdActivePolicy(),ruoloPorta,nomePorta);
 				List<String> allarmiUtilizzanoPolicy = null;
 				if(allarmiObjectUtilizzanoPolicy!=null && !allarmiObjectUtilizzanoPolicy.isEmpty()) {
-					allarmiUtilizzanoPolicy = new ArrayList<String>();
+					allarmiUtilizzanoPolicy = new ArrayList<>();
 					for (Allarme allarme : allarmiObjectUtilizzanoPolicy) {
 						String nomeAllarme = allarme.getAlias();
 						if(!oneOnlyConfig) {
@@ -346,7 +346,7 @@ public class ConfigurazioneUtilities {
 			List<ConfigurazionePolicy> policyObjectUtilizzanoAllarme = confCore.configurazioneControlloTrafficoConfigurazionePolicyList_conApplicabilitaAllarme(allarmeDaEliminare.getNome());
 			List<String> policyUtilizzanoAllarme = null;
 			if(policyObjectUtilizzanoAllarme!=null && !policyObjectUtilizzanoAllarme.isEmpty()) {
-				policyUtilizzanoAllarme = new ArrayList<String>();
+				policyUtilizzanoAllarme = new ArrayList<>();
 				for (ConfigurazionePolicy policy : policyObjectUtilizzanoAllarme) {
 					String nomePolicy = policy.getIdPolicy();
 					policyUtilizzanoAllarme.add(nomePolicy);				

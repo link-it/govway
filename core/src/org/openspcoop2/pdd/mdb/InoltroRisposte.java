@@ -1124,7 +1124,7 @@ public class InoltroRisposte extends GenericLib{
 			// User-Agent e X-* header
 			UtilitiesIntegrazione httpUtilities = UtilitiesIntegrazione.getInstancePAResponse(this.log);
 			if(connettoreMsg.getPropertiesTrasporto()==null){
-				Map<String, List<String>>  trasporto = new HashMap<String, List<String>> ();
+				Map<String, List<String>>  trasporto = new HashMap<> ();
 				connettoreMsg.setPropertiesTrasporto(trasporto);
 			}
 			httpUtilities.setInfoProductTransportProperties(connettoreMsg.getPropertiesTrasporto());

@@ -80,7 +80,7 @@ public class Test {
 			
 			System.out.println("ConfigurazioneAdd IN Pagina: ");
 			
-			Map<String, String> mapNameValue = new HashMap<String, String>();
+			Map<String, String> mapNameValue = new HashMap<>();
 			for (BaseItemBean<?> item : configurazioneAdd.getListaItem()) {
 				DataElement de = item.toDataElement(configurazioneAdd, mapNameValue, externalResources);
 				System.out.println("Item ["+de.getName()+"] Type ["	+de.getType() +"] Label ["+de.getLabel()+"] Value ["+de.getValue()+"]");
@@ -101,7 +101,7 @@ public class Test {
 			
 			System.out.println("ConfigurazioneAdd IN Pagina: ");
 			
-			mapNameValue = new HashMap<String, String>();
+			mapNameValue = new HashMap<>();
 			for (BaseItemBean<?> item : configurazioneAdd.getListaItem()) {
 				DataElement de = item.toDataElement(configurazioneAdd, mapNameValue, externalResources);
 				if(de.getType().equals(DataElementType.CHECKBOX.toString()) || de.getType().equals(DataElementType.SELECT.toString()) )
@@ -188,7 +188,7 @@ public class Test {
 			
 			System.out.println("configurazioneChange IN Pagina: ");
 			
-			mapNameValue = new HashMap<String, String>();
+			mapNameValue = new HashMap<>();
 			for (BaseItemBean<?> item : configurazioneChange.getListaItem()) {
 				DataElement de = item.toDataElement(configurazioneAdd, mapNameValue, externalResources);
 				if(de.getType().equals(DataElementType.CHECKBOX.toString()) || de.getType().equals(DataElementType.SELECT.toString()) )

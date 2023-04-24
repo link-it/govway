@@ -187,7 +187,7 @@ public class CleanerOpenSPCoop2Extensions {
 				if(pasa.getDatiConnettore()!=null) {
 					if(pasa.getDatiConnettore().sizeProprietaList()>0) {
 						
-						List<String> nomiDaEliminare = new ArrayList<String>();
+						List<String> nomiDaEliminare = new ArrayList<>();
 						
 						for (Proprieta p : pasa.getDatiConnettore().getProprietaList()) {
 							if(p.getValore()==null || "".equals(p.getValore())) {

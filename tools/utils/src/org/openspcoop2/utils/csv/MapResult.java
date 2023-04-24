@@ -36,7 +36,7 @@ public class MapResult {
 	// E' stata fatta questa classe per evitare i nullPointer nel caso di valori null se si usa una hashtable
 	
 	private List<Result> list = new ArrayList<Result>();
-	private List<String> keys = new ArrayList<String>();
+	private List<String> keys = new ArrayList<>();
 	
 	public void add(String name,String value) throws UtilsException{
 		

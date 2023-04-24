@@ -632,7 +632,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			}
 
 			// inserisco i campi hidden
-			Map<String, String> hidden = new HashMap<String, String>();
+			Map<String, String> hidden = new HashMap<>();
 			hidden.put(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET, servlet);
 			hidden.put(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID, id != null ? id : "");
 			hidden.put(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SOGGETTO, nomeprov != null ? nomeprov : "");
@@ -1619,7 +1619,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				String tipoCredenzialiSSLTipoArchivio = ArchiveType.CER.name();
 				BinaryParameter tipoCredenzialiSSLFileCertificato = new BinaryParameter();
 				tipoCredenzialiSSLFileCertificato.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO);
-				List<String> listaAliasEstrattiCertificato = new ArrayList<String>();
+				List<String> listaAliasEstrattiCertificato = new ArrayList<>();
 				String tipoCredenzialiSSLFileCertificatoPassword = "";
 				String tipoCredenzialiSSLAliasCertificato = "";
 				String tipoCredenzialiSSLAliasCertificatoSubject= "";
@@ -5185,7 +5185,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 							this.pd.setMessage("Dati incompleti. E' necessario indicare la " + ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
 							return false;
 						}
-						List<String> listaAliasEstrattiCertificato = new ArrayList<String>();
+						List<String> listaAliasEstrattiCertificato = new ArrayList<>();
 						try {
 							listaAliasEstrattiCertificato = ArchiveLoader.readAliases(tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato.getValue(), tipoCredenzialiSSLFileCertificatoPassword);
 						}catch(UtilsException e) {
@@ -5394,7 +5394,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String tipoCredenzialiSSLTipoArchivio = ArchiveType.CER.name();
 			BinaryParameter tipoCredenzialiSSLFileCertificato = new BinaryParameter();
 			tipoCredenzialiSSLFileCertificato.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO);
-			List<String> listaAliasEstrattiCertificato = new ArrayList<String>();
+			List<String> listaAliasEstrattiCertificato = new ArrayList<>();
 			String tipoCredenzialiSSLFileCertificatoPassword = "";
 			String tipoCredenzialiSSLAliasCertificato = "";
 			String tipoCredenzialiSSLAliasCertificatoSubject= "";

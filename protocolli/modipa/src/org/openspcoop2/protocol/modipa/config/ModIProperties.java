@@ -1706,7 +1706,7 @@ public class ModIProperties {
 	}	
 	
 	public List<String> getUsedRestSecurityClaims(boolean request, boolean integrita, boolean corniceSicurezza) throws Exception{
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		
 		l.add(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT);
 		l.add(Claims.JSON_WEB_TOKEN_RFC_7519_NOT_TO_BE_USED_BEFORE);

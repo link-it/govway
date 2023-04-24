@@ -151,7 +151,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 			checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);
 		}
 		
-		List<String> connettori = new ArrayList<String>();
+		List<String> connettori = new ArrayList<>();
 		connettori.add(Common.CONNETTORE_0);
 		connettori.add(Common.CONNETTORE_2);
 		connettori.add(Common.CONNETTORE_3);
@@ -179,7 +179,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 				
 		CommonConsegnaMultipla.jmxAbilitaSchedulingConnettore(erogazione, Common.CONNETTORE_1);
 		
-		connettori = new ArrayList<String>();
+		connettori = new ArrayList<>();
 		connettori.add(Common.CONNETTORE_1);
 		CommonConsegnaMultipla.waitConsegna(responses, connettori);
 		
@@ -232,7 +232,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		List<HttpResponse> responsesCheck = new ArrayList<HttpResponse>();
 		responsesCheck.addAll(responses);
 		responsesCheck.addAll(responses2);
-		List<String> connettoriCheck = new ArrayList<String>();
+		List<String> connettoriCheck = new ArrayList<>();
 		connettoriCheck.addAll(Common.setConnettoriAbilitati);
 		CommonConsegnaMultipla.waitConsegna(responsesCheck, connettoriCheck);
 		
@@ -703,7 +703,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		}
 	
 		// Attendo la consegna
-		List<String> connettoriCheck = new ArrayList<String>();
+		List<String> connettoriCheck = new ArrayList<>();
 		connettoriCheck.addAll(connettoriSchedulati);
 		CommonConsegnaMultipla.waitConsegna(responses, connettoriCheck);
 	
@@ -784,7 +784,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		List<HttpResponse> responsesCheck = new ArrayList<HttpResponse>();
 		responsesCheck.addAll(responsesSoap1);
 		responsesCheck.addAll(responsesSoap2);
-		List<String> connettoriCheck = new ArrayList<String>();
+		List<String> connettoriCheck = new ArrayList<>();
 		connettoriCheck.addAll(connettoriSuccesso);
 		CommonConsegnaMultipla.waitConsegna(responsesCheck, connettoriCheck);
 

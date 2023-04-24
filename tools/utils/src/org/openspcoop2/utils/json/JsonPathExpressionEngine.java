@@ -170,7 +170,7 @@ public class JsonPathExpressionEngine {
 		this.validate(pattern);
 		
 		try {
-			List<String> l = new ArrayList<String>();
+			List<String> l = new ArrayList<>();
 			Object o = JsonPath.read(input, pattern);
 			_parseStringMatchPatternResult(o, l);
 			if(l==null || l.size()<=0) {
@@ -195,7 +195,7 @@ public class JsonPathExpressionEngine {
 		this.validate(pattern);
 		
 		try {
-			List<String> l = new ArrayList<String>();
+			List<String> l = new ArrayList<>();
 			Object o = JsonPath.read(getAsString(document), pattern);
 			_parseStringMatchPatternResult(o, l);
 			if(l==null || l.size()<=0) {
@@ -219,7 +219,7 @@ public class JsonPathExpressionEngine {
 		this.validate(pattern);
 		
 		try {
-			List<String> l = new ArrayList<String>();
+			List<String> l = new ArrayList<>();
 			Object o = JsonPath.read(is, pattern);
 			_parseStringMatchPatternResult(o, l);
 			if(l==null || l.size()<=0) {
@@ -243,7 +243,7 @@ public class JsonPathExpressionEngine {
 		this.validate(pattern);
 		
 		try {
-			List<String> l = new ArrayList<String>();
+			List<String> l = new ArrayList<>();
 			Object o = JsonPath.read(contenuto, pattern);
 			_parseStringMatchPatternResult(o, l);
 			if(l==null || l.size()<=0) {

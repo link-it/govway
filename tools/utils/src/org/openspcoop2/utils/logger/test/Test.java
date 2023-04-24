@@ -325,7 +325,7 @@ public class Test {
 			
 			Contenitore c = new Contenitore();
 			
-			List<String> listPrimitive = new ArrayList<String>();
+			List<String> listPrimitive = new ArrayList<>();
 			listPrimitive.add("EsempioListPrimitiveValue1");
 			listPrimitive.add("EsempioListPrimitiveValue2");
 			c.setListPrimitive(listPrimitive);

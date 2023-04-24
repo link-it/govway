@@ -221,7 +221,7 @@ public class JDBCPreparedStatementUtilities {
 		
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		List<Object> lista = new ArrayList<Object>();
+		List<Object> lista = new ArrayList<>();
 		try{
 			
 			if(showSql)
@@ -277,7 +277,7 @@ public class JDBCPreparedStatementUtilities {
 		
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		List<Object> lista = new ArrayList<Object>();
+		List<Object> lista = new ArrayList<>();
 		try{
 			
 			if(showSql)
@@ -317,7 +317,7 @@ public class JDBCPreparedStatementUtilities {
 			return list.get(0);
 		}
 		else if(list.size()<=0){
-			return new ArrayList<Object>();
+			return new ArrayList<>();
 		}
 		else{
 			throw new MultipleResultException("More than one result found (result: "+list.size()+")");
@@ -338,7 +338,7 @@ public class JDBCPreparedStatementUtilities {
 			
 			rs =  pstmt.executeQuery();
 			while(rs.next()){
-				List<Object> result = new ArrayList<Object>();
+				List<Object> result = new ArrayList<>();
 				for (int i = 0; i < returnType.size(); i++) {
 					result.add(this.jdbcParameterUtilities.readParameter(rs, (i+1), returnType.get(i)));	
 				}

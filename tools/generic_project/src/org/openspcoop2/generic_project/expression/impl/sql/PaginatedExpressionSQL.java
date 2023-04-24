@@ -96,7 +96,7 @@ public class PaginatedExpressionSQL extends PaginatedExpressionImpl {
 		}
 	}
 	
-	private List<Object> fieldsManuallyAdd = new ArrayList<Object>();
+	private List<Object> fieldsManuallyAdd = new ArrayList<>();
 	public List<Object> getFieldsManuallyAdd() {
 		return this.fieldsManuallyAdd;
 	}
@@ -326,7 +326,7 @@ public class PaginatedExpressionSQL extends PaginatedExpressionImpl {
 	}
 	@Override
 	protected InExpressionImpl getInExpression(IField field, Object... values) throws ExpressionException {
-		List<Object> lista = new ArrayList<Object>();
+		List<Object> lista = new ArrayList<>();
 		if(values!=null){
 			for (int i = 0; i < values.length; i++) {
 				lista.add(values[i]);

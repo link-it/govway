@@ -838,7 +838,7 @@ public class AccordiServizioParteComuneUtilities {
 		}
 
 		if (getAziCorrList != null && getAziCorrList.size() > 0) {
-			aziCorrUniche = new ArrayList<String>();
+			aziCorrUniche = new ArrayList<>();
 			aziCorrUniche.add("-");
 			for (Iterator<Operation> iterator = getAziCorrList.iterator(); iterator.hasNext();) {
 				Operation operation = iterator.next();

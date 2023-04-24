@@ -569,7 +569,7 @@ public class WADLUtilities {
 		if(url == null)
 			throw new WADLException("URL non fornita");
 
-		List<String> urlList = new ArrayList<String>();
+		List<String> urlList = new ArrayList<>();
 
 		if(baseURI != null) {
 			urlList.add(baseURI);

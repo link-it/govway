@@ -1145,7 +1145,7 @@ public class PorteDelegateCore extends ControlStationCore {
 			}
 			else {
 				//return mapping.getNome();
-				List<String> listaAzioni = pd.getAzione()!= null ?  pd.getAzione().getAzioneDelegataList() : new ArrayList<String>();
+				List<String> listaAzioni = pd.getAzione()!= null ?  pd.getAzione().getAzioneDelegataList() : new ArrayList<>();
 				if(listaAzioni.size() > 0) {
 					StringBuilder sb = new StringBuilder();
 					for (String string : listaAzioni) {

@@ -86,7 +86,7 @@ public class AttachmentResource extends AbstractContentResource {
 	}
 	
 	public List<String> cids(){
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		for (int i=0; i<this.attachments.size(); i++) {
 			list.add(this.attachments.get(i).getContentID()); 
 		}

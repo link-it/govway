@@ -492,7 +492,7 @@ public class GestoreAutorizzazione {
 	
 	public static void removePortaApplicativa(IDPortaApplicativa idPA) throws Exception {
 		if(GestoreAutorizzazione.isCacheAbilitata()) {
-			List<String> keyForClean = new ArrayList<String>();
+			List<String> keyForClean = new ArrayList<>();
 			List<String> keys = GestoreAutorizzazione.listKeysCache();
 			if(keys!=null && !keys.isEmpty()) {
 				String match = IDPortaApplicativa.PORTA_APPLICATIVA_PREFIX+idPA.getNome()+IDPortaApplicativa.PORTA_APPLICATIVA_SUFFIX;
@@ -512,7 +512,7 @@ public class GestoreAutorizzazione {
 	
 	public static void removePortaDelegata(IDPortaDelegata idPD) throws Exception {
 		if(GestoreAutorizzazione.isCacheAbilitata()) {
-			List<String> keyForClean = new ArrayList<String>();
+			List<String> keyForClean = new ArrayList<>();
 			List<String> keys = GestoreAutorizzazione.listKeysCache();
 			if(keys!=null && !keys.isEmpty()) {
 				String match = IDPortaDelegata.PORTA_DELEGATA_PREFIX+idPD.getNome()+IDPortaDelegata.PORTA_DELEGATA_SUFFIX;
@@ -532,7 +532,7 @@ public class GestoreAutorizzazione {
 	
 	public static void removeSoggetto(IDSoggetto idSoggetto) throws Exception {
 		if(GestoreAutorizzazione.isCacheAbilitata()) {
-			List<String> keyForClean = new ArrayList<String>();
+			List<String> keyForClean = new ArrayList<>();
 			List<String> keys = GestoreAutorizzazione.listKeysCache();
 			if(keys!=null && !keys.isEmpty()) {
 				String matchSoggettoFruitore = DatiInvocazionePortaApplicativa.SOGGETTO_FRUITORE_PREFIX+idSoggetto.toString()+DatiInvocazionePortaApplicativa.SOGGETTO_FRUITORE_SUFFIX;
@@ -552,7 +552,7 @@ public class GestoreAutorizzazione {
 	
 	public static void removeApplicativo(IDServizioApplicativo idApplicativo) throws Exception {
 		if(GestoreAutorizzazione.isCacheAbilitata()) {
-			List<String> keyForClean = new ArrayList<String>();
+			List<String> keyForClean = new ArrayList<>();
 			List<String> keys = GestoreAutorizzazione.listKeysCache();
 			if(keys!=null && !keys.isEmpty()) {
 				String matchApplicativoFruitore = DatiInvocazionePortaApplicativa.APPLICATIVO_FRUITORE_PREFIX+idApplicativo.toString()+DatiInvocazionePortaApplicativa.APPLICATIVO_FRUITORE_SUFFIX;

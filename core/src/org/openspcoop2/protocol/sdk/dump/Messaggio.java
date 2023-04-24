@@ -72,9 +72,9 @@ public class Messaggio implements Serializable{
 
 	private List<Attachment> attachments = new ArrayList<>();
 	
-	private Map<String, List<String>> headers = new HashMap<String, List<String>>();
+	private Map<String, List<String>> headers = new HashMap<>();
 	
-	private Map<String, String> contenuti = new HashMap<String, String>();
+	private Map<String, String> contenuti = new HashMap<>();
 	
 	private String idTransazione;
 

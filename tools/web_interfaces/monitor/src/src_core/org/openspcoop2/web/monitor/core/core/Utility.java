@@ -199,8 +199,8 @@ public class Utility {
 
 
 			Enumeration<?> keys = govwayMonitorProperties.keys();
-			HashMap<String, String> matched = new HashMap<String, String>();
-			ArrayList<String> matchedKeys = new ArrayList<String>();
+			HashMap<String, String> matched = new HashMap<>();
+			ArrayList<String> matchedKeys = new ArrayList<>();
 			while (keys.hasMoreElements()) {
 				String key = (String) keys.nextElement();
 				if (key.startsWith(prefix)) {
@@ -214,7 +214,7 @@ public class Utility {
 			}
 			Collections.sort(matchedKeys);
 
-			ArrayList<String> ordered = new ArrayList<String>();
+			ArrayList<String> ordered = new ArrayList<>();
 			for (String key : matchedKeys) {
 				String val = matched.get(key);
 				ordered.add(val);
@@ -480,7 +480,7 @@ public class Utility {
 		
 		if(configurazioneGenerale!=null && configurazioneGenerale.getGestioneCanali() != null) {
 			if(configurazioneGenerale.getGestioneCanali().getStato()!=null && StatoFunzionalita.ABILITATO.equals(configurazioneGenerale.getGestioneCanali().getStato())) {
-				List<String> l = new ArrayList<String>();
+				List<String> l = new ArrayList<>();
 				if(configurazioneGenerale.getGestioneCanali().sizeCanaleList()>0) {
 					for (CanaleConfigurazione c : configurazioneGenerale.getGestioneCanali().getCanaleList()) {
 						l.add(c.getNome());
@@ -515,7 +515,7 @@ public class Utility {
 		
 		if(configurazioneGenerale!=null && configurazioneGenerale.getGestioneCanali() != null) {
 			if(configurazioneGenerale.getGestioneCanali().getStato()!=null && StatoFunzionalita.ABILITATO.equals(configurazioneGenerale.getGestioneCanali().getStato())) {
-				List<String> l = new ArrayList<String>();
+				List<String> l = new ArrayList<>();
 				if(configurazioneGenerale.getGestioneCanali().sizeNodoList()>0) {
 					for (CanaleConfigurazioneNodo nodo : configurazioneGenerale.getGestioneCanali().getNodoList()) {
 						if(nodo.getCanaleList()!=null && nodo.getCanaleList().contains(canale)) {
@@ -794,7 +794,7 @@ public class Utility {
 		return ParseUtility.convertToServizioSoggetto(idServizio);
 	}
 
-	private static Map<String, String> mapIdentificativoPorta = new HashMap<String, String>();
+	private static Map<String, String> mapIdentificativoPorta = new HashMap<>();
 	public static synchronized void putIdentificativoPorta(String tipoSoggetto,String nomeSoggetto, String idPorta) {
 		String key = tipoSoggetto+"/"+nomeSoggetto;
 		mapIdentificativoPorta.put(key, idPorta);
@@ -838,7 +838,7 @@ public class Utility {
 		List<String> listaNomiProtocolli = new  ArrayList<String>();
 
 		if(listaSoggettiGestione != null && listaSoggettiGestione.size() > 0){
-			List<String> tipiSoggetti = new ArrayList<String>();
+			List<String> tipiSoggetti = new ArrayList<>();
 			for (Soggetto soggetto : listaSoggettiGestione) {
 				String tipoSoggetto = soggetto.getTipoSoggetto();
 
@@ -918,7 +918,7 @@ public class Utility {
 
 			return soggetti;
 		} else {
-			List<String> checkUnique = new ArrayList<String>();
+			List<String> checkUnique = new ArrayList<>();
 			for (IDSoggetto idSog : u.getSoggetti()) {
 
 				String tipoNome = idSog.getTipo()+"/"+idSog.getNome();
@@ -956,7 +956,7 @@ public class Utility {
 	}
 	public static List<String> getProtocolli(User utente, ProtocolFactoryManager pfManager, MapReader<String, IProtocolFactory<?>> protocolFactories, boolean ignoreProtocolloSelezionato, 
 			boolean consideraProtocolliCompatibiliSoggettoSelezionato) throws Exception {
-		List<String> protocolliList = new ArrayList<String>();
+		List<String> protocolliList = new ArrayList<>();
 
 		if(!ignoreProtocolloSelezionato) {
 			if(utente.getProtocolloSelezionatoPddMonitor()!=null) {
@@ -982,7 +982,7 @@ public class Utility {
 		
 		if(utente.getSoggetti()!=null && !utente.getSoggetti().isEmpty()) {
 			
-			List<String> protocolliNewList = new ArrayList<String>();
+			List<String> protocolliNewList = new ArrayList<>();
 			for (IDSoggetto idSoggetto : utente.getSoggetti()) {
 				String protocollo = pfManager.getProtocolByOrganizationType(idSoggetto.getTipo());
 				if(!protocolliNewList.contains(protocollo)) {
@@ -999,7 +999,7 @@ public class Utility {
 
 	public static List<String> getProtocolli(MapReader<String, IProtocolFactory<?>> protocolFactories){
 
-		List<String> protocolliList = new ArrayList<String>();
+		List<String> protocolliList = new ArrayList<>();
 
 		Enumeration<String> protocolli = protocolFactories.keys();
 		while (protocolli.hasMoreElements()) {
@@ -1065,7 +1065,7 @@ public class Utility {
 			return lb.getListaNomiGruppi();
 		}
 
-		return new ArrayList<String>();
+		return new ArrayList<>();
 	}
 	
 	public static boolean isAmministratore() {

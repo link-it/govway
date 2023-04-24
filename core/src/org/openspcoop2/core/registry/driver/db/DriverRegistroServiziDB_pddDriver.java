@@ -197,7 +197,7 @@ public class DriverRegistroServiziDB_pddDriver {
 				}
 			}
 			rs = stm.executeQuery();
-			List<String> nomiPdd = new ArrayList<String>();
+			List<String> nomiPdd = new ArrayList<>();
 			while (rs.next()) {
 				nomiPdd.add(rs.getString("nome"));
 			}

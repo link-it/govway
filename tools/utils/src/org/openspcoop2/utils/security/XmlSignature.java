@@ -170,7 +170,7 @@ public class XmlSignature {
 	}
 	public void addX509KeyInfo(String alias) throws UtilsException {
 		try{
-            List<Object> x509Content = new ArrayList<Object>();
+            List<Object> x509Content = new ArrayList<>();
             Certificate cert = this.keystore.getCertificate(alias);
             if(cert instanceof X509Certificate){
             	x509Content.add(((X509Certificate)cert).getSubjectX500Principal().getName());

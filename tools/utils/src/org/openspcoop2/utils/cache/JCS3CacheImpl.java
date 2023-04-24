@@ -328,7 +328,7 @@ public class JCS3CacheImpl extends AbstractCacheImpl {
 	public List<String> keys() throws UtilsException {
 		try{
 			
-			List<String> keys = new ArrayList<String>();
+			List<String> keys = new ArrayList<>();
 			Serializable[] keysObject = this.cache.getCacheControl().getKeySet().toArray(new Serializable[0]);
 			if(keysObject!=null){
 				for (int i = 0; i < keysObject.length; i++) {

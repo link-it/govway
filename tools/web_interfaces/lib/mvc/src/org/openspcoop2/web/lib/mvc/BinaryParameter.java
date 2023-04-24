@@ -140,7 +140,7 @@ public class BinaryParameter implements Serializable {
 		
 		BinaryParameter bp0 = listaParametri.get(0);
 		
-		List<String> fileNames = new ArrayList<String>();
+		List<String> fileNames = new ArrayList<>();
 		
 		for (BinaryParameter bp : listaParametri) {
 			if(StringUtils.isNotBlank(bp.getFilename()))
@@ -192,7 +192,7 @@ public class BinaryParameter implements Serializable {
 		
 		BinaryParameter bp0 = listaParametri.get(0);
 		
-		List<String> ids = new ArrayList<String>();
+		List<String> ids = new ArrayList<>();
 		
 		for (BinaryParameter bp : listaParametri) {
 			if(StringUtils.isNotBlank(bp.getId()))

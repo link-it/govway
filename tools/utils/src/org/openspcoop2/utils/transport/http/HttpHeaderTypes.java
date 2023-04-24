@@ -39,11 +39,11 @@ import org.openspcoop2.utils.UtilsException;
  */
 public class HttpHeaderTypes {
 
-	private Map<String, String> request_standard = new HashMap<String, String>();
-	private Map<String, String> request_nonStandard = new HashMap<String, String>();
+	private Map<String, String> request_standard = new HashMap<>();
+	private Map<String, String> request_nonStandard = new HashMap<>();
 	
-	private Map<String, String> response_standard = new HashMap<String, String>();
-	private Map<String, String> response_nonStandard = new HashMap<String, String>();
+	private Map<String, String> response_standard = new HashMap<>();
+	private Map<String, String> response_nonStandard = new HashMap<>();
 	
 	HttpHeaderTypes() throws UtilsException{
 		
@@ -130,42 +130,42 @@ public class HttpHeaderTypes {
 	} 
 	
 	public List<String> getHeaders(){
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		list.addAll(this.getRequestHeaders());
 		list.addAll(this.getResponseHeaders());
 		return list;
 	}
 	
 	public List<String> getRequestHeaders(){
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		list.addAll(this.getRequestStandardHeaders());
 		list.addAll(this.getRequestNonStandardHeaders());
 		return list;
 	}
 	public List<String> getRequestStandardHeaders(){
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		list.addAll(this.request_standard.keySet());
 		return list;
 	}
 	public List<String> getRequestNonStandardHeaders(){
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		list.addAll(this.request_nonStandard.keySet());
 		return list;
 	}
 	
 	public List<String> getResponseHeaders(){
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		list.addAll(this.getResponseStandardHeaders());
 		list.addAll(this.getResponseNonStandardHeaders());
 		return list;
 	}
 	public List<String> getResponseStandardHeaders(){
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		list.addAll(this.response_standard.keySet());
 		return list;
 	}
 	public List<String> getResponseNonStandardHeaders(){
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		list.addAll(this.response_nonStandard.keySet());
 		return list;
 	}

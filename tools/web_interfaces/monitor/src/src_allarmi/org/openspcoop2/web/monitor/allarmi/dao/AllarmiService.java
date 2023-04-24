@@ -294,7 +294,7 @@ public class AllarmiService implements IAllarmiService {
 				
 				tipoSoggettiByProtocollo = pConfig.getTipiSoggetti();
 				
-				tipoServiziByProtocollo = new ArrayList<String>();
+				tipoServiziByProtocollo = new ArrayList<>();
 				tipoServiziByProtocollo.addAll(pConfig.getTipiServizi(ServiceBinding.SOAP));
 				tipoServiziByProtocollo.addAll(pConfig.getTipiServizi(ServiceBinding.REST));
 			}
@@ -1501,7 +1501,7 @@ public class AllarmiService implements IAllarmiService {
 
 	@Override
 	public List<String> nomeAllarmeAutoComplete(String input) {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 
 
 		IExpression expr;

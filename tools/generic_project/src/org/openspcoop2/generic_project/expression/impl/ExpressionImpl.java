@@ -1119,7 +1119,7 @@ public class ExpressionImpl implements IExpression {
 		return new BetweenExpressionImpl(this.objectFormatter,field,lower,high);
 	}
 	protected InExpressionImpl getInExpression(IField field, Object... values) throws ExpressionException {
-		List<Object> lista = new ArrayList<Object>();
+		List<Object> lista = new ArrayList<>();
 		if(values!=null){
 			for (int i = 0; i < values.length; i++) {
 				lista.add(values[i]);

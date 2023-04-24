@@ -292,7 +292,7 @@ public final class SoggettiChange extends Action {
 			if(soggettiHelper.isModalitaAvanzata()){
 				versioniProtocollo = soggettiCore.getVersioniProtocollo(strutsBean.protocollo);
 			}else {
-				versioniProtocollo = new ArrayList<String>();
+				versioniProtocollo = new ArrayList<>();
 				strutsBean.versioneProtocollo = soggettiCore.getVersioneDefaultProtocollo(strutsBean.protocollo);
 				versioniProtocollo.add(strutsBean.versioneProtocollo);
 			}

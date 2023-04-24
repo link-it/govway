@@ -72,7 +72,7 @@ public class ScriptInvoker {
 			java.lang.Runtime runtime = java.lang.Runtime.getRuntime();
 	
 			// Invoco lo script
-			List<String> script = new ArrayList<String>();
+			List<String> script = new ArrayList<>();
 			script.add(this.script);
 			if(parameters!=null){
 				for (int i = 0; i < parameters.length; i++) {

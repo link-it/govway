@@ -100,7 +100,7 @@ public class CertificateUtils {
 			bf.append("\t"+prefix+"getIssuerX500Principal().getName(X500Principal.CANONICAL)="+cert.getIssuerX500Principal().getName(X500Principal.CANONICAL)+"\n");
 			bf.append("\t"+prefix+"getIssuerX500Principal().getName(X500Principal.RFC1779)="+cert.getIssuerX500Principal().getName(X500Principal.RFC1779)+"\n");
 			bf.append("\t"+prefix+"getIssuerX500Principal().getName(X500Principal.RFC2253)="+cert.getIssuerX500Principal().getName(X500Principal.RFC2253)+"\n");
-			/**	Map<String,String> oidMapCanonical = new HashMap<String, String>();
+			/**	Map<String,String> oidMapCanonical = new HashMap<>();
 				bf.append("\t"+prefix+"getIssuerX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical)="+
 						cert.getIssuerX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical));
 				if(oidMapCanonical!=null && oidMapCanonical.size()>0){
@@ -134,7 +134,7 @@ public class CertificateUtils {
 			bf.append("\t"+prefix+"getSubjectX500Principal().getName(X500Principal.CANONICAL)="+cert.getSubjectX500Principal().getName(X500Principal.CANONICAL)+"\n");
 			bf.append("\t"+prefix+"getSubjectX500Principal().getName(X500Principal.RFC1779)="+cert.getSubjectX500Principal().getName(X500Principal.RFC1779)+"\n");
 			bf.append("\t"+prefix+"getSubjectX500Principal().getName(X500Principal.RFC2253)="+cert.getSubjectX500Principal().getName(X500Principal.RFC2253)+"\n");
-			/**	Map<String,String> oidMapCanonical = new HashMap<String, String>();
+			/**	Map<String,String> oidMapCanonical = new HashMap<>();
 				bf.append("\t"+prefix+"getSubjectX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical)="+
 						cert.getSubjectX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical));
 				if(oidMapCanonical!=null && oidMapCanonical.size()>0){

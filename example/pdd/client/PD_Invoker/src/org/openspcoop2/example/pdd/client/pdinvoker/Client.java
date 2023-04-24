@@ -117,8 +117,8 @@ public class Client {
 		String trasportoKeywordTransazione = Client.getProperty(reader, "openspcoop2.trasporto.keyword.transazione", true);
 		
 		// Header Custom
-        List<String> headersKeys = new ArrayList<String>();
-        List<String> headersValues = new ArrayList<String>();
+        List<String> headersKeys = new ArrayList<>();
+        List<String> headersValues = new ArrayList<>();
 		Properties p = Utilities.readProperties("openspcoop2.header.", reader);
 		if(p!=null && p.size()>0){
 			Enumeration<?> enKeys = p.keys();

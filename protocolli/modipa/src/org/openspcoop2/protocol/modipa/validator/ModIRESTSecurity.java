@@ -46,7 +46,7 @@ public class ModIRESTSecurity {
 	private RuoloMessaggio ruoloMessaggio;
 	
 	public ModIRESTSecurity(String tokenHeaderName, boolean request) throws ProtocolException, Exception {
-		this.tokenHeaderNames = new ArrayList<String>();
+		this.tokenHeaderNames = new ArrayList<>();
 		this.tokenHeaderNames.add(tokenHeaderName);	
 		this.ruoloMessaggio =  request ? RuoloMessaggio.RICHIESTA : RuoloMessaggio.RISPOSTA;
 		switch (this.ruoloMessaggio) {

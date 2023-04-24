@@ -79,7 +79,7 @@ public class ProtocolFactoryReflectionUtils
 			
 			@SuppressWarnings("unchecked")
 			Enumeration<String> protocolli = (Enumeration<String>) cProtocolFactoryManager.getMethod("getProtocolNames").invoke(protocolFactoryManager);
-			List<String> l = new ArrayList<String>();
+			List<String> l = new ArrayList<>();
 			while (protocolli.hasMoreElements()) {
 				String protocollo = (String) protocolli.nextElement();
 				l.add(protocollo);

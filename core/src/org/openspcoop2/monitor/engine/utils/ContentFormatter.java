@@ -82,7 +82,7 @@ public class ContentFormatter {
 	}
 	
 	public static Collection<String> toString(Object [] o) throws EngineException{
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		for (int i = 0; i < o.length; i++) {
 			l.add(toString(o[i]));
 		}

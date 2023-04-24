@@ -80,7 +80,7 @@ public class DistribuzioneErroriDM extends BaseDataModel<String, ResDistribuzion
 				int start = ((SequenceRange)range).getFirstRow();
 				int limit = ((SequenceRange)range).getRows();
 
-				this.wrappedKeys = new ArrayList<String>();
+				this.wrappedKeys = new ArrayList<>();
 				
 				List<ResDistribuzione> list =  new ArrayList<ResDistribuzione>();
 				

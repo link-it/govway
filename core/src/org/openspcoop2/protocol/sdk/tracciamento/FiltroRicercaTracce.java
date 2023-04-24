@@ -76,7 +76,7 @@ public class FiltroRicercaTracce implements java.io.Serializable {
 
 
 	public FiltroRicercaTracce() {
-		this.properties = new HashMap<String, String>();
+		this.properties = new HashMap<>();
 	}
 
 

@@ -5933,14 +5933,14 @@ public class OpenSPCoop2Properties {
 					this.getTimerConsegnaContenutiApplicativiCode = null;
 				}else{
 					String [] r = name.trim().split(",");
-					List<String> l = new ArrayList<String>();
+					List<String> l = new ArrayList<>();
 					for(int i=0; i<r.length; i++){
 						r[i] = r[i].trim();
 						l.add(r[i]);
 					}
 					
 					if(!l.isEmpty()) {
-						this.getTimerConsegnaContenutiApplicativiCode = new ArrayList<String>();
+						this.getTimerConsegnaContenutiApplicativiCode = new ArrayList<>();
 						this.getTimerConsegnaContenutiApplicativiCode.addAll(l);
 					}
 				}
@@ -5992,14 +5992,14 @@ public class OpenSPCoop2Properties {
 					this.getTimerConsegnaContenutiApplicativiPriorita = null;
 				}else{
 					String [] r = name.trim().split(",");
-					List<String> l = new ArrayList<String>();
+					List<String> l = new ArrayList<>();
 					for(int i=0; i<r.length; i++){
 						r[i] = r[i].trim();
 						l.add(r[i]);
 					}
 					
 					if(!l.isEmpty()) {
-						this.getTimerConsegnaContenutiApplicativiPriorita = new ArrayList<String>();
+						this.getTimerConsegnaContenutiApplicativiPriorita = new ArrayList<>();
 						this.getTimerConsegnaContenutiApplicativiPriorita.addAll(l);
 					}
 				}
@@ -6957,14 +6957,14 @@ public class OpenSPCoop2Properties {
 					this.alternativeContentTypeSoap12 = null;
 				}else{
 					String [] r = name.trim().split(",");
-					List<String> l = new ArrayList<String>();
+					List<String> l = new ArrayList<>();
 					for(int i=0; i<r.length; i++){
 						r[i] = r[i].trim();
 						l.add(r[i]);
 					}
 					
 					if(!l.isEmpty()) {
-						this.alternativeContentTypeSoap12 = new ArrayList<String>();
+						this.alternativeContentTypeSoap12 = new ArrayList<>();
 						this.alternativeContentTypeSoap12.addAll(l);
 					}
 				}
@@ -7351,14 +7351,14 @@ public class OpenSPCoop2Properties {
 					this.repositoryThresholdTypes = null;
 				}else{
 					String [] r = name.trim().split(",");
-					List<String> l = new ArrayList<String>();
+					List<String> l = new ArrayList<>();
 					for(int i=0; i<r.length; i++){
 						r[i] = r[i].trim();
 						l.add(r[i]);
 					}
 					
 					if(!l.isEmpty()) {
-						this.repositoryThresholdTypes = new ArrayList<String>();
+						this.repositoryThresholdTypes = new ArrayList<>();
 						this.repositoryThresholdTypes.addAll(l);
 					}
 				}
@@ -8585,7 +8585,7 @@ public class OpenSPCoop2Properties {
 
 	// protocol mapping
 	
-	private Map<String,String> identificativoPortaDefault_mappingProtocol = new HashMap<String, String>();
+	private Map<String,String> identificativoPortaDefault_mappingProtocol = new HashMap<>();
 	private String _getIdentificativoPortaDefault(String protocol){
 		
 		if(protocol==null){
@@ -8613,7 +8613,7 @@ public class OpenSPCoop2Properties {
 		return this.identificativoPortaDefault_mappingProtocol.get(protocol);
 	}
 
-	private Map<String,String> nomePortaDefault_mappingProtocol = new HashMap<String, String>();
+	private Map<String,String> nomePortaDefault_mappingProtocol = new HashMap<>();
 	private String _getNomePortaDefault(String protocol){
 		
 		if(protocol==null){
@@ -8641,7 +8641,7 @@ public class OpenSPCoop2Properties {
 		return this.nomePortaDefault_mappingProtocol.get(protocol);
 	}
 	
-	private Map<String,String> tipoPortaDefault_mappingProtocol = new HashMap<String, String>();
+	private Map<String,String> tipoPortaDefault_mappingProtocol = new HashMap<>();
 	private String _getTipoPortaDefault(String protocol){
 		
 		if(protocol==null){
@@ -9083,7 +9083,7 @@ public class OpenSPCoop2Properties {
 						this.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap = false;
 					}
 					else {
-						List<String> l = new ArrayList<String>();
+						List<String> l = new ArrayList<>();
 						if(value.contains(",")) {
 							String [] tmp = value.split(",");
 							if(tmp!=null && tmp.length>0) {
@@ -9138,7 +9138,7 @@ public class OpenSPCoop2Properties {
 						this.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest = false;
 					}
 					else {
-						List<String> l = new ArrayList<String>();
+						List<String> l = new ArrayList<>();
 						if(value.contains(",")) {
 							String [] tmp = value.split(",");
 							if(tmp!=null && tmp.length>0) {
@@ -9193,7 +9193,7 @@ public class OpenSPCoop2Properties {
 						this.isControlloCharsetContentTypeAbilitatoRicezioneBusteSoap = false;
 					}
 					else {
-						List<String> l = new ArrayList<String>();
+						List<String> l = new ArrayList<>();
 						if(value.contains(",")) {
 							String [] tmp = value.split(",");
 							if(tmp!=null && tmp.length>0) {
@@ -9248,7 +9248,7 @@ public class OpenSPCoop2Properties {
 						this.isControlloCharsetContentTypeAbilitatoRicezioneBusteRest = false;
 					}
 					else {
-						List<String> l = new ArrayList<String>();
+						List<String> l = new ArrayList<>();
 						if(value.contains(",")) {
 							String [] tmp = value.split(",");
 							if(tmp!=null && tmp.length>0) {
@@ -10910,7 +10910,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.integrazione.backward_compatibility.trasparente.soggetto.tipo.";
 			try{ 
 				Properties p = this.reader.readProperties_convertEnvProperties(pName);
-				this.newOldMapping_backward_compatibility_trasparente_soggetto=new HashMap<String, String>();
+				this.newOldMapping_backward_compatibility_trasparente_soggetto=new HashMap<>();
 				if(p!=null && !p.isEmpty()) {
 					for (Object oKey : p.keySet()) {
 						if(oKey!=null && oKey instanceof String) {
@@ -10934,7 +10934,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.integrazione.backward_compatibility.trasparente.servizio.tipo.";
 			try{ 
 				Properties p = this.reader.readProperties_convertEnvProperties(pName);
-				this.newOldMapping_backward_compatibility_trasparente_servizio=new HashMap<String, String>();
+				this.newOldMapping_backward_compatibility_trasparente_servizio=new HashMap<>();
 				if(p!=null && !p.isEmpty()) {
 					for (Object oKey : p.keySet()) {
 						if(oKey!=null && oKey instanceof String) {
@@ -10959,7 +10959,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.integrazione.backward_compatibility.spcoop.soggetto.tipo.";
 			try{ 
 				Properties p = this.reader.readProperties_convertEnvProperties(pName);
-				this.newOldMapping_backward_compatibility_spcoop_soggetto=new HashMap<String, String>();
+				this.newOldMapping_backward_compatibility_spcoop_soggetto=new HashMap<>();
 				if(p!=null && !p.isEmpty()) {
 					for (Object oKey : p.keySet()) {
 						if(oKey!=null && oKey instanceof String) {
@@ -10983,7 +10983,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.integrazione.backward_compatibility.spcoop.servizio.tipo.";
 			try{ 
 				Properties p = this.reader.readProperties_convertEnvProperties(pName);
-				this.newOldMapping_backward_compatibility_spcoop_servizio=new HashMap<String, String>();
+				this.newOldMapping_backward_compatibility_spcoop_servizio=new HashMap<>();
 				if(p!=null && !p.isEmpty()) {
 					for (Object oKey : p.keySet()) {
 						if(oKey!=null && oKey instanceof String) {
@@ -11008,7 +11008,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.integrazione.backward_compatibility.sdi.soggetto.tipo.";
 			try{ 
 				Properties p = this.reader.readProperties_convertEnvProperties(pName);
-				this.newOldMapping_backward_compatibility_sdi_soggetto=new HashMap<String, String>();
+				this.newOldMapping_backward_compatibility_sdi_soggetto=new HashMap<>();
 				if(p!=null && !p.isEmpty()) {
 					for (Object oKey : p.keySet()) {
 						if(oKey!=null && oKey instanceof String) {
@@ -11032,7 +11032,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.integrazione.backward_compatibility.sdi.servizio.tipo.";
 			try{ 
 				Properties p = this.reader.readProperties_convertEnvProperties(pName);
-				this.newOldMapping_backward_compatibility_sdi_servizio=new HashMap<String, String>();
+				this.newOldMapping_backward_compatibility_sdi_servizio=new HashMap<>();
 				if(p!=null && !p.isEmpty()) {
 					for (Object oKey : p.keySet()) {
 						if(oKey!=null && oKey instanceof String) {
@@ -12778,7 +12778,7 @@ public class OpenSPCoop2Properties {
 		if(this.getIntegrazioneAutenticazionePortaDelegataRequestHeaders==null){
 			try{
 				
-				this.getIntegrazioneAutenticazionePortaDelegataRequestHeaders = new ArrayList<String>();
+				this.getIntegrazioneAutenticazionePortaDelegataRequestHeaders = new ArrayList<>();
 				
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
@@ -12812,7 +12812,7 @@ public class OpenSPCoop2Properties {
 		if(this.getIntegrazioneAutenticazionePortaDelegataRequestHeadersMap==null){
 			try{
 				
-				this.getIntegrazioneAutenticazionePortaDelegataRequestHeadersMap = new HashMap<String, String>();
+				this.getIntegrazioneAutenticazionePortaDelegataRequestHeadersMap = new HashMap<>();
 				List<String> getIntegrazioneAutenticazionePortaDelegataRequestHeaders = getIntegrazioneAutenticazionePortaDelegataRequestHeaders();
 				if(getIntegrazioneAutenticazionePortaDelegataRequestHeaders!=null && !getIntegrazioneAutenticazionePortaDelegataRequestHeaders.isEmpty()) {
 					for (String hdrName : getIntegrazioneAutenticazionePortaDelegataRequestHeaders) {
@@ -12844,7 +12844,7 @@ public class OpenSPCoop2Properties {
 		if(this.getIntegrazioneAutenticazionePortaApplicativaRequestHeaders==null){
 			try{
 				
-				this.getIntegrazioneAutenticazionePortaApplicativaRequestHeaders = new ArrayList<String>();
+				this.getIntegrazioneAutenticazionePortaApplicativaRequestHeaders = new ArrayList<>();
 				
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
@@ -12878,7 +12878,7 @@ public class OpenSPCoop2Properties {
 		if(this.getIntegrazioneAutenticazionePortaApplicativaRequestHeadersMap==null){
 			try{
 				
-				this.getIntegrazioneAutenticazionePortaApplicativaRequestHeadersMap = new HashMap<String, String>();
+				this.getIntegrazioneAutenticazionePortaApplicativaRequestHeadersMap = new HashMap<>();
 				List<String> getIntegrazioneAutenticazionePortaApplicativaRequestHeaders = getIntegrazioneAutenticazionePortaApplicativaRequestHeaders();
 				if(getIntegrazioneAutenticazionePortaApplicativaRequestHeaders!=null && !getIntegrazioneAutenticazionePortaApplicativaRequestHeaders.isEmpty()) {
 					for (String hdrName : getIntegrazioneAutenticazionePortaApplicativaRequestHeaders) {
@@ -18546,7 +18546,7 @@ public class OpenSPCoop2Properties {
 		if(this.getDumpHeaderWhiteList==null){
 			String pName = "org.openspcoop2.pdd.logger.dump.header.whiteList";
 			try{
-				this.getDumpHeaderWhiteList = new ArrayList<String>();
+				this.getDumpHeaderWhiteList = new ArrayList<>();
 				
 				String tmp = this.reader.getValue_convertEnvProperties(pName); 
 				if(tmp!=null && !"".equals(tmp.trim())) {
@@ -18583,7 +18583,7 @@ public class OpenSPCoop2Properties {
 		if(this.getDumpHeaderBlackList==null){
 			String pName = "org.openspcoop2.pdd.logger.dump.header.blackList";
 			try{
-				this.getDumpHeaderBlackList = new ArrayList<String>();
+				this.getDumpHeaderBlackList = new ArrayList<>();
 				
 				String tmp = this.reader.getValue_convertEnvProperties(pName); 
 				if(tmp!=null && !"".equals(tmp.trim())) {
@@ -18931,14 +18931,14 @@ public class OpenSPCoop2Properties {
 					if(value.contains(",")) {
 						String [] tmp = value.split(",");
 						if(tmp!=null && tmp.length>0) {
-							this.listIDManagerParameters = new ArrayList<String>();
+							this.listIDManagerParameters = new ArrayList<>();
 							for (String v : tmp) {
 								this.listIDManagerParameters.add(v);
 							}
 						}
 					}
 					else {
-						this.listIDManagerParameters = new ArrayList<String>();
+						this.listIDManagerParameters = new ArrayList<>();
 						this.listIDManagerParameters.add(value);
 					}
 				}
@@ -22214,7 +22214,7 @@ public class OpenSPCoop2Properties {
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				this.getCustomClaims_name_gestioneTokenHeaderIntegrazione = new HashMap<String, String>();
+				this.getCustomClaims_name_gestioneTokenHeaderIntegrazione = new HashMap<>();
 				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
 				if(prop!=null && !prop.isEmpty()) {
 					Enumeration<?> en = prop.keys();
@@ -22252,7 +22252,7 @@ public class OpenSPCoop2Properties {
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				this.getCustomClaims_headerName_gestioneTokenHeaderIntegrazioneTrasporto = new HashMap<String, String>();
+				this.getCustomClaims_headerName_gestioneTokenHeaderIntegrazioneTrasporto = new HashMap<>();
 				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
 				if(prop!=null && !prop.isEmpty()) {
 					Enumeration<?> en = prop.keys();
@@ -22377,7 +22377,7 @@ public class OpenSPCoop2Properties {
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				this.getCustomClaims_jsonPropertyName_gestioneTokenHeaderIntegrazioneJson = new HashMap<String, String>();
+				this.getCustomClaims_jsonPropertyName_gestioneTokenHeaderIntegrazioneJson = new HashMap<>();
 				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
 				if(prop!=null && !prop.isEmpty()) {
 					Enumeration<?> en = prop.keys();
@@ -23600,7 +23600,7 @@ public class OpenSPCoop2Properties {
 		tmp = this.getSOAPServicesBlackListUrlParameters();
 		this._list_add(tmp, blackList);
 		
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(!blackList.isEmpty()) {
 			for (MapKey<String> key : blackList) {
 				l.add(key.getValue());
@@ -23614,7 +23614,7 @@ public class OpenSPCoop2Properties {
 		List<MapKey<String>> tmp = this.getSOAPServicesWhiteListUrlParameters();
 		this._list_add(tmp, whiteList);
 		
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(!whiteList.isEmpty()) {
 			for (MapKey<String> key : whiteList) {
 				l.add(key.getValue());
@@ -23914,7 +23914,7 @@ public class OpenSPCoop2Properties {
 			this._list_add(tmp, blackList);
 		}
 		
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(!blackList.isEmpty()) {
 			for (MapKey<String> key : blackList) {
 				l.add(key.getValue());
@@ -23936,7 +23936,7 @@ public class OpenSPCoop2Properties {
 			this._list_add(tmp, whiteList);
 		}
 		
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(!whiteList.isEmpty()) {
 			for (MapKey<String> key : whiteList) {
 				l.add(key.getValue());
@@ -24003,7 +24003,7 @@ public class OpenSPCoop2Properties {
 	public List<String> getSOAPServices_inoltroBuste_proxyPassReverse_headers() throws Exception {	
 		if(this.getSOAPServices_inoltroBuste_proxyPassReverse_headers==null){
 			try{ 
-				this.getSOAPServices_inoltroBuste_proxyPassReverse_headers = new ArrayList<String>();
+				this.getSOAPServices_inoltroBuste_proxyPassReverse_headers = new ArrayList<>();
 				
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.headers");
@@ -24035,7 +24035,7 @@ public class OpenSPCoop2Properties {
 	public List<String> getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_headers() throws Exception {	
 		if(this.getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_headers==null){
 			try{ 
-				this.getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_headers = new ArrayList<String>();
+				this.getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_headers = new ArrayList<>();
 				
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.headers");
@@ -24201,7 +24201,7 @@ public class OpenSPCoop2Properties {
 	public List<String> getSOAPServices_inoltroBuste_proxyPassReverse_setCookie_headers() throws Exception {	
 		if(this.getSOAPServices_inoltroBuste_proxyPassReverse_setCookie_headers==null){
 			try{ 
-				this.getSOAPServices_inoltroBuste_proxyPassReverse_setCookie_headers = new ArrayList<String>();
+				this.getSOAPServices_inoltroBuste_proxyPassReverse_setCookie_headers = new ArrayList<>();
 				
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.setCookie.headers");
@@ -24233,7 +24233,7 @@ public class OpenSPCoop2Properties {
 	public List<String> getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers() throws Exception {	
 		if(this.getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers==null){
 			try{ 
-				this.getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers = new ArrayList<String>();
+				this.getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers = new ArrayList<>();
 				
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.setCookie.headers");
@@ -24493,7 +24493,7 @@ public class OpenSPCoop2Properties {
 		tmp = this.getRESTServicesBlackListUrlParameters();
 		this._list_add(tmp, blackList);
 		
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(!blackList.isEmpty()) {
 			for (MapKey<String> key : blackList) {
 				l.add(key.getValue());
@@ -24507,7 +24507,7 @@ public class OpenSPCoop2Properties {
 		List<MapKey<String>> tmp = this.getRESTServicesWhiteListUrlParameters();
 		this._list_add(tmp, whiteList);
 		
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(!whiteList.isEmpty()) {
 			for (MapKey<String> key : whiteList) {
 				l.add(key.getValue());
@@ -24807,7 +24807,7 @@ public class OpenSPCoop2Properties {
 			this._list_add(tmp, blackList);
 		}
 		
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(!blackList.isEmpty()) {
 			for (MapKey<String> key : blackList) {
 				l.add(key.getValue());
@@ -24829,7 +24829,7 @@ public class OpenSPCoop2Properties {
 			this._list_add(tmp, whiteList);
 		}
 		
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(!whiteList.isEmpty()) {
 			for (MapKey<String> key : whiteList) {
 				l.add(key.getValue());
@@ -24896,7 +24896,7 @@ public class OpenSPCoop2Properties {
 	public List<String> getRESTServices_inoltroBuste_proxyPassReverse_headers() throws Exception {	
 		if(this.getRESTServices_inoltroBuste_proxyPassReverse_headers==null){
 			try{ 
-				this.getRESTServices_inoltroBuste_proxyPassReverse_headers = new ArrayList<String>();
+				this.getRESTServices_inoltroBuste_proxyPassReverse_headers = new ArrayList<>();
 				
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.headers");
@@ -24928,7 +24928,7 @@ public class OpenSPCoop2Properties {
 	public List<String> getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_headers() throws Exception {	
 		if(this.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_headers==null){
 			try{ 
-				this.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_headers = new ArrayList<String>();
+				this.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_headers = new ArrayList<>();
 				
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.headers");
@@ -25094,7 +25094,7 @@ public class OpenSPCoop2Properties {
 	public List<String> getRESTServices_inoltroBuste_proxyPassReverse_setCookie_headers() throws Exception {	
 		if(this.getRESTServices_inoltroBuste_proxyPassReverse_setCookie_headers==null){
 			try{ 
-				this.getRESTServices_inoltroBuste_proxyPassReverse_setCookie_headers = new ArrayList<String>();
+				this.getRESTServices_inoltroBuste_proxyPassReverse_setCookie_headers = new ArrayList<>();
 				
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.setCookie.headers");
@@ -25126,7 +25126,7 @@ public class OpenSPCoop2Properties {
 	public List<String> getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers() throws Exception {	
 		if(this.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers==null){
 			try{ 
-				this.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers = new ArrayList<String>();
+				this.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers = new ArrayList<>();
 				
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.setCookie.headers");
@@ -27770,14 +27770,14 @@ public class OpenSPCoop2Properties {
 					throw new Exception("non definita");
 				}else{
 					String [] r = name.trim().split(",");
-					List<String> l = new ArrayList<String>();
+					List<String> l = new ArrayList<>();
 					for(int i=0; i<r.length; i++){
 						r[i] = r[i].trim();
 						l.add(r[i]);
 					}
 					
 					if(!l.isEmpty()) {
-						this.getControlloTrafficoGestorePolicyInMemoryRedisConnectionUrl = new ArrayList<String>();
+						this.getControlloTrafficoGestorePolicyInMemoryRedisConnectionUrl = new ArrayList<>();
 						this.getControlloTrafficoGestorePolicyInMemoryRedisConnectionUrl.addAll(l);
 					}
 					else {
@@ -29242,7 +29242,7 @@ public class OpenSPCoop2Properties {
 		if(this.isReadTimedOut==null){
 			try{ 
 				Properties p = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.readTimedOut.");
-				this.isReadTimedOut = new ArrayList<String>();
+				this.isReadTimedOut = new ArrayList<>();
 				if(p!=null && !p.isEmpty()) {
 					Iterator<Object> it = p.values().iterator();
 					while (it.hasNext()) {
@@ -29255,7 +29255,7 @@ public class OpenSPCoop2Properties {
 				}
 			} catch(java.lang.Exception e) {
 				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.error.': "+e.getMessage(),e);
-				this.isReadTimedOut = new ArrayList<String>();
+				this.isReadTimedOut = new ArrayList<>();
 			}    
 		}
 

@@ -57,7 +57,7 @@ public class InformazioniProtocollo implements Serializable{
 	protected Map<String, String> proprietaProtocollo;
     
 	public InformazioniProtocollo() {
-		this.proprietaProtocollo = new HashMap<String, String>();
+		this.proprietaProtocollo = new HashMap<>();
 	}
     
 

@@ -65,7 +65,7 @@ public class ApacheClient {
 		generator.initialize(config);
 		
 		
-		List<String> check = new ArrayList<String>();
+		List<String> check = new ArrayList<>();
 		
 		String v = null;
 		int i = 0;

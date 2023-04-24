@@ -99,7 +99,7 @@ public class SoggettoVirtuale implements Serializable  {
 	
 	public List<String> getIdServiziApplicativi(boolean gestisciBehaviuorPerFiltri,GestoreMessaggi gestoreMessaggi,Busta busta, RequestInfo requestInfo,
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory, IState state) throws Exception{
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		for (SoggettoVirtualeServizioApplicativo sa : this.soggettoVirtuale_serviziApplicativi) {
 
 			boolean filtrato = false;

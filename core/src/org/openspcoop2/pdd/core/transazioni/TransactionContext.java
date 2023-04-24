@@ -188,7 +188,7 @@ public class TransactionContext {
 	}
 	
 	
-	//private static List<String> idBustaFiltroDuplicati = new ArrayList<String>();
+	//private static List<String> idBustaFiltroDuplicati = new ArrayList<>();
 	private static Set<String> idBustaFiltroDuplicati = ConcurrentHashMap.newKeySet();
 	
 	public static List<String> getIdBustaKeys() {

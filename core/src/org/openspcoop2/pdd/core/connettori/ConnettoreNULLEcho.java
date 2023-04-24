@@ -167,7 +167,7 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 			// Collezione header di trasporto per dump
 			Map<String, List<String>> propertiesTrasportoDebug = null;
 			if(this.isDumpBinarioRichiesta()) {
-				propertiesTrasportoDebug = new HashMap<String, List<String>>();
+				propertiesTrasportoDebug = new HashMap<>();
 			}
 			
 			

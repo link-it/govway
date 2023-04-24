@@ -158,18 +158,18 @@ public class SerializationClientTest {
 		s7.setNome("SoggettoTest7");
 		
 		// Excludes per Json
-		List<String> excludesJson_Soggetto = new ArrayList<String> ();
+		List<String> excludesJson_Soggetto = new ArrayList<> ();
 		excludesJson_Soggetto.add("servizio");
 		excludesJson_Soggetto.add("servizioCorrelato");
 		excludesJson_Soggetto.add("property");
 
-		List<String> excludesJson_AccordiServizio = new ArrayList<String> ();
+		List<String> excludesJson_AccordiServizio = new ArrayList<> ();
 		excludesJson_AccordiServizio.add("specificaSemiformale");
 		excludesJson_AccordiServizio.add("allegato");
 		excludesJson_AccordiServizio.add("azione");
 		excludesJson_AccordiServizio.add("portType");
 				
-		List<String> excludesJson_date = new ArrayList<String> ();
+		List<String> excludesJson_date = new ArrayList<> ();
 		excludesJson_date.add("day");
 		excludesJson_date.add("timezoneOffset");
 		

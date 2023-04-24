@@ -383,7 +383,7 @@ public class HazelcastManager {
 						if(portHazelcastConfigInstance!=null && portHazelcastConfigInstance.intValue()>0) {
 							if(ncInstance.getJoin().getTcpIpConfig().getMembers()!=null && !ncInstance.getJoin().getTcpIpConfig().getMembers().isEmpty()) {
 								// Se vengono usate le porte, devo clonare la lista e sistemarla con la porta usata sull'attuale istanza
-								List<String> newList = new ArrayList<String>();
+								List<String> newList = new ArrayList<>();
 								for (String member : ncInstance.getJoin().getTcpIpConfig().getMembers()) {
 									try {
 										if(member.contains(GOVWAY_INSTANCE_PORT)) {

@@ -86,7 +86,7 @@ public class JOSEUtils {
 	
 	public int returnCodeAtteso = 200;
 	public boolean delegata = true;
-	public Map<String,String> queryParameters = new HashMap<String,String>();
+	public Map<String,String> queryParameters = new HashMap<>();
 	
 	public boolean signature = true;
 	public boolean payloadEncoding = true;

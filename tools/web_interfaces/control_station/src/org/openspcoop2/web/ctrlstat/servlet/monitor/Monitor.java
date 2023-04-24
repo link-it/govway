@@ -151,7 +151,7 @@ public final class Monitor extends Action {
 					throw new Exception("[govwayConsole] Lettura proprieta' non riuscita : " + e.getMessage());
 				} 
 				
-				labelSorgentiDriverMonitoraggioLocale = new ArrayList<String>();
+				labelSorgentiDriverMonitoraggioLocale = new ArrayList<>();
 				driverMonitoraggioLocale = new HashMap<String, DriverMonitoraggio>();
 				for (String sorgente : sorgentiDriverMonitoraggioLocale) {
 					
@@ -1350,8 +1350,8 @@ public final class Monitor extends Action {
 	//			} else {
 				
 				SoggettiCore soggettiCore = new SoggettiCore(monitorCore);
-				List<String> tipiSoggetti = new ArrayList<String>();
-				List<String> tipiSoggetti_label = new ArrayList<String>();
+				List<String> tipiSoggetti = new ArrayList<>();
+				List<String> tipiSoggetti_label = new ArrayList<>();
 				tipiSoggetti.add("");
 				tipiSoggetti_label.add("-");
 				tipiSoggetti.addAll(soggettiCore.getTipiSoggettiGestiti());
@@ -1452,8 +1452,8 @@ public final class Monitor extends Action {
 	//			dati.add(de);
 				
 				AccordiServizioParteSpecificaCore aspsCore = new AccordiServizioParteSpecificaCore(monitorCore);
-				List<String> tipiServizi = new ArrayList<String>();
-				List<String> tipiServizi_label = new ArrayList<String>();
+				List<String> tipiServizi = new ArrayList<>();
+				List<String> tipiServizi_label = new ArrayList<>();
 				tipiServizi.add("");
 				tipiServizi_label.add("-");
 				List<String> list = monitorCore.getProtocolli(request, session);
@@ -2132,7 +2132,7 @@ public final class Monitor extends Action {
 			monitorHelper.makeMenu();
 
 			
-			List<String> labels = new ArrayList<String>();
+			List<String> labels = new ArrayList<>();
 //			labels.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOW);
 			labels.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_SERVIZIO_APPLICATIVO);
 			labels.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_CODA);

@@ -56,7 +56,7 @@ public class JsonJacksonDeserializer implements IDeserializer{
         	if(properties!=null)
         		this.ignorables = properties;
         	else
-        		this.ignorables = new ArrayList<String>();
+        		this.ignorables = new ArrayList<>();
         }
 
         @Override

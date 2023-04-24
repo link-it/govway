@@ -87,7 +87,7 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 	private List<SelectItem> stati = new ArrayList<SelectItem>();
 	private List<SelectItem> risorse = new ArrayList<SelectItem>();
 
-	private List<String> esportazioniSelezionate = new ArrayList<String>();
+	private List<String> esportazioniSelezionate = new ArrayList<>();
 
 	private String tableState = "";
 
@@ -269,7 +269,7 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 		try {
 
 			// recupero lista diagnostici
-			List<String> idTransazioni = new ArrayList<String>();
+			List<String> idTransazioni = new ArrayList<>();
 
 			// se nn sono in select all allore prendo solo quelle selezionate
 			if (!this.isSelectedAll()) {
@@ -321,7 +321,7 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 		try {
 
 			// recupero lista diagnostici
-			List<String> idTransazioni = new ArrayList<String>();
+			List<String> idTransazioni = new ArrayList<>();
 
 			// se nn sono in select all allore prendo solo quelle selezionate
 			if (!this.isSelectedAll()) {
@@ -379,15 +379,15 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 			String idColonneSelezionate = UUID.randomUUID().toString().replace("-", ""); 
 
 			// recupero lista diagnostici
-			List<String> idTransazioni = new ArrayList<String>();
+			List<String> idTransazioni = new ArrayList<>();
 
 //			// se nn sono in select all allore prendo solo quelle selezionate
 //			if (!this.isSelectedAll()) {
 //				
 //				// NOTA: Al massimo sono selezionate 25 transazioni
 //				// NOTA2: Le transazioni esportate sono sempre ordinate per data
-//				List<String> orderFix = new ArrayList<String>();
-//				Map<String, String> orderMap = new HashMap<String, String>();
+//				List<String> orderFix = new ArrayList<>();
+//				Map<String, String> orderMap = new HashMap<>();
 //				SimpleDateFormat format = Utilities.getSimpleDateFormatMs();
 //				
 //				Iterator<TransazioneBean> it = this.selectedIds.keySet().iterator();
@@ -415,7 +415,7 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 				
 				// NOTA: Al massimo sono selezionate 25 report
 				// NOTA2: i report esportate sono sempre ordinate per data
-				List<String> orderFix = new ArrayList<String>();
+				List<String> orderFix = new ArrayList<>();
 				
 				// j_id170:tableReport_tbl:19:tableReport_column_ckb
 				for (String idString : split) {
@@ -508,7 +508,7 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 
 //	@SuppressWarnings("rawtypes")
 	public List<String> getIdentificativiColonneSelezionate(String colonneEsportate){
-		List<String> colonneSelezionate = new ArrayList<String>();
+		List<String> colonneSelezionate = new ArrayList<>();
 
 		if(colonneEsportate.equals(CostantiExport.COLONNE_VALUE_TUTTE)){
 			// inserisco tutte le chiavi

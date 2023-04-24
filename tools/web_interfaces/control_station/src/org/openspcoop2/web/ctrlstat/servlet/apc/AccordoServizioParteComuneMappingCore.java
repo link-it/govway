@@ -548,7 +548,7 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 			
 			// Allegati
 			List<byte[]> schemiPresentiInternamenteTypes = new ArrayList<byte[]>();
-			List<String> nomiSchemiPresentiInternamenteTypes = new ArrayList<String>();
+			List<String> nomiSchemiPresentiInternamenteTypes = new ArrayList<>();
 			
 			try{
 				

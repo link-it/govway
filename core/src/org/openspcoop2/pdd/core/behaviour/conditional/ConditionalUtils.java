@@ -701,7 +701,7 @@ public class ConditionalUtils  {
 		IdentificazioneFallitaConfigurazione nessunConnettoreTrovato = new IdentificazioneFallitaConfigurazione();
 		config.setNessunConnettoreTrovato(nessunConnettoreTrovato);
 		
-		List<String> idRegole = new ArrayList<String>();
+		List<String> idRegole = new ArrayList<>();
 		
 		for (Proprieta p : pa.getBehaviour().getProprietaList()) {
 			

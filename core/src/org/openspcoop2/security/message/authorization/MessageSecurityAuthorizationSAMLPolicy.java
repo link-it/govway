@@ -475,7 +475,7 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 		private Map<String, List<String>> findNameAttributes(SOAPElement security) throws SAXException, SOAPException,
 				XPathException, XPathNotValidException, Exception {
 			
-			Map<String, List<String>> nameAttributes = new HashMap<String, List<String>>();
+			Map<String, List<String>> nameAttributes = new HashMap<>();
 
 			String xpath = null;
 			if(this.saml20){
@@ -550,7 +550,7 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 						if(nameAttributes.containsKey(key)) {
 							values = nameAttributes.remove(key);
 						} else {
-							values = new ArrayList<String>();
+							values = new ArrayList<>();
 						}
 						NodeList attributeValues = attribute.getChildNodes();
 						if(attributeValues != null) {

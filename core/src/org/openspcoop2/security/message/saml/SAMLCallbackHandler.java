@@ -174,7 +174,7 @@ public class SAMLCallbackHandler implements CallbackHandler {
 						List<AudienceRestrictionBean> lAudience = new ArrayList<AudienceRestrictionBean>();
 						
 						AudienceRestrictionBean arb = new AudienceRestrictionBean();
-						List<String> uri = new ArrayList<String>();
+						List<String> uri = new ArrayList<>();
 						uri.add(this.samlBuilderConfig.getConditionsAudienceURI());
 						arb.setAudienceURIs(uri);
 						lAudience.add(arb);

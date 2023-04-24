@@ -100,7 +100,7 @@ public class TransactionManager {
 			}
 						
 			// tracce / diagnostici
-			Map<String, String> propertiesRicerca = new HashMap<String, String>();
+			Map<String, String> propertiesRicerca = new HashMap<>();
 			
 			propertiesRicerca.put("id_transazione", id);
 			Traccia tracciaRichiesta = null;
@@ -268,7 +268,7 @@ public class TransactionManager {
 		else{
 			resource = (TransportHeaderResource) transaction.getContentResourceByName(ContentResourceNames.RES_TRANSPORT_HEADER);
 		}
-		List<String> keys = new ArrayList<String>();
+		List<String> keys = new ArrayList<>();
 		if(resource!=null && resource.keys()!=null && resource.keys().size()>0){
 			keys.addAll(resource.keys());
 		}

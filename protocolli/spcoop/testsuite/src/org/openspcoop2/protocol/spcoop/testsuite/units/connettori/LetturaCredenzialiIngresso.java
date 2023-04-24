@@ -779,7 +779,7 @@ public class LetturaCredenzialiIngresso extends GestioneViaJmx {
 			
 			// Contesto SSL
 			java.util.Map<String, String> sslContext = null;
-			sslContext = new HashMap<String, String>();
+			sslContext = new HashMap<>();
 			sslContext.put("trustStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("keyStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("trustStorePassword", "openspcoopjks");
@@ -929,7 +929,7 @@ public class LetturaCredenzialiIngresso extends GestioneViaJmx {
 			
 			// Contesto SSL
 			java.util.Map<String, String> sslContext = null;
-			sslContext = new HashMap<String, String>();
+			sslContext = new HashMap<>();
 			sslContext.put("trustStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("keyStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("trustStorePassword", "openspcoopjks");
@@ -2132,7 +2132,7 @@ public class LetturaCredenzialiIngresso extends GestioneViaJmx {
 			
 			// Contesto SSL
 			java.util.Map<String, String> sslContext = null;
-			sslContext = new HashMap<String, String>();
+			sslContext = new HashMap<>();
 			sslContext.put("trustStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("keyStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("trustStorePassword", "openspcoopjks");
@@ -2272,7 +2272,7 @@ public class LetturaCredenzialiIngresso extends GestioneViaJmx {
 			
 			// Contesto SSL
 			java.util.Map<String, String> sslContext = null;
-			sslContext = new HashMap<String, String>();
+			sslContext = new HashMap<>();
 			sslContext.put("trustStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("keyStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("trustStorePassword", "openspcoopjks");
@@ -3356,7 +3356,7 @@ public class LetturaCredenzialiIngresso extends GestioneViaJmx {
 			
 			// Contesto SSL
 			java.util.Map<String, String> sslContext = null;
-			sslContext = new HashMap<String, String>();
+			sslContext = new HashMap<>();
 			sslContext.put("trustStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("keyStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("trustStorePassword", "openspcoopjks");
@@ -3545,7 +3545,7 @@ public class LetturaCredenzialiIngresso extends GestioneViaJmx {
 			
 			// Contesto SSL
 			java.util.Map<String, String> sslContext = null;
-			sslContext = new HashMap<String, String>();
+			sslContext = new HashMap<>();
 			sslContext.put("trustStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("keyStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("trustStorePassword", "openspcoopjks");

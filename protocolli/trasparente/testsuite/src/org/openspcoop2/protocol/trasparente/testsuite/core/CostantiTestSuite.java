@@ -1030,7 +1030,7 @@ public class CostantiTestSuite {
 	public static final String TEST_CORS_EXPOSE_HDR2 = "X-GovWayTest-HDR2";
 	public static final String TEST_CORS_EXPOSE_HEADERS = TEST_CORS_EXPOSE_HDR1+", "+TEST_CORS_EXPOSE_HDR2;
     
-	private static final List<String> TEST_CORS_ALLOW_METHOD_DEFAULT = new ArrayList<String> ();
+	private static final List<String> TEST_CORS_ALLOW_METHOD_DEFAULT = new ArrayList<> ();
 	static {
 		TEST_CORS_ALLOW_METHOD_DEFAULT.add(HttpRequestMethod.GET.name());
 		TEST_CORS_ALLOW_METHOD_DEFAULT.add(HttpRequestMethod.POST.name());
@@ -1040,7 +1040,7 @@ public class CostantiTestSuite {
 	}
 	public static final String TEST_CORS_ALLOW_METHOD_DEFAULT_AS_STRING = TEST_CORS_ALLOW_METHOD_DEFAULT.toString().substring(1, TEST_CORS_ALLOW_METHOD_DEFAULT.toString().length()-1);
 
-	private static final List<String> TEST_CORS_ALLOW_HEADER_DEFAULT = new ArrayList<String> ();
+	private static final List<String> TEST_CORS_ALLOW_HEADER_DEFAULT = new ArrayList<> ();
 	static {
 		TEST_CORS_ALLOW_HEADER_DEFAULT.add(HttpConstants.AUTHORIZATION);
 		TEST_CORS_ALLOW_HEADER_DEFAULT.add(HttpConstants.CONTENT_TYPE);

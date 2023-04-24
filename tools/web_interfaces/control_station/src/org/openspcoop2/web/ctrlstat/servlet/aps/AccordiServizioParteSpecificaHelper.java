@@ -260,7 +260,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		List<String> erogazione_listTrasformazioniPredefinito = null;
 		List<String> erogazione_listRateLimitingPredefinito = null;
 		List<String> erogazione_listAllarmePredefinito = null;
-		HashMap<String, List<String>> erogazione_mapGruppi = new HashMap<String, List<String>>();
+		HashMap<String, List<String>> erogazione_mapGruppi = new HashMap<>();
 		
 		HashMap<String, List<String>> fruizione_listTrasformazioniPredefinito = null;
 		HashMap<String, List<String>> fruizione_listRateLimitingPredefinito = null;
@@ -315,7 +315,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 									String [] tmp = ap.getFiltro().getAzione().split(",");
 									if(tmp!=null && tmp.length>0) {
 										if(erogazione_listRateLimitingPredefinito==null) {
-											erogazione_listRateLimitingPredefinito = new ArrayList<String>();
+											erogazione_listRateLimitingPredefinito = new ArrayList<>();
 										}
 										for (String az : tmp) {
 											if(!erogazione_listRateLimitingPredefinito.contains(az)) {
@@ -340,7 +340,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 										String [] tmp = allarme.getFiltro().getAzione().split(",");
 										if(tmp!=null && tmp.length>0) {
 											if(erogazione_listAllarmePredefinito==null) {
-												erogazione_listAllarmePredefinito = new ArrayList<String>();
+												erogazione_listAllarmePredefinito = new ArrayList<>();
 											}
 											for (String az : tmp) {
 												if(!erogazione_listAllarmePredefinito.contains(az)) {
@@ -355,7 +355,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					}
 					else {
 						if(pa.getAzione()!=null && pa.getAzione().sizeAzioneDelegataList()>0) {
-							List<String> l = new ArrayList<String>();
+							List<String> l = new ArrayList<>();
 							for (String az : pa.getAzione().getAzioneDelegataList()) {
 								l.add(az);
 							}
@@ -405,7 +405,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 									}
 									if(list!=null) {
 										if(fruizione_listTrasformazioniPredefinito==null) {
-											fruizione_listTrasformazioniPredefinito = new HashMap<String, List<String>>();
+											fruizione_listTrasformazioniPredefinito = new HashMap<>();
 										}
 										fruizione_listTrasformazioniPredefinito.put(labelFruitore, list);
 									}
@@ -424,7 +424,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 											String [] tmp = ap.getFiltro().getAzione().split(",");
 											if(tmp!=null && tmp.length>0) {
 												if(list==null) {
-													list = new ArrayList<String>();
+													list = new ArrayList<>();
 												}
 												for (String az : tmp) {
 													if(!list.contains(az)) {
@@ -436,7 +436,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 									}
 									if(list!=null) {
 										if(fruizione_listRateLimitingPredefinito==null) {
-											fruizione_listRateLimitingPredefinito = new HashMap<String, List<String>>();
+											fruizione_listRateLimitingPredefinito = new HashMap<>();
 										}
 										fruizione_listRateLimitingPredefinito.put(labelFruitore, list);
 									}
@@ -456,7 +456,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 												String [] tmp = allarme.getFiltro().getAzione().split(",");
 												if(tmp!=null && tmp.length>0) {
 													if(list==null) {
-														list = new ArrayList<String>();
+														list = new ArrayList<>();
 													}
 													for (String az : tmp) {
 														if(!list.contains(az)) {
@@ -468,7 +468,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 										}
 										if(list!=null) {
 											if(fruizione_listAllarmePredefinito==null) {
-												fruizione_listAllarmePredefinito = new HashMap<String, List<String>>();
+												fruizione_listAllarmePredefinito = new HashMap<>();
 											}
 											fruizione_listAllarmePredefinito.put(labelFruitore, list);
 										}
@@ -477,11 +477,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							}
 							else {
 								if(pd.getAzione()!=null && pd.getAzione().sizeAzioneDelegataList()>0) {
-									List<String> l = new ArrayList<String>();
+									List<String> l = new ArrayList<>();
 									for (String az : pd.getAzione().getAzioneDelegataList()) {
 										l.add(az);
 									}
-									HashMap<String, List<String>> m = new HashMap<String, List<String>>();
+									HashMap<String, List<String>> m = new HashMap<>();
 									m.put(mappingFruizionePortaDelegata.getDescrizione(), l);
 									fruizione_mapGruppi.put(labelFruitore, m);
 								}
@@ -506,7 +506,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if(!erogazione_mapGruppi.isEmpty() ) {
 				for (String gruppo : erogazione_mapGruppi.keySet()) {
 					List<String> azioni = erogazione_mapGruppi.get(gruppo);
-					List<String> azioniNonTrovate = new ArrayList<String>();
+					List<String> azioniNonTrovate = new ArrayList<>();
 					if(azioni!=null && !azioni.isEmpty()) {
 						for (String az : azioni) {
 							if(!existsOperazione(asSintetico, serviceBinding, portType, az)) {
@@ -524,7 +524,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 			
 			if(erogazione_listTrasformazioniPredefinito!=null && !erogazione_listTrasformazioniPredefinito.isEmpty()) {
-				List<String> azioniNonTrovate = new ArrayList<String>();
+				List<String> azioniNonTrovate = new ArrayList<>();
 				for (String az : erogazione_listTrasformazioniPredefinito) {
 					if(!existsOperazione(asSintetico, serviceBinding, portType, az)) {
 						azioniNonTrovate.add(az);
@@ -539,7 +539,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 			
 			if(erogazione_listRateLimitingPredefinito!=null && !erogazione_listRateLimitingPredefinito.isEmpty()) {
-				List<String> azioniNonTrovate = new ArrayList<String>();
+				List<String> azioniNonTrovate = new ArrayList<>();
 				for (String az : erogazione_listRateLimitingPredefinito) {
 					if(!existsOperazione(asSintetico, serviceBinding, portType, az)) {
 						azioniNonTrovate.add(az);
@@ -554,7 +554,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 			
 			if(erogazione_listAllarmePredefinito!=null && !erogazione_listAllarmePredefinito.isEmpty()) {
-				List<String> azioniNonTrovate = new ArrayList<String>();
+				List<String> azioniNonTrovate = new ArrayList<>();
 				for (String az : erogazione_listAllarmePredefinito) {
 					if(!existsOperazione(asSintetico, serviceBinding, portType, az)) {
 						azioniNonTrovate.add(az);
@@ -579,7 +579,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					HashMap<String, List<String>> m = fruizione_mapGruppi.get(labelFruitore);
 					for (String gruppo : m.keySet()) {
 						List<String> azioni = m.get(gruppo);
-						List<String> azioniNonTrovate = new ArrayList<String>();
+						List<String> azioniNonTrovate = new ArrayList<>();
 						if(azioni!=null && !azioni.isEmpty()) {
 							for (String az : azioni) {
 								if(!existsOperazione(asSintetico, serviceBinding, portType, az)) {
@@ -600,7 +600,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if(fruizione_listTrasformazioniPredefinito!=null && !fruizione_listTrasformazioniPredefinito.isEmpty()) {
 				for (String labelFruitore : fruizione_listTrasformazioniPredefinito.keySet()) {
 					List<String> l = fruizione_listTrasformazioniPredefinito.get(labelFruitore);
-					List<String> azioniNonTrovate = new ArrayList<String>();
+					List<String> azioniNonTrovate = new ArrayList<>();
 					for (String az : l) {
 						if(!existsOperazione(asSintetico, serviceBinding, portType, az)) {
 							azioniNonTrovate.add(az);
@@ -618,7 +618,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if(fruizione_listRateLimitingPredefinito!=null && !fruizione_listRateLimitingPredefinito.isEmpty()) {
 				for (String labelFruitore : fruizione_listRateLimitingPredefinito.keySet()) {
 					List<String> l = fruizione_listRateLimitingPredefinito.get(labelFruitore);
-					List<String> azioniNonTrovate = new ArrayList<String>();
+					List<String> azioniNonTrovate = new ArrayList<>();
 					for (String az : l) {
 						if(!existsOperazione(asSintetico, serviceBinding, portType, az)) {
 							azioniNonTrovate.add(az);
@@ -636,7 +636,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if(fruizione_listAllarmePredefinito!=null && !fruizione_listAllarmePredefinito.isEmpty()) {
 				for (String labelFruitore : fruizione_listAllarmePredefinito.keySet()) {
 					List<String> l = fruizione_listAllarmePredefinito.get(labelFruitore);
-					List<String> azioniNonTrovate = new ArrayList<String>();
+					List<String> azioniNonTrovate = new ArrayList<>();
 					for (String az : l) {
 						if(!existsOperazione(asSintetico, serviceBinding, portType, az)) {
 							azioniNonTrovate.add(az);
@@ -674,7 +674,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String idSoggErogatore, String protocollo) throws Exception {
 		
 		// Verifico che non esistano erogazioni riguardanti la modifica (anche se la modifica parte da una fruizione) contenente applicativi server.
-		List<String> nomiApplicativiServer = new ArrayList<String>();
+		List<String> nomiApplicativiServer = new ArrayList<>();
 		IDServizio idService = this.idServizioFactory.getIDServizioFromAccordo(servizio);
 		List<MappingErogazionePortaApplicativa> listaMappingErogazione = null;
 		try{
@@ -1933,7 +1933,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				return false;
 			}
 			
-			List<String> listaErrori = new ArrayList<String>();
+			List<String> listaErrori = new ArrayList<>();
 			String labelServizio = getLabelServizioMessaggioErroreDocumentoDuplicato();
 			
 			for (int i = 0; i < binaryParameterDocumenti.size() ; i++) {
@@ -2428,7 +2428,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			
 			List<AccordoServizioParteComuneSintetico> listApc = new ArrayList<AccordoServizioParteComuneSintetico>();
-			List<String> protocolli = new ArrayList<String>();
+			List<String> protocolli = new ArrayList<>();
 			
 			boolean showRuoli = false;
 			for (AccordoServizioParteSpecifica asps : lista) {
@@ -2443,7 +2443,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 						
 			// controllo visualizzazione colonna ruolo
-			List<String> listaLabelTabella = new ArrayList<String>();
+			List<String> listaLabelTabella = new ArrayList<>();
 
 			listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO);
 			if(showSoggettoErogatore) {
@@ -3146,7 +3146,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			//}
 			boolean showPoliticheSLA = false;
 			
-			List<String> listaLabelTabella = new ArrayList<String>();
+			List<String> listaLabelTabella = new ArrayList<>();
 			listaLabelTabella.add(labelFruitore);
 			if(this.isShowGestioneWorkflowStatoDocumenti() && this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()){
 				listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_STATO);
@@ -3356,7 +3356,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
 			
-			Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<String>());
+			Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<>());
 			String filtroAzione = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_AZIONE);
 						
 			this.pd.setIndex(offset);
@@ -3552,7 +3552,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 //			boolean isPaDefaultMulti = paAssociataDefault.getBehaviour() != null;
 			
 			// setto le label delle colonne
-			List<String> listaLabel = new ArrayList<String>();
+			List<String> listaLabel = new ArrayList<>();
 
 			if(visualizzazioneTabs && (gestioneGruppi || listaParam.size()>1)) {
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME_GRUPPO);
@@ -3787,7 +3787,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						String nomiAzioni = null;
 						long countAzioni = 0;
 						if(!mapping.isDefault()) {
-							listaAzioni = paAssociata.getAzione()!= null ?  paAssociata.getAzione().getAzioneDelegataList() : new ArrayList<String>();
+							listaAzioni = paAssociata.getAzione()!= null ?  paAssociata.getAzione().getAzioneDelegataList() : new ArrayList<>();
 							
 							if(listaAzioni.size() > 0 && azioni.size()>0) {
 								
@@ -4873,7 +4873,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 
 
-			List<String> listaLabel = new ArrayList<String>();
+			List<String> listaLabel = new ArrayList<>();
 
 			listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
 			//listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTO);
@@ -5125,7 +5125,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding = apc.getServiceBinding();
 			ServiceBinding serviceBindingMessage = this.apcCore.toMessageServiceBinding(apc.getServiceBinding());
 			
-			Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<String>());
+			Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<>());
 			String filtroAzione = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_AZIONE);
 			
 			this.pd.setIndex(offset);
@@ -5344,7 +5344,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam );
 
-			List<String> listaLabel = new ArrayList<String>();
+			List<String> listaLabel = new ArrayList<>();
 			if(visualizzazioneTabs && (gestioneGruppi || listaParam.size()>1)) {
 		        listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME_GRUPPO);
 			}
@@ -5574,7 +5574,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						String nomiAzioni = null;
 						long countAzioni = 0;
 						if(!mapping.isDefault()) {
-							listaAzioni = listaAzioniPDAssociataMappingNonDefault!= null ? listaAzioniPDAssociataMappingNonDefault : new ArrayList<String>();
+							listaAzioni = listaAzioniPDAssociataMappingNonDefault!= null ? listaAzioniPDAssociataMappingNonDefault : new ArrayList<>();
 							
 							if(listaAzioni.size() > 0 && azioni.size()>0) {
 								

@@ -188,7 +188,7 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 			// Collezione header di trasporto per dump
 			Map<String, List<String>> propertiesTrasportoDebug = null;
 			if(this.isDumpBinarioRichiesta()) {
-				propertiesTrasportoDebug = new HashMap<String, List<String>>();
+				propertiesTrasportoDebug = new HashMap<>();
 			}
 			
 			
@@ -302,7 +302,7 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 				    	}
 						
 						if(encodingRFC2047){
-							List<String> valuesEncoded = new ArrayList<String>();
+							List<String> valuesEncoded = new ArrayList<>();
 							if(values!=null && !values.isEmpty()) {
 				        		for (String value : values) {
 				        			if(RFC2047Utilities.isAllCharactersInCharset(value, charsetRFC2047)==false){
@@ -417,7 +417,7 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 				if(soapResponse.getMimeHeaders()!=null){
 					
 					if(this.propertiesTrasportoRisposta==null){
-						this.propertiesTrasportoRisposta = new HashMap<String, List<String>>();
+						this.propertiesTrasportoRisposta = new HashMap<>();
 					}
 					
 					Iterator<?> it = soapResponse.getMimeHeaders().getAllHeaders();

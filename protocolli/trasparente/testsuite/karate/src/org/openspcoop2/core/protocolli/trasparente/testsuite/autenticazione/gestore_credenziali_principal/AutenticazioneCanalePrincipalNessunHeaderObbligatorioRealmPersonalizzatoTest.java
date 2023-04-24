@@ -46,7 +46,7 @@ public class AutenticazioneCanalePrincipalNessunHeaderObbligatorioRealmPersonali
 		request.setUsername("esempioFruitoreTrasparentePrincipal");
 		request.setPassword("Op3nSPC@@p2");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Erogazione-Principal", "ApplicativoSoggettoInternoTestFruitore1");
 		Utilities._test(request,
 				TipoServizio.EROGAZIONE,
@@ -63,7 +63,7 @@ public class AutenticazioneCanalePrincipalNessunHeaderObbligatorioRealmPersonali
 	
 	@Test
 	public void erogazione_autenticazionePrincipal_credenzialiNonFornite() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Erogazione-Principal", "ApplicativoSoggettoInternoTestFruitore1");
 		Utilities._test(TipoServizio.EROGAZIONE,
 				"SoggettoInternoTestGestoreCredenzialePrincipal",
@@ -84,7 +84,7 @@ public class AutenticazioneCanalePrincipalNessunHeaderObbligatorioRealmPersonali
 		request.setUsername("esempioFruitoreTrasparentePrincipal2");
 		request.setPassword("Op3nSPC@@p2");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Erogazione-Principal", "ApplicativoSoggettoInternoTestFruitore1");
 		Utilities._test(request,
 				TipoServizio.EROGAZIONE,
@@ -106,7 +106,7 @@ public class AutenticazioneCanalePrincipalNessunHeaderObbligatorioRealmPersonali
 		request.setUsername("esempioFruitoreTrasparentePrincipal");
 		request.setPassword("Op3nSPC@@p2");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Erogazione-SSL-Subject", "l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM");
 		headers.put("X-Erogazione-SSL-Issuer", "/l=Pisa/st=Italy/ou=Test/o=Test/c=IT/cn=ExampleClient1HSM/");
 		Utilities._test(request,
@@ -129,7 +129,7 @@ public class AutenticazioneCanalePrincipalNessunHeaderObbligatorioRealmPersonali
 		request.setUsername("esempioFruitoreTrasparentePrincipal");
 		request.setPassword("Op3nSPC@@p2");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Erogazione-BASIC-Username", "ApplicativoSoggettoInternoTestFruitore1");
 		headers.put("X-Erogazione-BASIC-Password", "123456");
 		Utilities._test(request,
@@ -152,7 +152,7 @@ public class AutenticazioneCanalePrincipalNessunHeaderObbligatorioRealmPersonali
 		request.setUsername("esempioFruitoreTrasparentePrincipal");
 		request.setPassword("Op3nSPC@@p2");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		Utilities._test(request,
 				TipoServizio.EROGAZIONE,
 				"SoggettoInternoTestGestoreCredenzialePrincipal",
@@ -176,7 +176,7 @@ public class AutenticazioneCanalePrincipalNessunHeaderObbligatorioRealmPersonali
 		request.setUsername("esempioFruitoreTrasparentePrincipal");
 		request.setPassword("Op3nSPC@@p2");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Fruizione-Principal", "ApplicativoSoggettoInternoTestGestoreCredenzialiPrincipal");
 		Utilities._test(request,
 				TipoServizio.FRUIZIONE,
@@ -193,7 +193,7 @@ public class AutenticazioneCanalePrincipalNessunHeaderObbligatorioRealmPersonali
 	
 	@Test
 	public void fruizione_autenticazionePrincipal_credenzialiNonFornite() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Fruizione-Principal", "ApplicativoSoggettoInternoTestGestoreCredenzialiPrincipal");
 		Utilities._test(TipoServizio.FRUIZIONE,
 				"SoggettoInternoTestGestoreCredenzialePrincipal",
@@ -214,7 +214,7 @@ public class AutenticazioneCanalePrincipalNessunHeaderObbligatorioRealmPersonali
 		request.setUsername("esempioFruitoreTrasparentePrincipal2");
 		request.setPassword("Op3nSPC@@p2");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Fruizione-Principal", "ApplicativoSoggettoInternoTestGestoreCredenzialiPrincipal");
 		Utilities._test(request,
 				TipoServizio.FRUIZIONE,
@@ -236,7 +236,7 @@ public class AutenticazioneCanalePrincipalNessunHeaderObbligatorioRealmPersonali
 		request.setUsername("esempioFruitoreTrasparentePrincipal");
 		request.setPassword("Op3nSPC@@p2");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Fruizione-SSL-Subject", "/cn=ApplicativoSoggettoInternoTestGestoreCredenzialiPrincipal/");
 		Utilities._test(request,
 				TipoServizio.FRUIZIONE,
@@ -258,7 +258,7 @@ public class AutenticazioneCanalePrincipalNessunHeaderObbligatorioRealmPersonali
 		request.setUsername("esempioFruitoreTrasparentePrincipal");
 		request.setPassword("Op3nSPC@@p2");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Fruizione-BASIC-Username", "ApplicativoSoggettoInternoTestGestoreCredenzialiPrincipal");
 		headers.put("X-Fruizione-BASIC-Password", "123456");
 		Utilities._test(request,
@@ -281,7 +281,7 @@ public class AutenticazioneCanalePrincipalNessunHeaderObbligatorioRealmPersonali
 		request.setUsername("esempioFruitoreTrasparentePrincipal");
 		request.setPassword("Op3nSPC@@p2");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		Utilities._test(request,
 				TipoServizio.FRUIZIONE,
 				"SoggettoInternoTestGestoreCredenzialePrincipal",

@@ -205,7 +205,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		
 		if(listaMappingErogazionePortaApplicativa.size()>1) {
 			List<String> azioniL = new ArrayList<>();
-			Map<String,String> azioni = this.apsCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<String>());
+			Map<String,String> azioni = this.apsCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<>());
 			if(azioni != null && azioni.size() > 0)
 				azioniL.addAll(azioni.keySet());
 			allActionRedefined = this.allActionsRedefinedMappingErogazione(azioniL, listaMappingErogazionePortaApplicativa);
@@ -368,7 +368,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		
 		if(listaMappingFruzionePortaDelegata.size()>1) {
 			List<String> azioniL = new ArrayList<>();
-			Map<String,String> azioni = this.porteDelegateCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<String>());
+			Map<String,String> azioni = this.porteDelegateCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<>());
 			if(azioni != null && azioni.size() > 0)
 				azioniL.addAll(azioni.keySet());
 			allActionRedefined = this.allActionsRedefinedMappingFruizione(azioniL, listaMappingFruzionePortaDelegata);
@@ -615,7 +615,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			boolean profiloModipaSelezionato = false;
 			// solo se il protocollo modipa e' caricato faccio la verifica
 			if(this.core.getProtocolli().contains(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_MODIPA)) {
-				List<String> profiloModipaSelezionatoOpzioniAccettate = new ArrayList<String>();
+				List<String> profiloModipaSelezionatoOpzioniAccettate = new ArrayList<>();
 				profiloModipaSelezionatoOpzioniAccettate.add(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_MODIPA);
 				if(this.core.isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi()) {
 					profiloModipaSelezionatoOpzioniAccettate.add(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI);

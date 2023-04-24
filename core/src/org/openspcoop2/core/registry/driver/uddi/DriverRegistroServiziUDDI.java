@@ -1006,7 +1006,7 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			String [] urlXMLPdd = this.uddiLib.getUrlXmlPortaDominio(nomeFiltro,this.urlPrefix);
 			
 			// Esamina delle porte di dominio
-			List<String> nomiPdd = new ArrayList<String>();
+			List<String> nomiPdd = new ArrayList<>();
 			for(int i=0; i<urlXMLPdd.length; i++){
 				org.openspcoop2.core.registry.PortaDominio pd = null;
 				

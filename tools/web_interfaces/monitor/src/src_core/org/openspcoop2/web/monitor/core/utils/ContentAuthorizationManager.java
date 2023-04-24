@@ -66,8 +66,8 @@ public class ContentAuthorizationManager implements IContentAuthorizationManager
 
 	public ContentAuthorizationManager () throws Exception{
 		log.debug("Inizializzazione Content Authorization Manager in corso...");
-		this.mappaRuoliPagine = new HashMap<String, List<String>>();
-		this.mappaPagineModuli = new HashMap<String,String>();
+		this.mappaRuoliPagine = new HashMap<>();
+		this.mappaPagineModuli = new HashMap<>();
 
 		this.extendedContentAuthorizationManager = this.loadExtendedAuthorizationManager(log);
 

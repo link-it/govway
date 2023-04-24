@@ -53,7 +53,7 @@ public class APS {
 	private String ebmsBinding; // viene inizializzato una volta raccolte le azioni con stesso binding
 	private String ebmsMep; // viene inizializzato una volta raccolte le azioni con stesso binding
 	private String id;
-	private List<String> cnFruitori = new ArrayList<String>();
+	private List<String> cnFruitori = new ArrayList<>();
 	
 	private APS() {} // per clone
 	

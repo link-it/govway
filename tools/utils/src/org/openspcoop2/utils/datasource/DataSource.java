@@ -74,7 +74,7 @@ public class DataSource implements javax.sql.DataSource,java.sql.Wrapper {
 			return null;
 	
 		org.openspcoop2.utils.datasource.Connection[] list = this.releasedConnections.values().toArray(new org.openspcoop2.utils.datasource.Connection[1]);
-		List<String> listResource = new ArrayList<String>();
+		List<String> listResource = new ArrayList<>();
 		for (int i = 0; i < list.length; i++) {
 			org.openspcoop2.utils.datasource.Connection connection = (org.openspcoop2.utils.datasource.Connection) list[i];
 			StringBuilder bf = new StringBuilder();

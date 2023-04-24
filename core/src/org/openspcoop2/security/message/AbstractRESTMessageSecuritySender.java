@@ -22,7 +22,6 @@
 package org.openspcoop2.security.message;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
@@ -84,7 +83,7 @@ public abstract class AbstractRESTMessageSecuritySender implements IMessageSecur
 						throw new SecurityException(descriptionEngine+" (mode:"+mode+" message-role:"+restMessage.getMessageRole()+") property url '"+signatureDetachedPropertyUrl+"'; transporto context undefined");
 					}
 					if(restMessage.getTransportRequestContext().getParameters()==null) {
-						restMessage.getTransportRequestContext().setParameters(new HashMap<String, List<String>>());
+						restMessage.getTransportRequestContext().setParameters(new HashMap<>());
 					}
 					restMessage.getTransportRequestContext().removeParameter(signatureDetachedPropertyUrl); // sovrascrivo
 					//restMessage.getTransportRequestContext().getParametersFormBased().put(signatureDetachedPropertyUrl, detachedSignature);
@@ -101,7 +100,7 @@ public abstract class AbstractRESTMessageSecuritySender implements IMessageSecur
 					throw new SecurityException(descriptionEngine+" (mode:"+mode+" message-role:"+restMessage.getMessageRole()+") property url '"+signatureDetachedPropertyUrl+"'; transporto context undefined");
 				}
 				if(restMessage.getTransportRequestContext().getHeaders()==null) {
-					restMessage.getTransportRequestContext().setHeaders(new HashMap<String, List<String>>());
+					restMessage.getTransportRequestContext().setHeaders(new HashMap<>());
 				}
 				restMessage.getTransportRequestContext().removeHeader(signatureDetachedHeader); // sovrascrivo
 				//restMessage.getTransportRequestContext().getParametersTrasporto().put(signatureDetachedHeader, detachedSignature);
@@ -112,7 +111,7 @@ public abstract class AbstractRESTMessageSecuritySender implements IMessageSecur
 					throw new SecurityException(descriptionEngine+" (mode:"+mode+" message-role:"+restMessage.getMessageRole()+") property url '"+signatureDetachedPropertyUrl+"'; transporto context undefined");
 				}
 				if(restMessage.getTransportResponseContext().getHeaders()==null) {
-					restMessage.getTransportResponseContext().setHeaders(new HashMap<String, List<String>>());
+					restMessage.getTransportResponseContext().setHeaders(new HashMap<>());
 				}
 				restMessage.getTransportResponseContext().removeHeader(signatureDetachedHeader); // sovrascrivo
 				//restMessage.getTransportResponseContext().getParametersTrasporto().put(signatureDetachedHeader, detachedSignature);

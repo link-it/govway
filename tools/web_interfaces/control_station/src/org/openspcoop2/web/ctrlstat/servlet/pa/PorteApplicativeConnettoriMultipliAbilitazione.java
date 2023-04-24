@@ -146,7 +146,7 @@ public final class PorteApplicativeConnettoriMultipliAbilitazione extends Action
 					ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(apc.getServiceBinding());
 					
 					// controllo che il connettore non sia utilizzato in altri punti della configurazione
-					List<String> messaggiSezioniConnettore = new ArrayList<String>();
+					List<String> messaggiSezioniConnettore = new ArrayList<>();
 					int numeroElementiDaControllare = 1;
 					
 					boolean connettoreUtilizzatiConfig = porteApplicativeHelper.isConnettoreMultiploInUso(numeroElementiDaControllare,

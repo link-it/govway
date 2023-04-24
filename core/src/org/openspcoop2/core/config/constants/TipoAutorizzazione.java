@@ -175,14 +175,14 @@ public enum TipoAutorizzazione implements IEnumeration , Serializable , Cloneabl
 
 	
 	public static List<String> getAllValues(){
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		for (TipoAutorizzazione tmp : values()) {
 			l.add(tmp.getValue());
 		}
 		return l;
 	}
 	public static List<String> getValues(boolean authenticated,boolean optionalAuthenticated){
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		for (TipoAutorizzazione tmp : values()) {
 			
 			if(isAuthenticationRequired(tmp)){
@@ -210,7 +210,7 @@ public enum TipoAutorizzazione implements IEnumeration , Serializable , Cloneabl
 		return l;
 	}
 	public static List<String> getLabels(){
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		for (TipoAutorizzazione tmp : values()) {
 			l.add(tmp.getLabel());
 		}

@@ -68,7 +68,7 @@ public class TestBugEntityReferences {
     			xml_riga1+"\n"+
     			"</ns:contenutoInterno></ns:prova>";
 
-    	List<String> listTest = new ArrayList<String>();
+    	List<String> listTest = new ArrayList<>();
     	listTest.add("&");
     	listTest.add("<");
     	listTest.add(">");
@@ -76,7 +76,7 @@ public class TestBugEntityReferences {
     	listTest.add("'");
     	listTest.add("&<>\"'");
     	
-    	List<String> listReferences = new ArrayList<String>();
+    	List<String> listReferences = new ArrayList<>();
     	listReferences.add("(&amp; , &#38; , &#x26;)");
     	listReferences.add("(&lt; , &#60; , &#x3C;)");
     	listReferences.add("(&gt; , &#62; , &#x3E;)");
@@ -84,7 +84,7 @@ public class TestBugEntityReferences {
     	listReferences.add("(&apos; , &#39; , &#x27;)");
     	listReferences.add("(&amp; , &lt; , &gt; , &quot; , &apos;)");
     	
-    	List<String> listReferencesAttese = new ArrayList<String>();
+    	List<String> listReferencesAttese = new ArrayList<>();
     	listReferencesAttese.add("(&amp; , &amp; , &amp;)");
     	listReferencesAttese.add("(&lt; , &lt; , &lt;)");
     	listReferencesAttese.add("(&gt; , &gt; , &gt;)");

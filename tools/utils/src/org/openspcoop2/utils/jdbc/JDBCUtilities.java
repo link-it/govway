@@ -53,7 +53,7 @@ public class JDBCUtilities {
 	 */
 	public static void closePreparedStatement(Map<String,PreparedStatement> tablePstmt,Logger log){
 		if(tablePstmt!=null && !tablePstmt.isEmpty()){
-			java.util.ArrayList<String> listKeys = new ArrayList<String>();
+			java.util.ArrayList<String> listKeys = new ArrayList<>();
 			for (String key : tablePstmt.keySet()) {
 				listKeys.add(key);
 			}
@@ -80,7 +80,7 @@ public class JDBCUtilities {
 	 */
 	public static void executePreparedStatement(Map<String,PreparedStatement> tablePstmt) throws UtilsException{
 		if(tablePstmt!=null && !tablePstmt.isEmpty()){
-			java.util.ArrayList<String> listKeys = new ArrayList<String>();
+			java.util.ArrayList<String> listKeys = new ArrayList<>();
 			for (String key : tablePstmt.keySet()) {
 				listKeys.add(key);
 			}

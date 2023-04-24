@@ -70,7 +70,7 @@ public class SDICostanti {
     public static final String SDI_VERSIONE_FATTURA_PA_12 = it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.constants.FormatoTrasmissioneType.FPA12.name();
     public static final String SDI_VERSIONE_FATTURA_PR_12 = it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.constants.FormatoTrasmissioneType.FPR12.name();
     public static final String SDI_VERSIONE_FATTURA_SEMPLIFICATA_10 = it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_0.constants.FormatoTrasmissioneType.FSM10.name();
-    public static final List<String> SDI_VERSIONI_FATTURA = new ArrayList<String>();
+    public static final List<String> SDI_VERSIONI_FATTURA = new ArrayList<>();
     static{
     	SDI_VERSIONI_FATTURA.add(SDI_VERSIONE_FATTURA_PA_12);
     	SDI_VERSIONI_FATTURA.add(SDI_VERSIONE_FATTURA_PR_12);

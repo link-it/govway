@@ -883,7 +883,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			String urlInvocazione = ErogazioniApiHelper.getUrlInvocazioneFruizione(asps, env.idSoggetto.toIDSoggetto(), env);
 			ApiImplUrlInvocazioneView ret = new ApiImplUrlInvocazioneView();
 
-			Map<String, String> azioni = env.paCore.getAzioniConLabel(asps, aspc, false, true, new ArrayList<String>());
+			Map<String, String> azioni = env.paCore.getAzioniConLabel(asps, aspc, false, true, new ArrayList<>());
 			ret.setAzioni(Arrays.asList(azioni.keySet().toArray(new String[azioni.size()])));
 			ret.setForceInterface(Helper.statoFunzionalitaConfToBool(pdAzione.getForceInterfaceBased()));
 			ret.setModalita(Enum.valueOf(ModalitaIdentificazioneAzioneEnum.class, pdAzione.getIdentificazione().name()));

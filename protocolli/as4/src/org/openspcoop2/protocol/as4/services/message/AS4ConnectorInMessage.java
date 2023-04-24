@@ -133,11 +133,11 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 						
 			URLProtocolContext urlProtocolContext = new URLProtocolContextImpl(this.log);
 			
-			Map<String, List<String>> pFormBased = new HashMap<String, List<String>>();
+			Map<String, List<String>> pFormBased = new HashMap<>();
 			pFormBased.putAll(this.parameters);
 			urlProtocolContext.setParameters(pFormBased);
 			
-			Map<String, List<String>> pTrasporto = new HashMap<String, List<String>>();
+			Map<String, List<String>> pTrasporto = new HashMap<>();
 			pTrasporto.putAll(this.headers);
 			urlProtocolContext.setHeaders(pTrasporto);
 			
@@ -245,7 +245,7 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 	}
 	
 	
-	private Map<String, List<String>> headers = new HashMap<String, List<String>>();
+	private Map<String, List<String>> headers = new HashMap<>();
 	public void addHeader(String key, String value) throws ConnectorException {
 		TransportUtils.addHeader(this.headers, key, value);
 	}
@@ -255,7 +255,7 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 	}
 	
 	
-	private Map<String, List<String>> parameters = new HashMap<String, List<String>>();
+	private Map<String, List<String>> parameters = new HashMap<>();
 	public void addParameter(String key, String value) throws ConnectorException {
 		TransportUtils.addParameter(this.parameters,key, value);
 	}

@@ -71,14 +71,14 @@ public class RepositoryConnettori {
 	}
 	
 	public static List<String> getIdentificatoriConnettori_pd() {
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(RepositoryConnettori.connettori_pd!=null && !RepositoryConnettori.connettori_pd.isEmpty()) {
 			l.addAll(RepositoryConnettori.connettori_pd.keySet());
 		}
 		return l;
 	}
 	public static List<String> getIdentificatoriConnettori_pa() {
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		if(RepositoryConnettori.connettori_pa!=null && !RepositoryConnettori.connettori_pa.isEmpty()) {
 			l.addAll(RepositoryConnettori.connettori_pa.keySet());
 		}

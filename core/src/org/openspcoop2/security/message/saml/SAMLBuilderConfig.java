@@ -425,7 +425,7 @@ public class SAMLBuilderConfig {
 			throw new IOException(e.getMessage(),e);
 		}
 		if(pAttribute!=null && p.size()>0){
-			List<String> attrNames = new ArrayList<String>();
+			List<String> attrNames = new ArrayList<>();
 			Enumeration<?> enAttributes = pAttribute.keys();
 			if(enAttributes!=null){
 				while (enAttributes.hasMoreElements()) {

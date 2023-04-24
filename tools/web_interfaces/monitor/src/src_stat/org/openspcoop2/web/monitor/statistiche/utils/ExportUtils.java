@@ -623,7 +623,7 @@ public class ExportUtils {
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza, 
 			StatisticType modalitaTemporale,boolean distribuzionePerEsiti, boolean convertRawData) throws Exception {
 		// Scittura Intestazione
-		List<String> header = new ArrayList<String>();
+		List<String> header = new ArrayList<>();
 
 		header.add("nome");
 
@@ -722,7 +722,7 @@ public class ExportUtils {
 		for (int idx = 0 ; idx < list.size() ; idx ++){
 			Res risultato = list.get(idx);
 
-			List<Object> oneLine = new ArrayList<Object>();
+			List<Object> oneLine = new ArrayList<>();
 
 			String label = "";
 			Calendar c =  null;
@@ -1047,7 +1047,7 @@ public class ExportUtils {
 	private static JRDataSource getDatasourceAndamentoTemporalePersonalizzato (Map<String, List<Res>> results, Logger log,TipoVisualizzazione tipoVisualizzazione, 
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza, StatisticType modalitaTemporale, boolean convertRawData) throws Exception {
 		// Scittura Intestazione
-		List<String> header = new ArrayList<String>();
+		List<String> header = new ArrayList<>();
 		boolean isLatenzaTotale = false;	
 		boolean isLatenzaServizio = false;
 		boolean isLatenzaPorta = false;
@@ -1145,7 +1145,7 @@ public class ExportUtils {
 
 		// ciclo sulle colonne
 		for (int idx = 0 ; idx < numeroRisultati; idx ++) {
-			List<Object> oneLine = new ArrayList<Object>();
+			List<Object> oneLine = new ArrayList<>();
 
 			Set<String> keys = results.keySet();
 			Iterator<String> it = keys.iterator();
@@ -1289,7 +1289,7 @@ public class ExportUtils {
 	private static JRDataSource getDatasourceDistribuzione (List<ResDistribuzione> list,Logger log,TipoVisualizzazione tipoVisualizzazione, 
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza, TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim, boolean convertRawData) throws Exception {
 		// Scittura Intestazione
-		List<String> header = new ArrayList<String>();
+		List<String> header = new ArrayList<>();
 
 		header.add("nome");
 
@@ -1385,7 +1385,7 @@ public class ExportUtils {
 		for (int idx = 0 ; idx < list.size() ; idx ++){
 			ResDistribuzione risultato = list.get(idx);
 
-			List<Object> oneLine = new ArrayList<Object>();
+			List<Object> oneLine = new ArrayList<>();
 
 			// Servizio
 			String label = risultato.getRisultato() != null ? risultato.getRisultato() : "";

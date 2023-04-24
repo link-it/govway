@@ -45,7 +45,7 @@ public class AutenticazioneCanaleBasicHeaderAtLeastOneTest extends ConfigLoader 
 		request.setUsername("WebServerErogazioniSoggettoAuthBasic");
 		request.setPassword("123456");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Erogazione-BASIC-Username", "ApplicativoSoggettoInternoTestFruitore1");
 		headers.put("X-Erogazione-BASIC-Password", "123456");
 		Utilities._test(request,
@@ -63,7 +63,7 @@ public class AutenticazioneCanaleBasicHeaderAtLeastOneTest extends ConfigLoader 
 	
 	@Test
 	public void erogazione_autenticazioneBasic_credenzialiNonFornite() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Erogazione-BASIC-Username", "ApplicativoSoggettoInternoTestFruitore1");
 		headers.put("X-Erogazione-BASIC-Password", "123456");
 		Utilities._test(TipoServizio.EROGAZIONE,
@@ -85,7 +85,7 @@ public class AutenticazioneCanaleBasicHeaderAtLeastOneTest extends ConfigLoader 
 		request.setUsername("WebServerErogazioniSoggettoAuthBasicErrate");
 		request.setPassword("123456");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Erogazione-BASIC-Username", "ApplicativoSoggettoInternoTestFruitore1");
 		headers.put("X-Erogazione-BASIC-Password", "123456");
 		Utilities._test(request,
@@ -108,7 +108,7 @@ public class AutenticazioneCanaleBasicHeaderAtLeastOneTest extends ConfigLoader 
 		request.setUsername("WebServerErogazioniSoggettoAuthBasic");
 		request.setPassword("123456");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Erogazione-SSL-Subject", "l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM");
 		headers.put("X-Erogazione-SSL-Issuer", "/l=Pisa/st=Italy/ou=Test/o=Test/c=IT/cn=ExampleClient1HSM/");
 		Utilities._test(request,
@@ -131,7 +131,7 @@ public class AutenticazioneCanaleBasicHeaderAtLeastOneTest extends ConfigLoader 
 		request.setUsername("WebServerErogazioniSoggettoAuthBasic");
 		request.setPassword("123456");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Erogazione-Principal", "ApplicativoSoggettoInternoTestFruitore1");
 		Utilities._test(request,
 				TipoServizio.EROGAZIONE,
@@ -153,7 +153,7 @@ public class AutenticazioneCanaleBasicHeaderAtLeastOneTest extends ConfigLoader 
 		request.setUsername("WebServerErogazioniSoggettoAuthBasic");
 		request.setPassword("123456");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		Utilities._test(request,
 				TipoServizio.EROGAZIONE,
 				"SoggettoInternoTestGestoreCredenzialeBasic",
@@ -179,7 +179,7 @@ public class AutenticazioneCanaleBasicHeaderAtLeastOneTest extends ConfigLoader 
 		request.setUsername("WebServerFruizioniSoggettoAuthBasic");
 		request.setPassword("123456");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Fruizione-BASIC-Username", "ApplicativoSoggettoInternoTestGestoreCredenzialiBasic");
 		headers.put("X-Fruizione-BASIC-Password", "123456");
 		Utilities._test(request,
@@ -197,7 +197,7 @@ public class AutenticazioneCanaleBasicHeaderAtLeastOneTest extends ConfigLoader 
 	
 	@Test
 	public void fruizione_autenticazioneBasic_credenzialiNonFornite() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Fruizione-BASIC-Username", "ApplicativoSoggettoInternoTestGestoreCredenzialiBasic");
 		headers.put("X-Fruizione-BASIC-Password", "123456");
 		Utilities._test(TipoServizio.FRUIZIONE,
@@ -219,7 +219,7 @@ public class AutenticazioneCanaleBasicHeaderAtLeastOneTest extends ConfigLoader 
 		request.setUsername("WebServerFruizioniSoggettoAuthBasicErrate");
 		request.setPassword("123456");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Fruizione-BASIC-Username", "ApplicativoSoggettoInternoTestGestoreCredenzialiBasic");
 		headers.put("X-Fruizione-BASIC-Password", "123456");
 		Utilities._test(request,
@@ -242,7 +242,7 @@ public class AutenticazioneCanaleBasicHeaderAtLeastOneTest extends ConfigLoader 
 		request.setUsername("WebServerFruizioniSoggettoAuthBasic");
 		request.setPassword("123456");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Fruizione-SSL-Subject", "/cn=ApplicativoSoggettoInternoTestGestoreCredenzialiBasic/");
 		Utilities._test(request,
 				TipoServizio.FRUIZIONE,
@@ -264,7 +264,7 @@ public class AutenticazioneCanaleBasicHeaderAtLeastOneTest extends ConfigLoader 
 		request.setUsername("WebServerFruizioniSoggettoAuthBasic");
 		request.setPassword("123456");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-Fruizione-Principal", "ApplicativoSoggettoInternoTestGestoreCredenzialiBasic");
 		Utilities._test(request,
 				TipoServizio.FRUIZIONE,
@@ -286,7 +286,7 @@ public class AutenticazioneCanaleBasicHeaderAtLeastOneTest extends ConfigLoader 
 		request.setUsername("WebServerFruizioniSoggettoAuthBasic");
 		request.setPassword("123456");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		Utilities._test(request,
 				TipoServizio.FRUIZIONE,
 				"SoggettoInternoTestGestoreCredenzialeBasic",

@@ -117,7 +117,7 @@ public class MimeTypeUtils {
 		// default
 		return "application/octet-stream";
 	}
-	private static List<String> classMimesTypes = new ArrayList<String>();
+	private static List<String> classMimesTypes = new ArrayList<>();
 	static {
 		classMimesTypes.add("application/pdf");
 		classMimesTypes.add("application/postscript");

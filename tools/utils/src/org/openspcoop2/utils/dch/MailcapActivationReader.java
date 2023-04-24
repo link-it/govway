@@ -44,7 +44,7 @@ import org.openspcoop2.utils.UtilsException;
 
 public class MailcapActivationReader {
    
-	 private static Map<String, String> mimeTypes = new HashMap<String, String>();
+	 private static Map<String, String> mimeTypes = new HashMap<>();
 	
 	 public static void initDataContentHandler(Logger log,boolean forceLoadMailcap) throws UtilsException{
 	      try

@@ -149,7 +149,7 @@ public class Connettore extends org.openspcoop2.utils.beans.BaseBeanWithId imple
 
 
 public Map<String,String> getProperties(){
-   Map<String, String> map = new HashMap<String, String>();
+   Map<String, String> map = new HashMap<>();
    Iterator<Property> it = this.property.iterator();
    while (it!=null && it.hasNext()){
       Property elem = it.next();

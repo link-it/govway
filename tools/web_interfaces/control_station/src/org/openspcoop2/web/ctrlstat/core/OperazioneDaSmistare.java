@@ -79,7 +79,7 @@ public class OperazioneDaSmistare implements java.io.Serializable {
 			v.add(value);
 
 		} else {
-			v = new ArrayList<String>();
+			v = new ArrayList<>();
 			v.add(value);
 
 		}

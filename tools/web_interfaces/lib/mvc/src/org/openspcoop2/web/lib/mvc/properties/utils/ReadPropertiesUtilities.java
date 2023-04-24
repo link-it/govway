@@ -51,7 +51,7 @@ import org.openspcoop2.web.lib.mvc.properties.beans.SubsectionBean;
 public class ReadPropertiesUtilities {
 	
 	public static List<String> getListaNomiProperties(Config config){
-		List<String> lista = new ArrayList<String>();
+		List<String> lista = new ArrayList<>();
 		
 		org.openspcoop2.core.mvc.properties.Properties properties = config.getProperties();
 		if(properties != null) {

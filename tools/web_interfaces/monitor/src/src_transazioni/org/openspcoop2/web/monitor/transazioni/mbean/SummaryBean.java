@@ -1176,7 +1176,7 @@ public class SummaryBean implements Serializable{
 			UserDetailsBean loggedUser = Utility.getLoggedUser();
 			if(loggedUser!=null){
 				String tipoProtocollo = this.getProtocollo();
-				Map<String,String> mapInternal = new HashMap<String,String>();
+				Map<String,String> mapInternal = new HashMap<>();
 				
 				if(tipoProtocollo != null) {
 					List<IDSoggetto> tipiNomiSoggettiAssociati = loggedUser.getUtenteSoggettoProtocolliMap().containsKey(tipoProtocollo) ? loggedUser.getUtenteSoggettoProtocolliMap().get(tipoProtocollo) : new ArrayList<>();
@@ -1289,7 +1289,7 @@ public class SummaryBean implements Serializable{
 			String tipoSoggetto = null;
 			String nomeSoggetto = null;
 			
-			Map<String,String> mapInternal = new HashMap<String,String>();
+			Map<String,String> mapInternal = new HashMap<>();
 			
 			// se non ho fissato un soggetto posso cercare anche per soggetto
 			if(this.isShowFiltroSoggettoLocale()) {

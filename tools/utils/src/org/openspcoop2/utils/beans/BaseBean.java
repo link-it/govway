@@ -131,7 +131,7 @@ public abstract class BaseBean {
 		return this._equalsEngine(object,null);
 	}
 	public boolean equals(Object object,boolean checkLongId){
-		List<String> listFieldsNotCheck = new ArrayList<String>();
+		List<String> listFieldsNotCheck = new ArrayList<>();
 		if(checkLongId==false){
 			listFieldsNotCheck.add("id");
 		}
@@ -434,7 +434,7 @@ public abstract class BaseBean {
 		return _toStringEngine(false,fieldsNotIncluded);
 	}
 	public String toString(boolean reportHTML,boolean includeLongId){
-		List<String> fieldsNotIncluded = new ArrayList<String>();
+		List<String> fieldsNotIncluded = new ArrayList<>();
 		if(includeLongId==false){
 			fieldsNotIncluded.add("id");
 		}
@@ -582,7 +582,7 @@ public abstract class BaseBean {
 		return _diffEngine(object,bf,false,fieldsNotIncluded);
 	}
 	public String diff(Object object,StringBuilder bf,boolean reportHTML,boolean includeLongId){
-		List<String> fieldsNotIncluded = new ArrayList<String>();
+		List<String> fieldsNotIncluded = new ArrayList<>();
 		if(includeLongId==false){
 			fieldsNotIncluded.add("id");
 		}

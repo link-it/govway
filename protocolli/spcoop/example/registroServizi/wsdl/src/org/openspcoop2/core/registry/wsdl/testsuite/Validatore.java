@@ -326,7 +326,7 @@ public class Validatore {
 		
 		if(implementativo){
 			
-			Map<String, String> mappingPortTypeBinding = new HashMap<String, String>();
+			Map<String, String> mappingPortTypeBinding = new HashMap<>();
 			
 			// CHECK BINDING
 			Map<?, ?> mBindings = wsdl.getAllBindings();

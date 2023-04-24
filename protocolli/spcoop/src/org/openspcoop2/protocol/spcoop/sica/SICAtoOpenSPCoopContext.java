@@ -227,7 +227,7 @@ public class SICAtoOpenSPCoopContext {
 	
 	
 	// --------- Array list contenente il mapping fra Soggetti e CodiciIPA
-	private Map<String, String> mappingSoggettoSPCoopToCodiceIPA = new HashMap<String, String>();
+	private Map<String, String> mappingSoggettoSPCoopToCodiceIPA = new HashMap<>();
 	
 	public void addMappingSoggettoSPCoopToCodiceIPA(IDSoggetto idSoggettoSPCoop,String codiceIPA){
 		if(codiceIPA==null || idSoggettoSPCoop==null || idSoggettoSPCoop.toString() ==null)
@@ -261,7 +261,7 @@ public class SICAtoOpenSPCoopContext {
 	
 	
 	// --------- Array list contenente il mapping fra uri AccordiServizioParteSpecifica e IDServizio OpenSPCoop
-	private Map<String,String> mappingServizioSPCoopToUriAPS = new HashMap<String,String>();
+	private Map<String,String> mappingServizioSPCoopToUriAPS = new HashMap<>();
 	
 	public void addMappingServizioToUriAPS(IRegistryReader registryReader,IDServizio idServizioSPCoop) throws SICAToOpenSPCoopUtilitiesException{
 		if(idServizioSPCoop==null || 

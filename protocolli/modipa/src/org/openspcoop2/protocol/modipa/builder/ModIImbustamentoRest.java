@@ -630,7 +630,7 @@ public class ModIImbustamentoRest {
 			}
 		}
 		
-		Map<String, String> claimsCustom = new HashMap<String, String>();
+		Map<String, String> claimsCustom = new HashMap<>();
 		if(securityConfig.getMultipleHeaderClaims()!=null && !securityConfig.getMultipleHeaderClaims().isEmpty()) {
 			for (Object oKeyP : securityConfig.getMultipleHeaderClaims().keySet()) {
 				if(oKeyP!=null && oKeyP instanceof String) {
@@ -701,7 +701,7 @@ public class ModIImbustamentoRest {
 					
 					ObjectNode httpHeaderNode = null;
 					String hdrName = null;
-					List<String> hdrValues = new ArrayList<String>();
+					List<String> hdrValues = new ArrayList<>();
 					
 					if(httpHeader.toLowerCase().equals(HttpConstants.DIGEST.toLowerCase())) {
 						if(digestValue!=null) {

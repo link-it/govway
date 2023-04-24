@@ -69,7 +69,7 @@ public class Search implements Serializable, ISearch {
 			this.indexIniziale.put(i, Search.INDEX_DEFAULT);
 			this.searchString.put(i, Search.SEARCH_DEFAULT);
 			this.numEntries.put(i, Search.NUM_ENTRIES_DEFAULT);
-			this.filter.put(i, new HashMap<String,String>());
+			this.filter.put(i, new HashMap<>());
 		}
 
 	}
@@ -94,7 +94,7 @@ public class Search implements Serializable, ISearch {
 			this.indexIniziale.put(i, Search.INDEX_DEFAULT);
 			this.searchString.put(i, Search.SEARCH_DEFAULT);
 			this.numEntries.put(i, Search.NUM_ENTRIES_DEFAULT);
-			this.filter.put(i, new HashMap<String,String>());
+			this.filter.put(i, new HashMap<>());
 		}
 
 	}

@@ -306,7 +306,7 @@ public class RegistroServiziReader {
 				RegistroServiziReader.removeObjectCache(keyIdAccordo);
 			}
 			
-			List<String> keyForClean = new ArrayList<String>();
+			List<String> keyForClean = new ArrayList<>();
 			List<String> keys = RegistroServiziReader.keysCache();
 			if(keys!=null && !keys.isEmpty()) {
 				
@@ -375,7 +375,7 @@ public class RegistroServiziReader {
 				// ignore
 			}
 			
-			List<String> keyForClean = new ArrayList<String>();
+			List<String> keyForClean = new ArrayList<>();
 			List<String> keys = RegistroServiziReader.keysCache();
 			if(keys!=null && !keys.isEmpty()) {
 				
@@ -540,7 +540,7 @@ public class RegistroServiziReader {
 			String keyServiceBinding = RegistroServizi._getKey_getServiceBinding(idServizio);
 			RegistroServiziReader.removeObjectCache(keyServiceBinding);
 			
-			List<String> keyForClean = new ArrayList<String>();
+			List<String> keyForClean = new ArrayList<>();
 			List<String> keys = RegistroServiziReader.keysCache();
 			if(keys!=null && !keys.isEmpty()) {
 				
@@ -626,7 +626,7 @@ public class RegistroServiziReader {
 			String keyPdd = RegistroServizi._getKey_getPortaDominio(portaDominio);
 			RegistroServiziReader.removeObjectCache(keyPdd);
 			
-			List<String> keyForClean = new ArrayList<String>();
+			List<String> keyForClean = new ArrayList<>();
 			List<String> keys = RegistroServiziReader.keysCache();
 			if(keys!=null && !keys.isEmpty()) {
 				
@@ -668,7 +668,7 @@ public class RegistroServiziReader {
 			String keySoggetto = RegistroServizi._getKey_getSoggetto(idSoggetto);
 			RegistroServiziReader.removeObjectCache(keySoggetto);
 			
-			List<String> keyForClean = new ArrayList<String>();
+			List<String> keyForClean = new ArrayList<>();
 			List<String> keys = RegistroServiziReader.keysCache();
 			if(keys!=null && !keys.isEmpty()) {
 				
@@ -734,7 +734,7 @@ public class RegistroServiziReader {
 			String keyRuolo = RegistroServizi._getKey_getRuolo(idRuolo.getNome());
 			RegistroServiziReader.removeObjectCache(keyRuolo);
 			
-			List<String> keyForClean = new ArrayList<String>();
+			List<String> keyForClean = new ArrayList<>();
 			List<String> keys = RegistroServiziReader.keysCache();
 			if(keys!=null && !keys.isEmpty()) {
 				
@@ -776,7 +776,7 @@ public class RegistroServiziReader {
 			String keyScope = RegistroServizi._getKey_getScope(idScope.getNome());
 			RegistroServiziReader.removeObjectCache(keyScope);
 			
-			List<String> keyForClean = new ArrayList<String>();
+			List<String> keyForClean = new ArrayList<>();
 			List<String> keys = RegistroServiziReader.keysCache();
 			if(keys!=null && !keys.isEmpty()) {
 				
@@ -3334,7 +3334,7 @@ public class RegistroServiziReader {
 		} else if (soggetto.sizeProprietaList() <= 0) {
 			return null;
 		} else {
-			Map<String, String> properties = new HashMap<String, String>();
+			Map<String, String> properties = new HashMap<>();
 
 			for(int i = 0; i < soggetto.sizeProprietaList(); ++i) {
 				Proprieta p = soggetto.getProprieta(i);

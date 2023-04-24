@@ -722,8 +722,8 @@ public class OptimizedHeaderTest {
 		xmlDiffEngine.initialize(XMLDiffImplType.XML_UNIT, xmlDiffOptions);
 		
 		TransportRequestContext req = new TransportRequestContext();
-		Map<String, List<String>> parametriTrasporto = new HashMap<String, List<String>>();
-		List<String> list = new ArrayList<String>();
+		Map<String, List<String>> parametriTrasporto = new HashMap<>();
+		List<String> list = new ArrayList<>();
 		if(fileName.startsWith("requestSOAPMultipartRelatedMIMEpdf")) {
 			String ctMultipartRefreshed = null;
 			String ct = MessageType.SOAP_11.equals(messageType) ? HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
@@ -1101,12 +1101,12 @@ public class OptimizedHeaderTest {
 						newString = newString.replaceFirst("<xsd:skcotSyub>", "<xsd:skcotSyub xmlns:xsd=\"http://services.samples/xsd\">");
 						int indexOf = newString.indexOf("<soapenv:Body>");
 						
-						List<String> listSrc = new ArrayList<String>();
+						List<String> listSrc = new ArrayList<>();
 						listSrc.add("&lt;redro>&lt;lobmys>IBM&lt;/lobmys>&lt;DIreyub>asankha&lt;/DIreyub>&lt;ecirp>140.34&lt;/ecirp>&lt;emulov>2000&lt;/emulov>&lt;/redro>");
 						listSrc.add("&lt;redro>&lt;lobmys>MSFT&lt;/lobmys>&lt;DIreyub>ruwan&lt;/DIreyub>&lt;ecirp>23.56&lt;/ecirp>&lt;emulov>8030&lt;/emulov>&lt;/redro>");
 						listSrc.add("&lt;redro>&lt;lobmys>SUN&lt;/lobmys>&lt;DIreyub>indika&lt;/DIreyub>&lt;ecirp>14.56&lt;/ecirp>&lt;emulov>500&lt;/emulov>&lt;/redro>");
 						listSrc.add("&lt;redro>&lt;lobmys>GOOG&lt;/lobmys>&lt;DIreyub>chathura&lt;/DIreyub>&lt;ecirp>60.24&lt;/ecirp>&lt;emulov>40000&lt;/emulov>&lt;/redro>");
-						List<String> listDest = new ArrayList<String>();
+						List<String> listDest = new ArrayList<>();
 						listDest.add("&lt;redro&gt;&lt;lobmys&gt;IBM&lt;/lobmys&gt;&lt;DIreyub&gt;asankha&lt;/DIreyub&gt;&lt;ecirp&gt;140.34&lt;/ecirp&gt;&lt;emulov&gt;2000&lt;/emulov&gt;&lt;/redro&gt;");
 						listDest.add("&lt;redro&gt;&lt;lobmys&gt;MSFT&lt;/lobmys&gt;&lt;DIreyub&gt;ruwan&lt;/DIreyub&gt;&lt;ecirp&gt;23.56&lt;/ecirp&gt;&lt;emulov&gt;8030&lt;/emulov&gt;&lt;/redro&gt;");
 						listDest.add("&lt;redro&gt;&lt;lobmys&gt;SUN&lt;/lobmys&gt;&lt;DIreyub&gt;indika&lt;/DIreyub&gt;&lt;ecirp&gt;14.56&lt;/ecirp&gt;&lt;emulov&gt;500&lt;/emulov&gt;&lt;/redro&gt;");
@@ -1413,12 +1413,12 @@ public class OptimizedHeaderTest {
 				if(fileName.startsWith("requestHeaderBodyXmlEntityOpenOnly")) {
 					newString = resourceAsString.replace("</soapenv:Header>", newHeader+"</soapenv:Header>");
 					
-					List<String> listSrc = new ArrayList<String>();
+					List<String> listSrc = new ArrayList<>();
 					listSrc.add("&lt;redro>&lt;lobmys>IBM&lt;/lobmys>&lt;DIreyub>asankha&lt;/DIreyub>&lt;ecirp>140.34&lt;/ecirp>&lt;emulov>2000&lt;/emulov>&lt;/redro>");
 					listSrc.add("&lt;redro>&lt;lobmys>MSFT&lt;/lobmys>&lt;DIreyub>ruwan&lt;/DIreyub>&lt;ecirp>23.56&lt;/ecirp>&lt;emulov>8030&lt;/emulov>&lt;/redro>");
 					listSrc.add("&lt;redro>&lt;lobmys>SUN&lt;/lobmys>&lt;DIreyub>indika&lt;/DIreyub>&lt;ecirp>14.56&lt;/ecirp>&lt;emulov>500&lt;/emulov>&lt;/redro>");
 					listSrc.add("&lt;redro>&lt;lobmys>GOOG&lt;/lobmys>&lt;DIreyub>chathura&lt;/DIreyub>&lt;ecirp>60.24&lt;/ecirp>&lt;emulov>40000&lt;/emulov>&lt;/redro>");
-					List<String> listDest = new ArrayList<String>();
+					List<String> listDest = new ArrayList<>();
 					listDest.add("&lt;redro&gt;&lt;lobmys&gt;IBM&lt;/lobmys&gt;&lt;DIreyub&gt;asankha&lt;/DIreyub&gt;&lt;ecirp&gt;140.34&lt;/ecirp&gt;&lt;emulov&gt;2000&lt;/emulov&gt;&lt;/redro&gt;");
 					listDest.add("&lt;redro&gt;&lt;lobmys&gt;MSFT&lt;/lobmys&gt;&lt;DIreyub&gt;ruwan&lt;/DIreyub&gt;&lt;ecirp&gt;23.56&lt;/ecirp&gt;&lt;emulov&gt;8030&lt;/emulov&gt;&lt;/redro&gt;");
 					listDest.add("&lt;redro&gt;&lt;lobmys&gt;SUN&lt;/lobmys&gt;&lt;DIreyub&gt;indika&lt;/DIreyub&gt;&lt;ecirp&gt;14.56&lt;/ecirp&gt;&lt;emulov&gt;500&lt;/emulov&gt;&lt;/redro&gt;");
@@ -2030,12 +2030,12 @@ public class OptimizedHeaderTest {
 					newString = newString.replaceFirst("<xsd:skcotSyub>", "<xsd:skcotSyub xmlns:xsd=\"http://services.samples/xsd\">");
 					int indexOf = newString.indexOf("<soapenv:Body>");
 					
-					List<String> listSrc = new ArrayList<String>();
+					List<String> listSrc = new ArrayList<>();
 					listSrc.add("&lt;redro>&lt;lobmys>IBM&lt;/lobmys>&lt;DIreyub>asankha&lt;/DIreyub>&lt;ecirp>140.34&lt;/ecirp>&lt;emulov>2000&lt;/emulov>&lt;/redro>");
 					listSrc.add("&lt;redro>&lt;lobmys>MSFT&lt;/lobmys>&lt;DIreyub>ruwan&lt;/DIreyub>&lt;ecirp>23.56&lt;/ecirp>&lt;emulov>8030&lt;/emulov>&lt;/redro>");
 					listSrc.add("&lt;redro>&lt;lobmys>SUN&lt;/lobmys>&lt;DIreyub>indika&lt;/DIreyub>&lt;ecirp>14.56&lt;/ecirp>&lt;emulov>500&lt;/emulov>&lt;/redro>");
 					listSrc.add("&lt;redro>&lt;lobmys>GOOG&lt;/lobmys>&lt;DIreyub>chathura&lt;/DIreyub>&lt;ecirp>60.24&lt;/ecirp>&lt;emulov>40000&lt;/emulov>&lt;/redro>");
-					List<String> listDest = new ArrayList<String>();
+					List<String> listDest = new ArrayList<>();
 					listDest.add("&lt;redro&gt;&lt;lobmys&gt;IBM&lt;/lobmys&gt;&lt;DIreyub&gt;asankha&lt;/DIreyub&gt;&lt;ecirp&gt;140.34&lt;/ecirp&gt;&lt;emulov&gt;2000&lt;/emulov&gt;&lt;/redro&gt;");
 					listDest.add("&lt;redro&gt;&lt;lobmys&gt;MSFT&lt;/lobmys&gt;&lt;DIreyub&gt;ruwan&lt;/DIreyub&gt;&lt;ecirp&gt;23.56&lt;/ecirp&gt;&lt;emulov&gt;8030&lt;/emulov&gt;&lt;/redro&gt;");
 					listDest.add("&lt;redro&gt;&lt;lobmys&gt;SUN&lt;/lobmys&gt;&lt;DIreyub&gt;indika&lt;/DIreyub&gt;&lt;ecirp&gt;14.56&lt;/ecirp&gt;&lt;emulov&gt;500&lt;/emulov&gt;&lt;/redro&gt;");
@@ -2266,7 +2266,7 @@ public class OptimizedHeaderTest {
 	private static Runtime runtime = null;
 	private static long precedenteCalcolo = -1;
 	private static long skip = 0;
-	private static List<String> error = new ArrayList<String>();
+	private static List<String> error = new ArrayList<>();
 	private static boolean printAllIterations = false;
 	private static void printMemory(int iterazione, long interazioniPossibili, long tolleranza_bytes) throws Exception {
 		if(testHeap) {
@@ -2322,8 +2322,8 @@ public class OptimizedHeaderTest {
 			check.toString();
 			
 			TransportRequestContext req = new TransportRequestContext();
-			Map<String, List<String>> parametriTrasporto = new HashMap<String, List<String>>();
-			List<String> list = new ArrayList<String>();
+			Map<String, List<String>> parametriTrasporto = new HashMap<>();
+			List<String> list = new ArrayList<>();
 			list.add(contentType);
 			parametriTrasporto.put(HttpConstants.CONTENT_TYPE, list);
 			req.setHeaders(parametriTrasporto);
@@ -2350,8 +2350,8 @@ public class OptimizedHeaderTest {
 			//System.out.println("CT ["+ctMultipartRefreshed+"]");
 			
 			TransportRequestContext req = new TransportRequestContext();
-			Map<String, List<String>> parametriTrasporto = new HashMap<String, List<String>>();
-			List<String> list = new ArrayList<String>();
+			Map<String, List<String>> parametriTrasporto = new HashMap<>();
+			List<String> list = new ArrayList<>();
 			list.add(ctMultipartRefreshed);
 			parametriTrasporto.put(HttpConstants.CONTENT_TYPE, list);
 			req.setHeaders(parametriTrasporto);

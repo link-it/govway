@@ -381,7 +381,7 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 			if(encrypt){
 				updateSecurityContextForEncryption(msgSecCtx, messageSecurityContext.getOutgoingProperties(), aliasEncryptUser);
 				
-				Map<String, String> passwordMap_encryption = new HashMap<String, String>();
+				Map<String, String> passwordMap_encryption = new HashMap<>();
 				passwordMap_encryption.put(aliasEncryptUser, aliasEncryptPassword);
 
 				if(encryptionTrustStoreKS==null){
@@ -406,7 +406,7 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 				
 				updateSecurityContextForSignature(msgSecCtx, messageSecurityContext.getOutgoingProperties(), aliasSignatureUser);
 								
-				Map<String, String> passwordMap_signature = new HashMap<String, String>();
+				Map<String, String> passwordMap_signature = new HashMap<>();
 				passwordMap_signature.put(aliasSignatureUser, aliasSignaturePassword);
 
 				if(signatureTrustStoreKS==null){

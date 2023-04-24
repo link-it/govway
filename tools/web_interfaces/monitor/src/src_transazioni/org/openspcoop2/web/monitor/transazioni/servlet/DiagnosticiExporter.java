@@ -192,7 +192,7 @@ public class DiagnosticiExporter extends HttpServlet{
 
 					//devo impostare solo l'idtransazione
 					//filter.setIdEgov(this.diagnosticiBean.getIdEgov());	
-					Map<String, String> properties = new HashMap<String, String>();
+					Map<String, String> properties = new HashMap<>();
 					properties.put("id_transazione", t.getIdTransazione());
 					filter.setProperties(properties);
 

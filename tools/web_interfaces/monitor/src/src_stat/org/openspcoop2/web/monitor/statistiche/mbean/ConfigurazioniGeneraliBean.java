@@ -281,15 +281,15 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 	public String exportSelected() {
 		try {
 			// recupero lista diagnostici
-			List<String> idReport = new ArrayList<String>();
+			List<String> idReport = new ArrayList<>();
 
 			// se nn sono in select all allore prendo solo quelle selezionate
 			if (!this.isSelectedAll()) {
 
 				// NOTA: Al massimo sono selezionate 25 report
 				// NOTA2: le configurazioni sono ordinate per nome
-				List<String> orderFix = new ArrayList<String>();
-				Map<String, String> mapIds = new HashMap<String, String>();
+				List<String> orderFix = new ArrayList<>();
+				Map<String, String> mapIds = new HashMap<>();
 
 				Iterator<ConfigurazioneGenerale> it = this.selectedIds.keySet().iterator();
 				while (it.hasNext()) {

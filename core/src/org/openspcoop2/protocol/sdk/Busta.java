@@ -1174,7 +1174,7 @@ public class Busta implements java.io.Serializable {
 	}
 
 	public String[] getPropertiesValues() {
-		List<String> propertiesValues = new ArrayList<String>();
+		List<String> propertiesValues = new ArrayList<>();
 		if(this.busta.getProtocollo()!=null){
 			for (int i = 0; i < this.busta.getProtocollo().sizeProprietaList(); i++) {
 				Proprieta proprieta = this.busta.getProtocollo().getProprieta(i);
@@ -1190,7 +1190,7 @@ public class Busta implements java.io.Serializable {
 	}
 
 	public String[] getPropertiesNames() {
-		List<String> propertiesValues = new ArrayList<String>();
+		List<String> propertiesValues = new ArrayList<>();
 		if(this.busta.getProtocollo()!=null){
 			for (int i = 0; i < this.busta.getProtocollo().sizeProprietaList(); i++) {
 				Proprieta proprieta = this.busta.getProtocollo().getProprieta(i);
@@ -1216,7 +1216,7 @@ public class Busta implements java.io.Serializable {
 //	}
 //
 //	public Map<String, String> getProperties() {
-//		Map<String, String> map = new HashMap<String, String>();
+//		Map<String, String> map = new HashMap<>();
 //		if(this.busta.getProtocollo()!=null){
 //			for (int i = 0; i < this.busta.getProtocollo().sizeProprietaList(); i++) {
 //				Proprieta proprieta = this.busta.getProtocollo().getProprieta(i);

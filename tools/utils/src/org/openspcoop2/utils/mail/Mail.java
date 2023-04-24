@@ -45,7 +45,7 @@ public class Mail {
 	
 	private String from;
 	private String to;
-	private List<String> cc = new ArrayList<String>();	
+	private List<String> cc = new ArrayList<>();	
 	private String subject;
 	
 	private String userAgent;

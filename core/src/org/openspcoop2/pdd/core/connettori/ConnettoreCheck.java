@@ -1102,7 +1102,7 @@ public class ConnettoreCheck {
 			try {
 				GenericProperties gp = ((DriverConfigurazioneDB)iDriverConfigurazioneGet).getGenericProperties(tipologia, nome);
 				List<Connettore> l = convertPolicyToConnettore(gp, log);
-				List<String> hostPort = new ArrayList<String>();
+				List<String> hostPort = new ArrayList<>();
 				if(l!=null && !l.isEmpty()) {
 					StringBuilder sb = new StringBuilder();
 					for (Connettore connettore : l) {

@@ -84,7 +84,7 @@ public class Environment {
 
 	public final boolean gestioneCanali;
 	public String canaleDefault;
-	public List<String> canali = new ArrayList<String>();
+	public List<String> canali = new ArrayList<>();
 	
 	public Environment(HttpServletRequest req, ProfiloEnum profilo, String soggetto, IContext ctx) throws Exception {
 		

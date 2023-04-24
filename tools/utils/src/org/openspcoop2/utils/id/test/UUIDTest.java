@@ -353,7 +353,7 @@ public class UUIDTest {
 
 class ClientTestThread implements Runnable{
 
-	private List<String> check = new ArrayList<String>();
+	private List<String> check = new ArrayList<>();
 	private boolean valoriDuplicati = false;
 	
 	private void put(String v,boolean rilevaValoriDuplicati) throws Exception{
@@ -410,7 +410,7 @@ class ClientTestThread implements Runnable{
 	}
 
 	public ClientTestThread(int index, boolean debug){
-		this.valoriGenerati = new ArrayList<String>();
+		this.valoriGenerati = new ArrayList<>();
 		this.index = index;
 		this.debug = debug;
 	}

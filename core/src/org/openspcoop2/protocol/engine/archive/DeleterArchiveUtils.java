@@ -749,7 +749,7 @@ public class DeleterArchiveUtils {
 			
 			// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
 			
-			List<String> whereIsInUso = new ArrayList<String>();
+			List<String> whereIsInUso = new ArrayList<>();
 			if (this.importerEngine.isControlloTraffico_configurationPolicyInUso(nomePolicy, whereIsInUso)) {
 				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(nomePolicy, whereIsInUso,false,NEW_LINE));
 			}
@@ -806,7 +806,7 @@ public class DeleterArchiveUtils {
 			
 			// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
 			
-			List<String> whereIsInUso = new ArrayList<String>();
+			List<String> whereIsInUso = new ArrayList<>();
 			if (this.importerEngine.isControlloTraffico_activePolicyInUso(ruoloPorta, nomePorta, attivazionePolicy.getAlias(), whereIsInUso)) {
 				// Il metodo inUso sopra ritorna sempre false.
 				//throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(ruoloPorta, nomePorta, attivazionePolicy.getAlias(), whereIsInUso,false,NEW_LINE));
@@ -864,7 +864,7 @@ public class DeleterArchiveUtils {
 			
 			// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
 			
-			List<String> whereIsInUso = new ArrayList<String>();
+			List<String> whereIsInUso = new ArrayList<>();
 			if (this.importerEngine.isAllarmeInUso(ruoloPorta, nomePorta, allarme.getAlias(), whereIsInUso)) {
 				// Il metodo inUso sopra ritorna sempre false.
 				//throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(ruoloPorta, nomePorta, attivazionePolicy.getAlias(), whereIsInUso,false,NEW_LINE));
@@ -1122,7 +1122,7 @@ public class DeleterArchiveUtils {
 			
 			// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
 			
-			List<String> whereIsInUso = new ArrayList<String>();
+			List<String> whereIsInUso = new ArrayList<>();
 			if (this.importerEngine.isPddInUso(nomePdd, whereIsInUso, NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO)) {
 				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(nomePdd, whereIsInUso,false,NEW_LINE));
 			}

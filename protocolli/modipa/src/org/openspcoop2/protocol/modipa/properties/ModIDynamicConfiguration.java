@@ -3530,7 +3530,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			if(profiloSicurezzaRispostaConfigurazioneReturnCodeItemValue!=null && profiloSicurezzaRispostaConfigurazioneReturnCodeItemValue.getValue()!=null && 
 					StringUtils.isNotEmpty(profiloSicurezzaRispostaConfigurazioneReturnCodeItemValue.getValue())) {
 				String v = profiloSicurezzaRispostaConfigurazioneReturnCodeItemValue.getValue();
-				List<String> codici = new ArrayList<String>();
+				List<String> codici = new ArrayList<>();
 				if(v.contains(",")) {
 					String [] tmp = v.split(",");
 					for (int i = 0; i < tmp.length; i++) {
@@ -5416,7 +5416,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			else {
 				userModeItem.setInfo(new ConsoleItemInfo(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE_LABEL));
 				userModeItem.getInfo().setHeaderBody(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE_DEFAULT_INFO_INTESTAZIONE);
-				userModeItem.getInfo().setListBody(new ArrayList<String>());
+				userModeItem.getInfo().setListBody(new ArrayList<>());
 				userModeItem.getInfo().getListBody().add(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE_DEFAULT_INFO_HTTP);
 				userModeItem.getInfo().getListBody().add(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE_DEFAULT_INFO_URL);
 			}
@@ -5451,7 +5451,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			else {
 				ipUserModeItem.setInfo(new ConsoleItemInfo(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE_LABEL));
 				ipUserModeItem.getInfo().setHeaderBody(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE_DEFAULT_INFO_INTESTAZIONE);
-				ipUserModeItem.getInfo().setListBody(new ArrayList<String>());
+				ipUserModeItem.getInfo().setListBody(new ArrayList<>());
 				ipUserModeItem.getInfo().getListBody().add(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE_DEFAULT_INFO_HTTP);
 				ipUserModeItem.getInfo().getListBody().add(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE_DEFAULT_INFO_URL);
 			}
@@ -5926,7 +5926,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_ID);
 		if(typeItem!=null) {
 			if(hsm) {
-				List<String> l = new ArrayList<String>();
+				List<String> l = new ArrayList<>();
 				HSMUtils.fillTipologieKeystore(false, false, l);
 				if(l!=null && !l.isEmpty()) {
 					for (String hsmType : l) {
@@ -6312,7 +6312,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_VALUE_JKS);
 			}
 			if(HSMUtils.existsTipologieKeystoreHSM(true, false)) {
-				List<String> l = new ArrayList<String>();
+				List<String> l = new ArrayList<>();
 				HSMUtils.fillTipologieKeystore(true, false, l);
 				if(l!=null && !l.isEmpty()) {
 					typeItem.setReloadOnChange(true);

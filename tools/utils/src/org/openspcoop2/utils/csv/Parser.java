@@ -133,7 +133,7 @@ public class Parser {
 				ParserRegexpNotFound regexpNotFoundBehaviour = null;
 				if(regexps.containsKey(key)){
 					if(regexps.getProperty(key)!=null){
-						List<String> r = new ArrayList<String>();
+						List<String> r = new ArrayList<>();
 						r.add(regexps.getProperty(key).trim());
 						int index = 1;
 						while(regexps.containsKey(key+"."+index) && regexps.getProperty(key+"."+index)!=null){

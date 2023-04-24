@@ -1344,7 +1344,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			}
 
 			// Prendo la lista di pdd dell'utente connesso
-			/*List<String> nomiPdd = new ArrayList<String>();
+			/*List<String> nomiPdd = new ArrayList<>();
 			List<PdDControlStation> listaPdd = this.core.pddList(superUser, new Search(true));
 			Iterator<PdDControlStation> itP = listaPdd.iterator();
 			while (itP.hasNext()) {
@@ -1580,7 +1580,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 	private void setLabelColonne(boolean modalitaCompleta, boolean multiTenant, boolean showProtocolli) {
 		
 		if(!modalitaCompleta) {
-			List<String> labels = new ArrayList<String>();
+			List<String> labels = new ArrayList<>();
 			labels.add(SoggettiCostanti.LABEL_SOGGETTI);
 			
 			this.pd.setLabels(labels.toArray(new String[1]));
@@ -2183,7 +2183,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 					);
 			
 			// setto le label delle colonne
-			List<String> labels = new ArrayList<String>();
+			List<String> labels = new ArrayList<>();
 			
 			labels.add(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_PRINCIPALE);
 			labels.add(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SUBJECT);

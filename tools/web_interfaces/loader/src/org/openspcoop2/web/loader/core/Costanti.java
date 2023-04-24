@@ -79,26 +79,26 @@ public class Costanti {
 	/* SERVLET NAME */
 	
 	public static final String SERVLET_NAME_LOGIN = OBJECT_NAME_LOGIN+".do";
-	public static final List<String> SERVLET_LOGIN = new ArrayList<String>();
+	public static final List<String> SERVLET_LOGIN = new ArrayList<>();
 	static{
 		SERVLET_LOGIN.add(SERVLET_NAME_LOGIN);
 	}
 	
 	public static final String SERVLET_NAME_LOGOUT = OBJECT_NAME_LOGOUT+".do";
-	public static final List<String> SERVLET_LOGOUT = new ArrayList<String>();
+	public static final List<String> SERVLET_LOGOUT = new ArrayList<>();
 	static{
 		SERVLET_LOGOUT.add(SERVLET_NAME_LOGOUT);
 	}
 	
 	public static final String SERVLET_NAME_ARCHIVI_IMPORTA_XML = OBJECT_NAME_ARCHIVI_IMPORTA_XML+".do";
 	public static final String SERVLET_NAME_ARCHIVI_ELIMINAZIONE_XML = OBJECT_NAME_ARCHIVI_ELIMINAZIONE_XML+".do";
-	public static final List<String> SERVLET_ARCHIVI = new ArrayList<String>();
+	public static final List<String> SERVLET_ARCHIVI = new ArrayList<>();
 	static{
 		SERVLET_ARCHIVI.add(SERVLET_NAME_ARCHIVI_IMPORTA_XML);
 	}
 	
 	public static final String SERVLET_NAME_MESSAGE_PAGE = OBJECT_NAME_MESSAGE_PAGE+".do";
-	public static final List<String> SERVLET_MESSAGE_PAGE = new ArrayList<String>();
+	public static final List<String> SERVLET_MESSAGE_PAGE = new ArrayList<>();
 	static{
 		SERVLET_MESSAGE_PAGE.add(SERVLET_NAME_MESSAGE_PAGE);
 	}

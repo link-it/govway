@@ -231,7 +231,7 @@ public class ServiceBindingConfiguration implements Serializable {
 		if(mpv!=null){
 			List<String> ct = this.contextUrlCollection.getContentTypesRestriction(protocol,function,functionParameters);
 			if(ct==null){
-				ct = new ArrayList<String>();
+				ct = new ArrayList<>();
 			}
 			if(ct.size()<=0){
 				ct.add(Costanti.CONTENT_TYPE_ALL);

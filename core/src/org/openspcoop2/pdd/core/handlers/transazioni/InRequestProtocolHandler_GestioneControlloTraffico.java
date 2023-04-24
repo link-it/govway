@@ -313,11 +313,11 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 					
 					List<RisultatoVerificaPolicy> policyBloccanti = new ArrayList<RisultatoVerificaPolicy>();
 					
-					List<String> pddContext_uniqueIdsPolicy = new ArrayList<String>();
+					List<String> pddContext_uniqueIdsPolicy = new ArrayList<>();
 					List<IDUnivocoGroupByPolicy> pddContext_idUnivociGroupBy = new ArrayList<IDUnivocoGroupByPolicy>();
 					List<Boolean> pddContext_policyApplicabile = new ArrayList<Boolean>();
 					List<Boolean> pddContext_policyViolata = new ArrayList<Boolean>();
-					List<String> pddContext_api = new ArrayList<String>();
+					List<String> pddContext_api = new ArrayList<>();
 					
 					DatiTempiRisposta datiTempiRisposta = null;
 					

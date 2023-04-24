@@ -41,7 +41,7 @@ public class SecurityInfo {
 	
 	public SecurityInfo(){
 		this.listaAllegati = new ArrayList<Allegato>();
-		this.properties = new HashMap<String, String>();
+		this.properties = new HashMap<>();
 	}
 	
 	public List<Allegato> getListaAllegati() {

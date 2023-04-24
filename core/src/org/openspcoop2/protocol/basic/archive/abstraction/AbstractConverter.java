@@ -246,7 +246,7 @@ public abstract class AbstractConverter {
 			String nome, Soggetto idSoggetto, Integer versione) throws DriverRegistroServiziException, ProtocolException, RegistryException{
 		
 		List<IDAccordo> idAccordi = new ArrayList<IDAccordo>();
-		List<String> uriAccordi = new ArrayList<String>();
+		List<String> uriAccordi = new ArrayList<>();
 		
 		// Cerco nel registro
 		ProtocolFiltroRicercaAccordi filtroAccordi = new ProtocolFiltroRicercaAccordi();
@@ -432,7 +432,7 @@ public abstract class AbstractConverter {
 			String nome, String tipo, Integer versione, Soggetto idSoggetto) throws DriverRegistroServiziException, ProtocolException, RegistryException{
 		
 		List<IDServizio> idAccordi = new ArrayList<IDServizio>();
-		List<String> uriAccordi = new ArrayList<String>();
+		List<String> uriAccordi = new ArrayList<>();
 		
 		// Cerco nel registro
 		ProtocolFiltroRicercaServizi filtroAccordi = new ProtocolFiltroRicercaServizi();

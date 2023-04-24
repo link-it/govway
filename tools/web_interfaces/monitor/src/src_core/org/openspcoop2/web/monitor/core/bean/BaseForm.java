@@ -383,7 +383,7 @@ public class BaseForm implements Serializable {
 			List<String> listaNomiProtocolli = new  ArrayList<String>();
 
 			if(listaSoggettiGestione != null && listaSoggettiGestione.size() > 0){
-				List<String> tipiSoggetti = new ArrayList<String>();
+				List<String> tipiSoggetti = new ArrayList<>();
 				for (Soggetto soggetto : listaSoggettiGestione) {
 					String tipoSoggetto = soggetto.getTipoSoggetto();
 
@@ -434,7 +434,7 @@ public class BaseForm implements Serializable {
 			List<String> listaNomiProtocolli = new  ArrayList<String>();
 
 			if(listaSoggettiGestione != null && listaSoggettiGestione.size() > 0){
-				List<String> tipiSoggetti = new ArrayList<String>();
+				List<String> tipiSoggetti = new ArrayList<>();
 				for (Soggetto soggetto : listaSoggettiGestione) {
 					String tipoSoggetto = soggetto.getTipoSoggetto();
 

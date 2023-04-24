@@ -38,7 +38,7 @@ public class MappingModeTypesExtensions {
 
 	private Map<String, List<ArchiveModeType>> mappingExtensionsTypes = new HashMap<String, List<ArchiveModeType>>();
 	private Map<String, ArchiveType> mappingExtensionsArchiveType = new HashMap<String, ArchiveType>();
-	private List<String> exts = new ArrayList<String>(); // per garantire l'ordine di inserimento
+	private List<String> exts = new ArrayList<>(); // per garantire l'ordine di inserimento
 	private String preferExtSingleObject = null;
 	
 	public void add(String ext,ArchiveModeType type) throws ProtocolException{
@@ -134,7 +134,7 @@ public class MappingModeTypesExtensions {
 		}
 	}
 	public List<String> mappingTypeToExts(ArchiveModeType type){
-		List<String> exts = new ArrayList<String>();
+		List<String> exts = new ArrayList<>();
 		for (int i = 0; i < this.exts.size(); i++) {
 			String ext = this.exts.get(i);
 			List<ArchiveModeType> types = this.mappingExtensionsTypes.get(ext);

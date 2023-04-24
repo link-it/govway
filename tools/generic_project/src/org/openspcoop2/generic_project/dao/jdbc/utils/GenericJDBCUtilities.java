@@ -289,7 +289,7 @@ public class GenericJDBCUtilities {
 			throw new ServiceException("OrderBy conditions not allowed in count expression");
 		}
 	
-		List<Object> listaQuery = new ArrayList<Object>();
+		List<Object> listaQuery = new ArrayList<>();
 	
 		boolean oldValue = isUsedForCountExpression(expression);
 		setUsedForCountExpression(expression,true);
@@ -351,7 +351,7 @@ public class GenericJDBCUtilities {
 			throw new NotFoundException("No result founds");
 		}
 		else{
-			List<Object> results = new ArrayList<Object>();
+			List<Object> results = new ArrayList<>();
 			for(int i=0; i<map.size(); i++){
 				results.add(map.get(i).values().iterator().next());		
 			}
@@ -387,7 +387,7 @@ public class GenericJDBCUtilities {
 	}
 	
 	private static List<Object> eliminaDuplicati(Collection<Object> returnField){
-		List<Object> listSenzaDuplicati = new ArrayList<Object>();
+		List<Object> listSenzaDuplicati = new ArrayList<>();
 		for (Object o : returnField) {
 			if(o instanceof IField){
 				IField field = (IField) o;
@@ -461,11 +461,11 @@ public class GenericJDBCUtilities {
 		// inizializzo
 		List<List<String>> returnClassAliases = new ArrayList<List<String>>();
 		for (int i = 0; i < returnField.size(); i++) {
-			returnClassAliases.add(new ArrayList<String>());
+			returnClassAliases.add(new ArrayList<>());
 		}
 		
 		// aggiungo i field semplici (foglie, vale per Field,ConstantField,CustomField,NullConstantField)
-		List<String> returnClassAliases_simple = new ArrayList<String>();
+		List<String> returnClassAliases_simple = new ArrayList<>();
 		int index = 0;
 		for (Object o : returnField) {
 			if(o instanceof Field){
@@ -526,7 +526,7 @@ public class GenericJDBCUtilities {
 	}
 	
 	public static String getAlias(Object object) throws ServiceException{
-		List<Object> l = new ArrayList<Object>();
+		List<Object> l = new ArrayList<>();
 		l.add(object);
 		List<List<String>> ll = readAliases(l);
 		if( (ll==null) || ll.size()<=0){
@@ -757,7 +757,7 @@ public class GenericJDBCUtilities {
 			
 			if(i==0){
 				// Uso i tipi della prima espressione. Dovrebbero essere tutti compatibili tra loro
-				List<Object> listaObject = new ArrayList<Object>();
+				List<Object> listaObject = new ArrayList<>();
 				for (String alias : aliasUe) {
 					listaObject.add(ue.getReturnField(alias));
 				}
@@ -893,7 +893,7 @@ public class GenericJDBCUtilities {
 					//listField.add(field);
 					
 					if(set){
-						List<String> lAlias = new ArrayList<String>();
+						List<String> lAlias = new ArrayList<>();
 						lAlias.add(alias);
 						if(exp instanceof JDBCExpression){
 							setFields(sqlQueryObject, ((JDBCExpression)exp), lAlias, field);
@@ -1030,7 +1030,7 @@ public class GenericJDBCUtilities {
 			
 			ISQLQueryObject sqlQueryObjectInner = sqlQueryObjectInnerList.get(i);
 			
-			List<Object> listaQuery = new ArrayList<Object>();
+			List<Object> listaQuery = new ArrayList<>();
 			toSqlForPreparedStatementWithFromCondition(expr,sqlQueryObjectInner,listaQuery,sqlConverter.toTable(model));
 			for (Object param : listaQuery) {
 				jdbcObjects.add(new JDBCObject(param, param.getClass()));
@@ -1192,7 +1192,7 @@ public class GenericJDBCUtilities {
 	public static List<Object> prepareFindAll(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject,
 			IExpression paginatedExpression,ISQLFieldConverter sqlConverter,IModel<?> model) throws SQLQueryObjectException, JDBCAdapterException, ExpressionException, ExpressionNotImplementedException, ServiceException{
 	
-		List<Object> listaQuery = new ArrayList<Object>();
+		List<Object> listaQuery = new ArrayList<>();
 		
 		toSqlForPreparedStatementWithFromCondition(paginatedExpression,sqlQueryObject,listaQuery,
 				sqlConverter.toTable(model));
@@ -1240,7 +1240,7 @@ public class GenericJDBCUtilities {
 	public static List<Object> prepareFind(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject,
 			IExpression expression,ISQLFieldConverter sqlConverter,IModel<?> model) throws SQLQueryObjectException, JDBCAdapterException, ExpressionException, ExpressionNotImplementedException, ServiceException, MultipleResultException{
 	
-		List<Object> listaQuery = new ArrayList<Object>();
+		List<Object> listaQuery = new ArrayList<>();
 		
 		toSqlForPreparedStatementWithFromCondition(expression,sqlQueryObject,listaQuery,
 				sqlConverter.toTable(model));
@@ -1322,7 +1322,7 @@ public class GenericJDBCUtilities {
 		if(updateModels==null || updateModels.length<=0){
 			throw new ServiceException("Parameter updateModels is not defined");
 		}
-		List<String> tableUpdated = new ArrayList<String>();
+		List<String> tableUpdated = new ArrayList<>();
 		for (UpdateModel updateModel : updateModels) {
 			
 			IModel<?> model = updateModel.getModel();

@@ -752,7 +752,7 @@ public class ClientTest {
 
 class ClientTestThread implements Runnable{
 
-	private static List<String> check = new ArrayList<String>();
+	private static List<String> check = new ArrayList<>();
 	private static boolean valoriDuplicati = false;
 	
 	private static synchronized void put(String v,boolean rilevaValoriDuplicati) throws Exception{
@@ -814,7 +814,7 @@ class ClientTestThread implements Runnable{
 		this.param = param;
 		this.con = con;
 		this.isNumber = isNumber;
-		this.valoriGenerati = new ArrayList<String>();
+		this.valoriGenerati = new ArrayList<>();
 		this.index = index;
 		this.debug = debug;
 		this.tipoDatabase = tipoDatabase;

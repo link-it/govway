@@ -346,8 +346,8 @@ public class GestoreErroreConnettore {
 						codice = this.fault.getFaultCode();
 					}
 					
-					List<String> subCodice_soap12 = new ArrayList<String>();
-					List<String> subCodiceNamespace_soap12 = new ArrayList<String>();
+					List<String> subCodice_soap12 = new ArrayList<>();
+					List<String> subCodiceNamespace_soap12 = new ArrayList<>();
 					if(MessageType.SOAP_12.equals(messageType)) {
 						if(this.fault.getFaultSubcodes()!=null) {
 							Iterator<QName> it = this.fault.getFaultSubcodes();

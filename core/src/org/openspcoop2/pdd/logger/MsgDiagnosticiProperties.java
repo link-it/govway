@@ -700,7 +700,7 @@ public class MsgDiagnosticiProperties {
 	
 	
 	/*---------- Codici Warning -------------*/
-	public static List<String> MSG_DIAGNOSTICI_WARNING = new ArrayList<String>();
+	public static List<String> MSG_DIAGNOSTICI_WARNING = new ArrayList<>();
 	static {
 		MSG_DIAGNOSTICI_WARNING.add("001069"); // ricezioneContenutiApplicativi.controlloTraffico.policy.violataWarningOnly
 		MSG_DIAGNOSTICI_WARNING.add("001072"); // ricezioneContenutiApplicativi.controlloTraffico.maxRequestsViolatedWarningOnly
@@ -726,7 +726,7 @@ public class MsgDiagnosticiProperties {
 	}
 	
 	/*---------- Codici Consegna Fallita -------------*/
-	public static List<String> MSG_DIAGNOSTICI_ERRORE_CONNETTORE = new ArrayList<String>();
+	public static List<String> MSG_DIAGNOSTICI_ERRORE_CONNETTORE = new ArrayList<>();
 	static {
 		MSG_DIAGNOSTICI_ERRORE_CONNETTORE.add("003008"); // inoltroBuste.inoltroConErrore
 		MSG_DIAGNOSTICI_ERRORE_CONNETTORE.add("003013"); // inoltroBuste.ricezioneSoapFault 
@@ -737,7 +737,7 @@ public class MsgDiagnosticiProperties {
 	}
 	
 	/*---------- Codici Generazione Messaggio Errore -------------*/
-	public static List<String> MSG_DIAGNOSTICI_SEGNALA_GENERATA_RISPOSTA_ERRORE = new ArrayList<String>();
+	public static List<String> MSG_DIAGNOSTICI_SEGNALA_GENERATA_RISPOSTA_ERRORE = new ArrayList<>();
 	static {
 		MSG_DIAGNOSTICI_SEGNALA_GENERATA_RISPOSTA_ERRORE.add("001008"); // ricezioneContenutiApplicativi.consegnaRispostaApplicativaFallita
 		MSG_DIAGNOSTICI_SEGNALA_GENERATA_RISPOSTA_ERRORE.add("001033"); // ricezioneContenutiApplicativi.integrationManager.consegnaRispostaApplicativaFallita

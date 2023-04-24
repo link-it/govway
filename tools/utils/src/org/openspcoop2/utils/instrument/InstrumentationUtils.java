@@ -191,10 +191,10 @@ public class InstrumentationUtils
     	print(map, file, sort);
     }
 	private static void print(Map<String, List<Long>> map,  File file, boolean sort) throws Exception {
-		List<String> keys = new ArrayList<String>();
+		List<String> keys = new ArrayList<>();
 		keys.addAll(map.keySet());
 		//Collections.sort(keys, Comparator.reverseOrder());
-		List<String> output = new ArrayList<String>();
+		List<String> output = new ArrayList<>();
 		for (String key : keys) {
 			List<Long> l = map.get(key);
 			if(l.size()==1) {

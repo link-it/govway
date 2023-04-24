@@ -48,7 +48,7 @@ public class SchemaCallback implements org.jvnet.ws.wadl.ast.WadlAstBuilder.Sche
 	 **/
 	
 	private Map<String, byte[]> resources = new HashMap<String, byte[]>();
-	private Map<String, String> mappingNamespaceLocations = new HashMap<String, String>();
+	private Map<String, String> mappingNamespaceLocations = new HashMap<>();
 	private Logger log;
 	private AbstractXMLUtils xmlUtils = null;
 	private XSDUtils xsdUtils = null;

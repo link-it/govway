@@ -118,7 +118,7 @@ public class TransportUtils {
 			value = get ? p.get(name.toUpperCase()) : p.remove(name.toUpperCase()); 
 		}
 		if(value==null){
-			List<String> keysFound = new ArrayList<String>();
+			List<String> keysFound = new ArrayList<>();
 			Iterator<String> keys = p.keySet().iterator();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
@@ -217,7 +217,7 @@ public class TransportUtils {
 			value = get? map.get(name.toUpperCase()) : map.remove(name.toUpperCase());
 		}
 		if(value==null){
-			List<String> keysFound = new ArrayList<String>();
+			List<String> keysFound = new ArrayList<>();
 			Iterator<String> keys = map.keySet().iterator();
 			while (keys.hasNext()) {
 				String key = keys.next();
@@ -307,7 +307,7 @@ public class TransportUtils {
 		}
 		
 		String [] s = request.getParameterValues(exactKeyName);
-		List<String> values = new ArrayList<String>();
+		List<String> values = new ArrayList<>();
 		if(s!=null && s.length>0) {
 			for (int i = 0; i < s.length; i++) {
 				String value = s[i];
@@ -366,7 +366,7 @@ public class TransportUtils {
 		}
 		
 		Enumeration<String> enValues = request.getHeaders(exactKeyName);
-		List<String> values = new ArrayList<String>();
+		List<String> values = new ArrayList<>();
 		if(enValues!=null) {
 			@SuppressWarnings("unused")
 			int i = 0;
@@ -429,7 +429,7 @@ public class TransportUtils {
 		}
 		
 		Collection<String> enValues = response.getHeaders(exactKeyName);
-		List<String> values = new ArrayList<String>();
+		List<String> values = new ArrayList<>();
 		if(enValues!=null && !enValues.isEmpty()) {
 			@SuppressWarnings("unused")
 			int i = 0;
@@ -629,12 +629,12 @@ public class TransportUtils {
 	public static Map<String, List<String>> convertToMapListValues(Map<String, String> mapSingleValue) {
 		Map<String, List<String>> mapMultipleValues = null;
 		if(mapSingleValue!=null && !mapSingleValue.isEmpty()) {
-			mapMultipleValues = new HashMap<String, List<String>>();
+			mapMultipleValues = new HashMap<>();
 			Iterator<String> keys = mapSingleValue.keySet().iterator();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
 				String value = mapSingleValue.get(key);
-				List<String> l = new ArrayList<String>();
+				List<String> l = new ArrayList<>();
 				l.add(value);
 				mapMultipleValues.put(key, l);
 			}
@@ -645,7 +645,7 @@ public class TransportUtils {
 	public static Map<String, String> convertToMapSingleValue(Map<String, List<String>> mapMultipleValues) {
 		Map<String, String> mapSingleValue = null;
 		if(mapMultipleValues!=null && !mapMultipleValues.isEmpty()) {
-			mapSingleValue = new HashMap<String, String>();
+			mapSingleValue = new HashMap<>();
 			Iterator<String> keys = mapMultipleValues.keySet().iterator();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
@@ -682,13 +682,13 @@ public class TransportUtils {
 		List<String> l = map.get(name);
 		if(add) {
 			if(l==null) {
-				l = new ArrayList<String>();
+				l = new ArrayList<>();
 				map.put(name, l);
 			}
 		}
 		else {
 			if(l==null) {
-				l = new ArrayList<String>();
+				l = new ArrayList<>();
 				map.put(name, l);
 			}
 			else {

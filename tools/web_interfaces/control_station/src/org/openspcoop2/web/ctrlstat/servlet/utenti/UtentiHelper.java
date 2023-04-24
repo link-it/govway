@@ -497,8 +497,8 @@ public class UtentiHelper extends ConsoleHelper {
 						// select list Profilo Interoperabilità
 						List<String> protocolliRegistratiConsole = this.core.getProtocolli();
 						
-						List<String> profiloValues = new ArrayList<String>();
-						List<String> profiloLabels = new ArrayList<String>();
+						List<String> profiloValues = new ArrayList<>();
+						List<String> profiloLabels = new ArrayList<>();
 						for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
 							String protocolloName = protocolliRegistratiConsole.get(i);
 							if(ServletUtils.isCheckBoxEnabled(modalitaGateway[i])) {
@@ -647,8 +647,8 @@ public class UtentiHelper extends ConsoleHelper {
 					// select list Profilo Interoperabilità
 					List<String> protocolliRegistratiConsole = this.core.getProtocolli();
 					
-					List<String> profiloValues = new ArrayList<String>();
-					List<String> profiloLabels = new ArrayList<String>();
+					List<String> profiloValues = new ArrayList<>();
+					List<String> profiloLabels = new ArrayList<>();
 					for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
 						String protocolloName = protocolliRegistratiConsole.get(i);
 						if(ServletUtils.isCheckBoxEnabled(modalitaGateway[i])) {
@@ -1283,7 +1283,7 @@ public class UtentiHelper extends ConsoleHelper {
 			if(protocolliDispondibili != null && protocolliDispondibili.size() > 1) {
 				de.setType(DataElementType.SELECT);
 				
-				List<String> labelProtocolli = new ArrayList<String>();
+				List<String> labelProtocolli = new ArrayList<>();
 				
 				for (String protocolloDisponibile : ProtocolUtils.orderProtocolli(protocolliDispondibili)) {
 					String labelProt = ConsoleHelper._getLabelProtocollo(protocolloDisponibile);
@@ -1494,7 +1494,7 @@ public class UtentiHelper extends ConsoleHelper {
 			List<String> protocolliRegistratiConsole = this.utentiCore.getProtocolli();
 			
 			String [] modalitaScelte = new String[protocolliRegistratiConsole.size()]; 
-			List<String> nuoviProtocolliSupportati = new ArrayList<String>();
+			List<String> nuoviProtocolliSupportati = new ArrayList<>();
 			for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
 				String protocolloName = protocolliRegistratiConsole.get(i);
 				modalitaScelte[i] = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_MODALITA_PREFIX + protocolloName);
@@ -1607,7 +1607,7 @@ public class UtentiHelper extends ConsoleHelper {
 					Collections.sort(oldProtocolliSupportati);
 					Collections.sort(nuoviProtocolliSupportati);
 					
-					List<String> protocolliEliminati = new ArrayList<String>(); 
+					List<String> protocolliEliminati = new ArrayList<>(); 
 					for (String vecchioProtocollo : oldProtocolliSupportati) {
 						boolean protocolloEliminato = !nuoviProtocolliSupportati.contains(vecchioProtocollo);
 						
@@ -1616,10 +1616,10 @@ public class UtentiHelper extends ConsoleHelper {
 					}
 					
 					if(protocolliEliminati.size() > 0) {
-						List<String> nomiUtentiDaRimuovere = new ArrayList<String>();
+						List<String> nomiUtentiDaRimuovere = new ArrayList<>();
 						nomiUtentiDaRimuovere.add(nomesu);
-						List<String> utentiDaNonEliminare = new ArrayList<String>();
-						List<String> protocolliNonValidi = new ArrayList<String>();
+						List<String> utentiDaNonEliminare = new ArrayList<>();
+						List<String> protocolliNonValidi = new ArrayList<>();
 						for (String protocolloDaControllare : protocolliEliminati) {
 							boolean protocolloNonPiuAssociato = this.controllaEsistenzaUtentePerAssociareIlProtocollo(nomiUtentiDaRimuovere, utentiDaNonEliminare, nomesu, protocolloDaControllare);
 							if(protocolloNonPiuAssociato)
@@ -2100,7 +2100,7 @@ public class UtentiHelper extends ConsoleHelper {
 					
 					List<String> protocolliSupportati = mySU.getProtocolliSupportati();
 					if(protocolliSupportati == null)
-						protocolliSupportati = new ArrayList<String>();
+						protocolliSupportati = new ArrayList<>();
 					
 					if(mySU.hasOnlyPermessiUtenti()) {
 						de.setValue("-");

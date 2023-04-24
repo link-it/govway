@@ -2115,7 +2115,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 					ControlloAccessiAttributeAuthority attributeAuthorityItem = new ControlloAccessiAttributeAuthority();
 					attributeAuthorityItem.setNome(aa.getNome());
 					if(aa.sizeAttributoList()>0) {
-						attributeAuthorityItem.setAttributi(new ArrayList<String>());
+						attributeAuthorityItem.setAttributi(new ArrayList<>());
 						for (String attributeName : aa.getAttributoList()) {
 							attributeAuthorityItem.addAttributiItem(attributeName);
 						}

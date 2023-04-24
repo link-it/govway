@@ -40,7 +40,7 @@ import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCore;
  * 
  */
 public class Connettori {
-	private static final List<String> lista = new ArrayList<String>();
+	private static final List<String> lista = new ArrayList<>();
 
 	public static void initialize(Logger log) throws Exception {
 		initialize(log, false, null, null);
@@ -96,6 +96,6 @@ public class Connettori {
 	}
 
 	public static List<String> getList() {
-		return new ArrayList<String>(Connettori.lista);
+		return new ArrayList<>(Connettori.lista);
 	}
 }

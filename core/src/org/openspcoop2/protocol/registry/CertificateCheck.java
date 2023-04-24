@@ -36,12 +36,12 @@ public class CertificateCheck {
 
 	private StatoCheck statoCheck;
 	private String configurationId;
-	private List<String> errorCertificateIdentity = new ArrayList<String>();
-	private List<String> errorDetails = new ArrayList<String>();
-	private List<String> errorCertificateDetails = new ArrayList<String>();
-	private List<String> warningCertificateIdentity = new ArrayList<String>();
-	private List<String> warningDetails = new ArrayList<String>();
-	private List<String> warningCertificateDetails = new ArrayList<String>();
+	private List<String> errorCertificateIdentity = new ArrayList<>();
+	private List<String> errorDetails = new ArrayList<>();
+	private List<String> errorCertificateDetails = new ArrayList<>();
+	private List<String> warningCertificateIdentity = new ArrayList<>();
+	private List<String> warningDetails = new ArrayList<>();
+	private List<String> warningCertificateDetails = new ArrayList<>();
 	
 	public void addError(String identity, String details, String certificateDetails) {
 		this.errorCertificateIdentity.add(identity);

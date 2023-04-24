@@ -1250,7 +1250,7 @@ public abstract class AbstractStatistiche {
 				this.logger.debug("Aggiorno statistiche ["+this.getTipoStatistiche()+"]");
 				this.logger.debug("Valori update stato record CASE ("+case1_when_stato+"->"+case1_then_stato+") e ("+case2_when_stato+"->"+case2_then_stato+") tr.data_ingresso_richiesta=["+next.getTime()+"]");
 			}
-			List<Object> l = new ArrayList<Object>();
+			List<Object> l = new ArrayList<>();
 			l.add(case1_when_stato); l.add(case1_then_stato);
 			l.add(case2_when_stato); l.add(case2_then_stato);
 			l.add(next);

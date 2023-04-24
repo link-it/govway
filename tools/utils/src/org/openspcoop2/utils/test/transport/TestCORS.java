@@ -81,7 +81,7 @@ public class TestCORS {
 	private static final String TEST_INVALID_ORIGIN_4 = "http://www.w3.org%0%0d%0ad%0%0d%0aa";
 	private static final String TEST_INVALID_ORIGIN_5 = "http://www.w3.org http://altraUrl"; 
 
-	private static final List<String> ALLOW_METHOD_DEFAULT = new ArrayList<String> ();
+	private static final List<String> ALLOW_METHOD_DEFAULT = new ArrayList<> ();
 	static {
 		ALLOW_METHOD_DEFAULT.add(HttpRequestMethod.GET.name());
 		ALLOW_METHOD_DEFAULT.add(HttpRequestMethod.POST.name());
@@ -90,7 +90,7 @@ public class TestCORS {
 		ALLOW_METHOD_DEFAULT.add(HttpRequestMethod.PATCH.name());
 	}
 
-	private static final List<String> ALLOW_HEADER_DEFAULT = new ArrayList<String> ();
+	private static final List<String> ALLOW_HEADER_DEFAULT = new ArrayList<> ();
 	static {
 		ALLOW_HEADER_DEFAULT.add(HttpConstants.AUTHORIZATION);
 		ALLOW_HEADER_DEFAULT.add(HttpConstants.CONTENT_TYPE);
@@ -1274,7 +1274,7 @@ public class TestCORS {
 	private class TestHttpServletRequest extends WrappedHttpServletRequest{
 
 		private Map<String, Object> attributes = new HashMap<String, Object>();
-		private Map<String, List<String>> headers = new HashMap<String, List<String>>();
+		private Map<String, List<String>> headers = new HashMap<>();
 		private String method;
 		private String contentType;
 

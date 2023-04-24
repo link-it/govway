@@ -113,7 +113,7 @@ public final class ConfigurazioneAllarmiDel extends Action {
 			List<Allarme> allarmiRimossi = new ArrayList<Allarme>();
 			ConfigurazioneUtilities.deleteAllarmi(allarmiToRemove, confHelper, confCore, userLogin, inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE, allarmiRimossi);
 			
-			List<String> allarmiAttivi = new ArrayList<String>();
+			List<String> allarmiAttivi = new ArrayList<>();
 			if(!allarmiRimossi.isEmpty()) {
 			
 				for (Allarme allarme : allarmiRimossi) {

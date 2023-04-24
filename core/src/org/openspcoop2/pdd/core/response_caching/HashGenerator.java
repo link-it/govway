@@ -104,7 +104,7 @@ public class HashGenerator {
 					this.addList(requestInfo.getProtocolContext().getParameters(), false, sb);
 				}
 				else {
-					Map<String, List<String>> pUrlForDigest = new HashMap<String, List<String>>();
+					Map<String, List<String>> pUrlForDigest = new HashMap<>();
 					if(requestInfo.getProtocolContext().getParameters()!=null && configHash.sizeQueryParameterList()>0) {
 						for (String queryParameter : configHash.getQueryParameterList()) {
 							List<String> v = requestInfo.getProtocolContext().getParameterValues(queryParameter);
@@ -127,7 +127,7 @@ public class HashGenerator {
 				
 				// Gli header vengono riordinati e le chiavi vengono prese lowerCase proprio per far si che tali differenze non impattano nel digest
 				
-				Map<String, List<String>> pTrasportoForDigest = new HashMap<String, List<String>>();
+				Map<String, List<String>> pTrasportoForDigest = new HashMap<>();
 				if(requestInfo.getProtocolContext().getHeaders()!=null && configHash.sizeHeaderList()>0) {
 					for (String header : configHash.getHeaderList()) {
 						List<String> v = requestInfo.getProtocolContext().getHeaderValues(header);
@@ -181,7 +181,7 @@ public class HashGenerator {
 			Collections.sort(sortKeys);
 			for (String sortKey : sortKeys) {
 				List<String> values = TransportUtils.getRawObject(p, sortKey);
-				List<String> ordinatedValues = new ArrayList<String>();
+				List<String> ordinatedValues = new ArrayList<>();
 				ordinatedValues.addAll(values);
 				if(ordinatedValues.size()>1) {
 					Collections.sort(ordinatedValues);

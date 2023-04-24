@@ -64,8 +64,8 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		Map<String, List<String>> values = new HashMap<String, List<String>>();
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, List<String>> values = new HashMap<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
 				buildJWT(values));
 		
@@ -82,8 +82,8 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		Map<String, List<String>> values = new HashMap<String, List<String>>();
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, List<String>> values = new HashMap<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
 				buildJWT(values));
 		
@@ -100,8 +100,8 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		Map<String, List<String>> values = new HashMap<String, List<String>>();
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, List<String>> values = new HashMap<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
 				buildJWT(values));
 		
@@ -118,8 +118,8 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		Map<String, List<String>> values = new HashMap<String, List<String>>();
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, List<String>> values = new HashMap<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
 				buildJWT(values));
 		
@@ -136,8 +136,8 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		Map<String, List<String>> values = new HashMap<String, List<String>>();
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, List<String>> values = new HashMap<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
 				buildJWT(values));
 		
@@ -156,8 +156,8 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		Map<String, List<String>> values = new HashMap<String, List<String>>();
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, List<String>> values = new HashMap<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
 				buildJWT(values));
 		
@@ -177,8 +177,8 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		Map<String, List<String>> values = new HashMap<String, List<String>>();
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, List<String>> values = new HashMap<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
 				buildJWT(values));
 		
@@ -197,8 +197,8 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		Map<String, List<String>> values = new HashMap<String, List<String>>();
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, List<String>> values = new HashMap<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
 				buildJWT(values));
 		
@@ -224,7 +224,7 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		
 		String format = "yyyy-MM-dd_HH:mm:ss.SSSZ";
 				
-		Map<String, String> expectedHeaders = new HashMap<String, String>();
+		Map<String, String> expectedHeaders = new HashMap<>();
 		expectedHeaders.put("govway-token-processtime", TIME);
 		expectedHeaders.put("govway-token-issuer", values.get("iss").get(0));
 		expectedHeaders.put("govway-token-subject", values.get("sub").get(0));
@@ -402,7 +402,7 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		//String format = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 		DateFormat dateFormat = JSONUtils.getInstance().getDateFormat();
 			
-		Map<String, String> expectedField = new HashMap<String, String>();
+		Map<String, String> expectedField = new HashMap<>();
 		if(govway) {
 			expectedField.put("$.id", ID);
 			expectedField.put("$.processTime", TIME);

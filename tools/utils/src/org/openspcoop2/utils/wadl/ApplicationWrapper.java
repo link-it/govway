@@ -43,7 +43,7 @@ public class ApplicationWrapper {
 
 	private ApplicationNode applicationNode;
 	private Map<String, byte[]> resources = new HashMap<String, byte[]>();
-	private Map<String, String> mappingNamespaceLocations = new HashMap<String, String>();
+	private Map<String, String> mappingNamespaceLocations = new HashMap<>();
 	private AbstractXMLUtils xmlUtils = null;
 	private XSDUtils xsdUtils = null;
 	

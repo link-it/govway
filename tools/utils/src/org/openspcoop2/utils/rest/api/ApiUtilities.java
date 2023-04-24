@@ -40,7 +40,7 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
  */
 public class ApiUtilities extends BaseBean {
 
-	private static List<String> _static_list_characters = new ArrayList<String>();
+	private static List<String> _static_list_characters = new ArrayList<>();
 	static {
 		for (int i = 'A'; i <= 'Z'; i++) {
 			_static_list_characters.add(((char)i)+"");
@@ -143,7 +143,7 @@ public class ApiUtilities extends BaseBean {
 		if(url == null)
 			throw new ProcessingException("URL non fornita");
 
-		List<String> urlList = new ArrayList<String>();
+		List<String> urlList = new ArrayList<>();
 
 		if(baseURI != null) {
 			if(url.startsWith(baseURI.toString())) {

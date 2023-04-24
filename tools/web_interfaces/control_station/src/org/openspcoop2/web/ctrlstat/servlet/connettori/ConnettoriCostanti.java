@@ -493,7 +493,7 @@ public class ConnettoriCostanti {
 			"bks", "uber", "gkr" };
 	public static List<String> getTIPOLOGIE_KEYSTORE(boolean truststore, boolean label){
 		// NOTA:far ricreare la lista ogni volta, poiche' poi viene modificata
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		l.add(label ? SecurityConstants.KEYSTORE_TYPE_JKS_LABEL : SecurityConstants.KEYSTORE_TYPE_JKS_VALUE);
 		l.add(label ? SecurityConstants.KEYSTORE_TYPE_PKCS12_LABEL : SecurityConstants.KEYSTORE_TYPE_PKCS12_VALUE);
 		HSMUtils.fillTipologieKeystore(truststore, false, l);

@@ -81,7 +81,7 @@ public class MTOMServiceExampleImpl {
 	        	LOG.fine("XML received");
 	        }
 	        List<byte[]> dhReceived = new ArrayList<byte[]>();
-	        List<String> dhReceivedCT = new ArrayList<String>();
+	        List<String> dhReceivedCT = new ArrayList<>();
 	        if(other!=null){
 	        	LOG.fine("richiesta.other.size=" + other.size());
 	        	for (int i = 0; i < other.size(); i++) {

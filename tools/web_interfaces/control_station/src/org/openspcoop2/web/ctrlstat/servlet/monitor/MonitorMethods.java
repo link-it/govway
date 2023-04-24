@@ -49,7 +49,7 @@ public enum MonitorMethods {
 	
 	// inizializzo la lista dei nomi
 	static {
-		MonitorMethods.methodNames = new ArrayList<String>();
+		MonitorMethods.methodNames = new ArrayList<>();
 		MonitorMethods[] methods = MonitorMethods.values();
 		for (MonitorMethods method : methods) {
 			if(STATO_RICHIESTE.equals(method) && !stato) {
@@ -72,6 +72,6 @@ public enum MonitorMethods {
 	}
 
 	public static ArrayList<String> getMethodNames() {
-		return new ArrayList<String>(MonitorMethods.methodNames);
+		return new ArrayList<>(MonitorMethods.methodNames);
 	}
 }

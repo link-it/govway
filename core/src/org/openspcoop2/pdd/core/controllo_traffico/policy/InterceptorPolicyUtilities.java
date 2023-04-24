@@ -247,7 +247,7 @@ public class InterceptorPolicyUtilities {
 		else if(context.getIntegrazione()!=null && context.getIntegrazione().getIdPA()!=null){
 			idPA = context.getIntegrazione().getIdPA();
 			if(context.getIntegrazione().sizeServiziApplicativiErogatori()>0){
-				serviziApplicativiErogatori = new ArrayList<String>();
+				serviziApplicativiErogatori = new ArrayList<>();
 				for (int i = 0; i < context.getIntegrazione().sizeServiziApplicativiErogatori(); i++) {
 					serviziApplicativiErogatori.add(context.getIntegrazione().getServizioApplicativoErogatore(i));
 				}
@@ -313,7 +313,7 @@ public class InterceptorPolicyUtilities {
 			try {
 				AccordoServizioParteComune aspc = registroServiziManager.getAccordoServizioParteComune(datiTransazione.getIdAccordoServizioParteComune(), null, false, false, requestInfo);
 				if(aspc.getGruppi()!=null && aspc.getGruppi().sizeGruppoList()>0) {
-					List<String> tags = new ArrayList<String>();
+					List<String> tags = new ArrayList<>();
 					for (GruppoAccordo gruppoAccordo : aspc.getGruppi().getGruppoList()) {
 						tags.add(gruppoAccordo.getNome());
 					}

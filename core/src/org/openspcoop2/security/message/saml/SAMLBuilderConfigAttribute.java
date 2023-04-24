@@ -38,7 +38,7 @@ public class SAMLBuilderConfigAttribute {
 	private String simpleName;
 	private String formatName = SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_FORMAT_NAME_VALUE_UNSPECIFIED;
 	
-	private List<Object> values = new ArrayList<Object>();
+	private List<Object> values = new ArrayList<>();
 	
 	public SAMLBuilderConfigAttribute(String configName){
 		this.configName = configName;

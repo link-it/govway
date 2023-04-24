@@ -165,7 +165,7 @@ public class ModiErogazioniApiHelper {
 	}
 	
 	private static boolean isSicurezzaMessaggioAbilitata(AccordoServizioParteComune aspc, String portType) throws Exception {
-		List<String> valueAbilitato = new ArrayList<String>();
+		List<String> valueAbilitato = new ArrayList<>();
 		valueAbilitato.add(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01);
 		valueAbilitato.add(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02);
 		valueAbilitato.add(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301);
@@ -176,7 +176,7 @@ public class ModiErogazioniApiHelper {
 		if(!ServiceBinding.REST.equals(aspc.getServiceBinding())) {
 			return false;
 		}
-		List<String> valueAbilitato = new ArrayList<String>();
+		List<String> valueAbilitato = new ArrayList<>();
 		valueAbilitato.add(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA_AUTH_IN_RESPONSE);
 		valueAbilitato.add(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA);
 		valueAbilitato.add(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM_AUTH_IN_RESPONSE);

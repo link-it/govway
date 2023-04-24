@@ -1341,7 +1341,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				azTmp.add(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT); // era stata impostata precedentemente
 			}
 			else {
-				Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, aspc, false, true, new ArrayList<String>());
+				Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, aspc, false, true, new ArrayList<>());
 				if(azioni==null || azioni.size()<=1) {
 					azTmp.add(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT);
 				}
@@ -1575,7 +1575,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					de = new DataElement();
 					de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_LIST_AZIONI_READ_ONLY);
 					de.setLabel(this.getLabelAzioni(serviceBinding));
-					Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, aspc, false, true, new ArrayList<String>());
+					Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, aspc, false, true, new ArrayList<>());
 					StringBuilder bf = new StringBuilder();
 					for (String az : azioni.keySet()) {
 						if(bf.length()>0) {
@@ -2147,7 +2147,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MESSAGE_ENGINE);
 		if(!this.isModalitaStandard() && datiAltroApi) {
 			de.setType(DataElementType.SELECT);
-			List<String> lS = new ArrayList<String>();
+			List<String> lS = new ArrayList<>();
 			lS.add(CostantiControlStation.GESTIONE_MESSAGE_ENGINE_DEFAULT);
 			lS.addAll(this.porteApplicativeCore.getMessageEngines());
 			de.setValues(lS);
@@ -2312,7 +2312,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			boolean showProtocolli = this.core.countProtocolli(this.request, this.session)>1;
 			
-			List<String> listaLabel = new ArrayList<String>();
+			List<String> listaLabel = new ArrayList<>();
 
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 			if(useIdSogg==false){
@@ -4647,7 +4647,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	
 	public String getMessaggioConfermaModificaRegolaMappingErogazionePortaApplicativa(boolean fromAPI, PortaApplicativa pa, ServiceBinding serviceBinding,boolean abilitazione, boolean multiline,boolean listElement) throws DriverConfigurazioneException {
 		MappingErogazionePortaApplicativa mapping = this.porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
-		List<String> listaAzioni = pa.getAzione()!= null ?  pa.getAzione().getAzioneDelegataList() : new ArrayList<String>();
+		List<String> listaAzioni = pa.getAzione()!= null ?  pa.getAzione().getAzioneDelegataList() : new ArrayList<>();
 		return this.getMessaggioConfermaModificaRegolaMapping(fromAPI, mapping.isDefault(), listaAzioni, serviceBinding, mapping.getDescrizione(), abilitazione, multiline, listElement);
 	}
 	
@@ -4876,7 +4876,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			// Prendo il nome e il tipo del servizio
 			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
 			AccordoServizioParteComuneSintetico apc = this.apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
-			Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<String>());
+			Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<>());
 
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 			boolean autenticazione = !TipoAutenticazione.DISABILITATO.equals(myPA.getAutenticazione());
@@ -7371,7 +7371,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore tipoSelettoreS = org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.toEnumConstant(identificazioneCondizionale, true);
 							
-				List<String> identificazioneCondizionale_values = new ArrayList<String>();
+				List<String> identificazioneCondizionale_values = new ArrayList<>();
 				identificazioneCondizionale_values.add(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.HEADER_BASED.getValue());
 				identificazioneCondizionale_values.add(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.URLBASED.getValue());
 				identificazioneCondizionale_values.add(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.FORM_BASED.getValue());
@@ -7582,9 +7582,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_CONNETTORE);
 						de.setType(DataElementType.SELECT);
 						
-						List<String> condizioneNonIdentificataConnettoriValues = new ArrayList<String>();
+						List<String> condizioneNonIdentificataConnettoriValues = new ArrayList<>();
 						condizioneNonIdentificataConnettoriValues.addAll(connettoriImplementaAPIValues);
-						List<String> condizioneNonIdentificataConnettoriLabels = new ArrayList<String>();
+						List<String> condizioneNonIdentificataConnettoriLabels = new ArrayList<>();
 						condizioneNonIdentificataConnettoriLabels.addAll(connettoriImplementaAPILabels);
 						if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna) && connettorePrincipale!=null) {
 							for (int i = 0; i < condizioneNonIdentificataConnettoriValues.size(); i++) {
@@ -7691,9 +7691,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_CONNETTORE);
 						de.setType(DataElementType.SELECT);
 						 
-						List<String> connettoreNonTrovatoConnettoriValues = new ArrayList<String>();
+						List<String> connettoreNonTrovatoConnettoriValues = new ArrayList<>();
 						connettoreNonTrovatoConnettoriValues.addAll(connettoriImplementaAPIValues);
-						List<String> connettoreNonTrovatoConnettoriLabels = new ArrayList<String>();
+						List<String> connettoreNonTrovatoConnettoriLabels = new ArrayList<>();
 						connettoreNonTrovatoConnettoriLabels.addAll(connettoriImplementaAPILabels);
 						if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna) && connettorePrincipale!=null) {
 							for (int i = 0; i < connettoreNonTrovatoConnettoriValues.size(); i++) {
@@ -8386,7 +8386,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				listOrdinata.add(paDefault);
 			}	
 			if(!paList.isEmpty()) {
-				List<String> keysOrdinate = new ArrayList<String>();
+				List<String> keysOrdinate = new ArrayList<>();
 				keysOrdinate.addAll(paList.keySet());
 				Collections.sort(keysOrdinate);
 				for (String key : keysOrdinate) {
@@ -8670,8 +8670,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					de = new DataElement();
 					de.setType(DataElementType.BUTTON);
 					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRI);
-					List<String> labelsGruppi = new ArrayList<String>();
-					List<String> valuesGruppi = new ArrayList<String>();
+					List<String> labelsGruppi = new ArrayList<>();
+					List<String> valuesGruppi = new ArrayList<>();
 					
 					if(paSA.getDatiConnettore() != null) {
 						for (int i = 0; i < paSA.getDatiConnettore().sizeFiltroList(); i++) {
@@ -8912,8 +8912,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			List<String> mapSA_ok = null;
 			List<String> mapSA_filtrati = null;
 			if(StringUtils.isNotBlank(filtroConnettoreFiltro) || joinConnettore) {
-				mapSA_ok = new ArrayList<String>();
-				mapSA_filtrati = new ArrayList<String>();
+				mapSA_ok = new ArrayList<>();
+				mapSA_filtrati = new ArrayList<>();
 			}
 			
 			for (PortaApplicativaServizioApplicativo paSA : lista) {
@@ -10287,7 +10287,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			configurazioneMultiDeliver.setTransazioneSincrona_nomeConnettore(connettoreImplementaAPI);
 		configurazioneMultiDeliver.setNotificheByEsito(notificheCondizionaliEsito);
 		
-		List<String> esitiList = new ArrayList<String>();
+		List<String> esitiList = new ArrayList<>();
 		if(esitiTransazione != null && esitiTransazione.length > 0) {
 			esitiList = Arrays.asList(esitiTransazione);
 		}
@@ -10830,7 +10830,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			if (nomePaSA.equals(paSA.getNome())) {
 				if(pa.getBehaviour() != null) {
 					boolean connettoreInUso = false;
-					List<String> titoliSezioniAggiornate = new ArrayList<String>();
+					List<String> titoliSezioniAggiornate = new ArrayList<>();
 					TipoBehaviour behaviourType = TipoBehaviour.toEnumConstant(pa.getBehaviour().getNome());
 
 					boolean consegnaCondizionale = false;
@@ -10948,7 +10948,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 								}
 
 								
-								List<String> titoliSezioniAggiornate = new ArrayList<String>();
+								List<String> titoliSezioniAggiornate = new ArrayList<>();
 								
 								titoliSezioniAggiornate.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI 
 										+ " -> " + tr.getNome() +" -> "+ PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA);
@@ -11062,7 +11062,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			else {
 				de.setType(DataElementType.SELECT);
 				de.setValues(code);
-				List<String> labels = new ArrayList<String>();
+				List<String> labels = new ArrayList<>();
 				for (String codaNome : code) {
 					labels.add(this.porteApplicativeCore.getConsegnaNotificaCodaLabel(codaNome));
 				}
@@ -11096,8 +11096,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				List<String> prioritaList = this.porteApplicativeCore.getConsegnaNotificaPriorita();
 				de.setType(DataElementType.SELECT);
 				de.setValues(prioritaList);
-				List<String> labels = new ArrayList<String>();
-				List<String> listPriorita = new ArrayList<String>();
+				List<String> labels = new ArrayList<>();
+				List<String> listPriorita = new ArrayList<>();
 				for (String prioritaNome : prioritaList) {
 					ConfigurazionePriorita conf = this.porteApplicativeCore.getConsegnaNotificaConfigurazionePriorita(prioritaNome);
 					labels.add(conf.getLabel());

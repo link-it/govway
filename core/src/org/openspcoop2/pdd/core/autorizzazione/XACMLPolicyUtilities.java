@@ -775,7 +775,7 @@ public class XACMLPolicyUtilities {
 					Object o = attributesParam.get(attrAuthName);
 					if(o instanceof Map) {
 						try {
-							List<String> attributesNames = new ArrayList<String>();
+							List<String> attributesNames = new ArrayList<>();
 							@SuppressWarnings("unchecked")
 							Map<String, Object> attributes = (Map<String, Object>) o;
 							if(attributes!=null && !attributes.isEmpty()) {
@@ -803,7 +803,7 @@ public class XACMLPolicyUtilities {
 				
 			}
 			else {
-				List<String> attributesNames = new ArrayList<String>();
+				List<String> attributesNames = new ArrayList<>();
 				for (String attrName : attributesParam.keySet()) {
 					attributesNames.add(attrName);
 				}
@@ -834,7 +834,7 @@ public class XACMLPolicyUtilities {
 //				else if(oValue instanceof List<?>) {
 //					List<?> list = (List<?>) oValue;
 //					if(list!=null && !list.isEmpty()) {
-//						List<String> lValues = new ArrayList<String>();
+//						List<String> lValues = new ArrayList<>();
 //						for (Object object : list) {
 //							if(object!=null && object instanceof String) {
 //								lValues.add((String)object);

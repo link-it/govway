@@ -836,7 +836,7 @@ public class ApiApiHelper {
 		ret.setStato(stato);
 
 		if(as.getGruppo()!=null &&  !as.getGruppo().isEmpty()) {
-			ret.setTags(new ArrayList<String>());
+			ret.setTags(new ArrayList<>());
 			for (GruppoSintetico tag : as.getGruppo()) {
 				ret.addTagsItem(tag.getNome());
 			}

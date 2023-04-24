@@ -341,7 +341,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 
 		ArrayList<String> f = null;
 		if (f == null) {
-			f = new ArrayList<String>();
+			f = new ArrayList<>();
 			f.add("Qualsiasi");
 			f.add("Non Disabilitato");
 			f.add("Ok");
@@ -357,7 +357,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 
 		ArrayList<String> f = null;
 		if (f == null) {
-			f = new ArrayList<String>();
+			f = new ArrayList<>();
 			f.add("Qualsiasi");
 			f.add("Non Disabilitato");
 			f.add("Ok");
@@ -377,7 +377,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 
 		ArrayList<String> f = null;
 		if (f == null) {
-			f = new ArrayList<String>();
+			f = new ArrayList<>();
 			f.add("All");
 			f.add("Si");
 			f.add("No");
@@ -1070,7 +1070,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 					} else {
 						List<IDServizio> listServizi = this.dynamicUtilsService.getServizi(this.allarme.getFiltro().getProtocollo(), null, 
 								this.allarme.getFiltro().getTipoServizio(), this.allarme.getFiltro().getNomeServizio(), this.allarme.getFiltro().getVersioneServizio(), null);
-						List<String> uris = new ArrayList<String>();
+						List<String> uris = new ArrayList<>();
 						AccordoServizioParteSpecifica aspsRiferimento = null;
 						if(listServizi!=null && !listServizi.isEmpty()) {
 							for (IDServizio idS : listServizi) {
@@ -1150,7 +1150,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 					} else {
 						List<IDServizio> listServizi = this.dynamicUtilsService.getServizi(this.allarme.getFiltro().getProtocollo(), null, 
 								this.allarme.getFiltro().getTipoServizio(), this.allarme.getFiltro().getNomeServizio(), this.allarme.getFiltro().getVersioneServizio(), null);
-						List<String> uris = new ArrayList<String>();
+						List<String> uris = new ArrayList<>();
 						AccordoServizioParteSpecifica aspsRiferimento = null;
 						if(listServizi!=null && !listServizi.isEmpty()) {
 							for (IDServizio idS : listServizi) {
@@ -1360,7 +1360,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	 public List<String> nomeAllarmeAutoComplete(Object val){
          List<String> list = null;
          if(val==null || StringUtils.isEmpty((String)val))
-                 list = new ArrayList<String>();
+                 list = new ArrayList<>();
          else{
                  list = ((IAllarmiService)this.service).nomeAllarmeAutoComplete((String) val);
          }

@@ -113,7 +113,7 @@ public final class ConfigurazioneHandlersRichiestaDel extends Action {
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 
-			List<Object> oggettiDaAggiornare = new ArrayList<Object>();
+			List<Object> oggettiDaAggiornare = new ArrayList<>();
 			List<ConfigurazioneHandler> listaDaAggiornare = null;
 			if(ruoloPorta !=null) {
 				if(ruoloPorta.equals(TipoPdD.DELEGATA)) {
@@ -203,7 +203,7 @@ public final class ConfigurazioneHandlersRichiestaDel extends Action {
 				oggettiDaAggiornare.add(configurazione);
 			}
 			
-			List<String> idRemove = new ArrayList<String>();
+			List<String> idRemove = new ArrayList<>();
 			if(listaDaAggiornare!=null) {
 				for(int j = listaDaAggiornare.size() -1; j >= 0 ; j--) {
 					for (int i = 0; i < idsToRemove.size(); i++) {

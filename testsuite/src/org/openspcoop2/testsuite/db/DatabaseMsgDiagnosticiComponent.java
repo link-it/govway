@@ -822,7 +822,7 @@ public class DatabaseMsgDiagnosticiComponent {
 	public List<String> getMessaggiNonTrasformatiCorrettamente()throws TestSuiteException{
 		ResultSet res = null;
 		PreparedStatement prep = null;
-		List<String> resultsList = new ArrayList<String>();
+		List<String> resultsList = new ArrayList<>();
 		try {
 			StringBuilder sql = new StringBuilder();
 			sql.append("select * from "+CostantiDB.MSG_DIAGNOSTICI+" where "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO +" LIKE '%@%@%'");

@@ -66,8 +66,8 @@ public class DiagnosticProperties implements Cloneable{
 	
 	private Properties diagnosticProperties;
 	
-	private Map<String, String> mappingFunctionToCode = new HashMap<String, String>();
-	private Map<String, String> mappingFullCodeToFullString = new HashMap<String, String>();
+	private Map<String, String> mappingFunctionToCode = new HashMap<>();
+	private Map<String, String> mappingFullCodeToFullString = new HashMap<>();
 	private Map<String, DiagnosticInfo> mappingStringCodeToDiagnostic = new HashMap<String, DiagnosticInfo>(); 
 	
 	private String defaultFunction;
@@ -107,7 +107,7 @@ public class DiagnosticProperties implements Cloneable{
 		dmNew.throwExceptionPlaceholderFailedResolution = this.throwExceptionPlaceholderFailedResolution;
 		
 		if(this.mappingFullCodeToFullString!=null && this.mappingFullCodeToFullString.size()>0){
-			dmNew.mappingFullCodeToFullString = new HashMap<String, String>();
+			dmNew.mappingFullCodeToFullString = new HashMap<>();
 			for (String key : this.mappingFullCodeToFullString.keySet()) {
 				String value = this.mappingFullCodeToFullString.get(key);
 				dmNew.mappingFullCodeToFullString.put(key, value);
@@ -115,7 +115,7 @@ public class DiagnosticProperties implements Cloneable{
 		}
 		
 		if(this.mappingFunctionToCode!=null && this.mappingFunctionToCode.size()>0){
-			dmNew.mappingFunctionToCode = new HashMap<String, String>();
+			dmNew.mappingFunctionToCode = new HashMap<>();
 			for (String key : this.mappingFunctionToCode.keySet()) {
 				String value = this.mappingFunctionToCode.get(key);
 				dmNew.mappingFunctionToCode.put(key, value);

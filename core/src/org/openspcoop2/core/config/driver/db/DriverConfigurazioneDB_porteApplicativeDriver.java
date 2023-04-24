@@ -2380,7 +2380,7 @@ public class DriverConfigurazioneDB_porteApplicativeDriver {
 		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<String> lista = new ArrayList<String>();
+		ArrayList<String> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
@@ -2457,7 +2457,7 @@ public class DriverConfigurazioneDB_porteApplicativeDriver {
 		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<String> lista = new ArrayList<String>();
+		ArrayList<String> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
@@ -3546,7 +3546,7 @@ public class DriverConfigurazioneDB_porteApplicativeDriver {
 				}
 			}
 			rs = stm.executeQuery();
-			nomiPA = new ArrayList<String>();
+			nomiPA = new ArrayList<>();
 			while (rs.next()) {
 				nomiPA.add(rs.getString("nome_porta"));
 			}
@@ -3801,8 +3801,8 @@ public class DriverConfigurazioneDB_porteApplicativeDriver {
 			return null;
 		}
 		
-		List<String> lId = new ArrayList<String>();
-		Map<String, String> m = new HashMap<String, String>();
+		List<String> lId = new ArrayList<>();
+		Map<String, String> m = new HashMap<>();
 		for (String s : sa) {
 			for (PortaApplicativaServizioApplicativo pasa : pa.getServizioApplicativoList()) {
 				if(pasa!=null && pasa.getNome()!=null && pasa.getNome().equals(s)) {
@@ -3821,7 +3821,7 @@ public class DriverConfigurazioneDB_porteApplicativeDriver {
 			}
 		}
 		
-		List<String> sorted = new ArrayList<String>();
+		List<String> sorted = new ArrayList<>();
 		Collections.sort(lId);
 		for (String sId : lId) {
 			sorted.add(m.get(sId));

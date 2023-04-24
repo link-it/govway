@@ -107,7 +107,7 @@ public class SystemPropertiesManager {
 			StringBuilder bf = new StringBuilder();
 			
 			Enumeration<Object> keys = p.keys();
-			java.util.ArrayList<String> listKeys = new ArrayList<String>();
+			java.util.ArrayList<String> listKeys = new ArrayList<>();
 			while (keys.hasMoreElements()) {
 				Object object = (Object) keys.nextElement();
 				if(object instanceof String){

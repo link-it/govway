@@ -131,7 +131,7 @@ public final class Exporter extends Action {
 			Parameter provenienza = null;
 			String urlTitle = null;
 			List<?> identificativi = null;
-			List<String> protocolli = new ArrayList<String>();
+			List<String> protocolli = new ArrayList<>();
 			switch (archiveType) {
 			case SOGGETTO:
 				provenienza = new Parameter(SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST);
@@ -325,7 +325,7 @@ public final class Exporter extends Action {
 					
 			// protocolli disponibili compatibili con la sorgente degli oggetti selezionati
 //			if(protocolli.size()>1){
-//				protocolli = new ArrayList<String>();
+//				protocolli = new ArrayList<>();
 //				protocolli.add(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO_UNDEFINDED);
 //				protocolli.addAll(archiviCore.getProtocolli());
 //			}

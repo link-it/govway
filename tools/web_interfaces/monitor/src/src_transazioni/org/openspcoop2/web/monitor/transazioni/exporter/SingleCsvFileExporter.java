@@ -184,7 +184,7 @@ public class SingleCsvFileExporter implements IExporter{
 
 				//devo impostare solo l'idtransazione
 				//filter.setIdEgov(this.diagnosticiBean.getIdEgov());	
-				Map<String, String> properties = new HashMap<String, String>();
+				Map<String, String> properties = new HashMap<>();
 				properties.put("id_transazione", t.getIdTransazione());
 				filter.setProperties(properties);
 				List<MsgDiagnostico> list = this.diagnosticiService.getMessaggiDiagnostici(filter);
@@ -240,7 +240,7 @@ public class SingleCsvFileExporter implements IExporter{
 		if(this.exportTracce){
 			//devo impostare solo l'idtransazione
 			//filter.setIdEgov(this.diagnosticiBean.getIdEgov());	
-			Map<String, String> properties = new HashMap<String, String>();
+			Map<String, String> properties = new HashMap<>();
 			properties.put("id_transazione", t.getIdTransazione());
 
 			Traccia tracciaRichiesta = null;
@@ -344,7 +344,7 @@ public class SingleCsvFileExporter implements IExporter{
 	}
 
 	private List<Object> getLine(TransazioneBean t) throws ExportException {
-		List<Object> oneLine = new ArrayList<Object>();
+		List<Object> oneLine = new ArrayList<>();
 		try {
 			
 			EsitoUtils esitoUtils = new EsitoUtils(SingleCsvFileExporter.log, t.getProtocollo());
@@ -1237,7 +1237,7 @@ public class SingleCsvFileExporter implements IExporter{
 
 	private DRDataSource creaDatasourceTransazioni (List<String> colonneSelezionate,Logger log) throws Exception {
 		// Scittura Intestazione sono le chiavi delle colonne scelte
-		List<String> header = new ArrayList<String>();
+		List<String> header = new ArrayList<>();
 		header.addAll(colonneSelezionate);
 
 		DRDataSource dataSource = new DRDataSource(header.toArray(new String[header.size()])); 
@@ -1245,7 +1245,7 @@ public class SingleCsvFileExporter implements IExporter{
 		//		// scorro le transazioni e in base alla colonna selezionata aggiungo il field corrispondente nell'ordine delle colonne scelto dall'utente
 		//		for (TransazioneBean transazione : transazioni) {
 		//			
-		//			List<Object> oneLine = new ArrayList<Object>();
+		//			List<Object> oneLine = new ArrayList<>();
 		//			
 		//			dataSource.add(oneLine.toArray(new Object[oneLine.size()])); 
 		//		}

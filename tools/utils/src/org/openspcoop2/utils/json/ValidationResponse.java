@@ -43,7 +43,7 @@ public class ValidationResponse {
 		this.esito = esito;
 	}
 	public List<String> getErrors() {
-		if(this.errors == null) this.errors = new ArrayList<String>();
+		if(this.errors == null) this.errors = new ArrayList<>();
 		return this.errors;
 	}
 	public void setErrors(List<String> errors) {

@@ -42,7 +42,7 @@ public class ContextUrlCollection implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	// Vengono utilizzate due liste per preservare l'ordine di inserimento che si perde in una hashtable,
-	private List<String> map_contextUrl = new ArrayList<String>();
+	private List<String> map_contextUrl = new ArrayList<>();
 	private List<MessageType> map_messageProcessor = new ArrayList<MessageType>();
 	private List<List<String>> map_contentTypesRestriction = new ArrayList<List<String>>();
 
@@ -129,7 +129,7 @@ public class ContextUrlCollection implements Serializable {
 		this.map_contextUrl.add(key);
 		this.map_messageProcessor.add(version);
 		
-		List<String> contentTypesRestrictionList = new ArrayList<String>();
+		List<String> contentTypesRestrictionList = new ArrayList<>();
 		if(contentTypesRestriction!=null){
 			for (int i = 0; i < contentTypesRestriction.length; i++) {
 				contentTypesRestrictionList.add(contentTypesRestriction[i]);

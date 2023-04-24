@@ -330,7 +330,7 @@ public class MsgDiagnostico implements Serializable{
     }
     
     public String[] getPropertiesValues() {
-    	List<String> propertiesValues = new ArrayList<String>();
+    	List<String> propertiesValues = new ArrayList<>();
 		if(this.messaggioDiagnostico.getProtocollo()!=null){
 			for (int i = 0; i < this.messaggioDiagnostico.getProtocollo().sizeProprietaList(); i++) {
 				Proprieta proprieta = this.messaggioDiagnostico.getProtocollo().getProprieta(i);
@@ -346,7 +346,7 @@ public class MsgDiagnostico implements Serializable{
     }
     
     public String[] getPropertiesNames() {
-    	List<String> propertiesValues = new ArrayList<String>();
+    	List<String> propertiesValues = new ArrayList<>();
 		if(this.messaggioDiagnostico.getProtocollo()!=null){
 			for (int i = 0; i < this.messaggioDiagnostico.getProtocollo().sizeProprietaList(); i++) {
 				Proprieta proprieta = this.messaggioDiagnostico.getProtocollo().getProprieta(i);
@@ -372,7 +372,7 @@ public class MsgDiagnostico implements Serializable{
 //    }
 //    
 //    public Map<String, String> getProperties() {
-//    	Map<String, String> map = new HashMap<String, String>();
+//    	Map<String, String> map = new HashMap<>();
 //		if(this.messaggioDiagnostico.getProtocollo()!=null){
 //			for (int i = 0; i < this.messaggioDiagnostico.getProtocollo().sizeProprietaList(); i++) {
 //				Proprieta proprieta = this.messaggioDiagnostico.getProtocollo().getProprieta(i);

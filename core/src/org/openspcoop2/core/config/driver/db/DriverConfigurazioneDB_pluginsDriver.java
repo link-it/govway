@@ -96,7 +96,7 @@ public class DriverConfigurazioneDB_pluginsDriver {
 			 
 			stm = con.prepareStatement(sqlQuery);
 			rs = stm.executeQuery();
-			List<String> nomi = new ArrayList<String>();
+			List<String> nomi = new ArrayList<>();
 			while(rs.next()) {
 				nomi.add(rs.getString("nome"));
 			}

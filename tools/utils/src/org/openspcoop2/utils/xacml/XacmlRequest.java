@@ -154,7 +154,7 @@ public class XacmlRequest {
 
 	private AttributeType createAttribute(String name, String value) {
 
-		List<String> lst = new ArrayList<String>();
+		List<String> lst = new ArrayList<>();
 		lst.add(value);
 		return createAttribute(name, lst);
 		

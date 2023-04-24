@@ -283,7 +283,7 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 	
 	@Override
 	public List<String> getTipiSoggetti() throws ProtocolException {
-		List<String> tipi = new ArrayList<String>();
+		List<String> tipi = new ArrayList<>();
 		List<OrganizationType> l = this.registroManifest.getOrganization().getTypes().getTypeList();
 		for (int i = 0; i < l.size(); i++) {
 			tipi.add(l.get(i).getName());
@@ -314,7 +314,7 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 			sb = this.convert(serviceBinding);
 		}
 		
-		List<String> tipi = new ArrayList<String>();
+		List<String> tipi = new ArrayList<>();
 		List<ServiceType> l = this.registroManifest.getService().getTypes().getTypeList();
 		for (int i = 0; i < l.size(); i++) {
 			org.openspcoop2.protocol.manifest.constants.ServiceBinding serviceBindingTmp = l.get(i).getBinding();
@@ -336,7 +336,7 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 	
 	@Override
 	public List<String> getVersioni() throws ProtocolException{
-		List<String> tipi = new ArrayList<String>();
+		List<String> tipi = new ArrayList<>();
 		List<Version> l = this.registroManifest.getVersions().getVersionList();
 		for (int i = 0; i < l.size(); i++) {
 			tipi.add(l.get(i).getName());

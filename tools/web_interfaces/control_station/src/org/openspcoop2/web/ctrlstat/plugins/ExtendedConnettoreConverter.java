@@ -52,7 +52,7 @@ public class ExtendedConnettoreConverter {
 	public static void fillExtendedInfoIntoConnettore(List<ExtendedConnettore> list, org.openspcoop2.core.config.Connettore connettore) throws ExtendedException{
 		if(list!=null && list.size()>0){
 			
-			List<String> pDaEliminare = new ArrayList<String>();
+			List<String> pDaEliminare = new ArrayList<>();
 			for (org.openspcoop2.core.config.Property property : connettore.getPropertyList()) {
 				if(property.getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)){
 					pDaEliminare.add(property.getNome());
@@ -109,7 +109,7 @@ public class ExtendedConnettoreConverter {
 	public static void fillExtendedInfoIntoConnettore(List<ExtendedConnettore> list, org.openspcoop2.core.registry.Connettore connettore) throws ExtendedException{
 		if(list!=null && list.size()>0){
 			
-			List<String> pDaEliminare = new ArrayList<String>();
+			List<String> pDaEliminare = new ArrayList<>();
 			for (org.openspcoop2.core.registry.Property property : connettore.getPropertyList()) {
 				if(property.getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)){
 					pDaEliminare.add(property.getNome());

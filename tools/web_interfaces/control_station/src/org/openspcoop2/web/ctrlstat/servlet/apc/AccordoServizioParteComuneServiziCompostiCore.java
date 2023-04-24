@@ -232,8 +232,8 @@ public class AccordoServizioParteComuneServiziCompostiCore extends ControlStatio
 			risultato.close();
 			stmt.close();
 
-			List<String> serviziL = new ArrayList<String>();
-			List<String> serviziLabelL = new ArrayList<String>();
+			List<String> serviziL = new ArrayList<>();
+			List<String> serviziLabelL = new ArrayList<>();
 			//serviziList = new String[totServ+1];
 			serviziL.add("-1");
 			serviziLabelL.add("-");

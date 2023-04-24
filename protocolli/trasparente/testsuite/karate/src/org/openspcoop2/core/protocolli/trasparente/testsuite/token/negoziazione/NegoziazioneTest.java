@@ -88,7 +88,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 	
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-azione", "clientid_clientsecret2");
 		headers.put("test-user", "ClientIDVerificaNegoziazioneConSecret2");
 		headers.put("test-scope", "testNegoziazioneScope2");
@@ -172,7 +172,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 	
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-azione", "clientid_clientsecret3");
 		
 		HttpResponse response = _test(logCore, api_negoziazione, "clientid_clientsecret3", headers,
@@ -209,7 +209,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 	
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-azione", "user_password");
 		headers.put("test-username", "ResourceOwnerPasswordUsername");
 		
@@ -268,7 +268,7 @@ public class NegoziazioneTest extends ConfigLoader {
 	
 		// Test HDR
 		
-		Map<String, String> headers_0 = new HashMap<String, String>();
+		Map<String, String> headers_0 = new HashMap<>();
 		headers_0.put("test-azione", "signedJWT_clientSecret");
 		headers_0.put("test-suffix", "DYNAMIC");
 		headers_0.put("test-decode-position", "0");
@@ -290,7 +290,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		// Test PAYLOAD
 		
-		Map<String, String> headers_1 = new HashMap<String, String>();
+		Map<String, String> headers_1 = new HashMap<>();
 		headers_1.put("test-azione", "signedJWT_clientSecret");
 		headers_1.put("test-suffix", "DYNAMIC");
 		headers_1.put("test-decode-position", "1");
@@ -376,7 +376,7 @@ public class NegoziazioneTest extends ConfigLoader {
 	
 		// Test HDR
 		
-		Map<String, String> headers_0 = new HashMap<String, String>();
+		Map<String, String> headers_0 = new HashMap<>();
 		headers_0.put("test-azione", "signedJWT_clientSecret2");
 		headers_0.put("test-suffix", "DYNAMIC");
 		headers_0.put("test-decode-position", "0");
@@ -399,7 +399,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		// Test PAYLOAD
 		
-		Map<String, String> headers_1 = new HashMap<String, String>();
+		Map<String, String> headers_1 = new HashMap<>();
 		headers_1.put("test-azione", "signedJWT_clientSecret2");
 		headers_1.put("test-suffix", "DYNAMIC");
 		headers_1.put("test-decode-position", "1");
@@ -501,7 +501,7 @@ public class NegoziazioneTest extends ConfigLoader {
 	
 		// Test HDR
 		
-		Map<String, String> headers_0 = new HashMap<String, String>();
+		Map<String, String> headers_0 = new HashMap<>();
 		headers_0.put("test-azione", "signedJWT_clientSecret3");
 		headers_0.put("test-suffix", "DYNAMIC");
 		headers_0.put("test-decode-position", "0");
@@ -523,7 +523,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		// Test PAYLOAD
 		
-		Map<String, String> headers_1 = new HashMap<String, String>();
+		Map<String, String> headers_1 = new HashMap<>();
 		headers_1.put("test-azione", "signedJWT_clientSecret3");
 		headers_1.put("test-suffix", "DYNAMIC");
 		headers_1.put("test-decode-position", "1");
@@ -611,7 +611,7 @@ public class NegoziazioneTest extends ConfigLoader {
 	
 		// Test HDR
 		
-		Map<String, String> headers_0 = new HashMap<String, String>();
+		Map<String, String> headers_0 = new HashMap<>();
 		headers_0.put("test-azione", "signedJWT");
 		headers_0.put("test-suffix", "DYNAMIC");
 		headers_0.put("test-decode-position", "0");
@@ -633,7 +633,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		// Test PAYLOAD
 		
-		Map<String, String> headers_1 = new HashMap<String, String>();
+		Map<String, String> headers_1 = new HashMap<>();
 		headers_1.put("test-azione", "signedJWT");
 		headers_1.put("test-suffix", "DYNAMIC");
 		headers_1.put("test-decode-position", "1");
@@ -719,7 +719,7 @@ public class NegoziazioneTest extends ConfigLoader {
 	
 		// Test HDR
 		
-		Map<String, String> headers_0 = new HashMap<String, String>();
+		Map<String, String> headers_0 = new HashMap<>();
 		headers_0.put("test-azione", "signedJWT2");
 		headers_0.put("test-suffix", "DYNAMIC");
 		headers_0.put("test-decode-position", "0");
@@ -742,7 +742,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		// Test PAYLOAD
 		
-		Map<String, String> headers_1 = new HashMap<String, String>();
+		Map<String, String> headers_1 = new HashMap<>();
 		headers_1.put("test-azione", "signedJWT2");
 		headers_1.put("test-suffix", "DYNAMIC");
 		headers_1.put("test-decode-position", "1");
@@ -833,7 +833,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		// AccessToken ritornato è un JWT
 		
-		Map<String, String> headers_0 = new HashMap<String, String>();
+		Map<String, String> headers_0 = new HashMap<>();
 		headers_0.put("test-azione", "signedJWT3");
 		headers_0.put("test-suffix", "DYNAMIC");
 		headers_0.put("test-decode-position", "0");
@@ -855,7 +855,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		// Test PAYLOAD
 		
-		Map<String, String> headers_1 = new HashMap<String, String>();
+		Map<String, String> headers_1 = new HashMap<>();
 		headers_1.put("test-azione", "signedJWT3");
 		headers_1.put("test-suffix", "DYNAMIC");
 		headers_1.put("test-decode-position", "1");
@@ -943,7 +943,7 @@ public class NegoziazioneTest extends ConfigLoader {
 	
 		// Test HDR
 		
-		Map<String, String> headers_0 = new HashMap<String, String>();
+		Map<String, String> headers_0 = new HashMap<>();
 		headers_0.put("test-azione", "signedJWT-PDND");
 		
 		headers_0.put("test-kid", "PDND");
@@ -981,7 +981,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		// Test PAYLOAD
 		
-		Map<String, String> headers_1 = new HashMap<String, String>();
+		Map<String, String> headers_1 = new HashMap<>();
 		headers_1.put("test-azione", "signedJWT-PDND");
 		
 		headers_1.put("test-kid", "PDND");
@@ -1074,7 +1074,7 @@ public class NegoziazioneTest extends ConfigLoader {
 	
 		// Test HDR
 		
-		Map<String, String> headers_0 = new HashMap<String, String>();
+		Map<String, String> headers_0 = new HashMap<>();
 		headers_0.put("test-azione", "signedJWT-PDNDv41");
 		
 		headers_0.put("test-kid", "PDND");
@@ -1113,7 +1113,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		// Test PAYLOAD
 		
-		Map<String, String> headers_1 = new HashMap<String, String>();
+		Map<String, String> headers_1 = new HashMap<>();
 		headers_1.put("test-azione", "signedJWT-PDNDv41");
 		
 		headers_1.put("test-kid", "PDND");

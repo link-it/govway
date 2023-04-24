@@ -118,7 +118,7 @@ public class Client {
 			Invocation.Builder builder = target.request();
 			MType request = new MType();
 			request.setA(new AComplexType());
-			ArrayList<String> l = new ArrayList<String>();
+			ArrayList<String> l = new ArrayList<>();
 			l.add("1");
 			l.add("2");
 			request.getA().setA1s( l);

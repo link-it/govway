@@ -457,7 +457,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			boolean escludiSAServer = saCore.isApplicativiServerEnabled(apsHelper);
 			String filtroTipoSA = escludiSAServer ? ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT : null;
 			
-			List<String> saList = new ArrayList<String>();
+			List<String> saList = new ArrayList<>();
 			saList.add("-");
 			if(idSoggettoSelected!=null){
 				try{

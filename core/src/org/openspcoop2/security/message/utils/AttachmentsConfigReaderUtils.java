@@ -39,7 +39,7 @@ import org.openspcoop2.security.message.constants.SecurityConstants;
 public class AttachmentsConfigReaderUtils {
 
 	public static List<String> getListCIDAttachmentsForSecurity(MessageSecurityContext wssContext) throws Exception{
-		List<String> cidSecurity = new ArrayList<String>();
+		List<String> cidSecurity = new ArrayList<>();
 		if(wssContext.getReferences()!=null && wssContext.getReferences().size()>0){
 			for (Reference reference : wssContext.getReferences()) {
 				if(reference instanceof AttachmentReference){

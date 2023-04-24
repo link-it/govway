@@ -424,7 +424,7 @@ public class OCSPValidator {
 					req.addHeader(params.getConfig().getForwardProxy_header(), remoteLocation);
 				}
 				else if(params.getConfig().getForwardProxy_queryParameter()!=null && StringUtils.isNotEmpty(params.getConfig().getForwardProxy_queryParameter())) {
-					Map<String, List<String>> queryParameters = new HashMap<String, List<String>>();
+					Map<String, List<String>> queryParameters = new HashMap<>();
 					TransportUtils.addParameter(queryParameters,params.getConfig().getForwardProxy_queryParameter(), remoteLocation);
 					forwardProxyUrl = TransportUtils.buildUrlWithParameters(queryParameters, forwardProxyUrl, false, log.getLogDebug());
 				}

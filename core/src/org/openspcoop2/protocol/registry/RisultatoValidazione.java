@@ -75,7 +75,7 @@ public class RisultatoValidazione implements java.io.Serializable {
 	 * 
 	 */
 	public RisultatoValidazione(){
-		this.azioni = new ArrayList<String>();
+		this.azioni = new ArrayList<>();
 	}
 
 

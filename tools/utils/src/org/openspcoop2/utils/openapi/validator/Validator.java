@@ -262,7 +262,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 							
 							readApiSchemas = false;
 							
-							Map<String, String> attachments = new HashMap<String, String>();
+							Map<String, String> attachments = new HashMap<>();
 							if(api.getSchemas()!=null && api.getSchemas().size()>0) {
 
 								for (ApiSchema apiSchema : api.getSchemas()) {
@@ -1665,7 +1665,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 					// enum
 					if(typeRestriction.getEnumValues()!=null && !typeRestriction.getEnumValues().isEmpty()) {
 						
-						List<String> valoriPresenti = new ArrayList<String>();
+						List<String> valoriPresenti = new ArrayList<>();
 						if(typeRestriction.isArrayParameter()) {
 							if(ApiParameterType.query.equals(parameterType) || ApiParameterType.form.equals(parameterType)) {
 								if(typeRestriction.isStyleQueryForm() || typeRestriction.getStyle()==null) { // form è il default
@@ -1897,7 +1897,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			List<String> originalValues = TransportUtils.getValues(hdr, HttpConstants.ACCEPT);
 //			List<String> newList = null;
 //			if(originalValues!=null && !originalValues.isEmpty()) {
-//				newList = new ArrayList<String>();
+//				newList = new ArrayList<>();
 //				for (String original : originalValues) {
 //					
 //					String [] acceptHeaders = null;

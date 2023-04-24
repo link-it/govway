@@ -46,8 +46,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-introspection", buildJWT(true, 
 						mapExpectedTokenInfo));
@@ -63,7 +63,7 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		
 		Utilities._test(logCore, validazione, "success", headers,  null,
@@ -78,8 +78,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-introspection", buildJWT_dates(false, false, false, false, // tutte buone, elimino la risposta introspection dopo 
 				mapExpectedTokenInfo));
 		headers.put("test-username", Utilities.username);
@@ -100,8 +100,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-introspection", buildJWT_dates(true, false, false, false, 
 				mapExpectedTokenInfo));
 		headers.put("test-username", Utilities.username);
@@ -117,8 +117,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-introspection", buildJWT_dates(false, true, false, false, 
 				mapExpectedTokenInfo));
 		headers.put("test-username", Utilities.username);
@@ -134,8 +134,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-introspection", buildJWT_dates(false, false, true, false, 
 				mapExpectedTokenInfo));
 		headers.put("test-username", Utilities.username);
@@ -151,8 +151,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-introspection", buildJWT_dates(false, false, false, true, 
 				mapExpectedTokenInfo));
 		headers.put("test-username", Utilities.username);
@@ -169,8 +169,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-introspection", buildJWT(true,
 				false, true, true, true, true,
@@ -187,8 +187,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-introspection", buildJWT(true,
 				true, false, true, true, true,
@@ -205,8 +205,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-introspection", buildJWT(true,
 				true, true, false, true, true,
@@ -223,8 +223,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-introspection", buildJWT(true,
 				true, true, true, false, true,
@@ -241,8 +241,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-introspection", buildJWT(true,
 				true, true, true, true, false,
@@ -259,8 +259,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-introspection", buildJWT(false,
 				mapExpectedTokenInfo));
@@ -279,8 +279,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-introspection", buildJWT_scope(true, true, false,
 						mapExpectedTokenInfo));
@@ -296,8 +296,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-introspection", buildJWT_scope(false, false, true,
 						mapExpectedTokenInfo));
@@ -313,8 +313,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-introspection", buildJWT_scope(false, false, false,
 						mapExpectedTokenInfo));
@@ -330,8 +330,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-introspection", buildJWT_scope(true, false, true,
 						mapExpectedTokenInfo));
@@ -347,8 +347,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-introspection", buildJWT_scope(true, true, false,
 						mapExpectedTokenInfo));
@@ -366,8 +366,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-introspection", buildJWT_roles(true, true, false,
 						mapExpectedTokenInfo));
@@ -382,8 +382,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-introspection", buildJWT_roles(false, false, true,
 						mapExpectedTokenInfo));
@@ -398,8 +398,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-introspection", buildJWT_roles(false, false, false,
 						mapExpectedTokenInfo));
@@ -415,8 +415,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-introspection", buildJWT_roles(true, false, true,
 						mapExpectedTokenInfo));
@@ -432,8 +432,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-introspection", buildJWT_roles(true, true, false,
 						mapExpectedTokenInfo));
@@ -451,8 +451,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-introspection", buildJWT_invalid(true, false, false, false, 
 				mapExpectedTokenInfo));
 		headers.put("test-username", Utilities.username);
@@ -469,8 +469,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-introspection", buildJWT_invalid(false, true, false, false, 
 				mapExpectedTokenInfo));
 		headers.put("test-username", Utilities.username);
@@ -487,8 +487,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-introspection", buildJWT_invalid(false, false, true, false, 
 				mapExpectedTokenInfo));
 		headers.put("test-username", Utilities.username);
@@ -503,8 +503,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-introspection", buildJWT_invalid(false, false, false, false, // tutti corretti 
 				mapExpectedTokenInfo));
 		headers.put("test-username", Utilities.username+"ERRORE"); // l'errore e' nel valore dinamico dell'header usato per il confronto
@@ -521,8 +521,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-introspection", buildJWT_invalid(false, false, false, true, 
 				mapExpectedTokenInfo));
 		headers.put("test-username", Utilities.username);
@@ -541,8 +541,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-not-aud", "7777.apps.invalid");
 		headers.put("test-not-iss", "testAuthEnte.invalid");
@@ -560,8 +560,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-not-aud", "7777.apps.invalid");
 		headers.put("test-not-iss", "testAuthEnte.invalid");
@@ -585,8 +585,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-not-aud", "7777.apps");
 		headers.put("test-not-iss", "testAuthEnte.invalid");
@@ -604,8 +604,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-not-aud", "7777.apps.invalid");
 		headers.put("test-not-iss", "testAuthEnte");
@@ -623,8 +623,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-not-aud", "7777.apps.invalid");
 		headers.put("test-not-iss", "testAuthEnte.invalid");
@@ -642,8 +642,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-not-aud", "7777.apps.invalid");
 		headers.put("test-not-iss", "testAuthEnte.invalid");
@@ -674,8 +674,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-not-aud", "7777.apps.invalid");
 		headers.put("test-not-iss", "testAuthEnte.invalid");
@@ -694,8 +694,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-not-aud", "7777.apps.invalid");
 		headers.put("test-not-iss", "testAuthEnte.invalid");
@@ -719,8 +719,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-not-aud", "23223.apps");
 		headers.put("test-not-iss", "testAuthEnte.invalid");
@@ -739,8 +739,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-not-aud", "7777.apps.invalid");
 		headers.put("test-not-iss", "testAuthEnte");
@@ -759,8 +759,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-not-aud", "7777.apps.invalid");
 		headers.put("test-not-iss", "testAuthEnte.invalid");
@@ -779,8 +779,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-not-aud", "7777.apps.invalid");
 		headers.put("test-not-iss", "testAuthEnte.invalid");
@@ -808,8 +808,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-ignoreCase-fullName", "bianchi ROSSI");
 		headers.put("test-ignoreCase-firstName", "MARIO");
@@ -830,8 +830,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-ignoreCase-fullName", "bianchi ROSSI");
 		headers.put("test-ignoreCase-firstName", "MARIO");
@@ -851,8 +851,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-ignoreCase-fullName", "bianchi VERDI"); // atteso Rossi
 		headers.put("test-ignoreCase-firstName", "MARIO");
@@ -872,8 +872,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-ignoreCase-fullName", "bianchi ROSSI");
 		headers.put("test-ignoreCase-firstName", "ALTRONOME");
@@ -897,8 +897,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-ignoreCase-fullName", "bianchi ROSSI");
 		headers.put("test-ignoreCase-firstName", "MARIO");
@@ -919,8 +919,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-ignoreCase-fullName", "bianchi ROSSI");
 		headers.put("test-ignoreCase-firstName", "MARIO");
@@ -940,8 +940,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-ignoreCase-fullName", "bianchi VERDI"); // atteso Rossi
 		headers.put("test-ignoreCase-firstName", "MARIO");
@@ -961,8 +961,8 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-ignoreCase-fullName", "bianchi ROSSI");
 		headers.put("test-ignoreCase-firstName", "ALTRONOME");

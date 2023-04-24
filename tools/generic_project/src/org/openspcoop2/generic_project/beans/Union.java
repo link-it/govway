@@ -39,15 +39,15 @@ public class Union {
 
 	private boolean unionAll;
 	
-	private List<String> fields = new ArrayList<String>();
+	private List<String> fields = new ArrayList<>();
 	private Map<String, Function> mapFieldsToFunction = new HashMap<String, Function>();
-	private Map<String, String> mapFieldsToAliasFunction = new HashMap<String, String>();
-	private Map<String, String> mapFieldsToCustomUnionField = new HashMap<String, String>();
+	private Map<String, String> mapFieldsToAliasFunction = new HashMap<>();
+	private Map<String, String> mapFieldsToCustomUnionField = new HashMap<>();
 	
 	private SortOrder sortOrder = null;
 	private List<UnionOrderedColumn> orderByList = new ArrayList<UnionOrderedColumn>();
 	
-	private List<String> groupByList = new ArrayList<String>();
+	private List<String> groupByList = new ArrayList<>();
 	
 	private Integer offset = null;
 	private Integer limit = null;

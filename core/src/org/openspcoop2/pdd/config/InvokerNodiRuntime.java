@@ -225,7 +225,7 @@ public class InvokerNodiRuntime {
 			else if(gestore instanceof String){
 				String url = (String) gestore;
 			
-				Map<String, List<String>> p = new HashMap<String,List<String>>();
+				Map<String, List<String>> p = new HashMap<>();
 				TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, nomeRisorsa);
 				TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_METHOD_NAME, nomeMetodo);
 				if(parametri!=null && parametri.length>0){
@@ -345,7 +345,7 @@ public class InvokerNodiRuntime {
 			else if(gestore instanceof String){
 				String url = (String) gestore;
 				
-				Map<String, List<String>> p = new HashMap<String, List<String>>();
+				Map<String, List<String>> p = new HashMap<>();
 				TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, nomeRisorsa);
 				TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_NAME, nomeAttributo);
 				String urlWithParameters = TransportUtils.buildUrlWithParameters(p, url);
@@ -384,7 +384,7 @@ public class InvokerNodiRuntime {
 			else if(gestore instanceof String){
 				String url = (String) gestore;
 				
-				Map<String, List<String>> p = new HashMap<String, List<String>>();
+				Map<String, List<String>> p = new HashMap<>();
 				TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, nomeRisorsa);
 				TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_NAME, nomeAttributo);
 				if(value instanceof Boolean){

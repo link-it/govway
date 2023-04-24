@@ -126,7 +126,7 @@ public class BetweenExpressionImpl extends AbstractBaseExpressionImpl {
 			return null;
 		}
 		if(this.field.equals(field)){
-			List<Object> lista = new ArrayList<Object>();
+			List<Object> lista = new ArrayList<>();
 			lista.add(this.lower);
 			lista.add(this.high);
 		}

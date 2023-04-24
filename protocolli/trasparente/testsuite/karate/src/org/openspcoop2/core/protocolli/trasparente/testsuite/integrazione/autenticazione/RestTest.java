@@ -41,7 +41,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void erogazione_secret() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		HttpResponse response = Utilities._test(MessageType.JSON,
 				TipoServizio.EROGAZIONE,
 				"secret",
@@ -54,7 +54,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void erogazione_id_secret() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		HttpResponse response = Utilities._test(MessageType.JSON,
 				TipoServizio.EROGAZIONE,
 				"id_secret",
@@ -69,7 +69,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void fruizione_secret() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		HttpResponse response = Utilities._test(MessageType.JSON,
 				TipoServizio.FRUIZIONE,
 				"secret",
@@ -82,7 +82,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void fruizione_id_secret() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		HttpResponse response = Utilities._test(MessageType.JSON,
 				TipoServizio.FRUIZIONE,
 				"id_secret",

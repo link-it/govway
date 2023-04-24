@@ -810,8 +810,8 @@ public class DriverRegistroServiziDB_ruoliDriver {
 			
 			/* === Filtro Gruppo, Tipo Erogazione/Fruizione, Implementazione API === */
 			
-			List<String> existsConditions = new ArrayList<String>();
-			List<Object> existsParameters = new ArrayList<Object>();
+			List<String> existsConditions = new ArrayList<>();
+			List<Object> existsParameters = new ArrayList<>();
 			String alias_CT = "ct";
 			String alias_ALLARMI = "alarm";
 			String alias_SOGGETTI_RUOLI = "sogruoli";

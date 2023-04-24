@@ -78,39 +78,39 @@ public class DBOggettiInUsoUtils_accordiParteSpecifica {
 			List<String> allarme_list = whereIsInUso.get(ErrorsHandlerCostant.ALLARMI);
 
 			if (porteApplicative_list == null) {
-				porteApplicative_list = new ArrayList<String>();
+				porteApplicative_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE, porteApplicative_list);
 			}
 			if (porteDelegate_list == null) {
-				porteDelegate_list = new ArrayList<String>();
+				porteDelegate_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_PORTE_DELEGATE, porteDelegate_list);
 			}
 			if (fruitori_list == null) {
-				fruitori_list = new ArrayList<String>();
+				fruitori_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.POSSIEDE_FRUITORI, fruitori_list);
 			}
 			if (servizioComponente_list == null) {
-				servizioComponente_list = new ArrayList<String>();
+				servizioComponente_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IS_SERVIZIO_COMPONENTE_IN_ACCORDI, servizioComponente_list);
 			}
 			if (mappingErogazionePA_list == null) {
-				mappingErogazionePA_list = new ArrayList<String>();
+				mappingErogazionePA_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_MAPPING_EROGAZIONE_PA, mappingErogazionePA_list);
 			}
 			if (mappingFruizionePD_list == null) {
-				mappingFruizionePD_list = new ArrayList<String>();
+				mappingFruizionePD_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_MAPPING_FRUIZIONE_PD, mappingFruizionePD_list);
 			}
 			if (utenti_list == null) {
-				utenti_list = new ArrayList<String>();
+				utenti_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.UTENTE, utenti_list);
 			}
 			if (ct_list == null) {
-				ct_list = new ArrayList<String>();
+				ct_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.CONTROLLO_TRAFFICO, ct_list);
 			}
 			if (allarme_list == null) {
-				allarme_list = new ArrayList<String>();
+				allarme_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.ALLARMI, allarme_list);
 			}
 
@@ -393,7 +393,7 @@ public class DBOggettiInUsoUtils_accordiParteSpecifica {
 			
 			
 			// servizio Componente
-			//List<String> nomiServiziApplicativi = new ArrayList<String>();
+			//List<String> nomiServiziApplicativi = new ArrayList<>();
 			//controllo se in uso in servizi
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.ACCORDI_SERVIZI_COMPONENTI);

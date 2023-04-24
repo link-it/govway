@@ -78,12 +78,12 @@ public class HttpServletTransportRequestContext extends org.openspcoop2.utils.tr
 			this.httpServletRequest = req;
 			
 			// Properties FORM Based
-			this.parameters = new HashMap<String, List<String>>();	       
+			this.parameters = new HashMap<>();	       
 			java.util.Enumeration<?> en = req.getParameterNames();
 			while(en.hasMoreElements()){
 				String nomeProperty = (String)en.nextElement();
 				String [] s = req.getParameterValues(nomeProperty);
-				List<String> values = new ArrayList<String>();
+				List<String> values = new ArrayList<>();
 				if(s!=null && s.length>0) {
 					for (int i = 0; i < s.length; i++) {
 						String value = s[i];
@@ -99,12 +99,12 @@ public class HttpServletTransportRequestContext extends org.openspcoop2.utils.tr
 			}
 
 			// Hedear Trasporto
-			this.headers = new HashMap<String, List<String>>();		    
+			this.headers = new HashMap<>();		    
 			java.util.Enumeration<?> enTrasporto = req.getHeaderNames();
 			while(enTrasporto.hasMoreElements()){
 				String nomeHeader = (String)enTrasporto.nextElement();
 				Enumeration<String> enValues = req.getHeaders(nomeHeader);
-				List<String> values = new ArrayList<String>();
+				List<String> values = new ArrayList<>();
 				if(enValues!=null) {
 					@SuppressWarnings("unused")
 					int i = 0;
@@ -123,7 +123,7 @@ public class HttpServletTransportRequestContext extends org.openspcoop2.utils.tr
 			}
 			
 			// Cookies
-			this.cookiesValue = new HashMap<String, String>();
+			this.cookiesValue = new HashMap<>();
 			this.cookiesMaxAge = new HashMap<String, Integer>();
 			Cookie [] cookies = req.getCookies();
 			if(cookies!=null && cookies.length>0) {

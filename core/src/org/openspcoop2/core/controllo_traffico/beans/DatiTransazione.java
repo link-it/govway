@@ -61,7 +61,7 @@ public class DatiTransazione extends org.openspcoop2.utils.beans.BaseBean implem
 	private IDServizio idServizio;
 	
 	private String servizioApplicativoFruitore;
-	private List<String> listServiziApplicativiErogatori = new ArrayList<String>();
+	private List<String> listServiziApplicativiErogatori = new ArrayList<>();
 	
 	private String identificativoAutenticato;
 	
@@ -224,7 +224,7 @@ public class DatiTransazione extends org.openspcoop2.utils.beans.BaseBean implem
 	}
 
 	public void setTokenClaims(Map<String, Object> tokenClaims) {
-		this.tokenClaims = new HashMap<String, String>();
+		this.tokenClaims = new HashMap<>();
 		if(tokenClaims!=null && !tokenClaims.isEmpty()) {
 			for (String key : tokenClaims.keySet()) {
 				Object v = tokenClaims.get(key);

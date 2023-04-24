@@ -125,7 +125,7 @@ public class ClientTest {
 	private static void cleanManuallyFieldAdd(IExpression expr){
 		if(expr instanceof ExpressionSQL){
 			List<Object> list = ((ExpressionSQL)expr).getFieldsManuallyAdd();
-			List<Object> newList = new ArrayList<Object>();
+			List<Object> newList = new ArrayList<>();
 			for (Object object : list) {
 				newList.add(object);
 			}
@@ -135,7 +135,7 @@ public class ClientTest {
 		}
 		else if(expr instanceof PaginatedExpressionSQL){
 			List<Object> list = ((PaginatedExpressionSQL)expr).getFieldsManuallyAdd();
-			List<Object> newList = new ArrayList<Object>();
+			List<Object> newList = new ArrayList<>();
 			for (Object object : list) {
 				newList.add(object);
 			}
@@ -270,7 +270,7 @@ public class ClientTest {
 				else
 					throw new ExpressionException("Tipo non gestito: "+expr.getClass().getName()); 	
 			case PREPARED_STATEMENT:
-				List<Object> lista = new ArrayList<Object>();
+				List<Object> lista = new ArrayList<>();
 				String s = null;
 				if(expSQL!=null)
 					s = ((JDBCExpression)expSQL).toSqlForPreparedStatement(lista);
@@ -307,7 +307,7 @@ public class ClientTest {
 				}else{
 					sqlQueryObjectPreparedStatement = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
 				}
-				List<Object> listaQuery = new ArrayList<Object>();
+				List<Object> listaQuery = new ArrayList<>();
 				if(expSQL!=null)
 					((JDBCExpression)expSQL).toSqlForPreparedStatement(sqlQueryObjectPreparedStatement,listaQuery);
 				else if(pagExpSQL!=null)
@@ -343,7 +343,7 @@ public class ClientTest {
 				}else{
 					sqlQueryObjectPreparedStatementWithFromCondition = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
 				}
-				listaQuery = new ArrayList<Object>();
+				listaQuery = new ArrayList<>();
 				if(expSQL!=null)
 					((JDBCExpression)expSQL).toSqlForPreparedStatementWithFromCondition(sqlQueryObjectPreparedStatementWithFromCondition,listaQuery,"NOMETABELLA");
 				else if(pagExpSQL!=null)
@@ -2216,7 +2216,7 @@ public class ClientTest {
 		
 		System.out.println("\n **************** IN ************************* ");
 		
-		List<Object> l = new ArrayList<Object>();
+		List<Object> l = new ArrayList<>();
 		l.add(author.getAge());
 		l.add(author.getWeight());
 		l.add(author.getBankAccount());

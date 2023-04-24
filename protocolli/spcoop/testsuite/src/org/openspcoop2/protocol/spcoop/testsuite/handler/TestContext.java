@@ -82,7 +82,7 @@ public class TestContext implements Serializable {
 	public TestContext(TipoPdD tipoPdD,Map<String,List<String>> p) throws HandlerException{
 		
 		if(TipoPdD.DELEGATA.equals(tipoPdD)){
-			this.forwardProperties = new HashMap<String,List<String>>();
+			this.forwardProperties = new HashMap<>();
 		}
 		
 		// Generazione errore

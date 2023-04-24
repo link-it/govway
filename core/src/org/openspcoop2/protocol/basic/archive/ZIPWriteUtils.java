@@ -483,7 +483,7 @@ public class ZIPWriteUtils {
 			
 			// soggetti
 			Map<String, Archive> archiveMapIntoSoggetti = archiveMapIntoSoggetti(archive);
-			List<String> listaSoggetti = new ArrayList<String>();
+			List<String> listaSoggetti = new ArrayList<>();
 			listaSoggetti.addAll(archiveMapIntoSoggetti.keySet());
 			java.util.Collections.sort(listaSoggetti);
 			for (String idSoggettoAsString : listaSoggetti) {

@@ -67,7 +67,7 @@ public class ExternalResourceUtils {
 					req.addHeader(externalConfig.getForwardProxy_header(), remoteLocation);
 				}
 				else if(externalConfig.getForwardProxy_queryParameter()!=null && StringUtils.isNotEmpty(externalConfig.getForwardProxy_queryParameter())) {
-					Map<String, List<String>> queryParameters = new HashMap<String, List<String>>();
+					Map<String, List<String>> queryParameters = new HashMap<>();
 					TransportUtils.addParameter(queryParameters,externalConfig.getForwardProxy_queryParameter(), remoteLocation);
 					forwardProxyUrl = TransportUtils.buildUrlWithParameters(queryParameters, forwardProxyUrl, false, null);
 				}

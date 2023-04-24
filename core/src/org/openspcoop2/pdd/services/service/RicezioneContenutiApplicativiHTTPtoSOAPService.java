@@ -699,7 +699,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				}
 				
 				if(requestInfo.getProtocolContext().getHeaders()==null) {
-					requestInfo.getProtocolContext().setHeaders(new HashMap<String,List<String>>());
+					requestInfo.getProtocolContext().setHeaders(new HashMap<>());
 				}
 				requestInfo.getProtocolContext().removeHeader(HttpConstants.CONTENT_TYPE);
 				TransportUtils.setHeader(requestInfo.getProtocolContext().getHeaders(),HttpConstants.CONTENT_TYPE, requestMessage.getContentType());
@@ -970,7 +970,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			msgDiag = context.getMsgDiagnostico();
 		}
 		if(context.getResponseHeaders()==null) {
-			context.setResponseHeaders(new HashMap<String,List<String>>());
+			context.setResponseHeaders(new HashMap<>());
 		}
 		ServicesUtils.setGovWayHeaderResponse(requestMessage!=null ? requestMessage.getServiceBinding() : requestInfo.getProtocolServiceBinding(),
 				responseMessage, openSPCoopProperties,

@@ -99,7 +99,7 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 	private String transactionId;
 	
 	/* ContentType */
-	public Map<String, String> contentTypeParamaters = new HashMap<String, String>();
+	public Map<String, String> contentTypeParamaters = new HashMap<>();
 	
 	/* MessageType */
 	public MessageType messageType;
@@ -588,7 +588,7 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 		}	
 	}
 	protected Map<String, List<String>> _msgContext_convertTo(List<StringParameter> list){
-		Map<String, List<String>> p = new HashMap<String, List<String>>();
+		Map<String, List<String>> p = new HashMap<>();
 		if(list.size()>0) {
 			for (StringParameter stringParameter : list) {
 				TransportUtils.put(p, stringParameter.getNome(), stringParameter.getBase(), true);
@@ -710,7 +710,7 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 	}
 	@Override
 	public Map<String, List<String>> getForceTransportHeaders(){
-		return this.forceTransportHeaders!=null ? new HashMap<String, List<String>>(this.forceTransportHeaders) : null; // viene ritornata una immagine clonata. Per aggiungere un valore usare metodo force
+		return this.forceTransportHeaders!=null ? new HashMap<>(this.forceTransportHeaders) : null; // viene ritornata una immagine clonata. Per aggiungere un valore usare metodo force
 	}
 	@Override
 	public void forceUrlProperty(String name, String value) {
@@ -727,7 +727,7 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 	}
 	@Override
 	public Map<String, List<String>> getForceUrlProperties(){
-		return this.forceUrlProperties!=null ? new HashMap<String, List<String>>(this.forceUrlProperties) : null; // viene ritornata una immagine clonata. Per aggiungere un valore usare metodo force
+		return this.forceUrlProperties!=null ? new HashMap<>(this.forceUrlProperties) : null; // viene ritornata una immagine clonata. Per aggiungere un valore usare metodo force
 	}
 	@Override
 	public OpenSPCoop2MessageProperties getForwardTransportHeader(ForwardConfig forwardConfig) throws MessageException{

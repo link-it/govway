@@ -112,7 +112,7 @@ public enum GruppoIntegrazione {
 	
 	
 	public static String[] toValues(ServiceBinding serviceBinding){
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		for (GruppoIntegrazione tmp : values()) {
 			if(tmp.getServiceBinding()==null || serviceBinding==null) {
 				list.add(tmp.getValue());
@@ -124,7 +124,7 @@ public enum GruppoIntegrazione {
 		return list.toArray(new String[list.size()]);
 	}
 	public static String[] toLabels(boolean compact, ServiceBinding serviceBinding){
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		for (GruppoIntegrazione tmp : values()) {
 			String label = compact?tmp.getCompactLabel():tmp.getLabel();
 			if(tmp.getServiceBinding()==null || serviceBinding==null) {

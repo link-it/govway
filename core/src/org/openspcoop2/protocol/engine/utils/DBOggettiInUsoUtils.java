@@ -289,20 +289,20 @@ public class DBOggettiInUsoUtils  {
 			List<String> mapping_connettorePD_list = whereIsInUso.get(ErrorsHandlerCostant.CONNETTORE_MAPPING_PD);
 			
 			if (connettorePA_list == null) {
-				connettorePA_list = new ArrayList<String>();
+				connettorePA_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.CONNETTORE_PA, connettorePA_list);
 			}
 			if (connettorePD_list == null) {
-				connettorePD_list = new ArrayList<String>();
+				connettorePD_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.CONNETTORE_PD, connettorePD_list);
 			}
 			
 			if (mapping_connettorePA_list == null) {
-				mapping_connettorePA_list = new ArrayList<String>();
+				mapping_connettorePA_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.CONNETTORE_MAPPING_PA, mapping_connettorePA_list);
 			}
 			if (mapping_connettorePD_list == null) {
-				mapping_connettorePD_list = new ArrayList<String>();
+				mapping_connettorePD_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.CONNETTORE_MAPPING_PD, mapping_connettorePD_list);
 			}
 			
@@ -408,7 +408,7 @@ public class DBOggettiInUsoUtils  {
 							stmt = con.prepareStatement(queryString);
 							stmt.setLong(1, id);
 							risultato = stmt.executeQuery();
-							List<String> azioni = new ArrayList<String>();
+							List<String> azioni = new ArrayList<>();
 							while (risultato.next()) {
 								String nomeAzione = risultato.getString("nome_azione");
 								azioni.add(nomeAzione);

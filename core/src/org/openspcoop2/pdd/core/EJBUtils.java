@@ -1752,7 +1752,7 @@ public class EJBUtils {
 			if( serviziApplicativiConfigurazione==null || serviziApplicativiConfigurazione.length < 1){
 				throw new EJBUtilsConsegnaException(this.msgDiag,MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI,"servizioApplicativoNonDefinito");
 			}
-			List<String> serviziApplicativiAbilitati = new ArrayList<String>();
+			List<String> serviziApplicativiAbilitati = new ArrayList<>();
 			List<IDServizioApplicativo> idServiziApplicativiAbilitati = new ArrayList<IDServizioApplicativo>();
 			for (int i = 0; i < serviziApplicativiConfigurazione.length; i++) {
 				IDServizioApplicativo idSA = new IDServizioApplicativo();
@@ -1765,7 +1765,7 @@ public class EJBUtils {
 				// Dentro qua non si passa se siamo in modalità soggetto virtuale
 				// Il behaviuor sul filtro è gestito direttamente dentro il metodo soggettiVirtuali.getIdServiziApplicativi() sopra
 				idServiziApplicativiAbilitati = singleFilterBehaviour.aggiornaDestinatariAbilitati(idServiziApplicativiAbilitati);
-				serviziApplicativiAbilitati = new ArrayList<String>();
+				serviziApplicativiAbilitati = new ArrayList<>();
 				for (IDServizioApplicativo idServizioApplicativo : idServiziApplicativiAbilitati) {
 					serviziApplicativiAbilitati.add(idServizioApplicativo.getNome());
 				}
@@ -1851,13 +1851,13 @@ public class EJBUtils {
 					BehaviourForwardTo behaviourForwardTo = forwardTo.get(i);
 					
 					// check servizi applicativi
-					List<String> serviziApplicativiAbilitatiForwardTo = new ArrayList<String>();
+					List<String> serviziApplicativiAbilitatiForwardTo = new ArrayList<>();
 					List<IDServizioApplicativo> idServiziApplicativiAbilitatiForwardTo = new ArrayList<IDServizioApplicativo>();
 					serviziApplicativiAbilitatiForwardTo.addAll(serviziApplicativiAbilitati);
 					idServiziApplicativiAbilitatiForwardTo.addAll(idServiziApplicativiAbilitati);
 					if(behaviourForwardTo.getFilter()!=null){
 						idServiziApplicativiAbilitatiForwardTo = behaviourForwardTo.getFilter().aggiornaDestinatariAbilitati(idServiziApplicativiAbilitati);
-						serviziApplicativiAbilitatiForwardTo = new ArrayList<String>();
+						serviziApplicativiAbilitatiForwardTo = new ArrayList<>();
 						for (IDServizioApplicativo idServizioApplicativo : idServiziApplicativiAbilitatiForwardTo) {
 							serviziApplicativiAbilitatiForwardTo.add(idServizioApplicativo.getNome());
 						}
@@ -2021,7 +2021,7 @@ public class EJBUtils {
 		Map<String, Boolean> mapSbustamentoSoap = new HashMap<String, Boolean>();
 		Map<String, Boolean> mapSbustamentoInformazioniProtocollo = new HashMap<String, Boolean>();
 		Map<String, Boolean> mapGetMessage = new HashMap<String, Boolean>();
-		Map<String, String> mapTipoConsegna = new HashMap<String, String>();
+		Map<String, String> mapTipoConsegna = new HashMap<>();
 		Map<String, Timestamp> mapOraRegistrazione = new HashMap<String, Timestamp>();
 		Map<String, ConsegnaContenutiApplicativiMessage> mapConsegnaContenutiApplicativiMessage = new HashMap<String, ConsegnaContenutiApplicativiMessage>();
 		
@@ -2539,7 +2539,7 @@ public class EJBUtils {
 			repositoryBuste.registraBustaIntoInBox(busta,propertiesReader.getRepositoryIntervalloScadenzaMessaggi(), true);
 			if(!(state instanceof OpenSPCoopStateful)){
 				if(busta.sizeProperties()>0){
-					Map<String, String> bustaProperties = new HashMap<String, String>();
+					Map<String, String> bustaProperties = new HashMap<>();
 					String[]propertyNames = busta.getPropertiesNames();
 					if(propertyNames!=null){
 						for (int i = 0; i < propertyNames.length; i++) {

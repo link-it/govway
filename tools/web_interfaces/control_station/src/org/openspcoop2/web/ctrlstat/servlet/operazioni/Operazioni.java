@@ -70,7 +70,7 @@ public class Operazioni extends Action{
 
 			OperazioniHelper opHelper = new OperazioniHelper(request, pd, session);
 
-			ArrayList<String> errors = new ArrayList<String>();
+			ArrayList<String> errors = new ArrayList<>();
 
 			OperazioniFormBean formBean = opHelper.getBeanForm(errors);
 			

@@ -894,7 +894,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 				throw new DriverRegistroServiziNotFound("Porte di dominio non esistenti nel repository WEB");
 
 			// Esamina delle pdd
-			List<String> nomiPdd = new ArrayList<String>();
+			List<String> nomiPdd = new ArrayList<>();
 			for(int i=0; i<pddList.length; i++){
 
 				String pdUrlXML = this.urlPrefix + CostantiXMLRepository.PORTE_DI_DOMINIO + CostantiRegistroServizi.URL_SEPARATOR 

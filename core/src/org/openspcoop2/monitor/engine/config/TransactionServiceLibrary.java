@@ -191,8 +191,8 @@ public class TransactionServiceLibrary implements Serializable {
 			List<ConfigurazioneTransazioneRisorsaContenuto> risorse = this.mergeServiceActionTransactionLibrary_resources();
 	
 			// XPATH
-			Map<String, String> notFoundRules = new HashMap<String, String>();
-			Map<String, String> dirtyRules = new HashMap<String, String>();
+			Map<String, String> notFoundRules = new HashMap<>();
+			Map<String, String> dirtyRules = new HashMap<>();
 			if(risorse.size()>0){
 	
 				if(soapEnvelope==null){
@@ -763,7 +763,7 @@ public class TransactionServiceLibrary implements Serializable {
 	public List<ConfigurazioneTransazioneStato> mergeServiceActionTransactionLibrary_states() throws Exception{
 
 		List<ConfigurazioneTransazioneStato> list = new ArrayList<ConfigurazioneTransazioneStato>();
-		List<String> idStati = new ArrayList<String>();
+		List<String> idStati = new ArrayList<>();
 
 		// Leggo le risorse associate all'azione specifica
 		if(this.transactionActionLibrary!=null && this.transactionActionLibrary.sizeConfigurazioneTransazioneStatoList()>0){
@@ -797,7 +797,7 @@ public class TransactionServiceLibrary implements Serializable {
 	public List<ConfigurazioneTransazioneRisorsaContenuto> mergeServiceActionTransactionLibrary_resources() throws Exception{
 
 		List<ConfigurazioneTransazioneRisorsaContenuto> list = new ArrayList<ConfigurazioneTransazioneRisorsaContenuto>();
-		List<String> idRisorse = new ArrayList<String>();
+		List<String> idRisorse = new ArrayList<>();
 
 		// Leggo le risorse associate all'azione specifica
 		if(this.transactionActionLibrary!=null && this.transactionActionLibrary.sizeConfigurazioneTransazioneRisorsaContenutoList()>0){
@@ -833,7 +833,7 @@ public class TransactionServiceLibrary implements Serializable {
 	public List<ITransactionProcessing> mergeServiceActionTransactionLibrary_sdkPlugins(Logger log) throws Exception{
 
 		List<ITransactionProcessing> list = new ArrayList<ITransactionProcessing>();
-		List<String> idRisorse = new ArrayList<String>();
+		List<String> idRisorse = new ArrayList<>();
 
 		// Leggo le risorse associate all'azione specifica
 		if(this.transactionActionLibrary!=null && this.transactionActionLibrary.getEnabled() 

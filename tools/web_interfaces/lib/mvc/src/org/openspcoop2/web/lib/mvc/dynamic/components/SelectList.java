@@ -55,8 +55,8 @@ public class SelectList extends BaseComponent<String> {
 		de.setSelected(this.getValue());
 		de.setType(DataElementType.SELECT);
 
-		List<String> valuesList = new ArrayList<String>();
-		List<String> labelsList = new ArrayList<String>();
+		List<String> valuesList = new ArrayList<>();
+		List<String> labelsList = new ArrayList<>();
 		List<String> values = this.getRendering().getValues();
 		List<String> labels = this.getRendering().getLabels();
 		if(values!=null && values.size()>0) {

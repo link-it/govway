@@ -75,7 +75,7 @@ public class DataElement implements Serializable {
 	
 	
 	static{
-		DataElement.escapeMap = new HashMap<String,String>();
+		DataElement.escapeMap = new HashMap<>();
 		
 		// carico le stringhe da sostituire
 		DataElement.escapeMap.put("&lt;BR&gt;", "<BR>");

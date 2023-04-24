@@ -871,7 +871,7 @@ public class Utilities {
 		//System.out.println("SUBJECT SPLIT ["+separator+"]");
 		
 		StringBuilder bf = new StringBuilder();
-		List<String> splitResults = new ArrayList<String>();
+		List<String> splitResults = new ArrayList<>();
 		if(value==null || value.length()<=0){
 			throw new UtilsException("Valore non fornito");
 		}
@@ -1455,7 +1455,7 @@ public class Utilities {
 		if(map==null || map.isEmpty()) {
 			return null;
 		}
-		HashMap<String, String> newMap = new HashMap<String, String>();
+		HashMap<String, String> newMap = new HashMap<>();
 		Iterator<Object> it = map.keySet().iterator();
 		while (it.hasNext()) {
 			Object k = it.next();

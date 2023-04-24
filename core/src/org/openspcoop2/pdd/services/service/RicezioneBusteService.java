@@ -1154,7 +1154,7 @@ public class RicezioneBusteService  {
 			msgDiag = context.getMsgDiagnostico();
 		}
 		if(context.getResponseHeaders()==null) {
-			context.setResponseHeaders(new HashMap<String,List<String>>());
+			context.setResponseHeaders(new HashMap<>());
 		}
 		ServicesUtils.setGovWayHeaderResponse(requestMessage!=null ? requestMessage.getServiceBinding() : requestInfo.getProtocolServiceBinding(),
 				responseMessage, openSPCoopProperties,

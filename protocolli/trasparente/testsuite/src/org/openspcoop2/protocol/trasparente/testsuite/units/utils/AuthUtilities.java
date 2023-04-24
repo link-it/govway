@@ -354,7 +354,7 @@ public class AuthUtilities {
 			java.util.Map<String, String> sslContext = null;
 			if(credenzialiInvocazione!=null && credenzialiInvocazione.isCreateSSLContext()){
 				Reporter.log("Creo contesto SSL");
-				sslContext = new HashMap<String, String>();
+				sslContext = new HashMap<>();
 				if(credenzialiInvocazione.getPathKeystore()!=null){
 					sslContext.put("trustStoreLocation", credenzialiInvocazione.getPathKeystore());
 					sslContext.put("keyStoreLocation", credenzialiInvocazione.getPathKeystore());

@@ -1137,7 +1137,7 @@ public abstract class AbstractXMLUtils {
 	
 	public Map<String, String> getNamespaceDeclaration(Node n){
 		NamedNodeMap map = n.getAttributes();
-		Map<String, String> namespaces = new HashMap<String, String>();
+		Map<String, String> namespaces = new HashMap<>();
 		if(map!=null){
 			for (int i = 0; i < map.getLength(); i++) {
 				Node attribute = map.item(i);

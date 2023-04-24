@@ -83,20 +83,20 @@ public class DBOggettiInUsoUtils_accordi {
 			List<String> correlazione_list = whereIsInUso.get(ErrorsHandlerCostant.IS_CORRELATA);
 			
 			if (servizi_list == null) {
-				servizi_list = new ArrayList<String>();
+				servizi_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_SERVIZI, servizi_list);
 			}
 			if (mappingErogazionePA_list == null) {
-				mappingErogazionePA_list = new ArrayList<String>();
+				mappingErogazionePA_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_MAPPING_EROGAZIONE_PA, mappingErogazionePA_list);
 			}
 			if (mappingFruizionePD_list == null) {
-				mappingFruizionePD_list = new ArrayList<String>();
+				mappingFruizionePD_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_MAPPING_FRUIZIONE_PD, mappingFruizionePD_list);
 			}
 			
 			if (correlazione_list == null) {
-				correlazione_list = new ArrayList<String>();
+				correlazione_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IS_CORRELATA, correlazione_list);
 			}
 			
@@ -256,7 +256,7 @@ public class DBOggettiInUsoUtils_accordi {
 					int index = 1;
 					stmt.setLong(index++, idAccordoServizioParteComune);
 					risultato = stmt.executeQuery();
-					List<String> risorse = new ArrayList<String>();
+					List<String> risorse = new ArrayList<>();
 					while(risultato.next()){
 						String nomeRisorsa = risultato.getString("nomeRisorsa");
 						risorse.add(nomeRisorsa);

@@ -105,12 +105,12 @@ public class WadlTest {
 			TextHttpRequestEntity httpEntity = new TextHttpRequestEntity();
 			httpEntity.setUrl("/prova2");
 			httpEntity.setMethod(HttpRequestMethod.GET);
-			Map<String, List<String>> parametersFormBased = new HashMap<String, List<String>>();
+			Map<String, List<String>> parametersFormBased = new HashMap<>();
 			TransportUtils.setParameter(parametersFormBased,"idTrasmissionePROVA2Required", "24");
 			TransportUtils.setParameter(parametersFormBased,"idTrasmissionePROVA2NOTRequired", "true");
 			httpEntity.setParameters(parametersFormBased);
 	
-			Map<String, List<String>> parametersTrasporto = new HashMap<String, List<String>>();
+			Map<String, List<String>> parametersTrasporto = new HashMap<>();
 			TransportUtils.setHeader(parametersTrasporto,"idTrasmissionePROVA2headerRequired", "67");
 			TransportUtils.setHeader(parametersTrasporto,"idTrasmissionePROVA2headerNOTRequired", "true");
 			httpEntity.setHeaders(parametersTrasporto);

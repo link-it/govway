@@ -539,7 +539,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			List<Plugin> p = driver.pluginsClassiList(ricercaPlugin);
 			
 			Map<String, Plugin> plugins = new HashMap<String, Plugin>();
-			List<String> keys = new ArrayList<String>();
+			List<String> keys = new ArrayList<>();
 			if(p!=null && p.size()>0){
 				for (Plugin plugin : p) {
 					String key = plugin.getLabel() + "_" + plugin.getClassName();
@@ -1319,7 +1319,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			configurazioneUrlInvocazione = config.getUrlInvocazione();
 		}
 		
-		List<String> tags = new ArrayList<String>();
+		List<String> tags = new ArrayList<>();
 		if(aspc!=null && aspc.getGruppo()!=null && aspc.getGruppo().size()>0) {
 			for (int i = 0; i < aspc.getGruppo().size(); i++) {
 				tags.add(aspc.getGruppo().get(i).getNome());

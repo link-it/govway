@@ -518,7 +518,7 @@ public class GestoreConsegnaMultipla {
 					if(times!=null) {
 						timeStart = DateManager.getTimeMillis();
 						if(buildDetailsSA) {
-							times.sa_details = new ArrayList<String>();
+							times.sa_details = new ArrayList<>();
 						}
 					}
 					
@@ -584,7 +584,7 @@ public class GestoreConsegnaMultipla {
 						try{
 							
 							if(times!=null && buildDetailsSA) {
-								timeDetails = new ArrayList<String>();
+								timeDetails = new ArrayList<>();
 							}
 							
 							boolean transazioneAggiornata = TransactionServerUtils.save(transazioneService, (TransazioneApplicativoServer)o, update, throwNotFoundIfNotExists, false, 
@@ -779,7 +779,7 @@ public class GestoreConsegnaMultipla {
 					if(times!=null) {
 						timeStart = DateManager.getTimeMillis();
 						if(buildDetailsUpdateTransaction) {
-							times.transazione_details = new ArrayList<String>();
+							times.transazione_details = new ArrayList<>();
 							timeDetails = times.transazione_details;
 						}
 					}

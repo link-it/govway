@@ -37,7 +37,7 @@ public class MapPlaceholder implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private Map<String, String> map = new HashMap<String, String>();
+	private Map<String, String> map = new HashMap<>();
 
 	public Map<String, String> getMap() {
 		return this.map;

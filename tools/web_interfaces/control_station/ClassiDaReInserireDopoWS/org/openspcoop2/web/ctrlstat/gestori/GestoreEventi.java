@@ -481,7 +481,7 @@ public class GestoreEventi extends GestoreGeneral {
 						if (saValue != null) {
 							String[] sa = saValue.split(" ");
 							if (sa != null) {
-								nomiSA = new ArrayList<String>();
+								nomiSA = new ArrayList<>();
 								for (int i = 0; i < sa.length; i++) {
 									nomiSA.add(sa[i]);
 								}

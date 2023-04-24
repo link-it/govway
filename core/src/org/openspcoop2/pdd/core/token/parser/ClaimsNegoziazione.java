@@ -41,12 +41,12 @@ public class ClaimsNegoziazione {
 	
 	public static final String AZURE_EXPIRES_ON = "expires_on"; // azure (https://learn.microsoft.com/en-us/azure/container-apps/managed-identity?tabs=portal%2Chttp#connect-to-azure-services-in-app-code)
 	
-	public static final List<String> REFRESH_EXPIRE_IN_CUSTOM_CLAIMS = new ArrayList<String>();
+	public static final List<String> REFRESH_EXPIRE_IN_CUSTOM_CLAIMS = new ArrayList<>();
 	static {
 		REFRESH_EXPIRE_IN_CUSTOM_CLAIMS.add("refresh_expires_in"); //keyclock
 	}
 	
-	public static final List<String> REFRESH_EXPIRE_ON_CUSTOM_CLAIMS = new ArrayList<String>();
+	public static final List<String> REFRESH_EXPIRE_ON_CUSTOM_CLAIMS = new ArrayList<>();
 	static {
 		REFRESH_EXPIRE_ON_CUSTOM_CLAIMS.add("refresh_expires_on");
 	}

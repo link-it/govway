@@ -85,15 +85,15 @@ public class DBOggettiInUsoUtils_gruppi {
 			List<String> allarme_list = whereIsInUso.get(ErrorsHandlerCostant.ALLARMI);	
 
 			if (accordi_list == null) {
-				accordi_list = new ArrayList<String>();
+				accordi_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_ACCORDI, accordi_list);
 			}
 			if (ct_list == null) {
-				ct_list = new ArrayList<String>();
+				ct_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.CONTROLLO_TRAFFICO, ct_list);
 			}
 			if (allarme_list == null) {
-				allarme_list = new ArrayList<String>();
+				allarme_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.ALLARMI, allarme_list);
 			}
 

@@ -643,7 +643,7 @@ public class SoggettiCore extends ControlStationCore {
 		String nomeMetodo = "getTipiSoggettiGestiti";
 		try{
 			
-			List<String> tipi = new ArrayList<String>();
+			List<String> tipi = new ArrayList<>();
 			
 			MapReader<String, IProtocolFactory<?>> protocolFactories = this.protocolFactoryManager.getProtocolFactories();
 			Enumeration<String> protocolli = protocolFactories.keys();

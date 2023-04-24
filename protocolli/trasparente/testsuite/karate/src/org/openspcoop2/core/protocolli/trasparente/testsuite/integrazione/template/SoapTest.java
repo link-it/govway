@@ -42,7 +42,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void erogazione_soap11_template_request_cookie() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_COOKIE+";"+Utilities.COOKIE_NAME+";"+Utilities.TOKEN;
 		headers.put(Utilities.SECURITY_TOKEN, token);
 		
@@ -56,7 +56,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void erogazione_soap12_template_request_cookie() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_COOKIE+";"+Utilities.COOKIE_NAME+";"+Utilities.TOKEN;
 		headers.put(Utilities.SECURITY_TOKEN, token);
 		
@@ -72,7 +72,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void erogazione_soap11_template_request_jwt() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_JWT+";"+Utilities.TOKEN_TYPE_JWT_BEARER+";"+Utilities.TOKEN;
 		headers.put(Utilities.SECURITY_TOKEN, token);
 		
@@ -87,7 +87,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void erogazione_soap12_template_request_jwt() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_JWT+";"+Utilities.TOKEN_TYPE_JWT_BEARER+";"+Utilities.TOKEN;
 		headers.put(Utilities.SECURITY_TOKEN, token);
 		
@@ -103,7 +103,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void erogazione_soap11_template_request_soapHeader() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_HEADER_SOAP+";"+Utilities.TOKEN_TYPE_HEADER_SOAP_VALUE+";"+Utilities.TOKEN;
 		headers.put(Utilities.SECURITY_TOKEN, token);
 		
@@ -118,7 +118,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void erogazione_soap12_template_request_soapHeader() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_HEADER_SOAP+";"+Utilities.TOKEN_TYPE_HEADER_SOAP_VALUE+";"+Utilities.TOKEN;
 		headers.put(Utilities.SECURITY_TOKEN, token);
 		
@@ -136,7 +136,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void erogazione_soap11_template_response_cookie() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_COOKIE+";"+Utilities.COOKIE_NAME+";"+Utilities.TOKEN_RISPOSTA;
 		headers.put(Utilities.SECURITY_TOKEN_RESPONSE, token);
 		
@@ -151,7 +151,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void erogazione_soap12_template_response_cookie() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_COOKIE+";"+Utilities.COOKIE_NAME+";"+Utilities.TOKEN_RISPOSTA;
 		headers.put(Utilities.SECURITY_TOKEN_RESPONSE, token);
 		
@@ -167,7 +167,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void erogazione_soap11_template_response_jwt() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_JWT+";"+Utilities.TOKEN_TYPE_JWT_BEARER+";"+Utilities.TOKEN_RISPOSTA;
 		headers.put(Utilities.SECURITY_TOKEN_RESPONSE, token);
 		
@@ -182,7 +182,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void erogazione_soap12_template_response_jwt() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_JWT+";"+Utilities.TOKEN_TYPE_JWT_BEARER+";"+Utilities.TOKEN_RISPOSTA;
 		headers.put(Utilities.SECURITY_TOKEN_RESPONSE, token);
 		
@@ -197,7 +197,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void erogazione_soap11_template_response_soapHeader() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_HEADER_SOAP+";"+Utilities.TOKEN_TYPE_HEADER_SOAP_VALUE+";"+Utilities.TOKEN_RISPOSTA;
 		headers.put(Utilities.SECURITY_TOKEN_RESPONSE, token);
 		
@@ -212,7 +212,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void erogazione_soap12_template_response_soapHeader() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_HEADER_SOAP+";"+Utilities.TOKEN_TYPE_HEADER_SOAP_VALUE+";"+Utilities.TOKEN_RISPOSTA;
 		headers.put(Utilities.SECURITY_TOKEN_RESPONSE, token);
 		
@@ -231,7 +231,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void fruizione_soap11_template_request_cookie() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_COOKIE+";"+Utilities.COOKIE_NAME+";"+Utilities.TOKEN;
 		headers.put(Utilities.SECURITY_TOKEN, token);
 		
@@ -246,7 +246,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void fruizione_soap12_template_request_cookie() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_COOKIE+";"+Utilities.COOKIE_NAME+";"+Utilities.TOKEN;
 		headers.put(Utilities.SECURITY_TOKEN, token);
 		
@@ -262,7 +262,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void fruizione_soap11_template_request_jwt() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_JWT+";"+Utilities.TOKEN_TYPE_JWT_BEARER+";"+Utilities.TOKEN;
 		headers.put(Utilities.SECURITY_TOKEN, token);
 		
@@ -277,7 +277,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void fruizione_soap12_template_request_jwt() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_JWT+";"+Utilities.TOKEN_TYPE_JWT_BEARER+";"+Utilities.TOKEN;
 		headers.put(Utilities.SECURITY_TOKEN, token);
 		
@@ -292,7 +292,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void fruizione_soap11_template_request_soapHeader() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_HEADER_SOAP+";"+Utilities.TOKEN_TYPE_HEADER_SOAP_VALUE+";"+Utilities.TOKEN;
 		headers.put(Utilities.SECURITY_TOKEN, token);
 		
@@ -307,7 +307,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void fruizione_soap12_template_request_soapHeader() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_HEADER_SOAP+";"+Utilities.TOKEN_TYPE_HEADER_SOAP_VALUE+";"+Utilities.TOKEN;
 		headers.put(Utilities.SECURITY_TOKEN, token);
 		
@@ -325,7 +325,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void fruizione_soap11_template_response_cookie() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_COOKIE+";"+Utilities.COOKIE_NAME+";"+Utilities.TOKEN_RISPOSTA;
 		headers.put(Utilities.SECURITY_TOKEN_RESPONSE, token);
 		
@@ -340,7 +340,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void fruizione_soap12_template_response_cookie() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_COOKIE+";"+Utilities.COOKIE_NAME+";"+Utilities.TOKEN_RISPOSTA;
 		headers.put(Utilities.SECURITY_TOKEN_RESPONSE, token);
 		
@@ -355,7 +355,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void fruizione_soap11_template_response_jwt() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_JWT+";"+Utilities.TOKEN_TYPE_JWT_BEARER+";"+Utilities.TOKEN_RISPOSTA;
 		headers.put(Utilities.SECURITY_TOKEN_RESPONSE, token);
 		
@@ -370,7 +370,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void fruizione_soap12_template_response_jwt() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_JWT+";"+Utilities.TOKEN_TYPE_JWT_BEARER+";"+Utilities.TOKEN_RISPOSTA;
 		headers.put(Utilities.SECURITY_TOKEN_RESPONSE, token);
 		
@@ -387,7 +387,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void fruizione_soap11_template_response_soapHeader() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_HEADER_SOAP+";"+Utilities.TOKEN_TYPE_HEADER_SOAP_VALUE+";"+Utilities.TOKEN_RISPOSTA;
 		headers.put(Utilities.SECURITY_TOKEN_RESPONSE, token);
 		
@@ -402,7 +402,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void fruizione_soap12_template_response_soapHeader() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_HEADER_SOAP+";"+Utilities.TOKEN_TYPE_HEADER_SOAP_VALUE+";"+Utilities.TOKEN_RISPOSTA;
 		headers.put(Utilities.SECURITY_TOKEN_RESPONSE, token);
 		

@@ -79,27 +79,27 @@ public class DBOggettiInUsoUtils_canali {
 			List<String> nodi_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_CANALE_NODO);
 			
 			if (accordi_list == null) {
-				accordi_list = new ArrayList<String>();
+				accordi_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_ACCORDI, accordi_list);
 			}
 			if (porte_applicative_list == null) {
-				porte_applicative_list = new ArrayList<String>();
+				porte_applicative_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE, porte_applicative_list);
 			}
 			if (porte_delegate_list == null) {
-				porte_delegate_list = new ArrayList<String>();
+				porte_delegate_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_PORTE_DELEGATE, porte_delegate_list);
 			}
 			if (mappingErogazionePA_list == null) {
-				mappingErogazionePA_list = new ArrayList<String>();
+				mappingErogazionePA_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_MAPPING_EROGAZIONE_PA, mappingErogazionePA_list);
 			}
 			if (mappingFruizionePD_list == null) {
-				mappingFruizionePD_list = new ArrayList<String>();
+				mappingFruizionePD_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_MAPPING_FRUIZIONE_PD, mappingFruizionePD_list);
 			}
 			if (nodi_list == null) {
-				nodi_list = new ArrayList<String>();
+				nodi_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_CANALE_NODO, nodi_list);
 			}
 			

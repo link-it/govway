@@ -342,7 +342,7 @@ public class ValidazioneDocumenti extends BasicComponentFactory implements IVali
 		
 
 		// WSDL Erogatore
-		List<String> portTypesWSDL_erogatore = new ArrayList<String>();
+		List<String> portTypesWSDL_erogatore = new ArrayList<>();
 		tipoWsdl = "LogicoErogatore";
 		try{
 			if(wsdlLogicoErogatore!=null){
@@ -373,7 +373,7 @@ public class ValidazioneDocumenti extends BasicComponentFactory implements IVali
 		
 		
 		// WSDL Fruitore
-		List<String> portTypesWSDL_fruitore = new ArrayList<String>();
+		List<String> portTypesWSDL_fruitore = new ArrayList<>();
 		tipoWsdl = "LogicoFruitore";
 		try{
 			if(wsdlLogicoFruitore!=null){
@@ -474,7 +474,7 @@ public class ValidazioneDocumenti extends BasicComponentFactory implements IVali
 	}
 	private void checkPortTypeInBinding(DefinitionWrapper wsdlParteSpecifica) throws Exception{
 		Map<QName,QName> mapBindingToPortTypeImplemented = wsdlParteSpecifica.getMapPortTypesImplementedBinding();
-		List<String> portTypes = new ArrayList<String>();
+		List<String> portTypes = new ArrayList<>();
 		StringBuilder bf = new StringBuilder();
 		for (QName binding : mapBindingToPortTypeImplemented.keySet()) {
 			QName portType = mapBindingToPortTypeImplemented.get(binding);

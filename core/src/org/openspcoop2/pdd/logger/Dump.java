@@ -764,7 +764,7 @@ public class Dump {
 		
 		
 		// HEADERS
-		Map<String, List<String>> transportHeader = new HashMap<String, List<String>>(); // uso anche sotto per content type in caso msg bytes
+		Map<String, List<String>> transportHeader = new HashMap<>(); // uso anche sotto per content type in caso msg bytes
 		try{
 			if(transportHeaderParam!=null && transportHeaderParam.size()>0){
 				transportHeader.putAll(transportHeaderParam);

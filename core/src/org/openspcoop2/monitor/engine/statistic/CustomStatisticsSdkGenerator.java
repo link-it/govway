@@ -233,9 +233,9 @@ public class CustomStatisticsSdkGenerator implements IStatistic {
 	}
 	
 	
-	private List<String> idStatistiche = new ArrayList<String>();
-	private List<String> idRisorse = new ArrayList<String>();
-	private Map<String, String> mapIdRisorsaToIdStatistica = new HashMap<String, String>();
+	private List<String> idStatistiche = new ArrayList<>();
+	private List<String> idRisorse = new ArrayList<>();
+	private Map<String, String> mapIdRisorsaToIdStatistica = new HashMap<>();
 	
 	@Override
 	public void createStatistics(String idStatistica,String idRisorsa) throws StatisticException{
@@ -278,7 +278,7 @@ public class CustomStatisticsSdkGenerator implements IStatistic {
 	
 	
 	
-	//private List<String> valoreRisorseAggregate = new ArrayList<String>();
+	//private List<String> valoreRisorseAggregate = new ArrayList<>();
 	
 	@Override
 	public void createStatistics(IFilter filtro, String valoreRisorsaAggregata)

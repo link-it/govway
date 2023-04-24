@@ -294,8 +294,8 @@ public class TimerGestorePuliziaMessaggiAnomaliLib{
 								this.propertiesReader.isForceIndex(),this.orderByQuery);
 					}
 					else {
-						busteInutiliINBOX = new ArrayList<String>(); // per uscire dal while
-						busteInutiliOUTBOX = new ArrayList<String>(); // per uscire dal while
+						busteInutiliINBOX = new ArrayList<>(); // per uscire dal while
+						busteInutiliOUTBOX = new ArrayList<>(); // per uscire dal while
 					}
 	
 				}

@@ -94,7 +94,7 @@ public class CoreTest {
 				httpEntity.setMethod(HttpRequestMethod.GET);
 				httpEntity.setUrl(testUrl1);	
 				Map<String, List<String>> parametersTrasporto = new HashMap<>();
-				List<String> headersValues = new ArrayList<String>();
+				List<String> headersValues = new ArrayList<>();
 				headersValues.add("aaa");
 				parametersTrasporto.put("api_key", headersValues);
 				httpEntity.setHeaders(parametersTrasporto);
@@ -115,7 +115,7 @@ public class CoreTest {
 				}
 				
 				System.out.println("["+testName+"] Test #3 (Richiesta GET con parametri query)");
-				Map<String, List<String>> parametersQuery = new HashMap<String, List<String>>();
+				Map<String, List<String>> parametersQuery = new HashMap<>();
 				HttpBaseRequestEntity<?> httpEntity3 = new TextHttpRequestEntity();
 				TransportUtils.setParameter(parametersQuery,"status", "available");
 				if(addParameterTipizzati) {
@@ -1220,12 +1220,12 @@ public class CoreTest {
 	private static void setContentType(String contentType, HttpBaseEntity<?> httpEntity) {
 		httpEntity.setContentType(contentType);
 		if(httpEntity.getHeaders()==null) {
-			httpEntity.setHeaders(new HashMap<String, List<String>>());
+			httpEntity.setHeaders(new HashMap<>());
 		}
 		httpEntity.getHeaders().remove(HttpConstants.CONTENT_TYPE);
 		httpEntity.getHeaders().remove(HttpConstants.CONTENT_TYPE.toUpperCase());
 		httpEntity.getHeaders().remove(HttpConstants.CONTENT_TYPE.toLowerCase());
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		l.add(contentType);
 		httpEntity.getHeaders().put(HttpConstants.CONTENT_TYPE, l);
 	}

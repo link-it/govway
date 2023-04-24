@@ -41,7 +41,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void erogazione_secret_soap11() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		HttpResponse response = Utilities._test(MessageType.SOAP_11,
 				TipoServizio.EROGAZIONE,
 				"secret",
@@ -54,7 +54,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void erogazione_id_secret_soap11() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		HttpResponse response = Utilities._test(MessageType.SOAP_11,
 				TipoServizio.EROGAZIONE,
 				"id_secret",
@@ -67,7 +67,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void erogazione_secret_soap12() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		HttpResponse response = Utilities._test(MessageType.SOAP_12,
 				TipoServizio.EROGAZIONE,
 				"secret",
@@ -80,7 +80,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void erogazione_id_secret_soap12() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		HttpResponse response = Utilities._test(MessageType.SOAP_12,
 				TipoServizio.EROGAZIONE,
 				"id_secret",
@@ -96,7 +96,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void fruizione_secret_soap11() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		HttpResponse response = Utilities._test(MessageType.SOAP_11,
 				TipoServizio.FRUIZIONE,
 				"secret",
@@ -109,7 +109,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void fruizione_id_secret_soap11() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		HttpResponse response = Utilities._test(MessageType.SOAP_11,
 				TipoServizio.FRUIZIONE,
 				"id_secret",
@@ -122,7 +122,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void fruizione_secret_soap12() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		HttpResponse response = Utilities._test(MessageType.SOAP_12,
 				TipoServizio.FRUIZIONE,
 				"secret",
@@ -135,7 +135,7 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void fruizione_id_secret_soap12() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		HttpResponse response = Utilities._test(MessageType.SOAP_12,
 				TipoServizio.FRUIZIONE,
 				"id_secret",

@@ -484,7 +484,7 @@ public class RestTest extends ConfigLoader{
 			checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);
 		}
 		
-		List<String> connettori = new ArrayList<String>();
+		List<String> connettori = new ArrayList<>();
 		connettori.add(Common.CONNETTORE_0);
 		connettori.add(Common.CONNETTORE_2);
 		connettori.add(Common.CONNETTORE_3);
@@ -505,7 +505,7 @@ public class RestTest extends ConfigLoader{
 		
 		// Attendo la consegna sul connettore appena abilitato
 		
-		connettori = new ArrayList<String>();
+		connettori = new ArrayList<>();
 		connettori.add(Common.CONNETTORE_1);
 		CommonConsegnaMultipla.waitConsegna(responses, connettori);
 		
@@ -540,7 +540,7 @@ public class RestTest extends ConfigLoader{
 		}
 
 		// Attendo la consegna
-		List<String> connettoriCheck = new ArrayList<String>();
+		List<String> connettoriCheck = new ArrayList<>();
 		connettoriCheck.addAll(Common.setConnettoriAbilitati);
 		CommonConsegnaMultipla.waitConsegna(responses, connettoriCheck);
 
@@ -593,7 +593,7 @@ public class RestTest extends ConfigLoader{
 		List<HttpResponse> responsesCheck = new ArrayList<HttpResponse>();
 		responsesCheck.addAll(responsesOk);
 		responsesCheck.addAll(responsesErroreProcessamentoOK);
-		List<String> connettoriCheck = new ArrayList<String>();
+		List<String> connettoriCheck = new ArrayList<>();
 		connettoriCheck.addAll(Common.setConnettoriAbilitati);
 		CommonConsegnaMultipla.waitConsegna(responsesCheck, connettoriCheck);	
 
@@ -655,7 +655,7 @@ public class RestTest extends ConfigLoader{
 		responsesCheck.addAll(responses);
 		responsesCheck.addAll(responsesOk);
 		//responsesCheck.addAll(responsesErroreProcessamento);
-		List<String> connettoriCheck = new ArrayList<String>();
+		List<String> connettoriCheck = new ArrayList<>();
 		connettoriCheck.addAll(Common.setConnettoriAbilitati);
 		CommonConsegnaMultipla.waitConsegna(responsesCheck, connettoriCheck);
 
@@ -1061,7 +1061,7 @@ public class RestTest extends ConfigLoader{
 		}
 	
 		// Attendo la consegna
-		List<String> connettoriCheck = new ArrayList<String>();
+		List<String> connettoriCheck = new ArrayList<>();
 		connettoriCheck.addAll(connettoriSchedulati);
 		CommonConsegnaMultipla.waitConsegna(responses, connettoriCheck);
 	

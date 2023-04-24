@@ -497,7 +497,7 @@ public class Axis14WSSReceiver {
 					Object next = childrenToClean.next();
 					if(next instanceof SOAPElement) {
 						SOAPElement childToClean = (SOAPElement) next;
-						List<String> prefixesToRemove = new ArrayList<String>();
+						List<String> prefixesToRemove = new ArrayList<>();
 						
 						Iterator<?> prefixes = childToClean.getNamespacePrefixes();
 						while(prefixes.hasNext()){

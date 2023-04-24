@@ -137,7 +137,7 @@ public class SDIValidatoreNomeFile {
 	private static List<String> CODICI_PAESE = null;
 	private static synchronized void initCodiciPaese(){
 		if(CODICI_PAESE==null){
-			CODICI_PAESE = new ArrayList<String>(); 
+			CODICI_PAESE = new ArrayList<>(); 
 			String [] l = Locale.getISOCountries();
 			for (int i = 0; i < l.length; i++) {
 				CODICI_PAESE.add(l[i]);

@@ -598,7 +598,7 @@ public class CertificateUtils {
 		
 		if(keystore) {
 			
-			List<String> alias = new ArrayList<String>();
+			List<String> alias = new ArrayList<>();
 			if(aliasKey!=null) {
 				alias.add(aliasKey);
 			}
@@ -623,7 +623,7 @@ public class CertificateUtils {
 		}
 		else {
 			
-			List<String> alias = new ArrayList<String>();
+			List<String> alias = new ArrayList<>();
 			if(aliasKey!=null) {
 				alias.add(aliasKey);
 			}

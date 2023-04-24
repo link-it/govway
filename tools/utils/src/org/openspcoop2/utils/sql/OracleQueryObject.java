@@ -73,7 +73,7 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 	}
 	@Override
 	public List<String> getSupportedAliasesTable(){
-		List<String> lista = new ArrayList<String>();
+		List<String> lista = new ArrayList<>();
 		lista.add(" ");
 		return lista;
 	}

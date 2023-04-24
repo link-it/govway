@@ -552,7 +552,7 @@ public class Utils {
 	
 	public static void resetAllCache(Logger log) {
 		
-		List<String> resource = new ArrayList<String>();
+		List<String> resource = new ArrayList<>();
 		resource.add("DatiRichieste");
 		resource.add("AccessoRegistroServizi");
 		resource.add("ConfigurazionePdD");

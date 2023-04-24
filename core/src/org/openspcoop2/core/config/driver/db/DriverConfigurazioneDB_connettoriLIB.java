@@ -115,9 +115,9 @@ public class DriverConfigurazioneDB_connettoriLIB {
 		
 		boolean isAbilitato = false;
 
-		Map<String, String> extendedProperties = new HashMap<String, String>();
+		Map<String, String> extendedProperties = new HashMap<>();
 		
-		List<String> propertiesGestiteAttraversoColonneAdHoc = new ArrayList<String>();
+		List<String> propertiesGestiteAttraversoColonneAdHoc = new ArrayList<>();
 		
 		// setto i dati, se le property non sono presenti il loro valore rimarra
 		// a null e verra settato come tale nel DB

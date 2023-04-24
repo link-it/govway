@@ -74,7 +74,7 @@ public class OperationFinder {
 		try{
 
 			// Recupero Lista di Azioni
-//			List<String> listaAzioni = new ArrayList<String>();
+//			List<String> listaAzioni = new ArrayList<>();
 //			boolean rest = false;
 //			try {
 //				AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false);

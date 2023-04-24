@@ -275,8 +275,8 @@ public class StandardWSDL {
 		List<byte[]> schemiInglobareWsdlErogatore = null;
 		List<byte[]> schemiInglobareWsdlFruitore = null;
 		
-		HashMap<String,String> prefixForWSDLErogatore = new HashMap<String, String>();
-		HashMap<String,String> prefixForWSDLFruitore = new HashMap<String, String>();
+		HashMap<String,String> prefixForWSDLErogatore = new HashMap<>();
+		HashMap<String,String> prefixForWSDLFruitore = new HashMap<>();
 		String uniquePrefix = "_n"+IDUtilities.getUniqueSerialNumber("StandardWSDL.setup")+"_";
 		
 		
@@ -489,19 +489,19 @@ public class StandardWSDL {
 			}
 			Document documentWSDL = this.xmlUtils.newDocument(wsdl.toByteArray());
 			Element wsdlElement = documentWSDL.getDocumentElement();
-			HashMap<String,String> prefixForWSDL = new HashMap<String, String>();
+			HashMap<String,String> prefixForWSDL = new HashMap<>();
 			
 			List<Node> schemiImportatiDalWsdl = new ArrayList<Node>();
 			List<Node> schemiInclusiDalWsdl = new ArrayList<Node>();
 			
 			// leggo dal wsdl
 			List<SchemaXSDAccordoServizio> listaSchemiImportati = new ArrayList<SchemaXSDAccordoServizio>();
-			List<String> namespaceSchemiImportati = new ArrayList<String>();
+			List<String> namespaceSchemiImportati = new ArrayList<>();
 			readSchemi(listaSchemiImportati, namespaceSchemiImportati,schemiImportatiDalWsdl,schemiInclusiDalWsdl,wsdl,false,true);
 			//System.out.println("LETTI IMP: "+listaSchemiImportati.size()+" NS:"+namespaceSchemiImportati.size());
 			
 			List<SchemaXSDAccordoServizio> listaSchemiInclusi = new ArrayList<SchemaXSDAccordoServizio>();
-			List<String> namespaceSchemiInclusi = new ArrayList<String>();
+			List<String> namespaceSchemiInclusi = new ArrayList<>();
 			readSchemi(listaSchemiInclusi, namespaceSchemiInclusi,schemiImportatiDalWsdl,schemiInclusiDalWsdl,wsdl,true,false);
 			//System.out.println("LETTI INCL: "+listaSchemiImportati.size()+" NS:"+namespaceSchemiImportati.size());
 			
@@ -903,7 +903,7 @@ public class StandardWSDL {
 			String targetNamespaceWSDL = this.wsdlUtilities.getTargetNamespace(documentWSDL);
 			
 			List<SchemaXSDAccordoServizio> schemiInclusi = new ArrayList<SchemaXSDAccordoServizio>();
-			List<String> namespacesInclusioni = new ArrayList<String>();
+			List<String> namespacesInclusioni = new ArrayList<>();
 			List<Node> inclusioni = this.wsdlUtilities.readIncludesSchemaIntoTypes(documentWSDL);
 			//System.out.println("TROVATE INCLUSIONI NEL WSDL: "+inclusioni.size());
 			buildListaSchemiInclusi_inputByteArray(inclusioni, schemiInclusi, namespacesInclusioni ,schemi,targetNamespaceWSDL);

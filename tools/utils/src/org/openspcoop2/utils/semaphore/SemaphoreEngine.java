@@ -231,7 +231,7 @@ public class SemaphoreEngine {
 		
 		int iteration = 0;
 		
-		List<String> messageException = new ArrayList<String>();
+		List<String> messageException = new ArrayList<>();
 		
 		String table = this.mapping.getTable();
 		String columnIdNode = this.mapping.getIdNode();

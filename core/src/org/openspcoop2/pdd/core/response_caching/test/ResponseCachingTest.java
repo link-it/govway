@@ -77,12 +77,12 @@ public class ResponseCachingTest {
 		protocolContext.setFunction("PD");
 		protocolContext.setRequestURI("http://govway/in/GW_serv/RGT");
 		
-		protocolContext.setParameters(new HashMap<String, List<String>>());
+		protocolContext.setParameters(new HashMap<>());
 		TransportUtils.addParameter(protocolContext.getParameters(),"p1", "v1");
 		TransportUtils.addParameter(protocolContext.getParameters(),"p2", "v2a");
 		TransportUtils.addParameter(protocolContext.getParameters(),"p2", "v2b");
 		
-		protocolContext.setHeaders(new HashMap<String, List<String>>());
+		protocolContext.setHeaders(new HashMap<>());
 		TransportUtils.addHeader(protocolContext.getHeaders(),"h1", "v1");
 		TransportUtils.addHeader(protocolContext.getHeaders(),"h2", "v2a");
 		TransportUtils.addHeader(protocolContext.getHeaders(),"h2", "v2b");
@@ -107,7 +107,7 @@ public class ResponseCachingTest {
 		
 		ResponseCachingConfigurazione responseCachingConfig = new ResponseCachingConfigurazione();
 		responseCachingConfig.setHashGenerator(new ResponseCachingConfigurazioneHashGenerator());
-		List<String> headers = new ArrayList<String>();
+		List<String> headers = new ArrayList<>();
 		headers.addAll(protocolContext.getHeaders().keySet());
 		responseCachingConfig.getHashGenerator().setHeaders(StatoFunzionalita.ABILITATO);
 		responseCachingConfig.getHashGenerator().setHeaderList(headers);

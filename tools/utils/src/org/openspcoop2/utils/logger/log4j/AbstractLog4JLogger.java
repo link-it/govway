@@ -89,7 +89,7 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 	private synchronized void initLogFunctionToDiagnostic(){
 		if(this.mapFunctionToLogDiagnostic==null){
 				
-			List<String> loggers = new ArrayList<String>();
+			List<String> loggers = new ArrayList<>();
 			org.apache.logging.log4j.core.LoggerContext context = (org.apache.logging.log4j.core.LoggerContext) org.apache.logging.log4j.LogManager.getContext(false);
 			Iterator<String> it = context.getConfiguration().getLoggers().keySet().iterator();
 			while (it.hasNext()) {

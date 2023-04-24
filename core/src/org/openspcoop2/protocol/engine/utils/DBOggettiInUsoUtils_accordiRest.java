@@ -99,50 +99,50 @@ public class DBOggettiInUsoUtils_accordiRest {
 			List<String> allarme_list = whereIsInUso.get(ErrorsHandlerCostant.ALLARMI);
 			
 			if (correlazione_list == null) {
-				correlazione_list = new ArrayList<String>();
+				correlazione_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IS_CORRELATA, correlazione_list);
 			}
 			
 			if (porte_applicative_list == null) {
-				porte_applicative_list = new ArrayList<String>();
+				porte_applicative_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE, porte_applicative_list);
 			}
 			if (porte_delegate_list == null) {
-				porte_delegate_list = new ArrayList<String>();
+				porte_delegate_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_PORTE_DELEGATE, porte_delegate_list);
 			}
 			if (mappingErogazionePA_list == null) {
-				mappingErogazionePA_list = new ArrayList<String>();
+				mappingErogazionePA_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_MAPPING_EROGAZIONE_PA, mappingErogazionePA_list);
 			}
 			if (mappingFruizionePD_list == null) {
-				mappingFruizionePD_list = new ArrayList<String>();
+				mappingFruizionePD_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_MAPPING_FRUIZIONE_PD, mappingFruizionePD_list);
 			}
 			
 			if (trasformazionePD_mapping_list == null) {
-				trasformazionePD_mapping_list = new ArrayList<String>();
+				trasformazionePD_mapping_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.TRASFORMAZIONE_MAPPING_PD, trasformazionePD_mapping_list);
 			}
 			if (trasformazionePD_list == null) {
-				trasformazionePD_list = new ArrayList<String>();
+				trasformazionePD_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.TRASFORMAZIONE_PD, trasformazionePD_list);
 			}
 			if (trasformazionePA_mapping_list == null) {
-				trasformazionePA_mapping_list = new ArrayList<String>();
+				trasformazionePA_mapping_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.TRASFORMAZIONE_MAPPING_PA, trasformazionePA_mapping_list);
 			}
 			if (trasformazionePA_list == null) {
-				trasformazionePA_list = new ArrayList<String>();
+				trasformazionePA_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.TRASFORMAZIONE_PA, trasformazionePA_list);
 			}
 			
 			if (ct_list == null) {
-				ct_list = new ArrayList<String>();
+				ct_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.CONTROLLO_TRAFFICO, ct_list);
 			}
 			if (allarme_list == null) {
-				allarme_list = new ArrayList<String>();
+				allarme_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.ALLARMI, allarme_list);
 			}
 			

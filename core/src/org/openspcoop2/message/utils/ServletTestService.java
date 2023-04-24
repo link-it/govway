@@ -142,7 +142,7 @@ public class ServletTestService extends HttpServlet {
 		return value;
 	}
 	private static List<String> getParameters_checkWhiteList(HttpServletRequest request, List<String> whitePropertiesList, String parameter) {
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		String [] values = request.getParameterValues(parameter);
 		if(values!=null && values.length>0) {
 			
@@ -529,7 +529,7 @@ public class ServletTestService extends HttpServlet {
 			String setCookie = getParameter_checkWhiteList(req, this.whitePropertiesList, "setCookie");
 			if(setCookie!=null) {
 				setCookie = setCookie.trim();
-				List<String> hdr = new ArrayList<String>();
+				List<String> hdr = new ArrayList<>();
 				if(setCookie.contains(",")==false) {
 					hdr.add(setCookie);
 				}
@@ -600,7 +600,7 @@ public class ServletTestService extends HttpServlet {
 					redirect = true;
 			}
 			if(redirect) {
-				Map<String, List<String>> p = new HashMap<String, List<String>>();
+				Map<String, List<String>> p = new HashMap<>();
 				
 				Integer returnCode = 307;
 				String returnCodeOpt = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirectReturnCode");
@@ -910,7 +910,7 @@ public class ServletTestService extends HttpServlet {
 			// opzione replace
 			// formato: old:new[,old:new,....,old:new]
 			String replace = getParameter_checkWhiteList(req, this.whitePropertiesList, "replace");
-			Map<String, String> replaceMap = new HashMap<String, String>();
+			Map<String, String> replaceMap = new HashMap<>();
 			if(replace!=null){
 				// volutamente non faccio il trim
 				if(replace.contains(",")){

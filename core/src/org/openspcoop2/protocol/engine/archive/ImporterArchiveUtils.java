@@ -686,7 +686,7 @@ public class ImporterArchiveUtils {
 			}
 			
 			// Controllo Traffico (AttivazionePolicy)
-			HashMap<String, String> instanceSerialIdsForPolicy = new HashMap<String, String>();
+			HashMap<String, String> instanceSerialIdsForPolicy = new HashMap<>();
 			// NOTA: devo riordinare per posizione, poi anche se la posizione verrà ricalcolata, verrà mantenuto l'ordine
 			SortedMap<List<ArchiveActivePolicy>> map_controllo_traffico_activePolicy = reorderByPosition(archive.getControlloTraffico_activePolicies());
 			if(!map_controllo_traffico_activePolicy.isEmpty()) {
@@ -709,7 +709,7 @@ public class ImporterArchiveUtils {
 
 			
 			// Allarmi
-			HashMap<String, String> instanceSerialIdsForAlarm = new HashMap<String, String>();
+			HashMap<String, String> instanceSerialIdsForAlarm = new HashMap<>();
 			for (int i = 0; i < archive.getAllarmi().size(); i++) {
 				ArchiveAllarme archiveAllarme = archive.getAllarmi().get(i);
 				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveAllarme);
@@ -865,7 +865,7 @@ public class ImporterArchiveUtils {
 				l.add(archive);
 			}
 			
-			List<String> keys = new ArrayList<String>();
+			List<String> keys = new ArrayList<>();
 			keys.addAll(map_for_reorder.keySet());
 			Collections.sort(keys);
 			for (String position : keys) {
@@ -2396,20 +2396,20 @@ public class ImporterArchiveUtils {
 			RegistroOpenSPCoopUtilities wsdlUtility = new RegistroOpenSPCoopUtilities(defaultFactory, this.log);
 			wsdl=wsdlUtility.eliminaImportASParteComune(wsdl);
 			DefinitionWrapper wsdlObject = new DefinitionWrapper(wsdl,MessageXMLUtils.getInstance(defaultFactory));
-			Map<String, List<String>> mapPortTypeOperations = new HashMap<String, List<String>>();
+			Map<String, List<String>> mapPortTypeOperations = new HashMap<>();
 			java.util.Map<?,?> pts = wsdlObject.getAllPortTypes();
 			if(pts==null || pts.size()<=0){
 				this.log.warn("Non sono stati definiti port types nel wsdl concettuale");
 			}else{
 				java.util.Iterator<?> ptsIterator = pts.values().iterator();
-				java.util.ArrayList<String> listPortTypesName = new ArrayList<String>();
+				java.util.ArrayList<String> listPortTypesName = new ArrayList<>();
 				while(ptsIterator.hasNext()) {
 					javax.wsdl.PortType pt = (javax.wsdl.PortType) ptsIterator.next();
 					String ptName = pt.getQName().getLocalPart();
 					listPortTypesName.add(ptName);
 					java.util.List<?> ops = pt.getOperations();
 					java.util.Iterator<?> opIt = ops.iterator();
-					java.util.ArrayList<String> listOperationName = new ArrayList<String>();
+					java.util.ArrayList<String> listOperationName = new ArrayList<>();
 					while(opIt.hasNext()){
 						javax.wsdl.Operation op = (javax.wsdl.Operation) opIt.next();
 						String nomeOperazione = op.getName();
@@ -2432,7 +2432,7 @@ public class ImporterArchiveUtils {
 			// Accordo di Servizio registrato
 			StringBuilder strutturaAccordoOpenSPCoop = new StringBuilder("Servizi/Azioni associati all'accordo:\n");
 			//strutturaAccordoOpenSPCoop.append(indent+"=========================================\n");
-			java.util.ArrayList<String> listPortTypesName = new ArrayList<String>();
+			java.util.ArrayList<String> listPortTypesName = new ArrayList<>();
 			Map<String, PortType> mapPtNameToObject = new HashMap<String, PortType>();
 			for(int i=0;i<accordoServizioParteComune.sizePortTypeList();i++){
 				PortType ptOpenSPCoop = accordoServizioParteComune.getPortType(i);
@@ -2443,7 +2443,7 @@ public class ImporterArchiveUtils {
 			for (String ptName : listPortTypesName) {
 				PortType ptOpenSPCoop = mapPtNameToObject.get(ptName);
 				strutturaAccordoOpenSPCoop.append(indent+". "+ptOpenSPCoop.getNome()+"\n");
-				java.util.ArrayList<String> listOperationName = new ArrayList<String>();
+				java.util.ArrayList<String> listOperationName = new ArrayList<>();
 				for(int j=0;j<ptOpenSPCoop.sizeAzioneList();j++){
 					Operation opOpenSPCoop = ptOpenSPCoop.getAzione(j);
 					listOperationName.add(opOpenSPCoop.getNome());

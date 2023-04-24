@@ -740,7 +740,7 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 		
 		/* ******** INVIO NOTIFICHE *************** */
 		try {
-			List<String> allarmeList = new ArrayList<String>();
+			List<String> allarmeList = new ArrayList<>();
 			allarmeList.add(allarme.getNome());
 				
 			AllarmiUtils.stopActiveThreads(allarmeList, log, this.alarmEngineConfig);

@@ -359,7 +359,7 @@ public class RegistroCore {
 	}
 	public static List<String> getAzioni(JDBCServiceManager manager, List<String> protocolli, 
 			String tipoSoggettoErogatore, String nomeSoggettoErogatore,	String tipoServizio, String nomeServizio, Integer versioneServizio) throws Exception{
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		list.addAll(_getAzioni(manager, protocolli, tipoSoggettoErogatore, nomeSoggettoErogatore, tipoServizio, nomeServizio, versioneServizio,null).keySet());
 		 
 		if(list!=null && list.size()>0){
@@ -399,8 +399,8 @@ public class RegistroCore {
 	
 	public static Map<String,String> _getAzioni(JDBCServiceManager manager, List<String> protocolli, String tipoSoggettoErogatore, String nomeSoggettoErogatore, String tipoServizio, String nomeServizio, Integer versioneServizio, String input) throws Exception{
 		
-		List<String> list = new ArrayList<String>();
-		Map<String,String> mapAzioni = new HashMap<String,String>();
+		List<String> list = new ArrayList<>();
+		Map<String,String> mapAzioni = new HashMap<>();
 			
 		// Localizzo Accordi di Servizio Parte Comune dalle Parti Specifiche
 		List<IdPortType> idPortTypes = new ArrayList<IdPortType>();
@@ -600,7 +600,7 @@ public class RegistroCore {
 			}
 		}
 		
-		Map<String,String> mapAzioniReturn = new HashMap<String,String>();
+		Map<String,String> mapAzioniReturn = new HashMap<>();
 		
 		if(list!=null && list.size()>0){
 			Collections.sort(list);
@@ -993,7 +993,7 @@ public class RegistroCore {
 		ExpressionProperties.enableSoloDatiIdentificativiServizio(pagPaExpr);
 		listaPorte = portaApplicativaDAO.findAll(pagPaExpr);
 		
-		List<String> lstTmp = new ArrayList<String>();
+		List<String> lstTmp = new ArrayList<>();
 		for (PortaApplicativa portaApplicativa : listaPorte) {
 			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaApplicativa.getTipoServizio(), portaApplicativa.getNomeServizio(),
 						portaApplicativa.getIdSoggetto().getTipo(), portaApplicativa.getIdSoggetto().getNome(), portaApplicativa.getVersioneServizio());
@@ -1121,7 +1121,7 @@ public class RegistroCore {
 		
 		listaPorte = portaDelegataDAO.findAll(pagPdExpr);
 		
-		List<String> lstTmp = new ArrayList<String>();
+		List<String> lstTmp = new ArrayList<>();
 		for (PortaDelegata portaDelegata : listaPorte) {
 			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaDelegata.getTipoServizio(), portaDelegata.getNomeServizio(), portaDelegata.getTipoSoggettoErogatore(), portaDelegata.getNomeSoggettoErogatore(), portaDelegata.getVersioneServizio());
 			IDSoggetto idFruitore = new IDSoggetto(portaDelegata.getIdSoggetto().getTipo(), portaDelegata.getIdSoggetto().getNome());

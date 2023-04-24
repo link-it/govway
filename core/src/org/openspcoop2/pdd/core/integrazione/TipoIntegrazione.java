@@ -146,7 +146,7 @@ public enum TipoIntegrazione {
 	}
 	
 	public static String[] toValues(GruppoIntegrazione gruppo){
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		for (TipoIntegrazione tmp : values()) {
 			if(gruppo==null) {
 				if(tmp.getGroup()!=null) {
@@ -166,7 +166,7 @@ public enum TipoIntegrazione {
 		return list.toArray(new String[list.size()]);
 	}
 	public static String[] toLabels(GruppoIntegrazione gruppo){
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		for (TipoIntegrazione tmp : values()) {
 			if(gruppo==null) {
 				if(tmp.getGroup()!=null) {

@@ -183,8 +183,8 @@ public class CheckStatoPdD extends HttpServlet {
 				Object [] params = null;
 				String [] signatures = null;
 				try {
-					List<Object> paramsL = new ArrayList<Object>();
-					List<String> signaturesL = new ArrayList<String>();
+					List<Object> paramsL = new ArrayList<>();
+					List<String> signaturesL = new ArrayList<>();
 					addParameter(paramsL, signaturesL, req);
 					if(!paramsL.isEmpty() && !signaturesL.isEmpty()) {
 						params = paramsL.toArray(new Object[1]);
@@ -386,7 +386,7 @@ public class CheckStatoPdD extends HttpServlet {
 			String stringNameParameter, String intNameParameter, String longNameParameter, String booleanNameParameter) throws Exception {
 		
 		int count = 0;
-		List<String> pFound = new ArrayList<String>();
+		List<String> pFound = new ArrayList<>();
 		
 		String paramStringValue = req.getParameter(stringNameParameter);
 		boolean paramStringDefined = paramStringValue!=null && !"".equals(paramStringValue);

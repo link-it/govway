@@ -74,9 +74,9 @@ public class AllarmiUtils {
 		String tipoDestinatario = filtro.getTipoErogatore();
 		String tipoServizio = filtro.getTipoServizio();
 
-		List<String> protocolloMittente = new ArrayList<String>();
-		List<String> protocolloDestinatario = new ArrayList<String>();
-		List<String> protocolloServizio = new ArrayList<String>();
+		List<String> protocolloMittente = new ArrayList<>();
+		List<String> protocolloDestinatario = new ArrayList<>();
+		List<String> protocolloServizio = new ArrayList<>();
 
 
 		try{
@@ -101,7 +101,7 @@ public class AllarmiUtils {
 			}
 
 			// Inserisco tutti i tipi trovati in una mappa, se i tre tipi sono compatibili, l'elenco delle chiavi coincide con la dimensione delle liste di quelli settati.
-			Map<String, String> mappaProtocolli = new HashMap<String, String>();
+			Map<String, String> mappaProtocolli = new HashMap<>();
 			if(protocolloServizio != null && protocolloServizio.size() > 0)
 				for (String tipo : protocolloServizio) {
 					if(!mappaProtocolli.containsKey(tipo))
@@ -220,8 +220,8 @@ public class AllarmiUtils {
 			prefixUrl = prefixUrl + "/";
 		}
 		prefixUrl = prefixUrl + "gestione/attivi/"+allarme.getNome();
-		List<String> post_urls = new ArrayList<String>();
-		List<String> post_contents = new ArrayList<String>();
+		List<String> post_urls = new ArrayList<>();
+		List<String> post_contents = new ArrayList<>();
 		if(isAdd){
 			if(allarme.getEnabled()==1){
 				// start allarme
@@ -235,7 +235,7 @@ public class AllarmiUtils {
 			StringBuilder bfDiff = null;
 			if(oldAllarmePrimaModifica!=null){
 				
-				List<String> fieldEsclusi = new ArrayList<String>();
+				List<String> fieldEsclusi = new ArrayList<>();
 				fieldEsclusi.add("id");
 				if(modificatoStato){
 					fieldEsclusi.add("stato");
@@ -313,8 +313,8 @@ public class AllarmiUtils {
 	
 	public static void stopActiveThreads(List<String> allarmi, Logger log, AlarmEngineConfig allarmiConfig) throws Exception{
 		
-		List<String> post_urls = new ArrayList<String>();
-		List<String> post_contents = new ArrayList<String>();
+		List<String> post_urls = new ArrayList<>();
+		List<String> post_contents = new ArrayList<>();
 		if(!allarmi.isEmpty()) {
 			for (String nomeAllarme : allarmi) {
 				
@@ -346,8 +346,8 @@ public class AllarmiUtils {
 	}
 	public static void _manageActiveThreads(ConfigurazioneAllarmeBean allarme, Logger log, AlarmEngineConfig allarmiConfig, String operazione) throws Exception{
 		
-		List<String> post_urls = new ArrayList<String>();
-		List<String> post_contents = new ArrayList<String>();
+		List<String> post_urls = new ArrayList<>();
+		List<String> post_contents = new ArrayList<>();
 				
 		String prefixUrl = allarmiConfig.getActiveAlarm_serviceUrl();
 		if(prefixUrl.endsWith("/")==false){
@@ -430,8 +430,8 @@ public class AllarmiUtils {
 	}
 	public static void _manageActiveThreads(Logger log, AlarmEngineConfig allarmiConfig, String operazione) throws Exception{
 		
-		List<String> post_urls = new ArrayList<String>();
-		List<String> post_contents = new ArrayList<String>();
+		List<String> post_urls = new ArrayList<>();
+		List<String> post_contents = new ArrayList<>();
 				
 		String prefixUrl = allarmiConfig.getActiveAlarm_serviceUrl();
 		if(prefixUrl.endsWith("/")==false){

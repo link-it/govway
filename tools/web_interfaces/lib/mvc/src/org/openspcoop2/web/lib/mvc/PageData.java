@@ -763,7 +763,7 @@ public class PageData implements Serializable {
 	}
 
 	public void setLinkHomeLabels(String pre, String labelLink, String post ) {
-		this.linkHomeLabels = new ArrayList<String>();
+		this.linkHomeLabels = new ArrayList<>();
 
 		this.linkHomeLabels.add(StringUtils.isNotBlank(pre) ? pre : "");
 		this.linkHomeLabels.add(StringUtils.isNotBlank(labelLink) ? labelLink : Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE_BACK_HOME);
@@ -771,7 +771,7 @@ public class PageData implements Serializable {
 	}
 	
 	public List<String> getDefaultLinkHomeLabels() {
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		l.add(Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE_BACK_HOME_PRE);
 		l.add(Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE_BACK_HOME);
 		l.add(Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE_BACK_HOME_POST);

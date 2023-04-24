@@ -870,7 +870,7 @@ public class VerificatoreMessaggi {
 
 		ResultSet res = null;
 		PreparedStatement pstmt = null;
-		List<String> resultsList = new ArrayList<String>();
+		List<String> resultsList = new ArrayList<>();
 		try {
 
 			// REPOSITORY

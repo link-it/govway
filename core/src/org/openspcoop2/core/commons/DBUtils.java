@@ -110,7 +110,7 @@ public class DBUtils {
 
 			while(rs.next()){
 				
-				List<Object> listaInterna = new ArrayList<Object>();
+				List<Object> listaInterna = new ArrayList<>();
 				
 				for (int i = 0; i < returnTypes.size(); i++) {
 					listaInterna.add(jdbcParameterUtilities.readParameter(rs, (i+1), returnTypes.get(i)));
@@ -1369,7 +1369,7 @@ public class DBUtils {
 		}
 		else if(tipoConnettore!=null) {
 			if(TipiConnettore.CUSTOM.equals(tipoConnettore)) {
-				List<String> tipiConosciuti = new ArrayList<String>();
+				List<String> tipiConosciuti = new ArrayList<>();
 				TipiConnettore[] tipi = TipiConnettore.values();
 				for (TipiConnettore tipiConnettore : tipi) {
 					tipiConosciuti.add(tipiConnettore.getNome());
@@ -1393,7 +1393,7 @@ public class DBUtils {
 		}
 		
 		if(filtroConnettoreEndpoint!=null) {
-			List<String> query = new ArrayList<String>();
+			List<String> query = new ArrayList<>();
 			if((tipoConnettore==null || TipiConnettore.HTTP.equals(tipoConnettore))) {
 				query.add(sqlQueryObject.getWhereLikeCondition(CostantiDB.CONNETTORI+".url", filtroConnettoreEndpoint, LikeConfig.contains(true)));
 			}
@@ -1623,7 +1623,7 @@ public class DBUtils {
 		
 		if(filtroModIKeystore!=null) {
 			
-			List<String> query = new ArrayList<String>();
+			List<String> query = new ArrayList<>();
 			
 			ISQLQueryObject sqlAccordoKeystore = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
 					tipoDB, CostantiDB.MODIPA_KEYSTORE_PATH, null, filtroModIKeystore, null);
@@ -1666,7 +1666,7 @@ public class DBUtils {
 		}
 		if(filtroModISicurezzaMessaggio!=null) {
 			
-			List<String> query = new ArrayList<String>();
+			List<String> query = new ArrayList<>();
 			
 			ISQLQueryObject sqlAccordoSec = buildSQLQueryObjectProtocolProperties(ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, CostantiDB.ACCORDI,
 					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, filtroModISicurezzaMessaggio, null, null);
@@ -1682,7 +1682,7 @@ public class DBUtils {
 		}
 		if(filtroModIDigestRichiesta!=null) {
 			
-			List<String> query = new ArrayList<String>();
+			List<String> query = new ArrayList<>();
 			
 			ISQLQueryObject sqlAccordoSec = buildSQLQueryObjectProtocolProperties(ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, CostantiDB.ACCORDI,
 					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST, null, null, filtroModIDigestRichiesta);
@@ -1698,7 +1698,7 @@ public class DBUtils {
 		}
 		if(filtroModIInfoUtente!=null) {
 			
-			List<String> query = new ArrayList<String>();
+			List<String> query = new ArrayList<>();
 			
 			ISQLQueryObject sqlAccordoSec = buildSQLQueryObjectProtocolProperties(ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, CostantiDB.ACCORDI,
 					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA, null, null, filtroModIInfoUtente);

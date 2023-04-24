@@ -3496,7 +3496,7 @@ public class RepositoryBuste  {
 
 			pstmt = connectionDB.prepareStatement(queryString);
 			int index = 1;
-			List<Object> objects = new ArrayList<Object>();
+			List<Object> objects = new ArrayList<>();
 			if(leftDate!=null) {
 				java.sql.Timestamp leftDateT = new java.sql.Timestamp(leftDate.getTime());
 				pstmt.setTimestamp(index++, leftDateT);
@@ -3735,7 +3735,7 @@ public class RepositoryBuste  {
 			deleteString = sqlQueryObjectRepositoryBuste.createSQLDelete();
 			pstmt = connectionDB.prepareStatement(deleteString);
 			int index = 1;
-			List<Object> objects = new ArrayList<Object>();
+			List<Object> objects = new ArrayList<>();
 			if(leftDate!=null) {
 				java.sql.Timestamp leftDateT = new java.sql.Timestamp(leftDate.getTime());
 				pstmt.setTimestamp(index++, leftDateT);
@@ -3819,7 +3819,7 @@ public class RepositoryBuste  {
 		try{	
 			pstmt = connectionDB.prepareStatement(deleteString);
 			int index = 1;
-			List<Object> objects = new ArrayList<Object>();
+			List<Object> objects = new ArrayList<>();
 			if(nomeColonnaTipoMessaggio!=null) {
 				pstmt.setString(index++,tipo);
 				if(logQuery) {
@@ -3932,7 +3932,7 @@ public class RepositoryBuste  {
 			
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
-			List<String> idBuste = new ArrayList<String>();
+			List<String> idBuste = new ArrayList<>();
 			IGestoreRepository gestorerepositoryBuste = Configurazione.getGestoreRepositoryBuste();
 			String queryString = null;
 			try{

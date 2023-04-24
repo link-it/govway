@@ -182,7 +182,7 @@ public final class PorteApplicativeChange extends Action {
 			String[] integrazioneGruppi = porteApplicativeHelper.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO);
 					
 			List<GruppoIntegrazione> integrazioneGruppiDaVisualizzare = new ArrayList<GruppoIntegrazione>();  
-			Map<String, List<String>> integrazioneGruppiValoriDeiGruppi = new HashMap<String, List<String>>();
+			Map<String, List<String>> integrazioneGruppiValoriDeiGruppi = new HashMap<>();
 			boolean isConfigurazione = parentPA!=null ? (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE) : false; 
 			boolean datiAltroPorta = isConfigurazione ? ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_PORTA)) : false;
 			boolean visualizzaSezioneOpzioniAvanzate = !(porteApplicativeHelper.isModalitaStandard() || (isConfigurazione && !datiAltroPorta));
@@ -197,7 +197,7 @@ public final class PorteApplicativeChange extends Action {
 						
 						// leggere i valori selezionati per ogni gruppo selezionato
 						for (GruppoIntegrazione group : integrazioneGruppiDaVisualizzare) {
-							List<String> valoriGruppoList = new ArrayList<String>();
+							List<String> valoriGruppoList = new ArrayList<>();
 							if(group.isMulti()) {
 								String[] valoriGruppo = porteApplicativeHelper.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO+group.getValue());
 								if(valoriGruppo != null) {
@@ -825,7 +825,7 @@ public final class PorteApplicativeChange extends Action {
 					
 					if(integrazioneStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_RIDEFINITO)) {
 						// decodificare il contenuto di integrazione per generare gli elementi grafici necessari.
-						List<String> valoriIntegrazione = integrazione != null ? Arrays.asList(integrazione.split(",")) : new ArrayList<String>();
+						List<String> valoriIntegrazione = integrazione != null ? Arrays.asList(integrazione.split(",")) : new ArrayList<>();
 						for (String valoreIntegrazione : valoriIntegrazione) {
 							TipoIntegrazione tipoIntegrazione = TipoIntegrazione.toEnumConstant(valoreIntegrazione);
 							GruppoIntegrazione group = tipoIntegrazione != null ? tipoIntegrazione.getGroup() : GruppoIntegrazione.PLUGIN;
@@ -835,7 +835,7 @@ public final class PorteApplicativeChange extends Action {
 							if(integrazioneGruppiValoriDeiGruppi.containsKey(gruppoValore)) {
 								valoriIntegrazionePerGruppo = integrazioneGruppiValoriDeiGruppi.remove(gruppoValore);
 							} else {
-								valoriIntegrazionePerGruppo = new ArrayList<String>();
+								valoriIntegrazionePerGruppo = new ArrayList<>();
 							}
 							
 							valoriIntegrazionePerGruppo.add(valoreIntegrazione);

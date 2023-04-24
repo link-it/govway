@@ -644,7 +644,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			this.auditHelper = new AuditHelper(request, pd, session);
 
-			this.idBinaryParameterRicevuti = new ArrayList<String>();
+			this.idBinaryParameterRicevuti = new ArrayList<>();
 			// analisi dei parametri della request
 			this.contentType = request.getContentType();
 			if ((this.contentType != null) && (this.contentType.indexOf(Costanti.MULTIPART) != -1)) {
@@ -652,7 +652,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				this.mimeMultipart = new MimeMultipart(request.getInputStream(), this.contentType);
 				this.mapParametri = new HashMap<String, List<InputStream>>();
 				this.mapParametriReaded = new HashMap<>();
-				this.mapNomiFileParametri = new HashMap<String,List<String>>();
+				this.mapNomiFileParametri = new HashMap<>();
 
 				for(int i = 0 ; i < this.mimeMultipart.countBodyParts() ;  i ++) {
 					BodyPart bodyPart = this.mimeMultipart.getBodyPart(i);
@@ -683,7 +683,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						if(this.mapNomiFileParametri.containsKey(partName)) {
 							nomiFiles = this.mapNomiFileParametri.get(partName);
 						} else {
-							nomiFiles = new ArrayList<String>();
+							nomiFiles = new ArrayList<>();
 							this.mapNomiFileParametri.put(partName, nomiFiles);
 						}
 						
@@ -8579,7 +8579,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		
 		List<AttributeAuthority> aa = paAssociata.getAttributeAuthorityList();
-		List<String> attributeAuthority = new ArrayList<String>();
+		List<String> attributeAuthority = new ArrayList<>();
 		if(aa!=null && !aa.isEmpty()) {
 			for (AttributeAuthority a : aa) {
 				attributeAuthority.add(a.getNome());
@@ -8941,7 +8941,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		
 		List<AttributeAuthority> aa = pdAssociata.getAttributeAuthorityList();
-		List<String> attributeAuthority = new ArrayList<String>();
+		List<String> attributeAuthority = new ArrayList<>();
 		if(aa!=null && !aa.isEmpty()) {
 			for (AttributeAuthority a : aa) {
 				attributeAuthority.add(a.getNome());
@@ -10805,8 +10805,8 @@ public class ConsoleHelper implements IConsoleHelper {
 				bfTooltips.append("\n");
 			}
 			
-			List<String> listGruppi = new ArrayList<String>();
-			List<String> listPlugins = new ArrayList<String>();
+			List<String> listGruppi = new ArrayList<>();
+			List<String> listPlugins = new ArrayList<>();
 			if(tmp.length>0) {
 				for (String tmpIntegrazione : tmp) {
 					if(tmpIntegrazione!=null) {
@@ -12247,8 +12247,8 @@ public class ConsoleHelper implements IConsoleHelper {
 				gruppo = filterGruppo;
 			}
 			
-			List<String> valuesL = new ArrayList<String>();
-			List<String> labelsL = new ArrayList<String>();
+			List<String> valuesL = new ArrayList<>();
+			List<String> labelsL = new ArrayList<>();
 			if(isFruizione) {
 				List<IDFruizione> listFruizioni = this.apsCore.getFruizioni(protocolli, gruppo, tipoSoggetto, nomeSoggetto);
 				if(listFruizioni!=null && !listFruizioni.isEmpty()) {
@@ -12327,8 +12327,8 @@ public class ConsoleHelper implements IConsoleHelper {
 				protocolloSelezionato = protocolli.get(0);
 			}
 			
-			List<String> valuesL = new ArrayList<String>();
-			List<String> labelsL = new ArrayList<String>();
+			List<String> valuesL = new ArrayList<>();
+			List<String> labelsL = new ArrayList<>();
 			List<IDServizioApplicativo> listApplicativi = this.confCore.getServiziApplicativi(null, protocolli, filterSoggettoTipo, filterSoggettoNome);
 			if(listApplicativi!=null && !listApplicativi.isEmpty()) {
 				for (IDServizioApplicativo idApplicativo : listApplicativi) {
@@ -13700,7 +13700,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 	public List<String> getProfiloModIPAFiltroSicurezzaCanaleValues() {
 		try {
-			List<String> values = new ArrayList<String>();
+			List<String> values = new ArrayList<>();
 			values.add(CostantiDB.MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC01);
 			values.add(CostantiDB.MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC02);
 			return values;
@@ -13711,7 +13711,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	public List<String> getProfiloModIPAFiltroSicurezzaCanaleLabels() {
 		try {
-			List<String> labels = new ArrayList<String>();
+			List<String> labels = new ArrayList<>();
 			labels.add(CostantiLabel.MODIPA_PROFILO_SICUREZZA_CANALE_LABEL_IDAC01);
 			labels.add(CostantiLabel.MODIPA_PROFILO_SICUREZZA_CANALE_LABEL_IDAC02);
 			return labels;
@@ -13722,7 +13722,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	public List<String> getProfiloModIPAFiltroSicurezzaMessaggioValues() {
 		try {
-			List<String> values = new ArrayList<String>();
+			List<String> values = new ArrayList<>();
 			values.add(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01);
 			values.add(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02);
 			values.add(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301);
@@ -13735,7 +13735,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	public List<String> getProfiloModIPAFiltroSicurezzaMessaggioLabels(String serviceBindingValue) {
 		try {
-			List<String> labels = new ArrayList<String>();
+			List<String> labels = new ArrayList<>();
 			
 			if(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_REST.toLowerCase().equals(serviceBindingValue) ) {
 				labels.add(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM01_REST);
@@ -15185,7 +15185,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			Connection con = DBManager.getInstance().getConnection();
 			try {
 				externalResources.setConnection(con);
-				Map<String, String> mapNameValue = new HashMap<String, String>();
+				Map<String, String> mapNameValue = new HashMap<>();
 				for (BaseItemBean<?> item : configurazioneBean.getListaItem()) {
 					if(item.isVisible())
 						dati.add(item.toDataElement(configurazioneBean, mapNameValue, externalResources));
@@ -15463,7 +15463,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			dati.add(de);
 			
 			
-			List<String> attivi = new ArrayList<String>();
+			List<String> attivi = new ArrayList<>();
 			if(nuovaConfigurazioneEsiti!=null){
 				String [] tmp = nuovaConfigurazioneEsiti.split(",");
 				if(tmp!=null){
@@ -16604,8 +16604,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		DataElement de = new DataElement();
 		de.setType(DataElementType.SELECT);
-		List<String> values = new ArrayList<String>();
-		List<String> labels = new ArrayList<String>();
+		List<String> values = new ArrayList<>();
+		List<String> labels = new ArrayList<>();
 		values.add(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI);
 		labels.add(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI);
 		values.addAll(this.confCore.getJmxPdD_aliases());
@@ -20671,7 +20671,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			// controllo che tutte le azioni del gruppo siano oneway
 			// se c'e' almeno un'azione non oneway visualizzo la sezione notifiche
 			if(mappingErogazionePortaApplicativa.isDefault()) {
-				Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, as, false, true, new ArrayList<String>());
+				Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, as, false, true, new ArrayList<>());
 				IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
 				List<MappingErogazionePortaApplicativa> lista = this.apsCore.mappingServiziPorteAppList(idServizio2,asps.getId(), null);
 		
@@ -20689,7 +20689,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					isSoapOneWay = false;
 				} 
 			} else {
-				List<String> listaAzioni = portaApplicativa.getAzione()!= null ?  portaApplicativa.getAzione().getAzioneDelegataList() : new ArrayList<String>();
+				List<String> listaAzioni = portaApplicativa.getAzione()!= null ?  portaApplicativa.getAzione().getAzioneDelegataList() : new ArrayList<>();
 				isSoapOneWay = this.porteApplicativeCore.azioniTutteOneway(asps, as, listaAzioni);
 			}
 		} else {
@@ -21136,8 +21136,8 @@ public class ConsoleHelper implements IConsoleHelper {
 			boolean postBack_viaPOST, boolean mostraSempreLabel, List<String> listaValuesDaEscludere, 
 			String messaggioErroreValoriDisponibiliTerminati, boolean isSearch, String valoreDefault, String[] valoriDefault) throws Exception {
 		
-		List<String> values = new ArrayList<String>();
-		List<String> labels = new ArrayList<String>();
+		List<String> values = new ArrayList<>();
+		List<String> labels = new ArrayList<>();
 		String note = null;
 		
 		if(	this.confCore.isConfigurazionePluginsEnabled() ) {
@@ -21879,9 +21879,9 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 				
 				// leggere i valori selezionati per ogni gruppo selezionato
-				Map<String, List<String>> integrazioneGruppiValoriDeiGruppi = new HashMap<String, List<String>>();
+				Map<String, List<String>> integrazioneGruppiValoriDeiGruppi = new HashMap<>();
 				for (GruppoIntegrazione group : integrazioneGruppiDaVisualizzare) {
-					List<String> valoriGruppoList = new ArrayList<String>();
+					List<String> valoriGruppoList = new ArrayList<>();
 					if(group.isMulti()) {
 						String[] valoriGruppo = this.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO+group.getValue());
 						if(valoriGruppo == null || valoriGruppo.length == 0) {
@@ -21903,7 +21903,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 				
 				// controllo sulla lunghezza finale del campo integrazione
-				List<String> valoriFinaliIntegrazione = new ArrayList<String>();
+				List<String> valoriFinaliIntegrazione = new ArrayList<>();
 				for (GruppoIntegrazione group : integrazioneGruppiDaVisualizzare) {
 					valoriFinaliIntegrazione.addAll(integrazioneGruppiValoriDeiGruppi.get(group.getValue()));
 				}
@@ -22233,8 +22233,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		DataElement de = new DataElement();
 		de.setType(DataElementType.SELECT);
-		List<String> values = new ArrayList<String>();
-		List<String> labels = new ArrayList<String>();
+		List<String> values = new ArrayList<>();
+		List<String> labels = new ArrayList<>();
 		values.add(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI);
 		labels.add(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI);
 		values.addAll(this.confCore.getJmxPdD_aliases());

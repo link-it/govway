@@ -225,7 +225,7 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 						this.log.debug("Dump "+messaggio.getBodyMultipartInfo().getHeaders().size()+" multipart-body headers");
 					}
 					
-					Map<String, List<String>> propertiesHdr = new HashMap<String, List<String>>();
+					Map<String, List<String>> propertiesHdr = new HashMap<>();
 					List<DumpMultipartHeader> backupFailed = new ArrayList<DumpMultipartHeader>();
 					
 					Iterator<String> keys = messaggio.getBodyMultipartInfo().getHeaders().keySet().iterator();
@@ -286,7 +286,7 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 					this.log.debug("Dump "+messaggio.getHeaders().size()+" headers");
 				}
 
-				Map<String, List<String>> propertiesHdr = new HashMap<String, List<String>>();
+				Map<String, List<String>> propertiesHdr = new HashMap<>();
 				List<DumpHeaderTrasporto> backupFailed = new ArrayList<DumpHeaderTrasporto>();
 				
 				Iterator<String> keys = messaggio.getHeaders().keySet().iterator();
@@ -370,7 +370,7 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 							this.log.debug("Dump "+attach.getHeaders().size()+" headers dell'allegato con id ["+attach.getContentId()+"]");
 						}
 
-						Map<String, List<String>> propertiesHdr = new HashMap<String, List<String>>();
+						Map<String, List<String>> propertiesHdr = new HashMap<>();
 						List<DumpHeaderAllegato> backupFailed = new ArrayList<DumpHeaderAllegato>();
 												
 						Iterator<String> keys = attach.getHeaders().keySet().iterator();

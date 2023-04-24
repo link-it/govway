@@ -136,7 +136,7 @@ public class PorteDelegateUtilities {
 		}
 		else {
 			
-			List<Object> listaOggettiDaModificare = new ArrayList<Object>();
+			List<Object> listaOggettiDaModificare = new ArrayList<>();
 			
 			listaOggettiDaModificare.add(portaDelegata);
 			

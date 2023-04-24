@@ -37,7 +37,7 @@ import java.util.List;
 
 public class ValidazioneStatoPackageException extends Exception {
     
-	private List<String> errori_validazione = new ArrayList<String>();
+	private List<String> errori_validazione = new ArrayList<>();
 	private String tipoPackage = null;
 	private String stato = null;
 	

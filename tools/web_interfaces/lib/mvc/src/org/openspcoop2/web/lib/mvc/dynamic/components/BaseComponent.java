@@ -145,7 +145,7 @@ public abstract class BaseComponent<T> extends Parameter<T>{
 	
 	public String getContainersIdToRefresh(){
 		if(this.getRefreshParamIds()!=null){
-			ArrayList<String> res = new ArrayList<String>();
+			ArrayList<String> res = new ArrayList<>();
 			for (String pid : this.getRefreshParamIds()) {
 				 res.add(this.buildContainerId(pid));
 			}

@@ -78,7 +78,7 @@ public class FindAllIdsResponse {
      */
     public List<String> getIdTransazione() {
         if (this.idTransazione == null) {
-            this.idTransazione = new ArrayList<String>();
+            this.idTransazione = new ArrayList<>();
         }
         return this.idTransazione;
     }

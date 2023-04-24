@@ -65,7 +65,7 @@ public class DriverConfigurazioneDB_handlerLIB {
 				tabella = CostantiDB.PORTE_APPLICATIVE_HANDLERS;
 			}
 			
-			List<String> tipologie = new ArrayList<String>();
+			List<String> tipologie = new ArrayList<>();
 			String suffix = request ? CostantiDB.HANDLER_REQUEST_SUFFIX : CostantiDB.HANDLER_RESPONSE_SUFFIX;
 			tipologie.add(CostantiDB.HANDLER_PRE_IN+suffix);
 			tipologie.add(CostantiDB.HANDLER_IN+suffix);
@@ -159,7 +159,7 @@ public class DriverConfigurazioneDB_handlerLIB {
 				tabella = CostantiDB.PORTE_APPLICATIVE_HANDLERS;
 			}
 			
-			List<String> tipologie = new ArrayList<String>();
+			List<String> tipologie = new ArrayList<>();
 			tipologie.add(CostantiDB.HANDLER_INIT);
 			tipologie.add(CostantiDB.HANDLER_EXIT);
 			tipologie.add(CostantiDB.HANDLER_INTEGRATION_MANAGER_REQUEST);
@@ -278,7 +278,7 @@ public class DriverConfigurazioneDB_handlerLIB {
 				
 			case DELETE:
 				
-				List<String> tipologie = new ArrayList<String>();
+				List<String> tipologie = new ArrayList<>();
 				tipologie.add(CostantiDB.HANDLER_PRE_IN+suffix);
 				tipologie.add(CostantiDB.HANDLER_IN+suffix);
 				if(request) {
@@ -362,7 +362,7 @@ public class DriverConfigurazioneDB_handlerLIB {
 				
 			case DELETE:
 				
-				List<String> tipologie = new ArrayList<String>();
+				List<String> tipologie = new ArrayList<>();
 				tipologie.add(CostantiDB.HANDLER_INIT);
 				tipologie.add(CostantiDB.HANDLER_EXIT);
 				tipologie.add(CostantiDB.HANDLER_INTEGRATION_MANAGER_REQUEST);

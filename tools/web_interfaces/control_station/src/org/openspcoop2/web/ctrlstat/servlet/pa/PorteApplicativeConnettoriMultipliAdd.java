@@ -674,8 +674,8 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 			}
 
 			
-			List<Object> listaOggettiDaCreare = new ArrayList<Object>();
-			List<Object> listaOggettiDaModificare = new ArrayList<Object>();
+			List<Object> listaOggettiDaCreare = new ArrayList<>();
+			List<Object> listaOggettiDaModificare = new ArrayList<>();
 			
 			PortaApplicativaServizioApplicativoConnettore datiConnettore = new PortaApplicativaServizioApplicativoConnettore();
 			datiConnettore.setNotifica(true); // connettore notifica

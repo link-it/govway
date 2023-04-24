@@ -157,7 +157,7 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 			for (int i = 0; i < informazioniTokens.length; i++) {
 				if(informazioniTokens[i].getIss()!=null) {
 					if(this.aaIss==null) {
-						this.aaIss = new HashMap<String, String>();
+						this.aaIss = new HashMap<>();
 					}
 					this.aaIss.put(informazioniTokens[i].getSourceAttributeAuthority(),informazioniTokens[i].getIss());
 				}
@@ -165,7 +165,7 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 			for (int i = 0; i < informazioniTokens.length; i++) {
 				if(informazioniTokens[i].getSub()!=null) {
 					if(this.aaSub==null) {
-						this.aaSub = new HashMap<String, String>();
+						this.aaSub = new HashMap<>();
 					}
 					this.aaSub.put(informazioniTokens[i].getSourceAttributeAuthority(),informazioniTokens[i].getSub());
 				}
@@ -174,7 +174,7 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 			for (int i = 0; i < informazioniTokens.length; i++) {
 				if(informazioniTokens[i].getAud()!=null && !informazioniTokens[i].getAud().isEmpty()) {
 					if(this.aaAud==null) {
-						this.aaAud = new HashMap<String, List<String>>();
+						this.aaAud = new HashMap<>();
 					}
 					this.aaAud.put(informazioniTokens[i].getSourceAttributeAuthority(),informazioniTokens[i].getAud());
 				}
@@ -208,7 +208,7 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 			for (int i = 0; i < informazioniTokens.length; i++) {
 				if(informazioniTokens[i].getIdentifier()!=null) {
 					if(this.aaIdentifier==null) {
-						this.aaIdentifier = new HashMap<String, String>();
+						this.aaIdentifier = new HashMap<>();
 					}
 					this.aaIdentifier.put(informazioniTokens[i].getSourceAttributeAuthority(),informazioniTokens[i].getIdentifier());
 				}
@@ -262,7 +262,7 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 	// NOTA: l'ordine stabilisce come viene serializzato nell'oggetto json
 	
 	private Boolean multipleAttributeAuthorities = false;
-	private List<String> attributeAuthorities = new ArrayList<String>();
+	private List<String> attributeAuthorities = new ArrayList<>();
 	
 	// RawResponse
 	private byte[] raw;
@@ -314,7 +314,7 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 		if(this.attributes!=null && !this.attributes.isEmpty()) {
 			if(this.multipleAttributeAuthorities!=null && this.multipleAttributeAuthorities) {
 				// informazioni normalizzate, devo scendere di un livello, senno al primo degli attributi ci sono le attribute authority
-				List<String> attributesNames = new ArrayList<String>();
+				List<String> attributesNames = new ArrayList<>();
 				for (String attrAuthName : this.attributes.keySet()) {
 					Object o = this.attributes.get(attrAuthName);
 					if(o instanceof Map) {
@@ -337,7 +337,7 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 				return attributesNames;
 			}
 			else {
-				List<String> attributesNames = new ArrayList<String>();
+				List<String> attributesNames = new ArrayList<>();
 				for (String attrName : this.attributes.keySet()) {
 					attributesNames.add(attrName);
 				}

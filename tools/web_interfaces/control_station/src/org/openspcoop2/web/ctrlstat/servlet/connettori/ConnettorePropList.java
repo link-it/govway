@@ -145,7 +145,7 @@ public final class ConnettorePropList extends Action {
 				connettore = ss.getConnettore();
 			}
 			
-			List<Object> lista = new ArrayList<Object>();
+			List<Object> lista = new ArrayList<>();
 			if (connettore != null) {
 				for (int i = 0; i<connettore.sizePropertyList(); i++){
 					if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false &&

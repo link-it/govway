@@ -1234,7 +1234,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 			}
 			else {
 				//return mapping.getNome();
-				List<String> listaAzioni = pa.getAzione()!= null ?  pa.getAzione().getAzioneDelegataList() : new ArrayList<String>();
+				List<String> listaAzioni = pa.getAzione()!= null ?  pa.getAzione().getAzioneDelegataList() : new ArrayList<>();
 				if(listaAzioni.size() > 0) {
 					StringBuilder sb = new StringBuilder();
 					for (String string : listaAzioni) {

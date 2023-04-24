@@ -145,7 +145,7 @@ public class Utilities {
 			content=Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE).getBytes();
 			api = api + "SOAP";
 			if(headers==null) {
-				headers = new HashMap<String, String>();
+				headers = new HashMap<>();
 			}
 			headers.put(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, "test");
 		}

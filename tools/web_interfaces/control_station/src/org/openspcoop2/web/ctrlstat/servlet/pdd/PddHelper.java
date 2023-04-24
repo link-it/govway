@@ -616,7 +616,7 @@ public class PddHelper extends ConsoleHelper {
 					this.pddCore.getJmxPdD_aliases()!=null && this.pddCore.getJmxPdD_aliases().size()>0;
 			
 			// setto le label delle colonne
-			List<String> listLabels = new ArrayList<String>();
+			List<String> listLabels = new ArrayList<>();
 			listLabels.add(PddCostanti.LABEL_PDD_NOME);
 			listLabels.add(PddCostanti.LABEL_PDD_INDIRIZZO);
 			listLabels.add(PddCostanti.LABEL_PDD_TIPOLOGIA);

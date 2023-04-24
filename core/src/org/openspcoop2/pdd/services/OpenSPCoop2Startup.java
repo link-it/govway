@@ -893,8 +893,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				MessageSecurityFactory.setMessageSecurityContextClassName(classNameReader.getMessageSecurityContext(propertiesReader.getMessageSecurityContext()));
 				MessageSecurityFactory.setMessageSecurityDigestReaderClassName(classNameReader.getMessageSecurityDigestReader(propertiesReader.getMessageSecurityDigestReader()));
 				
-				List<String> tipiMessageFactory = new ArrayList<String>();
-				List<String> classiMessageFactory = new ArrayList<String>();
+				List<String> tipiMessageFactory = new ArrayList<>();
+				List<String> classiMessageFactory = new ArrayList<>();
 				String factoryDefault = "@DEFAULT@";
 				tipiMessageFactory.add(factoryDefault);
 				OpenSPCoop2MessageFactory defaultMessageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();

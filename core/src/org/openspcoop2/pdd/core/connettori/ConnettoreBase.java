@@ -170,7 +170,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	/** Eccezione processamento */
 	protected Exception eccezioneProcessamento = null;
 	/** Proprieta' del trasporto della risposta */
-	protected Map<String, List<String>> propertiesTrasportoRisposta = new HashMap<String, List<String>>();
+	protected Map<String, List<String>> propertiesTrasportoRisposta = new HashMap<>();
 	/** CreationDate */
 	protected Date creationDate;
 	
@@ -1326,14 +1326,14 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 			if(this.debug)
 				this.logger.debug("Forward header di trasporto (size:"+forwardHeader.size()+") ...");
 			if(this.propertiesTrasporto==null){
-				this.propertiesTrasporto = new HashMap<String, List<String>>();
+				this.propertiesTrasporto = new HashMap<>();
 			}
 			Iterator<String> keys = forwardHeader.getKeys();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
 				List<String> values = forwardHeader.getPropertyValues(key);
 				if(values!=null && !values.isEmpty()) {
-					List<String> vs = new ArrayList<String>(values); // per evitare che la add sottostante aggiunga alla collezione e si continui a iterare
+					List<String> vs = new ArrayList<>(values); // per evitare che la add sottostante aggiunga alla collezione e si continui a iterare
 					for (String value : vs) {
 						if(this.debug)
 							this.logger.debug("Forward Transport Header ["+key+"]=["+value+"]");
@@ -1345,7 +1345,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	}
     
     
-    private Map<String,List<String>> headersImpostati = new HashMap<String,List<String>>(); // per evitare che header generati nel conettore siano sovrascritti da eventuali forward. Gli header del connettore vengono impostati prima del forward.
+    private Map<String,List<String>> headersImpostati = new HashMap<>(); // per evitare che header generati nel conettore siano sovrascritti da eventuali forward. Gli header del connettore vengono impostati prima del forward.
     protected void clearRequestHeader() {
     	this.headersImpostati.clear();
     }
@@ -1389,7 +1389,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     		}
     		if(this.messaggioDumpUscita!=null) {
     			if(this.messaggioDumpUscita.getHeaders()==null) {
-    				this.messaggioDumpUscita.setHeaders(new HashMap<String, List<String>>());
+    				this.messaggioDumpUscita.setHeaders(new HashMap<>());
     			}
     			TransportUtils.removeRawObject(this.messaggioDumpUscita.getHeaders(), key);
     			this.messaggioDumpUscita.getHeaders().put(key, this.headersImpostati.get(key));

@@ -121,7 +121,7 @@ public enum TipoBehaviour implements IEnumeration , Serializable , Cloneable {
 	}
 	public static List<String> getLabels(boolean consegnaMultiplaEnabled, boolean soapOneway){
 		List<TipoBehaviour> l = getEnums(consegnaMultiplaEnabled, soapOneway);
-		List<String> newL = new ArrayList<String>();
+		List<String> newL = new ArrayList<>();
 		for (TipoBehaviour behaviourType : l) {
 			newL.add(behaviourType.getLabel());
 		}
@@ -129,7 +129,7 @@ public enum TipoBehaviour implements IEnumeration , Serializable , Cloneable {
 	}
 	public static List<String> getValues(boolean consegnaMultiplaEnabled, boolean soapOneway){
 		List<TipoBehaviour> l = getEnums(consegnaMultiplaEnabled, soapOneway);
-		List<String> newL = new ArrayList<String>();
+		List<String> newL = new ArrayList<>();
 		for (TipoBehaviour behaviourType : l) {
 			newL.add(behaviourType.getValue());
 		}

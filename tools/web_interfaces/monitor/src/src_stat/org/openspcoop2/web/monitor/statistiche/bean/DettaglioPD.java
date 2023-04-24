@@ -67,9 +67,9 @@ public class DettaglioPD implements Serializable{
 	private String configurazioneProfilo = null;
 	
 	public DettaglioPD(){
-		this.azioni = new ArrayList<String>();
-		this.ruoli = new ArrayList<String>();
-		this.sa = new ArrayList<String>();
+		this.azioni = new ArrayList<>();
+		this.ruoli = new ArrayList<>();
+		this.sa = new ArrayList<>();
 	}
 	
 	public Connettore getConnettore() {

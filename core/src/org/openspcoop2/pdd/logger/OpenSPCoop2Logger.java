@@ -185,13 +185,13 @@ public class OpenSPCoop2Logger {
 	protected static Logger loggerOpenSPCoopPluginsSqlError = null;
 	/** Appender personalizzati per i messaggi diagnostici di OpenSPCoop */
 	public static List<IDiagnosticProducer> loggerMsgDiagnosticoOpenSPCoopAppender = new ArrayList<IDiagnosticProducer>(); 
-	public static List<String> tipoMsgDiagnosticoOpenSPCoopAppender = new ArrayList<String>();
+	public static List<String> tipoMsgDiagnosticoOpenSPCoopAppender = new ArrayList<>();
 	/** Appender personalizzati per i tracciamenti di OpenSPCoop */
 	public static List<ITracciaProducer> loggerTracciamentoOpenSPCoopAppender = new ArrayList<ITracciaProducer>(); 
-	public static List<String> tipoTracciamentoOpenSPCoopAppender = new ArrayList<String>();
+	public static List<String> tipoTracciamentoOpenSPCoopAppender = new ArrayList<>();
 	/** Appender personalizzati per i dump applicativi di OpenSPCoop */
 	public static List<IDumpProducer> loggerDumpOpenSPCoopAppender = new ArrayList<IDumpProducer>(); 
-	public static List<String> tipoDumpOpenSPCoopAppender = new ArrayList<String>();
+	public static List<String> tipoDumpOpenSPCoopAppender = new ArrayList<>();
 	/** PdDContextSerializer */
 	private static IPdDContextSerializer pddContextSerializer = null;
 	/** LogDir */

@@ -1035,7 +1035,7 @@ public class GestoreHandlers  {
 	}
 	
 	private static String [] _mergeTipi(String [] fromProperties, List<String> fromConfig) {
-		List<String> merge = new ArrayList<String>();
+		List<String> merge = new ArrayList<>();
 		if(fromProperties!=null && fromProperties.length>0) {
 			for (int i = 0; i < fromProperties.length; i++) {
 				merge.add(fromProperties[i]);
@@ -1056,10 +1056,10 @@ public class GestoreHandlers  {
 	private static <T> T[] reorder(T [] handlers, T[] bufferReturn){
 		if(handlers!=null && handlers.length>0){
 			
-			List<String> handlerPositionHeadId = new ArrayList<String>();
+			List<String> handlerPositionHeadId = new ArrayList<>();
 			Map<String,T> handlerPositionHeadMap = new HashMap<String,T>();
 			
-			List<String> handlerPositionTailId = new ArrayList<String>();
+			List<String> handlerPositionTailId = new ArrayList<>();
 			Map<String,T> handlerPositionTailMap = new HashMap<String,T>();
 			
 			List<T> handlerPositionMiddle = new ArrayList<T>();
@@ -1208,7 +1208,7 @@ public class GestoreHandlers  {
 			}
 		}catch(Throwable e){}
 		if(notifierInputStreamCallback!=null){
-			List<String> list = new ArrayList<String>();
+			List<String> list = new ArrayList<>();
 			list.add(NotifierConstants.TIPO_NOTIFIER);
 			if(tipi!=null){
 				for (int i = 0; i < tipi.length; i++) {
@@ -1388,7 +1388,7 @@ public class GestoreHandlers  {
 			}
 			if(tipiPorta!=null && !tipiPorta.isEmpty()) {
 				List<PreInRequestHandler> listHandler = new ArrayList<PreInRequestHandler>();
-				List<String> listTipi = new ArrayList<String>();
+				List<String> listTipi = new ArrayList<>();
 				if(preInRequestHandlers!=null && preInRequestHandlers.length>0) {
 					for (int i = 0; i < preInRequestHandlers.length; i++) {
 						listHandler.add(preInRequestHandlers[i]);
@@ -1511,7 +1511,7 @@ public class GestoreHandlers  {
 			}
 			if(tipiPorta!=null && !tipiPorta.isEmpty()) {
 				List<PreInRequestHandler> listHandler = new ArrayList<PreInRequestHandler>();
-				List<String> listTipi = new ArrayList<String>();
+				List<String> listTipi = new ArrayList<>();
 				if(preInRequestHandlers!=null && preInRequestHandlers.length>0) {
 					for (int i = 0; i < preInRequestHandlers.length; i++) {
 						listHandler.add(preInRequestHandlers[i]);
@@ -1637,7 +1637,7 @@ public class GestoreHandlers  {
 			}
 			if(tipiPorta!=null && !tipiPorta.isEmpty()) {
 				List<InRequestHandler> listHandler = new ArrayList<InRequestHandler>();
-				List<String> listTipi = new ArrayList<String>();
+				List<String> listTipi = new ArrayList<>();
 				if(inRequestHandlers!=null && inRequestHandlers.length>0) {
 					for (int i = 0; i < inRequestHandlers.length; i++) {
 						listHandler.add(inRequestHandlers[i]);
@@ -1758,7 +1758,7 @@ public class GestoreHandlers  {
 			}
 			if(tipiPorta!=null && !tipiPorta.isEmpty()) {
 				List<InRequestProtocolHandler> listHandler = new ArrayList<InRequestProtocolHandler>();
-				List<String> listTipi = new ArrayList<String>();
+				List<String> listTipi = new ArrayList<>();
 				if(intRequestProtocolHandlers!=null && intRequestProtocolHandlers.length>0) {
 					for (int i = 0; i < intRequestProtocolHandlers.length; i++) {
 						listHandler.add(intRequestProtocolHandlers[i]);
@@ -1879,7 +1879,7 @@ public class GestoreHandlers  {
 			}
 			if(tipiPorta!=null && !tipiPorta.isEmpty()) {
 				List<OutRequestHandler> listHandler = new ArrayList<OutRequestHandler>();
-				List<String> listTipi = new ArrayList<String>();
+				List<String> listTipi = new ArrayList<>();
 				if(outRequestHandlers!=null && outRequestHandlers.length>0) {
 					for (int i = 0; i < outRequestHandlers.length; i++) {
 						listHandler.add(outRequestHandlers[i]);
@@ -2000,7 +2000,7 @@ public class GestoreHandlers  {
 			}
 			if(tipiPorta!=null && !tipiPorta.isEmpty()) {
 				List<PostOutRequestHandler> listHandler = new ArrayList<PostOutRequestHandler>();
-				List<String> listTipi = new ArrayList<String>();
+				List<String> listTipi = new ArrayList<>();
 				if(postOutRequestHandlers!=null && postOutRequestHandlers.length>0) {
 					for (int i = 0; i < postOutRequestHandlers.length; i++) {
 						listHandler.add(postOutRequestHandlers[i]);
@@ -2121,7 +2121,7 @@ public class GestoreHandlers  {
 			}
 			if(tipiPorta!=null && !tipiPorta.isEmpty()) {
 				List<PreInResponseHandler> listHandler = new ArrayList<PreInResponseHandler>();
-				List<String> listTipi = new ArrayList<String>();
+				List<String> listTipi = new ArrayList<>();
 				if(preInResponseHandlers!=null && preInResponseHandlers.length>0) {
 					for (int i = 0; i < preInResponseHandlers.length; i++) {
 						listHandler.add(preInResponseHandlers[i]);
@@ -2242,7 +2242,7 @@ public class GestoreHandlers  {
 			}
 			if(tipiPorta!=null && !tipiPorta.isEmpty()) {
 				List<InResponseHandler> listHandler = new ArrayList<InResponseHandler>();
-				List<String> listTipi = new ArrayList<String>();
+				List<String> listTipi = new ArrayList<>();
 				if(inResponseHandlers!=null && inResponseHandlers.length>0) {
 					for (int i = 0; i < inResponseHandlers.length; i++) {
 						listHandler.add(inResponseHandlers[i]);
@@ -2363,7 +2363,7 @@ public class GestoreHandlers  {
 			}
 			if(tipiPorta!=null && !tipiPorta.isEmpty()) {
 				List<OutResponseHandler> listHandler = new ArrayList<OutResponseHandler>();
-				List<String> listTipi = new ArrayList<String>();
+				List<String> listTipi = new ArrayList<>();
 				if(outResponseHandlers!=null && outResponseHandlers.length>0) {
 					for (int i = 0; i < outResponseHandlers.length; i++) {
 						listHandler.add(outResponseHandlers[i]);
@@ -2486,7 +2486,7 @@ public class GestoreHandlers  {
 			}
 			if(tipiPorta!=null && !tipiPorta.isEmpty()) {
 				List<PostOutResponseHandler> listHandler = new ArrayList<PostOutResponseHandler>();
-				List<String> listTipi = new ArrayList<String>();
+				List<String> listTipi = new ArrayList<>();
 				if(postOutResponseHandlers!=null && postOutResponseHandlers.length>0) {
 					for (int i = 0; i < postOutResponseHandlers.length; i++) {
 						listHandler.add(postOutResponseHandlers[i]);

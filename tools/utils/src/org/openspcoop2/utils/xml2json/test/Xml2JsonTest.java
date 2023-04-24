@@ -51,7 +51,7 @@ public class Xml2JsonTest {
 	public static void test() throws Exception {
 
 		String xmlString = Utilities.getAsString(Xml2JsonTest.class.getResource("file.xml"), Charsets.ISO_8859_1.name());
-		Map<String, String> xmlToJsonNamespaces = new HashMap<String,String>(1);
+		Map<String, String> xmlToJsonNamespaces = new HashMap<>(1);
 		xmlToJsonNamespaces.put("http://www.link.it/", "b");
 		xmlToJsonNamespaces.put("http://www.link.it/employee", "a");
 
@@ -67,9 +67,9 @@ public class Xml2JsonTest {
 			test(xmlString, "Mapped (String)", xml2json, json2xml);
 		}
 		{
-			IXml2Json xml2json = Xml2JsonFactory.getXml2JsonMapped(new HashMap<String,String>(1));
+			IXml2Json xml2json = Xml2JsonFactory.getXml2JsonMapped(new HashMap<>(1));
 			((MappedXml2Json)xml2json).getConfiguration().setIgnoreNamespaces(true);
-			IJson2Xml json2xml = Xml2JsonFactory.getJson2XmlMapped(new HashMap<String,String>(1));			
+			IJson2Xml json2xml = Xml2JsonFactory.getJson2XmlMapped(new HashMap<>(1));			
 			test(xmlString, "Mapped (String) senza prefissi e namespace", xml2json, json2xml);
 		}
 		{
@@ -92,9 +92,9 @@ public class Xml2JsonTest {
 			test(instance, node, "Mapped (Node)", xml2json, json2xml);
 		}
 		{
-			IXml2Json xml2json = Xml2JsonFactory.getXml2JsonMapped(new HashMap<String,String>(1));
+			IXml2Json xml2json = Xml2JsonFactory.getXml2JsonMapped(new HashMap<>(1));
 			((MappedXml2Json)xml2json).getConfiguration().setIgnoreNamespaces(true);
-			IJson2Xml json2xml = Xml2JsonFactory.getJson2XmlMapped(new HashMap<String,String>(1));			
+			IJson2Xml json2xml = Xml2JsonFactory.getJson2XmlMapped(new HashMap<>(1));			
 			test(instance, node, "Mapped (Node) senza prefissi e namespace", xml2json, json2xml);
 		}
 		{

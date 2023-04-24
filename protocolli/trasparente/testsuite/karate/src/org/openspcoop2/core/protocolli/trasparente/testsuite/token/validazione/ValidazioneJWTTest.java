@@ -49,8 +49,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
 				buildJWT(true, 
@@ -67,7 +67,7 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		
 		Utilities._test(logCore, validazione, "success", headers,  null,
@@ -81,7 +81,7 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
 				"AAA.AAAA.AAAA");
 		headers.put("test-username", Utilities.username);
@@ -97,7 +97,7 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
 				buildJWT_signInvalid());
 		headers.put("test-username", Utilities.username);
@@ -115,8 +115,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWT_dates(true, false, false, false, 
 				mapExpectedTokenInfo));
 		headers.put("test-username", Utilities.username);
@@ -132,8 +132,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWT_dates(false, true, false, false, 
 				mapExpectedTokenInfo));
 		headers.put("test-username", Utilities.username);
@@ -149,8 +149,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWT_dates(false, false, true, false, 
 				mapExpectedTokenInfo));
 		headers.put("test-username", Utilities.username);
@@ -166,8 +166,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWT_dates(false, false, false, true, 
 				mapExpectedTokenInfo));
 		headers.put("test-username", Utilities.username);
@@ -184,8 +184,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWT(true,
 				false, true, true, true, true,
@@ -202,8 +202,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWT(true,
 				true, false, true, true, true,
@@ -220,8 +220,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWT(true,
 				true, true, false, true, true,
@@ -238,8 +238,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWT(true,
 				true, true, true, false, true,
@@ -256,8 +256,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWT(true,
 				true, true, true, true, false,
@@ -274,8 +274,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWT(false,
 				mapExpectedTokenInfo));
@@ -294,8 +294,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
 				buildJWT_scope(true, true, false,
@@ -312,8 +312,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
 				buildJWT_scope(false, false, true,
@@ -330,8 +330,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
 				buildJWT_scope(false, false, false,
@@ -348,8 +348,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
 				buildJWT_scope(true, false, true,
@@ -366,8 +366,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
 				buildJWT_scope(true, true, false,
@@ -386,8 +386,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
 				buildJWT_roles(true, true, false,
@@ -403,8 +403,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
 				buildJWT_roles(false, false, true,
@@ -420,8 +420,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
 				buildJWT_roles(false, false, false,
@@ -438,8 +438,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
 				buildJWT_roles(true, false, true,
@@ -456,8 +456,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
 				buildJWT_roles(true, true, false,
@@ -476,8 +476,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWT_invalid(true, false, false, false, 
 				mapExpectedTokenInfo));
 		headers.put("test-username", Utilities.username);
@@ -494,8 +494,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWT_invalid(false, true, false, false, 
 				mapExpectedTokenInfo));
 		headers.put("test-username", Utilities.username);
@@ -512,8 +512,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWT_invalid(false, false, true, false, 
 				mapExpectedTokenInfo));
 		headers.put("test-username", Utilities.username);
@@ -528,8 +528,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWT_invalid(false, false, false, false, // tutti corretti 
 				mapExpectedTokenInfo));
 		headers.put("test-username", Utilities.username+"ERRORE"); // l'errore e' nel valore dinamico dell'header usato per il confronto
@@ -546,8 +546,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWT_invalid(false, false, false, true, 
 				mapExpectedTokenInfo));
 		headers.put("test-username", Utilities.username);
@@ -565,8 +565,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-not-aud", "7777.apps.invalid");
 		headers.put("test-not-iss", "testAuthEnte.invalid");
@@ -585,8 +585,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-not-aud", "7777.apps.invalid");
 		headers.put("test-not-iss", "testAuthEnte.invalid");
@@ -610,8 +610,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-not-aud", "7777.apps");
 		headers.put("test-not-iss", "testAuthEnte.invalid");
@@ -629,8 +629,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-not-aud", "7777.apps.invalid");
 		headers.put("test-not-iss", "testAuthEnte");
@@ -648,8 +648,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-not-aud", "7777.apps.invalid");
 		headers.put("test-not-iss", "testAuthEnte.invalid");
@@ -667,8 +667,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-not-aud", "7777.apps.invalid");
 		headers.put("test-not-iss", "testAuthEnte.invalid");
@@ -699,8 +699,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-not-aud", "7777.apps.invalid");
 		headers.put("test-not-iss", "testAuthEnte.invalid");
@@ -719,8 +719,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-not-aud", "7777.apps.invalid");
 		headers.put("test-not-iss", "testAuthEnte.invalid");
@@ -744,8 +744,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-not-aud", "23223.apps");
 		headers.put("test-not-iss", "testAuthEnte.invalid");
@@ -763,8 +763,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-not-aud", "7777.apps.invalid");
 		headers.put("test-not-iss", "testAuthEnte");
@@ -782,8 +782,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-not-aud", "7777.apps.invalid");
 		headers.put("test-not-iss", "testAuthEnte.invalid");
@@ -801,8 +801,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-not-aud", "7777.apps.invalid");
 		headers.put("test-not-iss", "testAuthEnte.invalid");
@@ -834,8 +834,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-ignoreCase-fullName", "bianchi ROSSI");
 		headers.put("test-ignoreCase-firstName", "MARIO");
@@ -856,8 +856,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-ignoreCase-fullName", "bianchi ROSSI");
 		headers.put("test-ignoreCase-firstName", "MARIO");
@@ -877,8 +877,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-ignoreCase-fullName", "bianchi VERDI"); // atteso Rossi
 		headers.put("test-ignoreCase-firstName", "MARIO");
@@ -898,8 +898,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-ignoreCase-fullName", "bianchi ROSSI");
 		headers.put("test-ignoreCase-firstName", "ALTRONOME");
@@ -923,8 +923,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-ignoreCase-fullName", "bianchi ROSSI");
 		headers.put("test-ignoreCase-firstName", "MARIO");
@@ -945,8 +945,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-ignoreCase-fullName", "bianchi ROSSI");
 		headers.put("test-ignoreCase-firstName", "MARIO");
@@ -966,8 +966,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-ignoreCase-fullName", "bianchi VERDI"); // atteso Rossi
 		headers.put("test-ignoreCase-firstName", "MARIO");
@@ -987,8 +987,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
-		List<String> mapExpectedTokenInfo = new ArrayList<String>();
-		Map<String, String> headers = new HashMap<String, String>();
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put("test-ignoreCase-fullName", "bianchi ROSSI");
 		headers.put("test-ignoreCase-firstName", "ALTRONOME");

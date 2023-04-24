@@ -245,7 +245,7 @@ public class Map<T> extends HashMap<MapKey<String>, T> implements Serializable {
 	public List<String> keysAsString(){
 		List<String> keys = null;
 		if(!this.isEmpty()) {
-			keys = new ArrayList<String>();
+			keys = new ArrayList<>();
 			for (MapKey<String> key : super.keySet()) {
 				keys.add(key.getValue());
 			}

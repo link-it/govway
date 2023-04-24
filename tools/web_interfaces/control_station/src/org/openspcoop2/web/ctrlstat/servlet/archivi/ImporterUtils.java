@@ -90,9 +90,9 @@ public class ImporterUtils {
 
 	public List<String> getIdSoggetti(List<String> protocolli,String importMode, 
 			String protocolloMissingInput,String tipoPdDMissingInput, Wizard wizard, ArchiviHelper helper) throws Exception{
-		List<String> listIdSoggetti = new ArrayList<String>();
+		List<String> listIdSoggetti = new ArrayList<>();
 		
-		List<String> protocolliDaScorrere = new ArrayList<String>();
+		List<String> protocolliDaScorrere = new ArrayList<>();
 		if(wizard!=null && wizard.getRequisiti()!=null && wizard.getRequisiti().sizeProtocolloList()>0){
 			for (int i = 0; i < wizard.getRequisiti().sizeProtocolloList(); i++) {
 				protocolliDaScorrere.add(wizard.getRequisiti().getProtocollo(i).getNome());
@@ -140,7 +140,7 @@ public class ImporterUtils {
 		}
 		
 		// filtro per protocollo e/o tipoPdD
-		List<String> listIdSoggettiFiltrati = new ArrayList<String>();
+		List<String> listIdSoggettiFiltrati = new ArrayList<>();
 		for (String tipoNome : listIdSoggetti) {
 			String [] tmp = tipoNome.split("/");
 			String tipo = tmp[0];
@@ -184,7 +184,7 @@ public class ImporterUtils {
 	
 	public List<String> getIdAccordiServizioParteComune(List<String> protocolli,String importMode, 
 			String protocolloMissingInput, ArchiviHelper helper) throws Exception{
-		List<String> listIdAccordiServizioParteComune = new ArrayList<String>();
+		List<String> listIdAccordiServizioParteComune = new ArrayList<>();
 		for (int i = 0; i < protocolli.size(); i++) {
 			String protocollo = protocolli.get(i);
 						
@@ -239,7 +239,7 @@ public class ImporterUtils {
 	
 	public List<String> getIdAccordiCooperazione(List<String> protocolli,String importMode, 
 			String protocolloMissingInput, ArchiviHelper helper) throws Exception{
-		List<String> listIdAccordiCooperazione = new ArrayList<String>();
+		List<String> listIdAccordiCooperazione = new ArrayList<>();
 		for (int i = 0; i < protocolli.size(); i++) {
 			String protocollo = protocolli.get(i);
 			if(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO_UNDEFINDED.equals(protocollo) == false){
@@ -293,7 +293,7 @@ public class ImporterUtils {
 
 	public Map<String,String> getImportModesWithProtocol(List<String> protocolli) throws ProtocolException{
 
-		Map<String,String> importModes = new HashMap<String,String>();
+		Map<String,String> importModes = new HashMap<>();
 		for (int i = 0; i < protocolli.size(); i++) {
 			String protocolName = protocolli.get(i);
 			if(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO_UNDEFINDED.equals(protocolName)==false){

@@ -440,11 +440,11 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		this.setVisualizzaIdCluster(pddMonitorare!=null && pddMonitorare.size()>1);
 		this.visualizzaIdClusterAsSelectList = pddMonitorProperties.isAttivoTransazioniUtilizzoSondaPdDListAsClusterId();
 		if(pddMonitorare!=null && pddMonitorare.size()>1){
-			this.listIdCluster = new ArrayList<String>();
+			this.listIdCluster = new ArrayList<>();
 			this.listIdCluster.add("--");
 			this.listIdCluster.addAll(pddMonitorare);
 			
-			this.listLabelIdCluster = new ArrayList<String>();
+			this.listLabelIdCluster = new ArrayList<>();
 			ConfigurazioneNodiRuntime config = pddMonitorProperties.getConfigurazioneNodiRuntime();
 			for (String nodoRun : this.listIdCluster) {
 				String descrizione = null;
@@ -458,15 +458,15 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		this.visualizzaCanali = Utility.isCanaliAbilitato();
 		if(this.visualizzaCanali) {
 			List<String> canali = Utility.getCanali();
-			this.listCanali = new ArrayList<String>();
+			this.listCanali = new ArrayList<>();
 			this.listCanali.add("--");
 			if(canali!=null && !canali.isEmpty()) {
 				this.listCanali.addAll(canali);
-				this.mapCanaleToNodi = new HashMap<String, List<String>>();
+				this.mapCanaleToNodi = new HashMap<>();
 				for (String canale : canali) {
 					List<String> nodi = Utility.getNodi(canale);
 					if(nodi==null) {
-						nodi = new ArrayList<String>();
+						nodi = new ArrayList<>();
 					}
 					this.mapCanaleToNodi.put(canale, nodi);
 				}

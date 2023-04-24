@@ -60,7 +60,7 @@ public class TracciaExtInfo {
 		return null;
 	}
 	public Map<String, String> getProprietaAsMap(){
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 		for (Proprieta proprietaCheck : this.proprieta) {
 			map.put(proprietaCheck.getNome(), proprietaCheck.getValore());
 		}

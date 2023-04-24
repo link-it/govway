@@ -191,7 +191,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		de = new DataElement();
 		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO);
 		if(exportModes.size()>1){
-			List<String> exportMode_tmp = new ArrayList<String>();
+			List<String> exportMode_tmp = new ArrayList<>();
 			for (ExportMode exp : exportModes) {
 				exportMode_tmp.add(exp.toString());
 			}
@@ -850,7 +850,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO);
 		if(importModes.size()>1){
 			// Lo vediamo sempre anche se solo con un valore, poiche' vogliamo vedere govlet e fuori dalla select list non e' bello graficamente.
-			List<String> tmpArchivi = new ArrayList<String>();
+			List<String> tmpArchivi = new ArrayList<>();
 			for (ImportMode imp : importModes) {
 				tmpArchivi.add(imp.toString());
 			}
@@ -873,7 +873,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		de = new DataElement();
 		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_TIPO);
 		if(importTypes.size()>1){
-			List<String> tmp = new ArrayList<String>();
+			List<String> tmp = new ArrayList<>();
 			for (ArchiveModeType type : importTypes) {
 				tmp.add(type.toString());
 			}
@@ -1112,7 +1112,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 	
 	public HashMap<String, String> readRequisitiInput() throws Exception{
 		
-		HashMap<String, String> map = new HashMap<String, String>();
+		HashMap<String, String> map = new HashMap<>();
 		
 		int index = 0;
 		String pHidden = this.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_REQUISITO_INPUT_PROPRIETA_PREFIX_HIDDEN+index);
@@ -1133,7 +1133,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 	}
 	public HashMap<String, String> readRequisitiStepIncrementInput() throws Exception{
 		
-		HashMap<String, String> map = new HashMap<String, String>();
+		HashMap<String, String> map = new HashMap<>();
 		
 		int index = 0;
 		String pHidden = this.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_REQUISITO_INPUT_PROPRIETA_PREFIX_HIDDEN+index);
@@ -1813,7 +1813,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			
 			HashMap<String, String> mapRequisitiInput = this.readRequisitiInput();
 			if(mapRequisitiInput==null) {
-				mapRequisitiInput = new HashMap<String, String>();
+				mapRequisitiInput = new HashMap<>();
 			}
 			for (int i = 0; i < requisitoInput.sizeProprietaList(); i++) {
 				ProprietaRequisitoInput p = requisitoInput.getProprieta(i);
@@ -2378,7 +2378,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			de = new DataElement();
 			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_PORT_TYPE_IMPLEMENTED_INPUT);
 			de.setType(DataElementType.SELECT);
-			List<String> listServizi = new ArrayList<String>();
+			List<String> listServizi = new ArrayList<>();
 			listServizi.add(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_SOGGETTO_INPUT_UNDEFINDED);
 			listServizi.addAll(importInformationMissingException.getMismatchPortTypeRifServiziParteComune_serviziParteComune());
 			de.setValues(listServizi);
@@ -2636,7 +2636,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		}
 		String tipoCredenzialiSSLTipoArchivioS = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO);
 		BinaryParameter tipoCredenzialiSSLFileCertificato = this.getBinaryParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO);
-		List<String> listaAliasEstrattiCertificato = new ArrayList<String>();
+		List<String> listaAliasEstrattiCertificato = new ArrayList<>();
 		String tipoCredenzialiSSLFileCertificatoPassword = this.getParameter(readedDatiConnettori, defaultProperties, ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
 		String tipoCredenzialiSSLAliasCertificato = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO);
 		String tipoCredenzialiSSLAliasCertificatoSubject= this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SUBJECT);
@@ -3100,7 +3100,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			}
 			
 			
-			List<String> listaErrori = new ArrayList<String>();
+			List<String> listaErrori = new ArrayList<>();
 			
 			for (int i = 0; i < binaryParameterDocumenti.size() ; i++) {
 				BinaryParameter binaryParameter = binaryParameterDocumenti.get(i);

@@ -284,7 +284,7 @@ public class DynamicNamespaceContext implements javax.xml.namespace.NamespaceCon
 		
 		//System.out.println("------ getPrefixes("+namespace+") -----");
 		
-		List<String> v = new ArrayList<String>();
+		List<String> v = new ArrayList<>();
 		
 		// -e. null 
 		if(namespace==null){

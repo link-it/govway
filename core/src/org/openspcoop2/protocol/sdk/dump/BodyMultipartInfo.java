@@ -44,7 +44,7 @@ public class BodyMultipartInfo implements Serializable{
 	private String contentLocation;
 	private String contentType;
 	
-	private Map<String, List<String>> headers = new HashMap<String, List<String>>();
+	private Map<String, List<String>> headers = new HashMap<>();
 	
 
 	public Map<String, List<String>> getHeaders() {

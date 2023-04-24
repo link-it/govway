@@ -148,7 +148,7 @@ public class RestMessageSecurityToken extends AbstractMessageSecurityToken<Strin
 	private Map<String, String> readClaims_header = null;
 	private synchronized void initReadClaims_header() throws UtilsException {
 		if(this.readClaims_header==null) {
-			this.readClaims_header = new HashMap<String, String>();
+			this.readClaims_header = new HashMap<>();
 			String hdr = getDecodedHeader();
 			JSONUtils jsonUtils = JSONUtils.getInstance();
 			if(jsonUtils.isJson(hdr)) {
@@ -175,7 +175,7 @@ public class RestMessageSecurityToken extends AbstractMessageSecurityToken<Strin
 	private Map<String, String> readClaims_payload = null;
 	private synchronized void initReadClaims_payload() throws UtilsException {
 		if(this.readClaims_payload==null) {
-			this.readClaims_payload = new HashMap<String, String>();
+			this.readClaims_payload = new HashMap<>();
 			String hdr = getDecodedPayload();
 			JSONUtils jsonUtils = JSONUtils.getInstance();
 			if(jsonUtils.isJson(hdr)) {

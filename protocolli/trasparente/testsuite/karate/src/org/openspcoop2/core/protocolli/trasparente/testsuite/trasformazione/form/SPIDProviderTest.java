@@ -416,10 +416,10 @@ public class SPIDProviderTest extends ConfigLoader {
 		
 		String samlBase64 = Base64Utilities.encodeAsString(saml);
 		
-		List<String> keys = new ArrayList<String>();
+		List<String> keys = new ArrayList<>();
 		keys.add("RelayState");
 		keys.add("SAMLResponse");
-		List<String> values = new ArrayList<String>();
+		List<String> values = new ArrayList<>();
 		values.add("ss:mem:f2d69b87d9e2ce0fa6f5461e665116dcd0abf6373ca41432352eef9656aa5173");
 		values.add(samlBase64);
 		

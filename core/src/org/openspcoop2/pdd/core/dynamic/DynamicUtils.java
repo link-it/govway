@@ -414,7 +414,7 @@ public class DynamicUtils {
 				dynamicMap.put(Costanti.MAP_HEADER_VALUES, dynamicInfo.getHeaders());
 			}
 			else {
-				dynamicMap.put(Costanti.MAP_HEADER_VALUES, new HashMap<String, List<String>>()); // aggiungo sempre, piu' pratico il controllo nei template engine
+				dynamicMap.put(Costanti.MAP_HEADER_VALUES, new HashMap<>()); // aggiungo sempre, piu' pratico il controllo nei template engine
 			}
 		}
 		
@@ -432,7 +432,7 @@ public class DynamicUtils {
 				dynamicMap.put(Costanti.MAP_QUERY_PARAMETER_VALUES, dynamicInfo.getParameters());
 			}
 			else {
-				dynamicMap.put(Costanti.MAP_QUERY_PARAMETER_VALUES, new HashMap<String, List<String>>()); // aggiungo sempre, piu' pratico il controllo nei template engine
+				dynamicMap.put(Costanti.MAP_QUERY_PARAMETER_VALUES, new HashMap<>()); // aggiungo sempre, piu' pratico il controllo nei template engine
 			}
 		}
 		
@@ -450,7 +450,7 @@ public class DynamicUtils {
 				dynamicMap.put(Costanti.MAP_FORM_PARAMETER_VALUES, dynamicInfo.getFormParameters());
 			}
 			else {
-				dynamicMap.put(Costanti.MAP_FORM_PARAMETER_VALUES, new HashMap<String, List<String>>()); // aggiungo sempre, piu' pratico il controllo nei template engine
+				dynamicMap.put(Costanti.MAP_FORM_PARAMETER_VALUES, new HashMap<>()); // aggiungo sempre, piu' pratico il controllo nei template engine
 			}
 		}
 		

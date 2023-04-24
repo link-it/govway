@@ -134,7 +134,7 @@ public final class PorteDelegateAzioneList extends Action {
 				List<MappingFruizionePortaDelegata> lista = porteDelegateCore.getMapping(listId, false, true);
 				if(lista!=null && !lista.isEmpty()) {
 					AccordiServizioParteSpecificaHelper aspsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
-					Map<String,String> azioni = porteDelegateCore.getAzioniConLabel(asps, aspc, false, true, new ArrayList<String>());
+					Map<String,String> azioni = porteDelegateCore.getAzioniConLabel(asps, aspc, false, true, new ArrayList<>());
 					List<String> azioniL = new ArrayList<>();
 					if(azioni != null && azioni.size() > 0)
 						azioniL.addAll(azioni.keySet());

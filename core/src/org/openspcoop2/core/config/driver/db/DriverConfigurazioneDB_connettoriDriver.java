@@ -172,7 +172,7 @@ public class DriverConfigurazioneDB_connettoriDriver {
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		boolean error = false;
-		ArrayList<String> lista = new ArrayList<String>();
+		ArrayList<String> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {

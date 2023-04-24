@@ -3322,7 +3322,7 @@ public abstract class AbstractVerificatoreTraccia {
 
 		ResultSet res = null;
 		PreparedStatement pstmtListaExtInfoProtocol = null;
-		Map<String,String> extInfos = new HashMap<String, String>();
+		Map<String,String> extInfos = new HashMap<>();
 		int idTraccia = 0;
 		try {
 			res = pstmt.executeQuery();

@@ -439,7 +439,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
                         
 				StringBuilder inUsoMessage = new StringBuilder();
 				
-				PorteDelegateUtilities.deletePortaDelegataAzioni(pd, asps, env.pdCore, env.pdHelper, inUsoMessage, new ArrayList<String>(Arrays.asList(nomeAzione)), env.userLogin);
+				PorteDelegateUtilities.deletePortaDelegataAzioni(pd, asps, env.pdCore, env.pdHelper, inUsoMessage, new ArrayList<>(Arrays.asList(nomeAzione)), env.userLogin);
 				
 				if (inUsoMessage.length() > 0)
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));

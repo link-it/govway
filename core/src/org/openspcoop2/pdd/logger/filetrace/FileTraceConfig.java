@@ -90,7 +90,7 @@ public class FileTraceConfig {
 		semaphore.acquireThrowRuntime("resetFileTraceAssociatePorte");
 		try {
 			if(!staticInstanceMap.isEmpty()) {
-				List<String> removeEntries = new ArrayList<String>();
+				List<String> removeEntries = new ArrayList<>();
 				for (String path : staticInstanceMap.keySet()) {
 					FileTraceConfig config = staticInstanceMap.get(path);
 					if(config.isGlobale()) {
@@ -125,7 +125,7 @@ public class FileTraceConfig {
 	
 	private LogSeverity logSeverity = LogSeverity.info;
 	
-	private Map<String, String> escape = new HashMap<String, String>();
+	private Map<String, String> escape = new HashMap<>();
 		
 	private String headersSeparator = ",";
 	private String headerSeparator = "=";
@@ -136,14 +136,14 @@ public class FileTraceConfig {
 	
 	private String headerMultiValueSeparator = ","; // per singolo header
 	
-	private List<String> propertiesSortKeys = new ArrayList<String>();
-	private Map<String, String> propertiesNames = new HashMap<String, String>();
-	private Map<String, String> propertiesValues = new HashMap<String, String>();
+	private List<String> propertiesSortKeys = new ArrayList<>();
+	private Map<String, String> propertiesNames = new HashMap<>();
+	private Map<String, String> propertiesValues = new HashMap<>();
 	
-	private List<String> topicErogazioni = new ArrayList<String>();
+	private List<String> topicErogazioni = new ArrayList<>();
 	private Map<String, Topic> topicErogazioniMap = new HashMap<String, Topic>();
 	
-	private List<String> topicFruizioni = new ArrayList<String>();
+	private List<String> topicFruizioni = new ArrayList<>();
 	private Map<String, Topic> topicFruizioneMap = new HashMap<String, Topic>();
 	
 	public FileTraceConfig(File file, boolean globale) throws CoreException {
@@ -355,7 +355,7 @@ public class FileTraceConfig {
 	}
 	@SuppressWarnings("unused")
 	private List<String> getList(PropertiesReader reader, String propertyName) throws Exception{
-		List<String> list = new ArrayList<String>();		
+		List<String> list = new ArrayList<>();		
 		String tmp = getProperty(reader, propertyName, false);
 		if(tmp!=null && !StringUtils.isEmpty(tmp)) {
 			String [] split = tmp.split(",");
@@ -382,8 +382,8 @@ public class FileTraceConfig {
 		}
 		
 		Properties propertiesMap = reader.readProperties("format.property.");
-		List<String> listPosition = new ArrayList<String>();
-		List<String> listPnames = new ArrayList<String>();
+		List<String> listPosition = new ArrayList<>();
+		List<String> listPnames = new ArrayList<>();
 		if(propertiesMap!=null && !propertiesMap.isEmpty()) {
 			for (Object s : propertiesMap.keySet()) {
 				String key = (String) s;
@@ -436,7 +436,7 @@ public class FileTraceConfig {
 		tmp = getProperty(reader, "format.header.whiteList", false);
 		if(tmp!=null && !"".equals(tmp.trim())) {
 			tmp = tmp.trim();
-			this.headerWhiteList = new ArrayList<String>();
+			this.headerWhiteList = new ArrayList<>();
 			if(tmp.contains(",")) {
 				String [] split = tmp.split(",");
 				if(split!=null && split.length>0) {
@@ -458,7 +458,7 @@ public class FileTraceConfig {
 		tmp = getProperty(reader, "format.header.blackList", false);
 		if(tmp!=null && !"".equals(tmp.trim())) {
 			tmp = tmp.trim();
-			this.headerBlackList = new ArrayList<String>();
+			this.headerBlackList = new ArrayList<>();
 			if(tmp.contains(",")) {
 				String [] split = tmp.split(",");
 				if(split!=null && split.length>0) {

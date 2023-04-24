@@ -164,7 +164,7 @@ public abstract class BasicManager extends BasicComponentFactory implements IPro
 			boolean isRichiesta, TipoIntegrazione tipoIntegrazione)
 			throws ProtocolException {
 		if(busta!=null && busta.sizeProperties()>0){
-			Map<String, String> map = new HashMap<String, String>();
+			Map<String, String> map = new HashMap<>();
 			String[]names = busta.getPropertiesNames();
 			for (int i = 0; i < names.length; i++) {
 				String nomeProprieta = names[i];

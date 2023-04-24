@@ -269,7 +269,7 @@ public class MessageSecurityReceiver_soapbox extends AbstractSOAPMessageSecurity
 			if(decrypt){			
 				msgSecCtx.getEncryptionRequest().setCertAlias(aliasDecryptUser);
 				
-				Map<String, String> passwordMap_decryption = new HashMap<String, String>();
+				Map<String, String> passwordMap_decryption = new HashMap<>();
 				passwordMap_decryption.put(aliasDecryptUser, aliasDecryptPassword);
 				if(decryptionTrustStoreKS==null){
 					decryptionTrustStoreKS = decryptionKS;
@@ -289,7 +289,7 @@ public class MessageSecurityReceiver_soapbox extends AbstractSOAPMessageSecurity
 			// **************** Inizializzo Secure Context for signature **************************
 			org.openspcoop2.security.message.soapbox.SoapBoxSecurityConfig securityConfig_signature = null;
 			if(signature){			
-				Map<String, String> passwordMap_signature = new HashMap<String, String>();
+				Map<String, String> passwordMap_signature = new HashMap<>();
 				passwordMap_signature.put(aliasSignatureUser, aliasSignaturePassword);
 				if(signatureTrustStoreKS==null){
 					signatureTrustStoreKS = signatureKS;

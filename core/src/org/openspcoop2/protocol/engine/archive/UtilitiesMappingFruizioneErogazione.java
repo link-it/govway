@@ -95,7 +95,7 @@ public class UtilitiesMappingFruizioneErogazione  {
 		
 		try {
 
-			List<String> tipiPdd = new ArrayList<String>();
+			List<String> tipiPdd = new ArrayList<>();
 			tipiPdd.add(PddTipologia.OPERATIVO.toString());
 			tipiPdd.add(PddTipologia.NONOPERATIVO.toString());
 			

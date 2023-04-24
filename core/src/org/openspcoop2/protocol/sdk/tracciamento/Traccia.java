@@ -66,7 +66,7 @@ public class Traccia implements java.io.Serializable {
     private BustaRawContent<?> bustaRawContent;
 
     // properties
-    protected Map<String, String> properties = new HashMap<String, String>();
+    protected Map<String, String> properties = new HashMap<>();
     
     // protocollo
     private String protocollo;

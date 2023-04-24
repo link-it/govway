@@ -168,7 +168,7 @@ public class HttpConstants {
 	public static final String ACCESS_CONTROL_EXPOSE_HEADERS = "Access-Control-Expose-Headers";
 	public static final String ACCESS_CONTROL_MAX_AGE = "Access-Control-Max-Age";
 	public static final String ACCESS_CONTROL_MAX_AGE_DISABLE_CACHE = "-1";
-    public static final List<String> ACCESS_CONTROL_SIMPLE_REQUEST_CONTENT_TYPES = new ArrayList<String>(Arrays.asList(
+    public static final List<String> ACCESS_CONTROL_SIMPLE_REQUEST_CONTENT_TYPES = new ArrayList<>(Arrays.asList(
     		HttpConstants.CONTENT_TYPE_X_WWW_FORM_URLENCODED, 
     		HttpConstants.CONTENT_TYPE_FORM_DATA,
     		HttpConstants.CONTENT_TYPE_PLAIN));

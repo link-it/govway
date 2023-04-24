@@ -478,7 +478,7 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 		}
 
 		// Attendo la consegna
-		List<String> connettoriCheck = new ArrayList<String>();
+		List<String> connettoriCheck = new ArrayList<>();
 		connettoriCheck.addAll(connettori);
 		CommonConsegnaMultipla.waitConsegna(responses, connettoriCheck);
 
@@ -547,7 +547,7 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 			}
 	
 			// Attendo la consegna
-			List<String> connettoriCheck = new ArrayList<String>();
+			List<String> connettoriCheck = new ArrayList<>();
 			connettoriCheck.addAll(connettori);
 			CommonConsegnaMultipla.waitConsegna(responses, connettoriCheck);
 	
@@ -598,7 +598,7 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 		}
 
 		// Attendo la consegna
-		List<String> connettoriCheck = new ArrayList<String>();
+		List<String> connettoriCheck = new ArrayList<>();
 		connettoriCheck.addAll(connettori);
 		CommonConsegnaMultipla.waitConsegna(responses, connettoriCheck);
 
@@ -663,7 +663,7 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 		}
 
 		// Attendo la consegna
-		List<String> connettoriCheck = new ArrayList<String>();
+		List<String> connettoriCheck = new ArrayList<>();
 		connettoriCheck.addAll(connettori);
 		CommonConsegnaMultipla.waitConsegna(responses, connettoriCheck);
 
@@ -734,7 +734,7 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 			}
 	
 			// Attendo la consegna
-			List<String> connettoriCheck = new ArrayList<String>();
+			List<String> connettoriCheck = new ArrayList<>();
 			connettoriCheck.addAll(connettori);
 			CommonConsegnaMultipla.waitConsegna(responses, connettoriCheck);
 	
@@ -786,7 +786,7 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 		}
 
 		// Attendo la consegna
-		List<String> connettoriCheck = new ArrayList<String>();
+		List<String> connettoriCheck = new ArrayList<>();
 		connettoriCheck.addAll(connettori);
 		CommonConsegnaMultipla.waitConsegna(responses, connettoriCheck);
 
@@ -847,7 +847,7 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 		}
 
 		// Attendo la consegna
-		List<String> connettoriCheck = new ArrayList<String>();
+		List<String> connettoriCheck = new ArrayList<>();
 		connettoriCheck.addAll(connettori);
 		CommonConsegnaMultipla.waitConsegna(responses, connettoriCheck);
 
@@ -927,7 +927,7 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 			}
 	
 			// Attendo la consegna
-			List<String> connettoriCheck = new ArrayList<String>();
+			List<String> connettoriCheck = new ArrayList<>();
 			connettoriCheck.addAll(connettori);
 			CommonConsegnaMultipla.waitConsegna(responses, connettoriCheck);
 	
@@ -980,7 +980,7 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 		}
 
 		// Attendo la consegna
-		List<String> connettoriCheck = new ArrayList<String>();
+		List<String> connettoriCheck = new ArrayList<>();
 		connettoriCheck.addAll(connettori);
 		CommonConsegnaMultipla.waitConsegna(responses, connettoriCheck);
 
@@ -1053,7 +1053,7 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 		}
 
 		// Attendo la consegna
-		List<String> connettoriCheck = new ArrayList<String>();
+		List<String> connettoriCheck = new ArrayList<>();
 		connettoriCheck.addAll(connettori);
 		CommonConsegnaMultipla.waitConsegna(responses, connettoriCheck);
 

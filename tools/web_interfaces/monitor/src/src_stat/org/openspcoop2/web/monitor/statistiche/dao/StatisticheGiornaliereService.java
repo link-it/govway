@@ -7796,7 +7796,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			// order by somma
 			//			Enumeration<String> enKeys = map.keys();
-			//			List<String> order = new ArrayList<String>();
+			//			List<String> order = new ArrayList<>();
 			//			while (enKeys.hasMoreElements()) {
 			//				String key = (String) enKeys.nextElement();
 			//				order.add(key);
@@ -8715,7 +8715,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	public List<String> getValoriRisorse() throws ServiceException{
 		StatisticheGiornaliereService.log.debug("Leggo i valori delle risorse per la statistica: " + this.statistichePersonalizzateSearch.getNomeStatisticaPersonalizzata()); 
 
-		List<String> valori = new ArrayList<String>();
+		List<String> valori = new ArrayList<>();
 		StatisticaModel model = null;
 		IServiceSearchWithoutId<?> dao = null;
 		StatisticaContenutiModel modelContenuti = null;
@@ -9361,7 +9361,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		List<String> l = this.getHostnames(gruppo, refreshSecondsInterval);
 		List<String> list = null;
 		if(l!=null && !l.isEmpty()) {
-			list = new ArrayList<String>();
+			list = new ArrayList<>();
 			for (String id : l) {
 				list.add( DynamicClusterManager.hashClusterId(id) );
 			}

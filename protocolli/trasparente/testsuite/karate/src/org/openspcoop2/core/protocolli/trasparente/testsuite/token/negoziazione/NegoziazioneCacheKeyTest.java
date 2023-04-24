@@ -212,7 +212,7 @@ public class NegoziazioneCacheKeyTest extends ConfigLoader {
 	
 		// Test HDR
 		
-		Map<String, String> headers_0 = new HashMap<String, String>();
+		Map<String, String> headers_0 = new HashMap<>();
 		headers_0.put("test-azione", "signedJWT-PDND");
 		
 		headers_0.put("test-kid", "PDND");
@@ -250,7 +250,7 @@ public class NegoziazioneCacheKeyTest extends ConfigLoader {
 		
 		// Test PAYLOAD
 		
-		Map<String, String> headers_1 = new HashMap<String, String>();
+		Map<String, String> headers_1 = new HashMap<>();
 		headers_1.put("test-azione", "signedJWT-PDND");
 		
 		headers_1.put("test-kid", "PDND");

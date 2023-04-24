@@ -117,7 +117,7 @@ public final class ConfigurazioneHandlersRispostaList extends Action {
 				
 				Long idHandler = Long.parseLong(idHandlerS);
 				
-				List<Object> oggettiDaAggiornare = new ArrayList<Object>();
+				List<Object> oggettiDaAggiornare = new ArrayList<>();
 				List<ConfigurazioneHandler> listaDaAggiornare = null;
 				if(ruoloPorta !=null) {
 					if(ruoloPorta.equals(TipoPdD.DELEGATA)) {

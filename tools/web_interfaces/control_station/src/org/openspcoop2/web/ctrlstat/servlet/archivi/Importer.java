@@ -139,7 +139,7 @@ public final class Importer extends Action {
 			// protocolli supportati
 			List<String> protocolli = archiviCore.getProtocolli(request, session);
 			if(protocolli.size()>1){
-				protocolli = new ArrayList<String>();
+				protocolli = new ArrayList<>();
 				protocolli.add(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO_UNDEFINDED);
 				protocolli.addAll(archiviCore.getProtocolli(request, session));
 			}
@@ -161,7 +161,7 @@ public final class Importer extends Action {
 			
 			
 			// import modes
-			List<String> protocolliForModes = new ArrayList<String>();
+			List<String> protocolliForModes = new ArrayList<>();
 			if(strutsBean.protocollo!=null){
 				protocolliForModes.add(strutsBean.protocollo);
 			}else{

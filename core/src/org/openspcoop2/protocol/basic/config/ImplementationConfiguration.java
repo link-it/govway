@@ -227,7 +227,7 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 			}catch(Exception e) {
 				// ignore
 			}
-			List<String> idPolicyCreate = new ArrayList<String>();
+			List<String> idPolicyCreate = new ArrayList<>();
 			if(listAP!=null && !listAP.isEmpty()) {
 				for (AttivazionePolicy attivazionePolicy : listAP) {
 					
@@ -265,7 +265,7 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 			}catch(Exception e) {
 				// ignore
 			}
-			List<String> idAllarmiCreate = new ArrayList<String>();
+			List<String> idAllarmiCreate = new ArrayList<>();
 			if(listAllarmi!=null && !listAllarmi.isEmpty()) {
 				for (Allarme allarme : listAllarmi) {
 					

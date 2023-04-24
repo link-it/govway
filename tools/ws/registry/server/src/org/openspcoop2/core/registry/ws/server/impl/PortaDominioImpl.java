@@ -148,7 +148,7 @@ public abstract class PortaDominioImpl extends BaseImpl  implements PortaDominio
 			return listIds;
 		}
 		else{
-			List<String> listIds = new ArrayList<String>();
+			List<String> listIds = new ArrayList<>();
 			for (List<Object> list : listaRisultati) {
 				String name = (String)list.get(0);
 				listIds.add(name);

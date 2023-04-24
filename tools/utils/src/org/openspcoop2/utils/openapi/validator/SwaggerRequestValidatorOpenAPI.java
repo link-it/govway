@@ -111,7 +111,7 @@ public class SwaggerRequestValidatorOpenAPI implements Serializable {
 			
 			// Se l'api non è stata mergiata, recuperiamo gli schemi dei riferimenti esterni
 			
-			Map<String,String> schemaMapSerialized = new HashMap<String,String>();
+			Map<String,String> schemaMapSerialized = new HashMap<>();
 			if (!this.openApi4jConfig.isMergeAPISpec() && this.api.getSchemas()!=null) {							
 				for (ApiSchema apiSchema : this.api.getSchemas()) {
 					if(ApiSchemaType.JSON.equals(apiSchema.getType()) || ApiSchemaType.YAML.equals(apiSchema.getType())) {

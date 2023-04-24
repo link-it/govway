@@ -209,16 +209,16 @@ public class ProtocolFactoryManager {
 			Map<String, URL> tmp_manifestURLs = new HashMap<String, URL>();
 			Map<String, IProtocolFactory<?>> tmp_factories = new HashMap<String, IProtocolFactory<?>>();
 			
-			Map<String, List<String>> tmp_tipiSoggettiValidi = new HashMap<String, List<String>>();
-			Map<String, String> tmp_tipiSoggettiDefault = new HashMap<String, String>();
+			Map<String, List<String>> tmp_tipiSoggettiValidi = new HashMap<>();
+			Map<String, String> tmp_tipiSoggettiDefault = new HashMap<>();
 			
-			Map<String, List<String>> tmp_tipiServiziValidi_soap = new HashMap<String, List<String>>();
-			Map<String, String> tmp_tipiServiziDefault_soap = new HashMap<String, String>();
-			Map<String, List<String>> tmp_tipiServiziValidi_rest = new HashMap<String, List<String>>();
-			Map<String, String> tmp_tipiServiziDefault_rest = new HashMap<String, String>();
+			Map<String, List<String>> tmp_tipiServiziValidi_soap = new HashMap<>();
+			Map<String, String> tmp_tipiServiziDefault_soap = new HashMap<>();
+			Map<String, List<String>> tmp_tipiServiziValidi_rest = new HashMap<>();
+			Map<String, String> tmp_tipiServiziDefault_rest = new HashMap<>();
 			
-			Map<String, List<String>> tmp_versioniValide = new HashMap<String, List<String>>();
-			Map<String, String> tmp_versioniDefault = new HashMap<String, String>();
+			Map<String, List<String>> tmp_versioniValide = new HashMap<>();
+			Map<String, String> tmp_versioniDefault = new HashMap<>();
 			
 			this.log = configPdD.getLog();
 			this.protocolDefault = protocolDefault;
@@ -388,7 +388,7 @@ public class ProtocolFactoryManager {
 		}
 		
 		// 2. controllare che i contesti siano tutti diversi
-		Map<String, String> mappingContextToProtocol = new HashMap<String, String>();
+		Map<String, String> mappingContextToProtocol = new HashMap<>();
 		for (String protocolManifest : tmp_manifests.keySet()) {
 			Openspcoop2 manifestOpenspcoop2 = tmp_manifests.get(protocolManifest);
 			
@@ -405,7 +405,7 @@ public class ProtocolFactoryManager {
 		}
 		
 		// 2.b. controllare che le label siano tutti diversi
-		Map<String, String> mappinLabelToProtocol = new HashMap<String, String>();
+		Map<String, String> mappinLabelToProtocol = new HashMap<>();
 		for (String protocolManifest : tmp_manifests.keySet()) {
 			Openspcoop2 manifestOpenspcoop2 = tmp_manifests.get(protocolManifest);
 			
@@ -420,7 +420,7 @@ public class ProtocolFactoryManager {
 		}
 		
 		// 3. controllare e inizializzare i tipi di soggetti in modo che siano tutti diversi
-		Map<String, String> mappingTipiSoggettiToProtocol = new HashMap<String, String>();
+		Map<String, String> mappingTipiSoggettiToProtocol = new HashMap<>();
 		for (String protocolManifest : tmp_manifests.keySet()) {
 			Openspcoop2 manifestOpenspcoop2 = tmp_manifests.get(protocolManifest);
 			
@@ -439,7 +439,7 @@ public class ProtocolFactoryManager {
 						tipiSoggettiPerProtocollo = tmp_tipiSoggettiValidi.remove(protocolManifest);
 					}
 					else{
-						tipiSoggettiPerProtocollo = new ArrayList<String>();
+						tipiSoggettiPerProtocollo = new ArrayList<>();
 					}
 					tipiSoggettiPerProtocollo.add(tipo);
 					tmp_tipiSoggettiValidi.put(protocolManifest, tipiSoggettiPerProtocollo);
@@ -479,7 +479,7 @@ public class ProtocolFactoryManager {
 		// 4. controllare e inizializzare i tipi di servizi in modo che siano tutti diversi
 		String tipoServizioDefaultSoap = null;
 		String tipoServizioDefaultRest = null;
-		Map<String, String> mappingTipiServiziToProtocol = new HashMap<String, String>();
+		Map<String, String> mappingTipiServiziToProtocol = new HashMap<>();
 		for (String protocolManifest : tmp_manifests.keySet()) {
 			Openspcoop2 manifestOpenspcoop2 = tmp_manifests.get(protocolManifest);
 			
@@ -499,7 +499,7 @@ public class ProtocolFactoryManager {
 						tipiServiziPerProtocollo_soap = tmp_tipiServiziValidi_soap.get(protocolManifest);
 					}
 					else{
-						tipiServiziPerProtocollo_soap = new ArrayList<String>();
+						tipiServiziPerProtocollo_soap = new ArrayList<>();
 						tmp_tipiServiziValidi_soap.put(protocolManifest, tipiServiziPerProtocollo_soap);
 					}
 					
@@ -508,7 +508,7 @@ public class ProtocolFactoryManager {
 						tipiServiziPerProtocollo_rest = tmp_tipiServiziValidi_rest.get(protocolManifest);
 					}
 					else{
-						tipiServiziPerProtocollo_rest = new ArrayList<String>();
+						tipiServiziPerProtocollo_rest = new ArrayList<>();
 						tmp_tipiServiziValidi_rest.put(protocolManifest, tipiServiziPerProtocollo_rest);
 					}
 					
@@ -577,7 +577,7 @@ public class ProtocolFactoryManager {
 					versioniPerProtocollo = tmp_versioniValide.remove(protocolManifest);
 				}
 				else{
-					versioniPerProtocollo = new ArrayList<String>();
+					versioniPerProtocollo = new ArrayList<>();
 				}
 				versioniPerProtocollo.add(version);
 				tmp_versioniValide.put(protocolManifest, versioniPerProtocollo);
@@ -1273,7 +1273,7 @@ public class ProtocolFactoryManager {
 	}
 	public String[] getOrganizationTypesAsArray() {
 		Enumeration<List<String>> listeTipiSoggettiValidi = this.tipiSoggettiValidi.elements();
-		List<String> listaTipiSoggetti = new ArrayList<String>();
+		List<String> listaTipiSoggetti = new ArrayList<>();
 		while(listeTipiSoggettiValidi.hasMoreElements()){
 			listaTipiSoggetti.addAll(listeTipiSoggettiValidi.nextElement());
 		}
@@ -1281,7 +1281,7 @@ public class ProtocolFactoryManager {
 	}
 	public List<String> getOrganizationTypesAsList() {
 		Enumeration<List<String>> listeTipiSoggettiValidi = this.tipiSoggettiValidi.elements();
-		List<String> listaTipiSoggetti = new ArrayList<String>();
+		List<String> listaTipiSoggetti = new ArrayList<>();
 		while(listeTipiSoggettiValidi.hasMoreElements()){
 			listaTipiSoggetti.addAll(listeTipiSoggettiValidi.nextElement());
 		}
@@ -1342,7 +1342,7 @@ public class ProtocolFactoryManager {
 		else{
 			listeTipiServiziValidi = this.tipiServiziValidi_rest.elements();
 		}
-		List<String> listaTipiServizi = new ArrayList<String>();
+		List<String> listaTipiServizi = new ArrayList<>();
 		while(listeTipiServiziValidi.hasMoreElements()){
 			listaTipiServizi.addAll(listeTipiServiziValidi.nextElement());
 		}
@@ -1356,7 +1356,7 @@ public class ProtocolFactoryManager {
 		else{
 			listeTipiServiziValidi = this.tipiServiziValidi_rest.elements();
 		}
-		List<String> listaTipiServizi = new ArrayList<String>();
+		List<String> listaTipiServizi = new ArrayList<>();
 		while(listeTipiServiziValidi.hasMoreElements()){
 			listaTipiServizi.addAll(listeTipiServiziValidi.nextElement());
 		}
@@ -1377,7 +1377,7 @@ public class ProtocolFactoryManager {
 	}
 	public String[] getVersionAsArray() {
 		Enumeration<List<String>> listeVersioniValidi = this.versioniValide.elements();
-		List<String> listaVersioni = new ArrayList<String>();
+		List<String> listaVersioni = new ArrayList<>();
 		while(listeVersioniValidi.hasMoreElements()){
 			listaVersioni.addAll(listeVersioniValidi.nextElement());
 		}
@@ -1385,7 +1385,7 @@ public class ProtocolFactoryManager {
 	}
 	public List<String> getVersionAsList() {
 		Enumeration<List<String>> listeVersioniValide = this.versioniValide.elements();
-		List<String> listaVersioni = new ArrayList<String>();
+		List<String> listaVersioni = new ArrayList<>();
 		while(listeVersioniValide.hasMoreElements()){
 			listaVersioni.addAll(listeVersioniValide.nextElement());
 		}

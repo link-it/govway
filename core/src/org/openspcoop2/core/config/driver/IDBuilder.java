@@ -319,7 +319,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 	 */
 	@Override
 	public String[] getManagedObjects(boolean simpleName) throws IOException{
-		List<String> oggetti = new ArrayList<String>();
+		List<String> oggetti = new ArrayList<>();
 		
 		if(simpleName){
 			oggetti.add(Soggetto.class.getSimpleName());

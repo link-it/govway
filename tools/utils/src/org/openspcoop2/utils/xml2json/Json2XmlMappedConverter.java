@@ -49,7 +49,7 @@ public class Json2XmlMappedConverter extends AbstractMappedConverter {
 	private String rootElement_localName = "Root";
 	private String rootElement_namespace = null;
 
-	private List<String> attributes = new ArrayList<String>();
+	private List<String> attributes = new ArrayList<>();
 	
 	
 	public Json2XmlMappedConverter() {
@@ -193,7 +193,7 @@ public class Json2XmlMappedConverter extends AbstractMappedConverter {
 		
 		// Fix: se il nodo json è formato da più elementi, viene convertito solo il primo. Aggiungo un root Element
 		JsonNode rootNode = node;
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 		if(this.rootElement_localName!=null) {
 			rootNode = utils.newObjectNode();
 			if(this.rootElement_namespace!=null) {

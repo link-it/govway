@@ -260,7 +260,7 @@ public class InoltroBuste extends GenericLib{
 				String protocol = (String) enumProtocols.nextElement();
 				String[]tipiIntegrazionePD = propertiesReader.getTipoIntegrazionePD(protocol);
 				if(tipiIntegrazionePD!=null && tipiIntegrazionePD.length>0){
-					List<String> tipiIntegrazionePerProtocollo = new ArrayList<String>();
+					List<String> tipiIntegrazionePerProtocollo = new ArrayList<>();
 					for (int i = 0; i < tipiIntegrazionePD.length; i++) {
 						try {
 							IGestoreIntegrazionePD gestore = pluginLoader.newIntegrazionePortaDelegata(tipiIntegrazionePD[i]);
@@ -1231,8 +1231,8 @@ public class InoltroBuste extends GenericLib{
 				}
 			}
 
-			Map<String, List<String>>  propertiesTrasporto = new HashMap<String, List<String>> ();
-			Map<String, List<String>>  propertiesUrlBased = new HashMap<String, List<String>> ();
+			Map<String, List<String>>  propertiesTrasporto = new HashMap<> ();
+			Map<String, List<String>>  propertiesUrlBased = new HashMap<> ();
 
 			String [] tipiIntegrazionePD = null;
 			try {
@@ -2060,7 +2060,7 @@ public class InoltroBuste extends GenericLib{
 			// User-Agent e X-* header
 			UtilitiesIntegrazione httpUtilities = UtilitiesIntegrazione.getInstancePDRequest(this.log);
 			if(connettoreMsg.getPropertiesTrasporto()==null){
-				Map<String, List<String>> trasporto = new HashMap<String, List<String>>();
+				Map<String, List<String>> trasporto = new HashMap<>();
 				connettoreMsg.setPropertiesTrasporto(trasporto);
 			}
 			httpUtilities.setInfoProductTransportProperties(connettoreMsg.getPropertiesTrasporto());

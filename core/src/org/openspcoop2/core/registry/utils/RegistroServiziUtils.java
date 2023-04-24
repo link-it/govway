@@ -123,7 +123,7 @@ public class RegistroServiziUtils {
 	
 	public static List<String> fillPropertyProtocollo(String propertyName, AccordoServizioParteComune api, String portType, boolean booleanValue) {
 		
-		List<String> apiValues = new ArrayList<String>();
+		List<String> apiValues = new ArrayList<>();
 		
 		for (ProtocolProperty pp : api.getProtocolPropertyList()) {
 			if(propertyName.equals(pp.getName())) {

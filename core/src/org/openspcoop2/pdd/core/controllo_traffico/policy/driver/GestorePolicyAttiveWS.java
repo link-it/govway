@@ -88,7 +88,7 @@ public class GestorePolicyAttiveWS implements IGestorePolicyAttive {
 		
 		try{
 			String activeId = UniqueIdentifierUtilities.getUniqueId(activePolicy.getInstanceConfiguration());
-			Map<String, List<String>> p = new HashMap<String, List<String>>();
+			Map<String, List<String>> p = new HashMap<>();
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_ACTIVE_ID, activeId);
 			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_REGISTER_POLICY, this.log);
 			
@@ -114,7 +114,7 @@ public class GestorePolicyAttiveWS implements IGestorePolicyAttive {
 	public IPolicyGroupByActiveThreads getActiveThreadsPolicy(String activeId)
 			throws PolicyShutdownException, PolicyException, PolicyNotFoundException {
 		try{
-			Map<String, List<String>> p = new HashMap<String, List<String>>();
+			Map<String, List<String>> p = new HashMap<>();
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_ACTIVE_ID, activeId);
 			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_GET_POLICY, this.log);
 			
@@ -139,7 +139,7 @@ public class GestorePolicyAttiveWS implements IGestorePolicyAttive {
 	@Override
 	public long sizeActivePolicyThreads(boolean sum) throws PolicyShutdownException,PolicyException {
 		try{
-			Map<String, List<String>> p = new HashMap<String, List<String>>();
+			Map<String, List<String>> p = new HashMap<>();
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_SUM, sum+"");
 			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_SIZE_ACTIVE_THREADS_POLICY, this.log);
 			
@@ -162,7 +162,7 @@ public class GestorePolicyAttiveWS implements IGestorePolicyAttive {
 	@Override
 	public String printKeysPolicy(String separator) throws PolicyShutdownException, PolicyException {
 		try{
-			Map<String, List<String>> p = new HashMap<String, List<String>>();
+			Map<String, List<String>> p = new HashMap<>();
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_SEPARATOR, separator);
 			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_PRINT_KEYS_POLICY, this.log);
 			
@@ -186,7 +186,7 @@ public class GestorePolicyAttiveWS implements IGestorePolicyAttive {
 	public String printInfoPolicy(String id, String separatorGroups)
 			throws PolicyShutdownException, PolicyException, PolicyNotFoundException {
 		try{
-			Map<String, List<String>> p = new HashMap<String, List<String>>();
+			Map<String, List<String>> p = new HashMap<>();
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_ACTIVE_ID, id);
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_SEPARATOR, separatorGroups);
 			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_PRINT_INFO_POLICY, this.log);
@@ -209,7 +209,7 @@ public class GestorePolicyAttiveWS implements IGestorePolicyAttive {
 	@Override
 	public void removeActiveThreadsPolicy(String idActivePolicy) throws PolicyShutdownException, PolicyException {
 		try{
-			Map<String, List<String>> p = new HashMap<String, List<String>>();
+			Map<String, List<String>> p = new HashMap<>();
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_ACTIVE_ID, idActivePolicy);
 			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_REMOVE_ACTIVE_THREADS_POLICY, this.log);
 			
@@ -230,7 +230,7 @@ public class GestorePolicyAttiveWS implements IGestorePolicyAttive {
 	@Override
 	public void removeActiveThreadsPolicyUnsafe(String idActivePolicy) throws PolicyShutdownException,PolicyException{
 		try{
-			Map<String, List<String>> p = new HashMap<String, List<String>>();
+			Map<String, List<String>> p = new HashMap<>();
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_ACTIVE_ID, idActivePolicy);
 			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_REMOVE_ACTIVE_THREADS_POLICY_UNSAFE, this.log);
 			
@@ -251,7 +251,7 @@ public class GestorePolicyAttiveWS implements IGestorePolicyAttive {
 	@Override
 	public void removeAllActiveThreadsPolicy() throws PolicyShutdownException, PolicyException {
 		try{
-			Map<String, List<String>> p = new HashMap<String, List<String>>();
+			Map<String, List<String>> p = new HashMap<>();
 			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_REMOVE_ALL_ACTIVE_THREADS_POLICY, this.log);
 			
 			this.log.debug("[GestorePolicyAttiveWS.removeAllActiveThreadsPolicy] invoke ("+url+") ...");
@@ -271,7 +271,7 @@ public class GestorePolicyAttiveWS implements IGestorePolicyAttive {
 	public void resetCountersActiveThreadsPolicy(String idActivePolicy)
 			throws PolicyShutdownException, PolicyException {
 		try{
-			Map<String, List<String>> p = new HashMap<String, List<String>>();
+			Map<String, List<String>> p = new HashMap<>();
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_ACTIVE_ID, idActivePolicy);
 			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_RESET_COUNTERS_ACTIVE_THREADS_POLICY, this.log);
 			
@@ -291,7 +291,7 @@ public class GestorePolicyAttiveWS implements IGestorePolicyAttive {
 	@Override
 	public void resetCountersAllActiveThreadsPolicy() throws PolicyShutdownException, PolicyException {
 		try{
-			Map<String, List<String>> p = new HashMap<String, List<String>>();
+			Map<String, List<String>> p = new HashMap<>();
 			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_RESET_COUNTERS_ALL_ACTIVE_THREADS_POLICY, this.log);
 			
 			this.log.debug("[GestorePolicyAttiveWS.resetCountersAllActiveThreadsPolicy] invoke ("+url+") ...");

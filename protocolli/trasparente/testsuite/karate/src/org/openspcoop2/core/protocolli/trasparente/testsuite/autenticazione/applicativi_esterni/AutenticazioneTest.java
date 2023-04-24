@@ -45,7 +45,7 @@ public class AutenticazioneTest extends ConfigLoader {
 		request.setUsername("ApplicativoSoggettoEsternoTestFruitoreBasic");
 		request.setPassword("123456");
 		
-		Map<String, String> headers = new HashMap<String, String>(); 
+		Map<String, String> headers = new HashMap<>(); 
 		org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.gestore_credenziali.Utilities._test(API,
 				request,
 				TipoServizio.EROGAZIONE,
@@ -64,7 +64,7 @@ public class AutenticazioneTest extends ConfigLoader {
 		
 		HttpRequest request = new HttpRequest();
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("TEST-PRINCIPAL", "ApplicativoSoggettoEsternoTestFruitorePrincipal");
 		org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.gestore_credenziali.Utilities._test(API,
 				request,
@@ -89,7 +89,7 @@ public class AutenticazioneTest extends ConfigLoader {
 		request.setKeyStorePassword("openspcoopjks");
 		request.setKeyPassword("openspcoop");
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.gestore_credenziali.Utilities._test(API,
 				request,
 				TipoServizio.EROGAZIONE,
@@ -108,7 +108,7 @@ public class AutenticazioneTest extends ConfigLoader {
 		
 		HttpRequest request = new HttpRequest();
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-API-Key", "QXBwbGljYXRpdm9Tb2dnZXR0b0VzdGVybm9UZXN0RnJ1aXRvcmVBcGlLZXlAREFFTElNSU5BUkUuZ3c=.WW44N2NBOjhCdTEwVE5BcDY4ZmNhVzMwelF6ZEgzUXg=");
 		org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.gestore_credenziali.Utilities._test(API,
 				request,
@@ -128,7 +128,7 @@ public class AutenticazioneTest extends ConfigLoader {
 		
 		HttpRequest request = new HttpRequest();
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("X-API-Key", "UFZyM3RFaz5jRzdhNHUzY1p1WnpWOTY0Q2NVWDE4ZDM=");
 		headers.put("X-APP-ID", "ApplicativoSoggettoEsternoTestFruitoreApiKeyAppID@DAELIMINARE.gw");
 		org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.gestore_credenziali.Utilities._test(API,

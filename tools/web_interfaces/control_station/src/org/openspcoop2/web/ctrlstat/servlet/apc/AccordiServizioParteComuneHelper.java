@@ -771,7 +771,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_PORT_TYPE_OPERATIONS,
 					pIdAccordo,pNomeAccordo,pTipoAccordo, pNomePortTypes);
 
-			Map<String, String> campiHidden = new HashMap<String, String>();
+			Map<String, String> campiHidden = new HashMap<>();
 			campiHidden.put("nomept", nomept);
 			this.pd.setHidden(campiHidden);
 

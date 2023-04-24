@@ -42,7 +42,7 @@ public class NotifierInputStreamParams {
 
 	private boolean bufferEnabled = false;
 	private Map<String,StreamingHandler> streamingHandlers = new HashMap<String, StreamingHandler>();
-	private List<String> streamingHandlersIds = new ArrayList<String>(); // Per preservare l'ordine di inserimento
+	private List<String> streamingHandlersIds = new ArrayList<>(); // Per preservare l'ordine di inserimento
 	private boolean throwStreamingHandlerException = true;
 	private Logger log = null;
 	

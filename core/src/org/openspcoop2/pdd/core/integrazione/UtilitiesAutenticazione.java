@@ -145,7 +145,7 @@ public class UtilitiesAutenticazione {
 
 	public static List<String> convert(String headers, String pName) throws HeaderIntegrazioneException {
 		try {
-			List<String> l = new ArrayList<String>();
+			List<String> l = new ArrayList<>();
 			if(headers!=null) {
 				headers = headers.trim();
 				String [] split = headers.split(",");

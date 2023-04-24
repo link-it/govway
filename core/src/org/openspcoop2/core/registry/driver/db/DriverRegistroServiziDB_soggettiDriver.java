@@ -1307,7 +1307,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<String> lista = new ArrayList<String>();
+		ArrayList<String> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
@@ -1389,11 +1389,11 @@ public class DriverRegistroServiziDB_soggettiDriver {
 
 		try {
 			boolean isInUso = false;
-			List<String> nomiServizi = new ArrayList<String>();
-			List<String> serviziFruitori = new ArrayList<String>();
-			List<String> accordi = new ArrayList<String>();
-			List<String> accordi_cooperazione = new ArrayList<String>();
-			List<String> partecipanti = new ArrayList<String>();
+			List<String> nomiServizi = new ArrayList<>();
+			List<String> serviziFruitori = new ArrayList<>();
+			List<String> accordi = new ArrayList<>();
+			List<String> accordi_cooperazione = new ArrayList<>();
+			List<String> partecipanti = new ArrayList<>();
 
 			//controllo se in uso in servizi
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);

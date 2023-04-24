@@ -38,7 +38,7 @@ public class InfoStatistics {
 
 	private int errorSerializableAccess = 0;
 	private List<Throwable> exceptionOccurs = new ArrayList<Throwable>();
-	private List<String> _exceptionOccursDistincts = new ArrayList<String>();
+	private List<String> _exceptionOccursDistincts = new ArrayList<>();
 	private Map<String, Integer> _occurs = new HashMap<String, Integer>(); 
 	
 	public int getErrorSerializableAccess() {

@@ -81,7 +81,7 @@ public class DirectVMConnectorOutMessage implements ConnectorOutMessage {
 		this.responseHeaderMessage = message;
 	}
 	
-	private Map<String, List<String>> headers = new HashMap<String, List<String>>();
+	private Map<String, List<String>> headers = new HashMap<>();
 	public List<String> getHeaderValues(String key) throws ConnectorException{
 		return TransportUtils.getRawObject(this.headers,key);
 	}

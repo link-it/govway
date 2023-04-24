@@ -247,7 +247,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				String protocol = (String) enumProtocols.nextElement();
 				String [] tipiIntegrazionePA = propertiesReader.getTipoIntegrazionePA(protocol);
 				if(tipiIntegrazionePA!=null && tipiIntegrazionePA.length>0){
-					List<String> tipiIntegrazionePerProtocollo = new ArrayList<String>();
+					List<String> tipiIntegrazionePerProtocollo = new ArrayList<>();
 					for (int i = 0; i < tipiIntegrazionePA.length; i++) {
 						try {
 							IGestoreIntegrazionePA gestore =  pluginLoader.newIntegrazionePortaApplicativa(tipiIntegrazionePA[i]);
@@ -1735,8 +1735,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				}
 			}
 
-			Map<String, List<String>> propertiesTrasporto = new HashMap<String, List<String>>();
-			Map<String, List<String>> propertiesUrlBased = new HashMap<String, List<String>>();
+			Map<String, List<String>> propertiesTrasporto = new HashMap<>();
+			Map<String, List<String>> propertiesUrlBased = new HashMap<>();
 
 			if(tipiIntegrazione==null){
 				if(ConsegnaContenutiApplicativi.defaultPerProtocolloGestoreIntegrazionePA.containsKey(protocolFactory.getProtocol())){

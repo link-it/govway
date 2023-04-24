@@ -1162,7 +1162,7 @@ public class GestoreTrasformazioniUtilities {
 		
 		try {
 			TransportRequestContext requestContext = new TransportRequestContext(log);
-			requestContext.setHeaders(new HashMap<String, List<String>>());
+			requestContext.setHeaders(new HashMap<>());
 			TransportUtils.addHeader(requestContext.getHeaders(), HttpConstants.CONTENT_TYPE, mimeType);
 			OpenSPCoop2MessageParseResult msg = msgFactory.createMessage(MessageType.BINARY, requestContext, archive);
 			return msg.getMessage_throwParseThrowable();

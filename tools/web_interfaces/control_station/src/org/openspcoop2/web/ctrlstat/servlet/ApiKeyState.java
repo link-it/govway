@@ -44,9 +44,9 @@ public class ApiKeyState {
 	public boolean appIdSelected = false;
 
 	// posizione
-	List<String> posizioneValues = new ArrayList<String>();
-	List<String> posizioneLabels = new ArrayList<String>();
-	List<String> posizioneSelected = new ArrayList<String>();
+	List<String> posizioneValues = new ArrayList<>();
+	List<String> posizioneLabels = new ArrayList<>();
+	List<String> posizioneSelected = new ArrayList<>();
 	// posizione 1: queryParameter
 	String queryParameter = Costanti.CHECK_BOX_ENABLED;
 	boolean queryParameterEnabled = true;
@@ -105,7 +105,7 @@ public class ApiKeyState {
 				this.appIdSelected = ServletUtils.isCheckBoxEnabled(this.appId);
 			}
 			if(autenticazioneParametroList.size()>1) {
-				this.posizioneSelected = new ArrayList<String>();
+				this.posizioneSelected = new ArrayList<>();
 				this.queryParameter = autenticazioneParametroList.get(1);
 				this.queryParameterEnabled = ServletUtils.isCheckBoxEnabled(this.queryParameter);
 				if(this.queryParameterEnabled) {

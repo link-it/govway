@@ -1780,7 +1780,7 @@ public class ImporterInformationMissingUtils {
 		return this.letturaServiziDefinitiParteComune(correlato, aspc);	
 	}
 	private List<String> letturaServiziDefinitiParteComune(boolean correlato,AccordoServizioParteComune aspc){
-		List<String> serviziIdentificatiNellaParteComune = new ArrayList<String>();
+		List<String> serviziIdentificatiNellaParteComune = new ArrayList<>();
 				
 		// Lettura Accordo di Servizio Parte Comune di OpenSPCoop
 		// NOTA: aspc di openspcoop contiene sia le parti comuni "normali" che quelle "servizio composto"
@@ -1858,7 +1858,7 @@ public class ImporterInformationMissingUtils {
 			AccordoServizioParteComune aspc,
 			List<String> serviziIdentificatiNellaParteComune) throws Exception {
 		
-		List<String> portTypesImplemented = new ArrayList<String>();
+		List<String> portTypesImplemented = new ArrayList<>();
 		try{
 									
 			// Lettura WSDL Parte Specifica

@@ -512,7 +512,7 @@ public class SoapUtils {
 	
 	public static void equalsSoapElements(SOAPElement element1,SOAPElement element2,boolean checkTextComment) throws MessageException{
 		try{
-			_equalsSoapElements(element1, element2, new ArrayList<String>(),checkTextComment);
+			_equalsSoapElements(element1, element2, new ArrayList<>(),checkTextComment);
 		}catch(Exception e){
 			try{
 				String soapReq = PrettyPrintXMLUtils.prettyPrintWithTrAX(element1);
@@ -544,8 +544,8 @@ public class SoapUtils {
 		
 		Iterator<?> it=el1.getAllAttributesAsQNames();
 		Iterator<?> it2=el2.getAllAttributesAsQNames();
-		List <String>vet=new ArrayList<String>();
-		List <String>vet2=new ArrayList<String>();
+		List <String>vet=new ArrayList<>();
+		List <String>vet2=new ArrayList<>();
 		/**************** controllo se gli attributi sono uguali*****************************/
 		while(it.hasNext()){
 			if(!it2.hasNext()){
@@ -616,8 +616,8 @@ public class SoapUtils {
 		/*****************************Controllo se i namespace sono uguali********************************/
         Iterator<?> nameSp1=el1.getNamespacePrefixes();
         Iterator<?> nameSp2=el2.getNamespacePrefixes();
-        List <String>nameSpVet1=new ArrayList<String>();
-        List <String>nameSpVet2=new ArrayList<String>();
+        List <String>nameSpVet1=new ArrayList<>();
+        List <String>nameSpVet2=new ArrayList<>();
         String prefix1, prefix2, urlPrefix1, urlPrefix2;
         while(nameSp1.hasNext() && nameSp2.hasNext())
         {

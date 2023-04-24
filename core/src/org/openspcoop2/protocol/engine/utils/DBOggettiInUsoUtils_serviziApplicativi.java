@@ -103,119 +103,119 @@ public class DBOggettiInUsoUtils_serviziApplicativi {
 			List<String> trasformazionePA_list = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_PA);
 			
 			if (autorizzazionePD_mapping_list == null) {
-				autorizzazionePD_mapping_list = new ArrayList<String>();
+				autorizzazionePD_mapping_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.AUTORIZZAZIONE_MAPPING, autorizzazionePD_mapping_list);
 			}
 			if (autorizzazionePD_list == null) {
-				autorizzazionePD_list = new ArrayList<String>();
+				autorizzazionePD_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.AUTORIZZAZIONE, autorizzazionePD_list);
 			}
 			if (autorizzazionePA_mapping_list == null) {
-				autorizzazionePA_mapping_list = new ArrayList<String>();
+				autorizzazionePA_mapping_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.AUTORIZZAZIONE_MAPPING_PA, autorizzazionePA_mapping_list);
 			}
 			if (autorizzazionePA_list == null) {
-				autorizzazionePA_list = new ArrayList<String>();
+				autorizzazionePA_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.AUTORIZZAZIONE_PA, autorizzazionePA_list);
 			}
 			if (autorizzazionePA_mapping_modi_list == null) {
-				autorizzazionePA_mapping_modi_list = new ArrayList<String>();
+				autorizzazionePA_mapping_modi_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.AUTORIZZAZIONE_MAPPING_PA_MODI, autorizzazionePA_mapping_modi_list);
 			}
 			if (autorizzazionePA_modi_list == null) {
-				autorizzazionePA_modi_list = new ArrayList<String>();
+				autorizzazionePA_modi_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.AUTORIZZAZIONE_PA_MODI, autorizzazionePA_modi_list);
 			}
 			
 			if (autorizzazioneTokenPD_mapping_list == null) {
-				autorizzazioneTokenPD_mapping_list = new ArrayList<String>();
+				autorizzazioneTokenPD_mapping_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.AUTORIZZAZIONE_TOKEN_MAPPING_PD, autorizzazioneTokenPD_mapping_list);
 			}
 			if (autorizzazioneTokenPD_list == null) {
-				autorizzazioneTokenPD_list = new ArrayList<String>();
+				autorizzazioneTokenPD_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.AUTORIZZAZIONE_TOKEN_PD, autorizzazioneTokenPD_list);
 			}
 			if (autorizzazioneTokenPA_mapping_list == null) {
-				autorizzazioneTokenPA_mapping_list = new ArrayList<String>();
+				autorizzazioneTokenPA_mapping_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.AUTORIZZAZIONE_TOKEN_MAPPING_PA, autorizzazioneTokenPA_mapping_list);
 			}
 			if (autorizzazioneTokenPA_list == null) {
-				autorizzazioneTokenPA_list = new ArrayList<String>();
+				autorizzazioneTokenPA_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.AUTORIZZAZIONE_TOKEN_PA, autorizzazioneTokenPA_list);
 			}
 			
 			if (ruoliPD_mapping_list == null) {
-				ruoliPD_mapping_list = new ArrayList<String>();
+				ruoliPD_mapping_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.RUOLI_MAPPING, ruoliPD_mapping_list);
 			}
 			if (ruoliPD_list == null) {
-				ruoliPD_list = new ArrayList<String>();
+				ruoliPD_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.RUOLI, ruoliPD_list);
 			}
 			if (ruoliPA_mapping_list == null) {
-				ruoliPA_mapping_list = new ArrayList<String>();
+				ruoliPA_mapping_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.RUOLI_MAPPING_PA, ruoliPA_mapping_list);
 			}
 			if (ruoliPA_list == null) {
-				ruoliPA_list = new ArrayList<String>();
+				ruoliPA_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.RUOLI_PA, ruoliPA_list);
 			}
 			
 			if (ruoliTokenPD_mapping_list == null) {
-				ruoliTokenPD_mapping_list = new ArrayList<String>();
+				ruoliTokenPD_mapping_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.RUOLI_TOKEN_MAPPING_PD, ruoliPD_mapping_list);
 			}
 			if (ruoliTokenPD_list == null) {
-				ruoliTokenPD_list = new ArrayList<String>();
+				ruoliTokenPD_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.RUOLI_TOKEN_PD, ruoliTokenPD_list);
 			}
 			if (ruoliTokenPA_mapping_list == null) {
-				ruoliTokenPA_mapping_list = new ArrayList<String>();
+				ruoliTokenPA_mapping_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.RUOLI_TOKEN_MAPPING_PA, ruoliTokenPA_mapping_list);
 			}
 			if (ruoliTokenPA_list == null) {
-				ruoliTokenPA_list = new ArrayList<String>();
+				ruoliTokenPA_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.RUOLI_TOKEN_PA, ruoliTokenPA_list);
 			}
 			if (ruoliTokenPA_mapping_modi_list == null) {
-				ruoliTokenPA_mapping_modi_list = new ArrayList<String>();
+				ruoliTokenPA_mapping_modi_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.RUOLI_TOKEN_MAPPING_PA_MODI, ruoliTokenPA_mapping_modi_list);
 			}
 			if (ruoliTokenPA_modi_list == null) {
-				ruoliTokenPA_modi_list = new ArrayList<String>();
+				ruoliTokenPA_modi_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.RUOLI_TOKEN_PA_MODI, ruoliTokenPA_modi_list);
 			}
 			
 			if (porte_applicative_list == null) {
-				porte_applicative_list = new ArrayList<String>();
+				porte_applicative_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE, porte_applicative_list);
 			}
 			if (porte_applicative_mapping_list == null) {
-				porte_applicative_mapping_list = new ArrayList<String>();
+				porte_applicative_mapping_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_MAPPING_EROGAZIONE_PA, porte_applicative_mapping_list);
 			}
 			if (ct_list == null) {
-				ct_list = new ArrayList<String>();
+				ct_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.CONTROLLO_TRAFFICO, ct_list);
 			}
 			if (allarme_list == null) {
-				allarme_list = new ArrayList<String>();
+				allarme_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.ALLARMI, allarme_list);
 			}
 			if (trasformazionePD_mapping_list == null) {
-				trasformazionePD_mapping_list = new ArrayList<String>();
+				trasformazionePD_mapping_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.TRASFORMAZIONE_MAPPING_PD, trasformazionePD_mapping_list);
 			}
 			if (trasformazionePD_list == null) {
-				trasformazionePD_list = new ArrayList<String>();
+				trasformazionePD_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.TRASFORMAZIONE_PD, trasformazionePD_list);
 			}
 			if (trasformazionePA_mapping_list == null) {
-				trasformazionePA_mapping_list = new ArrayList<String>();
+				trasformazionePA_mapping_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.TRASFORMAZIONE_MAPPING_PA, trasformazionePA_mapping_list);
 			}
 			if (trasformazionePA_list == null) {
-				trasformazionePA_list = new ArrayList<String>();
+				trasformazionePA_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.TRASFORMAZIONE_PA, trasformazionePA_list);
 			}
 
@@ -605,8 +605,8 @@ public class DBOggettiInUsoUtils_serviziApplicativi {
 		ResultSet risultato = null;
 		try {
 			
-			List<String> distinctPorteDelegate = new ArrayList<String>();
-			List<String> verificaPorteDelegateAll = new ArrayList<String>();
+			List<String> distinctPorteDelegate = new ArrayList<>();
+			List<String> verificaPorteDelegateAll = new ArrayList<>();
 			
 			for (String ruolo : listRuoliSA) {
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
@@ -737,8 +737,8 @@ public class DBOggettiInUsoUtils_serviziApplicativi {
 		ResultSet risultato = null;
 		try {
 			
-			List<String> distinctPorteApplicative = new ArrayList<String>();
-			List<String> verificaPorteApplicativeAll = new ArrayList<String>();
+			List<String> distinctPorteApplicative = new ArrayList<>();
+			List<String> verificaPorteApplicativeAll = new ArrayList<>();
 			
 			for (String ruolo : listRuoliSA) {
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);

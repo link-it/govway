@@ -252,7 +252,7 @@ public class LoadBalancerPool implements Serializable{
 			debug("getNextConnectorLeastConnections situazione iniziale ("+this.connectorMap_activeConnections+")");
 			Set<String> setKeys = passiveHealthCheck(this.connectorMap.keySet(), false);
 			
-			List<String> listMin = new ArrayList<String>();
+			List<String> listMin = new ArrayList<>();
 			int min = 0;
 			if(!this.connectorMap_activeConnections.isEmpty()) {
 				min = Integer.MAX_VALUE;
@@ -394,7 +394,7 @@ public class LoadBalancerPool implements Serializable{
 		debug("Passive Health Check della lista: "+set);
 		
 		Set<String> newSet = new HashSet<String>();
-		List<String> listRimuoviDate = new ArrayList<String>();
+		List<String> listRimuoviDate = new ArrayList<>();
 		
 		for (String name : set) {
 			if(this.connectorMap_errorDate.containsKey(name)) {
@@ -454,7 +454,7 @@ public class LoadBalancerPool implements Serializable{
 		return newSet;
 	}
 	private void cleanErrorDate(List<String> listRimuoviDate, Date now) {
-		List<String> listDaRimuovere = new ArrayList<String>();
+		List<String> listDaRimuovere = new ArrayList<>();
 		for (String name : listRimuoviDate) {
 			if(this.connectorMap_errorDate.containsKey(name)) {
 				Date registrationDate = this.connectorMap_errorDate.get(name);
@@ -478,7 +478,7 @@ public class LoadBalancerPool implements Serializable{
 	}
 	private void cleanAllErrorDate(Date now) {
 		debug("(HealthCheck) lista di errori di connessione prima della pulizia totale: "+this.connectorMap_errorDate.keySet());
-		List<String> listDaRimuovere = new ArrayList<String>();
+		List<String> listDaRimuovere = new ArrayList<>();
 		for (String name : this.connectorMap_errorDate.keySet()) {
 			Date registrationDate = this.connectorMap_errorDate.get(name);
 			if(registrationDate.before(now)) {

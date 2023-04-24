@@ -39,7 +39,7 @@ public abstract class AbstractHttp {
 
 	private String contentType;
 	private byte[] content;
-	private Map<String, List<String>> headers = new HashMap<String,List<String>>();
+	private Map<String, List<String>> headers = new HashMap<>();
 	
 	public byte[] getContent() {
 		return this.content;
@@ -59,7 +59,7 @@ public abstract class AbstractHttp {
 	public void addHeader(String key,String value){
 		List<String> l = this.headers.remove(key);
 		if(l==null) {
-			l = new ArrayList<String>();
+			l = new ArrayList<>();
 		}
 		l.add(value);
 		this.headers.put(key, l);
@@ -67,7 +67,7 @@ public abstract class AbstractHttp {
 	public void addHeader(String key,List<String> values){
 		List<String> l = this.headers.remove(key);
 		if(l==null) {
-			l = new ArrayList<String>();
+			l = new ArrayList<>();
 		}
 		l.addAll(values);
 		this.headers.put(key, l);

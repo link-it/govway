@@ -280,7 +280,7 @@ public class BustaBean extends Busta {
 	private Map.Entry<String, List<Map.Entry<String, String>>> getMapEntryExtInfoDefault(){
 		List<Map.Entry<String, String>> internalEntry = new ArrayList<>();
 		Map<String, String> internalMap = this.getProperties();
-		java.util.ArrayList<String> listKeys = new ArrayList<String>();
+		java.util.ArrayList<String> listKeys = new ArrayList<>();
 		for (String internalKey : internalMap.keySet()) {
 			listKeys.add(internalKey);
 		}
@@ -295,9 +295,9 @@ public class BustaBean extends Busta {
 	
 	
 	public Map<String, String> getProperties(){
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 		
-		java.util.ArrayList<String> listKeys = new ArrayList<String>();
+		java.util.ArrayList<String> listKeys = new ArrayList<>();
 		String [] propertiesNames = super.getPropertiesNames();
 		if(propertiesNames!=null){
 			for (int i = 0; i < propertiesNames.length; i++) {
@@ -321,7 +321,7 @@ public class BustaBean extends Busta {
 		List <Map.Entry<String, String>> toRet = new ArrayList<Map.Entry<String, String>>();
 			
 		if(super.sizeProperties()>0){
-			java.util.ArrayList<String> keys = new ArrayList<String>();
+			java.util.ArrayList<String> keys = new ArrayList<>();
 			String [] pNames = super.getPropertiesNames();
 			if(pNames!=null && pNames.length>0){
 				for (int i = 0; i < pNames.length; i++) {

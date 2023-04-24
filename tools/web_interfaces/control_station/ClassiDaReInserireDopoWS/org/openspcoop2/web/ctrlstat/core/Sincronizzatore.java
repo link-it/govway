@@ -374,7 +374,7 @@ public class Sincronizzatore {
 	}
 
 	private static String getNomiPdd(List<PdDControlStation> lista) {
-		ArrayList<String> nomiPdd = new ArrayList<String>();
+		ArrayList<String> nomiPdd = new ArrayList<>();
 		for (PdDControlStation pdd : lista) {
 			nomiPdd.add(pdd.getNome());
 		}

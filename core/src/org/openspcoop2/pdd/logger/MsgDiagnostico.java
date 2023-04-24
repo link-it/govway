@@ -134,13 +134,13 @@ public class MsgDiagnostico {
 	private GeneratoreCasualeDate generatoreDateCasuali = null;
 	
 	/** Properties da aggiungere ai diagnostici (utili nelle implementazioni handler) */
-	private Map<String,String> properties = new HashMap<String, String>();		
+	private Map<String,String> properties = new HashMap<>();		
 	public Map<String, String> getProperties() {
 		return this.properties;
 	}
 
 	/** Keyword per i log personalizzati */
-	private Map<String,String> keywordLogPersonalizzati = new HashMap<String, String>();	
+	private Map<String,String> keywordLogPersonalizzati = new HashMap<>();	
 	public Map<String, String> getKeywordLogPersonalizzati() {
 		return this.keywordLogPersonalizzati;
 	}

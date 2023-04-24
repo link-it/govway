@@ -58,7 +58,7 @@ public abstract class AbstractTransaction implements Serializable {
 	
 	private String protocol; // indicare un protocollo applicativo a cui appartiene il messaggio
 	
-	private List<String> events = new ArrayList<String>(); // eventi a cui appartiene la transazione
+	private List<String> events = new ArrayList<>(); // eventi a cui appartiene la transazione
 		
 	public String getConversationId() {
 		return this.conversionId;

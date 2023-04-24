@@ -75,7 +75,7 @@ public class DiagnosticManager {
 	public List<String> getFunctions(){
 		List<String> keys = null;
 		if(!this.diagnosticProperties.getMappingFunctionToCode().isEmpty()) {
-			keys = new ArrayList<String>();
+			keys = new ArrayList<>();
 			for (String key : this.diagnosticProperties.getMappingFunctionToCode().keySet()) {
 				keys.add(key);
 			}

@@ -117,7 +117,7 @@ public class ConfigurazioneNodiRuntime {
 	}
 	public static List<String> getPrefixes(){
 		if(staticInstanceMap!=null && !staticInstanceMap.isEmpty()) {
-			List<String> l = new ArrayList<String>();
+			List<String> l = new ArrayList<>();
 			l.addAll(staticInstanceMap.keySet());
 			return l;
 		}
@@ -156,7 +156,7 @@ public class ConfigurazioneNodiRuntime {
 	private Map<String, String> factory;
 	
 	private Map<String, String> resourceUrl; // check con parametri o proxy in modalità dinamica
-	private Map<String, String> forceResourceUrl = new HashMap<String, String>();
+	private Map<String, String> forceResourceUrl = new HashMap<>();
 	private Map<String, String> checkStatusUrl; // check senza parametri
 	
 	private Map<String, String> dominio;
@@ -204,7 +204,7 @@ public class ConfigurazioneNodiRuntime {
 	}
 	
 	public void initAliases() throws UtilsException {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		String tipo = this.readProperty(false, "aliases");
 		if(tipo!=null && !"".equals(tipo)){
 			String [] tmp = tipo.split(",");
@@ -222,7 +222,7 @@ public class ConfigurazioneNodiRuntime {
 	}
 	
 	public void initGruppi_aliases() throws UtilsException {
-		Map<String,List<String>> map = new HashMap<String, List<String>>();
+		Map<String,List<String>> map = new HashMap<>();
 		String nomeP = "aliases.";
 		Properties p = null;
 		if(this.readerClasspath!=null) {
@@ -255,7 +255,7 @@ public class ConfigurazioneNodiRuntime {
 					if(aliases!=null && !"".equals(aliases)){
 						String [] tmp = aliases.split(",");
 						if(tmp!=null && tmp.length>0) {
-							List<String> list = new ArrayList<String>();
+							List<String> list = new ArrayList<>();
 							for (int i = 0; i < tmp.length; i++) {
 								String alias = tmp[i].trim();
 								if(aliasesRegistrati.contains(alias)==false) {
@@ -279,31 +279,31 @@ public class ConfigurazioneNodiRuntime {
 	
 	public void initConfigAliases() throws UtilsException {
 		
-		this.descrizione = new HashMap<String, String>();
+		this.descrizione = new HashMap<>();
 		
-		this.tipoAccesso = new HashMap<String, String>();
+		this.tipoAccesso = new HashMap<>();
 		
-		this.username = new HashMap<String, String>();
-		this.password = new HashMap<String, String>();
+		this.username = new HashMap<>();
+		this.password = new HashMap<>();
 		
 		this.https = new HashMap<String, Boolean>();
 		this.https_verificaHostName = new HashMap<String, Boolean>();
 		this.https_autenticazioneServer = new HashMap<String, Boolean>();
-		this.https_autenticazioneServer_truststorePath = new HashMap<String, String>();
-		this.https_autenticazioneServer_truststoreType = new HashMap<String, String>();
-		this.https_autenticazioneServer_truststorePassword = new HashMap<String, String>();
+		this.https_autenticazioneServer_truststorePath = new HashMap<>();
+		this.https_autenticazioneServer_truststoreType = new HashMap<>();
+		this.https_autenticazioneServer_truststorePassword = new HashMap<>();
 		
-		this.connectionTimeout = new HashMap<String, String>();
-		this.readConnectionTimeout = new HashMap<String, String>();
-		this.readConnectionTimeout_slowOperation = new HashMap<String, String>();
+		this.connectionTimeout = new HashMap<>();
+		this.readConnectionTimeout = new HashMap<>();
+		this.readConnectionTimeout_slowOperation = new HashMap<>();
 		
-		this.as = new HashMap<String, String>();
-		this.factory = new HashMap<String, String>();
+		this.as = new HashMap<>();
+		this.factory = new HashMap<>();
 		
-		this.resourceUrl = new HashMap<String, String>();
-		this.checkStatusUrl = new HashMap<String, String>();
+		this.resourceUrl = new HashMap<>();
+		this.checkStatusUrl = new HashMap<>();
 		
-		this.dominio = new HashMap<String, String>();
+		this.dominio = new HashMap<>();
 		
 		if(this.aliases!=null && !this.aliases.isEmpty()) {
 			for (String alias : this.aliases) {

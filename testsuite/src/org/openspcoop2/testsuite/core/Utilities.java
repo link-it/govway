@@ -104,7 +104,7 @@ public class Utilities {
 			if(!it2.hasNext()){
 				return false;
 			}
-			if(!equalsSoapElements((SOAPElement)it.next(), (SOAPElement)it2.next(), new ArrayList<String>())){
+			if(!equalsSoapElements((SOAPElement)it.next(), (SOAPElement)it2.next(), new ArrayList<>())){
 				return false;
 			}
 		}
@@ -134,8 +134,8 @@ public class Utilities {
 		
 		Iterator<?> it=el1.getAllAttributes();
 		Iterator<?> it2=el2.getAllAttributes();
-		List<String>vet=new ArrayList<String>();
-		List<String>vet2=new ArrayList<String>();
+		List<String>vet=new ArrayList<>();
+		List<String>vet2=new ArrayList<>();
 		/**************** controllo se gli attributi sono uguali*****************************/
 		while(it.hasNext()){
 			if(!it2.hasNext()){
@@ -175,8 +175,8 @@ public class Utilities {
 		/*****************************Controllo se i namespace sono uguali********************************/
         Iterator<?> nameSp1=el1.getNamespacePrefixes();
         Iterator<?> nameSp2=el2.getNamespacePrefixes();
-        List<String>nameSpVet1=new ArrayList<String>();
-        List<String>nameSpVet2=new ArrayList<String>();
+        List<String>nameSpVet1=new ArrayList<>();
+        List<String>nameSpVet2=new ArrayList<>();
         String prefix1, prefix2, urlPrefix1, urlPrefix2;
         while(nameSp1.hasNext() && nameSp2.hasNext())
         {

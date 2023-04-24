@@ -263,7 +263,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			throw new Exception("Param asps is null");
 		}
 		
-		List<Object> listaOggettiDaCreare = new ArrayList<Object>();
+		List<Object> listaOggettiDaCreare = new ArrayList<>();
 		if(!alreadyExists) {
 			listaOggettiDaCreare.add(asps);
 		}
@@ -808,7 +808,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			filtroPA.setNomeServizio(asps.getOldIDServizioForUpdate().getNome());
 			filtroPA.setVersioneServizio(asps.getOldIDServizioForUpdate().getVersione());
 			List<IDPortaApplicativa> listIdsPorteApplicative = porteApplicativeCore.getAllIdPorteApplicative(filtroPA);
-			Map<String, String> mapOldToNewSaName = new HashMap<String, String>();
+			Map<String, String> mapOldToNewSaName = new HashMap<>();
 			if(listIdsPorteApplicative!=null && !listIdsPorteApplicative.isEmpty()) {
 
 				String tmpLocationSuffix = asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo() + "_" + asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome() + 
@@ -1170,7 +1170,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			
 		}
 
-		List<Object> oggettiDaAggiornare = new ArrayList<Object>();
+		List<Object> oggettiDaAggiornare = new ArrayList<>();
 		
 		// Aggiorno il servizio
 		oggettiDaAggiornare.add(asps);
@@ -1515,8 +1515,8 @@ public class AccordiServizioParteSpecificaUtilities {
 			inUsoMessage.append(newLine);
 		} else {// accordo non in uso
 			
-			List<Object> listaOggettiDaEliminare = new ArrayList<Object>();
-			List<Object> listaServiziApplicativiDaEliminare = new ArrayList<Object>();
+			List<Object> listaOggettiDaEliminare = new ArrayList<>();
+			List<Object> listaServiziApplicativiDaEliminare = new ArrayList<>();
 			
 			if(paGenerateAutomcaticamente!=null && paGenerateAutomcaticamente.size()>0){
 				
@@ -1706,7 +1706,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		ConfigurazioneCore confCore = new ConfigurazioneCore(apsCore);
 		ServiziApplicativiCore saCore = new ServiziApplicativiCore(apsCore);
 		
-		List<Object> listaOggettiDaEliminare = new ArrayList<Object>();
+		List<Object> listaOggettiDaEliminare = new ArrayList<>();
 		
 		// leggo la pa
 		PortaApplicativa tmpPA = porteApplicativeCore.getPortaApplicativa(idPortaApplicativa);
@@ -1782,7 +1782,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		
 		IDServizio idServizioFromAccordo = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
 		
-		List<Object> listaOggettiDaModificare = new ArrayList<Object>();
+		List<Object> listaOggettiDaModificare = new ArrayList<>();
 		Fruitore fruitore = null;
 		for (Fruitore fruitoreCheck : asps.getFruitoreList()) {
 			if(fruitoreCheck.getTipo().equals(idSoggettoFruitore.getTipo()) && fruitoreCheck.getNome().equals(idSoggettoFruitore.getNome())) {
@@ -1795,7 +1795,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		
 		for (int i = 0; i < listPortaDelegataDaELiminare.size(); i++) {
 			
-			List<Object> listaOggettiDaEliminare = new ArrayList<Object>();
+			List<Object> listaOggettiDaEliminare = new ArrayList<>();
 			
 			// ricevo come parametro l'id della pd associata al mapping da cancellare
 			IDPortaDelegata idPortaDelegata = listPortaDelegataDaELiminare.get(i);
@@ -2037,7 +2037,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 		}
 		
-		List<Object> listaOggettiDaCreare = new ArrayList<Object>();
+		List<Object> listaOggettiDaCreare = new ArrayList<>();
 
 		PortaApplicativa portaApplicativaDefault = porteApplicativeCore.getPortaApplicativa(mappingDefault.getIdPortaApplicativa());
 		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
@@ -2588,8 +2588,8 @@ public class AccordiServizioParteSpecificaUtilities {
 			serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 		}
 	
-		List<Object> listaOggettiDaCreare = new ArrayList<Object>();
-		List<Object> listaOggettiDaModificare = new ArrayList<Object>();
+		List<Object> listaOggettiDaCreare = new ArrayList<>();
+		List<Object> listaOggettiDaModificare = new ArrayList<>();
 
 		PortaDelegata portaDelegataDefault = porteDelegateCore.getPortaDelegata(mappingDefault.getIdPortaDelegata());
 		String protocollo = apsCore.getProtocolloAssociatoTipoServizio(idServizio2.getTipo());

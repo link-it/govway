@@ -562,8 +562,8 @@ public class ProtocolPropertiesUtilities {
 
 		ConsoleItemValueType consoleItemValueType = ProtocolPropertiesUtils.getConsoleItemValueType(item);
 
-		List<String> values = new ArrayList<String>();
-		List<String> labels = new ArrayList<String>();
+		List<String> values = new ArrayList<>();
+		List<String> labels = new ArrayList<>();
 
 		switch(consoleItemValueType){
 		// [TODO] controllare casi che ci possono essere
@@ -632,8 +632,8 @@ public class ProtocolPropertiesUtilities {
 
 		ConsoleItemValueType consoleItemValueType = ProtocolPropertiesUtils.getConsoleItemValueType(item);
 
-		List<String> values = new ArrayList<String>();
-		List<String> labels = new ArrayList<String>();
+		List<String> values = new ArrayList<>();
+		List<String> labels = new ArrayList<>();
 
 		switch(consoleItemValueType){
 		case STRING:

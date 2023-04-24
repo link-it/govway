@@ -300,7 +300,7 @@ public class DBVerifier {
 		else {
 			rows = dbUtils().readRows(query, idApplicativo);
 		}
-		List<String> ids = new ArrayList<String>();
+		List<String> ids = new ArrayList<>();
 		if(rows!=null) {
 			for (Map<String, Object> row : rows) {
 				for (String key : row.keySet()) {

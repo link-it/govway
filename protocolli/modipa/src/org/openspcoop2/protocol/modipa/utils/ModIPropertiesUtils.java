@@ -706,7 +706,7 @@ public class ModIPropertiesUtils {
 	}
 	
 	private static List<String> readValues(String v){
-		List<String> codici = new ArrayList<String>();
+		List<String> codici = new ArrayList<>();
 		if(v!=null && !StringUtils.isEmpty(v)) {
 			if(v.contains(",")) {
 				String [] tmp = v.split(",");

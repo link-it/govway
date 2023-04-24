@@ -100,7 +100,7 @@ public final class ConfigurazioneHandlersServizioList extends Action {
 				
 				Long idHandler = Long.parseLong(idHandlerS);
 				
-				List<Object> oggettiDaAggiornare = new ArrayList<Object>();
+				List<Object> oggettiDaAggiornare = new ArrayList<>();
 				List<ConfigurazioneHandler> listaDaAggiornare = null;
 				Configurazione configurazione = confCore.getConfigurazioneGenerale();
 				

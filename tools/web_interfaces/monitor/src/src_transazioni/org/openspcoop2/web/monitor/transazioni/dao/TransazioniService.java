@@ -3605,7 +3605,7 @@ public class TransazioniService implements ITransazioniService {
 			
 			if (StringUtils.isNotEmpty(this.searchForm.getCodiceRisposta())) {
 				
-				List<String> l = new ArrayList<String>();
+				List<String> l = new ArrayList<>();
 				if(this.searchForm.getCodiceRisposta().contains(",")) {
 					String [] tmp = this.searchForm.getCodiceRisposta().split(",");
 					if(tmp!=null && tmp.length>0) {
@@ -4234,7 +4234,7 @@ public class TransazioniService implements ITransazioniService {
 		List<String> l = this.getHostnames(gruppo, refreshSecondsInterval);
 		List<String> list = null;
 		if(l!=null && !l.isEmpty()) {
-			list = new ArrayList<String>();
+			list = new ArrayList<>();
 			for (String id : l) {
 				list.add( DynamicClusterManager.hashClusterId(id) );
 			}

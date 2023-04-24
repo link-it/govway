@@ -101,7 +101,7 @@ public class MessageUtilities {
 		
 		try{
 			int numAttachmentsInMsg = message.countAttachments();
-			List<String> cidAttachments = new ArrayList<String>();
+			List<String> cidAttachments = new ArrayList<>();
 			if(numAttachmentsInMsg>0){
 				Iterator<?> itAttach = message.getAttachments();
 				while (itAttach.hasNext()) {
@@ -169,7 +169,7 @@ public class MessageUtilities {
 							nome = nome.substring(1);
 						//System.out.println("CIFRO ["+tipo+"] ["+namespace+"] ["+nome+"]");	
 						
-						List<String> cidAttachmentsEncrypt = new ArrayList<String>();
+						List<String> cidAttachmentsEncrypt = new ArrayList<>();
 						if(cidAttachments!=null && cidAttachments.size()>0){
 							cidAttachmentsEncrypt.addAll(cidAttachments);
 						}
@@ -397,7 +397,7 @@ public class MessageUtilities {
 							nome = nome.substring(1);
 						//System.out.println("CIFRO ["+tipo+"] ["+namespace+"] ["+nome+"]");	
 						
-						List<String> cidAttachmentsSignature = new ArrayList<String>();
+						List<String> cidAttachmentsSignature = new ArrayList<>();
 						if(cidAttachments!=null && cidAttachments.size()>0){
 							cidAttachmentsSignature.addAll(cidAttachments);
 						}

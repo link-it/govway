@@ -780,7 +780,7 @@ public class DriverUsersDB {
 			// Get Connection
 			connectionDB = getConnection();
 			
-			List<String> userWithType = new ArrayList<String>();
+			List<String> userWithType = new ArrayList<>();
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addFromTable(CostantiDB.USERS);
 			sqlQueryObject.addSelectField("*");
@@ -835,7 +835,7 @@ public class DriverUsersDB {
 			// Get Connection
 			connectionDB = getConnection();
 			
-			List<String> userWithType = new ArrayList<String>();
+			List<String> userWithType = new ArrayList<>();
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addFromTable(CostantiDB.USERS);
 			sqlQueryObject.addSelectField("*");
@@ -2342,7 +2342,7 @@ public class DriverUsersDB {
 			// Get Connection
 			connectionDB = getConnection();
 			
-			List<String> tables = new ArrayList<String>();
+			List<String> tables = new ArrayList<>();
 			if(cooperazione) {
 				tables.add(CostantiDB.ACCORDI_COOPERAZIONE);
 				tables.add(CostantiDB.ACCORDI);
@@ -2457,7 +2457,7 @@ public class DriverUsersDB {
 			// Get Connection
 			connectionDB = getConnection();
 			
-			List<String> tables = new ArrayList<String>();
+			List<String> tables = new ArrayList<>();
 			if(cooperazione) {
 				tables.add(CostantiDB.ACCORDI_COOPERAZIONE);
 				tables.add(CostantiDB.ACCORDI);

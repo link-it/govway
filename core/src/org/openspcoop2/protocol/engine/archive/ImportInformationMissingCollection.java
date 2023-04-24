@@ -74,7 +74,7 @@ public class ImportInformationMissingCollection implements Serializable {
 	public List<String> keys(){
 		List<String> keys = null;
 		if(this.importInformationMissing!=null && !this.importInformationMissing.isEmpty()) {
-			keys = new ArrayList<String>();
+			keys = new ArrayList<>();
 			keys.addAll(this.importInformationMissing.keySet());
 		}
 		return keys;

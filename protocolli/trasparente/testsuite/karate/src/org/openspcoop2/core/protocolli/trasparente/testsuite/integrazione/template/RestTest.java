@@ -42,7 +42,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void erogazione_template_request_cookie() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_COOKIE+";"+Utilities.COOKIE_NAME+";"+Utilities.TOKEN;
 		headers.put(Utilities.SECURITY_TOKEN, token);
 		
@@ -57,7 +57,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void erogazione_template_request_jwt() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_JWT+";"+Utilities.TOKEN_TYPE_JWT_BEARER+";"+Utilities.TOKEN;
 		headers.put(Utilities.SECURITY_TOKEN, token);
 		
@@ -73,7 +73,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void erogazione_template_response_cookie() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_COOKIE+";"+Utilities.COOKIE_NAME+";"+Utilities.TOKEN_RISPOSTA;
 		headers.put(Utilities.SECURITY_TOKEN_RESPONSE, token);
 		
@@ -88,7 +88,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void erogazione_template_response_jwt() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_JWT+";"+Utilities.TOKEN_TYPE_JWT_BEARER+";"+Utilities.TOKEN_RISPOSTA;
 		headers.put(Utilities.SECURITY_TOKEN_RESPONSE, token);
 		
@@ -107,7 +107,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void fruizione_template_request_cookie() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_COOKIE+";"+Utilities.COOKIE_NAME+";"+Utilities.TOKEN;
 		headers.put(Utilities.SECURITY_TOKEN, token);
 		
@@ -122,7 +122,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void fruizione_template_request_jwt() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_JWT+";"+Utilities.TOKEN_TYPE_JWT_BEARER+";"+Utilities.TOKEN;
 		headers.put(Utilities.SECURITY_TOKEN, token);
 		
@@ -138,7 +138,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void fruizione_template_response_cookie() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_COOKIE+";"+Utilities.COOKIE_NAME+";"+Utilities.TOKEN_RISPOSTA;
 		headers.put(Utilities.SECURITY_TOKEN_RESPONSE, token);
 		
@@ -153,7 +153,7 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void fruizione_template_response_jwt() throws Exception {
 		
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		String token = Utilities.TOKEN_TYPE_JWT+";"+Utilities.TOKEN_TYPE_JWT_BEARER+";"+Utilities.TOKEN_RISPOSTA;
 		headers.put(Utilities.SECURITY_TOKEN_RESPONSE, token);
 		

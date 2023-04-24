@@ -2348,7 +2348,7 @@ public class ErogazioniApiHelper {
 						
 			if(listaMappingErogazionePortaApplicativa.size()>1) {
 				List<String> azioniL = new ArrayList<>();
-				Map<String,String> azioni = env.paCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<String>());
+				Map<String,String> azioni = env.paCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<>());
 				if(azioni != null && azioni.size() > 0)
 					azioniL.addAll(azioni.keySet());
 				allActionRedefined = env.erogazioniHelper.allActionsRedefinedMappingErogazione(azioniL, listaMappingErogazionePortaApplicativa);
@@ -2488,7 +2488,7 @@ public class ErogazioniApiHelper {
 		 
 		if(listaMappingFruzionePortaDelegata.size()>1) {
 			List<String> azioniL = new ArrayList<>();
-			Map<String,String> azioni = env.pdCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<String>());
+			Map<String,String> azioni = env.pdCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<>());
 			if(azioni != null && azioni.size() > 0)
 				azioniL.addAll(azioni.keySet());
 			allActionRedefined = env.erogazioniHelper.allActionsRedefinedMappingFruizione(azioniL, listaMappingFruzionePortaDelegata);
@@ -2792,7 +2792,7 @@ public class ErogazioniApiHelper {
 			configurazioneUrlInvocazione = config.getUrlInvocazione();
 		}
 		
-		List<String> tags = new ArrayList<String>();
+		List<String> tags = new ArrayList<>();
 		if(aspc!=null && aspc.getGruppo()!=null && aspc.getGruppo().size()>0) {
 			for (int i = 0; i < aspc.getGruppo().size(); i++) {
 				tags.add(aspc.getGruppo().get(i).getNome());
@@ -2838,7 +2838,7 @@ public class ErogazioniApiHelper {
 			configurazioneUrlInvocazione = config.getUrlInvocazione();
 		}
 		
-		List<String> tags = new ArrayList<String>();
+		List<String> tags = new ArrayList<>();
 		if(aspc!=null && aspc.getGruppo()!=null && aspc.getGruppo().size()>0) {
 			for (int i = 0; i < aspc.getGruppo().size(); i++) {
 				tags.add(aspc.getGruppo().get(i).getNome());
@@ -3217,9 +3217,9 @@ public class ErogazioniApiHelper {
 		
 		final String corsStato = Helper.boolToStatoFunzionalita( body.getTipo() != TipoGestioneCorsEnum.DISABILITATO ).toString();
 		final TipoGestioneCORS corsTipo =  Enums.tipoGestioneCorsFromRest.get( body.getTipo() );
-		final String allowOrigins = String.join(",", BaseHelper.evalorElse( () -> c.getAllowOrigins(), new ArrayList<String>()) );
-		final String allowHeaders = String.join(",", BaseHelper.evalorElse( () -> c.getAllowHeaders(), new ArrayList<String>()) );
-		final String exposeHeaders = String.join(",", BaseHelper.evalorElse( () -> c.getExposeHeaders(), new ArrayList<String>()) );
+		final String allowOrigins = String.join(",", BaseHelper.evalorElse( () -> c.getAllowOrigins(), new ArrayList<>()) );
+		final String allowHeaders = String.join(",", BaseHelper.evalorElse( () -> c.getAllowHeaders(), new ArrayList<>()) );
+		final String exposeHeaders = String.join(",", BaseHelper.evalorElse( () -> c.getExposeHeaders(), new ArrayList<>()) );
 		final String allowMethods = String.join(
 				",",
 				BaseHelper.evalorElse( () -> c.getAllowMethods(), new ArrayList<HttpMethodEnum>() )
@@ -3591,7 +3591,7 @@ public class ErogazioniApiHelper {
 		String [] attributeAuthoritySelezionate = null; 
 		String attributeAuthorityAttributi = null;
 		if(newPd.sizeAttributeAuthorityList()>0) {
-			List<String> l = new ArrayList<String>();
+			List<String> l = new ArrayList<>();
 			for (AttributeAuthority aa : newPd.getAttributeAuthorityList()) {
 				l.add(aa.getNome());
 			}
@@ -3694,7 +3694,7 @@ public class ErogazioniApiHelper {
 		String [] attributeAuthoritySelezionate = null; 
 		String attributeAuthorityAttributi = null;
 		if(newPa.sizeAttributeAuthorityList()>0) {
-			List<String> l = new ArrayList<String>();
+			List<String> l = new ArrayList<>();
 			for (AttributeAuthority aa : newPa.getAttributeAuthorityList()) {
 				l.add(aa.getNome());
 			}

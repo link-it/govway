@@ -958,7 +958,7 @@ public class ErogazioniDetailsUtilities {
 			allRuoli = paAssociata.getRuoli().getMatch()==null || RuoloTipoMatch.ALL.equals(paAssociata.getRuoli().getMatch());
 		}
 		if(paAssociata.getRuoli()!=null && paAssociata.getRuoli().sizeRuoloList()>0) {
-			authzRuoli = new ArrayList<String>();
+			authzRuoli = new ArrayList<>();
 			for (Ruolo ruolo: paAssociata.getRuoli().getRuoloList()) {
 				authzRuoli.add(ruolo.getNome());
 			}
@@ -982,7 +982,7 @@ public class ErogazioniDetailsUtilities {
 					allRuoliToken = paAssociata.getAutorizzazioneToken().getRuoli().getMatch()==null || RuoloTipoMatch.ALL.equals(paAssociata.getAutorizzazioneToken().getRuoli().getMatch());
 				}
 				if(paAssociata.getAutorizzazioneToken().getRuoli()!=null && paAssociata.getAutorizzazioneToken().getRuoli().sizeRuoloList()>0) {
-					authzRuoliToken = new ArrayList<String>();
+					authzRuoliToken = new ArrayList<>();
 					for (Ruolo ruolo: paAssociata.getAutorizzazioneToken().getRuoli().getRuoloList()) {
 						authzRuoliToken.add(ruolo.getNome());
 					}
@@ -994,7 +994,7 @@ public class ErogazioniDetailsUtilities {
 			if(authzScopeTokenEnabled) {
 				allScope = paAssociata.getScope().getMatch()==null || ScopeTipoMatch.ALL.equals(paAssociata.getScope().getMatch());
 				if(paAssociata.getScope().sizeScopeList()>0) {
-					authzScope = new ArrayList<String>();
+					authzScope = new ArrayList<>();
 					for (Scope scope: paAssociata.getScope().getScopeList()) {
 						authzScope.add(scope.getNome());
 					}
@@ -1004,7 +1004,7 @@ public class ErogazioniDetailsUtilities {
 		if(paAssociata.getGestioneToken()!=null && paAssociata.getGestioneToken().getOptions()!=null) {
 			Properties properties = PropertiesUtilities.convertTextToProperties(paAssociata.getGestioneToken().getOptions());
 			if(properties!=null && properties.size()>0) {
-				authzTokenClaims = new ArrayList<String>();
+				authzTokenClaims = new ArrayList<>();
 				for (Object key : properties.keySet()) {
 					if(key!=null && key instanceof String) {
 						authzTokenClaims.add((String)key);
@@ -1061,7 +1061,7 @@ public class ErogazioniDetailsUtilities {
 			allRuoli = pdAssociata.getRuoli().getMatch()==null || RuoloTipoMatch.ALL.equals(pdAssociata.getRuoli().getMatch());
 		}
 		if(pdAssociata.getRuoli()!=null && pdAssociata.getRuoli().sizeRuoloList()>0) {
-			authzRuoli = new ArrayList<String>();
+			authzRuoli = new ArrayList<>();
 			for (Ruolo ruolo: pdAssociata.getRuoli().getRuoloList()) {
 				authzRuoli.add(ruolo.getNome());
 			}
@@ -1085,7 +1085,7 @@ public class ErogazioniDetailsUtilities {
 					allRuoliToken = pdAssociata.getAutorizzazioneToken().getRuoli().getMatch()==null || RuoloTipoMatch.ALL.equals(pdAssociata.getAutorizzazioneToken().getRuoli().getMatch());
 				}
 				if(pdAssociata.getAutorizzazioneToken().getRuoli()!=null && pdAssociata.getAutorizzazioneToken().getRuoli().sizeRuoloList()>0) {
-					authzRuoliToken = new ArrayList<String>();
+					authzRuoliToken = new ArrayList<>();
 					for (Ruolo ruolo: pdAssociata.getAutorizzazioneToken().getRuoli().getRuoloList()) {
 						authzRuoliToken.add(ruolo.getNome());
 					}
@@ -1097,7 +1097,7 @@ public class ErogazioniDetailsUtilities {
 			if(authzScopeTokenEnabled) {
 				allScope = pdAssociata.getScope().getMatch()==null || ScopeTipoMatch.ALL.equals(pdAssociata.getScope().getMatch());
 				if(pdAssociata.getScope().sizeScopeList()>0) {
-					authzScope = new ArrayList<String>();
+					authzScope = new ArrayList<>();
 					for (Scope scope: pdAssociata.getScope().getScopeList()) {
 						authzScope.add(scope.getNome());
 					}
@@ -1107,7 +1107,7 @@ public class ErogazioniDetailsUtilities {
 		if(pdAssociata.getGestioneToken()!=null && pdAssociata.getGestioneToken().getOptions()!=null) {
 			Properties properties = PropertiesUtilities.convertTextToProperties(pdAssociata.getGestioneToken().getOptions());
 			if(properties!=null && properties.size()>0) {
-				authzTokenClaims = new ArrayList<String>();
+				authzTokenClaims = new ArrayList<>();
 				for (Object key : properties.keySet()) {
 					if(key!=null && key instanceof String) {
 						authzTokenClaims.add((String)key);

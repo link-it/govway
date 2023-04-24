@@ -153,7 +153,7 @@ public class FatturaPABehaviour extends DefaultBehaviour {
 				
 				// forwardTo
 				List<byte[]> listForwardToList = new ArrayList<byte[]>();
-				List<Object> listForwardToObjectList = new ArrayList<Object>();
+				List<Object> listForwardToObjectList = new ArrayList<>();
 				
 				if(fatturaPAObject==null){
 					

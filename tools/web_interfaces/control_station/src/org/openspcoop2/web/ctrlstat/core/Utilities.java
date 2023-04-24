@@ -110,7 +110,7 @@ public class Utilities {
 
 
 	 public static ArrayList<String> parseIdsToRemove(String idsToRemove) {
-		 ArrayList<String> toRem = new ArrayList<String>();
+		 ArrayList<String> toRem = new ArrayList<>();
 		 StringTokenizer objTok = new StringTokenizer(idsToRemove, ",");
 
 		 while (objTok.hasMoreElements()) {

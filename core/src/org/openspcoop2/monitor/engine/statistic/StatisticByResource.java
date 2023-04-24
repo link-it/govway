@@ -182,7 +182,7 @@ public class StatisticByResource extends StatisticProcessing {
 	private List<String> readResources(IDServizio idServizio,Logger log, boolean debug) throws Exception{
 		TransactionServiceLibrary transactionServiceLibrary = this.getObjectReadFromDB(idServizio, log, debug);
 		List<ConfigurazioneTransazioneRisorsaContenuto> list = transactionServiceLibrary.mergeServiceActionTransactionLibrary_resources();
-		List<String> resources = new ArrayList<String>();
+		List<String> resources = new ArrayList<>();
 		if(list!=null){
 			for (ConfigurazioneTransazioneRisorsaContenuto configurazioneTransazioneRisorsaContenuto : list) {
 				if(configurazioneTransazioneRisorsaContenuto.isStatEnabled()){

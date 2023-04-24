@@ -772,7 +772,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			// Come prendo le azioni del gruppo predefinito?
 
-			Map<String, String> azioni = env.paCore.getAzioniConLabel(asps, aspc, false, true, new ArrayList<String>());
+			Map<String, String> azioni = env.paCore.getAzioniConLabel(asps, aspc, false, true, new ArrayList<>());
 			ret.setAzioni(Arrays.asList(azioni.keySet().toArray(new String[azioni.size()])));
 			ret.setForceInterface(Helper.statoFunzionalitaConfToBool(paAzione.getForceInterfaceBased()));
 			ret.setModalita(Enum.valueOf(ModalitaIdentificazioneAzioneEnum.class, paAzione.getIdentificazione().name()));
@@ -978,8 +978,8 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			if(creaNuovoConnettore) {
 				// crea sa e associa connettore
 
-				List<Object> listaOggettiDaCreare = new ArrayList<Object>();
-				List<Object> listaOggettiDaModificare = new ArrayList<Object>();
+				List<Object> listaOggettiDaCreare = new ArrayList<>();
+				List<Object> listaOggettiDaModificare = new ArrayList<>();
 
 				// creare un servizio applicativo
 				String nomeServizioApplicativoErogatore = pa.getNome();

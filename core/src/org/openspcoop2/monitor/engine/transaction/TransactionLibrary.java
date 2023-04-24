@@ -158,7 +158,7 @@ public class TransactionLibrary {
 				
 				lastTransactionProcessed = null;
 				
-				List<String> listIdTransazioni = new ArrayList<String>();
+				List<String> listIdTransazioni = new ArrayList<>();
 				
 				List<TransactionProcessorThread> processorThreads = new ArrayList<TransactionProcessorThread>();
 				
@@ -173,7 +173,7 @@ public class TransactionLibrary {
 						threadsPool.execute(pt);
 						processorThreads.add(pt);
 						logCore.info("Avviato Thread #"+threadNumber+" ...");
-						listIdTransazioni = new ArrayList<String>();
+						listIdTransazioni = new ArrayList<>();
 						threadNumber++;
 					}
 					
@@ -187,7 +187,7 @@ public class TransactionLibrary {
 					threadsPool.execute(pt);
 					processorThreads.add(pt);
 					logCore.info("Avviato (coda msg non piena) Thread #"+threadNumber+" ...");
-					listIdTransazioni = new ArrayList<String>();
+					listIdTransazioni = new ArrayList<>();
 					threadNumber++;
 				}
 				

@@ -329,7 +329,7 @@ public class Utilities {
 												}
 												
 												if(setMethodList!=null){
-													List<Object> newList = new ArrayList<Object>();
+													List<Object> newList = new ArrayList<>();
 													
 													for (Object oInternalList : l) {
 														if(oInternalList!=null){

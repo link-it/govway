@@ -96,7 +96,7 @@ public class SSLUtilities {
 	
 	public static List<String> getSSLEnabledProtocols(String sslType) throws UtilsException{
 		try{
-			List<String> p = new ArrayList<String>();
+			List<String> p = new ArrayList<>();
 			SSLContext context = SSLContext.getInstance(sslType);
 			context.init(null,null,null);
 			SSLSocket socket = null;
@@ -122,7 +122,7 @@ public class SSLUtilities {
 	}
 	public static List<String> getSSLSupportedProtocols() throws UtilsException{
 		try{
-			List<String> p = new ArrayList<String>();
+			List<String> p = new ArrayList<>();
 			SSLContext defaultContext = SSLContext.getDefault();
 			SSLSocket socket = null;
 			try {
@@ -185,7 +185,7 @@ public class SSLUtilities {
 	}
 	public static List<String> getAllSslProtocol() {
 		// ritorno in ordine dal più recente al meno recento, più altri eventuali protocolli.
-		List<String> p = new ArrayList<String>();
+		List<String> p = new ArrayList<>();
 		p.add(SSLConstants.PROTOCOL_TLS_V1_2);
 		p.add(SSLConstants.PROTOCOL_TLS_V1_1);
 		p.add(SSLConstants.PROTOCOL_TLS_V1);
@@ -211,7 +211,7 @@ public class SSLUtilities {
 	
 	public static List<String> getSSLEnabledCipherSuites(String sslType) throws UtilsException{
 		try{
-			List<String> l = new ArrayList<String>();
+			List<String> l = new ArrayList<>();
 			SSLContext context = SSLContext.getInstance(sslType);
 			context.init(null,null,null);
 			SSLSocket socket = null;
@@ -237,7 +237,7 @@ public class SSLUtilities {
 	}
 	public static List<String> getSSLSupportedCipherSuites() throws UtilsException{
 		try{
-			List<String> l = new ArrayList<String>();
+			List<String> l = new ArrayList<>();
 			SSLContext defaultContext = SSLContext.getDefault();
 			SSLSocket socket = null;
 			try {
@@ -275,7 +275,7 @@ public class SSLUtilities {
 	}
 	public static List<String> getSSLProvidersName() throws UtilsException{
 		try{
-			List<String> p = new ArrayList<String>();
+			List<String> p = new ArrayList<>();
 			for (Provider provider : Security.getProviders()){
 				p.add(provider.getName());
 			}
@@ -286,7 +286,7 @@ public class SSLUtilities {
 	}
 	public static List<String> getServiceTypes(Provider provider) throws UtilsException{
 		try{
-			List<String> p = new ArrayList<String>();
+			List<String> p = new ArrayList<>();
 			for (Service service : provider.getServices()){
 				if(p.contains(service.getType())==false){
 					p.add(service.getType());
@@ -299,7 +299,7 @@ public class SSLUtilities {
 	}
 	public static List<String> getServiceTypeAlgorithms(Provider provider,String serviceType) throws UtilsException{
 		try{
-			List<String> p = new ArrayList<String>();
+			List<String> p = new ArrayList<>();
 			for (Service service : provider.getServices()){
 				if(serviceType.equals(service.getType())){
 					p.add(service.getAlgorithm());
@@ -692,7 +692,7 @@ public class SSLUtilities {
 	
 	private static CertStore _buildCRLCertStore(String crlsPath) throws Exception {
     	List<byte[]> crlBytes = new ArrayList<>();
-    	List<String> crlPathsList = new ArrayList<String>();
+    	List<String> crlPathsList = new ArrayList<>();
 		if(crlsPath.contains(",")) {
 			String [] tmp = crlsPath.split(",");
 			for (String crlPath : tmp) {

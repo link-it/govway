@@ -429,7 +429,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 				StringBuilder inUsoMessage = new StringBuilder();
 				
 				PorteApplicativeUtilities.deletePortaApplicativaAzioni(pa, env.paCore, env.paHelper, inUsoMessage, "\n",
-						new ArrayList<String>(Arrays.asList(nomeAzione)), env.userLogin);
+						new ArrayList<>(Arrays.asList(nomeAzione)), env.userLogin);
 				
 				if (inUsoMessage.length() > 0)
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));

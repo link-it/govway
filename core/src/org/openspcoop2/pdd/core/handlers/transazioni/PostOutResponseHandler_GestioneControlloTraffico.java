@@ -154,7 +154,7 @@ public class PostOutResponseHandler_GestioneControlloTraffico {
 									times.controlloTraffico_preparePolicy = timeProcess;
 								
 									if(!uniqueIdsPolicies.isEmpty()) {
-										times.controlloTraffico_policyTimes = new ArrayList<String>();
+										times.controlloTraffico_policyTimes = new ArrayList<>();
 									}
 								}
 								

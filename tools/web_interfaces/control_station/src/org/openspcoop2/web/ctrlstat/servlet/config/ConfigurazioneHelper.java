@@ -4657,7 +4657,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		DataElement de = new DataElement();
 		de.setType(DataElementType.MULTI_SELECT);
 		de.setValues(this.confCore.getJmxPdD_aliases());
-		List<String> labels = new ArrayList<String>();
+		List<String> labels = new ArrayList<>();
 		for (String alias : this.confCore.getJmxPdD_aliases()) {
 			labels.add(this.confCore.getJmxPdD_descrizione(alias));
 		}
@@ -4750,7 +4750,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			 Map<String, List<String>> map = this.confCore.getJmxPdD_gruppi_aliases();
 			 if(map!=null && !map.isEmpty()) {
-				 List<String> gruppi = new ArrayList<String>();
+				 List<String> gruppi = new ArrayList<>();
 				 for (String gruppo : map.keySet()) {
 					 gruppi.add(gruppo);
 				 }
@@ -5761,7 +5761,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 												this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW(alias),
 												paramIdentificazioneDataSource);
 										if(infoConnessioneAltriDB==null) {
-											infoConnessioneAltriDB = new HashMap<String, String>();
+											infoConnessioneAltriDB = new HashMap<>();
 										}
 										infoConnessioneAltriDB.put(nomeDS,statoInfo);
 										
@@ -5774,7 +5774,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 											throw new Exception(statoDB);
 										}
 										if(statoConnessioniAltriDB==null) {
-											statoConnessioniAltriDB = new HashMap<String, String>();
+											statoConnessioniAltriDB = new HashMap<>();
 										}
 										statoConnessioniAltriDB.put(nomeDS,statoDB);
 										
@@ -5782,12 +5782,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 										ControlStationCore.logError("Errore durante la lettura delle informazioni verso il database "+nomeDS+" (jmxResourcePdD): "+e.getMessage(),e);
 										
 										if(infoConnessioneAltriDB==null) {
-											infoConnessioneAltriDB = new HashMap<String, String>();
+											infoConnessioneAltriDB = new HashMap<>();
 										}
 										infoConnessioneAltriDB.put(nomeDS,ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
 										
 										if(statoConnessioniAltriDB==null) {
-											statoConnessioniAltriDB = new HashMap<String, String>();
+											statoConnessioniAltriDB = new HashMap<>();
 										}
 										statoConnessioniAltriDB.put(nomeDS,ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
 									}		
@@ -5801,12 +5801,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			ControlStationCore.logError("Errore durante la lettura delle informazioni verso gli altri database (jmxResourcePdD): "+e.getMessage(),e);
 			
 			if(infoConnessioneAltriDB==null) {
-				infoConnessioneAltriDB = new HashMap<String, String>();
+				infoConnessioneAltriDB = new HashMap<>();
 			}
 			infoConnessioneAltriDB.put("GovWayDatasources",ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
 			
 			if(statoConnessioniAltriDB==null) {
-				statoConnessioniAltriDB = new HashMap<String, String>();
+				statoConnessioniAltriDB = new HashMap<>();
 			}
 			statoConnessioniAltriDB.put("GovWayDatasources",ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
 		}
@@ -6241,7 +6241,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		else{
 			boolean addProtocollo = false;
-			Map<String, String> map = new HashMap<String, String>();
+			Map<String, String> map = new HashMap<>();
 			for (int i = 0; i < infoProtocolli.length; i++) {
 				
 				try{
@@ -6392,7 +6392,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						List<String> listDe = null;
 						Map<String, List<DataElement>> mapDe = null;
 						if(CostantiPdD.JMX_GESTORE_RICHIESTE.equals(cache)) {
-							listDe = new ArrayList<String>();
+							listDe = new ArrayList<>();
 							mapDe = new HashMap<String, List<DataElement>>();
 						}
 						String internalCache = null;
@@ -11609,8 +11609,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				// Permetto di creare policy legate solamente a allarmi globali
 				List<Allarme> listAllarmiGlobali = this.confCore.allarmiSenzaPluginList(new ConsoleSearch(true), null, null);
 				if(listAllarmiGlobali!=null && !listAllarmiGlobali.isEmpty()) {
-					allarmi_id = new ArrayList<String>();
-					allarmi_alias = new ArrayList<String>();
+					allarmi_id = new ArrayList<>();
+					allarmi_alias = new ArrayList<>();
 					for (Allarme allarme : listAllarmiGlobali) {
 						allarmi_id.add(allarme.getNome());
 						allarmi_alias.add(allarme.getAlias());
@@ -11621,7 +11621,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 		}
 		if(allarmi_id==null){
-			allarmi_id = new ArrayList<String>();
+			allarmi_id = new ArrayList<>();
 		}
 		
 		if(policy.isApplicabilitaStatoAllarme() && allarmi_id.size()<=0){
@@ -12023,7 +12023,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			try{
 				List<Allarme> listAllarmiGlobali = this.confCore.allarmiSenzaPluginList(new ConsoleSearch(true), null, null);
 				if(listAllarmiGlobali!=null && !listAllarmiGlobali.isEmpty()) {
-					allarmi = new ArrayList<String>();
+					allarmi = new ArrayList<>();
 					for (Allarme allarme : listAllarmiGlobali) {
 						allarmi.add(allarme.getNome());
 					}
@@ -12681,8 +12681,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA_TIPO);
 			if(editMode) {
 				if(type!=null) {
-					List<String> valoriFiltrati = new ArrayList<String>();
-					List<String> labelFiltrate = new ArrayList<String>();
+					List<String> valoriFiltrati = new ArrayList<>();
+					List<String> labelFiltrate = new ArrayList<>();
 					for (int i = 0; i < CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPI_RISORSE_VALORI.length; i++) {
 						String v = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPI_RISORSE_VALORI[i];
 						TipoRisorsaPolicyAttiva tipoRisorsa = TipoRisorsaPolicyAttiva.toEnumConstant(v);
@@ -13002,7 +13002,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 			
 		InfoPolicy infoPolicy = null;
-		List<String> idPolicies = new ArrayList<String>();
+		List<String> idPolicies = new ArrayList<>();
 		String modalitaRisorsa = null;
 		String modalitaEsiti = null;
 		String modalitaIntervallo = null;
@@ -13060,7 +13060,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			modalitaErrorRateEnabled = ServletUtils.isCheckBoxEnabled(modalitaErrorRate);
 			
-			List<String> idPoliciesTmp = new ArrayList<String>();
+			List<String> idPoliciesTmp = new ArrayList<>();
 			List<InfoPolicy> idPoliciesSoddisfanoCriteri = new ArrayList<>();
 			findPolicyBuiltIn(policies, 
 					idPoliciesSoddisfanoCriteri,
@@ -14358,7 +14358,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						else {
 							List<IDServizio> listServizi = this.confCore.getServizi(protocolloSelezionatoValue, protocolliValue, 
 									policy.getFiltro().getTipoServizio(), policy.getFiltro().getNomeServizio(), policy.getFiltro().getVersioneServizio(), null);
-							List<String> uris = new ArrayList<String>();
+							List<String> uris = new ArrayList<>();
 							AccordoServizioParteSpecifica aspsRiferimento = null;
 							if(listServizi!=null && !listServizi.isEmpty()) {
 								for (IDServizio idS : listServizi) {
@@ -15460,7 +15460,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					else {
 						if(infoPolicy!=null && TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(infoPolicy.getTipoRisorsa())){
 							String [] arr = TipoFiltroApplicativo.toStringArray();
-							List<String> values = new ArrayList<String>();
+							List<String> values = new ArrayList<>();
 							for (String v : arr) {
 								if(TipoFiltroApplicativo.CONTENT_BASED.equals(v)) {
 									continue;
@@ -15991,7 +15991,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 	
 	private List<String> enrichListConLabelQualsiasi(List<String> l){
-		List<String> newList = new ArrayList<String>();
+		List<String> newList = new ArrayList<>();
 		newList.add(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI);
 		if(l!=null && l.size()>0){
 			newList.addAll(l);
@@ -15999,7 +15999,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return newList;
 	}
 	private List<String> enrichListConValueQualsiasi(List<String> l){
-		List<String> newList = new ArrayList<String>();
+		List<String> newList = new ArrayList<>();
 		newList.add(ConfigurazioneCostanti.VALUE_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI);
 		if(l!=null && l.size()>0){
 			newList.addAll(l);
@@ -17821,7 +17821,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de = new DataElement();
 					List<String> canaleList = regola.getCanaleList();
 					if(canaleList == null)
-						canaleList = new ArrayList<String>();
+						canaleList = new ArrayList<>();
 					
 					String labelTooltip = StringUtils.join(canaleList.toArray(new String[canaleList.size()]), ", ");
 					
@@ -18518,7 +18518,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 			
-			Map<String, String> campiHidden = new HashMap<String, String>();
+			Map<String, String> campiHidden = new HashMap<>();
 			campiHidden.put(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_NOME, nome);
 			this.pd.setHidden(campiHidden);
 
@@ -18827,12 +18827,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// tipoPlugin
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_TIPO_PLUGIN);
-		List<String> labels = new ArrayList<String>();
+		List<String> labels = new ArrayList<>();
 		if(tipoOp.equals(TipoOperazione.ADD)) {
 			labels.add(CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_LABEL_UNDEFINED);
 		}
 		labels.addAll(ConfigurazionePluginsTipoPluginUtils.getLabelsTipoPlugin(this.confCore.isConfigurazioneAllarmiEnabled()));
-		List<String> values = new ArrayList<String>();
+		List<String> values = new ArrayList<>();
 		if(tipoOp.equals(TipoOperazione.ADD)) {
 			values.add(CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED);
 		}
@@ -20719,8 +20719,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_PLUGIN);
 		if(tipoOperazione.equals(TipoOperazione.ADD)){
 			de.setType(DataElementType.SELECT);
-			List<String> pluginValues = new ArrayList<String>();
-			List<String> pluginLabels = new ArrayList<String>();
+			List<String> pluginValues = new ArrayList<>();
+			List<String> pluginLabels = new ArrayList<>();
 			
 			for (Plugin pluginBean : listaPlugin) {
 				String key = pluginBean.getLabel() + ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_PLUGIN_NOME_SEP + pluginBean.getClassName();
@@ -21740,7 +21740,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						else {
 							List<IDServizio> listServizi = this.confCore.getServizi(protocolloSelezionatoValue, protocolliValue, 
 									allarme.getFiltro().getTipoServizio(), allarme.getFiltro().getNomeServizio(), allarme.getFiltro().getVersioneServizio(), null);
-							List<String> uris = new ArrayList<String>();
+							List<String> uris = new ArrayList<>();
 							AccordoServizioParteSpecifica aspsRiferimento = null;
 							if(listServizi!=null && !listServizi.isEmpty()) {
 								for (IDServizio idS : listServizi) {

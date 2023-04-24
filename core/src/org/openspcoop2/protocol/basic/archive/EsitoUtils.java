@@ -119,7 +119,7 @@ public class EsitoUtils {
 		ArchiveEsitoImport defaultArchiveEsitoImport = null;
 		ArchiveIdCorrelazione defaultArchiveIdCorrelazione = null;
 		
-		List<String> idCorrelazioneOrdinato = new ArrayList<String>();
+		List<String> idCorrelazioneOrdinato = new ArrayList<>();
 		for (String idCorrelazione : map.keySet()) {
 			idCorrelazioneOrdinato.add(idCorrelazione);
 		}

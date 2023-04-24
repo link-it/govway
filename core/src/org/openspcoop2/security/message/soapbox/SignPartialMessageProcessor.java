@@ -308,7 +308,7 @@ public class SignPartialMessageProcessor implements Processor {
      * Get the List of inclusive prefixes from the DOM Element argument 
      */
     public List<String> getInclusivePrefixes(Element target, boolean excludeVisible) {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         Node parent = target;
         while (parent.getParentNode() != null &&
             !(Node.DOCUMENT_NODE == parent.getParentNode().getNodeType())) {

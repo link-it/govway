@@ -307,7 +307,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 
 			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 
-			List<String> tipiServizi = new ArrayList<String>();
+			List<String> tipiServizi = new ArrayList<>();
 			
 			tipiServizi.addAll(protocolFactory.createProtocolConfiguration().getTipiServizi(ServiceBinding.SOAP));
 			tipiServizi.addAll(protocolFactory.createProtocolConfiguration().getTipiServizi(ServiceBinding.REST));
@@ -338,7 +338,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 
 			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 
-			List<String> tipiServizi = new ArrayList<String>();
+			List<String> tipiServizi = new ArrayList<>();
 			
 			tipiServizi.addAll(protocolFactory.createProtocolConfiguration().getTipiServizi(ServiceBinding.SOAP));
 			tipiServizi.addAll(protocolFactory.createProtocolConfiguration().getTipiServizi(ServiceBinding.REST));
@@ -635,7 +635,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 
 			IPaginatedExpression sogPagExpr = this.soggettoDAO.newPaginatedExpression();
 			if(idPorte != null && idPorte.size() > 0){
-				List<String> nomiPorte = new ArrayList<String>();
+				List<String> nomiPorte = new ArrayList<>();
 				for (IdPortaDominio idPorta : idPorte) {
 					nomiPorte.add(idPorta.getNome());
 				}
@@ -672,7 +672,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 				List<IdPortaDominio> idPorte = this.pddDAO.findAllIds(pagExpr);
 				IExpression sogExpr = this.soggettoDAO.newExpression();
 				if(idPorte != null && idPorte.size() > 0){
-					List<String> nomiPorte = new ArrayList<String>();
+					List<String> nomiPorte = new ArrayList<>();
 					for (IdPortaDominio idPorta : idPorte) {
 						nomiPorte.add(idPorta.getNome());
 					}
@@ -1101,7 +1101,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			log.error(e.getMessage(), e);
 		} 
 
-		return new HashMap<String, String>();
+		return new HashMap<>();
 
 	}
 
@@ -1137,7 +1137,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 				log.debug(e.getMessage(), e);
 			}
 			if(l==null) {
-				l = new ArrayList<Object>();
+				l = new ArrayList<>();
 			}
 			
 			if(viaModiProperties) {
@@ -1172,7 +1172,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			log.error(e.getMessage(), e);
 		} 
 
-		return new ArrayList<Object>();
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -1986,7 +1986,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 				if(lstAsps != null){
 					List<Soggetto> lstSog = new ArrayList<Soggetto>();
 					Set<Soggetto> setSog = new HashSet<Soggetto>();
-					List<String> soggettiGiaInseriti = new ArrayList<String>();
+					List<String> soggettiGiaInseriti = new ArrayList<>();
 
 					for(AccordoServizioParteSpecifica asps : lstAsps){
 
@@ -2118,7 +2118,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 
 					List<Soggetto> lstSog = new ArrayList<Soggetto>();
 					Set<Soggetto> setSog = new HashSet<Soggetto>();
-					List<String> soggettiGiaInseriti = new ArrayList<String>();
+					List<String> soggettiGiaInseriti = new ArrayList<>();
 					for(AccordoServizioParteSpecifica asps : lstAsps){
 
 						expr = this.fruitoreSearchDAO.newExpression();
@@ -2297,7 +2297,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			ExpressionProperties.enableSoloDatiIdentificativiServizio(pagPaExpr);
 			listaPorte = this.portaApplicativaDAO.findAll(pagPaExpr);
 			
-			List<String> lstTmp = new ArrayList<String>();
+			List<String> lstTmp = new ArrayList<>();
 			for (PortaApplicativa portaApplicativa : listaPorte) {
 				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaApplicativa.getTipoServizio(), portaApplicativa.getNomeServizio(),
 							portaApplicativa.getIdSoggetto().getTipo(), portaApplicativa.getIdSoggetto().getNome(), portaApplicativa.getVersioneServizio());
@@ -2347,7 +2347,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			ExpressionProperties.enableSoloDatiIdentificativiServizio(pagPaExpr);
 			listaPorte = this.portaApplicativaDAO.findAll(pagPaExpr);
 			
-			List<String> lstTmp = new ArrayList<String>();
+			List<String> lstTmp = new ArrayList<>();
 			for (PortaApplicativa portaApplicativa : listaPorte) {
 				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaApplicativa.getTipoServizio(), portaApplicativa.getNomeServizio(),
 							portaApplicativa.getIdSoggetto().getTipo(), portaApplicativa.getIdSoggetto().getNome(), portaApplicativa.getVersioneServizio());
@@ -2420,7 +2420,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			ExpressionProperties.enableSoloDatiIdentificativiServizio(pagPaExpr);
 			listaPorte = this.portaApplicativaDAO.findAll(pagPaExpr);
 			
-			List<String> lstTmp = new ArrayList<String>();
+			List<String> lstTmp = new ArrayList<>();
 			for (PortaApplicativa portaApplicativa : listaPorte) {
 				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaApplicativa.getTipoServizio(), portaApplicativa.getNomeServizio(),
 							portaApplicativa.getIdSoggetto().getTipo(), portaApplicativa.getIdSoggetto().getNome(), portaApplicativa.getVersioneServizio());
@@ -2472,7 +2472,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			ExpressionProperties.enableSoloDatiIdentificativiServizio(pagPaExpr);
 			listaPorte = this.portaApplicativaDAO.findAll(pagPaExpr);
 			
-			List<String> lstTmp = new ArrayList<String>();
+			List<String> lstTmp = new ArrayList<>();
 			for (PortaApplicativa portaApplicativa : listaPorte) {
 				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaApplicativa.getTipoServizio(), portaApplicativa.getNomeServizio(),
 							portaApplicativa.getIdSoggetto().getTipo(), portaApplicativa.getIdSoggetto().getNome(), portaApplicativa.getVersioneServizio());
@@ -2597,7 +2597,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			ExpressionProperties.enableSoloDatiIdentificativiServizio(pagPdExpr);
 			listaPorte = this.portaDelegataDAO.findAll(pagPdExpr);
 			
-			List<String> lstTmp = new ArrayList<String>();
+			List<String> lstTmp = new ArrayList<>();
 			for (PortaDelegata portaDelegata : listaPorte) {
 				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaDelegata.getTipoServizio(), portaDelegata.getNomeServizio(), portaDelegata.getTipoSoggettoErogatore(), portaDelegata.getNomeSoggettoErogatore(), portaDelegata.getVersioneServizio());
 				String uriFromIDServizio = IDServizioFactory.getInstance().getUriFromIDServizio(idServizio);
@@ -2648,7 +2648,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			ExpressionProperties.enableSoloDatiIdentificativiServizio(pagPdExpr);
 			listaPorte = this.portaDelegataDAO.findAll(pagPdExpr);
 			
-			List<String> lstTmp = new ArrayList<String>();
+			List<String> lstTmp = new ArrayList<>();
 			for (PortaDelegata portaDelegata : listaPorte) {
 				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaDelegata.getTipoServizio(), portaDelegata.getNomeServizio(), portaDelegata.getTipoSoggettoErogatore(), portaDelegata.getNomeSoggettoErogatore(), portaDelegata.getVersioneServizio());
 				String uriFromIDServizio = IDServizioFactory.getInstance().getUriFromIDServizio(idServizio);
@@ -2722,7 +2722,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			ExpressionProperties.enableSoloDatiIdentificativiServizio(pagPdExpr);
 			listaPorte = this.portaDelegataDAO.findAll(pagPdExpr);
 			
-			List<String> lstTmp = new ArrayList<String>();
+			List<String> lstTmp = new ArrayList<>();
 			for (PortaDelegata portaDelegata : listaPorte) {
 				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaDelegata.getTipoServizio(), portaDelegata.getNomeServizio(), portaDelegata.getTipoSoggettoErogatore(), portaDelegata.getNomeSoggettoErogatore(), portaDelegata.getVersioneServizio());
 				String uriFromIDServizio = IDServizioFactory.getInstance().getUriFromIDServizio(idServizio);

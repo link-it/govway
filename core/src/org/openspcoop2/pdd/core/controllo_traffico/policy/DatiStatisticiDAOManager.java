@@ -1067,7 +1067,7 @@ public class DatiStatisticiDAOManager  {
 			if(filtro!=null && filtro.isEnabled()){
 				if(filtro.getAzione()!=null && !"".equals(filtro.getAzione()) && idServizio!=null){
 					String [] tmp = filtro.getAzione().split(",");
-					List<String> azioneList = new ArrayList<String>();
+					List<String> azioneList = new ArrayList<>();
 					if(tmp!=null && tmp.length>0) {
 						for (String az : tmp) {
 							azioneList.add(az);

@@ -59,9 +59,9 @@ public class ColonnaExportManager {
 	
 	public ColonnaExportManager(){
 		this.mapColonne = new HashMap<String, ColonnaExport>();
-		this.colonneNonSelezionabiliDallUtente = new ArrayList<String>();
-		this.ordineInserimentoColonne = new ArrayList<String>();
-		this.ordineInserimentoColonneCustomView = new ArrayList<String>();
+		this.colonneNonSelezionabiliDallUtente = new ArrayList<>();
+		this.ordineInserimentoColonne = new ArrayList<>();
+		this.ordineInserimentoColonneCustomView = new ArrayList<>();
 		
 		boolean SHOW_IN_CUSTOM_VIEW = true; // rappresenta le colonne visualizzate nello storico
 		
@@ -226,20 +226,20 @@ public class ColonnaExportManager {
 	}
 	
 	public List<String> getKeysColonneTracce(){
-		List<String> lst = new ArrayList<String>();
+		List<String> lst = new ArrayList<>();
 		lst.add(CostantiExport.KEY_COL_TRACCIA_RICHIESTA);
 		lst.add(CostantiExport.KEY_COL_TRACCIA_RISPOSTA);
 		return lst;
 	}
 	
 	public List<String> getKeysColonneDiagnostici(){
-		List<String> lst = new ArrayList<String>();
+		List<String> lst = new ArrayList<>();
 		lst.add(CostantiExport.KEY_COL_DIAGNOSTICI);
 		return lst;
 	}
 	
 	public List<String> getKeysColonne(){
-		List<String> lst = new ArrayList<String>();
+		List<String> lst = new ArrayList<>();
 		
 		for (String string : this.ordineInserimentoColonne) {
 			if(!this.colonneNonSelezionabiliDallUtente.contains(string))
@@ -251,7 +251,7 @@ public class ColonnaExportManager {
 	}
 	
 	public List<String> getKeysColonneCustomView(){
-		List<String> lst = new ArrayList<String>();
+		List<String> lst = new ArrayList<>();
 		
 		for (String string : this.ordineInserimentoColonneCustomView) {
 			lst.add(string);

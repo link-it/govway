@@ -362,7 +362,7 @@ PdDBaseBean<TransazioneApplicativoServerBean, Long, IService<TransazioneApplicat
 
 			// devo impostare solo l'idtransazione
 			// filter.setIdEgov(this.diagnosticiBean.getIdEgov());
-			Map<String, String> properties = new HashMap<String, String>();
+			Map<String, String> properties = new HashMap<>();
 			properties.put("id_transazione", this.dettaglio.getIdTransazione());
 
 			@SuppressWarnings("unused")
@@ -434,7 +434,7 @@ PdDBaseBean<TransazioneApplicativoServerBean, Long, IService<TransazioneApplicat
 					response.getOutputStream());
 			InputStream in = null;
 
-			ArrayList<String> errori = new ArrayList<String>(0);
+			ArrayList<String> errori = new ArrayList<>(0);
 
 			if (tracce.size() > 0) {
 				// Add ZIP entry to output stream.

@@ -1145,50 +1145,50 @@ public class TrasformazioniTest {
 		busta.setMittente(BUSTA_MITTENTE_VALORE);
 		busta.addProperty(BUSTA_PROPERTY, BUSTA_PROPERTY_VALORE);
 		
-		Map<String, List<String>> parametriTrasporto = new HashMap<String, List<String>>();
+		Map<String, List<String>> parametriTrasporto = new HashMap<>();
 		TransportUtils.addHeader(parametriTrasporto,HEADER1_CASE_INSENTIVE, HEADER1_VALORE);
 		TransportUtils.addHeader(parametriTrasporto,HEADER2, HEADER2_VALORE);
 		TransportUtils.addHeader(parametriTrasporto,HEADER2, HEADER2_VALORE_POSIZIONE_2);
 		
-		Map<String, List<String>> parametriTrasportoRisposta = new HashMap<String, List<String>>();
+		Map<String, List<String>> parametriTrasportoRisposta = new HashMap<>();
 		TransportUtils.addHeader(parametriTrasportoRisposta,HEADER1_RISPOSTA_CASE_INSENTIVE, HEADER1_VALORE_RISPOSTA);
 		TransportUtils.addHeader(parametriTrasportoRisposta,HEADER2_RISPOSTA, HEADER2_VALORE_RISPOSTA);
 		TransportUtils.addHeader(parametriTrasportoRisposta,HEADER2_RISPOSTA, HEADER2_VALORE_RISPOSTA_POSIZIONE_2);
 		
-		Map<String, List<String>> parametriUrl = new HashMap<String, List<String>>();
+		Map<String, List<String>> parametriUrl = new HashMap<>();
 		TransportUtils.addParameter(parametriUrl,QUERY1, QUERY1_VALORE);
 		TransportUtils.addParameter(parametriUrl,QUERY2, QUERY2_VALORE);
 		TransportUtils.addParameter(parametriUrl,QUERY2, QUERY2_VALORE_POSIZIONE_2);
 		TransportUtils.addParameter(parametriUrl,QUERY3, QUERY3_VALORE);
 		TransportUtils.addParameter(parametriUrl,QUERY4, QUERY4_VALORE);
 		
-		Map<String, List<String>> parametriForm = new HashMap<String, List<String>>();
+		Map<String, List<String>> parametriForm = new HashMap<>();
 		TransportUtils.addParameter(parametriForm,FORM1, FORM1_VALORE);
 		TransportUtils.addParameter(parametriForm,FORM2, FORM2_VALORE);
 		TransportUtils.addParameter(parametriForm,FORM2, FORM2_VALORE_POSIZIONE_2);
 		
-		Map<String, String> config = new HashMap<String, String>();
+		Map<String, String> config = new HashMap<>();
 		config.put(CONFIG1, CONFIG1_VALORE);
 		config.put(CONFIG2, CONFIG2_VALORE);
 		config.put(CONFIG3, CONFIG3_VALORE);
 		config.put(CONFIG4, CONFIG4_VALORE);
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE, config);
 		
-		Map<String, String> configSoggettoFruitore = new HashMap<String, String>();
+		Map<String, String> configSoggettoFruitore = new HashMap<>();
 		configSoggettoFruitore.put(CONFIG1_SOGGETTO_FRUITORE, CONFIG1_SOGGETTO_FRUITORE_VALORE);
 		configSoggettoFruitore.put(CONFIG2_SOGGETTO_FRUITORE, CONFIG2_SOGGETTO_FRUITORE_VALORE);
 		configSoggettoFruitore.put(CONFIG3_SOGGETTO_FRUITORE, CONFIG3_SOGGETTO_FRUITORE_VALORE);
 		configSoggettoFruitore.put(CONFIG4_SOGGETTO_FRUITORE, CONFIG4_SOGGETTO_FRUITORE_VALORE);
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE, configSoggettoFruitore);
 		
-		Map<String, String> configSoggettoErogatore = new HashMap<String, String>();
+		Map<String, String> configSoggettoErogatore = new HashMap<>();
 		configSoggettoErogatore.put(CONFIG1_SOGGETTO_EROGATORE, CONFIG1_SOGGETTO_EROGATORE_VALORE);
 		configSoggettoErogatore.put(CONFIG2_SOGGETTO_EROGATORE, CONFIG2_SOGGETTO_EROGATORE_VALORE);
 		configSoggettoErogatore.put(CONFIG3_SOGGETTO_EROGATORE, CONFIG3_SOGGETTO_EROGATORE_VALORE);
 		configSoggettoErogatore.put(CONFIG4_SOGGETTO_EROGATORE, CONFIG4_SOGGETTO_EROGATORE_VALORE);
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_EROGATORE, configSoggettoErogatore);
 		
-		Map<String, String> configServizioApplicativo = new HashMap<String, String>();
+		Map<String, String> configServizioApplicativo = new HashMap<>();
 		configServizioApplicativo.put(CONFIG1_APPLICATIVO, CONFIG1_APPLICATIVO_VALORE);
 		configServizioApplicativo.put(CONFIG2_APPLICATIVO, CONFIG2_APPLICATIVO_VALORE);
 		configServizioApplicativo.put(CONFIG3_APPLICATIVO, CONFIG3_APPLICATIVO_VALORE);
@@ -1197,14 +1197,14 @@ public class TrasformazioniTest {
 		
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_APPLICATIVO_TOKEN, APPLICATIVO_TOKEN);
 		
-		Map<String, String> configServizioApplicativoToken = new HashMap<String, String>();
+		Map<String, String> configServizioApplicativoToken = new HashMap<>();
 		configServizioApplicativoToken.put(CONFIG1_APPLICATIVO_TOKEN, CONFIG1_APPLICATIVO_TOKEN_VALORE);
 		configServizioApplicativoToken.put(CONFIG2_APPLICATIVO_TOKEN, CONFIG2_APPLICATIVO_TOKEN_VALORE);
 		configServizioApplicativoToken.put(CONFIG3_APPLICATIVO_TOKEN, CONFIG3_APPLICATIVO_TOKEN_VALORE);
 		configServizioApplicativoToken.put(CONFIG4_APPLICATIVO_TOKEN, CONFIG4_APPLICATIVO_TOKEN_VALORE);
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO_TOKEN, configServizioApplicativoToken);
 		
-		Map<String, String> configServizioApplicativoTokenSoggetto = new HashMap<String, String>();
+		Map<String, String> configServizioApplicativoTokenSoggetto = new HashMap<>();
 		configServizioApplicativoTokenSoggetto.put(CONFIG1_SOGGETTO_APPLICATIVO_TOKEN, CONFIG1_SOGGETTO_APPLICATIVO_TOKEN_VALORE);
 		configServizioApplicativoTokenSoggetto.put(CONFIG2_SOGGETTO_APPLICATIVO_TOKEN, CONFIG2_SOGGETTO_APPLICATIVO_TOKEN_VALORE);
 		configServizioApplicativoTokenSoggetto.put(CONFIG3_SOGGETTO_APPLICATIVO_TOKEN, CONFIG3_SOGGETTO_APPLICATIVO_TOKEN_VALORE);
@@ -2374,7 +2374,7 @@ public class TrasformazioniTest {
 		ContentExtractor ce = (ContentExtractor) dynamicMapJsonRequest.get(Costanti.MAP_REQUEST);
 		//OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 			
-		List<Object> testOggetti = new ArrayList<Object>();
+		List<Object> testOggetti = new ArrayList<>();
 		testOggetti.add("valoreElementoAggiunto");
 		testOggetti.add(23);
 		testOggetti.add(23l);

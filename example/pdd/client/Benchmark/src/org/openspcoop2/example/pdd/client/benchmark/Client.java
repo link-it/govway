@@ -238,7 +238,7 @@ public class Client {
         }
 
         
-        List<String> headers = new ArrayList<String>();
+        List<String> headers = new ArrayList<>();
         
         // Autenticazione Basic
         String authentication = "";

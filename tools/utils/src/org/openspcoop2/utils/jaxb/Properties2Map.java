@@ -55,7 +55,7 @@ public class Properties2Map extends XmlAdapter<Properties, Map<String, String>>
 		if(prop==null){
 			return null;
 		}
-		Map<String, String> hash = new HashMap<String, String>();
+		Map<String, String> hash = new HashMap<>();
 		Iterator<Properties.Entry> i = prop.getEntry().iterator();
 		while(i.hasNext()){
 			Properties.Entry e = i.next();

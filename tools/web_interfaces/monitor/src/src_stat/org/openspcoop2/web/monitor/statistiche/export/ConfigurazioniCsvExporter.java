@@ -598,7 +598,7 @@ public class ConfigurazioniCsvExporter {
 
 	private DRDataSource creaDatasourceConfigurazioni(List<String> colonneSelezionate,Logger log) throws Exception {
 		// Scittura Intestazione sono le chiavi delle colonne scelte
-		List<String> header = new ArrayList<String>();
+		List<String> header = new ArrayList<>();
 		header.addAll(colonneSelezionate);
 
 		DRDataSource dataSource = new DRDataSource(header.toArray(new String[header.size()])); 
@@ -622,7 +622,7 @@ public class ConfigurazioniCsvExporter {
 					DettaglioPA dettaglioPA = configurazione.getPa();
 					PortaApplicativa paOp2 = dettaglioPA.getPortaApplicativaOp2(); 
 					
-					List<String> orderFix = new ArrayList<String>();
+					List<String> orderFix = new ArrayList<>();
 					Map<String, DettaglioSA> mapIds = new HashMap<String, DettaglioSA>();
 					for (DettaglioSA dettaglioSA : listaSA) {
 						
@@ -665,7 +665,7 @@ public class ConfigurazioniCsvExporter {
 	}
 
 	private void addLinePA(DRDataSource dataSource, ConfigurazioneGenerale configurazione, DettaglioSA dettaglioSA) throws Exception  {
-		List<Object> oneLine = new ArrayList<Object>();
+		List<Object> oneLine = new ArrayList<>();
 		DettaglioPA dettaglioPA = configurazione.getPa();
 		PortaApplicativa paOp2 = dettaglioPA.getPortaApplicativaOp2(); 
 		org.openspcoop2.core.commons.search.PortaApplicativa portaApplicativa = dettaglioPA.getPortaApplicativa();
@@ -1387,7 +1387,7 @@ public class ConfigurazioniCsvExporter {
 	}
 
 	private void addLinePD(DRDataSource dataSource, ConfigurazioneGenerale configurazione) throws Exception  {
-		List<Object> oneLine = new ArrayList<Object>();
+		List<Object> oneLine = new ArrayList<>();
 		DettaglioPD dettaglioPD = configurazione.getPd();
 		PortaDelegata pdOp2 = dettaglioPD.getPortaDelegataOp2();
 		PortaDelegata pdOp2Default = dettaglioPD.getPortaDelegataDefaultOp2();
@@ -2038,7 +2038,7 @@ public class ConfigurazioniCsvExporter {
 	public  List<Object> printConnettore(Connettore connettore,String labelTipoConnettore,
 			InvocazioneCredenziali invCredenziali, 
 			StatoFunzionalita integrationManager, InvocazionePorta invocazionePorta){
-		List<Object> oneLine = new ArrayList<Object>();
+		List<Object> oneLine = new ArrayList<>();
 		Map<Integer, String> mapProperties = new HashMap<Integer, String>();
 
 		mapProperties.put(1, connettore.getTipo());

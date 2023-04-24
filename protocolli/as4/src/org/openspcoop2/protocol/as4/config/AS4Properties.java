@@ -684,8 +684,8 @@ public class AS4Properties {
 		return this.domibusGatewayRegistrySoggettoDefault;
 	}
 	
-	private List<String> domibusGatewayRegistrySoggettoCustom_Read = new ArrayList<String>();
-	private HashMap<String,String> domibusGatewayRegistrySoggettoCustom = new HashMap<String,String>();
+	private List<String> domibusGatewayRegistrySoggettoCustom_Read = new ArrayList<>();
+	private HashMap<String,String> domibusGatewayRegistrySoggettoCustom = new HashMap<>();
 	public String getDomibusGatewayRegistrySoggettoCustom(String nome) throws ProtocolException {
 		if(this.domibusGatewayRegistrySoggettoCustom_Read.contains(nome)==false){
 	    	try{  
@@ -706,12 +706,12 @@ public class AS4Properties {
 		return this.domibusGatewayRegistrySoggettoCustom.get(nome);
 	}
     
-	private List<String> domibusGatewayRegistrySoggettoCustomList = new ArrayList<String>();
+	private List<String> domibusGatewayRegistrySoggettoCustomList = new ArrayList<>();
 	public List<String> getDomibusGatewayRegistrySoggettoCustomList() throws ProtocolException {
 		if(this.domibusGatewayRegistrySoggettoCustomList==null){
 	    	try{  
 	    		Properties p = this.reader.readProperties_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.registry.soggetto.");
-	    		this.domibusGatewayRegistrySoggettoCustomList = new ArrayList<String>();
+	    		this.domibusGatewayRegistrySoggettoCustomList = new ArrayList<>();
 	    		Enumeration<?> keys = p.keys();
 	    		while (keys.hasMoreElements()) {
 					Object object = (Object) keys.nextElement();
@@ -802,8 +802,8 @@ public class AS4Properties {
 		return this.domibusGatewayConfigDefaultHttpsProperties;
 	}
 	
-	private List<String> domibusGatewayConfigCustomUrl_Read = new ArrayList<String>();
-	private HashMap<String,String> domibusGatewayConfigCustomUrl = new HashMap<String,String>();
+	private List<String> domibusGatewayConfigCustomUrl_Read = new ArrayList<>();
+	private HashMap<String,String> domibusGatewayConfigCustomUrl = new HashMap<>();
 	public String getDomibusGatewayConfigCustomUrl(String nome) throws ProtocolException {
 		if(this.domibusGatewayConfigCustomUrl_Read.contains(nome)==false){
 	    	try{  
@@ -824,7 +824,7 @@ public class AS4Properties {
 		return this.domibusGatewayConfigCustomUrl.get(nome);
 	}
 	
-	private List<String> domibusGatewayConfigCustomHttsEnabled_Read = new ArrayList<String>();
+	private List<String> domibusGatewayConfigCustomHttsEnabled_Read = new ArrayList<>();
 	private HashMap<String,Boolean> domibusGatewayConfigCustomHttpsEnabled = new HashMap<String,Boolean>();
     public Boolean isDomibusGatewayConfigCustomHttpsEnabled(String nome) throws ProtocolException{
     	if(this.domibusGatewayConfigCustomHttsEnabled_Read.contains(nome)==false){
@@ -848,7 +848,7 @@ public class AS4Properties {
     	return this.domibusGatewayConfigCustomHttpsEnabled.get(nome);
 	}
     
-    private List<String> domibusGatewayConfigCustomHttsProperties_Read = new ArrayList<String>();
+    private List<String> domibusGatewayConfigCustomHttsProperties_Read = new ArrayList<>();
 	private HashMap<String,Properties> domibusGatewayConfigCustomHttpsProperties = new HashMap<String,Properties>();
 	public Properties getDomibusGatewayConfigCustomHttpsProperties(String nome) throws ProtocolException {
 		if(this.domibusGatewayConfigCustomHttsProperties_Read.contains(nome)==false){

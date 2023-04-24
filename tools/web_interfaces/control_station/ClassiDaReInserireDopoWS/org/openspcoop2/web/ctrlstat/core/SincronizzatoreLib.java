@@ -2235,7 +2235,7 @@ public class SincronizzatoreLib {
 
 			SincronizzatoreLib.log.info(engineAbilitati);
 
-			ArrayList<String> pddsName = new ArrayList<String>();
+			ArrayList<String> pddsName = new ArrayList<>();
 			ArrayList<PdDControlStation> lista = new ArrayList<PdDControlStation>();
 
 			for (PdDControlStation pdd : pdds) {

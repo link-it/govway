@@ -132,7 +132,7 @@ public class RegistroServizi  {
 	private java.util.Map<String,IDriverRegistroServiziGet> driverRegistroServizi;
 
 	/** Indicazione se usare la connessione della PdD */
-	private Map<String, String> mappingNomeRegistroToTipiDatabase = new HashMap<String, String>();
+	private Map<String, String> mappingNomeRegistroToTipiDatabase = new HashMap<>();
 	private Map<String, Boolean> mappingNomeRegistroToUseConnectionPdD = new HashMap<String, Boolean>();
 	
 	/** Eventuale RegistriXML da cui prelevare le definizioni dei connettori */

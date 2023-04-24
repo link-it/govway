@@ -420,7 +420,7 @@ public class OpenSPCoop2DBConfigurationUtility {
 					
 					
 					// PORTE DELEGATE CON TALE SERVIZIO e con tale fruitore
-					List<String> nomiServiziApplicativi = new ArrayList<String>();
+					List<String> nomiServiziApplicativi = new ArrayList<>();
 					List<PortaDelegata> listaPorteDelegate = 
 						driverConfigurazione.getPorteDelegateWithServizio(asps.getId(), asps.getTipo(), asps.getNome(), asps.getVersione(),
 								asps.getIdSoggetto(), asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore());

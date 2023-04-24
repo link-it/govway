@@ -50,7 +50,7 @@ public class StatisticsServiceLibrary implements Serializable {
 	private List<ConfigurazioneStatistica> statisticsActionLibrary;
 	private List<ConfigurazioneStatistica> statisticsActionAllLibrary;
 	private boolean pluginStatiTransazioniEnabled = false; // plugin org.openspcoop2.monitor.engine.plugins.statistic.StatisticByState
-	private List<String> pluginRisorseTransazioni = new ArrayList<String>(); // plugin org.openspcoop2.monitor.engine.plugins.statistic.StatisticByResource
+	private List<String> pluginRisorseTransazioni = new ArrayList<>(); // plugin org.openspcoop2.monitor.engine.plugins.statistic.StatisticByResource
 
 	public BasicServiceLibrary getBasicServiceLibrary() {
 		return this.basicServiceLibrary;
@@ -199,7 +199,7 @@ public class StatisticsServiceLibrary implements Serializable {
 
 		List<ConfigurazioneStatistica> list = new ArrayList<ConfigurazioneStatistica>();
 		if(orderByLabel){
-			List<String> sortedKey = new ArrayList<String>();
+			List<String> sortedKey = new ArrayList<>();
 			Map<String, ConfigurazioneStatistica> mapLabelToCorrelazioneStatistica = new HashMap<String, ConfigurazioneStatistica>();
 			int count = 0; // lo uso per gestire eventuali label identiche.
 			for (String className : plugins.keySet()) {

@@ -148,7 +148,7 @@ public class GeneratoreMessaggiDiagnostici {
 						"] failed (expected:"+NUMERO_TEMPLATE_DINAMICI+" found:"+tmp.length+")");
 			}
 			
-			Map<String, String> map = new HashMap<String, String>();
+			Map<String, String> map = new HashMap<>();
 			
 			for (int i = 0; i < tmp.length; i++) {
 				

@@ -258,12 +258,12 @@ public class DriverConfigurazioneDB_allarmiDriver {
 			
 			// Utenza permessi
 			
-			List<String> condizioniUtenza = new ArrayList<String>();
+			List<String> condizioniUtenza = new ArrayList<>();
 			
 			if(listSoggettiProprietariAbilitati!=null && !listSoggettiProprietariAbilitati.isEmpty()) {
 				ISQLQueryObject sqlQueryObjectUtenzaSoggetto = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 				sqlQueryObjectUtenzaSoggetto.setANDLogicOperator(true);
-				List<String> condizioni = new ArrayList<String>();
+				List<String> condizioni = new ArrayList<>();
 				for (@SuppressWarnings("unused") IDSoggetto idSoggetto : listSoggettiProprietariAbilitati) {
 					ISQLQueryObject sqlQueryObjectSoggetto = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 					sqlQueryObjectSoggetto.setANDLogicOperator(true);
@@ -278,7 +278,7 @@ public class DriverConfigurazioneDB_allarmiDriver {
 			if(listIDServizioAbilitati!=null && !listIDServizioAbilitati.isEmpty()) {
 				ISQLQueryObject sqlQueryObjectUtenzaServizio = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 				sqlQueryObjectUtenzaServizio.setANDLogicOperator(true);
-				List<String> condizioni = new ArrayList<String>();
+				List<String> condizioni = new ArrayList<>();
 				for (@SuppressWarnings("unused") IDServizio idServizio : listIDServizioAbilitati) {
 					ISQLQueryObject sqlQueryObjectServizio = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 					sqlQueryObjectServizio.setANDLogicOperator(true);
@@ -323,7 +323,7 @@ public class DriverConfigurazioneDB_allarmiDriver {
 					sqlQueryObjectPorteApplicative.addWhereCondition(alias_PA+".versione_servizio = ?");
 				}
 				else {
-					List<String> condizioni = new ArrayList<String>();
+					List<String> condizioni = new ArrayList<>();
 					for (@SuppressWarnings("unused") IDServizio idServizio : listIDServizio) {
 						ISQLQueryObject sqlQueryObjectServizio = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 						sqlQueryObjectServizio.setANDLogicOperator(true);
@@ -373,12 +373,12 @@ public class DriverConfigurazioneDB_allarmiDriver {
 			
 			// Utenza permessi
 			
-			List<String> condizioniUtenza = new ArrayList<String>();
+			List<String> condizioniUtenza = new ArrayList<>();
 			
 			if(listSoggettiProprietariAbilitati!=null && !listSoggettiProprietariAbilitati.isEmpty()) {
 				ISQLQueryObject sqlQueryObjectUtenzaSoggetto = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 				sqlQueryObjectUtenzaSoggetto.setANDLogicOperator(true);
-				List<String> condizioni = new ArrayList<String>();
+				List<String> condizioni = new ArrayList<>();
 				for (@SuppressWarnings("unused") IDSoggetto idSoggetto : listSoggettiProprietariAbilitati) {
 					ISQLQueryObject sqlQueryObjectSoggetto = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 					sqlQueryObjectSoggetto.setANDLogicOperator(true);
@@ -393,7 +393,7 @@ public class DriverConfigurazioneDB_allarmiDriver {
 			if(listIDServizioAbilitati!=null && !listIDServizioAbilitati.isEmpty()) {
 				ISQLQueryObject sqlQueryObjectUtenzaServizio = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 				sqlQueryObjectUtenzaServizio.setANDLogicOperator(true);
-				List<String> condizioni = new ArrayList<String>();
+				List<String> condizioni = new ArrayList<>();
 				for (@SuppressWarnings("unused") IDServizio idServizio : listIDServizioAbilitati) {
 					ISQLQueryObject sqlQueryObjectServizio = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 					sqlQueryObjectServizio.setANDLogicOperator(true);
@@ -439,7 +439,7 @@ public class DriverConfigurazioneDB_allarmiDriver {
 					sqlQueryObjectPorteDelegate.addWhereCondition(alias_PD+".versione_servizio = ?");
 				}
 				else {
-					List<String> condizioni = new ArrayList<String>();
+					List<String> condizioni = new ArrayList<>();
 					for (@SuppressWarnings("unused") IDServizio idServizio : listIDServizio) {
 						ISQLQueryObject sqlQueryObjectServizio = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 						sqlQueryObjectServizio.setANDLogicOperator(true);

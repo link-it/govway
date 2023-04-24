@@ -156,7 +156,7 @@ public class PermessiUtenteOperatore {
 
 			if(this.listIDSoggetti.size()>0){
 				// I Soggetti rappresentano coloro che gestiscono la transazione, sia che siano fruizioni che erogazioni
-				List<String> identificativiPorta = new ArrayList<String>();
+				List<String> identificativiPorta = new ArrayList<>();
 				for (IDSoggetto idSoggetto : this.listIDSoggetti) {
 					identificativiPorta.add(idSoggetto.getCodicePorta());
 				}

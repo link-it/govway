@@ -201,7 +201,7 @@ public class AccordoServizioUtils {
 		}
 
 		Map<String, byte[]> resources = new HashMap<String, byte[]>();
-		Map<String, String> mappingNamespaceLocations = new HashMap<String, String>();
+		Map<String, String> mappingNamespaceLocations = new HashMap<>();
 
 		
 		

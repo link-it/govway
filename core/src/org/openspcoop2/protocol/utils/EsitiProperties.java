@@ -271,8 +271,8 @@ public class EsitiProperties {
 						
 			getEsitiCodeOrderLabel();
 			
-			List<String> labelCheck = new ArrayList<String>();
-			List<String> nameCheck = new ArrayList<String>();
+			List<String> labelCheck = new ArrayList<>();
+			List<String> nameCheck = new ArrayList<>();
 			
 			for (Integer codeEsito : codes) {
 				
@@ -320,7 +320,7 @@ public class EsitiProperties {
 			
 			getEsitiTransactionContextCodeOrderLabel();
 			
-			labelCheck = new ArrayList<String>();
+			labelCheck = new ArrayList<>();
 			
 			for (String tipo : tipi) {
 				String tipoLabel = getEsitoTransactionContextLabel(tipo);
@@ -899,7 +899,7 @@ public class EsitiProperties {
 	private synchronized void initEsitiOrderLabel() throws ProtocolException {
 		if(this.esitiOrderLabel == null){
 			List<Integer> codes = getEsitiCode();
-			List<String> esitiOrderLabel = new ArrayList<String>();
+			List<String> esitiOrderLabel = new ArrayList<>();
 			for (Integer codeEsito : codes) {
 				esitiOrderLabel.add(this.getEsitoLabel(codeEsito));
 			}
@@ -919,7 +919,7 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoName() throws ProtocolException {
 		if(this.esitoName == null){
-			java.util.Map<String,String> esitoName = new HashMap<String, String>();
+			java.util.Map<String,String> esitoName = new HashMap<>();
 			List<Integer> codes = getEsitiCodeSenzaFiltri();
 			for (Integer code : codes) {
 				esitoName.put(code+"", getProperty("esito."+code+".name"));
@@ -940,7 +940,7 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoDescription() throws ProtocolException {
 		if(this.esitoDescription == null){
-			java.util.Map<String, String> esitoDescription = new HashMap<String, String>();
+			java.util.Map<String, String> esitoDescription = new HashMap<>();
 			List<Integer> codes = getEsitiCode();
 			for (Integer code : codes) {
 				esitoDescription.put(code+"", getProperty("esito."+code+".description"));
@@ -961,7 +961,7 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoLabel() throws ProtocolException {
 		if(this.esitoLabel == null){
-			java.util.Map<String, String> esitoLabel = new HashMap<String, String>();
+			java.util.Map<String, String> esitoLabel = new HashMap<>();
 			List<Integer> codes = getEsitiCode();
 			for (Integer code : codes) {
 				String label = getProperty("esito."+code+".label");
@@ -984,7 +984,7 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoLabelSyntetic() throws ProtocolException {
 		if(this.esitoLabelSyntetic == null){
-			java.util.Map<String, String> esitoLabelSyntetic = new HashMap<String, String>();
+			java.util.Map<String, String> esitoLabelSyntetic = new HashMap<>();
 			List<Integer> codes = getEsitiCode();
 			for (Integer code : codes) {
 				String label = getProperty("esito."+code+".label.syntetic");
@@ -1244,7 +1244,7 @@ public class EsitiProperties {
 	private synchronized void initEsitiTransactionContextOrderLabel() throws ProtocolException {
 		if(this.esitiTransactionContextOrderLabel == null){
 			List<String> codes = getEsitiTransactionContextCode();
-			List<String> esitiTransactionContextOrderLabel = new ArrayList<String>();
+			List<String> esitiTransactionContextOrderLabel = new ArrayList<>();
 			for (String codeTransactionContext : codes) {
 				esitiTransactionContextOrderLabel.add(this.getEsitoTransactionContextLabel(codeTransactionContext));
 			}
@@ -1264,7 +1264,7 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoTransactionContextLabel() throws ProtocolException {
 		if(this.esitoTransactionContextLabel == null){
-			java.util.Map<String, String> esitoTransactionContextLabel = new HashMap<String, String>();
+			java.util.Map<String, String> esitoTransactionContextLabel = new HashMap<>();
 			List<String> codes = getEsitiTransactionContextCode();
 			for (String code : codes) {
 				esitoTransactionContextLabel.put(code, getProperty("esiti.transactionContext."+code+".label"));
@@ -1446,7 +1446,7 @@ public class EsitiProperties {
 				throw new Exception("proprieta non definita");
 			else
 				name = name.trim();
-			lista  = new ArrayList<String>();
+			lista  = new ArrayList<>();
 			String [] split = name.split(",");
 			if(split==null || split.length<=0){
 				throw new Exception("proprieta non definita (dopo split?)");

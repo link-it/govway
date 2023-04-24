@@ -139,10 +139,10 @@ public final class ClientPushResponse {
 		                   context.get(MessageContext.HTTP_REQUEST_HEADERS);
 		    }
 		    if (headers == null) {
-		        headers = new HashMap<String, List<String>>();
+		        headers = new HashMap<>();
 		        context.put(MessageContext.HTTP_REQUEST_HEADERS, headers);
 		    }
-		    List<String> l = new ArrayList<String>();
+		    List<String> l = new ArrayList<>();
 		    l.add("XXGWXXHDR");
 		    headers.put("X-Correlation-ID", l );
 		}

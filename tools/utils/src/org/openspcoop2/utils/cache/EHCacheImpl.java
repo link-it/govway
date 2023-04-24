@@ -187,7 +187,7 @@ public class EHCacheImpl extends AbstractCacheImpl {
 		try{
 			Set<String> set = new HashSet<>();
 			this.cache.forEach(entry -> set.add(entry.getKey()));
-			List<String> keys = new ArrayList<String>();
+			List<String> keys = new ArrayList<>();
 			keys.addAll(set);
 			return keys;
 		}catch(Exception e){

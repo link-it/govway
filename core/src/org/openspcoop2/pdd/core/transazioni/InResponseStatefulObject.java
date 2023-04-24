@@ -43,7 +43,7 @@ public class InResponseStatefulObject {
 	private String faultCooperazione;
 	private String formatoFaultCooperazione;
 	
-	private List<String> eventiGestione = new ArrayList<String>();
+	private List<String> eventiGestione = new ArrayList<>();
 	
 	public Date getDataRichiestaInoltrata() {
 		return this.dataRichiestaInoltrata;

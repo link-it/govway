@@ -69,10 +69,10 @@ public class DettaglioPA implements Serializable{
 	private String configurazioneProfilo = null;
 	
 	public DettaglioPA(){
-		this.ruoli = new ArrayList<String>();
-		this.fruitori = new ArrayList<String>();
+		this.ruoli = new ArrayList<>();
+		this.fruitori = new ArrayList<>();
 		this.listaSA = new ArrayList<DettaglioSA>();
-		this.azioni = new ArrayList<String>();
+		this.azioni = new ArrayList<>();
 	}
 
 	public PortaApplicativa getPortaApplicativa() {

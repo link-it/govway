@@ -65,7 +65,7 @@ public class OperazioniList extends Action {
 		try {
 			OperazioniHelper opHelper = new OperazioniHelper(request, pd, session);
 			
-			ArrayList<String> errors = new ArrayList<String>();
+			ArrayList<String> errors = new ArrayList<>();
 			OperazioniFormBean formBean = opHelper.getBeanForm(errors );
 			
 			OperazioniCore opCore = new OperazioniCore();

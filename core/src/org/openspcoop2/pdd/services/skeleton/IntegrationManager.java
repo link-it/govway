@@ -694,7 +694,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 						getErroreIntegrazione(),id_servizio_applicativo,
 						IntegrationFunctionError.IM_MESSAGES_NOT_FOUND, this.getErroriProperties(logCore));
 			}
-			List<String> listResponse = new ArrayList<String>();
+			List<String> listResponse = new ArrayList<>();
 			if(ids!=null && ids.size()>0){
 				for (IdentificativoIM id : ids) {
 					if(this.propertiesReader.isIntegrationManagerIdWithDate()) {

@@ -187,8 +187,8 @@ public final class AccordiCooperazioneAdd extends Action {
 				lista = soggettiCore.soggettiRegistroList(userLogin, new ConsoleSearch(true));
 			}
 
-			List<String> soggettiListTmp = new ArrayList<String>();
-			List<String> soggettiListLabelTmp = new ArrayList<String>();
+			List<String> soggettiListTmp = new ArrayList<>();
+			List<String> soggettiListLabelTmp = new ArrayList<>();
 			soggettiListTmp.add("-");
 			soggettiListLabelTmp.add("-");
 

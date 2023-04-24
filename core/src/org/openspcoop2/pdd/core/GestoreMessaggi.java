@@ -1101,7 +1101,7 @@ public class GestoreMessaggi  {
 				StringBuilder fieldNamesPdDContext = new StringBuilder();
 				StringBuilder fieldValuesPdDContext = new StringBuilder();
 				Map<String, String> contextSerializerParameters = null;
-				List<Object> objectSerializer = new ArrayList<Object>();
+				List<Object> objectSerializer = new ArrayList<>();
 				if(GestoreMessaggi.pddContextSerializer!=null){
 					contextSerializerParameters = GestoreMessaggi.pddContextSerializer.getGestoreMessaggiKeywords();
 					if(contextSerializerParameters!=null && contextSerializerParameters.size()>0){
@@ -1226,7 +1226,7 @@ public class GestoreMessaggi  {
 			StringBuilder fieldNamesPdDContext = new StringBuilder();
 			StringBuilder fieldValuesPdDContext = new StringBuilder();
 			Map<String, String> contextSerializerParameters = null;
-			List<Object> objectSerializer = new ArrayList<Object>();
+			List<Object> objectSerializer = new ArrayList<>();
 			if(GestoreMessaggi.pddContextSerializer!=null){
 				contextSerializerParameters = GestoreMessaggi.pddContextSerializer.getGestoreMessaggiKeywords();
 				if(contextSerializerParameters!=null && contextSerializerParameters.size()>0){
@@ -3366,7 +3366,7 @@ public class GestoreMessaggi  {
 
 				// PdDContext
 				StringBuilder fieldNamesPdDContext_db = new StringBuilder();
-				Map<String, String> mapping = new HashMap<String, String>();
+				Map<String, String> mapping = new HashMap<>();
 				if(GestoreMessaggi.pddContextSerializer!=null){
 					Map<String, String> contextSerializerParameters = GestoreMessaggi.pddContextSerializer.getGestoreMessaggiKeywords();
 					if(contextSerializerParameters!=null && contextSerializerParameters.size()>0){
@@ -5072,7 +5072,7 @@ public class GestoreMessaggi  {
 			pstmt = connectionDB.prepareStatement(updateString);
 			
 			int index = 1;
-			List<Object> params = new ArrayList<Object>();
+			List<Object> params = new ArrayList<>();
 		
 			if(abilitaScheduling) {
 				pstmt.setTimestamp(index++,null); 
@@ -5288,7 +5288,7 @@ public class GestoreMessaggi  {
 					
 					pstmt = connectionDB.prepareStatement(queryString);
 					int index = 1;
-					List<Object> params = new ArrayList<Object>();
+					List<Object> params = new ArrayList<>();
 					
 					if(secondiAnzianitaPerIniziareSpedireNuovoMessaggio!=null && secondiAnzianitaPerIniziareSpedireNuovoMessaggio>0) {
 						Timestamp anzianita = new Timestamp(DateManager.getTimeMillis()-(1000*secondiAnzianitaPerIniziareSpedireNuovoMessaggio.intValue()));
@@ -5552,7 +5552,7 @@ public class GestoreMessaggi  {
 				//log.debug("Query: "+query);
 				pstmtMsgDaSpedire = connectionDB.prepareStatement(queryString);
 				int index = 1;
-				List<Object> params = new ArrayList<Object>();
+				List<Object> params = new ArrayList<>();
 				
 				// Ottimizzazione per partizionamento
 				if(verificaPresenzaMessaggiDaRispedire) {
@@ -6184,7 +6184,7 @@ public class GestoreMessaggi  {
 
 			pstmt = connectionDB.prepareStatement(queryString);
 			int index = 1;
-			List<Object> objects = new ArrayList<Object>();
+			List<Object> objects = new ArrayList<>();
 			if(leftDate!=null) {
 				java.sql.Timestamp leftDateT = new java.sql.Timestamp(leftDate.getTime());
 				pstmt.setTimestamp(index++, leftDateT);
@@ -6341,7 +6341,7 @@ public class GestoreMessaggi  {
 				deleteString = sqlQueryObjectMsgServiziApplicativi.createSQLDelete();
 				pstmt = connectionDB.prepareStatement(deleteString);
 				int index = 1;
-				List<Object> objects = new ArrayList<Object>();
+				List<Object> objects = new ArrayList<>();
 				if(leftDate!=null) {
 					java.sql.Timestamp leftDateT = new java.sql.Timestamp(leftDate.getTime());
 					pstmt.setTimestamp(index++, leftDateT);
@@ -6405,7 +6405,7 @@ public class GestoreMessaggi  {
 			deleteString = sqlQueryObjectDefinizioneMessaggi.createSQLDelete();
 			pstmt = connectionDB.prepareStatement(deleteString);
 			int index = 1;
-			List<Object> objects = new ArrayList<Object>();
+			List<Object> objects = new ArrayList<>();
 			pstmt.setString(index++,tipo);
 			if(logQuery) {
 				objects.add(tipo);
@@ -6533,7 +6533,7 @@ public class GestoreMessaggi  {
 				deleteString = sqlQueryObjectRepositoryBuste.createSQLDelete();
 				pstmt = connectionDB.prepareStatement(deleteString);
 				index = 1;
-				objects = new ArrayList<Object>();
+				objects = new ArrayList<>();
 				pstmt.setString(index++,tipo);
 				if(logQuery) {
 					objects.add(tipo);
@@ -6615,7 +6615,7 @@ public class GestoreMessaggi  {
 			deleteString = sqlQueryObjectMessaggi.createSQLDelete();
 			pstmt = connectionDB.prepareStatement(deleteString);
 			index = 1;
-			objects = new ArrayList<Object>();
+			objects = new ArrayList<>();
 			if(leftDate!=null) {
 				java.sql.Timestamp leftDateT = new java.sql.Timestamp(leftDate.getTime());
 				pstmt.setTimestamp(index++, leftDateT);
@@ -6704,7 +6704,7 @@ public class GestoreMessaggi  {
 		try{	
 			pstmt = connectionDB.prepareStatement(deleteString);
 			int index = 1;
-			List<Object> objects = new ArrayList<Object>();
+			List<Object> objects = new ArrayList<>();
 			if(nomeColonnaTipoMessaggio!=null) {
 				pstmt.setString(index++,tipo);
 				if(logQuery) {
@@ -6829,7 +6829,7 @@ public class GestoreMessaggi  {
 					: ((StatefulMessage)this.openspcoopstate.getStatoRisposta()) ;			
 			Connection connectionDB = stateful.getConnectionDB();
 
-			List<String> idMsg = new ArrayList<String>();
+			List<String> idMsg = new ArrayList<>();
 
 			PreparedStatement pstmtMsgEliminati = null;
 			ResultSet rs = null;
@@ -6972,7 +6972,7 @@ public class GestoreMessaggi  {
 					: ((StatefulMessage)this.openspcoopstate.getStatoRisposta()) ;
 
 			Connection connectionDB = stateful.getConnectionDB();
-			List<String> idMsg = new ArrayList<String>();
+			List<String> idMsg = new ArrayList<>();
 
 			PreparedStatement pstmtMsgScaduti = null;
 			ResultSet rs = null;
@@ -7151,7 +7151,7 @@ public class GestoreMessaggi  {
 					: ((StatefulMessage)this.openspcoopstate.getStatoRisposta()) ;
 			Connection connectionDB = stateful.getConnectionDB();
 
-			List<String> idMsg = new ArrayList<String>();
+			List<String> idMsg = new ArrayList<>();
 
 			PreparedStatement pstmtMsgScaduti = null;
 			ResultSet rs = null;
@@ -7277,7 +7277,7 @@ public class GestoreMessaggi  {
 
 			Connection connectionDB = stateful.getConnectionDB();
 
-			List<String> idMsg = new ArrayList<String>();
+			List<String> idMsg = new ArrayList<>();
 
 			PreparedStatement pstmtMsgScaduti = null;
 			ResultSet rs = null;
@@ -7413,7 +7413,7 @@ public class GestoreMessaggi  {
 
 	private List<String> readBusteNonRiferiteDaMessaggi(String tipoBusta,int limit,boolean logQuery,boolean forceIndex,boolean orderBy) throws ProtocolException, GestoreMessaggiException{
 
-		List<String> idBuste = new ArrayList<String>();
+		List<String> idBuste = new ArrayList<>();
 		int pdd = 0;
 		int profilo = 0;
 		int pddProfilo = 0;

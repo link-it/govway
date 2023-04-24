@@ -263,7 +263,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			// Collezione header di trasporto per dump
 			Map<String, List<String>> propertiesTrasportoDebug = null;
 			if(this.isDumpBinarioRichiesta()) {
-				propertiesTrasportoDebug = new HashMap<String, List<String>>();
+				propertiesTrasportoDebug = new HashMap<>();
 			}
 			
 			
@@ -507,7 +507,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 				// InputFile Header
 				if(this.inputFileHeaders!=null){
 					this.checkInputFile(this.inputFileHeaders, "Response-Headers");
-					this.propertiesTrasportoRisposta = new HashMap<String, List<String>>();
+					this.propertiesTrasportoRisposta = new HashMap<>();
 					FileInputStream fin = new FileInputStream(this.inputFileHeaders);
 					try{
 						Properties pTmp = new Properties();
@@ -549,7 +549,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 				if(this.tipoRisposta==null || "".equals(this.tipoRisposta)) {
 					this.tipoRisposta = contentTypeRichiesta;
 					if(this.propertiesTrasportoRisposta==null) {
-						this.propertiesTrasportoRisposta = new HashMap<String, List<String>>();
+						this.propertiesTrasportoRisposta = new HashMap<>();
 					}
 					TransportUtils.setHeader(this.propertiesTrasportoRisposta, HttpConstants.CONTENT_TYPE, this.tipoRisposta);
 				}

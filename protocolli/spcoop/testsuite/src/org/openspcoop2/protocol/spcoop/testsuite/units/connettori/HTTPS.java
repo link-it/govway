@@ -1018,7 +1018,7 @@ public class HTTPS extends GestioneViaJmx {
 			// Contesto SSL
 			java.util.Map<String, String> sslContext = null;
 			if(location!=null){
-				sslContext = new HashMap<String, String>();
+				sslContext = new HashMap<>();
 				if(location!=null){
 					sslContext.put("trustStoreLocation", location);
 					sslContext.put("keyStoreLocation", location);
@@ -1170,7 +1170,7 @@ public class HTTPS extends GestioneViaJmx {
 			
 			// Contesto SSL
 			java.util.Map<String, String> sslContext = null;
-			sslContext = new HashMap<String, String>();
+			sslContext = new HashMap<>();
 			sslContext.put("trustStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("keyStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("trustStorePassword", "openspcoopjks");
@@ -1295,7 +1295,7 @@ public class HTTPS extends GestioneViaJmx {
 			
 			// Contesto SSL
 			java.util.Map<String, String> sslContext = null;
-			sslContext = new HashMap<String, String>();
+			sslContext = new HashMap<>();
 			sslContext.put("trustStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("keyStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("trustStorePassword", "openspcoopjks");
@@ -1452,7 +1452,7 @@ public class HTTPS extends GestioneViaJmx {
 			// Contesto SSL
 			java.util.Map<String, String> sslContext = null;
 			if(location!=null){
-				sslContext = new HashMap<String, String>();
+				sslContext = new HashMap<>();
 				if(location!=null){
 					sslContext.put("trustStoreLocation", location);
 					sslContext.put("keyStoreLocation", location);
