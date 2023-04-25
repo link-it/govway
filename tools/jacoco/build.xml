@@ -632,7 +632,6 @@
 				        <equals arg1="${jacoco.deleteOldClasses}" arg2="true"/>
 				        <then>
 						<delete dir="${jacoco.build}">
-							<include name="**/org/openspcoop2/pdd/mdb/threads/**/*.class"/>
 							<include name="**/org/openspcoop2/pdd/core/handlers/statistics/**/*.class"/>
 							<include name="**/org/openspcoop2/pdd/core/handlers/notifier/**/*.class"/>
 						</delete>       

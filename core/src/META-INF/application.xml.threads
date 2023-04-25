@@ -1,6 +1,0 @@
-	<module>
-		<web>
-			<web-uri>OpenSPCoop2Threads.war</web-uri>
-			<context-root>openspcoop2_threads</context-root>
-		</web>
-	</module>

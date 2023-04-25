@@ -18,25 +18,45 @@
  *
  */
 
+package org.openspcoop2.pdd.core.node;
 
-package org.openspcoop2.pdd.mdb.threads;
-
+import org.openspcoop2.pdd.mdb.GenericMessage;
 
 /**
  * @author Fabio Tronci (tronci@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ImbustamentoRisposteMain extends ModuloAlternativoMain {
-	private static final String idModulo = "ImbustamentoRisposte";
+public class MessaggioSerializzato implements java.io.Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
-	public ImbustamentoRisposteMain(){
-		super(ImbustamentoRisposteMain.idModulo);
+	
+	private String idMessaggio;
+	private GenericMessage msg;
+	
+	public MessaggioSerializzato(String id, GenericMessage msg){
+		this.idMessaggio=id;
+		this.msg=msg;
 	}
 	
-	@Override
-	protected IProducer creaProduttore() throws Exception {
-		IProducer p = new ImbustamentoRisposteProducer(this.coda);
-		return p;
+	
+	public String getIdMessaggio() {
+		return this.idMessaggio;
 	}
+	public void setIdMessaggio(String id) {
+		this.idMessaggio = id;
+	}
+	public GenericMessage getMsg() {
+		return this.msg;
+	}
+	public void setMsg(GenericMessage msg) {
+		this.msg = msg;
+	}
+	
+	
+	
 }

@@ -115,74 +115,42 @@
 		<var name="ejb_jar_xml" value=""/>
 		<var name="jboss_xml" value=""/>
 		<if>
-			<equals arg1="${build_openspcoop_with_linkit_threads}" arg2="true" />
+			<or>
+				<equals arg1="${as}" arg2="jboss4"/>
+				<equals arg1="${as}" arg2="jboss5"/>
+				<equals arg1="${as}" arg2="jboss6"/>
+			</or>
 			<then>
-				<if>
-					<or>
-						<equals arg1="${as}" arg2="jboss4"/>
-						<equals arg1="${as}" arg2="jboss5"/>
-						<equals arg1="${as}" arg2="jboss6"/>
-					</or>
-					<then>
-						<copy file="${src}/META-INF/ejb-jar.xml.ejb2.threads" tofile="${build}/tmpEJB/META-INF/ejb-jar.xml" />
-						<copy file="${src}/META-INF/jboss.xml.ejb2.threads" tofile="${build}/tmpEJB/META-INF/jboss.xml" />
-						<var name="ejb_jar_xml" value="ejb-jar.xml"/>
-						<var name="jboss_xml" value="jboss.xml"/>
-					</then>
-				</if>
+				<copy file="${src}/META-INF/ejb-jar.xml.ejb2" tofile="${build}/tmpEJB/META-INF/ejb-jar.xml" />
+				<copy file="${src}/META-INF/jboss.xml.ejb2" tofile="${build}/tmpEJB/META-INF/jboss.xml" />
+				<var name="ejb_jar_xml" value="ejb-jar.xml"/>
+				<var name="jboss_xml" value="jboss.xml"/>
+			</then>
+		</if>
+		<if>
+			<or>
+				<equals arg1="${as}" arg2="jboss7"/>
+				<matches string="${as}" pattern="wildfly.*"/>
+			</or>
+			<then>
+				<copy file="${src}/META-INF/ejb-jar.xml.ejb3" tofile="${build}/tmpEJB/META-INF/ejb-jar.xml" />
+				<copy file="${src}/META-INF/jboss.xml.ejb3" tofile="${build}/tmpEJB/META-INF/jboss-ejb3.xml" />
+				<var name="ejb_jar_xml" value="ejb-jar.xml"/>
+				<var name="jboss_xml" value="jboss-ejb3.xml"/>
 				<if>
 					<or>
 						<equals arg1="${as}" arg2="jboss7"/>
-						<matches string="${as}" pattern="wildfly.*"/>
+						<equals arg1="${as}" arg2="wildfly8"/>
+						<equals arg1="${as}" arg2="wildfly9"/>
 					</or>
 					<then>
-						<copy file="${src}/META-INF/ejb-jar.xml.ejb3.threads" tofile="${build}/tmpEJB/META-INF/ejb-jar.xml" />
-						<copy file="${src}/META-INF/jboss.xml.ejb3.threads" tofile="${build}/tmpEJB/META-INF/jboss-ejb3.xml" />
-						<var name="ejb_jar_xml" value="ejb-jar.xml"/>
-						<var name="jboss_xml" value="jboss-ejb3.xml"/>
+						<replace file="${build}/tmpEJB/META-INF/jboss-ejb3.xml" token="RA_OPENSPCOOP2" value="hornetq-ra-govway"/>
 					</then>
+					<else>
+						<replace file="${build}/tmpEJB/META-INF/jboss-ejb3.xml" token="RA_OPENSPCOOP2" value="activemq-ra-govway"/>
+					</else>
 				</if>
 			</then>
-			<else>
-				<if>
-					<or>
-						<equals arg1="${as}" arg2="jboss4"/>
-						<equals arg1="${as}" arg2="jboss5"/>
-						<equals arg1="${as}" arg2="jboss6"/>
-					</or>
-					<then>
-						<copy file="${src}/META-INF/ejb-jar.xml.ejb2" tofile="${build}/tmpEJB/META-INF/ejb-jar.xml" />
-						<copy file="${src}/META-INF/jboss.xml.ejb2" tofile="${build}/tmpEJB/META-INF/jboss.xml" />
-						<var name="ejb_jar_xml" value="ejb-jar.xml"/>
-						<var name="jboss_xml" value="jboss.xml"/>
-					</then>
-				</if>
-				<if>
-					<or>
-						<equals arg1="${as}" arg2="jboss7"/>
-						<matches string="${as}" pattern="wildfly.*"/>
-					</or>
-					<then>
-						<copy file="${src}/META-INF/ejb-jar.xml.ejb3" tofile="${build}/tmpEJB/META-INF/ejb-jar.xml" />
-						<copy file="${src}/META-INF/jboss.xml.ejb3" tofile="${build}/tmpEJB/META-INF/jboss-ejb3.xml" />
-						<var name="ejb_jar_xml" value="ejb-jar.xml"/>
-						<var name="jboss_xml" value="jboss-ejb3.xml"/>
-						<if>
-							<or>
-								<equals arg1="${as}" arg2="jboss7"/>
-								<equals arg1="${as}" arg2="wildfly8"/>
-								<equals arg1="${as}" arg2="wildfly9"/>
-							</or>
-							<then>
-								<replace file="${build}/tmpEJB/META-INF/jboss-ejb3.xml" token="RA_OPENSPCOOP2" value="hornetq-ra-govway"/>
-							</then>
-							<else>
-								<replace file="${build}/tmpEJB/META-INF/jboss-ejb3.xml" token="RA_OPENSPCOOP2" value="activemq-ra-govway"/>
-							</else>
-						</if>
-					</then>
-				</if>
-			</else>
 		</if>
 		
 		<!-- mailcap -->
@@ -320,17 +288,6 @@
 
 		<delete dir="${build}/web-module"/>
 	</target>
-
-
-	<!-- Creazione del modulo OpenSPCoop2Threads.jar -->
-	<target name="make_openspcoop2_threads" description="Crea il modulo WEB per i threads">
-		<war destfile="${dist}/OpenSPCoop2Threads.war" webxml="${deploy_threads_web_dir}/web.xml">
-			<manifest>
-				<attribute name="Class-Path" value="${manifest.classpath.3parti} ${plugins.classpath} ${manifest.classpath.openspcoop} properties/" />
-			</manifest>
-		</war>
-	</target>
-	
 	
 	
 	<!-- Costruisce l'ear di OpenSPCoop -->
@@ -349,12 +306,6 @@
 			</else>
 		</if>	
 		<runtarget target="make_openspcoop2_web" />
-		<if>
-			<equals arg1="${build_openspcoop_with_linkit_threads}" arg2="true" />
-			<then>
-				<runtarget target="make_openspcoop2_threads" />
-			</then>
-		</if>
 
 		<!-- costruzione application.xml -->
 		<delete file="${build}/application.xml" />
@@ -398,15 +349,6 @@
                                 files="application.xml.web"/>
 		</concat>
 		<if>
-			<equals arg1="${build_openspcoop_with_linkit_threads}" arg2="true" />
-			<then>
-				<concat destfile="${build}/application.xml" append="yes">
-					<filelist dir="${src}/META-INF"
-                                files="application.xml.threads"/>
-				</concat>
-			</then>	
-		</if>
-		<if>
 			<not>
 				<equals arg1="${plugins.application.listApplicationXML}" arg2="" />
 			</not>
@@ -422,56 +364,8 @@
                            files="application.xml.end"/>
 		</concat>
 
-		<!-- directory tmp per versionamento mdb/threads -->
-		<mkdir dir="${build}/tmp" />
-		<if>
-			<equals arg1="${build_openspcoop_with_linkit_threads}" arg2="true" />
-			<then>
-				<copy file="${dist}/OpenSPCoop2Threads.war" todir="${build}/tmp" />
-				<copy file="${deploy_threads_web_dir}/threads.properties" todir="${build}/tmp" />
-			</then>
-		</if>
-
 		<!-- OpenSPCoop2 Properties -->
 		<copy file="${properties_dir}/govway.properties" todir="${build}/tmp" />
-		<if>
-			<equals arg1="${build_openspcoop_with_linkit_threads}" arg2="true" />
-			<then>
-				<concat destfile="${build}/tmp/govway.properties" append="yes" >
-
-# ----- Personalizzazione LinkItThread -------------
-				</concat>
-				<antcall target="set_property">
-				    <param name="file" value="${build}/tmp/govway.properties"/>
-					<param name="token" value="org.openspcoop2.pdd.nodeSender"/>
-					<param name="value" value="db"/>
-				</antcall>
-				<antcall target="set_property">
-				    <param name="file" value="${build}/tmp/govway.properties"/>
-					<param name="token" value="org.openspcoop2.pdd.stateless.default.oneway"/>
-					<param name="value" value="disabilitato"/>
-				</antcall>
-				<antcall target="set_property">
-				    <param name="file" value="${build}/tmp/govway.properties"/>
-					<param name="token" value="org.openspcoop2.pdd.stateless.default.sincrono"/>
-					<param name="value" value="disabilitato"/>
-				</antcall>
-				<antcall target="set_property">
-				    <param name="file" value="${build}/tmp/govway.properties"/>
-					<param name="token" value="org.openspcoop2.pdd.stateful.oneway"/>
-					<param name="value" value="1.0"/>
-				</antcall>
-				<antcall target="set_property">
-				    <param name="file" value="${build}/tmp/govway.properties"/>
-					<param name="token" value="org.openspcoop2.pdd.stateless.router"/>
-					<param name="value" value="disabilitato"/>
-				</antcall>				
-				<antcall target="dos2unix">
-					<param name="dir" value="${build}/tmp"/>
-				    <param name="file" value="govway.properties"/>
-				</antcall>
-			</then>
-		</if>
 		<if>
 			<or>
 				<equals arg1="${as}" arg2="jboss7"/>
@@ -782,25 +676,6 @@
 					</then>
 				</if>	
 				<if>
-					<equals arg1="${build_openspcoop_with_linkit_threads}" arg2="true" />
-					<then>
-						<replace file="${build}/tmp/jboss-deployment-structure.xml" token="&lt;/jboss-deployment-structure&gt;" value=""/>
-						<concat destfile="${build}/tmp/jboss-deployment-structure.xml" append="yes">
-							<![CDATA[
-    <sub-deployment name="OpenSPCoop2Threads.war">
-        <exclusions>
-                <module name="org.apache.log4j"/>
-                <module name="org.slf4j" />
-                <module name="org.apache.commons.logging"/>
-                <module name="org.jboss.logging"/>
-        </exclusions>
-    </sub-deployment>
-</jboss-deployment-structure>						
-							]]>
-						</concat>
-					</then>	
-				</if>
-				<if>
 					<not>
 						<equals arg1="${plugins.application.listJbossDeploymentStructure}" arg2="" />
 					</not>
@@ -915,9 +790,6 @@
 				<include name="govwaySec.war" />
 				<include name="govway.jar" />
 				<include name="OpenSPCoop2PropertiesLoader.jar" />
-			</zipfileset>
-			<zipfileset dir="${build}/tmp">
-				<include name="OpenSPCoop2Threads.war" />
 			</zipfileset>
 			<!-- Librerie di OpenSPCoop2 -->
 			<zipfileset prefix="lib" dir="${dist}">
@@ -1072,10 +944,6 @@
 				<include name="govway.msgDiagnostici.properties" />
 			</zipfileset>
 			<zipfileset dir="${properties_dir}/crypto" prefix="properties" />
-			<!-- Properties di LinkITThreads -->
-			<zipfileset dir="${build}/tmp" prefix="properties">
-				<include name="threads.properties" />
-			</zipfileset>
 			<!-- Plugins -->
 			<zipfileset prefix="lib" dir="${plugins}">
 				<include name="**/*.jar"/>
@@ -1116,7 +984,6 @@
 		<delete file="${dist}/govway.war" />
 		<delete file="${dist}/govwaySec.war" />
 		<delete file="${dist}/govway.jar" />
-		<delete file="${dist}/OpenSPCoop2Threads.war" failonerror="false" />
 		
 	</target>
 
