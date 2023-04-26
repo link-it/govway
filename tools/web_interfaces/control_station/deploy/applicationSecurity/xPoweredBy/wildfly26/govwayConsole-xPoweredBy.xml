@@ -1,0 +1,34 @@
+<server>
+   ...
+   <profile>
+        ...
+        <subsystem xmlns="urn:jboss:domain:undertow:12.0" ...>
+        	<server name="default-server">
+                ...
+                <host name="default-host" alias="localhost">
+                    ...
+                    
+                    <!-- Aggiungere il riferimento al filtro -->
+            		<filter-ref name="samesite-cookie"/>
+                </host>
+            </server>
+			<servlet-container name="default">
+                ...
+            </servlet-container>
+            <handlers>
+                ...
+            </handlers>
+            <application-security-domains>
+                ...
+        	</application-security-domains>
+        	
+        	<!-- Aggiungere la definizione dei filtri -->
+            <filters>
+		        <!-- Configurazione dell'handler samesite -->
+		        <expression-filter name="samesite-cookie" expression="samesite-cookie(mode=strict)"/>
+		    </filters>
+        </subsystem>
+        ...
+   </profile>
+   ...
+</server>
