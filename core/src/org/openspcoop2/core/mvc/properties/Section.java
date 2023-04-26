@@ -152,64 +152,10 @@ public class Section extends org.openspcoop2.utils.beans.BaseBean implements Ser
   protected Conditions conditions;
 
   @XmlElement(name="item",required=true,nillable=false)
-  protected List<Item> item = new ArrayList<Item>();
-
-  /**
-   * @deprecated Use method getItemList
-   * @return List&lt;Item&gt;
-  */
-  @Deprecated
-  public List<Item> getItem() {
-  	return this.item;
-  }
-
-  /**
-   * @deprecated Use method setItemList
-   * @param item List&lt;Item&gt;
-  */
-  @Deprecated
-  public void setItem(List<Item> item) {
-  	this.item=item;
-  }
-
-  /**
-   * @deprecated Use method sizeItemList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeItem() {
-  	return this.item.size();
-  }
+  private List<Item> item = new ArrayList<>();
 
   @XmlElement(name="subsection",required=true,nillable=false)
-  protected List<Subsection> subsection = new ArrayList<Subsection>();
-
-  /**
-   * @deprecated Use method getSubsectionList
-   * @return List&lt;Subsection&gt;
-  */
-  @Deprecated
-  public List<Subsection> getSubsection() {
-  	return this.subsection;
-  }
-
-  /**
-   * @deprecated Use method setSubsectionList
-   * @param subsection List&lt;Subsection&gt;
-  */
-  @Deprecated
-  public void setSubsection(List<Subsection> subsection) {
-  	this.subsection=subsection;
-  }
-
-  /**
-   * @deprecated Use method sizeSubsectionList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeSubsection() {
-  	return this.subsection.size();
-  }
+  private List<Subsection> subsection = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="label",required=true)

@@ -376,13 +376,13 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 
 		// elimino tutte le occorrenze di configurazioneTransazione_configurazioneTransazionePlugin non presenti nell'update
 
-		ISQLQueryObject sqlQueryObjectUpdate_configurazioneTransazionePlugin_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
-		sqlQueryObjectUpdate_configurazioneTransazionePlugin_deleteList.setANDLogicOperator(true);
-		sqlQueryObjectUpdate_configurazioneTransazionePlugin_deleteList.addDeleteTable(this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_PLUGIN));
-		java.util.List<JDBCObject> jdbcObjects_configurazioneTransazione_configurazioneTransazionePlugin_delete = new java.util.ArrayList<>();
+		ISQLQueryObject sqlQueryObjectUpdate_configurazioneTransazionePlugindeleteEngineList = sqlQueryObjectUpdate.newSQLQueryObject();
+		sqlQueryObjectUpdate_configurazioneTransazionePlugindeleteEngineList.setANDLogicOperator(true);
+		sqlQueryObjectUpdate_configurazioneTransazionePlugindeleteEngineList.addDeleteTable(this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_PLUGIN));
+		java.util.List<JDBCObject> jdbcObjects_configurazioneTransazione_configurazioneTransazionePlugindeleteEngine = new java.util.ArrayList<>();
 
-		sqlQueryObjectUpdate_configurazioneTransazionePlugin_deleteList.addWhereCondition("id_configurazione_transazione=?");
-		jdbcObjects_configurazioneTransazione_configurazioneTransazionePlugin_delete.add(new JDBCObject(configurazioneTransazione.getId(), Long.class));
+		sqlQueryObjectUpdate_configurazioneTransazionePlugindeleteEngineList.addWhereCondition("id_configurazione_transazione=?");
+		jdbcObjects_configurazioneTransazione_configurazioneTransazionePlugindeleteEngine.add(new JDBCObject(configurazioneTransazione.getId(), Long.class));
 
 		StringBuilder marks_configurazioneTransazione_configurazioneTransazionePlugin = new StringBuilder();
 		if(ids_configurazioneTransazione_configurazioneTransazionePlugin_da_non_eliminare.size() > 0) {
@@ -391,13 +391,13 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 					marks_configurazioneTransazione_configurazioneTransazionePlugin.append(",");
 				}
 				marks_configurazioneTransazione_configurazioneTransazionePlugin.append("?");
-				jdbcObjects_configurazioneTransazione_configurazioneTransazionePlugin_delete.add(new JDBCObject(ids, Long.class));
+				jdbcObjects_configurazioneTransazione_configurazioneTransazionePlugindeleteEngine.add(new JDBCObject(ids, Long.class));
 
 			}
-			sqlQueryObjectUpdate_configurazioneTransazionePlugin_deleteList.addWhereCondition("id NOT IN ("+marks_configurazioneTransazione_configurazioneTransazionePlugin.toString()+")");
+			sqlQueryObjectUpdate_configurazioneTransazionePlugindeleteEngineList.addWhereCondition("id NOT IN ("+marks_configurazioneTransazione_configurazioneTransazionePlugin.toString()+")");
 		}
 
-		jdbcUtilities.execute(sqlQueryObjectUpdate_configurazioneTransazionePlugin_deleteList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_configurazioneTransazione_configurazioneTransazionePlugin_delete.toArray(new JDBCObject[]{}));
+		jdbcUtilities.execute(sqlQueryObjectUpdate_configurazioneTransazionePlugindeleteEngineList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_configurazioneTransazione_configurazioneTransazionePlugindeleteEngine.toArray(new JDBCObject[]{}));
 
 		// for configurazioneTransazione_configurazioneTransazioneStato
 
@@ -468,13 +468,13 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 
 		// elimino tutte le occorrenze di configurazioneTransazione_configurazioneTransazioneStato non presenti nell'update
 
-		ISQLQueryObject sqlQueryObjectUpdate_configurazioneTransazioneStato_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
-		sqlQueryObjectUpdate_configurazioneTransazioneStato_deleteList.setANDLogicOperator(true);
-		sqlQueryObjectUpdate_configurazioneTransazioneStato_deleteList.addDeleteTable(this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_STATO));
-		java.util.List<JDBCObject> jdbcObjects_configurazioneTransazione_configurazioneTransazioneStato_delete = new java.util.ArrayList<>();
+		ISQLQueryObject sqlQueryObjectUpdate_configurazioneTransazioneStatodeleteEngineList = sqlQueryObjectUpdate.newSQLQueryObject();
+		sqlQueryObjectUpdate_configurazioneTransazioneStatodeleteEngineList.setANDLogicOperator(true);
+		sqlQueryObjectUpdate_configurazioneTransazioneStatodeleteEngineList.addDeleteTable(this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_STATO));
+		java.util.List<JDBCObject> jdbcObjects_configurazioneTransazione_configurazioneTransazioneStatodeleteEngine = new java.util.ArrayList<>();
 
-		sqlQueryObjectUpdate_configurazioneTransazioneStato_deleteList.addWhereCondition("id_configurazione_transazione=?");
-		jdbcObjects_configurazioneTransazione_configurazioneTransazioneStato_delete.add(new JDBCObject(configurazioneTransazione.getId(), Long.class));
+		sqlQueryObjectUpdate_configurazioneTransazioneStatodeleteEngineList.addWhereCondition("id_configurazione_transazione=?");
+		jdbcObjects_configurazioneTransazione_configurazioneTransazioneStatodeleteEngine.add(new JDBCObject(configurazioneTransazione.getId(), Long.class));
 
 		StringBuilder marks_configurazioneTransazione_configurazioneTransazioneStato = new StringBuilder();
 		if(ids_configurazioneTransazione_configurazioneTransazioneStato_da_non_eliminare.size() > 0) {
@@ -483,13 +483,13 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 					marks_configurazioneTransazione_configurazioneTransazioneStato.append(",");
 				}
 				marks_configurazioneTransazione_configurazioneTransazioneStato.append("?");
-				jdbcObjects_configurazioneTransazione_configurazioneTransazioneStato_delete.add(new JDBCObject(ids, Long.class));
+				jdbcObjects_configurazioneTransazione_configurazioneTransazioneStatodeleteEngine.add(new JDBCObject(ids, Long.class));
 
 			}
-			sqlQueryObjectUpdate_configurazioneTransazioneStato_deleteList.addWhereCondition("id NOT IN ("+marks_configurazioneTransazione_configurazioneTransazioneStato.toString()+")");
+			sqlQueryObjectUpdate_configurazioneTransazioneStatodeleteEngineList.addWhereCondition("id NOT IN ("+marks_configurazioneTransazione_configurazioneTransazioneStato.toString()+")");
 		}
 
-		jdbcUtilities.execute(sqlQueryObjectUpdate_configurazioneTransazioneStato_deleteList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_configurazioneTransazione_configurazioneTransazioneStato_delete.toArray(new JDBCObject[]{}));
+		jdbcUtilities.execute(sqlQueryObjectUpdate_configurazioneTransazioneStatodeleteEngineList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_configurazioneTransazione_configurazioneTransazioneStatodeleteEngine.toArray(new JDBCObject[]{}));
 
 		// for configurazioneTransazione_configurazioneTransazioneRisorsaContenuto
 
@@ -635,13 +635,13 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 
 		// elimino tutte le occorrenze di configurazioneTransazione_configurazioneTransazioneRisorsaContenuto non presenti nell'update
 
-		ISQLQueryObject sqlQueryObjectUpdate_configurazioneTransazioneRisorsaContenuto_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
-		sqlQueryObjectUpdate_configurazioneTransazioneRisorsaContenuto_deleteList.setANDLogicOperator(true);
-		sqlQueryObjectUpdate_configurazioneTransazioneRisorsaContenuto_deleteList.addDeleteTable(this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO));
-		java.util.List<JDBCObject> jdbcObjects_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_delete = new java.util.ArrayList<>();
+		ISQLQueryObject sqlQueryObjectUpdate_configurazioneTransazioneRisorsaContenutodeleteEngineList = sqlQueryObjectUpdate.newSQLQueryObject();
+		sqlQueryObjectUpdate_configurazioneTransazioneRisorsaContenutodeleteEngineList.setANDLogicOperator(true);
+		sqlQueryObjectUpdate_configurazioneTransazioneRisorsaContenutodeleteEngineList.addDeleteTable(this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO));
+		java.util.List<JDBCObject> jdbcObjects_configurazioneTransazione_configurazioneTransazioneRisorsaContenutodeleteEngine = new java.util.ArrayList<>();
 
-		sqlQueryObjectUpdate_configurazioneTransazioneRisorsaContenuto_deleteList.addWhereCondition("id_conf_transazione=?");
-		jdbcObjects_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_delete.add(new JDBCObject(configurazioneTransazione.getId(), Long.class));
+		sqlQueryObjectUpdate_configurazioneTransazioneRisorsaContenutodeleteEngineList.addWhereCondition("id_conf_transazione=?");
+		jdbcObjects_configurazioneTransazione_configurazioneTransazioneRisorsaContenutodeleteEngine.add(new JDBCObject(configurazioneTransazione.getId(), Long.class));
 
 		StringBuilder marks_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto = new StringBuilder();
 		if(ids_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_da_non_eliminare.size() > 0) {
@@ -650,13 +650,13 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 					marks_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto.append(",");
 				}
 				marks_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto.append("?");
-				jdbcObjects_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_delete.add(new JDBCObject(ids, Long.class));
+				jdbcObjects_configurazioneTransazione_configurazioneTransazioneRisorsaContenutodeleteEngine.add(new JDBCObject(ids, Long.class));
 
 			}
-			sqlQueryObjectUpdate_configurazioneTransazioneRisorsaContenuto_deleteList.addWhereCondition("id NOT IN ("+marks_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto.toString()+")");
+			sqlQueryObjectUpdate_configurazioneTransazioneRisorsaContenutodeleteEngineList.addWhereCondition("id NOT IN ("+marks_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto.toString()+")");
 		}
 
-		jdbcUtilities.execute(sqlQueryObjectUpdate_configurazioneTransazioneRisorsaContenuto_deleteList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_delete.toArray(new JDBCObject[]{}));
+		jdbcUtilities.execute(sqlQueryObjectUpdate_configurazioneTransazioneRisorsaContenutodeleteEngineList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_configurazioneTransazione_configurazioneTransazioneRisorsaContenutodeleteEngine.toArray(new JDBCObject[]{}));
 
 
 	}
@@ -666,8 +666,8 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, id),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, id),
 				this.getConfigurazioneTransazioneFieldConverter(), this, null, updateFields);
 	}
 	
@@ -676,8 +676,8 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, id),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, id),
 				this.getConfigurazioneTransazioneFieldConverter(), this, condition, updateFields);
 	}
 	
@@ -686,8 +686,8 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, id),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, id),
 				this.getConfigurazioneTransazioneFieldConverter(), this, updateModels);
 	}	
 	
@@ -697,7 +697,7 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getConfigurazioneTransazioneFieldConverter(), this, null, updateFields);
 	}
@@ -708,7 +708,7 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getConfigurazioneTransazioneFieldConverter(), this, condition, updateFields);
 	}
@@ -719,7 +719,7 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getConfigurazioneTransazioneFieldConverter(), this, updateModels);
 	}
@@ -760,11 +760,11 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 			}
 		}		
 		
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, longId);
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, longId);
 		
 	}
 
-	private void _delete(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long id) throws NotImplementedException,ServiceException,Exception {
+	private void deleteEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long id) throws NotImplementedException,ServiceException,Exception {
 	
 		if(id==null){
 			throw new ServiceException("Id is null");
@@ -780,11 +780,11 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 		
 
 		//Recupero oggetto _configurazioneTransazione_configurazioneTransazionePlugin
-		ISQLQueryObject sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazionePlugin_getToDelete = sqlQueryObjectDelete.newSQLQueryObject();
-		sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazionePlugin_getToDelete.setANDLogicOperator(true);
-		sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazionePlugin_getToDelete.addFromTable(this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_PLUGIN));
-		sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazionePlugin_getToDelete.addWhereCondition("id_configurazione_transazione=?");
-		java.util.List<Object> configurazioneTransazione_configurazioneTransazionePlugin_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazionePlugin_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_PLUGIN, this.getConfigurazioneTransazioneFetch(),
+		ISQLQueryObject sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazionePlugingetEngineToDelete = sqlQueryObjectDelete.newSQLQueryObject();
+		sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazionePlugingetEngineToDelete.setANDLogicOperator(true);
+		sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazionePlugingetEngineToDelete.addFromTable(this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_PLUGIN));
+		sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazionePlugingetEngineToDelete.addWhereCondition("id_configurazione_transazione=?");
+		java.util.List<Object> configurazioneTransazione_configurazioneTransazionePlugin_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazionePlugingetEngineToDelete.createSQLQuery(), jdbcProperties.isShowSql(), ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_PLUGIN, this.getConfigurazioneTransazioneFetch(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id,Long.class));
 
 		// for configurazioneTransazione_configurazioneTransazionePlugin
@@ -805,11 +805,11 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 		} // fine for configurazioneTransazione_configurazioneTransazionePlugin
 
 		//Recupero oggetto _configurazioneTransazione_configurazioneTransazioneStato
-		ISQLQueryObject sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneStato_getToDelete = sqlQueryObjectDelete.newSQLQueryObject();
-		sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneStato_getToDelete.setANDLogicOperator(true);
-		sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneStato_getToDelete.addFromTable(this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_STATO));
-		sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneStato_getToDelete.addWhereCondition("id_configurazione_transazione=?");
-		java.util.List<Object> configurazioneTransazione_configurazioneTransazioneStato_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneStato_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_STATO, this.getConfigurazioneTransazioneFetch(),
+		ISQLQueryObject sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneStatogetEngineToDelete = sqlQueryObjectDelete.newSQLQueryObject();
+		sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneStatogetEngineToDelete.setANDLogicOperator(true);
+		sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneStatogetEngineToDelete.addFromTable(this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_STATO));
+		sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneStatogetEngineToDelete.addWhereCondition("id_configurazione_transazione=?");
+		java.util.List<Object> configurazioneTransazione_configurazioneTransazioneStato_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneStatogetEngineToDelete.createSQLQuery(), jdbcProperties.isShowSql(), ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_STATO, this.getConfigurazioneTransazioneFetch(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id,Long.class));
 
 		// for configurazioneTransazione_configurazioneTransazioneStato
@@ -830,11 +830,11 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 		} // fine for configurazioneTransazione_configurazioneTransazioneStato
 
 		//Recupero oggetto _configurazioneTransazione_configurazioneTransazioneRisorsaContenuto
-		ISQLQueryObject sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_getToDelete = sqlQueryObjectDelete.newSQLQueryObject();
-		sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_getToDelete.setANDLogicOperator(true);
-		sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_getToDelete.addFromTable(this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO));
-		sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_getToDelete.addWhereCondition("id_conf_transazione=?");
-		java.util.List<Object> configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO, this.getConfigurazioneTransazioneFetch(),
+		ISQLQueryObject sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneRisorsaContenutogetEngineToDelete = sqlQueryObjectDelete.newSQLQueryObject();
+		sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneRisorsaContenutogetEngineToDelete.setANDLogicOperator(true);
+		sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneRisorsaContenutogetEngineToDelete.addFromTable(this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO));
+		sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneRisorsaContenutogetEngineToDelete.addWhereCondition("id_conf_transazione=?");
+		java.util.List<Object> configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_configurazioneTransazione_configurazioneTransazioneRisorsaContenutogetEngineToDelete.createSQLQuery(), jdbcProperties.isShowSql(), ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO, this.getConfigurazioneTransazioneFetch(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id,Long.class));
 
 		// for configurazioneTransazione_configurazioneTransazioneRisorsaContenuto
@@ -875,7 +875,7 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 		}catch(NotFoundException notFound){
 			return;
 		}
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, id);
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, id);
 		
 	}
 	
@@ -892,7 +892,7 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 		java.util.List<Long> lst = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, new JDBCPaginatedExpression(expression));
 		
 		for(Long id : lst) {
-			this._delete(jdbcProperties, log, connection, sqlQueryObject, id);
+			this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, id);
 		}
 		
 		return new NonNegativeNumber(lst.size());
@@ -905,7 +905,7 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 	
 	@Override
 	public void deleteById(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId) throws ServiceException, NotImplementedException, Exception {
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
 	}
 	
 	@Override

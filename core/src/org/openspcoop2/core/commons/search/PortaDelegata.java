@@ -295,63 +295,9 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBeanWithId im
   protected java.lang.String canale;
 
   @XmlElement(name="porta-delegata-servizio-applicativo",required=true,nillable=false)
-  protected List<PortaDelegataServizioApplicativo> portaDelegataServizioApplicativo = new ArrayList<PortaDelegataServizioApplicativo>();
-
-  /**
-   * @deprecated Use method getPortaDelegataServizioApplicativoList
-   * @return List&lt;PortaDelegataServizioApplicativo&gt;
-  */
-  @Deprecated
-  public List<PortaDelegataServizioApplicativo> getPortaDelegataServizioApplicativo() {
-  	return this.portaDelegataServizioApplicativo;
-  }
-
-  /**
-   * @deprecated Use method setPortaDelegataServizioApplicativoList
-   * @param portaDelegataServizioApplicativo List&lt;PortaDelegataServizioApplicativo&gt;
-  */
-  @Deprecated
-  public void setPortaDelegataServizioApplicativo(List<PortaDelegataServizioApplicativo> portaDelegataServizioApplicativo) {
-  	this.portaDelegataServizioApplicativo=portaDelegataServizioApplicativo;
-  }
-
-  /**
-   * @deprecated Use method sizePortaDelegataServizioApplicativoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizePortaDelegataServizioApplicativo() {
-  	return this.portaDelegataServizioApplicativo.size();
-  }
+  private List<PortaDelegataServizioApplicativo> portaDelegataServizioApplicativo = new ArrayList<>();
 
   @XmlElement(name="porta-delegata-azione",required=true,nillable=false)
-  protected List<PortaDelegataAzione> portaDelegataAzione = new ArrayList<PortaDelegataAzione>();
-
-  /**
-   * @deprecated Use method getPortaDelegataAzioneList
-   * @return List&lt;PortaDelegataAzione&gt;
-  */
-  @Deprecated
-  public List<PortaDelegataAzione> getPortaDelegataAzione() {
-  	return this.portaDelegataAzione;
-  }
-
-  /**
-   * @deprecated Use method setPortaDelegataAzioneList
-   * @param portaDelegataAzione List&lt;PortaDelegataAzione&gt;
-  */
-  @Deprecated
-  public void setPortaDelegataAzione(List<PortaDelegataAzione> portaDelegataAzione) {
-  	this.portaDelegataAzione=portaDelegataAzione;
-  }
-
-  /**
-   * @deprecated Use method sizePortaDelegataAzioneList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizePortaDelegataAzione() {
-  	return this.portaDelegataAzione.size();
-  }
+  private List<PortaDelegataAzione> portaDelegataAzione = new ArrayList<>();
 
 }

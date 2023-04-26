@@ -116,7 +116,7 @@ public class DriverAuditDBAppender {
 				
 				// binaries
 				ArrayList<Binary> list = this.getBinaries(id);
-				if(list!=null && list.size()>0){
+				if(list!=null && !list.isEmpty()){
 					operation.setBinaryList(list);
 				}	
 				

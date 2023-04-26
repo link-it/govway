@@ -109,11 +109,11 @@ public class Operation extends org.openspcoop2.utils.beans.BaseBeanWithId implem
     return this.binary.size();
   }
 
-  public void set_value_tipologia(String value) {
+  public void setTipologiaRawEnumValue(String value) {
     this.tipologia = (Tipologia) Tipologia.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipologia() {
+  public String getTipologiaRawEnumValue() {
     if(this.tipologia == null){
     	return null;
     }else{
@@ -161,11 +161,11 @@ public class Operation extends org.openspcoop2.utils.beans.BaseBeanWithId implem
     this.utente = utente;
   }
 
-  public void set_value_stato(String value) {
+  public void setStatoRawEnumValue(String value) {
     this.stato = (Stato) Stato.toEnumConstantFromString(value);
   }
 
-  public String get_value_stato() {
+  public String getStatoRawEnumValue() {
     if(this.stato == null){
     	return null;
     }else{
@@ -242,37 +242,10 @@ public class Operation extends org.openspcoop2.utils.beans.BaseBeanWithId implem
   protected java.lang.String objectDetails;
 
   @XmlElement(name="binary",required=true,nillable=false)
-  protected List<Binary> binary = new ArrayList<Binary>();
-
-  /**
-   * @deprecated Use method getBinaryList
-   * @return List&lt;Binary&gt;
-  */
-  @Deprecated
-  public List<Binary> getBinary() {
-  	return this.binary;
-  }
-
-  /**
-   * @deprecated Use method setBinaryList
-   * @param binary List&lt;Binary&gt;
-  */
-  @Deprecated
-  public void setBinary(List<Binary> binary) {
-  	this.binary=binary;
-  }
-
-  /**
-   * @deprecated Use method sizeBinaryList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeBinary() {
-  	return this.binary.size();
-  }
+  private List<Binary> binary = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipologia;
+  protected java.lang.String tipologiaRawEnumValue;
 
   @XmlAttribute(name="tipologia",required=true)
   protected Tipologia tipologia;
@@ -294,7 +267,7 @@ public class Operation extends org.openspcoop2.utils.beans.BaseBeanWithId implem
   protected java.lang.String utente;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_stato;
+  protected java.lang.String statoRawEnumValue;
 
   @XmlAttribute(name="stato",required=true)
   protected Stato stato;

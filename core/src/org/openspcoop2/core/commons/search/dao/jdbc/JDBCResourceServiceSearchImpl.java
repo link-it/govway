@@ -115,7 +115,7 @@ public class JDBCResourceServiceSearchImpl implements IJDBCServiceSearchWithId<R
 	@Override
 	public Resource get(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdResource id, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException,Exception {
 		Long id_resource = ( (id!=null && id.getId()!=null && id.getId()>0) ? id.getId() : this.findIdResource(jdbcProperties, log, connection, sqlQueryObject, id, true));
-		return this._get(jdbcProperties, log, connection, sqlQueryObject, id_resource,idMappingResolutionBehaviour);
+		return this.getEngine(jdbcProperties, log, connection, sqlQueryObject, id_resource,idMappingResolutionBehaviour);
 		
 		
 	}
@@ -194,7 +194,7 @@ public class JDBCResourceServiceSearchImpl implements IJDBCServiceSearchWithId<R
 		
 		sqlQueryObject.addSelectCountField(this.getResourceFieldConverter().toTable(Resource.model())+".id","tot",true);
 		
-		_join(expression,sqlQueryObject);
+		joinEngine(expression,sqlQueryObject);
 		
 		return org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.count(jdbcProperties, log, connection, sqlQueryObject, expression,
 																			this.getResourceFieldConverter(), Resource.model(),listaQuery);
@@ -204,7 +204,7 @@ public class JDBCResourceServiceSearchImpl implements IJDBCServiceSearchWithId<R
 	public InUse inUse(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdResource id) throws NotFoundException, NotImplementedException, ServiceException,Exception {
 		
 		Long id_resource = this.findIdResource(jdbcProperties, log, connection, sqlQueryObject, id, true);
-        return this._inUse(jdbcProperties, log, connection, sqlQueryObject, id_resource);
+        return this.inUseEngine(jdbcProperties, log, connection, sqlQueryObject, id_resource);
 		
 	}
 
@@ -241,7 +241,7 @@ public class JDBCResourceServiceSearchImpl implements IJDBCServiceSearchWithId<R
 						org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareSqlQueryObjectForSelectDistinct(distinct,sqlQueryObject, paginatedExpression, log,
 												this.getResourceFieldConverter(), field);
 
-			return _select(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression, sqlQueryObjectDistinct);
+			return selectEngine(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression, sqlQueryObjectDistinct);
 			
 		}finally{
 			org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.removeFields(sqlQueryObject,paginatedExpression,field);
@@ -262,7 +262,7 @@ public class JDBCResourceServiceSearchImpl implements IJDBCServiceSearchWithId<R
 		
 		org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.setFields(sqlQueryObject,expression,functionField);
 		try{
-			List<Map<String,Object>> list = _select(jdbcProperties, log, connection, sqlQueryObject, expression);
+			List<Map<String,Object>> list = selectEngine(jdbcProperties, log, connection, sqlQueryObject, expression);
 			return list.get(0);
 		}finally{
 			org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.removeFields(sqlQueryObject,expression,functionField);
@@ -273,13 +273,13 @@ public class JDBCResourceServiceSearchImpl implements IJDBCServiceSearchWithId<R
 	public List<Map<String,Object>> groupBy(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
 													JDBCExpression expression, FunctionField ... functionField) throws ServiceException,NotFoundException,NotImplementedException,Exception {
 		
-		if(expression.getGroupByFields().size()<=0){
+		if(expression.getGroupByFields().isEmpty()){
 			throw new ServiceException("GroupBy conditions not found in expression");
 		}
 		
 		org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.setFields(sqlQueryObject,expression,functionField);
 		try{
-			return _select(jdbcProperties, log, connection, sqlQueryObject, expression);
+			return selectEngine(jdbcProperties, log, connection, sqlQueryObject, expression);
 		}finally{
 			org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.removeFields(sqlQueryObject,expression,functionField);
 		}
@@ -290,23 +290,23 @@ public class JDBCResourceServiceSearchImpl implements IJDBCServiceSearchWithId<R
 	public List<Map<String,Object>> groupBy(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
 													JDBCPaginatedExpression paginatedExpression, FunctionField ... functionField) throws ServiceException,NotFoundException,NotImplementedException,Exception {
 		
-		if(paginatedExpression.getGroupByFields().size()<=0){
+		if(paginatedExpression.getGroupByFields().isEmpty()){
 			throw new ServiceException("GroupBy conditions not found in expression");
 		}
 		
 		org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.setFields(sqlQueryObject,paginatedExpression,functionField);
 		try{
-			return _select(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression);
+			return selectEngine(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression);
 		}finally{
 			org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.removeFields(sqlQueryObject,paginatedExpression,functionField);
 		}
 	}
 	
-	protected List<Map<String,Object>> _select(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
+	protected List<Map<String,Object>> selectEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
 												IExpression expression) throws ServiceException,NotFoundException,NotImplementedException,Exception {
-		return _select(jdbcProperties, log, connection, sqlQueryObject, expression, null);
+		return selectEngine(jdbcProperties, log, connection, sqlQueryObject, expression, null);
 	}
-	protected List<Map<String,Object>> _select(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
+	protected List<Map<String,Object>> selectEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
 												IExpression expression, ISQLQueryObject sqlQueryObjectDistinct) throws ServiceException,NotFoundException,NotImplementedException,Exception {
 		
 		List<Object> listaQuery = new ArrayList<>();
@@ -315,17 +315,17 @@ public class JDBCResourceServiceSearchImpl implements IJDBCServiceSearchWithId<R
         						expression, this.getResourceFieldConverter(), Resource.model(), 
         						listaQuery,listaParams);
 		
-		_join(expression,sqlQueryObject);
+		joinEngine(expression,sqlQueryObject);
         
         List<Map<String,Object>> list = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.select(jdbcProperties, log, connection,
         								org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareSqlQueryObjectForSelectDistinct(sqlQueryObject,sqlQueryObjectDistinct), 
         								expression, this.getResourceFieldConverter(), Resource.model(),
         								listaQuery,listaParams,returnField);
-		if(list!=null && list.size()>0){
+		if(list!=null && !list.isEmpty()){
 			return list;
 		}
 		else{
-			throw new NotFoundException("Not Found");
+			throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 		}
 	}
 	
@@ -343,18 +343,18 @@ public class JDBCResourceServiceSearchImpl implements IJDBCServiceSearchWithId<R
 			for (int i = 0; i < unionExpression.length; i++) {
 				UnionExpression ue = unionExpression[i];
 				IExpression expression = ue.getExpression();
-				_join(expression,sqlQueryObjectInnerList.get(i));
+				joinEngine(expression,sqlQueryObjectInnerList.get(i));
 			}
 		}
         
         List<Map<String,Object>> list = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.union(jdbcProperties, log, connection, sqlQueryObject, 
         								this.getResourceFieldConverter(), Resource.model(), 
         								sqlQueryObjectInnerList, jdbcObjects, returnClassTypes, union, unionExpression);
-        if(list!=null && list.size()>0){
+        if(list!=null && !list.isEmpty()){
 			return list;
 		}
 		else{
-			throw new NotFoundException("Not Found");
+			throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 		}								
 	}
 	
@@ -372,7 +372,7 @@ public class JDBCResourceServiceSearchImpl implements IJDBCServiceSearchWithId<R
 			for (int i = 0; i < unionExpression.length; i++) {
 				UnionExpression ue = unionExpression[i];
 				IExpression expression = ue.getExpression();
-				_join(expression,sqlQueryObjectInnerList.get(i));
+				joinEngine(expression,sqlQueryObjectInnerList.get(i));
 			}
 		}
         
@@ -383,7 +383,7 @@ public class JDBCResourceServiceSearchImpl implements IJDBCServiceSearchWithId<R
 			return number;
 		}
 		else{
-			throw new NotFoundException("Not Found");
+			throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 		}
 	}
 
@@ -461,10 +461,10 @@ public class JDBCResourceServiceSearchImpl implements IJDBCServiceSearchWithId<R
 	
 	@Override
 	public Resource get(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException, Exception {
-		return this._get(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId), idMappingResolutionBehaviour);
+		return this.getEngine(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId), idMappingResolutionBehaviour);
 	}
 	
-	private Resource _get(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long tableId, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException, Exception {
+	private Resource getEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long tableId, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException, Exception {
 	
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
@@ -543,7 +543,7 @@ public class JDBCResourceServiceSearchImpl implements IJDBCServiceSearchWithId<R
 	
 	}
 	
-	private void _join(IExpression expression, ISQLQueryObject sqlQueryObject) throws NotImplementedException, ServiceException, Exception{
+	private void joinEngine(IExpression expression, ISQLQueryObject sqlQueryObject) throws NotImplementedException, ServiceException, Exception{
 	
 		if(expression.inUseModel(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE,false)){
 			String tableName1 = this.getResourceFieldConverter().toAliasTable(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE);
@@ -564,7 +564,7 @@ public class JDBCResourceServiceSearchImpl implements IJDBCServiceSearchWithId<R
         
 	}
 	
-	protected java.util.List<Object> _getRootTablePrimaryKeyValues(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdResource id) throws NotFoundException, ServiceException, NotImplementedException, Exception{
+	protected java.util.List<Object> getRootTablePrimaryKeyValuesEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdResource id) throws NotFoundException, ServiceException, NotImplementedException, Exception{
 	    // Identificativi
         java.util.List<Object> rootTableIdValues = new java.util.ArrayList<>();
         Long longId = this.findIdResource(jdbcProperties, log, connection, sqlQueryObject.newSQLQueryObject(), id, true);
@@ -572,7 +572,7 @@ public class JDBCResourceServiceSearchImpl implements IJDBCServiceSearchWithId<R
         return rootTableIdValues;
 	}
 	
-	protected Map<String, List<IField>> _getMapTableToPKColumn() throws NotImplementedException, Exception{
+	protected Map<String, List<IField>> getMapTableToPKColumnEngine() throws NotImplementedException, Exception{
 	
 		ResourceFieldConverter converter = this.getResourceFieldConverter();
 		Map<String, List<IField>> mapTableToPKColumn = new java.util.HashMap<>();
@@ -612,7 +612,7 @@ public class JDBCResourceServiceSearchImpl implements IJDBCServiceSearchWithId<R
 		List<Object> listaQuery = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareFindAll(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression,
 												this.getResourceFieldConverter(), Resource.model());
 		
-		_join(paginatedExpression,sqlQueryObject);
+		joinEngine(paginatedExpression,sqlQueryObject);
 		
 		List<Object> listObjects = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.findAll(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression,
 																			this.getResourceFieldConverter(), Resource.model(), objectIdClass, listaQuery);
@@ -635,7 +635,7 @@ public class JDBCResourceServiceSearchImpl implements IJDBCServiceSearchWithId<R
 		List<Object> listaQuery = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareFind(jdbcProperties, log, connection, sqlQueryObject, expression,
 												this.getResourceFieldConverter(), Resource.model());
 		
-		_join(expression,sqlQueryObject);
+		joinEngine(expression,sqlQueryObject);
 
 		Object res = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.find(jdbcProperties, log, connection, sqlQueryObject, expression,
 														this.getResourceFieldConverter(), Resource.model(), objectIdClass, listaQuery);
@@ -643,17 +643,17 @@ public class JDBCResourceServiceSearchImpl implements IJDBCServiceSearchWithId<R
 			return ((Long) res).longValue();
 		}
 		else{
-			throw new NotFoundException("Not Found");
+			throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 		}
 		
 	}
 
 	@Override
 	public InUse inUse(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId) throws ServiceException, NotFoundException, NotImplementedException, Exception {
-		return this._inUse(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
+		return this.inUseEngine(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
 	}
 
-	private InUse _inUse(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long tableId) throws ServiceException, NotFoundException, NotImplementedException, Exception {
+	private InUse inUseEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long tableId) throws ServiceException, NotFoundException, NotImplementedException, Exception {
 
 		InUse inUse = new InUse();
 		inUse.setInUse(false);
@@ -702,7 +702,7 @@ public class JDBCResourceServiceSearchImpl implements IJDBCServiceSearchWithId<R
 				listaFieldIdReturnType_resource, searchParams_resource);
 		if(listaFieldId_resource==null || listaFieldId_resource.size()<=0){
 			if(throwNotFound){
-				throw new NotFoundException("Not Found");
+				throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 			}
 		}
 		else{
@@ -789,7 +789,7 @@ public class JDBCResourceServiceSearchImpl implements IJDBCServiceSearchWithId<R
 		}
 		if(id_resource==null || id_resource<=0){
 			if(throwNotFound){
-				throw new NotFoundException("Not Found");
+				throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 			}
 		}
 		

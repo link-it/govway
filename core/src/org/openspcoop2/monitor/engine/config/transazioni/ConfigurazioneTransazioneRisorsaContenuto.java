@@ -103,11 +103,11 @@ public class ConfigurazioneTransazioneRisorsaContenuto extends org.openspcoop2.u
     this.abilitaCompressione = abilitaCompressione;
   }
 
-  public void set_value_tipoCompressione(String value) {
+  public void setTipoCompressioneRawEnumValue(String value) {
     this.tipoCompressione = (TipoCompressione) TipoCompressione.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipoCompressione() {
+  public String getTipoCompressioneRawEnumValue() {
     if(this.tipoCompressione == null){
     	return null;
     }else{
@@ -145,11 +145,11 @@ public class ConfigurazioneTransazioneRisorsaContenuto extends org.openspcoop2.u
     this.numeroCaratteriMaschera = numeroCaratteriMaschera;
   }
 
-  public void set_value_posizionamentoMaschera(String value) {
+  public void setPosizionamentoMascheraRawEnumValue(String value) {
     this.posizionamentoMaschera = (PosizioneMascheramento) PosizioneMascheramento.toEnumConstantFromString(value);
   }
 
-  public String get_value_posizionamentoMaschera() {
+  public String getPosizionamentoMascheraRawEnumValue() {
     if(this.posizionamentoMaschera == null){
     	return null;
     }else{
@@ -165,11 +165,11 @@ public class ConfigurazioneTransazioneRisorsaContenuto extends org.openspcoop2.u
     this.posizionamentoMaschera = posizionamentoMaschera;
   }
 
-  public void set_value_tipoMascheramento(String value) {
+  public void setTipoMascheramentoRawEnumValue(String value) {
     this.tipoMascheramento = (TipoMascheramento) TipoMascheramento.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipoMascheramento() {
+  public String getTipoMascheramentoRawEnumValue() {
     if(this.tipoMascheramento == null){
     	return null;
     }else{
@@ -205,11 +205,11 @@ public class ConfigurazioneTransazioneRisorsaContenuto extends org.openspcoop2.u
     this.nome = nome;
   }
 
-  public void set_value_tipoMessaggio(String value) {
+  public void setTipoMessaggioRawEnumValue(String value) {
     this.tipoMessaggio = (TipoMessaggio) TipoMessaggio.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipoMessaggio() {
+  public String getTipoMessaggioRawEnumValue() {
     if(this.tipoMessaggio == null){
     	return null;
     }else{
@@ -266,7 +266,7 @@ public class ConfigurazioneTransazioneRisorsaContenuto extends org.openspcoop2.u
   protected java.lang.Integer abilitaCompressione = java.lang.Integer.valueOf("0");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipoCompressione;
+  protected java.lang.String tipoCompressioneRawEnumValue;
 
   @XmlElement(name="tipo-compressione",required=false,nillable=false)
   protected TipoCompressione tipoCompressione;
@@ -291,13 +291,13 @@ public class ConfigurazioneTransazioneRisorsaContenuto extends org.openspcoop2.u
   protected java.lang.Integer numeroCaratteriMaschera;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_posizionamentoMaschera;
+  protected java.lang.String posizionamentoMascheraRawEnumValue;
 
   @XmlElement(name="posizionamento-maschera",required=false,nillable=false)
   protected PosizioneMascheramento posizionamentoMaschera;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipoMascheramento;
+  protected java.lang.String tipoMascheramentoRawEnumValue;
 
   @XmlElement(name="tipo-mascheramento",required=false,nillable=false)
   protected TipoMascheramento tipoMascheramento;
@@ -311,7 +311,7 @@ public class ConfigurazioneTransazioneRisorsaContenuto extends org.openspcoop2.u
   protected java.lang.String nome;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipoMessaggio;
+  protected java.lang.String tipoMessaggioRawEnumValue;
 
   @XmlElement(name="tipo-messaggio",required=true,nillable=false)
   protected TipoMessaggio tipoMessaggio;

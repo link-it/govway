@@ -55,30 +55,31 @@ public class JDBCLimitedServiceManager extends JDBCServiceManager {
 
 	private JDBCServiceManager unlimitedJdbcServiceManager;
 
-	public JDBCLimitedServiceManager(JDBCServiceManager jdbcServiceManager) throws ServiceException {
-		this.datasource = jdbcServiceManager.get_Datasource();
-		this.connection = jdbcServiceManager.get_Connection();
-		this.log = jdbcServiceManager.get_Logger();
-		this.jdbcProperties = jdbcServiceManager.get_JdbcProperties();
+	public JDBCLimitedServiceManager(JDBCServiceManager jdbcServiceManager) {
+		this.datasource = jdbcServiceManager.getDatasourceInternalResource();
+		this.connection = jdbcServiceManager.getConnectionInternalResource();
+		this.log = jdbcServiceManager.getLoggerInternalResource();
+		this.jdbcProperties = jdbcServiceManager.getJdbcPropertiesInternalResource();
 		this.unlimitedJdbcServiceManager = jdbcServiceManager;
 	}
 	
+	private static final String CONNNECTION_MANAGED = "Connection managed from framework";
 	
 	@Override
 	public Connection getConnection() throws ServiceException {
-		throw new ServiceException("Connection managed from framework");
+		throw new ServiceException(CONNNECTION_MANAGED);
 	}
 	@Override
 	public void closeConnection(Connection connection) throws ServiceException {
-		throw new ServiceException("Connection managed from framework");
+		throw new ServiceException(CONNNECTION_MANAGED);
 	}
 	@Override
-	protected Connection get_Connection() throws ServiceException {
-		throw new ServiceException("Connection managed from framework");
+	protected Connection getConnectionInternalResource() {
+		throw new org.openspcoop2.utils.UtilsRuntimeException(CONNNECTION_MANAGED);
 	}
 	@Override
-	protected DataSource get_Datasource() throws ServiceException {
-		throw new ServiceException("Connection managed from framework");
+	protected DataSource getDatasourceInternalResource() {
+		throw new org.openspcoop2.utils.UtilsRuntimeException(CONNNECTION_MANAGED);
 	}
 	
 	

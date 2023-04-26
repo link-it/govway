@@ -253,63 +253,9 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBeanWit
   protected IdSoggetto idSoggetto;
 
   @XmlElement(name="servizio-applicativo-ruolo",required=true,nillable=false)
-  protected List<ServizioApplicativoRuolo> servizioApplicativoRuolo = new ArrayList<ServizioApplicativoRuolo>();
-
-  /**
-   * @deprecated Use method getServizioApplicativoRuoloList
-   * @return List&lt;ServizioApplicativoRuolo&gt;
-  */
-  @Deprecated
-  public List<ServizioApplicativoRuolo> getServizioApplicativoRuolo() {
-  	return this.servizioApplicativoRuolo;
-  }
-
-  /**
-   * @deprecated Use method setServizioApplicativoRuoloList
-   * @param servizioApplicativoRuolo List&lt;ServizioApplicativoRuolo&gt;
-  */
-  @Deprecated
-  public void setServizioApplicativoRuolo(List<ServizioApplicativoRuolo> servizioApplicativoRuolo) {
-  	this.servizioApplicativoRuolo=servizioApplicativoRuolo;
-  }
-
-  /**
-   * @deprecated Use method sizeServizioApplicativoRuoloList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeServizioApplicativoRuolo() {
-  	return this.servizioApplicativoRuolo.size();
-  }
+  private List<ServizioApplicativoRuolo> servizioApplicativoRuolo = new ArrayList<>();
 
   @XmlElement(name="servizio-applicativo-proprieta-protocollo",required=true,nillable=false)
-  protected List<ServizioApplicativoProprietaProtocollo> servizioApplicativoProprietaProtocollo = new ArrayList<ServizioApplicativoProprietaProtocollo>();
-
-  /**
-   * @deprecated Use method getServizioApplicativoProprietaProtocolloList
-   * @return List&lt;ServizioApplicativoProprietaProtocollo&gt;
-  */
-  @Deprecated
-  public List<ServizioApplicativoProprietaProtocollo> getServizioApplicativoProprietaProtocollo() {
-  	return this.servizioApplicativoProprietaProtocollo;
-  }
-
-  /**
-   * @deprecated Use method setServizioApplicativoProprietaProtocolloList
-   * @param servizioApplicativoProprietaProtocollo List&lt;ServizioApplicativoProprietaProtocollo&gt;
-  */
-  @Deprecated
-  public void setServizioApplicativoProprietaProtocollo(List<ServizioApplicativoProprietaProtocollo> servizioApplicativoProprietaProtocollo) {
-  	this.servizioApplicativoProprietaProtocollo=servizioApplicativoProprietaProtocollo;
-  }
-
-  /**
-   * @deprecated Use method sizeServizioApplicativoProprietaProtocolloList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeServizioApplicativoProprietaProtocollo() {
-  	return this.servizioApplicativoProprietaProtocollo.size();
-  }
+  private List<ServizioApplicativoProprietaProtocollo> servizioApplicativoProprietaProtocollo = new ArrayList<>();
 
 }

@@ -70,11 +70,11 @@ public class PortaDominio extends org.openspcoop2.utils.beans.BaseBeanWithId imp
     this.nome = nome;
   }
 
-  public void set_value_tipo(String value) {
+  public void setTipoRawEnumValue(String value) {
     this.tipo = (TipoPdD) TipoPdD.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipo() {
+  public String getTipoRawEnumValue() {
     if(this.tipo == null){
     	return null;
     }else{
@@ -111,7 +111,7 @@ public class PortaDominio extends org.openspcoop2.utils.beans.BaseBeanWithId imp
   protected java.lang.String nome;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipo;
+  protected java.lang.String tipoRawEnumValue;
 
   @XmlElement(name="tipo",required=false,nillable=false)
   protected TipoPdD tipo;

@@ -185,93 +185,12 @@ public class ConfigurazioneTransazione extends org.openspcoop2.utils.beans.BaseB
   protected boolean enabled;
 
   @XmlElement(name="configurazione-transazione-plugin",required=true,nillable=false)
-  protected List<ConfigurazioneTransazionePlugin> configurazioneTransazionePlugin = new ArrayList<ConfigurazioneTransazionePlugin>();
-
-  /**
-   * @deprecated Use method getConfigurazioneTransazionePluginList
-   * @return List&lt;ConfigurazioneTransazionePlugin&gt;
-  */
-  @Deprecated
-  public List<ConfigurazioneTransazionePlugin> getConfigurazioneTransazionePlugin() {
-  	return this.configurazioneTransazionePlugin;
-  }
-
-  /**
-   * @deprecated Use method setConfigurazioneTransazionePluginList
-   * @param configurazioneTransazionePlugin List&lt;ConfigurazioneTransazionePlugin&gt;
-  */
-  @Deprecated
-  public void setConfigurazioneTransazionePlugin(List<ConfigurazioneTransazionePlugin> configurazioneTransazionePlugin) {
-  	this.configurazioneTransazionePlugin=configurazioneTransazionePlugin;
-  }
-
-  /**
-   * @deprecated Use method sizeConfigurazioneTransazionePluginList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeConfigurazioneTransazionePlugin() {
-  	return this.configurazioneTransazionePlugin.size();
-  }
+  private List<ConfigurazioneTransazionePlugin> configurazioneTransazionePlugin = new ArrayList<>();
 
   @XmlElement(name="configurazione-transazione-stato",required=true,nillable=false)
-  protected List<ConfigurazioneTransazioneStato> configurazioneTransazioneStato = new ArrayList<ConfigurazioneTransazioneStato>();
-
-  /**
-   * @deprecated Use method getConfigurazioneTransazioneStatoList
-   * @return List&lt;ConfigurazioneTransazioneStato&gt;
-  */
-  @Deprecated
-  public List<ConfigurazioneTransazioneStato> getConfigurazioneTransazioneStato() {
-  	return this.configurazioneTransazioneStato;
-  }
-
-  /**
-   * @deprecated Use method setConfigurazioneTransazioneStatoList
-   * @param configurazioneTransazioneStato List&lt;ConfigurazioneTransazioneStato&gt;
-  */
-  @Deprecated
-  public void setConfigurazioneTransazioneStato(List<ConfigurazioneTransazioneStato> configurazioneTransazioneStato) {
-  	this.configurazioneTransazioneStato=configurazioneTransazioneStato;
-  }
-
-  /**
-   * @deprecated Use method sizeConfigurazioneTransazioneStatoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeConfigurazioneTransazioneStato() {
-  	return this.configurazioneTransazioneStato.size();
-  }
+  private List<ConfigurazioneTransazioneStato> configurazioneTransazioneStato = new ArrayList<>();
 
   @XmlElement(name="configurazione-transazione-risorsa-contenuto",required=true,nillable=false)
-  protected List<ConfigurazioneTransazioneRisorsaContenuto> configurazioneTransazioneRisorsaContenuto = new ArrayList<ConfigurazioneTransazioneRisorsaContenuto>();
-
-  /**
-   * @deprecated Use method getConfigurazioneTransazioneRisorsaContenutoList
-   * @return List&lt;ConfigurazioneTransazioneRisorsaContenuto&gt;
-  */
-  @Deprecated
-  public List<ConfigurazioneTransazioneRisorsaContenuto> getConfigurazioneTransazioneRisorsaContenuto() {
-  	return this.configurazioneTransazioneRisorsaContenuto;
-  }
-
-  /**
-   * @deprecated Use method setConfigurazioneTransazioneRisorsaContenutoList
-   * @param configurazioneTransazioneRisorsaContenuto List&lt;ConfigurazioneTransazioneRisorsaContenuto&gt;
-  */
-  @Deprecated
-  public void setConfigurazioneTransazioneRisorsaContenuto(List<ConfigurazioneTransazioneRisorsaContenuto> configurazioneTransazioneRisorsaContenuto) {
-  	this.configurazioneTransazioneRisorsaContenuto=configurazioneTransazioneRisorsaContenuto;
-  }
-
-  /**
-   * @deprecated Use method sizeConfigurazioneTransazioneRisorsaContenutoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeConfigurazioneTransazioneRisorsaContenuto() {
-  	return this.configurazioneTransazioneRisorsaContenuto.size();
-  }
+  private List<ConfigurazioneTransazioneRisorsaContenuto> configurazioneTransazioneRisorsaContenuto = new ArrayList<>();
 
 }

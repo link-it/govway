@@ -90,33 +90,6 @@ public class Properties extends org.openspcoop2.utils.beans.BaseBean implements 
 
 
   @XmlElement(name="collection",required=true,nillable=false)
-  protected List<Collection> collection = new ArrayList<Collection>();
-
-  /**
-   * @deprecated Use method getCollectionList
-   * @return List&lt;Collection&gt;
-  */
-  @Deprecated
-  public List<Collection> getCollection() {
-  	return this.collection;
-  }
-
-  /**
-   * @deprecated Use method setCollectionList
-   * @param collection List&lt;Collection&gt;
-  */
-  @Deprecated
-  public void setCollection(List<Collection> collection) {
-  	this.collection=collection;
-  }
-
-  /**
-   * @deprecated Use method sizeCollectionList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeCollection() {
-  	return this.collection.size();
-  }
+  private List<Collection> collection = new ArrayList<>();
 
 }

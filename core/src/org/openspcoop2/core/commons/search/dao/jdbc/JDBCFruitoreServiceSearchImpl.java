@@ -115,7 +115,7 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 	@Override
 	public Fruitore get(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdFruitore id, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException,Exception {
 		Long id_fruitore = ( (id!=null && id.getId()!=null && id.getId()>0) ? id.getId() : this.findIdFruitore(jdbcProperties, log, connection, sqlQueryObject, id, true));
-		return this._get(jdbcProperties, log, connection, sqlQueryObject, id_fruitore,idMappingResolutionBehaviour);
+		return this.getEngine(jdbcProperties, log, connection, sqlQueryObject, id_fruitore,idMappingResolutionBehaviour);
 		
 		
 	}
@@ -293,7 +293,7 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 		
 		sqlQueryObject.addSelectCountField(this.getFruitoreFieldConverter().toTable(Fruitore.model())+".id","tot",true);
 		
-		_join(expression,sqlQueryObject);
+		joinEngine(expression,sqlQueryObject);
 		
 		return org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.count(jdbcProperties, log, connection, sqlQueryObject, expression,
 																			this.getFruitoreFieldConverter(), Fruitore.model(),listaQuery);
@@ -303,7 +303,7 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 	public InUse inUse(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdFruitore id) throws NotFoundException, NotImplementedException, ServiceException,Exception {
 		
 		Long id_fruitore = this.findIdFruitore(jdbcProperties, log, connection, sqlQueryObject, id, true);
-        return this._inUse(jdbcProperties, log, connection, sqlQueryObject, id_fruitore);
+        return this.inUseEngine(jdbcProperties, log, connection, sqlQueryObject, id_fruitore);
 		
 	}
 
@@ -340,7 +340,7 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 						org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareSqlQueryObjectForSelectDistinct(distinct,sqlQueryObject, paginatedExpression, log,
 												this.getFruitoreFieldConverter(), field);
 
-			return _select(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression, sqlQueryObjectDistinct);
+			return selectEngine(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression, sqlQueryObjectDistinct);
 			
 		}finally{
 			org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.removeFields(sqlQueryObject,paginatedExpression,field);
@@ -361,7 +361,7 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 		
 		org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.setFields(sqlQueryObject,expression,functionField);
 		try{
-			List<Map<String,Object>> list = _select(jdbcProperties, log, connection, sqlQueryObject, expression);
+			List<Map<String,Object>> list = selectEngine(jdbcProperties, log, connection, sqlQueryObject, expression);
 			return list.get(0);
 		}finally{
 			org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.removeFields(sqlQueryObject,expression,functionField);
@@ -372,13 +372,13 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 	public List<Map<String,Object>> groupBy(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
 													JDBCExpression expression, FunctionField ... functionField) throws ServiceException,NotFoundException,NotImplementedException,Exception {
 		
-		if(expression.getGroupByFields().size()<=0){
+		if(expression.getGroupByFields().isEmpty()){
 			throw new ServiceException("GroupBy conditions not found in expression");
 		}
 		
 		org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.setFields(sqlQueryObject,expression,functionField);
 		try{
-			return _select(jdbcProperties, log, connection, sqlQueryObject, expression);
+			return selectEngine(jdbcProperties, log, connection, sqlQueryObject, expression);
 		}finally{
 			org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.removeFields(sqlQueryObject,expression,functionField);
 		}
@@ -389,23 +389,23 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 	public List<Map<String,Object>> groupBy(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
 													JDBCPaginatedExpression paginatedExpression, FunctionField ... functionField) throws ServiceException,NotFoundException,NotImplementedException,Exception {
 		
-		if(paginatedExpression.getGroupByFields().size()<=0){
+		if(paginatedExpression.getGroupByFields().isEmpty()){
 			throw new ServiceException("GroupBy conditions not found in expression");
 		}
 		
 		org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.setFields(sqlQueryObject,paginatedExpression,functionField);
 		try{
-			return _select(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression);
+			return selectEngine(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression);
 		}finally{
 			org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.removeFields(sqlQueryObject,paginatedExpression,functionField);
 		}
 	}
 	
-	protected List<Map<String,Object>> _select(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
+	protected List<Map<String,Object>> selectEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
 												IExpression expression) throws ServiceException,NotFoundException,NotImplementedException,Exception {
-		return _select(jdbcProperties, log, connection, sqlQueryObject, expression, null);
+		return selectEngine(jdbcProperties, log, connection, sqlQueryObject, expression, null);
 	}
-	protected List<Map<String,Object>> _select(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
+	protected List<Map<String,Object>> selectEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
 												IExpression expression, ISQLQueryObject sqlQueryObjectDistinct) throws ServiceException,NotFoundException,NotImplementedException,Exception {
 		
 		List<Object> listaQuery = new ArrayList<>();
@@ -414,17 +414,17 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
         						expression, this.getFruitoreFieldConverter(), Fruitore.model(), 
         						listaQuery,listaParams);
 		
-		_join(expression,sqlQueryObject);
+		joinEngine(expression,sqlQueryObject);
         
         List<Map<String,Object>> list = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.select(jdbcProperties, log, connection,
         								org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareSqlQueryObjectForSelectDistinct(sqlQueryObject,sqlQueryObjectDistinct), 
         								expression, this.getFruitoreFieldConverter(), Fruitore.model(),
         								listaQuery,listaParams,returnField);
-		if(list!=null && list.size()>0){
+		if(list!=null && !list.isEmpty()){
 			return list;
 		}
 		else{
-			throw new NotFoundException("Not Found");
+			throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 		}
 	}
 	
@@ -442,18 +442,18 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 			for (int i = 0; i < unionExpression.length; i++) {
 				UnionExpression ue = unionExpression[i];
 				IExpression expression = ue.getExpression();
-				_join(expression,sqlQueryObjectInnerList.get(i));
+				joinEngine(expression,sqlQueryObjectInnerList.get(i));
 			}
 		}
         
         List<Map<String,Object>> list = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.union(jdbcProperties, log, connection, sqlQueryObject, 
         								this.getFruitoreFieldConverter(), Fruitore.model(), 
         								sqlQueryObjectInnerList, jdbcObjects, returnClassTypes, union, unionExpression);
-        if(list!=null && list.size()>0){
+        if(list!=null && !list.isEmpty()){
 			return list;
 		}
 		else{
-			throw new NotFoundException("Not Found");
+			throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 		}								
 	}
 	
@@ -471,7 +471,7 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 			for (int i = 0; i < unionExpression.length; i++) {
 				UnionExpression ue = unionExpression[i];
 				IExpression expression = ue.getExpression();
-				_join(expression,sqlQueryObjectInnerList.get(i));
+				joinEngine(expression,sqlQueryObjectInnerList.get(i));
 			}
 		}
         
@@ -482,7 +482,7 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 			return number;
 		}
 		else{
-			throw new NotFoundException("Not Found");
+			throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 		}
 	}
 
@@ -564,10 +564,10 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 	
 	@Override
 	public Fruitore get(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException, Exception {
-		return this._get(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId), idMappingResolutionBehaviour);
+		return this.getEngine(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId), idMappingResolutionBehaviour);
 	}
 	
-	private Fruitore _get(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long tableId, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException, Exception {
+	private Fruitore getEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long tableId, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException, Exception {
 	
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
@@ -718,7 +718,7 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 	
 	}
 	
-	private void _join(IExpression expression, ISQLQueryObject sqlQueryObject) throws NotImplementedException, ServiceException, Exception{
+	private void joinEngine(IExpression expression, ISQLQueryObject sqlQueryObject) throws NotImplementedException, ServiceException, Exception{
 	
 		if(expression.inUseModel(Fruitore.model().ID_FRUITORE,false)){
 			String tableName1 = this.getFruitoreFieldConverter().toTable(Fruitore.model());
@@ -747,7 +747,7 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
         
 	}
 	
-	protected java.util.List<Object> _getRootTablePrimaryKeyValues(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdFruitore id) throws NotFoundException, ServiceException, NotImplementedException, Exception{
+	protected java.util.List<Object> getRootTablePrimaryKeyValuesEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdFruitore id) throws NotFoundException, ServiceException, NotImplementedException, Exception{
 	    // Identificativi
         java.util.List<Object> rootTableIdValues = new java.util.ArrayList<>();
         Long longId = this.findIdFruitore(jdbcProperties, log, connection, sqlQueryObject.newSQLQueryObject(), id, true);
@@ -755,7 +755,7 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
         return rootTableIdValues;
 	}
 	
-	protected Map<String, List<IField>> _getMapTableToPKColumn() throws NotImplementedException, Exception{
+	protected Map<String, List<IField>> getMapTableToPKColumnEngine() throws NotImplementedException, Exception{
 	
 		FruitoreFieldConverter converter = this.getFruitoreFieldConverter();
 		Map<String, List<IField>> mapTableToPKColumn = new java.util.HashMap<>();
@@ -801,7 +801,7 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 		List<Object> listaQuery = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareFindAll(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression,
 												this.getFruitoreFieldConverter(), Fruitore.model());
 		
-		_join(paginatedExpression,sqlQueryObject);
+		joinEngine(paginatedExpression,sqlQueryObject);
 		
 		List<Object> listObjects = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.findAll(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression,
 																			this.getFruitoreFieldConverter(), Fruitore.model(), objectIdClass, listaQuery);
@@ -824,7 +824,7 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 		List<Object> listaQuery = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareFind(jdbcProperties, log, connection, sqlQueryObject, expression,
 												this.getFruitoreFieldConverter(), Fruitore.model());
 		
-		_join(expression,sqlQueryObject);
+		joinEngine(expression,sqlQueryObject);
 
 		Object res = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.find(jdbcProperties, log, connection, sqlQueryObject, expression,
 														this.getFruitoreFieldConverter(), Fruitore.model(), objectIdClass, listaQuery);
@@ -832,17 +832,17 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 			return ((Long) res).longValue();
 		}
 		else{
-			throw new NotFoundException("Not Found");
+			throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 		}
 		
 	}
 
 	@Override
 	public InUse inUse(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId) throws ServiceException, NotFoundException, NotImplementedException, Exception {
-		return this._inUse(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
+		return this.inUseEngine(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
 	}
 
-	private InUse _inUse(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long tableId) throws ServiceException, NotFoundException, NotImplementedException, Exception {
+	private InUse inUseEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long tableId) throws ServiceException, NotFoundException, NotImplementedException, Exception {
 
 		InUse inUse = new InUse();
 		inUse.setInUse(false);
@@ -890,7 +890,7 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 				listaFieldIdReturnType_fruitore, searchParams_fruitore);
 		if(listaFieldId_fruitore==null || listaFieldId_fruitore.size()<=0){
 			if(throwNotFound){
-				throw new NotFoundException("Not Found");
+				throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 			}
 		}
 		else{
@@ -977,7 +977,7 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 		}
 		if(id_fruitore==null || id_fruitore<=0){
 			if(throwNotFound){
-				throw new NotFoundException("Not Found");
+				throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 			}
 		}
 		

@@ -249,123 +249,15 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
   protected java.lang.String canale;
 
   @XmlElement(name="accordo-servizio-parte-comune-azione",required=true,nillable=false)
-  protected List<AccordoServizioParteComuneAzione> accordoServizioParteComuneAzione = new ArrayList<AccordoServizioParteComuneAzione>();
-
-  /**
-   * @deprecated Use method getAccordoServizioParteComuneAzioneList
-   * @return List&lt;AccordoServizioParteComuneAzione&gt;
-  */
-  @Deprecated
-  public List<AccordoServizioParteComuneAzione> getAccordoServizioParteComuneAzione() {
-  	return this.accordoServizioParteComuneAzione;
-  }
-
-  /**
-   * @deprecated Use method setAccordoServizioParteComuneAzioneList
-   * @param accordoServizioParteComuneAzione List&lt;AccordoServizioParteComuneAzione&gt;
-  */
-  @Deprecated
-  public void setAccordoServizioParteComuneAzione(List<AccordoServizioParteComuneAzione> accordoServizioParteComuneAzione) {
-  	this.accordoServizioParteComuneAzione=accordoServizioParteComuneAzione;
-  }
-
-  /**
-   * @deprecated Use method sizeAccordoServizioParteComuneAzioneList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeAccordoServizioParteComuneAzione() {
-  	return this.accordoServizioParteComuneAzione.size();
-  }
+  private List<AccordoServizioParteComuneAzione> accordoServizioParteComuneAzione = new ArrayList<>();
 
   @XmlElement(name="port-type",required=true,nillable=false)
-  protected List<PortType> portType = new ArrayList<PortType>();
-
-  /**
-   * @deprecated Use method getPortTypeList
-   * @return List&lt;PortType&gt;
-  */
-  @Deprecated
-  public List<PortType> getPortType() {
-  	return this.portType;
-  }
-
-  /**
-   * @deprecated Use method setPortTypeList
-   * @param portType List&lt;PortType&gt;
-  */
-  @Deprecated
-  public void setPortType(List<PortType> portType) {
-  	this.portType=portType;
-  }
-
-  /**
-   * @deprecated Use method sizePortTypeList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizePortType() {
-  	return this.portType.size();
-  }
+  private List<PortType> portType = new ArrayList<>();
 
   @XmlElement(name="resource",required=true,nillable=false)
-  protected List<Resource> resource = new ArrayList<Resource>();
-
-  /**
-   * @deprecated Use method getResourceList
-   * @return List&lt;Resource&gt;
-  */
-  @Deprecated
-  public List<Resource> getResource() {
-  	return this.resource;
-  }
-
-  /**
-   * @deprecated Use method setResourceList
-   * @param resource List&lt;Resource&gt;
-  */
-  @Deprecated
-  public void setResource(List<Resource> resource) {
-  	this.resource=resource;
-  }
-
-  /**
-   * @deprecated Use method sizeResourceList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeResource() {
-  	return this.resource.size();
-  }
+  private List<Resource> resource = new ArrayList<>();
 
   @XmlElement(name="accordo-servizio-parte-comune-gruppo",required=true,nillable=false)
-  protected List<AccordoServizioParteComuneGruppo> accordoServizioParteComuneGruppo = new ArrayList<AccordoServizioParteComuneGruppo>();
-
-  /**
-   * @deprecated Use method getAccordoServizioParteComuneGruppoList
-   * @return List&lt;AccordoServizioParteComuneGruppo&gt;
-  */
-  @Deprecated
-  public List<AccordoServizioParteComuneGruppo> getAccordoServizioParteComuneGruppo() {
-  	return this.accordoServizioParteComuneGruppo;
-  }
-
-  /**
-   * @deprecated Use method setAccordoServizioParteComuneGruppoList
-   * @param accordoServizioParteComuneGruppo List&lt;AccordoServizioParteComuneGruppo&gt;
-  */
-  @Deprecated
-  public void setAccordoServizioParteComuneGruppo(List<AccordoServizioParteComuneGruppo> accordoServizioParteComuneGruppo) {
-  	this.accordoServizioParteComuneGruppo=accordoServizioParteComuneGruppo;
-  }
-
-  /**
-   * @deprecated Use method sizeAccordoServizioParteComuneGruppoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeAccordoServizioParteComuneGruppo() {
-  	return this.accordoServizioParteComuneGruppo.size();
-  }
+  private List<AccordoServizioParteComuneGruppo> accordoServizioParteComuneGruppo = new ArrayList<>();
 
 }

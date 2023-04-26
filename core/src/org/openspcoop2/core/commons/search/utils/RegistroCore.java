@@ -360,9 +360,9 @@ public class RegistroCore {
 	public static List<String> getAzioni(JDBCServiceManager manager, List<String> protocolli, 
 			String tipoSoggettoErogatore, String nomeSoggettoErogatore,	String tipoServizio, String nomeServizio, Integer versioneServizio) throws Exception{
 		List<String> list = new ArrayList<>();
-		list.addAll(_getAzioni(manager, protocolli, tipoSoggettoErogatore, nomeSoggettoErogatore, tipoServizio, nomeServizio, versioneServizio,null).keySet());
+		list.addAll(getEngineAzioni(manager, protocolli, tipoSoggettoErogatore, nomeSoggettoErogatore, tipoServizio, nomeServizio, versioneServizio,null).keySet());
 		 
-		if(list!=null && list.size()>0){
+		if(list!=null && !list.isEmpty()){
 			Collections.sort(list);
 		}
 		 
@@ -375,7 +375,7 @@ public class RegistroCore {
 			protocolli = new ArrayList<>();
 			protocolli.add(protocollo);
 		}
-		Map<String,String> mapAzioni = _getAzioni(manager, protocolli, tipoSoggettoErogatore, nomeSoggettoErogatore, tipoServizio, nomeServizio, versioneServizio,input);
+		Map<String,String> mapAzioni = getEngineAzioni(manager, protocolli, tipoSoggettoErogatore, nomeSoggettoErogatore, tipoServizio, nomeServizio, versioneServizio,input);
 		
 		//convert map to a List
 		List<Entry<String, String>> list = new LinkedList<Map.Entry<String, String>>(mapAzioni.entrySet());
@@ -397,7 +397,7 @@ public class RegistroCore {
 		return sortedMap;
 	}
 	
-	public static Map<String,String> _getAzioni(JDBCServiceManager manager, List<String> protocolli, String tipoSoggettoErogatore, String nomeSoggettoErogatore, String tipoServizio, String nomeServizio, Integer versioneServizio, String input) throws Exception{
+	public static Map<String,String> getEngineAzioni(JDBCServiceManager manager, List<String> protocolli, String tipoSoggettoErogatore, String nomeSoggettoErogatore, String tipoServizio, String nomeServizio, Integer versioneServizio, String input) throws Exception{
 		
 		List<String> list = new ArrayList<>();
 		Map<String,String> mapAzioni = new HashMap<>();
@@ -602,7 +602,7 @@ public class RegistroCore {
 		
 		Map<String,String> mapAzioniReturn = new HashMap<>();
 		
-		if(list!=null && list.size()>0){
+		if(list!=null && !list.isEmpty()){
 			Collections.sort(list);
 			
 			for (String key : list) {
@@ -814,7 +814,7 @@ public class RegistroCore {
 	}
 	public static List<IDServizioApplicativo> getServiziApplicativiFruitore(JDBCServiceManager manager, List<String> protocolli, 
 			String tipoSoggettoFruitore, String nomeSoggettoFruitore) throws Exception{
-		return _getServiziApplicativi(manager, protocolli, 
+		return getEngineServiziApplicativi(manager, protocolli, 
 				tipoSoggettoFruitore, nomeSoggettoFruitore, true);
 	}
 	
@@ -830,11 +830,11 @@ public class RegistroCore {
 	}
 	public static List<IDServizioApplicativo> getServiziApplicativi(JDBCServiceManager manager, List<String> protocolli, 
 			String tipoSoggettoProprietario, String nomeSoggettoProprietario) throws Exception{
-		return _getServiziApplicativi(manager, protocolli, 
+		return getEngineServiziApplicativi(manager, protocolli, 
 				tipoSoggettoProprietario, nomeSoggettoProprietario, false);
 	}
 	
-	private static List<IDServizioApplicativo> _getServiziApplicativi(JDBCServiceManager manager, List<String> protocolli, 
+	private static List<IDServizioApplicativo> getEngineServiziApplicativi(JDBCServiceManager manager, List<String> protocolli, 
 			String tipoSoggettoProprietario, String nomeSoggettoProprietario, boolean onlyClient) throws Exception{
 		List<IDServizioApplicativo> list = new ArrayList<IDServizioApplicativo>();
 			
@@ -937,7 +937,7 @@ public class RegistroCore {
 
 		List<Object> list = aspsDAO.select(pagExpr,true,cf);
 
-		if(list==null || list.size()<=0) {
+		if(list==null || list.isEmpty()) {
 			throw new NotFoundException("NonPresente");
 		}
 		if(list.size()>1) {

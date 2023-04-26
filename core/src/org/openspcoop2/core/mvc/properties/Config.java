@@ -174,34 +174,7 @@ public class Config extends org.openspcoop2.utils.beans.BaseBean implements Seri
   protected Properties properties;
 
   @XmlElement(name="section",required=true,nillable=false)
-  protected List<Section> section = new ArrayList<Section>();
-
-  /**
-   * @deprecated Use method getSectionList
-   * @return List&lt;Section&gt;
-  */
-  @Deprecated
-  public List<Section> getSection() {
-  	return this.section;
-  }
-
-  /**
-   * @deprecated Use method setSectionList
-   * @param section List&lt;Section&gt;
-  */
-  @Deprecated
-  public void setSection(List<Section> section) {
-  	this.section=section;
-  }
-
-  /**
-   * @deprecated Use method sizeSectionList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeSection() {
-  	return this.section.size();
-  }
+  private List<Section> section = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="id",required=true)

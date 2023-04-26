@@ -267,63 +267,9 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBeanWithId
   protected java.lang.String canale;
 
   @XmlElement(name="porta-applicativa-servizio-applicativo",required=true,nillable=false)
-  protected List<PortaApplicativaServizioApplicativo> portaApplicativaServizioApplicativo = new ArrayList<PortaApplicativaServizioApplicativo>();
-
-  /**
-   * @deprecated Use method getPortaApplicativaServizioApplicativoList
-   * @return List&lt;PortaApplicativaServizioApplicativo&gt;
-  */
-  @Deprecated
-  public List<PortaApplicativaServizioApplicativo> getPortaApplicativaServizioApplicativo() {
-  	return this.portaApplicativaServizioApplicativo;
-  }
-
-  /**
-   * @deprecated Use method setPortaApplicativaServizioApplicativoList
-   * @param portaApplicativaServizioApplicativo List&lt;PortaApplicativaServizioApplicativo&gt;
-  */
-  @Deprecated
-  public void setPortaApplicativaServizioApplicativo(List<PortaApplicativaServizioApplicativo> portaApplicativaServizioApplicativo) {
-  	this.portaApplicativaServizioApplicativo=portaApplicativaServizioApplicativo;
-  }
-
-  /**
-   * @deprecated Use method sizePortaApplicativaServizioApplicativoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizePortaApplicativaServizioApplicativo() {
-  	return this.portaApplicativaServizioApplicativo.size();
-  }
+  private List<PortaApplicativaServizioApplicativo> portaApplicativaServizioApplicativo = new ArrayList<>();
 
   @XmlElement(name="porta-applicativa-azione",required=true,nillable=false)
-  protected List<PortaApplicativaAzione> portaApplicativaAzione = new ArrayList<PortaApplicativaAzione>();
-
-  /**
-   * @deprecated Use method getPortaApplicativaAzioneList
-   * @return List&lt;PortaApplicativaAzione&gt;
-  */
-  @Deprecated
-  public List<PortaApplicativaAzione> getPortaApplicativaAzione() {
-  	return this.portaApplicativaAzione;
-  }
-
-  /**
-   * @deprecated Use method setPortaApplicativaAzioneList
-   * @param portaApplicativaAzione List&lt;PortaApplicativaAzione&gt;
-  */
-  @Deprecated
-  public void setPortaApplicativaAzione(List<PortaApplicativaAzione> portaApplicativaAzione) {
-  	this.portaApplicativaAzione=portaApplicativaAzione;
-  }
-
-  /**
-   * @deprecated Use method sizePortaApplicativaAzioneList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizePortaApplicativaAzione() {
-  	return this.portaApplicativaAzione.size();
-  }
+  private List<PortaApplicativaAzione> portaApplicativaAzione = new ArrayList<>();
 
 }

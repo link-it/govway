@@ -101,11 +101,11 @@ public class Item extends org.openspcoop2.utils.beans.BaseBean implements Serial
     this.property = property;
   }
 
-  public void set_value_type(String value) {
+  public void setTypeRawEnumValue(String value) {
     this.type = (ItemType) ItemType.toEnumConstantFromString(value);
   }
 
-  public String get_value_type() {
+  public String getTypeRawEnumValue() {
     if(this.type == null){
     	return null;
     }else{
@@ -235,7 +235,7 @@ public class Item extends org.openspcoop2.utils.beans.BaseBean implements Serial
   protected Property property;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_type;
+  protected java.lang.String typeRawEnumValue;
 
   @XmlAttribute(name="type",required=true)
   protected ItemType type;

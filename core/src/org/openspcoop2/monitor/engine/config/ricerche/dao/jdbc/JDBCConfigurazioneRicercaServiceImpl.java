@@ -214,8 +214,8 @@ public class JDBCConfigurazioneRicercaServiceImpl extends JDBCConfigurazioneRice
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneRicercaFieldConverter().toTable(ConfigurazioneRicerca.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, id),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, id),
 				this.getConfigurazioneRicercaFieldConverter(), this, null, updateFields);
 	}
 	
@@ -224,8 +224,8 @@ public class JDBCConfigurazioneRicercaServiceImpl extends JDBCConfigurazioneRice
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneRicercaFieldConverter().toTable(ConfigurazioneRicerca.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, id),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, id),
 				this.getConfigurazioneRicercaFieldConverter(), this, condition, updateFields);
 	}
 	
@@ -234,8 +234,8 @@ public class JDBCConfigurazioneRicercaServiceImpl extends JDBCConfigurazioneRice
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneRicercaFieldConverter().toTable(ConfigurazioneRicerca.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, id),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, id),
 				this.getConfigurazioneRicercaFieldConverter(), this, updateModels);
 	}	
 	
@@ -245,7 +245,7 @@ public class JDBCConfigurazioneRicercaServiceImpl extends JDBCConfigurazioneRice
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneRicercaFieldConverter().toTable(ConfigurazioneRicerca.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getConfigurazioneRicercaFieldConverter(), this, null, updateFields);
 	}
@@ -256,7 +256,7 @@ public class JDBCConfigurazioneRicercaServiceImpl extends JDBCConfigurazioneRice
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneRicercaFieldConverter().toTable(ConfigurazioneRicerca.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getConfigurazioneRicercaFieldConverter(), this, condition, updateFields);
 	}
@@ -267,7 +267,7 @@ public class JDBCConfigurazioneRicercaServiceImpl extends JDBCConfigurazioneRice
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneRicercaFieldConverter().toTable(ConfigurazioneRicerca.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getConfigurazioneRicercaFieldConverter(), this, updateModels);
 	}
@@ -308,11 +308,11 @@ public class JDBCConfigurazioneRicercaServiceImpl extends JDBCConfigurazioneRice
 			}
 		}		
 		
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, longId);
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, longId);
 		
 	}
 
-	private void _delete(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long id) throws NotImplementedException,ServiceException,Exception {
+	private void deleteEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long id) throws NotImplementedException,ServiceException,Exception {
 	
 		if(id!=null && id.longValue()<=0){
 			throw new ServiceException("Id is less equals 0");
@@ -345,7 +345,7 @@ public class JDBCConfigurazioneRicercaServiceImpl extends JDBCConfigurazioneRice
 		}catch(NotFoundException notFound){
 			return;
 		}
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, id);
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, id);
 		
 	}
 	
@@ -362,7 +362,7 @@ public class JDBCConfigurazioneRicercaServiceImpl extends JDBCConfigurazioneRice
 		java.util.List<Long> lst = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, new JDBCPaginatedExpression(expression));
 		
 		for(Long id : lst) {
-			this._delete(jdbcProperties, log, connection, sqlQueryObject, id);
+			this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, id);
 		}
 		
 		return new NonNegativeNumber(lst.size());
@@ -375,7 +375,7 @@ public class JDBCConfigurazioneRicercaServiceImpl extends JDBCConfigurazioneRice
 	
 	@Override
 	public void deleteById(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId) throws ServiceException, NotImplementedException, Exception {
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
 	}
 	
 	@Override

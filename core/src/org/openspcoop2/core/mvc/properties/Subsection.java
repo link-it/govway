@@ -126,34 +126,7 @@ public class Subsection extends org.openspcoop2.utils.beans.BaseBean implements 
   protected Conditions conditions;
 
   @XmlElement(name="item",required=true,nillable=false)
-  protected List<Item> item = new ArrayList<Item>();
-
-  /**
-   * @deprecated Use method getItemList
-   * @return List&lt;Item&gt;
-  */
-  @Deprecated
-  public List<Item> getItem() {
-  	return this.item;
-  }
-
-  /**
-   * @deprecated Use method setItemList
-   * @param item List&lt;Item&gt;
-  */
-  @Deprecated
-  public void setItem(List<Item> item) {
-  	this.item=item;
-  }
-
-  /**
-   * @deprecated Use method sizeItemList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeItem() {
-  	return this.item.size();
-  }
+  private List<Item> item = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="label",required=true)

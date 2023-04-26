@@ -126,34 +126,7 @@ public class PortType extends org.openspcoop2.utils.beans.BaseBeanWithId impleme
   protected java.lang.String nome;
 
   @XmlElement(name="operation",required=true,nillable=false)
-  protected List<Operation> operation = new ArrayList<Operation>();
-
-  /**
-   * @deprecated Use method getOperationList
-   * @return List&lt;Operation&gt;
-  */
-  @Deprecated
-  public List<Operation> getOperation() {
-  	return this.operation;
-  }
-
-  /**
-   * @deprecated Use method setOperationList
-   * @param operation List&lt;Operation&gt;
-  */
-  @Deprecated
-  public void setOperation(List<Operation> operation) {
-  	this.operation=operation;
-  }
-
-  /**
-   * @deprecated Use method sizeOperationList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeOperation() {
-  	return this.operation.size();
-  }
+  private List<Operation> operation = new ArrayList<>();
 
   @XmlElement(name="id-accordo-servizio-parte-comune",required=true,nillable=false)
   protected IdAccordoServizioParteComune idAccordoServizioParteComune;

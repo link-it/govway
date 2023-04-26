@@ -226,8 +226,8 @@ public class JDBCConfigurazioneStatisticaServiceImpl extends JDBCConfigurazioneS
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneStatisticaFieldConverter().toTable(ConfigurazioneStatistica.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, id),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, id),
 				this.getConfigurazioneStatisticaFieldConverter(), this, null, updateFields);
 	}
 	
@@ -236,8 +236,8 @@ public class JDBCConfigurazioneStatisticaServiceImpl extends JDBCConfigurazioneS
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneStatisticaFieldConverter().toTable(ConfigurazioneStatistica.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, id),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, id),
 				this.getConfigurazioneStatisticaFieldConverter(), this, condition, updateFields);
 	}
 	
@@ -246,8 +246,8 @@ public class JDBCConfigurazioneStatisticaServiceImpl extends JDBCConfigurazioneS
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneStatisticaFieldConverter().toTable(ConfigurazioneStatistica.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, id),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, id),
 				this.getConfigurazioneStatisticaFieldConverter(), this, updateModels);
 	}	
 	
@@ -257,7 +257,7 @@ public class JDBCConfigurazioneStatisticaServiceImpl extends JDBCConfigurazioneS
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneStatisticaFieldConverter().toTable(ConfigurazioneStatistica.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getConfigurazioneStatisticaFieldConverter(), this, null, updateFields);
 	}
@@ -268,7 +268,7 @@ public class JDBCConfigurazioneStatisticaServiceImpl extends JDBCConfigurazioneS
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneStatisticaFieldConverter().toTable(ConfigurazioneStatistica.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getConfigurazioneStatisticaFieldConverter(), this, condition, updateFields);
 	}
@@ -279,7 +279,7 @@ public class JDBCConfigurazioneStatisticaServiceImpl extends JDBCConfigurazioneS
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneStatisticaFieldConverter().toTable(ConfigurazioneStatistica.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getConfigurazioneStatisticaFieldConverter(), this, updateModels);
 	}
@@ -320,11 +320,11 @@ public class JDBCConfigurazioneStatisticaServiceImpl extends JDBCConfigurazioneS
 			}
 		}		
 		
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, longId);
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, longId);
 		
 	}
 
-	private void _delete(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long id) throws NotImplementedException,ServiceException,Exception {
+	private void deleteEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long id) throws NotImplementedException,ServiceException,Exception {
 	
 		if(id!=null && id.longValue()<=0){
 			throw new ServiceException("Id is less equals 0");
@@ -357,7 +357,7 @@ public class JDBCConfigurazioneStatisticaServiceImpl extends JDBCConfigurazioneS
 		}catch(NotFoundException notFound){
 			return;
 		}
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, id);
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, id);
 		
 	}
 	
@@ -374,7 +374,7 @@ public class JDBCConfigurazioneStatisticaServiceImpl extends JDBCConfigurazioneS
 		java.util.List<Long> lst = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, new JDBCPaginatedExpression(expression));
 		
 		for(Long id : lst) {
-			this._delete(jdbcProperties, log, connection, sqlQueryObject, id);
+			this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, id);
 		}
 		
 		return new NonNegativeNumber(lst.size());
@@ -387,7 +387,7 @@ public class JDBCConfigurazioneStatisticaServiceImpl extends JDBCConfigurazioneS
 	
 	@Override
 	public void deleteById(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId) throws ServiceException, NotImplementedException, Exception {
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
 	}
 	
 	@Override

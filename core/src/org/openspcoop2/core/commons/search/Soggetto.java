@@ -158,33 +158,6 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBeanWithId impleme
   protected java.lang.String identificativoPorta;
 
   @XmlElement(name="soggetto-ruolo",required=true,nillable=false)
-  protected List<SoggettoRuolo> soggettoRuolo = new ArrayList<SoggettoRuolo>();
-
-  /**
-   * @deprecated Use method getSoggettoRuoloList
-   * @return List&lt;SoggettoRuolo&gt;
-  */
-  @Deprecated
-  public List<SoggettoRuolo> getSoggettoRuolo() {
-  	return this.soggettoRuolo;
-  }
-
-  /**
-   * @deprecated Use method setSoggettoRuoloList
-   * @param soggettoRuolo List&lt;SoggettoRuolo&gt;
-  */
-  @Deprecated
-  public void setSoggettoRuolo(List<SoggettoRuolo> soggettoRuolo) {
-  	this.soggettoRuolo=soggettoRuolo;
-  }
-
-  /**
-   * @deprecated Use method sizeSoggettoRuoloList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeSoggettoRuolo() {
-  	return this.soggettoRuolo.size();
-  }
+  private List<SoggettoRuolo> soggettoRuolo = new ArrayList<>();
 
 }

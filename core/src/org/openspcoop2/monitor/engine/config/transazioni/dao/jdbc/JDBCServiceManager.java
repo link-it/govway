@@ -46,25 +46,33 @@ import org.slf4j.Logger;
 
 public class JDBCServiceManager extends org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerBase implements IServiceManager {
 
-	protected Connection get_Connection() throws ServiceException {
+	protected Connection getConnectionInternalResource() {
 		return this.connection;
 	}
-	protected DataSource get_Datasource() throws ServiceException {
+	protected DataSource getDatasourceInternalResource() {
 		return this.datasource;
 	}
-	protected JDBCServiceManagerProperties get_JdbcProperties(){
+	protected JDBCServiceManagerProperties getJdbcPropertiesInternalResource(){
 		return this.jdbcProperties;
 	}
-	protected Logger get_Logger(){
+	protected Logger getLoggerInternalResource(){
 		return this.log;
 	}
 	@Override
 	protected Connection getConnection() throws ServiceException {
-		return super.getConnection();
+		try{
+			return super.getConnection();
+		}catch(Exception e){
+			throw new ServiceException(e.getMessage(),e);
+		}
 	}
 	@Override
 	protected void closeConnection(Connection connection) throws ServiceException {
-		super.closeConnection(connection);
+		try{
+			super.closeConnection(connection);
+		}catch(Exception e){
+			throw new ServiceException(e.getMessage(),e);
+		}
 	}
 
 	protected JDBCServiceManager(){}

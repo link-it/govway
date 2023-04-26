@@ -325,274 +325,31 @@ public class Condition extends org.openspcoop2.utils.beans.BaseBean implements S
 
 
   @XmlElement(name="defined",required=true,nillable=false)
-  protected List<Defined> defined = new ArrayList<Defined>();
-
-  /**
-   * @deprecated Use method getDefinedList
-   * @return List&lt;Defined&gt;
-  */
-  @Deprecated
-  public List<Defined> getDefined() {
-  	return this.defined;
-  }
-
-  /**
-   * @deprecated Use method setDefinedList
-   * @param defined List&lt;Defined&gt;
-  */
-  @Deprecated
-  public void setDefined(List<Defined> defined) {
-  	this.defined=defined;
-  }
-
-  /**
-   * @deprecated Use method sizeDefinedList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeDefined() {
-  	return this.defined.size();
-  }
+  private List<Defined> defined = new ArrayList<>();
 
   @XmlElement(name="selected",required=true,nillable=false)
-  protected List<Selected> selected = new ArrayList<Selected>();
-
-  /**
-   * @deprecated Use method getSelectedList
-   * @return List&lt;Selected&gt;
-  */
-  @Deprecated
-  public List<Selected> getSelected() {
-  	return this.selected;
-  }
-
-  /**
-   * @deprecated Use method setSelectedList
-   * @param selected List&lt;Selected&gt;
-  */
-  @Deprecated
-  public void setSelected(List<Selected> selected) {
-  	this.selected=selected;
-  }
-
-  /**
-   * @deprecated Use method sizeSelectedList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeSelected() {
-  	return this.selected.size();
-  }
+  private List<Selected> selected = new ArrayList<>();
 
   @XmlElement(name="equals",required=true,nillable=false)
-  protected List<Equals> equals = new ArrayList<Equals>();
-
-  /**
-   * @deprecated Use method getEqualsList
-   * @return List&lt;Equals&gt;
-  */
-  @Deprecated
-  public List<Equals> getEquals() {
-  	return this.equals;
-  }
-
-  /**
-   * @deprecated Use method setEqualsList
-   * @param equals List&lt;Equals&gt;
-  */
-  @Deprecated
-  public void setEquals(List<Equals> equals) {
-  	this.equals=equals;
-  }
-
-  /**
-   * @deprecated Use method sizeEqualsList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeEquals() {
-  	return this.equals.size();
-  }
+  private List<Equals> equals = new ArrayList<>();
 
   @XmlElement(name="lessThen",required=true,nillable=false)
-  protected List<Equals> lessThen = new ArrayList<Equals>();
-
-  /**
-   * @deprecated Use method getLessThenList
-   * @return List&lt;Equals&gt;
-  */
-  @Deprecated
-  public List<Equals> getLessThen() {
-  	return this.lessThen;
-  }
-
-  /**
-   * @deprecated Use method setLessThenList
-   * @param lessThen List&lt;Equals&gt;
-  */
-  @Deprecated
-  public void setLessThen(List<Equals> lessThen) {
-  	this.lessThen=lessThen;
-  }
-
-  /**
-   * @deprecated Use method sizeLessThenList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeLessThen() {
-  	return this.lessThen.size();
-  }
+  private List<Equals> lessThen = new ArrayList<>();
 
   @XmlElement(name="lessEquals",required=true,nillable=false)
-  protected List<Equals> lessEquals = new ArrayList<Equals>();
-
-  /**
-   * @deprecated Use method getLessEqualsList
-   * @return List&lt;Equals&gt;
-  */
-  @Deprecated
-  public List<Equals> getLessEquals() {
-  	return this.lessEquals;
-  }
-
-  /**
-   * @deprecated Use method setLessEqualsList
-   * @param lessEquals List&lt;Equals&gt;
-  */
-  @Deprecated
-  public void setLessEquals(List<Equals> lessEquals) {
-  	this.lessEquals=lessEquals;
-  }
-
-  /**
-   * @deprecated Use method sizeLessEqualsList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeLessEquals() {
-  	return this.lessEquals.size();
-  }
+  private List<Equals> lessEquals = new ArrayList<>();
 
   @XmlElement(name="greaterThen",required=true,nillable=false)
-  protected List<Equals> greaterThen = new ArrayList<Equals>();
-
-  /**
-   * @deprecated Use method getGreaterThenList
-   * @return List&lt;Equals&gt;
-  */
-  @Deprecated
-  public List<Equals> getGreaterThen() {
-  	return this.greaterThen;
-  }
-
-  /**
-   * @deprecated Use method setGreaterThenList
-   * @param greaterThen List&lt;Equals&gt;
-  */
-  @Deprecated
-  public void setGreaterThen(List<Equals> greaterThen) {
-  	this.greaterThen=greaterThen;
-  }
-
-  /**
-   * @deprecated Use method sizeGreaterThenList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeGreaterThen() {
-  	return this.greaterThen.size();
-  }
+  private List<Equals> greaterThen = new ArrayList<>();
 
   @XmlElement(name="greaterEquals",required=true,nillable=false)
-  protected List<Equals> greaterEquals = new ArrayList<Equals>();
-
-  /**
-   * @deprecated Use method getGreaterEqualsList
-   * @return List&lt;Equals&gt;
-  */
-  @Deprecated
-  public List<Equals> getGreaterEquals() {
-  	return this.greaterEquals;
-  }
-
-  /**
-   * @deprecated Use method setGreaterEqualsList
-   * @param greaterEquals List&lt;Equals&gt;
-  */
-  @Deprecated
-  public void setGreaterEquals(List<Equals> greaterEquals) {
-  	this.greaterEquals=greaterEquals;
-  }
-
-  /**
-   * @deprecated Use method sizeGreaterEqualsList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeGreaterEquals() {
-  	return this.greaterEquals.size();
-  }
+  private List<Equals> greaterEquals = new ArrayList<>();
 
   @XmlElement(name="startsWith",required=true,nillable=false)
-  protected List<Equals> startsWith = new ArrayList<Equals>();
-
-  /**
-   * @deprecated Use method getStartsWithList
-   * @return List&lt;Equals&gt;
-  */
-  @Deprecated
-  public List<Equals> getStartsWith() {
-  	return this.startsWith;
-  }
-
-  /**
-   * @deprecated Use method setStartsWithList
-   * @param startsWith List&lt;Equals&gt;
-  */
-  @Deprecated
-  public void setStartsWith(List<Equals> startsWith) {
-  	this.startsWith=startsWith;
-  }
-
-  /**
-   * @deprecated Use method sizeStartsWithList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeStartsWith() {
-  	return this.startsWith.size();
-  }
+  private List<Equals> startsWith = new ArrayList<>();
 
   @XmlElement(name="endsWith",required=true,nillable=false)
-  protected List<Equals> endsWith = new ArrayList<Equals>();
-
-  /**
-   * @deprecated Use method getEndsWithList
-   * @return List&lt;Equals&gt;
-  */
-  @Deprecated
-  public List<Equals> getEndsWith() {
-  	return this.endsWith;
-  }
-
-  /**
-   * @deprecated Use method setEndsWithList
-   * @param endsWith List&lt;Equals&gt;
-  */
-  @Deprecated
-  public void setEndsWith(List<Equals> endsWith) {
-  	this.endsWith=endsWith;
-  }
-
-  /**
-   * @deprecated Use method sizeEndsWithList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeEndsWith() {
-  	return this.endsWith.size();
-  }
+  private List<Equals> endsWith = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="and",required=false)

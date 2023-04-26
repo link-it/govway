@@ -118,34 +118,7 @@ public class Tags extends org.openspcoop2.utils.beans.BaseBean implements Serial
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tag",required=true,nillable=false)
-  protected List<java.lang.String> tag = new ArrayList<java.lang.String>();
-
-  /**
-   * @deprecated Use method getTagList
-   * @return List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public List<java.lang.String> getTag() {
-  	return this.tag;
-  }
-
-  /**
-   * @deprecated Use method setTagList
-   * @param tag List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public void setTag(List<java.lang.String> tag) {
-  	this.tag=tag;
-  }
-
-  /**
-   * @deprecated Use method sizeTagList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeTag() {
-  	return this.tag.size();
-  }
+  private List<java.lang.String> tag = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="and",required=false)

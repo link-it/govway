@@ -91,11 +91,11 @@ public class ConfigurazioneTransazioneStato extends org.openspcoop2.utils.beans.
     this.nome = nome;
   }
 
-  public void set_value_tipoControllo(String value) {
+  public void setTipoControlloRawEnumValue(String value) {
     this.tipoControllo = (TipoControllo) TipoControllo.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipoControllo() {
+  public String getTipoControlloRawEnumValue() {
     if(this.tipoControllo == null){
     	return null;
     }else{
@@ -111,11 +111,11 @@ public class ConfigurazioneTransazioneStato extends org.openspcoop2.utils.beans.
     this.tipoControllo = tipoControllo;
   }
 
-  public void set_value_tipoMessaggio(String value) {
+  public void setTipoMessaggioRawEnumValue(String value) {
     this.tipoMessaggio = (TipoMessaggio) TipoMessaggio.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipoMessaggio() {
+  public String getTipoMessaggioRawEnumValue() {
     if(this.tipoMessaggio == null){
     	return null;
     }else{
@@ -160,13 +160,13 @@ public class ConfigurazioneTransazioneStato extends org.openspcoop2.utils.beans.
   protected java.lang.String nome;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipoControllo;
+  protected java.lang.String tipoControlloRawEnumValue;
 
   @XmlElement(name="tipo-controllo",required=true,nillable=false)
   protected TipoControllo tipoControllo;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipoMessaggio;
+  protected java.lang.String tipoMessaggioRawEnumValue;
 
   @XmlElement(name="tipo-messaggio",required=true,nillable=false)
   protected TipoMessaggio tipoMessaggio;
