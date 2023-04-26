@@ -2793,7 +2793,7 @@ public class ProfiloDiCollaborazione {
 
 				PreparedStatement pstmt = null;
 				ResultSet rs = null;
-				java.util.List<String> IDBuste = new java.util.ArrayList<String>();
+				java.util.List<String> IDBuste = new java.util.ArrayList<>();
 				try{	
 
 					long nowTime = DateManager.getTimeMillis() - (timeout * 60 * 1000);
@@ -2904,7 +2904,7 @@ public class ProfiloDiCollaborazione {
 			
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
-			java.util.List<String> IDBuste = new java.util.ArrayList<String>();
+			java.util.List<String> IDBuste = new java.util.ArrayList<>();
 			String queryString = null;
 			try{	
 

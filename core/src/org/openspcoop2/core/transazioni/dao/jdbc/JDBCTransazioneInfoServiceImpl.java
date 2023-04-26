@@ -97,7 +97,7 @@ public class JDBCTransazioneInfoServiceImpl extends JDBCTransazioneInfoServiceSe
 		sqlQueryObjectUpdate.setANDLogicOperator(true);
 		sqlQueryObjectUpdate.addUpdateTable(this.getTransazioneInfoFieldConverter().toTable(TransazioneInfo.model()));
 		boolean isUpdate_transazioneInfo = true;
-		java.util.List<JDBCObject> lstObjects_transazioneInfo = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> lstObjects_transazioneInfo = new java.util.ArrayList<>();
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneInfoFieldConverter().toColumn(TransazioneInfo.model().TIPO,false), "?");
 		lstObjects_transazioneInfo.add(new JDBCObject(transazioneInfo.getTipo(), TransazioneInfo.model().TIPO.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneInfoFieldConverter().toColumn(TransazioneInfo.model().DATA,false), "?");

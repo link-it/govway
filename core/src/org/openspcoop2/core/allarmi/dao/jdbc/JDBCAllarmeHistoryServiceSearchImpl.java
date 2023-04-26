@@ -59,12 +59,12 @@ import org.slf4j.Logger;
  */
 public class JDBCAllarmeHistoryServiceSearchImpl implements IJDBCServiceSearchWithoutId<AllarmeHistory, JDBCServiceManager> {
 
-	private AllarmeHistoryFieldConverter _allarmeHistoryFieldConverter = null;
+	private AllarmeHistoryFieldConverter allarmeHistoryFieldConverterInternal = null;
 	public AllarmeHistoryFieldConverter getAllarmeHistoryFieldConverter() {
-		if(this._allarmeHistoryFieldConverter==null){
-			this._allarmeHistoryFieldConverter = new AllarmeHistoryFieldConverter(this.jdbcServiceManager.getJdbcProperties().getDatabaseType());
+		if(this.allarmeHistoryFieldConverterInternal==null){
+			this.allarmeHistoryFieldConverterInternal = new AllarmeHistoryFieldConverter(this.jdbcServiceManager.getJdbcProperties().getDatabaseType());
 		}		
-		return this._allarmeHistoryFieldConverter;
+		return this.allarmeHistoryFieldConverterInternal;
 	}
 	@Override
 	public ISQLFieldConverter getFieldConverter() {
@@ -101,13 +101,13 @@ public class JDBCAllarmeHistoryServiceSearchImpl implements IJDBCServiceSearchWi
 	@Override
 	public List<AllarmeHistory> findAll(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, JDBCPaginatedExpression expression, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException, ServiceException,Exception {
 
-        List<AllarmeHistory> list = new ArrayList<AllarmeHistory>();
+        List<AllarmeHistory> list = new ArrayList<>();
         
-        // TODO: implementazione non efficiente. 
+        /** TODO: implementazione non efficiente. 
 		// Per ottenere una implementazione efficiente:
 		// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari
 		// 2. Usare metodo getAllarmeHistoryFetch() sul risultato della select per ottenere un oggetto AllarmeHistory
-		//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 
+		//	  La fetch con la map inserirà nell'oggetto solo i valori estratti*/ 
 
         List<Long> ids = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, expression);
         
@@ -140,7 +140,7 @@ public class JDBCAllarmeHistoryServiceSearchImpl implements IJDBCServiceSearchWi
 		
 		sqlQueryObject.addSelectCountField(this.getAllarmeHistoryFieldConverter().toTable(AllarmeHistory.model())+".id","tot",true);
 		
-		_join(expression,sqlQueryObject);
+		joinEngine(expression,sqlQueryObject);
 		
 		return org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.count(jdbcProperties, log, connection, sqlQueryObject, expression,
 																			this.getAllarmeHistoryFieldConverter(), AllarmeHistory.model(),listaQuery);
@@ -180,7 +180,7 @@ public class JDBCAllarmeHistoryServiceSearchImpl implements IJDBCServiceSearchWi
 						org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareSqlQueryObjectForSelectDistinct(distinct,sqlQueryObject, paginatedExpression, log,
 												this.getAllarmeHistoryFieldConverter(), field);
 
-			return _select(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression, sqlQueryObjectDistinct);
+			return selectEngine(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression, sqlQueryObjectDistinct);
 			
 		}finally{
 			org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.removeFields(sqlQueryObject,paginatedExpression,field);
@@ -201,7 +201,7 @@ public class JDBCAllarmeHistoryServiceSearchImpl implements IJDBCServiceSearchWi
 		
 		org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.setFields(sqlQueryObject,expression,functionField);
 		try{
-			List<Map<String,Object>> list = _select(jdbcProperties, log, connection, sqlQueryObject, expression);
+			List<Map<String,Object>> list = selectEngine(jdbcProperties, log, connection, sqlQueryObject, expression);
 			return list.get(0);
 		}finally{
 			org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.removeFields(sqlQueryObject,expression,functionField);
@@ -212,13 +212,13 @@ public class JDBCAllarmeHistoryServiceSearchImpl implements IJDBCServiceSearchWi
 	public List<Map<String,Object>> groupBy(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
 													JDBCExpression expression, FunctionField ... functionField) throws ServiceException,NotFoundException,NotImplementedException,Exception {
 		
-		if(expression.getGroupByFields().size()<=0){
+		if(expression.getGroupByFields().isEmpty()){
 			throw new ServiceException("GroupBy conditions not found in expression");
 		}
 		
 		org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.setFields(sqlQueryObject,expression,functionField);
 		try{
-			return _select(jdbcProperties, log, connection, sqlQueryObject, expression);
+			return selectEngine(jdbcProperties, log, connection, sqlQueryObject, expression);
 		}finally{
 			org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.removeFields(sqlQueryObject,expression,functionField);
 		}
@@ -229,42 +229,42 @@ public class JDBCAllarmeHistoryServiceSearchImpl implements IJDBCServiceSearchWi
 	public List<Map<String,Object>> groupBy(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
 													JDBCPaginatedExpression paginatedExpression, FunctionField ... functionField) throws ServiceException,NotFoundException,NotImplementedException,Exception {
 		
-		if(paginatedExpression.getGroupByFields().size()<=0){
+		if(paginatedExpression.getGroupByFields().isEmpty()){
 			throw new ServiceException("GroupBy conditions not found in expression");
 		}
 		
 		org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.setFields(sqlQueryObject,paginatedExpression,functionField);
 		try{
-			return _select(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression);
+			return selectEngine(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression);
 		}finally{
 			org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.removeFields(sqlQueryObject,paginatedExpression,functionField);
 		}
 	}
 	
-	protected List<Map<String,Object>> _select(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
+	protected List<Map<String,Object>> selectEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
 												IExpression expression) throws ServiceException,NotFoundException,NotImplementedException,Exception {
-		return _select(jdbcProperties, log, connection, sqlQueryObject, expression, null);
+		return selectEngine(jdbcProperties, log, connection, sqlQueryObject, expression, null);
 	}
-	protected List<Map<String,Object>> _select(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
+	protected List<Map<String,Object>> selectEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
 												IExpression expression, ISQLQueryObject sqlQueryObjectDistinct) throws ServiceException,NotFoundException,NotImplementedException,Exception {
 		
 		List<Object> listaQuery = new ArrayList<>();
-		List<JDBCObject> listaParams = new ArrayList<JDBCObject>();
+		List<JDBCObject> listaParams = new ArrayList<>();
 		List<Object> returnField = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareSelect(jdbcProperties, log, connection, sqlQueryObject, 
         						expression, this.getAllarmeHistoryFieldConverter(), AllarmeHistory.model(), 
         						listaQuery,listaParams);
 		
-		_join(expression,sqlQueryObject);
+		joinEngine(expression,sqlQueryObject);
         
         List<Map<String,Object>> list = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.select(jdbcProperties, log, connection,
         								org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareSqlQueryObjectForSelectDistinct(sqlQueryObject,sqlQueryObjectDistinct), 
         								expression, this.getAllarmeHistoryFieldConverter(), AllarmeHistory.model(),
         								listaQuery,listaParams,returnField);
-		if(list!=null && list.size()>0){
+		if(list!=null && !list.isEmpty()){
 			return list;
 		}
 		else{
-			throw new NotFoundException("Not Found");
+			throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 		}
 	}
 	
@@ -272,8 +272,8 @@ public class JDBCAllarmeHistoryServiceSearchImpl implements IJDBCServiceSearchWi
 	public List<Map<String,Object>> union(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
 												Union union, UnionExpression ... unionExpression) throws ServiceException,NotFoundException,NotImplementedException,Exception {		
 		
-		List<ISQLQueryObject> sqlQueryObjectInnerList = new ArrayList<ISQLQueryObject>();
-		List<JDBCObject> jdbcObjects = new ArrayList<JDBCObject>();
+		List<ISQLQueryObject> sqlQueryObjectInnerList = new ArrayList<>();
+		List<JDBCObject> jdbcObjects = new ArrayList<>();
 		List<Class<?>> returnClassTypes = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareUnion(jdbcProperties, log, connection, sqlQueryObject, 
         						this.getAllarmeHistoryFieldConverter(), AllarmeHistory.model(), 
         						sqlQueryObjectInnerList, jdbcObjects, union, unionExpression);
@@ -282,18 +282,18 @@ public class JDBCAllarmeHistoryServiceSearchImpl implements IJDBCServiceSearchWi
 			for (int i = 0; i < unionExpression.length; i++) {
 				UnionExpression ue = unionExpression[i];
 				IExpression expression = ue.getExpression();
-				_join(expression,sqlQueryObjectInnerList.get(i));
+				joinEngine(expression,sqlQueryObjectInnerList.get(i));
 			}
 		}
         
         List<Map<String,Object>> list = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.union(jdbcProperties, log, connection, sqlQueryObject, 
         								this.getAllarmeHistoryFieldConverter(), AllarmeHistory.model(), 
         								sqlQueryObjectInnerList, jdbcObjects, returnClassTypes, union, unionExpression);
-        if(list!=null && list.size()>0){
+        if(list!=null && !list.isEmpty()){
 			return list;
 		}
 		else{
-			throw new NotFoundException("Not Found");
+			throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 		}								
 	}
 	
@@ -301,8 +301,8 @@ public class JDBCAllarmeHistoryServiceSearchImpl implements IJDBCServiceSearchWi
 	public NonNegativeNumber unionCount(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
 												Union union, UnionExpression ... unionExpression) throws ServiceException,NotFoundException,NotImplementedException,Exception {		
 		
-		List<ISQLQueryObject> sqlQueryObjectInnerList = new ArrayList<ISQLQueryObject>();
-		List<JDBCObject> jdbcObjects = new ArrayList<JDBCObject>();
+		List<ISQLQueryObject> sqlQueryObjectInnerList = new ArrayList<>();
+		List<JDBCObject> jdbcObjects = new ArrayList<>();
 		List<Class<?>> returnClassTypes = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareUnionCount(jdbcProperties, log, connection, sqlQueryObject, 
         						this.getAllarmeHistoryFieldConverter(), AllarmeHistory.model(), 
         						sqlQueryObjectInnerList, jdbcObjects, union, unionExpression);
@@ -311,7 +311,7 @@ public class JDBCAllarmeHistoryServiceSearchImpl implements IJDBCServiceSearchWi
 			for (int i = 0; i < unionExpression.length; i++) {
 				UnionExpression ue = unionExpression[i];
 				IExpression expression = ue.getExpression();
-				_join(expression,sqlQueryObjectInnerList.get(i));
+				joinEngine(expression,sqlQueryObjectInnerList.get(i));
 			}
 		}
         
@@ -322,7 +322,7 @@ public class JDBCAllarmeHistoryServiceSearchImpl implements IJDBCServiceSearchWi
 			return number;
 		}
 		else{
-			throw new NotFoundException("Not Found");
+			throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 		}
 	}
 
@@ -374,17 +374,15 @@ public class JDBCAllarmeHistoryServiceSearchImpl implements IJDBCServiceSearchWi
 	
 	@Override
 	public AllarmeHistory get(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException, Exception {
-		return this._get(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId), idMappingResolutionBehaviour);
+		return this.getEngine(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId), idMappingResolutionBehaviour);
 	}
 	
-	private AllarmeHistory _get(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long tableId, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException, Exception {
+	private AllarmeHistory getEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long tableId, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException, Exception {
 	
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 		
 		ISQLQueryObject sqlQueryObjectGet = sqlQueryObject.newSQLQueryObject();
-				
-		AllarmeHistory allarmeHistory = new AllarmeHistory();
 		
 
 		// Object allarmeHistory
@@ -400,7 +398,7 @@ public class JDBCAllarmeHistoryServiceSearchImpl implements IJDBCServiceSearchWi
 		sqlQueryObjectGet.addWhereCondition("id=?");
 
 		// Get allarmeHistory
-		allarmeHistory = (AllarmeHistory) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet.createSQLQuery(), jdbcProperties.isShowSql(), AllarmeHistory.model(), this.getAllarmeHistoryFetch(),
+		AllarmeHistory allarmeHistory = (AllarmeHistory) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet.createSQLQuery(), jdbcProperties.isShowSql(), AllarmeHistory.model(), this.getAllarmeHistoryFetch(),
 			new JDBCObject(tableId,Long.class));
 
 
@@ -408,22 +406,22 @@ public class JDBCAllarmeHistoryServiceSearchImpl implements IJDBCServiceSearchWi
 			(org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour) || org.openspcoop2.generic_project.beans.IDMappingBehaviour.USE_TABLE_ID.equals(idMappingResolutionBehaviour))
 		){
 			// Object _allarme (recupero id)
-			ISQLQueryObject sqlQueryObjectGet_allarme_readFkId = sqlQueryObjectGet.newSQLQueryObject();
-			sqlQueryObjectGet_allarme_readFkId.addFromTable(this.getAllarmeHistoryFieldConverter().toTable(org.openspcoop2.core.allarmi.AllarmeHistory.model()));
-			sqlQueryObjectGet_allarme_readFkId.addSelectField("id_allarme");
-			sqlQueryObjectGet_allarme_readFkId.addWhereCondition("id=?");
-			sqlQueryObjectGet_allarme_readFkId.setANDLogicOperator(true);
-			Long idFK_allarme = (Long) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_allarme_readFkId.createSQLQuery(), jdbcProperties.isShowSql(),Long.class,
+			ISQLQueryObject sqlQueryObjectGetAllarmeReadFkId = sqlQueryObjectGet.newSQLQueryObject();
+			sqlQueryObjectGetAllarmeReadFkId.addFromTable(this.getAllarmeHistoryFieldConverter().toTable(org.openspcoop2.core.allarmi.AllarmeHistory.model()));
+			sqlQueryObjectGetAllarmeReadFkId.addSelectField("idAllarme");
+			sqlQueryObjectGetAllarmeReadFkId.addWhereCondition("id=?");
+			sqlQueryObjectGetAllarmeReadFkId.setANDLogicOperator(true);
+			Long idFKAllarme = (Long) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGetAllarmeReadFkId.createSQLQuery(), jdbcProperties.isShowSql(),Long.class,
 					new JDBCObject(allarmeHistory.getId(),Long.class));
 			
-			org.openspcoop2.core.allarmi.IdAllarme id_allarme = null;
+			org.openspcoop2.core.allarmi.IdAllarme idAllarme = null;
 			if(idMappingResolutionBehaviour==null || org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour)){
-				id_allarme = ((JDBCAllarmeServiceSearch)(this.getServiceManager().getAllarmeServiceSearch())).findId(idFK_allarme, false);
+				idAllarme = ((JDBCAllarmeServiceSearch)(this.getServiceManager().getAllarmeServiceSearch())).findId(idFKAllarme, false);
 			}else{
-				id_allarme = new org.openspcoop2.core.allarmi.IdAllarme();
+				idAllarme = new org.openspcoop2.core.allarmi.IdAllarme();
 			}
-			id_allarme.setId(idFK_allarme);
-			allarmeHistory.setIdAllarme(id_allarme);
+			idAllarme.setId(idFKAllarme);
+			allarmeHistory.setIdAllarme(idAllarme);
 		}              
 		
         return allarmeHistory;  
@@ -459,29 +457,29 @@ public class JDBCAllarmeHistoryServiceSearchImpl implements IJDBCServiceSearchWi
 	
 	}
 	
-	private void _join(IExpression expression, ISQLQueryObject sqlQueryObject) throws NotImplementedException, ServiceException, Exception{
+	private void joinEngine(IExpression expression, ISQLQueryObject sqlQueryObject) throws NotImplementedException, ServiceException, Exception{
 	
 		if(expression.inUseModel(AllarmeHistory.model().ID_ALLARME,false)){
 			String tableName1 = this.getAllarmeHistoryFieldConverter().toAliasTable(AllarmeHistory.model());
 			String tableName2 = this.getAllarmeHistoryFieldConverter().toAliasTable(AllarmeHistory.model().ID_ALLARME);
-			sqlQueryObject.addWhereCondition(tableName1+".id_allarme="+tableName2+".id");
+			sqlQueryObject.addWhereCondition(tableName1+".idAllarme="+tableName2+".id");
 		}
         
 	}
 	
-	protected java.util.List<Object> _getRootTablePrimaryKeyValues(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, AllarmeHistory allarmeHistory) throws NotFoundException, ServiceException, NotImplementedException, Exception{
+	protected java.util.List<Object> getRootTablePrimaryKeyValuesEngine(Logger log, Connection connection, ISQLQueryObject sqlQueryObject, AllarmeHistory allarmeHistory) throws NotFoundException, ServiceException, NotImplementedException, Exception{
 	    // Identificativi
-        java.util.List<Object> rootTableIdValues = new java.util.ArrayList<Object>();
+        java.util.List<Object> rootTableIdValues = new java.util.ArrayList<>();
         rootTableIdValues.add(allarmeHistory.getId());
         
         return rootTableIdValues;
 	}
 	
-	protected Map<String, List<IField>> _getMapTableToPKColumn() throws NotImplementedException, Exception{
+	protected Map<String, List<IField>> getMapTableToPKColumnEngine() throws NotImplementedException, Exception{
 	
 		AllarmeHistoryFieldConverter converter = this.getAllarmeHistoryFieldConverter();
-		Map<String, List<IField>> mapTableToPKColumn = new java.util.HashMap<String, List<IField>>();
-		UtilsTemplate<IField> utilities = new UtilsTemplate<IField>();
+		Map<String, List<IField>> mapTableToPKColumn = new java.util.HashMap<>();
+		UtilsTemplate<IField> utilities = new UtilsTemplate<>();
 
 		// AllarmeHistory.model()
 		mapTableToPKColumn.put(converter.toTable(AllarmeHistory.model()),
@@ -511,7 +509,7 @@ public class JDBCAllarmeHistoryServiceSearchImpl implements IJDBCServiceSearchWi
 		List<Object> listaQuery = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareFindAll(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression,
 												this.getAllarmeHistoryFieldConverter(), AllarmeHistory.model());
 		
-		_join(paginatedExpression,sqlQueryObject);
+		joinEngine(paginatedExpression,sqlQueryObject);
 		
 		List<Object> listObjects = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.findAll(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression,
 																			this.getAllarmeHistoryFieldConverter(), AllarmeHistory.model(), objectIdClass, listaQuery);
@@ -534,7 +532,7 @@ public class JDBCAllarmeHistoryServiceSearchImpl implements IJDBCServiceSearchWi
 		List<Object> listaQuery = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareFind(jdbcProperties, log, connection, sqlQueryObject, expression,
 												this.getAllarmeHistoryFieldConverter(), AllarmeHistory.model());
 		
-		_join(expression,sqlQueryObject);
+		joinEngine(expression,sqlQueryObject);
 
 		Object res = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.find(jdbcProperties, log, connection, sqlQueryObject, expression,
 														this.getAllarmeHistoryFieldConverter(), AllarmeHistory.model(), objectIdClass, listaQuery);
@@ -542,33 +540,19 @@ public class JDBCAllarmeHistoryServiceSearchImpl implements IJDBCServiceSearchWi
 			return ((Long) res).longValue();
 		}
 		else{
-			throw new NotFoundException("Not Found");
+			throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 		}
 		
 	}
 
 	@Override
 	public InUse inUse(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId) throws ServiceException, NotFoundException, NotImplementedException, Exception {
-		return this._inUse(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
+		return this.inUseEngine(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
 	}
 
-	private InUse _inUse(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long tableId) throws ServiceException, NotFoundException, NotImplementedException, Exception {
+	private InUse inUseEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long tableId) throws ServiceException, NotFoundException, NotImplementedException, Exception {
 
-		InUse inUse = new InUse();
-		inUse.setInUse(false);
-		
-		/* 
-		 * TODO: implement code that checks whether the object identified by the id parameter is used by other objects
-		*/
-		
-		// Delete this line when you have implemented the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have implemented the method
-
-        return inUse;
+		throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotImplementedException();
 
 	}
 	

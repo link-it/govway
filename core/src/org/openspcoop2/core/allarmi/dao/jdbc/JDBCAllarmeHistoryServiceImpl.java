@@ -63,18 +63,18 @@ public class JDBCAllarmeHistoryServiceImpl extends JDBCAllarmeHistoryServiceSear
 				
 
 		// Object _allarme
-		Long id_allarme = null;
-		org.openspcoop2.core.allarmi.IdAllarme idLogic_allarme = null;
-		idLogic_allarme = allarmeHistory.getIdAllarme();
-		if(idLogic_allarme!=null){
+		Long idAllarme = null;
+		org.openspcoop2.core.allarmi.IdAllarme idLogicAllarme = null;
+		idLogicAllarme = allarmeHistory.getIdAllarme();
+		if(idLogicAllarme!=null){
 			if(idMappingResolutionBehaviour==null ||
 				(org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour))){
-				id_allarme = ((JDBCAllarmeServiceSearch)(this.getServiceManager().getAllarmeServiceSearch())).findTableId(idLogic_allarme, false);
+				idAllarme = ((JDBCAllarmeServiceSearch)(this.getServiceManager().getAllarmeServiceSearch())).findTableId(idLogicAllarme, false);
 			}
 			else if(org.openspcoop2.generic_project.beans.IDMappingBehaviour.USE_TABLE_ID.equals(idMappingResolutionBehaviour)){
-				id_allarme = idLogic_allarme.getId();
-				if(id_allarme==null || id_allarme<=0){
-					throw new Exception("Logic id not contains table id");
+				idAllarme = idLogicAllarme.getId();
+				if(idAllarme==null || idAllarme<=0){
+					throw new ServiceException("Logic id not contains table id");
 				}
 			}
 		}
@@ -91,7 +91,7 @@ public class JDBCAllarmeHistoryServiceImpl extends JDBCAllarmeHistoryServiceSear
 		sqlQueryObjectInsert.addInsertField(this.getAllarmeHistoryFieldConverter().toColumn(AllarmeHistory.model().ACKNOWLEDGED,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAllarmeHistoryFieldConverter().toColumn(AllarmeHistory.model().TIMESTAMP_UPDATE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAllarmeHistoryFieldConverter().toColumn(AllarmeHistory.model().UTENTE,false),"?");
-		sqlQueryObjectInsert.addInsertField("id_allarme","?");
+		sqlQueryObjectInsert.addInsertField("idAllarme","?");
 
 		// Insert allarmeHistory
 		org.openspcoop2.utils.jdbc.IKeyGeneratorObject keyGenerator = this.getAllarmeHistoryFetch().getKeyGeneratorObject(AllarmeHistory.model());
@@ -102,7 +102,7 @@ public class JDBCAllarmeHistoryServiceImpl extends JDBCAllarmeHistoryServiceSear
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarmeHistory.getAcknowledged(),AllarmeHistory.model().ACKNOWLEDGED.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarmeHistory.getTimestampUpdate(),AllarmeHistory.model().TIMESTAMP_UPDATE.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarmeHistory.getUtente(),AllarmeHistory.model().UTENTE.getFieldType()),
-			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id_allarme,Long.class)
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(idAllarme,Long.class)
 		);
 		allarmeHistory.setId(id);
 
@@ -113,7 +113,7 @@ public class JDBCAllarmeHistoryServiceImpl extends JDBCAllarmeHistoryServiceSear
 		
 		Long tableId = allarmeHistory.getId();
 		if(tableId==null || tableId<=0){
-			throw new Exception("Retrieve tableId failed");
+			throw new ServiceException("Retrieve tableId failed");
 		}
 
 		this.update(jdbcProperties, log, connection, sqlQueryObject, tableId, allarmeHistory, idMappingResolutionBehaviour);
@@ -136,18 +136,18 @@ public class JDBCAllarmeHistoryServiceImpl extends JDBCAllarmeHistoryServiceSear
 			
 
 		// Object _allarme
-		Long id_allarme = null;
-		org.openspcoop2.core.allarmi.IdAllarme idLogic_allarme = null;
-		idLogic_allarme = allarmeHistory.getIdAllarme();
-		if(idLogic_allarme!=null){
+		Long idAllarme = null;
+		org.openspcoop2.core.allarmi.IdAllarme idLogicAllarme = null;
+		idLogicAllarme = allarmeHistory.getIdAllarme();
+		if(idLogicAllarme!=null){
 			if(idMappingResolutionBehaviour==null ||
 				(org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour))){
-				id_allarme = ((JDBCAllarmeServiceSearch)(this.getServiceManager().getAllarmeServiceSearch())).findTableId(idLogic_allarme, false);
+				idAllarme = ((JDBCAllarmeServiceSearch)(this.getServiceManager().getAllarmeServiceSearch())).findTableId(idLogicAllarme, false);
 			}
 			else if(org.openspcoop2.generic_project.beans.IDMappingBehaviour.USE_TABLE_ID.equals(idMappingResolutionBehaviour)){
-				id_allarme = idLogic_allarme.getId();
-				if(id_allarme==null || id_allarme<=0){
-					throw new Exception("Logic id not contains table id");
+				idAllarme = idLogicAllarme.getId();
+				if(idAllarme==null || idAllarme<=0){
+					throw new ServiceException("Logic id not contains table id");
 				}
 			}
 		}
@@ -160,7 +160,7 @@ public class JDBCAllarmeHistoryServiceImpl extends JDBCAllarmeHistoryServiceSear
 		sqlQueryObjectUpdate.setANDLogicOperator(true);
 		sqlQueryObjectUpdate.addUpdateTable(this.getAllarmeHistoryFieldConverter().toTable(AllarmeHistory.model()));
 		boolean isUpdate = true;
-		java.util.List<JDBCObject> lstObjects = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> lstObjects = new java.util.ArrayList<>();
 		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeHistoryFieldConverter().toColumn(AllarmeHistory.model().ENABLED,false), "?");
 		lstObjects.add(new JDBCObject(allarmeHistory.getEnabled(), AllarmeHistory.model().ENABLED.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeHistoryFieldConverter().toColumn(AllarmeHistory.model().STATO,false), "?");
@@ -174,10 +174,10 @@ public class JDBCAllarmeHistoryServiceImpl extends JDBCAllarmeHistoryServiceSear
 		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeHistoryFieldConverter().toColumn(AllarmeHistory.model().UTENTE,false), "?");
 		lstObjects.add(new JDBCObject(allarmeHistory.getUtente(), AllarmeHistory.model().UTENTE.getFieldType()));
 		if(setIdMappingResolutionBehaviour){
-			sqlQueryObjectUpdate.addUpdateField("id_allarme","?");
+			sqlQueryObjectUpdate.addUpdateField("idAllarme","?");
 		}
 		if(setIdMappingResolutionBehaviour){
-			lstObjects.add(new JDBCObject(id_allarme, Long.class));
+			lstObjects.add(new JDBCObject(idAllarme, Long.class));
 		}
 		sqlQueryObjectUpdate.addWhereCondition("id=?");
 		lstObjects.add(new JDBCObject(tableId, Long.class));
@@ -195,8 +195,8 @@ public class JDBCAllarmeHistoryServiceImpl extends JDBCAllarmeHistoryServiceSear
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getAllarmeHistoryFieldConverter().toTable(AllarmeHistory.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, allarmeHistory),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(log, connection, sqlQueryObject, allarmeHistory),
 				this.getAllarmeHistoryFieldConverter(), this, null, updateFields);
 	}
 	
@@ -205,8 +205,8 @@ public class JDBCAllarmeHistoryServiceImpl extends JDBCAllarmeHistoryServiceSear
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getAllarmeHistoryFieldConverter().toTable(AllarmeHistory.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, allarmeHistory),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(log, connection, sqlQueryObject, allarmeHistory),
 				this.getAllarmeHistoryFieldConverter(), this, condition, updateFields);
 	}
 	
@@ -215,40 +215,40 @@ public class JDBCAllarmeHistoryServiceImpl extends JDBCAllarmeHistoryServiceSear
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getAllarmeHistoryFieldConverter().toTable(AllarmeHistory.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, allarmeHistory),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(log, connection, sqlQueryObject, allarmeHistory),
 				this.getAllarmeHistoryFieldConverter(), this, updateModels);
 	}	
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getAllarmeHistoryFieldConverter().toTable(AllarmeHistory.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getAllarmeHistoryFieldConverter(), this, null, updateFields);
 	}
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, IExpression condition, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getAllarmeHistoryFieldConverter().toTable(AllarmeHistory.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getAllarmeHistoryFieldConverter(), this, condition, updateFields);
 	}
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateModel ... updateModels) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getAllarmeHistoryFieldConverter().toTable(AllarmeHistory.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getAllarmeHistoryFieldConverter(), this, updateModels);
 	}
@@ -280,18 +280,18 @@ public class JDBCAllarmeHistoryServiceImpl extends JDBCAllarmeHistoryServiceSear
 		
 		Long longId = null;
 		if(allarmeHistory.getId()==null){
-			throw new Exception("Parameter "+allarmeHistory.getClass().getName()+".id is null");
+			throw new ServiceException("Parameter "+allarmeHistory.getClass().getName()+".id is null");
 		}
 		if(allarmeHistory.getId()<=0){
-			throw new Exception("Parameter "+allarmeHistory.getClass().getName()+".id is less equals 0");
+			throw new ServiceException("Parameter "+allarmeHistory.getClass().getName()+".id is less equals 0");
 		}
 		longId = allarmeHistory.getId();
 		
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, longId);
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, longId);
 		
 	}
 
-	private void _delete(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long id) throws NotImplementedException,ServiceException,Exception {
+	private void deleteEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long id) throws NotImplementedException,ServiceException,Exception {
 	
 		if(id!=null && id.longValue()<=0){
 			throw new ServiceException("Id is less equals 0");
@@ -329,7 +329,7 @@ public class JDBCAllarmeHistoryServiceImpl extends JDBCAllarmeHistoryServiceSear
 		java.util.List<Long> lst = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, new JDBCPaginatedExpression(expression));
 		
 		for(Long id : lst) {
-			this._delete(jdbcProperties, log, connection, sqlQueryObject, id);
+			this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, id);
 		}
 		
 		return new NonNegativeNumber(lst.size());
@@ -342,7 +342,7 @@ public class JDBCAllarmeHistoryServiceImpl extends JDBCAllarmeHistoryServiceSear
 	
 	@Override
 	public void deleteById(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId) throws ServiceException, NotImplementedException, Exception {
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
 	}
 	
 	@Override

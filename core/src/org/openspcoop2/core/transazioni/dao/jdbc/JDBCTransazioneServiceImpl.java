@@ -190,7 +190,7 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 			
 		// Insert transazione
 		String insertSql = sqlQueryObjectInsert.createSQLInsert();
-		List<JDBCObject> listaJDBCObject = new ArrayList<JDBCObject>();
+		List<JDBCObject> listaJDBCObject = new ArrayList<>();
 		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getIdTransazione(),Transazione.model().ID_TRANSAZIONE.getFieldType()) );
 		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getStato(),Transazione.model().STATO.getFieldType()) );
 		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getRuoloTransazione(),Transazione.model().RUOLO_TRANSAZIONE.getFieldType()) );
@@ -332,7 +332,7 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 		sqlQueryObjectUpdate.setANDLogicOperator(true);
 		sqlQueryObjectUpdate.addUpdateTable(this.getTransazioneFieldConverter().toTable(Transazione.model()));
 		boolean isUpdate_transazione = true;
-		java.util.List<JDBCObject> lstObjects_transazione = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> lstObjects_transazione = new java.util.ArrayList<>();
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneFieldConverter().toColumn(Transazione.model().ID_TRANSAZIONE,false), "?");
 		lstObjects_transazione.add(new JDBCObject(transazione.getIdTransazione(), Transazione.model().ID_TRANSAZIONE.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneFieldConverter().toColumn(Transazione.model().STATO,false), "?");

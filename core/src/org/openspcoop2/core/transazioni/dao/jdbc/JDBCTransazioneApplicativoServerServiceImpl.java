@@ -234,7 +234,7 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 		sqlQueryObjectUpdate.setANDLogicOperator(true);
 		sqlQueryObjectUpdate.addUpdateTable(this.getTransazioneApplicativoServerFieldConverter().toTable(TransazioneApplicativoServer.model()));
 		boolean isUpdate_transazioneApplicativoServer = true;
-		java.util.List<JDBCObject> lstObjects_transazioneApplicativoServer = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> lstObjects_transazioneApplicativoServer = new java.util.ArrayList<>();
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().ID_TRANSAZIONE,false), "?");
 		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getIdTransazione(), TransazioneApplicativoServer.model().ID_TRANSAZIONE.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().SERVIZIO_APPLICATIVO_EROGATORE,false), "?");
@@ -370,7 +370,7 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getTransazioneApplicativoServerFieldConverter().toTable(TransazioneApplicativoServer.model()), 
@@ -381,7 +381,7 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, IExpression condition, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getTransazioneApplicativoServerFieldConverter().toTable(TransazioneApplicativoServer.model()), 
@@ -392,7 +392,7 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateModel ... updateModels) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getTransazioneApplicativoServerFieldConverter().toTable(TransazioneApplicativoServer.model()), 

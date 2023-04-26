@@ -253,7 +253,7 @@ public class JDBCTransazioneExportServiceSearchImpl implements IJDBCServiceSearc
 												IExpression expression, ISQLQueryObject sqlQueryObjectDistinct) throws ServiceException,NotFoundException,NotImplementedException,Exception {
 		
 		List<Object> listaQuery = new ArrayList<>();
-		List<JDBCObject> listaParams = new ArrayList<JDBCObject>();
+		List<JDBCObject> listaParams = new ArrayList<>();
 		List<Object> returnField = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareSelect(jdbcProperties, log, connection, sqlQueryObject, 
         						expression, this.getTransazioneExportFieldConverter(), TransazioneExport.model(), 
         						listaQuery,listaParams);
@@ -276,8 +276,8 @@ public class JDBCTransazioneExportServiceSearchImpl implements IJDBCServiceSearc
 	public List<Map<String,Object>> union(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
 												Union union, UnionExpression ... unionExpression) throws ServiceException,NotFoundException,NotImplementedException,Exception {		
 		
-		List<ISQLQueryObject> sqlQueryObjectInnerList = new ArrayList<ISQLQueryObject>();
-		List<JDBCObject> jdbcObjects = new ArrayList<JDBCObject>();
+		List<ISQLQueryObject> sqlQueryObjectInnerList = new ArrayList<>();
+		List<JDBCObject> jdbcObjects = new ArrayList<>();
 		List<Class<?>> returnClassTypes = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareUnion(jdbcProperties, log, connection, sqlQueryObject, 
         						this.getTransazioneExportFieldConverter(), TransazioneExport.model(), 
         						sqlQueryObjectInnerList, jdbcObjects, union, unionExpression);
@@ -305,8 +305,8 @@ public class JDBCTransazioneExportServiceSearchImpl implements IJDBCServiceSearc
 	public NonNegativeNumber unionCount(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
 												Union union, UnionExpression ... unionExpression) throws ServiceException,NotFoundException,NotImplementedException,Exception {		
 		
-		List<ISQLQueryObject> sqlQueryObjectInnerList = new ArrayList<ISQLQueryObject>();
-		List<JDBCObject> jdbcObjects = new ArrayList<JDBCObject>();
+		List<ISQLQueryObject> sqlQueryObjectInnerList = new ArrayList<>();
+		List<JDBCObject> jdbcObjects = new ArrayList<>();
 		List<Class<?>> returnClassTypes = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareUnionCount(jdbcProperties, log, connection, sqlQueryObject, 
         						this.getTransazioneExportFieldConverter(), TransazioneExport.model(), 
         						sqlQueryObjectInnerList, jdbcObjects, union, unionExpression);
@@ -457,7 +457,7 @@ public class JDBCTransazioneExportServiceSearchImpl implements IJDBCServiceSearc
 	
 	protected java.util.List<Object> _getRootTablePrimaryKeyValues(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, TransazioneExport transazioneExport) throws NotFoundException, ServiceException, NotImplementedException, Exception{
 	    // Identificativi
-        java.util.List<Object> rootTableIdValues = new java.util.ArrayList<Object>();
+        java.util.List<Object> rootTableIdValues = new java.util.ArrayList<>();
         rootTableIdValues.add(transazioneExport.getId());
         return rootTableIdValues;
 	}
@@ -465,8 +465,8 @@ public class JDBCTransazioneExportServiceSearchImpl implements IJDBCServiceSearc
 	protected Map<String, List<IField>> _getMapTableToPKColumn() throws NotImplementedException, Exception{
 	
 		TransazioneExportFieldConverter converter = this.getTransazioneExportFieldConverter();
-		Map<String, List<IField>> mapTableToPKColumn = new java.util.HashMap<String, List<IField>>();
-		UtilsTemplate<IField> utilities = new UtilsTemplate<IField>();
+		Map<String, List<IField>> mapTableToPKColumn = new java.util.HashMap<>();
+		UtilsTemplate<IField> utilities = new UtilsTemplate<>();
 
 		// TransazioneExport.model()
 		mapTableToPKColumn.put(converter.toTable(TransazioneExport.model()),

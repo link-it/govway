@@ -144,7 +144,7 @@ public abstract class AccordoServizioParteSpecificaImpl extends BaseImpl  implem
 		
 		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(driverDB.getTipoDB());
 		List<Class<?>> returnTypes = new ArrayList<Class<?>>();
-		List<JDBCObject> paramTypes = new ArrayList<JDBCObject>();
+		List<JDBCObject> paramTypes = new ArrayList<>();
 		
 		sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 		
@@ -204,7 +204,7 @@ public abstract class AccordoServizioParteSpecificaImpl extends BaseImpl  implem
 		
 		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(driverDB.getTipoDB());
 		List<Class<?>> returnTypes = new ArrayList<Class<?>>();
-		List<JDBCObject> paramTypes = new ArrayList<JDBCObject>();
+		List<JDBCObject> paramTypes = new ArrayList<>();
 		
 		sqlQueryObject.addFromTable(CostantiDB.SERVIZI, CostantiDB.SERVIZI);
 		

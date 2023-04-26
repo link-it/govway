@@ -70,7 +70,7 @@ public class Operation {
 	}
 	
 	private List<Parameter> parameters = new ArrayList<Parameter>();
-	private java.util.Map<String,String> parametersHash = new java.util.HashMap<String,String>();
+	private java.util.Map<String,String> parametersHash = new java.util.HashMap<>();
 	
 	public void addParameter(Parameter p){
 		this.parameters.add(p);

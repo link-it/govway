@@ -681,7 +681,7 @@ public class CooperazioneConErrori extends GestioneViaJmx {
 	@DataProvider (name="ConnettoreErrato")
 	public Object[][]testConnettoreErrato()throws Exception{
 		String [] ids = new String[1];
-		List<String> idsV = new java.util.ArrayList<String>();
+		List<String> idsV = new java.util.ArrayList<>();
 		String id = null;
 		while( (id=this.repositoryConnettoreErrato.getNext()) != null){
 			idsV.add(id);
@@ -1016,7 +1016,7 @@ public class CooperazioneConErrori extends GestioneViaJmx {
 	@DataProvider (name="SOAPFaultPdDDestinazione")
 	public Object[][]testSOAPFaultPdDDestinazione()throws Exception{
 		String [] ids = new String[1];
-		List<String> idsV = new java.util.ArrayList<String>();
+		List<String> idsV = new java.util.ArrayList<>();
 		String id = null;
 		while( (id=this.repositorySOAPFaultPdDDestinazione.getNext()) != null){
 			idsV.add(id);
@@ -1358,7 +1358,7 @@ public class CooperazioneConErrori extends GestioneViaJmx {
 	@DataProvider (name="ConnettoreErratoServizioApplicativo")
 	public Object[][]testConnettoreErratoServizioApplicativo()throws Exception{
 		String [] ids = new String[1];
-		List<String> idsV = new java.util.ArrayList<String>();
+		List<String> idsV = new java.util.ArrayList<>();
 		String id = null;
 		while( (id=this.repositoryConnettoreErratoServizioApplicativo.getNext()) != null){
 			idsV.add(id);
@@ -1746,7 +1746,7 @@ public class CooperazioneConErrori extends GestioneViaJmx {
 	@DataProvider (name="SOAPFaultServizioApplicativo")
 	public Object[][]testSOAPFaultServizioApplicativo()throws Exception{
 		String [] ids = new String[1];
-		List<String> idsV = new java.util.ArrayList<String>();
+		List<String> idsV = new java.util.ArrayList<>();
 		String id = null;
 		while( (id=this.repositorySOAPFaultServizioApplicativo.getNext()) != null){
 			idsV.add(id);
@@ -2194,7 +2194,7 @@ public class CooperazioneConErrori extends GestioneViaJmx {
 	@DataProvider (name="ErroreProcessamento")
 	public Object[][]testErroreProcessamento()throws Exception{
 		String [] ids = new String[1];
-		List<String> idsV = new java.util.ArrayList<String>();
+		List<String> idsV = new java.util.ArrayList<>();
 		String id = null;
 		while( (id=this.repositoryErroreProcessamento.getNext()) != null){
 			idsV.add(id);
@@ -2651,7 +2651,7 @@ public class CooperazioneConErrori extends GestioneViaJmx {
 	@DataProvider (name="ErroreValidazione")
 	public Object[][]testErroreValidazione()throws Exception{
 		String [] ids = new String[1];
-		List<String> idsV = new java.util.ArrayList<String>();
+		List<String> idsV = new java.util.ArrayList<>();
 		String id = null;
 		while( (id=this.repositoryErroreValidazione.getNext()) != null){
 			idsV.add(id);
@@ -2985,7 +2985,7 @@ public class CooperazioneConErrori extends GestioneViaJmx {
 	@DataProvider (name="rispedizioniOneWay")
 	public Object[][]testRispedizioniOneWay()throws Exception{
 		String [] ids = new String[1];
-		List<String> idsV = new java.util.ArrayList<String>();
+		List<String> idsV = new java.util.ArrayList<>();
 		String id = null;
 		while( (id=this.repositoryRispedizioniOneWay.getNext()) != null){
 			idsV.add(id);
@@ -3195,7 +3195,7 @@ public class CooperazioneConErrori extends GestioneViaJmx {
 	@DataProvider (name="rispedizioniAsincronoSimmetrico")
 	public Object[][]testRispedizioniAsincronoSimmetrico()throws Exception{
 		String [] ids = new String[1];
-		List<String> idsV = new java.util.ArrayList<String>();
+		List<String> idsV = new java.util.ArrayList<>();
 		String id = null;
 		while( (id=this.repositoryRispedizioniAsincronoSimmetrico.getNext()) != null){
 			idsV.add(id);
@@ -3359,7 +3359,7 @@ public class CooperazioneConErrori extends GestioneViaJmx {
 	@DataProvider (name="rispedizioniAsincronoAsimmetrico")
 	public Object[][]testRispedizioniAsincronoAsimmetrico()throws Exception{
 		String [] ids = new String[1];
-		List<String> idsV = new java.util.ArrayList<String>();
+		List<String> idsV = new java.util.ArrayList<>();
 		String id = null;
 		while( (id=this.repositoryRispedizioniAsincronoAsimmetrico.getNext()) != null){
 			idsV.add(id);

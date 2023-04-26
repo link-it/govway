@@ -32,7 +32,7 @@ public class NonShortCircuitLogicCheck {
 	public static final String OR_CHECK = " | ";
 	public static final String AND_CHECK = " & ";
 
-	public static java.util.List<String> fileNonValidi = new java.util.ArrayList<String>();
+	public static java.util.List<String> fileNonValidi = new java.util.ArrayList<>();
 
 	public static String versione_rilascio = null;
 
@@ -52,7 +52,7 @@ public class NonShortCircuitLogicCheck {
 			
 			check(new File(dir));
 
-			java.util.List<String> filePrinted = new java.util.ArrayList<String>();	    
+			java.util.List<String> filePrinted = new java.util.ArrayList<>();	    
 			if(fileNonValidi.size()>0){
 				for(int i=0; i<fileNonValidi.size(); i++){
 					String file = fileNonValidi.get(i);

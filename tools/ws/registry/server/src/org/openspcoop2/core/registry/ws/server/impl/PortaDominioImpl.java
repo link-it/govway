@@ -120,7 +120,7 @@ public abstract class PortaDominioImpl extends BaseImpl  implements PortaDominio
 		
 		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(driverDB.getTipoDB());
 		List<Class<?>> returnTypes = new ArrayList<Class<?>>();
-		List<JDBCObject> paramTypes = new ArrayList<JDBCObject>();
+		List<JDBCObject> paramTypes = new ArrayList<>();
 		
 		sqlQueryObject.addFromTable(CostantiDB.PDD);
 		
@@ -164,7 +164,7 @@ public abstract class PortaDominioImpl extends BaseImpl  implements PortaDominio
 		
 		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(driverDB.getTipoDB());
 		List<Class<?>> returnTypes = new ArrayList<Class<?>>();
-		List<JDBCObject> paramTypes = new ArrayList<JDBCObject>();
+		List<JDBCObject> paramTypes = new ArrayList<>();
 		
 		sqlQueryObject.addFromTable(CostantiDB.PDD, CostantiDB.PDD);
 		

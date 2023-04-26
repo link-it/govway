@@ -123,7 +123,7 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 		
 		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(driverDB.getTipoDB());
 		List<Class<?>> returnTypes = new ArrayList<Class<?>>();
-		List<JDBCObject> paramTypes = new ArrayList<JDBCObject>();
+		List<JDBCObject> paramTypes = new ArrayList<>();
 		
 		sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
 		
@@ -169,7 +169,7 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 		
 		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(driverDB.getTipoDB());
 		List<Class<?>> returnTypes = new ArrayList<Class<?>>();
-		List<JDBCObject> paramTypes = new ArrayList<JDBCObject>();
+		List<JDBCObject> paramTypes = new ArrayList<>();
 		
 		sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE,CostantiDB.PORTE_APPLICATIVE);
 		

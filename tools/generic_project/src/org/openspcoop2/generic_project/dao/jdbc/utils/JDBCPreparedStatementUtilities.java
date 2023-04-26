@@ -95,7 +95,7 @@ public class JDBCPreparedStatementUtilities {
 			IKeyGenerator keyGenerator = KeyGeneratorFactory.createKeyGeneratorFactory(this.tipoDatabase.getNome(), this.connection, object);
 
 			// Parametri di insert
-			List<JDBCObject> p = new ArrayList<JDBCObject>();
+			List<JDBCObject> p = new ArrayList<>();
 			if(params!=null){
 				for (int i = 0; i < params.length; i++) {
 					p.add(params[i]);

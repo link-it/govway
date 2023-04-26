@@ -125,7 +125,7 @@ public class TunnelSOAP {
 		boolean value = org.openspcoop2.testsuite.core.Utilities.
 		equalsSoapElements(xmlRichiestaAxis, 
 				   xmlRispostaAxis,
-				   new java.util.ArrayList<String>());
+				   new java.util.ArrayList<>());
 		if(!value){
 			System.out.println("RICHIESTA ["+xmlRichiestaAxis.getAsString()+"]");
 			System.out.println("RISPOSTA  ["+xmlRispostaAxis.getAsString()+"]");

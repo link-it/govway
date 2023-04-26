@@ -101,7 +101,7 @@ public class JDBCConfigurazioneRateLimitingProprietaServiceImpl extends JDBCConf
 		sqlQueryObjectUpdate.setANDLogicOperator(true);
 		sqlQueryObjectUpdate.addUpdateTable(this.getConfigurazioneRateLimitingProprietaFieldConverter().toTable(ConfigurazioneRateLimitingProprieta.model()));
 		boolean isUpdate = true;
-		java.util.List<JDBCObject> lstObjects = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> lstObjects = new java.util.ArrayList<>();
 		sqlQueryObjectUpdate.addUpdateField(this.getConfigurazioneRateLimitingProprietaFieldConverter().toColumn(ConfigurazioneRateLimitingProprieta.model().NOME,false), "?");
 		lstObjects.add(new JDBCObject(configurazioneRateLimitingProprieta.getNome(), ConfigurazioneRateLimitingProprieta.model().NOME.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getConfigurazioneRateLimitingProprietaFieldConverter().toColumn(ConfigurazioneRateLimitingProprieta.model().VALORE,false), "?");
@@ -150,7 +150,7 @@ public class JDBCConfigurazioneRateLimitingProprietaServiceImpl extends JDBCConf
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneRateLimitingProprietaFieldConverter().toTable(ConfigurazioneRateLimitingProprieta.model()), 
@@ -161,7 +161,7 @@ public class JDBCConfigurazioneRateLimitingProprietaServiceImpl extends JDBCConf
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, IExpression condition, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneRateLimitingProprietaFieldConverter().toTable(ConfigurazioneRateLimitingProprieta.model()), 
@@ -172,7 +172,7 @@ public class JDBCConfigurazioneRateLimitingProprietaServiceImpl extends JDBCConf
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateModel ... updateModels) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneRateLimitingProprietaFieldConverter().toTable(ConfigurazioneRateLimitingProprieta.model()), 

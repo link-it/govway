@@ -90,33 +90,6 @@ public class ElencoIdAllarmi extends org.openspcoop2.utils.beans.BaseBeanWithId 
 
 
   @XmlElement(name="id-allarme",required=true,nillable=false)
-  protected List<IdAllarme> idAllarme = new ArrayList<IdAllarme>();
-
-  /**
-   * @deprecated Use method getIdAllarmeList
-   * @return List&lt;IdAllarme&gt;
-  */
-  @Deprecated
-  public List<IdAllarme> getIdAllarme() {
-  	return this.idAllarme;
-  }
-
-  /**
-   * @deprecated Use method setIdAllarmeList
-   * @param idAllarme List&lt;IdAllarme&gt;
-  */
-  @Deprecated
-  public void setIdAllarme(List<IdAllarme> idAllarme) {
-  	this.idAllarme=idAllarme;
-  }
-
-  /**
-   * @deprecated Use method sizeIdAllarmeList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeIdAllarme() {
-  	return this.idAllarme.size();
-  }
+  private List<IdAllarme> idAllarme = new ArrayList<>();
 
 }

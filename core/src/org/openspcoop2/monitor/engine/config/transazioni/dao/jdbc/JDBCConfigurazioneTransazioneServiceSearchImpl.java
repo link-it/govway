@@ -315,7 +315,7 @@ public class JDBCConfigurazioneTransazioneServiceSearchImpl implements IJDBCServ
 												IExpression expression, ISQLQueryObject sqlQueryObjectDistinct) throws ServiceException,NotFoundException,NotImplementedException,Exception {
 		
 		List<Object> listaQuery = new ArrayList<>();
-		List<JDBCObject> listaParams = new ArrayList<JDBCObject>();
+		List<JDBCObject> listaParams = new ArrayList<>();
 		List<Object> returnField = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareSelect(jdbcProperties, log, connection, sqlQueryObject, 
         						expression, this.getConfigurazioneTransazioneFieldConverter(), ConfigurazioneTransazione.model(), 
         						listaQuery,listaParams);
@@ -338,8 +338,8 @@ public class JDBCConfigurazioneTransazioneServiceSearchImpl implements IJDBCServ
 	public List<Map<String,Object>> union(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
 												Union union, UnionExpression ... unionExpression) throws ServiceException,NotFoundException,NotImplementedException,Exception {		
 		
-		List<ISQLQueryObject> sqlQueryObjectInnerList = new ArrayList<ISQLQueryObject>();
-		List<JDBCObject> jdbcObjects = new ArrayList<JDBCObject>();
+		List<ISQLQueryObject> sqlQueryObjectInnerList = new ArrayList<>();
+		List<JDBCObject> jdbcObjects = new ArrayList<>();
 		List<Class<?>> returnClassTypes = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareUnion(jdbcProperties, log, connection, sqlQueryObject, 
         						this.getConfigurazioneTransazioneFieldConverter(), ConfigurazioneTransazione.model(), 
         						sqlQueryObjectInnerList, jdbcObjects, union, unionExpression);
@@ -367,8 +367,8 @@ public class JDBCConfigurazioneTransazioneServiceSearchImpl implements IJDBCServ
 	public NonNegativeNumber unionCount(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
 												Union union, UnionExpression ... unionExpression) throws ServiceException,NotFoundException,NotImplementedException,Exception {		
 		
-		List<ISQLQueryObject> sqlQueryObjectInnerList = new ArrayList<ISQLQueryObject>();
-		List<JDBCObject> jdbcObjects = new ArrayList<JDBCObject>();
+		List<ISQLQueryObject> sqlQueryObjectInnerList = new ArrayList<>();
+		List<JDBCObject> jdbcObjects = new ArrayList<>();
 		List<Class<?>> returnClassTypes = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareUnionCount(jdbcProperties, log, connection, sqlQueryObject, 
         						this.getConfigurazioneTransazioneFieldConverter(), ConfigurazioneTransazione.model(), 
         						sqlQueryObjectInnerList, jdbcObjects, union, unionExpression);
@@ -810,7 +810,7 @@ public class JDBCConfigurazioneTransazioneServiceSearchImpl implements IJDBCServ
 	
 	protected java.util.List<Object> _getRootTablePrimaryKeyValues(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdConfigurazioneTransazione id) throws NotFoundException, ServiceException, NotImplementedException, Exception{
 	    // Identificativi
-        java.util.List<Object> rootTableIdValues = new java.util.ArrayList<Object>();
+        java.util.List<Object> rootTableIdValues = new java.util.ArrayList<>();
         // TODO: Define the column values used to identify the primary key
 		Long longId = this.findIdConfigurazioneTransazione(jdbcProperties, log, connection, sqlQueryObject.newSQLQueryObject(), id, true);
 		rootTableIdValues.add(longId);
@@ -828,8 +828,8 @@ public class JDBCConfigurazioneTransazioneServiceSearchImpl implements IJDBCServ
 	protected Map<String, List<IField>> _getMapTableToPKColumn() throws NotImplementedException, Exception{
 	
 		ConfigurazioneTransazioneFieldConverter converter = this.getConfigurazioneTransazioneFieldConverter();
-		Map<String, List<IField>> mapTableToPKColumn = new java.util.HashMap<String, List<IField>>();
-		UtilsTemplate<IField> utilities = new UtilsTemplate<IField>();
+		Map<String, List<IField>> mapTableToPKColumn = new java.util.HashMap<>();
+		UtilsTemplate<IField> utilities = new UtilsTemplate<>();
 
 		// ConfigurazioneTransazione.model()
 		mapTableToPKColumn.put(converter.toTable(ConfigurazioneTransazione.model()),

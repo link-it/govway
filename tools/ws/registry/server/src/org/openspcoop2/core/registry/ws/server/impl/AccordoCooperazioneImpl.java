@@ -137,7 +137,7 @@ public abstract class AccordoCooperazioneImpl extends BaseImpl  implements Accor
 		
 		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(driverDB.getTipoDB());
 		List<Class<?>> returnTypes = new ArrayList<Class<?>>();
-		List<JDBCObject> paramTypes = new ArrayList<JDBCObject>();
+		List<JDBCObject> paramTypes = new ArrayList<>();
 		
 		sqlQueryObject.addFromTable(CostantiDB.ACCORDI_COOPERAZIONE);
 		
@@ -193,7 +193,7 @@ public abstract class AccordoCooperazioneImpl extends BaseImpl  implements Accor
 		
 		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(driverDB.getTipoDB());
 		List<Class<?>> returnTypes = new ArrayList<Class<?>>();
-		List<JDBCObject> paramTypes = new ArrayList<JDBCObject>();
+		List<JDBCObject> paramTypes = new ArrayList<>();
 		
 		sqlQueryObject.addFromTable(CostantiDB.ACCORDI_COOPERAZIONE,CostantiDB.ACCORDI_COOPERAZIONE);
 		

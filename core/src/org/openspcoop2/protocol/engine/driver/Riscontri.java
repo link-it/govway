@@ -176,7 +176,7 @@ public class Riscontri  {
 
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		java.util.List<String> IDBuste = new java.util.ArrayList<String>();
+		java.util.List<String> IDBuste = new java.util.ArrayList<>();
 		String queryString = null;
 		try{	
 

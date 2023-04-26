@@ -302,7 +302,7 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 		sqlQueryObjectUpdate.setANDLogicOperator(true);
 		sqlQueryObjectUpdate.addUpdateTable(this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model()));
 		boolean isUpdate_configurazioneTransazione = true;
-		java.util.List<JDBCObject> lstObjects_configurazioneTransazione = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> lstObjects_configurazioneTransazione = new java.util.ArrayList<>();
 		sqlQueryObjectUpdate.addUpdateField(this.getConfigurazioneTransazioneFieldConverter().toColumn(ConfigurazioneTransazione.model().ENABLED,false), "?");
 		lstObjects_configurazioneTransazione.add(new JDBCObject(configurazioneTransazione.getEnabled(), ConfigurazioneTransazione.model().ENABLED.getFieldType()));
 		sqlQueryObjectUpdate.addWhereCondition("id=?");
@@ -355,7 +355,7 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 				sqlQueryObjectUpdate_configurazioneTransazione_configurazioneTransazionePlugin.setANDLogicOperator(true);
 				sqlQueryObjectUpdate_configurazioneTransazione_configurazioneTransazionePlugin.addUpdateTable(this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_PLUGIN));
 				boolean isUpdate_configurazioneTransazione_configurazioneTransazionePlugin = true;
-				java.util.List<JDBCObject> lstObjects_configurazioneTransazione_configurazioneTransazionePlugin = new java.util.ArrayList<JDBCObject>();
+				java.util.List<JDBCObject> lstObjects_configurazioneTransazione_configurazioneTransazionePlugin = new java.util.ArrayList<>();
 				sqlQueryObjectUpdate_configurazioneTransazione_configurazioneTransazionePlugin.addUpdateField(this.getConfigurazioneTransazioneFieldConverter().toColumn(ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_PLUGIN.ID_CONFIGURAZIONE_TRANSAZIONE_PLUGIN,false), "?");
 				lstObjects_configurazioneTransazione_configurazioneTransazionePlugin.add(new JDBCObject(configurazioneTransazione_configurazioneTransazionePlugin.getIdConfigurazioneTransazionePlugin(), ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_PLUGIN.ID_CONFIGURAZIONE_TRANSAZIONE_PLUGIN.getFieldType()));
 				sqlQueryObjectUpdate_configurazioneTransazione_configurazioneTransazionePlugin.addUpdateField(this.getConfigurazioneTransazioneFieldConverter().toColumn(ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_PLUGIN.ENABLED,false), "?");
@@ -379,7 +379,7 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 		ISQLQueryObject sqlQueryObjectUpdate_configurazioneTransazionePlugin_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
 		sqlQueryObjectUpdate_configurazioneTransazionePlugin_deleteList.setANDLogicOperator(true);
 		sqlQueryObjectUpdate_configurazioneTransazionePlugin_deleteList.addDeleteTable(this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_PLUGIN));
-		java.util.List<JDBCObject> jdbcObjects_configurazioneTransazione_configurazioneTransazionePlugin_delete = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> jdbcObjects_configurazioneTransazione_configurazioneTransazionePlugin_delete = new java.util.ArrayList<>();
 
 		sqlQueryObjectUpdate_configurazioneTransazionePlugin_deleteList.addWhereCondition("id_configurazione_transazione=?");
 		jdbcObjects_configurazioneTransazione_configurazioneTransazionePlugin_delete.add(new JDBCObject(configurazioneTransazione.getId(), Long.class));
@@ -441,7 +441,7 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 				sqlQueryObjectUpdate_configurazioneTransazione_configurazioneTransazioneStato.setANDLogicOperator(true);
 				sqlQueryObjectUpdate_configurazioneTransazione_configurazioneTransazioneStato.addUpdateTable(this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_STATO));
 				boolean isUpdate_configurazioneTransazione_configurazioneTransazioneStato = true;
-				java.util.List<JDBCObject> lstObjects_configurazioneTransazione_configurazioneTransazioneStato = new java.util.ArrayList<JDBCObject>();
+				java.util.List<JDBCObject> lstObjects_configurazioneTransazione_configurazioneTransazioneStato = new java.util.ArrayList<>();
 				sqlQueryObjectUpdate_configurazioneTransazione_configurazioneTransazioneStato.addUpdateField(this.getConfigurazioneTransazioneFieldConverter().toColumn(ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_STATO.ENABLED,false), "?");
 				lstObjects_configurazioneTransazione_configurazioneTransazioneStato.add(new JDBCObject(configurazioneTransazione_configurazioneTransazioneStato.getEnabled(), ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_STATO.ENABLED.getFieldType()));
 				sqlQueryObjectUpdate_configurazioneTransazione_configurazioneTransazioneStato.addUpdateField(this.getConfigurazioneTransazioneFieldConverter().toColumn(ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_STATO.NOME,false), "?");
@@ -471,7 +471,7 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 		ISQLQueryObject sqlQueryObjectUpdate_configurazioneTransazioneStato_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
 		sqlQueryObjectUpdate_configurazioneTransazioneStato_deleteList.setANDLogicOperator(true);
 		sqlQueryObjectUpdate_configurazioneTransazioneStato_deleteList.addDeleteTable(this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_STATO));
-		java.util.List<JDBCObject> jdbcObjects_configurazioneTransazione_configurazioneTransazioneStato_delete = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> jdbcObjects_configurazioneTransazione_configurazioneTransazioneStato_delete = new java.util.ArrayList<>();
 
 		sqlQueryObjectUpdate_configurazioneTransazioneStato_deleteList.addWhereCondition("id_configurazione_transazione=?");
 		jdbcObjects_configurazioneTransazione_configurazioneTransazioneStato_delete.add(new JDBCObject(configurazioneTransazione.getId(), Long.class));
@@ -593,7 +593,7 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 				sqlQueryObjectUpdate_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto.setANDLogicOperator(true);
 				sqlQueryObjectUpdate_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto.addUpdateTable(this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO));
 				boolean isUpdate_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto = true;
-				java.util.List<JDBCObject> lstObjects_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto = new java.util.ArrayList<JDBCObject>();
+				java.util.List<JDBCObject> lstObjects_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto = new java.util.ArrayList<>();
 				sqlQueryObjectUpdate_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto.addUpdateField(this.getConfigurazioneTransazioneFieldConverter().toColumn(ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO.ABILITA_ANONIMIZZAZIONE,false), "?");
 				lstObjects_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto.add(new JDBCObject(configurazioneTransazione_configurazioneTransazioneRisorsaContenuto.getAbilitaAnonimizzazione(), ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO.ABILITA_ANONIMIZZAZIONE.getFieldType()));
 				sqlQueryObjectUpdate_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto.addUpdateField(this.getConfigurazioneTransazioneFieldConverter().toColumn(ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO.ABILITA_COMPRESSIONE,false), "?");
@@ -638,7 +638,7 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 		ISQLQueryObject sqlQueryObjectUpdate_configurazioneTransazioneRisorsaContenuto_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
 		sqlQueryObjectUpdate_configurazioneTransazioneRisorsaContenuto_deleteList.setANDLogicOperator(true);
 		sqlQueryObjectUpdate_configurazioneTransazioneRisorsaContenuto_deleteList.addDeleteTable(this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO));
-		java.util.List<JDBCObject> jdbcObjects_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_delete = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> jdbcObjects_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_delete = new java.util.ArrayList<>();
 
 		sqlQueryObjectUpdate_configurazioneTransazioneRisorsaContenuto_deleteList.addWhereCondition("id_conf_transazione=?");
 		jdbcObjects_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_delete.add(new JDBCObject(configurazioneTransazione.getId(), Long.class));
@@ -693,7 +693,7 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model()), 
@@ -704,7 +704,7 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, IExpression condition, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model()), 
@@ -715,7 +715,7 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateModel ... updateModels) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneTransazioneFieldConverter().toTable(ConfigurazioneTransazione.model()), 

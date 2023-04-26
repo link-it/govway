@@ -179,7 +179,7 @@ public class JDBCConfigurazioneRicercaServiceImpl extends JDBCConfigurazioneRice
 		sqlQueryObjectUpdate.setANDLogicOperator(true);
 		sqlQueryObjectUpdate.addUpdateTable(this.getConfigurazioneRicercaFieldConverter().toTable(ConfigurazioneRicerca.model()));
 		boolean isUpdate_configurazioneRicerca = true;
-		java.util.List<JDBCObject> lstObjects_configurazioneRicerca = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> lstObjects_configurazioneRicerca = new java.util.ArrayList<>();
 		sqlQueryObjectUpdate.addUpdateField(this.getConfigurazioneRicercaFieldConverter().toColumn(ConfigurazioneRicerca.model().ID_CONFIGURAZIONE_RICERCA,false), "?");
 		lstObjects_configurazioneRicerca.add(new JDBCObject(configurazioneRicerca.getIdConfigurazioneRicerca(), ConfigurazioneRicerca.model().ID_CONFIGURAZIONE_RICERCA.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getConfigurazioneRicercaFieldConverter().toColumn(ConfigurazioneRicerca.model().ENABLED,false), "?");
@@ -241,7 +241,7 @@ public class JDBCConfigurazioneRicercaServiceImpl extends JDBCConfigurazioneRice
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneRicercaFieldConverter().toTable(ConfigurazioneRicerca.model()), 
@@ -252,7 +252,7 @@ public class JDBCConfigurazioneRicercaServiceImpl extends JDBCConfigurazioneRice
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, IExpression condition, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneRicercaFieldConverter().toTable(ConfigurazioneRicerca.model()), 
@@ -263,7 +263,7 @@ public class JDBCConfigurazioneRicercaServiceImpl extends JDBCConfigurazioneRice
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateModel ... updateModels) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneRicercaFieldConverter().toTable(ConfigurazioneRicerca.model()), 

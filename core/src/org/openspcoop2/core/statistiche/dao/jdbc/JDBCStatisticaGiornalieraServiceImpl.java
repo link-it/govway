@@ -246,7 +246,7 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 		sqlQueryObjectUpdate.setANDLogicOperator(true);
 		sqlQueryObjectUpdate.addUpdateTable(this.getStatisticaGiornalieraFieldConverter().toTable(StatisticaGiornaliera.model().STATISTICA_BASE));
 		boolean isUpdate = true;
-		java.util.List<JDBCObject> lstObjects = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> lstObjects = new java.util.ArrayList<>();
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.DATA,false), "?");
 		lstObjects.add(new JDBCObject(statisticaGiornaliera_statisticaBase.getData(), StatisticaGiornaliera.model().STATISTICA_BASE.DATA.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.STATO_RECORD,false), "?");
@@ -409,7 +409,7 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 				sqlQueryObjectUpdate_statisticaGiornalieraContenuti.setANDLogicOperator(true);
 				sqlQueryObjectUpdate_statisticaGiornalieraContenuti.addUpdateTable(this.getStatisticaGiornalieraFieldConverter().toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_CONTENUTI));
 				boolean isUpdate_statisticaGiornalieraContenuti = true;
-				java.util.List<JDBCObject> lstObjects_statisticaGiornalieraContenuti = new java.util.ArrayList<JDBCObject>();
+				java.util.List<JDBCObject> lstObjects_statisticaGiornalieraContenuti = new java.util.ArrayList<>();
 				sqlQueryObjectUpdate_statisticaGiornalieraContenuti.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_CONTENUTI.DATA,false), "?");
 				lstObjects_statisticaGiornalieraContenuti.add(new JDBCObject(statisticaGiornaliera_statisticaGiornalieraContenuti.getData(), StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_CONTENUTI.DATA.getFieldType()));
 				sqlQueryObjectUpdate_statisticaGiornalieraContenuti.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_CONTENUTI.RISORSA_NOME,false), "?");
@@ -487,7 +487,7 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 		ISQLQueryObject sqlQueryObjectUpdate_statisticaGiornalieraContenuti_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
 		sqlQueryObjectUpdate_statisticaGiornalieraContenuti_deleteList.setANDLogicOperator(true);
 		sqlQueryObjectUpdate_statisticaGiornalieraContenuti_deleteList.addDeleteTable(this.getStatisticaGiornalieraFieldConverter().toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_CONTENUTI));
-		java.util.List<JDBCObject> jdbcObjects_statisticaGiornalieraContenuti_delete = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> jdbcObjects_statisticaGiornalieraContenuti_delete = new java.util.ArrayList<>();
 
 		sqlQueryObjectUpdate_statisticaGiornalieraContenuti_deleteList.addWhereCondition("id_stat=?");
 		jdbcObjects_statisticaGiornalieraContenuti_delete.add(new JDBCObject(statisticaGiornaliera.getId(), Long.class));
@@ -543,7 +543,7 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaGiornalieraFieldConverter().toTable(StatisticaGiornaliera.model()), 
@@ -554,7 +554,7 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, IExpression condition, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaGiornalieraFieldConverter().toTable(StatisticaGiornaliera.model()), 
@@ -565,7 +565,7 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateModel ... updateModels) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaGiornalieraFieldConverter().toTable(StatisticaGiornaliera.model()), 

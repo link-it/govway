@@ -138,7 +138,7 @@ public abstract class ServizioApplicativoImpl extends BaseImpl  implements Servi
 		
 		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(driverDB.getTipoDB());
 		List<Class<?>> returnTypes = new ArrayList<Class<?>>();
-		List<JDBCObject> paramTypes = new ArrayList<JDBCObject>();
+		List<JDBCObject> paramTypes = new ArrayList<>();
 		
 		sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
 		
@@ -191,7 +191,7 @@ public abstract class ServizioApplicativoImpl extends BaseImpl  implements Servi
 		
 		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(driverDB.getTipoDB());
 		List<Class<?>> returnTypes = new ArrayList<Class<?>>();
-		List<JDBCObject> paramTypes = new ArrayList<JDBCObject>();
+		List<JDBCObject> paramTypes = new ArrayList<>();
 		
 		sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI,CostantiDB.SERVIZI_APPLICATIVI);
 		

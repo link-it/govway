@@ -2071,7 +2071,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 
 			// timeout di default
 			if(connettoreMsg.getConnectorProperties()==null){
-				java.util.Map<String,String> propCon = new java.util.HashMap<String,String>();
+				java.util.Map<String,String> propCon = new java.util.HashMap<>();
 				connettoreMsg.setConnectorProperties(propCon);
 			}
 			if(connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)==null){

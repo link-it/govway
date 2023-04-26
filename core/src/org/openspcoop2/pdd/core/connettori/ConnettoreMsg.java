@@ -146,7 +146,7 @@ public class ConnettoreMsg  {
 	 */
 	public ConnettoreMsg(String type,OpenSPCoop2Message r,
 			Property[] p){
-		java.util.Map<String,String> pr = new java.util.HashMap<String,String>();
+		java.util.Map<String,String> pr = new java.util.HashMap<>();
 		if(p!=null){
 			for(int i=0; i<p.length; i++){
 				if(p[i]!=null){
@@ -185,9 +185,9 @@ public class ConnettoreMsg  {
 			Property[] p,boolean sb,
 			String tipoAuth,InvocazioneCredenziali cr,
 			boolean isRichiesta){
-		this(type,r,new java.util.HashMap<String,String>() ,sb,tipoAuth,cr,isRichiesta);
+		this(type,r,new java.util.HashMap<>() ,sb,tipoAuth,cr,isRichiesta);
 
-		java.util.Map<String,String> pr = new java.util.HashMap<String,String>();
+		java.util.Map<String,String> pr = new java.util.HashMap<>();
 		if(p!=null){
 			for(int i=0; i<p.length; i++){
 				if(p[i]!=null){

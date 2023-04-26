@@ -168,7 +168,7 @@ public class JDBCConfigurazioneGeneraleServiceSearchImpl implements IJDBCService
 												IExpression expression, ISQLQueryObject sqlQueryObjectDistinct) throws ServiceException,NotFoundException,NotImplementedException,Exception {
 		
 		List<Object> listaQuery = new ArrayList<>();
-		List<JDBCObject> listaParams = new ArrayList<JDBCObject>();
+		List<JDBCObject> listaParams = new ArrayList<>();
 		List<Object> returnField = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareSelect(jdbcProperties, log, connection, sqlQueryObject, 
         						expression, this.getConfigurazioneGeneraleFieldConverter(), ConfigurazioneGenerale.model(), 
         						listaQuery,listaParams);
@@ -337,7 +337,7 @@ public class JDBCConfigurazioneGeneraleServiceSearchImpl implements IJDBCService
 	
 	protected java.util.List<Object> _getRootTablePrimaryKeyValues(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject) throws NotFoundException, ServiceException, NotImplementedException, Exception{
 	    // Identificativi
-        java.util.List<Object> rootTableIdValues = new java.util.ArrayList<Object>();
+        java.util.List<Object> rootTableIdValues = new java.util.ArrayList<>();
         
         return rootTableIdValues;
 	}
@@ -345,8 +345,8 @@ public class JDBCConfigurazioneGeneraleServiceSearchImpl implements IJDBCService
 	protected Map<String, List<IField>> _getMapTableToPKColumn() throws NotImplementedException, Exception{
 	
 		ConfigurazioneGeneraleFieldConverter converter = this.getConfigurazioneGeneraleFieldConverter();
-		Map<String, List<IField>> mapTableToPKColumn = new java.util.HashMap<String, List<IField>>();
-		UtilsTemplate<IField> utilities = new UtilsTemplate<IField>();
+		Map<String, List<IField>> mapTableToPKColumn = new java.util.HashMap<>();
+		UtilsTemplate<IField> utilities = new UtilsTemplate<>();
 
 		// ConfigurazioneGenerale.model()
 		mapTableToPKColumn.put(converter.toTable(ConfigurazioneGenerale.model()),

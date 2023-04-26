@@ -98,7 +98,7 @@ public class JDBCStatisticaInfoServiceImpl extends JDBCStatisticaInfoServiceSear
 		sqlQueryObjectUpdate.setANDLogicOperator(true);
 		sqlQueryObjectUpdate.addUpdateTable(this.getStatisticaInfoFieldConverter().toTable(StatisticaInfo.model()));
 		boolean isUpdate = true;
-		java.util.List<JDBCObject> lstObjects = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> lstObjects = new java.util.ArrayList<>();
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaInfoFieldConverter().toColumn(StatisticaInfo.model().TIPO_STATISTICA,false), "?");
 		lstObjects.add(new JDBCObject(statisticaInfo.getTipoStatistica(), StatisticaInfo.model().TIPO_STATISTICA.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaInfoFieldConverter().toColumn(StatisticaInfo.model().DATA_ULTIMA_GENERAZIONE,false), "?");

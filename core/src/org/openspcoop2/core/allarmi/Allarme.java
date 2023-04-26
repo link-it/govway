@@ -132,11 +132,11 @@ public class Allarme extends org.openspcoop2.utils.beans.BaseBeanWithId implemen
     this.tipo = tipo;
   }
 
-  public void set_value_tipoAllarme(String value) {
+  public void setTipoAllarmeRawEnumValue(String value) {
     this.tipoAllarme = (TipoAllarme) TipoAllarme.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipoAllarme() {
+  public String getTipoAllarmeRawEnumValue() {
     if(this.tipoAllarme == null){
     	return null;
     }else{
@@ -321,7 +321,7 @@ public class Allarme extends org.openspcoop2.utils.beans.BaseBeanWithId implemen
   protected java.lang.String tipo;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipoAllarme;
+  protected java.lang.String tipoAllarmeRawEnumValue;
 
   @XmlElement(name="tipo-allarme",required=true,nillable=false,defaultValue="ATTIVO")
   protected TipoAllarme tipoAllarme = (TipoAllarme) TipoAllarme.toEnumConstantFromString("ATTIVO");
@@ -381,33 +381,6 @@ public class Allarme extends org.openspcoop2.utils.beans.BaseBeanWithId implemen
   protected AllarmeRaggruppamento groupBy;
 
   @XmlElement(name="allarme-parametro",required=true,nillable=false)
-  protected List<AllarmeParametro> allarmeParametro = new ArrayList<AllarmeParametro>();
-
-  /**
-   * @deprecated Use method getAllarmeParametroList
-   * @return List&lt;AllarmeParametro&gt;
-  */
-  @Deprecated
-  public List<AllarmeParametro> getAllarmeParametro() {
-  	return this.allarmeParametro;
-  }
-
-  /**
-   * @deprecated Use method setAllarmeParametroList
-   * @param allarmeParametro List&lt;AllarmeParametro&gt;
-  */
-  @Deprecated
-  public void setAllarmeParametro(List<AllarmeParametro> allarmeParametro) {
-  	this.allarmeParametro=allarmeParametro;
-  }
-
-  /**
-   * @deprecated Use method sizeAllarmeParametroList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeAllarmeParametro() {
-  	return this.allarmeParametro.size();
-  }
+  private List<AllarmeParametro> allarmeParametro = new ArrayList<>();
 
 }

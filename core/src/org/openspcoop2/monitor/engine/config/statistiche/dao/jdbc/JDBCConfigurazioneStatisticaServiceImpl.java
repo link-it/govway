@@ -190,7 +190,7 @@ public class JDBCConfigurazioneStatisticaServiceImpl extends JDBCConfigurazioneS
 		sqlQueryObjectUpdate.setANDLogicOperator(true);
 		sqlQueryObjectUpdate.addUpdateTable(this.getConfigurazioneStatisticaFieldConverter().toTable(ConfigurazioneStatistica.model()));
 		boolean isUpdate_configurazioneStatistica = true;
-		java.util.List<JDBCObject> lstObjects_configurazioneStatistica = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> lstObjects_configurazioneStatistica = new java.util.ArrayList<>();
 		sqlQueryObjectUpdate.addUpdateField(this.getConfigurazioneStatisticaFieldConverter().toColumn(ConfigurazioneStatistica.model().ID_CONFIGURAZIONE_STATISTICA,false), "?");
 		lstObjects_configurazioneStatistica.add(new JDBCObject(configurazioneStatistica.getIdConfigurazioneStatistica(), ConfigurazioneStatistica.model().ID_CONFIGURAZIONE_STATISTICA.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getConfigurazioneStatisticaFieldConverter().toColumn(ConfigurazioneStatistica.model().ENABLED,false), "?");
@@ -253,7 +253,7 @@ public class JDBCConfigurazioneStatisticaServiceImpl extends JDBCConfigurazioneS
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneStatisticaFieldConverter().toTable(ConfigurazioneStatistica.model()), 
@@ -264,7 +264,7 @@ public class JDBCConfigurazioneStatisticaServiceImpl extends JDBCConfigurazioneS
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, IExpression condition, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneStatisticaFieldConverter().toTable(ConfigurazioneStatistica.model()), 
@@ -275,7 +275,7 @@ public class JDBCConfigurazioneStatisticaServiceImpl extends JDBCConfigurazioneS
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateModel ... updateModels) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneStatisticaFieldConverter().toTable(ConfigurazioneStatistica.model()), 

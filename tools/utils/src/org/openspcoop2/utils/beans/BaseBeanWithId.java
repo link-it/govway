@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlTransient
 public abstract class BaseBeanWithId extends BaseBean {
 
-	public BaseBeanWithId(){
+	protected BaseBeanWithId(){
 		super();
 	}
 	

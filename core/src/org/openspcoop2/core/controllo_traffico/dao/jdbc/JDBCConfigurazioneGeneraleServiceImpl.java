@@ -142,7 +142,7 @@ public class JDBCConfigurazioneGeneraleServiceImpl extends JDBCConfigurazioneGen
 		sqlQueryObjectUpdate.setANDLogicOperator(true);
 		sqlQueryObjectUpdate.addUpdateTable(this.getConfigurazioneGeneraleFieldConverter().toTable(ConfigurazioneGenerale.model().CONTROLLO_TRAFFICO));
 		boolean isUpdate = true;
-		java.util.List<JDBCObject> lstObjects = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> lstObjects = new java.util.ArrayList<>();
 		sqlQueryObjectUpdate.addUpdateField(this.getConfigurazioneGeneraleFieldConverter().toColumn(ConfigurazioneGenerale.model().CONTROLLO_TRAFFICO.CONTROLLO_MAX_THREADS_ENABLED,false), "?");
 		lstObjects.add(new JDBCObject(configurazioneGenerale_controlloTraffico.getControlloMaxThreadsEnabled(), ConfigurazioneGenerale.model().CONTROLLO_TRAFFICO.CONTROLLO_MAX_THREADS_ENABLED.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getConfigurazioneGeneraleFieldConverter().toColumn(ConfigurazioneGenerale.model().CONTROLLO_TRAFFICO.CONTROLLO_MAX_THREADS_WARNING_ONLY,false), "?");

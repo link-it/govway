@@ -124,7 +124,7 @@ public class JDBCTransazioneExportServiceImpl extends JDBCTransazioneExportServi
 		sqlQueryObjectUpdate.setANDLogicOperator(true);
 		sqlQueryObjectUpdate.addUpdateTable(this.getTransazioneExportFieldConverter().toTable(TransazioneExport.model()));
 		boolean isUpdate_transazioneExport = true;
-		java.util.List<JDBCObject> lstObjects_transazioneExport = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> lstObjects_transazioneExport = new java.util.ArrayList<>();
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneExportFieldConverter().toColumn(TransazioneExport.model().INTERVALLO_INIZIO,false), "?");
 		lstObjects_transazioneExport.add(new JDBCObject(transazioneExport.getIntervalloInizio(), TransazioneExport.model().INTERVALLO_INIZIO.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneExportFieldConverter().toColumn(TransazioneExport.model().INTERVALLO_FINE,false), "?");
@@ -191,7 +191,7 @@ public class JDBCTransazioneExportServiceImpl extends JDBCTransazioneExportServi
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getTransazioneExportFieldConverter().toTable(TransazioneExport.model()), 
@@ -202,7 +202,7 @@ public class JDBCTransazioneExportServiceImpl extends JDBCTransazioneExportServi
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, IExpression condition, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getTransazioneExportFieldConverter().toTable(TransazioneExport.model()), 
@@ -213,7 +213,7 @@ public class JDBCTransazioneExportServiceImpl extends JDBCTransazioneExportServi
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateModel ... updateModels) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getTransazioneExportFieldConverter().toTable(TransazioneExport.model()), 

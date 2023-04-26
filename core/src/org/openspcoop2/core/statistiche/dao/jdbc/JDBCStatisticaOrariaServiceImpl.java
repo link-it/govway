@@ -246,7 +246,7 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 		sqlQueryObjectUpdate.setANDLogicOperator(true);
 		sqlQueryObjectUpdate.addUpdateTable(this.getStatisticaOrariaFieldConverter().toTable(StatisticaOraria.model().STATISTICA_BASE));
 		boolean isUpdate = true;
-		java.util.List<JDBCObject> lstObjects = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> lstObjects = new java.util.ArrayList<>();
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.DATA,false), "?");
 		lstObjects.add(new JDBCObject(statisticaOraria_statisticaBase.getData(), StatisticaOraria.model().STATISTICA_BASE.DATA.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.STATO_RECORD,false), "?");
@@ -409,7 +409,7 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 				sqlQueryObjectUpdate_statisticaOrariaContenuti.setANDLogicOperator(true);
 				sqlQueryObjectUpdate_statisticaOrariaContenuti.addUpdateTable(this.getStatisticaOrariaFieldConverter().toTable(StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI));
 				boolean isUpdate_statisticaOrariaContenuti = true;
-				java.util.List<JDBCObject> lstObjects_statisticaOrariaContenuti = new java.util.ArrayList<JDBCObject>();
+				java.util.List<JDBCObject> lstObjects_statisticaOrariaContenuti = new java.util.ArrayList<>();
 				sqlQueryObjectUpdate_statisticaOrariaContenuti.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI.DATA,false), "?");
 				lstObjects_statisticaOrariaContenuti.add(new JDBCObject(statisticaOraria_statisticaOrariaContenuti.getData(), StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI.DATA.getFieldType()));
 				sqlQueryObjectUpdate_statisticaOrariaContenuti.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI.RISORSA_NOME,false), "?");
@@ -487,7 +487,7 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 		ISQLQueryObject sqlQueryObjectUpdate_statisticaOrariaContenuti_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
 		sqlQueryObjectUpdate_statisticaOrariaContenuti_deleteList.setANDLogicOperator(true);
 		sqlQueryObjectUpdate_statisticaOrariaContenuti_deleteList.addDeleteTable(this.getStatisticaOrariaFieldConverter().toTable(StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI));
-		java.util.List<JDBCObject> jdbcObjects_statisticaOrariaContenuti_delete = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> jdbcObjects_statisticaOrariaContenuti_delete = new java.util.ArrayList<>();
 
 		sqlQueryObjectUpdate_statisticaOrariaContenuti_deleteList.addWhereCondition("id_stat=?");
 		jdbcObjects_statisticaOrariaContenuti_delete.add(new JDBCObject(statisticaOraria.getId(), Long.class));
@@ -543,7 +543,7 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaOrariaFieldConverter().toTable(StatisticaOraria.model()), 
@@ -554,7 +554,7 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, IExpression condition, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaOrariaFieldConverter().toTable(StatisticaOraria.model()), 
@@ -565,7 +565,7 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateModel ... updateModels) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaOrariaFieldConverter().toTable(StatisticaOraria.model()), 

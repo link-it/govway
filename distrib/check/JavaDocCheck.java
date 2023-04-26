@@ -49,8 +49,8 @@ public class JavaDocCheck {
 
 	public static final String VALORE_CORROTTO = ".java $";
 
-	public static java.util.List<String> fileNonValidi = new java.util.ArrayList<String>();
-	public static java.util.List<String> dichiarazioneAssente = new java.util.ArrayList<String>();
+	public static java.util.List<String> fileNonValidi = new java.util.ArrayList<>();
+	public static java.util.List<String> dichiarazioneAssente = new java.util.ArrayList<>();
 
 	public static String versione_rilascio = null;
 
@@ -73,7 +73,7 @@ public class JavaDocCheck {
 
 			check(new File(dir));
 
-			java.util.List<String> filePrinted = new java.util.ArrayList<String>();	    
+			java.util.List<String> filePrinted = new java.util.ArrayList<>();	    
 			if(fileNonValidi.size()>0){
 				for(int i=0; i<fileNonValidi.size(); i++){
 					if(isSintesi){

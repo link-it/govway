@@ -185,16 +185,16 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 			sqlQueryObjectInsert_allarmeParametro.addInsertTable(this.getAllarmeFieldConverter().toTable(Allarme.model().ALLARME_PARAMETRO));
 			sqlQueryObjectInsert_allarmeParametro.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().ALLARME_PARAMETRO.ID_PARAMETRO,false),"?");
 			sqlQueryObjectInsert_allarmeParametro.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().ALLARME_PARAMETRO.VALORE,false),"?");
-			sqlQueryObjectInsert_allarmeParametro.addInsertField("id_allarme","?");
+			sqlQueryObjectInsert_allarmeParametro.addInsertField("idAllarme","?");
 
 			// Insert allarme.getAllarmeParametroList().get(i)
 			org.openspcoop2.utils.jdbc.IKeyGeneratorObject keyGenerator_allarmeParametro = this.getAllarmeFetch().getKeyGeneratorObject(Allarme.model().ALLARME_PARAMETRO);
-			long id_allarmeParametro = jdbcUtilities.insertAndReturnGeneratedKey(sqlQueryObjectInsert_allarmeParametro, keyGenerator_allarmeParametro, jdbcProperties.isShowSql(),
+			long idAllarmeParametro = jdbcUtilities.insertAndReturnGeneratedKey(sqlQueryObjectInsert_allarmeParametro, keyGenerator_allarmeParametro, jdbcProperties.isShowSql(),
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getAllarmeParametroList().get(i).getIdParametro(),Allarme.model().ALLARME_PARAMETRO.ID_PARAMETRO.getFieldType()),
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getAllarmeParametroList().get(i).getValore(),Allarme.model().ALLARME_PARAMETRO.VALORE.getFieldType()),
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class)
 			);
-			allarme.getAllarmeParametroList().get(i).setId(id_allarmeParametro);
+			allarme.getAllarmeParametroList().get(i).setId(idAllarmeParametro);
 		} // fine for 
 
 		
@@ -236,7 +236,7 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 		sqlQueryObjectUpdate.setANDLogicOperator(true);
 		sqlQueryObjectUpdate.addUpdateTable(this.getAllarmeFieldConverter().toTable(Allarme.model()));
 		boolean isUpdate = true;
-		java.util.List<JDBCObject> lstObjects = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> lstObjects = new java.util.ArrayList<>();
 		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeFieldConverter().toColumn(Allarme.model().NOME,false), "?");
 		lstObjects.add(new JDBCObject(allarme.getNome(), Allarme.model().NOME.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeFieldConverter().toColumn(Allarme.model().ALIAS,false), "?");
@@ -363,16 +363,16 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 				sqlQueryObjectInsert_allarmeParametro.addInsertTable(this.getAllarmeFieldConverter().toTable(Allarme.model().ALLARME_PARAMETRO));
 				sqlQueryObjectInsert_allarmeParametro.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().ALLARME_PARAMETRO.ID_PARAMETRO,false),"?");
 				sqlQueryObjectInsert_allarmeParametro.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().ALLARME_PARAMETRO.VALORE,false),"?");
-				sqlQueryObjectInsert_allarmeParametro.addInsertField("id_allarme","?");
+				sqlQueryObjectInsert_allarmeParametro.addInsertField("idAllarme","?");
 
 				// Insert allarme_allarmeParametro
 				org.openspcoop2.utils.jdbc.IKeyGeneratorObject keyGenerator_allarmeParametro = this.getAllarmeFetch().getKeyGeneratorObject(Allarme.model().ALLARME_PARAMETRO);
-				long id_allarmeParametro = jdbcUtilities.insertAndReturnGeneratedKey(sqlQueryObjectInsert_allarmeParametro, keyGenerator_allarmeParametro, jdbcProperties.isShowSql(),
+				long idAllarmeParametro = jdbcUtilities.insertAndReturnGeneratedKey(sqlQueryObjectInsert_allarmeParametro, keyGenerator_allarmeParametro, jdbcProperties.isShowSql(),
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme_allarmeParametro.getIdParametro(),Allarme.model().ALLARME_PARAMETRO.ID_PARAMETRO.getFieldType()),
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme_allarmeParametro.getValore(),Allarme.model().ALLARME_PARAMETRO.VALORE.getFieldType()),
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class)
 				);
-				allarme_allarmeParametro.setId(id_allarmeParametro);
+				allarme_allarmeParametro.setId(idAllarmeParametro);
 
 				ids_allarmeParametro_da_non_eliminare.add(allarme_allarmeParametro.getId());
 			} else {
@@ -383,7 +383,7 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 				sqlQueryObjectUpdate_allarmeParametro.setANDLogicOperator(true);
 				sqlQueryObjectUpdate_allarmeParametro.addUpdateTable(this.getAllarmeFieldConverter().toTable(Allarme.model().ALLARME_PARAMETRO));
 				boolean isUpdate_allarmeParametro = true;
-				java.util.List<JDBCObject> lstObjects_allarmeParametro = new java.util.ArrayList<JDBCObject>();
+				java.util.List<JDBCObject> lstObjects_allarmeParametro = new java.util.ArrayList<>();
 				sqlQueryObjectUpdate_allarmeParametro.addUpdateField(this.getAllarmeFieldConverter().toColumn(Allarme.model().ALLARME_PARAMETRO.ID_PARAMETRO,false), "?");
 				lstObjects_allarmeParametro.add(new JDBCObject(allarme_allarmeParametro.getIdParametro(), Allarme.model().ALLARME_PARAMETRO.ID_PARAMETRO.getFieldType()));
 				sqlQueryObjectUpdate_allarmeParametro.addUpdateField(this.getAllarmeFieldConverter().toColumn(Allarme.model().ALLARME_PARAMETRO.VALORE,false), "?");
@@ -402,13 +402,13 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 
 		// elimino tutte le occorrenze di allarme_allarmeParametro non presenti nell'update
 
-		ISQLQueryObject sqlQueryObjectUpdate_allarmeParametro_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
-		sqlQueryObjectUpdate_allarmeParametro_deleteList.setANDLogicOperator(true);
-		sqlQueryObjectUpdate_allarmeParametro_deleteList.addDeleteTable(this.getAllarmeFieldConverter().toTable(Allarme.model().ALLARME_PARAMETRO));
-		java.util.List<JDBCObject> jdbcObjects_allarmeParametro_delete = new java.util.ArrayList<JDBCObject>();
+		ISQLQueryObject sqlQueryObjectUpdate_allarmeParametrodeleteEngineList = sqlQueryObjectUpdate.newSQLQueryObject();
+		sqlQueryObjectUpdate_allarmeParametrodeleteEngineList.setANDLogicOperator(true);
+		sqlQueryObjectUpdate_allarmeParametrodeleteEngineList.addDeleteTable(this.getAllarmeFieldConverter().toTable(Allarme.model().ALLARME_PARAMETRO));
+		java.util.List<JDBCObject> jdbcObjects_allarmeParametrodeleteEngine = new java.util.ArrayList<>();
 
-		sqlQueryObjectUpdate_allarmeParametro_deleteList.addWhereCondition("id_allarme=?");
-		jdbcObjects_allarmeParametro_delete.add(new JDBCObject(allarme.getId(), Long.class));
+		sqlQueryObjectUpdate_allarmeParametrodeleteEngineList.addWhereCondition("idAllarme=?");
+		jdbcObjects_allarmeParametrodeleteEngine.add(new JDBCObject(allarme.getId(), Long.class));
 
 		StringBuilder marks_allarmeParametro = new StringBuilder();
 		if(ids_allarmeParametro_da_non_eliminare.size() > 0) {
@@ -417,13 +417,13 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 					marks_allarmeParametro.append(",");
 				}
 				marks_allarmeParametro.append("?");
-				jdbcObjects_allarmeParametro_delete.add(new JDBCObject(ids, Long.class));
+				jdbcObjects_allarmeParametrodeleteEngine.add(new JDBCObject(ids, Long.class));
 
 			}
-			sqlQueryObjectUpdate_allarmeParametro_deleteList.addWhereCondition("chk_param_id NOT IN ("+marks_allarmeParametro.toString()+")");
+			sqlQueryObjectUpdate_allarmeParametrodeleteEngineList.addWhereCondition("chk_param_id NOT IN ("+marks_allarmeParametro.toString()+")");
 		}
 
-		jdbcUtilities.execute(sqlQueryObjectUpdate_allarmeParametro_deleteList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_allarmeParametro_delete.toArray(new JDBCObject[]{}));
+		jdbcUtilities.execute(sqlQueryObjectUpdate_allarmeParametrodeleteEngineList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_allarmeParametrodeleteEngine.toArray(new JDBCObject[]{}));
 
 
 
@@ -434,8 +434,8 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getAllarmeFieldConverter().toTable(Allarme.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, id),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, id),
 				this.getAllarmeFieldConverter(), this, null, updateFields);
 	}
 	
@@ -444,8 +444,8 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getAllarmeFieldConverter().toTable(Allarme.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, id),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, id),
 				this.getAllarmeFieldConverter(), this, condition, updateFields);
 	}
 	
@@ -454,40 +454,40 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getAllarmeFieldConverter().toTable(Allarme.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, id),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, id),
 				this.getAllarmeFieldConverter(), this, updateModels);
 	}	
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getAllarmeFieldConverter().toTable(Allarme.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getAllarmeFieldConverter(), this, null, updateFields);
 	}
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, IExpression condition, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getAllarmeFieldConverter().toTable(Allarme.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getAllarmeFieldConverter(), this, condition, updateFields);
 	}
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateModel ... updateModels) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getAllarmeFieldConverter().toTable(Allarme.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getAllarmeFieldConverter(), this, updateModels);
 	}
@@ -528,11 +528,11 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 			}
 		}		
 		
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, longId);
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, longId);
 		
 	}
 
-	private void _delete(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long id) throws NotImplementedException,ServiceException,Exception {
+	private void deleteEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long id) throws NotImplementedException,ServiceException,Exception {
 	
 		if(id==null){
 			throw new ServiceException("Id is null");
@@ -548,11 +548,11 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 		
 
 		//Recupero oggetto _allarmeParametro
-		ISQLQueryObject sqlQueryObjectDelete_allarmeParametro_getToDelete = sqlQueryObjectDelete.newSQLQueryObject();
-		sqlQueryObjectDelete_allarmeParametro_getToDelete.setANDLogicOperator(true);
-		sqlQueryObjectDelete_allarmeParametro_getToDelete.addFromTable(this.getAllarmeFieldConverter().toTable(Allarme.model().ALLARME_PARAMETRO));
-		sqlQueryObjectDelete_allarmeParametro_getToDelete.addWhereCondition("id_allarme=?");
-		java.util.List<Object> allarme_allarmeParametro_toDelete_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectDelete_allarmeParametro_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), Allarme.model().ALLARME_PARAMETRO, this.getAllarmeFetch(),
+		ISQLQueryObject sqlQueryObjectDelete_allarmeParametrogetEngineToDelete = sqlQueryObjectDelete.newSQLQueryObject();
+		sqlQueryObjectDelete_allarmeParametrogetEngineToDelete.setANDLogicOperator(true);
+		sqlQueryObjectDelete_allarmeParametrogetEngineToDelete.addFromTable(this.getAllarmeFieldConverter().toTable(Allarme.model().ALLARME_PARAMETRO));
+		sqlQueryObjectDelete_allarmeParametrogetEngineToDelete.addWhereCondition("idAllarme=?");
+		java.util.List<Object> allarme_allarmeParametro_toDelete_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectDelete_allarmeParametrogetEngineToDelete.createSQLQuery(), jdbcProperties.isShowSql(), Allarme.model().ALLARME_PARAMETRO, this.getAllarmeFetch(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id,Long.class));
 
 		// for allarme_allarmeParametro
@@ -583,11 +583,11 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 		@SuppressWarnings("unchecked")
 		IDBServiceUtilities<AllarmeHistory> dbHistoryServiceUtilities = (IDBServiceUtilities<AllarmeHistory>) this.getServiceManager().getAllarmeHistoryServiceSearch();
 		
-		ISQLQueryObject sqlQueryObjectDelete_allarmeHistory_delete = sqlQueryObjectDelete.newSQLQueryObject();
-		sqlQueryObjectDelete_allarmeHistory_delete.setANDLogicOperator(true);
-		sqlQueryObjectDelete_allarmeHistory_delete.addDeleteTable(dbHistoryServiceUtilities.getFieldConverter().toTable(AllarmeHistory.model()));
-		sqlQueryObjectDelete_allarmeHistory_delete.addWhereCondition("id_allarme=?");
-		jdbcUtilities.execute(sqlQueryObjectDelete_allarmeHistory_delete.createSQLDelete(), jdbcProperties.isShowSql(), 
+		ISQLQueryObject sqlQueryObjectDelete_allarmeHistorydeleteEngine = sqlQueryObjectDelete.newSQLQueryObject();
+		sqlQueryObjectDelete_allarmeHistorydeleteEngine.setANDLogicOperator(true);
+		sqlQueryObjectDelete_allarmeHistorydeleteEngine.addDeleteTable(dbHistoryServiceUtilities.getFieldConverter().toTable(AllarmeHistory.model()));
+		sqlQueryObjectDelete_allarmeHistorydeleteEngine.addWhereCondition("idAllarme=?");
+		jdbcUtilities.execute(sqlQueryObjectDelete_allarmeHistorydeleteEngine.createSQLDelete(), jdbcProperties.isShowSql(), 
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id,Long.class));
 				
 
@@ -596,11 +596,11 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 		@SuppressWarnings("unchecked")
 		IDBServiceUtilities<AllarmeNotifica> dbNotificaServiceUtilities = (IDBServiceUtilities<AllarmeNotifica>) this.getServiceManager().getAllarmeNotificaServiceSearch();
 		
-		ISQLQueryObject sqlQueryObjectDelete_allarmeNotifica_delete = sqlQueryObjectDelete.newSQLQueryObject();
-		sqlQueryObjectDelete_allarmeNotifica_delete.setANDLogicOperator(true);
-		sqlQueryObjectDelete_allarmeNotifica_delete.addDeleteTable(dbNotificaServiceUtilities.getFieldConverter().toTable(AllarmeNotifica.model()));
-		sqlQueryObjectDelete_allarmeNotifica_delete.addWhereCondition("id_allarme=?");
-		jdbcUtilities.execute(sqlQueryObjectDelete_allarmeNotifica_delete.createSQLDelete(), jdbcProperties.isShowSql(), 
+		ISQLQueryObject sqlQueryObjectDelete_allarmeNotificadeleteEngine = sqlQueryObjectDelete.newSQLQueryObject();
+		sqlQueryObjectDelete_allarmeNotificadeleteEngine.setANDLogicOperator(true);
+		sqlQueryObjectDelete_allarmeNotificadeleteEngine.addDeleteTable(dbNotificaServiceUtilities.getFieldConverter().toTable(AllarmeNotifica.model()));
+		sqlQueryObjectDelete_allarmeNotificadeleteEngine.addWhereCondition("idAllarme=?");
+		jdbcUtilities.execute(sqlQueryObjectDelete_allarmeNotificadeleteEngine.createSQLDelete(), jdbcProperties.isShowSql(), 
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id,Long.class));
 		
 		
@@ -620,7 +620,7 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 		}catch(NotFoundException notFound){
 			return;
 		}
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, id);
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, id);
 		
 	}
 	
@@ -637,7 +637,7 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 		java.util.List<Long> lst = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, new JDBCPaginatedExpression(expression));
 		
 		for(Long id : lst) {
-			this._delete(jdbcProperties, log, connection, sqlQueryObject, id);
+			this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, id);
 		}
 		
 		return new NonNegativeNumber(lst.size());
@@ -650,7 +650,7 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 	
 	@Override
 	public void deleteById(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId) throws ServiceException, NotImplementedException, Exception {
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
 	}
 	
 	@Override

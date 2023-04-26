@@ -268,9 +268,13 @@ public class GenericJDBCUtilities {
 	}
 	
 	
+	public static NotFoundException newNotFoundException(){
+		return new NotFoundException("Not Found");
+	}
 	
-	
-	
+	public static NotImplementedException newNotImplementedException(){
+		return new NotImplementedException("NotImplemented");
+	}
 
 	
 	
@@ -1079,7 +1083,7 @@ public class GenericJDBCUtilities {
 		
 		// Aggiunto un livello intermedio agli inner sql, in modo da essere sicuro di avere gli alias nei select field.
 		// !non serve!
-//		List<ISQLQueryObject> sqlQueryObjectUnionExpression = new ArrayList<ISQLQueryObject>();
+//		List<ISQLQueryObject> sqlQueryObjectUnionExpression = new ArrayList<>();
 //		for (int i = 0; i < unionExpression.length; i++) {
 //			ISQLQueryObject sqlQueryObjectUnion = sqlQueryObject.newSQLQueryObject(); 
 //			for (String alias : unionExpression[i].getReturnFieldAliases()) {
@@ -1435,7 +1439,7 @@ public class GenericJDBCUtilities {
 		sqlQueryObjectUpdate.addUpdateTable(table);
 		
 		// update fields
-		java.util.List<JDBCObject> lstObjectsUpdate = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> lstObjectsUpdate = new java.util.ArrayList<>();
 		for (UpdateField updateField : updateFields) {
             sqlQueryObjectUpdate.addUpdateField(sqlConverter.toColumn(updateField.getField(),false), "?");
             lstObjectsUpdate.add(new JDBCObject(updateField.getValue(), updateField.getField().getFieldType()));

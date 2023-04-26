@@ -199,10 +199,10 @@ public abstract class BaseBean {
 							}
 						}
 						// SORT
-						java.util.List<Object> lista_thisSORT = new java.util.ArrayList<Object>();
-						java.util.List<Object> lista_parameterSORT = new java.util.ArrayList<Object>();
+						java.util.List<Object> lista_thisSORT = new java.util.ArrayList<>();
+						java.util.List<Object> lista_parameterSORT = new java.util.ArrayList<>();
 						try{
-							java.util.List<String> lista_thisTMP = new java.util.ArrayList<String>();
+							java.util.List<String> lista_thisTMP = new java.util.ArrayList<>();
 							java.util.Map<String, Object> thisTmp = new java.util.HashMap<String, Object>();
 							java.util.Map<String, Object> parameterTmp = new java.util.HashMap<String, Object>();
 							for(int k=0; k<lista_this.size(); k++){
@@ -494,7 +494,7 @@ public abstract class BaseBean {
 						if(lista_this.size()>0){
 							if(reportHTML) bf.append("<br>"); else bf.append("\n");
 						}
-						java.util.List<String> sortLISTKEY = new java.util.ArrayList<String>();
+						java.util.List<String> sortLISTKEY = new java.util.ArrayList<>();
 						for(int j=0; j<lista_this.size(); j++){
 							String key = null;
 							if(lista_this.get(j).getClass().getName().startsWith(this.getClass().getPackage().getName())){
@@ -653,11 +653,11 @@ public abstract class BaseBean {
 						// Controllo elementi della lista
 						else{
 							// SORT
-							java.util.List<Object> lista_thisSORT = new java.util.ArrayList<Object>();
-							java.util.List<Object> lista_parameterSORT = new java.util.ArrayList<Object>();
+							java.util.List<Object> lista_thisSORT = new java.util.ArrayList<>();
+							java.util.List<Object> lista_parameterSORT = new java.util.ArrayList<>();
 							boolean listaNonCompleta = false;
 							try{
-								java.util.List<String> lista_thisTMP = new java.util.ArrayList<String>();
+								java.util.List<String> lista_thisTMP = new java.util.ArrayList<>();
 								java.util.Map<String, Object> thisTmp = new java.util.HashMap<String, Object>();
 								java.util.Map<String, Object> parameterTmp = new java.util.HashMap<String, Object>();
 								for(int k=0; k<lista_this.size(); k++){

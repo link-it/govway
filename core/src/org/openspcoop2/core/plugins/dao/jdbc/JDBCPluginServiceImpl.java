@@ -188,7 +188,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 		sqlQueryObjectUpdate.setANDLogicOperator(true);
 		sqlQueryObjectUpdate.addUpdateTable(this.getPluginFieldConverter().toTable(Plugin.model()));
 		boolean isUpdate_plugin = true;
-		java.util.List<JDBCObject> lstObjects_plugin = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> lstObjects_plugin = new java.util.ArrayList<>();
 		sqlQueryObjectUpdate.addUpdateField(this.getPluginFieldConverter().toColumn(Plugin.model().TIPO_PLUGIN,false), "?");
 		lstObjects_plugin.add(new JDBCObject(plugin.getTipoPlugin(), Plugin.model().TIPO_PLUGIN.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getPluginFieldConverter().toColumn(Plugin.model().CLASS_NAME,false), "?");
@@ -262,7 +262,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 				sqlQueryObjectUpdate_plugin_pluginServizioCompatibilita.setANDLogicOperator(true);
 				sqlQueryObjectUpdate_plugin_pluginServizioCompatibilita.addUpdateTable(this.getPluginFieldConverter().toTable(Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA));
 				boolean isUpdate_plugin_pluginServizioCompatibilita = true;
-				java.util.List<JDBCObject> lstObjects_plugin_pluginServizioCompatibilita = new java.util.ArrayList<JDBCObject>();
+				java.util.List<JDBCObject> lstObjects_plugin_pluginServizioCompatibilita = new java.util.ArrayList<>();
 				sqlQueryObjectUpdate_plugin_pluginServizioCompatibilita.addUpdateField(this.getPluginFieldConverter().toColumn(Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA.URI_ACCORDO,false), "?");
 				lstObjects_plugin_pluginServizioCompatibilita.add(new JDBCObject(plugin_pluginServizioCompatibilita.getUriAccordo(), Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA.URI_ACCORDO.getFieldType()));
 				sqlQueryObjectUpdate_plugin_pluginServizioCompatibilita.addUpdateField(this.getPluginFieldConverter().toColumn(Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA.SERVIZIO,false), "?");
@@ -308,7 +308,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 						sqlQueryObjectUpdate_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita.setANDLogicOperator(true);
 						sqlQueryObjectUpdate_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita.addUpdateTable(this.getPluginFieldConverter().toTable(Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA.PLUGIN_SERVIZIO_AZIONE_COMPATIBILITA));
 						boolean isUpdate_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita = true;
-						java.util.List<JDBCObject> lstObjects_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita = new java.util.ArrayList<JDBCObject>();
+						java.util.List<JDBCObject> lstObjects_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita = new java.util.ArrayList<>();
 						sqlQueryObjectUpdate_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita.addUpdateField(this.getPluginFieldConverter().toColumn(Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA.PLUGIN_SERVIZIO_AZIONE_COMPATIBILITA.AZIONE,false), "?");
 						lstObjects_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita.add(new JDBCObject(plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita.getAzione(), Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA.PLUGIN_SERVIZIO_AZIONE_COMPATIBILITA.AZIONE.getFieldType()));
 						sqlQueryObjectUpdate_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita.addWhereCondition("id=?");
@@ -328,7 +328,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 				ISQLQueryObject sqlQueryObjectUpdate_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
 				sqlQueryObjectUpdate_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_deleteList.setANDLogicOperator(true);
 				sqlQueryObjectUpdate_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_deleteList.addDeleteTable(this.getPluginFieldConverter().toTable(Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA.PLUGIN_SERVIZIO_AZIONE_COMPATIBILITA));
-				java.util.List<JDBCObject> jdbcObjects_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_delete = new java.util.ArrayList<JDBCObject>();
+				java.util.List<JDBCObject> jdbcObjects_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_delete = new java.util.ArrayList<>();
 
 				sqlQueryObjectUpdate_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_deleteList.addWhereCondition("id_plugin_servizio_comp=?");
 				jdbcObjects_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_delete.add(new JDBCObject(plugin_pluginServizioCompatibilita.getId(), Long.class));
@@ -356,7 +356,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 		ISQLQueryObject sqlQueryObjectUpdate_pluginServizioCompatibilita_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
 		sqlQueryObjectUpdate_pluginServizioCompatibilita_deleteList.setANDLogicOperator(true);
 		sqlQueryObjectUpdate_pluginServizioCompatibilita_deleteList.addDeleteTable(this.getPluginFieldConverter().toTable(Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA));
-		java.util.List<JDBCObject> jdbcObjects_plugin_pluginServizioCompatibilita_delete = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> jdbcObjects_plugin_pluginServizioCompatibilita_delete = new java.util.ArrayList<>();
 
 		sqlQueryObjectUpdate_pluginServizioCompatibilita_deleteList.addWhereCondition("id_plugin=?");
 		jdbcObjects_plugin_pluginServizioCompatibilita_delete.add(new JDBCObject(plugin.getId(), Long.class));
@@ -410,7 +410,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 				sqlQueryObjectUpdate_plugin_pluginProprietaCompatibilita.setANDLogicOperator(true);
 				sqlQueryObjectUpdate_plugin_pluginProprietaCompatibilita.addUpdateTable(this.getPluginFieldConverter().toTable(Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA));
 				boolean isUpdate_plugin_pluginProprietaCompatibilita = true;
-				java.util.List<JDBCObject> lstObjects_plugin_pluginProprietaCompatibilita = new java.util.ArrayList<JDBCObject>();
+				java.util.List<JDBCObject> lstObjects_plugin_pluginProprietaCompatibilita = new java.util.ArrayList<>();
 				sqlQueryObjectUpdate_plugin_pluginProprietaCompatibilita.addUpdateField(this.getPluginFieldConverter().toColumn(Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA.NOME,false), "?");
 				lstObjects_plugin_pluginProprietaCompatibilita.add(new JDBCObject(plugin_pluginProprietaCompatibilita.getNome(), Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA.NOME.getFieldType()));
 				sqlQueryObjectUpdate_plugin_pluginProprietaCompatibilita.addUpdateField(this.getPluginFieldConverter().toColumn(Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA.VALORE,false), "?");
@@ -432,7 +432,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 		ISQLQueryObject sqlQueryObjectUpdate_pluginProprietaCompatibilita_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
 		sqlQueryObjectUpdate_pluginProprietaCompatibilita_deleteList.setANDLogicOperator(true);
 		sqlQueryObjectUpdate_pluginProprietaCompatibilita_deleteList.addDeleteTable(this.getPluginFieldConverter().toTable(Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA));
-		java.util.List<JDBCObject> jdbcObjects_plugin_pluginProprietaCompatibilita_delete = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> jdbcObjects_plugin_pluginProprietaCompatibilita_delete = new java.util.ArrayList<>();
 
 		sqlQueryObjectUpdate_pluginProprietaCompatibilita_deleteList.addWhereCondition("id_plugin=?");
 		jdbcObjects_plugin_pluginProprietaCompatibilita_delete.add(new JDBCObject(plugin.getId(), Long.class));
@@ -488,7 +488,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getPluginFieldConverter().toTable(Plugin.model()), 
@@ -499,7 +499,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, IExpression condition, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getPluginFieldConverter().toTable(Plugin.model()), 
@@ -510,7 +510,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateModel ... updateModels) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getPluginFieldConverter().toTable(Plugin.model()), 

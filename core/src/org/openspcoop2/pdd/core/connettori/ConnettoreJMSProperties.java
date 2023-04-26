@@ -137,7 +137,7 @@ public class ConnettoreJMSProperties {
 		Map<String,IDServizio> servizi= new HashMap<String,IDServizio>();
 	    try{ 
 			// Raccolta servizi
-			java.util.List<String> idServizi = new java.util.ArrayList<String>();	
+			java.util.List<String> idServizi = new java.util.ArrayList<>();	
 			java.util.Enumeration<?> en = this.reader.propertyNames();
 			for (; en.hasMoreElements() ;) {
 			    String property = (String) en.nextElement();

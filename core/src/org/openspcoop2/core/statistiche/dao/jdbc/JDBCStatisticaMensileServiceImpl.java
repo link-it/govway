@@ -246,7 +246,7 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 		sqlQueryObjectUpdate.setANDLogicOperator(true);
 		sqlQueryObjectUpdate.addUpdateTable(this.getStatisticaMensileFieldConverter().toTable(StatisticaMensile.model().STATISTICA_BASE));
 		boolean isUpdate = true;
-		java.util.List<JDBCObject> lstObjects = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> lstObjects = new java.util.ArrayList<>();
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.DATA,false), "?");
 		lstObjects.add(new JDBCObject(statisticaMensile_statisticaBase.getData(), StatisticaMensile.model().STATISTICA_BASE.DATA.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.STATO_RECORD,false), "?");
@@ -409,7 +409,7 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 				sqlQueryObjectUpdate_statisticaMensileContenuti.setANDLogicOperator(true);
 				sqlQueryObjectUpdate_statisticaMensileContenuti.addUpdateTable(this.getStatisticaMensileFieldConverter().toTable(StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI));
 				boolean isUpdate_statisticaMensileContenuti = true;
-				java.util.List<JDBCObject> lstObjects_statisticaMensileContenuti = new java.util.ArrayList<JDBCObject>();
+				java.util.List<JDBCObject> lstObjects_statisticaMensileContenuti = new java.util.ArrayList<>();
 				sqlQueryObjectUpdate_statisticaMensileContenuti.addUpdateField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI.DATA,false), "?");
 				lstObjects_statisticaMensileContenuti.add(new JDBCObject(statisticaMensile_statisticaMensileContenuti.getData(), StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI.DATA.getFieldType()));
 				sqlQueryObjectUpdate_statisticaMensileContenuti.addUpdateField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI.RISORSA_NOME,false), "?");
@@ -487,7 +487,7 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 		ISQLQueryObject sqlQueryObjectUpdate_statisticaMensileContenuti_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
 		sqlQueryObjectUpdate_statisticaMensileContenuti_deleteList.setANDLogicOperator(true);
 		sqlQueryObjectUpdate_statisticaMensileContenuti_deleteList.addDeleteTable(this.getStatisticaMensileFieldConverter().toTable(StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI));
-		java.util.List<JDBCObject> jdbcObjects_statisticaMensileContenuti_delete = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> jdbcObjects_statisticaMensileContenuti_delete = new java.util.ArrayList<>();
 
 		sqlQueryObjectUpdate_statisticaMensileContenuti_deleteList.addWhereCondition("id_stat=?");
 		jdbcObjects_statisticaMensileContenuti_delete.add(new JDBCObject(statisticaMensile.getId(), Long.class));
@@ -543,7 +543,7 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaMensileFieldConverter().toTable(StatisticaMensile.model()), 
@@ -554,7 +554,7 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, IExpression condition, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaMensileFieldConverter().toTable(StatisticaMensile.model()), 
@@ -565,7 +565,7 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateModel ... updateModels) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaMensileFieldConverter().toTable(StatisticaMensile.model()), 

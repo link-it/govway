@@ -4558,7 +4558,7 @@ public class OpenSPCoop2Properties {
 	/* ********  CODE JMS DI OPENSPCOOP  ******** */
 
 	public java.util.Map<String,String> getJNDIQueueName(boolean receiverJMSActive,boolean senderJMSActive){
-		java.util.Map<String,String> table = new java.util.HashMap<String,String>();
+		java.util.Map<String,String> table = new java.util.HashMap<>();
 		try{ 
 			boolean ricezioneContenutiApplicativi = !receiverJMSActive;
 			boolean ricezioneBuste = !receiverJMSActive;
@@ -4698,7 +4698,7 @@ public class OpenSPCoop2Properties {
 	/* ********  Timer EJB DI OPENSPCOOP  ******** */
 
 	public java.util.Map<String,String> getJNDITimerEJBName(){
-		java.util.Map<String,String> table = new java.util.HashMap<String,String>();
+		java.util.Map<String,String> table = new java.util.HashMap<>();
 		try{ 
 			boolean gestoreBusteNonRiscontrate = false;
 			boolean gestoreMessaggi = false;

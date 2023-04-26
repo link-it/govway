@@ -31,7 +31,7 @@ public class HashtableCheck {
 
 	public static final String HASHTABLE_CHECK = "Hashtable";
 
-	public static java.util.List<String> fileNonValidi = new java.util.ArrayList<String>();
+	public static java.util.List<String> fileNonValidi = new java.util.ArrayList<>();
 
 	public static String versione_rilascio = null;
 
@@ -51,7 +51,7 @@ public class HashtableCheck {
 			
 			check(new File(dir));
 
-			java.util.List<String> filePrinted = new java.util.ArrayList<String>();	    
+			java.util.List<String> filePrinted = new java.util.ArrayList<>();	    
 			if(fileNonValidi.size()>0){
 				for(int i=0; i<fileNonValidi.size(); i++){
 					String file = fileNonValidi.get(i);

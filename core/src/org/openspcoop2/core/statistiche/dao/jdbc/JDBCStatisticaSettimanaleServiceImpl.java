@@ -246,7 +246,7 @@ public class JDBCStatisticaSettimanaleServiceImpl extends JDBCStatisticaSettiman
 		sqlQueryObjectUpdate.setANDLogicOperator(true);
 		sqlQueryObjectUpdate.addUpdateTable(this.getStatisticaSettimanaleFieldConverter().toTable(StatisticaSettimanale.model().STATISTICA_BASE));
 		boolean isUpdate = true;
-		java.util.List<JDBCObject> lstObjects = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> lstObjects = new java.util.ArrayList<>();
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.DATA,false), "?");
 		lstObjects.add(new JDBCObject(statisticaSettimanale_statisticaBase.getData(), StatisticaSettimanale.model().STATISTICA_BASE.DATA.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.STATO_RECORD,false), "?");
@@ -409,7 +409,7 @@ public class JDBCStatisticaSettimanaleServiceImpl extends JDBCStatisticaSettiman
 				sqlQueryObjectUpdate_statisticaSettimanaleContenuti.setANDLogicOperator(true);
 				sqlQueryObjectUpdate_statisticaSettimanaleContenuti.addUpdateTable(this.getStatisticaSettimanaleFieldConverter().toTable(StatisticaSettimanale.model().STATISTICA_SETTIMANALE_CONTENUTI));
 				boolean isUpdate_statisticaSettimanaleContenuti = true;
-				java.util.List<JDBCObject> lstObjects_statisticaSettimanaleContenuti = new java.util.ArrayList<JDBCObject>();
+				java.util.List<JDBCObject> lstObjects_statisticaSettimanaleContenuti = new java.util.ArrayList<>();
 				sqlQueryObjectUpdate_statisticaSettimanaleContenuti.addUpdateField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_SETTIMANALE_CONTENUTI.DATA,false), "?");
 				lstObjects_statisticaSettimanaleContenuti.add(new JDBCObject(statisticaSettimanale_statisticaSettimanaleContenuti.getData(), StatisticaSettimanale.model().STATISTICA_SETTIMANALE_CONTENUTI.DATA.getFieldType()));
 				sqlQueryObjectUpdate_statisticaSettimanaleContenuti.addUpdateField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_SETTIMANALE_CONTENUTI.RISORSA_NOME,false), "?");
@@ -487,7 +487,7 @@ public class JDBCStatisticaSettimanaleServiceImpl extends JDBCStatisticaSettiman
 		ISQLQueryObject sqlQueryObjectUpdate_statisticaSettimanaleContenuti_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
 		sqlQueryObjectUpdate_statisticaSettimanaleContenuti_deleteList.setANDLogicOperator(true);
 		sqlQueryObjectUpdate_statisticaSettimanaleContenuti_deleteList.addDeleteTable(this.getStatisticaSettimanaleFieldConverter().toTable(StatisticaSettimanale.model().STATISTICA_SETTIMANALE_CONTENUTI));
-		java.util.List<JDBCObject> jdbcObjects_statisticaSettimanaleContenuti_delete = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> jdbcObjects_statisticaSettimanaleContenuti_delete = new java.util.ArrayList<>();
 
 		sqlQueryObjectUpdate_statisticaSettimanaleContenuti_deleteList.addWhereCondition("id_stat=?");
 		jdbcObjects_statisticaSettimanaleContenuti_delete.add(new JDBCObject(statisticaSettimanale.getId(), Long.class));
@@ -543,7 +543,7 @@ public class JDBCStatisticaSettimanaleServiceImpl extends JDBCStatisticaSettiman
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaSettimanaleFieldConverter().toTable(StatisticaSettimanale.model()), 
@@ -554,7 +554,7 @@ public class JDBCStatisticaSettimanaleServiceImpl extends JDBCStatisticaSettiman
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, IExpression condition, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaSettimanaleFieldConverter().toTable(StatisticaSettimanale.model()), 
@@ -565,7 +565,7 @@ public class JDBCStatisticaSettimanaleServiceImpl extends JDBCStatisticaSettiman
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateModel ... updateModels) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaSettimanaleFieldConverter().toTable(StatisticaSettimanale.model()), 

@@ -372,7 +372,7 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 			// Il vincolo rimane per l'offset, per gestire le select annidate di qualche implementazioni come Oracle,SQLServer ...
 			if( (this.offset>=0) && (delete==false)){
 				
-				//java.util.List<String> aliasOrderByDistinct = new java.util.ArrayList<String>();
+				//java.util.List<String> aliasOrderByDistinct = new java.util.ArrayList<>();
 								
 				if(this.isSelectDistinct()==false){
 				

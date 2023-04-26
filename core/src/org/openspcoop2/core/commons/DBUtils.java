@@ -1473,7 +1473,7 @@ public class DBUtils {
 		ProprietariProtocolProperty proprietario = ProprietariProtocolProperty.SERVIZIO_APPLICATIVO;
 		String tabellaDB = 	CostantiDB.SERVIZI_APPLICATIVI ;
 		
-		List<ISQLQueryObject> listSqlQueryProtocolProperties = new ArrayList<ISQLQueryObject>();
+		List<ISQLQueryObject> listSqlQueryProtocolProperties = new ArrayList<>();
 		
 		if(filtroModISicurezzaMessaggio!=null) {
 			ISQLQueryObject sql = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,

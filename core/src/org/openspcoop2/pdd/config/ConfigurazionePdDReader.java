@@ -4542,7 +4542,7 @@ public class ConfigurazionePdDReader {
 			setPAUrlPrefixRewriter(connectionPdD,connettore, aSoggetto, requestInfo);
 
 			// Properties connettore
-			properties = new java.util.HashMap<String,String>();
+			properties = new java.util.HashMap<>();
 			for(int i=0;i<connettore.sizePropertyList();i++){
 				properties.put(connettore.getProperty(i).getNome(),connettore.getProperty(i).getValore());
 			}
@@ -4759,7 +4759,7 @@ public class ConfigurazionePdDReader {
 			setPAUrlPrefixRewriter(connectionPdD,connettore, aSoggetto, requestInfo);
 
 			// set properties
-			properties = new java.util.HashMap<String,String>();
+			properties = new java.util.HashMap<>();
 			for(int i=0;i<connettore.sizePropertyList();i++){
 				properties.put(connettore.getProperty(i).getNome(),connettore.getProperty(i).getValore());
 			}
@@ -4883,7 +4883,7 @@ public class ConfigurazionePdDReader {
 			setPAUrlPrefixRewriter(connectionPdD,connettore, aSoggetto, requestInfo);
 
 			// Properties connettore
-			properties = new java.util.HashMap<String,String>();
+			properties = new java.util.HashMap<>();
 			for(int i=0;i<connettore.sizePropertyList();i++){
 				properties.put(connettore.getProperty(i).getNome(),connettore.getProperty(i).getValore());
 			}

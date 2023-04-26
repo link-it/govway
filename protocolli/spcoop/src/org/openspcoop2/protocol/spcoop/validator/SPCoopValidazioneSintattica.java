@@ -3851,8 +3851,8 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
 			OpenSPCoop2MessageFactory messageFactory = msg.getFactory();
 			
-			java.util.List<String> contentID = new java.util.ArrayList<String>();
-			java.util.List<String> contentLocation = new java.util.ArrayList<String>();
+			java.util.List<String> contentID = new java.util.ArrayList<>();
+			java.util.List<String> contentLocation = new java.util.ArrayList<>();
 			java.util.Iterator<?> it = msg.getAttachments();
 			
 			while(it.hasNext()){

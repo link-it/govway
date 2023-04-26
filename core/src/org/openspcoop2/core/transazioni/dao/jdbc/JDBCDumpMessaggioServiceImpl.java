@@ -306,7 +306,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		sqlQueryObjectUpdate.setANDLogicOperator(true);
 		sqlQueryObjectUpdate.addUpdateTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model()));
 		boolean isUpdate_dumpMessaggio = true;
-		java.util.List<JDBCObject> lstObjects_dumpMessaggio = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> lstObjects_dumpMessaggio = new java.util.ArrayList<>();
 		sqlQueryObjectUpdate.addUpdateField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ID_TRANSAZIONE,false), "?");
 		lstObjects_dumpMessaggio.add(new JDBCObject(dumpMessaggio.getIdTransazione(), DumpMessaggio.model().ID_TRANSAZIONE.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().PROTOCOLLO,false), "?");
@@ -402,7 +402,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 				sqlQueryObjectUpdate_dumpMessaggio_multipartHeader.setANDLogicOperator(true);
 				sqlQueryObjectUpdate_dumpMessaggio_multipartHeader.addUpdateTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().MULTIPART_HEADER));
 				boolean isUpdate_dumpMessaggio_multipartHeader = true;
-				java.util.List<JDBCObject> lstObjects_dumpMessaggio_multipartHeader = new java.util.ArrayList<JDBCObject>();
+				java.util.List<JDBCObject> lstObjects_dumpMessaggio_multipartHeader = new java.util.ArrayList<>();
 				sqlQueryObjectUpdate_dumpMessaggio_multipartHeader.addUpdateField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().MULTIPART_HEADER.NOME,false), "?");
 				lstObjects_dumpMessaggio_multipartHeader.add(new JDBCObject(dumpMessaggio_multipartHeader.getNome(), DumpMessaggio.model().MULTIPART_HEADER.NOME.getFieldType()));
 				sqlQueryObjectUpdate_dumpMessaggio_multipartHeader.addUpdateField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().MULTIPART_HEADER.VALORE,false), "?");
@@ -426,7 +426,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		ISQLQueryObject sqlQueryObjectUpdate_multipartHeader_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
 		sqlQueryObjectUpdate_multipartHeader_deleteList.setANDLogicOperator(true);
 		sqlQueryObjectUpdate_multipartHeader_deleteList.addDeleteTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().MULTIPART_HEADER));
-		java.util.List<JDBCObject> jdbcObjects_dumpMessaggio_multipartHeader_delete = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> jdbcObjects_dumpMessaggio_multipartHeader_delete = new java.util.ArrayList<>();
 
 		sqlQueryObjectUpdate_multipartHeader_deleteList.addWhereCondition("id_messaggio=?");
 		jdbcObjects_dumpMessaggio_multipartHeader_delete.add(new JDBCObject(dumpMessaggio.getId(), Long.class));
@@ -491,7 +491,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 				sqlQueryObjectUpdate_dumpMessaggio_headerTrasporto.setANDLogicOperator(true);
 				sqlQueryObjectUpdate_dumpMessaggio_headerTrasporto.addUpdateTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().HEADER_TRASPORTO));
 				boolean isUpdate_dumpMessaggio_headerTrasporto = true;
-				java.util.List<JDBCObject> lstObjects_dumpMessaggio_headerTrasporto = new java.util.ArrayList<JDBCObject>();
+				java.util.List<JDBCObject> lstObjects_dumpMessaggio_headerTrasporto = new java.util.ArrayList<>();
 				sqlQueryObjectUpdate_dumpMessaggio_headerTrasporto.addUpdateField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().HEADER_TRASPORTO.NOME,false), "?");
 				lstObjects_dumpMessaggio_headerTrasporto.add(new JDBCObject(dumpMessaggio_headerTrasporto.getNome(), DumpMessaggio.model().HEADER_TRASPORTO.NOME.getFieldType()));
 				sqlQueryObjectUpdate_dumpMessaggio_headerTrasporto.addUpdateField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().HEADER_TRASPORTO.VALORE,false), "?");
@@ -515,7 +515,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		ISQLQueryObject sqlQueryObjectUpdate_headerTrasporto_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
 		sqlQueryObjectUpdate_headerTrasporto_deleteList.setANDLogicOperator(true);
 		sqlQueryObjectUpdate_headerTrasporto_deleteList.addDeleteTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().HEADER_TRASPORTO));
-		java.util.List<JDBCObject> jdbcObjects_dumpMessaggio_headerTrasporto_delete = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> jdbcObjects_dumpMessaggio_headerTrasporto_delete = new java.util.ArrayList<>();
 
 		sqlQueryObjectUpdate_headerTrasporto_deleteList.addWhereCondition("id_messaggio=?");
 		jdbcObjects_dumpMessaggio_headerTrasporto_delete.add(new JDBCObject(dumpMessaggio.getId(), Long.class));
@@ -607,7 +607,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 				sqlQueryObjectUpdate_dumpMessaggio_allegato.setANDLogicOperator(true);
 				sqlQueryObjectUpdate_dumpMessaggio_allegato.addUpdateTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().ALLEGATO));
 				boolean isUpdate_dumpMessaggio_allegato = true;
-				java.util.List<JDBCObject> lstObjects_dumpMessaggio_allegato = new java.util.ArrayList<JDBCObject>();
+				java.util.List<JDBCObject> lstObjects_dumpMessaggio_allegato = new java.util.ArrayList<>();
 				sqlQueryObjectUpdate_dumpMessaggio_allegato.addUpdateField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.CONTENT_TYPE,false), "?");
 				lstObjects_dumpMessaggio_allegato.add(new JDBCObject(dumpMessaggio_allegato.getContentType(), DumpMessaggio.model().ALLEGATO.CONTENT_TYPE.getFieldType()));
 				sqlQueryObjectUpdate_dumpMessaggio_allegato.addUpdateField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.CONTENT_ID,false), "?");
@@ -665,7 +665,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 						sqlQueryObjectUpdate_dumpMessaggio_allegato_header.setANDLogicOperator(true);
 						sqlQueryObjectUpdate_dumpMessaggio_allegato_header.addUpdateTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().ALLEGATO.HEADER));
 						boolean isUpdate_dumpMessaggio_allegato_header = true;
-						java.util.List<JDBCObject> lstObjects_dumpMessaggio_allegato_header = new java.util.ArrayList<JDBCObject>();
+						java.util.List<JDBCObject> lstObjects_dumpMessaggio_allegato_header = new java.util.ArrayList<>();
 						sqlQueryObjectUpdate_dumpMessaggio_allegato_header.addUpdateField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.HEADER.NOME,false), "?");
 						lstObjects_dumpMessaggio_allegato_header.add(new JDBCObject(dumpMessaggio_allegato_header.getNome(), DumpMessaggio.model().ALLEGATO.HEADER.NOME.getFieldType()));
 						sqlQueryObjectUpdate_dumpMessaggio_allegato_header.addUpdateField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.HEADER.VALORE,false), "?");
@@ -689,7 +689,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 				ISQLQueryObject sqlQueryObjectUpdate_dumpMessaggio_allegato_header_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
 				sqlQueryObjectUpdate_dumpMessaggio_allegato_header_deleteList.setANDLogicOperator(true);
 				sqlQueryObjectUpdate_dumpMessaggio_allegato_header_deleteList.addDeleteTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().ALLEGATO.HEADER));
-				java.util.List<JDBCObject> jdbcObjects_dumpMessaggio_allegato_header_delete = new java.util.ArrayList<JDBCObject>();
+				java.util.List<JDBCObject> jdbcObjects_dumpMessaggio_allegato_header_delete = new java.util.ArrayList<>();
 
 				sqlQueryObjectUpdate_dumpMessaggio_allegato_header_deleteList.addWhereCondition("id_allegato=?");
 				jdbcObjects_dumpMessaggio_allegato_header_delete.add(new JDBCObject(dumpMessaggio_allegato.getId(), Long.class));
@@ -717,7 +717,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		ISQLQueryObject sqlQueryObjectUpdate_allegato_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
 		sqlQueryObjectUpdate_allegato_deleteList.setANDLogicOperator(true);
 		sqlQueryObjectUpdate_allegato_deleteList.addDeleteTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().ALLEGATO));
-		java.util.List<JDBCObject> jdbcObjects_dumpMessaggio_allegato_delete = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> jdbcObjects_dumpMessaggio_allegato_delete = new java.util.ArrayList<>();
 
 		sqlQueryObjectUpdate_allegato_deleteList.addWhereCondition("id_messaggio=?");
 		jdbcObjects_dumpMessaggio_allegato_delete.add(new JDBCObject(dumpMessaggio.getId(), Long.class));
@@ -775,7 +775,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 				sqlQueryObjectUpdate_dumpMessaggio_contenuto.setANDLogicOperator(true);
 				sqlQueryObjectUpdate_dumpMessaggio_contenuto.addUpdateTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().CONTENUTO));
 				boolean isUpdate_dumpMessaggio_contenuto = true;
-				java.util.List<JDBCObject> lstObjects_dumpMessaggio_contenuto = new java.util.ArrayList<JDBCObject>();
+				java.util.List<JDBCObject> lstObjects_dumpMessaggio_contenuto = new java.util.ArrayList<>();
 				sqlQueryObjectUpdate_dumpMessaggio_contenuto.addUpdateField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().CONTENUTO.NOME,false), "?");
 				lstObjects_dumpMessaggio_contenuto.add(new JDBCObject(dumpMessaggio_contenuto.getNome(), DumpMessaggio.model().CONTENUTO.NOME.getFieldType()));
 				sqlQueryObjectUpdate_dumpMessaggio_contenuto.addUpdateField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().CONTENUTO.VALORE,false), "?");
@@ -801,7 +801,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		ISQLQueryObject sqlQueryObjectUpdate_contenuto_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
 		sqlQueryObjectUpdate_contenuto_deleteList.setANDLogicOperator(true);
 		sqlQueryObjectUpdate_contenuto_deleteList.addDeleteTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().CONTENUTO));
-		java.util.List<JDBCObject> jdbcObjects_dumpMessaggio_contenuto_delete = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> jdbcObjects_dumpMessaggio_contenuto_delete = new java.util.ArrayList<>();
 
 		sqlQueryObjectUpdate_contenuto_deleteList.addWhereCondition("id_messaggio=?");
 		jdbcObjects_dumpMessaggio_contenuto_delete.add(new JDBCObject(dumpMessaggio.getId(), Long.class));
@@ -857,7 +857,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model()), 
@@ -868,7 +868,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, IExpression condition, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model()), 
@@ -879,7 +879,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateModel ... updateModels) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model()), 

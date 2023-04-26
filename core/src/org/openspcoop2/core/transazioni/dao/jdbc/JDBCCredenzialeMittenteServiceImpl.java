@@ -128,7 +128,7 @@ public class JDBCCredenzialeMittenteServiceImpl extends JDBCCredenzialeMittenteS
 		sqlQueryObjectUpdate.setANDLogicOperator(true);
 		sqlQueryObjectUpdate.addUpdateTable(this.getCredenzialeMittenteFieldConverter().toTable(CredenzialeMittente.model()));
 		boolean isUpdate_credenzialeMittente = true;
-		java.util.List<JDBCObject> lstObjects_credenzialeMittente = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> lstObjects_credenzialeMittente = new java.util.ArrayList<>();
 		sqlQueryObjectUpdate.addUpdateField(this.getCredenzialeMittenteFieldConverter().toColumn(CredenzialeMittente.model().TIPO,false), "?");
 		lstObjects_credenzialeMittente.add(new JDBCObject(credenzialeMittente.getTipo(), CredenzialeMittente.model().TIPO.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getCredenzialeMittenteFieldConverter().toColumn(CredenzialeMittente.model().CREDENZIALE,false), "?");
@@ -179,7 +179,7 @@ public class JDBCCredenzialeMittenteServiceImpl extends JDBCCredenzialeMittenteS
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getCredenzialeMittenteFieldConverter().toTable(CredenzialeMittente.model()), 
@@ -190,7 +190,7 @@ public class JDBCCredenzialeMittenteServiceImpl extends JDBCCredenzialeMittenteS
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, IExpression condition, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getCredenzialeMittenteFieldConverter().toTable(CredenzialeMittente.model()), 
@@ -201,7 +201,7 @@ public class JDBCCredenzialeMittenteServiceImpl extends JDBCCredenzialeMittenteS
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateModel ... updateModels) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getCredenzialeMittenteFieldConverter().toTable(CredenzialeMittente.model()), 

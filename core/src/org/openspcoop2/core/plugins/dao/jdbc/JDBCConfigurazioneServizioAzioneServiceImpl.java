@@ -154,7 +154,7 @@ public class JDBCConfigurazioneServizioAzioneServiceImpl extends JDBCConfigurazi
 		sqlQueryObjectUpdate.setANDLogicOperator(true);
 		sqlQueryObjectUpdate.addUpdateTable(this.getConfigurazioneServizioAzioneFieldConverter().toTable(ConfigurazioneServizioAzione.model()));
 		boolean isUpdate_configurazioneServizioAzione = true;
-		java.util.List<JDBCObject> lstObjects_configurazioneServizioAzione = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> lstObjects_configurazioneServizioAzione = new java.util.ArrayList<>();
 		sqlQueryObjectUpdate.addUpdateField(this.getConfigurazioneServizioAzioneFieldConverter().toColumn(ConfigurazioneServizioAzione.model().AZIONE,false), "?");
 		lstObjects_configurazioneServizioAzione.add(new JDBCObject(configurazioneServizioAzione.getAzione(), ConfigurazioneServizioAzione.model().AZIONE.getFieldType()));
 		if(setIdMappingResolutionBehaviour){
@@ -207,7 +207,7 @@ public class JDBCConfigurazioneServizioAzioneServiceImpl extends JDBCConfigurazi
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneServizioAzioneFieldConverter().toTable(ConfigurazioneServizioAzione.model()), 
@@ -218,7 +218,7 @@ public class JDBCConfigurazioneServizioAzioneServiceImpl extends JDBCConfigurazi
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, IExpression condition, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneServizioAzioneFieldConverter().toTable(ConfigurazioneServizioAzione.model()), 
@@ -229,7 +229,7 @@ public class JDBCConfigurazioneServizioAzioneServiceImpl extends JDBCConfigurazi
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateModel ... updateModels) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneServizioAzioneFieldConverter().toTable(ConfigurazioneServizioAzione.model()), 

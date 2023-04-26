@@ -165,7 +165,7 @@ public class JDBCConfigurazionePolicyServiceImpl extends JDBCConfigurazionePolic
 		sqlQueryObjectUpdate.setANDLogicOperator(true);
 		sqlQueryObjectUpdate.addUpdateTable(this.getConfigurazionePolicyFieldConverter().toTable(ConfigurazionePolicy.model()));
 		boolean isUpdate = true;
-		java.util.List<JDBCObject> lstObjects = new java.util.ArrayList<JDBCObject>();
+		java.util.List<JDBCObject> lstObjects = new java.util.ArrayList<>();
 		sqlQueryObjectUpdate.addUpdateField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().ID_POLICY,false), "?");
 		lstObjects.add(new JDBCObject(configurazionePolicy.getIdPolicy(), ConfigurazionePolicy.model().ID_POLICY.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().BUILT_IN,false), "?");
@@ -264,7 +264,7 @@ public class JDBCConfigurazionePolicyServiceImpl extends JDBCConfigurazionePolic
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazionePolicyFieldConverter().toTable(ConfigurazionePolicy.model()), 
@@ -275,7 +275,7 @@ public class JDBCConfigurazionePolicyServiceImpl extends JDBCConfigurazionePolic
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, IExpression condition, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazionePolicyFieldConverter().toTable(ConfigurazionePolicy.model()), 
@@ -286,7 +286,7 @@ public class JDBCConfigurazionePolicyServiceImpl extends JDBCConfigurazionePolic
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateModel ... updateModels) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		java.util.List<Object> ids = new java.util.ArrayList<Object>();
+		java.util.List<Object> ids = new java.util.ArrayList<>();
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazionePolicyFieldConverter().toTable(ConfigurazionePolicy.model()), 
