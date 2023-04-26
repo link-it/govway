@@ -90,33 +90,6 @@ public class ElencoIdPolicy extends org.openspcoop2.utils.beans.BaseBeanWithId i
 
 
   @XmlElement(name="id-policy",required=true,nillable=false)
-  protected List<IdPolicy> idPolicy = new ArrayList<IdPolicy>();
-
-  /**
-   * @deprecated Use method getIdPolicyList
-   * @return List&lt;IdPolicy&gt;
-  */
-  @Deprecated
-  public List<IdPolicy> getIdPolicy() {
-  	return this.idPolicy;
-  }
-
-  /**
-   * @deprecated Use method setIdPolicyList
-   * @param idPolicy List&lt;IdPolicy&gt;
-  */
-  @Deprecated
-  public void setIdPolicy(List<IdPolicy> idPolicy) {
-  	this.idPolicy=idPolicy;
-  }
-
-  /**
-   * @deprecated Use method sizeIdPolicyList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeIdPolicy() {
-  	return this.idPolicy.size();
-  }
+  private List<IdPolicy> idPolicy = new ArrayList<>();
 
 }

@@ -122,33 +122,6 @@ public class ConfigurazioneRateLimiting extends org.openspcoop2.utils.beans.Base
   protected boolean tipoErroreIncludiDescrizione = true;
 
   @XmlElement(name="proprieta",required=true,nillable=false)
-  protected List<ConfigurazioneRateLimitingProprieta> proprieta = new ArrayList<ConfigurazioneRateLimitingProprieta>();
-
-  /**
-   * @deprecated Use method getProprietaList
-   * @return List&lt;ConfigurazioneRateLimitingProprieta&gt;
-  */
-  @Deprecated
-  public List<ConfigurazioneRateLimitingProprieta> getProprieta() {
-  	return this.proprieta;
-  }
-
-  /**
-   * @deprecated Use method setProprietaList
-   * @param proprieta List&lt;ConfigurazioneRateLimitingProprieta&gt;
-  */
-  @Deprecated
-  public void setProprieta(List<ConfigurazioneRateLimitingProprieta> proprieta) {
-  	this.proprieta=proprieta;
-  }
-
-  /**
-   * @deprecated Use method sizeProprietaList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeProprieta() {
-  	return this.proprieta.size();
-  }
+  private List<ConfigurazioneRateLimitingProprieta> proprieta = new ArrayList<>();
 
 }

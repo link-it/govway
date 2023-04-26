@@ -115,33 +115,6 @@ public class StatisticaSettimanale extends org.openspcoop2.utils.beans.BaseBeanW
   protected Statistica statisticaBase;
 
   @XmlElement(name="statistica-settimanale-contenuti",required=true,nillable=false)
-  protected List<StatisticaContenuti> statisticaSettimanaleContenuti = new ArrayList<StatisticaContenuti>();
-
-  /**
-   * @deprecated Use method getStatisticaSettimanaleContenutiList
-   * @return List&lt;StatisticaContenuti&gt;
-  */
-  @Deprecated
-  public List<StatisticaContenuti> getStatisticaSettimanaleContenuti() {
-  	return this.statisticaSettimanaleContenuti;
-  }
-
-  /**
-   * @deprecated Use method setStatisticaSettimanaleContenutiList
-   * @param statisticaSettimanaleContenuti List&lt;StatisticaContenuti&gt;
-  */
-  @Deprecated
-  public void setStatisticaSettimanaleContenuti(List<StatisticaContenuti> statisticaSettimanaleContenuti) {
-  	this.statisticaSettimanaleContenuti=statisticaSettimanaleContenuti;
-  }
-
-  /**
-   * @deprecated Use method sizeStatisticaSettimanaleContenutiList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeStatisticaSettimanaleContenuti() {
-  	return this.statisticaSettimanaleContenuti.size();
-  }
+  private List<StatisticaContenuti> statisticaSettimanaleContenuti = new ArrayList<>();
 
 }

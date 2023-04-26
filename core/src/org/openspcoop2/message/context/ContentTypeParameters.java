@@ -90,33 +90,6 @@ public class ContentTypeParameters extends org.openspcoop2.utils.beans.BaseBeanW
 
 
   @XmlElement(name="parameter",required=true,nillable=false)
-  protected List<StringParameter> parameter = new ArrayList<StringParameter>();
-
-  /**
-   * @deprecated Use method getParameterList
-   * @return List&lt;StringParameter&gt;
-  */
-  @Deprecated
-  public List<StringParameter> getParameter() {
-  	return this.parameter;
-  }
-
-  /**
-   * @deprecated Use method setParameterList
-   * @param parameter List&lt;StringParameter&gt;
-  */
-  @Deprecated
-  public void setParameter(List<StringParameter> parameter) {
-  	this.parameter=parameter;
-  }
-
-  /**
-   * @deprecated Use method sizeParameterList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeParameter() {
-  	return this.parameter.size();
-  }
+  private List<StringParameter> parameter = new ArrayList<>();
 
 }

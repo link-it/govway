@@ -140,11 +140,11 @@ public class IdActivePolicy extends org.openspcoop2.utils.beans.BaseBeanWithId i
     this.alias = alias;
   }
 
-  public void set_value_filtroRuoloPorta(String value) {
+  public void setFiltroRuoloPortaRawEnumValue(String value) {
     this.filtroRuoloPorta = (RuoloPolicy) RuoloPolicy.toEnumConstantFromString(value);
   }
 
-  public String get_value_filtroRuoloPorta() {
+  public String getFiltroRuoloPortaRawEnumValue() {
     if(this.filtroRuoloPorta == null){
     	return null;
     }else{
@@ -202,7 +202,7 @@ public class IdActivePolicy extends org.openspcoop2.utils.beans.BaseBeanWithId i
   protected java.lang.String alias;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_filtroRuoloPorta;
+  protected java.lang.String filtroRuoloPortaRawEnumValue;
 
   @XmlElement(name="filtro-ruolo-porta",required=false,nillable=false)
   protected RuoloPolicy filtroRuoloPorta;

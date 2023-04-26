@@ -90,33 +90,6 @@ public class ElencoIdConfigurazioneFiltro extends org.openspcoop2.utils.beans.Ba
 
 
   @XmlElement(name="id-configurazione-filtro",required=true,nillable=false)
-  protected List<IdConfigurazioneFiltro> idConfigurazioneFiltro = new ArrayList<IdConfigurazioneFiltro>();
-
-  /**
-   * @deprecated Use method getIdConfigurazioneFiltroList
-   * @return List&lt;IdConfigurazioneFiltro&gt;
-  */
-  @Deprecated
-  public List<IdConfigurazioneFiltro> getIdConfigurazioneFiltro() {
-  	return this.idConfigurazioneFiltro;
-  }
-
-  /**
-   * @deprecated Use method setIdConfigurazioneFiltroList
-   * @param idConfigurazioneFiltro List&lt;IdConfigurazioneFiltro&gt;
-  */
-  @Deprecated
-  public void setIdConfigurazioneFiltro(List<IdConfigurazioneFiltro> idConfigurazioneFiltro) {
-  	this.idConfigurazioneFiltro=idConfigurazioneFiltro;
-  }
-
-  /**
-   * @deprecated Use method sizeIdConfigurazioneFiltroList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeIdConfigurazioneFiltro() {
-  	return this.idConfigurazioneFiltro.size();
-  }
+  private List<IdConfigurazioneFiltro> idConfigurazioneFiltro = new ArrayList<>();
 
 }

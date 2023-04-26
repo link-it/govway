@@ -484,13 +484,13 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 
 		// elimino tutte le occorrenze di statisticaOraria_statisticaOrariaContenuti non presenti nell'update
 
-		ISQLQueryObject sqlQueryObjectUpdate_statisticaOrariaContenuti_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
-		sqlQueryObjectUpdate_statisticaOrariaContenuti_deleteList.setANDLogicOperator(true);
-		sqlQueryObjectUpdate_statisticaOrariaContenuti_deleteList.addDeleteTable(this.getStatisticaOrariaFieldConverter().toTable(StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI));
-		java.util.List<JDBCObject> jdbcObjects_statisticaOrariaContenuti_delete = new java.util.ArrayList<>();
+		ISQLQueryObject sqlQueryObjectUpdate_statisticaOrariaContenutideleteEngineList = sqlQueryObjectUpdate.newSQLQueryObject();
+		sqlQueryObjectUpdate_statisticaOrariaContenutideleteEngineList.setANDLogicOperator(true);
+		sqlQueryObjectUpdate_statisticaOrariaContenutideleteEngineList.addDeleteTable(this.getStatisticaOrariaFieldConverter().toTable(StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI));
+		java.util.List<JDBCObject> jdbcObjects_statisticaOrariaContenutideleteEngine = new java.util.ArrayList<>();
 
-		sqlQueryObjectUpdate_statisticaOrariaContenuti_deleteList.addWhereCondition("id_stat=?");
-		jdbcObjects_statisticaOrariaContenuti_delete.add(new JDBCObject(statisticaOraria.getId(), Long.class));
+		sqlQueryObjectUpdate_statisticaOrariaContenutideleteEngineList.addWhereCondition("id_stat=?");
+		jdbcObjects_statisticaOrariaContenutideleteEngine.add(new JDBCObject(statisticaOraria.getId(), Long.class));
 
 		StringBuilder marks_statisticaOrariaContenuti = new StringBuilder();
 		if(ids_statisticaOrariaContenuti_da_non_eliminare.size() > 0) {
@@ -499,13 +499,13 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 					marks_statisticaOrariaContenuti.append(",");
 				}
 				marks_statisticaOrariaContenuti.append("?");
-				jdbcObjects_statisticaOrariaContenuti_delete.add(new JDBCObject(ids, Long.class));
+				jdbcObjects_statisticaOrariaContenutideleteEngine.add(new JDBCObject(ids, Long.class));
 
 			}
-			sqlQueryObjectUpdate_statisticaOrariaContenuti_deleteList.addWhereCondition("id NOT IN ("+marks_statisticaOrariaContenuti.toString()+")");
+			sqlQueryObjectUpdate_statisticaOrariaContenutideleteEngineList.addWhereCondition("id NOT IN ("+marks_statisticaOrariaContenuti.toString()+")");
 		}
 
-		jdbcUtilities.execute(sqlQueryObjectUpdate_statisticaOrariaContenuti_deleteList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_statisticaOrariaContenuti_delete.toArray(new JDBCObject[]{}));
+		jdbcUtilities.execute(sqlQueryObjectUpdate_statisticaOrariaContenutideleteEngineList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_statisticaOrariaContenutideleteEngine.toArray(new JDBCObject[]{}));
 
 
 
@@ -516,8 +516,8 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaOrariaFieldConverter().toTable(StatisticaOraria.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, statisticaOraria),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, statisticaOraria),
 				this.getStatisticaOrariaFieldConverter(), this, null, updateFields);
 	}
 	
@@ -526,8 +526,8 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaOrariaFieldConverter().toTable(StatisticaOraria.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, statisticaOraria),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, statisticaOraria),
 				this.getStatisticaOrariaFieldConverter(), this, condition, updateFields);
 	}
 	
@@ -536,8 +536,8 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaOrariaFieldConverter().toTable(StatisticaOraria.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, statisticaOraria),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, statisticaOraria),
 				this.getStatisticaOrariaFieldConverter(), this, updateModels);
 	}	
 	
@@ -547,7 +547,7 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaOrariaFieldConverter().toTable(StatisticaOraria.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getStatisticaOrariaFieldConverter(), this, null, updateFields);
 	}
@@ -558,7 +558,7 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaOrariaFieldConverter().toTable(StatisticaOraria.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getStatisticaOrariaFieldConverter(), this, condition, updateFields);
 	}
@@ -569,7 +569,7 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaOrariaFieldConverter().toTable(StatisticaOraria.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getStatisticaOrariaFieldConverter(), this, updateModels);
 	}
@@ -608,11 +608,11 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 		}
 		longId = statisticaOraria.getId();
 		
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, longId);
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, longId);
 		
 	}
 
-	private void _delete(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long id) throws NotImplementedException,ServiceException,Exception {
+	private void deleteEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long id) throws NotImplementedException,ServiceException,Exception {
 	
 		if(id==null){
 			throw new ServiceException("Id is null");
@@ -628,11 +628,11 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 		
 
 		//Recupero oggetto _statisticaOrariaContenuti
-		ISQLQueryObject sqlQueryObjectDelete_statisticaOrariaContenuti_getToDelete = sqlQueryObjectDelete.newSQLQueryObject();
-		sqlQueryObjectDelete_statisticaOrariaContenuti_getToDelete.setANDLogicOperator(true);
-		sqlQueryObjectDelete_statisticaOrariaContenuti_getToDelete.addFromTable(this.getStatisticaOrariaFieldConverter().toTable(StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI));
-		sqlQueryObjectDelete_statisticaOrariaContenuti_getToDelete.addWhereCondition("id_stat=?");
-		java.util.List<Object> statisticaOraria_statisticaOrariaContenuti_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_statisticaOrariaContenuti_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI, this.getStatisticaOrariaFetch(),
+		ISQLQueryObject sqlQueryObjectDelete_statisticaOrariaContenutigetEngineToDelete = sqlQueryObjectDelete.newSQLQueryObject();
+		sqlQueryObjectDelete_statisticaOrariaContenutigetEngineToDelete.setANDLogicOperator(true);
+		sqlQueryObjectDelete_statisticaOrariaContenutigetEngineToDelete.addFromTable(this.getStatisticaOrariaFieldConverter().toTable(StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI));
+		sqlQueryObjectDelete_statisticaOrariaContenutigetEngineToDelete.addWhereCondition("id_stat=?");
+		java.util.List<Object> statisticaOraria_statisticaOrariaContenuti_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_statisticaOrariaContenutigetEngineToDelete.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI, this.getStatisticaOrariaFetch(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id,Long.class));
 
 		// for statisticaOraria_statisticaOrariaContenuti
@@ -678,7 +678,7 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 		java.util.List<Long> lst = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, new JDBCPaginatedExpression(expression));
 		
 		for(Long id : lst) {
-			this._delete(jdbcProperties, log, connection, sqlQueryObject, id);
+			this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, id);
 		}
 		
 		return new NonNegativeNumber(lst.size());
@@ -691,7 +691,7 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 	
 	@Override
 	public void deleteById(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId) throws ServiceException, NotImplementedException, Exception {
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
 	}
 	
 	@Override

@@ -90,33 +90,6 @@ public class Eccezioni extends org.openspcoop2.utils.beans.BaseBean implements S
 
 
   @XmlElement(name="exception",required=true,nillable=false)
-  protected List<Eccezione> exception = new ArrayList<Eccezione>();
-
-  /**
-   * @deprecated Use method getExceptionList
-   * @return List&lt;Eccezione&gt;
-  */
-  @Deprecated
-  public List<Eccezione> getException() {
-  	return this.exception;
-  }
-
-  /**
-   * @deprecated Use method setExceptionList
-   * @param exception List&lt;Eccezione&gt;
-  */
-  @Deprecated
-  public void setException(List<Eccezione> exception) {
-  	this.exception=exception;
-  }
-
-  /**
-   * @deprecated Use method sizeExceptionList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeException() {
-  	return this.exception.size();
-  }
+  private List<Eccezione> exception = new ArrayList<>();
 
 }

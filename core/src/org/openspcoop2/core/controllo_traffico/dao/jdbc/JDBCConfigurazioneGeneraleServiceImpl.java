@@ -208,8 +208,8 @@ public class JDBCConfigurazioneGeneraleServiceImpl extends JDBCConfigurazioneGen
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneGeneraleFieldConverter().toTable(ConfigurazioneGenerale.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject),
 				this.getConfigurazioneGeneraleFieldConverter(), this, null, updateFields);
 	}
 	
@@ -218,8 +218,8 @@ public class JDBCConfigurazioneGeneraleServiceImpl extends JDBCConfigurazioneGen
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneGeneraleFieldConverter().toTable(ConfigurazioneGenerale.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject),
 				this.getConfigurazioneGeneraleFieldConverter(), this, condition, updateFields);
 	}
 	
@@ -228,8 +228,8 @@ public class JDBCConfigurazioneGeneraleServiceImpl extends JDBCConfigurazioneGen
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneGeneraleFieldConverter().toTable(ConfigurazioneGenerale.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject),
 				this.getConfigurazioneGeneraleFieldConverter(), this, updateModels);
 	}	
 	
@@ -249,10 +249,10 @@ public class JDBCConfigurazioneGeneraleServiceImpl extends JDBCConfigurazioneGen
 	@Override
 	public void delete(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, ConfigurazioneGenerale configurazioneGenerale) throws NotImplementedException,ServiceException,Exception {
 		
-		this._delete(jdbcProperties, log, connection, sqlQueryObject);
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject);
 	}
 
-	private void _delete(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject) throws NotImplementedException,ServiceException,Exception {
+	private void deleteEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject) throws NotImplementedException,ServiceException,Exception {
 	
 		// Used by internal elements (if exists)
 		@SuppressWarnings("unused")
@@ -288,7 +288,7 @@ public class JDBCConfigurazioneGeneraleServiceImpl extends JDBCConfigurazioneGen
 	
 	@Override
 	public void deleteById(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId) throws ServiceException, NotImplementedException, Exception {
-		this._delete(jdbcProperties, log, connection, sqlQueryObject); // long id ignored, object with single instance
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject); // long id ignored, object with single instance
 	}
 	
 	@Override

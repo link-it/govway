@@ -90,33 +90,6 @@ public class UrlParameters extends org.openspcoop2.utils.beans.BaseBeanWithId im
 
 
   @XmlElement(name="url-parameter",required=true,nillable=false)
-  protected List<StringParameter> urlParameter = new ArrayList<StringParameter>();
-
-  /**
-   * @deprecated Use method getUrlParameterList
-   * @return List&lt;StringParameter&gt;
-  */
-  @Deprecated
-  public List<StringParameter> getUrlParameter() {
-  	return this.urlParameter;
-  }
-
-  /**
-   * @deprecated Use method setUrlParameterList
-   * @param urlParameter List&lt;StringParameter&gt;
-  */
-  @Deprecated
-  public void setUrlParameter(List<StringParameter> urlParameter) {
-  	this.urlParameter=urlParameter;
-  }
-
-  /**
-   * @deprecated Use method sizeUrlParameterList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeUrlParameter() {
-  	return this.urlParameter.size();
-  }
+  private List<StringParameter> urlParameter = new ArrayList<>();
 
 }

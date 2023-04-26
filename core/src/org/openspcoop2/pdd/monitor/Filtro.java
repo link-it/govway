@@ -118,11 +118,11 @@ public class Filtro extends org.openspcoop2.utils.beans.BaseBeanWithId implement
     this.soglia = soglia;
   }
 
-  public void set_value_stato(String value) {
+  public void setStatoRawEnumValue(String value) {
     this.stato = (StatoMessaggio) StatoMessaggio.toEnumConstantFromString(value);
   }
 
-  public String get_value_stato() {
+  public String getStatoRawEnumValue() {
     if(this.stato == null){
     	return null;
     }else{
@@ -218,7 +218,7 @@ public class Filtro extends org.openspcoop2.utils.beans.BaseBeanWithId implement
   protected long soglia = -1; // default utilizzato dal driver
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_stato;
+  protected java.lang.String statoRawEnumValue;
 
   @XmlElement(name="stato",required=false,nillable=false)
   protected StatoMessaggio stato;
@@ -228,63 +228,9 @@ public class Filtro extends org.openspcoop2.utils.beans.BaseBeanWithId implement
   protected java.lang.String tipo;
 
   @XmlElement(name="soggetto",required=true,nillable=false)
-  protected List<BustaSoggetto> soggetto = new ArrayList<BustaSoggetto>();
-
-  /**
-   * @deprecated Use method getSoggettoList
-   * @return List&lt;BustaSoggetto&gt;
-  */
-  @Deprecated
-  public List<BustaSoggetto> getSoggetto() {
-  	return this.soggetto;
-  }
-
-  /**
-   * @deprecated Use method setSoggettoList
-   * @param soggetto List&lt;BustaSoggetto&gt;
-  */
-  @Deprecated
-  public void setSoggetto(List<BustaSoggetto> soggetto) {
-  	this.soggetto=soggetto;
-  }
-
-  /**
-   * @deprecated Use method sizeSoggettoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeSoggetto() {
-  	return this.soggetto.size();
-  }
+  private List<BustaSoggetto> soggetto = new ArrayList<>();
 
   @XmlElement(name="proprieta",required=true,nillable=false)
-  protected List<Proprieta> proprieta = new ArrayList<Proprieta>();
-
-  /**
-   * @deprecated Use method getProprietaList
-   * @return List&lt;Proprieta&gt;
-  */
-  @Deprecated
-  public List<Proprieta> getProprieta() {
-  	return this.proprieta;
-  }
-
-  /**
-   * @deprecated Use method setProprietaList
-   * @param proprieta List&lt;Proprieta&gt;
-  */
-  @Deprecated
-  public void setProprieta(List<Proprieta> proprieta) {
-  	this.proprieta=proprieta;
-  }
-
-  /**
-   * @deprecated Use method sizeProprietaList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeProprieta() {
-  	return this.proprieta.size();
-  }
+  private List<Proprieta> proprieta = new ArrayList<>();
 
 }

@@ -90,33 +90,6 @@ public class ElencoIdConfigurazioneServizio extends org.openspcoop2.utils.beans.
 
 
   @XmlElement(name="id-configurazione-servizio",required=true,nillable=false)
-  protected List<IdConfigurazioneServizio> idConfigurazioneServizio = new ArrayList<IdConfigurazioneServizio>();
-
-  /**
-   * @deprecated Use method getIdConfigurazioneServizioList
-   * @return List&lt;IdConfigurazioneServizio&gt;
-  */
-  @Deprecated
-  public List<IdConfigurazioneServizio> getIdConfigurazioneServizio() {
-  	return this.idConfigurazioneServizio;
-  }
-
-  /**
-   * @deprecated Use method setIdConfigurazioneServizioList
-   * @param idConfigurazioneServizio List&lt;IdConfigurazioneServizio&gt;
-  */
-  @Deprecated
-  public void setIdConfigurazioneServizio(List<IdConfigurazioneServizio> idConfigurazioneServizio) {
-  	this.idConfigurazioneServizio=idConfigurazioneServizio;
-  }
-
-  /**
-   * @deprecated Use method sizeIdConfigurazioneServizioList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeIdConfigurazioneServizio() {
-  	return this.idConfigurazioneServizio.size();
-  }
+  private List<IdConfigurazioneServizio> idConfigurazioneServizio = new ArrayList<>();
 
 }

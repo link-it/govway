@@ -81,11 +81,11 @@ public class Dominio extends org.openspcoop2.utils.beans.BaseBean implements Ser
     this.organization = organization;
   }
 
-  public void set_value_role(String value) {
+  public void setRoleRawEnumValue(String value) {
     this.role = (TipoPdD) TipoPdD.toEnumConstantFromString(value);
   }
 
-  public String get_value_role() {
+  public String getRoleRawEnumValue() {
     if(this.role == null){
     	return null;
     }else{
@@ -121,7 +121,7 @@ public class Dominio extends org.openspcoop2.utils.beans.BaseBean implements Ser
   protected DominioSoggetto organization;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_role;
+  protected java.lang.String roleRawEnumValue;
 
   @XmlAttribute(name="role",required=false)
   protected TipoPdD role;

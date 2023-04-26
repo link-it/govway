@@ -110,11 +110,11 @@ public class Messaggio extends org.openspcoop2.utils.beans.BaseBeanWithId implem
     this.oraRegistrazione = oraRegistrazione;
   }
 
-  public void set_value_stato(String value) {
+  public void setStatoRawEnumValue(String value) {
     this.stato = (StatoMessaggio) StatoMessaggio.toEnumConstantFromString(value);
   }
 
-  public String get_value_stato() {
+  public String getStatoRawEnumValue() {
     if(this.stato == null){
     	return null;
     }else{
@@ -175,7 +175,7 @@ public class Messaggio extends org.openspcoop2.utils.beans.BaseBeanWithId implem
   protected java.util.Date oraRegistrazione;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_stato;
+  protected java.lang.String statoRawEnumValue;
 
   @XmlElement(name="stato",required=true,nillable=false)
   protected StatoMessaggio stato;

@@ -90,33 +90,6 @@ public class Dettagli extends org.openspcoop2.utils.beans.BaseBean implements Se
 
 
   @XmlElement(name="detail",required=true,nillable=false)
-  protected List<Dettaglio> detail = new ArrayList<Dettaglio>();
-
-  /**
-   * @deprecated Use method getDetailList
-   * @return List&lt;Dettaglio&gt;
-  */
-  @Deprecated
-  public List<Dettaglio> getDetail() {
-  	return this.detail;
-  }
-
-  /**
-   * @deprecated Use method setDetailList
-   * @param detail List&lt;Dettaglio&gt;
-  */
-  @Deprecated
-  public void setDetail(List<Dettaglio> detail) {
-  	this.detail=detail;
-  }
-
-  /**
-   * @deprecated Use method sizeDetailList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeDetail() {
-  	return this.detail.size();
-  }
+  private List<Dettaglio> detail = new ArrayList<>();
 
 }

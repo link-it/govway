@@ -90,33 +90,6 @@ public class ElencoConfigurazioneServizio extends org.openspcoop2.utils.beans.Ba
 
 
   @XmlElement(name="configurazione-servizio",required=true,nillable=false)
-  protected List<ConfigurazioneServizio> configurazioneServizio = new ArrayList<ConfigurazioneServizio>();
-
-  /**
-   * @deprecated Use method getConfigurazioneServizioList
-   * @return List&lt;ConfigurazioneServizio&gt;
-  */
-  @Deprecated
-  public List<ConfigurazioneServizio> getConfigurazioneServizio() {
-  	return this.configurazioneServizio;
-  }
-
-  /**
-   * @deprecated Use method setConfigurazioneServizioList
-   * @param configurazioneServizio List&lt;ConfigurazioneServizio&gt;
-  */
-  @Deprecated
-  public void setConfigurazioneServizio(List<ConfigurazioneServizio> configurazioneServizio) {
-  	this.configurazioneServizio=configurazioneServizio;
-  }
-
-  /**
-   * @deprecated Use method sizeConfigurazioneServizioList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeConfigurazioneServizio() {
-  	return this.configurazioneServizio.size();
-  }
+  private List<ConfigurazioneServizio> configurazioneServizio = new ArrayList<>();
 
 }

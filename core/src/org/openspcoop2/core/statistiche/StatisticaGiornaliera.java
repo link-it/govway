@@ -115,33 +115,6 @@ public class StatisticaGiornaliera extends org.openspcoop2.utils.beans.BaseBeanW
   protected Statistica statisticaBase;
 
   @XmlElement(name="statistica-giornaliera-contenuti",required=true,nillable=false)
-  protected List<StatisticaContenuti> statisticaGiornalieraContenuti = new ArrayList<StatisticaContenuti>();
-
-  /**
-   * @deprecated Use method getStatisticaGiornalieraContenutiList
-   * @return List&lt;StatisticaContenuti&gt;
-  */
-  @Deprecated
-  public List<StatisticaContenuti> getStatisticaGiornalieraContenuti() {
-  	return this.statisticaGiornalieraContenuti;
-  }
-
-  /**
-   * @deprecated Use method setStatisticaGiornalieraContenutiList
-   * @param statisticaGiornalieraContenuti List&lt;StatisticaContenuti&gt;
-  */
-  @Deprecated
-  public void setStatisticaGiornalieraContenuti(List<StatisticaContenuti> statisticaGiornalieraContenuti) {
-  	this.statisticaGiornalieraContenuti=statisticaGiornalieraContenuti;
-  }
-
-  /**
-   * @deprecated Use method sizeStatisticaGiornalieraContenutiList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeStatisticaGiornalieraContenuti() {
-  	return this.statisticaGiornalieraContenuti.size();
-  }
+  private List<StatisticaContenuti> statisticaGiornalieraContenuti = new ArrayList<>();
 
 }

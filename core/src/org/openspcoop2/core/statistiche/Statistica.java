@@ -146,11 +146,11 @@ public class Statistica extends org.openspcoop2.utils.beans.BaseBeanWithId imple
     this.idPorta = idPorta;
   }
 
-  public void set_value_tipoPorta(String value) {
+  public void setTipoPortaRawEnumValue(String value) {
     this.tipoPorta = (TipoPorta) TipoPorta.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipoPorta() {
+  public String getTipoPortaRawEnumValue() {
     if(this.tipoPorta == null){
     	return null;
     }else{
@@ -408,7 +408,7 @@ public class Statistica extends org.openspcoop2.utils.beans.BaseBeanWithId imple
   protected java.lang.String idPorta;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipoPorta;
+  protected java.lang.String tipoPortaRawEnumValue;
 
   @XmlElement(name="tipo-porta",required=true,nillable=false)
   protected TipoPorta tipoPorta;

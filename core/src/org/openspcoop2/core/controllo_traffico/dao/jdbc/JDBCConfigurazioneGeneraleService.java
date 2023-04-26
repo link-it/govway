@@ -52,11 +52,64 @@ public class JDBCConfigurazioneGeneraleService extends JDBCConfigurazioneGeneral
 	private IJDBCServiceCRUDSingleObject<ConfigurazioneGenerale, JDBCServiceManager> serviceCRUD = null;
 	public JDBCConfigurazioneGeneraleService(JDBCServiceManager jdbcServiceManager) throws ServiceException {
 		super(jdbcServiceManager);
-		this.log.debug(JDBCConfigurazioneGeneraleService.class.getName()+ " initialized");
+		String msgInit = JDBCConfigurazioneGeneraleService.class.getName()+ " initialized";
+		this.log.debug(msgInit);
 		this.serviceCRUD = JDBCProperties.getInstance(org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager.class.getPackage(),ProjectInfo.getInstance()).getServiceCRUD("configurazioneGenerale");
 		this.serviceCRUD.setServiceManager(new JDBCLimitedServiceManager(this.jdbcServiceManager));
 	}
 
+	private static final String PARAMETER_TYPE_PREFIX = "Parameter (type:";
+	private ServiceException newServiceExceptionParameterIsNull(){
+		return new ServiceException(PARAMETER_TYPE_PREFIX+ConfigurazioneGenerale.class.getName()+") 'configurazioneGenerale' is null");
+	}
+	private ServiceException newServiceExceptionParameterUpdateFieldsIsNull(){
+		return new ServiceException(PARAMETER_TYPE_PREFIX+UpdateField.class.getName()+") 'updateFields' is null");
+	}
+	private ServiceException newServiceExceptionParameterConditionIsNull(){
+		return new ServiceException(PARAMETER_TYPE_PREFIX+IExpression.class.getName()+") 'condition' is null");
+	}
+	private ServiceException newServiceExceptionParameterUpdateModelsIsNull(){
+		return new ServiceException(PARAMETER_TYPE_PREFIX+UpdateModel.class.getName()+") 'updateModels' is null");
+	}
+	
+	private ServiceException newServiceExceptionUpdateFieldsNotCompleted(Exception e){
+		return new ServiceException("UpdateFields not completed: "+e.getMessage(),e);
+	}
+	
+	
+	private void releaseResources(boolean rollback, Connection connection, boolean oldValueAutoCommit) throws ServiceException {
+		if(this.jdbcProperties.isAutomaticTransactionManagement()){
+			manageTransaction(rollback, connection);
+			try{
+				if(connection!=null)
+					connection.setAutoCommit(oldValueAutoCommit);
+			}catch(Exception eIgnore){
+				// ignore
+			}
+		}
+		if(connection!=null){
+			this.jdbcServiceManager.closeConnection(connection);
+		}
+	}
+	private void manageTransaction(boolean rollback, Connection connection) {
+		if(rollback){
+			try{
+				if(connection!=null)
+					connection.rollback();
+			}catch(Exception eIgnore){
+				// ignore
+			}
+		}else{
+			try{
+				if(connection!=null)
+					connection.commit();
+			}catch(Exception eIgnore){
+				// ignore
+			}
+		}
+	}
+	
+	
 	
 	@Override
 	public void create(ConfigurazioneGenerale configurazioneGenerale) throws ServiceException, NotImplementedException {
@@ -93,7 +146,7 @@ public class JDBCConfigurazioneGeneraleService extends JDBCConfigurazioneGeneral
 			
 			// check parameters
 			if(configurazioneGenerale==null){
-				throw new Exception("Parameter (type:"+ConfigurazioneGenerale.class.getName()+") 'configurazioneGenerale' is null");
+				throw this.newServiceExceptionParameterIsNull();
 			}
 			
 			// validate
@@ -115,39 +168,14 @@ public class JDBCConfigurazioneGeneraleService extends JDBCConfigurazioneGeneral
 		
 			this.serviceCRUD.create(this.jdbcProperties,this.log,connection,sqlQueryObject,configurazioneGenerale,idMappingResolutionBehaviour);			
 
-		}catch(ServiceException e){
+		}catch(ServiceException | NotImplementedException | ValidationException e){
 			rollback = true;
-			this.log.error(e.getMessage(),e); throw e;
-		}catch(NotImplementedException e){
-			rollback = true;
-			this.log.error(e.getMessage(),e); throw e;
-		}catch(ValidationException e){
-			rollback = true;
-			this.log.error(e.getMessage(),e); throw e;
+			this.logError(e); throw e;
 		}catch(Exception e){
 			rollback = true;
-			this.log.error(e.getMessage(),e); throw new ServiceException("Create not completed: "+e.getMessage(),e);
+			this.logError(e); throw new ServiceException("Create not completed: "+e.getMessage(),e);
 		}finally{
-			if(this.jdbcProperties.isAutomaticTransactionManagement()){
-				if(rollback){
-					try{
-						if(connection!=null)
-							connection.rollback();
-					}catch(Exception eIgnore){}
-				}else{
-					try{
-						if(connection!=null)
-							connection.commit();
-					}catch(Exception eIgnore){}
-				}
-				try{
-					if(connection!=null)
-						connection.setAutoCommit(oldValueAutoCommit);
-				}catch(Exception eIgnore){}
-			}
-			if(connection!=null){
-				this.jdbcServiceManager.closeConnection(connection);
-			}
+			this.releaseResources(rollback, connection, oldValueAutoCommit);
 		}
 
 	}
@@ -187,7 +215,7 @@ public class JDBCConfigurazioneGeneraleService extends JDBCConfigurazioneGeneral
 			
 			// check parameters
 			if(configurazioneGenerale==null){
-				throw new Exception("Parameter (type:"+ConfigurazioneGenerale.class.getName()+") 'configurazioneGenerale' is null");
+				throw this.newServiceExceptionParameterIsNull();
 			}
 
 			// validate
@@ -209,42 +237,17 @@ public class JDBCConfigurazioneGeneraleService extends JDBCConfigurazioneGeneral
 
 			this.serviceCRUD.update(this.jdbcProperties,this.log,connection,sqlQueryObject,configurazioneGenerale,idMappingResolutionBehaviour);
 			
-		}catch(ServiceException e){
+		}catch(ServiceException | NotImplementedException | ValidationException e){
 			rollback = true;
-			this.log.error(e.getMessage(),e); throw e;
+			this.logError(e); throw e;
 		}catch(NotFoundException e){
 			rollback = true;
-			this.log.debug(e.getMessage(),e); throw e;
-		}catch(NotImplementedException e){
-			rollback = true;
-			this.log.error(e.getMessage(),e); throw e;
-		}catch(ValidationException e){
-			rollback = true;
-			this.log.error(e.getMessage(),e); throw e;
+			this.logDebug(e); throw e;
 		}catch(Exception e){
 			rollback = true;
-			this.log.error(e.getMessage(),e); throw new ServiceException("Update not completed: "+e.getMessage(),e);
+			this.logError(e); throw new ServiceException("Update not completed: "+e.getMessage(),e);
 		}finally{
-			if(this.jdbcProperties.isAutomaticTransactionManagement()){
-				if(rollback){
-					try{
-						if(connection!=null)
-							connection.rollback();
-					}catch(Exception eIgnore){}
-				}else{
-					try{
-						if(connection!=null)
-							connection.commit();
-					}catch(Exception eIgnore){}
-				}
-				try{
-					if(connection!=null)
-						connection.setAutoCommit(oldValueAutoCommit);
-				}catch(Exception eIgnore){}
-			}
-			if(connection!=null){
-				this.jdbcServiceManager.closeConnection(connection);
-			}
+			this.releaseResources(rollback, connection, oldValueAutoCommit);
 		}
 
 	}
@@ -260,7 +263,7 @@ public class JDBCConfigurazioneGeneraleService extends JDBCConfigurazioneGeneral
 			
 			// check parameters
 			if(updateFields==null){
-				throw new Exception("Parameter (type:"+UpdateField.class.getName()+") 'updateFields' is null");
+				throw this.newServiceExceptionParameterUpdateFieldsIsNull();
 			}
 
 			// ISQLQueryObject
@@ -277,39 +280,17 @@ public class JDBCConfigurazioneGeneraleService extends JDBCConfigurazioneGeneral
 
 			this.serviceCRUD.updateFields(this.jdbcProperties,this.log,connection,sqlQueryObject,updateFields);
 			
-		}catch(ServiceException e){
+		}catch(ServiceException | NotImplementedException e){
 			rollback = true;
-			this.log.error(e.getMessage(),e); throw e;
+			this.logError(e); throw e;
 		}catch(NotFoundException e){
 			rollback = true;
-			this.log.debug(e.getMessage(),e); throw e;
-		}catch(NotImplementedException e){
-			rollback = true;
-			this.log.error(e.getMessage(),e); throw e;
+			this.logDebug(e); throw e;
 		}catch(Exception e){
 			rollback = true;
-			this.log.error(e.getMessage(),e); throw new ServiceException("UpdateFields not completed: "+e.getMessage(),e);
+			this.logError(e); throw this.newServiceExceptionUpdateFieldsNotCompleted(e);
 		}finally{
-			if(this.jdbcProperties.isAutomaticTransactionManagement()){
-				if(rollback){
-					try{
-						if(connection!=null)
-							connection.rollback();
-					}catch(Exception eIgnore){}
-				}else{
-					try{
-						if(connection!=null)
-							connection.commit();
-					}catch(Exception eIgnore){}
-				}
-				try{
-					if(connection!=null)
-						connection.setAutoCommit(oldValueAutoCommit);
-				}catch(Exception eIgnore){}
-			}
-			if(connection!=null){
-				this.jdbcServiceManager.closeConnection(connection);
-			}
+			this.releaseResources(rollback, connection, oldValueAutoCommit);
 		}
 
 	}
@@ -324,10 +305,10 @@ public class JDBCConfigurazioneGeneraleService extends JDBCConfigurazioneGeneral
 			
 			// check parameters
 			if(condition==null){
-				throw new Exception("Parameter (type:"+IExpression.class.getName()+") 'condition' is null");
+				throw this.newServiceExceptionParameterConditionIsNull();
 			}
 			if(updateFields==null){
-				throw new Exception("Parameter (type:"+UpdateField.class.getName()+") 'updateFields' is null");
+				throw this.newServiceExceptionParameterUpdateFieldsIsNull();
 			}
 
 			// ISQLQueryObject
@@ -344,39 +325,17 @@ public class JDBCConfigurazioneGeneraleService extends JDBCConfigurazioneGeneral
 
 			this.serviceCRUD.updateFields(this.jdbcProperties,this.log,connection,sqlQueryObject,condition,updateFields);
 			
-		}catch(ServiceException e){
+		}catch(ServiceException | NotImplementedException e){
 			rollback = true;
-			this.log.error(e.getMessage(),e); throw e;
+			this.logError(e); throw e;
 		}catch(NotFoundException e){
 			rollback = true;
-			this.log.debug(e.getMessage(),e); throw e;
-		}catch(NotImplementedException e){
-			rollback = true;
-			this.log.error(e.getMessage(),e); throw e;
+			this.logDebug(e); throw e;
 		}catch(Exception e){
 			rollback = true;
-			this.log.error(e.getMessage(),e); throw new ServiceException("UpdateFields not completed: "+e.getMessage(),e);
+			this.logError(e); throw this.newServiceExceptionUpdateFieldsNotCompleted(e);
 		}finally{
-			if(this.jdbcProperties.isAutomaticTransactionManagement()){
-				if(rollback){
-					try{
-						if(connection!=null)
-							connection.rollback();
-					}catch(Exception eIgnore){}
-				}else{
-					try{
-						if(connection!=null)
-							connection.commit();
-					}catch(Exception eIgnore){}
-				}
-				try{
-					if(connection!=null)
-						connection.setAutoCommit(oldValueAutoCommit);
-				}catch(Exception eIgnore){}
-			}
-			if(connection!=null){
-				this.jdbcServiceManager.closeConnection(connection);
-			}
+			this.releaseResources(rollback, connection, oldValueAutoCommit);
 		}
 
 	}
@@ -391,7 +350,7 @@ public class JDBCConfigurazioneGeneraleService extends JDBCConfigurazioneGeneral
 			
 			// check parameters
 			if(updateModels==null){
-				throw new Exception("Parameter (type:"+UpdateModel.class.getName()+") 'updateModels' is null");
+				throw this.newServiceExceptionParameterUpdateModelsIsNull();
 			}
 
 			// ISQLQueryObject
@@ -408,39 +367,17 @@ public class JDBCConfigurazioneGeneraleService extends JDBCConfigurazioneGeneral
 
 			this.serviceCRUD.updateFields(this.jdbcProperties,this.log,connection,sqlQueryObject,updateModels);
 			
-		}catch(ServiceException e){
+		}catch(ServiceException | NotImplementedException e){
 			rollback = true;
-			this.log.error(e.getMessage(),e); throw e;
+			this.logError(e); throw e;
 		}catch(NotFoundException e){
 			rollback = true;
-			this.log.debug(e.getMessage(),e); throw e;
-		}catch(NotImplementedException e){
-			rollback = true;
-			this.log.error(e.getMessage(),e); throw e;
+			this.logDebug(e); throw e;
 		}catch(Exception e){
 			rollback = true;
-			this.log.error(e.getMessage(),e); throw new ServiceException("UpdateFields not completed: "+e.getMessage(),e);
+			this.logError(e); throw this.newServiceExceptionUpdateFieldsNotCompleted(e);
 		}finally{
-			if(this.jdbcProperties.isAutomaticTransactionManagement()){
-				if(rollback){
-					try{
-						if(connection!=null)
-							connection.rollback();
-					}catch(Exception eIgnore){}
-				}else{
-					try{
-						if(connection!=null)
-							connection.commit();
-					}catch(Exception eIgnore){}
-				}
-				try{
-					if(connection!=null)
-						connection.setAutoCommit(oldValueAutoCommit);
-				}catch(Exception eIgnore){}
-			}
-			if(connection!=null){
-				this.jdbcServiceManager.closeConnection(connection);
-			}
+			this.releaseResources(rollback, connection, oldValueAutoCommit);
 		}
 
 	}
@@ -481,7 +418,7 @@ public class JDBCConfigurazioneGeneraleService extends JDBCConfigurazioneGeneral
 			
 			// check parameters
 			if(configurazioneGenerale==null){
-				throw new Exception("Parameter (type:"+ConfigurazioneGenerale.class.getName()+") 'configurazioneGenerale' is null");
+				throw this.newServiceExceptionParameterIsNull();
 			}
 
 			// validate
@@ -503,39 +440,14 @@ public class JDBCConfigurazioneGeneraleService extends JDBCConfigurazioneGeneral
 
 			this.serviceCRUD.updateOrCreate(this.jdbcProperties,this.log,connection,sqlQueryObject,configurazioneGenerale,idMappingResolutionBehaviour);
 			
-		}catch(ServiceException e){
+		}catch(ServiceException | NotImplementedException | ValidationException e){
 			rollback = true;
-			this.log.error(e.getMessage(),e); throw e;
-		}catch(NotImplementedException e){
-			rollback = true;
-			this.log.error(e.getMessage(),e); throw e;
-		}catch(ValidationException e){
-			rollback = true;
-			this.log.error(e.getMessage(),e); throw e;
+			this.logError(e); throw e;
 		}catch(Exception e){
 			rollback = true;
-			this.log.error(e.getMessage(),e); throw new ServiceException("UpdateOrCreate not completed: "+e.getMessage(),e);
+			this.logError(e); throw new ServiceException("UpdateOrCreate not completed: "+e.getMessage(),e);
 		}finally{
-			if(this.jdbcProperties.isAutomaticTransactionManagement()){
-				if(rollback){
-					try{
-						if(connection!=null)
-							connection.rollback();
-					}catch(Exception eIgnore){}
-				}else{
-					try{
-						if(connection!=null)
-							connection.commit();
-					}catch(Exception eIgnore){}
-				}
-				try{
-					if(connection!=null)
-						connection.setAutoCommit(oldValueAutoCommit);
-				}catch(Exception eIgnore){}
-			}
-			if(connection!=null){
-				this.jdbcServiceManager.closeConnection(connection);
-			}
+			this.releaseResources(rollback, connection, oldValueAutoCommit);
 		}
 
 	}
@@ -551,7 +463,7 @@ public class JDBCConfigurazioneGeneraleService extends JDBCConfigurazioneGeneral
 			
 			// check parameters
 			if(configurazioneGenerale==null){
-				throw new Exception("Parameter (type:"+ConfigurazioneGenerale.class.getName()+") 'configurazioneGenerale' is null");
+				throw this.newServiceExceptionParameterIsNull();
 			}
 
 			// ISQLQueryObject
@@ -568,36 +480,14 @@ public class JDBCConfigurazioneGeneraleService extends JDBCConfigurazioneGeneral
 
 			this.serviceCRUD.delete(this.jdbcProperties,this.log,connection,sqlQueryObject,configurazioneGenerale);	
 
-		}catch(ServiceException e){
+		}catch(ServiceException | NotImplementedException e){
 			rollback = true;
-			this.log.error(e.getMessage(),e); throw e;
-		}catch(NotImplementedException e){
-			rollback = true;
-			this.log.error(e.getMessage(),e); throw e;
+			this.logError(e); throw e;
 		}catch(Exception e){
 			rollback = true;
-			this.log.error(e.getMessage(),e); throw new ServiceException("Delete not completed: "+e.getMessage(),e);
+			this.logError(e); throw new ServiceException("Delete not completed: "+e.getMessage(),e);
 		}finally{
-			if(this.jdbcProperties.isAutomaticTransactionManagement()){
-				if(rollback){
-					try{
-						if(connection!=null)
-							connection.rollback();
-					}catch(Exception eIgnore){}
-				}else{
-					try{
-						if(connection!=null)
-							connection.commit();
-					}catch(Exception eIgnore){}
-				}
-				try{
-					if(connection!=null)
-						connection.setAutoCommit(oldValueAutoCommit);
-				}catch(Exception eIgnore){}
-			}
-			if(connection!=null){
-				this.jdbcServiceManager.closeConnection(connection);
-			}
+			this.releaseResources(rollback, connection, oldValueAutoCommit);
 		}
 	
 	}
@@ -624,36 +514,14 @@ public class JDBCConfigurazioneGeneraleService extends JDBCConfigurazioneGeneral
 
 			this.serviceCRUD.delete(this.jdbcProperties,this.log,connection,sqlQueryObject,null);	
 
-		}catch(ServiceException e){
+		}catch(ServiceException | NotImplementedException e){
 			rollback = true;
-			this.log.error(e.getMessage(),e); throw e;
-		}catch(NotImplementedException e){
-			rollback = true;
-			this.log.error(e.getMessage(),e); throw e;
+			this.logError(e); throw e;
 		}catch(Exception e){
 			rollback = true;
-			this.log.error(e.getMessage(),e); throw new ServiceException("Delete not completed: "+e.getMessage(),e);
+			this.logError(e); throw new ServiceException("Delete not completed: "+e.getMessage(),e);
 		}finally{
-			if(this.jdbcProperties.isAutomaticTransactionManagement()){
-				if(rollback){
-					try{
-						if(connection!=null)
-							connection.rollback();
-					}catch(Exception eIgnore){}
-				}else{
-					try{
-						if(connection!=null)
-							connection.commit();
-					}catch(Exception eIgnore){}
-				}
-				try{
-					if(connection!=null)
-						connection.setAutoCommit(oldValueAutoCommit);
-				}catch(Exception eIgnore){}
-			}
-			if(connection!=null){
-				this.jdbcServiceManager.closeConnection(connection);
-			}
+			this.releaseResources(rollback, connection, oldValueAutoCommit);
 		}
 	
 	}
@@ -673,7 +541,7 @@ public class JDBCConfigurazioneGeneraleService extends JDBCConfigurazioneGeneral
 			
 			// check parameters
 			if(tableId<=0){
-				throw new Exception("Parameter 'tableId' is less equals 0");
+				throw new ServiceException("Parameter 'tableId' is less equals 0");
 			}
 		
 			// ISQLQueryObject
@@ -690,36 +558,14 @@ public class JDBCConfigurazioneGeneraleService extends JDBCConfigurazioneGeneral
 
 			this.serviceCRUD.deleteById(this.jdbcProperties,this.log,connection,sqlQueryObject,tableId);
 	
-		}catch(ServiceException e){
+		}catch(ServiceException | NotImplementedException e){
 			rollback = true;
-			this.log.error(e.getMessage(),e); throw e;
-		}catch(NotImplementedException e){
-			rollback = true;
-			this.log.error(e.getMessage(),e); throw e;
+			this.logError(e); throw e;
 		}catch(Exception e){
 			rollback = true;
-			this.log.error(e.getMessage(),e); throw new ServiceException("DeleteById(tableId) not completed: "+e.getMessage(),e);
+			this.logError(e); throw new ServiceException("DeleteById(tableId) not completed: "+e.getMessage(),e);
 		}finally{
-			if(this.jdbcProperties.isAutomaticTransactionManagement()){
-				if(rollback){
-					try{
-						if(connection!=null)
-							connection.rollback();
-					}catch(Exception eIgnore){}
-				}else{
-					try{
-						if(connection!=null)
-							connection.commit();
-					}catch(Exception eIgnore){}
-				}
-				try{
-					if(connection!=null)
-						connection.setAutoCommit(oldValueAutoCommit);
-				}catch(Exception eIgnore){}
-			}
-			if(connection!=null){
-				this.jdbcServiceManager.closeConnection(connection);
-			}
+			this.releaseResources(rollback, connection, oldValueAutoCommit);
 		}
 	
 	}
@@ -734,7 +580,7 @@ public class JDBCConfigurazioneGeneraleService extends JDBCConfigurazioneGeneral
 			
 			// check parameters
 			if(sql==null){
-				throw new Exception("Parameter 'sql' is null");
+				throw new ServiceException("Parameter 'sql' is null");
 			}
 		
 			// ISQLQueryObject
@@ -751,36 +597,14 @@ public class JDBCConfigurazioneGeneraleService extends JDBCConfigurazioneGeneral
 
 			return this.serviceCRUD.nativeUpdate(this.jdbcProperties,this.log,connection,sqlQueryObject,sql,param);
 	
-		}catch(ServiceException e){
+		}catch(ServiceException | NotImplementedException e){
 			rollback = true;
-			this.log.error(e.getMessage(),e); throw e;
-		}catch(NotImplementedException e){
-			rollback = true;
-			this.log.error(e.getMessage(),e); throw e;
+			this.logError(e); throw e;
 		}catch(Exception e){
 			rollback = true;
-			this.log.error(e.getMessage(),e); throw new ServiceException("DeleteById(tableId) not completed: "+e.getMessage(),e);
+			this.logError(e); throw new ServiceException("DeleteById(tableId) not completed: "+e.getMessage(),e);
 		}finally{
-			if(this.jdbcProperties.isAutomaticTransactionManagement()){
-				if(rollback){
-					try{
-						if(connection!=null)
-							connection.rollback();
-					}catch(Exception eIgnore){}
-				}else{
-					try{
-						if(connection!=null)
-							connection.commit();
-					}catch(Exception eIgnore){}
-				}
-				try{
-					if(connection!=null)
-						connection.setAutoCommit(oldValueAutoCommit);
-				}catch(Exception eIgnore){}
-			}
-			if(connection!=null){
-				this.jdbcServiceManager.closeConnection(connection);
-			}
+			this.releaseResources(rollback, connection, oldValueAutoCommit);
 		}
 	
 	}

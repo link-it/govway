@@ -115,33 +115,6 @@ public class StatisticaOraria extends org.openspcoop2.utils.beans.BaseBeanWithId
   protected Statistica statisticaBase;
 
   @XmlElement(name="statistica-oraria-contenuti",required=true,nillable=false)
-  protected List<StatisticaContenuti> statisticaOrariaContenuti = new ArrayList<StatisticaContenuti>();
-
-  /**
-   * @deprecated Use method getStatisticaOrariaContenutiList
-   * @return List&lt;StatisticaContenuti&gt;
-  */
-  @Deprecated
-  public List<StatisticaContenuti> getStatisticaOrariaContenuti() {
-  	return this.statisticaOrariaContenuti;
-  }
-
-  /**
-   * @deprecated Use method setStatisticaOrariaContenutiList
-   * @param statisticaOrariaContenuti List&lt;StatisticaContenuti&gt;
-  */
-  @Deprecated
-  public void setStatisticaOrariaContenuti(List<StatisticaContenuti> statisticaOrariaContenuti) {
-  	this.statisticaOrariaContenuti=statisticaOrariaContenuti;
-  }
-
-  /**
-   * @deprecated Use method sizeStatisticaOrariaContenutiList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeStatisticaOrariaContenuti() {
-  	return this.statisticaOrariaContenuti.size();
-  }
+  private List<StatisticaContenuti> statisticaOrariaContenuti = new ArrayList<>();
 
 }

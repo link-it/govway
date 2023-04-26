@@ -118,33 +118,6 @@ public class PluginServizioCompatibilita extends org.openspcoop2.utils.beans.Bas
   protected java.lang.String servizio;
 
   @XmlElement(name="plugin-servizio-azione-compatibilita",required=true,nillable=false)
-  protected List<PluginServizioAzioneCompatibilita> pluginServizioAzioneCompatibilita = new ArrayList<PluginServizioAzioneCompatibilita>();
-
-  /**
-   * @deprecated Use method getPluginServizioAzioneCompatibilitaList
-   * @return List&lt;PluginServizioAzioneCompatibilita&gt;
-  */
-  @Deprecated
-  public List<PluginServizioAzioneCompatibilita> getPluginServizioAzioneCompatibilita() {
-  	return this.pluginServizioAzioneCompatibilita;
-  }
-
-  /**
-   * @deprecated Use method setPluginServizioAzioneCompatibilitaList
-   * @param pluginServizioAzioneCompatibilita List&lt;PluginServizioAzioneCompatibilita&gt;
-  */
-  @Deprecated
-  public void setPluginServizioAzioneCompatibilita(List<PluginServizioAzioneCompatibilita> pluginServizioAzioneCompatibilita) {
-  	this.pluginServizioAzioneCompatibilita=pluginServizioAzioneCompatibilita;
-  }
-
-  /**
-   * @deprecated Use method sizePluginServizioAzioneCompatibilitaList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizePluginServizioAzioneCompatibilita() {
-  	return this.pluginServizioAzioneCompatibilita.size();
-  }
+  private List<PluginServizioAzioneCompatibilita> pluginServizioAzioneCompatibilita = new ArrayList<>();
 
 }

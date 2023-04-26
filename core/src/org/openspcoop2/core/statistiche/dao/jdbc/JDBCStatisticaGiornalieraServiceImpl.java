@@ -484,13 +484,13 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 
 		// elimino tutte le occorrenze di statisticaGiornaliera_statisticaGiornalieraContenuti non presenti nell'update
 
-		ISQLQueryObject sqlQueryObjectUpdate_statisticaGiornalieraContenuti_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
-		sqlQueryObjectUpdate_statisticaGiornalieraContenuti_deleteList.setANDLogicOperator(true);
-		sqlQueryObjectUpdate_statisticaGiornalieraContenuti_deleteList.addDeleteTable(this.getStatisticaGiornalieraFieldConverter().toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_CONTENUTI));
-		java.util.List<JDBCObject> jdbcObjects_statisticaGiornalieraContenuti_delete = new java.util.ArrayList<>();
+		ISQLQueryObject sqlQueryObjectUpdate_statisticaGiornalieraContenutideleteEngineList = sqlQueryObjectUpdate.newSQLQueryObject();
+		sqlQueryObjectUpdate_statisticaGiornalieraContenutideleteEngineList.setANDLogicOperator(true);
+		sqlQueryObjectUpdate_statisticaGiornalieraContenutideleteEngineList.addDeleteTable(this.getStatisticaGiornalieraFieldConverter().toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_CONTENUTI));
+		java.util.List<JDBCObject> jdbcObjects_statisticaGiornalieraContenutideleteEngine = new java.util.ArrayList<>();
 
-		sqlQueryObjectUpdate_statisticaGiornalieraContenuti_deleteList.addWhereCondition("id_stat=?");
-		jdbcObjects_statisticaGiornalieraContenuti_delete.add(new JDBCObject(statisticaGiornaliera.getId(), Long.class));
+		sqlQueryObjectUpdate_statisticaGiornalieraContenutideleteEngineList.addWhereCondition("id_stat=?");
+		jdbcObjects_statisticaGiornalieraContenutideleteEngine.add(new JDBCObject(statisticaGiornaliera.getId(), Long.class));
 
 		StringBuilder marks_statisticaGiornalieraContenuti = new StringBuilder();
 		if(ids_statisticaGiornalieraContenuti_da_non_eliminare.size() > 0) {
@@ -499,13 +499,13 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 					marks_statisticaGiornalieraContenuti.append(",");
 				}
 				marks_statisticaGiornalieraContenuti.append("?");
-				jdbcObjects_statisticaGiornalieraContenuti_delete.add(new JDBCObject(ids, Long.class));
+				jdbcObjects_statisticaGiornalieraContenutideleteEngine.add(new JDBCObject(ids, Long.class));
 
 			}
-			sqlQueryObjectUpdate_statisticaGiornalieraContenuti_deleteList.addWhereCondition("id NOT IN ("+marks_statisticaGiornalieraContenuti.toString()+")");
+			sqlQueryObjectUpdate_statisticaGiornalieraContenutideleteEngineList.addWhereCondition("id NOT IN ("+marks_statisticaGiornalieraContenuti.toString()+")");
 		}
 
-		jdbcUtilities.execute(sqlQueryObjectUpdate_statisticaGiornalieraContenuti_deleteList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_statisticaGiornalieraContenuti_delete.toArray(new JDBCObject[]{}));
+		jdbcUtilities.execute(sqlQueryObjectUpdate_statisticaGiornalieraContenutideleteEngineList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_statisticaGiornalieraContenutideleteEngine.toArray(new JDBCObject[]{}));
 
 
 
@@ -516,8 +516,8 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaGiornalieraFieldConverter().toTable(StatisticaGiornaliera.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, statisticaGiornaliera),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, statisticaGiornaliera),
 				this.getStatisticaGiornalieraFieldConverter(), this, null, updateFields);
 	}
 	
@@ -526,8 +526,8 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaGiornalieraFieldConverter().toTable(StatisticaGiornaliera.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, statisticaGiornaliera),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, statisticaGiornaliera),
 				this.getStatisticaGiornalieraFieldConverter(), this, condition, updateFields);
 	}
 	
@@ -536,8 +536,8 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaGiornalieraFieldConverter().toTable(StatisticaGiornaliera.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, statisticaGiornaliera),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, statisticaGiornaliera),
 				this.getStatisticaGiornalieraFieldConverter(), this, updateModels);
 	}	
 	
@@ -547,7 +547,7 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaGiornalieraFieldConverter().toTable(StatisticaGiornaliera.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getStatisticaGiornalieraFieldConverter(), this, null, updateFields);
 	}
@@ -558,7 +558,7 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaGiornalieraFieldConverter().toTable(StatisticaGiornaliera.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getStatisticaGiornalieraFieldConverter(), this, condition, updateFields);
 	}
@@ -569,7 +569,7 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaGiornalieraFieldConverter().toTable(StatisticaGiornaliera.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getStatisticaGiornalieraFieldConverter(), this, updateModels);
 	}
@@ -608,11 +608,11 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 		}
 		longId = statisticaGiornaliera.getId();
 		
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, longId);
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, longId);
 		
 	}
 
-	private void _delete(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long id) throws NotImplementedException,ServiceException,Exception {
+	private void deleteEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long id) throws NotImplementedException,ServiceException,Exception {
 	
 		if(id==null){
 			throw new ServiceException("Id is null");
@@ -628,11 +628,11 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 		
 
 		//Recupero oggetto _statisticaGiornalieraContenuti
-		ISQLQueryObject sqlQueryObjectDelete_statisticaGiornalieraContenuti_getToDelete = sqlQueryObjectDelete.newSQLQueryObject();
-		sqlQueryObjectDelete_statisticaGiornalieraContenuti_getToDelete.setANDLogicOperator(true);
-		sqlQueryObjectDelete_statisticaGiornalieraContenuti_getToDelete.addFromTable(this.getStatisticaGiornalieraFieldConverter().toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_CONTENUTI));
-		sqlQueryObjectDelete_statisticaGiornalieraContenuti_getToDelete.addWhereCondition("id_stat=?");
-		java.util.List<Object> statisticaGiornaliera_statisticaGiornalieraContenuti_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_statisticaGiornalieraContenuti_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_CONTENUTI, this.getStatisticaGiornalieraFetch(),
+		ISQLQueryObject sqlQueryObjectDelete_statisticaGiornalieraContenutigetEngineToDelete = sqlQueryObjectDelete.newSQLQueryObject();
+		sqlQueryObjectDelete_statisticaGiornalieraContenutigetEngineToDelete.setANDLogicOperator(true);
+		sqlQueryObjectDelete_statisticaGiornalieraContenutigetEngineToDelete.addFromTable(this.getStatisticaGiornalieraFieldConverter().toTable(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_CONTENUTI));
+		sqlQueryObjectDelete_statisticaGiornalieraContenutigetEngineToDelete.addWhereCondition("id_stat=?");
+		java.util.List<Object> statisticaGiornaliera_statisticaGiornalieraContenuti_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_statisticaGiornalieraContenutigetEngineToDelete.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_CONTENUTI, this.getStatisticaGiornalieraFetch(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id,Long.class));
 
 		// for statisticaGiornaliera_statisticaGiornalieraContenuti
@@ -678,7 +678,7 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 		java.util.List<Long> lst = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, new JDBCPaginatedExpression(expression));
 		
 		for(Long id : lst) {
-			this._delete(jdbcProperties, log, connection, sqlQueryObject, id);
+			this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, id);
 		}
 		
 		return new NonNegativeNumber(lst.size());
@@ -691,7 +691,7 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 	
 	@Override
 	public void deleteById(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId) throws ServiceException, NotImplementedException, Exception {
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
 	}
 	
 	@Override

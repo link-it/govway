@@ -90,33 +90,6 @@ public class ElencoPlugin extends org.openspcoop2.utils.beans.BaseBeanWithId imp
 
 
   @XmlElement(name="plugin",required=true,nillable=false)
-  protected List<Plugin> plugin = new ArrayList<Plugin>();
-
-  /**
-   * @deprecated Use method getPluginList
-   * @return List&lt;Plugin&gt;
-  */
-  @Deprecated
-  public List<Plugin> getPlugin() {
-  	return this.plugin;
-  }
-
-  /**
-   * @deprecated Use method setPluginList
-   * @param plugin List&lt;Plugin&gt;
-  */
-  @Deprecated
-  public void setPlugin(List<Plugin> plugin) {
-  	this.plugin=plugin;
-  }
-
-  /**
-   * @deprecated Use method sizePluginList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizePlugin() {
-  	return this.plugin.size();
-  }
+  private List<Plugin> plugin = new ArrayList<>();
 
 }

@@ -88,11 +88,11 @@ public class Cache extends org.openspcoop2.utils.beans.BaseBeanWithId implements
     this.size = size;
   }
 
-  public void set_value_algorithm(String value) {
+  public void setAlgorithmRawEnumValue(String value) {
     this.algorithm = (CacheAlgorithm) CacheAlgorithm.toEnumConstantFromString(value);
   }
 
-  public String get_value_algorithm() {
+  public String getAlgorithmRawEnumValue() {
     if(this.algorithm == null){
     	return null;
     }else{
@@ -137,7 +137,7 @@ public class Cache extends org.openspcoop2.utils.beans.BaseBeanWithId implements
   protected java.lang.Long size;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_algorithm;
+  protected java.lang.String algorithmRawEnumValue;
 
   @XmlElement(name="algorithm",required=false,nillable=false)
   protected CacheAlgorithm algorithm;

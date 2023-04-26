@@ -115,33 +115,6 @@ public class StatisticaMensile extends org.openspcoop2.utils.beans.BaseBeanWithI
   protected Statistica statisticaBase;
 
   @XmlElement(name="statistica-mensile-contenuti",required=true,nillable=false)
-  protected List<StatisticaContenuti> statisticaMensileContenuti = new ArrayList<StatisticaContenuti>();
-
-  /**
-   * @deprecated Use method getStatisticaMensileContenutiList
-   * @return List&lt;StatisticaContenuti&gt;
-  */
-  @Deprecated
-  public List<StatisticaContenuti> getStatisticaMensileContenuti() {
-  	return this.statisticaMensileContenuti;
-  }
-
-  /**
-   * @deprecated Use method setStatisticaMensileContenutiList
-   * @param statisticaMensileContenuti List&lt;StatisticaContenuti&gt;
-  */
-  @Deprecated
-  public void setStatisticaMensileContenuti(List<StatisticaContenuti> statisticaMensileContenuti) {
-  	this.statisticaMensileContenuti=statisticaMensileContenuti;
-  }
-
-  /**
-   * @deprecated Use method sizeStatisticaMensileContenutiList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeStatisticaMensileContenuti() {
-  	return this.statisticaMensileContenuti.size();
-  }
+  private List<StatisticaContenuti> statisticaMensileContenuti = new ArrayList<>();
 
 }

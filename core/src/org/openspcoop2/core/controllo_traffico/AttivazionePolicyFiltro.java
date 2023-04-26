@@ -122,11 +122,11 @@ public class AttivazionePolicyFiltro extends org.openspcoop2.utils.beans.BaseBea
     this.protocollo = protocollo;
   }
 
-  public void set_value_ruoloPorta(String value) {
+  public void setRuoloPortaRawEnumValue(String value) {
     this.ruoloPorta = (RuoloPolicy) RuoloPolicy.toEnumConstantFromString(value);
   }
 
-  public String get_value_ruoloPorta() {
+  public String getRuoloPortaRawEnumValue() {
     if(this.ruoloPorta == null){
     	return null;
     }else{
@@ -311,7 +311,7 @@ public class AttivazionePolicyFiltro extends org.openspcoop2.utils.beans.BaseBea
   protected java.lang.String protocollo;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_ruoloPorta;
+  protected java.lang.String ruoloPortaRawEnumValue;
 
   @XmlElement(name="ruolo-porta",required=false,nillable=false)
   protected RuoloPolicy ruoloPorta;

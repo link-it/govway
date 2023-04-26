@@ -484,13 +484,13 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 
 		// elimino tutte le occorrenze di statisticaMensile_statisticaMensileContenuti non presenti nell'update
 
-		ISQLQueryObject sqlQueryObjectUpdate_statisticaMensileContenuti_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
-		sqlQueryObjectUpdate_statisticaMensileContenuti_deleteList.setANDLogicOperator(true);
-		sqlQueryObjectUpdate_statisticaMensileContenuti_deleteList.addDeleteTable(this.getStatisticaMensileFieldConverter().toTable(StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI));
-		java.util.List<JDBCObject> jdbcObjects_statisticaMensileContenuti_delete = new java.util.ArrayList<>();
+		ISQLQueryObject sqlQueryObjectUpdate_statisticaMensileContenutideleteEngineList = sqlQueryObjectUpdate.newSQLQueryObject();
+		sqlQueryObjectUpdate_statisticaMensileContenutideleteEngineList.setANDLogicOperator(true);
+		sqlQueryObjectUpdate_statisticaMensileContenutideleteEngineList.addDeleteTable(this.getStatisticaMensileFieldConverter().toTable(StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI));
+		java.util.List<JDBCObject> jdbcObjects_statisticaMensileContenutideleteEngine = new java.util.ArrayList<>();
 
-		sqlQueryObjectUpdate_statisticaMensileContenuti_deleteList.addWhereCondition("id_stat=?");
-		jdbcObjects_statisticaMensileContenuti_delete.add(new JDBCObject(statisticaMensile.getId(), Long.class));
+		sqlQueryObjectUpdate_statisticaMensileContenutideleteEngineList.addWhereCondition("id_stat=?");
+		jdbcObjects_statisticaMensileContenutideleteEngine.add(new JDBCObject(statisticaMensile.getId(), Long.class));
 
 		StringBuilder marks_statisticaMensileContenuti = new StringBuilder();
 		if(ids_statisticaMensileContenuti_da_non_eliminare.size() > 0) {
@@ -499,13 +499,13 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 					marks_statisticaMensileContenuti.append(",");
 				}
 				marks_statisticaMensileContenuti.append("?");
-				jdbcObjects_statisticaMensileContenuti_delete.add(new JDBCObject(ids, Long.class));
+				jdbcObjects_statisticaMensileContenutideleteEngine.add(new JDBCObject(ids, Long.class));
 
 			}
-			sqlQueryObjectUpdate_statisticaMensileContenuti_deleteList.addWhereCondition("id NOT IN ("+marks_statisticaMensileContenuti.toString()+")");
+			sqlQueryObjectUpdate_statisticaMensileContenutideleteEngineList.addWhereCondition("id NOT IN ("+marks_statisticaMensileContenuti.toString()+")");
 		}
 
-		jdbcUtilities.execute(sqlQueryObjectUpdate_statisticaMensileContenuti_deleteList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_statisticaMensileContenuti_delete.toArray(new JDBCObject[]{}));
+		jdbcUtilities.execute(sqlQueryObjectUpdate_statisticaMensileContenutideleteEngineList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_statisticaMensileContenutideleteEngine.toArray(new JDBCObject[]{}));
 
 
 
@@ -516,8 +516,8 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaMensileFieldConverter().toTable(StatisticaMensile.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, statisticaMensile),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, statisticaMensile),
 				this.getStatisticaMensileFieldConverter(), this, null, updateFields);
 	}
 	
@@ -526,8 +526,8 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaMensileFieldConverter().toTable(StatisticaMensile.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, statisticaMensile),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, statisticaMensile),
 				this.getStatisticaMensileFieldConverter(), this, condition, updateFields);
 	}
 	
@@ -536,8 +536,8 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaMensileFieldConverter().toTable(StatisticaMensile.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, statisticaMensile),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, statisticaMensile),
 				this.getStatisticaMensileFieldConverter(), this, updateModels);
 	}	
 	
@@ -547,7 +547,7 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaMensileFieldConverter().toTable(StatisticaMensile.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getStatisticaMensileFieldConverter(), this, null, updateFields);
 	}
@@ -558,7 +558,7 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaMensileFieldConverter().toTable(StatisticaMensile.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getStatisticaMensileFieldConverter(), this, condition, updateFields);
 	}
@@ -569,7 +569,7 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaMensileFieldConverter().toTable(StatisticaMensile.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getStatisticaMensileFieldConverter(), this, updateModels);
 	}
@@ -608,11 +608,11 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 		}
 		longId = statisticaMensile.getId();
 		
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, longId);
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, longId);
 		
 	}
 
-	private void _delete(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long id) throws NotImplementedException,ServiceException,Exception {
+	private void deleteEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long id) throws NotImplementedException,ServiceException,Exception {
 	
 		if(id==null){
 			throw new ServiceException("Id is null");
@@ -628,11 +628,11 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 		
 
 		//Recupero oggetto _statisticaMensileContenuti
-		ISQLQueryObject sqlQueryObjectDelete_statisticaMensileContenuti_getToDelete = sqlQueryObjectDelete.newSQLQueryObject();
-		sqlQueryObjectDelete_statisticaMensileContenuti_getToDelete.setANDLogicOperator(true);
-		sqlQueryObjectDelete_statisticaMensileContenuti_getToDelete.addFromTable(this.getStatisticaMensileFieldConverter().toTable(StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI));
-		sqlQueryObjectDelete_statisticaMensileContenuti_getToDelete.addWhereCondition("id_stat=?");
-		java.util.List<Object> statisticaMensile_statisticaMensileContenuti_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_statisticaMensileContenuti_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI, this.getStatisticaMensileFetch(),
+		ISQLQueryObject sqlQueryObjectDelete_statisticaMensileContenutigetEngineToDelete = sqlQueryObjectDelete.newSQLQueryObject();
+		sqlQueryObjectDelete_statisticaMensileContenutigetEngineToDelete.setANDLogicOperator(true);
+		sqlQueryObjectDelete_statisticaMensileContenutigetEngineToDelete.addFromTable(this.getStatisticaMensileFieldConverter().toTable(StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI));
+		sqlQueryObjectDelete_statisticaMensileContenutigetEngineToDelete.addWhereCondition("id_stat=?");
+		java.util.List<Object> statisticaMensile_statisticaMensileContenuti_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_statisticaMensileContenutigetEngineToDelete.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI, this.getStatisticaMensileFetch(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id,Long.class));
 
 		// for statisticaMensile_statisticaMensileContenuti
@@ -678,7 +678,7 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 		java.util.List<Long> lst = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, new JDBCPaginatedExpression(expression));
 		
 		for(Long id : lst) {
-			this._delete(jdbcProperties, log, connection, sqlQueryObject, id);
+			this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, id);
 		}
 		
 		return new NonNegativeNumber(lst.size());
@@ -691,7 +691,7 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 	
 	@Override
 	public void deleteById(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId) throws ServiceException, NotImplementedException, Exception {
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
 	}
 	
 	@Override

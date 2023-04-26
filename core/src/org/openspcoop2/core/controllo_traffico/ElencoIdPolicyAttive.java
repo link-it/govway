@@ -90,33 +90,6 @@ public class ElencoIdPolicyAttive extends org.openspcoop2.utils.beans.BaseBeanWi
 
 
   @XmlElement(name="id-active-policy",required=true,nillable=false)
-  protected List<IdActivePolicy> idActivePolicy = new ArrayList<IdActivePolicy>();
-
-  /**
-   * @deprecated Use method getIdActivePolicyList
-   * @return List&lt;IdActivePolicy&gt;
-  */
-  @Deprecated
-  public List<IdActivePolicy> getIdActivePolicy() {
-  	return this.idActivePolicy;
-  }
-
-  /**
-   * @deprecated Use method setIdActivePolicyList
-   * @param idActivePolicy List&lt;IdActivePolicy&gt;
-  */
-  @Deprecated
-  public void setIdActivePolicy(List<IdActivePolicy> idActivePolicy) {
-  	this.idActivePolicy=idActivePolicy;
-  }
-
-  /**
-   * @deprecated Use method sizeIdActivePolicyList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeIdActivePolicy() {
-  	return this.idActivePolicy.size();
-  }
+  private List<IdActivePolicy> idActivePolicy = new ArrayList<>();
 
 }

@@ -104,7 +104,7 @@ public class JDBCStatisticaInfoServiceImpl extends JDBCStatisticaInfoServiceSear
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaInfoFieldConverter().toColumn(StatisticaInfo.model().DATA_ULTIMA_GENERAZIONE,false), "?");
 		lstObjects.add(new JDBCObject(statisticaInfo.getDataUltimaGenerazione(), StatisticaInfo.model().DATA_ULTIMA_GENERAZIONE.getFieldType()));
 		sqlQueryObjectUpdate.addWhereCondition(this.getStatisticaInfoFieldConverter().toColumn(StatisticaInfo.model().TIPO_STATISTICA,false)+"=?");
-		lstObjects.add(new JDBCObject(statisticaInfo.get_value_tipoStatistica(), String.class));
+		lstObjects.add(new JDBCObject(statisticaInfo.getTipoStatisticaRawEnumValue(), String.class));
 
 		if(isUpdate) {
 			// Update statisticaInfo
@@ -123,8 +123,8 @@ public class JDBCStatisticaInfoServiceImpl extends JDBCStatisticaInfoServiceSear
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaInfoFieldConverter().toTable(StatisticaInfo.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, statisticaInfo),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, statisticaInfo),
 				this.getStatisticaInfoFieldConverter(), this, null, updateFields);
 	}
 	
@@ -133,8 +133,8 @@ public class JDBCStatisticaInfoServiceImpl extends JDBCStatisticaInfoServiceSear
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaInfoFieldConverter().toTable(StatisticaInfo.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, statisticaInfo),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, statisticaInfo),
 				this.getStatisticaInfoFieldConverter(), this, condition, updateFields);
 	}
 	
@@ -143,8 +143,8 @@ public class JDBCStatisticaInfoServiceImpl extends JDBCStatisticaInfoServiceSear
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatisticaInfoFieldConverter().toTable(StatisticaInfo.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, statisticaInfo),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, statisticaInfo),
 				this.getStatisticaInfoFieldConverter(), this, updateModels);
 	}	
 	
@@ -184,12 +184,12 @@ public class JDBCStatisticaInfoServiceImpl extends JDBCStatisticaInfoServiceSear
 	public void delete(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, StatisticaInfo statisticaInfo) throws NotImplementedException,ServiceException,Exception {
 		
 		TipoIntervalloStatistico idObject = statisticaInfo.getTipoStatistica();
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, idObject);
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, idObject);
                 
 
 	}
 
-	private void _delete(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Object id) throws NotImplementedException,ServiceException,Exception {
+	private void deleteEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Object id) throws NotImplementedException,ServiceException,Exception {
 		
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
@@ -229,7 +229,7 @@ public class JDBCStatisticaInfoServiceImpl extends JDBCStatisticaInfoServiceSear
 		java.util.List<Object> lst = this._findAllObjectIds(jdbcProperties, log, connection, sqlQueryObject, new JDBCPaginatedExpression(expression));
 		
 		for(Object id : lst) {
-			this._delete(jdbcProperties, log, connection, sqlQueryObject, id);
+			this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, id);
 		}
 		
 		return new NonNegativeNumber(lst.size());

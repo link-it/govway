@@ -757,7 +757,7 @@ public class ControlloTrafficoDriverUtils {
 						
 			policy = serviceManager.getAttivazionePolicyServiceSearch().find(expr);
 			if(policy==null) {
-				throw new NotFoundException("Not Found");
+				throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 			}
 		} catch(NotFoundException notFound) {
 			throw notFound;
@@ -1269,7 +1269,7 @@ public class ControlloTrafficoDriverUtils {
 			try{
 				// inefficiente
 				List<Object> list = serviceManager.getAttivazionePolicyServiceSearch().select(pagExpr, AttivazionePolicy.model().ID_ACTIVE_POLICY);
-				if(list!=null && list.size()>0){
+				if(list!=null && !list.isEmpty()){
 					int found = -1;
 					for (Object r : list) {
 						if(r instanceof String){

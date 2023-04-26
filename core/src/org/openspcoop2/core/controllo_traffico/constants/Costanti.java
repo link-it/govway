@@ -41,12 +41,12 @@ public class Costanti {
 	private static String controlloTrafficoImageExt = ".bin";
 	
 	public static String getControlloTrafficoImage(String CT_policyType) {
-		return _getControlloTrafficoImagePrefix(CT_policyType, controlloTrafficoImagePrefix);
+		return getEngineControlloTrafficoImagePrefix(CT_policyType, controlloTrafficoImagePrefix);
 	}
 	public static String getControlloTrafficoEventiImage(String CT_policyType) {
-		return _getControlloTrafficoImagePrefix(CT_policyType, controlloTrafficoEventiImagePrefix);
+		return getEngineControlloTrafficoImagePrefix(CT_policyType, controlloTrafficoEventiImagePrefix);
 	}
-	private static String _getControlloTrafficoImagePrefix(String CT_policyType, String prefix) {
+	private static String getEngineControlloTrafficoImagePrefix(String CT_policyType, String prefix) {
 		StringBuilder sb = new StringBuilder(prefix);
 		if(CT_policyType!=null && !"LOCAL".equals(CT_policyType)) {
 			sb.append("-").append(CT_policyType);
@@ -71,7 +71,7 @@ public class Costanti {
 	public static final String VALUE_MODALITA_SINCRONIZZAZIONE_LOCALE_SUDDIVISA_TRA_NODI = "localePiuNodi";
 	public static final String VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA = "distribuita";
 	public static final List<String> getVALUES_MODALITA_SINCRONIZZAZIONE(List<PolicyGroupByActiveThreadsType> tipiSupportati){
-		return _getMODALITA_SINCRONIZZAZIONE(tipiSupportati, true);
+		return getEngineMODALITA_SINCRONIZZAZIONE(tipiSupportati, true);
 	}
 	
 	public static final String LABEL_MODALITA_SINCRONIZZAZIONE = "Sincronizzazione";	
@@ -81,10 +81,10 @@ public class Costanti {
 	public static final String LABEL_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA = "Distribuita";
 	
 	public static final List<String> getLABELS_MODALITA_SINCRONIZZAZIONE(List<PolicyGroupByActiveThreadsType> tipiSupportati){
-		return _getMODALITA_SINCRONIZZAZIONE(tipiSupportati, false);
+		return getEngineMODALITA_SINCRONIZZAZIONE(tipiSupportati, false);
 	} 
 	
-	private static final List<String> _getMODALITA_SINCRONIZZAZIONE(List<PolicyGroupByActiveThreadsType> tipiSupportati, boolean values){
+	private static final List<String> getEngineMODALITA_SINCRONIZZAZIONE(List<PolicyGroupByActiveThreadsType> tipiSupportati, boolean values){
 		boolean locale = false;
 		boolean localeNodi = false;
 		boolean distribuita = false;
@@ -120,7 +120,7 @@ public class Costanti {
 	public static final String VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST = "hazelcast";
 	public static final String VALUE_MODALITA_IMPLEMENTAZIONE_REDIS = "redis";
 	public static final List<String> getVALUES_MODALITA_IMPLEMENTAZIONE(List<PolicyGroupByActiveThreadsType> tipiSupportati){
-		return _getMODALITA_IMPLEMENTAZIONE(tipiSupportati, true);
+		return getEngineMODALITA_IMPLEMENTAZIONE(tipiSupportati, true);
 	}
 	
 	public static final String LABEL_MODALITA_IMPLEMENTAZIONE = "Implementazione";
@@ -129,10 +129,10 @@ public class Costanti {
 	public static final String LABEL_MODALITA_IMPLEMENTAZIONE_HAZELCAST = "hazelcast";
 	public static final String LABEL_MODALITA_IMPLEMENTAZIONE_REDIS = "redis";	
 	public static final List<String> getLABELS_MODALITA_IMPLEMENTAZIONE(List<PolicyGroupByActiveThreadsType> tipiSupportati){
-		return _getMODALITA_IMPLEMENTAZIONE(tipiSupportati, false);
+		return getEngineMODALITA_IMPLEMENTAZIONE(tipiSupportati, false);
 	}
 	
-	private static final List<String> _getMODALITA_IMPLEMENTAZIONE(List<PolicyGroupByActiveThreadsType> tipiSupportati, boolean values){
+	private static final List<String> getEngineMODALITA_IMPLEMENTAZIONE(List<PolicyGroupByActiveThreadsType> tipiSupportati, boolean values){
 		boolean database = false;
 		boolean hazelcast = false;
 		boolean redis = false;
@@ -168,7 +168,7 @@ public class Costanti {
 	public static final String VALUE_MODALITA_CONTATORI_APPROXIMATED = "approximated";
 	public static final String VALUE_MODALITA_CONTATORI_INCONSISTENT = "inconsistent";
 	public static final List<String> getVALUES_MODALITA_CONTATORI(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl){
-		return _getMODALITA_CONTATORI(tipiSupportati, impl, true);
+		return getEngineMODALITA_CONTATORI(tipiSupportati, impl, true);
 	}
 	
 	public static final String LABEL_MODALITA_CONTATORI = "Misurazione";
@@ -177,10 +177,10 @@ public class Costanti {
 	public static final String LABEL_MODALITA_CONTATORI_APPROXIMATED = "approssimata";
 	public static final String LABEL_MODALITA_CONTATORI_INCONSISTENT = "inconsistente";
 	public static final List<String> getLABELS_MODALITA_CONTATORI(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl){
-		return _getMODALITA_CONTATORI(tipiSupportati, impl, false);
+		return getEngineMODALITA_CONTATORI(tipiSupportati, impl, false);
 	}
 	
-	private static final List<String> _getMODALITA_CONTATORI(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl, boolean values){
+	private static final List<String> getEngineMODALITA_CONTATORI(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl, boolean values){
 		boolean exact = false;
 		boolean approximated = false;
 		boolean inconsistent = false;
@@ -251,7 +251,7 @@ public class Costanti {
 	public static final String VALUE_MODALITA_TIPOLOGIA_REDIS_CONTATORI_LONGADDER = "longadder-counters";
 	
 	public static final List<String> getVALUES_MODALITA_TIPOLOGIA(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl, String counter){
-		return _getMODALITA_TIPOLOGIA(tipiSupportati, impl, counter, true);
+		return getEngineMODALITA_TIPOLOGIA(tipiSupportati, impl, counter, true);
 	}
 	
 	public static final String LABEL_MODALITA_TIPOLOGIA = "Algoritmo";
@@ -272,10 +272,10 @@ public class Costanti {
 
 
 	public static final List<String> getLABELS_MODALITA_TIPOLOGIA(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl, String counter){
-		return _getMODALITA_TIPOLOGIA(tipiSupportati, impl, counter, false);
+		return getEngineMODALITA_TIPOLOGIA(tipiSupportati, impl, counter, false);
 	}
 	
-	private static final List<String> _getMODALITA_TIPOLOGIA(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl, String counter, boolean values){
+	private static final List<String> getEngineMODALITA_TIPOLOGIA(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl, String counter, boolean values){
 		List<String> l = new ArrayList<>();
 		if(VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST.equals(impl)) {
 			for (PolicyGroupByActiveThreadsType tipo : tipiSupportati) {

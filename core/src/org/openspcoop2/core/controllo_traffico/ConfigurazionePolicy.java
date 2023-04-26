@@ -190,11 +190,11 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBeanWi
     this.valore2 = valore2;
   }
 
-  public void set_value_valoreTipoBanda(String value) {
+  public void setValoreTipoBandaRawEnumValue(String value) {
     this.valoreTipoBanda = (TipoBanda) TipoBanda.toEnumConstantFromString(value);
   }
 
-  public String get_value_valoreTipoBanda() {
+  public String getValoreTipoBandaRawEnumValue() {
     if(this.valoreTipoBanda == null){
     	return null;
     }else{
@@ -210,11 +210,11 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBeanWi
     this.valoreTipoBanda = valoreTipoBanda;
   }
 
-  public void set_value_valoreTipoLatenza(String value) {
+  public void setValoreTipoLatenzaRawEnumValue(String value) {
     this.valoreTipoLatenza = (TipoLatenza) TipoLatenza.toEnumConstantFromString(value);
   }
 
-  public String get_value_valoreTipoLatenza() {
+  public String getValoreTipoLatenzaRawEnumValue() {
     if(this.valoreTipoLatenza == null){
     	return null;
     }else{
@@ -230,11 +230,11 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBeanWi
     this.valoreTipoLatenza = valoreTipoLatenza;
   }
 
-  public void set_value_modalitaControllo(String value) {
+  public void setModalitaControlloRawEnumValue(String value) {
     this.modalitaControllo = (TipoControlloPeriodo) TipoControlloPeriodo.toEnumConstantFromString(value);
   }
 
-  public String get_value_modalitaControllo() {
+  public String getModalitaControlloRawEnumValue() {
     if(this.modalitaControllo == null){
     	return null;
     }else{
@@ -250,11 +250,11 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBeanWi
     this.modalitaControllo = modalitaControllo;
   }
 
-  public void set_value_tipoIntervalloOsservazioneRealtime(String value) {
+  public void setTipoIntervalloOsservazioneRealtimeRawEnumValue(String value) {
     this.tipoIntervalloOsservazioneRealtime = (TipoPeriodoRealtime) TipoPeriodoRealtime.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipoIntervalloOsservazioneRealtime() {
+  public String getTipoIntervalloOsservazioneRealtimeRawEnumValue() {
     if(this.tipoIntervalloOsservazioneRealtime == null){
     	return null;
     }else{
@@ -270,11 +270,11 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBeanWi
     this.tipoIntervalloOsservazioneRealtime = tipoIntervalloOsservazioneRealtime;
   }
 
-  public void set_value_tipoIntervalloOsservazioneStatistico(String value) {
+  public void setTipoIntervalloOsservazioneStatisticoRawEnumValue(String value) {
     this.tipoIntervalloOsservazioneStatistico = (TipoPeriodoStatistico) TipoPeriodoStatistico.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipoIntervalloOsservazioneStatistico() {
+  public String getTipoIntervalloOsservazioneStatisticoRawEnumValue() {
     if(this.tipoIntervalloOsservazioneStatistico == null){
     	return null;
     }else{
@@ -298,11 +298,11 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBeanWi
     this.intervalloOsservazione = intervalloOsservazione;
   }
 
-  public void set_value_finestraOsservazione(String value) {
+  public void setFinestraOsservazioneRawEnumValue(String value) {
     this.finestraOsservazione = (TipoFinestra) TipoFinestra.toEnumConstantFromString(value);
   }
 
-  public String get_value_finestraOsservazione() {
+  public String getFinestraOsservazioneRawEnumValue() {
     if(this.finestraOsservazione == null){
     	return null;
     }else{
@@ -318,11 +318,11 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBeanWi
     this.finestraOsservazione = finestraOsservazione;
   }
 
-  public void set_value_tipoApplicabilita(String value) {
+  public void setTipoApplicabilitaRawEnumValue(String value) {
     this.tipoApplicabilita = (TipoApplicabilita) TipoApplicabilita.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipoApplicabilita() {
+  public String getTipoApplicabilitaRawEnumValue() {
     if(this.tipoApplicabilita == null){
     	return null;
     }else{
@@ -362,11 +362,11 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBeanWi
     this.applicabilitaDegradoPrestazionale = applicabilitaDegradoPrestazionale;
   }
 
-  public void set_value_degradoAvgTimeModalitaControllo(String value) {
+  public void setDegradoAvgTimeModalitaControlloRawEnumValue(String value) {
     this.degradoAvgTimeModalitaControllo = (TipoControlloPeriodo) TipoControlloPeriodo.toEnumConstantFromString(value);
   }
 
-  public String get_value_degradoAvgTimeModalitaControllo() {
+  public String getDegradoAvgTimeModalitaControlloRawEnumValue() {
     if(this.degradoAvgTimeModalitaControllo == null){
     	return null;
     }else{
@@ -382,11 +382,11 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBeanWi
     this.degradoAvgTimeModalitaControllo = degradoAvgTimeModalitaControllo;
   }
 
-  public void set_value_degradoAvgTimeTipoIntervalloOsservazioneRealtime(String value) {
+  public void setDegradoAvgTimeTipoIntervalloOsservazioneRealtimeRawEnumValue(String value) {
     this.degradoAvgTimeTipoIntervalloOsservazioneRealtime = (TipoPeriodoRealtime) TipoPeriodoRealtime.toEnumConstantFromString(value);
   }
 
-  public String get_value_degradoAvgTimeTipoIntervalloOsservazioneRealtime() {
+  public String getDegradoAvgTimeTipoIntervalloOsservazioneRealtimeRawEnumValue() {
     if(this.degradoAvgTimeTipoIntervalloOsservazioneRealtime == null){
     	return null;
     }else{
@@ -402,11 +402,11 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBeanWi
     this.degradoAvgTimeTipoIntervalloOsservazioneRealtime = degradoAvgTimeTipoIntervalloOsservazioneRealtime;
   }
 
-  public void set_value_degradoAvgTimeTipoIntervalloOsservazioneStatistico(String value) {
+  public void setDegradoAvgTimeTipoIntervalloOsservazioneStatisticoRawEnumValue(String value) {
     this.degradoAvgTimeTipoIntervalloOsservazioneStatistico = (TipoPeriodoStatistico) TipoPeriodoStatistico.toEnumConstantFromString(value);
   }
 
-  public String get_value_degradoAvgTimeTipoIntervalloOsservazioneStatistico() {
+  public String getDegradoAvgTimeTipoIntervalloOsservazioneStatisticoRawEnumValue() {
     if(this.degradoAvgTimeTipoIntervalloOsservazioneStatistico == null){
     	return null;
     }else{
@@ -430,11 +430,11 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBeanWi
     this.degradoAvgTimeIntervalloOsservazione = degradoAvgTimeIntervalloOsservazione;
   }
 
-  public void set_value_degradoAvgTimeFinestraOsservazione(String value) {
+  public void setDegradoAvgTimeFinestraOsservazioneRawEnumValue(String value) {
     this.degradoAvgTimeFinestraOsservazione = (TipoFinestra) TipoFinestra.toEnumConstantFromString(value);
   }
 
-  public String get_value_degradoAvgTimeFinestraOsservazione() {
+  public String getDegradoAvgTimeFinestraOsservazioneRawEnumValue() {
     if(this.degradoAvgTimeFinestraOsservazione == null){
     	return null;
     }else{
@@ -450,11 +450,11 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBeanWi
     this.degradoAvgTimeFinestraOsservazione = degradoAvgTimeFinestraOsservazione;
   }
 
-  public void set_value_degradoAvgTimeTipoLatenza(String value) {
+  public void setDegradoAvgTimeTipoLatenzaRawEnumValue(String value) {
     this.degradoAvgTimeTipoLatenza = (TipoLatenza) TipoLatenza.toEnumConstantFromString(value);
   }
 
-  public String get_value_degradoAvgTimeTipoLatenza() {
+  public String getDegradoAvgTimeTipoLatenzaRawEnumValue() {
     if(this.degradoAvgTimeTipoLatenza == null){
     	return null;
     }else{
@@ -558,31 +558,31 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBeanWi
   protected java.lang.Long valore2;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_valoreTipoBanda;
+  protected java.lang.String valoreTipoBandaRawEnumValue;
 
   @XmlElement(name="valore-tipo-banda",required=false,nillable=false)
   protected TipoBanda valoreTipoBanda;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_valoreTipoLatenza;
+  protected java.lang.String valoreTipoLatenzaRawEnumValue;
 
   @XmlElement(name="valore-tipo-latenza",required=false,nillable=false)
   protected TipoLatenza valoreTipoLatenza;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_modalitaControllo;
+  protected java.lang.String modalitaControlloRawEnumValue;
 
   @XmlElement(name="modalita-controllo",required=false,nillable=false)
   protected TipoControlloPeriodo modalitaControllo;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipoIntervalloOsservazioneRealtime;
+  protected java.lang.String tipoIntervalloOsservazioneRealtimeRawEnumValue;
 
   @XmlElement(name="tipo-intervallo-osservazione-realtime",required=false,nillable=false)
   protected TipoPeriodoRealtime tipoIntervalloOsservazioneRealtime;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipoIntervalloOsservazioneStatistico;
+  protected java.lang.String tipoIntervalloOsservazioneStatisticoRawEnumValue;
 
   @XmlElement(name="tipo-intervallo-osservazione-statistico",required=false,nillable=false)
   protected TipoPeriodoStatistico tipoIntervalloOsservazioneStatistico;
@@ -592,13 +592,13 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBeanWi
   protected java.lang.Integer intervalloOsservazione;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_finestraOsservazione;
+  protected java.lang.String finestraOsservazioneRawEnumValue;
 
   @XmlElement(name="finestra-osservazione",required=false,nillable=false)
   protected TipoFinestra finestraOsservazione;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipoApplicabilita;
+  protected java.lang.String tipoApplicabilitaRawEnumValue;
 
   @XmlElement(name="tipo-applicabilita",required=true,nillable=false,defaultValue="sempre")
   protected TipoApplicabilita tipoApplicabilita = (TipoApplicabilita) TipoApplicabilita.toEnumConstantFromString("sempre");
@@ -612,19 +612,19 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBeanWi
   protected boolean applicabilitaDegradoPrestazionale = false;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_degradoAvgTimeModalitaControllo;
+  protected java.lang.String degradoAvgTimeModalitaControlloRawEnumValue;
 
   @XmlElement(name="degrado-avg-time-modalita-controllo",required=false,nillable=false)
   protected TipoControlloPeriodo degradoAvgTimeModalitaControllo;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_degradoAvgTimeTipoIntervalloOsservazioneRealtime;
+  protected java.lang.String degradoAvgTimeTipoIntervalloOsservazioneRealtimeRawEnumValue;
 
   @XmlElement(name="degrado-avg-time-tipo-intervallo-osservazione-realtime",required=false,nillable=false)
   protected TipoPeriodoRealtime degradoAvgTimeTipoIntervalloOsservazioneRealtime;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_degradoAvgTimeTipoIntervalloOsservazioneStatistico;
+  protected java.lang.String degradoAvgTimeTipoIntervalloOsservazioneStatisticoRawEnumValue;
 
   @XmlElement(name="degrado-avg-time-tipo-intervallo-osservazione-statistico",required=false,nillable=false)
   protected TipoPeriodoStatistico degradoAvgTimeTipoIntervalloOsservazioneStatistico;
@@ -634,13 +634,13 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBeanWi
   protected java.lang.Integer degradoAvgTimeIntervalloOsservazione;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_degradoAvgTimeFinestraOsservazione;
+  protected java.lang.String degradoAvgTimeFinestraOsservazioneRawEnumValue;
 
   @XmlElement(name="degrado-avg-time-finestra-osservazione",required=false,nillable=false)
   protected TipoFinestra degradoAvgTimeFinestraOsservazione;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_degradoAvgTimeTipoLatenza;
+  protected java.lang.String degradoAvgTimeTipoLatenzaRawEnumValue;
 
   @XmlElement(name="degrado-avg-time-tipo-latenza",required=false,nillable=false)
   protected TipoLatenza degradoAvgTimeTipoLatenza;

@@ -50,19 +50,19 @@ public abstract class AbstractPolicyConfiguration implements Serializable {
 	private Boolean LOCAL_DIVIDED_BY_NODES_remaining_zeroValue = null;
 	private Boolean LOCAL_DIVIDED_BY_NODES_limit_roundingDown = null;
 	private Boolean LOCAL_DIVIDED_BY_NODES_limit_normalizedQuota = null;
-	protected Boolean _getLOCAL_DIVIDED_BY_NODES_remaining_zeroValue() {
+	protected Boolean getEngineLOCAL_DIVIDED_BY_NODES_remaining_zeroValue() {
 		return this.LOCAL_DIVIDED_BY_NODES_remaining_zeroValue;
 	}
 	public void setLOCAL_DIVIDED_BY_NODES_remaining_zeroValue(Boolean lOCAL_DIVIDED_BY_NODES_remaining_zeroValue) {
 		this.LOCAL_DIVIDED_BY_NODES_remaining_zeroValue = lOCAL_DIVIDED_BY_NODES_remaining_zeroValue;
 	}
-	protected Boolean _getLOCAL_DIVIDED_BY_NODES_limit_roundingDown() {
+	protected Boolean getEngineLOCAL_DIVIDED_BY_NODES_limit_roundingDown() {
 		return this.LOCAL_DIVIDED_BY_NODES_limit_roundingDown;
 	}
 	public void setLOCAL_DIVIDED_BY_NODES_limit_roundingDown(Boolean lOCAL_DIVIDED_BY_NODES_limit_roundingDown) {
 		this.LOCAL_DIVIDED_BY_NODES_limit_roundingDown = lOCAL_DIVIDED_BY_NODES_limit_roundingDown;
 	}
-	protected Boolean _getLOCAL_DIVIDED_BY_NODES_limit_normalizedQuota() {
+	protected Boolean getEngineLOCAL_DIVIDED_BY_NODES_limit_normalizedQuota() {
 		return this.LOCAL_DIVIDED_BY_NODES_limit_normalizedQuota;
 	}
 	public void setLOCAL_DIVIDED_BY_NODES_limit_normalizedQuota(Boolean lOCAL_DIVIDED_BY_NODES_limit_normalizedQuota) {

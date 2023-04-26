@@ -325,13 +325,13 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 
 				// elimino tutte le occorrenze di plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita non presenti nell'update
 
-				ISQLQueryObject sqlQueryObjectUpdate_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
-				sqlQueryObjectUpdate_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_deleteList.setANDLogicOperator(true);
-				sqlQueryObjectUpdate_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_deleteList.addDeleteTable(this.getPluginFieldConverter().toTable(Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA.PLUGIN_SERVIZIO_AZIONE_COMPATIBILITA));
-				java.util.List<JDBCObject> jdbcObjects_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_delete = new java.util.ArrayList<>();
+				ISQLQueryObject sqlQueryObjectUpdate_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilitadeleteEngineList = sqlQueryObjectUpdate.newSQLQueryObject();
+				sqlQueryObjectUpdate_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilitadeleteEngineList.setANDLogicOperator(true);
+				sqlQueryObjectUpdate_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilitadeleteEngineList.addDeleteTable(this.getPluginFieldConverter().toTable(Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA.PLUGIN_SERVIZIO_AZIONE_COMPATIBILITA));
+				java.util.List<JDBCObject> jdbcObjects_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilitadeleteEngine = new java.util.ArrayList<>();
 
-				sqlQueryObjectUpdate_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_deleteList.addWhereCondition("id_plugin_servizio_comp=?");
-				jdbcObjects_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_delete.add(new JDBCObject(plugin_pluginServizioCompatibilita.getId(), Long.class));
+				sqlQueryObjectUpdate_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilitadeleteEngineList.addWhereCondition("id_plugin_servizio_comp=?");
+				jdbcObjects_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilitadeleteEngine.add(new JDBCObject(plugin_pluginServizioCompatibilita.getId(), Long.class));
 
 				StringBuilder marks_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita = new StringBuilder();
 				if(ids_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_da_non_eliminare.size() > 0) {
@@ -340,26 +340,26 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 							marks_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita.append(",");
 						}
 						marks_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita.append("?");
-						jdbcObjects_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_delete.add(new JDBCObject(ids, Long.class));
+						jdbcObjects_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilitadeleteEngine.add(new JDBCObject(ids, Long.class));
 
 					}
-					sqlQueryObjectUpdate_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_deleteList.addWhereCondition("id NOT IN ("+marks_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita.toString()+")");
+					sqlQueryObjectUpdate_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilitadeleteEngineList.addWhereCondition("id NOT IN ("+marks_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita.toString()+")");
 				}
 
-				jdbcUtilities.execute(sqlQueryObjectUpdate_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_deleteList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_delete.toArray(new JDBCObject[]{}));
+				jdbcUtilities.execute(sqlQueryObjectUpdate_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilitadeleteEngineList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilitadeleteEngine.toArray(new JDBCObject[]{}));
 
 			}
 		} // fine for plugin_pluginServizioCompatibilita
 
 		// elimino tutte le occorrenze di plugin_pluginServizioCompatibilita non presenti nell'update
 
-		ISQLQueryObject sqlQueryObjectUpdate_pluginServizioCompatibilita_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
-		sqlQueryObjectUpdate_pluginServizioCompatibilita_deleteList.setANDLogicOperator(true);
-		sqlQueryObjectUpdate_pluginServizioCompatibilita_deleteList.addDeleteTable(this.getPluginFieldConverter().toTable(Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA));
-		java.util.List<JDBCObject> jdbcObjects_plugin_pluginServizioCompatibilita_delete = new java.util.ArrayList<>();
+		ISQLQueryObject sqlQueryObjectUpdate_pluginServizioCompatibilitadeleteEngineList = sqlQueryObjectUpdate.newSQLQueryObject();
+		sqlQueryObjectUpdate_pluginServizioCompatibilitadeleteEngineList.setANDLogicOperator(true);
+		sqlQueryObjectUpdate_pluginServizioCompatibilitadeleteEngineList.addDeleteTable(this.getPluginFieldConverter().toTable(Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA));
+		java.util.List<JDBCObject> jdbcObjects_plugin_pluginServizioCompatibilitadeleteEngine = new java.util.ArrayList<>();
 
-		sqlQueryObjectUpdate_pluginServizioCompatibilita_deleteList.addWhereCondition("id_plugin=?");
-		jdbcObjects_plugin_pluginServizioCompatibilita_delete.add(new JDBCObject(plugin.getId(), Long.class));
+		sqlQueryObjectUpdate_pluginServizioCompatibilitadeleteEngineList.addWhereCondition("id_plugin=?");
+		jdbcObjects_plugin_pluginServizioCompatibilitadeleteEngine.add(new JDBCObject(plugin.getId(), Long.class));
 
 		StringBuilder marks_plugin_pluginServizioCompatibilita = new StringBuilder();
 		if(ids_plugin_pluginServizioCompatibilita_da_non_eliminare.size() > 0) {
@@ -368,13 +368,13 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 					marks_plugin_pluginServizioCompatibilita.append(",");
 				}
 				marks_plugin_pluginServizioCompatibilita.append("?");
-				jdbcObjects_plugin_pluginServizioCompatibilita_delete.add(new JDBCObject(ids, Long.class));
+				jdbcObjects_plugin_pluginServizioCompatibilitadeleteEngine.add(new JDBCObject(ids, Long.class));
 
 			}
-			sqlQueryObjectUpdate_pluginServizioCompatibilita_deleteList.addWhereCondition("id NOT IN ("+marks_plugin_pluginServizioCompatibilita.toString()+")");
+			sqlQueryObjectUpdate_pluginServizioCompatibilitadeleteEngineList.addWhereCondition("id NOT IN ("+marks_plugin_pluginServizioCompatibilita.toString()+")");
 		}
 
-		jdbcUtilities.execute(sqlQueryObjectUpdate_pluginServizioCompatibilita_deleteList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_plugin_pluginServizioCompatibilita_delete.toArray(new JDBCObject[]{}));
+		jdbcUtilities.execute(sqlQueryObjectUpdate_pluginServizioCompatibilitadeleteEngineList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_plugin_pluginServizioCompatibilitadeleteEngine.toArray(new JDBCObject[]{}));
 
 		// for plugin_pluginProprietaCompatibilita
 
@@ -429,13 +429,13 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 
 		// elimino tutte le occorrenze di plugin_pluginProprietaCompatibilita non presenti nell'update
 
-		ISQLQueryObject sqlQueryObjectUpdate_pluginProprietaCompatibilita_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
-		sqlQueryObjectUpdate_pluginProprietaCompatibilita_deleteList.setANDLogicOperator(true);
-		sqlQueryObjectUpdate_pluginProprietaCompatibilita_deleteList.addDeleteTable(this.getPluginFieldConverter().toTable(Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA));
-		java.util.List<JDBCObject> jdbcObjects_plugin_pluginProprietaCompatibilita_delete = new java.util.ArrayList<>();
+		ISQLQueryObject sqlQueryObjectUpdate_pluginProprietaCompatibilitadeleteEngineList = sqlQueryObjectUpdate.newSQLQueryObject();
+		sqlQueryObjectUpdate_pluginProprietaCompatibilitadeleteEngineList.setANDLogicOperator(true);
+		sqlQueryObjectUpdate_pluginProprietaCompatibilitadeleteEngineList.addDeleteTable(this.getPluginFieldConverter().toTable(Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA));
+		java.util.List<JDBCObject> jdbcObjects_plugin_pluginProprietaCompatibilitadeleteEngine = new java.util.ArrayList<>();
 
-		sqlQueryObjectUpdate_pluginProprietaCompatibilita_deleteList.addWhereCondition("id_plugin=?");
-		jdbcObjects_plugin_pluginProprietaCompatibilita_delete.add(new JDBCObject(plugin.getId(), Long.class));
+		sqlQueryObjectUpdate_pluginProprietaCompatibilitadeleteEngineList.addWhereCondition("id_plugin=?");
+		jdbcObjects_plugin_pluginProprietaCompatibilitadeleteEngine.add(new JDBCObject(plugin.getId(), Long.class));
 
 		StringBuilder marks_plugin_pluginProprietaCompatibilita = new StringBuilder();
 		if(ids_plugin_pluginProprietaCompatibilita_da_non_eliminare.size() > 0) {
@@ -444,13 +444,13 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 					marks_plugin_pluginProprietaCompatibilita.append(",");
 				}
 				marks_plugin_pluginProprietaCompatibilita.append("?");
-				jdbcObjects_plugin_pluginProprietaCompatibilita_delete.add(new JDBCObject(ids, Long.class));
+				jdbcObjects_plugin_pluginProprietaCompatibilitadeleteEngine.add(new JDBCObject(ids, Long.class));
 
 			}
-			sqlQueryObjectUpdate_pluginProprietaCompatibilita_deleteList.addWhereCondition("id NOT IN ("+marks_plugin_pluginProprietaCompatibilita.toString()+")");
+			sqlQueryObjectUpdate_pluginProprietaCompatibilitadeleteEngineList.addWhereCondition("id NOT IN ("+marks_plugin_pluginProprietaCompatibilita.toString()+")");
 		}
 
-		jdbcUtilities.execute(sqlQueryObjectUpdate_pluginProprietaCompatibilita_deleteList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_plugin_pluginProprietaCompatibilita_delete.toArray(new JDBCObject[]{}));
+		jdbcUtilities.execute(sqlQueryObjectUpdate_pluginProprietaCompatibilitadeleteEngineList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_plugin_pluginProprietaCompatibilitadeleteEngine.toArray(new JDBCObject[]{}));
 
 
 
@@ -461,8 +461,8 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getPluginFieldConverter().toTable(Plugin.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, id),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, id),
 				this.getPluginFieldConverter(), this, null, updateFields);
 	}
 	
@@ -471,8 +471,8 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getPluginFieldConverter().toTable(Plugin.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, id),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, id),
 				this.getPluginFieldConverter(), this, condition, updateFields);
 	}
 	
@@ -481,8 +481,8 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getPluginFieldConverter().toTable(Plugin.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, id),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, id),
 				this.getPluginFieldConverter(), this, updateModels);
 	}	
 	
@@ -492,7 +492,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getPluginFieldConverter().toTable(Plugin.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getPluginFieldConverter(), this, null, updateFields);
 	}
@@ -503,7 +503,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getPluginFieldConverter().toTable(Plugin.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getPluginFieldConverter(), this, condition, updateFields);
 	}
@@ -514,7 +514,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getPluginFieldConverter().toTable(Plugin.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getPluginFieldConverter(), this, updateModels);
 	}
@@ -555,11 +555,11 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 			}
 		}		
 		
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, longId);
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, longId);
 		
 	}
 
-	private void _delete(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long id) throws NotImplementedException,ServiceException,Exception {
+	private void deleteEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long id) throws NotImplementedException,ServiceException,Exception {
 	
 		if(id==null){
 			throw new ServiceException("Id is null");
@@ -575,11 +575,11 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 		
 
 		//Recupero oggetto _plugin_pluginServizioCompatibilita
-		ISQLQueryObject sqlQueryObjectDelete_plugin_pluginServizioCompatibilita_getToDelete = sqlQueryObjectDelete.newSQLQueryObject();
-		sqlQueryObjectDelete_plugin_pluginServizioCompatibilita_getToDelete.setANDLogicOperator(true);
-		sqlQueryObjectDelete_plugin_pluginServizioCompatibilita_getToDelete.addFromTable(this.getPluginFieldConverter().toTable(Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA));
-		sqlQueryObjectDelete_plugin_pluginServizioCompatibilita_getToDelete.addWhereCondition("id_plugin=?");
-		java.util.List<Object> plugin_pluginServizioCompatibilita_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_plugin_pluginServizioCompatibilita_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA, this.getPluginFetch(),
+		ISQLQueryObject sqlQueryObjectDelete_plugin_pluginServizioCompatibilitagetEngineToDelete = sqlQueryObjectDelete.newSQLQueryObject();
+		sqlQueryObjectDelete_plugin_pluginServizioCompatibilitagetEngineToDelete.setANDLogicOperator(true);
+		sqlQueryObjectDelete_plugin_pluginServizioCompatibilitagetEngineToDelete.addFromTable(this.getPluginFieldConverter().toTable(Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA));
+		sqlQueryObjectDelete_plugin_pluginServizioCompatibilitagetEngineToDelete.addWhereCondition("id_plugin=?");
+		java.util.List<Object> plugin_pluginServizioCompatibilita_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_plugin_pluginServizioCompatibilitagetEngineToDelete.createSQLQuery(), jdbcProperties.isShowSql(), Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA, this.getPluginFetch(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id,Long.class));
 
 		// for plugin_pluginServizioCompatibilita
@@ -590,11 +590,11 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 			}
 
 			//Recupero oggetto _plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita
-			ISQLQueryObject sqlQueryObjectDelete_plugin_pluginServizioCompatibilita_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_getToDelete = sqlQueryObjectDelete.newSQLQueryObject();
-			sqlQueryObjectDelete_plugin_pluginServizioCompatibilita_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_getToDelete.setANDLogicOperator(true);
-			sqlQueryObjectDelete_plugin_pluginServizioCompatibilita_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_getToDelete.addFromTable(this.getPluginFieldConverter().toTable(Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA.PLUGIN_SERVIZIO_AZIONE_COMPATIBILITA));
-			sqlQueryObjectDelete_plugin_pluginServizioCompatibilita_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_getToDelete.addWhereCondition("id_plugin_servizio_comp=?");
-			java.util.List<Object> plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_plugin_pluginServizioCompatibilita_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA.PLUGIN_SERVIZIO_AZIONE_COMPATIBILITA, this.getPluginFetch(),
+			ISQLQueryObject sqlQueryObjectDelete_plugin_pluginServizioCompatibilita_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilitagetEngineToDelete = sqlQueryObjectDelete.newSQLQueryObject();
+			sqlQueryObjectDelete_plugin_pluginServizioCompatibilita_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilitagetEngineToDelete.setANDLogicOperator(true);
+			sqlQueryObjectDelete_plugin_pluginServizioCompatibilita_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilitagetEngineToDelete.addFromTable(this.getPluginFieldConverter().toTable(Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA.PLUGIN_SERVIZIO_AZIONE_COMPATIBILITA));
+			sqlQueryObjectDelete_plugin_pluginServizioCompatibilita_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilitagetEngineToDelete.addWhereCondition("id_plugin_servizio_comp=?");
+			java.util.List<Object> plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_plugin_pluginServizioCompatibilita_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilitagetEngineToDelete.createSQLQuery(), jdbcProperties.isShowSql(), Plugin.model().PLUGIN_SERVIZIO_COMPATIBILITA.PLUGIN_SERVIZIO_AZIONE_COMPATIBILITA, this.getPluginFetch(),
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(plugin_pluginServizioCompatibilita.getId(),Long.class));
 
 			// for plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita
@@ -626,11 +626,11 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 		} // fine for plugin_pluginServizioCompatibilita
 
 		//Recupero oggetto _plugin_pluginProprietaCompatibilita
-		ISQLQueryObject sqlQueryObjectDelete_plugin_pluginProprietaCompatibilita_getToDelete = sqlQueryObjectDelete.newSQLQueryObject();
-		sqlQueryObjectDelete_plugin_pluginProprietaCompatibilita_getToDelete.setANDLogicOperator(true);
-		sqlQueryObjectDelete_plugin_pluginProprietaCompatibilita_getToDelete.addFromTable(this.getPluginFieldConverter().toTable(Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA));
-		sqlQueryObjectDelete_plugin_pluginProprietaCompatibilita_getToDelete.addWhereCondition("id_plugin=?");
-		java.util.List<Object> plugin_pluginProprietaCompatibilita_toDelete_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectDelete_plugin_pluginProprietaCompatibilita_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA, this.getPluginFetch(),
+		ISQLQueryObject sqlQueryObjectDelete_plugin_pluginProprietaCompatibilitagetEngineToDelete = sqlQueryObjectDelete.newSQLQueryObject();
+		sqlQueryObjectDelete_plugin_pluginProprietaCompatibilitagetEngineToDelete.setANDLogicOperator(true);
+		sqlQueryObjectDelete_plugin_pluginProprietaCompatibilitagetEngineToDelete.addFromTable(this.getPluginFieldConverter().toTable(Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA));
+		sqlQueryObjectDelete_plugin_pluginProprietaCompatibilitagetEngineToDelete.addWhereCondition("id_plugin=?");
+		java.util.List<Object> plugin_pluginProprietaCompatibilita_toDelete_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectDelete_plugin_pluginProprietaCompatibilitagetEngineToDelete.createSQLQuery(), jdbcProperties.isShowSql(), Plugin.model().PLUGIN_PROPRIETA_COMPATIBILITA, this.getPluginFetch(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id,Long.class));
 
 		// for plugin_pluginProprietaCompatibilita
@@ -671,7 +671,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 		}catch(NotFoundException notFound){
 			return;
 		}
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, id);
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, id);
 		
 	}
 	
@@ -688,7 +688,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 		java.util.List<Long> lst = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, new JDBCPaginatedExpression(expression));
 		
 		for(Long id : lst) {
-			this._delete(jdbcProperties, log, connection, sqlQueryObject, id);
+			this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, id);
 		}
 		
 		return new NonNegativeNumber(lst.size());
@@ -701,7 +701,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 	
 	@Override
 	public void deleteById(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId) throws ServiceException, NotImplementedException, Exception {
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
 	}
 	
 	@Override

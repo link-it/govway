@@ -62,11 +62,11 @@ public class StatisticaInfo extends org.openspcoop2.utils.beans.BaseBeanWithId i
     super();
   }
 
-  public void set_value_tipoStatistica(String value) {
+  public void setTipoStatisticaRawEnumValue(String value) {
     this.tipoStatistica = (TipoIntervalloStatistico) TipoIntervalloStatistico.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipoStatistica() {
+  public String getTipoStatisticaRawEnumValue() {
     if(this.tipoStatistica == null){
     	return null;
     }else{
@@ -107,7 +107,7 @@ public class StatisticaInfo extends org.openspcoop2.utils.beans.BaseBeanWithId i
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipoStatistica;
+  protected java.lang.String tipoStatisticaRawEnumValue;
 
   @XmlElement(name="tipo-statistica",required=true,nillable=false)
   protected TipoIntervalloStatistico tipoStatistica;

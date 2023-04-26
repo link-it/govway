@@ -172,63 +172,9 @@ public class Dettaglio extends org.openspcoop2.utils.beans.BaseBeanWithId implem
   protected java.lang.String tipo;
 
   @XmlElement(name="servizio-applicativo-consegna",required=true,nillable=false)
-  protected List<ServizioApplicativoConsegna> servizioApplicativoConsegna = new ArrayList<ServizioApplicativoConsegna>();
-
-  /**
-   * @deprecated Use method getServizioApplicativoConsegnaList
-   * @return List&lt;ServizioApplicativoConsegna&gt;
-  */
-  @Deprecated
-  public List<ServizioApplicativoConsegna> getServizioApplicativoConsegna() {
-  	return this.servizioApplicativoConsegna;
-  }
-
-  /**
-   * @deprecated Use method setServizioApplicativoConsegnaList
-   * @param servizioApplicativoConsegna List&lt;ServizioApplicativoConsegna&gt;
-  */
-  @Deprecated
-  public void setServizioApplicativoConsegna(List<ServizioApplicativoConsegna> servizioApplicativoConsegna) {
-  	this.servizioApplicativoConsegna=servizioApplicativoConsegna;
-  }
-
-  /**
-   * @deprecated Use method sizeServizioApplicativoConsegnaList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeServizioApplicativoConsegna() {
-  	return this.servizioApplicativoConsegna.size();
-  }
+  private List<ServizioApplicativoConsegna> servizioApplicativoConsegna = new ArrayList<>();
 
   @XmlElement(name="proprieta",required=true,nillable=false)
-  protected List<Proprieta> proprieta = new ArrayList<Proprieta>();
-
-  /**
-   * @deprecated Use method getProprietaList
-   * @return List&lt;Proprieta&gt;
-  */
-  @Deprecated
-  public List<Proprieta> getProprieta() {
-  	return this.proprieta;
-  }
-
-  /**
-   * @deprecated Use method setProprietaList
-   * @param proprieta List&lt;Proprieta&gt;
-  */
-  @Deprecated
-  public void setProprieta(List<Proprieta> proprieta) {
-  	this.proprieta=proprieta;
-  }
-
-  /**
-   * @deprecated Use method sizeProprietaList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeProprieta() {
-  	return this.proprieta.size();
-  }
+  private List<Proprieta> proprieta = new ArrayList<>();
 
 }

@@ -227,63 +227,9 @@ public class Plugin extends org.openspcoop2.utils.beans.BaseBeanWithId implement
   protected boolean stato = true;
 
   @XmlElement(name="plugin-servizio-compatibilita",required=true,nillable=false)
-  protected List<PluginServizioCompatibilita> pluginServizioCompatibilita = new ArrayList<PluginServizioCompatibilita>();
-
-  /**
-   * @deprecated Use method getPluginServizioCompatibilitaList
-   * @return List&lt;PluginServizioCompatibilita&gt;
-  */
-  @Deprecated
-  public List<PluginServizioCompatibilita> getPluginServizioCompatibilita() {
-  	return this.pluginServizioCompatibilita;
-  }
-
-  /**
-   * @deprecated Use method setPluginServizioCompatibilitaList
-   * @param pluginServizioCompatibilita List&lt;PluginServizioCompatibilita&gt;
-  */
-  @Deprecated
-  public void setPluginServizioCompatibilita(List<PluginServizioCompatibilita> pluginServizioCompatibilita) {
-  	this.pluginServizioCompatibilita=pluginServizioCompatibilita;
-  }
-
-  /**
-   * @deprecated Use method sizePluginServizioCompatibilitaList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizePluginServizioCompatibilita() {
-  	return this.pluginServizioCompatibilita.size();
-  }
+  private List<PluginServizioCompatibilita> pluginServizioCompatibilita = new ArrayList<>();
 
   @XmlElement(name="plugin-proprieta-compatibilita",required=true,nillable=false)
-  protected List<PluginProprietaCompatibilita> pluginProprietaCompatibilita = new ArrayList<PluginProprietaCompatibilita>();
-
-  /**
-   * @deprecated Use method getPluginProprietaCompatibilitaList
-   * @return List&lt;PluginProprietaCompatibilita&gt;
-  */
-  @Deprecated
-  public List<PluginProprietaCompatibilita> getPluginProprietaCompatibilita() {
-  	return this.pluginProprietaCompatibilita;
-  }
-
-  /**
-   * @deprecated Use method setPluginProprietaCompatibilitaList
-   * @param pluginProprietaCompatibilita List&lt;PluginProprietaCompatibilita&gt;
-  */
-  @Deprecated
-  public void setPluginProprietaCompatibilita(List<PluginProprietaCompatibilita> pluginProprietaCompatibilita) {
-  	this.pluginProprietaCompatibilita=pluginProprietaCompatibilita;
-  }
-
-  /**
-   * @deprecated Use method sizePluginProprietaCompatibilitaList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizePluginProprietaCompatibilita() {
-  	return this.pluginProprietaCompatibilita.size();
-  }
+  private List<PluginProprietaCompatibilita> pluginProprietaCompatibilita = new ArrayList<>();
 
 }

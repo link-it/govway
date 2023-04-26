@@ -90,11 +90,11 @@ public class Eccezione extends org.openspcoop2.utils.beans.BaseBean implements S
     this.context = context;
   }
 
-  public void set_value_type(String value) {
+  public void setTypeRawEnumValue(String value) {
     this.type = (TipoEccezione) TipoEccezione.toEnumConstantFromString(value);
   }
 
-  public String get_value_type() {
+  public String getTypeRawEnumValue() {
     if(this.type == null){
     	return null;
     }else{
@@ -131,7 +131,7 @@ public class Eccezione extends org.openspcoop2.utils.beans.BaseBean implements S
   protected java.lang.String context;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_type;
+  protected java.lang.String typeRawEnumValue;
 
   @XmlAttribute(name="type",required=true)
   protected TipoEccezione type;
