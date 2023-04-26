@@ -73,11 +73,11 @@ public class IntegrationError extends org.openspcoop2.utils.beans.BaseBean imple
     this.errorCode = errorCode;
   }
 
-  public void set_value_messageType(String value) {
+  public void setMessageTypeRawEnumValue(String value) {
     this.messageType = (IntegrationErrorMessageType) IntegrationErrorMessageType.toEnumConstantFromString(value);
   }
 
-  public String get_value_messageType() {
+  public String getMessageTypeRawEnumValue() {
     if(this.messageType == null){
     	return null;
     }else{
@@ -105,11 +105,11 @@ public class IntegrationError extends org.openspcoop2.utils.beans.BaseBean imple
     this.retry = retry;
   }
 
-  public void set_value_errorMessage(String value) {
+  public void setErrorMessageRawEnumValue(String value) {
     this.errorMessage = (IntegrationErrorMessageDetailType) IntegrationErrorMessageDetailType.toEnumConstantFromString(value);
   }
 
-  public String get_value_errorMessage() {
+  public String getErrorMessageRawEnumValue() {
     if(this.errorMessage == null){
     	return null;
     }else{
@@ -133,7 +133,7 @@ public class IntegrationError extends org.openspcoop2.utils.beans.BaseBean imple
   protected IntegrationErrorCode errorCode;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_messageType;
+  protected java.lang.String messageTypeRawEnumValue;
 
   @XmlAttribute(name="messageType",required=true)
   protected IntegrationErrorMessageType messageType;
@@ -143,7 +143,7 @@ public class IntegrationError extends org.openspcoop2.utils.beans.BaseBean imple
   protected boolean retry = false;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_errorMessage;
+  protected java.lang.String errorMessageRawEnumValue;
 
   @XmlAttribute(name="errorMessage",required=false)
   protected IntegrationErrorMessageDetailType errorMessage = (IntegrationErrorMessageDetailType) IntegrationErrorMessageDetailType.toEnumConstantFromString("generic");

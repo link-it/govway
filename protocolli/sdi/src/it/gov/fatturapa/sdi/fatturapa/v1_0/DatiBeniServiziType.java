@@ -116,63 +116,9 @@ public class DatiBeniServiziType extends org.openspcoop2.utils.beans.BaseBean im
 
 
   @XmlElement(name="DettaglioLinee",required=true,nillable=false)
-  protected List<DettaglioLineeType> dettaglioLinee = new ArrayList<DettaglioLineeType>();
-
-  /**
-   * @deprecated Use method getDettaglioLineeList
-   * @return List&lt;DettaglioLineeType&gt;
-  */
-  @Deprecated
-  public List<DettaglioLineeType> getDettaglioLinee() {
-  	return this.dettaglioLinee;
-  }
-
-  /**
-   * @deprecated Use method setDettaglioLineeList
-   * @param dettaglioLinee List&lt;DettaglioLineeType&gt;
-  */
-  @Deprecated
-  public void setDettaglioLinee(List<DettaglioLineeType> dettaglioLinee) {
-  	this.dettaglioLinee=dettaglioLinee;
-  }
-
-  /**
-   * @deprecated Use method sizeDettaglioLineeList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeDettaglioLinee() {
-  	return this.dettaglioLinee.size();
-  }
+  private List<DettaglioLineeType> dettaglioLinee = new ArrayList<>();
 
   @XmlElement(name="DatiRiepilogo",required=true,nillable=false)
-  protected List<DatiRiepilogoType> datiRiepilogo = new ArrayList<DatiRiepilogoType>();
-
-  /**
-   * @deprecated Use method getDatiRiepilogoList
-   * @return List&lt;DatiRiepilogoType&gt;
-  */
-  @Deprecated
-  public List<DatiRiepilogoType> getDatiRiepilogo() {
-  	return this.datiRiepilogo;
-  }
-
-  /**
-   * @deprecated Use method setDatiRiepilogoList
-   * @param datiRiepilogo List&lt;DatiRiepilogoType&gt;
-  */
-  @Deprecated
-  public void setDatiRiepilogo(List<DatiRiepilogoType> datiRiepilogo) {
-  	this.datiRiepilogo=datiRiepilogo;
-  }
-
-  /**
-   * @deprecated Use method sizeDatiRiepilogoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeDatiRiepilogo() {
-  	return this.datiRiepilogo.size();
-  }
+  private List<DatiRiepilogoType> datiRiepilogo = new ArrayList<>();
 
 }

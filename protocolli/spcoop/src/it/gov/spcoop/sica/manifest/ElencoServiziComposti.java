@@ -91,33 +91,6 @@ public class ElencoServiziComposti extends org.openspcoop2.utils.beans.BaseBean 
 
   @javax.xml.bind.annotation.XmlSchemaType(name="anyURI")
   @XmlElement(name="servizioComposto",required=true,nillable=false)
-  protected List<java.net.URI> servizioComposto = new ArrayList<java.net.URI>();
-
-  /**
-   * @deprecated Use method getServizioCompostoList
-   * @return List&lt;java.net.URI&gt;
-  */
-  @Deprecated
-  public List<java.net.URI> getServizioComposto() {
-  	return this.servizioComposto;
-  }
-
-  /**
-   * @deprecated Use method setServizioCompostoList
-   * @param servizioComposto List&lt;java.net.URI&gt;
-  */
-  @Deprecated
-  public void setServizioComposto(List<java.net.URI> servizioComposto) {
-  	this.servizioComposto=servizioComposto;
-  }
-
-  /**
-   * @deprecated Use method sizeServizioCompostoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeServizioComposto() {
-  	return this.servizioComposto.size();
-  }
+  private List<java.net.URI> servizioComposto = new ArrayList<>();
 
 }

@@ -129,11 +129,11 @@ public class Context extends org.openspcoop2.utils.beans.BaseBean implements Ser
     this.name = name;
   }
 
-  public void set_value_emptyFunction(String value) {
+  public void setEmptyFunctionRawEnumValue(String value) {
     this.emptyFunction = (FunctionType) FunctionType.toEnumConstantFromString(value);
   }
 
-  public String get_value_emptyFunction() {
+  public String getEmptyFunctionRawEnumValue() {
     if(this.emptyFunction == null){
     	return null;
     }else{
@@ -149,11 +149,11 @@ public class Context extends org.openspcoop2.utils.beans.BaseBean implements Ser
     this.emptyFunction = emptyFunction;
   }
 
-  public void set_value_binding(String value) {
+  public void setBindingRawEnumValue(String value) {
     this.binding = (ServiceBinding) ServiceBinding.toEnumConstantFromString(value);
   }
 
-  public String get_value_binding() {
+  public String getBindingRawEnumValue() {
     if(this.binding == null){
     	return null;
     }else{
@@ -174,34 +174,7 @@ public class Context extends org.openspcoop2.utils.beans.BaseBean implements Ser
 
 
   @XmlElement(name="subContext",required=true,nillable=false)
-  protected List<SubContextMapping> subContext = new ArrayList<SubContextMapping>();
-
-  /**
-   * @deprecated Use method getSubContextList
-   * @return List&lt;SubContextMapping&gt;
-  */
-  @Deprecated
-  public List<SubContextMapping> getSubContext() {
-  	return this.subContext;
-  }
-
-  /**
-   * @deprecated Use method setSubContextList
-   * @param subContext List&lt;SubContextMapping&gt;
-  */
-  @Deprecated
-  public void setSubContext(List<SubContextMapping> subContext) {
-  	this.subContext=subContext;
-  }
-
-  /**
-   * @deprecated Use method sizeSubContextList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeSubContext() {
-  	return this.subContext.size();
-  }
+  private List<SubContextMapping> subContext = new ArrayList<>();
 
   @XmlElement(name="emptySubContext",required=false,nillable=false)
   protected EmptySubContextMapping emptySubContext;
@@ -217,13 +190,13 @@ public class Context extends org.openspcoop2.utils.beans.BaseBean implements Ser
   protected java.lang.String name;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_emptyFunction;
+  protected java.lang.String emptyFunctionRawEnumValue;
 
   @XmlAttribute(name="emptyFunction",required=false)
   protected FunctionType emptyFunction;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_binding;
+  protected java.lang.String bindingRawEnumValue;
 
   @XmlAttribute(name="binding",required=false)
   protected ServiceBinding binding;

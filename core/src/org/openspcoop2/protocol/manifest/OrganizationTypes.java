@@ -90,33 +90,6 @@ public class OrganizationTypes extends org.openspcoop2.utils.beans.BaseBean impl
 
 
   @XmlElement(name="type",required=true,nillable=false)
-  protected List<OrganizationType> type = new ArrayList<OrganizationType>();
-
-  /**
-   * @deprecated Use method getTypeList
-   * @return List&lt;OrganizationType&gt;
-  */
-  @Deprecated
-  public List<OrganizationType> getType() {
-  	return this.type;
-  }
-
-  /**
-   * @deprecated Use method setTypeList
-   * @param type List&lt;OrganizationType&gt;
-  */
-  @Deprecated
-  public void setType(List<OrganizationType> type) {
-  	this.type=type;
-  }
-
-  /**
-   * @deprecated Use method sizeTypeList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeType() {
-  	return this.type.size();
-  }
+  private List<OrganizationType> type = new ArrayList<>();
 
 }

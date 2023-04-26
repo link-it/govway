@@ -116,63 +116,9 @@ public class PayloadProfiles extends org.openspcoop2.utils.beans.BaseBean implem
 
 
   @XmlElement(name="payload",required=true,nillable=false)
-  protected List<Payload> payload = new ArrayList<Payload>();
-
-  /**
-   * @deprecated Use method getPayloadList
-   * @return List&lt;Payload&gt;
-  */
-  @Deprecated
-  public List<Payload> getPayload() {
-  	return this.payload;
-  }
-
-  /**
-   * @deprecated Use method setPayloadList
-   * @param payload List&lt;Payload&gt;
-  */
-  @Deprecated
-  public void setPayload(List<Payload> payload) {
-  	this.payload=payload;
-  }
-
-  /**
-   * @deprecated Use method sizePayloadList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizePayload() {
-  	return this.payload.size();
-  }
+  private List<Payload> payload = new ArrayList<>();
 
   @XmlElement(name="payloadProfile",required=true,nillable=false)
-  protected List<PayloadProfile> payloadProfile = new ArrayList<PayloadProfile>();
-
-  /**
-   * @deprecated Use method getPayloadProfileList
-   * @return List&lt;PayloadProfile&gt;
-  */
-  @Deprecated
-  public List<PayloadProfile> getPayloadProfile() {
-  	return this.payloadProfile;
-  }
-
-  /**
-   * @deprecated Use method setPayloadProfileList
-   * @param payloadProfile List&lt;PayloadProfile&gt;
-  */
-  @Deprecated
-  public void setPayloadProfile(List<PayloadProfile> payloadProfile) {
-  	this.payloadProfile=payloadProfile;
-  }
-
-  /**
-   * @deprecated Use method sizePayloadProfileList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizePayloadProfile() {
-  	return this.payloadProfile.size();
-  }
+  private List<PayloadProfile> payloadProfile = new ArrayList<>();
 
 }

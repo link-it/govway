@@ -90,33 +90,6 @@ public class Mpcs extends org.openspcoop2.utils.beans.BaseBean implements Serial
 
 
   @XmlElement(name="mpc",required=true,nillable=false)
-  protected List<Mpc> mpc = new ArrayList<Mpc>();
-
-  /**
-   * @deprecated Use method getMpcList
-   * @return List&lt;Mpc&gt;
-  */
-  @Deprecated
-  public List<Mpc> getMpc() {
-  	return this.mpc;
-  }
-
-  /**
-   * @deprecated Use method setMpcList
-   * @param mpc List&lt;Mpc&gt;
-  */
-  @Deprecated
-  public void setMpc(List<Mpc> mpc) {
-  	this.mpc=mpc;
-  }
-
-  /**
-   * @deprecated Use method sizeMpcList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeMpc() {
-  	return this.mpc.size();
-  }
+  private List<Mpc> mpc = new ArrayList<>();
 
 }

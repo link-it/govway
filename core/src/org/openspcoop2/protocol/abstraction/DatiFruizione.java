@@ -70,11 +70,11 @@ public class DatiFruizione extends org.openspcoop2.utils.beans.BaseBean implemen
     this.endpoint = endpoint;
   }
 
-  public void set_value_clientAuth(String value) {
+  public void setClientAuthRawEnumValue(String value) {
     this.clientAuth = (Stato) Stato.toEnumConstantFromString(value);
   }
 
-  public String get_value_clientAuth() {
+  public String getClientAuthRawEnumValue() {
     if(this.clientAuth == null){
     	return null;
     }else{
@@ -99,7 +99,7 @@ public class DatiFruizione extends org.openspcoop2.utils.beans.BaseBean implemen
   protected java.lang.String endpoint;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_clientAuth;
+  protected java.lang.String clientAuthRawEnumValue;
 
   @XmlElement(name="client-auth",required=false,nillable=false)
   protected Stato clientAuth;

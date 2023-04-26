@@ -109,34 +109,7 @@ public class PayloadProfile extends org.openspcoop2.utils.beans.BaseBean impleme
 
 
   @XmlElement(name="attachment",required=true,nillable=false)
-  protected List<Attachment> attachment = new ArrayList<Attachment>();
-
-  /**
-   * @deprecated Use method getAttachmentList
-   * @return List&lt;Attachment&gt;
-  */
-  @Deprecated
-  public List<Attachment> getAttachment() {
-  	return this.attachment;
-  }
-
-  /**
-   * @deprecated Use method setAttachmentList
-   * @param attachment List&lt;Attachment&gt;
-  */
-  @Deprecated
-  public void setAttachment(List<Attachment> attachment) {
-  	this.attachment=attachment;
-  }
-
-  /**
-   * @deprecated Use method sizeAttachmentList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeAttachment() {
-  	return this.attachment.size();
-  }
+  private List<Attachment> attachment = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="name",required=true)

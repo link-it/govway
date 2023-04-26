@@ -89,11 +89,11 @@ public class IntegrationConfigurationResourceIdentificationModes extends org.ope
     return this.mode.size();
   }
 
-  public void set_value__default(String value) {
+  public void setDefaultRawEnumValue(String value) {
     this._default = (ResourceIdentificationType) ResourceIdentificationType.toEnumConstantFromString(value);
   }
 
-  public String get_value__default() {
+  public String getDefaultRawEnumValue() {
     if(this._default == null){
     	return null;
     }else{
@@ -126,37 +126,10 @@ public class IntegrationConfigurationResourceIdentificationModes extends org.ope
 
 
   @XmlElement(name="mode",required=true,nillable=false)
-  protected List<IntegrationConfigurationResourceIdentificationMode> mode = new ArrayList<IntegrationConfigurationResourceIdentificationMode>();
-
-  /**
-   * @deprecated Use method getModeList
-   * @return List&lt;IntegrationConfigurationResourceIdentificationMode&gt;
-  */
-  @Deprecated
-  public List<IntegrationConfigurationResourceIdentificationMode> getMode() {
-  	return this.mode;
-  }
-
-  /**
-   * @deprecated Use method setModeList
-   * @param mode List&lt;IntegrationConfigurationResourceIdentificationMode&gt;
-  */
-  @Deprecated
-  public void setMode(List<IntegrationConfigurationResourceIdentificationMode> mode) {
-  	this.mode=mode;
-  }
-
-  /**
-   * @deprecated Use method sizeModeList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeMode() {
-  	return this.mode.size();
-  }
+  private List<IntegrationConfigurationResourceIdentificationMode> mode = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value__default;
+  protected java.lang.String _defaultRawEnumValue;
 
   @XmlAttribute(name="default",required=false)
   protected ResourceIdentificationType _default;

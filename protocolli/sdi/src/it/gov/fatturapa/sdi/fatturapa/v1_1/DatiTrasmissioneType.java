@@ -84,11 +84,11 @@ public class DatiTrasmissioneType extends org.openspcoop2.utils.beans.BaseBean i
     this.progressivoInvio = progressivoInvio;
   }
 
-  public void set_value_formatoTrasmissione(String value) {
+  public void setFormatoTrasmissioneRawEnumValue(String value) {
     this.formatoTrasmissione = (FormatoTrasmissioneType) FormatoTrasmissioneType.toEnumConstantFromString(value);
   }
 
-  public String get_value_formatoTrasmissione() {
+  public String getFormatoTrasmissioneRawEnumValue() {
     if(this.formatoTrasmissione == null){
     	return null;
     }else{
@@ -133,7 +133,7 @@ public class DatiTrasmissioneType extends org.openspcoop2.utils.beans.BaseBean i
   protected java.lang.String progressivoInvio;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_formatoTrasmissione;
+  protected java.lang.String formatoTrasmissioneRawEnumValue;
 
   @XmlElement(name="FormatoTrasmissione",required=true,nillable=false)
   protected FormatoTrasmissioneType formatoTrasmissione;

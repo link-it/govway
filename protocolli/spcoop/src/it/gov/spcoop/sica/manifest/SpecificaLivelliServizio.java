@@ -90,33 +90,6 @@ public class SpecificaLivelliServizio extends org.openspcoop2.utils.beans.BaseBe
 
 
   @XmlElement(name="documentoLivelloServizio",required=true,nillable=false)
-  protected List<DocumentoLivelloServizio> documentoLivelloServizio = new ArrayList<DocumentoLivelloServizio>();
-
-  /**
-   * @deprecated Use method getDocumentoLivelloServizioList
-   * @return List&lt;DocumentoLivelloServizio&gt;
-  */
-  @Deprecated
-  public List<DocumentoLivelloServizio> getDocumentoLivelloServizio() {
-  	return this.documentoLivelloServizio;
-  }
-
-  /**
-   * @deprecated Use method setDocumentoLivelloServizioList
-   * @param documentoLivelloServizio List&lt;DocumentoLivelloServizio&gt;
-  */
-  @Deprecated
-  public void setDocumentoLivelloServizio(List<DocumentoLivelloServizio> documentoLivelloServizio) {
-  	this.documentoLivelloServizio=documentoLivelloServizio;
-  }
-
-  /**
-   * @deprecated Use method sizeDocumentoLivelloServizioList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeDocumentoLivelloServizio() {
-  	return this.documentoLivelloServizio.size();
-  }
+  private List<DocumentoLivelloServizio> documentoLivelloServizio = new ArrayList<>();
 
 }

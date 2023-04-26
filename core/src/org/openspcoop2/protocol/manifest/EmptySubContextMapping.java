@@ -56,11 +56,11 @@ public class EmptySubContextMapping extends org.openspcoop2.utils.beans.BaseBean
     super();
   }
 
-  public void set_value_function(String value) {
+  public void setFunctionRawEnumValue(String value) {
     this.function = (FunctionType) FunctionType.toEnumConstantFromString(value);
   }
 
-  public String get_value_function() {
+  public String getFunctionRawEnumValue() {
     if(this.function == null){
     	return null;
     }else{
@@ -76,11 +76,11 @@ public class EmptySubContextMapping extends org.openspcoop2.utils.beans.BaseBean
     this.function = function;
   }
 
-  public void set_value_messageType(String value) {
+  public void setMessageTypeRawEnumValue(String value) {
     this.messageType = (MessageType) MessageType.toEnumConstantFromString(value);
   }
 
-  public String get_value_messageType() {
+  public String getMessageTypeRawEnumValue() {
     if(this.messageType == null){
     	return null;
     }else{
@@ -101,13 +101,13 @@ public class EmptySubContextMapping extends org.openspcoop2.utils.beans.BaseBean
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_function;
+  protected java.lang.String functionRawEnumValue;
 
   @XmlAttribute(name="function",required=false)
   protected FunctionType function;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_messageType;
+  protected java.lang.String messageTypeRawEnumValue;
 
   @XmlAttribute(name="messageType",required=true)
   protected MessageType messageType;

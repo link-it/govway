@@ -289,214 +289,25 @@ public class DatiGeneraliType extends org.openspcoop2.utils.beans.BaseBean imple
   protected DatiGeneraliDocumentoType datiGeneraliDocumento;
 
   @XmlElement(name="DatiOrdineAcquisto",required=true,nillable=false)
-  protected List<DatiDocumentiCorrelatiType> datiOrdineAcquisto = new ArrayList<DatiDocumentiCorrelatiType>();
-
-  /**
-   * @deprecated Use method getDatiOrdineAcquistoList
-   * @return List&lt;DatiDocumentiCorrelatiType&gt;
-  */
-  @Deprecated
-  public List<DatiDocumentiCorrelatiType> getDatiOrdineAcquisto() {
-  	return this.datiOrdineAcquisto;
-  }
-
-  /**
-   * @deprecated Use method setDatiOrdineAcquistoList
-   * @param datiOrdineAcquisto List&lt;DatiDocumentiCorrelatiType&gt;
-  */
-  @Deprecated
-  public void setDatiOrdineAcquisto(List<DatiDocumentiCorrelatiType> datiOrdineAcquisto) {
-  	this.datiOrdineAcquisto=datiOrdineAcquisto;
-  }
-
-  /**
-   * @deprecated Use method sizeDatiOrdineAcquistoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeDatiOrdineAcquisto() {
-  	return this.datiOrdineAcquisto.size();
-  }
+  private List<DatiDocumentiCorrelatiType> datiOrdineAcquisto = new ArrayList<>();
 
   @XmlElement(name="DatiContratto",required=true,nillable=false)
-  protected List<DatiDocumentiCorrelatiType> datiContratto = new ArrayList<DatiDocumentiCorrelatiType>();
-
-  /**
-   * @deprecated Use method getDatiContrattoList
-   * @return List&lt;DatiDocumentiCorrelatiType&gt;
-  */
-  @Deprecated
-  public List<DatiDocumentiCorrelatiType> getDatiContratto() {
-  	return this.datiContratto;
-  }
-
-  /**
-   * @deprecated Use method setDatiContrattoList
-   * @param datiContratto List&lt;DatiDocumentiCorrelatiType&gt;
-  */
-  @Deprecated
-  public void setDatiContratto(List<DatiDocumentiCorrelatiType> datiContratto) {
-  	this.datiContratto=datiContratto;
-  }
-
-  /**
-   * @deprecated Use method sizeDatiContrattoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeDatiContratto() {
-  	return this.datiContratto.size();
-  }
+  private List<DatiDocumentiCorrelatiType> datiContratto = new ArrayList<>();
 
   @XmlElement(name="DatiConvenzione",required=true,nillable=false)
-  protected List<DatiDocumentiCorrelatiType> datiConvenzione = new ArrayList<DatiDocumentiCorrelatiType>();
-
-  /**
-   * @deprecated Use method getDatiConvenzioneList
-   * @return List&lt;DatiDocumentiCorrelatiType&gt;
-  */
-  @Deprecated
-  public List<DatiDocumentiCorrelatiType> getDatiConvenzione() {
-  	return this.datiConvenzione;
-  }
-
-  /**
-   * @deprecated Use method setDatiConvenzioneList
-   * @param datiConvenzione List&lt;DatiDocumentiCorrelatiType&gt;
-  */
-  @Deprecated
-  public void setDatiConvenzione(List<DatiDocumentiCorrelatiType> datiConvenzione) {
-  	this.datiConvenzione=datiConvenzione;
-  }
-
-  /**
-   * @deprecated Use method sizeDatiConvenzioneList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeDatiConvenzione() {
-  	return this.datiConvenzione.size();
-  }
+  private List<DatiDocumentiCorrelatiType> datiConvenzione = new ArrayList<>();
 
   @XmlElement(name="DatiRicezione",required=true,nillable=false)
-  protected List<DatiDocumentiCorrelatiType> datiRicezione = new ArrayList<DatiDocumentiCorrelatiType>();
-
-  /**
-   * @deprecated Use method getDatiRicezioneList
-   * @return List&lt;DatiDocumentiCorrelatiType&gt;
-  */
-  @Deprecated
-  public List<DatiDocumentiCorrelatiType> getDatiRicezione() {
-  	return this.datiRicezione;
-  }
-
-  /**
-   * @deprecated Use method setDatiRicezioneList
-   * @param datiRicezione List&lt;DatiDocumentiCorrelatiType&gt;
-  */
-  @Deprecated
-  public void setDatiRicezione(List<DatiDocumentiCorrelatiType> datiRicezione) {
-  	this.datiRicezione=datiRicezione;
-  }
-
-  /**
-   * @deprecated Use method sizeDatiRicezioneList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeDatiRicezione() {
-  	return this.datiRicezione.size();
-  }
+  private List<DatiDocumentiCorrelatiType> datiRicezione = new ArrayList<>();
 
   @XmlElement(name="DatiFattureCollegate",required=true,nillable=false)
-  protected List<DatiDocumentiCorrelatiType> datiFattureCollegate = new ArrayList<DatiDocumentiCorrelatiType>();
-
-  /**
-   * @deprecated Use method getDatiFattureCollegateList
-   * @return List&lt;DatiDocumentiCorrelatiType&gt;
-  */
-  @Deprecated
-  public List<DatiDocumentiCorrelatiType> getDatiFattureCollegate() {
-  	return this.datiFattureCollegate;
-  }
-
-  /**
-   * @deprecated Use method setDatiFattureCollegateList
-   * @param datiFattureCollegate List&lt;DatiDocumentiCorrelatiType&gt;
-  */
-  @Deprecated
-  public void setDatiFattureCollegate(List<DatiDocumentiCorrelatiType> datiFattureCollegate) {
-  	this.datiFattureCollegate=datiFattureCollegate;
-  }
-
-  /**
-   * @deprecated Use method sizeDatiFattureCollegateList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeDatiFattureCollegate() {
-  	return this.datiFattureCollegate.size();
-  }
+  private List<DatiDocumentiCorrelatiType> datiFattureCollegate = new ArrayList<>();
 
   @XmlElement(name="DatiSAL",required=true,nillable=false)
-  protected List<DatiSALType> datiSAL = new ArrayList<DatiSALType>();
-
-  /**
-   * @deprecated Use method getDatiSALList
-   * @return List&lt;DatiSALType&gt;
-  */
-  @Deprecated
-  public List<DatiSALType> getDatiSAL() {
-  	return this.datiSAL;
-  }
-
-  /**
-   * @deprecated Use method setDatiSALList
-   * @param datiSAL List&lt;DatiSALType&gt;
-  */
-  @Deprecated
-  public void setDatiSAL(List<DatiSALType> datiSAL) {
-  	this.datiSAL=datiSAL;
-  }
-
-  /**
-   * @deprecated Use method sizeDatiSALList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeDatiSAL() {
-  	return this.datiSAL.size();
-  }
+  private List<DatiSALType> datiSAL = new ArrayList<>();
 
   @XmlElement(name="DatiDDT",required=true,nillable=false)
-  protected List<DatiDDTType> datiDDT = new ArrayList<DatiDDTType>();
-
-  /**
-   * @deprecated Use method getDatiDDTList
-   * @return List&lt;DatiDDTType&gt;
-  */
-  @Deprecated
-  public List<DatiDDTType> getDatiDDT() {
-  	return this.datiDDT;
-  }
-
-  /**
-   * @deprecated Use method setDatiDDTList
-   * @param datiDDT List&lt;DatiDDTType&gt;
-  */
-  @Deprecated
-  public void setDatiDDT(List<DatiDDTType> datiDDT) {
-  	this.datiDDT=datiDDT;
-  }
-
-  /**
-   * @deprecated Use method sizeDatiDDTList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeDatiDDT() {
-  	return this.datiDDT.size();
-  }
+  private List<DatiDDTType> datiDDT = new ArrayList<>();
 
   @XmlElement(name="DatiTrasporto",required=false,nillable=false)
   protected DatiTrasportoType datiTrasporto;

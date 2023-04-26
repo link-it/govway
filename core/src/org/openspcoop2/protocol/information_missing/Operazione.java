@@ -324,303 +324,33 @@ public class Operazione extends org.openspcoop2.utils.beans.BaseBean implements 
 
 
   @XmlElement(name="soggetto",required=true,nillable=false)
-  protected List<Soggetto> soggetto = new ArrayList<Soggetto>();
-
-  /**
-   * @deprecated Use method getSoggettoList
-   * @return List&lt;Soggetto&gt;
-  */
-  @Deprecated
-  public List<Soggetto> getSoggetto() {
-  	return this.soggetto;
-  }
-
-  /**
-   * @deprecated Use method setSoggettoList
-   * @param soggetto List&lt;Soggetto&gt;
-  */
-  @Deprecated
-  public void setSoggetto(List<Soggetto> soggetto) {
-  	this.soggetto=soggetto;
-  }
-
-  /**
-   * @deprecated Use method sizeSoggettoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeSoggetto() {
-  	return this.soggetto.size();
-  }
+  private List<Soggetto> soggetto = new ArrayList<>();
 
   @XmlElement(name="input",required=true,nillable=false)
-  protected List<Input> input = new ArrayList<Input>();
-
-  /**
-   * @deprecated Use method getInputList
-   * @return List&lt;Input&gt;
-  */
-  @Deprecated
-  public List<Input> getInput() {
-  	return this.input;
-  }
-
-  /**
-   * @deprecated Use method setInputList
-   * @param input List&lt;Input&gt;
-  */
-  @Deprecated
-  public void setInput(List<Input> input) {
-  	this.input=input;
-  }
-
-  /**
-   * @deprecated Use method sizeInputList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeInput() {
-  	return this.input.size();
-  }
+  private List<Input> input = new ArrayList<>();
 
   @XmlElement(name="servizio-applicativo",required=true,nillable=false)
-  protected List<ServizioApplicativo> servizioApplicativo = new ArrayList<ServizioApplicativo>();
-
-  /**
-   * @deprecated Use method getServizioApplicativoList
-   * @return List&lt;ServizioApplicativo&gt;
-  */
-  @Deprecated
-  public List<ServizioApplicativo> getServizioApplicativo() {
-  	return this.servizioApplicativo;
-  }
-
-  /**
-   * @deprecated Use method setServizioApplicativoList
-   * @param servizioApplicativo List&lt;ServizioApplicativo&gt;
-  */
-  @Deprecated
-  public void setServizioApplicativo(List<ServizioApplicativo> servizioApplicativo) {
-  	this.servizioApplicativo=servizioApplicativo;
-  }
-
-  /**
-   * @deprecated Use method sizeServizioApplicativoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeServizioApplicativo() {
-  	return this.servizioApplicativo.size();
-  }
+  private List<ServizioApplicativo> servizioApplicativo = new ArrayList<>();
 
   @XmlElement(name="accordo-cooperazione",required=true,nillable=false)
-  protected List<AccordoCooperazione> accordoCooperazione = new ArrayList<AccordoCooperazione>();
-
-  /**
-   * @deprecated Use method getAccordoCooperazioneList
-   * @return List&lt;AccordoCooperazione&gt;
-  */
-  @Deprecated
-  public List<AccordoCooperazione> getAccordoCooperazione() {
-  	return this.accordoCooperazione;
-  }
-
-  /**
-   * @deprecated Use method setAccordoCooperazioneList
-   * @param accordoCooperazione List&lt;AccordoCooperazione&gt;
-  */
-  @Deprecated
-  public void setAccordoCooperazione(List<AccordoCooperazione> accordoCooperazione) {
-  	this.accordoCooperazione=accordoCooperazione;
-  }
-
-  /**
-   * @deprecated Use method sizeAccordoCooperazioneList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeAccordoCooperazione() {
-  	return this.accordoCooperazione.size();
-  }
+  private List<AccordoCooperazione> accordoCooperazione = new ArrayList<>();
 
   @XmlElement(name="accordo-servizio-parte-comune",required=true,nillable=false)
-  protected List<AccordoServizioParteComune> accordoServizioParteComune = new ArrayList<AccordoServizioParteComune>();
-
-  /**
-   * @deprecated Use method getAccordoServizioParteComuneList
-   * @return List&lt;AccordoServizioParteComune&gt;
-  */
-  @Deprecated
-  public List<AccordoServizioParteComune> getAccordoServizioParteComune() {
-  	return this.accordoServizioParteComune;
-  }
-
-  /**
-   * @deprecated Use method setAccordoServizioParteComuneList
-   * @param accordoServizioParteComune List&lt;AccordoServizioParteComune&gt;
-  */
-  @Deprecated
-  public void setAccordoServizioParteComune(List<AccordoServizioParteComune> accordoServizioParteComune) {
-  	this.accordoServizioParteComune=accordoServizioParteComune;
-  }
-
-  /**
-   * @deprecated Use method sizeAccordoServizioParteComuneList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeAccordoServizioParteComune() {
-  	return this.accordoServizioParteComune.size();
-  }
+  private List<AccordoServizioParteComune> accordoServizioParteComune = new ArrayList<>();
 
   @XmlElement(name="accordo-servizio-parte-specifica",required=true,nillable=false)
-  protected List<AccordoServizioParteSpecifica> accordoServizioParteSpecifica = new ArrayList<AccordoServizioParteSpecifica>();
-
-  /**
-   * @deprecated Use method getAccordoServizioParteSpecificaList
-   * @return List&lt;AccordoServizioParteSpecifica&gt;
-  */
-  @Deprecated
-  public List<AccordoServizioParteSpecifica> getAccordoServizioParteSpecifica() {
-  	return this.accordoServizioParteSpecifica;
-  }
-
-  /**
-   * @deprecated Use method setAccordoServizioParteSpecificaList
-   * @param accordoServizioParteSpecifica List&lt;AccordoServizioParteSpecifica&gt;
-  */
-  @Deprecated
-  public void setAccordoServizioParteSpecifica(List<AccordoServizioParteSpecifica> accordoServizioParteSpecifica) {
-  	this.accordoServizioParteSpecifica=accordoServizioParteSpecifica;
-  }
-
-  /**
-   * @deprecated Use method sizeAccordoServizioParteSpecificaList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeAccordoServizioParteSpecifica() {
-  	return this.accordoServizioParteSpecifica.size();
-  }
+  private List<AccordoServizioParteSpecifica> accordoServizioParteSpecifica = new ArrayList<>();
 
   @XmlElement(name="accordo-servizio-composto",required=true,nillable=false)
-  protected List<AccordoServizioParteComune> accordoServizioComposto = new ArrayList<AccordoServizioParteComune>();
-
-  /**
-   * @deprecated Use method getAccordoServizioCompostoList
-   * @return List&lt;AccordoServizioParteComune&gt;
-  */
-  @Deprecated
-  public List<AccordoServizioParteComune> getAccordoServizioComposto() {
-  	return this.accordoServizioComposto;
-  }
-
-  /**
-   * @deprecated Use method setAccordoServizioCompostoList
-   * @param accordoServizioComposto List&lt;AccordoServizioParteComune&gt;
-  */
-  @Deprecated
-  public void setAccordoServizioComposto(List<AccordoServizioParteComune> accordoServizioComposto) {
-  	this.accordoServizioComposto=accordoServizioComposto;
-  }
-
-  /**
-   * @deprecated Use method sizeAccordoServizioCompostoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeAccordoServizioComposto() {
-  	return this.accordoServizioComposto.size();
-  }
+  private List<AccordoServizioParteComune> accordoServizioComposto = new ArrayList<>();
 
   @XmlElement(name="fruitore",required=true,nillable=false)
-  protected List<Fruitore> fruitore = new ArrayList<Fruitore>();
-
-  /**
-   * @deprecated Use method getFruitoreList
-   * @return List&lt;Fruitore&gt;
-  */
-  @Deprecated
-  public List<Fruitore> getFruitore() {
-  	return this.fruitore;
-  }
-
-  /**
-   * @deprecated Use method setFruitoreList
-   * @param fruitore List&lt;Fruitore&gt;
-  */
-  @Deprecated
-  public void setFruitore(List<Fruitore> fruitore) {
-  	this.fruitore=fruitore;
-  }
-
-  /**
-   * @deprecated Use method sizeFruitoreList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeFruitore() {
-  	return this.fruitore.size();
-  }
+  private List<Fruitore> fruitore = new ArrayList<>();
 
   @XmlElement(name="porta-delegata",required=true,nillable=false)
-  protected List<PortaDelegata> portaDelegata = new ArrayList<PortaDelegata>();
-
-  /**
-   * @deprecated Use method getPortaDelegataList
-   * @return List&lt;PortaDelegata&gt;
-  */
-  @Deprecated
-  public List<PortaDelegata> getPortaDelegata() {
-  	return this.portaDelegata;
-  }
-
-  /**
-   * @deprecated Use method setPortaDelegataList
-   * @param portaDelegata List&lt;PortaDelegata&gt;
-  */
-  @Deprecated
-  public void setPortaDelegata(List<PortaDelegata> portaDelegata) {
-  	this.portaDelegata=portaDelegata;
-  }
-
-  /**
-   * @deprecated Use method sizePortaDelegataList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizePortaDelegata() {
-  	return this.portaDelegata.size();
-  }
+  private List<PortaDelegata> portaDelegata = new ArrayList<>();
 
   @XmlElement(name="porta-applicativa",required=true,nillable=false)
-  protected List<PortaApplicativa> portaApplicativa = new ArrayList<PortaApplicativa>();
-
-  /**
-   * @deprecated Use method getPortaApplicativaList
-   * @return List&lt;PortaApplicativa&gt;
-  */
-  @Deprecated
-  public List<PortaApplicativa> getPortaApplicativa() {
-  	return this.portaApplicativa;
-  }
-
-  /**
-   * @deprecated Use method setPortaApplicativaList
-   * @param portaApplicativa List&lt;PortaApplicativa&gt;
-  */
-  @Deprecated
-  public void setPortaApplicativa(List<PortaApplicativa> portaApplicativa) {
-  	this.portaApplicativa=portaApplicativa;
-  }
-
-  /**
-   * @deprecated Use method sizePortaApplicativaList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizePortaApplicativa() {
-  	return this.portaApplicativa.size();
-  }
+  private List<PortaApplicativa> portaApplicativa = new ArrayList<>();
 
 }

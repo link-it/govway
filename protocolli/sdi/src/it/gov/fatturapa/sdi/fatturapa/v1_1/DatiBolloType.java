@@ -62,11 +62,11 @@ public class DatiBolloType extends org.openspcoop2.utils.beans.BaseBean implemen
     super();
   }
 
-  public void set_value_bolloVirtuale(String value) {
+  public void setBolloVirtualeRawEnumValue(String value) {
     this.bolloVirtuale = (BolloVirtualeType) BolloVirtualeType.toEnumConstantFromString(value);
   }
 
-  public String get_value_bolloVirtuale() {
+  public String getBolloVirtualeRawEnumValue() {
     if(this.bolloVirtuale == null){
     	return null;
     }else{
@@ -101,7 +101,7 @@ public class DatiBolloType extends org.openspcoop2.utils.beans.BaseBean implemen
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_bolloVirtuale;
+  protected java.lang.String bolloVirtualeRawEnumValue;
 
   @XmlElement(name="BolloVirtuale",required=true,nillable=false)
   protected BolloVirtualeType bolloVirtuale;

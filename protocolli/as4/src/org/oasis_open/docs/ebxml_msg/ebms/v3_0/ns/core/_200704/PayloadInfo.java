@@ -90,33 +90,6 @@ public class PayloadInfo extends org.openspcoop2.utils.beans.BaseBean implements
 
 
   @XmlElement(name="PartInfo",required=true,nillable=false)
-  protected List<PartInfo> partInfo = new ArrayList<PartInfo>();
-
-  /**
-   * @deprecated Use method getPartInfoList
-   * @return List&lt;PartInfo&gt;
-  */
-  @Deprecated
-  public List<PartInfo> getPartInfo() {
-  	return this.partInfo;
-  }
-
-  /**
-   * @deprecated Use method setPartInfoList
-   * @param partInfo List&lt;PartInfo&gt;
-  */
-  @Deprecated
-  public void setPartInfo(List<PartInfo> partInfo) {
-  	this.partInfo=partInfo;
-  }
-
-  /**
-   * @deprecated Use method sizePartInfoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizePartInfo() {
-  	return this.partInfo.size();
-  }
+  private List<PartInfo> partInfo = new ArrayList<>();
 
 }

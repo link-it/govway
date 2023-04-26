@@ -116,63 +116,9 @@ public class As4 extends org.openspcoop2.utils.beans.BaseBean implements Seriali
 
 
   @XmlElement(name="receptionAwareness",required=true,nillable=false)
-  protected List<ReceptionAwareness> receptionAwareness = new ArrayList<ReceptionAwareness>();
-
-  /**
-   * @deprecated Use method getReceptionAwarenessList
-   * @return List&lt;ReceptionAwareness&gt;
-  */
-  @Deprecated
-  public List<ReceptionAwareness> getReceptionAwareness() {
-  	return this.receptionAwareness;
-  }
-
-  /**
-   * @deprecated Use method setReceptionAwarenessList
-   * @param receptionAwareness List&lt;ReceptionAwareness&gt;
-  */
-  @Deprecated
-  public void setReceptionAwareness(List<ReceptionAwareness> receptionAwareness) {
-  	this.receptionAwareness=receptionAwareness;
-  }
-
-  /**
-   * @deprecated Use method sizeReceptionAwarenessList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeReceptionAwareness() {
-  	return this.receptionAwareness.size();
-  }
+  private List<ReceptionAwareness> receptionAwareness = new ArrayList<>();
 
   @XmlElement(name="reliability",required=true,nillable=false)
-  protected List<Reliability> reliability = new ArrayList<Reliability>();
-
-  /**
-   * @deprecated Use method getReliabilityList
-   * @return List&lt;Reliability&gt;
-  */
-  @Deprecated
-  public List<Reliability> getReliability() {
-  	return this.reliability;
-  }
-
-  /**
-   * @deprecated Use method setReliabilityList
-   * @param reliability List&lt;Reliability&gt;
-  */
-  @Deprecated
-  public void setReliability(List<Reliability> reliability) {
-  	this.reliability=reliability;
-  }
-
-  /**
-   * @deprecated Use method sizeReliabilityList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeReliability() {
-  	return this.reliability.size();
-  }
+  private List<Reliability> reliability = new ArrayList<>();
 
 }

@@ -108,11 +108,11 @@ public class DettaglioPagamentoType extends org.openspcoop2.utils.beans.BaseBean
     this.beneficiario = beneficiario;
   }
 
-  public void set_value_modalitaPagamento(String value) {
+  public void setModalitaPagamentoRawEnumValue(String value) {
     this.modalitaPagamento = (ModalitaPagamentoType) ModalitaPagamentoType.toEnumConstantFromString(value);
   }
 
-  public String get_value_modalitaPagamento() {
+  public String getModalitaPagamentoRawEnumValue() {
     if(this.modalitaPagamento == null){
     	return null;
     }else{
@@ -308,7 +308,7 @@ public class DettaglioPagamentoType extends org.openspcoop2.utils.beans.BaseBean
   protected java.lang.String beneficiario;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_modalitaPagamento;
+  protected java.lang.String modalitaPagamentoRawEnumValue;
 
   @XmlElement(name="ModalitaPagamento",required=true,nillable=false)
   protected ModalitaPagamentoType modalitaPagamento;

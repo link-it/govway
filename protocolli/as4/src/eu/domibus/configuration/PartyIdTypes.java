@@ -90,33 +90,6 @@ public class PartyIdTypes extends org.openspcoop2.utils.beans.BaseBean implement
 
 
   @XmlElement(name="partyIdType",required=true,nillable=false)
-  protected List<PartyIdType> partyIdType = new ArrayList<PartyIdType>();
-
-  /**
-   * @deprecated Use method getPartyIdTypeList
-   * @return List&lt;PartyIdType&gt;
-  */
-  @Deprecated
-  public List<PartyIdType> getPartyIdType() {
-  	return this.partyIdType;
-  }
-
-  /**
-   * @deprecated Use method setPartyIdTypeList
-   * @param partyIdType List&lt;PartyIdType&gt;
-  */
-  @Deprecated
-  public void setPartyIdType(List<PartyIdType> partyIdType) {
-  	this.partyIdType=partyIdType;
-  }
-
-  /**
-   * @deprecated Use method sizePartyIdTypeList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizePartyIdType() {
-  	return this.partyIdType.size();
-  }
+  private List<PartyIdType> partyIdType = new ArrayList<>();
 
 }

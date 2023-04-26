@@ -64,11 +64,11 @@ public class IntegrationConfigurationElementName extends org.openspcoop2.utils.b
     this.prefix = prefix;
   }
 
-  public void set_value_actor(String value) {
+  public void setActorRawEnumValue(String value) {
     this.actor = (ActorType) ActorType.toEnumConstantFromString(value);
   }
 
-  public String get_value_actor() {
+  public String getActorRawEnumValue() {
     if(this.actor == null){
     	return null;
     }else{
@@ -101,7 +101,7 @@ public class IntegrationConfigurationElementName extends org.openspcoop2.utils.b
   protected java.lang.String prefix;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_actor;
+  protected java.lang.String actorRawEnumValue;
 
   @XmlAttribute(name="actor",required=false)
   protected ActorType actor;

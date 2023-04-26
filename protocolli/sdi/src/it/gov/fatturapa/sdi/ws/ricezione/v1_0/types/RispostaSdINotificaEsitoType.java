@@ -62,11 +62,11 @@ public class RispostaSdINotificaEsitoType extends org.openspcoop2.utils.beans.Ba
     super();
   }
 
-  public void set_value_esito(String value) {
+  public void setEsitoRawEnumValue(String value) {
     this.esito = (EsitoNotificaType) EsitoNotificaType.toEnumConstantFromString(value);
   }
 
-  public String get_value_esito() {
+  public String getEsitoRawEnumValue() {
     if(this.esito == null){
     	return null;
     }else{
@@ -107,7 +107,7 @@ public class RispostaSdINotificaEsitoType extends org.openspcoop2.utils.beans.Ba
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_esito;
+  protected java.lang.String esitoRawEnumValue;
 
   @XmlElement(name="Esito",required=true,nillable=false)
   protected EsitoNotificaType esito;

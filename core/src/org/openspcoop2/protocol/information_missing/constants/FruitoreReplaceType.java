@@ -74,21 +74,41 @@ public enum FruitoreReplaceType implements IEnumeration , Serializable , Cloneab
 	/** compatibility with the generated bean (reflection) */
 	public boolean equals(Object object,List<String> fieldsNotCheck){
 		if( !(object instanceof FruitoreReplaceType) ){
-			throw new RuntimeException("Wrong type: "+object.getClass().getName());
+			java.lang.StringBuilder sb = new java.lang.StringBuilder();
+			if(fieldsNotCheck!=null && !fieldsNotCheck.isEmpty()){
+				sb.append(" (fieldsNotCheck: ").append(fieldsNotCheck).append(")");
+			}
+			throw new org.openspcoop2.utils.UtilsRuntimeException("Wrong type"+sb.toString()+": "+object.getClass().getName());
 		}
-		return this.equals(((FruitoreReplaceType)object));
+		return this.equals(object);
+	}
+	private String toStringEngine(Object object,boolean reportHTML,List<String> fieldsNotIncluded, StringBuilder bf){
+		java.lang.StringBuilder sb = new java.lang.StringBuilder();
+		if(reportHTML){
+			sb.append(" (reportHTML)");
+		}
+		if(fieldsNotIncluded!=null && !fieldsNotIncluded.isEmpty()){
+			sb.append(" (fieldsNotIncluded: ").append(fieldsNotIncluded).append(")");
+		}
+		if(object!=null){
+			sb.append(" (object: ").append(object.getClass().getName()).append(")");
+		}
+		if(sb.length()>0) {
+			bf.append(sb.toString());
+		}
+		return sb.length()>0 ? this.toString()+sb.toString() : this.toString();
 	}
 	public String toString(boolean reportHTML){
-		return toString();
+		return toStringEngine(null, reportHTML, null, null);
 	}
   	public String toString(boolean reportHTML,List<String> fieldsNotIncluded){
-  		return toString();
+  		return toStringEngine(null, reportHTML, fieldsNotIncluded, null);
   	}
   	public String diff(Object object,StringBuilder bf,boolean reportHTML){
-		return bf.toString();
+  		return toStringEngine(object, reportHTML, null, bf);
 	}
 	public String diff(Object object,StringBuilder bf,boolean reportHTML,List<String> fieldsNotIncluded){
-		return bf.toString();
+		return toStringEngine(object, reportHTML, fieldsNotIncluded, bf);
 	}
 	
 	

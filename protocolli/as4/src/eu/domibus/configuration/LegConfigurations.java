@@ -90,33 +90,6 @@ public class LegConfigurations extends org.openspcoop2.utils.beans.BaseBean impl
 
 
   @XmlElement(name="legConfiguration",required=true,nillable=false)
-  protected List<LegConfiguration> legConfiguration = new ArrayList<LegConfiguration>();
-
-  /**
-   * @deprecated Use method getLegConfigurationList
-   * @return List&lt;LegConfiguration&gt;
-  */
-  @Deprecated
-  public List<LegConfiguration> getLegConfiguration() {
-  	return this.legConfiguration;
-  }
-
-  /**
-   * @deprecated Use method setLegConfigurationList
-   * @param legConfiguration List&lt;LegConfiguration&gt;
-  */
-  @Deprecated
-  public void setLegConfiguration(List<LegConfiguration> legConfiguration) {
-  	this.legConfiguration=legConfiguration;
-  }
-
-  /**
-   * @deprecated Use method sizeLegConfigurationList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeLegConfiguration() {
-  	return this.legConfiguration.size();
-  }
+  private List<LegConfiguration> legConfiguration = new ArrayList<>();
 
 }

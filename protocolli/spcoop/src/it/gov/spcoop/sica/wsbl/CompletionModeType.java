@@ -62,11 +62,11 @@ public class CompletionModeType extends org.openspcoop2.utils.beans.BaseBean imp
     super();
   }
 
-  public void set_value_mode(String value) {
+  public void setModeRawEnumValue(String value) {
     this.mode = (Mode) Mode.toEnumConstantFromString(value);
   }
 
-  public String get_value_mode() {
+  public String getModeRawEnumValue() {
     if(this.mode == null){
     	return null;
     }else{
@@ -95,7 +95,7 @@ public class CompletionModeType extends org.openspcoop2.utils.beans.BaseBean imp
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_mode;
+  protected java.lang.String modeRawEnumValue;
 
   @XmlElement(name="mode",required=true,nillable=false)
   protected Mode mode;

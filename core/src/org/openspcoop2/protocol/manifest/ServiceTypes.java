@@ -90,33 +90,6 @@ public class ServiceTypes extends org.openspcoop2.utils.beans.BaseBean implement
 
 
   @XmlElement(name="type",required=true,nillable=false)
-  protected List<ServiceType> type = new ArrayList<ServiceType>();
-
-  /**
-   * @deprecated Use method getTypeList
-   * @return List&lt;ServiceType&gt;
-  */
-  @Deprecated
-  public List<ServiceType> getType() {
-  	return this.type;
-  }
-
-  /**
-   * @deprecated Use method setTypeList
-   * @param type List&lt;ServiceType&gt;
-  */
-  @Deprecated
-  public void setType(List<ServiceType> type) {
-  	this.type=type;
-  }
-
-  /**
-   * @deprecated Use method sizeTypeList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeType() {
-  	return this.type.size();
-  }
+  private List<ServiceType> type = new ArrayList<>();
 
 }

@@ -89,11 +89,11 @@ public class DatiRiepilogoType extends org.openspcoop2.utils.beans.BaseBean impl
 	}
   }
 
-  public void set_value_natura(String value) {
+  public void setNaturaRawEnumValue(String value) {
     this.natura = (NaturaType) NaturaType.toEnumConstantFromString(value);
   }
 
-  public String get_value_natura() {
+  public String getNaturaRawEnumValue() {
     if(this.natura == null){
     	return null;
     }else{
@@ -165,11 +165,11 @@ public class DatiRiepilogoType extends org.openspcoop2.utils.beans.BaseBean impl
 	}
   }
 
-  public void set_value_esigibilitaIVA(String value) {
+  public void setEsigibilitaIVARawEnumValue(String value) {
     this.esigibilitaIVA = (EsigibilitaIVAType) EsigibilitaIVAType.toEnumConstantFromString(value);
   }
 
-  public String get_value_esigibilitaIVA() {
+  public String getEsigibilitaIVARawEnumValue() {
     if(this.esigibilitaIVA == null){
     	return null;
     }else{
@@ -206,7 +206,7 @@ public class DatiRiepilogoType extends org.openspcoop2.utils.beans.BaseBean impl
   protected java.math.BigDecimal aliquotaIVA;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_natura;
+  protected java.lang.String naturaRawEnumValue;
 
   @XmlElement(name="Natura",required=false,nillable=false)
   protected NaturaType natura;
@@ -244,7 +244,7 @@ public class DatiRiepilogoType extends org.openspcoop2.utils.beans.BaseBean impl
   protected java.math.BigDecimal imposta;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_esigibilitaIVA;
+  protected java.lang.String esigibilitaIVARawEnumValue;
 
   @XmlElement(name="EsigibilitaIVA",required=false,nillable=false)
   protected EsigibilitaIVAType esigibilitaIVA;

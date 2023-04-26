@@ -100,11 +100,11 @@ public class ServiceType extends org.openspcoop2.utils.beans.BaseBean implements
     this.protocol = protocol;
   }
 
-  public void set_value_messageType(String value) {
+  public void setMessageTypeRawEnumValue(String value) {
     this.messageType = (MessageType) MessageType.toEnumConstantFromString(value);
   }
 
-  public String get_value_messageType() {
+  public String getMessageTypeRawEnumValue() {
     if(this.messageType == null){
     	return null;
     }else{
@@ -120,11 +120,11 @@ public class ServiceType extends org.openspcoop2.utils.beans.BaseBean implements
     this.messageType = messageType;
   }
 
-  public void set_value_binding(String value) {
+  public void setBindingRawEnumValue(String value) {
     this.binding = (ServiceBinding) ServiceBinding.toEnumConstantFromString(value);
   }
 
-  public String get_value_binding() {
+  public String getBindingRawEnumValue() {
     if(this.binding == null){
     	return null;
     }else{
@@ -159,13 +159,13 @@ public class ServiceType extends org.openspcoop2.utils.beans.BaseBean implements
   protected java.lang.String protocol;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_messageType;
+  protected java.lang.String messageTypeRawEnumValue;
 
   @XmlAttribute(name="messageType",required=false)
   protected MessageType messageType;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_binding;
+  protected java.lang.String bindingRawEnumValue;
 
   @XmlAttribute(name="binding",required=false)
   protected ServiceBinding binding;

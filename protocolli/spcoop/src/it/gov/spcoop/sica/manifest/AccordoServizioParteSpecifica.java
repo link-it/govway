@@ -101,11 +101,11 @@ public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.B
     this.specificaLivelliServizio = specificaLivelliServizio;
   }
 
-  public void set_value_adesione(String value) {
+  public void setAdesioneRawEnumValue(String value) {
     this.adesione = (TipoAdesione) TipoAdesione.toEnumConstantFromString(value);
   }
 
-  public String get_value_adesione() {
+  public String getAdesioneRawEnumValue() {
     if(this.adesione == null){
     	return null;
     }else{
@@ -147,7 +147,7 @@ public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.B
   protected SpecificaLivelliServizio specificaLivelliServizio;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_adesione;
+  protected java.lang.String adesioneRawEnumValue;
 
   @XmlAttribute(name="adesione",required=true)
   protected TipoAdesione adesione;

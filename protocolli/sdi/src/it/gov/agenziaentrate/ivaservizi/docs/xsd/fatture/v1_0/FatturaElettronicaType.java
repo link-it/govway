@@ -99,11 +99,11 @@ public class FatturaElettronicaType extends org.openspcoop2.utils.beans.BaseBean
     return this.fatturaElettronicaBody.size();
   }
 
-  public void set_value_versione(String value) {
+  public void setVersioneRawEnumValue(String value) {
     this.versione = (FormatoTrasmissioneType) FormatoTrasmissioneType.toEnumConstantFromString(value);
   }
 
-  public String get_value_versione() {
+  public String getVersioneRawEnumValue() {
     if(this.versione == null){
     	return null;
     }else{
@@ -147,37 +147,10 @@ public class FatturaElettronicaType extends org.openspcoop2.utils.beans.BaseBean
   protected FatturaElettronicaHeaderType fatturaElettronicaHeader;
 
   @XmlElement(name="FatturaElettronicaBody",required=true,nillable=false)
-  protected List<FatturaElettronicaBodyType> fatturaElettronicaBody = new ArrayList<FatturaElettronicaBodyType>();
-
-  /**
-   * @deprecated Use method getFatturaElettronicaBodyList
-   * @return List&lt;FatturaElettronicaBodyType&gt;
-  */
-  @Deprecated
-  public List<FatturaElettronicaBodyType> getFatturaElettronicaBody() {
-  	return this.fatturaElettronicaBody;
-  }
-
-  /**
-   * @deprecated Use method setFatturaElettronicaBodyList
-   * @param fatturaElettronicaBody List&lt;FatturaElettronicaBodyType&gt;
-  */
-  @Deprecated
-  public void setFatturaElettronicaBody(List<FatturaElettronicaBodyType> fatturaElettronicaBody) {
-  	this.fatturaElettronicaBody=fatturaElettronicaBody;
-  }
-
-  /**
-   * @deprecated Use method sizeFatturaElettronicaBodyList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeFatturaElettronicaBody() {
-  	return this.fatturaElettronicaBody.size();
-  }
+  private List<FatturaElettronicaBodyType> fatturaElettronicaBody = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_versione;
+  protected java.lang.String versioneRawEnumValue;
 
   @XmlAttribute(name="versione",required=true)
   protected FormatoTrasmissioneType versione;

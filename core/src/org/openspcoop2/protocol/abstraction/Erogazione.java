@@ -101,11 +101,11 @@ public class Erogazione extends org.openspcoop2.utils.beans.BaseBean implements 
     this.servizioApplicativo = servizioApplicativo;
   }
 
-  public void set_value_tipologia(String value) {
+  public void setTipologiaRawEnumValue(String value) {
     this.tipologia = (Tipologia) Tipologia.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipologia() {
+  public String getTipologiaRawEnumValue() {
     if(this.tipologia == null){
     	return null;
     }else{
@@ -158,7 +158,7 @@ public class Erogazione extends org.openspcoop2.utils.beans.BaseBean implements 
   protected RiferimentoServizioApplicativoErogatore servizioApplicativo;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipologia;
+  protected java.lang.String tipologiaRawEnumValue;
 
   @XmlAttribute(name="tipologia",required=true)
   protected Tipologia tipologia;

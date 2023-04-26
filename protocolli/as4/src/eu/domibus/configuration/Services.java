@@ -90,33 +90,6 @@ public class Services extends org.openspcoop2.utils.beans.BaseBean implements Se
 
 
   @XmlElement(name="service",required=true,nillable=false)
-  protected List<Service> service = new ArrayList<Service>();
-
-  /**
-   * @deprecated Use method getServiceList
-   * @return List&lt;Service&gt;
-  */
-  @Deprecated
-  public List<Service> getService() {
-  	return this.service;
-  }
-
-  /**
-   * @deprecated Use method setServiceList
-   * @param service List&lt;Service&gt;
-  */
-  @Deprecated
-  public void setService(List<Service> service) {
-  	this.service=service;
-  }
-
-  /**
-   * @deprecated Use method sizeServiceList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeService() {
-  	return this.service.size();
-  }
+  private List<Service> service = new ArrayList<>();
 
 }

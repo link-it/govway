@@ -122,11 +122,11 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
     this.descrizione = descrizione;
   }
 
-  public void set_value_tipo(String value) {
+  public void setTipoRawEnumValue(String value) {
     this.tipo = (PortaDelegataReplaceType) PortaDelegataReplaceType.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipo() {
+  public String getTipoRawEnumValue() {
     if(this.tipo == null){
     	return null;
     }else{
@@ -142,11 +142,11 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
     this.tipo = tipo;
   }
 
-  public void set_value_stato(String value) {
+  public void setStatoRawEnumValue(String value) {
     this.stato = (PortaStatoType) PortaStatoType.toEnumConstantFromString(value);
   }
 
-  public String get_value_stato() {
+  public String getStatoRawEnumValue() {
     if(this.stato == null){
     	return null;
     }else{
@@ -194,13 +194,13 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
   protected java.lang.String descrizione;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipo;
+  protected java.lang.String tipoRawEnumValue;
 
   @XmlAttribute(name="tipo",required=true)
   protected PortaDelegataReplaceType tipo;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_stato;
+  protected java.lang.String statoRawEnumValue;
 
   @XmlAttribute(name="stato",required=false)
   protected PortaStatoType stato;

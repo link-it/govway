@@ -90,11 +90,11 @@ public class DatiApplicativiFruizione extends org.openspcoop2.utils.beans.BaseBe
     this.sslSubject = sslSubject;
   }
 
-  public void set_value_autenticazione(String value) {
+  public void setAutenticazioneRawEnumValue(String value) {
     this.autenticazione = (Autenticazione) Autenticazione.toEnumConstantFromString(value);
   }
 
-  public String get_value_autenticazione() {
+  public String getAutenticazioneRawEnumValue() {
     if(this.autenticazione == null){
     	return null;
     }else{
@@ -127,7 +127,7 @@ public class DatiApplicativiFruizione extends org.openspcoop2.utils.beans.BaseBe
   protected java.lang.String sslSubject;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_autenticazione;
+  protected java.lang.String autenticazioneRawEnumValue;
 
   @XmlAttribute(name="autenticazione",required=true)
   protected Autenticazione autenticazione;

@@ -100,34 +100,7 @@ public class Default extends org.openspcoop2.utils.beans.BaseBean implements Ser
 
 
   @XmlElement(name="proprieta",required=true,nillable=false)
-  protected List<ProprietaDefault> proprieta = new ArrayList<ProprietaDefault>();
-
-  /**
-   * @deprecated Use method getProprietaList
-   * @return List&lt;ProprietaDefault&gt;
-  */
-  @Deprecated
-  public List<ProprietaDefault> getProprieta() {
-  	return this.proprieta;
-  }
-
-  /**
-   * @deprecated Use method setProprietaList
-   * @param proprieta List&lt;ProprietaDefault&gt;
-  */
-  @Deprecated
-  public void setProprieta(List<ProprietaDefault> proprieta) {
-  	this.proprieta=proprieta;
-  }
-
-  /**
-   * @deprecated Use method sizeProprietaList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeProprieta() {
-  	return this.proprieta.size();
-  }
+  private List<ProprietaDefault> proprieta = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="valore",required=false)

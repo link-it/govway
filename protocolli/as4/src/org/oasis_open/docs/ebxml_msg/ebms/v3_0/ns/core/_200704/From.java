@@ -100,34 +100,7 @@ public class From extends org.openspcoop2.utils.beans.BaseBean implements Serial
 
 
   @XmlElement(name="PartyId",required=true,nillable=false)
-  protected List<PartyId> partyId = new ArrayList<PartyId>();
-
-  /**
-   * @deprecated Use method getPartyIdList
-   * @return List&lt;PartyId&gt;
-  */
-  @Deprecated
-  public List<PartyId> getPartyId() {
-  	return this.partyId;
-  }
-
-  /**
-   * @deprecated Use method setPartyIdList
-   * @param partyId List&lt;PartyId&gt;
-  */
-  @Deprecated
-  public void setPartyId(List<PartyId> partyId) {
-  	this.partyId=partyId;
-  }
-
-  /**
-   * @deprecated Use method sizePartyIdList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizePartyId() {
-  	return this.partyId.size();
-  }
+  private List<PartyId> partyId = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="Role",required=true,nillable=false)

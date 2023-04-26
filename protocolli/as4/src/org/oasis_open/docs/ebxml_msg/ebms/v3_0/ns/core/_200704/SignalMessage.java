@@ -131,33 +131,6 @@ public class SignalMessage extends org.openspcoop2.utils.beans.BaseBean implemen
   protected java.lang.String receipt;
 
   @XmlElement(name="Error",required=true,nillable=false)
-  protected List<Error> error = new ArrayList<Error>();
-
-  /**
-   * @deprecated Use method getErrorList
-   * @return List&lt;Error&gt;
-  */
-  @Deprecated
-  public List<Error> getError() {
-  	return this.error;
-  }
-
-  /**
-   * @deprecated Use method setErrorList
-   * @param error List&lt;Error&gt;
-  */
-  @Deprecated
-  public void setError(List<Error> error) {
-  	this.error=error;
-  }
-
-  /**
-   * @deprecated Use method sizeErrorList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeError() {
-  	return this.error.size();
-  }
+  private List<Error> error = new ArrayList<>();
 
 }

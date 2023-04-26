@@ -103,33 +103,6 @@ public class Parties extends org.openspcoop2.utils.beans.BaseBean implements Ser
   protected PartyIdTypes partyIdTypes;
 
   @XmlElement(name="party",required=true,nillable=false)
-  protected List<Party> party = new ArrayList<Party>();
-
-  /**
-   * @deprecated Use method getPartyList
-   * @return List&lt;Party&gt;
-  */
-  @Deprecated
-  public List<Party> getParty() {
-  	return this.party;
-  }
-
-  /**
-   * @deprecated Use method setPartyList
-   * @param party List&lt;Party&gt;
-  */
-  @Deprecated
-  public void setParty(List<Party> party) {
-  	this.party=party;
-  }
-
-  /**
-   * @deprecated Use method sizePartyList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeParty() {
-  	return this.party.size();
-  }
+  private List<Party> party = new ArrayList<>();
 
 }

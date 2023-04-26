@@ -90,33 +90,6 @@ public class InitiatorParties extends org.openspcoop2.utils.beans.BaseBean imple
 
 
   @XmlElement(name="initiatorParty",required=true,nillable=false)
-  protected List<InitiatorParty> initiatorParty = new ArrayList<InitiatorParty>();
-
-  /**
-   * @deprecated Use method getInitiatorPartyList
-   * @return List&lt;InitiatorParty&gt;
-  */
-  @Deprecated
-  public List<InitiatorParty> getInitiatorParty() {
-  	return this.initiatorParty;
-  }
-
-  /**
-   * @deprecated Use method setInitiatorPartyList
-   * @param initiatorParty List&lt;InitiatorParty&gt;
-  */
-  @Deprecated
-  public void setInitiatorParty(List<InitiatorParty> initiatorParty) {
-  	this.initiatorParty=initiatorParty;
-  }
-
-  /**
-   * @deprecated Use method sizeInitiatorPartyList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeInitiatorParty() {
-  	return this.initiatorParty.size();
-  }
+  private List<InitiatorParty> initiatorParty = new ArrayList<>();
 
 }

@@ -67,11 +67,11 @@ public class DatiRitenutaType extends org.openspcoop2.utils.beans.BaseBean imple
     super();
   }
 
-  public void set_value_tipoRitenuta(String value) {
+  public void setTipoRitenutaRawEnumValue(String value) {
     this.tipoRitenuta = (TipoRitenutaType) TipoRitenutaType.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipoRitenuta() {
+  public String getTipoRitenutaRawEnumValue() {
     if(this.tipoRitenuta == null){
     	return null;
     }else{
@@ -115,11 +115,11 @@ public class DatiRitenutaType extends org.openspcoop2.utils.beans.BaseBean imple
 	}
   }
 
-  public void set_value_causalePagamento(String value) {
+  public void setCausalePagamentoRawEnumValue(String value) {
     this.causalePagamento = (CausalePagamentoType) CausalePagamentoType.toEnumConstantFromString(value);
   }
 
-  public String get_value_causalePagamento() {
+  public String getCausalePagamentoRawEnumValue() {
     if(this.causalePagamento == null){
     	return null;
     }else{
@@ -140,7 +140,7 @@ public class DatiRitenutaType extends org.openspcoop2.utils.beans.BaseBean imple
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipoRitenuta;
+  protected java.lang.String tipoRitenutaRawEnumValue;
 
   @XmlElement(name="TipoRitenuta",required=true,nillable=false)
   protected TipoRitenutaType tipoRitenuta;
@@ -162,7 +162,7 @@ public class DatiRitenutaType extends org.openspcoop2.utils.beans.BaseBean imple
   protected java.math.BigDecimal aliquotaRitenuta;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_causalePagamento;
+  protected java.lang.String causalePagamentoRawEnumValue;
 
   @XmlElement(name="CausalePagamento",required=true,nillable=false)
   protected CausalePagamentoType causalePagamento;

@@ -90,33 +90,6 @@ public class Roles extends org.openspcoop2.utils.beans.BaseBean implements Seria
 
 
   @XmlElement(name="role",required=true,nillable=false)
-  protected List<Role> role = new ArrayList<Role>();
-
-  /**
-   * @deprecated Use method getRoleList
-   * @return List&lt;Role&gt;
-  */
-  @Deprecated
-  public List<Role> getRole() {
-  	return this.role;
-  }
-
-  /**
-   * @deprecated Use method setRoleList
-   * @param role List&lt;Role&gt;
-  */
-  @Deprecated
-  public void setRole(List<Role> role) {
-  	this.role=role;
-  }
-
-  /**
-   * @deprecated Use method sizeRoleList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeRole() {
-  	return this.role.size();
-  }
+  private List<Role> role = new ArrayList<>();
 
 }

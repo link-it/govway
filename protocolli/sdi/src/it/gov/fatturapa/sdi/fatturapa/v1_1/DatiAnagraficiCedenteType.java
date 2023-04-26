@@ -130,11 +130,11 @@ public class DatiAnagraficiCedenteType extends org.openspcoop2.utils.beans.BaseB
     this.dataIscrizioneAlbo = dataIscrizioneAlbo;
   }
 
-  public void set_value_regimeFiscale(String value) {
+  public void setRegimeFiscaleRawEnumValue(String value) {
     this.regimeFiscale = (RegimeFiscaleType) RegimeFiscaleType.toEnumConstantFromString(value);
   }
 
-  public String get_value_regimeFiscale() {
+  public String getRegimeFiscaleRawEnumValue() {
     if(this.regimeFiscale == null){
     	return null;
     }else{
@@ -184,7 +184,7 @@ public class DatiAnagraficiCedenteType extends org.openspcoop2.utils.beans.BaseB
   protected java.util.Date dataIscrizioneAlbo;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_regimeFiscale;
+  protected java.lang.String regimeFiscaleRawEnumValue;
 
   @XmlElement(name="RegimeFiscale",required=true,nillable=false)
   protected RegimeFiscaleType regimeFiscale;

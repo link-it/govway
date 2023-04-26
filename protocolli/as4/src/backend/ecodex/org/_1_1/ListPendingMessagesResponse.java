@@ -91,33 +91,6 @@ public class ListPendingMessagesResponse extends org.openspcoop2.utils.beans.Bas
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="messageID",required=true,nillable=false)
-  protected List<java.lang.String> messageID = new ArrayList<java.lang.String>();
-
-  /**
-   * @deprecated Use method getMessageIDList
-   * @return List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public List<java.lang.String> getMessageID() {
-  	return this.messageID;
-  }
-
-  /**
-   * @deprecated Use method setMessageIDList
-   * @param messageID List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public void setMessageID(List<java.lang.String> messageID) {
-  	this.messageID=messageID;
-  }
-
-  /**
-   * @deprecated Use method sizeMessageIDList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeMessageID() {
-  	return this.messageID.size();
-  }
+  private List<java.lang.String> messageID = new ArrayList<>();
 
 }

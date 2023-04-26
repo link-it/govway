@@ -74,11 +74,11 @@ public class OperationType extends org.openspcoop2.utils.beans.BaseBean implemen
     this.operazione = operazione;
   }
 
-  public void set_value_profiloDiCollaborazione(String value) {
+  public void setProfiloDiCollaborazioneRawEnumValue(String value) {
     this.profiloDiCollaborazione = (ProfiloDiCollaborazioneType) ProfiloDiCollaborazioneType.toEnumConstantFromString(value);
   }
 
-  public String get_value_profiloDiCollaborazione() {
+  public String getProfiloDiCollaborazioneRawEnumValue() {
     if(this.profiloDiCollaborazione == null){
     	return null;
     }else{
@@ -123,7 +123,7 @@ public class OperationType extends org.openspcoop2.utils.beans.BaseBean implemen
   protected java.lang.String operazione;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_profiloDiCollaborazione;
+  protected java.lang.String profiloDiCollaborazioneRawEnumValue;
 
   @XmlAttribute(name="profiloDiCollaborazione",required=true)
   protected ProfiloDiCollaborazioneType profiloDiCollaborazione;

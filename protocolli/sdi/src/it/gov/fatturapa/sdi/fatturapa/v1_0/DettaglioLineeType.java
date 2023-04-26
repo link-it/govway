@@ -102,11 +102,11 @@ public class DettaglioLineeType extends org.openspcoop2.utils.beans.BaseBean imp
     this.numeroLinea = numeroLinea;
   }
 
-  public void set_value_tipoCessionePrestazione(String value) {
+  public void setTipoCessionePrestazioneRawEnumValue(String value) {
     this.tipoCessionePrestazione = (TipoCessionePrestazioneType) TipoCessionePrestazioneType.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipoCessionePrestazione() {
+  public String getTipoCessionePrestazioneRawEnumValue() {
     if(this.tipoCessionePrestazione == null){
     	return null;
     }else{
@@ -258,11 +258,11 @@ public class DettaglioLineeType extends org.openspcoop2.utils.beans.BaseBean imp
 	}
   }
 
-  public void set_value_ritenuta(String value) {
+  public void setRitenutaRawEnumValue(String value) {
     this.ritenuta = (RitenutaType) RitenutaType.toEnumConstantFromString(value);
   }
 
-  public String get_value_ritenuta() {
+  public String getRitenutaRawEnumValue() {
     if(this.ritenuta == null){
     	return null;
     }else{
@@ -278,11 +278,11 @@ public class DettaglioLineeType extends org.openspcoop2.utils.beans.BaseBean imp
     this.ritenuta = ritenuta;
   }
 
-  public void set_value_natura(String value) {
+  public void setNaturaRawEnumValue(String value) {
     this.natura = (NaturaType) NaturaType.toEnumConstantFromString(value);
   }
 
-  public String get_value_natura() {
+  public String getNaturaRawEnumValue() {
     if(this.natura == null){
     	return null;
     }else{
@@ -339,40 +339,13 @@ public class DettaglioLineeType extends org.openspcoop2.utils.beans.BaseBean imp
   protected java.math.BigInteger numeroLinea;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipoCessionePrestazione;
+  protected java.lang.String tipoCessionePrestazioneRawEnumValue;
 
   @XmlElement(name="TipoCessionePrestazione",required=false,nillable=false)
   protected TipoCessionePrestazioneType tipoCessionePrestazione;
 
   @XmlElement(name="CodiceArticolo",required=true,nillable=false)
-  protected List<CodiceArticoloType> codiceArticolo = new ArrayList<CodiceArticoloType>();
-
-  /**
-   * @deprecated Use method getCodiceArticoloList
-   * @return List&lt;CodiceArticoloType&gt;
-  */
-  @Deprecated
-  public List<CodiceArticoloType> getCodiceArticolo() {
-  	return this.codiceArticolo;
-  }
-
-  /**
-   * @deprecated Use method setCodiceArticoloList
-   * @param codiceArticolo List&lt;CodiceArticoloType&gt;
-  */
-  @Deprecated
-  public void setCodiceArticolo(List<CodiceArticoloType> codiceArticolo) {
-  	this.codiceArticolo=codiceArticolo;
-  }
-
-  /**
-   * @deprecated Use method sizeCodiceArticoloList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeCodiceArticolo() {
-  	return this.codiceArticolo.size();
-  }
+  private List<CodiceArticoloType> codiceArticolo = new ArrayList<>();
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
@@ -411,34 +384,7 @@ public class DettaglioLineeType extends org.openspcoop2.utils.beans.BaseBean imp
   protected java.math.BigDecimal prezzoUnitario;
 
   @XmlElement(name="ScontoMaggiorazione",required=true,nillable=false)
-  protected List<ScontoMaggiorazioneType> scontoMaggiorazione = new ArrayList<ScontoMaggiorazioneType>();
-
-  /**
-   * @deprecated Use method getScontoMaggiorazioneList
-   * @return List&lt;ScontoMaggiorazioneType&gt;
-  */
-  @Deprecated
-  public List<ScontoMaggiorazioneType> getScontoMaggiorazione() {
-  	return this.scontoMaggiorazione;
-  }
-
-  /**
-   * @deprecated Use method setScontoMaggiorazioneList
-   * @param scontoMaggiorazione List&lt;ScontoMaggiorazioneType&gt;
-  */
-  @Deprecated
-  public void setScontoMaggiorazione(List<ScontoMaggiorazioneType> scontoMaggiorazione) {
-  	this.scontoMaggiorazione=scontoMaggiorazione;
-  }
-
-  /**
-   * @deprecated Use method sizeScontoMaggiorazioneList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeScontoMaggiorazione() {
-  	return this.scontoMaggiorazione.size();
-  }
+  private List<ScontoMaggiorazioneType> scontoMaggiorazione = new ArrayList<>();
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="decimal")
@@ -457,13 +403,13 @@ public class DettaglioLineeType extends org.openspcoop2.utils.beans.BaseBean imp
   protected java.math.BigDecimal aliquotaIVA;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_ritenuta;
+  protected java.lang.String ritenutaRawEnumValue;
 
   @XmlElement(name="Ritenuta",required=false,nillable=false)
   protected RitenutaType ritenuta;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_natura;
+  protected java.lang.String naturaRawEnumValue;
 
   @XmlElement(name="Natura",required=false,nillable=false)
   protected NaturaType natura;
@@ -474,33 +420,6 @@ public class DettaglioLineeType extends org.openspcoop2.utils.beans.BaseBean imp
   protected java.lang.String riferimentoAmministrazione;
 
   @XmlElement(name="AltriDatiGestionali",required=true,nillable=false)
-  protected List<AltriDatiGestionaliType> altriDatiGestionali = new ArrayList<AltriDatiGestionaliType>();
-
-  /**
-   * @deprecated Use method getAltriDatiGestionaliList
-   * @return List&lt;AltriDatiGestionaliType&gt;
-  */
-  @Deprecated
-  public List<AltriDatiGestionaliType> getAltriDatiGestionali() {
-  	return this.altriDatiGestionali;
-  }
-
-  /**
-   * @deprecated Use method setAltriDatiGestionaliList
-   * @param altriDatiGestionali List&lt;AltriDatiGestionaliType&gt;
-  */
-  @Deprecated
-  public void setAltriDatiGestionali(List<AltriDatiGestionaliType> altriDatiGestionali) {
-  	this.altriDatiGestionali=altriDatiGestionali;
-  }
-
-  /**
-   * @deprecated Use method sizeAltriDatiGestionaliList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeAltriDatiGestionali() {
-  	return this.altriDatiGestionali.size();
-  }
+  private List<AltriDatiGestionaliType> altriDatiGestionali = new ArrayList<>();
 
 }

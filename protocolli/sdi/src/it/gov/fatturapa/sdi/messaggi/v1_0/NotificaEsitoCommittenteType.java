@@ -86,11 +86,11 @@ public class NotificaEsitoCommittenteType extends org.openspcoop2.utils.beans.Ba
     this.riferimentoFattura = riferimentoFattura;
   }
 
-  public void set_value_esito(String value) {
+  public void setEsitoRawEnumValue(String value) {
     this.esito = (EsitoCommittenteType) EsitoCommittenteType.toEnumConstantFromString(value);
   }
 
-  public String get_value_esito() {
+  public String getEsitoRawEnumValue() {
     if(this.esito == null){
     	return null;
     }else{
@@ -154,7 +154,7 @@ public class NotificaEsitoCommittenteType extends org.openspcoop2.utils.beans.Ba
   protected RiferimentoFatturaType riferimentoFattura;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_esito;
+  protected java.lang.String esitoRawEnumValue;
 
   @XmlElement(name="Esito",required=true,nillable=false)
   protected EsitoCommittenteType esito;

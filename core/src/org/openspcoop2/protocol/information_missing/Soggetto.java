@@ -122,11 +122,11 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
     this.descrizione = descrizione;
   }
 
-  public void set_value_tipo(String value) {
+  public void setTipoRawEnumValue(String value) {
     this.tipo = (SoggettoReplaceType) SoggettoReplaceType.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipo() {
+  public String getTipoRawEnumValue() {
     if(this.tipo == null){
     	return null;
     }else{
@@ -150,11 +150,11 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
     this.protocollo = protocollo;
   }
 
-  public void set_value_tipoPdd(String value) {
+  public void setTipoPddRawEnumValue(String value) {
     this.tipoPdd = (PddType) PddType.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipoPdd() {
+  public String getTipoPddRawEnumValue() {
     if(this.tipoPdd == null){
     	return null;
     }else{
@@ -194,7 +194,7 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
   protected java.lang.String descrizione;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipo;
+  protected java.lang.String tipoRawEnumValue;
 
   @XmlAttribute(name="tipo",required=true)
   protected SoggettoReplaceType tipo;
@@ -204,7 +204,7 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
   protected java.lang.String protocollo;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipoPdd;
+  protected java.lang.String tipoPddRawEnumValue;
 
   @XmlAttribute(name="tipo-pdd",required=false)
   protected PddType tipoPdd;

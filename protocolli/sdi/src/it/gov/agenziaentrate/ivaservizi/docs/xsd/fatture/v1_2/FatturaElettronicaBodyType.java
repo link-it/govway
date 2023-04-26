@@ -155,63 +155,9 @@ public class FatturaElettronicaBodyType extends org.openspcoop2.utils.beans.Base
   protected DatiVeicoliType datiVeicoli;
 
   @XmlElement(name="DatiPagamento",required=true,nillable=false)
-  protected List<DatiPagamentoType> datiPagamento = new ArrayList<DatiPagamentoType>();
-
-  /**
-   * @deprecated Use method getDatiPagamentoList
-   * @return List&lt;DatiPagamentoType&gt;
-  */
-  @Deprecated
-  public List<DatiPagamentoType> getDatiPagamento() {
-  	return this.datiPagamento;
-  }
-
-  /**
-   * @deprecated Use method setDatiPagamentoList
-   * @param datiPagamento List&lt;DatiPagamentoType&gt;
-  */
-  @Deprecated
-  public void setDatiPagamento(List<DatiPagamentoType> datiPagamento) {
-  	this.datiPagamento=datiPagamento;
-  }
-
-  /**
-   * @deprecated Use method sizeDatiPagamentoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeDatiPagamento() {
-  	return this.datiPagamento.size();
-  }
+  private List<DatiPagamentoType> datiPagamento = new ArrayList<>();
 
   @XmlElement(name="Allegati",required=true,nillable=false)
-  protected List<AllegatiType> allegati = new ArrayList<AllegatiType>();
-
-  /**
-   * @deprecated Use method getAllegatiList
-   * @return List&lt;AllegatiType&gt;
-  */
-  @Deprecated
-  public List<AllegatiType> getAllegati() {
-  	return this.allegati;
-  }
-
-  /**
-   * @deprecated Use method setAllegatiList
-   * @param allegati List&lt;AllegatiType&gt;
-  */
-  @Deprecated
-  public void setAllegati(List<AllegatiType> allegati) {
-  	this.allegati=allegati;
-  }
-
-  /**
-   * @deprecated Use method sizeAllegatiList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeAllegati() {
-  	return this.allegati.size();
-  }
+  private List<AllegatiType> allegati = new ArrayList<>();
 
 }

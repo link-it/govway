@@ -97,11 +97,11 @@ public class ProprietaRequisitoInput extends org.openspcoop2.utils.beans.BaseBea
     this.footer = footer;
   }
 
-  public void set_value_tipo(String value) {
+  public void setTipoRawEnumValue(String value) {
     this.tipo = (ProprietaRequisitoInputType) ProprietaRequisitoInputType.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipo() {
+  public String getTipoRawEnumValue() {
     if(this.tipo == null){
     	return null;
     }else{
@@ -195,7 +195,7 @@ public class ProprietaRequisitoInput extends org.openspcoop2.utils.beans.BaseBea
   protected Description footer;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipo;
+  protected java.lang.String tipoRawEnumValue;
 
   @XmlAttribute(name="tipo",required=true)
   protected ProprietaRequisitoInputType tipo;

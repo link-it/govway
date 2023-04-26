@@ -99,11 +99,11 @@ public class IscrizioneREAType extends org.openspcoop2.utils.beans.BaseBean impl
 	}
   }
 
-  public void set_value_socioUnico(String value) {
+  public void setSocioUnicoRawEnumValue(String value) {
     this.socioUnico = (SocioUnicoType) SocioUnicoType.toEnumConstantFromString(value);
   }
 
-  public String get_value_socioUnico() {
+  public String getSocioUnicoRawEnumValue() {
     if(this.socioUnico == null){
     	return null;
     }else{
@@ -119,11 +119,11 @@ public class IscrizioneREAType extends org.openspcoop2.utils.beans.BaseBean impl
     this.socioUnico = socioUnico;
   }
 
-  public void set_value_statoLiquidazione(String value) {
+  public void setStatoLiquidazioneRawEnumValue(String value) {
     this.statoLiquidazione = (StatoLiquidazioneType) StatoLiquidazioneType.toEnumConstantFromString(value);
   }
 
-  public String get_value_statoLiquidazione() {
+  public String getStatoLiquidazioneRawEnumValue() {
     if(this.statoLiquidazione == null){
     	return null;
     }else{
@@ -161,13 +161,13 @@ public class IscrizioneREAType extends org.openspcoop2.utils.beans.BaseBean impl
   protected java.math.BigDecimal capitaleSociale;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_socioUnico;
+  protected java.lang.String socioUnicoRawEnumValue;
 
   @XmlElement(name="SocioUnico",required=false,nillable=false)
   protected SocioUnicoType socioUnico;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_statoLiquidazione;
+  protected java.lang.String statoLiquidazioneRawEnumValue;
 
   @XmlElement(name="StatoLiquidazione",required=true,nillable=false)
   protected StatoLiquidazioneType statoLiquidazione;

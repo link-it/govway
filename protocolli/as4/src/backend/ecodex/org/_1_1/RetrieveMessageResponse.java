@@ -103,33 +103,6 @@ public class RetrieveMessageResponse extends org.openspcoop2.utils.beans.BaseBea
   protected LargePayloadType bodyload;
 
   @XmlElement(name="payload",required=true,nillable=false)
-  protected List<LargePayloadType> payload = new ArrayList<LargePayloadType>();
-
-  /**
-   * @deprecated Use method getPayloadList
-   * @return List&lt;LargePayloadType&gt;
-  */
-  @Deprecated
-  public List<LargePayloadType> getPayload() {
-  	return this.payload;
-  }
-
-  /**
-   * @deprecated Use method setPayloadList
-   * @param payload List&lt;LargePayloadType&gt;
-  */
-  @Deprecated
-  public void setPayload(List<LargePayloadType> payload) {
-  	this.payload=payload;
-  }
-
-  /**
-   * @deprecated Use method sizePayloadList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizePayload() {
-  	return this.payload.size();
-  }
+  private List<LargePayloadType> payload = new ArrayList<>();
 
 }

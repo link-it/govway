@@ -91,33 +91,6 @@ public class ElencoPartecipanti extends org.openspcoop2.utils.beans.BaseBean imp
 
   @javax.xml.bind.annotation.XmlSchemaType(name="anyURI")
   @XmlElement(name="partecipante",required=true,nillable=false)
-  protected List<java.net.URI> partecipante = new ArrayList<java.net.URI>();
-
-  /**
-   * @deprecated Use method getPartecipanteList
-   * @return List&lt;java.net.URI&gt;
-  */
-  @Deprecated
-  public List<java.net.URI> getPartecipante() {
-  	return this.partecipante;
-  }
-
-  /**
-   * @deprecated Use method setPartecipanteList
-   * @param partecipante List&lt;java.net.URI&gt;
-  */
-  @Deprecated
-  public void setPartecipante(List<java.net.URI> partecipante) {
-  	this.partecipante=partecipante;
-  }
-
-  /**
-   * @deprecated Use method sizePartecipanteList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizePartecipante() {
-  	return this.partecipante.size();
-  }
+  private List<java.net.URI> partecipante = new ArrayList<>();
 
 }

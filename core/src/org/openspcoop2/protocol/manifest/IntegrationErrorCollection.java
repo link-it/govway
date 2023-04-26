@@ -211,11 +211,11 @@ public class IntegrationErrorCollection extends org.openspcoop2.utils.beans.Base
     this._default = _default;
   }
 
-  public void set_value_problemType(String value) {
+  public void setProblemTypeRawEnumValue(String value) {
     this.problemType = (IntegrationErrorProblemType) IntegrationErrorProblemType.toEnumConstantFromString(value);
   }
 
-  public String get_value_problemType() {
+  public String getProblemTypeRawEnumValue() {
     if(this.problemType == null){
     	return null;
     }else{
@@ -293,7 +293,7 @@ public class IntegrationErrorCollection extends org.openspcoop2.utils.beans.Base
   protected DefaultIntegrationError _default;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_problemType;
+  protected java.lang.String problemTypeRawEnumValue;
 
   @XmlAttribute(name="problemType",required=true)
   protected IntegrationErrorProblemType problemType;

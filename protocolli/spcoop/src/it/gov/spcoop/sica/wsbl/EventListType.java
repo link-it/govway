@@ -90,33 +90,6 @@ public class EventListType extends org.openspcoop2.utils.beans.BaseBean implemen
 
 
   @XmlElement(name="event",required=true,nillable=false)
-  protected List<EventType> event = new ArrayList<EventType>();
-
-  /**
-   * @deprecated Use method getEventList
-   * @return List&lt;EventType&gt;
-  */
-  @Deprecated
-  public List<EventType> getEvent() {
-  	return this.event;
-  }
-
-  /**
-   * @deprecated Use method setEventList
-   * @param event List&lt;EventType&gt;
-  */
-  @Deprecated
-  public void setEvent(List<EventType> event) {
-  	this.event=event;
-  }
-
-  /**
-   * @deprecated Use method sizeEventList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeEvent() {
-  	return this.event.size();
-  }
+  private List<EventType> event = new ArrayList<>();
 
 }

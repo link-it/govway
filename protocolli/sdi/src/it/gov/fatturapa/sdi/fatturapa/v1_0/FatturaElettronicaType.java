@@ -125,34 +125,7 @@ public class FatturaElettronicaType extends org.openspcoop2.utils.beans.BaseBean
   protected FatturaElettronicaHeaderType fatturaElettronicaHeader;
 
   @XmlElement(name="FatturaElettronicaBody",required=true,nillable=false)
-  protected List<FatturaElettronicaBodyType> fatturaElettronicaBody = new ArrayList<FatturaElettronicaBodyType>();
-
-  /**
-   * @deprecated Use method getFatturaElettronicaBodyList
-   * @return List&lt;FatturaElettronicaBodyType&gt;
-  */
-  @Deprecated
-  public List<FatturaElettronicaBodyType> getFatturaElettronicaBody() {
-  	return this.fatturaElettronicaBody;
-  }
-
-  /**
-   * @deprecated Use method setFatturaElettronicaBodyList
-   * @param fatturaElettronicaBody List&lt;FatturaElettronicaBodyType&gt;
-  */
-  @Deprecated
-  public void setFatturaElettronicaBody(List<FatturaElettronicaBodyType> fatturaElettronicaBody) {
-  	this.fatturaElettronicaBody=fatturaElettronicaBody;
-  }
-
-  /**
-   * @deprecated Use method sizeFatturaElettronicaBodyList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeFatturaElettronicaBody() {
-  	return this.fatturaElettronicaBody.size();
-  }
+  private List<FatturaElettronicaBodyType> fatturaElettronicaBody = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="versione",required=true)

@@ -90,11 +90,11 @@ public class ScartoEsitoCommittenteType extends org.openspcoop2.utils.beans.Base
     this.riferimentoFattura = riferimentoFattura;
   }
 
-  public void set_value_scarto(String value) {
+  public void setScartoRawEnumValue(String value) {
     this.scarto = (ScartoType) ScartoType.toEnumConstantFromString(value);
   }
 
-  public String get_value_scarto() {
+  public String getScartoRawEnumValue() {
     if(this.scarto == null){
     	return null;
     }else{
@@ -174,7 +174,7 @@ public class ScartoEsitoCommittenteType extends org.openspcoop2.utils.beans.Base
   protected RiferimentoFatturaType riferimentoFattura;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_scarto;
+  protected java.lang.String scartoRawEnumValue;
 
   @XmlElement(name="Scarto",required=true,nillable=false)
   protected ScartoType scarto;

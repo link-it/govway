@@ -152,11 +152,11 @@ public class DatiRiepilogoType extends org.openspcoop2.utils.beans.BaseBean impl
 	}
   }
 
-  public void set_value_esigibilitaIVA(String value) {
+  public void setEsigibilitaIVARawEnumValue(String value) {
     this.esigibilitaIVA = (EsigibilitaIVAType) EsigibilitaIVAType.toEnumConstantFromString(value);
   }
 
-  public String get_value_esigibilitaIVA() {
+  public String getEsigibilitaIVARawEnumValue() {
     if(this.esigibilitaIVA == null){
     	return null;
     }else{
@@ -229,7 +229,7 @@ public class DatiRiepilogoType extends org.openspcoop2.utils.beans.BaseBean impl
   protected java.math.BigDecimal imposta;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_esigibilitaIVA;
+  protected java.lang.String esigibilitaIVARawEnumValue;
 
   @XmlElement(name="EsigibilitaIVA",required=false,nillable=false)
   protected EsigibilitaIVAType esigibilitaIVA;

@@ -80,11 +80,11 @@ public class RispostaSdIRiceviFileType extends org.openspcoop2.utils.beans.BaseB
     this.dataOraRicezione = dataOraRicezione;
   }
 
-  public void set_value_errore(String value) {
+  public void setErroreRawEnumValue(String value) {
     this.errore = (ErroreInvioType) ErroreInvioType.toEnumConstantFromString(value);
   }
 
-  public String get_value_errore() {
+  public String getErroreRawEnumValue() {
     if(this.errore == null){
     	return null;
     }else{
@@ -126,7 +126,7 @@ public class RispostaSdIRiceviFileType extends org.openspcoop2.utils.beans.BaseB
   protected java.util.Date dataOraRicezione;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_errore;
+  protected java.lang.String erroreRawEnumValue;
 
   @XmlElement(name="Errore",required=false,nillable=false)
   protected ErroreInvioType errore;

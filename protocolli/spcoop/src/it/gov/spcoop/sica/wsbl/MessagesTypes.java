@@ -90,33 +90,6 @@ public class MessagesTypes extends org.openspcoop2.utils.beans.BaseBean implemen
 
 
   @XmlElement(name="message",required=true,nillable=false)
-  protected List<Message> message = new ArrayList<Message>();
-
-  /**
-   * @deprecated Use method getMessageList
-   * @return List&lt;Message&gt;
-  */
-  @Deprecated
-  public List<Message> getMessage() {
-  	return this.message;
-  }
-
-  /**
-   * @deprecated Use method setMessageList
-   * @param message List&lt;Message&gt;
-  */
-  @Deprecated
-  public void setMessage(List<Message> message) {
-  	this.message=message;
-  }
-
-  /**
-   * @deprecated Use method sizeMessageList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeMessage() {
-  	return this.message.size();
-  }
+  private List<Message> message = new ArrayList<>();
 
 }

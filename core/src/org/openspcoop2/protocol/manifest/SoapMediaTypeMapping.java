@@ -72,11 +72,11 @@ public class SoapMediaTypeMapping extends org.openspcoop2.utils.beans.BaseBean i
     this.base=base;
   }
 
-  public void set_value_messageType(String value) {
+  public void setMessageTypeRawEnumValue(String value) {
     this.messageType = (SoapMessageType) SoapMessageType.toEnumConstantFromString(value);
   }
 
-  public String get_value_messageType() {
+  public String getMessageTypeRawEnumValue() {
     if(this.messageType == null){
     	return null;
     }else{
@@ -113,7 +113,7 @@ public class SoapMediaTypeMapping extends org.openspcoop2.utils.beans.BaseBean i
   public String base;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_messageType;
+  protected java.lang.String messageTypeRawEnumValue;
 
   @XmlAttribute(name="messageType",required=true)
   protected SoapMessageType messageType;

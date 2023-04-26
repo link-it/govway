@@ -770,12 +770,12 @@ public class ServiceBindingConfigurationReader  {
 			if(manifest.getWeb().getContext(i).sizeSubContextList()>0){
 				for (int j = 0; j < manifest.getWeb().getContext(i).sizeSubContextList(); j++) {
 					SubContextMapping subContext = manifest.getWeb().getContext(i).getSubContext(j);
-					urlCollection.addContext(context,subContext.get_value_function(),subContext.getBase(),convertToMessageType(subContext.getMessageType()));
+					urlCollection.addContext(context,subContext.getFunctionRawEnumValue(),subContext.getBase(),convertToMessageType(subContext.getMessageType()));
 				}
 			}
 			if(manifest.getWeb().getContext(i).getEmptySubContext()!=null){
 				EmptySubContextMapping subContext = manifest.getWeb().getContext(i).getEmptySubContext();
-				urlCollection.addContext(context,subContext.get_value_function(),null, convertToMessageType(subContext.getMessageType()));
+				urlCollection.addContext(context,subContext.getFunctionRawEnumValue(),null, convertToMessageType(subContext.getMessageType()));
 			}
 		}
 		
@@ -783,12 +783,12 @@ public class ServiceBindingConfigurationReader  {
 			if(manifest.getWeb().getEmptyContext().sizeSubContextList()>0){
 				for (int j = 0; j < manifest.getWeb().getEmptyContext().sizeSubContextList(); j++) {
 					SubContextMapping subContext = manifest.getWeb().getEmptyContext().getSubContext(j);
-					urlCollection.addContext(null,subContext.get_value_function(),subContext.getBase(), convertToMessageType(subContext.getMessageType()));
+					urlCollection.addContext(null,subContext.getFunctionRawEnumValue(),subContext.getBase(), convertToMessageType(subContext.getMessageType()));
 				}
 			}
 			if(manifest.getWeb().getEmptyContext().getEmptySubContext()!=null){
 				EmptySubContextMapping subContext = manifest.getWeb().getEmptyContext().getEmptySubContext();
-				urlCollection.addContext(null,subContext.get_value_function(),null, convertToMessageType(subContext.getMessageType()));
+				urlCollection.addContext(null,subContext.getFunctionRawEnumValue(),null, convertToMessageType(subContext.getMessageType()));
 			}
 		}
 		

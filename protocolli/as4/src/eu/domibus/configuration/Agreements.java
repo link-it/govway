@@ -90,33 +90,6 @@ public class Agreements extends org.openspcoop2.utils.beans.BaseBean implements 
 
 
   @XmlElement(name="agreement",required=true,nillable=false)
-  protected List<Agreement> agreement = new ArrayList<Agreement>();
-
-  /**
-   * @deprecated Use method getAgreementList
-   * @return List&lt;Agreement&gt;
-  */
-  @Deprecated
-  public List<Agreement> getAgreement() {
-  	return this.agreement;
-  }
-
-  /**
-   * @deprecated Use method setAgreementList
-   * @param agreement List&lt;Agreement&gt;
-  */
-  @Deprecated
-  public void setAgreement(List<Agreement> agreement) {
-  	this.agreement=agreement;
-  }
-
-  /**
-   * @deprecated Use method sizeAgreementList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeAgreement() {
-  	return this.agreement.size();
-  }
+  private List<Agreement> agreement = new ArrayList<>();
 
 }

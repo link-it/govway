@@ -90,33 +90,6 @@ public class SpecificaSicurezza extends org.openspcoop2.utils.beans.BaseBean imp
 
 
   @XmlElement(name="documentoSicurezza",required=true,nillable=false)
-  protected List<DocumentoSicurezza> documentoSicurezza = new ArrayList<DocumentoSicurezza>();
-
-  /**
-   * @deprecated Use method getDocumentoSicurezzaList
-   * @return List&lt;DocumentoSicurezza&gt;
-  */
-  @Deprecated
-  public List<DocumentoSicurezza> getDocumentoSicurezza() {
-  	return this.documentoSicurezza;
-  }
-
-  /**
-   * @deprecated Use method setDocumentoSicurezzaList
-   * @param documentoSicurezza List&lt;DocumentoSicurezza&gt;
-  */
-  @Deprecated
-  public void setDocumentoSicurezza(List<DocumentoSicurezza> documentoSicurezza) {
-  	this.documentoSicurezza=documentoSicurezza;
-  }
-
-  /**
-   * @deprecated Use method sizeDocumentoSicurezzaList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeDocumentoSicurezza() {
-  	return this.documentoSicurezza.size();
-  }
+  private List<DocumentoSicurezza> documentoSicurezza = new ArrayList<>();
 
 }

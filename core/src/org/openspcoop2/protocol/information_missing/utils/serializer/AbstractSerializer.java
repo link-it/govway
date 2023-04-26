@@ -1229,7 +1229,7 @@ public abstract class AbstractSerializer {
 	 * Serialize to file system in <var>fileName</var> the object <var>default</var> of type {@link org.openspcoop2.protocol.information_missing.Default}
 	 * 
 	 * @param fileName Xml file to serialize the object <var>default</var>
-	 * @param defaultParam Object to be serialized in xml file <var>fileName</var>
+	 * @param default Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
 	public void write(String fileName,Default defaultParam) throws SerializerException {
@@ -1239,7 +1239,7 @@ public abstract class AbstractSerializer {
 	 * Serialize to file system in <var>fileName</var> the object <var>default</var> of type {@link org.openspcoop2.protocol.information_missing.Default}
 	 * 
 	 * @param fileName Xml file to serialize the object <var>default</var>
-	 * @param defaultParam Object to be serialized in xml file <var>fileName</var>
+	 * @param default Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
@@ -1251,7 +1251,7 @@ public abstract class AbstractSerializer {
 	 * Serialize to file system in <var>file</var> the object <var>default</var> of type {@link org.openspcoop2.protocol.information_missing.Default}
 	 * 
 	 * @param file Xml file to serialize the object <var>default</var>
-	 * @param defaultParam Object to be serialized in xml file <var>fileName</var>
+	 * @param default Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
 	public void write(File file,Default defaultParam) throws SerializerException {
@@ -1261,7 +1261,7 @@ public abstract class AbstractSerializer {
 	 * Serialize to file system in <var>file</var> the object <var>default</var> of type {@link org.openspcoop2.protocol.information_missing.Default}
 	 * 
 	 * @param file Xml file to serialize the object <var>default</var>
-	 * @param defaultParam Object to be serialized in xml file <var>fileName</var>
+	 * @param default Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
@@ -1273,7 +1273,7 @@ public abstract class AbstractSerializer {
 	 * Serialize to output stream <var>out</var> the object <var>default</var> of type {@link org.openspcoop2.protocol.information_missing.Default}
 	 * 
 	 * @param out OutputStream to serialize the object <var>default</var>
-	 * @param defaultParam Object to be serialized in xml file <var>fileName</var>
+	 * @param default Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
 	public void write(OutputStream out,Default defaultParam) throws SerializerException {
@@ -1283,7 +1283,7 @@ public abstract class AbstractSerializer {
 	 * Serialize to output stream <var>out</var> the object <var>default</var> of type {@link org.openspcoop2.protocol.information_missing.Default}
 	 * 
 	 * @param out OutputStream to serialize the object <var>default</var>
-	 * @param defaultParam Object to be serialized in xml file <var>fileName</var>
+	 * @param default Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
@@ -1294,7 +1294,7 @@ public abstract class AbstractSerializer {
 	/**
 	 * Serialize to byte array the object <var>default</var> of type {@link org.openspcoop2.protocol.information_missing.Default}
 	 * 
-	 * @param defaultParam Object to be serialized
+	 * @param default Object to be serialized
 	 * @return Object to be serialized in byte array
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
@@ -1304,7 +1304,7 @@ public abstract class AbstractSerializer {
 	/**
 	 * Serialize to byte array the object <var>default</var> of type {@link org.openspcoop2.protocol.information_missing.Default}
 	 * 
-	 * @param defaultParam Object to be serialized
+	 * @param default Object to be serialized
 	 * @param prettyPrint if true output the XML with indenting
 	 * @return Object to be serialized in byte array
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
@@ -1316,7 +1316,7 @@ public abstract class AbstractSerializer {
 	/**
 	 * Serialize to String the object <var>default</var> of type {@link org.openspcoop2.protocol.information_missing.Default}
 	 * 
-	 * @param defaultParam Object to be serialized
+	 * @param default Object to be serialized
 	 * @return Object to be serialized as String
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
@@ -1326,7 +1326,7 @@ public abstract class AbstractSerializer {
 	/**
 	 * Serialize to String the object <var>default</var> of type {@link org.openspcoop2.protocol.information_missing.Default}
 	 * 
-	 * @param defaultParam Object to be serialized
+	 * @param default Object to be serialized
 	 * @param prettyPrint if true output the XML with indenting
 	 * @return Object to be serialized as String
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization

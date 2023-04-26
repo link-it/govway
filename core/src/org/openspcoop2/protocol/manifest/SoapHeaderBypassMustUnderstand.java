@@ -90,33 +90,6 @@ public class SoapHeaderBypassMustUnderstand extends org.openspcoop2.utils.beans.
 
 
   @XmlElement(name="header",required=true,nillable=false)
-  protected List<SoapHeaderBypassMustUnderstandHeader> header = new ArrayList<SoapHeaderBypassMustUnderstandHeader>();
-
-  /**
-   * @deprecated Use method getHeaderList
-   * @return List&lt;SoapHeaderBypassMustUnderstandHeader&gt;
-  */
-  @Deprecated
-  public List<SoapHeaderBypassMustUnderstandHeader> getHeader() {
-  	return this.header;
-  }
-
-  /**
-   * @deprecated Use method setHeaderList
-   * @param header List&lt;SoapHeaderBypassMustUnderstandHeader&gt;
-  */
-  @Deprecated
-  public void setHeader(List<SoapHeaderBypassMustUnderstandHeader> header) {
-  	this.header=header;
-  }
-
-  /**
-   * @deprecated Use method sizeHeaderList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeHeader() {
-  	return this.header.size();
-  }
+  private List<SoapHeaderBypassMustUnderstandHeader> header = new ArrayList<>();
 
 }

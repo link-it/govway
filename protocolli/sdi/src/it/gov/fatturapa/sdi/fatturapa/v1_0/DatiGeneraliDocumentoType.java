@@ -85,11 +85,11 @@ public class DatiGeneraliDocumentoType extends org.openspcoop2.utils.beans.BaseB
     super();
   }
 
-  public void set_value_tipoDocumento(String value) {
+  public void setTipoDocumentoRawEnumValue(String value) {
     this.tipoDocumento = (TipoDocumentoType) TipoDocumentoType.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipoDocumento() {
+  public String getTipoDocumentoRawEnumValue() {
     if(this.tipoDocumento == null){
     	return null;
     }else{
@@ -229,11 +229,11 @@ public class DatiGeneraliDocumentoType extends org.openspcoop2.utils.beans.BaseB
     this.causale = causale;
   }
 
-  public void set_value_art73(String value) {
+  public void setArt73RawEnumValue(String value) {
     this.art73 = (Art73Type) Art73Type.toEnumConstantFromString(value);
   }
 
-  public String get_value_art73() {
+  public String getArt73RawEnumValue() {
     if(this.art73 == null){
     	return null;
     }else{
@@ -254,7 +254,7 @@ public class DatiGeneraliDocumentoType extends org.openspcoop2.utils.beans.BaseB
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipoDocumento;
+  protected java.lang.String tipoDocumentoRawEnumValue;
 
   @XmlElement(name="TipoDocumento",required=true,nillable=false)
   protected TipoDocumentoType tipoDocumento;
@@ -280,64 +280,10 @@ public class DatiGeneraliDocumentoType extends org.openspcoop2.utils.beans.BaseB
   protected DatiBolloType datiBollo;
 
   @XmlElement(name="DatiCassaPrevidenziale",required=true,nillable=false)
-  protected List<DatiCassaPrevidenzialeType> datiCassaPrevidenziale = new ArrayList<DatiCassaPrevidenzialeType>();
-
-  /**
-   * @deprecated Use method getDatiCassaPrevidenzialeList
-   * @return List&lt;DatiCassaPrevidenzialeType&gt;
-  */
-  @Deprecated
-  public List<DatiCassaPrevidenzialeType> getDatiCassaPrevidenziale() {
-  	return this.datiCassaPrevidenziale;
-  }
-
-  /**
-   * @deprecated Use method setDatiCassaPrevidenzialeList
-   * @param datiCassaPrevidenziale List&lt;DatiCassaPrevidenzialeType&gt;
-  */
-  @Deprecated
-  public void setDatiCassaPrevidenziale(List<DatiCassaPrevidenzialeType> datiCassaPrevidenziale) {
-  	this.datiCassaPrevidenziale=datiCassaPrevidenziale;
-  }
-
-  /**
-   * @deprecated Use method sizeDatiCassaPrevidenzialeList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeDatiCassaPrevidenziale() {
-  	return this.datiCassaPrevidenziale.size();
-  }
+  private List<DatiCassaPrevidenzialeType> datiCassaPrevidenziale = new ArrayList<>();
 
   @XmlElement(name="ScontoMaggiorazione",required=true,nillable=false)
-  protected List<ScontoMaggiorazioneType> scontoMaggiorazione = new ArrayList<ScontoMaggiorazioneType>();
-
-  /**
-   * @deprecated Use method getScontoMaggiorazioneList
-   * @return List&lt;ScontoMaggiorazioneType&gt;
-  */
-  @Deprecated
-  public List<ScontoMaggiorazioneType> getScontoMaggiorazione() {
-  	return this.scontoMaggiorazione;
-  }
-
-  /**
-   * @deprecated Use method setScontoMaggiorazioneList
-   * @param scontoMaggiorazione List&lt;ScontoMaggiorazioneType&gt;
-  */
-  @Deprecated
-  public void setScontoMaggiorazione(List<ScontoMaggiorazioneType> scontoMaggiorazione) {
-  	this.scontoMaggiorazione=scontoMaggiorazione;
-  }
-
-  /**
-   * @deprecated Use method sizeScontoMaggiorazioneList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeScontoMaggiorazione() {
-  	return this.scontoMaggiorazione.size();
-  }
+  private List<ScontoMaggiorazioneType> scontoMaggiorazione = new ArrayList<>();
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="decimal")
@@ -361,7 +307,7 @@ public class DatiGeneraliDocumentoType extends org.openspcoop2.utils.beans.BaseB
   protected java.lang.String causale;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_art73;
+  protected java.lang.String art73RawEnumValue;
 
   @XmlElement(name="Art73",required=false,nillable=false)
   protected Art73Type art73;

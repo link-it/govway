@@ -121,33 +121,6 @@ public class DatiDDTType extends org.openspcoop2.utils.beans.BaseBean implements
 
   @javax.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlElement(name="RiferimentoNumeroLinea",required=true,nillable=false)
-  protected List<java.math.BigInteger> riferimentoNumeroLinea = new ArrayList<java.math.BigInteger>();
-
-  /**
-   * @deprecated Use method getRiferimentoNumeroLineaList
-   * @return List&lt;java.math.BigInteger&gt;
-  */
-  @Deprecated
-  public List<java.math.BigInteger> getRiferimentoNumeroLinea() {
-  	return this.riferimentoNumeroLinea;
-  }
-
-  /**
-   * @deprecated Use method setRiferimentoNumeroLineaList
-   * @param riferimentoNumeroLinea List&lt;java.math.BigInteger&gt;
-  */
-  @Deprecated
-  public void setRiferimentoNumeroLinea(List<java.math.BigInteger> riferimentoNumeroLinea) {
-  	this.riferimentoNumeroLinea=riferimentoNumeroLinea;
-  }
-
-  /**
-   * @deprecated Use method sizeRiferimentoNumeroLineaList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeRiferimentoNumeroLinea() {
-  	return this.riferimentoNumeroLinea.size();
-  }
+  private List<java.math.BigInteger> riferimentoNumeroLinea = new ArrayList<>();
 
 }

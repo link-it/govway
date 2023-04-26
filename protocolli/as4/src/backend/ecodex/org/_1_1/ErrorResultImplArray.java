@@ -90,33 +90,6 @@ public class ErrorResultImplArray extends org.openspcoop2.utils.beans.BaseBean i
 
 
   @XmlElement(name="item",required=true,nillable=false)
-  protected List<ErrorResultImpl> item = new ArrayList<ErrorResultImpl>();
-
-  /**
-   * @deprecated Use method getItemList
-   * @return List&lt;ErrorResultImpl&gt;
-  */
-  @Deprecated
-  public List<ErrorResultImpl> getItem() {
-  	return this.item;
-  }
-
-  /**
-   * @deprecated Use method setItemList
-   * @param item List&lt;ErrorResultImpl&gt;
-  */
-  @Deprecated
-  public void setItem(List<ErrorResultImpl> item) {
-  	this.item=item;
-  }
-
-  /**
-   * @deprecated Use method sizeItemList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeItem() {
-  	return this.item.size();
-  }
+  private List<ErrorResultImpl> item = new ArrayList<>();
 
 }

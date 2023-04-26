@@ -138,64 +138,10 @@ public class Messaging extends org.openspcoop2.utils.beans.BaseBean implements S
 
 
   @XmlElement(name="SignalMessage",required=true,nillable=false)
-  protected List<SignalMessage> signalMessage = new ArrayList<SignalMessage>();
-
-  /**
-   * @deprecated Use method getSignalMessageList
-   * @return List&lt;SignalMessage&gt;
-  */
-  @Deprecated
-  public List<SignalMessage> getSignalMessage() {
-  	return this.signalMessage;
-  }
-
-  /**
-   * @deprecated Use method setSignalMessageList
-   * @param signalMessage List&lt;SignalMessage&gt;
-  */
-  @Deprecated
-  public void setSignalMessage(List<SignalMessage> signalMessage) {
-  	this.signalMessage=signalMessage;
-  }
-
-  /**
-   * @deprecated Use method sizeSignalMessageList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeSignalMessage() {
-  	return this.signalMessage.size();
-  }
+  private List<SignalMessage> signalMessage = new ArrayList<>();
 
   @XmlElement(name="UserMessage",required=true,nillable=false)
-  protected List<UserMessage> userMessage = new ArrayList<UserMessage>();
-
-  /**
-   * @deprecated Use method getUserMessageList
-   * @return List&lt;UserMessage&gt;
-  */
-  @Deprecated
-  public List<UserMessage> getUserMessage() {
-  	return this.userMessage;
-  }
-
-  /**
-   * @deprecated Use method setUserMessageList
-   * @param userMessage List&lt;UserMessage&gt;
-  */
-  @Deprecated
-  public void setUserMessage(List<UserMessage> userMessage) {
-  	this.userMessage=userMessage;
-  }
-
-  /**
-   * @deprecated Use method sizeUserMessageList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeUserMessage() {
-  	return this.userMessage.size();
-  }
+  private List<UserMessage> userMessage = new ArrayList<>();
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.CollapsedStringAdapter.class)
   @javax.xml.bind.annotation.XmlID

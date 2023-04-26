@@ -120,11 +120,11 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean im
     this.descrizione = descrizione;
   }
 
-  public void set_value_tipo(String value) {
+  public void setTipoRawEnumValue(String value) {
     this.tipo = (ServizioApplicativoReplaceType) ServizioApplicativoReplaceType.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipo() {
+  public String getTipoRawEnumValue() {
     if(this.tipo == null){
     	return null;
     }else{
@@ -172,7 +172,7 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean im
   protected java.lang.String descrizione;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipo;
+  protected java.lang.String tipoRawEnumValue;
 
   @XmlAttribute(name="tipo",required=true)
   protected ServizioApplicativoReplaceType tipo;

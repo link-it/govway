@@ -90,33 +90,6 @@ public class Actions extends org.openspcoop2.utils.beans.BaseBean implements Ser
 
 
   @XmlElement(name="action",required=true,nillable=false)
-  protected List<Action> action = new ArrayList<Action>();
-
-  /**
-   * @deprecated Use method getActionList
-   * @return List&lt;Action&gt;
-  */
-  @Deprecated
-  public List<Action> getAction() {
-  	return this.action;
-  }
-
-  /**
-   * @deprecated Use method setActionList
-   * @param action List&lt;Action&gt;
-  */
-  @Deprecated
-  public void setAction(List<Action> action) {
-  	this.action=action;
-  }
-
-  /**
-   * @deprecated Use method sizeActionList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeAction() {
-  	return this.action.size();
-  }
+  private List<Action> action = new ArrayList<>();
 
 }

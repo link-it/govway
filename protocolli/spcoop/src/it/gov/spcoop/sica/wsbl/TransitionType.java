@@ -72,11 +72,11 @@ public class TransitionType extends org.openspcoop2.utils.beans.BaseBean impleme
     super();
   }
 
-  public void set_value_activationMode(String value) {
+  public void setActivationModeRawEnumValue(String value) {
     this.activationMode = (ActivationType) ActivationType.toEnumConstantFromString(value);
   }
 
-  public String get_value_activationMode() {
+  public String getActivationModeRawEnumValue() {
     if(this.activationMode == null){
     	return null;
     }else{
@@ -153,7 +153,7 @@ public class TransitionType extends org.openspcoop2.utils.beans.BaseBean impleme
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_activationMode;
+  protected java.lang.String activationModeRawEnumValue;
 
   @XmlElement(name="activationMode",required=true,nillable=false)
   protected ActivationType activationMode;

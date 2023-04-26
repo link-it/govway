@@ -91,33 +91,6 @@ public class ElencoServiziComponenti extends org.openspcoop2.utils.beans.BaseBea
 
   @javax.xml.bind.annotation.XmlSchemaType(name="anyURI")
   @XmlElement(name="servizioComponente",required=true,nillable=false)
-  protected List<java.net.URI> servizioComponente = new ArrayList<java.net.URI>();
-
-  /**
-   * @deprecated Use method getServizioComponenteList
-   * @return List&lt;java.net.URI&gt;
-  */
-  @Deprecated
-  public List<java.net.URI> getServizioComponente() {
-  	return this.servizioComponente;
-  }
-
-  /**
-   * @deprecated Use method setServizioComponenteList
-   * @param servizioComponente List&lt;java.net.URI&gt;
-  */
-  @Deprecated
-  public void setServizioComponente(List<java.net.URI> servizioComponente) {
-  	this.servizioComponente=servizioComponente;
-  }
-
-  /**
-   * @deprecated Use method sizeServizioComponenteList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeServizioComponente() {
-  	return this.servizioComponente.size();
-  }
+  private List<java.net.URI> servizioComponente = new ArrayList<>();
 
 }

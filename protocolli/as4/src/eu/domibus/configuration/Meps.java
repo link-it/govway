@@ -116,63 +116,9 @@ public class Meps extends org.openspcoop2.utils.beans.BaseBean implements Serial
 
 
   @XmlElement(name="mep",required=true,nillable=false)
-  protected List<Mep> mep = new ArrayList<Mep>();
-
-  /**
-   * @deprecated Use method getMepList
-   * @return List&lt;Mep&gt;
-  */
-  @Deprecated
-  public List<Mep> getMep() {
-  	return this.mep;
-  }
-
-  /**
-   * @deprecated Use method setMepList
-   * @param mep List&lt;Mep&gt;
-  */
-  @Deprecated
-  public void setMep(List<Mep> mep) {
-  	this.mep=mep;
-  }
-
-  /**
-   * @deprecated Use method sizeMepList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeMep() {
-  	return this.mep.size();
-  }
+  private List<Mep> mep = new ArrayList<>();
 
   @XmlElement(name="binding",required=true,nillable=false)
-  protected List<Binding> binding = new ArrayList<Binding>();
-
-  /**
-   * @deprecated Use method getBindingList
-   * @return List&lt;Binding&gt;
-  */
-  @Deprecated
-  public List<Binding> getBinding() {
-  	return this.binding;
-  }
-
-  /**
-   * @deprecated Use method setBindingList
-   * @param binding List&lt;Binding&gt;
-  */
-  @Deprecated
-  public void setBinding(List<Binding> binding) {
-  	this.binding=binding;
-  }
-
-  /**
-   * @deprecated Use method sizeBindingList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeBinding() {
-  	return this.binding.size();
-  }
+  private List<Binding> binding = new ArrayList<>();
 
 }

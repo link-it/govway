@@ -90,33 +90,6 @@ public class OperationListType extends org.openspcoop2.utils.beans.BaseBean impl
 
 
   @XmlElement(name="operation",required=true,nillable=false)
-  protected List<OperationType> operation = new ArrayList<OperationType>();
-
-  /**
-   * @deprecated Use method getOperationList
-   * @return List&lt;OperationType&gt;
-  */
-  @Deprecated
-  public List<OperationType> getOperation() {
-  	return this.operation;
-  }
-
-  /**
-   * @deprecated Use method setOperationList
-   * @param operation List&lt;OperationType&gt;
-  */
-  @Deprecated
-  public void setOperation(List<OperationType> operation) {
-  	this.operation=operation;
-  }
-
-  /**
-   * @deprecated Use method sizeOperationList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeOperation() {
-  	return this.operation.size();
-  }
+  private List<OperationType> operation = new ArrayList<>();
 
 }

@@ -64,11 +64,11 @@ public class DatiPagamentoType extends org.openspcoop2.utils.beans.BaseBean impl
     super();
   }
 
-  public void set_value_condizioniPagamento(String value) {
+  public void setCondizioniPagamentoRawEnumValue(String value) {
     this.condizioniPagamento = (CondizioniPagamentoType) CondizioniPagamentoType.toEnumConstantFromString(value);
   }
 
-  public String get_value_condizioniPagamento() {
+  public String getCondizioniPagamentoRawEnumValue() {
     if(this.condizioniPagamento == null){
     	return null;
     }else{
@@ -113,39 +113,12 @@ public class DatiPagamentoType extends org.openspcoop2.utils.beans.BaseBean impl
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_condizioniPagamento;
+  protected java.lang.String condizioniPagamentoRawEnumValue;
 
   @XmlElement(name="CondizioniPagamento",required=true,nillable=false)
   protected CondizioniPagamentoType condizioniPagamento;
 
   @XmlElement(name="DettaglioPagamento",required=true,nillable=false)
-  protected List<DettaglioPagamentoType> dettaglioPagamento = new ArrayList<DettaglioPagamentoType>();
-
-  /**
-   * @deprecated Use method getDettaglioPagamentoList
-   * @return List&lt;DettaglioPagamentoType&gt;
-  */
-  @Deprecated
-  public List<DettaglioPagamentoType> getDettaglioPagamento() {
-  	return this.dettaglioPagamento;
-  }
-
-  /**
-   * @deprecated Use method setDettaglioPagamentoList
-   * @param dettaglioPagamento List&lt;DettaglioPagamentoType&gt;
-  */
-  @Deprecated
-  public void setDettaglioPagamento(List<DettaglioPagamentoType> dettaglioPagamento) {
-  	this.dettaglioPagamento=dettaglioPagamento;
-  }
-
-  /**
-   * @deprecated Use method sizeDettaglioPagamentoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeDettaglioPagamento() {
-  	return this.dettaglioPagamento.size();
-  }
+  private List<DettaglioPagamentoType> dettaglioPagamento = new ArrayList<>();
 
 }

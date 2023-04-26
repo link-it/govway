@@ -110,11 +110,11 @@ public class FatturaElettronicaHeaderType extends org.openspcoop2.utils.beans.Ba
     this.terzoIntermediarioOSoggettoEmittente = terzoIntermediarioOSoggettoEmittente;
   }
 
-  public void set_value_soggettoEmittente(String value) {
+  public void setSoggettoEmittenteRawEnumValue(String value) {
     this.soggettoEmittente = (SoggettoEmittenteType) SoggettoEmittenteType.toEnumConstantFromString(value);
   }
 
-  public String get_value_soggettoEmittente() {
+  public String getSoggettoEmittenteRawEnumValue() {
     if(this.soggettoEmittente == null){
     	return null;
     }else{
@@ -150,7 +150,7 @@ public class FatturaElettronicaHeaderType extends org.openspcoop2.utils.beans.Ba
   protected TerzoIntermediarioSoggettoEmittenteType terzoIntermediarioOSoggettoEmittente;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_soggettoEmittente;
+  protected java.lang.String soggettoEmittenteRawEnumValue;
 
   @XmlElement(name="SoggettoEmittente",required=false,nillable=false)
   protected SoggettoEmittenteType soggettoEmittente;

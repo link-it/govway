@@ -90,33 +90,6 @@ public class SpecificaCoordinamento extends org.openspcoop2.utils.beans.BaseBean
 
 
   @XmlElement(name="documentoCoordinamento",required=true,nillable=false)
-  protected List<DocumentoCoordinamento> documentoCoordinamento = new ArrayList<DocumentoCoordinamento>();
-
-  /**
-   * @deprecated Use method getDocumentoCoordinamentoList
-   * @return List&lt;DocumentoCoordinamento&gt;
-  */
-  @Deprecated
-  public List<DocumentoCoordinamento> getDocumentoCoordinamento() {
-  	return this.documentoCoordinamento;
-  }
-
-  /**
-   * @deprecated Use method setDocumentoCoordinamentoList
-   * @param documentoCoordinamento List&lt;DocumentoCoordinamento&gt;
-  */
-  @Deprecated
-  public void setDocumentoCoordinamento(List<DocumentoCoordinamento> documentoCoordinamento) {
-  	this.documentoCoordinamento=documentoCoordinamento;
-  }
-
-  /**
-   * @deprecated Use method sizeDocumentoCoordinamentoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeDocumentoCoordinamento() {
-  	return this.documentoCoordinamento.size();
-  }
+  private List<DocumentoCoordinamento> documentoCoordinamento = new ArrayList<>();
 
 }

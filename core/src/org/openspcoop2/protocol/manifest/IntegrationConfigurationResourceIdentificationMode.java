@@ -55,11 +55,11 @@ public class IntegrationConfigurationResourceIdentificationMode extends org.open
     super();
   }
 
-  public void set_value_name(String value) {
+  public void setNameRawEnumValue(String value) {
     this.name = (ResourceIdentificationType) ResourceIdentificationType.toEnumConstantFromString(value);
   }
 
-  public String get_value_name() {
+  public String getNameRawEnumValue() {
     if(this.name == null){
     	return null;
     }else{
@@ -92,7 +92,7 @@ public class IntegrationConfigurationResourceIdentificationMode extends org.open
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_name;
+  protected java.lang.String nameRawEnumValue;
 
   @XmlAttribute(name="name",required=true)
   protected ResourceIdentificationType name;

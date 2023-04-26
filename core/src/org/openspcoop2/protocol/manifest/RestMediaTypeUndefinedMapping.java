@@ -54,11 +54,11 @@ public class RestMediaTypeUndefinedMapping extends org.openspcoop2.utils.beans.B
     super();
   }
 
-  public void set_value_messageType(String value) {
+  public void setMessageTypeRawEnumValue(String value) {
     this.messageType = (RestMessageType) RestMessageType.toEnumConstantFromString(value);
   }
 
-  public String get_value_messageType() {
+  public String getMessageTypeRawEnumValue() {
     if(this.messageType == null){
     	return null;
     }else{
@@ -79,7 +79,7 @@ public class RestMediaTypeUndefinedMapping extends org.openspcoop2.utils.beans.B
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_messageType;
+  protected java.lang.String messageTypeRawEnumValue;
 
   @XmlAttribute(name="messageType",required=true)
   protected RestMessageType messageType;

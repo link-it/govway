@@ -136,34 +136,7 @@ public class Party extends org.openspcoop2.utils.beans.BaseBean implements Seria
 
 
   @XmlElement(name="identifier",required=true,nillable=false)
-  protected List<Identifier> identifier = new ArrayList<Identifier>();
-
-  /**
-   * @deprecated Use method getIdentifierList
-   * @return List&lt;Identifier&gt;
-  */
-  @Deprecated
-  public List<Identifier> getIdentifier() {
-  	return this.identifier;
-  }
-
-  /**
-   * @deprecated Use method setIdentifierList
-   * @param identifier List&lt;Identifier&gt;
-  */
-  @Deprecated
-  public void setIdentifier(List<Identifier> identifier) {
-  	this.identifier=identifier;
-  }
-
-  /**
-   * @deprecated Use method sizeIdentifierList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeIdentifier() {
-  	return this.identifier.size();
-  }
+  private List<Identifier> identifier = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="name",required=true)

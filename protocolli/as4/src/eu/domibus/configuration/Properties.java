@@ -116,63 +116,9 @@ public class Properties extends org.openspcoop2.utils.beans.BaseBean implements 
 
 
   @XmlElement(name="property",required=true,nillable=false)
-  protected List<Property> property = new ArrayList<Property>();
-
-  /**
-   * @deprecated Use method getPropertyList
-   * @return List&lt;Property&gt;
-  */
-  @Deprecated
-  public List<Property> getProperty() {
-  	return this.property;
-  }
-
-  /**
-   * @deprecated Use method setPropertyList
-   * @param property List&lt;Property&gt;
-  */
-  @Deprecated
-  public void setProperty(List<Property> property) {
-  	this.property=property;
-  }
-
-  /**
-   * @deprecated Use method sizePropertyList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeProperty() {
-  	return this.property.size();
-  }
+  private List<Property> property = new ArrayList<>();
 
   @XmlElement(name="propertySet",required=true,nillable=false)
-  protected List<PropertySet> propertySet = new ArrayList<PropertySet>();
-
-  /**
-   * @deprecated Use method getPropertySetList
-   * @return List&lt;PropertySet&gt;
-  */
-  @Deprecated
-  public List<PropertySet> getPropertySet() {
-  	return this.propertySet;
-  }
-
-  /**
-   * @deprecated Use method setPropertySetList
-   * @param propertySet List&lt;PropertySet&gt;
-  */
-  @Deprecated
-  public void setPropertySet(List<PropertySet> propertySet) {
-  	this.propertySet=propertySet;
-  }
-
-  /**
-   * @deprecated Use method sizePropertySetList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizePropertySet() {
-  	return this.propertySet.size();
-  }
+  private List<PropertySet> propertySet = new ArrayList<>();
 
 }

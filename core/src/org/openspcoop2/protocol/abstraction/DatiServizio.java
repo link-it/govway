@@ -92,11 +92,11 @@ public class DatiServizio extends org.openspcoop2.utils.beans.BaseBean implement
     this.nome = nome;
   }
 
-  public void set_value_tipologiaServizio(String value) {
+  public void setTipologiaServizioRawEnumValue(String value) {
     this.tipologiaServizio = (TipologiaServizio) TipologiaServizio.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipologiaServizio() {
+  public String getTipologiaServizioRawEnumValue() {
     if(this.tipologiaServizio == null){
     	return null;
     }else{
@@ -137,7 +137,7 @@ public class DatiServizio extends org.openspcoop2.utils.beans.BaseBean implement
   protected java.lang.String nome;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipologiaServizio;
+  protected java.lang.String tipologiaServizioRawEnumValue;
 
   @XmlElement(name="tipologia-servizio",required=false,nillable=false)
   protected TipologiaServizio tipologiaServizio;

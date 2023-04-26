@@ -60,11 +60,11 @@ public class RispostaRiceviFattureType extends org.openspcoop2.utils.beans.BaseB
     super();
   }
 
-  public void set_value_esito(String value) {
+  public void setEsitoRawEnumValue(String value) {
     this.esito = (EsitoRicezioneType) EsitoRicezioneType.toEnumConstantFromString(value);
   }
 
-  public String get_value_esito() {
+  public String getEsitoRawEnumValue() {
     if(this.esito == null){
     	return null;
     }else{
@@ -97,7 +97,7 @@ public class RispostaRiceviFattureType extends org.openspcoop2.utils.beans.BaseB
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_esito;
+  protected java.lang.String esitoRawEnumValue;
 
   @XmlElement(name="Esito",required=true,nillable=false)
   protected EsitoRicezioneType esito;

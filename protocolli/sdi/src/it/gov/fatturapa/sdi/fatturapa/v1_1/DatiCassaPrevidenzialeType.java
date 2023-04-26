@@ -76,11 +76,11 @@ public class DatiCassaPrevidenzialeType extends org.openspcoop2.utils.beans.Base
     super();
   }
 
-  public void set_value_tipoCassa(String value) {
+  public void setTipoCassaRawEnumValue(String value) {
     this.tipoCassa = (TipoCassaType) TipoCassaType.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipoCassa() {
+  public String getTipoCassaRawEnumValue() {
     if(this.tipoCassa == null){
     	return null;
     }else{
@@ -152,11 +152,11 @@ public class DatiCassaPrevidenzialeType extends org.openspcoop2.utils.beans.Base
 	}
   }
 
-  public void set_value_ritenuta(String value) {
+  public void setRitenutaRawEnumValue(String value) {
     this.ritenuta = (RitenutaType) RitenutaType.toEnumConstantFromString(value);
   }
 
-  public String get_value_ritenuta() {
+  public String getRitenutaRawEnumValue() {
     if(this.ritenuta == null){
     	return null;
     }else{
@@ -172,11 +172,11 @@ public class DatiCassaPrevidenzialeType extends org.openspcoop2.utils.beans.Base
     this.ritenuta = ritenuta;
   }
 
-  public void set_value_natura(String value) {
+  public void setNaturaRawEnumValue(String value) {
     this.natura = (NaturaType) NaturaType.toEnumConstantFromString(value);
   }
 
-  public String get_value_natura() {
+  public String getNaturaRawEnumValue() {
     if(this.natura == null){
     	return null;
     }else{
@@ -205,7 +205,7 @@ public class DatiCassaPrevidenzialeType extends org.openspcoop2.utils.beans.Base
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipoCassa;
+  protected java.lang.String tipoCassaRawEnumValue;
 
   @XmlElement(name="TipoCassa",required=true,nillable=false)
   protected TipoCassaType tipoCassa;
@@ -243,13 +243,13 @@ public class DatiCassaPrevidenzialeType extends org.openspcoop2.utils.beans.Base
   protected java.math.BigDecimal aliquotaIVA;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_ritenuta;
+  protected java.lang.String ritenutaRawEnumValue;
 
   @XmlElement(name="Ritenuta",required=false,nillable=false)
   protected RitenutaType ritenuta;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_natura;
+  protected java.lang.String naturaRawEnumValue;
 
   @XmlElement(name="Natura",required=false,nillable=false)
   protected NaturaType natura;

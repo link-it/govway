@@ -110,34 +110,7 @@ public class SoapMediaTypeCollection extends org.openspcoop2.utils.beans.BaseBea
 
 
   @XmlElement(name="mediaType",required=true,nillable=false)
-  protected List<SoapMediaTypeMapping> mediaType = new ArrayList<SoapMediaTypeMapping>();
-
-  /**
-   * @deprecated Use method getMediaTypeList
-   * @return List&lt;SoapMediaTypeMapping&gt;
-  */
-  @Deprecated
-  public List<SoapMediaTypeMapping> getMediaType() {
-  	return this.mediaType;
-  }
-
-  /**
-   * @deprecated Use method setMediaTypeList
-   * @param mediaType List&lt;SoapMediaTypeMapping&gt;
-  */
-  @Deprecated
-  public void setMediaType(List<SoapMediaTypeMapping> mediaType) {
-  	this.mediaType=mediaType;
-  }
-
-  /**
-   * @deprecated Use method sizeMediaTypeList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeMediaType() {
-  	return this.mediaType.size();
-  }
+  private List<SoapMediaTypeMapping> mediaType = new ArrayList<>();
 
   @XmlElement(name="default",required=false,nillable=false)
   protected SoapMediaTypeDefaultMapping _default;

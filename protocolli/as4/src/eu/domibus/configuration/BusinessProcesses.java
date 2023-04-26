@@ -246,33 +246,6 @@ public class BusinessProcesses extends org.openspcoop2.utils.beans.BaseBean impl
   protected LegConfigurations legConfigurations;
 
   @XmlElement(name="process",required=true,nillable=false)
-  protected List<Process> process = new ArrayList<Process>();
-
-  /**
-   * @deprecated Use method getProcessList
-   * @return List&lt;Process&gt;
-  */
-  @Deprecated
-  public List<Process> getProcess() {
-  	return this.process;
-  }
-
-  /**
-   * @deprecated Use method setProcessList
-   * @param process List&lt;Process&gt;
-  */
-  @Deprecated
-  public void setProcess(List<Process> process) {
-  	this.process=process;
-  }
-
-  /**
-   * @deprecated Use method sizeProcessList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeProcess() {
-  	return this.process.size();
-  }
+  private List<Process> process = new ArrayList<>();
 
 }

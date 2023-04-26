@@ -116,33 +116,6 @@ public class StatesType extends org.openspcoop2.utils.beans.BaseBean implements 
   protected StateTypeFinal stateFinal;
 
   @XmlElement(name="state",required=true,nillable=false)
-  protected List<StateTypeNormal> state = new ArrayList<StateTypeNormal>();
-
-  /**
-   * @deprecated Use method getStateList
-   * @return List&lt;StateTypeNormal&gt;
-  */
-  @Deprecated
-  public List<StateTypeNormal> getState() {
-  	return this.state;
-  }
-
-  /**
-   * @deprecated Use method setStateList
-   * @param state List&lt;StateTypeNormal&gt;
-  */
-  @Deprecated
-  public void setState(List<StateTypeNormal> state) {
-  	this.state=state;
-  }
-
-  /**
-   * @deprecated Use method sizeStateList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeState() {
-  	return this.state.size();
-  }
+  private List<StateTypeNormal> state = new ArrayList<>();
 
 }

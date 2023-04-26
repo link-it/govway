@@ -80,11 +80,11 @@ public class Binding extends org.openspcoop2.utils.beans.BaseBean implements Ser
     this.rest = rest;
   }
 
-  public void set_value__default(String value) {
+  public void setDefaultRawEnumValue(String value) {
     this._default = (ServiceBinding) ServiceBinding.toEnumConstantFromString(value);
   }
 
-  public String get_value__default() {
+  public String getDefaultRawEnumValue() {
     if(this._default == null){
     	return null;
     }else{
@@ -111,7 +111,7 @@ public class Binding extends org.openspcoop2.utils.beans.BaseBean implements Ser
   protected RestConfiguration rest;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value__default;
+  protected java.lang.String _defaultRawEnumValue;
 
   @XmlAttribute(name="default",required=false)
   protected ServiceBinding _default;

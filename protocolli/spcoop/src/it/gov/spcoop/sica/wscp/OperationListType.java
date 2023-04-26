@@ -90,33 +90,6 @@ public class OperationListType extends org.openspcoop2.utils.beans.BaseBean impl
 
 
   @XmlElement(name="collaborazione",required=true,nillable=false)
-  protected List<OperationType> collaborazione = new ArrayList<OperationType>();
-
-  /**
-   * @deprecated Use method getCollaborazioneList
-   * @return List&lt;OperationType&gt;
-  */
-  @Deprecated
-  public List<OperationType> getCollaborazione() {
-  	return this.collaborazione;
-  }
-
-  /**
-   * @deprecated Use method setCollaborazioneList
-   * @param collaborazione List&lt;OperationType&gt;
-  */
-  @Deprecated
-  public void setCollaborazione(List<OperationType> collaborazione) {
-  	this.collaborazione=collaborazione;
-  }
-
-  /**
-   * @deprecated Use method sizeCollaborazioneList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeCollaborazione() {
-  	return this.collaborazione.size();
-  }
+  private List<OperationType> collaborazione = new ArrayList<>();
 
 }

@@ -91,33 +91,6 @@ public class ElencoAllegati extends org.openspcoop2.utils.beans.BaseBean impleme
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="genericoDocumento",required=true,nillable=false)
-  protected List<java.lang.String> genericoDocumento = new ArrayList<java.lang.String>();
-
-  /**
-   * @deprecated Use method getGenericoDocumentoList
-   * @return List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public List<java.lang.String> getGenericoDocumento() {
-  	return this.genericoDocumento;
-  }
-
-  /**
-   * @deprecated Use method setGenericoDocumentoList
-   * @param genericoDocumento List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public void setGenericoDocumento(List<java.lang.String> genericoDocumento) {
-  	this.genericoDocumento=genericoDocumento;
-  }
-
-  /**
-   * @deprecated Use method sizeGenericoDocumentoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeGenericoDocumento() {
-  	return this.genericoDocumento.size();
-  }
+  private List<java.lang.String> genericoDocumento = new ArrayList<>();
 
 }

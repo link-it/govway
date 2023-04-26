@@ -70,11 +70,11 @@ public class UrlMapping extends org.openspcoop2.utils.beans.BaseBean implements 
     this.file = file;
   }
 
-  public void set_value_type(String value) {
+  public void setTypeRawEnumValue(String value) {
     this.type = (UrlMappingSourceType) UrlMappingSourceType.toEnumConstantFromString(value);
   }
 
-  public String get_value_type() {
+  public String getTypeRawEnumValue() {
     if(this.type == null){
     	return null;
     }else{
@@ -99,7 +99,7 @@ public class UrlMapping extends org.openspcoop2.utils.beans.BaseBean implements 
   protected java.lang.String file;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_type;
+  protected java.lang.String typeRawEnumValue;
 
   @XmlAttribute(name="type",required=true)
   protected UrlMappingSourceType type;

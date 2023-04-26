@@ -115,33 +115,6 @@ public class Openspcoop2 extends org.openspcoop2.utils.beans.BaseBean implements
   protected Wizard wizard;
 
   @XmlElement(name="operazione",required=true,nillable=false)
-  protected List<Operazione> operazione = new ArrayList<Operazione>();
-
-  /**
-   * @deprecated Use method getOperazioneList
-   * @return List&lt;Operazione&gt;
-  */
-  @Deprecated
-  public List<Operazione> getOperazione() {
-  	return this.operazione;
-  }
-
-  /**
-   * @deprecated Use method setOperazioneList
-   * @param operazione List&lt;Operazione&gt;
-  */
-  @Deprecated
-  public void setOperazione(List<Operazione> operazione) {
-  	this.operazione=operazione;
-  }
-
-  /**
-   * @deprecated Use method sizeOperazioneList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeOperazione() {
-  	return this.operazione.size();
-  }
+  private List<Operazione> operazione = new ArrayList<>();
 
 }

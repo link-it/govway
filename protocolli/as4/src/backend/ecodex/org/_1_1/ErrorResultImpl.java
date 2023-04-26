@@ -71,11 +71,11 @@ public class ErrorResultImpl extends org.openspcoop2.utils.beans.BaseBean implem
     super();
   }
 
-  public void set_value_errorCode(String value) {
+  public void setErrorCodeRawEnumValue(String value) {
     this.errorCode = (ErrorCode) ErrorCode.toEnumConstantFromString(value);
   }
 
-  public String get_value_errorCode() {
+  public String getErrorCodeRawEnumValue() {
     if(this.errorCode == null){
     	return null;
     }else{
@@ -107,11 +107,11 @@ public class ErrorResultImpl extends org.openspcoop2.utils.beans.BaseBean implem
     this.messageInErrorId = messageInErrorId;
   }
 
-  public void set_value_mshRole(String value) {
+  public void setMshRoleRawEnumValue(String value) {
     this.mshRole = (MshRole) MshRole.toEnumConstantFromString(value);
   }
 
-  public String get_value_mshRole() {
+  public String getMshRoleRawEnumValue() {
     if(this.mshRole == null){
     	return null;
     }else{
@@ -148,7 +148,7 @@ public class ErrorResultImpl extends org.openspcoop2.utils.beans.BaseBean implem
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_errorCode;
+  protected java.lang.String errorCodeRawEnumValue;
 
   @XmlElement(name="errorCode",required=false,nillable=false)
   protected ErrorCode errorCode;
@@ -162,7 +162,7 @@ public class ErrorResultImpl extends org.openspcoop2.utils.beans.BaseBean implem
   protected java.lang.String messageInErrorId;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_mshRole;
+  protected java.lang.String mshRoleRawEnumValue;
 
   @XmlElement(name="mshRole",required=false,nillable=false)
   protected MshRole mshRole;

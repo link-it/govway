@@ -100,34 +100,7 @@ public class Requisiti extends org.openspcoop2.utils.beans.BaseBean implements S
 
 
   @XmlElement(name="protocollo",required=true,nillable=false)
-  protected List<RequisitoProtocollo> protocollo = new ArrayList<RequisitoProtocollo>();
-
-  /**
-   * @deprecated Use method getProtocolloList
-   * @return List&lt;RequisitoProtocollo&gt;
-  */
-  @Deprecated
-  public List<RequisitoProtocollo> getProtocollo() {
-  	return this.protocollo;
-  }
-
-  /**
-   * @deprecated Use method setProtocolloList
-   * @param protocollo List&lt;RequisitoProtocollo&gt;
-  */
-  @Deprecated
-  public void setProtocollo(List<RequisitoProtocollo> protocollo) {
-  	this.protocollo=protocollo;
-  }
-
-  /**
-   * @deprecated Use method sizeProtocolloList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeProtocollo() {
-  	return this.protocollo.size();
-  }
+  private List<RequisitoProtocollo> protocollo = new ArrayList<>();
 
   @XmlElement(name="input",required=false,nillable=false)
   protected RequisitoInput input;
