@@ -196,6 +196,30 @@ public class Dump extends org.openspcoop2.utils.beans.BaseBeanWithId implements 
   @XmlElement(name="openspcoop-appender",required=true,nillable=false)
   private List<OpenspcoopAppender> openspcoopAppender = new ArrayList<>();
 
+  /**
+   * Use method getOpenspcoopAppenderList
+   * @return List&lt;OpenspcoopAppender&gt;
+  */
+  public List<OpenspcoopAppender> getOpenspcoopAppender() {
+  	return this.getOpenspcoopAppenderList();
+  }
+
+  /**
+   * Use method setOpenspcoopAppenderList
+   * @param openspcoopAppender List&lt;OpenspcoopAppender&gt;
+  */
+  public void setOpenspcoopAppender(List<OpenspcoopAppender> openspcoopAppender) {
+  	this.setOpenspcoopAppenderList(openspcoopAppender);
+  }
+
+  /**
+   * Use method sizeOpenspcoopAppenderList
+   * @return lunghezza della lista
+  */
+  public int sizeOpenspcoopAppender() {
+  	return this.sizeOpenspcoopAppenderList();
+  }
+
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String statoRawEnumValue;
 

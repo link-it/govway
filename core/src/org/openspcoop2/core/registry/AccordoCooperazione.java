@@ -279,6 +279,30 @@ public class AccordoCooperazione extends org.openspcoop2.utils.beans.BaseBeanWit
   @XmlElement(name="uri-servizi-composti",required=true,nillable=false)
   private List<java.lang.String> uriServiziComposti = new ArrayList<>();
 
+  /**
+   * Use method getUriServiziCompostiList
+   * @return List&lt;java.lang.String&gt;
+  */
+  public List<java.lang.String> getUriServiziComposti() {
+  	return this.getUriServiziCompostiList();
+  }
+
+  /**
+   * Use method setUriServiziCompostiList
+   * @param uriServiziComposti List&lt;java.lang.String&gt;
+  */
+  public void setUriServiziComposti(List<java.lang.String> uriServiziComposti) {
+  	this.setUriServiziCompostiList(uriServiziComposti);
+  }
+
+  /**
+   * Use method sizeUriServiziCompostiList
+   * @return lunghezza della lista
+  */
+  public int sizeUriServiziComposti() {
+  	return this.sizeUriServiziCompostiList();
+  }
+
   @XmlElement(name="soggetto-referente",required=false,nillable=false)
   protected IdSoggetto soggettoReferente;
 
@@ -288,11 +312,83 @@ public class AccordoCooperazione extends org.openspcoop2.utils.beans.BaseBeanWit
   @XmlElement(name="allegato",required=true,nillable=false)
   private List<Documento> allegato = new ArrayList<>();
 
+  /**
+   * Use method getAllegatoList
+   * @return List&lt;Documento&gt;
+  */
+  public List<Documento> getAllegato() {
+  	return this.getAllegatoList();
+  }
+
+  /**
+   * Use method setAllegatoList
+   * @param allegato List&lt;Documento&gt;
+  */
+  public void setAllegato(List<Documento> allegato) {
+  	this.setAllegatoList(allegato);
+  }
+
+  /**
+   * Use method sizeAllegatoList
+   * @return lunghezza della lista
+  */
+  public int sizeAllegato() {
+  	return this.sizeAllegatoList();
+  }
+
   @XmlElement(name="specifica-semiformale",required=true,nillable=false)
   private List<Documento> specificaSemiformale = new ArrayList<>();
 
+  /**
+   * Use method getSpecificaSemiformaleList
+   * @return List&lt;Documento&gt;
+  */
+  public List<Documento> getSpecificaSemiformale() {
+  	return this.getSpecificaSemiformaleList();
+  }
+
+  /**
+   * Use method setSpecificaSemiformaleList
+   * @param specificaSemiformale List&lt;Documento&gt;
+  */
+  public void setSpecificaSemiformale(List<Documento> specificaSemiformale) {
+  	this.setSpecificaSemiformaleList(specificaSemiformale);
+  }
+
+  /**
+   * Use method sizeSpecificaSemiformaleList
+   * @return lunghezza della lista
+  */
+  public int sizeSpecificaSemiformale() {
+  	return this.sizeSpecificaSemiformaleList();
+  }
+
   @XmlElement(name="protocol-property",required=true,nillable=false)
   private List<ProtocolProperty> protocolProperty = new ArrayList<>();
+
+  /**
+   * Use method getProtocolPropertyList
+   * @return List&lt;ProtocolProperty&gt;
+  */
+  public List<ProtocolProperty> getProtocolProperty() {
+  	return this.getProtocolPropertyList();
+  }
+
+  /**
+   * Use method setProtocolPropertyList
+   * @param protocolProperty List&lt;ProtocolProperty&gt;
+  */
+  public void setProtocolProperty(List<ProtocolProperty> protocolProperty) {
+  	this.setProtocolPropertyList(protocolProperty);
+  }
+
+  /**
+   * Use method sizeProtocolPropertyList
+   * @return lunghezza della lista
+  */
+  public int sizeProtocolProperty() {
+  	return this.sizeProtocolPropertyList();
+  }
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String superUser;

@@ -92,4 +92,28 @@ public class Description extends org.openspcoop2.utils.beans.BaseBean implements
   @XmlElement(name="item",required=true,nillable=false)
   private List<DescriptionType> item = new ArrayList<>();
 
+  /**
+   * Use method getItemList
+   * @return List&lt;DescriptionType&gt;
+  */
+  public List<DescriptionType> getItem() {
+  	return this.getItemList();
+  }
+
+  /**
+   * Use method setItemList
+   * @param item List&lt;DescriptionType&gt;
+  */
+  public void setItem(List<DescriptionType> item) {
+  	this.setItemList(item);
+  }
+
+  /**
+   * Use method sizeItemList
+   * @return lunghezza della lista
+  */
+  public int sizeItem() {
+  	return this.sizeItemList();
+  }
+
 }

@@ -3482,7 +3482,7 @@ public class RegistroServiziReader {
 		if(httpsProp.getKeyStoreLocation()!=null) {
 			try {
 				check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(httpsProp.getKeyStoreLocation(), classpathSupported, httpsProp.getKeyStoreType(), 
-						httpsProp.getKeyStorePassword(), httpsProp.getKeyAlias(),
+						httpsProp.getKeyStorePassword(), httpsProp.getKeyAlias(), httpsProp.getKeyPassword(),
 						sogliaWarningGiorni, 
 						false, //addCertificateDetails, 
 						separator, newLine,
@@ -3653,14 +3653,14 @@ public class RegistroServiziReader {
 		if(keystoreParams!=null) {
 			try {
 				if(keystoreParams.getStore()!=null) {
-					check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(keystoreParams.getStore(), keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(),
+					check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(keystoreParams.getStore(), keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
 							sogliaWarningGiorni, 
 							false, //addCertificateDetails, 
 							separator, newLine,
 							log);
 				}
 				else {
-					check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(),
+					check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
 							sogliaWarningGiorni, 
 							false, //addCertificateDetails, 
 							separator, newLine,

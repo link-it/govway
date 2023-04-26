@@ -92,4 +92,28 @@ public class Versions extends org.openspcoop2.utils.beans.BaseBean implements Se
   @XmlElement(name="version",required=true,nillable=false)
   private List<Version> version = new ArrayList<>();
 
+  /**
+   * Use method getVersionList
+   * @return List&lt;Version&gt;
+  */
+  public List<Version> getVersion() {
+  	return this.getVersionList();
+  }
+
+  /**
+   * Use method setVersionList
+   * @param version List&lt;Version&gt;
+  */
+  public void setVersion(List<Version> version) {
+  	this.setVersionList(version);
+  }
+
+  /**
+   * Use method sizeVersionList
+   * @return lunghezza della lista
+  */
+  public int sizeVersion() {
+  	return this.sizeVersionList();
+  }
+
 }

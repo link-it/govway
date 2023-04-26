@@ -336,8 +336,56 @@ public class PortType extends org.openspcoop2.utils.beans.BaseBeanWithId impleme
   @XmlElement(name="azione",required=true,nillable=false)
   private List<Operation> azione = new ArrayList<>();
 
+  /**
+   * Use method getAzioneList
+   * @return List&lt;Operation&gt;
+  */
+  public List<Operation> getAzione() {
+  	return this.getAzioneList();
+  }
+
+  /**
+   * Use method setAzioneList
+   * @param azione List&lt;Operation&gt;
+  */
+  public void setAzione(List<Operation> azione) {
+  	this.setAzioneList(azione);
+  }
+
+  /**
+   * Use method sizeAzioneList
+   * @return lunghezza della lista
+  */
+  public int sizeAzione() {
+  	return this.sizeAzioneList();
+  }
+
   @XmlElement(name="protocol-property",required=true,nillable=false)
   private List<ProtocolProperty> protocolProperty = new ArrayList<>();
+
+  /**
+   * Use method getProtocolPropertyList
+   * @return List&lt;ProtocolProperty&gt;
+  */
+  public List<ProtocolProperty> getProtocolProperty() {
+  	return this.getProtocolPropertyList();
+  }
+
+  /**
+   * Use method setProtocolPropertyList
+   * @param protocolProperty List&lt;ProtocolProperty&gt;
+  */
+  public void setProtocolProperty(List<ProtocolProperty> protocolProperty) {
+  	this.setProtocolPropertyList(protocolProperty);
+  }
+
+  /**
+   * Use method sizeProtocolPropertyList
+   * @return lunghezza della lista
+  */
+  public int sizeProtocolProperty() {
+  	return this.sizeProtocolPropertyList();
+  }
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="profilo-p-t",required=false)

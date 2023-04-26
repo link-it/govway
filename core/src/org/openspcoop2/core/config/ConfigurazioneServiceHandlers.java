@@ -170,13 +170,109 @@ public class ConfigurazioneServiceHandlers extends org.openspcoop2.utils.beans.B
   @XmlElement(name="init",required=true,nillable=false)
   private List<ConfigurazioneHandler> init = new ArrayList<>();
 
+  /**
+   * Use method getInitList
+   * @return List&lt;ConfigurazioneHandler&gt;
+  */
+  public List<ConfigurazioneHandler> getInit() {
+  	return this.getInitList();
+  }
+
+  /**
+   * Use method setInitList
+   * @param init List&lt;ConfigurazioneHandler&gt;
+  */
+  public void setInit(List<ConfigurazioneHandler> init) {
+  	this.setInitList(init);
+  }
+
+  /**
+   * Use method sizeInitList
+   * @return lunghezza della lista
+  */
+  public int sizeInit() {
+  	return this.sizeInitList();
+  }
+
   @XmlElement(name="exit",required=true,nillable=false)
   private List<ConfigurazioneHandler> exit = new ArrayList<>();
+
+  /**
+   * Use method getExitList
+   * @return List&lt;ConfigurazioneHandler&gt;
+  */
+  public List<ConfigurazioneHandler> getExit() {
+  	return this.getExitList();
+  }
+
+  /**
+   * Use method setExitList
+   * @param exit List&lt;ConfigurazioneHandler&gt;
+  */
+  public void setExit(List<ConfigurazioneHandler> exit) {
+  	this.setExitList(exit);
+  }
+
+  /**
+   * Use method sizeExitList
+   * @return lunghezza della lista
+  */
+  public int sizeExit() {
+  	return this.sizeExitList();
+  }
 
   @XmlElement(name="integrationManagerRequest",required=true,nillable=false)
   private List<ConfigurazioneHandler> integrationManagerRequest = new ArrayList<>();
 
+  /**
+   * Use method getIntegrationManagerRequestList
+   * @return List&lt;ConfigurazioneHandler&gt;
+  */
+  public List<ConfigurazioneHandler> getIntegrationManagerRequest() {
+  	return this.getIntegrationManagerRequestList();
+  }
+
+  /**
+   * Use method setIntegrationManagerRequestList
+   * @param integrationManagerRequest List&lt;ConfigurazioneHandler&gt;
+  */
+  public void setIntegrationManagerRequest(List<ConfigurazioneHandler> integrationManagerRequest) {
+  	this.setIntegrationManagerRequestList(integrationManagerRequest);
+  }
+
+  /**
+   * Use method sizeIntegrationManagerRequestList
+   * @return lunghezza della lista
+  */
+  public int sizeIntegrationManagerRequest() {
+  	return this.sizeIntegrationManagerRequestList();
+  }
+
   @XmlElement(name="integrationManagerResponse",required=true,nillable=false)
   private List<ConfigurazioneHandler> integrationManagerResponse = new ArrayList<>();
+
+  /**
+   * Use method getIntegrationManagerResponseList
+   * @return List&lt;ConfigurazioneHandler&gt;
+  */
+  public List<ConfigurazioneHandler> getIntegrationManagerResponse() {
+  	return this.getIntegrationManagerResponseList();
+  }
+
+  /**
+   * Use method setIntegrationManagerResponseList
+   * @param integrationManagerResponse List&lt;ConfigurazioneHandler&gt;
+  */
+  public void setIntegrationManagerResponse(List<ConfigurazioneHandler> integrationManagerResponse) {
+  	this.setIntegrationManagerResponseList(integrationManagerResponse);
+  }
+
+  /**
+   * Use method sizeIntegrationManagerResponseList
+   * @return lunghezza della lista
+  */
+  public int sizeIntegrationManagerResponse() {
+  	return this.sizeIntegrationManagerResponseList();
+  }
 
 }

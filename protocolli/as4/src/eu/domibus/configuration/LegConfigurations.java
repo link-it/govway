@@ -92,4 +92,28 @@ public class LegConfigurations extends org.openspcoop2.utils.beans.BaseBean impl
   @XmlElement(name="legConfiguration",required=true,nillable=false)
   private List<LegConfiguration> legConfiguration = new ArrayList<>();
 
+  /**
+   * Use method getLegConfigurationList
+   * @return List&lt;LegConfiguration&gt;
+  */
+  public List<LegConfiguration> getLegConfiguration() {
+  	return this.getLegConfigurationList();
+  }
+
+  /**
+   * Use method setLegConfigurationList
+   * @param legConfiguration List&lt;LegConfiguration&gt;
+  */
+  public void setLegConfiguration(List<LegConfiguration> legConfiguration) {
+  	this.setLegConfigurationList(legConfiguration);
+  }
+
+  /**
+   * Use method sizeLegConfigurationList
+   * @return lunghezza della lista
+  */
+  public int sizeLegConfiguration() {
+  	return this.sizeLegConfigurationList();
+  }
+
 }

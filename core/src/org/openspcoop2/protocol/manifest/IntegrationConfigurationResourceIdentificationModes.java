@@ -128,6 +128,30 @@ public class IntegrationConfigurationResourceIdentificationModes extends org.ope
   @XmlElement(name="mode",required=true,nillable=false)
   private List<IntegrationConfigurationResourceIdentificationMode> mode = new ArrayList<>();
 
+  /**
+   * Use method getModeList
+   * @return List&lt;IntegrationConfigurationResourceIdentificationMode&gt;
+  */
+  public List<IntegrationConfigurationResourceIdentificationMode> getMode() {
+  	return this.getModeList();
+  }
+
+  /**
+   * Use method setModeList
+   * @param mode List&lt;IntegrationConfigurationResourceIdentificationMode&gt;
+  */
+  public void setMode(List<IntegrationConfigurationResourceIdentificationMode> mode) {
+  	this.setModeList(mode);
+  }
+
+  /**
+   * Use method sizeModeList
+   * @return lunghezza della lista
+  */
+  public int sizeMode() {
+  	return this.sizeModeList();
+  }
+
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _defaultRawEnumValue;
 

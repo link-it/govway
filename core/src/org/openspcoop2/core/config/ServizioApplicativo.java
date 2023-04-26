@@ -276,8 +276,56 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBeanWit
   @XmlElement(name="proprieta",required=true,nillable=false)
   private List<Proprieta> proprieta = new ArrayList<>();
 
+  /**
+   * Use method getProprietaList
+   * @return List&lt;Proprieta&gt;
+  */
+  public List<Proprieta> getProprieta() {
+  	return this.getProprietaList();
+  }
+
+  /**
+   * Use method setProprietaList
+   * @param proprieta List&lt;Proprieta&gt;
+  */
+  public void setProprieta(List<Proprieta> proprieta) {
+  	this.setProprietaList(proprieta);
+  }
+
+  /**
+   * Use method sizeProprietaList
+   * @return lunghezza della lista
+  */
+  public int sizeProprieta() {
+  	return this.sizeProprietaList();
+  }
+
   @XmlElement(name="protocol-property",required=true,nillable=false)
   private List<ProtocolProperty> protocolProperty = new ArrayList<>();
+
+  /**
+   * Use method getProtocolPropertyList
+   * @return List&lt;ProtocolProperty&gt;
+  */
+  public List<ProtocolProperty> getProtocolProperty() {
+  	return this.getProtocolPropertyList();
+  }
+
+  /**
+   * Use method setProtocolPropertyList
+   * @param protocolProperty List&lt;ProtocolProperty&gt;
+  */
+  public void setProtocolProperty(List<ProtocolProperty> protocolProperty) {
+  	this.setProtocolPropertyList(protocolProperty);
+  }
+
+  /**
+   * Use method sizeProtocolPropertyList
+   * @return lunghezza della lista
+  */
+  public int sizeProtocolProperty() {
+  	return this.sizeProtocolPropertyList();
+  }
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Long idSoggetto;

@@ -225,8 +225,56 @@ public class PortaApplicativaServizioApplicativoConnettore extends org.openspcoo
   @XmlElement(name="filtro",required=true,nillable=false)
   private List<java.lang.String> filtro = new ArrayList<>();
 
+  /**
+   * Use method getFiltroList
+   * @return List&lt;java.lang.String&gt;
+  */
+  public List<java.lang.String> getFiltro() {
+  	return this.getFiltroList();
+  }
+
+  /**
+   * Use method setFiltroList
+   * @param filtro List&lt;java.lang.String&gt;
+  */
+  public void setFiltro(List<java.lang.String> filtro) {
+  	this.setFiltroList(filtro);
+  }
+
+  /**
+   * Use method sizeFiltroList
+   * @return lunghezza della lista
+  */
+  public int sizeFiltro() {
+  	return this.sizeFiltroList();
+  }
+
   @XmlElement(name="proprieta",required=true,nillable=false)
   private List<Proprieta> proprieta = new ArrayList<>();
+
+  /**
+   * Use method getProprietaList
+   * @return List&lt;Proprieta&gt;
+  */
+  public List<Proprieta> getProprieta() {
+  	return this.getProprietaList();
+  }
+
+  /**
+   * Use method setProprietaList
+   * @param proprieta List&lt;Proprieta&gt;
+  */
+  public void setProprieta(List<Proprieta> proprieta) {
+  	this.setProprietaList(proprieta);
+  }
+
+  /**
+   * Use method sizeProprietaList
+   * @return lunghezza della lista
+  */
+  public int sizeProprieta() {
+  	return this.sizeProprietaList();
+  }
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=true)

@@ -117,4 +117,28 @@ public class Openspcoop2 extends org.openspcoop2.utils.beans.BaseBean implements
   @XmlElement(name="operazione",required=true,nillable=false)
   private List<Operazione> operazione = new ArrayList<>();
 
+  /**
+   * Use method getOperazioneList
+   * @return List&lt;Operazione&gt;
+  */
+  public List<Operazione> getOperazione() {
+  	return this.getOperazioneList();
+  }
+
+  /**
+   * Use method setOperazioneList
+   * @param operazione List&lt;Operazione&gt;
+  */
+  public void setOperazione(List<Operazione> operazione) {
+  	this.setOperazioneList(operazione);
+  }
+
+  /**
+   * Use method sizeOperazioneList
+   * @return lunghezza della lista
+  */
+  public int sizeOperazione() {
+  	return this.sizeOperazioneList();
+  }
+
 }

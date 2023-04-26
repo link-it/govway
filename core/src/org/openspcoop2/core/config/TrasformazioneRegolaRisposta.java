@@ -188,6 +188,30 @@ public class TrasformazioneRegolaRisposta extends org.openspcoop2.utils.beans.Ba
   @XmlElement(name="header",required=true,nillable=false)
   private List<TrasformazioneRegolaParametro> header = new ArrayList<>();
 
+  /**
+   * Use method getHeaderList
+   * @return List&lt;TrasformazioneRegolaParametro&gt;
+  */
+  public List<TrasformazioneRegolaParametro> getHeader() {
+  	return this.getHeaderList();
+  }
+
+  /**
+   * Use method setHeaderList
+   * @param header List&lt;TrasformazioneRegolaParametro&gt;
+  */
+  public void setHeader(List<TrasformazioneRegolaParametro> header) {
+  	this.setHeaderList(header);
+  }
+
+  /**
+   * Use method sizeHeaderList
+   * @return lunghezza della lista
+  */
+  public int sizeHeader() {
+  	return this.sizeHeaderList();
+  }
+
   @XmlElement(name="trasformazione-soap",required=false,nillable=false)
   protected TrasformazioneSoapRisposta trasformazioneSoap;
 

@@ -92,4 +92,28 @@ public class ElencoIdAllarmi extends org.openspcoop2.utils.beans.BaseBeanWithId 
   @XmlElement(name="id-allarme",required=true,nillable=false)
   private List<IdAllarme> idAllarme = new ArrayList<>();
 
+  /**
+   * Use method getIdAllarmeList
+   * @return List&lt;IdAllarme&gt;
+  */
+  public List<IdAllarme> getIdAllarme() {
+  	return this.getIdAllarmeList();
+  }
+
+  /**
+   * Use method setIdAllarmeList
+   * @param idAllarme List&lt;IdAllarme&gt;
+  */
+  public void setIdAllarme(List<IdAllarme> idAllarme) {
+  	this.setIdAllarmeList(idAllarme);
+  }
+
+  /**
+   * Use method sizeIdAllarmeList
+   * @return lunghezza della lista
+  */
+  public int sizeIdAllarme() {
+  	return this.sizeIdAllarmeList();
+  }
+
 }

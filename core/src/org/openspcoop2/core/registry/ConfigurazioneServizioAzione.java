@@ -106,4 +106,28 @@ public class ConfigurazioneServizioAzione extends org.openspcoop2.utils.beans.Ba
   @XmlElement(name="azione",required=true,nillable=false)
   private List<java.lang.String> azione = new ArrayList<>();
 
+  /**
+   * Use method getAzioneList
+   * @return List&lt;java.lang.String&gt;
+  */
+  public List<java.lang.String> getAzione() {
+  	return this.getAzioneList();
+  }
+
+  /**
+   * Use method setAzioneList
+   * @param azione List&lt;java.lang.String&gt;
+  */
+  public void setAzione(List<java.lang.String> azione) {
+  	this.setAzioneList(azione);
+  }
+
+  /**
+   * Use method sizeAzioneList
+   * @return lunghezza della lista
+  */
+  public int sizeAzione() {
+  	return this.sizeAzioneList();
+  }
+
 }

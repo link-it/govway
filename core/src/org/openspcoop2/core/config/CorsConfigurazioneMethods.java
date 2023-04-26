@@ -93,4 +93,28 @@ public class CorsConfigurazioneMethods extends org.openspcoop2.utils.beans.BaseB
   @XmlElement(name="method",required=true,nillable=false)
   private List<java.lang.String> method = new ArrayList<>();
 
+  /**
+   * Use method getMethodList
+   * @return List&lt;java.lang.String&gt;
+  */
+  public List<java.lang.String> getMethod() {
+  	return this.getMethodList();
+  }
+
+  /**
+   * Use method setMethodList
+   * @param method List&lt;java.lang.String&gt;
+  */
+  public void setMethod(List<java.lang.String> method) {
+  	this.setMethodList(method);
+  }
+
+  /**
+   * Use method sizeMethodList
+   * @return lunghezza della lista
+  */
+  public int sizeMethod() {
+  	return this.sizeMethodList();
+  }
+
 }

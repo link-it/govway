@@ -118,7 +118,55 @@ public class Properties extends org.openspcoop2.utils.beans.BaseBean implements 
   @XmlElement(name="property",required=true,nillable=false)
   private List<Property> property = new ArrayList<>();
 
+  /**
+   * Use method getPropertyList
+   * @return List&lt;Property&gt;
+  */
+  public List<Property> getProperty() {
+  	return this.getPropertyList();
+  }
+
+  /**
+   * Use method setPropertyList
+   * @param property List&lt;Property&gt;
+  */
+  public void setProperty(List<Property> property) {
+  	this.setPropertyList(property);
+  }
+
+  /**
+   * Use method sizePropertyList
+   * @return lunghezza della lista
+  */
+  public int sizeProperty() {
+  	return this.sizePropertyList();
+  }
+
   @XmlElement(name="propertySet",required=true,nillable=false)
   private List<PropertySet> propertySet = new ArrayList<>();
+
+  /**
+   * Use method getPropertySetList
+   * @return List&lt;PropertySet&gt;
+  */
+  public List<PropertySet> getPropertySet() {
+  	return this.getPropertySetList();
+  }
+
+  /**
+   * Use method setPropertySetList
+   * @param propertySet List&lt;PropertySet&gt;
+  */
+  public void setPropertySet(List<PropertySet> propertySet) {
+  	this.setPropertySetList(propertySet);
+  }
+
+  /**
+   * Use method sizePropertySetList
+   * @return lunghezza della lista
+  */
+  public int sizePropertySet() {
+  	return this.sizePropertySetList();
+  }
 
 }

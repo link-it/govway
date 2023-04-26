@@ -93,4 +93,28 @@ public class ElencoPartecipanti extends org.openspcoop2.utils.beans.BaseBean imp
   @XmlElement(name="partecipante",required=true,nillable=false)
   private List<java.net.URI> partecipante = new ArrayList<>();
 
+  /**
+   * Use method getPartecipanteList
+   * @return List&lt;java.net.URI&gt;
+  */
+  public List<java.net.URI> getPartecipante() {
+  	return this.getPartecipanteList();
+  }
+
+  /**
+   * Use method setPartecipanteList
+   * @param partecipante List&lt;java.net.URI&gt;
+  */
+  public void setPartecipante(List<java.net.URI> partecipante) {
+  	this.setPartecipanteList(partecipante);
+  }
+
+  /**
+   * Use method sizePartecipanteList
+   * @return lunghezza della lista
+  */
+  public int sizePartecipante() {
+  	return this.sizePartecipanteList();
+  }
+
 }

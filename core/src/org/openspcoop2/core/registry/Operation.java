@@ -332,6 +332,30 @@ public class Operation extends org.openspcoop2.utils.beans.BaseBeanWithId implem
   @XmlElement(name="protocol-property",required=true,nillable=false)
   private List<ProtocolProperty> protocolProperty = new ArrayList<>();
 
+  /**
+   * Use method getProtocolPropertyList
+   * @return List&lt;ProtocolProperty&gt;
+  */
+  public List<ProtocolProperty> getProtocolProperty() {
+  	return this.getProtocolPropertyList();
+  }
+
+  /**
+   * Use method setProtocolPropertyList
+   * @param protocolProperty List&lt;ProtocolProperty&gt;
+  */
+  public void setProtocolProperty(List<ProtocolProperty> protocolProperty) {
+  	this.setProtocolPropertyList(protocolProperty);
+  }
+
+  /**
+   * Use method sizeProtocolPropertyList
+   * @return lunghezza della lista
+  */
+  public int sizeProtocolProperty() {
+  	return this.sizeProtocolPropertyList();
+  }
+
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="prof-azione",required=false)
   protected java.lang.String profAzione;

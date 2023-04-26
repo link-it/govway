@@ -92,4 +92,28 @@ public class CorrelazioneApplicativaRisposta extends org.openspcoop2.utils.beans
   @XmlElement(name="elemento",required=true,nillable=false)
   private List<CorrelazioneApplicativaRispostaElemento> elemento = new ArrayList<>();
 
+  /**
+   * Use method getElementoList
+   * @return List&lt;CorrelazioneApplicativaRispostaElemento&gt;
+  */
+  public List<CorrelazioneApplicativaRispostaElemento> getElemento() {
+  	return this.getElementoList();
+  }
+
+  /**
+   * Use method setElementoList
+   * @param elemento List&lt;CorrelazioneApplicativaRispostaElemento&gt;
+  */
+  public void setElemento(List<CorrelazioneApplicativaRispostaElemento> elemento) {
+  	this.setElementoList(elemento);
+  }
+
+  /**
+   * Use method sizeElementoList
+   * @return lunghezza della lista
+  */
+  public int sizeElemento() {
+  	return this.sizeElementoList();
+  }
+
 }

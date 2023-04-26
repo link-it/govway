@@ -118,7 +118,55 @@ public class DatiBeniServiziType extends org.openspcoop2.utils.beans.BaseBean im
   @XmlElement(name="DettaglioLinee",required=true,nillable=false)
   private List<DettaglioLineeType> dettaglioLinee = new ArrayList<>();
 
+  /**
+   * Use method getDettaglioLineeList
+   * @return List&lt;DettaglioLineeType&gt;
+  */
+  public List<DettaglioLineeType> getDettaglioLinee() {
+  	return this.getDettaglioLineeList();
+  }
+
+  /**
+   * Use method setDettaglioLineeList
+   * @param dettaglioLinee List&lt;DettaglioLineeType&gt;
+  */
+  public void setDettaglioLinee(List<DettaglioLineeType> dettaglioLinee) {
+  	this.setDettaglioLineeList(dettaglioLinee);
+  }
+
+  /**
+   * Use method sizeDettaglioLineeList
+   * @return lunghezza della lista
+  */
+  public int sizeDettaglioLinee() {
+  	return this.sizeDettaglioLineeList();
+  }
+
   @XmlElement(name="DatiRiepilogo",required=true,nillable=false)
   private List<DatiRiepilogoType> datiRiepilogo = new ArrayList<>();
+
+  /**
+   * Use method getDatiRiepilogoList
+   * @return List&lt;DatiRiepilogoType&gt;
+  */
+  public List<DatiRiepilogoType> getDatiRiepilogo() {
+  	return this.getDatiRiepilogoList();
+  }
+
+  /**
+   * Use method setDatiRiepilogoList
+   * @param datiRiepilogo List&lt;DatiRiepilogoType&gt;
+  */
+  public void setDatiRiepilogo(List<DatiRiepilogoType> datiRiepilogo) {
+  	this.setDatiRiepilogoList(datiRiepilogo);
+  }
+
+  /**
+   * Use method sizeDatiRiepilogoList
+   * @return lunghezza della lista
+  */
+  public int sizeDatiRiepilogo() {
+  	return this.sizeDatiRiepilogoList();
+  }
 
 }

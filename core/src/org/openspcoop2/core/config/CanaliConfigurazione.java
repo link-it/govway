@@ -141,8 +141,56 @@ public class CanaliConfigurazione extends org.openspcoop2.utils.beans.BaseBeanWi
   @XmlElement(name="canale",required=true,nillable=false)
   private List<CanaleConfigurazione> canale = new ArrayList<>();
 
+  /**
+   * Use method getCanaleList
+   * @return List&lt;CanaleConfigurazione&gt;
+  */
+  public List<CanaleConfigurazione> getCanale() {
+  	return this.getCanaleList();
+  }
+
+  /**
+   * Use method setCanaleList
+   * @param canale List&lt;CanaleConfigurazione&gt;
+  */
+  public void setCanale(List<CanaleConfigurazione> canale) {
+  	this.setCanaleList(canale);
+  }
+
+  /**
+   * Use method sizeCanaleList
+   * @return lunghezza della lista
+  */
+  public int sizeCanale() {
+  	return this.sizeCanaleList();
+  }
+
   @XmlElement(name="nodo",required=true,nillable=false)
   private List<CanaleConfigurazioneNodo> nodo = new ArrayList<>();
+
+  /**
+   * Use method getNodoList
+   * @return List&lt;CanaleConfigurazioneNodo&gt;
+  */
+  public List<CanaleConfigurazioneNodo> getNodo() {
+  	return this.getNodoList();
+  }
+
+  /**
+   * Use method setNodoList
+   * @param nodo List&lt;CanaleConfigurazioneNodo&gt;
+  */
+  public void setNodo(List<CanaleConfigurazioneNodo> nodo) {
+  	this.setNodoList(nodo);
+  }
+
+  /**
+   * Use method sizeNodoList
+   * @return lunghezza della lista
+  */
+  public int sizeNodo() {
+  	return this.sizeNodoList();
+  }
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String statoRawEnumValue;

@@ -34,6 +34,8 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
  * @version $Rev$, $Date$
  */
 public final class CostantiLabel {
+	
+	private CostantiLabel() {}
 	    
 
     public static final String TRASPARENTE_PROTOCOL_NAME = "trasparente";
@@ -69,11 +71,15 @@ public final class CostantiLabel {
 	public static final String KEYSTORE = "KeyStore";
 	public static final String TRUSTSTORE = "TrustStore";
 	public static final String CRL = "CRL";
-	public static final String CRLs = "CRLs";
+	public static final String CRLS = "CRLs";
 	public static final String OCSP_POLICY = "OCSP Policy";
 	public static final String KEY_ALIAS = "Key Alias";
 	public static final String CERTIFICATE_ALIAS = "Certificate Alias";
 	public static final String ALIAS = "Alias";
+	public static final String KEY_PAIR = "Key Pair";
+	public static final String PRIVATE_KEY = "Private Key";
+	public static final String PUBLIC_KEY = "Public Key";
+	public static final String JWKS = "JWKs";
 	
 	/**
      * PROPRIETA CERTIFICATI

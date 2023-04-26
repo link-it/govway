@@ -121,4 +121,28 @@ public class DatiPagamentoType extends org.openspcoop2.utils.beans.BaseBean impl
   @XmlElement(name="DettaglioPagamento",required=true,nillable=false)
   private List<DettaglioPagamentoType> dettaglioPagamento = new ArrayList<>();
 
+  /**
+   * Use method getDettaglioPagamentoList
+   * @return List&lt;DettaglioPagamentoType&gt;
+  */
+  public List<DettaglioPagamentoType> getDettaglioPagamento() {
+  	return this.getDettaglioPagamentoList();
+  }
+
+  /**
+   * Use method setDettaglioPagamentoList
+   * @param dettaglioPagamento List&lt;DettaglioPagamentoType&gt;
+  */
+  public void setDettaglioPagamento(List<DettaglioPagamentoType> dettaglioPagamento) {
+  	this.setDettaglioPagamentoList(dettaglioPagamento);
+  }
+
+  /**
+   * Use method sizeDettaglioPagamentoList
+   * @return lunghezza della lista
+  */
+  public int sizeDettaglioPagamento() {
+  	return this.sizeDettaglioPagamentoList();
+  }
+
 }

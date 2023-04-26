@@ -1594,6 +1594,8 @@ public class CostantiControlStation {
 	public static final String LABEL_ELIMINATO_CACHE_FALLITO_PREFIX = "Eliminazione {0} dalla cache non riuscita: ";
 	
 	public static final String LABEL_VERIFICA_CERTIFICATI_NON_PRESENTI = "Non sono state rilevate configurazioni che utilizzano certificati";
+	public static final String LABEL_VERIFICA_CERTIFICATI_DEFINITI_IN_MODI_APPLICATIVO = LABEL_VERIFICA_CERTIFICATI_NON_PRESENTI+": vengono riferiti i certificati definiti nella configurazione dell'applicativo";
+	public static final String LABEL_VERIFICA_CERTIFICATI_DEFINITI_IN_MODI_FRUIZIONE = LABEL_VERIFICA_CERTIFICATI_NON_PRESENTI+": vengono riferiti i certificati definiti nella configurazione della fruizione";
 	public static final String LABEL_VERIFICA_CERTIFICATI_PRESENTE_SOLO_CONFIGURAZIONE_MANUALE = LABEL_VERIFICA_CERTIFICATI_NON_PRESENTI+"."+org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+"È presente una configurazione manuale del Subject e dell'Issuer";
 	public static final String LABEL_VERIFICA_CERTIFICATI_SUCCESSO = "Tutti i certificati riferiti risultano validi";
 	public static final String LABEL_VERIFICA_CERTIFICATI_WARNING_PREFIX = "Rilevati certificati prossimi alla scadenza in ";

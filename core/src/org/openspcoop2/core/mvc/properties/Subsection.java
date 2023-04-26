@@ -128,6 +128,30 @@ public class Subsection extends org.openspcoop2.utils.beans.BaseBean implements 
   @XmlElement(name="item",required=true,nillable=false)
   private List<Item> item = new ArrayList<>();
 
+  /**
+   * Use method getItemList
+   * @return List&lt;Item&gt;
+  */
+  public List<Item> getItem() {
+  	return this.getItemList();
+  }
+
+  /**
+   * Use method setItemList
+   * @param item List&lt;Item&gt;
+  */
+  public void setItem(List<Item> item) {
+  	this.setItemList(item);
+  }
+
+  /**
+   * Use method sizeItemList
+   * @return lunghezza della lista
+  */
+  public int sizeItem() {
+  	return this.sizeItemList();
+  }
+
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="label",required=true)
   protected java.lang.String label;

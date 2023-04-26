@@ -282,8 +282,56 @@ public class DatiGeneraliDocumentoType extends org.openspcoop2.utils.beans.BaseB
   @XmlElement(name="DatiCassaPrevidenziale",required=true,nillable=false)
   private List<DatiCassaPrevidenzialeType> datiCassaPrevidenziale = new ArrayList<>();
 
+  /**
+   * Use method getDatiCassaPrevidenzialeList
+   * @return List&lt;DatiCassaPrevidenzialeType&gt;
+  */
+  public List<DatiCassaPrevidenzialeType> getDatiCassaPrevidenziale() {
+  	return this.getDatiCassaPrevidenzialeList();
+  }
+
+  /**
+   * Use method setDatiCassaPrevidenzialeList
+   * @param datiCassaPrevidenziale List&lt;DatiCassaPrevidenzialeType&gt;
+  */
+  public void setDatiCassaPrevidenziale(List<DatiCassaPrevidenzialeType> datiCassaPrevidenziale) {
+  	this.setDatiCassaPrevidenzialeList(datiCassaPrevidenziale);
+  }
+
+  /**
+   * Use method sizeDatiCassaPrevidenzialeList
+   * @return lunghezza della lista
+  */
+  public int sizeDatiCassaPrevidenziale() {
+  	return this.sizeDatiCassaPrevidenzialeList();
+  }
+
   @XmlElement(name="ScontoMaggiorazione",required=true,nillable=false)
   private List<ScontoMaggiorazioneType> scontoMaggiorazione = new ArrayList<>();
+
+  /**
+   * Use method getScontoMaggiorazioneList
+   * @return List&lt;ScontoMaggiorazioneType&gt;
+  */
+  public List<ScontoMaggiorazioneType> getScontoMaggiorazione() {
+  	return this.getScontoMaggiorazioneList();
+  }
+
+  /**
+   * Use method setScontoMaggiorazioneList
+   * @param scontoMaggiorazione List&lt;ScontoMaggiorazioneType&gt;
+  */
+  public void setScontoMaggiorazione(List<ScontoMaggiorazioneType> scontoMaggiorazione) {
+  	this.setScontoMaggiorazioneList(scontoMaggiorazione);
+  }
+
+  /**
+   * Use method sizeScontoMaggiorazioneList
+   * @return lunghezza della lista
+  */
+  public int sizeScontoMaggiorazione() {
+  	return this.sizeScontoMaggiorazioneList();
+  }
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="decimal")

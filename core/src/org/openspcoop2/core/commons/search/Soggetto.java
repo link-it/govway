@@ -160,4 +160,28 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBeanWithId impleme
   @XmlElement(name="soggetto-ruolo",required=true,nillable=false)
   private List<SoggettoRuolo> soggettoRuolo = new ArrayList<>();
 
+  /**
+   * Use method getSoggettoRuoloList
+   * @return List&lt;SoggettoRuolo&gt;
+  */
+  public List<SoggettoRuolo> getSoggettoRuolo() {
+  	return this.getSoggettoRuoloList();
+  }
+
+  /**
+   * Use method setSoggettoRuoloList
+   * @param soggettoRuolo List&lt;SoggettoRuolo&gt;
+  */
+  public void setSoggettoRuolo(List<SoggettoRuolo> soggettoRuolo) {
+  	this.setSoggettoRuoloList(soggettoRuolo);
+  }
+
+  /**
+   * Use method sizeSoggettoRuoloList
+   * @return lunghezza della lista
+  */
+  public int sizeSoggettoRuolo() {
+  	return this.sizeSoggettoRuoloList();
+  }
+
 }

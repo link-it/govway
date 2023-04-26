@@ -383,4 +383,28 @@ public class Allarme extends org.openspcoop2.utils.beans.BaseBeanWithId implemen
   @XmlElement(name="allarme-parametro",required=true,nillable=false)
   private List<AllarmeParametro> allarmeParametro = new ArrayList<>();
 
+  /**
+   * Use method getAllarmeParametroList
+   * @return List&lt;AllarmeParametro&gt;
+  */
+  public List<AllarmeParametro> getAllarmeParametro() {
+  	return this.getAllarmeParametroList();
+  }
+
+  /**
+   * Use method setAllarmeParametroList
+   * @param allarmeParametro List&lt;AllarmeParametro&gt;
+  */
+  public void setAllarmeParametro(List<AllarmeParametro> allarmeParametro) {
+  	this.setAllarmeParametroList(allarmeParametro);
+  }
+
+  /**
+   * Use method sizeAllarmeParametroList
+   * @return lunghezza della lista
+  */
+  public int sizeAllarmeParametro() {
+  	return this.sizeAllarmeParametroList();
+  }
+
 }

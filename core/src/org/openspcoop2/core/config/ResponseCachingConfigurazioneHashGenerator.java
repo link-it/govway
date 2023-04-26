@@ -206,9 +206,57 @@ public class ResponseCachingConfigurazioneHashGenerator extends org.openspcoop2.
   @XmlElement(name="header",required=true,nillable=false)
   private List<java.lang.String> header = new ArrayList<>();
 
+  /**
+   * Use method getHeaderList
+   * @return List&lt;java.lang.String&gt;
+  */
+  public List<java.lang.String> getHeader() {
+  	return this.getHeaderList();
+  }
+
+  /**
+   * Use method setHeaderList
+   * @param header List&lt;java.lang.String&gt;
+  */
+  public void setHeader(List<java.lang.String> header) {
+  	this.setHeaderList(header);
+  }
+
+  /**
+   * Use method sizeHeaderList
+   * @return lunghezza della lista
+  */
+  public int sizeHeader() {
+  	return this.sizeHeaderList();
+  }
+
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="query-parameter",required=true,nillable=false)
   private List<java.lang.String> queryParameter = new ArrayList<>();
+
+  /**
+   * Use method getQueryParameterList
+   * @return List&lt;java.lang.String&gt;
+  */
+  public List<java.lang.String> getQueryParameter() {
+  	return this.getQueryParameterList();
+  }
+
+  /**
+   * Use method setQueryParameterList
+   * @param queryParameter List&lt;java.lang.String&gt;
+  */
+  public void setQueryParameter(List<java.lang.String> queryParameter) {
+  	this.setQueryParameterList(queryParameter);
+  }
+
+  /**
+   * Use method sizeQueryParameterList
+   * @return lunghezza della lista
+  */
+  public int sizeQueryParameter() {
+  	return this.sizeQueryParameterList();
+  }
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String requestUriRawEnumValue;

@@ -96,7 +96,7 @@ public class ConfigurazioneGeneraleFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "cache", ConfigurazioneGenerale.model().CACHE.CACHE.getFieldType()));
 				setParameter(object.getCache(), "setSize", ConfigurazioneGenerale.model().CACHE.SIZE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "cache_size", ConfigurazioneGenerale.model().CACHE.SIZE.getFieldType()));
-				setParameter(object.getCache(), "set_value_algorithm", String.class,
+				setParameter(object.getCache(), "setAlgorithmRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "cache_algorithm", ConfigurazioneGenerale.model().CACHE.ALGORITHM.getFieldType())+"");
 				setParameter(object.getCache(), "setIdleTime", ConfigurazioneGenerale.model().CACHE.IDLE_TIME.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "cache_idle_time", ConfigurazioneGenerale.model().CACHE.IDLE_TIME.getFieldType()));
@@ -163,7 +163,7 @@ public class ConfigurazioneGeneraleFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"cache.cache"));
 				setParameter(object.getCache(), "setSize", ConfigurazioneGenerale.model().CACHE.SIZE.getFieldType(),
 					this.getObjectFromMap(map,"cache.size"));
-				setParameter(object.getCache(), "set_value_algorithm", String.class,
+				setParameter(object.getCache(), "setAlgorithmRawEnumValue", String.class,
 					this.getObjectFromMap(map,"cache.algorithm"));
 				setParameter(object.getCache(), "setIdleTime", ConfigurazioneGenerale.model().CACHE.IDLE_TIME.getFieldType(),
 					this.getObjectFromMap(map,"cache.idle-time"));

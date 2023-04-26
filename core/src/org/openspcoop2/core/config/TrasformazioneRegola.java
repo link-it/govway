@@ -159,6 +159,30 @@ public class TrasformazioneRegola extends org.openspcoop2.utils.beans.BaseBeanWi
   @XmlElement(name="risposta",required=true,nillable=false)
   private List<TrasformazioneRegolaRisposta> risposta = new ArrayList<>();
 
+  /**
+   * Use method getRispostaList
+   * @return List&lt;TrasformazioneRegolaRisposta&gt;
+  */
+  public List<TrasformazioneRegolaRisposta> getRisposta() {
+  	return this.getRispostaList();
+  }
+
+  /**
+   * Use method setRispostaList
+   * @param risposta List&lt;TrasformazioneRegolaRisposta&gt;
+  */
+  public void setRisposta(List<TrasformazioneRegolaRisposta> risposta) {
+  	this.setRispostaList(risposta);
+  }
+
+  /**
+   * Use method sizeRispostaList
+   * @return lunghezza della lista
+  */
+  public int sizeRisposta() {
+  	return this.sizeRispostaList();
+  }
+
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=true)
   protected java.lang.String nome;

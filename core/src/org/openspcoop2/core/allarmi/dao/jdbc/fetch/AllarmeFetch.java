@@ -67,7 +67,7 @@ public class AllarmeFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "descrizione", Allarme.model().DESCRIZIONE.getFieldType()));
 				setParameter(object, "setTipo", Allarme.model().TIPO.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "tipo", Allarme.model().TIPO.getFieldType()));
-				setParameter(object, "set_value_tipoAllarme", String.class,
+				setParameter(object, "setTipoAllarmeRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "tipo_allarme", Allarme.model().TIPO_ALLARME.getFieldType())+"");
 				object.setMail(new AllarmeMail());
 				setParameter(object.getMail(), "setInvia", Allarme.model().MAIL.INVIA.getFieldType(),
@@ -114,7 +114,7 @@ public class AllarmeFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "filtro_enabled", Allarme.model().FILTRO.ENABLED.getFieldType()));
 				setParameter(object.getFiltro(), "setProtocollo", Allarme.model().FILTRO.PROTOCOLLO.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "filtro_protocollo", Allarme.model().FILTRO.PROTOCOLLO.getFieldType()));
-				setParameter(object.getFiltro(), "set_value_ruoloPorta", String.class,
+				setParameter(object.getFiltro(), "setRuoloPortaRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "filtro_ruolo", Allarme.model().FILTRO.RUOLO_PORTA.getFieldType())+"");
 				setParameter(object.getFiltro(), "setNomePorta", Allarme.model().FILTRO.NOME_PORTA.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "filtro_porta", Allarme.model().FILTRO.NOME_PORTA.getFieldType()));
@@ -203,7 +203,7 @@ public class AllarmeFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"descrizione"));
 				setParameter(object, "setTipo", Allarme.model().TIPO.getFieldType(),
 					this.getObjectFromMap(map,"tipo"));
-				setParameter(object, "set_value_tipoAllarme", String.class,
+				setParameter(object, "setTipoAllarmeRawEnumValue", String.class,
 					this.getObjectFromMap(map,"tipo-allarme"));
 				object.setMail(new AllarmeMail());
 				setParameter(object.getMail(), "setInvia", Allarme.model().MAIL.INVIA.getFieldType(),
@@ -250,7 +250,7 @@ public class AllarmeFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"filtro.enabled"));
 				setParameter(object.getFiltro(), "setProtocollo", Allarme.model().FILTRO.PROTOCOLLO.getFieldType(),
 					this.getObjectFromMap(map,"filtro.protocollo"));
-				setParameter(object.getFiltro(), "set_value_ruoloPorta", String.class,
+				setParameter(object.getFiltro(), "setRuoloPortaRawEnumValue", String.class,
 					this.getObjectFromMap(map,"filtro.ruolo-porta"));
 				setParameter(object.getFiltro(), "setNomePorta", Allarme.model().FILTRO.NOME_PORTA.getFieldType(),
 					this.getObjectFromMap(map,"filtro.nome-porta"));

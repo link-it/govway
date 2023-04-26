@@ -248,4 +248,28 @@ public class BusinessProcesses extends org.openspcoop2.utils.beans.BaseBean impl
   @XmlElement(name="process",required=true,nillable=false)
   private List<Process> process = new ArrayList<>();
 
+  /**
+   * Use method getProcessList
+   * @return List&lt;Process&gt;
+  */
+  public List<Process> getProcess() {
+  	return this.getProcessList();
+  }
+
+  /**
+   * Use method setProcessList
+   * @param process List&lt;Process&gt;
+  */
+  public void setProcess(List<Process> process) {
+  	this.setProcessList(process);
+  }
+
+  /**
+   * Use method sizeProcessList
+   * @return lunghezza della lista
+  */
+  public int sizeProcess() {
+  	return this.sizeProcessList();
+  }
+
 }

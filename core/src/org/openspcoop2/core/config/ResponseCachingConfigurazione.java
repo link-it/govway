@@ -159,6 +159,30 @@ public class ResponseCachingConfigurazione extends org.openspcoop2.utils.beans.B
   @XmlElement(name="regola",required=true,nillable=false)
   private List<ResponseCachingConfigurazioneRegola> regola = new ArrayList<>();
 
+  /**
+   * Use method getRegolaList
+   * @return List&lt;ResponseCachingConfigurazioneRegola&gt;
+  */
+  public List<ResponseCachingConfigurazioneRegola> getRegola() {
+  	return this.getRegolaList();
+  }
+
+  /**
+   * Use method setRegolaList
+   * @param regola List&lt;ResponseCachingConfigurazioneRegola&gt;
+  */
+  public void setRegola(List<ResponseCachingConfigurazioneRegola> regola) {
+  	this.setRegolaList(regola);
+  }
+
+  /**
+   * Use method sizeRegolaList
+   * @return lunghezza della lista
+  */
+  public int sizeRegola() {
+  	return this.sizeRegolaList();
+  }
+
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String statoRawEnumValue;
 

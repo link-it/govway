@@ -92,4 +92,28 @@ public class ElencoPolicy extends org.openspcoop2.utils.beans.BaseBeanWithId imp
   @XmlElement(name="configurazione-policy",required=true,nillable=false)
   private List<ConfigurazionePolicy> configurazionePolicy = new ArrayList<>();
 
+  /**
+   * Use method getConfigurazionePolicyList
+   * @return List&lt;ConfigurazionePolicy&gt;
+  */
+  public List<ConfigurazionePolicy> getConfigurazionePolicy() {
+  	return this.getConfigurazionePolicyList();
+  }
+
+  /**
+   * Use method setConfigurazionePolicyList
+   * @param configurazionePolicy List&lt;ConfigurazionePolicy&gt;
+  */
+  public void setConfigurazionePolicy(List<ConfigurazionePolicy> configurazionePolicy) {
+  	this.setConfigurazionePolicyList(configurazionePolicy);
+  }
+
+  /**
+   * Use method sizeConfigurazionePolicyList
+   * @return lunghezza della lista
+  */
+  public int sizeConfigurazionePolicy() {
+  	return this.sizeConfigurazionePolicyList();
+  }
+
 }

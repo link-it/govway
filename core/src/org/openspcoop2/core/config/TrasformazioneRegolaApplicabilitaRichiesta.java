@@ -207,9 +207,57 @@ public class TrasformazioneRegolaApplicabilitaRichiesta extends org.openspcoop2.
   @XmlElement(name="azione",required=true,nillable=false)
   private List<java.lang.String> azione = new ArrayList<>();
 
+  /**
+   * Use method getAzioneList
+   * @return List&lt;java.lang.String&gt;
+  */
+  public List<java.lang.String> getAzione() {
+  	return this.getAzioneList();
+  }
+
+  /**
+   * Use method setAzioneList
+   * @param azione List&lt;java.lang.String&gt;
+  */
+  public void setAzione(List<java.lang.String> azione) {
+  	this.setAzioneList(azione);
+  }
+
+  /**
+   * Use method sizeAzioneList
+   * @return lunghezza della lista
+  */
+  public int sizeAzione() {
+  	return this.sizeAzioneList();
+  }
+
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="content-type",required=true,nillable=false)
   private List<java.lang.String> contentType = new ArrayList<>();
+
+  /**
+   * Use method getContentTypeList
+   * @return List&lt;java.lang.String&gt;
+  */
+  public List<java.lang.String> getContentType() {
+  	return this.getContentTypeList();
+  }
+
+  /**
+   * Use method setContentTypeList
+   * @param contentType List&lt;java.lang.String&gt;
+  */
+  public void setContentType(List<java.lang.String> contentType) {
+  	this.setContentTypeList(contentType);
+  }
+
+  /**
+   * Use method sizeContentTypeList
+   * @return lunghezza della lista
+  */
+  public int sizeContentType() {
+  	return this.sizeContentTypeList();
+  }
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="pattern",required=false,nillable=false)
@@ -219,10 +267,82 @@ public class TrasformazioneRegolaApplicabilitaRichiesta extends org.openspcoop2.
   @XmlElement(name="connettore",required=true,nillable=false)
   private List<java.lang.String> connettore = new ArrayList<>();
 
+  /**
+   * Use method getConnettoreList
+   * @return List&lt;java.lang.String&gt;
+  */
+  public List<java.lang.String> getConnettore() {
+  	return this.getConnettoreList();
+  }
+
+  /**
+   * Use method setConnettoreList
+   * @param connettore List&lt;java.lang.String&gt;
+  */
+  public void setConnettore(List<java.lang.String> connettore) {
+  	this.setConnettoreList(connettore);
+  }
+
+  /**
+   * Use method sizeConnettoreList
+   * @return lunghezza della lista
+  */
+  public int sizeConnettore() {
+  	return this.sizeConnettoreList();
+  }
+
   @XmlElement(name="soggetto",required=true,nillable=false)
   private List<TrasformazioneRegolaApplicabilitaSoggetto> soggetto = new ArrayList<>();
 
+  /**
+   * Use method getSoggettoList
+   * @return List&lt;TrasformazioneRegolaApplicabilitaSoggetto&gt;
+  */
+  public List<TrasformazioneRegolaApplicabilitaSoggetto> getSoggetto() {
+  	return this.getSoggettoList();
+  }
+
+  /**
+   * Use method setSoggettoList
+   * @param soggetto List&lt;TrasformazioneRegolaApplicabilitaSoggetto&gt;
+  */
+  public void setSoggetto(List<TrasformazioneRegolaApplicabilitaSoggetto> soggetto) {
+  	this.setSoggettoList(soggetto);
+  }
+
+  /**
+   * Use method sizeSoggettoList
+   * @return lunghezza della lista
+  */
+  public int sizeSoggetto() {
+  	return this.sizeSoggettoList();
+  }
+
   @XmlElement(name="servizio-applicativo",required=true,nillable=false)
   private List<TrasformazioneRegolaApplicabilitaServizioApplicativo> servizioApplicativo = new ArrayList<>();
+
+  /**
+   * Use method getServizioApplicativoList
+   * @return List&lt;TrasformazioneRegolaApplicabilitaServizioApplicativo&gt;
+  */
+  public List<TrasformazioneRegolaApplicabilitaServizioApplicativo> getServizioApplicativo() {
+  	return this.getServizioApplicativoList();
+  }
+
+  /**
+   * Use method setServizioApplicativoList
+   * @param servizioApplicativo List&lt;TrasformazioneRegolaApplicabilitaServizioApplicativo&gt;
+  */
+  public void setServizioApplicativo(List<TrasformazioneRegolaApplicabilitaServizioApplicativo> servizioApplicativo) {
+  	this.setServizioApplicativoList(servizioApplicativo);
+  }
+
+  /**
+   * Use method sizeServizioApplicativoList
+   * @return lunghezza della lista
+  */
+  public int sizeServizioApplicativo() {
+  	return this.sizeServizioApplicativoList();
+  }
 
 }

@@ -92,4 +92,28 @@ public class AccordoCooperazionePartecipanti extends org.openspcoop2.utils.beans
   @XmlElement(name="soggetto-partecipante",required=true,nillable=false)
   private List<IdSoggetto> soggettoPartecipante = new ArrayList<>();
 
+  /**
+   * Use method getSoggettoPartecipanteList
+   * @return List&lt;IdSoggetto&gt;
+  */
+  public List<IdSoggetto> getSoggettoPartecipante() {
+  	return this.getSoggettoPartecipanteList();
+  }
+
+  /**
+   * Use method setSoggettoPartecipanteList
+   * @param soggettoPartecipante List&lt;IdSoggetto&gt;
+  */
+  public void setSoggettoPartecipante(List<IdSoggetto> soggettoPartecipante) {
+  	this.setSoggettoPartecipanteList(soggettoPartecipante);
+  }
+
+  /**
+   * Use method sizeSoggettoPartecipanteList
+   * @return lunghezza della lista
+  */
+  public int sizeSoggettoPartecipante() {
+  	return this.sizeSoggettoPartecipanteList();
+  }
+
 }

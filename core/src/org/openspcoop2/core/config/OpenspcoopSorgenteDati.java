@@ -120,6 +120,30 @@ public class OpenspcoopSorgenteDati extends org.openspcoop2.utils.beans.BaseBean
   @XmlElement(name="property",required=true,nillable=false)
   private List<Property> property = new ArrayList<>();
 
+  /**
+   * Use method getPropertyList
+   * @return List&lt;Property&gt;
+  */
+  public List<Property> getProperty() {
+  	return this.getPropertyList();
+  }
+
+  /**
+   * Use method setPropertyList
+   * @param property List&lt;Property&gt;
+  */
+  public void setProperty(List<Property> property) {
+  	this.setPropertyList(property);
+  }
+
+  /**
+   * Use method sizePropertyList
+   * @return lunghezza della lista
+  */
+  public int sizeProperty() {
+  	return this.sizePropertyList();
+  }
+
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=true)
   protected java.lang.String nome;

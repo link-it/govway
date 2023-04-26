@@ -102,6 +102,30 @@ public class Openspcoop2 extends org.openspcoop2.utils.beans.BaseBeanWithId impl
   @XmlElement(name="soggetto",required=true,nillable=false)
   private List<Soggetto> soggetto = new ArrayList<>();
 
+  /**
+   * Use method getSoggettoList
+   * @return List&lt;Soggetto&gt;
+  */
+  public List<Soggetto> getSoggetto() {
+  	return this.getSoggettoList();
+  }
+
+  /**
+   * Use method setSoggettoList
+   * @param soggetto List&lt;Soggetto&gt;
+  */
+  public void setSoggetto(List<Soggetto> soggetto) {
+  	this.setSoggettoList(soggetto);
+  }
+
+  /**
+   * Use method sizeSoggettoList
+   * @return lunghezza della lista
+  */
+  public int sizeSoggetto() {
+  	return this.sizeSoggettoList();
+  }
+
   @XmlElement(name="configurazione",required=true,nillable=false)
   protected Configurazione configurazione;
 

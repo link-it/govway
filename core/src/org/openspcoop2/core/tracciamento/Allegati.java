@@ -92,4 +92,28 @@ public class Allegati extends org.openspcoop2.utils.beans.BaseBeanWithId impleme
   @XmlElement(name="allegato",required=true,nillable=false)
   private List<Allegato> allegato = new ArrayList<>();
 
+  /**
+   * Use method getAllegatoList
+   * @return List&lt;Allegato&gt;
+  */
+  public List<Allegato> getAllegato() {
+  	return this.getAllegatoList();
+  }
+
+  /**
+   * Use method setAllegatoList
+   * @param allegato List&lt;Allegato&gt;
+  */
+  public void setAllegato(List<Allegato> allegato) {
+  	this.setAllegatoList(allegato);
+  }
+
+  /**
+   * Use method sizeAllegatoList
+   * @return lunghezza della lista
+  */
+  public int sizeAllegato() {
+  	return this.sizeAllegatoList();
+  }
+
 }

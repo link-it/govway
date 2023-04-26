@@ -92,4 +92,28 @@ public class ElencoPolicyAttive extends org.openspcoop2.utils.beans.BaseBeanWith
   @XmlElement(name="attivazione-policy",required=true,nillable=false)
   private List<AttivazionePolicy> attivazionePolicy = new ArrayList<>();
 
+  /**
+   * Use method getAttivazionePolicyList
+   * @return List&lt;AttivazionePolicy&gt;
+  */
+  public List<AttivazionePolicy> getAttivazionePolicy() {
+  	return this.getAttivazionePolicyList();
+  }
+
+  /**
+   * Use method setAttivazionePolicyList
+   * @param attivazionePolicy List&lt;AttivazionePolicy&gt;
+  */
+  public void setAttivazionePolicy(List<AttivazionePolicy> attivazionePolicy) {
+  	this.setAttivazionePolicyList(attivazionePolicy);
+  }
+
+  /**
+   * Use method sizeAttivazionePolicyList
+   * @return lunghezza della lista
+  */
+  public int sizeAttivazionePolicy() {
+  	return this.sizeAttivazionePolicyList();
+  }
+
 }

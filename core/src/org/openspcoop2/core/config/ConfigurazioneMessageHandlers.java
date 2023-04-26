@@ -196,16 +196,136 @@ public class ConfigurazioneMessageHandlers extends org.openspcoop2.utils.beans.B
   @XmlElement(name="pre-in",required=true,nillable=false)
   private List<ConfigurazioneHandler> preIn = new ArrayList<>();
 
+  /**
+   * Use method getPreInList
+   * @return List&lt;ConfigurazioneHandler&gt;
+  */
+  public List<ConfigurazioneHandler> getPreIn() {
+  	return this.getPreInList();
+  }
+
+  /**
+   * Use method setPreInList
+   * @param preIn List&lt;ConfigurazioneHandler&gt;
+  */
+  public void setPreIn(List<ConfigurazioneHandler> preIn) {
+  	this.setPreInList(preIn);
+  }
+
+  /**
+   * Use method sizePreInList
+   * @return lunghezza della lista
+  */
+  public int sizePreIn() {
+  	return this.sizePreInList();
+  }
+
   @XmlElement(name="in",required=true,nillable=false)
   private List<ConfigurazioneHandler> in = new ArrayList<>();
+
+  /**
+   * Use method getInList
+   * @return List&lt;ConfigurazioneHandler&gt;
+  */
+  public List<ConfigurazioneHandler> getIn() {
+  	return this.getInList();
+  }
+
+  /**
+   * Use method setInList
+   * @param in List&lt;ConfigurazioneHandler&gt;
+  */
+  public void setIn(List<ConfigurazioneHandler> in) {
+  	this.setInList(in);
+  }
+
+  /**
+   * Use method sizeInList
+   * @return lunghezza della lista
+  */
+  public int sizeIn() {
+  	return this.sizeInList();
+  }
 
   @XmlElement(name="inProtocolInfo",required=true,nillable=false)
   private List<ConfigurazioneHandler> inProtocolInfo = new ArrayList<>();
 
+  /**
+   * Use method getInProtocolInfoList
+   * @return List&lt;ConfigurazioneHandler&gt;
+  */
+  public List<ConfigurazioneHandler> getInProtocolInfo() {
+  	return this.getInProtocolInfoList();
+  }
+
+  /**
+   * Use method setInProtocolInfoList
+   * @param inProtocolInfo List&lt;ConfigurazioneHandler&gt;
+  */
+  public void setInProtocolInfo(List<ConfigurazioneHandler> inProtocolInfo) {
+  	this.setInProtocolInfoList(inProtocolInfo);
+  }
+
+  /**
+   * Use method sizeInProtocolInfoList
+   * @return lunghezza della lista
+  */
+  public int sizeInProtocolInfo() {
+  	return this.sizeInProtocolInfoList();
+  }
+
   @XmlElement(name="out",required=true,nillable=false)
   private List<ConfigurazioneHandler> out = new ArrayList<>();
 
+  /**
+   * Use method getOutList
+   * @return List&lt;ConfigurazioneHandler&gt;
+  */
+  public List<ConfigurazioneHandler> getOut() {
+  	return this.getOutList();
+  }
+
+  /**
+   * Use method setOutList
+   * @param out List&lt;ConfigurazioneHandler&gt;
+  */
+  public void setOut(List<ConfigurazioneHandler> out) {
+  	this.setOutList(out);
+  }
+
+  /**
+   * Use method sizeOutList
+   * @return lunghezza della lista
+  */
+  public int sizeOut() {
+  	return this.sizeOutList();
+  }
+
   @XmlElement(name="postOut",required=true,nillable=false)
   private List<ConfigurazioneHandler> postOut = new ArrayList<>();
+
+  /**
+   * Use method getPostOutList
+   * @return List&lt;ConfigurazioneHandler&gt;
+  */
+  public List<ConfigurazioneHandler> getPostOut() {
+  	return this.getPostOutList();
+  }
+
+  /**
+   * Use method setPostOutList
+   * @param postOut List&lt;ConfigurazioneHandler&gt;
+  */
+  public void setPostOut(List<ConfigurazioneHandler> postOut) {
+  	this.setPostOutList(postOut);
+  }
+
+  /**
+   * Use method sizePostOutList
+   * @return lunghezza della lista
+  */
+  public int sizePostOut() {
+  	return this.sizePostOutList();
+  }
 
 }

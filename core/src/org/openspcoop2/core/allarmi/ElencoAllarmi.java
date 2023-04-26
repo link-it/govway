@@ -92,4 +92,28 @@ public class ElencoAllarmi extends org.openspcoop2.utils.beans.BaseBeanWithId im
   @XmlElement(name="allarme",required=true,nillable=false)
   private List<Allarme> allarme = new ArrayList<>();
 
+  /**
+   * Use method getAllarmeList
+   * @return List&lt;Allarme&gt;
+  */
+  public List<Allarme> getAllarme() {
+  	return this.getAllarmeList();
+  }
+
+  /**
+   * Use method setAllarmeList
+   * @param allarme List&lt;Allarme&gt;
+  */
+  public void setAllarme(List<Allarme> allarme) {
+  	this.setAllarmeList(allarme);
+  }
+
+  /**
+   * Use method sizeAllarmeList
+   * @return lunghezza della lista
+  */
+  public int sizeAllarme() {
+  	return this.sizeAllarmeList();
+  }
+
 }

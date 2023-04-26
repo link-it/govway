@@ -230,7 +230,55 @@ public class Filtro extends org.openspcoop2.utils.beans.BaseBeanWithId implement
   @XmlElement(name="soggetto",required=true,nillable=false)
   private List<BustaSoggetto> soggetto = new ArrayList<>();
 
+  /**
+   * Use method getSoggettoList
+   * @return List&lt;BustaSoggetto&gt;
+  */
+  public List<BustaSoggetto> getSoggetto() {
+  	return this.getSoggettoList();
+  }
+
+  /**
+   * Use method setSoggettoList
+   * @param soggetto List&lt;BustaSoggetto&gt;
+  */
+  public void setSoggetto(List<BustaSoggetto> soggetto) {
+  	this.setSoggettoList(soggetto);
+  }
+
+  /**
+   * Use method sizeSoggettoList
+   * @return lunghezza della lista
+  */
+  public int sizeSoggetto() {
+  	return this.sizeSoggettoList();
+  }
+
   @XmlElement(name="proprieta",required=true,nillable=false)
   private List<Proprieta> proprieta = new ArrayList<>();
+
+  /**
+   * Use method getProprietaList
+   * @return List&lt;Proprieta&gt;
+  */
+  public List<Proprieta> getProprieta() {
+  	return this.getProprietaList();
+  }
+
+  /**
+   * Use method setProprietaList
+   * @param proprieta List&lt;Proprieta&gt;
+  */
+  public void setProprieta(List<Proprieta> proprieta) {
+  	this.setProprietaList(proprieta);
+  }
+
+  /**
+   * Use method sizeProprietaList
+   * @return lunghezza della lista
+  */
+  public int sizeProprieta() {
+  	return this.sizeProprietaList();
+  }
 
 }

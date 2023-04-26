@@ -156,6 +156,30 @@ public class InvocazionePorta extends org.openspcoop2.utils.beans.BaseBeanWithId
   @XmlElement(name="credenziali",required=true,nillable=false)
   private List<Credenziali> credenziali = new ArrayList<>();
 
+  /**
+   * Use method getCredenzialiList
+   * @return List&lt;Credenziali&gt;
+  */
+  public List<Credenziali> getCredenziali() {
+  	return this.getCredenzialiList();
+  }
+
+  /**
+   * Use method setCredenzialiList
+   * @param credenziali List&lt;Credenziali&gt;
+  */
+  public void setCredenziali(List<Credenziali> credenziali) {
+  	this.setCredenzialiList(credenziali);
+  }
+
+  /**
+   * Use method sizeCredenzialiList
+   * @return lunghezza della lista
+  */
+  public int sizeCredenziali() {
+  	return this.sizeCredenzialiList();
+  }
+
   @XmlElement(name="ruoli",required=false,nillable=false)
   protected ServizioApplicativoRuoli ruoli;
 

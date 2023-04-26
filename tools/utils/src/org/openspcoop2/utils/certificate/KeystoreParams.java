@@ -38,6 +38,10 @@ public class KeystoreParams {
 	private String keyAlias;
 	private String keyPassword;
 	
+	private String keyPairPublicKeyPath;
+	private byte[] keyPairPublicKey;
+	private String keyPairAlgorithm;
+	
 	public byte[] getStore() {
 		return this.store;
 	}
@@ -86,5 +90,23 @@ public class KeystoreParams {
 	public void setKeyPassword(String keyPassword) {
 		this.keyPassword = keyPassword;
 	}
-	
+
+	public String getKeyPairPublicKeyPath() {
+		return this.keyPairPublicKeyPath;
+	}
+	public void setKeyPairPublicKeyPath(String keyPairPublicKeyPath) {
+		this.keyPairPublicKeyPath = keyPairPublicKeyPath;
+	}
+	public byte[] getKeyPairPublicKey() {
+		return this.keyPairPublicKey;
+	}
+	public void setKeyPairPublicKey(byte[] keyPairPublicKey) {
+		this.keyPairPublicKey = keyPairPublicKey;
+	}
+	public String getKeyPairAlgorithm() {
+		return this.keyPairAlgorithm;
+	}
+	public void setKeyPairAlgorithm(String keyPairAlgorithm) {
+		this.keyPairAlgorithm = keyPairAlgorithm;
+	}
 }

@@ -93,4 +93,28 @@ public class ElencoAllegati extends org.openspcoop2.utils.beans.BaseBean impleme
   @XmlElement(name="genericoDocumento",required=true,nillable=false)
   private List<java.lang.String> genericoDocumento = new ArrayList<>();
 
+  /**
+   * Use method getGenericoDocumentoList
+   * @return List&lt;java.lang.String&gt;
+  */
+  public List<java.lang.String> getGenericoDocumento() {
+  	return this.getGenericoDocumentoList();
+  }
+
+  /**
+   * Use method setGenericoDocumentoList
+   * @param genericoDocumento List&lt;java.lang.String&gt;
+  */
+  public void setGenericoDocumento(List<java.lang.String> genericoDocumento) {
+  	this.setGenericoDocumentoList(genericoDocumento);
+  }
+
+  /**
+   * Use method sizeGenericoDocumentoList
+   * @return lunghezza della lista
+  */
+  public int sizeGenericoDocumento() {
+  	return this.sizeGenericoDocumentoList();
+  }
+
 }

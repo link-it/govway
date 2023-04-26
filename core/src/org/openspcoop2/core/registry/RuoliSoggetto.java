@@ -92,4 +92,28 @@ public class RuoliSoggetto extends org.openspcoop2.utils.beans.BaseBeanWithId im
   @XmlElement(name="ruolo",required=true,nillable=false)
   private List<RuoloSoggetto> ruolo = new ArrayList<>();
 
+  /**
+   * Use method getRuoloList
+   * @return List&lt;RuoloSoggetto&gt;
+  */
+  public List<RuoloSoggetto> getRuolo() {
+  	return this.getRuoloList();
+  }
+
+  /**
+   * Use method setRuoloList
+   * @param ruolo List&lt;RuoloSoggetto&gt;
+  */
+  public void setRuolo(List<RuoloSoggetto> ruolo) {
+  	this.setRuoloList(ruolo);
+  }
+
+  /**
+   * Use method sizeRuoloList
+   * @return lunghezza della lista
+  */
+  public int sizeRuolo() {
+  	return this.sizeRuoloList();
+  }
+
 }

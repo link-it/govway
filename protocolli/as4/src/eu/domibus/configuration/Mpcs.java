@@ -92,4 +92,28 @@ public class Mpcs extends org.openspcoop2.utils.beans.BaseBean implements Serial
   @XmlElement(name="mpc",required=true,nillable=false)
   private List<Mpc> mpc = new ArrayList<>();
 
+  /**
+   * Use method getMpcList
+   * @return List&lt;Mpc&gt;
+  */
+  public List<Mpc> getMpc() {
+  	return this.getMpcList();
+  }
+
+  /**
+   * Use method setMpcList
+   * @param mpc List&lt;Mpc&gt;
+  */
+  public void setMpc(List<Mpc> mpc) {
+  	this.setMpcList(mpc);
+  }
+
+  /**
+   * Use method sizeMpcList
+   * @return lunghezza della lista
+  */
+  public int sizeMpc() {
+  	return this.sizeMpcList();
+  }
+
 }

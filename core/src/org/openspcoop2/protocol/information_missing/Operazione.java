@@ -326,31 +326,271 @@ public class Operazione extends org.openspcoop2.utils.beans.BaseBean implements 
   @XmlElement(name="soggetto",required=true,nillable=false)
   private List<Soggetto> soggetto = new ArrayList<>();
 
+  /**
+   * Use method getSoggettoList
+   * @return List&lt;Soggetto&gt;
+  */
+  public List<Soggetto> getSoggetto() {
+  	return this.getSoggettoList();
+  }
+
+  /**
+   * Use method setSoggettoList
+   * @param soggetto List&lt;Soggetto&gt;
+  */
+  public void setSoggetto(List<Soggetto> soggetto) {
+  	this.setSoggettoList(soggetto);
+  }
+
+  /**
+   * Use method sizeSoggettoList
+   * @return lunghezza della lista
+  */
+  public int sizeSoggetto() {
+  	return this.sizeSoggettoList();
+  }
+
   @XmlElement(name="input",required=true,nillable=false)
   private List<Input> input = new ArrayList<>();
+
+  /**
+   * Use method getInputList
+   * @return List&lt;Input&gt;
+  */
+  public List<Input> getInput() {
+  	return this.getInputList();
+  }
+
+  /**
+   * Use method setInputList
+   * @param input List&lt;Input&gt;
+  */
+  public void setInput(List<Input> input) {
+  	this.setInputList(input);
+  }
+
+  /**
+   * Use method sizeInputList
+   * @return lunghezza della lista
+  */
+  public int sizeInput() {
+  	return this.sizeInputList();
+  }
 
   @XmlElement(name="servizio-applicativo",required=true,nillable=false)
   private List<ServizioApplicativo> servizioApplicativo = new ArrayList<>();
 
+  /**
+   * Use method getServizioApplicativoList
+   * @return List&lt;ServizioApplicativo&gt;
+  */
+  public List<ServizioApplicativo> getServizioApplicativo() {
+  	return this.getServizioApplicativoList();
+  }
+
+  /**
+   * Use method setServizioApplicativoList
+   * @param servizioApplicativo List&lt;ServizioApplicativo&gt;
+  */
+  public void setServizioApplicativo(List<ServizioApplicativo> servizioApplicativo) {
+  	this.setServizioApplicativoList(servizioApplicativo);
+  }
+
+  /**
+   * Use method sizeServizioApplicativoList
+   * @return lunghezza della lista
+  */
+  public int sizeServizioApplicativo() {
+  	return this.sizeServizioApplicativoList();
+  }
+
   @XmlElement(name="accordo-cooperazione",required=true,nillable=false)
   private List<AccordoCooperazione> accordoCooperazione = new ArrayList<>();
+
+  /**
+   * Use method getAccordoCooperazioneList
+   * @return List&lt;AccordoCooperazione&gt;
+  */
+  public List<AccordoCooperazione> getAccordoCooperazione() {
+  	return this.getAccordoCooperazioneList();
+  }
+
+  /**
+   * Use method setAccordoCooperazioneList
+   * @param accordoCooperazione List&lt;AccordoCooperazione&gt;
+  */
+  public void setAccordoCooperazione(List<AccordoCooperazione> accordoCooperazione) {
+  	this.setAccordoCooperazioneList(accordoCooperazione);
+  }
+
+  /**
+   * Use method sizeAccordoCooperazioneList
+   * @return lunghezza della lista
+  */
+  public int sizeAccordoCooperazione() {
+  	return this.sizeAccordoCooperazioneList();
+  }
 
   @XmlElement(name="accordo-servizio-parte-comune",required=true,nillable=false)
   private List<AccordoServizioParteComune> accordoServizioParteComune = new ArrayList<>();
 
+  /**
+   * Use method getAccordoServizioParteComuneList
+   * @return List&lt;AccordoServizioParteComune&gt;
+  */
+  public List<AccordoServizioParteComune> getAccordoServizioParteComune() {
+  	return this.getAccordoServizioParteComuneList();
+  }
+
+  /**
+   * Use method setAccordoServizioParteComuneList
+   * @param accordoServizioParteComune List&lt;AccordoServizioParteComune&gt;
+  */
+  public void setAccordoServizioParteComune(List<AccordoServizioParteComune> accordoServizioParteComune) {
+  	this.setAccordoServizioParteComuneList(accordoServizioParteComune);
+  }
+
+  /**
+   * Use method sizeAccordoServizioParteComuneList
+   * @return lunghezza della lista
+  */
+  public int sizeAccordoServizioParteComune() {
+  	return this.sizeAccordoServizioParteComuneList();
+  }
+
   @XmlElement(name="accordo-servizio-parte-specifica",required=true,nillable=false)
   private List<AccordoServizioParteSpecifica> accordoServizioParteSpecifica = new ArrayList<>();
+
+  /**
+   * Use method getAccordoServizioParteSpecificaList
+   * @return List&lt;AccordoServizioParteSpecifica&gt;
+  */
+  public List<AccordoServizioParteSpecifica> getAccordoServizioParteSpecifica() {
+  	return this.getAccordoServizioParteSpecificaList();
+  }
+
+  /**
+   * Use method setAccordoServizioParteSpecificaList
+   * @param accordoServizioParteSpecifica List&lt;AccordoServizioParteSpecifica&gt;
+  */
+  public void setAccordoServizioParteSpecifica(List<AccordoServizioParteSpecifica> accordoServizioParteSpecifica) {
+  	this.setAccordoServizioParteSpecificaList(accordoServizioParteSpecifica);
+  }
+
+  /**
+   * Use method sizeAccordoServizioParteSpecificaList
+   * @return lunghezza della lista
+  */
+  public int sizeAccordoServizioParteSpecifica() {
+  	return this.sizeAccordoServizioParteSpecificaList();
+  }
 
   @XmlElement(name="accordo-servizio-composto",required=true,nillable=false)
   private List<AccordoServizioParteComune> accordoServizioComposto = new ArrayList<>();
 
+  /**
+   * Use method getAccordoServizioCompostoList
+   * @return List&lt;AccordoServizioParteComune&gt;
+  */
+  public List<AccordoServizioParteComune> getAccordoServizioComposto() {
+  	return this.getAccordoServizioCompostoList();
+  }
+
+  /**
+   * Use method setAccordoServizioCompostoList
+   * @param accordoServizioComposto List&lt;AccordoServizioParteComune&gt;
+  */
+  public void setAccordoServizioComposto(List<AccordoServizioParteComune> accordoServizioComposto) {
+  	this.setAccordoServizioCompostoList(accordoServizioComposto);
+  }
+
+  /**
+   * Use method sizeAccordoServizioCompostoList
+   * @return lunghezza della lista
+  */
+  public int sizeAccordoServizioComposto() {
+  	return this.sizeAccordoServizioCompostoList();
+  }
+
   @XmlElement(name="fruitore",required=true,nillable=false)
   private List<Fruitore> fruitore = new ArrayList<>();
+
+  /**
+   * Use method getFruitoreList
+   * @return List&lt;Fruitore&gt;
+  */
+  public List<Fruitore> getFruitore() {
+  	return this.getFruitoreList();
+  }
+
+  /**
+   * Use method setFruitoreList
+   * @param fruitore List&lt;Fruitore&gt;
+  */
+  public void setFruitore(List<Fruitore> fruitore) {
+  	this.setFruitoreList(fruitore);
+  }
+
+  /**
+   * Use method sizeFruitoreList
+   * @return lunghezza della lista
+  */
+  public int sizeFruitore() {
+  	return this.sizeFruitoreList();
+  }
 
   @XmlElement(name="porta-delegata",required=true,nillable=false)
   private List<PortaDelegata> portaDelegata = new ArrayList<>();
 
+  /**
+   * Use method getPortaDelegataList
+   * @return List&lt;PortaDelegata&gt;
+  */
+  public List<PortaDelegata> getPortaDelegata() {
+  	return this.getPortaDelegataList();
+  }
+
+  /**
+   * Use method setPortaDelegataList
+   * @param portaDelegata List&lt;PortaDelegata&gt;
+  */
+  public void setPortaDelegata(List<PortaDelegata> portaDelegata) {
+  	this.setPortaDelegataList(portaDelegata);
+  }
+
+  /**
+   * Use method sizePortaDelegataList
+   * @return lunghezza della lista
+  */
+  public int sizePortaDelegata() {
+  	return this.sizePortaDelegataList();
+  }
+
   @XmlElement(name="porta-applicativa",required=true,nillable=false)
   private List<PortaApplicativa> portaApplicativa = new ArrayList<>();
+
+  /**
+   * Use method getPortaApplicativaList
+   * @return List&lt;PortaApplicativa&gt;
+  */
+  public List<PortaApplicativa> getPortaApplicativa() {
+  	return this.getPortaApplicativaList();
+  }
+
+  /**
+   * Use method setPortaApplicativaList
+   * @param portaApplicativa List&lt;PortaApplicativa&gt;
+  */
+  public void setPortaApplicativa(List<PortaApplicativa> portaApplicativa) {
+  	this.setPortaApplicativaList(portaApplicativa);
+  }
+
+  /**
+   * Use method sizePortaApplicativaList
+   * @return lunghezza della lista
+  */
+  public int sizePortaApplicativa() {
+  	return this.sizePortaApplicativaList();
+  }
 
 }

@@ -28,12 +28,13 @@ import java.util.Properties;
 import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.Property;
-import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.mvc.properties.utils.DBPropertiesUtils;
+import org.openspcoop2.pdd.core.token.TokenException;
+import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 
 /**     
- * TokenUtilities
+ * AttributeAuthorityUtilities
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
@@ -41,35 +42,45 @@ import org.openspcoop2.utils.certificate.KeystoreParams;
  */
 public class AttributeAuthorityUtilities {
 	
-	public static KeystoreParams getRequestJwsKeystoreParams(GenericProperties gp) throws Exception {
+	private AttributeAuthorityUtilities() {}
+	
+	public static KeystoreParams getRequestJwsKeystoreParams(GenericProperties gp) throws TokenException {
 		PolicyAttributeAuthority policy = AttributeAuthorityUtilities.convertTo(gp);
 		return getRequestJwsKeystoreParams(policy);
 	}
-	public static KeystoreParams getRequestJwsKeystoreParams(PolicyAttributeAuthority policy) throws Exception {
+	public static KeystoreParams getRequestJwsKeystoreParams(PolicyAttributeAuthority policy) throws TokenException {
 	
 		if(!policy.isRequestJws()) {
-			throw new DriverConfigurazioneException("La configurazione nell'AttributeAuthority "+policy.getName()+" non definisce il tipo di richiesta come JWS");
+			throw new TokenException("La configurazione nell'AttributeAuthority "+policy.getName()+" non definisce il tipo di richiesta come JWS");
 		}
 		
 		String keystoreType = policy.getRequestJwtSignKeystoreType();
 		if(keystoreType==null) {
-			throw new Exception("JWS Signature keystore type undefined");
+			throw new TokenException("JWS Signature keystore type undefined");
 		}
 		String keystoreFile = policy.getRequestJwtSignKeystoreFile();
 		if(keystoreFile==null) {
-			throw new Exception("JWS Signature keystore file undefined");
+			throw new TokenException("JWS Signature keystore file undefined");
 		}
 		String keystorePassword = policy.getRequestJwtSignKeystorePassword();
-		if(keystorePassword==null) {
-			throw new Exception("JWS Signature keystore password undefined");
+		if(keystorePassword==null && 
+				!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) && 
+				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
+				!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
+			throw new TokenException("JWS Signature keystore password undefined");
 		}
 		String keyAlias = policy.getRequestJwtSignKeyAlias();
-		if(keyAlias==null) {
-			throw new Exception("JWS Signature key alias undefined");
+		if(keyAlias==null && 
+				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
+				!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
+			throw new TokenException("JWS Signature key alias undefined");
 		}
 		String keyPassword = policy.getRequestJwtSignKeyPassword();
-		if(keyPassword==null) {
-			throw new Exception("JWS Signature key password undefined");
+		if(keyPassword==null && 
+				!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) && 
+				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
+				!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
+			throw new TokenException("JWS Signature key password undefined");
 		}
 		
 		KeystoreParams keystoreParams = new KeystoreParams();
@@ -78,18 +89,41 @@ public class AttributeAuthorityUtilities {
 		keystoreParams.setPassword(keystorePassword);
 		keystoreParams.setKeyAlias(keyAlias);
 		keystoreParams.setKeyPassword(keyPassword);
+		
+		fillKeyPairParamters(keystoreParams, keystoreType, policy);
+		
 		return keystoreParams;
 		
 	}
 	
-	public static KeystoreParams getResponseJwsKeystoreParams(GenericProperties gp) throws Exception {
+	private static void fillKeyPairParamters(KeystoreParams keystoreParams, String keystoreType, PolicyAttributeAuthority policy) throws TokenException {
+		if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
+			String keystorePublicKeyFile = policy.getRequestJwtSignKeystoreFilePublicKey();
+			if(keystorePublicKeyFile==null) {
+				throw new TokenException("JWT Signature public key file undefined");
+			}
+			keystoreParams.setKeyPairPublicKeyPath(keystorePublicKeyFile);
+		}
+		
+		if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)
+				||
+			SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
+			String keyPairAlgorithm = policy.getRequestJwtSignKeystoreFileAlgorithm();
+			if(keyPairAlgorithm==null) {
+				throw new TokenException("JWT Signature key pair algorithm undefined");
+			}
+			keystoreParams.setKeyPairAlgorithm(keyPairAlgorithm);
+		}
+	}
+	
+	public static KeystoreParams getResponseJwsKeystoreParams(GenericProperties gp) throws TokenException {
 		PolicyAttributeAuthority policy = AttributeAuthorityUtilities.convertTo(gp);
 		return getResponseJwsKeystoreParams(policy);
 	}
-	public static KeystoreParams getResponseJwsKeystoreParams(PolicyAttributeAuthority policy) throws Exception {
+	public static KeystoreParams getResponseJwsKeystoreParams(PolicyAttributeAuthority policy) throws TokenException {
 	
 		if(!policy.isResponseJws()) {
-			throw new DriverConfigurazioneException("La configurazione nell'AttributeAuthority "+policy.getName()+" non definisce il tipo di risposta come JWS");
+			throw new TokenException("La configurazione nell'AttributeAuthority "+policy.getName()+" non definisce il tipo di risposta come JWS");
 		}
 		Properties p = policy.getProperties().get(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID);
 		if(p!=null && p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE_FILE)) {
@@ -103,13 +137,35 @@ public class AttributeAuthorityUtilities {
 			keystoreParams.setPassword(p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_PSWD));
 			keystoreParams.setKeyAlias(p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS));
 			keystoreParams.setKeyPassword(p.getProperty(RSSecurityConstants.RSSEC_KEY_PSWD));
+			
+			fillKeyPairParamters(keystoreParams, type, p);
+			
 			return keystoreParams;
 		}
 		return null;
 		
 	}
+	private static void fillKeyPairParamters(KeystoreParams keystoreParams, String type, Properties p) throws TokenException {
+		if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(type)) {
+			String keystorePublicKeyFile = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE+".public");
+			if(keystorePublicKeyFile==null) {
+				throw new TokenException("Public key file undefined");
+			}
+			keystoreParams.setKeyPairPublicKeyPath(keystorePublicKeyFile);
+		}
+		
+		if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(type)
+				||
+			SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(type)) {
+			String keyPairAlgorithm = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE+".algorithm");
+			if(keyPairAlgorithm==null) {
+				throw new TokenException("Key pair algorithm undefined");
+			}
+			keystoreParams.setKeyPairAlgorithm(keyPairAlgorithm);
+		}
+	}
 	
-	public static PolicyAttributeAuthority convertTo(GenericProperties gp) throws Exception { 
+	public static PolicyAttributeAuthority convertTo(GenericProperties gp) throws TokenException { 
 		
 		PolicyAttributeAuthority policy = new PolicyAttributeAuthority();
 		policy.setName(gp.getNome());
@@ -119,8 +175,12 @@ public class AttributeAuthorityUtilities {
 		for (Property pConfig : gp.getPropertyList()) {
 			properties.put(pConfig.getNome(), pConfig.getValore());
 		}
-		Map<String, Properties> multiProperties = DBPropertiesUtils.toMultiMap(properties);
-		policy.setProperties(multiProperties);
+		try {
+			Map<String, Properties> multiProperties = DBPropertiesUtils.toMultiMap(properties);
+			policy.setProperties(multiProperties);
+		}catch(Exception e) {
+			throw new TokenException(e.getMessage(),e);
+		}
 		
 		return policy;
 

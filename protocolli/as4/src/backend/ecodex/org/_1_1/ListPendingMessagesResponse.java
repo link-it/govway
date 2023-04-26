@@ -93,4 +93,28 @@ public class ListPendingMessagesResponse extends org.openspcoop2.utils.beans.Bas
   @XmlElement(name="messageID",required=true,nillable=false)
   private List<java.lang.String> messageID = new ArrayList<>();
 
+  /**
+   * Use method getMessageIDList
+   * @return List&lt;java.lang.String&gt;
+  */
+  public List<java.lang.String> getMessageID() {
+  	return this.getMessageIDList();
+  }
+
+  /**
+   * Use method setMessageIDList
+   * @param messageID List&lt;java.lang.String&gt;
+  */
+  public void setMessageID(List<java.lang.String> messageID) {
+  	this.setMessageIDList(messageID);
+  }
+
+  /**
+   * Use method sizeMessageIDList
+   * @return lunghezza della lista
+  */
+  public int sizeMessageID() {
+  	return this.sizeMessageIDList();
+  }
+
 }

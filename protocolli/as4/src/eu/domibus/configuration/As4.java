@@ -118,7 +118,55 @@ public class As4 extends org.openspcoop2.utils.beans.BaseBean implements Seriali
   @XmlElement(name="receptionAwareness",required=true,nillable=false)
   private List<ReceptionAwareness> receptionAwareness = new ArrayList<>();
 
+  /**
+   * Use method getReceptionAwarenessList
+   * @return List&lt;ReceptionAwareness&gt;
+  */
+  public List<ReceptionAwareness> getReceptionAwareness() {
+  	return this.getReceptionAwarenessList();
+  }
+
+  /**
+   * Use method setReceptionAwarenessList
+   * @param receptionAwareness List&lt;ReceptionAwareness&gt;
+  */
+  public void setReceptionAwareness(List<ReceptionAwareness> receptionAwareness) {
+  	this.setReceptionAwarenessList(receptionAwareness);
+  }
+
+  /**
+   * Use method sizeReceptionAwarenessList
+   * @return lunghezza della lista
+  */
+  public int sizeReceptionAwareness() {
+  	return this.sizeReceptionAwarenessList();
+  }
+
   @XmlElement(name="reliability",required=true,nillable=false)
   private List<Reliability> reliability = new ArrayList<>();
+
+  /**
+   * Use method getReliabilityList
+   * @return List&lt;Reliability&gt;
+  */
+  public List<Reliability> getReliability() {
+  	return this.getReliabilityList();
+  }
+
+  /**
+   * Use method setReliabilityList
+   * @param reliability List&lt;Reliability&gt;
+  */
+  public void setReliability(List<Reliability> reliability) {
+  	this.setReliabilityList(reliability);
+  }
+
+  /**
+   * Use method sizeReliabilityList
+   * @return lunghezza della lista
+  */
+  public int sizeReliability() {
+  	return this.sizeReliabilityList();
+  }
 
 }

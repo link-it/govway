@@ -90,7 +90,7 @@ public class BaseStatus implements IStatus {
 		this.descrizione = descrizione;
 	}
 
-	public String get_value_stato() {
+	public String getStatoRawEnumValue() {
 		if(this.stato == null){
 	    	return null;
 	    }else{
@@ -98,8 +98,8 @@ public class BaseStatus implements IStatus {
 	    }
 	}
 
-	public void set_value_stato(String _value_stato) {
-		this.stato = (SondaStatus) SondaStatus.toEnumConstantFromString(_value_stato);
+	public void setStatoRawEnumValue(String v) {
+		this.stato = (SondaStatus) SondaStatus.toEnumConstantFromString(v);
 	}
 
  

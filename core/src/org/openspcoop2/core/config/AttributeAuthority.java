@@ -103,6 +103,30 @@ public class AttributeAuthority extends org.openspcoop2.utils.beans.BaseBeanWith
   @XmlElement(name="attributo",required=true,nillable=false)
   private List<java.lang.String> attributo = new ArrayList<>();
 
+  /**
+   * Use method getAttributoList
+   * @return List&lt;java.lang.String&gt;
+  */
+  public List<java.lang.String> getAttributo() {
+  	return this.getAttributoList();
+  }
+
+  /**
+   * Use method setAttributoList
+   * @param attributo List&lt;java.lang.String&gt;
+  */
+  public void setAttributo(List<java.lang.String> attributo) {
+  	this.setAttributoList(attributo);
+  }
+
+  /**
+   * Use method sizeAttributoList
+   * @return lunghezza della lista
+  */
+  public int sizeAttributo() {
+  	return this.sizeAttributoList();
+  }
+
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=true)
   protected java.lang.String nome;

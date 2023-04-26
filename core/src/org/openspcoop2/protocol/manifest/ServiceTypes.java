@@ -92,4 +92,28 @@ public class ServiceTypes extends org.openspcoop2.utils.beans.BaseBean implement
   @XmlElement(name="type",required=true,nillable=false)
   private List<ServiceType> type = new ArrayList<>();
 
+  /**
+   * Use method getTypeList
+   * @return List&lt;ServiceType&gt;
+  */
+  public List<ServiceType> getType() {
+  	return this.getTypeList();
+  }
+
+  /**
+   * Use method setTypeList
+   * @param type List&lt;ServiceType&gt;
+  */
+  public void setType(List<ServiceType> type) {
+  	this.setTypeList(type);
+  }
+
+  /**
+   * Use method sizeTypeList
+   * @return lunghezza della lista
+  */
+  public int sizeType() {
+  	return this.sizeTypeList();
+  }
+
 }

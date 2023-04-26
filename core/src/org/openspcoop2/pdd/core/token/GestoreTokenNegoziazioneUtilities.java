@@ -1052,19 +1052,23 @@ public class GestoreTokenNegoziazioneUtilities {
 				String keystorePassword = policyNegoziazioneToken.getJwtSignKeystorePassword();
 				if(keystorePassword==null && 
 						!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) && 
-						!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
+						!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
+						!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
 					throw new TokenException("JWT Signature keystore password undefined");
 				}
 				
 				keyAlias = policyNegoziazioneToken.getJwtSignKeyAlias();
 				if(keyAlias==null && 
-						!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
+						!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
+						!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
 					throw new TokenException(GestoreToken.KEY_ALIAS_UNDEFINED);
 				}
 				
 				keyPassword = policyNegoziazioneToken.getJwtSignKeyPassword();
 				if(keyPassword==null && 
-						!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
+						!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) && 
+						!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
+						!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
 					throw new TokenException(GestoreToken.KEY_PASSWORD_UNDEFINED);
 				}
 				

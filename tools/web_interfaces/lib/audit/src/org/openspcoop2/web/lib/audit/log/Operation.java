@@ -244,6 +244,30 @@ public class Operation extends org.openspcoop2.utils.beans.BaseBeanWithId implem
   @XmlElement(name="binary",required=true,nillable=false)
   private List<Binary> binary = new ArrayList<>();
 
+  /**
+   * Use method getBinaryList
+   * @return List&lt;Binary&gt;
+  */
+  public List<Binary> getBinary() {
+  	return this.getBinaryList();
+  }
+
+  /**
+   * Use method setBinaryList
+   * @param binary List&lt;Binary&gt;
+  */
+  public void setBinary(List<Binary> binary) {
+  	this.setBinaryList(binary);
+  }
+
+  /**
+   * Use method sizeBinaryList
+   * @return lunghezza della lista
+  */
+  public int sizeBinary() {
+  	return this.sizeBinaryList();
+  }
+
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String tipologiaRawEnumValue;
 

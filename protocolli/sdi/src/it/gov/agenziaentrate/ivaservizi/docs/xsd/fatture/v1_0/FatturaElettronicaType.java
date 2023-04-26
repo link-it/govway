@@ -149,6 +149,30 @@ public class FatturaElettronicaType extends org.openspcoop2.utils.beans.BaseBean
   @XmlElement(name="FatturaElettronicaBody",required=true,nillable=false)
   private List<FatturaElettronicaBodyType> fatturaElettronicaBody = new ArrayList<>();
 
+  /**
+   * Use method getFatturaElettronicaBodyList
+   * @return List&lt;FatturaElettronicaBodyType&gt;
+  */
+  public List<FatturaElettronicaBodyType> getFatturaElettronicaBody() {
+  	return this.getFatturaElettronicaBodyList();
+  }
+
+  /**
+   * Use method setFatturaElettronicaBodyList
+   * @param fatturaElettronicaBody List&lt;FatturaElettronicaBodyType&gt;
+  */
+  public void setFatturaElettronicaBody(List<FatturaElettronicaBodyType> fatturaElettronicaBody) {
+  	this.setFatturaElettronicaBodyList(fatturaElettronicaBody);
+  }
+
+  /**
+   * Use method sizeFatturaElettronicaBodyList
+   * @return lunghezza della lista
+  */
+  public int sizeFatturaElettronicaBody() {
+  	return this.sizeFatturaElettronicaBodyList();
+  }
+
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String versioneRawEnumValue;
 

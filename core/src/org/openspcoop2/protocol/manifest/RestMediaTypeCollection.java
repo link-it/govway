@@ -112,6 +112,30 @@ public class RestMediaTypeCollection extends org.openspcoop2.utils.beans.BaseBea
   @XmlElement(name="mediaType",required=true,nillable=false)
   private List<RestMediaTypeMapping> mediaType = new ArrayList<>();
 
+  /**
+   * Use method getMediaTypeList
+   * @return List&lt;RestMediaTypeMapping&gt;
+  */
+  public List<RestMediaTypeMapping> getMediaType() {
+  	return this.getMediaTypeList();
+  }
+
+  /**
+   * Use method setMediaTypeList
+   * @param mediaType List&lt;RestMediaTypeMapping&gt;
+  */
+  public void setMediaType(List<RestMediaTypeMapping> mediaType) {
+  	this.setMediaTypeList(mediaType);
+  }
+
+  /**
+   * Use method sizeMediaTypeList
+   * @return lunghezza della lista
+  */
+  public int sizeMediaType() {
+  	return this.sizeMediaTypeList();
+  }
+
   @XmlElement(name="default",required=false,nillable=false)
   protected RestMediaTypeDefaultMapping _default;
 

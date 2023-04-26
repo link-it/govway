@@ -165,6 +165,30 @@ public class PortaApplicativaAzione extends org.openspcoop2.utils.beans.BaseBean
   @XmlElement(name="azione-delegata",required=true,nillable=false)
   private List<java.lang.String> azioneDelegata = new ArrayList<>();
 
+  /**
+   * Use method getAzioneDelegataList
+   * @return List&lt;java.lang.String&gt;
+  */
+  public List<java.lang.String> getAzioneDelegata() {
+  	return this.getAzioneDelegataList();
+  }
+
+  /**
+   * Use method setAzioneDelegataList
+   * @param azioneDelegata List&lt;java.lang.String&gt;
+  */
+  public void setAzioneDelegata(List<java.lang.String> azioneDelegata) {
+  	this.setAzioneDelegataList(azioneDelegata);
+  }
+
+  /**
+   * Use method sizeAzioneDelegataList
+   * @return lunghezza della lista
+  */
+  public int sizeAzioneDelegata() {
+  	return this.sizeAzioneDelegataList();
+  }
+
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String identificazioneRawEnumValue;
 

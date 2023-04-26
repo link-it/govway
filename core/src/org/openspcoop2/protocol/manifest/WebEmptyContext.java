@@ -180,6 +180,30 @@ public class WebEmptyContext extends org.openspcoop2.utils.beans.BaseBean implem
   @XmlElement(name="subContext",required=true,nillable=false)
   private List<SubContextMapping> subContext = new ArrayList<>();
 
+  /**
+   * Use method getSubContextList
+   * @return List&lt;SubContextMapping&gt;
+  */
+  public List<SubContextMapping> getSubContext() {
+  	return this.getSubContextList();
+  }
+
+  /**
+   * Use method setSubContextList
+   * @param subContext List&lt;SubContextMapping&gt;
+  */
+  public void setSubContext(List<SubContextMapping> subContext) {
+  	this.setSubContextList(subContext);
+  }
+
+  /**
+   * Use method sizeSubContextList
+   * @return lunghezza della lista
+  */
+  public int sizeSubContext() {
+  	return this.sizeSubContextList();
+  }
+
   @XmlElement(name="emptySubContext",required=false,nillable=false)
   protected EmptySubContextMapping emptySubContext;
 

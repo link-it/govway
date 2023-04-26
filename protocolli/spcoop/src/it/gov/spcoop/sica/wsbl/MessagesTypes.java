@@ -92,4 +92,28 @@ public class MessagesTypes extends org.openspcoop2.utils.beans.BaseBean implemen
   @XmlElement(name="message",required=true,nillable=false)
   private List<Message> message = new ArrayList<>();
 
+  /**
+   * Use method getMessageList
+   * @return List&lt;Message&gt;
+  */
+  public List<Message> getMessage() {
+  	return this.getMessageList();
+  }
+
+  /**
+   * Use method setMessageList
+   * @param message List&lt;Message&gt;
+  */
+  public void setMessage(List<Message> message) {
+  	this.setMessageList(message);
+  }
+
+  /**
+   * Use method sizeMessageList
+   * @return lunghezza della lista
+  */
+  public int sizeMessage() {
+  	return this.sizeMessageList();
+  }
+
 }

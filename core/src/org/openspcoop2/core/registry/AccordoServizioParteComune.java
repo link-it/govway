@@ -697,20 +697,164 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
   @XmlElement(name="azione",required=true,nillable=false)
   private List<Azione> azione = new ArrayList<>();
 
+  /**
+   * Use method getAzioneList
+   * @return List&lt;Azione&gt;
+  */
+  public List<Azione> getAzione() {
+  	return this.getAzioneList();
+  }
+
+  /**
+   * Use method setAzioneList
+   * @param azione List&lt;Azione&gt;
+  */
+  public void setAzione(List<Azione> azione) {
+  	this.setAzioneList(azione);
+  }
+
+  /**
+   * Use method sizeAzioneList
+   * @return lunghezza della lista
+  */
+  public int sizeAzione() {
+  	return this.sizeAzioneList();
+  }
+
   @XmlElement(name="port-type",required=true,nillable=false)
   private List<PortType> portType = new ArrayList<>();
+
+  /**
+   * Use method getPortTypeList
+   * @return List&lt;PortType&gt;
+  */
+  public List<PortType> getPortType() {
+  	return this.getPortTypeList();
+  }
+
+  /**
+   * Use method setPortTypeList
+   * @param portType List&lt;PortType&gt;
+  */
+  public void setPortType(List<PortType> portType) {
+  	this.setPortTypeList(portType);
+  }
+
+  /**
+   * Use method sizePortTypeList
+   * @return lunghezza della lista
+  */
+  public int sizePortType() {
+  	return this.sizePortTypeList();
+  }
 
   @XmlElement(name="resource",required=true,nillable=false)
   private List<Resource> resource = new ArrayList<>();
 
+  /**
+   * Use method getResourceList
+   * @return List&lt;Resource&gt;
+  */
+  public List<Resource> getResource() {
+  	return this.getResourceList();
+  }
+
+  /**
+   * Use method setResourceList
+   * @param resource List&lt;Resource&gt;
+  */
+  public void setResource(List<Resource> resource) {
+  	this.setResourceList(resource);
+  }
+
+  /**
+   * Use method sizeResourceList
+   * @return lunghezza della lista
+  */
+  public int sizeResource() {
+  	return this.sizeResourceList();
+  }
+
   @XmlElement(name="allegato",required=true,nillable=false)
   private List<Documento> allegato = new ArrayList<>();
+
+  /**
+   * Use method getAllegatoList
+   * @return List&lt;Documento&gt;
+  */
+  public List<Documento> getAllegato() {
+  	return this.getAllegatoList();
+  }
+
+  /**
+   * Use method setAllegatoList
+   * @param allegato List&lt;Documento&gt;
+  */
+  public void setAllegato(List<Documento> allegato) {
+  	this.setAllegatoList(allegato);
+  }
+
+  /**
+   * Use method sizeAllegatoList
+   * @return lunghezza della lista
+  */
+  public int sizeAllegato() {
+  	return this.sizeAllegatoList();
+  }
 
   @XmlElement(name="specifica-semiformale",required=true,nillable=false)
   private List<Documento> specificaSemiformale = new ArrayList<>();
 
+  /**
+   * Use method getSpecificaSemiformaleList
+   * @return List&lt;Documento&gt;
+  */
+  public List<Documento> getSpecificaSemiformale() {
+  	return this.getSpecificaSemiformaleList();
+  }
+
+  /**
+   * Use method setSpecificaSemiformaleList
+   * @param specificaSemiformale List&lt;Documento&gt;
+  */
+  public void setSpecificaSemiformale(List<Documento> specificaSemiformale) {
+  	this.setSpecificaSemiformaleList(specificaSemiformale);
+  }
+
+  /**
+   * Use method sizeSpecificaSemiformaleList
+   * @return lunghezza della lista
+  */
+  public int sizeSpecificaSemiformale() {
+  	return this.sizeSpecificaSemiformaleList();
+  }
+
   @XmlElement(name="protocol-property",required=true,nillable=false)
   private List<ProtocolProperty> protocolProperty = new ArrayList<>();
+
+  /**
+   * Use method getProtocolPropertyList
+   * @return List&lt;ProtocolProperty&gt;
+  */
+  public List<ProtocolProperty> getProtocolProperty() {
+  	return this.getProtocolPropertyList();
+  }
+
+  /**
+   * Use method setProtocolPropertyList
+   * @param protocolProperty List&lt;ProtocolProperty&gt;
+  */
+  public void setProtocolProperty(List<ProtocolProperty> protocolProperty) {
+  	this.setProtocolPropertyList(protocolProperty);
+  }
+
+  /**
+   * Use method sizeProtocolPropertyList
+   * @return lunghezza della lista
+  */
+  public int sizeProtocolProperty() {
+  	return this.sizeProtocolPropertyList();
+  }
 
   @XmlElement(name="gruppi",required=false,nillable=false)
   protected GruppiAccordo gruppi;

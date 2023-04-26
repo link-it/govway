@@ -33,6 +33,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneToken;
@@ -181,19 +182,22 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 			
 			boolean verificaCertificatiPossibile = false;
 			
+			boolean riferimentoApplicativoModi = false;
+			boolean riferimentoFruizioneModi = false;
+			
 			if(!verificaConnettivita) {
 				if(attributeAuthority) {
 					PolicyAttributeAuthority policy = AttributeAuthorityUtilities.convertTo(genericProperties);
 					https = policy.isEndpointHttps();
 					if(policy.isRequestJws()) {
 						KeystoreParams keystoreParams = AttributeAuthorityUtilities.getRequestJwsKeystoreParams(policy);
-						if(keystoreParams!=null && !"jwk".equalsIgnoreCase(keystoreParams.getType())) {
+						if(keystoreParams!=null) {
 							jwtRichiesta = true;
 						}
 					}
 					if(policy.isResponseJws()) {
 						KeystoreParams keystoreParams = AttributeAuthorityUtilities.getResponseJwsKeystoreParams(policy);
-						if(keystoreParams!=null && !"jwk".equalsIgnoreCase(keystoreParams.getType())) {
+						if(keystoreParams!=null) {
 							jwtRisposta = true;
 						}
 					}
@@ -220,7 +224,7 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 									org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_TYPE_JWE.equals(tokenType)) {
 				    			keystoreParams = TokenUtilities.getValidazioneJwtKeystoreParams(policyGestioneToken);
 				    		}
-							if(keystoreParams!=null && !"jwk".equalsIgnoreCase(keystoreParams.getType())) {
+							if(keystoreParams!=null) {
 								validazioneJwt = true;
 							}
 						}
@@ -232,7 +236,7 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 									org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE.equals(forwardInformazioniRaccolteMode)) {
 				    			keystoreParams = TokenUtilities.getForwardToJwtKeystoreParams(policyGestioneToken);
 				    		}
-							if(keystoreParams!=null && !"jwk".equalsIgnoreCase(keystoreParams.getType())) {
+							if(keystoreParams!=null) {
 								forwardToJwt = true;
 							}
 						}	
@@ -243,18 +247,18 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 						https = policy.isEndpointHttps();
 						if(policy.isRfc7523x509Grant()) {
 							KeystoreParams keystoreParams = TokenUtilities.getSignedJwtKeystoreParams(policy);
-							if(keystoreParams!=null && !"jwk".equalsIgnoreCase(keystoreParams.getType())) {
-								if(!org.openspcoop2.pdd.core.token.Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equalsIgnoreCase(keystoreParams.getPath())
-										&&
-									!org.openspcoop2.pdd.core.token.Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equalsIgnoreCase(keystoreParams.getPath())) {
-									signedJwt = true;		
-								}
+							riferimentoApplicativoModi = keystoreParams!=null && org.openspcoop2.pdd.core.token.Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equalsIgnoreCase(keystoreParams.getPath());
+							riferimentoFruizioneModi = keystoreParams!=null && org.openspcoop2.pdd.core.token.Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equalsIgnoreCase(keystoreParams.getPath());
+							if(keystoreParams!=null &&
+									!riferimentoApplicativoModi &&
+									!riferimentoFruizioneModi) {
+								signedJwt = true;		
 							}
 						}
 						verificaCertificatiPossibile = https || signedJwt;
 					}
 					else {
-						throw new Exception("Tipologia '"+genericProperties.getTipologia()+"' non gestita");
+						throw new CoreException("Tipologia '"+genericProperties.getTipologia()+"' non gestita");
 					}
 				}
 			}
@@ -265,8 +269,19 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 
 			
 			if(!verificaConnettivita && !verificaCertificatiPossibile) {
-				pd.setMessage(CostantiControlStation.LABEL_VERIFICA_CERTIFICATI_NON_PRESENTI,
+				
+				if(riferimentoApplicativoModi) {
+					pd.setMessage(CostantiControlStation.LABEL_VERIFICA_CERTIFICATI_DEFINITI_IN_MODI_APPLICATIVO,
 							Costanti.MESSAGE_TYPE_INFO);
+				}
+				else if(riferimentoFruizioneModi) {
+					pd.setMessage(CostantiControlStation.LABEL_VERIFICA_CERTIFICATI_DEFINITI_IN_MODI_FRUIZIONE,
+							Costanti.MESSAGE_TYPE_INFO);
+				}
+				else {
+					pd.setMessage(CostantiControlStation.LABEL_VERIFICA_CERTIFICATI_NON_PRESENTI,
+							Costanti.MESSAGE_TYPE_INFO);
+				}
 				
 				pd.disableEditMode();
 				
@@ -288,8 +303,16 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 					// -- verifica						
 			
 					if(verificaConnettivita) {
+						String aliasDescrizione = null;
+						if(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI.equals(alias)){
+							aliasDescrizione = aliases.get(0);
+						}
+						else {
+							aliasDescrizione = alias!=null ? alias : aliases.get(0);
+						}
+						
 						confHelper.addDescrizioneVerificaConnettivitaToDati(dati, genericProperties, null, false, 
-								(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI.equals(alias)) ? aliases.get(0) : (alias!=null ? alias : aliases.get(0))
+								aliasDescrizione
 								);
 						
 						if (!confHelper.isEditModeInProgress()) {
@@ -306,7 +329,7 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 							}
 														
 							boolean rilevatoErrore = false;
-							String messagePerOperazioneEffettuata = "";
+							StringBuilder sbPerOperazioneEffettuata = new StringBuilder();
 							int index = 0;
 							for (String aliasForVerificaConnettore : aliasesForCheck) {
 								
@@ -363,18 +386,18 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 									}
 								}
 			
-								if(messagePerOperazioneEffettuata.length()>0){
-									messagePerOperazioneEffettuata+= org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
+								if(sbPerOperazioneEffettuata.length()>0){
+									sbPerOperazioneEffettuata.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 								}
-								messagePerOperazioneEffettuata+= bfExternal.toString();
+								sbPerOperazioneEffettuata.append(bfExternal.toString());
 								
 								index++;
 							}
-							if(messagePerOperazioneEffettuata!=null){
+							if(sbPerOperazioneEffettuata!=null){
 								if(rilevatoErrore)
-									pd.setMessage(messagePerOperazioneEffettuata);
+									pd.setMessage(sbPerOperazioneEffettuata.toString());
 								else 
-									pd.setMessage(messagePerOperazioneEffettuata,Costanti.MESSAGE_TYPE_INFO);
+									pd.setMessage(sbPerOperazioneEffettuata.toString(),Costanti.MESSAGE_TYPE_INFO);
 							}
 			
 							pd.disableEditMode();

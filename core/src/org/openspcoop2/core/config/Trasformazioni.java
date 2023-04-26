@@ -92,4 +92,28 @@ public class Trasformazioni extends org.openspcoop2.utils.beans.BaseBeanWithId i
   @XmlElement(name="regola",required=true,nillable=false)
   private List<TrasformazioneRegola> regola = new ArrayList<>();
 
+  /**
+   * Use method getRegolaList
+   * @return List&lt;TrasformazioneRegola&gt;
+  */
+  public List<TrasformazioneRegola> getRegola() {
+  	return this.getRegolaList();
+  }
+
+  /**
+   * Use method setRegolaList
+   * @param regola List&lt;TrasformazioneRegola&gt;
+  */
+  public void setRegola(List<TrasformazioneRegola> regola) {
+  	this.setRegolaList(regola);
+  }
+
+  /**
+   * Use method sizeRegolaList
+   * @return lunghezza della lista
+  */
+  public int sizeRegola() {
+  	return this.sizeRegolaList();
+  }
+
 }

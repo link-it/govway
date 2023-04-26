@@ -119,6 +119,30 @@ public class ConditionsType extends org.openspcoop2.utils.beans.BaseBean impleme
   @XmlElement(name="proprieta",required=true,nillable=false)
   private List<ConditionType> proprieta = new ArrayList<>();
 
+  /**
+   * Use method getProprietaList
+   * @return List&lt;ConditionType&gt;
+  */
+  public List<ConditionType> getProprieta() {
+  	return this.getProprietaList();
+  }
+
+  /**
+   * Use method setProprietaList
+   * @param proprieta List&lt;ConditionType&gt;
+  */
+  public void setProprieta(List<ConditionType> proprieta) {
+  	this.setProprietaList(proprieta);
+  }
+
+  /**
+   * Use method sizeProprietaList
+   * @return lunghezza della lista
+  */
+  public int sizeProprieta() {
+  	return this.sizeProprietaList();
+  }
+
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="and",required=false)
   protected boolean and = true;

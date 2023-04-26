@@ -92,4 +92,28 @@ public class SystemProperties extends org.openspcoop2.utils.beans.BaseBeanWithId
   @XmlElement(name="system-property",required=true,nillable=false)
   private List<Property> systemProperty = new ArrayList<>();
 
+  /**
+   * Use method getSystemPropertyList
+   * @return List&lt;Property&gt;
+  */
+  public List<Property> getSystemProperty() {
+  	return this.getSystemPropertyList();
+  }
+
+  /**
+   * Use method setSystemPropertyList
+   * @param systemProperty List&lt;Property&gt;
+  */
+  public void setSystemProperty(List<Property> systemProperty) {
+  	this.setSystemPropertyList(systemProperty);
+  }
+
+  /**
+   * Use method sizeSystemPropertyList
+   * @return lunghezza della lista
+  */
+  public int sizeSystemProperty() {
+  	return this.sizeSystemPropertyList();
+  }
+
 }

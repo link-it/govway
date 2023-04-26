@@ -124,6 +124,30 @@ public class MessageSecurityFlow extends org.openspcoop2.utils.beans.BaseBeanWit
   @XmlElement(name="parameter",required=true,nillable=false)
   private List<MessageSecurityFlowParameter> parameter = new ArrayList<>();
 
+  /**
+   * Use method getParameterList
+   * @return List&lt;MessageSecurityFlowParameter&gt;
+  */
+  public List<MessageSecurityFlowParameter> getParameter() {
+  	return this.getParameterList();
+  }
+
+  /**
+   * Use method setParameterList
+   * @param parameter List&lt;MessageSecurityFlowParameter&gt;
+  */
+  public void setParameter(List<MessageSecurityFlowParameter> parameter) {
+  	this.setParameterList(parameter);
+  }
+
+  /**
+   * Use method sizeParameterList
+   * @return lunghezza della lista
+  */
+  public int sizeParameter() {
+  	return this.sizeParameterList();
+  }
+
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String applyToMtomRawEnumValue;
 

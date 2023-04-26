@@ -119,6 +119,30 @@ public class Compatibility extends org.openspcoop2.utils.beans.BaseBean implemen
   @XmlElement(name="tags",required=true,nillable=false)
   private List<Tags> tags = new ArrayList<>();
 
+  /**
+   * Use method getTagsList
+   * @return List&lt;Tags&gt;
+  */
+  public List<Tags> getTags() {
+  	return this.getTagsList();
+  }
+
+  /**
+   * Use method setTagsList
+   * @param tags List&lt;Tags&gt;
+  */
+  public void setTags(List<Tags> tags) {
+  	this.setTagsList(tags);
+  }
+
+  /**
+   * Use method sizeTagsList
+   * @return lunghezza della lista
+  */
+  public int sizeTags() {
+  	return this.sizeTagsList();
+  }
+
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="and",required=false)
   protected boolean and = true;

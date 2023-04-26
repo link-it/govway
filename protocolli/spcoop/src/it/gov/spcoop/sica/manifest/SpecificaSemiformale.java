@@ -92,4 +92,28 @@ public class SpecificaSemiformale extends org.openspcoop2.utils.beans.BaseBean i
   @XmlElement(name="documentoSemiformale",required=true,nillable=false)
   private List<DocumentoSemiformale> documentoSemiformale = new ArrayList<>();
 
+  /**
+   * Use method getDocumentoSemiformaleList
+   * @return List&lt;DocumentoSemiformale&gt;
+  */
+  public List<DocumentoSemiformale> getDocumentoSemiformale() {
+  	return this.getDocumentoSemiformaleList();
+  }
+
+  /**
+   * Use method setDocumentoSemiformaleList
+   * @param documentoSemiformale List&lt;DocumentoSemiformale&gt;
+  */
+  public void setDocumentoSemiformale(List<DocumentoSemiformale> documentoSemiformale) {
+  	this.setDocumentoSemiformaleList(documentoSemiformale);
+  }
+
+  /**
+   * Use method sizeDocumentoSemiformaleList
+   * @return lunghezza della lista
+  */
+  public int sizeDocumentoSemiformale() {
+  	return this.sizeDocumentoSemiformaleList();
+  }
+
 }

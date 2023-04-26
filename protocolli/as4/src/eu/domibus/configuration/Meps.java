@@ -118,7 +118,55 @@ public class Meps extends org.openspcoop2.utils.beans.BaseBean implements Serial
   @XmlElement(name="mep",required=true,nillable=false)
   private List<Mep> mep = new ArrayList<>();
 
+  /**
+   * Use method getMepList
+   * @return List&lt;Mep&gt;
+  */
+  public List<Mep> getMep() {
+  	return this.getMepList();
+  }
+
+  /**
+   * Use method setMepList
+   * @param mep List&lt;Mep&gt;
+  */
+  public void setMep(List<Mep> mep) {
+  	this.setMepList(mep);
+  }
+
+  /**
+   * Use method sizeMepList
+   * @return lunghezza della lista
+  */
+  public int sizeMep() {
+  	return this.sizeMepList();
+  }
+
   @XmlElement(name="binding",required=true,nillable=false)
   private List<Binding> binding = new ArrayList<>();
+
+  /**
+   * Use method getBindingList
+   * @return List&lt;Binding&gt;
+  */
+  public List<Binding> getBinding() {
+  	return this.getBindingList();
+  }
+
+  /**
+   * Use method setBindingList
+   * @param binding List&lt;Binding&gt;
+  */
+  public void setBinding(List<Binding> binding) {
+  	this.setBindingList(binding);
+  }
+
+  /**
+   * Use method sizeBindingList
+   * @return lunghezza della lista
+  */
+  public int sizeBinding() {
+  	return this.sizeBindingList();
+  }
 
 }

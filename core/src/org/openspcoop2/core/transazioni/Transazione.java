@@ -1583,10 +1583,82 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBeanWithId impl
   @XmlElement(name="dump-messaggio",required=true,nillable=false)
   private List<DumpMessaggio> dumpMessaggio = new ArrayList<>();
 
+  /**
+   * Use method getDumpMessaggioList
+   * @return List&lt;DumpMessaggio&gt;
+  */
+  public List<DumpMessaggio> getDumpMessaggio() {
+  	return this.getDumpMessaggioList();
+  }
+
+  /**
+   * Use method setDumpMessaggioList
+   * @param dumpMessaggio List&lt;DumpMessaggio&gt;
+  */
+  public void setDumpMessaggio(List<DumpMessaggio> dumpMessaggio) {
+  	this.setDumpMessaggioList(dumpMessaggio);
+  }
+
+  /**
+   * Use method sizeDumpMessaggioList
+   * @return lunghezza della lista
+  */
+  public int sizeDumpMessaggio() {
+  	return this.sizeDumpMessaggioList();
+  }
+
   @XmlElement(name="transazione-applicativo-server",required=true,nillable=false)
   private List<TransazioneApplicativoServer> transazioneApplicativoServer = new ArrayList<>();
 
+  /**
+   * Use method getTransazioneApplicativoServerList
+   * @return List&lt;TransazioneApplicativoServer&gt;
+  */
+  public List<TransazioneApplicativoServer> getTransazioneApplicativoServer() {
+  	return this.getTransazioneApplicativoServerList();
+  }
+
+  /**
+   * Use method setTransazioneApplicativoServerList
+   * @param transazioneApplicativoServer List&lt;TransazioneApplicativoServer&gt;
+  */
+  public void setTransazioneApplicativoServer(List<TransazioneApplicativoServer> transazioneApplicativoServer) {
+  	this.setTransazioneApplicativoServerList(transazioneApplicativoServer);
+  }
+
+  /**
+   * Use method sizeTransazioneApplicativoServerList
+   * @return lunghezza della lista
+  */
+  public int sizeTransazioneApplicativoServer() {
+  	return this.sizeTransazioneApplicativoServerList();
+  }
+
   @XmlElement(name="transazione-extended-info",required=true,nillable=false)
   private List<TransazioneExtendedInfo> transazioneExtendedInfo = new ArrayList<>();
+
+  /**
+   * Use method getTransazioneExtendedInfoList
+   * @return List&lt;TransazioneExtendedInfo&gt;
+  */
+  public List<TransazioneExtendedInfo> getTransazioneExtendedInfo() {
+  	return this.getTransazioneExtendedInfoList();
+  }
+
+  /**
+   * Use method setTransazioneExtendedInfoList
+   * @param transazioneExtendedInfo List&lt;TransazioneExtendedInfo&gt;
+  */
+  public void setTransazioneExtendedInfo(List<TransazioneExtendedInfo> transazioneExtendedInfo) {
+  	this.setTransazioneExtendedInfoList(transazioneExtendedInfo);
+  }
+
+  /**
+   * Use method sizeTransazioneExtendedInfoList
+   * @return lunghezza della lista
+  */
+  public int sizeTransazioneExtendedInfo() {
+  	return this.sizeTransazioneExtendedInfoList();
+  }
 
 }

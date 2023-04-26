@@ -105,4 +105,28 @@ public class AccessoRegistro extends org.openspcoop2.utils.beans.BaseBeanWithId 
   @XmlElement(name="registro",required=true,nillable=false)
   private List<AccessoRegistroRegistro> registro = new ArrayList<>();
 
+  /**
+   * Use method getRegistroList
+   * @return List&lt;AccessoRegistroRegistro&gt;
+  */
+  public List<AccessoRegistroRegistro> getRegistro() {
+  	return this.getRegistroList();
+  }
+
+  /**
+   * Use method setRegistroList
+   * @param registro List&lt;AccessoRegistroRegistro&gt;
+  */
+  public void setRegistro(List<AccessoRegistroRegistro> registro) {
+  	this.setRegistroList(registro);
+  }
+
+  /**
+   * Use method sizeRegistroList
+   * @return lunghezza della lista
+  */
+  public int sizeRegistro() {
+  	return this.sizeRegistroList();
+  }
+
 }

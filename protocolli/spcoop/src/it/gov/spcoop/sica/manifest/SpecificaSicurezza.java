@@ -92,4 +92,28 @@ public class SpecificaSicurezza extends org.openspcoop2.utils.beans.BaseBean imp
   @XmlElement(name="documentoSicurezza",required=true,nillable=false)
   private List<DocumentoSicurezza> documentoSicurezza = new ArrayList<>();
 
+  /**
+   * Use method getDocumentoSicurezzaList
+   * @return List&lt;DocumentoSicurezza&gt;
+  */
+  public List<DocumentoSicurezza> getDocumentoSicurezza() {
+  	return this.getDocumentoSicurezzaList();
+  }
+
+  /**
+   * Use method setDocumentoSicurezzaList
+   * @param documentoSicurezza List&lt;DocumentoSicurezza&gt;
+  */
+  public void setDocumentoSicurezza(List<DocumentoSicurezza> documentoSicurezza) {
+  	this.setDocumentoSicurezzaList(documentoSicurezza);
+  }
+
+  /**
+   * Use method sizeDocumentoSicurezzaList
+   * @return lunghezza della lista
+  */
+  public int sizeDocumentoSicurezza() {
+  	return this.sizeDocumentoSicurezzaList();
+  }
+
 }

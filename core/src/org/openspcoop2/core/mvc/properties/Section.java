@@ -154,8 +154,56 @@ public class Section extends org.openspcoop2.utils.beans.BaseBean implements Ser
   @XmlElement(name="item",required=true,nillable=false)
   private List<Item> item = new ArrayList<>();
 
+  /**
+   * Use method getItemList
+   * @return List&lt;Item&gt;
+  */
+  public List<Item> getItem() {
+  	return this.getItemList();
+  }
+
+  /**
+   * Use method setItemList
+   * @param item List&lt;Item&gt;
+  */
+  public void setItem(List<Item> item) {
+  	this.setItemList(item);
+  }
+
+  /**
+   * Use method sizeItemList
+   * @return lunghezza della lista
+  */
+  public int sizeItem() {
+  	return this.sizeItemList();
+  }
+
   @XmlElement(name="subsection",required=true,nillable=false)
   private List<Subsection> subsection = new ArrayList<>();
+
+  /**
+   * Use method getSubsectionList
+   * @return List&lt;Subsection&gt;
+  */
+  public List<Subsection> getSubsection() {
+  	return this.getSubsectionList();
+  }
+
+  /**
+   * Use method setSubsectionList
+   * @param subsection List&lt;Subsection&gt;
+  */
+  public void setSubsection(List<Subsection> subsection) {
+  	this.setSubsectionList(subsection);
+  }
+
+  /**
+   * Use method sizeSubsectionList
+   * @return lunghezza della lista
+  */
+  public int sizeSubsection() {
+  	return this.sizeSubsectionList();
+  }
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="label",required=true)

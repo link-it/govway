@@ -108,7 +108,7 @@ public class TransazioneFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "pdd_tipo_soggetto", Transazione.model().PDD_TIPO_SOGGETTO.getFieldType()));
 				setParameter(object, "setPddNomeSoggetto", Transazione.model().PDD_NOME_SOGGETTO.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "pdd_nome_soggetto", Transazione.model().PDD_NOME_SOGGETTO.getFieldType()));
-				setParameter(object, "set_value_pddRuolo", String.class,
+				setParameter(object, "setPddRuoloRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "pdd_ruolo", Transazione.model().PDD_RUOLO.getFieldType())+"");
 				setParameter(object, "setFaultIntegrazione", Transazione.model().FAULT_INTEGRAZIONE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "fault_integrazione", Transazione.model().FAULT_INTEGRAZIONE.getFieldType()));
@@ -338,7 +338,7 @@ public class TransazioneFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"pdd-tipo-soggetto"));
 				setParameter(object, "setPddNomeSoggetto", Transazione.model().PDD_NOME_SOGGETTO.getFieldType(),
 					this.getObjectFromMap(map,"pdd-nome-soggetto"));
-				setParameter(object, "set_value_pddRuolo", String.class,
+				setParameter(object, "setPddRuoloRawEnumValue", String.class,
 					this.getObjectFromMap(map,"pdd-ruolo"));
 				setParameter(object, "setFaultIntegrazione", Transazione.model().FAULT_INTEGRAZIONE.getFieldType(),
 					this.getObjectFromMap(map,"fault-integrazione"));

@@ -123,4 +123,28 @@ public class DatiDDTType extends org.openspcoop2.utils.beans.BaseBean implements
   @XmlElement(name="RiferimentoNumeroLinea",required=true,nillable=false)
   private List<java.math.BigInteger> riferimentoNumeroLinea = new ArrayList<>();
 
+  /**
+   * Use method getRiferimentoNumeroLineaList
+   * @return List&lt;java.math.BigInteger&gt;
+  */
+  public List<java.math.BigInteger> getRiferimentoNumeroLinea() {
+  	return this.getRiferimentoNumeroLineaList();
+  }
+
+  /**
+   * Use method setRiferimentoNumeroLineaList
+   * @param riferimentoNumeroLinea List&lt;java.math.BigInteger&gt;
+  */
+  public void setRiferimentoNumeroLinea(List<java.math.BigInteger> riferimentoNumeroLinea) {
+  	this.setRiferimentoNumeroLineaList(riferimentoNumeroLinea);
+  }
+
+  /**
+   * Use method sizeRiferimentoNumeroLineaList
+   * @return lunghezza della lista
+  */
+  public int sizeRiferimentoNumeroLinea() {
+  	return this.sizeRiferimentoNumeroLineaList();
+  }
+
 }

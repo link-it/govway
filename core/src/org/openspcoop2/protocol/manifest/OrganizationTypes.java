@@ -92,4 +92,28 @@ public class OrganizationTypes extends org.openspcoop2.utils.beans.BaseBean impl
   @XmlElement(name="type",required=true,nillable=false)
   private List<OrganizationType> type = new ArrayList<>();
 
+  /**
+   * Use method getTypeList
+   * @return List&lt;OrganizationType&gt;
+  */
+  public List<OrganizationType> getType() {
+  	return this.getTypeList();
+  }
+
+  /**
+   * Use method setTypeList
+   * @param type List&lt;OrganizationType&gt;
+  */
+  public void setType(List<OrganizationType> type) {
+  	this.setTypeList(type);
+  }
+
+  /**
+   * Use method sizeTypeList
+   * @return lunghezza della lista
+  */
+  public int sizeType() {
+  	return this.sizeTypeList();
+  }
+
 }

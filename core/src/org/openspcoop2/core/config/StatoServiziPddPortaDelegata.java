@@ -141,8 +141,56 @@ public class StatoServiziPddPortaDelegata extends org.openspcoop2.utils.beans.Ba
   @XmlElement(name="filtro-abilitazione",required=true,nillable=false)
   private List<TipoFiltroAbilitazioneServizi> filtroAbilitazione = new ArrayList<>();
 
+  /**
+   * Use method getFiltroAbilitazioneList
+   * @return List&lt;TipoFiltroAbilitazioneServizi&gt;
+  */
+  public List<TipoFiltroAbilitazioneServizi> getFiltroAbilitazione() {
+  	return this.getFiltroAbilitazioneList();
+  }
+
+  /**
+   * Use method setFiltroAbilitazioneList
+   * @param filtroAbilitazione List&lt;TipoFiltroAbilitazioneServizi&gt;
+  */
+  public void setFiltroAbilitazione(List<TipoFiltroAbilitazioneServizi> filtroAbilitazione) {
+  	this.setFiltroAbilitazioneList(filtroAbilitazione);
+  }
+
+  /**
+   * Use method sizeFiltroAbilitazioneList
+   * @return lunghezza della lista
+  */
+  public int sizeFiltroAbilitazione() {
+  	return this.sizeFiltroAbilitazioneList();
+  }
+
   @XmlElement(name="filtro-disabilitazione",required=true,nillable=false)
   private List<TipoFiltroAbilitazioneServizi> filtroDisabilitazione = new ArrayList<>();
+
+  /**
+   * Use method getFiltroDisabilitazioneList
+   * @return List&lt;TipoFiltroAbilitazioneServizi&gt;
+  */
+  public List<TipoFiltroAbilitazioneServizi> getFiltroDisabilitazione() {
+  	return this.getFiltroDisabilitazioneList();
+  }
+
+  /**
+   * Use method setFiltroDisabilitazioneList
+   * @param filtroDisabilitazione List&lt;TipoFiltroAbilitazioneServizi&gt;
+  */
+  public void setFiltroDisabilitazione(List<TipoFiltroAbilitazioneServizi> filtroDisabilitazione) {
+  	this.setFiltroDisabilitazioneList(filtroDisabilitazione);
+  }
+
+  /**
+   * Use method sizeFiltroDisabilitazioneList
+   * @return lunghezza della lista
+  */
+  public int sizeFiltroDisabilitazione() {
+  	return this.sizeFiltroDisabilitazioneList();
+  }
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String statoRawEnumValue;

@@ -128,8 +128,56 @@ public class ResourceRequest extends org.openspcoop2.utils.beans.BaseBeanWithId 
   @XmlElement(name="parameter",required=true,nillable=false)
   private List<ResourceParameter> parameter = new ArrayList<>();
 
+  /**
+   * Use method getParameterList
+   * @return List&lt;ResourceParameter&gt;
+  */
+  public List<ResourceParameter> getParameter() {
+  	return this.getParameterList();
+  }
+
+  /**
+   * Use method setParameterList
+   * @param parameter List&lt;ResourceParameter&gt;
+  */
+  public void setParameter(List<ResourceParameter> parameter) {
+  	this.setParameterList(parameter);
+  }
+
+  /**
+   * Use method sizeParameterList
+   * @return lunghezza della lista
+  */
+  public int sizeParameter() {
+  	return this.sizeParameterList();
+  }
+
   @XmlElement(name="representation",required=true,nillable=false)
   private List<ResourceRepresentation> representation = new ArrayList<>();
+
+  /**
+   * Use method getRepresentationList
+   * @return List&lt;ResourceRepresentation&gt;
+  */
+  public List<ResourceRepresentation> getRepresentation() {
+  	return this.getRepresentationList();
+  }
+
+  /**
+   * Use method setRepresentationList
+   * @param representation List&lt;ResourceRepresentation&gt;
+  */
+  public void setRepresentation(List<ResourceRepresentation> representation) {
+  	this.setRepresentationList(representation);
+  }
+
+  /**
+   * Use method sizeRepresentationList
+   * @return lunghezza della lista
+  */
+  public int sizeRepresentation() {
+  	return this.sizeRepresentationList();
+  }
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Long idResource;

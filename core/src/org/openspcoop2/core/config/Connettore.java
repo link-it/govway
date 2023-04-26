@@ -174,6 +174,30 @@ public void setProperties(Map<String,String> newmap){
   @XmlElement(name="property",required=true,nillable=false)
   private List<Property> property = new ArrayList<>();
 
+  /**
+   * Use method getPropertyList
+   * @return List&lt;Property&gt;
+  */
+  public List<Property> getProperty() {
+  	return this.getPropertyList();
+  }
+
+  /**
+   * Use method setPropertyList
+   * @param property List&lt;Property&gt;
+  */
+  public void setProperty(List<Property> property) {
+  	this.setPropertyList(property);
+  }
+
+  /**
+   * Use method sizePropertyList
+   * @return lunghezza della lista
+  */
+  public int sizeProperty() {
+  	return this.sizePropertyList();
+  }
+
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome-registro",required=false)
   protected java.lang.String nomeRegistro;

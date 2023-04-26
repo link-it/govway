@@ -32,6 +32,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.GenericProperties;
@@ -71,8 +72,8 @@ import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.web.ctrlstat.core.CertificateChecker;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
@@ -188,7 +189,7 @@ public class ErogazioniVerificaCertificati  extends Action {
 			// Prendo la lista di aliases
 			List<String> aliases = apsCore.getJmxPdD_aliases();
 			if(aliases==null || aliases.isEmpty()){
-				throw new Exception("Pagina non prevista, la sezione configurazione non permette di accedere a questa pagina, se la configurazione non e' corretta");
+				throw new CoreException("Pagina non prevista, la sezione configurazione non permette di accedere a questa pagina, se la configurazione non e' corretta");
 			}
 			
 			
@@ -453,11 +454,10 @@ public class ErogazioniVerificaCertificati  extends Action {
 											continue;
 										}
 										
-										if(connettoreMultiploEnabled && paSA.getDatiConnettore()!=null){
+										if(connettoreMultiploEnabled && paSA.getDatiConnettore()!=null &&
 											// solo le porte applicative abilitate 
-											if(StatoFunzionalita.DISABILITATO.equals(paSA.getDatiConnettore().getStato())) {
-												continue;
-											}
+											StatoFunzionalita.DISABILITATO.equals(paSA.getDatiConnettore().getStato())) {
+											continue;
 										}
 										
 										String nomeErogazioneConnettore = nomeErogazione;
@@ -667,7 +667,7 @@ public class ErogazioniVerificaCertificati  extends Action {
 												org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_TYPE_JWE.equals(tokenType)) {
 											keystoreParams = TokenUtilities.getValidazioneJwtKeystoreParams(policyToken);
 										}
-										if(keystoreParams==null || "jwk".equalsIgnoreCase(keystoreParams.getType())) {
+										if(keystoreParams==null) {
 											validazioneJwt = false;
 										}
 									}catch(Exception t) {
@@ -686,7 +686,7 @@ public class ErogazioniVerificaCertificati  extends Action {
 												keystoreParams = TokenUtilities.getForwardToJwtKeystoreParams(policyToken);
 								    		}
 										}
-										if(keystoreParams==null || "jwk".equalsIgnoreCase(keystoreParams.getType())) {
+										if(keystoreParams==null) {
 											forwardToJwt = false;
 										}
 									}catch(Exception t) {
@@ -745,12 +745,13 @@ public class ErogazioniVerificaCertificati  extends Action {
 								}catch(Exception t) {
 									throw new DriverConfigurazioneException(t.getMessage(),t);
 								}
-								if(keystoreParams!=null && !"jwk".equalsIgnoreCase(keystoreParams.getType())) {
-									if(!org.openspcoop2.pdd.core.token.Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equalsIgnoreCase(keystoreParams.getPath())
-											&&
-										!org.openspcoop2.pdd.core.token.Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equalsIgnoreCase(keystoreParams.getPath())) {
-										signedJwt = true;
-									}
+								
+								boolean riferimentoApplicativoModi = keystoreParams!=null && org.openspcoop2.pdd.core.token.Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equalsIgnoreCase(keystoreParams.getPath());
+								boolean riferimentoFruizioneModi = keystoreParams!=null && org.openspcoop2.pdd.core.token.Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equalsIgnoreCase(keystoreParams.getPath());
+								if(keystoreParams!=null &&
+										!riferimentoApplicativoModi &&
+										!riferimentoFruizioneModi) {
+									signedJwt = true;
 								}
 								
 								if(https || signedJwt) {
@@ -801,10 +802,10 @@ public class ErogazioniVerificaCertificati  extends Action {
 										// JWS Compact   			
 										keystoreParams = AttributeAuthorityUtilities.getRequestJwsKeystoreParams(policyAA);
 									}
-									if(keystoreParams!=null && !"jwk".equalsIgnoreCase(keystoreParams.getType())) {
+									if(keystoreParams!=null) {
 										jwtRichiesta = true;
 									}
-								}catch(Throwable t) {
+								}catch(Exception t) {
 									throw new DriverConfigurazioneException(t.getMessage(),t);
 								}
 								
@@ -815,22 +816,22 @@ public class ErogazioniVerificaCertificati  extends Action {
 										// JWS Compact   			
 										truststoreParams = AttributeAuthorityUtilities.getResponseJwsKeystoreParams(policyAA);
 									}
-									if(truststoreParams!=null && !"jwk".equalsIgnoreCase(truststoreParams.getType())) {
+									if(truststoreParams!=null) {
 										jwtRisposta = true;
 									}
-								}catch(Throwable t) {
+								}catch(Exception t) {
 									throw new DriverConfigurazioneException(t.getMessage(),t);
 								}
 								
 								if(https || jwtRichiesta || jwtRisposta) {
-									StringBuilder _sbDetailsWarningAttributeAuthority = new StringBuilder(); 
-									certificateChecker.checkAttributeAuthority(sbDetailsError, _sbDetailsWarningAttributeAuthority,
+									StringBuilder sbDetailsWarningAttributeAuthorityDebug = new StringBuilder(); 
+									certificateChecker.checkAttributeAuthority(sbDetailsError, sbDetailsWarningAttributeAuthorityDebug,
 										https, jwtRichiesta, jwtRisposta,
 										gp,
 										sogliaWarningGiorni);
-									if(sbDetailsWarningAttributeAuthority.length()<=0 && _sbDetailsWarningAttributeAuthority.length()>0) {
+									if(sbDetailsWarningAttributeAuthority.length()<=0 && sbDetailsWarningAttributeAuthorityDebug.length()>0) {
 										posizioneWarningAttributeAuthority = posizione;
-										sbDetailsWarningAttributeAuthority.append(_sbDetailsWarningAttributeAuthority.toString()); // tengo solo un warning alla volta, come per gli errori
+										sbDetailsWarningAttributeAuthority.append(sbDetailsWarningAttributeAuthorityDebug.toString()); // tengo solo un warning alla volta, come per gli errori
 									}
 								}
 							}

@@ -851,6 +851,30 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBeanWithId
   @javax.xml.bind.annotation.XmlTransient
   private List<Object> extendedInfo = new ArrayList<>();
 
+  /**
+   * Use method getExtendedInfoList
+   * @return List&lt;Object&gt;
+  */
+  public List<Object> getExtendedInfo() {
+  	return this.getExtendedInfoList();
+  }
+
+  /**
+   * Use method setExtendedInfoList
+   * @param extendedInfo List&lt;Object&gt;
+  */
+  public void setExtendedInfo(List<Object> extendedInfo) {
+  	this.setExtendedInfoList(extendedInfo);
+  }
+
+  /**
+   * Use method sizeExtendedInfoList
+   * @return lunghezza della lista
+  */
+  public int sizeExtendedInfo() {
+  	return this.sizeExtendedInfoList();
+  }
+
   @XmlElement(name="soggetto-virtuale",required=false,nillable=false)
   protected PortaApplicativaSoggettoVirtuale soggettoVirtuale;
 
@@ -863,17 +887,137 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBeanWithId
   @XmlElement(name="servizio-applicativo",required=true,nillable=false)
   private List<PortaApplicativaServizioApplicativo> servizioApplicativo = new ArrayList<>();
 
+  /**
+   * Use method getServizioApplicativoList
+   * @return List&lt;PortaApplicativaServizioApplicativo&gt;
+  */
+  public List<PortaApplicativaServizioApplicativo> getServizioApplicativo() {
+  	return this.getServizioApplicativoList();
+  }
+
+  /**
+   * Use method setServizioApplicativoList
+   * @param servizioApplicativo List&lt;PortaApplicativaServizioApplicativo&gt;
+  */
+  public void setServizioApplicativo(List<PortaApplicativaServizioApplicativo> servizioApplicativo) {
+  	this.setServizioApplicativoList(servizioApplicativo);
+  }
+
+  /**
+   * Use method sizeServizioApplicativoList
+   * @return lunghezza della lista
+  */
+  public int sizeServizioApplicativo() {
+  	return this.sizeServizioApplicativoList();
+  }
+
   @XmlElement(name="proprieta-autenticazione",required=true,nillable=false)
   private List<Proprieta> proprietaAutenticazione = new ArrayList<>();
+
+  /**
+   * Use method getProprietaAutenticazioneList
+   * @return List&lt;Proprieta&gt;
+  */
+  public List<Proprieta> getProprietaAutenticazione() {
+  	return this.getProprietaAutenticazioneList();
+  }
+
+  /**
+   * Use method setProprietaAutenticazioneList
+   * @param proprietaAutenticazione List&lt;Proprieta&gt;
+  */
+  public void setProprietaAutenticazione(List<Proprieta> proprietaAutenticazione) {
+  	this.setProprietaAutenticazioneList(proprietaAutenticazione);
+  }
+
+  /**
+   * Use method sizeProprietaAutenticazioneList
+   * @return lunghezza della lista
+  */
+  public int sizeProprietaAutenticazione() {
+  	return this.sizeProprietaAutenticazioneList();
+  }
 
   @XmlElement(name="proprieta-autorizzazione",required=true,nillable=false)
   private List<Proprieta> proprietaAutorizzazione = new ArrayList<>();
 
+  /**
+   * Use method getProprietaAutorizzazioneList
+   * @return List&lt;Proprieta&gt;
+  */
+  public List<Proprieta> getProprietaAutorizzazione() {
+  	return this.getProprietaAutorizzazioneList();
+  }
+
+  /**
+   * Use method setProprietaAutorizzazioneList
+   * @param proprietaAutorizzazione List&lt;Proprieta&gt;
+  */
+  public void setProprietaAutorizzazione(List<Proprieta> proprietaAutorizzazione) {
+  	this.setProprietaAutorizzazioneList(proprietaAutorizzazione);
+  }
+
+  /**
+   * Use method sizeProprietaAutorizzazioneList
+   * @return lunghezza della lista
+  */
+  public int sizeProprietaAutorizzazione() {
+  	return this.sizeProprietaAutorizzazioneList();
+  }
+
   @XmlElement(name="proprieta-autorizzazione-contenuto",required=true,nillable=false)
   private List<Proprieta> proprietaAutorizzazioneContenuto = new ArrayList<>();
 
+  /**
+   * Use method getProprietaAutorizzazioneContenutoList
+   * @return List&lt;Proprieta&gt;
+  */
+  public List<Proprieta> getProprietaAutorizzazioneContenuto() {
+  	return this.getProprietaAutorizzazioneContenutoList();
+  }
+
+  /**
+   * Use method setProprietaAutorizzazioneContenutoList
+   * @param proprietaAutorizzazioneContenuto List&lt;Proprieta&gt;
+  */
+  public void setProprietaAutorizzazioneContenuto(List<Proprieta> proprietaAutorizzazioneContenuto) {
+  	this.setProprietaAutorizzazioneContenutoList(proprietaAutorizzazioneContenuto);
+  }
+
+  /**
+   * Use method sizeProprietaAutorizzazioneContenutoList
+   * @return lunghezza della lista
+  */
+  public int sizeProprietaAutorizzazioneContenuto() {
+  	return this.sizeProprietaAutorizzazioneContenutoList();
+  }
+
   @XmlElement(name="proprieta-rate-limiting",required=true,nillable=false)
   private List<Proprieta> proprietaRateLimiting = new ArrayList<>();
+
+  /**
+   * Use method getProprietaRateLimitingList
+   * @return List&lt;Proprieta&gt;
+  */
+  public List<Proprieta> getProprietaRateLimiting() {
+  	return this.getProprietaRateLimitingList();
+  }
+
+  /**
+   * Use method setProprietaRateLimitingList
+   * @param proprietaRateLimiting List&lt;Proprieta&gt;
+  */
+  public void setProprietaRateLimiting(List<Proprieta> proprietaRateLimiting) {
+  	this.setProprietaRateLimitingList(proprietaRateLimiting);
+  }
+
+  /**
+   * Use method sizeProprietaRateLimitingList
+   * @return lunghezza della lista
+  */
+  public int sizeProprietaRateLimiting() {
+  	return this.sizeProprietaRateLimitingList();
+  }
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="xacml-policy",required=false,nillable=false)
@@ -899,6 +1043,30 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBeanWithId
 
   @XmlElement(name="proprieta",required=true,nillable=false)
   private List<Proprieta> proprieta = new ArrayList<>();
+
+  /**
+   * Use method getProprietaList
+   * @return List&lt;Proprieta&gt;
+  */
+  public List<Proprieta> getProprieta() {
+  	return this.getProprietaList();
+  }
+
+  /**
+   * Use method setProprietaList
+   * @param proprieta List&lt;Proprieta&gt;
+  */
+  public void setProprieta(List<Proprieta> proprieta) {
+  	this.setProprietaList(proprieta);
+  }
+
+  /**
+   * Use method sizeProprietaList
+   * @return lunghezza della lista
+  */
+  public int sizeProprieta() {
+  	return this.sizeProprietaList();
+  }
 
   @XmlElement(name="mtom-processor",required=false,nillable=false)
   protected MtomProcessor mtomProcessor;
@@ -938,6 +1106,30 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBeanWithId
 
   @XmlElement(name="attribute-authority",required=true,nillable=false)
   private List<AttributeAuthority> attributeAuthority = new ArrayList<>();
+
+  /**
+   * Use method getAttributeAuthorityList
+   * @return List&lt;AttributeAuthority&gt;
+  */
+  public List<AttributeAuthority> getAttributeAuthority() {
+  	return this.getAttributeAuthorityList();
+  }
+
+  /**
+   * Use method setAttributeAuthorityList
+   * @param attributeAuthority List&lt;AttributeAuthority&gt;
+  */
+  public void setAttributeAuthority(List<AttributeAuthority> attributeAuthority) {
+  	this.setAttributeAuthorityList(attributeAuthority);
+  }
+
+  /**
+   * Use method sizeAttributeAuthorityList
+   * @return lunghezza della lista
+  */
+  public int sizeAttributeAuthority() {
+  	return this.sizeAttributeAuthorityList();
+  }
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Long idSoggetto;

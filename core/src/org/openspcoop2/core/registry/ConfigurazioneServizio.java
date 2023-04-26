@@ -105,4 +105,28 @@ public class ConfigurazioneServizio extends org.openspcoop2.utils.beans.BaseBean
   @XmlElement(name="configurazione-azione",required=true,nillable=false)
   private List<ConfigurazioneServizioAzione> configurazioneAzione = new ArrayList<>();
 
+  /**
+   * Use method getConfigurazioneAzioneList
+   * @return List&lt;ConfigurazioneServizioAzione&gt;
+  */
+  public List<ConfigurazioneServizioAzione> getConfigurazioneAzione() {
+  	return this.getConfigurazioneAzioneList();
+  }
+
+  /**
+   * Use method setConfigurazioneAzioneList
+   * @param configurazioneAzione List&lt;ConfigurazioneServizioAzione&gt;
+  */
+  public void setConfigurazioneAzione(List<ConfigurazioneServizioAzione> configurazioneAzione) {
+  	this.setConfigurazioneAzioneList(configurazioneAzione);
+  }
+
+  /**
+   * Use method sizeConfigurazioneAzioneList
+   * @return lunghezza della lista
+  */
+  public int sizeConfigurazioneAzione() {
+  	return this.sizeConfigurazioneAzioneList();
+  }
+
 }

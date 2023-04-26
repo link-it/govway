@@ -118,4 +118,28 @@ public class StatesType extends org.openspcoop2.utils.beans.BaseBean implements 
   @XmlElement(name="state",required=true,nillable=false)
   private List<StateTypeNormal> state = new ArrayList<>();
 
+  /**
+   * Use method getStateList
+   * @return List&lt;StateTypeNormal&gt;
+  */
+  public List<StateTypeNormal> getState() {
+  	return this.getStateList();
+  }
+
+  /**
+   * Use method setStateList
+   * @param state List&lt;StateTypeNormal&gt;
+  */
+  public void setState(List<StateTypeNormal> state) {
+  	this.setStateList(state);
+  }
+
+  /**
+   * Use method sizeStateList
+   * @return lunghezza della lista
+  */
+  public int sizeState() {
+  	return this.sizeStateList();
+  }
+
 }

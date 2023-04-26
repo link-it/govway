@@ -102,6 +102,30 @@ public class Web extends org.openspcoop2.utils.beans.BaseBean implements Seriali
   @XmlElement(name="context",required=true,nillable=false)
   private List<Context> context = new ArrayList<>();
 
+  /**
+   * Use method getContextList
+   * @return List&lt;Context&gt;
+  */
+  public List<Context> getContext() {
+  	return this.getContextList();
+  }
+
+  /**
+   * Use method setContextList
+   * @param context List&lt;Context&gt;
+  */
+  public void setContext(List<Context> context) {
+  	this.setContextList(context);
+  }
+
+  /**
+   * Use method sizeContextList
+   * @return lunghezza della lista
+  */
+  public int sizeContext() {
+  	return this.sizeContextList();
+  }
+
   @XmlElement(name="emptyContext",required=false,nillable=false)
   protected WebEmptyContext emptyContext;
 

@@ -133,4 +133,28 @@ public class SignalMessage extends org.openspcoop2.utils.beans.BaseBean implemen
   @XmlElement(name="Error",required=true,nillable=false)
   private List<Error> error = new ArrayList<>();
 
+  /**
+   * Use method getErrorList
+   * @return List&lt;Error&gt;
+  */
+  public List<Error> getError() {
+  	return this.getErrorList();
+  }
+
+  /**
+   * Use method setErrorList
+   * @param error List&lt;Error&gt;
+  */
+  public void setError(List<Error> error) {
+  	this.setErrorList(error);
+  }
+
+  /**
+   * Use method sizeErrorList
+   * @return lunghezza della lista
+  */
+  public int sizeError() {
+  	return this.sizeErrorList();
+  }
+
 }

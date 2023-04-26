@@ -150,8 +150,56 @@ public class Tracciamento extends org.openspcoop2.utils.beans.BaseBeanWithId imp
   @XmlElement(name="openspcoop-appender",required=true,nillable=false)
   private List<OpenspcoopAppender> openspcoopAppender = new ArrayList<>();
 
+  /**
+   * Use method getOpenspcoopAppenderList
+   * @return List&lt;OpenspcoopAppender&gt;
+  */
+  public List<OpenspcoopAppender> getOpenspcoopAppender() {
+  	return this.getOpenspcoopAppenderList();
+  }
+
+  /**
+   * Use method setOpenspcoopAppenderList
+   * @param openspcoopAppender List&lt;OpenspcoopAppender&gt;
+  */
+  public void setOpenspcoopAppender(List<OpenspcoopAppender> openspcoopAppender) {
+  	this.setOpenspcoopAppenderList(openspcoopAppender);
+  }
+
+  /**
+   * Use method sizeOpenspcoopAppenderList
+   * @return lunghezza della lista
+  */
+  public int sizeOpenspcoopAppender() {
+  	return this.sizeOpenspcoopAppenderList();
+  }
+
   @XmlElement(name="openspcoop-sorgente-dati",required=true,nillable=false)
   private List<OpenspcoopSorgenteDati> openspcoopSorgenteDati = new ArrayList<>();
+
+  /**
+   * Use method getOpenspcoopSorgenteDatiList
+   * @return List&lt;OpenspcoopSorgenteDati&gt;
+  */
+  public List<OpenspcoopSorgenteDati> getOpenspcoopSorgenteDati() {
+  	return this.getOpenspcoopSorgenteDatiList();
+  }
+
+  /**
+   * Use method setOpenspcoopSorgenteDatiList
+   * @param openspcoopSorgenteDati List&lt;OpenspcoopSorgenteDati&gt;
+  */
+  public void setOpenspcoopSorgenteDati(List<OpenspcoopSorgenteDati> openspcoopSorgenteDati) {
+  	this.setOpenspcoopSorgenteDatiList(openspcoopSorgenteDati);
+  }
+
+  /**
+   * Use method sizeOpenspcoopSorgenteDatiList
+   * @return lunghezza della lista
+  */
+  public int sizeOpenspcoopSorgenteDati() {
+  	return this.sizeOpenspcoopSorgenteDatiList();
+  }
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String statoRawEnumValue;

@@ -92,4 +92,28 @@ public class InterfacesConfiguration extends org.openspcoop2.utils.beans.BaseBea
   @XmlElement(name="specification",required=true,nillable=false)
   private List<InterfaceConfiguration> specification = new ArrayList<>();
 
+  /**
+   * Use method getSpecificationList
+   * @return List&lt;InterfaceConfiguration&gt;
+  */
+  public List<InterfaceConfiguration> getSpecification() {
+  	return this.getSpecificationList();
+  }
+
+  /**
+   * Use method setSpecificationList
+   * @param specification List&lt;InterfaceConfiguration&gt;
+  */
+  public void setSpecification(List<InterfaceConfiguration> specification) {
+  	this.setSpecificationList(specification);
+  }
+
+  /**
+   * Use method sizeSpecificationList
+   * @return lunghezza della lista
+  */
+  public int sizeSpecification() {
+  	return this.sizeSpecificationList();
+  }
+
 }

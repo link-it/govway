@@ -452,6 +452,30 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBeanWithId im
   @XmlElement(name="multipart-header",required=true,nillable=false)
   private List<DumpMultipartHeader> multipartHeader = new ArrayList<>();
 
+  /**
+   * Use method getMultipartHeaderList
+   * @return List&lt;DumpMultipartHeader&gt;
+  */
+  public List<DumpMultipartHeader> getMultipartHeader() {
+  	return this.getMultipartHeaderList();
+  }
+
+  /**
+   * Use method setMultipartHeaderList
+   * @param multipartHeader List&lt;DumpMultipartHeader&gt;
+  */
+  public void setMultipartHeader(List<DumpMultipartHeader> multipartHeader) {
+  	this.setMultipartHeaderList(multipartHeader);
+  }
+
+  /**
+   * Use method sizeMultipartHeaderList
+   * @return lunghezza della lista
+  */
+  public int sizeMultipartHeader() {
+  	return this.sizeMultipartHeaderList();
+  }
+
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.HexBinaryAdapter.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="hexBinary")
   @XmlElement(type=String.class, name="body",required=false,nillable=false)
@@ -460,11 +484,83 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBeanWithId im
   @XmlElement(name="header-trasporto",required=true,nillable=false)
   private List<DumpHeaderTrasporto> headerTrasporto = new ArrayList<>();
 
+  /**
+   * Use method getHeaderTrasportoList
+   * @return List&lt;DumpHeaderTrasporto&gt;
+  */
+  public List<DumpHeaderTrasporto> getHeaderTrasporto() {
+  	return this.getHeaderTrasportoList();
+  }
+
+  /**
+   * Use method setHeaderTrasportoList
+   * @param headerTrasporto List&lt;DumpHeaderTrasporto&gt;
+  */
+  public void setHeaderTrasporto(List<DumpHeaderTrasporto> headerTrasporto) {
+  	this.setHeaderTrasportoList(headerTrasporto);
+  }
+
+  /**
+   * Use method sizeHeaderTrasportoList
+   * @return lunghezza della lista
+  */
+  public int sizeHeaderTrasporto() {
+  	return this.sizeHeaderTrasportoList();
+  }
+
   @XmlElement(name="allegato",required=true,nillable=false)
   private List<DumpAllegato> allegato = new ArrayList<>();
 
+  /**
+   * Use method getAllegatoList
+   * @return List&lt;DumpAllegato&gt;
+  */
+  public List<DumpAllegato> getAllegato() {
+  	return this.getAllegatoList();
+  }
+
+  /**
+   * Use method setAllegatoList
+   * @param allegato List&lt;DumpAllegato&gt;
+  */
+  public void setAllegato(List<DumpAllegato> allegato) {
+  	this.setAllegatoList(allegato);
+  }
+
+  /**
+   * Use method sizeAllegatoList
+   * @return lunghezza della lista
+  */
+  public int sizeAllegato() {
+  	return this.sizeAllegatoList();
+  }
+
   @XmlElement(name="contenuto",required=true,nillable=false)
   private List<DumpContenuto> contenuto = new ArrayList<>();
+
+  /**
+   * Use method getContenutoList
+   * @return List&lt;DumpContenuto&gt;
+  */
+  public List<DumpContenuto> getContenuto() {
+  	return this.getContenutoList();
+  }
+
+  /**
+   * Use method setContenutoList
+   * @param contenuto List&lt;DumpContenuto&gt;
+  */
+  public void setContenuto(List<DumpContenuto> contenuto) {
+  	this.setContenutoList(contenuto);
+  }
+
+  /**
+   * Use method sizeContenutoList
+   * @return lunghezza della lista
+  */
+  public int sizeContenuto() {
+  	return this.sizeContenutoList();
+  }
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")

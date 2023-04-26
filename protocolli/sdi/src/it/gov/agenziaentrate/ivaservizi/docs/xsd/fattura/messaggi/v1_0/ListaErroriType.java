@@ -92,4 +92,28 @@ public class ListaErroriType extends org.openspcoop2.utils.beans.BaseBean implem
   @XmlElement(name="Errore",required=true,nillable=false)
   private List<ErroreType> errore = new ArrayList<>();
 
+  /**
+   * Use method getErroreList
+   * @return List&lt;ErroreType&gt;
+  */
+  public List<ErroreType> getErrore() {
+  	return this.getErroreList();
+  }
+
+  /**
+   * Use method setErroreList
+   * @param errore List&lt;ErroreType&gt;
+  */
+  public void setErrore(List<ErroreType> errore) {
+  	this.setErroreList(errore);
+  }
+
+  /**
+   * Use method sizeErroreList
+   * @return lunghezza della lista
+  */
+  public int sizeErrore() {
+  	return this.sizeErroreList();
+  }
+
 }

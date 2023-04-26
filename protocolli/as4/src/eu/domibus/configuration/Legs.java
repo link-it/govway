@@ -92,4 +92,28 @@ public class Legs extends org.openspcoop2.utils.beans.BaseBean implements Serial
   @XmlElement(name="leg",required=true,nillable=false)
   private List<Leg> leg = new ArrayList<>();
 
+  /**
+   * Use method getLegList
+   * @return List&lt;Leg&gt;
+  */
+  public List<Leg> getLeg() {
+  	return this.getLegList();
+  }
+
+  /**
+   * Use method setLegList
+   * @param leg List&lt;Leg&gt;
+  */
+  public void setLeg(List<Leg> leg) {
+  	this.setLegList(leg);
+  }
+
+  /**
+   * Use method sizeLegList
+   * @return lunghezza della lista
+  */
+  public int sizeLeg() {
+  	return this.sizeLegList();
+  }
+
 }

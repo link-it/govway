@@ -246,14 +246,86 @@ public class Fruitore extends org.openspcoop2.utils.beans.BaseBeanWithId impleme
   @XmlElement(name="servizio-applicativo",required=true,nillable=false)
   private List<java.lang.String> servizioApplicativo = new ArrayList<>();
 
+  /**
+   * Use method getServizioApplicativoList
+   * @return List&lt;java.lang.String&gt;
+  */
+  public List<java.lang.String> getServizioApplicativo() {
+  	return this.getServizioApplicativoList();
+  }
+
+  /**
+   * Use method setServizioApplicativoList
+   * @param servizioApplicativo List&lt;java.lang.String&gt;
+  */
+  public void setServizioApplicativo(List<java.lang.String> servizioApplicativo) {
+  	this.setServizioApplicativoList(servizioApplicativo);
+  }
+
+  /**
+   * Use method sizeServizioApplicativoList
+   * @return lunghezza della lista
+  */
+  public int sizeServizioApplicativo() {
+  	return this.sizeServizioApplicativoList();
+  }
+
   @XmlElement(name="connettore",required=false,nillable=false)
   protected Connettore connettore;
 
   @XmlElement(name="configurazione-azione",required=true,nillable=false)
   private List<ConfigurazioneServizioAzione> configurazioneAzione = new ArrayList<>();
 
+  /**
+   * Use method getConfigurazioneAzioneList
+   * @return List&lt;ConfigurazioneServizioAzione&gt;
+  */
+  public List<ConfigurazioneServizioAzione> getConfigurazioneAzione() {
+  	return this.getConfigurazioneAzioneList();
+  }
+
+  /**
+   * Use method setConfigurazioneAzioneList
+   * @param configurazioneAzione List&lt;ConfigurazioneServizioAzione&gt;
+  */
+  public void setConfigurazioneAzione(List<ConfigurazioneServizioAzione> configurazioneAzione) {
+  	this.setConfigurazioneAzioneList(configurazioneAzione);
+  }
+
+  /**
+   * Use method sizeConfigurazioneAzioneList
+   * @return lunghezza della lista
+  */
+  public int sizeConfigurazioneAzione() {
+  	return this.sizeConfigurazioneAzioneList();
+  }
+
   @XmlElement(name="protocol-property",required=true,nillable=false)
   private List<ProtocolProperty> protocolProperty = new ArrayList<>();
+
+  /**
+   * Use method getProtocolPropertyList
+   * @return List&lt;ProtocolProperty&gt;
+  */
+  public List<ProtocolProperty> getProtocolProperty() {
+  	return this.getProtocolPropertyList();
+  }
+
+  /**
+   * Use method setProtocolPropertyList
+   * @param protocolProperty List&lt;ProtocolProperty&gt;
+  */
+  public void setProtocolProperty(List<ProtocolProperty> protocolProperty) {
+  	this.setProtocolPropertyList(protocolProperty);
+  }
+
+  /**
+   * Use method sizeProtocolPropertyList
+   * @return lunghezza della lista
+  */
+  public int sizeProtocolProperty() {
+  	return this.sizeProtocolPropertyList();
+  }
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="stato-package",required=false)

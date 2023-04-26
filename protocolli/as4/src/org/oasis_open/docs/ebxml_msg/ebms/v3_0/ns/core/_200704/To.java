@@ -102,6 +102,30 @@ public class To extends org.openspcoop2.utils.beans.BaseBean implements Serializ
   @XmlElement(name="PartyId",required=true,nillable=false)
   private List<PartyId> partyId = new ArrayList<>();
 
+  /**
+   * Use method getPartyIdList
+   * @return List&lt;PartyId&gt;
+  */
+  public List<PartyId> getPartyId() {
+  	return this.getPartyIdList();
+  }
+
+  /**
+   * Use method setPartyIdList
+   * @param partyId List&lt;PartyId&gt;
+  */
+  public void setPartyId(List<PartyId> partyId) {
+  	this.setPartyIdList(partyId);
+  }
+
+  /**
+   * Use method sizePartyIdList
+   * @return lunghezza della lista
+  */
+  public int sizePartyId() {
+  	return this.sizePartyIdList();
+  }
+
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="Role",required=true,nillable=false)
   protected java.lang.String role;

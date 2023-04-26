@@ -56,7 +56,7 @@ public class PortaDominioFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "id", Long.class));
 				setParameter(object, "setNome", PortaDominio.model().NOME.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "nome", PortaDominio.model().NOME.getFieldType()));
-				setParameter(object, "set_value_tipo", String.class,
+				setParameter(object, "setTipoRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "tipo", PortaDominio.model().TIPO.getFieldType())+"");
 				return object;
 			}
@@ -82,7 +82,7 @@ public class PortaDominioFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"id"));
 				setParameter(object, "setNome", PortaDominio.model().NOME.getFieldType(),
 					this.getObjectFromMap(map,"nome"));
-				setParameter(object, "set_value_tipo", String.class,
+				setParameter(object, "setTipoRawEnumValue", String.class,
 					this.getObjectFromMap(map,"tipo"));
 				return object;
 			}

@@ -184,8 +184,56 @@ public class TrasformazioneRegolaRichiesta extends org.openspcoop2.utils.beans.B
   @XmlElement(name="header",required=true,nillable=false)
   private List<TrasformazioneRegolaParametro> header = new ArrayList<>();
 
+  /**
+   * Use method getHeaderList
+   * @return List&lt;TrasformazioneRegolaParametro&gt;
+  */
+  public List<TrasformazioneRegolaParametro> getHeader() {
+  	return this.getHeaderList();
+  }
+
+  /**
+   * Use method setHeaderList
+   * @param header List&lt;TrasformazioneRegolaParametro&gt;
+  */
+  public void setHeader(List<TrasformazioneRegolaParametro> header) {
+  	this.setHeaderList(header);
+  }
+
+  /**
+   * Use method sizeHeaderList
+   * @return lunghezza della lista
+  */
+  public int sizeHeader() {
+  	return this.sizeHeaderList();
+  }
+
   @XmlElement(name="parametro-url",required=true,nillable=false)
   private List<TrasformazioneRegolaParametro> parametroUrl = new ArrayList<>();
+
+  /**
+   * Use method getParametroUrlList
+   * @return List&lt;TrasformazioneRegolaParametro&gt;
+  */
+  public List<TrasformazioneRegolaParametro> getParametroUrl() {
+  	return this.getParametroUrlList();
+  }
+
+  /**
+   * Use method setParametroUrlList
+   * @param parametroUrl List&lt;TrasformazioneRegolaParametro&gt;
+  */
+  public void setParametroUrl(List<TrasformazioneRegolaParametro> parametroUrl) {
+  	this.setParametroUrlList(parametroUrl);
+  }
+
+  /**
+   * Use method sizeParametroUrlList
+   * @return lunghezza della lista
+  */
+  public int sizeParametroUrl() {
+  	return this.sizeParametroUrlList();
+  }
 
   @XmlElement(name="trasformazione-rest",required=false,nillable=false)
   protected TrasformazioneRest trasformazioneRest;

@@ -229,7 +229,55 @@ public class Plugin extends org.openspcoop2.utils.beans.BaseBeanWithId implement
   @XmlElement(name="plugin-servizio-compatibilita",required=true,nillable=false)
   private List<PluginServizioCompatibilita> pluginServizioCompatibilita = new ArrayList<>();
 
+  /**
+   * Use method getPluginServizioCompatibilitaList
+   * @return List&lt;PluginServizioCompatibilita&gt;
+  */
+  public List<PluginServizioCompatibilita> getPluginServizioCompatibilita() {
+  	return this.getPluginServizioCompatibilitaList();
+  }
+
+  /**
+   * Use method setPluginServizioCompatibilitaList
+   * @param pluginServizioCompatibilita List&lt;PluginServizioCompatibilita&gt;
+  */
+  public void setPluginServizioCompatibilita(List<PluginServizioCompatibilita> pluginServizioCompatibilita) {
+  	this.setPluginServizioCompatibilitaList(pluginServizioCompatibilita);
+  }
+
+  /**
+   * Use method sizePluginServizioCompatibilitaList
+   * @return lunghezza della lista
+  */
+  public int sizePluginServizioCompatibilita() {
+  	return this.sizePluginServizioCompatibilitaList();
+  }
+
   @XmlElement(name="plugin-proprieta-compatibilita",required=true,nillable=false)
   private List<PluginProprietaCompatibilita> pluginProprietaCompatibilita = new ArrayList<>();
+
+  /**
+   * Use method getPluginProprietaCompatibilitaList
+   * @return List&lt;PluginProprietaCompatibilita&gt;
+  */
+  public List<PluginProprietaCompatibilita> getPluginProprietaCompatibilita() {
+  	return this.getPluginProprietaCompatibilitaList();
+  }
+
+  /**
+   * Use method setPluginProprietaCompatibilitaList
+   * @param pluginProprietaCompatibilita List&lt;PluginProprietaCompatibilita&gt;
+  */
+  public void setPluginProprietaCompatibilita(List<PluginProprietaCompatibilita> pluginProprietaCompatibilita) {
+  	this.setPluginProprietaCompatibilitaList(pluginProprietaCompatibilita);
+  }
+
+  /**
+   * Use method sizePluginProprietaCompatibilitaList
+   * @return lunghezza della lista
+  */
+  public int sizePluginProprietaCompatibilita() {
+  	return this.sizePluginProprietaCompatibilitaList();
+  }
 
 }

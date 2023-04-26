@@ -102,6 +102,30 @@ public class PropertySet extends org.openspcoop2.utils.beans.BaseBean implements
   @XmlElement(name="propertyRef",required=true,nillable=false)
   private List<PropertyRef> propertyRef = new ArrayList<>();
 
+  /**
+   * Use method getPropertyRefList
+   * @return List&lt;PropertyRef&gt;
+  */
+  public List<PropertyRef> getPropertyRef() {
+  	return this.getPropertyRefList();
+  }
+
+  /**
+   * Use method setPropertyRefList
+   * @param propertyRef List&lt;PropertyRef&gt;
+  */
+  public void setPropertyRef(List<PropertyRef> propertyRef) {
+  	this.setPropertyRefList(propertyRef);
+  }
+
+  /**
+   * Use method sizePropertyRefList
+   * @return lunghezza della lista
+  */
+  public int sizePropertyRef() {
+  	return this.sizePropertyRefList();
+  }
+
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="name",required=true)
   protected java.lang.String name;

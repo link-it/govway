@@ -119,6 +119,30 @@ public class Conditions extends org.openspcoop2.utils.beans.BaseBean implements 
   @XmlElement(name="condition",required=true,nillable=false)
   private List<Condition> condition = new ArrayList<>();
 
+  /**
+   * Use method getConditionList
+   * @return List&lt;Condition&gt;
+  */
+  public List<Condition> getCondition() {
+  	return this.getConditionList();
+  }
+
+  /**
+   * Use method setConditionList
+   * @param condition List&lt;Condition&gt;
+  */
+  public void setCondition(List<Condition> condition) {
+  	this.setConditionList(condition);
+  }
+
+  /**
+   * Use method sizeConditionList
+   * @return lunghezza della lista
+  */
+  public int sizeCondition() {
+  	return this.sizeConditionList();
+  }
+
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="and",required=false)
   protected boolean and = true;

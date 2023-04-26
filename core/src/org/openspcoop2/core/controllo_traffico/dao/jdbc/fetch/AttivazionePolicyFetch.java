@@ -81,7 +81,7 @@ public class AttivazionePolicyFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "filtro_enabled", AttivazionePolicy.model().FILTRO.ENABLED.getFieldType()));
 				setParameter(object.getFiltro(), "setProtocollo", AttivazionePolicy.model().FILTRO.PROTOCOLLO.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "filtro_protocollo", AttivazionePolicy.model().FILTRO.PROTOCOLLO.getFieldType()));
-				setParameter(object.getFiltro(), "set_value_ruoloPorta", String.class,
+				setParameter(object.getFiltro(), "setRuoloPortaRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "filtro_ruolo", AttivazionePolicy.model().FILTRO.RUOLO_PORTA.getFieldType())+"");
 				setParameter(object.getFiltro(), "setNomePorta", AttivazionePolicy.model().FILTRO.NOME_PORTA.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "filtro_porta", AttivazionePolicy.model().FILTRO.NOME_PORTA.getFieldType()));
@@ -199,7 +199,7 @@ public class AttivazionePolicyFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"filtro.enabled"));
 				setParameter(object.getFiltro(), "setProtocollo", AttivazionePolicy.model().FILTRO.PROTOCOLLO.getFieldType(),
 					this.getObjectFromMap(map,"filtro.protocollo"));
-				setParameter(object.getFiltro(), "set_value_ruoloPorta", String.class,
+				setParameter(object.getFiltro(), "setRuoloPortaRawEnumValue", String.class,
 					this.getObjectFromMap(map,"filtro.ruolo-porta"));
 				setParameter(object.getFiltro(), "setNomePorta", AttivazionePolicy.model().FILTRO.NOME_PORTA.getFieldType(),
 					this.getObjectFromMap(map,"filtro.nome-porta"));

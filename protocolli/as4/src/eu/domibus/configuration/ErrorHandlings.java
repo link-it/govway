@@ -92,4 +92,28 @@ public class ErrorHandlings extends org.openspcoop2.utils.beans.BaseBean impleme
   @XmlElement(name="errorHandling",required=true,nillable=false)
   private List<ErrorHandling> errorHandling = new ArrayList<>();
 
+  /**
+   * Use method getErrorHandlingList
+   * @return List&lt;ErrorHandling&gt;
+  */
+  public List<ErrorHandling> getErrorHandling() {
+  	return this.getErrorHandlingList();
+  }
+
+  /**
+   * Use method setErrorHandlingList
+   * @param errorHandling List&lt;ErrorHandling&gt;
+  */
+  public void setErrorHandling(List<ErrorHandling> errorHandling) {
+  	this.setErrorHandlingList(errorHandling);
+  }
+
+  /**
+   * Use method sizeErrorHandlingList
+   * @return lunghezza della lista
+  */
+  public int sizeErrorHandling() {
+  	return this.sizeErrorHandlingList();
+  }
+
 }

@@ -111,6 +111,30 @@ public class ConfigurazioneUrlInvocazione extends org.openspcoop2.utils.beans.Ba
   @XmlElement(name="regola",required=true,nillable=false)
   private List<ConfigurazioneUrlInvocazioneRegola> regola = new ArrayList<>();
 
+  /**
+   * Use method getRegolaList
+   * @return List&lt;ConfigurazioneUrlInvocazioneRegola&gt;
+  */
+  public List<ConfigurazioneUrlInvocazioneRegola> getRegola() {
+  	return this.getRegolaList();
+  }
+
+  /**
+   * Use method setRegolaList
+   * @param regola List&lt;ConfigurazioneUrlInvocazioneRegola&gt;
+  */
+  public void setRegola(List<ConfigurazioneUrlInvocazioneRegola> regola) {
+  	this.setRegolaList(regola);
+  }
+
+  /**
+   * Use method sizeRegolaList
+   * @return lunghezza della lista
+  */
+  public int sizeRegola() {
+  	return this.sizeRegolaList();
+  }
+
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="base-url",required=true)
   protected java.lang.String baseUrl;

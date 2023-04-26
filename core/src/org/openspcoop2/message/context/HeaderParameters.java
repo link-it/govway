@@ -92,4 +92,28 @@ public class HeaderParameters extends org.openspcoop2.utils.beans.BaseBeanWithId
   @XmlElement(name="header-parameter",required=true,nillable=false)
   private List<StringParameter> headerParameter = new ArrayList<>();
 
+  /**
+   * Use method getHeaderParameterList
+   * @return List&lt;StringParameter&gt;
+  */
+  public List<StringParameter> getHeaderParameter() {
+  	return this.getHeaderParameterList();
+  }
+
+  /**
+   * Use method setHeaderParameterList
+   * @param headerParameter List&lt;StringParameter&gt;
+  */
+  public void setHeaderParameter(List<StringParameter> headerParameter) {
+  	this.setHeaderParameterList(headerParameter);
+  }
+
+  /**
+   * Use method sizeHeaderParameterList
+   * @return lunghezza della lista
+  */
+  public int sizeHeaderParameter() {
+  	return this.sizeHeaderParameterList();
+  }
+
 }

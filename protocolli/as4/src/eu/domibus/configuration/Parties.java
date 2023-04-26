@@ -105,4 +105,28 @@ public class Parties extends org.openspcoop2.utils.beans.BaseBean implements Ser
   @XmlElement(name="party",required=true,nillable=false)
   private List<Party> party = new ArrayList<>();
 
+  /**
+   * Use method getPartyList
+   * @return List&lt;Party&gt;
+  */
+  public List<Party> getParty() {
+  	return this.getPartyList();
+  }
+
+  /**
+   * Use method setPartyList
+   * @param party List&lt;Party&gt;
+  */
+  public void setParty(List<Party> party) {
+  	this.setPartyList(party);
+  }
+
+  /**
+   * Use method sizePartyList
+   * @return lunghezza della lista
+  */
+  public int sizeParty() {
+  	return this.sizePartyList();
+  }
+
 }

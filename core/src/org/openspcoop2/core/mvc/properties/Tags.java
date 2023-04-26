@@ -120,6 +120,30 @@ public class Tags extends org.openspcoop2.utils.beans.BaseBean implements Serial
   @XmlElement(name="tag",required=true,nillable=false)
   private List<java.lang.String> tag = new ArrayList<>();
 
+  /**
+   * Use method getTagList
+   * @return List&lt;java.lang.String&gt;
+  */
+  public List<java.lang.String> getTag() {
+  	return this.getTagList();
+  }
+
+  /**
+   * Use method setTagList
+   * @param tag List&lt;java.lang.String&gt;
+  */
+  public void setTag(List<java.lang.String> tag) {
+  	this.setTagList(tag);
+  }
+
+  /**
+   * Use method sizeTagList
+   * @return lunghezza della lista
+  */
+  public int sizeTag() {
+  	return this.sizeTagList();
+  }
+
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="and",required=false)
   protected boolean and = true;

@@ -255,7 +255,55 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBeanWit
   @XmlElement(name="servizio-applicativo-ruolo",required=true,nillable=false)
   private List<ServizioApplicativoRuolo> servizioApplicativoRuolo = new ArrayList<>();
 
+  /**
+   * Use method getServizioApplicativoRuoloList
+   * @return List&lt;ServizioApplicativoRuolo&gt;
+  */
+  public List<ServizioApplicativoRuolo> getServizioApplicativoRuolo() {
+  	return this.getServizioApplicativoRuoloList();
+  }
+
+  /**
+   * Use method setServizioApplicativoRuoloList
+   * @param servizioApplicativoRuolo List&lt;ServizioApplicativoRuolo&gt;
+  */
+  public void setServizioApplicativoRuolo(List<ServizioApplicativoRuolo> servizioApplicativoRuolo) {
+  	this.setServizioApplicativoRuoloList(servizioApplicativoRuolo);
+  }
+
+  /**
+   * Use method sizeServizioApplicativoRuoloList
+   * @return lunghezza della lista
+  */
+  public int sizeServizioApplicativoRuolo() {
+  	return this.sizeServizioApplicativoRuoloList();
+  }
+
   @XmlElement(name="servizio-applicativo-proprieta-protocollo",required=true,nillable=false)
   private List<ServizioApplicativoProprietaProtocollo> servizioApplicativoProprietaProtocollo = new ArrayList<>();
+
+  /**
+   * Use method getServizioApplicativoProprietaProtocolloList
+   * @return List&lt;ServizioApplicativoProprietaProtocollo&gt;
+  */
+  public List<ServizioApplicativoProprietaProtocollo> getServizioApplicativoProprietaProtocollo() {
+  	return this.getServizioApplicativoProprietaProtocolloList();
+  }
+
+  /**
+   * Use method setServizioApplicativoProprietaProtocolloList
+   * @param servizioApplicativoProprietaProtocollo List&lt;ServizioApplicativoProprietaProtocollo&gt;
+  */
+  public void setServizioApplicativoProprietaProtocollo(List<ServizioApplicativoProprietaProtocollo> servizioApplicativoProprietaProtocollo) {
+  	this.setServizioApplicativoProprietaProtocolloList(servizioApplicativoProprietaProtocollo);
+  }
+
+  /**
+   * Use method sizeServizioApplicativoProprietaProtocolloList
+   * @return lunghezza della lista
+  */
+  public int sizeServizioApplicativoProprietaProtocollo() {
+  	return this.sizeServizioApplicativoProprietaProtocolloList();
+  }
 
 }

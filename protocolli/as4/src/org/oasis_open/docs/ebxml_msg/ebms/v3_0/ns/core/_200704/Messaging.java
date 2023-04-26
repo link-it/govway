@@ -140,8 +140,56 @@ public class Messaging extends org.openspcoop2.utils.beans.BaseBean implements S
   @XmlElement(name="SignalMessage",required=true,nillable=false)
   private List<SignalMessage> signalMessage = new ArrayList<>();
 
+  /**
+   * Use method getSignalMessageList
+   * @return List&lt;SignalMessage&gt;
+  */
+  public List<SignalMessage> getSignalMessage() {
+  	return this.getSignalMessageList();
+  }
+
+  /**
+   * Use method setSignalMessageList
+   * @param signalMessage List&lt;SignalMessage&gt;
+  */
+  public void setSignalMessage(List<SignalMessage> signalMessage) {
+  	this.setSignalMessageList(signalMessage);
+  }
+
+  /**
+   * Use method sizeSignalMessageList
+   * @return lunghezza della lista
+  */
+  public int sizeSignalMessage() {
+  	return this.sizeSignalMessageList();
+  }
+
   @XmlElement(name="UserMessage",required=true,nillable=false)
   private List<UserMessage> userMessage = new ArrayList<>();
+
+  /**
+   * Use method getUserMessageList
+   * @return List&lt;UserMessage&gt;
+  */
+  public List<UserMessage> getUserMessage() {
+  	return this.getUserMessageList();
+  }
+
+  /**
+   * Use method setUserMessageList
+   * @param userMessage List&lt;UserMessage&gt;
+  */
+  public void setUserMessage(List<UserMessage> userMessage) {
+  	this.setUserMessageList(userMessage);
+  }
+
+  /**
+   * Use method sizeUserMessageList
+   * @return lunghezza della lista
+  */
+  public int sizeUserMessage() {
+  	return this.sizeUserMessageList();
+  }
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.CollapsedStringAdapter.class)
   @javax.xml.bind.annotation.XmlID

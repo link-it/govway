@@ -51,7 +51,7 @@ public class StatisticaInfoFetch extends AbstractJDBCFetch {
 
 			if(model.equals(StatisticaInfo.model())){
 				StatisticaInfo object = new StatisticaInfo();
-				setParameter(object, "set_value_tipoStatistica", String.class,
+				setParameter(object, "setTipoStatisticaRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "tipo", StatisticaInfo.model().TIPO_STATISTICA.getFieldType())+"");
 				setParameter(object, "setDataUltimaGenerazione", StatisticaInfo.model().DATA_ULTIMA_GENERAZIONE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "data_ultima_generazione", StatisticaInfo.model().DATA_ULTIMA_GENERAZIONE.getFieldType()));
@@ -75,7 +75,7 @@ public class StatisticaInfoFetch extends AbstractJDBCFetch {
 
 			if(model.equals(StatisticaInfo.model())){
 				StatisticaInfo object = new StatisticaInfo();
-				setParameter(object, "set_value_tipoStatistica", String.class,
+				setParameter(object, "setTipoStatisticaRawEnumValue", String.class,
 					this.getObjectFromMap(map,"tipo-statistica"));
 				setParameter(object, "setDataUltimaGenerazione", StatisticaInfo.model().DATA_ULTIMA_GENERAZIONE.getFieldType(),
 					this.getObjectFromMap(map,"data-ultima-generazione"));

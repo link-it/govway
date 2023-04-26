@@ -78,9 +78,9 @@ public class ConfigurazioneTransazioneFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "enabled", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_STATO.ENABLED.getFieldType()));
 				setParameter(object, "setNome", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_STATO.NOME.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "nome", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_STATO.NOME.getFieldType()));
-				setParameter(object, "set_value_tipoControllo", String.class,
+				setParameter(object, "setTipoControlloRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "tipo_controllo", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_STATO.TIPO_CONTROLLO.getFieldType())+"");
-				setParameter(object, "set_value_tipoMessaggio", String.class,
+				setParameter(object, "setTipoMessaggioRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "tipo_messaggio", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_STATO.TIPO_MESSAGGIO.getFieldType())+"");
 				setParameter(object, "setValore", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_STATO.VALORE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "valore", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_STATO.VALORE.getFieldType()));
@@ -96,21 +96,21 @@ public class ConfigurazioneTransazioneFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "abilita_anonimizzazione", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO.ABILITA_ANONIMIZZAZIONE.getFieldType()));
 				setParameter(object, "setAbilitaCompressione", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO.ABILITA_COMPRESSIONE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "abilita_compressione", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO.ABILITA_COMPRESSIONE.getFieldType()));
-				setParameter(object, "set_value_tipoCompressione", String.class,
+				setParameter(object, "setTipoCompressioneRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "tipo_compressione", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO.TIPO_COMPRESSIONE.getFieldType())+"");
 				setParameter(object, "setCarattereMaschera", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO.CARATTERE_MASCHERA.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "carattere_maschera", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO.CARATTERE_MASCHERA.getFieldType()));
 				setParameter(object, "setNumeroCaratteriMaschera", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO.NUMERO_CARATTERI_MASCHERA.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "num_char_maschera", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO.NUMERO_CARATTERI_MASCHERA.getFieldType()));
-				setParameter(object, "set_value_posizionamentoMaschera", String.class,
+				setParameter(object, "setPosizionamentoMascheraRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "posizionamento_maschera", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO.POSIZIONAMENTO_MASCHERA.getFieldType())+"");
-				setParameter(object, "set_value_tipoMascheramento", String.class,
+				setParameter(object, "setTipoMascheramentoRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "tipo_mascheramento", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO.TIPO_MASCHERAMENTO.getFieldType())+"");
 				setParameter(object, "setEnabled", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO.ENABLED.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "enabled", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO.ENABLED.getFieldType()));
 				setParameter(object, "setNome", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO.NOME.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "nome", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO.NOME.getFieldType()));
-				setParameter(object, "set_value_tipoMessaggio", String.class,
+				setParameter(object, "setTipoMessaggioRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "tipo_messaggio", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO.TIPO_MESSAGGIO.getFieldType())+"");
 				setParameter(object, "setXpath", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO.XPATH.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "xpath", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO.XPATH.getFieldType()));
@@ -160,9 +160,9 @@ public class ConfigurazioneTransazioneFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"configurazione-transazione-stato.enabled"));
 				setParameter(object, "setNome", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_STATO.NOME.getFieldType(),
 					this.getObjectFromMap(map,"configurazione-transazione-stato.nome"));
-				setParameter(object, "set_value_tipoControllo", String.class,
+				setParameter(object, "setTipoControlloRawEnumValue", String.class,
 					this.getObjectFromMap(map,"configurazione-transazione-stato.tipo-controllo"));
-				setParameter(object, "set_value_tipoMessaggio", String.class,
+				setParameter(object, "setTipoMessaggioRawEnumValue", String.class,
 					this.getObjectFromMap(map,"configurazione-transazione-stato.tipo-messaggio"));
 				setParameter(object, "setValore", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_STATO.VALORE.getFieldType(),
 					this.getObjectFromMap(map,"configurazione-transazione-stato.valore"));
@@ -178,21 +178,21 @@ public class ConfigurazioneTransazioneFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"configurazione-transazione-risorsa-contenuto.abilita-anonimizzazione"));
 				setParameter(object, "setAbilitaCompressione", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO.ABILITA_COMPRESSIONE.getFieldType(),
 					this.getObjectFromMap(map,"configurazione-transazione-risorsa-contenuto.abilita-compressione"));
-				setParameter(object, "set_value_tipoCompressione", String.class,
+				setParameter(object, "setTipoCompressioneRawEnumValue", String.class,
 					this.getObjectFromMap(map,"configurazione-transazione-risorsa-contenuto.tipo-compressione"));
 				setParameter(object, "setCarattereMaschera", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO.CARATTERE_MASCHERA.getFieldType(),
 					this.getObjectFromMap(map,"configurazione-transazione-risorsa-contenuto.carattere-maschera"));
 				setParameter(object, "setNumeroCaratteriMaschera", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO.NUMERO_CARATTERI_MASCHERA.getFieldType(),
 					this.getObjectFromMap(map,"configurazione-transazione-risorsa-contenuto.numero-caratteri-maschera"));
-				setParameter(object, "set_value_posizionamentoMaschera", String.class,
+				setParameter(object, "setPosizionamentoMascheraRawEnumValue", String.class,
 					this.getObjectFromMap(map,"configurazione-transazione-risorsa-contenuto.posizionamento-maschera"));
-				setParameter(object, "set_value_tipoMascheramento", String.class,
+				setParameter(object, "setTipoMascheramentoRawEnumValue", String.class,
 					this.getObjectFromMap(map,"configurazione-transazione-risorsa-contenuto.tipo-mascheramento"));
 				setParameter(object, "setEnabled", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO.ENABLED.getFieldType(),
 					this.getObjectFromMap(map,"configurazione-transazione-risorsa-contenuto.enabled"));
 				setParameter(object, "setNome", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO.NOME.getFieldType(),
 					this.getObjectFromMap(map,"configurazione-transazione-risorsa-contenuto.nome"));
-				setParameter(object, "set_value_tipoMessaggio", String.class,
+				setParameter(object, "setTipoMessaggioRawEnumValue", String.class,
 					this.getObjectFromMap(map,"configurazione-transazione-risorsa-contenuto.tipo-messaggio"));
 				setParameter(object, "setXpath", ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_RISORSA_CONTENUTO.XPATH.getFieldType(),
 					this.getObjectFromMap(map,"configurazione-transazione-risorsa-contenuto.xpath"));

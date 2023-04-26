@@ -92,4 +92,28 @@ public class Trasmissioni extends org.openspcoop2.utils.beans.BaseBeanWithId imp
   @XmlElement(name="trasmissione",required=true,nillable=false)
   private List<Trasmissione> trasmissione = new ArrayList<>();
 
+  /**
+   * Use method getTrasmissioneList
+   * @return List&lt;Trasmissione&gt;
+  */
+  public List<Trasmissione> getTrasmissione() {
+  	return this.getTrasmissioneList();
+  }
+
+  /**
+   * Use method setTrasmissioneList
+   * @param trasmissione List&lt;Trasmissione&gt;
+  */
+  public void setTrasmissione(List<Trasmissione> trasmissione) {
+  	this.setTrasmissioneList(trasmissione);
+  }
+
+  /**
+   * Use method sizeTrasmissioneList
+   * @return lunghezza della lista
+  */
+  public int sizeTrasmissione() {
+  	return this.sizeTrasmissioneList();
+  }
+
 }

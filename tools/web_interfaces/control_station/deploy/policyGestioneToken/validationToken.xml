@@ -506,13 +506,18 @@
 						<equals name="validazioneJwtKeystoreType" value="jwk"/>
 					</condition>
 				</conditions>
-		      	<property name="rs.security.keystore.password" properties="decryptionPropRefId" />
+		      		<property name="rs.security.keystore.password" properties="decryptionPropRefId" />
 			</item>
 			<item type="text" name="validazioneJwtKeystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
 			    <property name="rs.security.keystore.alias" properties="decryptionPropRefId" />
 			</item>
 			<item type="text" name="validazioneJwtKeystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
-			    <property name="rs.security.key.password" properties="decryptionPropRefId" />
+				<conditions>
+					<condition not="true" and="true">
+						<equals name="validazioneJwtKeystoreType" value="jwk"/>
+					</condition>
+				</conditions>
+			    	<property name="rs.security.key.password" properties="decryptionPropRefId" />
 			</item>
 
 		</subsection>
@@ -1998,8 +2003,9 @@
 			</item>
 			<item type="text" name="tokenForwardInfoRaccolteModeJWEContentKeystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
 				<conditions>
-					<condition not="false">
+					<condition not="true" and="false">
 						<equals name="tokenForwardInfoRaccolteModeJWEContentKeystoreType" value="jceks"/>
+						<equals name="tokenForwardInfoRaccolteModeJWEContentKeystoreType" value="jwk"/>
 					</condition>
 				</conditions>
 			    <property name="rs.security.key.password" properties="encryptionPropRefId" />

@@ -121,4 +121,28 @@ public class CanaleConfigurazioneNodo extends org.openspcoop2.utils.beans.BaseBe
   @XmlElement(name="canale",required=true,nillable=false)
   private List<java.lang.String> canale = new ArrayList<>();
 
+  /**
+   * Use method getCanaleList
+   * @return List&lt;java.lang.String&gt;
+  */
+  public List<java.lang.String> getCanale() {
+  	return this.getCanaleList();
+  }
+
+  /**
+   * Use method setCanaleList
+   * @param canale List&lt;java.lang.String&gt;
+  */
+  public void setCanale(List<java.lang.String> canale) {
+  	this.setCanaleList(canale);
+  }
+
+  /**
+   * Use method sizeCanaleList
+   * @return lunghezza della lista
+  */
+  public int sizeCanale() {
+  	return this.sizeCanaleList();
+  }
+
 }

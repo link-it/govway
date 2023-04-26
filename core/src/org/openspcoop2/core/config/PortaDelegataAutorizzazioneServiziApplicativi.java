@@ -92,4 +92,28 @@ public class PortaDelegataAutorizzazioneServiziApplicativi extends org.openspcoo
   @XmlElement(name="servizio-applicativo",required=true,nillable=false)
   private List<PortaDelegataServizioApplicativo> servizioApplicativo = new ArrayList<>();
 
+  /**
+   * Use method getServizioApplicativoList
+   * @return List&lt;PortaDelegataServizioApplicativo&gt;
+  */
+  public List<PortaDelegataServizioApplicativo> getServizioApplicativo() {
+  	return this.getServizioApplicativoList();
+  }
+
+  /**
+   * Use method setServizioApplicativoList
+   * @param servizioApplicativo List&lt;PortaDelegataServizioApplicativo&gt;
+  */
+  public void setServizioApplicativo(List<PortaDelegataServizioApplicativo> servizioApplicativo) {
+  	this.setServizioApplicativoList(servizioApplicativo);
+  }
+
+  /**
+   * Use method sizeServizioApplicativoList
+   * @return lunghezza della lista
+  */
+  public int sizeServizioApplicativo() {
+  	return this.sizeServizioApplicativoList();
+  }
+
 }

@@ -92,4 +92,28 @@ public class ItemValues extends org.openspcoop2.utils.beans.BaseBean implements 
   @XmlElement(name="value",required=true,nillable=false)
   private List<ItemValue> value = new ArrayList<>();
 
+  /**
+   * Use method getValueList
+   * @return List&lt;ItemValue&gt;
+  */
+  public List<ItemValue> getValue() {
+  	return this.getValueList();
+  }
+
+  /**
+   * Use method setValueList
+   * @param value List&lt;ItemValue&gt;
+  */
+  public void setValue(List<ItemValue> value) {
+  	this.setValueList(value);
+  }
+
+  /**
+   * Use method sizeValueList
+   * @return lunghezza della lista
+  */
+  public int sizeValue() {
+  	return this.sizeValueList();
+  }
+
 }

@@ -428,6 +428,30 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBeanWithId i
   @javax.xml.bind.annotation.XmlTransient
   private List<Object> extendedInfo = new ArrayList<>();
 
+  /**
+   * Use method getExtendedInfoList
+   * @return List&lt;Object&gt;
+  */
+  public List<Object> getExtendedInfo() {
+  	return this.getExtendedInfoList();
+  }
+
+  /**
+   * Use method setExtendedInfoList
+   * @param extendedInfo List&lt;Object&gt;
+  */
+  public void setExtendedInfo(List<Object> extendedInfo) {
+  	this.setExtendedInfoList(extendedInfo);
+  }
+
+  /**
+   * Use method sizeExtendedInfoList
+   * @return lunghezza della lista
+  */
+  public int sizeExtendedInfo() {
+  	return this.sizeExtendedInfoList();
+  }
+
   @XmlElement(name="routing-table",required=false,nillable=false)
   protected RoutingTable routingTable;
 
@@ -505,6 +529,30 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBeanWithId i
 
   @XmlElement(name="generic-properties",required=true,nillable=false)
   private List<GenericProperties> genericProperties = new ArrayList<>();
+
+  /**
+   * Use method getGenericPropertiesList
+   * @return List&lt;GenericProperties&gt;
+  */
+  public List<GenericProperties> getGenericProperties() {
+  	return this.getGenericPropertiesList();
+  }
+
+  /**
+   * Use method setGenericPropertiesList
+   * @param genericProperties List&lt;GenericProperties&gt;
+  */
+  public void setGenericProperties(List<GenericProperties> genericProperties) {
+  	this.setGenericPropertiesList(genericProperties);
+  }
+
+  /**
+   * Use method sizeGenericPropertiesList
+   * @return lunghezza della lista
+  */
+  public int sizeGenericProperties() {
+  	return this.sizeGenericPropertiesList();
+  }
 
   @XmlElement(name="gestione-cors",required=false,nillable=false)
   protected CorsConfigurazione gestioneCors;

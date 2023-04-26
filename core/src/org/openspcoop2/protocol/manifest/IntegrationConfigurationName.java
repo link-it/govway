@@ -106,6 +106,30 @@ public class IntegrationConfigurationName extends org.openspcoop2.utils.beans.Ba
   @XmlElement(name="param",required=true,nillable=false)
   private List<IntegrationConfigurationElementName> param = new ArrayList<>();
 
+  /**
+   * Use method getParamList
+   * @return List&lt;IntegrationConfigurationElementName&gt;
+  */
+  public List<IntegrationConfigurationElementName> getParam() {
+  	return this.getParamList();
+  }
+
+  /**
+   * Use method setParamList
+   * @param param List&lt;IntegrationConfigurationElementName&gt;
+  */
+  public void setParam(List<IntegrationConfigurationElementName> param) {
+  	this.setParamList(param);
+  }
+
+  /**
+   * Use method sizeParamList
+   * @return lunghezza della lista
+  */
+  public int sizeParam() {
+  	return this.sizeParamList();
+  }
+
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="useInUrl",required=false)
   protected boolean useInUrl = true;

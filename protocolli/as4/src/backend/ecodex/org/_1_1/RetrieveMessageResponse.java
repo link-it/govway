@@ -105,4 +105,28 @@ public class RetrieveMessageResponse extends org.openspcoop2.utils.beans.BaseBea
   @XmlElement(name="payload",required=true,nillable=false)
   private List<LargePayloadType> payload = new ArrayList<>();
 
+  /**
+   * Use method getPayloadList
+   * @return List&lt;LargePayloadType&gt;
+  */
+  public List<LargePayloadType> getPayload() {
+  	return this.getPayloadList();
+  }
+
+  /**
+   * Use method setPayloadList
+   * @param payload List&lt;LargePayloadType&gt;
+  */
+  public void setPayload(List<LargePayloadType> payload) {
+  	this.setPayloadList(payload);
+  }
+
+  /**
+   * Use method sizePayloadList
+   * @return lunghezza della lista
+  */
+  public int sizePayload() {
+  	return this.sizePayloadList();
+  }
+
 }

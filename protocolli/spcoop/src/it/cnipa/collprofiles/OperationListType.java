@@ -92,4 +92,28 @@ public class OperationListType extends org.openspcoop2.utils.beans.BaseBean impl
   @XmlElement(name="operation",required=true,nillable=false)
   private List<OperationType> operation = new ArrayList<>();
 
+  /**
+   * Use method getOperationList
+   * @return List&lt;OperationType&gt;
+  */
+  public List<OperationType> getOperation() {
+  	return this.getOperationList();
+  }
+
+  /**
+   * Use method setOperationList
+   * @param operation List&lt;OperationType&gt;
+  */
+  public void setOperation(List<OperationType> operation) {
+  	this.setOperationList(operation);
+  }
+
+  /**
+   * Use method sizeOperationList
+   * @return lunghezza della lista
+  */
+  public int sizeOperation() {
+  	return this.sizeOperationList();
+  }
+
 }

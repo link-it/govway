@@ -63,7 +63,7 @@ public class StatisticaGiornalieraFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "stato_record", StatisticaGiornaliera.model().STATISTICA_BASE.STATO_RECORD.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setIdPorta", StatisticaGiornaliera.model().STATISTICA_BASE.ID_PORTA.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "id_porta", StatisticaGiornaliera.model().STATISTICA_BASE.ID_PORTA.getFieldType()));
-				setParameter(object.getStatisticaBase(), "set_value_tipoPorta", String.class,
+				setParameter(object.getStatisticaBase(), "setTipoPortaRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "tipo_porta", StatisticaGiornaliera.model().STATISTICA_BASE.TIPO_PORTA.getFieldType())+"");
 				setParameter(object.getStatisticaBase(), "setTipoMittente", StatisticaGiornaliera.model().STATISTICA_BASE.TIPO_MITTENTE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "tipo_mittente", StatisticaGiornaliera.model().STATISTICA_BASE.TIPO_MITTENTE.getFieldType()));
@@ -216,7 +216,7 @@ public class StatisticaGiornalieraFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"statistica-base.stato-record"));
 				setParameter(object.getStatisticaBase(), "setIdPorta", StatisticaGiornaliera.model().STATISTICA_BASE.ID_PORTA.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.id-porta"));
-				setParameter(object.getStatisticaBase(), "set_value_tipoPorta", String.class,
+				setParameter(object.getStatisticaBase(), "setTipoPortaRawEnumValue", String.class,
 					this.getObjectFromMap(map,"statistica-base.tipo-porta"));
 				setParameter(object.getStatisticaBase(), "setTipoMittente", StatisticaGiornaliera.model().STATISTICA_BASE.TIPO_MITTENTE.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.tipo-mittente"));

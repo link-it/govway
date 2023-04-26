@@ -137,6 +137,30 @@ public class AutorizzazioneScope extends org.openspcoop2.utils.beans.BaseBeanWit
   @XmlElement(name="scope",required=true,nillable=false)
   private List<Scope> scope = new ArrayList<>();
 
+  /**
+   * Use method getScopeList
+   * @return List&lt;Scope&gt;
+  */
+  public List<Scope> getScope() {
+  	return this.getScopeList();
+  }
+
+  /**
+   * Use method setScopeList
+   * @param scope List&lt;Scope&gt;
+  */
+  public void setScope(List<Scope> scope) {
+  	this.setScopeList(scope);
+  }
+
+  /**
+   * Use method sizeScopeList
+   * @return lunghezza della lista
+  */
+  public int sizeScope() {
+  	return this.sizeScopeList();
+  }
+
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String statoRawEnumValue;
 

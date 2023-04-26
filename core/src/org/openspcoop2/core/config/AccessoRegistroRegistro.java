@@ -149,7 +149,31 @@ public class AccessoRegistroRegistro extends org.openspcoop2.utils.beans.BaseBea
 
 
 
-  protected Map<java.lang.String,String> genericProperties = new HashMap<java.lang.String,String>();
+  private Map<java.lang.String,String> genericProperties = new HashMap<>();
+
+  /**
+   * Use method getGenericPropertiesMap
+   * @return Map&lt;java.lang.String,String&gt;
+  */
+  public Map<java.lang.String,String> getGenericProperties() {
+  	return this.getGenericPropertiesMap();
+  }
+
+  /**
+   * Use method setGenericPropertiesMap
+   * @param genericProperties Map&lt;java.lang.String,String&gt;
+  */
+  public void setGenericProperties(Map<java.lang.String,String> genericProperties) {
+  	this.setGenericPropertiesMap(genericProperties);
+  }
+
+  /**
+   * Use method sizeGenericPropertiesMap
+   * @return lunghezza della mappa
+  */
+  public int sizeGenericProperties() {
+  	return this.sizeGenericPropertiesMap();
+  }
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="tipo-database",required=false)

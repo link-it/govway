@@ -176,6 +176,30 @@ public class Config extends org.openspcoop2.utils.beans.BaseBean implements Seri
   @XmlElement(name="section",required=true,nillable=false)
   private List<Section> section = new ArrayList<>();
 
+  /**
+   * Use method getSectionList
+   * @return List&lt;Section&gt;
+  */
+  public List<Section> getSection() {
+  	return this.getSectionList();
+  }
+
+  /**
+   * Use method setSectionList
+   * @param section List&lt;Section&gt;
+  */
+  public void setSection(List<Section> section) {
+  	this.setSectionList(section);
+  }
+
+  /**
+   * Use method sizeSectionList
+   * @return lunghezza della lista
+  */
+  public int sizeSection() {
+  	return this.sizeSectionList();
+  }
+
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="id",required=true)
   protected java.lang.String id;

@@ -92,4 +92,28 @@ public class UrlParameters extends org.openspcoop2.utils.beans.BaseBeanWithId im
   @XmlElement(name="url-parameter",required=true,nillable=false)
   private List<StringParameter> urlParameter = new ArrayList<>();
 
+  /**
+   * Use method getUrlParameterList
+   * @return List&lt;StringParameter&gt;
+  */
+  public List<StringParameter> getUrlParameter() {
+  	return this.getUrlParameterList();
+  }
+
+  /**
+   * Use method setUrlParameterList
+   * @param urlParameter List&lt;StringParameter&gt;
+  */
+  public void setUrlParameter(List<StringParameter> urlParameter) {
+  	this.setUrlParameterList(urlParameter);
+  }
+
+  /**
+   * Use method sizeUrlParameterList
+   * @return lunghezza della lista
+  */
+  public int sizeUrlParameter() {
+  	return this.sizeUrlParameterList();
+  }
+
 }

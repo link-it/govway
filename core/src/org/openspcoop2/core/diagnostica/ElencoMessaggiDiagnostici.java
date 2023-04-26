@@ -92,4 +92,28 @@ public class ElencoMessaggiDiagnostici extends org.openspcoop2.utils.beans.BaseB
   @XmlElement(name="messaggio-diagnostico",required=true,nillable=false)
   private List<MessaggioDiagnostico> messaggioDiagnostico = new ArrayList<>();
 
+  /**
+   * Use method getMessaggioDiagnosticoList
+   * @return List&lt;MessaggioDiagnostico&gt;
+  */
+  public List<MessaggioDiagnostico> getMessaggioDiagnostico() {
+  	return this.getMessaggioDiagnosticoList();
+  }
+
+  /**
+   * Use method setMessaggioDiagnosticoList
+   * @param messaggioDiagnostico List&lt;MessaggioDiagnostico&gt;
+  */
+  public void setMessaggioDiagnostico(List<MessaggioDiagnostico> messaggioDiagnostico) {
+  	this.setMessaggioDiagnosticoList(messaggioDiagnostico);
+  }
+
+  /**
+   * Use method sizeMessaggioDiagnosticoList
+   * @return lunghezza della lista
+  */
+  public int sizeMessaggioDiagnostico() {
+  	return this.sizeMessaggioDiagnosticoList();
+  }
+
 }

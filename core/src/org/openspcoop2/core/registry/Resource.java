@@ -378,8 +378,56 @@ public class Resource extends org.openspcoop2.utils.beans.BaseBeanWithId impleme
   @XmlElement(name="response",required=true,nillable=false)
   private List<ResourceResponse> response = new ArrayList<>();
 
+  /**
+   * Use method getResponseList
+   * @return List&lt;ResourceResponse&gt;
+  */
+  public List<ResourceResponse> getResponse() {
+  	return this.getResponseList();
+  }
+
+  /**
+   * Use method setResponseList
+   * @param response List&lt;ResourceResponse&gt;
+  */
+  public void setResponse(List<ResourceResponse> response) {
+  	this.setResponseList(response);
+  }
+
+  /**
+   * Use method sizeResponseList
+   * @return lunghezza della lista
+  */
+  public int sizeResponse() {
+  	return this.sizeResponseList();
+  }
+
   @XmlElement(name="protocol-property",required=true,nillable=false)
   private List<ProtocolProperty> protocolProperty = new ArrayList<>();
+
+  /**
+   * Use method getProtocolPropertyList
+   * @return List&lt;ProtocolProperty&gt;
+  */
+  public List<ProtocolProperty> getProtocolProperty() {
+  	return this.getProtocolPropertyList();
+  }
+
+  /**
+   * Use method setProtocolPropertyList
+   * @param protocolProperty List&lt;ProtocolProperty&gt;
+  */
+  public void setProtocolProperty(List<ProtocolProperty> protocolProperty) {
+  	this.setProtocolPropertyList(protocolProperty);
+  }
+
+  /**
+   * Use method sizeProtocolPropertyList
+   * @return lunghezza della lista
+  */
+  public int sizeProtocolProperty() {
+  	return this.sizeProtocolPropertyList();
+  }
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="prof-azione",required=false)

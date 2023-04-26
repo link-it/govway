@@ -169,7 +169,7 @@ public class TokenUtilities {
 		}
 		return getValidazioneJwtKeystoreParams(policy);
 	}
-	public static KeystoreParams getValidazioneJwtKeystoreParams(PolicyGestioneToken policy) {
+	public static KeystoreParams getValidazioneJwtKeystoreParams(PolicyGestioneToken policy) throws TokenException {
 		String tokenType = policy.getTipoToken();
 		Properties p = null;
 		if(org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_TYPE_JWS.equals(tokenType)) {
@@ -191,9 +191,31 @@ public class TokenUtilities {
 			keystoreParams.setPassword(p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_PSWD));
 			keystoreParams.setKeyAlias(p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS));
 			keystoreParams.setKeyPassword(p.getProperty(RSSecurityConstants.RSSEC_KEY_PSWD));
+			
+			fillKeyPairParamters(keystoreParams, type, p);
+			
 			return keystoreParams;
 		}
 		return null;
+	}
+	private static void fillKeyPairParamters(KeystoreParams keystoreParams, String type, Properties p) throws TokenException {
+		if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(type)) {
+			String keystorePublicKeyFile = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE+".public");
+			if(keystorePublicKeyFile==null) {
+				throw new TokenException("Public key file undefined");
+			}
+			keystoreParams.setKeyPairPublicKeyPath(keystorePublicKeyFile);
+		}
+		
+		if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(type)
+				||
+			SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(type)) {
+			String keyPairAlgorithm = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE+".algorithm");
+			if(keyPairAlgorithm==null) {
+				throw new TokenException("Key pair algorithm undefined");
+			}
+			keystoreParams.setKeyPairAlgorithm(keyPairAlgorithm);
+		}
 	}
 	
 	public static KeystoreParams getForwardToJwtKeystoreParams(GenericProperties gp) throws TokenException, ProviderException, ProviderValidationException {
@@ -203,7 +225,7 @@ public class TokenUtilities {
 		}
 		return getForwardToJwtKeystoreParams(policy);
 	}
-	public static KeystoreParams getForwardToJwtKeystoreParams(PolicyGestioneToken policy) {
+	public static KeystoreParams getForwardToJwtKeystoreParams(PolicyGestioneToken policy) throws TokenException {
 		String forwardInformazioniRaccolteMode = policy.getForwardToken_informazioniRaccolteMode();
 		Properties p = null;
 		if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JWS.equals(forwardInformazioniRaccolteMode) ||
@@ -226,6 +248,9 @@ public class TokenUtilities {
 			keystoreParams.setPassword(p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_PSWD));
 			keystoreParams.setKeyAlias(p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS));
 			keystoreParams.setKeyPassword(p.getProperty(RSSecurityConstants.RSSEC_KEY_PSWD));
+			
+			fillKeyPairParamters(keystoreParams, type, p);
+			
 			return keystoreParams;
 		}
 		return null;
@@ -441,17 +466,24 @@ public class TokenUtilities {
 			throw new TokenException("JWT Signature keystore file undefined");
 		}
 		String keystorePassword = policy.getJwtSignKeystorePassword();
-		if(keystorePassword==null && !SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType)) {
+		if(keystorePassword==null && 
+				!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) && 
+				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
+				!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
 			throw new TokenException("JWT Signature keystore password undefined");
 		}
 		String keyAlias = policy.getJwtSignKeyAlias();
-		if(keyAlias==null) {
+		if(keyAlias==null && 
+			!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
+			!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
 			throw new TokenException("JWT Signature key alias undefined");
 		}
+		
 		String keyPassword = policy.getJwtSignKeyPassword();
-		if(keystorePassword==null && 
+		if(keyPassword==null && 
 				!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) && 
-				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
+				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
+				!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
 			throw new TokenException("JWT Signature key password undefined");
 		}
 		
@@ -461,8 +493,31 @@ public class TokenUtilities {
 		keystoreParams.setPassword(keystorePassword);
 		keystoreParams.setKeyAlias(keyAlias);
 		keystoreParams.setKeyPassword(keyPassword);
+		
+		fillKeyPairParamters(keystoreParams, keystoreType, policy);
+		
 		return keystoreParams;
 		
+	}
+	
+	private static void fillKeyPairParamters(KeystoreParams keystoreParams, String keystoreType, PolicyNegoziazioneToken policy) throws TokenException {
+		if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
+			String keystorePublicKeyFile = policy.getJwtSignKeystoreFilePublicKey();
+			if(keystorePublicKeyFile==null) {
+				throw new TokenException("JWT Signature public key file undefined");
+			}
+			keystoreParams.setKeyPairPublicKeyPath(keystorePublicKeyFile);
+		}
+		
+		if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)
+				||
+			SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
+			String keyPairAlgorithm = policy.getJwtSignKeyPairAlgorithm();
+			if(keyPairAlgorithm==null) {
+				throw new TokenException("JWT Signature key pair algorithm undefined");
+			}
+			keystoreParams.setKeyPairAlgorithm(keyPairAlgorithm);
+		}
 	}
 	
 	public static PolicyNegoziazioneToken convertTo(GenericProperties gp) throws Exception { 

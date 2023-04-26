@@ -327,29 +327,245 @@ public class Condition extends org.openspcoop2.utils.beans.BaseBean implements S
   @XmlElement(name="defined",required=true,nillable=false)
   private List<Defined> defined = new ArrayList<>();
 
+  /**
+   * Use method getDefinedList
+   * @return List&lt;Defined&gt;
+  */
+  public List<Defined> getDefined() {
+  	return this.getDefinedList();
+  }
+
+  /**
+   * Use method setDefinedList
+   * @param defined List&lt;Defined&gt;
+  */
+  public void setDefined(List<Defined> defined) {
+  	this.setDefinedList(defined);
+  }
+
+  /**
+   * Use method sizeDefinedList
+   * @return lunghezza della lista
+  */
+  public int sizeDefined() {
+  	return this.sizeDefinedList();
+  }
+
   @XmlElement(name="selected",required=true,nillable=false)
   private List<Selected> selected = new ArrayList<>();
+
+  /**
+   * Use method getSelectedList
+   * @return List&lt;Selected&gt;
+  */
+  public List<Selected> getSelected() {
+  	return this.getSelectedList();
+  }
+
+  /**
+   * Use method setSelectedList
+   * @param selected List&lt;Selected&gt;
+  */
+  public void setSelected(List<Selected> selected) {
+  	this.setSelectedList(selected);
+  }
+
+  /**
+   * Use method sizeSelectedList
+   * @return lunghezza della lista
+  */
+  public int sizeSelected() {
+  	return this.sizeSelectedList();
+  }
 
   @XmlElement(name="equals",required=true,nillable=false)
   private List<Equals> equals = new ArrayList<>();
 
+  /**
+   * Use method getEqualsList
+   * @return List&lt;Equals&gt;
+  */
+  public List<Equals> getEquals() {
+  	return this.getEqualsList();
+  }
+
+  /**
+   * Use method setEqualsList
+   * @param equals List&lt;Equals&gt;
+  */
+  public void setEquals(List<Equals> equals) {
+  	this.setEqualsList(equals);
+  }
+
+  /**
+   * Use method sizeEqualsList
+   * @return lunghezza della lista
+  */
+  public int sizeEquals() {
+  	return this.sizeEqualsList();
+  }
+
   @XmlElement(name="lessThen",required=true,nillable=false)
   private List<Equals> lessThen = new ArrayList<>();
+
+  /**
+   * Use method getLessThenList
+   * @return List&lt;Equals&gt;
+  */
+  public List<Equals> getLessThen() {
+  	return this.getLessThenList();
+  }
+
+  /**
+   * Use method setLessThenList
+   * @param lessThen List&lt;Equals&gt;
+  */
+  public void setLessThen(List<Equals> lessThen) {
+  	this.setLessThenList(lessThen);
+  }
+
+  /**
+   * Use method sizeLessThenList
+   * @return lunghezza della lista
+  */
+  public int sizeLessThen() {
+  	return this.sizeLessThenList();
+  }
 
   @XmlElement(name="lessEquals",required=true,nillable=false)
   private List<Equals> lessEquals = new ArrayList<>();
 
+  /**
+   * Use method getLessEqualsList
+   * @return List&lt;Equals&gt;
+  */
+  public List<Equals> getLessEquals() {
+  	return this.getLessEqualsList();
+  }
+
+  /**
+   * Use method setLessEqualsList
+   * @param lessEquals List&lt;Equals&gt;
+  */
+  public void setLessEquals(List<Equals> lessEquals) {
+  	this.setLessEqualsList(lessEquals);
+  }
+
+  /**
+   * Use method sizeLessEqualsList
+   * @return lunghezza della lista
+  */
+  public int sizeLessEquals() {
+  	return this.sizeLessEqualsList();
+  }
+
   @XmlElement(name="greaterThen",required=true,nillable=false)
   private List<Equals> greaterThen = new ArrayList<>();
+
+  /**
+   * Use method getGreaterThenList
+   * @return List&lt;Equals&gt;
+  */
+  public List<Equals> getGreaterThen() {
+  	return this.getGreaterThenList();
+  }
+
+  /**
+   * Use method setGreaterThenList
+   * @param greaterThen List&lt;Equals&gt;
+  */
+  public void setGreaterThen(List<Equals> greaterThen) {
+  	this.setGreaterThenList(greaterThen);
+  }
+
+  /**
+   * Use method sizeGreaterThenList
+   * @return lunghezza della lista
+  */
+  public int sizeGreaterThen() {
+  	return this.sizeGreaterThenList();
+  }
 
   @XmlElement(name="greaterEquals",required=true,nillable=false)
   private List<Equals> greaterEquals = new ArrayList<>();
 
+  /**
+   * Use method getGreaterEqualsList
+   * @return List&lt;Equals&gt;
+  */
+  public List<Equals> getGreaterEquals() {
+  	return this.getGreaterEqualsList();
+  }
+
+  /**
+   * Use method setGreaterEqualsList
+   * @param greaterEquals List&lt;Equals&gt;
+  */
+  public void setGreaterEquals(List<Equals> greaterEquals) {
+  	this.setGreaterEqualsList(greaterEquals);
+  }
+
+  /**
+   * Use method sizeGreaterEqualsList
+   * @return lunghezza della lista
+  */
+  public int sizeGreaterEquals() {
+  	return this.sizeGreaterEqualsList();
+  }
+
   @XmlElement(name="startsWith",required=true,nillable=false)
   private List<Equals> startsWith = new ArrayList<>();
 
+  /**
+   * Use method getStartsWithList
+   * @return List&lt;Equals&gt;
+  */
+  public List<Equals> getStartsWith() {
+  	return this.getStartsWithList();
+  }
+
+  /**
+   * Use method setStartsWithList
+   * @param startsWith List&lt;Equals&gt;
+  */
+  public void setStartsWith(List<Equals> startsWith) {
+  	this.setStartsWithList(startsWith);
+  }
+
+  /**
+   * Use method sizeStartsWithList
+   * @return lunghezza della lista
+  */
+  public int sizeStartsWith() {
+  	return this.sizeStartsWithList();
+  }
+
   @XmlElement(name="endsWith",required=true,nillable=false)
   private List<Equals> endsWith = new ArrayList<>();
+
+  /**
+   * Use method getEndsWithList
+   * @return List&lt;Equals&gt;
+  */
+  public List<Equals> getEndsWith() {
+  	return this.getEndsWithList();
+  }
+
+  /**
+   * Use method setEndsWithList
+   * @param endsWith List&lt;Equals&gt;
+  */
+  public void setEndsWith(List<Equals> endsWith) {
+  	this.setEndsWithList(endsWith);
+  }
+
+  /**
+   * Use method sizeEndsWithList
+   * @return lunghezza della lista
+  */
+  public int sizeEndsWith() {
+  	return this.sizeEndsWithList();
+  }
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="and",required=false)

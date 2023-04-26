@@ -281,23 +281,191 @@ public class DatiGeneraliType extends org.openspcoop2.utils.beans.BaseBean imple
   @XmlElement(name="DatiOrdineAcquisto",required=true,nillable=false)
   private List<DatiDocumentiCorrelatiType> datiOrdineAcquisto = new ArrayList<>();
 
+  /**
+   * Use method getDatiOrdineAcquistoList
+   * @return List&lt;DatiDocumentiCorrelatiType&gt;
+  */
+  public List<DatiDocumentiCorrelatiType> getDatiOrdineAcquisto() {
+  	return this.getDatiOrdineAcquistoList();
+  }
+
+  /**
+   * Use method setDatiOrdineAcquistoList
+   * @param datiOrdineAcquisto List&lt;DatiDocumentiCorrelatiType&gt;
+  */
+  public void setDatiOrdineAcquisto(List<DatiDocumentiCorrelatiType> datiOrdineAcquisto) {
+  	this.setDatiOrdineAcquistoList(datiOrdineAcquisto);
+  }
+
+  /**
+   * Use method sizeDatiOrdineAcquistoList
+   * @return lunghezza della lista
+  */
+  public int sizeDatiOrdineAcquisto() {
+  	return this.sizeDatiOrdineAcquistoList();
+  }
+
   @XmlElement(name="DatiContratto",required=true,nillable=false)
   private List<DatiDocumentiCorrelatiType> datiContratto = new ArrayList<>();
+
+  /**
+   * Use method getDatiContrattoList
+   * @return List&lt;DatiDocumentiCorrelatiType&gt;
+  */
+  public List<DatiDocumentiCorrelatiType> getDatiContratto() {
+  	return this.getDatiContrattoList();
+  }
+
+  /**
+   * Use method setDatiContrattoList
+   * @param datiContratto List&lt;DatiDocumentiCorrelatiType&gt;
+  */
+  public void setDatiContratto(List<DatiDocumentiCorrelatiType> datiContratto) {
+  	this.setDatiContrattoList(datiContratto);
+  }
+
+  /**
+   * Use method sizeDatiContrattoList
+   * @return lunghezza della lista
+  */
+  public int sizeDatiContratto() {
+  	return this.sizeDatiContrattoList();
+  }
 
   @XmlElement(name="DatiConvenzione",required=true,nillable=false)
   private List<DatiDocumentiCorrelatiType> datiConvenzione = new ArrayList<>();
 
+  /**
+   * Use method getDatiConvenzioneList
+   * @return List&lt;DatiDocumentiCorrelatiType&gt;
+  */
+  public List<DatiDocumentiCorrelatiType> getDatiConvenzione() {
+  	return this.getDatiConvenzioneList();
+  }
+
+  /**
+   * Use method setDatiConvenzioneList
+   * @param datiConvenzione List&lt;DatiDocumentiCorrelatiType&gt;
+  */
+  public void setDatiConvenzione(List<DatiDocumentiCorrelatiType> datiConvenzione) {
+  	this.setDatiConvenzioneList(datiConvenzione);
+  }
+
+  /**
+   * Use method sizeDatiConvenzioneList
+   * @return lunghezza della lista
+  */
+  public int sizeDatiConvenzione() {
+  	return this.sizeDatiConvenzioneList();
+  }
+
   @XmlElement(name="DatiRicezione",required=true,nillable=false)
   private List<DatiDocumentiCorrelatiType> datiRicezione = new ArrayList<>();
+
+  /**
+   * Use method getDatiRicezioneList
+   * @return List&lt;DatiDocumentiCorrelatiType&gt;
+  */
+  public List<DatiDocumentiCorrelatiType> getDatiRicezione() {
+  	return this.getDatiRicezioneList();
+  }
+
+  /**
+   * Use method setDatiRicezioneList
+   * @param datiRicezione List&lt;DatiDocumentiCorrelatiType&gt;
+  */
+  public void setDatiRicezione(List<DatiDocumentiCorrelatiType> datiRicezione) {
+  	this.setDatiRicezioneList(datiRicezione);
+  }
+
+  /**
+   * Use method sizeDatiRicezioneList
+   * @return lunghezza della lista
+  */
+  public int sizeDatiRicezione() {
+  	return this.sizeDatiRicezioneList();
+  }
 
   @XmlElement(name="DatiFattureCollegate",required=true,nillable=false)
   private List<DatiDocumentiCorrelatiType> datiFattureCollegate = new ArrayList<>();
 
+  /**
+   * Use method getDatiFattureCollegateList
+   * @return List&lt;DatiDocumentiCorrelatiType&gt;
+  */
+  public List<DatiDocumentiCorrelatiType> getDatiFattureCollegate() {
+  	return this.getDatiFattureCollegateList();
+  }
+
+  /**
+   * Use method setDatiFattureCollegateList
+   * @param datiFattureCollegate List&lt;DatiDocumentiCorrelatiType&gt;
+  */
+  public void setDatiFattureCollegate(List<DatiDocumentiCorrelatiType> datiFattureCollegate) {
+  	this.setDatiFattureCollegateList(datiFattureCollegate);
+  }
+
+  /**
+   * Use method sizeDatiFattureCollegateList
+   * @return lunghezza della lista
+  */
+  public int sizeDatiFattureCollegate() {
+  	return this.sizeDatiFattureCollegateList();
+  }
+
   @XmlElement(name="DatiSAL",required=true,nillable=false)
   private List<DatiSALType> datiSAL = new ArrayList<>();
 
+  /**
+   * Use method getDatiSALList
+   * @return List&lt;DatiSALType&gt;
+  */
+  public List<DatiSALType> getDatiSAL() {
+  	return this.getDatiSALList();
+  }
+
+  /**
+   * Use method setDatiSALList
+   * @param datiSAL List&lt;DatiSALType&gt;
+  */
+  public void setDatiSAL(List<DatiSALType> datiSAL) {
+  	this.setDatiSALList(datiSAL);
+  }
+
+  /**
+   * Use method sizeDatiSALList
+   * @return lunghezza della lista
+  */
+  public int sizeDatiSAL() {
+  	return this.sizeDatiSALList();
+  }
+
   @XmlElement(name="DatiDDT",required=true,nillable=false)
   private List<DatiDDTType> datiDDT = new ArrayList<>();
+
+  /**
+   * Use method getDatiDDTList
+   * @return List&lt;DatiDDTType&gt;
+  */
+  public List<DatiDDTType> getDatiDDT() {
+  	return this.getDatiDDTList();
+  }
+
+  /**
+   * Use method setDatiDDTList
+   * @param datiDDT List&lt;DatiDDTType&gt;
+  */
+  public void setDatiDDT(List<DatiDDTType> datiDDT) {
+  	this.setDatiDDTList(datiDDT);
+  }
+
+  /**
+   * Use method sizeDatiDDTList
+   * @return lunghezza della lista
+  */
+  public int sizeDatiDDT() {
+  	return this.sizeDatiDDTList();
+  }
 
   @XmlElement(name="DatiTrasporto",required=false,nillable=false)
   protected DatiTrasportoType datiTrasporto;

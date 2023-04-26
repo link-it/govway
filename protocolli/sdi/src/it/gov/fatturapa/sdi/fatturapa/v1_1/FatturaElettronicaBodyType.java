@@ -157,7 +157,55 @@ public class FatturaElettronicaBodyType extends org.openspcoop2.utils.beans.Base
   @XmlElement(name="DatiPagamento",required=true,nillable=false)
   private List<DatiPagamentoType> datiPagamento = new ArrayList<>();
 
+  /**
+   * Use method getDatiPagamentoList
+   * @return List&lt;DatiPagamentoType&gt;
+  */
+  public List<DatiPagamentoType> getDatiPagamento() {
+  	return this.getDatiPagamentoList();
+  }
+
+  /**
+   * Use method setDatiPagamentoList
+   * @param datiPagamento List&lt;DatiPagamentoType&gt;
+  */
+  public void setDatiPagamento(List<DatiPagamentoType> datiPagamento) {
+  	this.setDatiPagamentoList(datiPagamento);
+  }
+
+  /**
+   * Use method sizeDatiPagamentoList
+   * @return lunghezza della lista
+  */
+  public int sizeDatiPagamento() {
+  	return this.sizeDatiPagamentoList();
+  }
+
   @XmlElement(name="Allegati",required=true,nillable=false)
   private List<AllegatiType> allegati = new ArrayList<>();
+
+  /**
+   * Use method getAllegatiList
+   * @return List&lt;AllegatiType&gt;
+  */
+  public List<AllegatiType> getAllegati() {
+  	return this.getAllegatiList();
+  }
+
+  /**
+   * Use method setAllegatiList
+   * @param allegati List&lt;AllegatiType&gt;
+  */
+  public void setAllegati(List<AllegatiType> allegati) {
+  	this.setAllegatiList(allegati);
+  }
+
+  /**
+   * Use method sizeAllegatiList
+   * @return lunghezza della lista
+  */
+  public int sizeAllegati() {
+  	return this.sizeAllegatiList();
+  }
 
 }

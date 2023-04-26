@@ -137,8 +137,56 @@ public class AccordoServizioParteComuneServizioComposto extends org.openspcoop2.
   @XmlElement(name="servizio-componente",required=true,nillable=false)
   private List<AccordoServizioParteComuneServizioCompostoServizioComponente> servizioComponente = new ArrayList<>();
 
+  /**
+   * Use method getServizioComponenteList
+   * @return List&lt;AccordoServizioParteComuneServizioCompostoServizioComponente&gt;
+  */
+  public List<AccordoServizioParteComuneServizioCompostoServizioComponente> getServizioComponente() {
+  	return this.getServizioComponenteList();
+  }
+
+  /**
+   * Use method setServizioComponenteList
+   * @param servizioComponente List&lt;AccordoServizioParteComuneServizioCompostoServizioComponente&gt;
+  */
+  public void setServizioComponente(List<AccordoServizioParteComuneServizioCompostoServizioComponente> servizioComponente) {
+  	this.setServizioComponenteList(servizioComponente);
+  }
+
+  /**
+   * Use method sizeServizioComponenteList
+   * @return lunghezza della lista
+  */
+  public int sizeServizioComponente() {
+  	return this.sizeServizioComponenteList();
+  }
+
   @XmlElement(name="specifica-coordinamento",required=true,nillable=false)
   private List<Documento> specificaCoordinamento = new ArrayList<>();
+
+  /**
+   * Use method getSpecificaCoordinamentoList
+   * @return List&lt;Documento&gt;
+  */
+  public List<Documento> getSpecificaCoordinamento() {
+  	return this.getSpecificaCoordinamentoList();
+  }
+
+  /**
+   * Use method setSpecificaCoordinamentoList
+   * @param specificaCoordinamento List&lt;Documento&gt;
+  */
+  public void setSpecificaCoordinamento(List<Documento> specificaCoordinamento) {
+  	this.setSpecificaCoordinamentoList(specificaCoordinamento);
+  }
+
+  /**
+   * Use method sizeSpecificaCoordinamentoList
+   * @return lunghezza della lista
+  */
+  public int sizeSpecificaCoordinamento() {
+  	return this.sizeSpecificaCoordinamentoList();
+  }
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Long idAccordoCooperazione;

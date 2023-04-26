@@ -187,10 +187,82 @@ public class ConfigurazioneTransazione extends org.openspcoop2.utils.beans.BaseB
   @XmlElement(name="configurazione-transazione-plugin",required=true,nillable=false)
   private List<ConfigurazioneTransazionePlugin> configurazioneTransazionePlugin = new ArrayList<>();
 
+  /**
+   * Use method getConfigurazioneTransazionePluginList
+   * @return List&lt;ConfigurazioneTransazionePlugin&gt;
+  */
+  public List<ConfigurazioneTransazionePlugin> getConfigurazioneTransazionePlugin() {
+  	return this.getConfigurazioneTransazionePluginList();
+  }
+
+  /**
+   * Use method setConfigurazioneTransazionePluginList
+   * @param configurazioneTransazionePlugin List&lt;ConfigurazioneTransazionePlugin&gt;
+  */
+  public void setConfigurazioneTransazionePlugin(List<ConfigurazioneTransazionePlugin> configurazioneTransazionePlugin) {
+  	this.setConfigurazioneTransazionePluginList(configurazioneTransazionePlugin);
+  }
+
+  /**
+   * Use method sizeConfigurazioneTransazionePluginList
+   * @return lunghezza della lista
+  */
+  public int sizeConfigurazioneTransazionePlugin() {
+  	return this.sizeConfigurazioneTransazionePluginList();
+  }
+
   @XmlElement(name="configurazione-transazione-stato",required=true,nillable=false)
   private List<ConfigurazioneTransazioneStato> configurazioneTransazioneStato = new ArrayList<>();
 
+  /**
+   * Use method getConfigurazioneTransazioneStatoList
+   * @return List&lt;ConfigurazioneTransazioneStato&gt;
+  */
+  public List<ConfigurazioneTransazioneStato> getConfigurazioneTransazioneStato() {
+  	return this.getConfigurazioneTransazioneStatoList();
+  }
+
+  /**
+   * Use method setConfigurazioneTransazioneStatoList
+   * @param configurazioneTransazioneStato List&lt;ConfigurazioneTransazioneStato&gt;
+  */
+  public void setConfigurazioneTransazioneStato(List<ConfigurazioneTransazioneStato> configurazioneTransazioneStato) {
+  	this.setConfigurazioneTransazioneStatoList(configurazioneTransazioneStato);
+  }
+
+  /**
+   * Use method sizeConfigurazioneTransazioneStatoList
+   * @return lunghezza della lista
+  */
+  public int sizeConfigurazioneTransazioneStato() {
+  	return this.sizeConfigurazioneTransazioneStatoList();
+  }
+
   @XmlElement(name="configurazione-transazione-risorsa-contenuto",required=true,nillable=false)
   private List<ConfigurazioneTransazioneRisorsaContenuto> configurazioneTransazioneRisorsaContenuto = new ArrayList<>();
+
+  /**
+   * Use method getConfigurazioneTransazioneRisorsaContenutoList
+   * @return List&lt;ConfigurazioneTransazioneRisorsaContenuto&gt;
+  */
+  public List<ConfigurazioneTransazioneRisorsaContenuto> getConfigurazioneTransazioneRisorsaContenuto() {
+  	return this.getConfigurazioneTransazioneRisorsaContenutoList();
+  }
+
+  /**
+   * Use method setConfigurazioneTransazioneRisorsaContenutoList
+   * @param configurazioneTransazioneRisorsaContenuto List&lt;ConfigurazioneTransazioneRisorsaContenuto&gt;
+  */
+  public void setConfigurazioneTransazioneRisorsaContenuto(List<ConfigurazioneTransazioneRisorsaContenuto> configurazioneTransazioneRisorsaContenuto) {
+  	this.setConfigurazioneTransazioneRisorsaContenutoList(configurazioneTransazioneRisorsaContenuto);
+  }
+
+  /**
+   * Use method sizeConfigurazioneTransazioneRisorsaContenutoList
+   * @return lunghezza della lista
+  */
+  public int sizeConfigurazioneTransazioneRisorsaContenuto() {
+  	return this.sizeConfigurazioneTransazioneRisorsaContenutoList();
+  }
 
 }

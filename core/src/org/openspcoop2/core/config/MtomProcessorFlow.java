@@ -115,6 +115,30 @@ public class MtomProcessorFlow extends org.openspcoop2.utils.beans.BaseBeanWithI
   @XmlElement(name="parameter",required=true,nillable=false)
   private List<MtomProcessorFlowParameter> parameter = new ArrayList<>();
 
+  /**
+   * Use method getParameterList
+   * @return List&lt;MtomProcessorFlowParameter&gt;
+  */
+  public List<MtomProcessorFlowParameter> getParameter() {
+  	return this.getParameterList();
+  }
+
+  /**
+   * Use method setParameterList
+   * @param parameter List&lt;MtomProcessorFlowParameter&gt;
+  */
+  public void setParameter(List<MtomProcessorFlowParameter> parameter) {
+  	this.setParameterList(parameter);
+  }
+
+  /**
+   * Use method sizeParameterList
+   * @return lunghezza della lista
+  */
+  public int sizeParameter() {
+  	return this.sizeParameterList();
+  }
+
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String modeRawEnumValue;
 

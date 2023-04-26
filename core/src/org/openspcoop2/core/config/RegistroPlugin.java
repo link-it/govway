@@ -193,9 +193,57 @@ public class RegistroPlugin extends org.openspcoop2.utils.beans.BaseBeanWithId i
   @XmlElement(name="archivio",required=true,nillable=false)
   private List<RegistroPluginArchivio> archivio = new ArrayList<>();
 
+  /**
+   * Use method getArchivioList
+   * @return List&lt;RegistroPluginArchivio&gt;
+  */
+  public List<RegistroPluginArchivio> getArchivio() {
+  	return this.getArchivioList();
+  }
+
+  /**
+   * Use method setArchivioList
+   * @param archivio List&lt;RegistroPluginArchivio&gt;
+  */
+  public void setArchivio(List<RegistroPluginArchivio> archivio) {
+  	this.setArchivioList(archivio);
+  }
+
+  /**
+   * Use method sizeArchivioList
+   * @return lunghezza della lista
+  */
+  public int sizeArchivio() {
+  	return this.sizeArchivioList();
+  }
+
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="compatibilita",required=true,nillable=false)
   private List<java.lang.String> compatibilita = new ArrayList<>();
+
+  /**
+   * Use method getCompatibilitaList
+   * @return List&lt;java.lang.String&gt;
+  */
+  public List<java.lang.String> getCompatibilita() {
+  	return this.getCompatibilitaList();
+  }
+
+  /**
+   * Use method setCompatibilitaList
+   * @param compatibilita List&lt;java.lang.String&gt;
+  */
+  public void setCompatibilita(List<java.lang.String> compatibilita) {
+  	this.setCompatibilitaList(compatibilita);
+  }
+
+  /**
+   * Use method sizeCompatibilitaList
+   * @return lunghezza della lista
+  */
+  public int sizeCompatibilita() {
+  	return this.sizeCompatibilitaList();
+  }
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String statoRawEnumValue;

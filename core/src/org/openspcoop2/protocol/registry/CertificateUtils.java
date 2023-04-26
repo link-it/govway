@@ -21,6 +21,7 @@ package org.openspcoop2.protocol.registry;
 
 import java.io.File;
 import java.io.InputStream;
+import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,10 +33,13 @@ import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.StatoCheck;
 import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.CRLCertstore;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.certificate.JWKSet;
+import org.openspcoop2.utils.certificate.KeyUtils;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
@@ -43,6 +47,7 @@ import org.openspcoop2.utils.certificate.ocsp.IOCSPResourceReader;
 import org.openspcoop2.utils.certificate.ocsp.OCSPResourceReader;
 import org.openspcoop2.utils.certificate.ocsp.OCSPValidatorImpl;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.http.IOCSPValidator;
 import org.slf4j.Logger;
@@ -55,10 +60,12 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class CertificateUtils {
-
-	private static String FORMAT_DATE_CERTIFICATE = "dd/MM/yyyy HH:mm";
 	
-	public static String toString(Certificate certificate, String separator, String newLine) throws Exception {
+	private CertificateUtils() {}
+
+	private static final String FORMAT_DATE_CERTIFICATE = "dd/MM/yyyy HH:mm";
+	
+	public static String toString(Certificate certificate, String separator, String newLine) throws UtilsException {
 		StringBuilder sb = new StringBuilder();
 		
 		SimpleDateFormat sdf = new SimpleDateFormat(FORMAT_DATE_CERTIFICATE);
@@ -92,34 +99,34 @@ public class CertificateUtils {
 			sb.append(newLine).append(CostantiLabel.CERTIFICATE_NOT_AFTER).append(separator).append(notAfter);
 		}
 		
-		//String serialNumber = certificate.getCertificate().getSerialNumber() + "";
+		/** String serialNumber = certificate.getCertificate().getSerialNumber() + ""; */
 		String serialNumberHex = certificate.getCertificate().getSerialNumberHex() + "";
-		//sb.append(newLine).append(CostantiLabel.CERTIFICATE_SERIAL_NUMBER).append(separator).append(serialNumber);
-		//sb.append(newLine).append(CostantiLabel.CERTIFICATE_SERIAL_NUMBER_HEX).append(separator).append(serialNumberHex);
+		/** sb.append(newLine).append(CostantiLabel.CERTIFICATE_SERIAL_NUMBER).append(separator).append(serialNumber);
+		//sb.append(newLine).append(CostantiLabel.CERTIFICATE_SERIAL_NUMBER_HEX).append(separator).append(serialNumberHex); */
 		sb.append(newLine).append(CostantiLabel.CERTIFICATE_SERIAL_NUMBER).append(separator).append(serialNumberHex);
 		
-		//String certificatoType = certificate.getCertificate().getType();
-		//String certificatoVersion = certificate.getCertificate().getVersion() + "";
+		/** String certificatoType = certificate.getCertificate().getType();
+		//String certificatoVersion = certificate.getCertificate().getVersion() + ""; */
 		
 		return sb.toString();
 	}
 	
 	public static String toStringKeyStore(KeystoreParams params,
 			String separator, String newLine) {
-		return _toString(true, params.getKeyAlias(), null, null,
+		return toStringEngine(true, params.getKeyAlias(), null, null,
 				params.getPath(), params.getType(), 
 				separator, newLine);
 	}
 	public static String toStringKeyStore(String storePath, String storeType,
 			String keyAlias,
 			String separator, String newLine) {
-		return _toString(true, keyAlias, null, null,
+		return toStringEngine(true, keyAlias, null, null,
 				storePath, storeType, 
 				separator, newLine);
 	}
 	public static String toStringTrustStore(KeystoreParams params,
 			String separator, String newLine) {
-		return _toString(false, params.getKeyAlias(), params.getCrls(), params.getOcspPolicy(),
+		return toStringEngine(false, params.getKeyAlias(), params.getCrls(), params.getOcspPolicy(),
 				params.getPath(), params.getType(), 
 				separator, newLine);
 	}
@@ -135,11 +142,11 @@ public class CertificateUtils {
 			String trustCRL, String ocspPolicy,
 			String certAlias,
 			String separator, String newLine) {
-		return _toString(false, certAlias, trustCRL, ocspPolicy,
+		return toStringEngine(false, certAlias, trustCRL, ocspPolicy,
 				storePath, storeType, 
 				separator, newLine);
 	}
-	public static String _toString(boolean keystore, String keyAlias, String trustCRL, String ocspPolicy,
+	private static String toStringEngine(boolean keystore, String keyAlias, String trustCRL, String ocspPolicy,
 			String storePath, String storeType, 
 			String separator, String newLine) {
 		
@@ -156,7 +163,7 @@ public class CertificateUtils {
 		
 		if(!keystore && trustCRL!=null) {
 			sb.append(newLine);
-			sb.append(CostantiLabel.CRLs);
+			sb.append(CostantiLabel.CRLS);
 			sb.append(separator);
 			sb.append(trustCRL);
 		}
@@ -229,25 +236,35 @@ public class CertificateUtils {
 		return params;
 	}
 	
+	private static final String NOT_EXISTS_STRING = " not exists";
+	private static final String CANNOT_READ_STRING = " cannot read";
+	private static final String READING_PREFIX_STRING = "Reading ";
+	private static final String SERIAL_NUMBER_STRING = " serialNumber:";
+	private static String getSuffixCertificateNotValid(Exception t) {
+		return " non risulta valido: "+t.getMessage();
+	}
+	private static String getSuffixFailed(Exception t) {
+		return " failed: "+t.getMessage();
+	}
 	
 	public static CertificateCheck checkCertificateClient(List<byte[]>certs, List<Boolean> strictValidation, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
-			Logger log) throws Exception{
+			Logger log) throws UtilsException{
 		
 		SimpleDateFormat sdf = new SimpleDateFormat(FORMAT_DATE_CERTIFICATE);
 		
-		if(certs==null || certs.size()<=0) {
-			throw new Exception("Nessun certificato individuato");
+		if(certs==null || certs.isEmpty()) {
+			throw new UtilsException("Nessun certificato individuato");
 		}
-		if(strictValidation==null || strictValidation.size()<=0) {
-			throw new Exception("Nessuna informazione sul tipo di validazione fornita");
+		if(strictValidation==null || strictValidation.isEmpty()) {
+			throw new UtilsException("Nessuna informazione sul tipo di validazione fornita");
 		}
 		if(strictValidation.size()!=certs.size()) {
-			throw new Exception("Rilevata inconsistenza tra le informazioni fornite sul tipo di validazione e i certificati");
+			throw new UtilsException("Rilevata inconsistenza tra le informazioni fornite sul tipo di validazione e i certificati");
 		}
 		
 		CertificateCheck esito = new CertificateCheck();
-		
+				
 		boolean error = false;
 		boolean warning = false;
 		boolean almostOneValid = false;
@@ -270,12 +287,12 @@ public class CertificateUtils {
 					certificateDetails = CertificateUtils.toString(certificate, separator, newLine);
 				}
 				else {
-					credenziale = credenziale+ " (CN:"+certificate.getCertificate().getSubject().getCN()+" serialNumber:"+hex+")";
+					credenziale = credenziale+ " (CN:"+certificate.getCertificate().getSubject().getCN()+SERIAL_NUMBER_STRING+hex+")";
 				}
 				boolean check = true;
 				try {
 					certificate.getCertificate().checkValid();
-				}catch(Throwable t) {
+				}catch(Exception t) {
 					check = false;
 					if(strictValidationCert) {
 						String msgErrore = credenziale+" non valido: "+t.getMessage();
@@ -292,13 +309,13 @@ public class CertificateUtils {
 									
 				if(check && certificate.getCertificateChain()!=null && !certificate.getCertificateChain().isEmpty()) {
 					for (CertificateInfo caChain : certificate.getCertificateChain()) {
-						String hex_caChain = caChain.getSerialNumberHex();
-						String credenziale_caChain = "(CN:"+caChain.getSubject().getCN()+" serialNumber:"+hex_caChain+")";
+						String hexCaChain = caChain.getSerialNumberHex();
+						String credenzialeCaChain = "(CN:"+caChain.getSubject().getCN()+SERIAL_NUMBER_STRING+hexCaChain+")";
 						try {
 							caChain.checkValid();
-						}catch(Throwable t) {
+						}catch(Exception t) {
 							check = false;
-							String msgErrore = (credenziale+"; un certificato della catena "+credenziale_caChain+" non risulta valido: "+t.getMessage());
+							String msgErrore = (credenziale+"; un certificato della catena "+credenzialeCaChain+getSuffixCertificateNotValid(t));
 							if(strictValidationCert) {
 								error = true;
 								esito.addError(identitaCertificato, msgErrore, certificateDetails);
@@ -312,29 +329,28 @@ public class CertificateUtils {
 					}
 				}
 				
-				if(check && sogliaWarningGiorni>0) {
-					if(certificate.getCertificate().getNotAfter()!=null) {
-						long expire = certificate.getCertificate().getNotAfter().getTime();
-						long now = DateManager.getTimeMillis();
-						long diff = expire - now;
-						long soglia = (1000l*60l*60l*24l) * ((long)sogliaWarningGiorni);
-						//System.out.println("=======================");
-						//System.out.println("SUBJECT ["+certificate.getCertificate().getCertificate().getSubjectDN().getName()+"]");
-						//System.out.println("NOT AFTER ["+certificate.getCertificate().getNotAfter()+"]");
-						//System.out.println("SOGLIA ["+sogliaWarningGiorni+"]");
-						//System.out.println("DEXP ["+expire+"]");
-						//System.out.println("DNOW ["+now+"]");
-						//System.out.println("DIFF ["+diff+"]");
-						//System.out.println("SOGLIATR ["+soglia+"]");
-						if(diff<soglia) {
-							String msgErrore = credenziale+" prossima alla scadenza ("+sogliaWarningGiorni+" giorni): "+sdf.format(certificate.getCertificate().getNotAfter());
-							warning = true;
-							esito.addWarning(identitaCertificato, msgErrore, certificateDetails);
-						}
+				if(check && sogliaWarningGiorni>0 &&
+					certificate.getCertificate().getNotAfter()!=null) {
+					long expire = certificate.getCertificate().getNotAfter().getTime();
+					long now = DateManager.getTimeMillis();
+					long diff = expire - now;
+					long soglia = (1000l*60l*60l*24l) * ((long)sogliaWarningGiorni);
+					/**System.out.println("=======================");
+					//System.out.println("SUBJECT ["+certificate.getCertificate().getCertificate().getSubjectDN().getName()+"]");
+					//System.out.println("NOT AFTER ["+certificate.getCertificate().getNotAfter()+"]");
+					//System.out.println("SOGLIA ["+sogliaWarningGiorni+"]");
+					//System.out.println("DEXP ["+expire+"]");
+					//System.out.println("DNOW ["+now+"]");
+					//System.out.println("DIFF ["+diff+"]");
+					//System.out.println("SOGLIATR ["+soglia+"]");*/
+					if(diff<soglia) {
+						String msgErrore = credenziale+" prossima alla scadenza ("+sogliaWarningGiorni+" giorni): "+sdf.format(certificate.getCertificate().getNotAfter());
+						warning = true;
+						esito.addWarning(identitaCertificato, msgErrore, certificateDetails);
 					}
 				}
 				
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				// non dovrebbe succedere
 				String msgError = "L'analisi del certificato ha prodotto un errore non atteso: "+t.getMessage();
 				esito.addError(identitaCertificato, msgError, null);
@@ -365,7 +381,7 @@ public class CertificateUtils {
 	public static CertificateCheck checkTrustStore(String trustStore, boolean classpathSupported, String type, String password, String trustStoreCrls, String ocspPolicy,
 			int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
-			Logger log) throws Exception{
+			Logger log) throws UtilsException{
 		return checkTrustStore(trustStore, classpathSupported, type, password, trustStoreCrls, ocspPolicy, null,
 				sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
@@ -374,27 +390,31 @@ public class CertificateUtils {
 	public static CertificateCheck checkTrustStore(String trustStore, boolean classpathSupported, String type, String password, String trustStoreCrls,String ocspPolicy,String certAlias,
 			int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
-			Logger log) throws Exception{
+			Logger log) throws UtilsException{
 		boolean hsm = HSMUtils.isKeystoreHSM(type);
 		byte [] keystoreBytes = null;
 		if(!hsm) {
 			File f = new File(trustStore);
 			boolean exists = f.exists();
 			boolean inClasspath = false;
-			if(exists==false && classpathSupported) {
+			if(!exists && classpathSupported) {
 				String uri = trustStore;
 				if(!trustStore.startsWith("/")) {
 					uri = "/" + uri;	
 				}
-				try( InputStream is = CertificateUtils.class.getResourceAsStream(uri); ){
-					exists = (is!=null);
-					if(exists) {
-						inClasspath = true;
-						keystoreBytes = Utilities.getAsByteArray(is);
+				try {
+					try( InputStream is = CertificateUtils.class.getResourceAsStream(uri); ){
+						exists = (is!=null);
+						if(exists) {
+							inClasspath = true;
+							keystoreBytes = Utilities.getAsByteArray(is);
+						}
 					}
+				}catch(Exception e) {
+					throw new UtilsException(e.getMessage(),e);
 				}
 			}
-			if(exists==false || (!inClasspath && f.canRead()==false)) {
+			if(!exists || (!inClasspath && !f.canRead())) {
 				
 				String storeDetails = null;
 				if(addCertificateDetails) {
@@ -407,7 +427,7 @@ public class CertificateUtils {
 							trustStore+
 							"'";
 				}
-				errorDetails = errorDetails + (!exists ? " not exists" : " cannot read"); 
+				errorDetails = errorDetails + (!exists ? NOT_EXISTS_STRING : CANNOT_READ_STRING); 
 				
 				CertificateCheck esito = new CertificateCheck();
 				esito.setStatoCheck(StatoCheck.ERROR);
@@ -415,10 +435,14 @@ public class CertificateUtils {
 				return esito;
 			}
 			if(!inClasspath) {
-				keystoreBytes = FileSystemUtilities.readBytesFromFile(f);
+				try {
+					keystoreBytes = FileSystemUtilities.readBytesFromFile(f);
+				}catch(Exception e) {
+					throw new UtilsException(e.getMessage(),e);
+				}
 			}
 		}
-		return checkStore(false, certAlias, trustStoreCrls, ocspPolicy,
+		return checkStore(false, certAlias, null, trustStoreCrls, ocspPolicy,
 				trustStore, keystoreBytes, type, password, 
 				sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
@@ -427,37 +451,41 @@ public class CertificateUtils {
 	public static CertificateCheck checkTrustStore(byte[] trustStore, String type, String password, String trustStoreCrls, String ocspPolicy,
 			int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
-			Logger log) throws Exception{
-		return checkStore(false, null, trustStoreCrls, ocspPolicy,
+			Logger log) throws UtilsException{
+		return checkStore(false, null, null, trustStoreCrls, ocspPolicy,
 				CostantiLabel.STORE_CARICATO_BASEDATI, trustStore, type, password, 
 				sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
 				log);
 	}
-	public static CertificateCheck checkKeyStore(String keyStore, boolean classpathSupported, String type, String password, String aliasKey,
+	public static CertificateCheck checkKeyStore(String keyStore, boolean classpathSupported, String type, String password, String aliasKey, String passwordKey,
 			int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
-			Logger log) throws Exception{
+			Logger log) throws UtilsException{
 		boolean hsm = HSMUtils.isKeystoreHSM(type);
 		byte [] keystoreBytes = null;
 		if(!hsm) {
 			File f = new File(keyStore);
 			boolean exists = f.exists();
 			boolean inClasspath = false;
-			if(exists==false && classpathSupported) {
+			if(!exists && classpathSupported) {
 				String uri = keyStore;
 				if(!keyStore.startsWith("/")) {
 					uri = "/" + uri;	
 				}
-				try( InputStream is = CertificateUtils.class.getResourceAsStream(uri); ){
-					exists = (is!=null);
-					if(exists) {
-						inClasspath = true;
-						keystoreBytes = Utilities.getAsByteArray(is);
+				try {
+					try( InputStream is = CertificateUtils.class.getResourceAsStream(uri); ){
+						exists = (is!=null);
+						if(exists) {
+							inClasspath = true;
+							keystoreBytes = Utilities.getAsByteArray(is);
+						}
 					}
+				}catch(Exception e) {
+					throw new UtilsException(e.getMessage(),e);
 				}
 			}
-			if(exists==false || (!inClasspath && f.canRead()==false)) {
+			if(!exists || (!inClasspath && !f.canRead())) {
 				
 				String storeDetails = null;
 				if(addCertificateDetails) {
@@ -470,7 +498,7 @@ public class CertificateUtils {
 							keyStore+
 							"'";
 				}
-				errorDetails = errorDetails + (!exists ? " not exists" : " cannot read"); 
+				errorDetails = errorDetails + (!exists ? NOT_EXISTS_STRING : CANNOT_READ_STRING); 
 				
 				CertificateCheck esito = new CertificateCheck();
 				esito.setStatoCheck(StatoCheck.ERROR);
@@ -478,30 +506,34 @@ public class CertificateUtils {
 				return esito;
 			}
 			if(!inClasspath) {
-				keystoreBytes = FileSystemUtilities.readBytesFromFile(f);
+				try {
+					keystoreBytes = FileSystemUtilities.readBytesFromFile(f);
+				}catch(Exception e) {
+					throw new UtilsException(e.getMessage(),e);
+				}
 			}
 		}
-		return checkStore(true, aliasKey, null, null,
+		return checkStore(true, aliasKey, passwordKey, null, null,
 				keyStore, keystoreBytes, type, password, 
 				sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
 				log);
 	}
-	public static CertificateCheck checkKeyStore(byte[] keyStore, String type, String password, String aliasKey,
+	public static CertificateCheck checkKeyStore(byte[] keyStore, String type, String password, String aliasKey, String passwordKey,
 			int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
-			Logger log) throws Exception{
-		return checkStore(true, aliasKey, null, null,
+			Logger log) throws UtilsException{
+		return checkStore(true, aliasKey, passwordKey, null, null,
 				CostantiLabel.STORE_CARICATO_BASEDATI, keyStore, type, password, 
 				sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
 				log);
 	}
-	private static CertificateCheck checkStore(boolean keystore, String aliasKey, String trustStoreCrls, String ocspPolicy,
+	private static CertificateCheck checkStore(boolean keystore, String aliasKey, String passwordKey, String trustStoreCrls, String ocspPolicy,
 			String storePath, byte[] storeBytes, String type, String password,
 			int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
-			Logger log) throws Exception{
+			Logger log) throws UtilsException{
 		
 		SimpleDateFormat sdf = new SimpleDateFormat(FORMAT_DATE_CERTIFICATE);
 		
@@ -523,7 +555,7 @@ public class CertificateUtils {
 			else {
 				store = new org.openspcoop2.utils.certificate.KeyStore(storeBytes, type, password);
 			}
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			CertificateCheck esito = new CertificateCheck();
 			esito.setStatoCheck(StatoCheck.ERROR);
 			esito.addError(storePath, "Non è possibile accedere al "+(keystore ? CostantiLabel.KEYSTORE : CostantiLabel.TRUSTSTORE)+": "+t.getMessage(), storeDetails);
@@ -561,9 +593,9 @@ public class CertificateUtils {
 			if(crlList!=null && !crlList.isEmpty()) {
 				for (String path : crlList) {
 					File f = new File(path);
-					if(f.exists()==false || f.canRead()==false) {
+					if(!f.exists() || !f.canRead()) {
 						
-						//String identita = CostantiLabel.CRL+" '"+path+"'";
+						/** String identita = CostantiLabel.CRL+" '"+path+"'"; */
 						String identita = CostantiLabel.CRL;
 						if(addCertificateDetails) {
 							identita = CostantiLabel.CRL+" '"+path+"'";
@@ -575,7 +607,7 @@ public class CertificateUtils {
 									path+
 									"'";
 						}
-						errorDetails = errorDetails + (!f.exists() ? " not exists" : " cannot read"); 
+						errorDetails = errorDetails + (!f.exists() ? NOT_EXISTS_STRING : CANNOT_READ_STRING); 
 						
 						CertificateCheck esito = new CertificateCheck();
 						esito.setStatoCheck(StatoCheck.ERROR);
@@ -603,12 +635,16 @@ public class CertificateUtils {
 				alias.add(aliasKey);
 			}
 			else {
-				Enumeration<String> aliases = store.aliases();
-				while (aliases.hasMoreElements()) {
-					String aliasCheck = (String) aliases.nextElement();
-					if(store.getKeystore().isKeyEntry(aliasCheck)) {
-						alias.add(aliasCheck);
+				try {
+					Enumeration<String> aliases = store.aliases();
+					while (aliases.hasMoreElements()) {
+						String aliasCheck = aliases.nextElement();
+						if(store.getKeystore().isKeyEntry(aliasCheck)) {
+							alias.add(aliasCheck);
+						}
 					}
+				}catch(Exception e) {
+					throw new UtilsException(e.getMessage(),e);
 				}
 			}
 			if(alias.isEmpty()) {
@@ -630,7 +666,7 @@ public class CertificateUtils {
 			else {
 				Enumeration<String> aliases = store.aliases();
 				while (aliases.hasMoreElements()) {
-					String aliasCheck = (String) aliases.nextElement();
+					String aliasCheck = aliases.nextElement();
 					alias.add(aliasCheck);
 				}
 			}
@@ -645,7 +681,7 @@ public class CertificateUtils {
 			aliasesForCheck = alias;
 		}
 		
-		List<Certificate> listCertificate = new ArrayList<Certificate>();
+		List<Certificate> listCertificate = new ArrayList<>();
 		if(aliasesForCheck!=null && !aliasesForCheck.isEmpty()) {
 			for (String aliasVerify : aliasesForCheck) {
 				
@@ -659,6 +695,26 @@ public class CertificateUtils {
 							(keystore ? "una coppia di chiavi" : "un certificato")+
 							" con alias '"+aliasVerify+"'", storeDetails);
 					return esito;
+				}
+				
+				if(keystore) {
+					PrivateKey privateKey = null;
+					String errorKey = null;
+					try {
+						privateKey = store.getPrivateKey(aliasVerify, passwordKey);
+					}catch(Exception e) {
+						errorKey = e.getMessage();
+					}
+					if(privateKey==null) {
+						esito = new CertificateCheck();
+						esito.setStatoCheck(StatoCheck.ERROR);
+						esito.addError(storePath, "Nel "+
+								CostantiLabel.KEYSTORE+
+								" la chiave "+
+								" con alias '"+aliasVerify+"' non è accessibile"+
+								(errorKey!=null ? ": "+errorKey : ""), storeDetails);
+						return esito;
+					}
 				}
 				
 				java.security.cert.Certificate[] baseCertChain = store.getCertificateChain(aliasVerify);
@@ -709,18 +765,18 @@ public class CertificateUtils {
 					if(ocspValidator!=null) {
 						ocspValidator.valid(certificate.getCertificate().getCertificate());
 					}
-				}catch(Throwable t) {
-					check = false;
+				}catch(Exception t) {
 					String msgErrore = "Certificato non valido: "+t.getMessage();
 					error = true;
 					esito.addError(identita, msgErrore, certificateDetails);
+					/** check = false; */
 					continue;
 				}
 									
 				if(check && certificate.getCertificateChain()!=null && !certificate.getCertificateChain().isEmpty()) {
 					for (CertificateInfo caChain : certificate.getCertificateChain()) {
-						String hex_caChain = caChain.getSerialNumberHex();
-						String credenziale_caChain = "(CN:"+caChain.getSubject().getCN()+" serialNumber:"+hex_caChain+")";
+						String hexCaChain = caChain.getSerialNumberHex();
+						String credenzialeCaChain = "(CN:"+caChain.getSubject().getCN()+SERIAL_NUMBER_STRING+hexCaChain+")";
 						try {
 							if(keystore || crls==null) {
 								caChain.checkValid();
@@ -729,37 +785,36 @@ public class CertificateUtils {
 								caChain.checkValid(crls.getCertStore(), store);
 							}
 							// La validazione della catena viene effettuata direttamente dal ocsp validator se previsto dalla policy
-//							if(ocspValidator!=null) {
+/**							if(ocspValidator!=null) {
 //								ocspValidator.valid(certificate.getCertificate().getCertificate());
-//							}
-						}catch(Throwable t) {
+//							}*/
+						}catch(Exception t) {
 							check = false;
-							String msgErrore = ("Un certificato della catena "+credenziale_caChain+" non risulta valido: "+t.getMessage());
+							String msgErrore = ("Un certificato della catena "+credenzialeCaChain+getSuffixCertificateNotValid(t));
 							error = true;
 							esito.addError(identita, msgErrore, certificateDetails);
 						}
 					}
 				}
 				
-				if(check && sogliaWarningGiorni>0) {
-					if(certificate.getCertificate().getNotAfter()!=null) {
-						long expire = certificate.getCertificate().getNotAfter().getTime();
-						long now = DateManager.getTimeMillis();
-						long diff = expire - now;
-						long soglia = (1000l*60l*60l*24l) * ((long)sogliaWarningGiorni);
-						//System.out.println("=======================");
-						//System.out.println("SUBJECT ["+certificate.getCertificate().getCertificate().getSubjectDN().getName()+"]");
-						//System.out.println("NOT AFTER ["+certificate.getCertificate().getNotAfter()+"]");
-						//System.out.println("SOGLIA ["+sogliaWarningGiorni+"]");
-						//System.out.println("DEXP ["+expire+"]");
-						//System.out.println("DNOW ["+now+"]");
-						//System.out.println("DIFF ["+diff+"]");
-						//System.out.println("SOGLIATR ["+soglia+"]");
-						if(diff<soglia) {
-							String msgErrore = "Certificato prossima alla scadenza ("+sogliaWarningGiorni+" giorni): "+sdf.format(certificate.getCertificate().getNotAfter());
-							warning = true;
-							esito.addWarning(identita, msgErrore, certificateDetails);
-						}
+				if(check && sogliaWarningGiorni>0 &&
+					certificate.getCertificate().getNotAfter()!=null) {
+					long expire = certificate.getCertificate().getNotAfter().getTime();
+					long now = DateManager.getTimeMillis();
+					long diff = expire - now;
+					long soglia = (1000l*60l*60l*24l) * (sogliaWarningGiorni);
+					/**System.out.println("=======================");
+					//System.out.println("SUBJECT ["+certificate.getCertificate().getCertificate().getSubjectDN().getName()+"]");
+					//System.out.println("NOT AFTER ["+certificate.getCertificate().getNotAfter()+"]");
+					//System.out.println("SOGLIA ["+sogliaWarningGiorni+"]");
+					//System.out.println("DEXP ["+expire+"]");
+					//System.out.println("DNOW ["+now+"]");
+					//System.out.println("DIFF ["+diff+"]");
+					//System.out.println("SOGLIATR ["+soglia+"]");*/
+					if(diff<soglia) {
+						String msgErrore = "Certificato prossima alla scadenza ("+sogliaWarningGiorni+" giorni): "+sdf.format(certificate.getCertificate().getNotAfter());
+						warning = true;
+						esito.addWarning(identita, msgErrore, certificateDetails);
 					}
 				}
 				
@@ -782,8 +837,7 @@ public class CertificateUtils {
 	
 	public static CertificateCheck checkSingleCertificate(String storeDetails, byte[] bytesCert, 
 			int sogliaWarningGiorni, 
-			boolean addCertificateDetails, String separator, String newLine,
-			Logger log) throws Exception{
+			String separator, String newLine) throws UtilsException{
 		
 		SimpleDateFormat sdf = new SimpleDateFormat(FORMAT_DATE_CERTIFICATE);
 		
@@ -802,7 +856,7 @@ public class CertificateUtils {
 		boolean check = true;
 		try {
 			certificate.getCertificate().checkValid();
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			check = false;
 			String msgErrore = "Certificato non valido: "+t.getMessage();
 			error = true;
@@ -811,38 +865,37 @@ public class CertificateUtils {
 							
 		if(check && certificate.getCertificateChain()!=null && !certificate.getCertificateChain().isEmpty()) {
 			for (CertificateInfo caChain : certificate.getCertificateChain()) {
-				String hex_caChain = caChain.getSerialNumberHex();
-				String credenziale_caChain = "(CN:"+caChain.getSubject().getCN()+" serialNumber:"+hex_caChain+")";
+				String hexCaChain = caChain.getSerialNumberHex();
+				String credenzialeCaChain = "(CN:"+caChain.getSubject().getCN()+SERIAL_NUMBER_STRING+hexCaChain+")";
 				try {
 					caChain.checkValid();
-				}catch(Throwable t) {
+				}catch(Exception t) {
 					check = false;
-					String msgErrore = ("Un certificato della catena "+credenziale_caChain+" non risulta valido: "+t.getMessage());
+					String msgErrore = ("Un certificato della catena "+credenzialeCaChain+getSuffixCertificateNotValid(t));
 					error = true;
 					esito.addError(identita, msgErrore, certificateDetails);
 				}
 			}
 		}
 		
-		if(check && sogliaWarningGiorni>0) {
-			if(certificate.getCertificate().getNotAfter()!=null) {
-				long expire = certificate.getCertificate().getNotAfter().getTime();
-				long now = DateManager.getTimeMillis();
-				long diff = expire - now;
-				long soglia = (1000l*60l*60l*24l) * ((long)sogliaWarningGiorni);
-				//System.out.println("=======================");
-				//System.out.println("SUBJECT ["+certificate.getCertificate().getCertificate().getSubjectDN().getName()+"]");
-				//System.out.println("NOT AFTER ["+certificate.getCertificate().getNotAfter()+"]");
-				//System.out.println("SOGLIA ["+sogliaWarningGiorni+"]");
-				//System.out.println("DEXP ["+expire+"]");
-				//System.out.println("DNOW ["+now+"]");
-				//System.out.println("DIFF ["+diff+"]");
-				//System.out.println("SOGLIATR ["+soglia+"]");
-				if(diff<soglia) {
-					String msgErrore = "Certificato prossima alla scadenza ("+sogliaWarningGiorni+" giorni): "+sdf.format(certificate.getCertificate().getNotAfter());
-					warning = true;
-					esito.addWarning(identita, msgErrore, certificateDetails);
-				}
+		if(check && sogliaWarningGiorni>0 &&
+			certificate.getCertificate().getNotAfter()!=null) {
+			long expire = certificate.getCertificate().getNotAfter().getTime();
+			long now = DateManager.getTimeMillis();
+			long diff = expire - now;
+			long soglia = (1000l*60l*60l*24l) * (sogliaWarningGiorni);
+			/**System.out.println("=======================");
+			//System.out.println("SUBJECT ["+certificate.getCertificate().getCertificate().getSubjectDN().getName()+"]");
+			//System.out.println("NOT AFTER ["+certificate.getCertificate().getNotAfter()+"]");
+			//System.out.println("SOGLIA ["+sogliaWarningGiorni+"]");
+			//System.out.println("DEXP ["+expire+"]");
+			//System.out.println("DNOW ["+now+"]");
+			//System.out.println("DIFF ["+diff+"]");
+			//System.out.println("SOGLIATR ["+soglia+"]");*/
+			if(diff<soglia) {
+				String msgErrore = "Certificato prossima alla scadenza ("+sogliaWarningGiorni+" giorni): "+sdf.format(certificate.getCertificate().getNotAfter());
+				warning = true;
+				esito.addWarning(identita, msgErrore, certificateDetails);
 			}
 		}
 			
@@ -857,5 +910,385 @@ public class CertificateUtils {
 		}
 		return esito;
 
+	}
+	
+	
+	
+	public static CertificateCheck checkKeyPair(boolean classpathSupported, String privateKey, String publicKey, String passwordKey, String algorithm,
+			boolean addCertificateDetails, String separator) throws UtilsException{
+		return checkKeyPairEngine(true,
+				classpathSupported, privateKey, publicKey, passwordKey, algorithm,
+				addCertificateDetails, separator);
+	}
+	public static String toStringKeyPair(KeystoreParams params,
+			String separator) {
+		return toStringKeyPair(params.getPath(), params.getKeyPairPublicKeyPath(),
+				separator);
+	}
+	private static String toStringKeyPair(String privateKey, String publicKey,
+			String separator) {
+		
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append(CostantiLabel.KEY_PAIR);
+		sb.append(separator);
+		sb.append("private:");
+		sb.append(privateKey);
+		sb.append(" ");
+		sb.append("public:");
+		sb.append(publicKey);
+		
+		return sb.toString();
+	}
+	
+	
+	public static CertificateCheck checkPublicKey(boolean classpathSupported, String publicKey, String algorithm,
+			boolean addCertificateDetails, String separator) throws UtilsException{
+		return checkKeyPairEngine(false,
+				classpathSupported, null, publicKey, null, algorithm,
+				addCertificateDetails, separator);
+	}	
+	public static String toStringPublicKey(KeystoreParams params,
+			String separator) {
+		return toStringPublicKey(params.getPath(), 
+				separator);
+	}
+	private static String toStringPublicKey(String publicKey,
+			String separator) {
+		
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append(CostantiLabel.PUBLIC_KEY);
+		sb.append(separator);
+		sb.append(publicKey);
+		
+		return sb.toString();
+	}
+	
+	
+	
+	
+	private static CertificateCheck checkKeyPairEngine(boolean isKeyPair,
+			boolean classpathSupported, String privateKey, String publicKey, String passwordKey, String algorithm,
+			boolean addCertificateDetails, String separator) throws UtilsException{
+		
+		String storeDetails = null;
+		if(addCertificateDetails) {
+			if(isKeyPair) {
+				storeDetails = toStringKeyPair(privateKey, publicKey, separator);
+			}
+			else {
+				storeDetails = toStringPublicKey(publicKey, separator);
+			}
+		}
+		
+		
+		// PRIVATE KEY
+		
+		byte[] privateKeyBytes = null;
+		if(isKeyPair) {
+			File f = new File(privateKey);
+			boolean exists = f.exists();
+			boolean inClasspath = false;
+			if(!exists && classpathSupported) {
+				String uri = privateKey;
+				if(!privateKey.startsWith("/")) {
+					uri = "/" + uri;	
+				}
+				try {
+					try( InputStream is = CertificateUtils.class.getResourceAsStream(uri); ){
+						exists = (is!=null);
+						if(exists) {
+							inClasspath = true;
+							privateKeyBytes = Utilities.getAsByteArray(is);
+						}
+					}
+				}catch(Exception e) {
+					throw new UtilsException(e.getMessage(),e);
+				}
+			}
+			if(!exists || (!inClasspath && !f.canRead())) {
+				
+				String errorDetails = CostantiLabel.PRIVATE_KEY;
+				if(!addCertificateDetails) {
+					errorDetails = errorDetails + " '"+
+							//f.getAbsolutePath()+  // nel caso di path relativo viene visualizzato un PATH basato sul bin di wildfly ed e' forviante
+							privateKey+
+							"'";
+				}
+				errorDetails = errorDetails + (!exists ? NOT_EXISTS_STRING : CANNOT_READ_STRING); 
+				
+				CertificateCheck esito = new CertificateCheck();
+				esito.setStatoCheck(StatoCheck.ERROR);
+				esito.addError(privateKey, errorDetails, storeDetails);
+				return esito;
+			}
+			if(!inClasspath) {
+				try {
+					privateKeyBytes = FileSystemUtilities.readBytesFromFile(f);
+				}catch(Exception e) {
+					throw new UtilsException(e.getMessage(),e);
+				}
+			}
+		}
+		
+		// PUBLIC KEY
+		
+		byte[] publicKeyBytes = null;
+		File f = new File(publicKey);
+		boolean exists = f.exists();
+		boolean inClasspath = false;
+		if(!exists && classpathSupported) {
+			String uri = publicKey;
+			if(!publicKey.startsWith("/")) {
+				uri = "/" + uri;	
+			}
+			try {
+				try( InputStream is = CertificateUtils.class.getResourceAsStream(uri); ){
+					exists = (is!=null);
+					if(exists) {
+						inClasspath = true;
+						publicKeyBytes = Utilities.getAsByteArray(is);
+					}
+				}
+			}catch(Exception e) {
+				throw new UtilsException(e.getMessage(),e);
+			}
+		}
+				
+		if(!exists || (!inClasspath && !f.canRead())) {
+			
+			String errorDetails = CostantiLabel.PUBLIC_KEY;
+			if(!addCertificateDetails) {
+				errorDetails = errorDetails + " '"+
+						//f.getAbsolutePath()+  // nel caso di path relativo viene visualizzato un PATH basato sul bin di wildfly ed e' forviante
+						publicKey+
+						"'";
+			}
+			errorDetails = errorDetails + (!exists ? NOT_EXISTS_STRING : CANNOT_READ_STRING); 
+			
+			CertificateCheck esito = new CertificateCheck();
+			esito.setStatoCheck(StatoCheck.ERROR);
+			esito.addError(publicKey, errorDetails, storeDetails);
+			return esito;
+		}
+		if(!inClasspath) {
+			try {
+				publicKeyBytes = FileSystemUtilities.readBytesFromFile(f);
+			}catch(Exception e) {
+				throw new UtilsException(e.getMessage(),e);
+			}
+		}
+		
+		return checkKeyPairEngine(isKeyPair,
+				storeDetails, privateKeyBytes, publicKeyBytes, passwordKey, algorithm,
+				addCertificateDetails);
+	}
+	private static CertificateCheck checkKeyPairEngine(boolean isKeyPair,
+			String storeDetails, byte[] privateKey, byte[] publicKey, String passwordKey, String algorithm,
+			boolean addCertificateDetails) throws UtilsException{
+				
+		KeyUtils keyUtils = null;
+		try {
+			keyUtils = KeyUtils.getInstance(algorithm);
+		}catch(Exception t) {
+			String errorDetails = "KeyAlgorithm";
+			if(!addCertificateDetails) {
+				errorDetails = errorDetails + " '"+
+						//f.getAbsolutePath()+  // nel caso di path relativo viene visualizzato un PATH basato sul bin di wildfly ed e' forviante
+						algorithm+
+						"'";
+			}
+			errorDetails = errorDetails + " unknown: "+t.getMessage(); 
+			
+			CertificateCheck esito = new CertificateCheck();
+			esito.setStatoCheck(StatoCheck.ERROR);
+			esito.addError(algorithm, errorDetails, storeDetails);
+			return esito;
+		}
+		
+		if(isKeyPair) {
+			try {
+				if(passwordKey!=null) {
+					keyUtils.getPrivateKey(privateKey, passwordKey);
+				}
+				else {
+					keyUtils.getPrivateKey(privateKey);
+				}
+			}catch(Exception t) {
+				String errorDetails = READING_PREFIX_STRING+ CostantiLabel.PRIVATE_KEY+getSuffixFailed(t);
+				CertificateCheck esito = new CertificateCheck();
+				esito.setStatoCheck(StatoCheck.ERROR);
+				esito.addError(CostantiLabel.PRIVATE_KEY, errorDetails, storeDetails);
+				return esito;
+			}
+		}
+		
+		try {
+			keyUtils.getPublicKey(publicKey);
+		}catch(Exception t) {
+			String errorDetails = READING_PREFIX_STRING+ CostantiLabel.PUBLIC_KEY+getSuffixFailed(t);
+			CertificateCheck esito = new CertificateCheck();
+			esito.setStatoCheck(StatoCheck.ERROR);
+			esito.addError(CostantiLabel.PUBLIC_KEY, errorDetails, storeDetails);
+			return esito;
+		}
+		
+		CertificateCheck esito = new CertificateCheck();
+		esito.setStatoCheck(StatoCheck.OK);
+		return esito;
+	}
+	
+	
+	
+	
+	
+	public static CertificateCheck checkKeystoreJWKs(boolean classpathSupported, String jwksPath, String keyAlias, 
+			boolean addCertificateDetails, String separator, String newLine) throws UtilsException{
+		return checkJWKsEngine(true,
+				classpathSupported, jwksPath, keyAlias,
+				addCertificateDetails, separator, newLine);
+	}
+	public static CertificateCheck checkTruststoreJWKs(boolean classpathSupported, String jwksPath, String keyAlias, 
+			boolean addCertificateDetails, String separator, String newLine) throws UtilsException{
+		return checkJWKsEngine(false,
+				classpathSupported, jwksPath, keyAlias,
+				addCertificateDetails, separator, newLine);
+	}
+	private static CertificateCheck checkJWKsEngine(boolean keystore,
+			boolean classpathSupported, String jwksPath, String keyAlias, 
+			boolean addCertificateDetails, String separator, String newLine) throws UtilsException{
+		
+		String storeDetails = null;
+		if(addCertificateDetails) {
+			storeDetails = toStringJWKs(keystore, jwksPath, keyAlias,
+					separator, newLine);
+		}
+				
+		String jwks = null;
+		File f = new File(jwksPath);
+		boolean exists = f.exists();
+		boolean inClasspath = false;
+		if(!exists && classpathSupported) {
+			String uri = jwksPath;
+			if(!jwksPath.startsWith("/")) {
+				uri = "/" + uri;	
+			}
+			try {
+				try( InputStream is = CertificateUtils.class.getResourceAsStream(uri); ){
+					exists = (is!=null);
+					if(exists) {
+						inClasspath = true;
+						jwks = Utilities.getAsString(is, Charset.UTF_8.getValue());
+					}
+				}
+			}catch(Exception e) {
+				throw new UtilsException(e.getMessage(),e);
+			}
+		}
+				
+		if(!exists || (!inClasspath && !f.canRead())) {
+			
+			String errorDetails = keystore ? CostantiLabel.KEYSTORE : CostantiLabel.TRUSTSTORE;
+			if(!addCertificateDetails) {
+				errorDetails = errorDetails + " '"+
+						//f.getAbsolutePath()+  // nel caso di path relativo viene visualizzato un PATH basato sul bin di wildfly ed e' forviante
+						jwksPath+
+						"'";
+			}
+			errorDetails = errorDetails + (!exists ? NOT_EXISTS_STRING : CANNOT_READ_STRING); 
+			
+			CertificateCheck esito = new CertificateCheck();
+			esito.setStatoCheck(StatoCheck.ERROR);
+			esito.addError(jwksPath, errorDetails, storeDetails);
+			return esito;
+		}
+		if(!inClasspath) {
+			try {
+				jwks = FileSystemUtilities.readFile(f);
+			}catch(Exception e) {
+				throw new UtilsException(e.getMessage(),e);
+			}
+		}
+		
+		return checkJWKsEngine(keystore, 
+				storeDetails, jwks, keyAlias);
+	}
+	private static CertificateCheck checkJWKsEngine(boolean keystore, 
+			String storeDetails,
+			String jwks, String keyAlias) throws UtilsException{
+				
+		com.nimbusds.jose.jwk.JWKSet set = null;
+		try {
+			JWKSet jwkset = new JWKSet(jwks);
+			set = jwkset.getJWKSet();
+		}catch(Exception t) {
+			String errorDetails = READING_PREFIX_STRING+ (keystore ? CostantiLabel.KEYSTORE : CostantiLabel.TRUSTSTORE) +getSuffixFailed(t);
+			CertificateCheck esito = new CertificateCheck();
+			esito.setStatoCheck(StatoCheck.ERROR);
+			esito.addError(keystore ? CostantiLabel.KEYSTORE : CostantiLabel.TRUSTSTORE, errorDetails, storeDetails);
+			return esito;
+		}
+		
+		CertificateCheck checkAlias = checkJWKsEngineKeyAlias(keyAlias, set, keystore, storeDetails);
+		if(checkAlias!=null) {
+			return checkAlias;
+		}
+		
+		CertificateCheck esito = new CertificateCheck();
+		esito.setStatoCheck(StatoCheck.OK);
+		return esito;
+	}
+	private static CertificateCheck checkJWKsEngineKeyAlias(String keyAlias, com.nimbusds.jose.jwk.JWKSet set, boolean keystore, String storeDetails) {
+		if(keyAlias!=null && StringUtils.isNotEmpty(keyAlias)) {
+			try {
+				com.nimbusds.jose.jwk.JWK jwk = set.getKeyByKeyId(keyAlias);
+				if(jwk==null) {
+					throw new UtilsException("kid not exists");
+				}
+			}catch(Exception t) {
+				String errorDetails = (keystore ? CostantiLabel.KEY_ALIAS : CostantiLabel.CERTIFICATE_ALIAS) +" unknown: "+t.getMessage();
+				CertificateCheck esito = new CertificateCheck();
+				esito.setStatoCheck(StatoCheck.ERROR);
+				esito.addError(keystore ? CostantiLabel.KEYSTORE : CostantiLabel.TRUSTSTORE, errorDetails, storeDetails);
+				return esito;
+			}
+		}
+		return null;
+	}
+	public static String toStringKeystoreJWKs(KeystoreParams params,
+			String separator, String newLine) {
+		return toStringJWKs(true, params.getPath(), params.getKeyAlias(),
+				separator, newLine);
+	}
+	public static String toStringTruststoreJWKs(KeystoreParams params,
+			String separator, String newLine) {
+		return toStringJWKs(false, params.getPath(), params.getKeyAlias(),
+				separator, newLine);
+	}
+	private static String toStringJWKs(boolean keystore, String jwksPath, String keyAlias,
+			String separator, String newLine) {
+		
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append(keystore? CostantiLabel.KEYSTORE : CostantiLabel.TRUSTSTORE);
+		sb.append(separator);
+		sb.append(CostantiLabel.JWKS);
+		sb.append(" ");
+		sb.append(jwksPath);
+		
+		if(keyAlias!=null) {
+			sb.append(newLine);
+			if(keystore) {
+				sb.append(CostantiLabel.KEY_ALIAS);
+			}
+			else {
+				sb.append(CostantiLabel.CERTIFICATE_ALIAS);
+			}
+			sb.append(separator);
+			sb.append(keyAlias);
+		}
+		
+		return sb.toString();
 	}
 }

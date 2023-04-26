@@ -93,4 +93,28 @@ public class CorsConfigurazioneHeaders extends org.openspcoop2.utils.beans.BaseB
   @XmlElement(name="header",required=true,nillable=false)
   private List<java.lang.String> header = new ArrayList<>();
 
+  /**
+   * Use method getHeaderList
+   * @return List&lt;java.lang.String&gt;
+  */
+  public List<java.lang.String> getHeader() {
+  	return this.getHeaderList();
+  }
+
+  /**
+   * Use method setHeaderList
+   * @param header List&lt;java.lang.String&gt;
+  */
+  public void setHeader(List<java.lang.String> header) {
+  	this.setHeaderList(header);
+  }
+
+  /**
+   * Use method sizeHeaderList
+   * @return lunghezza della lista
+  */
+  public int sizeHeader() {
+  	return this.sizeHeaderList();
+  }
+
 }

@@ -92,4 +92,28 @@ public class Fruitori extends org.openspcoop2.utils.beans.BaseBean implements Se
   @XmlElement(name="fruitore",required=true,nillable=false)
   private List<Soggetto> fruitore = new ArrayList<>();
 
+  /**
+   * Use method getFruitoreList
+   * @return List&lt;Soggetto&gt;
+  */
+  public List<Soggetto> getFruitore() {
+  	return this.getFruitoreList();
+  }
+
+  /**
+   * Use method setFruitoreList
+   * @param fruitore List&lt;Soggetto&gt;
+  */
+  public void setFruitore(List<Soggetto> fruitore) {
+  	this.setFruitoreList(fruitore);
+  }
+
+  /**
+   * Use method sizeFruitoreList
+   * @return lunghezza della lista
+  */
+  public int sizeFruitore() {
+  	return this.sizeFruitoreList();
+  }
+
 }

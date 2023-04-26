@@ -92,4 +92,28 @@ public class ElencoConfigurazioneServizio extends org.openspcoop2.utils.beans.Ba
   @XmlElement(name="configurazione-servizio",required=true,nillable=false)
   private List<ConfigurazioneServizio> configurazioneServizio = new ArrayList<>();
 
+  /**
+   * Use method getConfigurazioneServizioList
+   * @return List&lt;ConfigurazioneServizio&gt;
+  */
+  public List<ConfigurazioneServizio> getConfigurazioneServizio() {
+  	return this.getConfigurazioneServizioList();
+  }
+
+  /**
+   * Use method setConfigurazioneServizioList
+   * @param configurazioneServizio List&lt;ConfigurazioneServizio&gt;
+  */
+  public void setConfigurazioneServizio(List<ConfigurazioneServizio> configurazioneServizio) {
+  	this.setConfigurazioneServizioList(configurazioneServizio);
+  }
+
+  /**
+   * Use method sizeConfigurazioneServizioList
+   * @return lunghezza della lista
+  */
+  public int sizeConfigurazioneServizio() {
+  	return this.sizeConfigurazioneServizioList();
+  }
+
 }

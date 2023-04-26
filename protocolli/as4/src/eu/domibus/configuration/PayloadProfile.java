@@ -111,6 +111,30 @@ public class PayloadProfile extends org.openspcoop2.utils.beans.BaseBean impleme
   @XmlElement(name="attachment",required=true,nillable=false)
   private List<Attachment> attachment = new ArrayList<>();
 
+  /**
+   * Use method getAttachmentList
+   * @return List&lt;Attachment&gt;
+  */
+  public List<Attachment> getAttachment() {
+  	return this.getAttachmentList();
+  }
+
+  /**
+   * Use method setAttachmentList
+   * @param attachment List&lt;Attachment&gt;
+  */
+  public void setAttachment(List<Attachment> attachment) {
+  	this.setAttachmentList(attachment);
+  }
+
+  /**
+   * Use method sizeAttachmentList
+   * @return lunghezza della lista
+  */
+  public int sizeAttachment() {
+  	return this.sizeAttachmentList();
+  }
+
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="name",required=true)
   protected java.lang.String name;

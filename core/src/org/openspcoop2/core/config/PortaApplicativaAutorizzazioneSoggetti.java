@@ -92,4 +92,28 @@ public class PortaApplicativaAutorizzazioneSoggetti extends org.openspcoop2.util
   @XmlElement(name="soggetto",required=true,nillable=false)
   private List<PortaApplicativaAutorizzazioneSoggetto> soggetto = new ArrayList<>();
 
+  /**
+   * Use method getSoggettoList
+   * @return List&lt;PortaApplicativaAutorizzazioneSoggetto&gt;
+  */
+  public List<PortaApplicativaAutorizzazioneSoggetto> getSoggetto() {
+  	return this.getSoggettoList();
+  }
+
+  /**
+   * Use method setSoggettoList
+   * @param soggetto List&lt;PortaApplicativaAutorizzazioneSoggetto&gt;
+  */
+  public void setSoggetto(List<PortaApplicativaAutorizzazioneSoggetto> soggetto) {
+  	this.setSoggettoList(soggetto);
+  }
+
+  /**
+   * Use method sizeSoggettoList
+   * @return lunghezza della lista
+  */
+  public int sizeSoggetto() {
+  	return this.sizeSoggettoList();
+  }
+
 }

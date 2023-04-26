@@ -308,17 +308,113 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBeanWithId impleme
   @XmlElement(name="proprieta",required=true,nillable=false)
   private List<Proprieta> proprieta = new ArrayList<>();
 
+  /**
+   * Use method getProprietaList
+   * @return List&lt;Proprieta&gt;
+  */
+  public List<Proprieta> getProprieta() {
+  	return this.getProprietaList();
+  }
+
+  /**
+   * Use method setProprietaList
+   * @param proprieta List&lt;Proprieta&gt;
+  */
+  public void setProprieta(List<Proprieta> proprieta) {
+  	this.setProprietaList(proprieta);
+  }
+
+  /**
+   * Use method sizeProprietaList
+   * @return lunghezza della lista
+  */
+  public int sizeProprieta() {
+  	return this.sizeProprietaList();
+  }
+
   @XmlElement(name="protocol-property",required=true,nillable=false)
   private List<ProtocolProperty> protocolProperty = new ArrayList<>();
 
+  /**
+   * Use method getProtocolPropertyList
+   * @return List&lt;ProtocolProperty&gt;
+  */
+  public List<ProtocolProperty> getProtocolProperty() {
+  	return this.getProtocolPropertyList();
+  }
+
+  /**
+   * Use method setProtocolPropertyList
+   * @param protocolProperty List&lt;ProtocolProperty&gt;
+  */
+  public void setProtocolProperty(List<ProtocolProperty> protocolProperty) {
+  	this.setProtocolPropertyList(protocolProperty);
+  }
+
+  /**
+   * Use method sizeProtocolPropertyList
+   * @return lunghezza della lista
+  */
+  public int sizeProtocolProperty() {
+  	return this.sizeProtocolPropertyList();
+  }
+
   @XmlElement(name="credenziali",required=true,nillable=false)
   private List<CredenzialiSoggetto> credenziali = new ArrayList<>();
+
+  /**
+   * Use method getCredenzialiList
+   * @return List&lt;CredenzialiSoggetto&gt;
+  */
+  public List<CredenzialiSoggetto> getCredenziali() {
+  	return this.getCredenzialiList();
+  }
+
+  /**
+   * Use method setCredenzialiList
+   * @param credenziali List&lt;CredenzialiSoggetto&gt;
+  */
+  public void setCredenziali(List<CredenzialiSoggetto> credenziali) {
+  	this.setCredenzialiList(credenziali);
+  }
+
+  /**
+   * Use method sizeCredenzialiList
+   * @return lunghezza della lista
+  */
+  public int sizeCredenziali() {
+  	return this.sizeCredenzialiList();
+  }
 
   @XmlElement(name="ruoli",required=false,nillable=false)
   protected RuoliSoggetto ruoli;
 
   @XmlElement(name="accordo-servizio-parte-specifica",required=true,nillable=false)
   private List<AccordoServizioParteSpecifica> accordoServizioParteSpecifica = new ArrayList<>();
+
+  /**
+   * Use method getAccordoServizioParteSpecificaList
+   * @return List&lt;AccordoServizioParteSpecifica&gt;
+  */
+  public List<AccordoServizioParteSpecifica> getAccordoServizioParteSpecifica() {
+  	return this.getAccordoServizioParteSpecificaList();
+  }
+
+  /**
+   * Use method setAccordoServizioParteSpecificaList
+   * @param accordoServizioParteSpecifica List&lt;AccordoServizioParteSpecifica&gt;
+  */
+  public void setAccordoServizioParteSpecifica(List<AccordoServizioParteSpecifica> accordoServizioParteSpecifica) {
+  	this.setAccordoServizioParteSpecificaList(accordoServizioParteSpecifica);
+  }
+
+  /**
+   * Use method sizeAccordoServizioParteSpecificaList
+   * @return lunghezza della lista
+  */
+  public int sizeAccordoServizioParteSpecifica() {
+  	return this.sizeAccordoServizioParteSpecificaList();
+  }
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String superUser;

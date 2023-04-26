@@ -174,7 +174,55 @@ public class Dettaglio extends org.openspcoop2.utils.beans.BaseBeanWithId implem
   @XmlElement(name="servizio-applicativo-consegna",required=true,nillable=false)
   private List<ServizioApplicativoConsegna> servizioApplicativoConsegna = new ArrayList<>();
 
+  /**
+   * Use method getServizioApplicativoConsegnaList
+   * @return List&lt;ServizioApplicativoConsegna&gt;
+  */
+  public List<ServizioApplicativoConsegna> getServizioApplicativoConsegna() {
+  	return this.getServizioApplicativoConsegnaList();
+  }
+
+  /**
+   * Use method setServizioApplicativoConsegnaList
+   * @param servizioApplicativoConsegna List&lt;ServizioApplicativoConsegna&gt;
+  */
+  public void setServizioApplicativoConsegna(List<ServizioApplicativoConsegna> servizioApplicativoConsegna) {
+  	this.setServizioApplicativoConsegnaList(servizioApplicativoConsegna);
+  }
+
+  /**
+   * Use method sizeServizioApplicativoConsegnaList
+   * @return lunghezza della lista
+  */
+  public int sizeServizioApplicativoConsegna() {
+  	return this.sizeServizioApplicativoConsegnaList();
+  }
+
   @XmlElement(name="proprieta",required=true,nillable=false)
   private List<Proprieta> proprieta = new ArrayList<>();
+
+  /**
+   * Use method getProprietaList
+   * @return List&lt;Proprieta&gt;
+  */
+  public List<Proprieta> getProprieta() {
+  	return this.getProprietaList();
+  }
+
+  /**
+   * Use method setProprietaList
+   * @param proprieta List&lt;Proprieta&gt;
+  */
+  public void setProprieta(List<Proprieta> proprieta) {
+  	this.setProprietaList(proprieta);
+  }
+
+  /**
+   * Use method sizeProprietaList
+   * @return lunghezza della lista
+  */
+  public int sizeProprieta() {
+  	return this.sizeProprietaList();
+  }
 
 }

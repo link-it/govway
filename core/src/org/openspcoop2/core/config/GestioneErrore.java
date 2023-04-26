@@ -159,8 +159,56 @@ public class GestioneErrore extends org.openspcoop2.utils.beans.BaseBeanWithId i
   @XmlElement(name="codice-trasporto",required=true,nillable=false)
   private List<GestioneErroreCodiceTrasporto> codiceTrasporto = new ArrayList<>();
 
+  /**
+   * Use method getCodiceTrasportoList
+   * @return List&lt;GestioneErroreCodiceTrasporto&gt;
+  */
+  public List<GestioneErroreCodiceTrasporto> getCodiceTrasporto() {
+  	return this.getCodiceTrasportoList();
+  }
+
+  /**
+   * Use method setCodiceTrasportoList
+   * @param codiceTrasporto List&lt;GestioneErroreCodiceTrasporto&gt;
+  */
+  public void setCodiceTrasporto(List<GestioneErroreCodiceTrasporto> codiceTrasporto) {
+  	this.setCodiceTrasportoList(codiceTrasporto);
+  }
+
+  /**
+   * Use method sizeCodiceTrasportoList
+   * @return lunghezza della lista
+  */
+  public int sizeCodiceTrasporto() {
+  	return this.sizeCodiceTrasportoList();
+  }
+
   @XmlElement(name="soap-fault",required=true,nillable=false)
   private List<GestioneErroreSoapFault> soapFault = new ArrayList<>();
+
+  /**
+   * Use method getSoapFaultList
+   * @return List&lt;GestioneErroreSoapFault&gt;
+  */
+  public List<GestioneErroreSoapFault> getSoapFault() {
+  	return this.getSoapFaultList();
+  }
+
+  /**
+   * Use method setSoapFaultList
+   * @param soapFault List&lt;GestioneErroreSoapFault&gt;
+  */
+  public void setSoapFault(List<GestioneErroreSoapFault> soapFault) {
+  	this.setSoapFaultList(soapFault);
+  }
+
+  /**
+   * Use method sizeSoapFaultList
+   * @return lunghezza della lista
+  */
+  public int sizeSoapFault() {
+  	return this.sizeSoapFaultList();
+  }
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=false)

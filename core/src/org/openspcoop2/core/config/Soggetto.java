@@ -293,14 +293,110 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBeanWithId impleme
   @XmlElement(name="porta-delegata",required=true,nillable=false)
   private List<PortaDelegata> portaDelegata = new ArrayList<>();
 
+  /**
+   * Use method getPortaDelegataList
+   * @return List&lt;PortaDelegata&gt;
+  */
+  public List<PortaDelegata> getPortaDelegata() {
+  	return this.getPortaDelegataList();
+  }
+
+  /**
+   * Use method setPortaDelegataList
+   * @param portaDelegata List&lt;PortaDelegata&gt;
+  */
+  public void setPortaDelegata(List<PortaDelegata> portaDelegata) {
+  	this.setPortaDelegataList(portaDelegata);
+  }
+
+  /**
+   * Use method sizePortaDelegataList
+   * @return lunghezza della lista
+  */
+  public int sizePortaDelegata() {
+  	return this.sizePortaDelegataList();
+  }
+
   @XmlElement(name="porta-applicativa",required=true,nillable=false)
   private List<PortaApplicativa> portaApplicativa = new ArrayList<>();
+
+  /**
+   * Use method getPortaApplicativaList
+   * @return List&lt;PortaApplicativa&gt;
+  */
+  public List<PortaApplicativa> getPortaApplicativa() {
+  	return this.getPortaApplicativaList();
+  }
+
+  /**
+   * Use method setPortaApplicativaList
+   * @param portaApplicativa List&lt;PortaApplicativa&gt;
+  */
+  public void setPortaApplicativa(List<PortaApplicativa> portaApplicativa) {
+  	this.setPortaApplicativaList(portaApplicativa);
+  }
+
+  /**
+   * Use method sizePortaApplicativaList
+   * @return lunghezza della lista
+  */
+  public int sizePortaApplicativa() {
+  	return this.sizePortaApplicativaList();
+  }
 
   @XmlElement(name="servizio-applicativo",required=true,nillable=false)
   private List<ServizioApplicativo> servizioApplicativo = new ArrayList<>();
 
+  /**
+   * Use method getServizioApplicativoList
+   * @return List&lt;ServizioApplicativo&gt;
+  */
+  public List<ServizioApplicativo> getServizioApplicativo() {
+  	return this.getServizioApplicativoList();
+  }
+
+  /**
+   * Use method setServizioApplicativoList
+   * @param servizioApplicativo List&lt;ServizioApplicativo&gt;
+  */
+  public void setServizioApplicativo(List<ServizioApplicativo> servizioApplicativo) {
+  	this.setServizioApplicativoList(servizioApplicativo);
+  }
+
+  /**
+   * Use method sizeServizioApplicativoList
+   * @return lunghezza della lista
+  */
+  public int sizeServizioApplicativo() {
+  	return this.sizeServizioApplicativoList();
+  }
+
   @XmlElement(name="connettore",required=true,nillable=false)
   private List<Connettore> connettore = new ArrayList<>();
+
+  /**
+   * Use method getConnettoreList
+   * @return List&lt;Connettore&gt;
+  */
+  public List<Connettore> getConnettore() {
+  	return this.getConnettoreList();
+  }
+
+  /**
+   * Use method setConnettoreList
+   * @param connettore List&lt;Connettore&gt;
+  */
+  public void setConnettore(List<Connettore> connettore) {
+  	this.setConnettoreList(connettore);
+  }
+
+  /**
+   * Use method sizeConnettoreList
+   * @return lunghezza della lista
+  */
+  public int sizeConnettore() {
+  	return this.sizeConnettoreList();
+  }
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String superUser;

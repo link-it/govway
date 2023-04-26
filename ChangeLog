@@ -1,3 +1,13 @@
+2023-04-26  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Aggiunta funzionalità OP-1580
+	La funzionalità 'Verifica Certificati' consente adesso di verificare anche keystore di tipo 'JWK Set', 'Key Pair' e 'Public Key'.
+	Oltre alla verifica sulla presenza del file indicato nei file system dei nodi run, viene verificato:
+	- per il tipo 'JWK Set' la presenza del 'kid' indicato
+	- per il tipo 'Key Pair' viene acceduta la chiave privata utilizzando la password fornita.
+	La verifica di accesso alla chiave privata, con la password fornita, è stata inoltre aggiunta anche per i keystore esistenti.	
+
 2023-04-24  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

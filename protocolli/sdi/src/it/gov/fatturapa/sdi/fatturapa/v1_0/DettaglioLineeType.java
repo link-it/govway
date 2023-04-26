@@ -347,6 +347,30 @@ public class DettaglioLineeType extends org.openspcoop2.utils.beans.BaseBean imp
   @XmlElement(name="CodiceArticolo",required=true,nillable=false)
   private List<CodiceArticoloType> codiceArticolo = new ArrayList<>();
 
+  /**
+   * Use method getCodiceArticoloList
+   * @return List&lt;CodiceArticoloType&gt;
+  */
+  public List<CodiceArticoloType> getCodiceArticolo() {
+  	return this.getCodiceArticoloList();
+  }
+
+  /**
+   * Use method setCodiceArticoloList
+   * @param codiceArticolo List&lt;CodiceArticoloType&gt;
+  */
+  public void setCodiceArticolo(List<CodiceArticoloType> codiceArticolo) {
+  	this.setCodiceArticoloList(codiceArticolo);
+  }
+
+  /**
+   * Use method sizeCodiceArticoloList
+   * @return lunghezza della lista
+  */
+  public int sizeCodiceArticolo() {
+  	return this.sizeCodiceArticoloList();
+  }
+
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
   @XmlElement(name="Descrizione",required=true,nillable=false)
@@ -386,6 +410,30 @@ public class DettaglioLineeType extends org.openspcoop2.utils.beans.BaseBean imp
   @XmlElement(name="ScontoMaggiorazione",required=true,nillable=false)
   private List<ScontoMaggiorazioneType> scontoMaggiorazione = new ArrayList<>();
 
+  /**
+   * Use method getScontoMaggiorazioneList
+   * @return List&lt;ScontoMaggiorazioneType&gt;
+  */
+  public List<ScontoMaggiorazioneType> getScontoMaggiorazione() {
+  	return this.getScontoMaggiorazioneList();
+  }
+
+  /**
+   * Use method setScontoMaggiorazioneList
+   * @param scontoMaggiorazione List&lt;ScontoMaggiorazioneType&gt;
+  */
+  public void setScontoMaggiorazione(List<ScontoMaggiorazioneType> scontoMaggiorazione) {
+  	this.setScontoMaggiorazioneList(scontoMaggiorazione);
+  }
+
+  /**
+   * Use method sizeScontoMaggiorazioneList
+   * @return lunghezza della lista
+  */
+  public int sizeScontoMaggiorazione() {
+  	return this.sizeScontoMaggiorazioneList();
+  }
+
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="decimal")
   @XmlElement(name="PrezzoTotale",required=true,nillable=false)
@@ -421,5 +469,29 @@ public class DettaglioLineeType extends org.openspcoop2.utils.beans.BaseBean imp
 
   @XmlElement(name="AltriDatiGestionali",required=true,nillable=false)
   private List<AltriDatiGestionaliType> altriDatiGestionali = new ArrayList<>();
+
+  /**
+   * Use method getAltriDatiGestionaliList
+   * @return List&lt;AltriDatiGestionaliType&gt;
+  */
+  public List<AltriDatiGestionaliType> getAltriDatiGestionali() {
+  	return this.getAltriDatiGestionaliList();
+  }
+
+  /**
+   * Use method setAltriDatiGestionaliList
+   * @param altriDatiGestionali List&lt;AltriDatiGestionaliType&gt;
+  */
+  public void setAltriDatiGestionali(List<AltriDatiGestionaliType> altriDatiGestionali) {
+  	this.setAltriDatiGestionaliList(altriDatiGestionali);
+  }
+
+  /**
+   * Use method sizeAltriDatiGestionaliList
+   * @return lunghezza della lista
+  */
+  public int sizeAltriDatiGestionali() {
+  	return this.sizeAltriDatiGestionaliList();
+  }
 
 }

@@ -92,4 +92,28 @@ public class RegistroPlugins extends org.openspcoop2.utils.beans.BaseBeanWithId 
   @XmlElement(name="plugin",required=true,nillable=false)
   private List<RegistroPlugin> plugin = new ArrayList<>();
 
+  /**
+   * Use method getPluginList
+   * @return List&lt;RegistroPlugin&gt;
+  */
+  public List<RegistroPlugin> getPlugin() {
+  	return this.getPluginList();
+  }
+
+  /**
+   * Use method setPluginList
+   * @param plugin List&lt;RegistroPlugin&gt;
+  */
+  public void setPlugin(List<RegistroPlugin> plugin) {
+  	this.setPluginList(plugin);
+  }
+
+  /**
+   * Use method sizePluginList
+   * @return lunghezza della lista
+  */
+  public int sizePlugin() {
+  	return this.sizePluginList();
+  }
+
 }

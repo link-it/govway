@@ -92,4 +92,28 @@ public class RoutingTableDefault extends org.openspcoop2.utils.beans.BaseBeanWit
   @XmlElement(name="route",required=true,nillable=false)
   private List<Route> route = new ArrayList<>();
 
+  /**
+   * Use method getRouteList
+   * @return List&lt;Route&gt;
+  */
+  public List<Route> getRoute() {
+  	return this.getRouteList();
+  }
+
+  /**
+   * Use method setRouteList
+   * @param route List&lt;Route&gt;
+  */
+  public void setRoute(List<Route> route) {
+  	this.setRouteList(route);
+  }
+
+  /**
+   * Use method sizeRouteList
+   * @return lunghezza della lista
+  */
+  public int sizeRoute() {
+  	return this.sizeRouteList();
+  }
+
 }

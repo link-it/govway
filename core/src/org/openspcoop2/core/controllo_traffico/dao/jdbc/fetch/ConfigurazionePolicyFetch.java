@@ -66,37 +66,37 @@ public class ConfigurazionePolicyFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "rt_valore", ConfigurazionePolicy.model().VALORE.getFieldType()));
 				setParameter(object, "setValore2", ConfigurazionePolicy.model().VALORE_2.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "rt_valore2", ConfigurazionePolicy.model().VALORE_2.getFieldType()));
-				setParameter(object, "set_value_valoreTipoBanda", String.class,
+				setParameter(object, "setValoreTipoBandaRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "rt_bytes_type", ConfigurazionePolicy.model().VALORE_TIPO_BANDA.getFieldType())+"");
-				setParameter(object, "set_value_valoreTipoLatenza", String.class,
+				setParameter(object, "setValoreTipoLatenzaRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "rt_latency_type", ConfigurazionePolicy.model().VALORE_TIPO_LATENZA.getFieldType())+"");
-				setParameter(object, "set_value_modalitaControllo", String.class,
+				setParameter(object, "setModalitaControlloRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "rt_modalita_controllo", ConfigurazionePolicy.model().MODALITA_CONTROLLO.getFieldType())+"");
-				setParameter(object, "set_value_tipoIntervalloOsservazioneRealtime", String.class,
+				setParameter(object, "setTipoIntervalloOsservazioneRealtimeRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "rt_interval_type_real", ConfigurazionePolicy.model().TIPO_INTERVALLO_OSSERVAZIONE_REALTIME.getFieldType())+"");
-				setParameter(object, "set_value_tipoIntervalloOsservazioneStatistico", String.class,
+				setParameter(object, "setTipoIntervalloOsservazioneStatisticoRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "rt_interval_type_stat", ConfigurazionePolicy.model().TIPO_INTERVALLO_OSSERVAZIONE_STATISTICO.getFieldType())+"");
 				setParameter(object, "setIntervalloOsservazione", ConfigurazionePolicy.model().INTERVALLO_OSSERVAZIONE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "rt_interval", ConfigurazionePolicy.model().INTERVALLO_OSSERVAZIONE.getFieldType()));
-				setParameter(object, "set_value_finestraOsservazione", String.class,
+				setParameter(object, "setFinestraOsservazioneRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "rt_finestra", ConfigurazionePolicy.model().FINESTRA_OSSERVAZIONE.getFieldType())+"");
-				setParameter(object, "set_value_tipoApplicabilita", String.class,
+				setParameter(object, "setTipoApplicabilitaRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "rt_applicabilita", ConfigurazionePolicy.model().TIPO_APPLICABILITA.getFieldType())+"");
 				setParameter(object, "setApplicabilitaConCongestione", ConfigurazionePolicy.model().APPLICABILITA_CON_CONGESTIONE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "rt_applicabilita_con_cc", ConfigurazionePolicy.model().APPLICABILITA_CON_CONGESTIONE.getFieldType()));
 				setParameter(object, "setApplicabilitaDegradoPrestazionale", ConfigurazionePolicy.model().APPLICABILITA_DEGRADO_PRESTAZIONALE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "rt_applicabilita_degrado", ConfigurazionePolicy.model().APPLICABILITA_DEGRADO_PRESTAZIONALE.getFieldType()));
-				setParameter(object, "set_value_degradoAvgTimeModalitaControllo", String.class,
+				setParameter(object, "setDegradoAvgTimeModalitaControlloRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "degrato_modalita_controllo", ConfigurazionePolicy.model().DEGRADO_AVG_TIME_MODALITA_CONTROLLO.getFieldType())+"");
-				setParameter(object, "set_value_degradoAvgTimeTipoIntervalloOsservazioneRealtime", String.class,
+				setParameter(object, "setDegradoAvgTimeTipoIntervalloOsservazioneRealtimeRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "degrado_avg_interval_type_real", ConfigurazionePolicy.model().DEGRADO_AVG_TIME_TIPO_INTERVALLO_OSSERVAZIONE_REALTIME.getFieldType())+"");
-				setParameter(object, "set_value_degradoAvgTimeTipoIntervalloOsservazioneStatistico", String.class,
+				setParameter(object, "setDegradoAvgTimeTipoIntervalloOsservazioneStatisticoRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "degrado_avg_interval_type_stat", ConfigurazionePolicy.model().DEGRADO_AVG_TIME_TIPO_INTERVALLO_OSSERVAZIONE_STATISTICO.getFieldType())+"");
 				setParameter(object, "setDegradoAvgTimeIntervalloOsservazione", ConfigurazionePolicy.model().DEGRADO_AVG_TIME_INTERVALLO_OSSERVAZIONE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "degrado_avg_interval", ConfigurazionePolicy.model().DEGRADO_AVG_TIME_INTERVALLO_OSSERVAZIONE.getFieldType()));
-				setParameter(object, "set_value_degradoAvgTimeFinestraOsservazione", String.class,
+				setParameter(object, "setDegradoAvgTimeFinestraOsservazioneRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "degrado_avg_finestra", ConfigurazionePolicy.model().DEGRADO_AVG_TIME_FINESTRA_OSSERVAZIONE.getFieldType())+"");
-				setParameter(object, "set_value_degradoAvgTimeTipoLatenza", String.class,
+				setParameter(object, "setDegradoAvgTimeTipoLatenzaRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "degrado_avg_latency_type", ConfigurazionePolicy.model().DEGRADO_AVG_TIME_TIPO_LATENZA.getFieldType())+"");
 				setParameter(object, "setApplicabilitaStatoAllarme", ConfigurazionePolicy.model().APPLICABILITA_STATO_ALLARME.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "rt_applicabilita_allarme", ConfigurazionePolicy.model().APPLICABILITA_STATO_ALLARME.getFieldType()));
@@ -142,37 +142,37 @@ public class ConfigurazionePolicyFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"valore"));
 				setParameter(object, "setValore2", ConfigurazionePolicy.model().VALORE_2.getFieldType(),
 					this.getObjectFromMap(map,"valore2"));
-				setParameter(object, "set_value_valoreTipoBanda", String.class,
+				setParameter(object, "setValoreTipoBandaRawEnumValue", String.class,
 					this.getObjectFromMap(map,"valore-tipo-banda"));
-				setParameter(object, "set_value_valoreTipoLatenza", String.class,
+				setParameter(object, "setValoreTipoLatenzaRawEnumValue", String.class,
 					this.getObjectFromMap(map,"valore-tipo-latenza"));
-				setParameter(object, "set_value_modalitaControllo", String.class,
+				setParameter(object, "setModalitaControlloRawEnumValue", String.class,
 					this.getObjectFromMap(map,"modalita-controllo"));
-				setParameter(object, "set_value_tipoIntervalloOsservazioneRealtime", String.class,
+				setParameter(object, "setTipoIntervalloOsservazioneRealtimeRawEnumValue", String.class,
 					this.getObjectFromMap(map,"tipo-intervallo-osservazione-realtime"));
-				setParameter(object, "set_value_tipoIntervalloOsservazioneStatistico", String.class,
+				setParameter(object, "setTipoIntervalloOsservazioneStatisticoRawEnumValue", String.class,
 					this.getObjectFromMap(map,"tipo-intervallo-osservazione-statistico"));
 				setParameter(object, "setIntervalloOsservazione", ConfigurazionePolicy.model().INTERVALLO_OSSERVAZIONE.getFieldType(),
 					this.getObjectFromMap(map,"intervallo-osservazione"));
-				setParameter(object, "set_value_finestraOsservazione", String.class,
+				setParameter(object, "setFinestraOsservazioneRawEnumValue", String.class,
 					this.getObjectFromMap(map,"finestra-osservazione"));
-				setParameter(object, "set_value_tipoApplicabilita", String.class,
+				setParameter(object, "setTipoApplicabilitaRawEnumValue", String.class,
 					this.getObjectFromMap(map,"tipo-applicabilita"));
 				setParameter(object, "setApplicabilitaConCongestione", ConfigurazionePolicy.model().APPLICABILITA_CON_CONGESTIONE.getFieldType(),
 					this.getObjectFromMap(map,"applicabilita-con-congestione"));
 				setParameter(object, "setApplicabilitaDegradoPrestazionale", ConfigurazionePolicy.model().APPLICABILITA_DEGRADO_PRESTAZIONALE.getFieldType(),
 					this.getObjectFromMap(map,"applicabilita-degrado-prestazionale"));
-				setParameter(object, "set_value_degradoAvgTimeModalitaControllo", String.class,
+				setParameter(object, "setDegradoAvgTimeModalitaControlloRawEnumValue", String.class,
 					this.getObjectFromMap(map,"degrado-avg-time-modalita-controllo"));
-				setParameter(object, "set_value_degradoAvgTimeTipoIntervalloOsservazioneRealtime", String.class,
+				setParameter(object, "setDegradoAvgTimeTipoIntervalloOsservazioneRealtimeRawEnumValue", String.class,
 					this.getObjectFromMap(map,"degrado-avg-time-tipo-intervallo-osservazione-realtime"));
-				setParameter(object, "set_value_degradoAvgTimeTipoIntervalloOsservazioneStatistico", String.class,
+				setParameter(object, "setDegradoAvgTimeTipoIntervalloOsservazioneStatisticoRawEnumValue", String.class,
 					this.getObjectFromMap(map,"degrado-avg-time-tipo-intervallo-osservazione-statistico"));
 				setParameter(object, "setDegradoAvgTimeIntervalloOsservazione", ConfigurazionePolicy.model().DEGRADO_AVG_TIME_INTERVALLO_OSSERVAZIONE.getFieldType(),
 					this.getObjectFromMap(map,"degrado-avg-time-intervallo-osservazione"));
-				setParameter(object, "set_value_degradoAvgTimeFinestraOsservazione", String.class,
+				setParameter(object, "setDegradoAvgTimeFinestraOsservazioneRawEnumValue", String.class,
 					this.getObjectFromMap(map,"degrado-avg-time-finestra-osservazione"));
-				setParameter(object, "set_value_degradoAvgTimeTipoLatenza", String.class,
+				setParameter(object, "setDegradoAvgTimeTipoLatenzaRawEnumValue", String.class,
 					this.getObjectFromMap(map,"degrado-avg-time-tipo-latenza"));
 				setParameter(object, "setApplicabilitaStatoAllarme", ConfigurazionePolicy.model().APPLICABILITA_STATO_ALLARME.getFieldType(),
 					this.getObjectFromMap(map,"applicabilita-stato-allarme"));

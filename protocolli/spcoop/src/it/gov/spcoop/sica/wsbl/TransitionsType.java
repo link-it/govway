@@ -92,4 +92,28 @@ public class TransitionsType extends org.openspcoop2.utils.beans.BaseBean implem
   @XmlElement(name="transition",required=true,nillable=false)
   private List<TransitionType> transition = new ArrayList<>();
 
+  /**
+   * Use method getTransitionList
+   * @return List&lt;TransitionType&gt;
+  */
+  public List<TransitionType> getTransition() {
+  	return this.getTransitionList();
+  }
+
+  /**
+   * Use method setTransitionList
+   * @param transition List&lt;TransitionType&gt;
+  */
+  public void setTransition(List<TransitionType> transition) {
+  	this.setTransitionList(transition);
+  }
+
+  /**
+   * Use method sizeTransitionList
+   * @return lunghezza della lista
+  */
+  public int sizeTransition() {
+  	return this.sizeTransitionList();
+  }
+
 }

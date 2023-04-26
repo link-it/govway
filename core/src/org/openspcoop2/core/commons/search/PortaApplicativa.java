@@ -269,7 +269,55 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBeanWithId
   @XmlElement(name="porta-applicativa-servizio-applicativo",required=true,nillable=false)
   private List<PortaApplicativaServizioApplicativo> portaApplicativaServizioApplicativo = new ArrayList<>();
 
+  /**
+   * Use method getPortaApplicativaServizioApplicativoList
+   * @return List&lt;PortaApplicativaServizioApplicativo&gt;
+  */
+  public List<PortaApplicativaServizioApplicativo> getPortaApplicativaServizioApplicativo() {
+  	return this.getPortaApplicativaServizioApplicativoList();
+  }
+
+  /**
+   * Use method setPortaApplicativaServizioApplicativoList
+   * @param portaApplicativaServizioApplicativo List&lt;PortaApplicativaServizioApplicativo&gt;
+  */
+  public void setPortaApplicativaServizioApplicativo(List<PortaApplicativaServizioApplicativo> portaApplicativaServizioApplicativo) {
+  	this.setPortaApplicativaServizioApplicativoList(portaApplicativaServizioApplicativo);
+  }
+
+  /**
+   * Use method sizePortaApplicativaServizioApplicativoList
+   * @return lunghezza della lista
+  */
+  public int sizePortaApplicativaServizioApplicativo() {
+  	return this.sizePortaApplicativaServizioApplicativoList();
+  }
+
   @XmlElement(name="porta-applicativa-azione",required=true,nillable=false)
   private List<PortaApplicativaAzione> portaApplicativaAzione = new ArrayList<>();
+
+  /**
+   * Use method getPortaApplicativaAzioneList
+   * @return List&lt;PortaApplicativaAzione&gt;
+  */
+  public List<PortaApplicativaAzione> getPortaApplicativaAzione() {
+  	return this.getPortaApplicativaAzioneList();
+  }
+
+  /**
+   * Use method setPortaApplicativaAzioneList
+   * @param portaApplicativaAzione List&lt;PortaApplicativaAzione&gt;
+  */
+  public void setPortaApplicativaAzione(List<PortaApplicativaAzione> portaApplicativaAzione) {
+  	this.setPortaApplicativaAzioneList(portaApplicativaAzione);
+  }
+
+  /**
+   * Use method sizePortaApplicativaAzioneList
+   * @return lunghezza della lista
+  */
+  public int sizePortaApplicativaAzione() {
+  	return this.sizePortaApplicativaAzioneList();
+  }
 
 }

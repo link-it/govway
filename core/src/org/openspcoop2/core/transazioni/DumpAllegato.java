@@ -169,6 +169,30 @@ public class DumpAllegato extends org.openspcoop2.utils.beans.BaseBeanWithId imp
   @XmlElement(name="header",required=true,nillable=false)
   private List<DumpHeaderAllegato> header = new ArrayList<>();
 
+  /**
+   * Use method getHeaderList
+   * @return List&lt;DumpHeaderAllegato&gt;
+  */
+  public List<DumpHeaderAllegato> getHeader() {
+  	return this.getHeaderList();
+  }
+
+  /**
+   * Use method setHeaderList
+   * @param header List&lt;DumpHeaderAllegato&gt;
+  */
+  public void setHeader(List<DumpHeaderAllegato> header) {
+  	this.setHeaderList(header);
+  }
+
+  /**
+   * Use method sizeHeaderList
+   * @return lunghezza della lista
+  */
+  public int sizeHeader() {
+  	return this.sizeHeaderList();
+  }
+
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="dump-timestamp",required=true,nillable=false,type=java.lang.String.class)

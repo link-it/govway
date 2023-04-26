@@ -112,6 +112,30 @@ public class RoutingTable extends org.openspcoop2.utils.beans.BaseBeanWithId imp
   @XmlElement(name="destinazione",required=true,nillable=false)
   private List<RoutingTableDestinazione> destinazione = new ArrayList<>();
 
+  /**
+   * Use method getDestinazioneList
+   * @return List&lt;RoutingTableDestinazione&gt;
+  */
+  public List<RoutingTableDestinazione> getDestinazione() {
+  	return this.getDestinazioneList();
+  }
+
+  /**
+   * Use method setDestinazioneList
+   * @param destinazione List&lt;RoutingTableDestinazione&gt;
+  */
+  public void setDestinazione(List<RoutingTableDestinazione> destinazione) {
+  	this.setDestinazioneList(destinazione);
+  }
+
+  /**
+   * Use method sizeDestinazioneList
+   * @return lunghezza della lista
+  */
+  public int sizeDestinazione() {
+  	return this.sizeDestinazioneList();
+  }
+
   @XmlElement(name="default",required=true,nillable=false)
   protected RoutingTableDefault _default;
 

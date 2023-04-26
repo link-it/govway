@@ -92,4 +92,28 @@ public class ElencoIdPlugin extends org.openspcoop2.utils.beans.BaseBeanWithId i
   @XmlElement(name="id-plugin",required=true,nillable=false)
   private List<IdPlugin> idPlugin = new ArrayList<>();
 
+  /**
+   * Use method getIdPluginList
+   * @return List&lt;IdPlugin&gt;
+  */
+  public List<IdPlugin> getIdPlugin() {
+  	return this.getIdPluginList();
+  }
+
+  /**
+   * Use method setIdPluginList
+   * @param idPlugin List&lt;IdPlugin&gt;
+  */
+  public void setIdPlugin(List<IdPlugin> idPlugin) {
+  	this.setIdPluginList(idPlugin);
+  }
+
+  /**
+   * Use method sizeIdPluginList
+   * @return lunghezza della lista
+  */
+  public int sizeIdPlugin() {
+  	return this.sizeIdPluginList();
+  }
+
 }

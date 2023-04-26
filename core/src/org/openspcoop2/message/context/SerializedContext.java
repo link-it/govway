@@ -92,4 +92,28 @@ public class SerializedContext extends org.openspcoop2.utils.beans.BaseBeanWithI
   @XmlElement(name="property",required=true,nillable=false)
   private List<SerializedParameter> property = new ArrayList<>();
 
+  /**
+   * Use method getPropertyList
+   * @return List&lt;SerializedParameter&gt;
+  */
+  public List<SerializedParameter> getProperty() {
+  	return this.getPropertyList();
+  }
+
+  /**
+   * Use method setPropertyList
+   * @param property List&lt;SerializedParameter&gt;
+  */
+  public void setProperty(List<SerializedParameter> property) {
+  	this.setPropertyList(property);
+  }
+
+  /**
+   * Use method sizePropertyList
+   * @return lunghezza della lista
+  */
+  public int sizeProperty() {
+  	return this.sizePropertyList();
+  }
+
 }

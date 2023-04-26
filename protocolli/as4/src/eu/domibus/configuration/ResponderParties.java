@@ -92,4 +92,28 @@ public class ResponderParties extends org.openspcoop2.utils.beans.BaseBean imple
   @XmlElement(name="responderParty",required=true,nillable=false)
   private List<ResponderParty> responderParty = new ArrayList<>();
 
+  /**
+   * Use method getResponderPartyList
+   * @return List&lt;ResponderParty&gt;
+  */
+  public List<ResponderParty> getResponderParty() {
+  	return this.getResponderPartyList();
+  }
+
+  /**
+   * Use method setResponderPartyList
+   * @param responderParty List&lt;ResponderParty&gt;
+  */
+  public void setResponderParty(List<ResponderParty> responderParty) {
+  	this.setResponderPartyList(responderParty);
+  }
+
+  /**
+   * Use method sizeResponderPartyList
+   * @return lunghezza della lista
+  */
+  public int sizeResponderParty() {
+  	return this.sizeResponderPartyList();
+  }
+
 }

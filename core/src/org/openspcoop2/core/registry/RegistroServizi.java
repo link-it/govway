@@ -274,25 +274,217 @@ public class RegistroServizi extends org.openspcoop2.utils.beans.BaseBeanWithId 
   @XmlElement(name="accordo-cooperazione",required=true,nillable=false)
   private List<AccordoCooperazione> accordoCooperazione = new ArrayList<>();
 
+  /**
+   * Use method getAccordoCooperazioneList
+   * @return List&lt;AccordoCooperazione&gt;
+  */
+  public List<AccordoCooperazione> getAccordoCooperazione() {
+  	return this.getAccordoCooperazioneList();
+  }
+
+  /**
+   * Use method setAccordoCooperazioneList
+   * @param accordoCooperazione List&lt;AccordoCooperazione&gt;
+  */
+  public void setAccordoCooperazione(List<AccordoCooperazione> accordoCooperazione) {
+  	this.setAccordoCooperazioneList(accordoCooperazione);
+  }
+
+  /**
+   * Use method sizeAccordoCooperazioneList
+   * @return lunghezza della lista
+  */
+  public int sizeAccordoCooperazione() {
+  	return this.sizeAccordoCooperazioneList();
+  }
+
   @XmlElement(name="accordo-servizio-parte-comune",required=true,nillable=false)
   private List<AccordoServizioParteComune> accordoServizioParteComune = new ArrayList<>();
+
+  /**
+   * Use method getAccordoServizioParteComuneList
+   * @return List&lt;AccordoServizioParteComune&gt;
+  */
+  public List<AccordoServizioParteComune> getAccordoServizioParteComune() {
+  	return this.getAccordoServizioParteComuneList();
+  }
+
+  /**
+   * Use method setAccordoServizioParteComuneList
+   * @param accordoServizioParteComune List&lt;AccordoServizioParteComune&gt;
+  */
+  public void setAccordoServizioParteComune(List<AccordoServizioParteComune> accordoServizioParteComune) {
+  	this.setAccordoServizioParteComuneList(accordoServizioParteComune);
+  }
+
+  /**
+   * Use method sizeAccordoServizioParteComuneList
+   * @return lunghezza della lista
+  */
+  public int sizeAccordoServizioParteComune() {
+  	return this.sizeAccordoServizioParteComuneList();
+  }
 
   @XmlElement(name="porta-dominio",required=true,nillable=false)
   private List<PortaDominio> portaDominio = new ArrayList<>();
 
+  /**
+   * Use method getPortaDominioList
+   * @return List&lt;PortaDominio&gt;
+  */
+  public List<PortaDominio> getPortaDominio() {
+  	return this.getPortaDominioList();
+  }
+
+  /**
+   * Use method setPortaDominioList
+   * @param portaDominio List&lt;PortaDominio&gt;
+  */
+  public void setPortaDominio(List<PortaDominio> portaDominio) {
+  	this.setPortaDominioList(portaDominio);
+  }
+
+  /**
+   * Use method sizePortaDominioList
+   * @return lunghezza della lista
+  */
+  public int sizePortaDominio() {
+  	return this.sizePortaDominioList();
+  }
+
   @XmlElement(name="ruolo",required=true,nillable=false)
   private List<Ruolo> ruolo = new ArrayList<>();
+
+  /**
+   * Use method getRuoloList
+   * @return List&lt;Ruolo&gt;
+  */
+  public List<Ruolo> getRuolo() {
+  	return this.getRuoloList();
+  }
+
+  /**
+   * Use method setRuoloList
+   * @param ruolo List&lt;Ruolo&gt;
+  */
+  public void setRuolo(List<Ruolo> ruolo) {
+  	this.setRuoloList(ruolo);
+  }
+
+  /**
+   * Use method sizeRuoloList
+   * @return lunghezza della lista
+  */
+  public int sizeRuolo() {
+  	return this.sizeRuoloList();
+  }
 
   @XmlElement(name="scope",required=true,nillable=false)
   private List<Scope> scope = new ArrayList<>();
 
+  /**
+   * Use method getScopeList
+   * @return List&lt;Scope&gt;
+  */
+  public List<Scope> getScope() {
+  	return this.getScopeList();
+  }
+
+  /**
+   * Use method setScopeList
+   * @param scope List&lt;Scope&gt;
+  */
+  public void setScope(List<Scope> scope) {
+  	this.setScopeList(scope);
+  }
+
+  /**
+   * Use method sizeScopeList
+   * @return lunghezza della lista
+  */
+  public int sizeScope() {
+  	return this.sizeScopeList();
+  }
+
   @XmlElement(name="gruppo",required=true,nillable=false)
   private List<Gruppo> gruppo = new ArrayList<>();
+
+  /**
+   * Use method getGruppoList
+   * @return List&lt;Gruppo&gt;
+  */
+  public List<Gruppo> getGruppo() {
+  	return this.getGruppoList();
+  }
+
+  /**
+   * Use method setGruppoList
+   * @param gruppo List&lt;Gruppo&gt;
+  */
+  public void setGruppo(List<Gruppo> gruppo) {
+  	this.setGruppoList(gruppo);
+  }
+
+  /**
+   * Use method sizeGruppoList
+   * @return lunghezza della lista
+  */
+  public int sizeGruppo() {
+  	return this.sizeGruppoList();
+  }
 
   @XmlElement(name="soggetto",required=true,nillable=false)
   private List<Soggetto> soggetto = new ArrayList<>();
 
+  /**
+   * Use method getSoggettoList
+   * @return List&lt;Soggetto&gt;
+  */
+  public List<Soggetto> getSoggetto() {
+  	return this.getSoggettoList();
+  }
+
+  /**
+   * Use method setSoggettoList
+   * @param soggetto List&lt;Soggetto&gt;
+  */
+  public void setSoggetto(List<Soggetto> soggetto) {
+  	this.setSoggettoList(soggetto);
+  }
+
+  /**
+   * Use method sizeSoggettoList
+   * @return lunghezza della lista
+  */
+  public int sizeSoggetto() {
+  	return this.sizeSoggettoList();
+  }
+
   @XmlElement(name="connettore",required=true,nillable=false)
   private List<Connettore> connettore = new ArrayList<>();
+
+  /**
+   * Use method getConnettoreList
+   * @return List&lt;Connettore&gt;
+  */
+  public List<Connettore> getConnettore() {
+  	return this.getConnettoreList();
+  }
+
+  /**
+   * Use method setConnettoreList
+   * @param connettore List&lt;Connettore&gt;
+  */
+  public void setConnettore(List<Connettore> connettore) {
+  	this.setConnettoreList(connettore);
+  }
+
+  /**
+   * Use method sizeConnettoreList
+   * @return lunghezza della lista
+  */
+  public int sizeConnettore() {
+  	return this.sizeConnettoreList();
+  }
 
 }

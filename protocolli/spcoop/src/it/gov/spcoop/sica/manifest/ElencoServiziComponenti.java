@@ -93,4 +93,28 @@ public class ElencoServiziComponenti extends org.openspcoop2.utils.beans.BaseBea
   @XmlElement(name="servizioComponente",required=true,nillable=false)
   private List<java.net.URI> servizioComponente = new ArrayList<>();
 
+  /**
+   * Use method getServizioComponenteList
+   * @return List&lt;java.net.URI&gt;
+  */
+  public List<java.net.URI> getServizioComponente() {
+  	return this.getServizioComponenteList();
+  }
+
+  /**
+   * Use method setServizioComponenteList
+   * @param servizioComponente List&lt;java.net.URI&gt;
+  */
+  public void setServizioComponente(List<java.net.URI> servizioComponente) {
+  	this.setServizioComponenteList(servizioComponente);
+  }
+
+  /**
+   * Use method sizeServizioComponenteList
+   * @return lunghezza della lista
+  */
+  public int sizeServizioComponente() {
+  	return this.sizeServizioComponenteList();
+  }
+
 }

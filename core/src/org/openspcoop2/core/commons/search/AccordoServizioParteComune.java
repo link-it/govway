@@ -251,13 +251,109 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
   @XmlElement(name="accordo-servizio-parte-comune-azione",required=true,nillable=false)
   private List<AccordoServizioParteComuneAzione> accordoServizioParteComuneAzione = new ArrayList<>();
 
+  /**
+   * Use method getAccordoServizioParteComuneAzioneList
+   * @return List&lt;AccordoServizioParteComuneAzione&gt;
+  */
+  public List<AccordoServizioParteComuneAzione> getAccordoServizioParteComuneAzione() {
+  	return this.getAccordoServizioParteComuneAzioneList();
+  }
+
+  /**
+   * Use method setAccordoServizioParteComuneAzioneList
+   * @param accordoServizioParteComuneAzione List&lt;AccordoServizioParteComuneAzione&gt;
+  */
+  public void setAccordoServizioParteComuneAzione(List<AccordoServizioParteComuneAzione> accordoServizioParteComuneAzione) {
+  	this.setAccordoServizioParteComuneAzioneList(accordoServizioParteComuneAzione);
+  }
+
+  /**
+   * Use method sizeAccordoServizioParteComuneAzioneList
+   * @return lunghezza della lista
+  */
+  public int sizeAccordoServizioParteComuneAzione() {
+  	return this.sizeAccordoServizioParteComuneAzioneList();
+  }
+
   @XmlElement(name="port-type",required=true,nillable=false)
   private List<PortType> portType = new ArrayList<>();
+
+  /**
+   * Use method getPortTypeList
+   * @return List&lt;PortType&gt;
+  */
+  public List<PortType> getPortType() {
+  	return this.getPortTypeList();
+  }
+
+  /**
+   * Use method setPortTypeList
+   * @param portType List&lt;PortType&gt;
+  */
+  public void setPortType(List<PortType> portType) {
+  	this.setPortTypeList(portType);
+  }
+
+  /**
+   * Use method sizePortTypeList
+   * @return lunghezza della lista
+  */
+  public int sizePortType() {
+  	return this.sizePortTypeList();
+  }
 
   @XmlElement(name="resource",required=true,nillable=false)
   private List<Resource> resource = new ArrayList<>();
 
+  /**
+   * Use method getResourceList
+   * @return List&lt;Resource&gt;
+  */
+  public List<Resource> getResource() {
+  	return this.getResourceList();
+  }
+
+  /**
+   * Use method setResourceList
+   * @param resource List&lt;Resource&gt;
+  */
+  public void setResource(List<Resource> resource) {
+  	this.setResourceList(resource);
+  }
+
+  /**
+   * Use method sizeResourceList
+   * @return lunghezza della lista
+  */
+  public int sizeResource() {
+  	return this.sizeResourceList();
+  }
+
   @XmlElement(name="accordo-servizio-parte-comune-gruppo",required=true,nillable=false)
   private List<AccordoServizioParteComuneGruppo> accordoServizioParteComuneGruppo = new ArrayList<>();
+
+  /**
+   * Use method getAccordoServizioParteComuneGruppoList
+   * @return List&lt;AccordoServizioParteComuneGruppo&gt;
+  */
+  public List<AccordoServizioParteComuneGruppo> getAccordoServizioParteComuneGruppo() {
+  	return this.getAccordoServizioParteComuneGruppoList();
+  }
+
+  /**
+   * Use method setAccordoServizioParteComuneGruppoList
+   * @param accordoServizioParteComuneGruppo List&lt;AccordoServizioParteComuneGruppo&gt;
+  */
+  public void setAccordoServizioParteComuneGruppo(List<AccordoServizioParteComuneGruppo> accordoServizioParteComuneGruppo) {
+  	this.setAccordoServizioParteComuneGruppoList(accordoServizioParteComuneGruppo);
+  }
+
+  /**
+   * Use method sizeAccordoServizioParteComuneGruppoList
+   * @return lunghezza della lista
+  */
+  public int sizeAccordoServizioParteComuneGruppo() {
+  	return this.sizeAccordoServizioParteComuneGruppoList();
+  }
 
 }

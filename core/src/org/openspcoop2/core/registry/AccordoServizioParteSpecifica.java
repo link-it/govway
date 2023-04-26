@@ -590,20 +590,164 @@ public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.B
   @XmlElement(name="fruitore",required=true,nillable=false)
   private List<Fruitore> fruitore = new ArrayList<>();
 
+  /**
+   * Use method getFruitoreList
+   * @return List&lt;Fruitore&gt;
+  */
+  public List<Fruitore> getFruitore() {
+  	return this.getFruitoreList();
+  }
+
+  /**
+   * Use method setFruitoreList
+   * @param fruitore List&lt;Fruitore&gt;
+  */
+  public void setFruitore(List<Fruitore> fruitore) {
+  	this.setFruitoreList(fruitore);
+  }
+
+  /**
+   * Use method sizeFruitoreList
+   * @return lunghezza della lista
+  */
+  public int sizeFruitore() {
+  	return this.sizeFruitoreList();
+  }
+
   @XmlElement(name="allegato",required=true,nillable=false)
   private List<Documento> allegato = new ArrayList<>();
+
+  /**
+   * Use method getAllegatoList
+   * @return List&lt;Documento&gt;
+  */
+  public List<Documento> getAllegato() {
+  	return this.getAllegatoList();
+  }
+
+  /**
+   * Use method setAllegatoList
+   * @param allegato List&lt;Documento&gt;
+  */
+  public void setAllegato(List<Documento> allegato) {
+  	this.setAllegatoList(allegato);
+  }
+
+  /**
+   * Use method sizeAllegatoList
+   * @return lunghezza della lista
+  */
+  public int sizeAllegato() {
+  	return this.sizeAllegatoList();
+  }
 
   @XmlElement(name="specifica-semiformale",required=true,nillable=false)
   private List<Documento> specificaSemiformale = new ArrayList<>();
 
+  /**
+   * Use method getSpecificaSemiformaleList
+   * @return List&lt;Documento&gt;
+  */
+  public List<Documento> getSpecificaSemiformale() {
+  	return this.getSpecificaSemiformaleList();
+  }
+
+  /**
+   * Use method setSpecificaSemiformaleList
+   * @param specificaSemiformale List&lt;Documento&gt;
+  */
+  public void setSpecificaSemiformale(List<Documento> specificaSemiformale) {
+  	this.setSpecificaSemiformaleList(specificaSemiformale);
+  }
+
+  /**
+   * Use method sizeSpecificaSemiformaleList
+   * @return lunghezza della lista
+  */
+  public int sizeSpecificaSemiformale() {
+  	return this.sizeSpecificaSemiformaleList();
+  }
+
   @XmlElement(name="specifica-livello-servizio",required=true,nillable=false)
   private List<Documento> specificaLivelloServizio = new ArrayList<>();
+
+  /**
+   * Use method getSpecificaLivelloServizioList
+   * @return List&lt;Documento&gt;
+  */
+  public List<Documento> getSpecificaLivelloServizio() {
+  	return this.getSpecificaLivelloServizioList();
+  }
+
+  /**
+   * Use method setSpecificaLivelloServizioList
+   * @param specificaLivelloServizio List&lt;Documento&gt;
+  */
+  public void setSpecificaLivelloServizio(List<Documento> specificaLivelloServizio) {
+  	this.setSpecificaLivelloServizioList(specificaLivelloServizio);
+  }
+
+  /**
+   * Use method sizeSpecificaLivelloServizioList
+   * @return lunghezza della lista
+  */
+  public int sizeSpecificaLivelloServizio() {
+  	return this.sizeSpecificaLivelloServizioList();
+  }
 
   @XmlElement(name="specifica-sicurezza",required=true,nillable=false)
   private List<Documento> specificaSicurezza = new ArrayList<>();
 
+  /**
+   * Use method getSpecificaSicurezzaList
+   * @return List&lt;Documento&gt;
+  */
+  public List<Documento> getSpecificaSicurezza() {
+  	return this.getSpecificaSicurezzaList();
+  }
+
+  /**
+   * Use method setSpecificaSicurezzaList
+   * @param specificaSicurezza List&lt;Documento&gt;
+  */
+  public void setSpecificaSicurezza(List<Documento> specificaSicurezza) {
+  	this.setSpecificaSicurezzaList(specificaSicurezza);
+  }
+
+  /**
+   * Use method sizeSpecificaSicurezzaList
+   * @return lunghezza della lista
+  */
+  public int sizeSpecificaSicurezza() {
+  	return this.sizeSpecificaSicurezzaList();
+  }
+
   @XmlElement(name="protocol-property",required=true,nillable=false)
   private List<ProtocolProperty> protocolProperty = new ArrayList<>();
+
+  /**
+   * Use method getProtocolPropertyList
+   * @return List&lt;ProtocolProperty&gt;
+  */
+  public List<ProtocolProperty> getProtocolProperty() {
+  	return this.getProtocolPropertyList();
+  }
+
+  /**
+   * Use method setProtocolPropertyList
+   * @param protocolProperty List&lt;ProtocolProperty&gt;
+  */
+  public void setProtocolProperty(List<ProtocolProperty> protocolProperty) {
+  	this.setProtocolPropertyList(protocolProperty);
+  }
+
+  /**
+   * Use method sizeProtocolPropertyList
+   * @return lunghezza della lista
+  */
+  public int sizeProtocolProperty() {
+  	return this.sizeProtocolPropertyList();
+  }
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String superUser;

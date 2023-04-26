@@ -308,14 +308,86 @@ public class DatiGeneraliDocumentoType extends org.openspcoop2.utils.beans.BaseB
   @XmlElement(name="DatiRitenuta",required=true,nillable=false)
   private List<DatiRitenutaType> datiRitenuta = new ArrayList<>();
 
+  /**
+   * Use method getDatiRitenutaList
+   * @return List&lt;DatiRitenutaType&gt;
+  */
+  public List<DatiRitenutaType> getDatiRitenuta() {
+  	return this.getDatiRitenutaList();
+  }
+
+  /**
+   * Use method setDatiRitenutaList
+   * @param datiRitenuta List&lt;DatiRitenutaType&gt;
+  */
+  public void setDatiRitenuta(List<DatiRitenutaType> datiRitenuta) {
+  	this.setDatiRitenutaList(datiRitenuta);
+  }
+
+  /**
+   * Use method sizeDatiRitenutaList
+   * @return lunghezza della lista
+  */
+  public int sizeDatiRitenuta() {
+  	return this.sizeDatiRitenutaList();
+  }
+
   @XmlElement(name="DatiBollo",required=false,nillable=false)
   protected DatiBolloType datiBollo;
 
   @XmlElement(name="DatiCassaPrevidenziale",required=true,nillable=false)
   private List<DatiCassaPrevidenzialeType> datiCassaPrevidenziale = new ArrayList<>();
 
+  /**
+   * Use method getDatiCassaPrevidenzialeList
+   * @return List&lt;DatiCassaPrevidenzialeType&gt;
+  */
+  public List<DatiCassaPrevidenzialeType> getDatiCassaPrevidenziale() {
+  	return this.getDatiCassaPrevidenzialeList();
+  }
+
+  /**
+   * Use method setDatiCassaPrevidenzialeList
+   * @param datiCassaPrevidenziale List&lt;DatiCassaPrevidenzialeType&gt;
+  */
+  public void setDatiCassaPrevidenziale(List<DatiCassaPrevidenzialeType> datiCassaPrevidenziale) {
+  	this.setDatiCassaPrevidenzialeList(datiCassaPrevidenziale);
+  }
+
+  /**
+   * Use method sizeDatiCassaPrevidenzialeList
+   * @return lunghezza della lista
+  */
+  public int sizeDatiCassaPrevidenziale() {
+  	return this.sizeDatiCassaPrevidenzialeList();
+  }
+
   @XmlElement(name="ScontoMaggiorazione",required=true,nillable=false)
   private List<ScontoMaggiorazioneType> scontoMaggiorazione = new ArrayList<>();
+
+  /**
+   * Use method getScontoMaggiorazioneList
+   * @return List&lt;ScontoMaggiorazioneType&gt;
+  */
+  public List<ScontoMaggiorazioneType> getScontoMaggiorazione() {
+  	return this.getScontoMaggiorazioneList();
+  }
+
+  /**
+   * Use method setScontoMaggiorazioneList
+   * @param scontoMaggiorazione List&lt;ScontoMaggiorazioneType&gt;
+  */
+  public void setScontoMaggiorazione(List<ScontoMaggiorazioneType> scontoMaggiorazione) {
+  	this.setScontoMaggiorazioneList(scontoMaggiorazione);
+  }
+
+  /**
+   * Use method sizeScontoMaggiorazioneList
+   * @return lunghezza della lista
+  */
+  public int sizeScontoMaggiorazione() {
+  	return this.sizeScontoMaggiorazioneList();
+  }
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="decimal")
@@ -337,6 +409,30 @@ public class DatiGeneraliDocumentoType extends org.openspcoop2.utils.beans.BaseB
   @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
   @XmlElement(name="Causale",required=true,nillable=false)
   private List<java.lang.String> causale = new ArrayList<>();
+
+  /**
+   * Use method getCausaleList
+   * @return List&lt;java.lang.String&gt;
+  */
+  public List<java.lang.String> getCausale() {
+  	return this.getCausaleList();
+  }
+
+  /**
+   * Use method setCausaleList
+   * @param causale List&lt;java.lang.String&gt;
+  */
+  public void setCausale(List<java.lang.String> causale) {
+  	this.setCausaleList(causale);
+  }
+
+  /**
+   * Use method sizeCausaleList
+   * @return lunghezza della lista
+  */
+  public int sizeCausale() {
+  	return this.sizeCausaleList();
+  }
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String art73RawEnumValue;

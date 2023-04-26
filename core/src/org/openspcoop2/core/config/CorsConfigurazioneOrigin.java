@@ -93,4 +93,28 @@ public class CorsConfigurazioneOrigin extends org.openspcoop2.utils.beans.BaseBe
   @XmlElement(name="origin",required=true,nillable=false)
   private List<java.lang.String> origin = new ArrayList<>();
 
+  /**
+   * Use method getOriginList
+   * @return List&lt;java.lang.String&gt;
+  */
+  public List<java.lang.String> getOrigin() {
+  	return this.getOriginList();
+  }
+
+  /**
+   * Use method setOriginList
+   * @param origin List&lt;java.lang.String&gt;
+  */
+  public void setOrigin(List<java.lang.String> origin) {
+  	this.setOriginList(origin);
+  }
+
+  /**
+   * Use method sizeOriginList
+   * @return lunghezza della lista
+  */
+  public int sizeOrigin() {
+  	return this.sizeOriginList();
+  }
+
 }

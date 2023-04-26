@@ -92,4 +92,28 @@ public class Agreements extends org.openspcoop2.utils.beans.BaseBean implements 
   @XmlElement(name="agreement",required=true,nillable=false)
   private List<Agreement> agreement = new ArrayList<>();
 
+  /**
+   * Use method getAgreementList
+   * @return List&lt;Agreement&gt;
+  */
+  public List<Agreement> getAgreement() {
+  	return this.getAgreementList();
+  }
+
+  /**
+   * Use method setAgreementList
+   * @param agreement List&lt;Agreement&gt;
+  */
+  public void setAgreement(List<Agreement> agreement) {
+  	this.setAgreementList(agreement);
+  }
+
+  /**
+   * Use method sizeAgreementList
+   * @return lunghezza della lista
+  */
+  public int sizeAgreement() {
+  	return this.sizeAgreementList();
+  }
+
 }

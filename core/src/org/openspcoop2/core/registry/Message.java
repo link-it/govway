@@ -124,6 +124,30 @@ public class Message extends org.openspcoop2.utils.beans.BaseBeanWithId implemen
   @XmlElement(name="part",required=true,nillable=false)
   private List<MessagePart> part = new ArrayList<>();
 
+  /**
+   * Use method getPartList
+   * @return List&lt;MessagePart&gt;
+  */
+  public List<MessagePart> getPart() {
+  	return this.getPartList();
+  }
+
+  /**
+   * Use method setPartList
+   * @param part List&lt;MessagePart&gt;
+  */
+  public void setPart(List<MessagePart> part) {
+  	this.setPartList(part);
+  }
+
+  /**
+   * Use method sizePartList
+   * @return lunghezza della lista
+  */
+  public int sizePart() {
+  	return this.sizePartList();
+  }
+
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String useRawEnumValue;
 

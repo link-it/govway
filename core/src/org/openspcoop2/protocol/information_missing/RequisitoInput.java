@@ -102,6 +102,30 @@ public class RequisitoInput extends org.openspcoop2.utils.beans.BaseBean impleme
   @XmlElement(name="proprieta",required=true,nillable=false)
   private List<ProprietaRequisitoInput> proprieta = new ArrayList<>();
 
+  /**
+   * Use method getProprietaList
+   * @return List&lt;ProprietaRequisitoInput&gt;
+  */
+  public List<ProprietaRequisitoInput> getProprieta() {
+  	return this.getProprietaList();
+  }
+
+  /**
+   * Use method setProprietaList
+   * @param proprieta List&lt;ProprietaRequisitoInput&gt;
+  */
+  public void setProprieta(List<ProprietaRequisitoInput> proprieta) {
+  	this.setProprietaList(proprieta);
+  }
+
+  /**
+   * Use method sizeProprietaList
+   * @return lunghezza della lista
+  */
+  public int sizeProprieta() {
+  	return this.sizeProprietaList();
+  }
+
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="descrizione",required=true)
   protected java.lang.String descrizione;

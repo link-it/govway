@@ -92,4 +92,28 @@ public class Riscontri extends org.openspcoop2.utils.beans.BaseBeanWithId implem
   @XmlElement(name="riscontro",required=true,nillable=false)
   private List<Riscontro> riscontro = new ArrayList<>();
 
+  /**
+   * Use method getRiscontroList
+   * @return List&lt;Riscontro&gt;
+  */
+  public List<Riscontro> getRiscontro() {
+  	return this.getRiscontroList();
+  }
+
+  /**
+   * Use method setRiscontroList
+   * @param riscontro List&lt;Riscontro&gt;
+  */
+  public void setRiscontro(List<Riscontro> riscontro) {
+  	this.setRiscontroList(riscontro);
+  }
+
+  /**
+   * Use method sizeRiscontroList
+   * @return lunghezza della lista
+  */
+  public int sizeRiscontro() {
+  	return this.sizeRiscontroList();
+  }
+
 }

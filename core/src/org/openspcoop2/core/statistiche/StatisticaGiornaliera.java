@@ -117,4 +117,28 @@ public class StatisticaGiornaliera extends org.openspcoop2.utils.beans.BaseBeanW
   @XmlElement(name="statistica-giornaliera-contenuti",required=true,nillable=false)
   private List<StatisticaContenuti> statisticaGiornalieraContenuti = new ArrayList<>();
 
+  /**
+   * Use method getStatisticaGiornalieraContenutiList
+   * @return List&lt;StatisticaContenuti&gt;
+  */
+  public List<StatisticaContenuti> getStatisticaGiornalieraContenuti() {
+  	return this.getStatisticaGiornalieraContenutiList();
+  }
+
+  /**
+   * Use method setStatisticaGiornalieraContenutiList
+   * @param statisticaGiornalieraContenuti List&lt;StatisticaContenuti&gt;
+  */
+  public void setStatisticaGiornalieraContenuti(List<StatisticaContenuti> statisticaGiornalieraContenuti) {
+  	this.setStatisticaGiornalieraContenutiList(statisticaGiornalieraContenuti);
+  }
+
+  /**
+   * Use method sizeStatisticaGiornalieraContenutiList
+   * @return lunghezza della lista
+  */
+  public int sizeStatisticaGiornalieraContenuti() {
+  	return this.sizeStatisticaGiornalieraContenutiList();
+  }
+
 }

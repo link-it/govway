@@ -297,7 +297,55 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBeanWithId im
   @XmlElement(name="porta-delegata-servizio-applicativo",required=true,nillable=false)
   private List<PortaDelegataServizioApplicativo> portaDelegataServizioApplicativo = new ArrayList<>();
 
+  /**
+   * Use method getPortaDelegataServizioApplicativoList
+   * @return List&lt;PortaDelegataServizioApplicativo&gt;
+  */
+  public List<PortaDelegataServizioApplicativo> getPortaDelegataServizioApplicativo() {
+  	return this.getPortaDelegataServizioApplicativoList();
+  }
+
+  /**
+   * Use method setPortaDelegataServizioApplicativoList
+   * @param portaDelegataServizioApplicativo List&lt;PortaDelegataServizioApplicativo&gt;
+  */
+  public void setPortaDelegataServizioApplicativo(List<PortaDelegataServizioApplicativo> portaDelegataServizioApplicativo) {
+  	this.setPortaDelegataServizioApplicativoList(portaDelegataServizioApplicativo);
+  }
+
+  /**
+   * Use method sizePortaDelegataServizioApplicativoList
+   * @return lunghezza della lista
+  */
+  public int sizePortaDelegataServizioApplicativo() {
+  	return this.sizePortaDelegataServizioApplicativoList();
+  }
+
   @XmlElement(name="porta-delegata-azione",required=true,nillable=false)
   private List<PortaDelegataAzione> portaDelegataAzione = new ArrayList<>();
+
+  /**
+   * Use method getPortaDelegataAzioneList
+   * @return List&lt;PortaDelegataAzione&gt;
+  */
+  public List<PortaDelegataAzione> getPortaDelegataAzione() {
+  	return this.getPortaDelegataAzioneList();
+  }
+
+  /**
+   * Use method setPortaDelegataAzioneList
+   * @param portaDelegataAzione List&lt;PortaDelegataAzione&gt;
+  */
+  public void setPortaDelegataAzione(List<PortaDelegataAzione> portaDelegataAzione) {
+  	this.setPortaDelegataAzioneList(portaDelegataAzione);
+  }
+
+  /**
+   * Use method sizePortaDelegataAzioneList
+   * @return lunghezza della lista
+  */
+  public int sizePortaDelegataAzione() {
+  	return this.sizePortaDelegataAzioneList();
+  }
 
 }

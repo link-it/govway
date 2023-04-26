@@ -118,7 +118,55 @@ public class PayloadProfiles extends org.openspcoop2.utils.beans.BaseBean implem
   @XmlElement(name="payload",required=true,nillable=false)
   private List<Payload> payload = new ArrayList<>();
 
+  /**
+   * Use method getPayloadList
+   * @return List&lt;Payload&gt;
+  */
+  public List<Payload> getPayload() {
+  	return this.getPayloadList();
+  }
+
+  /**
+   * Use method setPayloadList
+   * @param payload List&lt;Payload&gt;
+  */
+  public void setPayload(List<Payload> payload) {
+  	this.setPayloadList(payload);
+  }
+
+  /**
+   * Use method sizePayloadList
+   * @return lunghezza della lista
+  */
+  public int sizePayload() {
+  	return this.sizePayloadList();
+  }
+
   @XmlElement(name="payloadProfile",required=true,nillable=false)
   private List<PayloadProfile> payloadProfile = new ArrayList<>();
+
+  /**
+   * Use method getPayloadProfileList
+   * @return List&lt;PayloadProfile&gt;
+  */
+  public List<PayloadProfile> getPayloadProfile() {
+  	return this.getPayloadProfileList();
+  }
+
+  /**
+   * Use method setPayloadProfileList
+   * @param payloadProfile List&lt;PayloadProfile&gt;
+  */
+  public void setPayloadProfile(List<PayloadProfile> payloadProfile) {
+  	this.setPayloadProfileList(payloadProfile);
+  }
+
+  /**
+   * Use method sizePayloadProfileList
+   * @return lunghezza della lista
+  */
+  public int sizePayloadProfile() {
+  	return this.sizePayloadProfileList();
+  }
 
 }

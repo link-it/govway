@@ -131,6 +131,30 @@ public class TrasformazioneRegolaApplicabilitaRisposta extends org.openspcoop2.u
   @XmlElement(name="content-type",required=true,nillable=false)
   private List<java.lang.String> contentType = new ArrayList<>();
 
+  /**
+   * Use method getContentTypeList
+   * @return List&lt;java.lang.String&gt;
+  */
+  public List<java.lang.String> getContentType() {
+  	return this.getContentTypeList();
+  }
+
+  /**
+   * Use method setContentTypeList
+   * @param contentType List&lt;java.lang.String&gt;
+  */
+  public void setContentType(List<java.lang.String> contentType) {
+  	this.setContentTypeList(contentType);
+  }
+
+  /**
+   * Use method sizeContentTypeList
+   * @return lunghezza della lista
+  */
+  public int sizeContentType() {
+  	return this.sizeContentTypeList();
+  }
+
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="pattern",required=false,nillable=false)
   protected java.lang.String pattern;

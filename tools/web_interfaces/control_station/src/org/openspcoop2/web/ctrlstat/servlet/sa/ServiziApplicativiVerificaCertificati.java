@@ -37,6 +37,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Connettore;
@@ -58,7 +59,6 @@ import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
-import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.connettori.ConnettoreUtils;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
@@ -66,7 +66,6 @@ import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
-import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
@@ -78,8 +77,8 @@ import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.web.ctrlstat.core.CertificateChecker;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
@@ -156,7 +155,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 			// Prendo la lista di aliases
 			List<String> aliases = confCore.getJmxPdD_aliases();
 			if(aliases==null || aliases.isEmpty()){
-				throw new Exception("Pagina non prevista, la sezione configurazione non permette di accedere a questa pagina, se la configurazione non e' corretta");
+				throw new CoreException("Pagina non prevista, la sezione configurazione non permette di accedere a questa pagina, se la configurazione non e' corretta");
 			}
 
 			// Prendo il nome e il provider del servizioApplicativo
@@ -190,7 +189,6 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 			boolean modalitaCompleta = saHelper.isModalitaCompleta();
 			String tmpTitle = null;
 			String protocolloSoggetto = null;
-			boolean supportAsincroni = true;
 			if(useIdSogg){
 				if(saCore.isRegistroServiziLocale()){
 					Soggetto tmpSogg =  soggettiCore.getSoggettoRegistro(Integer.parseInt(idProvider));
@@ -202,16 +200,6 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 					tmpTitle = saHelper.getLabelNomeSoggetto(protocolloSoggetto, tmpSogg.getTipo() , tmpSogg.getNome());
 				}
 				
-				List<ServiceBinding> serviceBindingListProtocollo = saCore.getServiceBindingListProtocollo(protocolloSoggetto);
-				for (ServiceBinding serviceBinding : serviceBindingListProtocollo) {
-					supportAsincroni = saCore.isProfiloDiCollaborazioneSupportatoDalProtocollo(protocolloSoggetto,serviceBinding, ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO)
-							|| saCore.isProfiloDiCollaborazioneSupportatoDalProtocollo(protocolloSoggetto, serviceBinding, ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO);
-				}
-				
-				if(!supportAsincroni &&
-					saHelper.isModalitaAvanzata()){
-					supportAsincroni = saCore.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona();
-				}
 			}
 			
 			String verificaConnettivitaS = saHelper.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTIVITA);
@@ -220,7 +208,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 			// setto la barra del titolo
 			String labelApplicativi = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
 			String labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI;
-			if(modalitaCompleta==false) {
+			if(!modalitaCompleta) {
 				labelApplicativi = ServiziApplicativiCostanti.LABEL_APPLICATIVI;
 				labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_APPLICATIVI_DI;
 			}
@@ -364,9 +352,15 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 					// -- verifica		
 					
 					if(verificaConnettivita) {
-						
+						String aliasDescrizione = null;
+						if(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI.equals(alias)){
+							aliasDescrizione = aliases.get(0);
+						}
+						else {
+							aliasDescrizione = alias!=null ? alias : aliases.get(0);
+						}
 						saHelper.addDescrizioneVerificaConnettivitaToDati(dati, connettore, null, 
-								(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI.equals(alias)) ? aliases.get(0) : (alias!=null ? alias : aliases.get(0))
+								aliasDescrizione
 								);
 						
 						if (!saHelper.isEditModeInProgress()) {
@@ -383,7 +377,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 							}
 														
 							boolean rilevatoErrore = false;
-							String messagePerOperazioneEffettuata = "";
+							StringBuilder sbPerOperazioneEffettuata = new StringBuilder();
 							int index = 0;
 							for (String aliasForVerificaConnettore : aliasesForCheck) {
 								
@@ -431,18 +425,18 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 									}
 								}
 			
-								if(messagePerOperazioneEffettuata.length()>0){
-									messagePerOperazioneEffettuata+= org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
+								if(sbPerOperazioneEffettuata.length()>0){
+									sbPerOperazioneEffettuata.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 								}
-								messagePerOperazioneEffettuata+= bfExternal.toString();
+								sbPerOperazioneEffettuata.append(bfExternal.toString());
 								
 								index++;
 							}
-							if(messagePerOperazioneEffettuata!=null){
+							if(sbPerOperazioneEffettuata!=null){
 								if(rilevatoErrore)
-									pd.setMessage(messagePerOperazioneEffettuata);
+									pd.setMessage(sbPerOperazioneEffettuata.toString());
 								else 
-									pd.setMessage(messagePerOperazioneEffettuata,Costanti.MESSAGE_TYPE_INFO);
+									pd.setMessage(sbPerOperazioneEffettuata.toString(),Costanti.MESSAGE_TYPE_INFO);
 							}
 			
 							pd.disableEditMode();
@@ -552,7 +546,12 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 								}catch(Exception t) {
 									throw new DriverConfigurazioneException(t.getMessage(),t);
 								}
-								if(keystoreParams!=null && !"jwk".equalsIgnoreCase(keystoreParams.getType())) {
+								
+								boolean riferimentoApplicativoModi = keystoreParams!=null && org.openspcoop2.pdd.core.token.Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equalsIgnoreCase(keystoreParams.getPath());
+								boolean riferimentoFruizioneModi = keystoreParams!=null && org.openspcoop2.pdd.core.token.Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equalsIgnoreCase(keystoreParams.getPath());
+								if(keystoreParams!=null &&
+										!riferimentoApplicativoModi &&
+										!riferimentoFruizioneModi) {
 									signedJwt = true;
 								}
 								
@@ -865,10 +864,6 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 					}
 					if ((risprif == null) || "".equals(risprif)) {
 						risprif = CostantiConfigurazione.DISABILITATO.toString();
-					}
-					String tipoauthRichiesta = null;
-					if ((tipoauthRichiesta == null) && (is != null) && is.getAutenticazione()!=null) {
-						tipoauthRichiesta = is.getAutenticazione().getValue();
 					}
 					String user = null;
 					String password = null;
