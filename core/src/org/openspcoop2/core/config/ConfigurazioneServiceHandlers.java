@@ -168,123 +168,15 @@ public class ConfigurazioneServiceHandlers extends org.openspcoop2.utils.beans.B
 
 
   @XmlElement(name="init",required=true,nillable=false)
-  protected List<ConfigurazioneHandler> init = new ArrayList<ConfigurazioneHandler>();
-
-  /**
-   * @deprecated Use method getInitList
-   * @return List&lt;ConfigurazioneHandler&gt;
-  */
-  @Deprecated
-  public List<ConfigurazioneHandler> getInit() {
-  	return this.init;
-  }
-
-  /**
-   * @deprecated Use method setInitList
-   * @param init List&lt;ConfigurazioneHandler&gt;
-  */
-  @Deprecated
-  public void setInit(List<ConfigurazioneHandler> init) {
-  	this.init=init;
-  }
-
-  /**
-   * @deprecated Use method sizeInitList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeInit() {
-  	return this.init.size();
-  }
+  private List<ConfigurazioneHandler> init = new ArrayList<>();
 
   @XmlElement(name="exit",required=true,nillable=false)
-  protected List<ConfigurazioneHandler> exit = new ArrayList<ConfigurazioneHandler>();
-
-  /**
-   * @deprecated Use method getExitList
-   * @return List&lt;ConfigurazioneHandler&gt;
-  */
-  @Deprecated
-  public List<ConfigurazioneHandler> getExit() {
-  	return this.exit;
-  }
-
-  /**
-   * @deprecated Use method setExitList
-   * @param exit List&lt;ConfigurazioneHandler&gt;
-  */
-  @Deprecated
-  public void setExit(List<ConfigurazioneHandler> exit) {
-  	this.exit=exit;
-  }
-
-  /**
-   * @deprecated Use method sizeExitList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeExit() {
-  	return this.exit.size();
-  }
+  private List<ConfigurazioneHandler> exit = new ArrayList<>();
 
   @XmlElement(name="integrationManagerRequest",required=true,nillable=false)
-  protected List<ConfigurazioneHandler> integrationManagerRequest = new ArrayList<ConfigurazioneHandler>();
-
-  /**
-   * @deprecated Use method getIntegrationManagerRequestList
-   * @return List&lt;ConfigurazioneHandler&gt;
-  */
-  @Deprecated
-  public List<ConfigurazioneHandler> getIntegrationManagerRequest() {
-  	return this.integrationManagerRequest;
-  }
-
-  /**
-   * @deprecated Use method setIntegrationManagerRequestList
-   * @param integrationManagerRequest List&lt;ConfigurazioneHandler&gt;
-  */
-  @Deprecated
-  public void setIntegrationManagerRequest(List<ConfigurazioneHandler> integrationManagerRequest) {
-  	this.integrationManagerRequest=integrationManagerRequest;
-  }
-
-  /**
-   * @deprecated Use method sizeIntegrationManagerRequestList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeIntegrationManagerRequest() {
-  	return this.integrationManagerRequest.size();
-  }
+  private List<ConfigurazioneHandler> integrationManagerRequest = new ArrayList<>();
 
   @XmlElement(name="integrationManagerResponse",required=true,nillable=false)
-  protected List<ConfigurazioneHandler> integrationManagerResponse = new ArrayList<ConfigurazioneHandler>();
-
-  /**
-   * @deprecated Use method getIntegrationManagerResponseList
-   * @return List&lt;ConfigurazioneHandler&gt;
-  */
-  @Deprecated
-  public List<ConfigurazioneHandler> getIntegrationManagerResponse() {
-  	return this.integrationManagerResponse;
-  }
-
-  /**
-   * @deprecated Use method setIntegrationManagerResponseList
-   * @param integrationManagerResponse List&lt;ConfigurazioneHandler&gt;
-  */
-  @Deprecated
-  public void setIntegrationManagerResponse(List<ConfigurazioneHandler> integrationManagerResponse) {
-  	this.integrationManagerResponse=integrationManagerResponse;
-  }
-
-  /**
-   * @deprecated Use method sizeIntegrationManagerResponseList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeIntegrationManagerResponse() {
-  	return this.integrationManagerResponse.size();
-  }
+  private List<ConfigurazioneHandler> integrationManagerResponse = new ArrayList<>();
 
 }

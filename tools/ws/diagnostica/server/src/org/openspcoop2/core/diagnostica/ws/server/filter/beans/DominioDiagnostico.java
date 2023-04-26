@@ -38,7 +38,7 @@ package org.openspcoop2.core.diagnostica.ws.server.filter.beans;
  */
  
 import java.io.Serializable;
- 
+
 import javax.xml.bind.annotation.XmlElement;
 
 /**     

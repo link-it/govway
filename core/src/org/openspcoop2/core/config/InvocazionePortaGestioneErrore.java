@@ -58,11 +58,11 @@ public class InvocazionePortaGestioneErrore extends org.openspcoop2.utils.beans.
     super();
   }
 
-  public void set_value_fault(String value) {
+  public void setFaultRawEnumValue(String value) {
     this.fault = (FaultIntegrazioneTipo) FaultIntegrazioneTipo.toEnumConstantFromString(value);
   }
 
-  public String get_value_fault() {
+  public String getFaultRawEnumValue() {
     if(this.fault == null){
     	return null;
     }else{
@@ -86,11 +86,11 @@ public class InvocazionePortaGestioneErrore extends org.openspcoop2.utils.beans.
     this.faultActor = faultActor;
   }
 
-  public void set_value_genericFaultCode(String value) {
+  public void setGenericFaultCodeRawEnumValue(String value) {
     this.genericFaultCode = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_genericFaultCode() {
+  public String getGenericFaultCodeRawEnumValue() {
     if(this.genericFaultCode == null){
     	return null;
     }else{
@@ -119,7 +119,7 @@ public class InvocazionePortaGestioneErrore extends org.openspcoop2.utils.beans.
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_fault;
+  protected java.lang.String faultRawEnumValue;
 
   @XmlAttribute(name="fault",required=false)
   protected FaultIntegrazioneTipo fault = (FaultIntegrazioneTipo) FaultIntegrazioneTipo.toEnumConstantFromString("soap");
@@ -129,7 +129,7 @@ public class InvocazionePortaGestioneErrore extends org.openspcoop2.utils.beans.
   protected java.lang.String faultActor;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_genericFaultCode;
+  protected java.lang.String genericFaultCodeRawEnumValue;
 
   @XmlAttribute(name="generic-fault-code",required=false)
   protected StatoFunzionalita genericFaultCode;

@@ -55,11 +55,11 @@ public class PortaDelegataLocalForward extends org.openspcoop2.utils.beans.BaseB
     super();
   }
 
-  public void set_value_stato(String value) {
+  public void setStatoRawEnumValue(String value) {
     this.stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_stato() {
+  public String getStatoRawEnumValue() {
     if(this.stato == null){
     	return null;
     }else{
@@ -88,7 +88,7 @@ public class PortaDelegataLocalForward extends org.openspcoop2.utils.beans.BaseB
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_stato;
+  protected java.lang.String statoRawEnumValue;
 
   @XmlAttribute(name="stato",required=false)
   protected StatoFunzionalita stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");

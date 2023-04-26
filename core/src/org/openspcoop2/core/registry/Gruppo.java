@@ -84,11 +84,11 @@ public class Gruppo extends org.openspcoop2.utils.beans.BaseBeanWithId implement
     this.descrizione = descrizione;
   }
 
-  public void set_value_serviceBinding(String value) {
+  public void setServiceBindingRawEnumValue(String value) {
     this.serviceBinding = (ServiceBinding) ServiceBinding.toEnumConstantFromString(value);
   }
 
-  public String get_value_serviceBinding() {
+  public String getServiceBindingRawEnumValue() {
     if(this.serviceBinding == null){
     	return null;
     }else{
@@ -148,7 +148,7 @@ public class Gruppo extends org.openspcoop2.utils.beans.BaseBeanWithId implement
   protected java.lang.String descrizione;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_serviceBinding;
+  protected java.lang.String serviceBindingRawEnumValue;
 
   @XmlAttribute(name="service-binding",required=false)
   protected ServiceBinding serviceBinding;

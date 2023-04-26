@@ -585,11 +585,11 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBeanWithId
     this.descrizione = descrizione;
   }
 
-  public void set_value_ricevutaAsincronaSimmetrica(String value) {
+  public void setRicevutaAsincronaSimmetricaRawEnumValue(String value) {
     this.ricevutaAsincronaSimmetrica = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_ricevutaAsincronaSimmetrica() {
+  public String getRicevutaAsincronaSimmetricaRawEnumValue() {
     if(this.ricevutaAsincronaSimmetrica == null){
     	return null;
     }else{
@@ -605,11 +605,11 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBeanWithId
     this.ricevutaAsincronaSimmetrica = ricevutaAsincronaSimmetrica;
   }
 
-  public void set_value_ricevutaAsincronaAsimmetrica(String value) {
+  public void setRicevutaAsincronaAsimmetricaRawEnumValue(String value) {
     this.ricevutaAsincronaAsimmetrica = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_ricevutaAsincronaAsimmetrica() {
+  public String getRicevutaAsincronaAsimmetricaRawEnumValue() {
     if(this.ricevutaAsincronaAsimmetrica == null){
     	return null;
     }else{
@@ -633,11 +633,11 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBeanWithId
     this.integrazione = integrazione;
   }
 
-  public void set_value_allegaBody(String value) {
+  public void setAllegaBodyRawEnumValue(String value) {
     this.allegaBody = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_allegaBody() {
+  public String getAllegaBodyRawEnumValue() {
     if(this.allegaBody == null){
     	return null;
     }else{
@@ -653,11 +653,11 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBeanWithId
     this.allegaBody = allegaBody;
   }
 
-  public void set_value_scartaBody(String value) {
+  public void setScartaBodyRawEnumValue(String value) {
     this.scartaBody = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_scartaBody() {
+  public String getScartaBodyRawEnumValue() {
     if(this.scartaBody == null){
     	return null;
     }else{
@@ -673,11 +673,11 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBeanWithId
     this.scartaBody = scartaBody;
   }
 
-  public void set_value_gestioneManifest(String value) {
+  public void setGestioneManifestRawEnumValue(String value) {
     this.gestioneManifest = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_gestioneManifest() {
+  public String getGestioneManifestRawEnumValue() {
     if(this.gestioneManifest == null){
     	return null;
     }else{
@@ -693,11 +693,11 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBeanWithId
     this.gestioneManifest = gestioneManifest;
   }
 
-  public void set_value_stateless(String value) {
+  public void setStatelessRawEnumValue(String value) {
     this.stateless = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_stateless() {
+  public String getStatelessRawEnumValue() {
     if(this.stateless == null){
     	return null;
     }else{
@@ -721,11 +721,11 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBeanWithId
     this.autenticazione = autenticazione;
   }
 
-  public void set_value_autenticazioneOpzionale(String value) {
+  public void setAutenticazioneOpzionaleRawEnumValue(String value) {
     this.autenticazioneOpzionale = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_autenticazioneOpzionale() {
+  public String getAutenticazioneOpzionaleRawEnumValue() {
     if(this.autenticazioneOpzionale == null){
     	return null;
     }else{
@@ -757,11 +757,11 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBeanWithId
     this.autorizzazioneContenuto = autorizzazioneContenuto;
   }
 
-  public void set_value_ricercaPortaAzioneDelegata(String value) {
+  public void setRicercaPortaAzioneDelegataRawEnumValue(String value) {
     this.ricercaPortaAzioneDelegata = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_ricercaPortaAzioneDelegata() {
+  public String getRicercaPortaAzioneDelegataRawEnumValue() {
     if(this.ricercaPortaAzioneDelegata == null){
     	return null;
     }else{
@@ -785,11 +785,11 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBeanWithId
     this.servizioApplicativoDefault = servizioApplicativoDefault;
   }
 
-  public void set_value_stato(String value) {
+  public void setStatoRawEnumValue(String value) {
     this.stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_stato() {
+  public String getStatoRawEnumValue() {
     if(this.stato == null){
     	return null;
     }else{
@@ -849,34 +849,7 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBeanWithId
   protected IDPortaApplicativa oldIDPortaApplicativaForUpdate;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected List<Object> extendedInfo = new ArrayList<>();
-
-  /**
-   * @deprecated Use method getExtendedInfoList
-   * @return List&lt;Object&gt;
-  */
-  @Deprecated
-  public List<Object> getExtendedInfo() {
-  	return this.extendedInfo;
-  }
-
-  /**
-   * @deprecated Use method setExtendedInfoList
-   * @param extendedInfo List&lt;Object&gt;
-  */
-  @Deprecated
-  public void setExtendedInfo(List<Object> extendedInfo) {
-  	this.extendedInfo=extendedInfo;
-  }
-
-  /**
-   * @deprecated Use method sizeExtendedInfoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeExtendedInfo() {
-  	return this.extendedInfo.size();
-  }
+  private List<Object> extendedInfo = new ArrayList<>();
 
   @XmlElement(name="soggetto-virtuale",required=false,nillable=false)
   protected PortaApplicativaSoggettoVirtuale soggettoVirtuale;
@@ -888,154 +861,19 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBeanWithId
   protected PortaApplicativaAzione azione;
 
   @XmlElement(name="servizio-applicativo",required=true,nillable=false)
-  protected List<PortaApplicativaServizioApplicativo> servizioApplicativo = new ArrayList<PortaApplicativaServizioApplicativo>();
-
-  /**
-   * @deprecated Use method getServizioApplicativoList
-   * @return List&lt;PortaApplicativaServizioApplicativo&gt;
-  */
-  @Deprecated
-  public List<PortaApplicativaServizioApplicativo> getServizioApplicativo() {
-  	return this.servizioApplicativo;
-  }
-
-  /**
-   * @deprecated Use method setServizioApplicativoList
-   * @param servizioApplicativo List&lt;PortaApplicativaServizioApplicativo&gt;
-  */
-  @Deprecated
-  public void setServizioApplicativo(List<PortaApplicativaServizioApplicativo> servizioApplicativo) {
-  	this.servizioApplicativo=servizioApplicativo;
-  }
-
-  /**
-   * @deprecated Use method sizeServizioApplicativoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeServizioApplicativo() {
-  	return this.servizioApplicativo.size();
-  }
+  private List<PortaApplicativaServizioApplicativo> servizioApplicativo = new ArrayList<>();
 
   @XmlElement(name="proprieta-autenticazione",required=true,nillable=false)
-  protected List<Proprieta> proprietaAutenticazione = new ArrayList<Proprieta>();
-
-  /**
-   * @deprecated Use method getProprietaAutenticazioneList
-   * @return List&lt;Proprieta&gt;
-  */
-  @Deprecated
-  public List<Proprieta> getProprietaAutenticazione() {
-  	return this.proprietaAutenticazione;
-  }
-
-  /**
-   * @deprecated Use method setProprietaAutenticazioneList
-   * @param proprietaAutenticazione List&lt;Proprieta&gt;
-  */
-  @Deprecated
-  public void setProprietaAutenticazione(List<Proprieta> proprietaAutenticazione) {
-  	this.proprietaAutenticazione=proprietaAutenticazione;
-  }
-
-  /**
-   * @deprecated Use method sizeProprietaAutenticazioneList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeProprietaAutenticazione() {
-  	return this.proprietaAutenticazione.size();
-  }
+  private List<Proprieta> proprietaAutenticazione = new ArrayList<>();
 
   @XmlElement(name="proprieta-autorizzazione",required=true,nillable=false)
-  protected List<Proprieta> proprietaAutorizzazione = new ArrayList<Proprieta>();
-
-  /**
-   * @deprecated Use method getProprietaAutorizzazioneList
-   * @return List&lt;Proprieta&gt;
-  */
-  @Deprecated
-  public List<Proprieta> getProprietaAutorizzazione() {
-  	return this.proprietaAutorizzazione;
-  }
-
-  /**
-   * @deprecated Use method setProprietaAutorizzazioneList
-   * @param proprietaAutorizzazione List&lt;Proprieta&gt;
-  */
-  @Deprecated
-  public void setProprietaAutorizzazione(List<Proprieta> proprietaAutorizzazione) {
-  	this.proprietaAutorizzazione=proprietaAutorizzazione;
-  }
-
-  /**
-   * @deprecated Use method sizeProprietaAutorizzazioneList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeProprietaAutorizzazione() {
-  	return this.proprietaAutorizzazione.size();
-  }
+  private List<Proprieta> proprietaAutorizzazione = new ArrayList<>();
 
   @XmlElement(name="proprieta-autorizzazione-contenuto",required=true,nillable=false)
-  protected List<Proprieta> proprietaAutorizzazioneContenuto = new ArrayList<Proprieta>();
-
-  /**
-   * @deprecated Use method getProprietaAutorizzazioneContenutoList
-   * @return List&lt;Proprieta&gt;
-  */
-  @Deprecated
-  public List<Proprieta> getProprietaAutorizzazioneContenuto() {
-  	return this.proprietaAutorizzazioneContenuto;
-  }
-
-  /**
-   * @deprecated Use method setProprietaAutorizzazioneContenutoList
-   * @param proprietaAutorizzazioneContenuto List&lt;Proprieta&gt;
-  */
-  @Deprecated
-  public void setProprietaAutorizzazioneContenuto(List<Proprieta> proprietaAutorizzazioneContenuto) {
-  	this.proprietaAutorizzazioneContenuto=proprietaAutorizzazioneContenuto;
-  }
-
-  /**
-   * @deprecated Use method sizeProprietaAutorizzazioneContenutoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeProprietaAutorizzazioneContenuto() {
-  	return this.proprietaAutorizzazioneContenuto.size();
-  }
+  private List<Proprieta> proprietaAutorizzazioneContenuto = new ArrayList<>();
 
   @XmlElement(name="proprieta-rate-limiting",required=true,nillable=false)
-  protected List<Proprieta> proprietaRateLimiting = new ArrayList<Proprieta>();
-
-  /**
-   * @deprecated Use method getProprietaRateLimitingList
-   * @return List&lt;Proprieta&gt;
-  */
-  @Deprecated
-  public List<Proprieta> getProprietaRateLimiting() {
-  	return this.proprietaRateLimiting;
-  }
-
-  /**
-   * @deprecated Use method setProprietaRateLimitingList
-   * @param proprietaRateLimiting List&lt;Proprieta&gt;
-  */
-  @Deprecated
-  public void setProprietaRateLimiting(List<Proprieta> proprietaRateLimiting) {
-  	this.proprietaRateLimiting=proprietaRateLimiting;
-  }
-
-  /**
-   * @deprecated Use method sizeProprietaRateLimitingList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeProprietaRateLimiting() {
-  	return this.proprietaRateLimiting.size();
-  }
+  private List<Proprieta> proprietaRateLimiting = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="xacml-policy",required=false,nillable=false)
@@ -1060,34 +898,7 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBeanWithId
   protected PortaApplicativaAutorizzazioneToken autorizzazioneToken;
 
   @XmlElement(name="proprieta",required=true,nillable=false)
-  protected List<Proprieta> proprieta = new ArrayList<Proprieta>();
-
-  /**
-   * @deprecated Use method getProprietaList
-   * @return List&lt;Proprieta&gt;
-  */
-  @Deprecated
-  public List<Proprieta> getProprieta() {
-  	return this.proprieta;
-  }
-
-  /**
-   * @deprecated Use method setProprietaList
-   * @param proprieta List&lt;Proprieta&gt;
-  */
-  @Deprecated
-  public void setProprieta(List<Proprieta> proprieta) {
-  	this.proprieta=proprieta;
-  }
-
-  /**
-   * @deprecated Use method sizeProprietaList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeProprieta() {
-  	return this.proprieta.size();
-  }
+  private List<Proprieta> proprieta = new ArrayList<>();
 
   @XmlElement(name="mtom-processor",required=false,nillable=false)
   protected MtomProcessor mtomProcessor;
@@ -1126,34 +937,7 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBeanWithId
   protected ConfigurazionePortaHandler configurazioneHandler;
 
   @XmlElement(name="attribute-authority",required=true,nillable=false)
-  protected List<AttributeAuthority> attributeAuthority = new ArrayList<AttributeAuthority>();
-
-  /**
-   * @deprecated Use method getAttributeAuthorityList
-   * @return List&lt;AttributeAuthority&gt;
-  */
-  @Deprecated
-  public List<AttributeAuthority> getAttributeAuthority() {
-  	return this.attributeAuthority;
-  }
-
-  /**
-   * @deprecated Use method setAttributeAuthorityList
-   * @param attributeAuthority List&lt;AttributeAuthority&gt;
-  */
-  @Deprecated
-  public void setAttributeAuthority(List<AttributeAuthority> attributeAuthority) {
-  	this.attributeAuthority=attributeAuthority;
-  }
-
-  /**
-   * @deprecated Use method sizeAttributeAuthorityList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeAttributeAuthority() {
-  	return this.attributeAuthority.size();
-  }
+  private List<AttributeAuthority> attributeAuthority = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Long idSoggetto;
@@ -1185,13 +969,13 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBeanWithId
   protected java.lang.String descrizione;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_ricevutaAsincronaSimmetrica;
+  protected java.lang.String ricevutaAsincronaSimmetricaRawEnumValue;
 
   @XmlAttribute(name="ricevuta-asincrona-simmetrica",required=false)
   protected StatoFunzionalita ricevutaAsincronaSimmetrica = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_ricevutaAsincronaAsimmetrica;
+  protected java.lang.String ricevutaAsincronaAsimmetricaRawEnumValue;
 
   @XmlAttribute(name="ricevuta-asincrona-asimmetrica",required=false)
   protected StatoFunzionalita ricevutaAsincronaAsimmetrica = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
@@ -1201,25 +985,25 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBeanWithId
   protected java.lang.String integrazione;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_allegaBody;
+  protected java.lang.String allegaBodyRawEnumValue;
 
   @XmlAttribute(name="allega-body",required=false)
   protected StatoFunzionalita allegaBody = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_scartaBody;
+  protected java.lang.String scartaBodyRawEnumValue;
 
   @XmlAttribute(name="scarta-body",required=false)
   protected StatoFunzionalita scartaBody = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_gestioneManifest;
+  protected java.lang.String gestioneManifestRawEnumValue;
 
   @XmlAttribute(name="gestione-manifest",required=false)
   protected StatoFunzionalita gestioneManifest;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_stateless;
+  protected java.lang.String statelessRawEnumValue;
 
   @XmlAttribute(name="stateless",required=false)
   protected StatoFunzionalita stateless;
@@ -1229,7 +1013,7 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBeanWithId
   protected java.lang.String autenticazione = "ssl";
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_autenticazioneOpzionale;
+  protected java.lang.String autenticazioneOpzionaleRawEnumValue;
 
   @XmlAttribute(name="autenticazione-opzionale",required=false)
   protected StatoFunzionalita autenticazioneOpzionale = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
@@ -1243,7 +1027,7 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBeanWithId
   protected java.lang.String autorizzazioneContenuto;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_ricercaPortaAzioneDelegata;
+  protected java.lang.String ricercaPortaAzioneDelegataRawEnumValue;
 
   @XmlAttribute(name="ricerca-porta-azione-delegata",required=false)
   protected StatoFunzionalita ricercaPortaAzioneDelegata = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
@@ -1253,7 +1037,7 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBeanWithId
   protected java.lang.String servizioApplicativoDefault;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_stato;
+  protected java.lang.String statoRawEnumValue;
 
   @XmlAttribute(name="stato",required=false)
   protected StatoFunzionalita stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");

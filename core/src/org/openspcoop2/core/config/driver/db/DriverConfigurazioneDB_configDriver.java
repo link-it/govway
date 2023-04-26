@@ -2326,7 +2326,7 @@ public class DriverConfigurazioneDB_configDriver {
 				IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoConfigurazione();
 				if(extInfoConfigurazioneDriver!=null){
 					List<Object> list = extInfoConfigurazioneDriver.getAllExtendedInfo(con, this.driver.log, config);
-					if(list!=null && list.size()>0){
+					if(list!=null && !list.isEmpty()){
 						config.setExtendedInfoList(list);
 					}
 				}

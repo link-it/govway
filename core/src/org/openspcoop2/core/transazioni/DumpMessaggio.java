@@ -142,11 +142,11 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBeanWithId im
     this.dataConsegnaErogatore = dataConsegnaErogatore;
   }
 
-  public void set_value_tipoMessaggio(String value) {
+  public void setTipoMessaggioRawEnumValue(String value) {
     this.tipoMessaggio = (TipoMessaggio) TipoMessaggio.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipoMessaggio() {
+  public String getTipoMessaggioRawEnumValue() {
     if(this.tipoMessaggio == null){
     	return null;
     }else{
@@ -420,7 +420,7 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBeanWithId im
   protected java.util.Date dataConsegnaErogatore;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipoMessaggio;
+  protected java.lang.String tipoMessaggioRawEnumValue;
 
   @XmlElement(name="tipo-messaggio",required=true,nillable=false)
   protected TipoMessaggio tipoMessaggio;
@@ -450,34 +450,7 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBeanWithId im
   protected java.lang.String multipartContentLocation;
 
   @XmlElement(name="multipart-header",required=true,nillable=false)
-  protected List<DumpMultipartHeader> multipartHeader = new ArrayList<DumpMultipartHeader>();
-
-  /**
-   * @deprecated Use method getMultipartHeaderList
-   * @return List&lt;DumpMultipartHeader&gt;
-  */
-  @Deprecated
-  public List<DumpMultipartHeader> getMultipartHeader() {
-  	return this.multipartHeader;
-  }
-
-  /**
-   * @deprecated Use method setMultipartHeaderList
-   * @param multipartHeader List&lt;DumpMultipartHeader&gt;
-  */
-  @Deprecated
-  public void setMultipartHeader(List<DumpMultipartHeader> multipartHeader) {
-  	this.multipartHeader=multipartHeader;
-  }
-
-  /**
-   * @deprecated Use method sizeMultipartHeaderList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeMultipartHeader() {
-  	return this.multipartHeader.size();
-  }
+  private List<DumpMultipartHeader> multipartHeader = new ArrayList<>();
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.HexBinaryAdapter.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="hexBinary")
@@ -485,94 +458,13 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBeanWithId im
   protected byte[] body;
 
   @XmlElement(name="header-trasporto",required=true,nillable=false)
-  protected List<DumpHeaderTrasporto> headerTrasporto = new ArrayList<DumpHeaderTrasporto>();
-
-  /**
-   * @deprecated Use method getHeaderTrasportoList
-   * @return List&lt;DumpHeaderTrasporto&gt;
-  */
-  @Deprecated
-  public List<DumpHeaderTrasporto> getHeaderTrasporto() {
-  	return this.headerTrasporto;
-  }
-
-  /**
-   * @deprecated Use method setHeaderTrasportoList
-   * @param headerTrasporto List&lt;DumpHeaderTrasporto&gt;
-  */
-  @Deprecated
-  public void setHeaderTrasporto(List<DumpHeaderTrasporto> headerTrasporto) {
-  	this.headerTrasporto=headerTrasporto;
-  }
-
-  /**
-   * @deprecated Use method sizeHeaderTrasportoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeHeaderTrasporto() {
-  	return this.headerTrasporto.size();
-  }
+  private List<DumpHeaderTrasporto> headerTrasporto = new ArrayList<>();
 
   @XmlElement(name="allegato",required=true,nillable=false)
-  protected List<DumpAllegato> allegato = new ArrayList<DumpAllegato>();
-
-  /**
-   * @deprecated Use method getAllegatoList
-   * @return List&lt;DumpAllegato&gt;
-  */
-  @Deprecated
-  public List<DumpAllegato> getAllegato() {
-  	return this.allegato;
-  }
-
-  /**
-   * @deprecated Use method setAllegatoList
-   * @param allegato List&lt;DumpAllegato&gt;
-  */
-  @Deprecated
-  public void setAllegato(List<DumpAllegato> allegato) {
-  	this.allegato=allegato;
-  }
-
-  /**
-   * @deprecated Use method sizeAllegatoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeAllegato() {
-  	return this.allegato.size();
-  }
+  private List<DumpAllegato> allegato = new ArrayList<>();
 
   @XmlElement(name="contenuto",required=true,nillable=false)
-  protected List<DumpContenuto> contenuto = new ArrayList<DumpContenuto>();
-
-  /**
-   * @deprecated Use method getContenutoList
-   * @return List&lt;DumpContenuto&gt;
-  */
-  @Deprecated
-  public List<DumpContenuto> getContenuto() {
-  	return this.contenuto;
-  }
-
-  /**
-   * @deprecated Use method setContenutoList
-   * @param contenuto List&lt;DumpContenuto&gt;
-  */
-  @Deprecated
-  public void setContenuto(List<DumpContenuto> contenuto) {
-  	this.contenuto=contenuto;
-  }
-
-  /**
-   * @deprecated Use method sizeContenutoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeContenuto() {
-  	return this.contenuto.size();
-  }
+  private List<DumpContenuto> contenuto = new ArrayList<>();
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")

@@ -149,11 +149,11 @@ public class PortaApplicativaServizioApplicativoConnettore extends org.openspcoo
     this.notifica = notifica;
   }
 
-  public void set_value_stato(String value) {
+  public void setStatoRawEnumValue(String value) {
     this.stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_stato() {
+  public String getStatoRawEnumValue() {
     if(this.stato == null){
     	return null;
     }else{
@@ -169,11 +169,11 @@ public class PortaApplicativaServizioApplicativoConnettore extends org.openspcoo
     this.stato = stato;
   }
 
-  public void set_value_scheduling(String value) {
+  public void setSchedulingRawEnumValue(String value) {
     this.scheduling = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_scheduling() {
+  public String getSchedulingRawEnumValue() {
     if(this.scheduling == null){
     	return null;
     }else{
@@ -223,64 +223,10 @@ public class PortaApplicativaServizioApplicativoConnettore extends org.openspcoo
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="filtro",required=true,nillable=false)
-  protected List<java.lang.String> filtro = new ArrayList<java.lang.String>();
-
-  /**
-   * @deprecated Use method getFiltroList
-   * @return List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public List<java.lang.String> getFiltro() {
-  	return this.filtro;
-  }
-
-  /**
-   * @deprecated Use method setFiltroList
-   * @param filtro List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public void setFiltro(List<java.lang.String> filtro) {
-  	this.filtro=filtro;
-  }
-
-  /**
-   * @deprecated Use method sizeFiltroList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeFiltro() {
-  	return this.filtro.size();
-  }
+  private List<java.lang.String> filtro = new ArrayList<>();
 
   @XmlElement(name="proprieta",required=true,nillable=false)
-  protected List<Proprieta> proprieta = new ArrayList<Proprieta>();
-
-  /**
-   * @deprecated Use method getProprietaList
-   * @return List&lt;Proprieta&gt;
-  */
-  @Deprecated
-  public List<Proprieta> getProprieta() {
-  	return this.proprieta;
-  }
-
-  /**
-   * @deprecated Use method setProprietaList
-   * @param proprieta List&lt;Proprieta&gt;
-  */
-  @Deprecated
-  public void setProprieta(List<Proprieta> proprieta) {
-  	this.proprieta=proprieta;
-  }
-
-  /**
-   * @deprecated Use method sizeProprietaList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeProprieta() {
-  	return this.proprieta.size();
-  }
+  private List<Proprieta> proprieta = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=true)
@@ -295,13 +241,13 @@ public class PortaApplicativaServizioApplicativoConnettore extends org.openspcoo
   protected boolean notifica;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_stato;
+  protected java.lang.String statoRawEnumValue;
 
   @XmlAttribute(name="stato",required=false)
   protected StatoFunzionalita stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_scheduling;
+  protected java.lang.String schedulingRawEnumValue;
 
   @XmlAttribute(name="scheduling",required=false)
   protected StatoFunzionalita scheduling = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");

@@ -65,11 +65,11 @@ public class Cache extends org.openspcoop2.utils.beans.BaseBeanWithId implements
     this.dimensione = dimensione;
   }
 
-  public void set_value_algoritmo(String value) {
+  public void setAlgoritmoRawEnumValue(String value) {
     this.algoritmo = (AlgoritmoCache) AlgoritmoCache.toEnumConstantFromString(value);
   }
 
-  public String get_value_algoritmo() {
+  public String getAlgoritmoRawEnumValue() {
     if(this.algoritmo == null){
     	return null;
     }else{
@@ -110,7 +110,7 @@ public class Cache extends org.openspcoop2.utils.beans.BaseBeanWithId implements
   protected java.lang.String dimensione;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_algoritmo;
+  protected java.lang.String algoritmoRawEnumValue;
 
   @XmlAttribute(name="algoritmo",required=false)
   protected AlgoritmoCache algoritmo = (AlgoritmoCache) AlgoritmoCache.toEnumConstantFromString("lru");

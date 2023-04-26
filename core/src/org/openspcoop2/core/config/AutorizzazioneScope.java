@@ -90,11 +90,11 @@ public class AutorizzazioneScope extends org.openspcoop2.utils.beans.BaseBeanWit
     return this.scope.size();
   }
 
-  public void set_value_stato(String value) {
+  public void setStatoRawEnumValue(String value) {
     this.stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_stato() {
+  public String getStatoRawEnumValue() {
     if(this.stato == null){
     	return null;
     }else{
@@ -110,11 +110,11 @@ public class AutorizzazioneScope extends org.openspcoop2.utils.beans.BaseBeanWit
     this.stato = stato;
   }
 
-  public void set_value_match(String value) {
+  public void setMatchRawEnumValue(String value) {
     this.match = (ScopeTipoMatch) ScopeTipoMatch.toEnumConstantFromString(value);
   }
 
-  public String get_value_match() {
+  public String getMatchRawEnumValue() {
     if(this.match == null){
     	return null;
     }else{
@@ -135,43 +135,16 @@ public class AutorizzazioneScope extends org.openspcoop2.utils.beans.BaseBeanWit
 
 
   @XmlElement(name="scope",required=true,nillable=false)
-  protected List<Scope> scope = new ArrayList<Scope>();
-
-  /**
-   * @deprecated Use method getScopeList
-   * @return List&lt;Scope&gt;
-  */
-  @Deprecated
-  public List<Scope> getScope() {
-  	return this.scope;
-  }
-
-  /**
-   * @deprecated Use method setScopeList
-   * @param scope List&lt;Scope&gt;
-  */
-  @Deprecated
-  public void setScope(List<Scope> scope) {
-  	this.scope=scope;
-  }
-
-  /**
-   * @deprecated Use method sizeScopeList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeScope() {
-  	return this.scope.size();
-  }
+  private List<Scope> scope = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_stato;
+  protected java.lang.String statoRawEnumValue;
 
   @XmlAttribute(name="stato",required=false)
   protected StatoFunzionalita stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_match;
+  protected java.lang.String matchRawEnumValue;
 
   @XmlAttribute(name="match",required=false)
   protected ScopeTipoMatch match;

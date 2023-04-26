@@ -90,33 +90,6 @@ public class RuoliSoggetto extends org.openspcoop2.utils.beans.BaseBeanWithId im
 
 
   @XmlElement(name="ruolo",required=true,nillable=false)
-  protected List<RuoloSoggetto> ruolo = new ArrayList<RuoloSoggetto>();
-
-  /**
-   * @deprecated Use method getRuoloList
-   * @return List&lt;RuoloSoggetto&gt;
-  */
-  @Deprecated
-  public List<RuoloSoggetto> getRuolo() {
-  	return this.ruolo;
-  }
-
-  /**
-   * @deprecated Use method setRuoloList
-   * @param ruolo List&lt;RuoloSoggetto&gt;
-  */
-  @Deprecated
-  public void setRuolo(List<RuoloSoggetto> ruolo) {
-  	this.ruolo=ruolo;
-  }
-
-  /**
-   * @deprecated Use method sizeRuoloList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeRuolo() {
-  	return this.ruolo.size();
-  }
+  private List<RuoloSoggetto> ruolo = new ArrayList<>();
 
 }

@@ -55,11 +55,11 @@ public class Transazioni extends org.openspcoop2.utils.beans.BaseBeanWithId impl
     super();
   }
 
-  public void set_value_tempiElaborazione(String value) {
+  public void setTempiElaborazioneRawEnumValue(String value) {
     this.tempiElaborazione = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_tempiElaborazione() {
+  public String getTempiElaborazioneRawEnumValue() {
     if(this.tempiElaborazione == null){
     	return null;
     }else{
@@ -75,11 +75,11 @@ public class Transazioni extends org.openspcoop2.utils.beans.BaseBeanWithId impl
     this.tempiElaborazione = tempiElaborazione;
   }
 
-  public void set_value_token(String value) {
+  public void setTokenRawEnumValue(String value) {
     this.token = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_token() {
+  public String getTokenRawEnumValue() {
     if(this.token == null){
     	return null;
     }else{
@@ -100,13 +100,13 @@ public class Transazioni extends org.openspcoop2.utils.beans.BaseBeanWithId impl
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tempiElaborazione;
+  protected java.lang.String tempiElaborazioneRawEnumValue;
 
   @XmlAttribute(name="tempi-elaborazione",required=false)
   protected StatoFunzionalita tempiElaborazione = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_token;
+  protected java.lang.String tokenRawEnumValue;
 
   @XmlAttribute(name="token",required=false)
   protected StatoFunzionalita token = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");

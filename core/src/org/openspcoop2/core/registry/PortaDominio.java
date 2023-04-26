@@ -114,11 +114,11 @@ public class PortaDominio extends org.openspcoop2.utils.beans.BaseBeanWithId imp
     this.subject = subject;
   }
 
-  public void set_value_clientAuth(String value) {
+  public void setClientAuthRawEnumValue(String value) {
     this.clientAuth = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_clientAuth() {
+  public String getClientAuthRawEnumValue() {
     if(this.clientAuth == null){
     	return null;
     }else{
@@ -181,7 +181,7 @@ public class PortaDominio extends org.openspcoop2.utils.beans.BaseBeanWithId imp
   protected java.lang.String subject;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_clientAuth;
+  protected java.lang.String clientAuthRawEnumValue;
 
   @XmlAttribute(name="client-auth",required=false)
   protected StatoFunzionalita clientAuth = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");

@@ -211,29 +211,29 @@ public class PorteDelegateDumpConfigurazione extends Action {
 						statoDumpRichiesta = porteDelegateHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, false) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
 						statoDumpRisposta = porteDelegateHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, true) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
 						
-						dumpRichiestaIngressoHeader = oldConfigurazione.getRichiestaIngresso().get_value_headers();	
-						dumpRichiestaIngressoPayload = oldConfigurazione.getRichiestaIngresso().get_value_payload();
-						dumpRichiestaIngressoPayloadParsing = oldConfigurazione.getRichiestaIngresso().get_value_payloadParsing();
-						dumpRichiestaIngressoBody = oldConfigurazione.getRichiestaIngresso().get_value_body();
-						dumpRichiestaIngressoAttachments = oldConfigurazione.getRichiestaIngresso().get_value_attachments();
+						dumpRichiestaIngressoHeader = oldConfigurazione.getRichiestaIngresso().getHeadersRawEnumValue();	
+						dumpRichiestaIngressoPayload = oldConfigurazione.getRichiestaIngresso().getPayloadRawEnumValue();
+						dumpRichiestaIngressoPayloadParsing = oldConfigurazione.getRichiestaIngresso().getPayloadParsingRawEnumValue();
+						dumpRichiestaIngressoBody = oldConfigurazione.getRichiestaIngresso().getBodyRawEnumValue();
+						dumpRichiestaIngressoAttachments = oldConfigurazione.getRichiestaIngresso().getAttachmentsRawEnumValue();
 						
-						dumpRichiestaUscitaHeader = oldConfigurazione.getRichiestaUscita().get_value_headers();	
-						dumpRichiestaUscitaPayload = oldConfigurazione.getRichiestaUscita().get_value_payload();
-						dumpRichiestaUscitaPayloadParsing = oldConfigurazione.getRichiestaUscita().get_value_payloadParsing();
-						dumpRichiestaUscitaBody = oldConfigurazione.getRichiestaUscita().get_value_body();
-						dumpRichiestaUscitaAttachments = oldConfigurazione.getRichiestaUscita().get_value_attachments();
+						dumpRichiestaUscitaHeader = oldConfigurazione.getRichiestaUscita().getHeadersRawEnumValue();	
+						dumpRichiestaUscitaPayload = oldConfigurazione.getRichiestaUscita().getPayloadRawEnumValue();
+						dumpRichiestaUscitaPayloadParsing = oldConfigurazione.getRichiestaUscita().getPayloadParsingRawEnumValue();
+						dumpRichiestaUscitaBody = oldConfigurazione.getRichiestaUscita().getBodyRawEnumValue();
+						dumpRichiestaUscitaAttachments = oldConfigurazione.getRichiestaUscita().getAttachmentsRawEnumValue();
 						
-						dumpRispostaIngressoHeader = oldConfigurazione.getRispostaIngresso().get_value_headers();	
-						dumpRispostaIngressoPayload = oldConfigurazione.getRispostaIngresso().get_value_payload();
-						dumpRispostaIngressoPayloadParsing = oldConfigurazione.getRispostaIngresso().get_value_payloadParsing();
-						dumpRispostaIngressoBody = oldConfigurazione.getRispostaIngresso().get_value_body();
-						dumpRispostaIngressoAttachments = oldConfigurazione.getRispostaIngresso().get_value_attachments();
+						dumpRispostaIngressoHeader = oldConfigurazione.getRispostaIngresso().getHeadersRawEnumValue();	
+						dumpRispostaIngressoPayload = oldConfigurazione.getRispostaIngresso().getPayloadRawEnumValue();
+						dumpRispostaIngressoPayloadParsing = oldConfigurazione.getRispostaIngresso().getPayloadParsingRawEnumValue();
+						dumpRispostaIngressoBody = oldConfigurazione.getRispostaIngresso().getBodyRawEnumValue();
+						dumpRispostaIngressoAttachments = oldConfigurazione.getRispostaIngresso().getAttachmentsRawEnumValue();
 						
-						dumpRispostaUscitaHeader = oldConfigurazione.getRispostaUscita().get_value_headers();	
-						dumpRispostaUscitaPayload = oldConfigurazione.getRispostaUscita().get_value_payload();
-						dumpRispostaUscitaPayloadParsing = oldConfigurazione.getRispostaUscita().get_value_payloadParsing();
-						dumpRispostaUscitaBody = oldConfigurazione.getRispostaUscita().get_value_body();
-						dumpRispostaUscitaAttachments = oldConfigurazione.getRispostaUscita().get_value_attachments();
+						dumpRispostaUscitaHeader = oldConfigurazione.getRispostaUscita().getHeadersRawEnumValue();	
+						dumpRispostaUscitaPayload = oldConfigurazione.getRispostaUscita().getPayloadRawEnumValue();
+						dumpRispostaUscitaPayloadParsing = oldConfigurazione.getRispostaUscita().getPayloadParsingRawEnumValue();
+						dumpRispostaUscitaBody = oldConfigurazione.getRispostaUscita().getBodyRawEnumValue();
+						dumpRispostaUscitaAttachments = oldConfigurazione.getRispostaUscita().getAttachmentsRawEnumValue();
 					}
 				}
 				
@@ -501,29 +501,29 @@ public class PorteDelegateDumpConfigurazione extends Action {
 				statoDumpRichiesta = porteDelegateHelper.isDumpConfigurazioneAbilitato(configurazioneAggiornata, false) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
 				statoDumpRisposta = porteDelegateHelper.isDumpConfigurazioneAbilitato(configurazioneAggiornata, true) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
 				
-				dumpRichiestaIngressoHeader = configurazioneAggiornata.getRichiestaIngresso().get_value_headers();	
-				dumpRichiestaIngressoPayload = configurazioneAggiornata.getRichiestaIngresso().get_value_payload();
-				dumpRichiestaIngressoPayloadParsing = configurazioneAggiornata.getRichiestaIngresso().get_value_payloadParsing();
-				dumpRichiestaIngressoBody = configurazioneAggiornata.getRichiestaIngresso().get_value_body();
-				dumpRichiestaIngressoAttachments = configurazioneAggiornata.getRichiestaIngresso().get_value_attachments();
+				dumpRichiestaIngressoHeader = configurazioneAggiornata.getRichiestaIngresso().getHeadersRawEnumValue();	
+				dumpRichiestaIngressoPayload = configurazioneAggiornata.getRichiestaIngresso().getPayloadRawEnumValue();
+				dumpRichiestaIngressoPayloadParsing = configurazioneAggiornata.getRichiestaIngresso().getPayloadParsingRawEnumValue();
+				dumpRichiestaIngressoBody = configurazioneAggiornata.getRichiestaIngresso().getBodyRawEnumValue();
+				dumpRichiestaIngressoAttachments = configurazioneAggiornata.getRichiestaIngresso().getAttachmentsRawEnumValue();
 				
-				dumpRichiestaUscitaHeader = configurazioneAggiornata.getRichiestaUscita().get_value_headers();	
-				dumpRichiestaUscitaPayload = configurazioneAggiornata.getRichiestaUscita().get_value_payload();
-				dumpRichiestaUscitaPayloadParsing = configurazioneAggiornata.getRichiestaUscita().get_value_payloadParsing();
-				dumpRichiestaUscitaBody = configurazioneAggiornata.getRichiestaUscita().get_value_body();
-				dumpRichiestaUscitaAttachments = configurazioneAggiornata.getRichiestaUscita().get_value_attachments();
+				dumpRichiestaUscitaHeader = configurazioneAggiornata.getRichiestaUscita().getHeadersRawEnumValue();	
+				dumpRichiestaUscitaPayload = configurazioneAggiornata.getRichiestaUscita().getPayloadRawEnumValue();
+				dumpRichiestaUscitaPayloadParsing = configurazioneAggiornata.getRichiestaUscita().getPayloadParsingRawEnumValue();
+				dumpRichiestaUscitaBody = configurazioneAggiornata.getRichiestaUscita().getBodyRawEnumValue();
+				dumpRichiestaUscitaAttachments = configurazioneAggiornata.getRichiestaUscita().getAttachmentsRawEnumValue();
 				
-				dumpRispostaIngressoHeader = configurazioneAggiornata.getRispostaIngresso().get_value_headers();	
-				dumpRispostaIngressoPayload = configurazioneAggiornata.getRispostaIngresso().get_value_payload();
-				dumpRispostaIngressoPayloadParsing = configurazioneAggiornata.getRispostaIngresso().get_value_payloadParsing();
-				dumpRispostaIngressoBody = configurazioneAggiornata.getRispostaIngresso().get_value_body();
-				dumpRispostaIngressoAttachments = configurazioneAggiornata.getRispostaIngresso().get_value_attachments();
+				dumpRispostaIngressoHeader = configurazioneAggiornata.getRispostaIngresso().getHeadersRawEnumValue();	
+				dumpRispostaIngressoPayload = configurazioneAggiornata.getRispostaIngresso().getPayloadRawEnumValue();
+				dumpRispostaIngressoPayloadParsing = configurazioneAggiornata.getRispostaIngresso().getPayloadParsingRawEnumValue();
+				dumpRispostaIngressoBody = configurazioneAggiornata.getRispostaIngresso().getBodyRawEnumValue();
+				dumpRispostaIngressoAttachments = configurazioneAggiornata.getRispostaIngresso().getAttachmentsRawEnumValue();
 				
-				dumpRispostaUscitaHeader = configurazioneAggiornata.getRispostaUscita().get_value_headers();	
-				dumpRispostaUscitaPayload = configurazioneAggiornata.getRispostaUscita().get_value_payload();
-				dumpRispostaUscitaPayloadParsing = configurazioneAggiornata.getRispostaUscita().get_value_payloadParsing();
-				dumpRispostaUscitaBody = configurazioneAggiornata.getRispostaUscita().get_value_body();
-				dumpRispostaUscitaAttachments = configurazioneAggiornata.getRispostaUscita().get_value_attachments();
+				dumpRispostaUscitaHeader = configurazioneAggiornata.getRispostaUscita().getHeadersRawEnumValue();	
+				dumpRispostaUscitaPayload = configurazioneAggiornata.getRispostaUscita().getPayloadRawEnumValue();
+				dumpRispostaUscitaPayloadParsing = configurazioneAggiornata.getRispostaUscita().getPayloadParsingRawEnumValue();
+				dumpRispostaUscitaBody = configurazioneAggiornata.getRispostaUscita().getBodyRawEnumValue();
+				dumpRispostaUscitaAttachments = configurazioneAggiornata.getRispostaUscita().getAttachmentsRawEnumValue();
 			}
 			
 			porteDelegateHelper.addConfigurazioneDumpToDati(tipoOperazione, dati, showStato, statoDump, showRealtime, realtime, statoDumpRichiesta, statoDumpRisposta, 

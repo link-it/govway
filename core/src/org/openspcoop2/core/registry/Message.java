@@ -89,11 +89,11 @@ public class Message extends org.openspcoop2.utils.beans.BaseBeanWithId implemen
     return this.part.size();
   }
 
-  public void set_value_use(String value) {
+  public void setUseRawEnumValue(String value) {
     this.use = (BindingUse) BindingUse.toEnumConstantFromString(value);
   }
 
-  public String get_value_use() {
+  public String getUseRawEnumValue() {
     if(this.use == null){
     	return null;
     }else{
@@ -122,37 +122,10 @@ public class Message extends org.openspcoop2.utils.beans.BaseBeanWithId implemen
 
 
   @XmlElement(name="part",required=true,nillable=false)
-  protected List<MessagePart> part = new ArrayList<MessagePart>();
-
-  /**
-   * @deprecated Use method getPartList
-   * @return List&lt;MessagePart&gt;
-  */
-  @Deprecated
-  public List<MessagePart> getPart() {
-  	return this.part;
-  }
-
-  /**
-   * @deprecated Use method setPartList
-   * @param part List&lt;MessagePart&gt;
-  */
-  @Deprecated
-  public void setPart(List<MessagePart> part) {
-  	this.part=part;
-  }
-
-  /**
-   * @deprecated Use method sizePartList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizePart() {
-  	return this.part.size();
-  }
+  private List<MessagePart> part = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_use;
+  protected java.lang.String useRawEnumValue;
 
   @XmlAttribute(name="use",required=false)
   protected BindingUse use = (BindingUse) BindingUse.toEnumConstantFromString("literal");

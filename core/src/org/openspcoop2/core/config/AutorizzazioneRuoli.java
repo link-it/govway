@@ -88,11 +88,11 @@ public class AutorizzazioneRuoli extends org.openspcoop2.utils.beans.BaseBeanWit
     return this.ruolo.size();
   }
 
-  public void set_value_match(String value) {
+  public void setMatchRawEnumValue(String value) {
     this.match = (RuoloTipoMatch) RuoloTipoMatch.toEnumConstantFromString(value);
   }
 
-  public String get_value_match() {
+  public String getMatchRawEnumValue() {
     if(this.match == null){
     	return null;
     }else{
@@ -113,37 +113,10 @@ public class AutorizzazioneRuoli extends org.openspcoop2.utils.beans.BaseBeanWit
 
 
   @XmlElement(name="ruolo",required=true,nillable=false)
-  protected List<Ruolo> ruolo = new ArrayList<Ruolo>();
-
-  /**
-   * @deprecated Use method getRuoloList
-   * @return List&lt;Ruolo&gt;
-  */
-  @Deprecated
-  public List<Ruolo> getRuolo() {
-  	return this.ruolo;
-  }
-
-  /**
-   * @deprecated Use method setRuoloList
-   * @param ruolo List&lt;Ruolo&gt;
-  */
-  @Deprecated
-  public void setRuolo(List<Ruolo> ruolo) {
-  	this.ruolo=ruolo;
-  }
-
-  /**
-   * @deprecated Use method sizeRuoloList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeRuolo() {
-  	return this.ruolo.size();
-  }
+  private List<Ruolo> ruolo = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_match;
+  protected java.lang.String matchRawEnumValue;
 
   @XmlAttribute(name="match",required=false)
   protected RuoloTipoMatch match;

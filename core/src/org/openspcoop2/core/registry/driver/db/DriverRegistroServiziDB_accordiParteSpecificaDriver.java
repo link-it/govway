@@ -627,14 +627,14 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 
 
 	protected long getServizioWithSoggettoAccordoServCorr(long idSoggetto, long idAccordo, String servizioCorrelato) throws DriverRegistroServiziException {
-		return _getServizioWithSoggettoAccordoServCorrPT(idSoggetto, idAccordo, servizioCorrelato, null);
+		return getEngineServizioWithSoggettoAccordoServCorrPT(idSoggetto, idAccordo, servizioCorrelato, null);
 	}
 
 	/**
 	 * Verifica l'esistenza di un servizio con un certo soggetto e port-type
 	 * accordo e servizio correlato
 	 */
-	private long _getServizioWithSoggettoAccordoServCorrPT(long idSoggetto, long idAccordo, String servizioCorrelato,String portType) throws DriverRegistroServiziException {
+	private long getEngineServizioWithSoggettoAccordoServCorrPT(long idSoggetto, long idAccordo, String servizioCorrelato,String portType) throws DriverRegistroServiziException {
 
 		long idServ = 0;
 		Connection connection;
@@ -642,7 +642,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		ResultSet rs = null;
 		if (this.driver.atomica) {
 			try {
-				connection = this.driver.getConnectionFromDatasource("_getServizioWithSoggettoAccordoServCorrPT");
+				connection = this.driver.getConnectionFromDatasource("getEngineServizioWithSoggettoAccordoServCorrPT");
 				connection.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getServizioWithSoggettoAccordoServCorr] Exception accedendo al datasource :" + e.getMessage(),e);
@@ -690,7 +690,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 	}
 
 	protected long getServizioWithSoggettoAccordoServCorrPt(long idSoggetto, long idAccordo, String servizioCorrelato,String portType) throws DriverRegistroServiziException {
-		return _getServizioWithSoggettoAccordoServCorrPT(idSoggetto, idAccordo, servizioCorrelato, portType);
+		return getEngineServizioWithSoggettoAccordoServCorrPT(idSoggetto, idAccordo, servizioCorrelato, portType);
 	}
 
 	

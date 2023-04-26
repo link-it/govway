@@ -426,34 +426,7 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBeanWithId i
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected List<Object> extendedInfo = new ArrayList<>();
-
-  /**
-   * @deprecated Use method getExtendedInfoList
-   * @return List&lt;Object&gt;
-  */
-  @Deprecated
-  public List<Object> getExtendedInfo() {
-  	return this.extendedInfo;
-  }
-
-  /**
-   * @deprecated Use method setExtendedInfoList
-   * @param extendedInfo List&lt;Object&gt;
-  */
-  @Deprecated
-  public void setExtendedInfo(List<Object> extendedInfo) {
-  	this.extendedInfo=extendedInfo;
-  }
-
-  /**
-   * @deprecated Use method sizeExtendedInfoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeExtendedInfo() {
-  	return this.extendedInfo.size();
-  }
+  private List<Object> extendedInfo = new ArrayList<>();
 
   @XmlElement(name="routing-table",required=false,nillable=false)
   protected RoutingTable routingTable;
@@ -531,34 +504,7 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBeanWithId i
   protected SystemProperties systemProperties;
 
   @XmlElement(name="generic-properties",required=true,nillable=false)
-  protected List<GenericProperties> genericProperties = new ArrayList<GenericProperties>();
-
-  /**
-   * @deprecated Use method getGenericPropertiesList
-   * @return List&lt;GenericProperties&gt;
-  */
-  @Deprecated
-  public List<GenericProperties> getGenericProperties() {
-  	return this.genericProperties;
-  }
-
-  /**
-   * @deprecated Use method setGenericPropertiesList
-   * @param genericProperties List&lt;GenericProperties&gt;
-  */
-  @Deprecated
-  public void setGenericProperties(List<GenericProperties> genericProperties) {
-  	this.genericProperties=genericProperties;
-  }
-
-  /**
-   * @deprecated Use method sizeGenericPropertiesList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeGenericProperties() {
-  	return this.genericProperties.size();
-  }
+  private List<GenericProperties> genericProperties = new ArrayList<>();
 
   @XmlElement(name="gestione-cors",required=false,nillable=false)
   protected CorsConfigurazione gestioneCors;

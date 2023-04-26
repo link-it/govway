@@ -64,7 +64,7 @@ public class XMLDataConverterMainProcessor {
 		String args_tipoConversione = argoments[4].trim();
 		String args_gestioneSoggetti = argoments[5].trim();
 		String args_mantieniFruitori = argoments[6].trim();
-		String args_deleteMappingErogazioneFruizione = argoments[7].trim();
+		String argsdeleteEngineMappingErogazioneFruizione = argoments[7].trim();
 		String args_statoAccordiImportati = argoments[8].trim();
 		String args_protocolloDefault = argoments[9].trim();
 		String args_nomePddOperativa = null;
@@ -126,7 +126,7 @@ public class XMLDataConverterMainProcessor {
 		boolean mantieniFruitori = Boolean.parseBoolean(args_mantieniFruitori);
 		
 		// DeleteMappingErogazioneFruizione
-		boolean deleteMappingErogazioneFruizione = Boolean.parseBoolean(args_deleteMappingErogazioneFruizione);
+		boolean deleteMappingErogazioneFruizione = Boolean.parseBoolean(argsdeleteEngineMappingErogazioneFruizione);
 		
 		// Properties
 		java.util.Properties reader = new java.util.Properties();

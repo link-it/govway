@@ -90,33 +90,6 @@ public class ServizioApplicativoRuoli extends org.openspcoop2.utils.beans.BaseBe
 
 
   @XmlElement(name="ruolo",required=true,nillable=false)
-  protected List<Ruolo> ruolo = new ArrayList<Ruolo>();
-
-  /**
-   * @deprecated Use method getRuoloList
-   * @return List&lt;Ruolo&gt;
-  */
-  @Deprecated
-  public List<Ruolo> getRuolo() {
-  	return this.ruolo;
-  }
-
-  /**
-   * @deprecated Use method setRuoloList
-   * @param ruolo List&lt;Ruolo&gt;
-  */
-  @Deprecated
-  public void setRuolo(List<Ruolo> ruolo) {
-  	this.ruolo=ruolo;
-  }
-
-  /**
-   * @deprecated Use method sizeRuoloList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeRuolo() {
-  	return this.ruolo.size();
-  }
+  private List<Ruolo> ruolo = new ArrayList<>();
 
 }

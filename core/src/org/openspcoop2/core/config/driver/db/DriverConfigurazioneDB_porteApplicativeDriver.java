@@ -301,15 +301,15 @@ public class DriverConfigurazioneDB_porteApplicativeDriver {
 	
 	
 	protected List<PortaApplicativa> getPorteApplicative(IDServizio idServizio, boolean ricercaPuntuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		return this._getPortaApplicativa(idServizio, ricercaPuntuale, null);
+		return this.getEnginePortaApplicativa(idServizio, ricercaPuntuale, null);
 	}
 	
 	protected List<PortaApplicativa> getPorteApplicativeVirtuali(IDSoggetto soggettoVirtuale,IDServizio idServizio, boolean ricercaPuntuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		return this._getPortaApplicativa(idServizio, ricercaPuntuale, soggettoVirtuale);
+		return this.getEnginePortaApplicativa(idServizio, ricercaPuntuale, soggettoVirtuale);
 	}
 	
 		
-	private List<PortaApplicativa> _getPortaApplicativa(IDServizio service,boolean ricercaPuntuale, IDSoggetto soggettoVirtuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	private List<PortaApplicativa> getEnginePortaApplicativa(IDServizio service,boolean ricercaPuntuale, IDSoggetto soggettoVirtuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 
 		if (service==null)
 			throw new DriverConfigurazioneException("[getPortaApplicativa] Parametro idServizio Non Valido");

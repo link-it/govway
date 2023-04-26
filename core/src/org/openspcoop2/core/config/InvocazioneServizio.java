@@ -96,11 +96,11 @@ public class InvocazioneServizio extends org.openspcoop2.utils.beans.BaseBeanWit
     this.gestioneErrore = gestioneErrore;
   }
 
-  public void set_value_sbustamentoSoap(String value) {
+  public void setSbustamentoSoapRawEnumValue(String value) {
     this.sbustamentoSoap = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_sbustamentoSoap() {
+  public String getSbustamentoSoapRawEnumValue() {
     if(this.sbustamentoSoap == null){
     	return null;
     }else{
@@ -116,11 +116,11 @@ public class InvocazioneServizio extends org.openspcoop2.utils.beans.BaseBeanWit
     this.sbustamentoSoap = sbustamentoSoap;
   }
 
-  public void set_value_sbustamentoInformazioniProtocollo(String value) {
+  public void setSbustamentoInformazioniProtocolloRawEnumValue(String value) {
     this.sbustamentoInformazioniProtocollo = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_sbustamentoInformazioniProtocollo() {
+  public String getSbustamentoInformazioniProtocolloRawEnumValue() {
     if(this.sbustamentoInformazioniProtocollo == null){
     	return null;
     }else{
@@ -136,11 +136,11 @@ public class InvocazioneServizio extends org.openspcoop2.utils.beans.BaseBeanWit
     this.sbustamentoInformazioniProtocollo = sbustamentoInformazioniProtocollo;
   }
 
-  public void set_value_getMessage(String value) {
+  public void setGetMessageRawEnumValue(String value) {
     this.getMessage = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_getMessage() {
+  public String getGetMessageRawEnumValue() {
     if(this.getMessage == null){
     	return null;
     }else{
@@ -156,11 +156,11 @@ public class InvocazioneServizio extends org.openspcoop2.utils.beans.BaseBeanWit
     this.getMessage = getMessage;
   }
 
-  public void set_value_autenticazione(String value) {
+  public void setAutenticazioneRawEnumValue(String value) {
     this.autenticazione = (InvocazioneServizioTipoAutenticazione) InvocazioneServizioTipoAutenticazione.toEnumConstantFromString(value);
   }
 
-  public String get_value_autenticazione() {
+  public String getAutenticazioneRawEnumValue() {
     if(this.autenticazione == null){
     	return null;
     }else{
@@ -176,11 +176,11 @@ public class InvocazioneServizio extends org.openspcoop2.utils.beans.BaseBeanWit
     this.autenticazione = autenticazione;
   }
 
-  public void set_value_invioPerRiferimento(String value) {
+  public void setInvioPerRiferimentoRawEnumValue(String value) {
     this.invioPerRiferimento = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_invioPerRiferimento() {
+  public String getInvioPerRiferimentoRawEnumValue() {
     if(this.invioPerRiferimento == null){
     	return null;
     }else{
@@ -196,11 +196,11 @@ public class InvocazioneServizio extends org.openspcoop2.utils.beans.BaseBeanWit
     this.invioPerRiferimento = invioPerRiferimento;
   }
 
-  public void set_value_rispostaPerRiferimento(String value) {
+  public void setRispostaPerRiferimentoRawEnumValue(String value) {
     this.rispostaPerRiferimento = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_rispostaPerRiferimento() {
+  public String getRispostaPerRiferimentoRawEnumValue() {
     if(this.rispostaPerRiferimento == null){
     	return null;
     }else{
@@ -230,37 +230,37 @@ public class InvocazioneServizio extends org.openspcoop2.utils.beans.BaseBeanWit
   protected GestioneErrore gestioneErrore;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_sbustamentoSoap;
+  protected java.lang.String sbustamentoSoapRawEnumValue;
 
   @XmlAttribute(name="sbustamento-soap",required=false)
   protected StatoFunzionalita sbustamentoSoap = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_sbustamentoInformazioniProtocollo;
+  protected java.lang.String sbustamentoInformazioniProtocolloRawEnumValue;
 
   @XmlAttribute(name="sbustamento-informazioni-protocollo",required=false)
   protected StatoFunzionalita sbustamentoInformazioniProtocollo = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_getMessage;
+  protected java.lang.String getMessageRawEnumValue;
 
   @XmlAttribute(name="get-message",required=false)
   protected StatoFunzionalita getMessage = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_autenticazione;
+  protected java.lang.String autenticazioneRawEnumValue;
 
   @XmlAttribute(name="autenticazione",required=false)
   protected InvocazioneServizioTipoAutenticazione autenticazione = (InvocazioneServizioTipoAutenticazione) InvocazioneServizioTipoAutenticazione.toEnumConstantFromString("none");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_invioPerRiferimento;
+  protected java.lang.String invioPerRiferimentoRawEnumValue;
 
   @XmlAttribute(name="invio-per-riferimento",required=false)
   protected StatoFunzionalita invioPerRiferimento = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_rispostaPerRiferimento;
+  protected java.lang.String rispostaPerRiferimentoRawEnumValue;
 
   @XmlAttribute(name="risposta-per-riferimento",required=false)
   protected StatoFunzionalita rispostaPerRiferimento = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");

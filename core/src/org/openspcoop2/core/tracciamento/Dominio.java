@@ -80,11 +80,11 @@ public class Dominio extends org.openspcoop2.utils.beans.BaseBeanWithId implemen
     this.soggetto = soggetto;
   }
 
-  public void set_value_funzione(String value) {
+  public void setFunzioneRawEnumValue(String value) {
     this.funzione = (TipoPdD) TipoPdD.toEnumConstantFromString(value);
   }
 
-  public String get_value_funzione() {
+  public String getFunzioneRawEnumValue() {
     if(this.funzione == null){
     	return null;
     }else{
@@ -112,7 +112,7 @@ public class Dominio extends org.openspcoop2.utils.beans.BaseBeanWithId implemen
   protected DominioSoggetto soggetto;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_funzione;
+  protected java.lang.String funzioneRawEnumValue;
 
   @XmlAttribute(name="funzione",required=false)
   protected TipoPdD funzione;

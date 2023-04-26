@@ -272,243 +272,27 @@ public class RegistroServizi extends org.openspcoop2.utils.beans.BaseBeanWithId 
 
 
   @XmlElement(name="accordo-cooperazione",required=true,nillable=false)
-  protected List<AccordoCooperazione> accordoCooperazione = new ArrayList<AccordoCooperazione>();
-
-  /**
-   * @deprecated Use method getAccordoCooperazioneList
-   * @return List&lt;AccordoCooperazione&gt;
-  */
-  @Deprecated
-  public List<AccordoCooperazione> getAccordoCooperazione() {
-  	return this.accordoCooperazione;
-  }
-
-  /**
-   * @deprecated Use method setAccordoCooperazioneList
-   * @param accordoCooperazione List&lt;AccordoCooperazione&gt;
-  */
-  @Deprecated
-  public void setAccordoCooperazione(List<AccordoCooperazione> accordoCooperazione) {
-  	this.accordoCooperazione=accordoCooperazione;
-  }
-
-  /**
-   * @deprecated Use method sizeAccordoCooperazioneList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeAccordoCooperazione() {
-  	return this.accordoCooperazione.size();
-  }
+  private List<AccordoCooperazione> accordoCooperazione = new ArrayList<>();
 
   @XmlElement(name="accordo-servizio-parte-comune",required=true,nillable=false)
-  protected List<AccordoServizioParteComune> accordoServizioParteComune = new ArrayList<AccordoServizioParteComune>();
-
-  /**
-   * @deprecated Use method getAccordoServizioParteComuneList
-   * @return List&lt;AccordoServizioParteComune&gt;
-  */
-  @Deprecated
-  public List<AccordoServizioParteComune> getAccordoServizioParteComune() {
-  	return this.accordoServizioParteComune;
-  }
-
-  /**
-   * @deprecated Use method setAccordoServizioParteComuneList
-   * @param accordoServizioParteComune List&lt;AccordoServizioParteComune&gt;
-  */
-  @Deprecated
-  public void setAccordoServizioParteComune(List<AccordoServizioParteComune> accordoServizioParteComune) {
-  	this.accordoServizioParteComune=accordoServizioParteComune;
-  }
-
-  /**
-   * @deprecated Use method sizeAccordoServizioParteComuneList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeAccordoServizioParteComune() {
-  	return this.accordoServizioParteComune.size();
-  }
+  private List<AccordoServizioParteComune> accordoServizioParteComune = new ArrayList<>();
 
   @XmlElement(name="porta-dominio",required=true,nillable=false)
-  protected List<PortaDominio> portaDominio = new ArrayList<PortaDominio>();
-
-  /**
-   * @deprecated Use method getPortaDominioList
-   * @return List&lt;PortaDominio&gt;
-  */
-  @Deprecated
-  public List<PortaDominio> getPortaDominio() {
-  	return this.portaDominio;
-  }
-
-  /**
-   * @deprecated Use method setPortaDominioList
-   * @param portaDominio List&lt;PortaDominio&gt;
-  */
-  @Deprecated
-  public void setPortaDominio(List<PortaDominio> portaDominio) {
-  	this.portaDominio=portaDominio;
-  }
-
-  /**
-   * @deprecated Use method sizePortaDominioList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizePortaDominio() {
-  	return this.portaDominio.size();
-  }
+  private List<PortaDominio> portaDominio = new ArrayList<>();
 
   @XmlElement(name="ruolo",required=true,nillable=false)
-  protected List<Ruolo> ruolo = new ArrayList<Ruolo>();
-
-  /**
-   * @deprecated Use method getRuoloList
-   * @return List&lt;Ruolo&gt;
-  */
-  @Deprecated
-  public List<Ruolo> getRuolo() {
-  	return this.ruolo;
-  }
-
-  /**
-   * @deprecated Use method setRuoloList
-   * @param ruolo List&lt;Ruolo&gt;
-  */
-  @Deprecated
-  public void setRuolo(List<Ruolo> ruolo) {
-  	this.ruolo=ruolo;
-  }
-
-  /**
-   * @deprecated Use method sizeRuoloList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeRuolo() {
-  	return this.ruolo.size();
-  }
+  private List<Ruolo> ruolo = new ArrayList<>();
 
   @XmlElement(name="scope",required=true,nillable=false)
-  protected List<Scope> scope = new ArrayList<Scope>();
-
-  /**
-   * @deprecated Use method getScopeList
-   * @return List&lt;Scope&gt;
-  */
-  @Deprecated
-  public List<Scope> getScope() {
-  	return this.scope;
-  }
-
-  /**
-   * @deprecated Use method setScopeList
-   * @param scope List&lt;Scope&gt;
-  */
-  @Deprecated
-  public void setScope(List<Scope> scope) {
-  	this.scope=scope;
-  }
-
-  /**
-   * @deprecated Use method sizeScopeList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeScope() {
-  	return this.scope.size();
-  }
+  private List<Scope> scope = new ArrayList<>();
 
   @XmlElement(name="gruppo",required=true,nillable=false)
-  protected List<Gruppo> gruppo = new ArrayList<Gruppo>();
-
-  /**
-   * @deprecated Use method getGruppoList
-   * @return List&lt;Gruppo&gt;
-  */
-  @Deprecated
-  public List<Gruppo> getGruppo() {
-  	return this.gruppo;
-  }
-
-  /**
-   * @deprecated Use method setGruppoList
-   * @param gruppo List&lt;Gruppo&gt;
-  */
-  @Deprecated
-  public void setGruppo(List<Gruppo> gruppo) {
-  	this.gruppo=gruppo;
-  }
-
-  /**
-   * @deprecated Use method sizeGruppoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeGruppo() {
-  	return this.gruppo.size();
-  }
+  private List<Gruppo> gruppo = new ArrayList<>();
 
   @XmlElement(name="soggetto",required=true,nillable=false)
-  protected List<Soggetto> soggetto = new ArrayList<Soggetto>();
-
-  /**
-   * @deprecated Use method getSoggettoList
-   * @return List&lt;Soggetto&gt;
-  */
-  @Deprecated
-  public List<Soggetto> getSoggetto() {
-  	return this.soggetto;
-  }
-
-  /**
-   * @deprecated Use method setSoggettoList
-   * @param soggetto List&lt;Soggetto&gt;
-  */
-  @Deprecated
-  public void setSoggetto(List<Soggetto> soggetto) {
-  	this.soggetto=soggetto;
-  }
-
-  /**
-   * @deprecated Use method sizeSoggettoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeSoggetto() {
-  	return this.soggetto.size();
-  }
+  private List<Soggetto> soggetto = new ArrayList<>();
 
   @XmlElement(name="connettore",required=true,nillable=false)
-  protected List<Connettore> connettore = new ArrayList<Connettore>();
-
-  /**
-   * @deprecated Use method getConnettoreList
-   * @return List&lt;Connettore&gt;
-  */
-  @Deprecated
-  public List<Connettore> getConnettore() {
-  	return this.connettore;
-  }
-
-  /**
-   * @deprecated Use method setConnettoreList
-   * @param connettore List&lt;Connettore&gt;
-  */
-  @Deprecated
-  public void setConnettore(List<Connettore> connettore) {
-  	this.connettore=connettore;
-  }
-
-  /**
-   * @deprecated Use method sizeConnettoreList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeConnettore() {
-  	return this.connettore.size();
-  }
+  private List<Connettore> connettore = new ArrayList<>();
 
 }

@@ -75,11 +75,11 @@ public class ResourceParameter extends org.openspcoop2.utils.beans.BaseBeanWithI
     this.descrizione = descrizione;
   }
 
-  public void set_value_parameterType(String value) {
+  public void setParameterTypeRawEnumValue(String value) {
     this.parameterType = (ParameterType) ParameterType.toEnumConstantFromString(value);
   }
 
-  public String get_value_parameterType() {
+  public String getParameterTypeRawEnumValue() {
     if(this.parameterType == null){
     	return null;
     }else{
@@ -136,7 +136,7 @@ public class ResourceParameter extends org.openspcoop2.utils.beans.BaseBeanWithI
   protected java.lang.String descrizione;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_parameterType;
+  protected java.lang.String parameterTypeRawEnumValue;
 
   @XmlAttribute(name="parameter-type",required=true)
   protected ParameterType parameterType;

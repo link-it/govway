@@ -69,17 +69,17 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI;
 		String nomeMetodo = "porteDelegateTrasformazioniList";
 		boolean delegata = true;
-		return _getTrasformazioniList(idPA, ricerca, idLista, nomeMetodo, delegata);
+		return getEngineTrasformazioniList(idPA, ricerca, idLista, nomeMetodo, delegata);
 	}
 	
 	protected List<TrasformazioneRegola> porteApplicativeTrasformazioniList(long idPA, ISearch ricerca) throws DriverConfigurazioneException {
 		int idLista = Liste.PORTE_APPLICATIVE_TRASFORMAZIONI;
 		String nomeMetodo = "porteApplicativeTrasformazioniList";
 		boolean delegata = false;
-		return _getTrasformazioniList(idPA, ricerca, idLista, nomeMetodo, delegata);
+		return getEngineTrasformazioniList(idPA, ricerca, idLista, nomeMetodo, delegata);
 	}
 	
-	private List<TrasformazioneRegola> _getTrasformazioniList(long idPA, ISearch ricerca, int idLista, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+	private List<TrasformazioneRegola> getEngineTrasformazioniList(long idPA, ISearch ricerca, int idLista, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		int offset; 
 		int limit;
 		String queryString;
@@ -505,7 +505,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		String nomeMetodo = "getPortaApplicativaTrasformazione";
 		boolean delegata = false;
 		
-		return _getTrasformazione(idPorta, azioni, pattern, contentType, connettori, soggetti, applicativi, nomeMetodo, delegata, interpretaNullList);
+		return getEngineTrasformazione(idPorta, azioni, pattern, contentType, connettori, soggetti, applicativi, nomeMetodo, delegata, interpretaNullList);
 		
 	}
 	
@@ -513,11 +513,11 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			List<TrasformazioneRegolaApplicabilitaServizioApplicativo> applicativi) throws DriverConfigurazioneException {
 		String nomeMetodo = "getPortaDelegataTrasformazione";
 		boolean delegata = true;
-		return _getTrasformazione(idPorta, azioni, pattern, contentType, connettori, null, applicativi, nomeMetodo, delegata, 
+		return getEngineTrasformazione(idPorta, azioni, pattern, contentType, connettori, null, applicativi, nomeMetodo, delegata, 
 				true); // esiste solo una lista
 	}
 	
-	private TrasformazioneRegola _getTrasformazione(long idPorta, String azioni, String pattern, String contentType, String connettori,
+	private TrasformazioneRegola getEngineTrasformazione(long idPorta, String azioni, String pattern, String contentType, String connettori,
 			List<TrasformazioneRegolaApplicabilitaSoggetto> soggetti,
 			List<TrasformazioneRegolaApplicabilitaServizioApplicativo> applicativi,
 			String nomeMetodo, boolean portaDelegata, boolean interpretaNullList) throws DriverConfigurazioneException {
@@ -670,7 +670,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			risultato = stmt.executeQuery();
 			if (risultato.next()) {
 				
-				regola = _getTrasformazione(risultato);
+				regola = getEngineTrasformazione(risultato);
 			}
 			
 			risultato.close();
@@ -693,16 +693,16 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 	protected TrasformazioneRegola getPortaApplicativaTrasformazione(long idPorta, String nome) throws DriverConfigurazioneException {
 		String nomeMetodo = "getPortaApplicativaTrasformazione";
 		boolean delegata = false;
-		return _getTrasformazione(idPorta, nome, nomeMetodo, delegata);
+		return getEngineTrasformazione(idPorta, nome, nomeMetodo, delegata);
 	}
 	
 	protected TrasformazioneRegola getPortaDelegataTrasformazione(long idPorta, String nome) throws DriverConfigurazioneException {
 		String nomeMetodo = "getPortaDelegataTrasformazione";
 		boolean delegata = true;
-		return _getTrasformazione(idPorta, nome, nomeMetodo, delegata);
+		return getEngineTrasformazione(idPorta, nome, nomeMetodo, delegata);
 	}
 	
-	private TrasformazioneRegola _getTrasformazione(long idPorta, String nome, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+	private TrasformazioneRegola getEngineTrasformazione(long idPorta, String nome, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
 		boolean error = false;
 		PreparedStatement stmt=null;
@@ -744,7 +744,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			risultato = stmt.executeQuery();
 			if (risultato.next()) {
 				
-				regola = _getTrasformazione(risultato);
+				regola = getEngineTrasformazione(risultato);
 			}
 			
 			risultato.close();
@@ -764,7 +764,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		}
 	}
 	
-	private TrasformazioneRegola _getTrasformazione(ResultSet risultato) throws Exception {
+	private TrasformazioneRegola getEngineTrasformazione(ResultSet risultato) throws Exception {
 		TrasformazioneRegola regola  = new TrasformazioneRegola();
 				
 		StatoFunzionalita stato = DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(risultato.getString("stato"));
@@ -1062,17 +1062,17 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE;
 		String nomeMetodo = "porteDelegateTrasformazioniRispostaList";
 		boolean delegata = true;
-		return _getTrasformazioniRispostaList(idPD, idTrasformazione, ricerca, idLista, nomeMetodo, delegata);
+		return getEngineTrasformazioniRispostaList(idPD, idTrasformazione, ricerca, idLista, nomeMetodo, delegata);
 	}
 	
 	protected List<TrasformazioneRegolaRisposta> porteApplicativeTrasformazioniRispostaList(long idPA, long idTrasformazione, ISearch ricerca) throws DriverConfigurazioneException {
 		int idLista = Liste.PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE;
 		String nomeMetodo = "porteApplicativeTrasformazioniRispostaList";
 		boolean delegata = false;
-		return _getTrasformazioniRispostaList(idPA, idTrasformazione, ricerca, idLista, nomeMetodo, delegata);
+		return getEngineTrasformazioniRispostaList(idPA, idTrasformazione, ricerca, idLista, nomeMetodo, delegata);
 	}
 	
-	private List<TrasformazioneRegolaRisposta> _getTrasformazioniRispostaList(long idPA, long idTrasformazione, ISearch ricerca, int idLista, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+	private List<TrasformazioneRegolaRisposta> getEngineTrasformazioniRispostaList(long idPA, long idTrasformazione, ISearch ricerca, int idLista, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		int offset; 
 		int limit;
 		String queryString;
@@ -1219,16 +1219,16 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 	protected TrasformazioneRegolaRisposta getPortaApplicativaTrasformazioneRisposta(long idPorta, long idTrasformazione, Integer statusMin, Integer statusMax, String pattern, String contentType) throws DriverConfigurazioneException {
 		String nomeMetodo = "getPortaApplicativaTrasformazioneRisposta";
 		boolean delegata = false;
-		return _getTrasformazioneRisposta(idPorta, idTrasformazione, statusMin, statusMax, pattern, contentType, nomeMetodo, delegata);
+		return getEngineTrasformazioneRisposta(idPorta, idTrasformazione, statusMin, statusMax, pattern, contentType, nomeMetodo, delegata);
 	}
 	
 	protected TrasformazioneRegolaRisposta getPortaDelegataTrasformazioneRisposta(long idPorta, long idTrasformazione, Integer statusMin, Integer statusMax, String pattern, String contentType) throws DriverConfigurazioneException {
 		String nomeMetodo = "getPortaDelegataTrasformazioneRisposta";
 		boolean delegata = true;
-		return _getTrasformazioneRisposta(idPorta, idTrasformazione, statusMin, statusMax, pattern, contentType, nomeMetodo, delegata);
+		return getEngineTrasformazioneRisposta(idPorta, idTrasformazione, statusMin, statusMax, pattern, contentType, nomeMetodo, delegata);
 	}
 	
-	private TrasformazioneRegolaRisposta _getTrasformazioneRisposta(long idPorta, long idTrasformazione, Integer statusMin, Integer statusMax, String pattern, String contentType, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+	private TrasformazioneRegolaRisposta getEngineTrasformazioneRisposta(long idPorta, long idTrasformazione, Integer statusMin, Integer statusMax, String pattern, String contentType, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
 		boolean error = false;
 		PreparedStatement stmt=null;
@@ -1340,16 +1340,16 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 	protected TrasformazioneRegolaRisposta getPortaApplicativaTrasformazioneRisposta(long idPorta, long idTrasformazione, String nome) throws DriverConfigurazioneException {
 		String nomeMetodo = "getPortaApplicativaTrasformazioneRisposta";
 		boolean delegata = false;
-		return _getTrasformazioneRisposta(idPorta, idTrasformazione, nome, nomeMetodo, delegata);
+		return getEngineTrasformazioneRisposta(idPorta, idTrasformazione, nome, nomeMetodo, delegata);
 	}
 	
 	protected TrasformazioneRegolaRisposta getPortaDelegataTrasformazioneRisposta(long idPorta, long idTrasformazione, String nome) throws DriverConfigurazioneException {
 		String nomeMetodo = "getPortaDelegataTrasformazioneRisposta";
 		boolean delegata = true;
-		return _getTrasformazioneRisposta(idPorta, idTrasformazione, nome, nomeMetodo, delegata);
+		return getEngineTrasformazioneRisposta(idPorta, idTrasformazione, nome, nomeMetodo, delegata);
 	}
 	
-	private TrasformazioneRegolaRisposta _getTrasformazioneRisposta(long idPorta, long idTrasformazione, String nome, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+	private TrasformazioneRegolaRisposta getEngineTrasformazioneRisposta(long idPorta, long idTrasformazione, String nome, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
 		boolean error = false;
 		PreparedStatement stmt=null;
@@ -1716,17 +1716,17 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO;
 		String nomeMetodo = "porteDelegateTrasformazioniServiziApplicativiList";
 		boolean delegata = true;
-		return _getTrasformazioniServiziApplicativiList(idPD, idTrasformazione, ricerca, idLista, nomeMetodo, delegata);
+		return getEngineTrasformazioniServiziApplicativiList(idPD, idTrasformazione, ricerca, idLista, nomeMetodo, delegata);
 	}
 	
 	protected List<TrasformazioneRegolaApplicabilitaServizioApplicativo> porteApplicativeTrasformazioniServiziApplicativiList(long idPA, long idTrasformazione, ISearch ricerca) throws DriverConfigurazioneException {
 		int idLista = Liste.PORTE_APPLICATIVE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_AUTORIZZATO;
 		String nomeMetodo = "porteApplicativeTrasformazioniServiziApplicativiList";
 		boolean delegata = false;
-		return _getTrasformazioniServiziApplicativiList(idPA, idTrasformazione, ricerca, idLista, nomeMetodo, delegata);
+		return getEngineTrasformazioniServiziApplicativiList(idPA, idTrasformazione, ricerca, idLista, nomeMetodo, delegata);
 	}
 	
-	private List<TrasformazioneRegolaApplicabilitaServizioApplicativo> _getTrasformazioniServiziApplicativiList(long idPA, long idTrasformazione, ISearch ricerca, int idLista, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+	private List<TrasformazioneRegolaApplicabilitaServizioApplicativo> getEngineTrasformazioniServiziApplicativiList(long idPA, long idTrasformazione, ISearch ricerca, int idLista, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		int offset; 
 		int limit;
 		String queryString;
@@ -1876,10 +1876,10 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		int idLista = Liste.PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO;
 		String nomeMetodo = "porteApplicativeTrasformazioniSoggettiList";
 		boolean delegata = false;
-		return _getTrasformazioniSoggettiList(idPA, idTrasformazione, ricerca, idLista, nomeMetodo, delegata);
+		return getEngineTrasformazioniSoggettiList(idPA, idTrasformazione, ricerca, idLista, nomeMetodo, delegata);
 	}
 	
-	private List<TrasformazioneRegolaApplicabilitaSoggetto> _getTrasformazioniSoggettiList(long idPA, long idTrasformazione, ISearch ricerca, int idLista, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+	private List<TrasformazioneRegolaApplicabilitaSoggetto> getEngineTrasformazioniSoggettiList(long idPA, long idTrasformazione, ISearch ricerca, int idLista, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		int offset; 
 		int limit;
 		String queryString;
@@ -2022,17 +2022,17 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_HEADER;
 		String nomeMetodo = "porteDelegateTrasformazioniRispostaHeaderList";
 		boolean delegata = true;
-		return _getTrasformazioniRispostaHeaderList(idPD, idTrasformazione, idTrasformazioneRisposta, ricerca, idLista, nomeMetodo, delegata);
+		return getEngineTrasformazioniRispostaHeaderList(idPD, idTrasformazione, idTrasformazioneRisposta, ricerca, idLista, nomeMetodo, delegata);
 	}
 	
 	protected List<TrasformazioneRegolaParametro> porteApplicativeTrasformazioniRispostaHeaderList(long idPA, long idTrasformazione, long idTrasformazioneRisposta, ISearch ricerca) throws DriverConfigurazioneException {
 		int idLista = Liste.PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_HEADER;
 		String nomeMetodo = "porteApplicativeTrasformazioniRispostaHeaderList";
 		boolean delegata = false;
-		return _getTrasformazioniRispostaHeaderList(idPA, idTrasformazione, idTrasformazioneRisposta, ricerca, idLista, nomeMetodo, delegata);
+		return getEngineTrasformazioniRispostaHeaderList(idPA, idTrasformazione, idTrasformazioneRisposta, ricerca, idLista, nomeMetodo, delegata);
 	}
 	
-	private List<TrasformazioneRegolaParametro> _getTrasformazioniRispostaHeaderList(long idPA, long idTrasformazione, long idTrasformazioneRisposta, ISearch ricerca, int idLista, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+	private List<TrasformazioneRegolaParametro> getEngineTrasformazioniRispostaHeaderList(long idPA, long idTrasformazione, long idTrasformazioneRisposta, ISearch ricerca, int idLista, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		int offset; 
 		int limit;
 		String queryString;
@@ -2275,16 +2275,16 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 	protected TrasformazioneRegolaParametro getPortaApplicativaTrasformazioneRispostaHeader(long idPorta, long idTrasformazione, long idTrasformazioneRisposta,  String nome, String tipo, boolean checkTipo) throws DriverConfigurazioneException {
 		String nomeMetodo = "getPortaApplicativaTrasformazioneRispostaHeader";
 		boolean delegata = false;
-		return _getTrasformazioneRispostaHeader(idPorta, idTrasformazione,  idTrasformazioneRisposta, nome, tipo, checkTipo, nomeMetodo, delegata);
+		return getEngineTrasformazioneRispostaHeader(idPorta, idTrasformazione,  idTrasformazioneRisposta, nome, tipo, checkTipo, nomeMetodo, delegata);
 	}
 	
 	protected TrasformazioneRegolaParametro getPortaDelegataTrasformazioneRispostaHeader(long idPorta, long idTrasformazione, long idTrasformazioneRisposta,  String nome, String tipo, boolean checkTipo) throws DriverConfigurazioneException {
 		String nomeMetodo = "getPortaDelegataTrasformazioneRispostaHeader";
 		boolean delegata = true;
-		return _getTrasformazioneRispostaHeader(idPorta, idTrasformazione,  idTrasformazioneRisposta, nome, tipo, checkTipo, nomeMetodo, delegata);
+		return getEngineTrasformazioneRispostaHeader(idPorta, idTrasformazione,  idTrasformazioneRisposta, nome, tipo, checkTipo, nomeMetodo, delegata);
 	}
 	
-	private TrasformazioneRegolaParametro _getTrasformazioneRispostaHeader(long idPorta, long idTrasformazione, long idTrasformazioneRisposta,  String nome, String tipo, boolean checkTipo, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+	private TrasformazioneRegolaParametro getEngineTrasformazioneRispostaHeader(long idPorta, long idTrasformazione, long idTrasformazioneRisposta,  String nome, String tipo, boolean checkTipo, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
 		boolean error = false;
 		PreparedStatement stmt=null;
@@ -2372,17 +2372,17 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_HEADER;
 		String nomeMetodo = "porteDelegateTrasformazioniRichiestaHeaderList";
 		boolean delegata = true;
-		return _getTrasformazioniRichiestaHeaderList(idPD, idTrasformazione, ricerca, idLista, nomeMetodo, delegata);
+		return getEngineTrasformazioniRichiestaHeaderList(idPD, idTrasformazione, ricerca, idLista, nomeMetodo, delegata);
 	}
 	
 	protected List<TrasformazioneRegolaParametro> porteApplicativeTrasformazioniRichiestaHeaderList(long idPA, long idTrasformazione, ISearch ricerca) throws DriverConfigurazioneException {
 		int idLista = Liste.PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER;
 		String nomeMetodo = "porteApplicativeTrasformazioniRichiestaHeaderList";
 		boolean delegata = false;
-		return _getTrasformazioniRichiestaHeaderList(idPA, idTrasformazione, ricerca, idLista, nomeMetodo, delegata);
+		return getEngineTrasformazioniRichiestaHeaderList(idPA, idTrasformazione, ricerca, idLista, nomeMetodo, delegata);
 	}
 	
-	private List<TrasformazioneRegolaParametro> _getTrasformazioniRichiestaHeaderList(long idPA, long idTrasformazione, ISearch ricerca, int idLista, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+	private List<TrasformazioneRegolaParametro> getEngineTrasformazioniRichiestaHeaderList(long idPA, long idTrasformazione, ISearch ricerca, int idLista, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		int offset; 
 		int limit;
 		String queryString;
@@ -2610,16 +2610,16 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 	protected TrasformazioneRegolaParametro getPortaApplicativaTrasformazioneRichiestaHeader(long idPorta, long idTrasformazione,  String nome, String tipo, boolean checkTipo) throws DriverConfigurazioneException {
 		String nomeMetodo = "getPortaApplicativaTrasformazioneRichiestaHeader";
 		boolean delegata = false;
-		return _getTrasformazioneRichiestaHeader(idPorta, idTrasformazione, nome, tipo, checkTipo, nomeMetodo, delegata);
+		return getEngineTrasformazioneRichiestaHeader(idPorta, idTrasformazione, nome, tipo, checkTipo, nomeMetodo, delegata);
 	}
 	
 	protected TrasformazioneRegolaParametro getPortaDelegataTrasformazioneRichiestaHeader(long idPorta, long idTrasformazione,  String nome, String tipo, boolean checkTipo) throws DriverConfigurazioneException {
 		String nomeMetodo = "getPortaDelegataTrasformazioneRichiestaHeader";
 		boolean delegata = true;
-		return _getTrasformazioneRichiestaHeader(idPorta, idTrasformazione, nome, tipo, checkTipo, nomeMetodo, delegata);
+		return getEngineTrasformazioneRichiestaHeader(idPorta, idTrasformazione, nome, tipo, checkTipo, nomeMetodo, delegata);
 	}
 	
-	private TrasformazioneRegolaParametro _getTrasformazioneRichiestaHeader(long idPorta, long idTrasformazione, String nome, String tipo, boolean checkTipo, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+	private TrasformazioneRegolaParametro getEngineTrasformazioneRichiestaHeader(long idPorta, long idTrasformazione, String nome, String tipo, boolean checkTipo, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
 		boolean error = false;
 		PreparedStatement stmt=null;
@@ -2702,17 +2702,17 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_PARAMETRI;
 		String nomeMetodo = "porteDelegateTrasformazioniRichiestaUrlParameterList";
 		boolean delegata = true;
-		return _getTrasformazioniRichiestaUrlParameterList(idPD, idTrasformazione, ricerca, idLista, nomeMetodo, delegata);
+		return getEngineTrasformazioniRichiestaUrlParameterList(idPD, idTrasformazione, ricerca, idLista, nomeMetodo, delegata);
 	}
 	
 	protected List<TrasformazioneRegolaParametro> porteApplicativeTrasformazioniRichiestaUrlParameterList(long idPA, long idTrasformazione, ISearch ricerca) throws DriverConfigurazioneException {
 		int idLista = Liste.PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRI;
 		String nomeMetodo = "porteApplicativeTrasformazioniRichiestaUrlParameterList";
 		boolean delegata = false;
-		return _getTrasformazioniRichiestaUrlParameterList(idPA, idTrasformazione, ricerca, idLista, nomeMetodo, delegata);
+		return getEngineTrasformazioniRichiestaUrlParameterList(idPA, idTrasformazione, ricerca, idLista, nomeMetodo, delegata);
 	}
 	
-	private List<TrasformazioneRegolaParametro> _getTrasformazioniRichiestaUrlParameterList(long idPA, long idTrasformazione, ISearch ricerca, int idLista, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+	private List<TrasformazioneRegolaParametro> getEngineTrasformazioniRichiestaUrlParameterList(long idPA, long idTrasformazione, ISearch ricerca, int idLista, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		int offset; 
 		int limit;
 		String queryString;
@@ -2935,16 +2935,16 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 	protected TrasformazioneRegolaParametro getPortaApplicativaTrasformazioneRichiestaUrlParameter(long idPorta, long idTrasformazione,  String nome, String tipo, boolean checkTipo) throws DriverConfigurazioneException {
 		String nomeMetodo = "getPortaApplicativaTrasformazioneRichiestaUrlParameter";
 		boolean delegata = false;
-		return _getTrasformazioneRichiestaUrlParameter(idPorta, idTrasformazione, nome, tipo, checkTipo, nomeMetodo, delegata);
+		return getEngineTrasformazioneRichiestaUrlParameter(idPorta, idTrasformazione, nome, tipo, checkTipo, nomeMetodo, delegata);
 	}
 	
 	protected TrasformazioneRegolaParametro getPortaDelegataTrasformazioneRichiestaUrlParameter(long idPorta, long idTrasformazione,  String nome, String tipo, boolean checkTipo) throws DriverConfigurazioneException {
 		String nomeMetodo = "getPortaDelegataTrasformazioneRichiestaUrlParameter";
 		boolean delegata = true;
-		return _getTrasformazioneRichiestaUrlParameter(idPorta, idTrasformazione, nome, tipo, checkTipo, nomeMetodo, delegata);
+		return getEngineTrasformazioneRichiestaUrlParameter(idPorta, idTrasformazione, nome, tipo, checkTipo, nomeMetodo, delegata);
 	}
 	
-	private TrasformazioneRegolaParametro _getTrasformazioneRichiestaUrlParameter(long idPorta, long idTrasformazione, String nome, String tipo, boolean checkTipo, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+	private TrasformazioneRegolaParametro getEngineTrasformazioneRichiestaUrlParameter(long idPorta, long idTrasformazione, String nome, String tipo, boolean checkTipo, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
 		boolean error = false;
 		PreparedStatement stmt=null;

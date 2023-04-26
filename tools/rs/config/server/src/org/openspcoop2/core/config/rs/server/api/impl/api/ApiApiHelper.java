@@ -669,7 +669,7 @@ public class ApiApiHelper {
 		res.setMethod(Helper.apiEnumToGovway(body.getHttpMethod(), HttpMethod.class));
 
 		if (res.getMethod() != null)
-			res.set_value_method(res.getMethod().toString());
+			res.setMethodRawEnumValue(res.getMethod().toString());
 
 		if (StringUtils.isEmpty(res.getNome()) && res.getMethod() != null)
 			res.setNome(APIUtils.normalizeResourceName(res.getMethod(), pathNormalizzato));
@@ -705,9 +705,9 @@ public class ApiApiHelper {
 		ret.setNome(r.getNome());
 		ret.setDescrizione(r.getDescrizione());
 
-		ret.setHttpMethod( r.get_value_method() == null || HttpMethodEnum.valueOf(r.get_value_method()) == null 
+		ret.setHttpMethod( r.getMethodRawEnumValue() == null || HttpMethodEnum.valueOf(r.getMethodRawEnumValue()) == null 
 				? HttpMethodEnum.QUALSIASI 
-						: HttpMethodEnum.valueOf(r.get_value_method())
+						: HttpMethodEnum.valueOf(r.getMethodRawEnumValue())
 				);
 
 		ret.setIdCollaborazione(r.getIdCollaborazione() == StatoFunzionalita.ABILITATO ? true : false);

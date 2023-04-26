@@ -58,11 +58,11 @@ public class DumpConfigurazioneRegola extends org.openspcoop2.utils.beans.BaseBe
     super();
   }
 
-  public void set_value_payload(String value) {
+  public void setPayloadRawEnumValue(String value) {
     this.payload = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_payload() {
+  public String getPayloadRawEnumValue() {
     if(this.payload == null){
     	return null;
     }else{
@@ -78,11 +78,11 @@ public class DumpConfigurazioneRegola extends org.openspcoop2.utils.beans.BaseBe
     this.payload = payload;
   }
 
-  public void set_value_payloadParsing(String value) {
+  public void setPayloadParsingRawEnumValue(String value) {
     this.payloadParsing = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_payloadParsing() {
+  public String getPayloadParsingRawEnumValue() {
     if(this.payloadParsing == null){
     	return null;
     }else{
@@ -98,11 +98,11 @@ public class DumpConfigurazioneRegola extends org.openspcoop2.utils.beans.BaseBe
     this.payloadParsing = payloadParsing;
   }
 
-  public void set_value_body(String value) {
+  public void setBodyRawEnumValue(String value) {
     this.body = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_body() {
+  public String getBodyRawEnumValue() {
     if(this.body == null){
     	return null;
     }else{
@@ -118,11 +118,11 @@ public class DumpConfigurazioneRegola extends org.openspcoop2.utils.beans.BaseBe
     this.body = body;
   }
 
-  public void set_value_attachments(String value) {
+  public void setAttachmentsRawEnumValue(String value) {
     this.attachments = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_attachments() {
+  public String getAttachmentsRawEnumValue() {
     if(this.attachments == null){
     	return null;
     }else{
@@ -138,11 +138,11 @@ public class DumpConfigurazioneRegola extends org.openspcoop2.utils.beans.BaseBe
     this.attachments = attachments;
   }
 
-  public void set_value_headers(String value) {
+  public void setHeadersRawEnumValue(String value) {
     this.headers = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_headers() {
+  public String getHeadersRawEnumValue() {
     if(this.headers == null){
     	return null;
     }else{
@@ -163,31 +163,31 @@ public class DumpConfigurazioneRegola extends org.openspcoop2.utils.beans.BaseBe
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_payload;
+  protected java.lang.String payloadRawEnumValue;
 
   @XmlAttribute(name="payload",required=false)
   protected StatoFunzionalita payload = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_payloadParsing;
+  protected java.lang.String payloadParsingRawEnumValue;
 
   @XmlAttribute(name="payload-parsing",required=false)
   protected StatoFunzionalita payloadParsing = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_body;
+  protected java.lang.String bodyRawEnumValue;
 
   @XmlAttribute(name="body",required=false)
   protected StatoFunzionalita body = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_attachments;
+  protected java.lang.String attachmentsRawEnumValue;
 
   @XmlAttribute(name="attachments",required=false)
   protected StatoFunzionalita attachments = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_headers;
+  protected java.lang.String headersRawEnumValue;
 
   @XmlAttribute(name="headers",required=false)
   protected StatoFunzionalita headers = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");

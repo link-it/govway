@@ -115,11 +115,11 @@ public class MessaggiDiagnostici extends org.openspcoop2.utils.beans.BaseBeanWit
     return this.openspcoopSorgenteDati.size();
   }
 
-  public void set_value_severita(String value) {
+  public void setSeveritaRawEnumValue(String value) {
     this.severita = (Severita) Severita.toEnumConstantFromString(value);
   }
 
-  public String get_value_severita() {
+  public String getSeveritaRawEnumValue() {
     if(this.severita == null){
     	return null;
     }else{
@@ -135,11 +135,11 @@ public class MessaggiDiagnostici extends org.openspcoop2.utils.beans.BaseBeanWit
     this.severita = severita;
   }
 
-  public void set_value_severitaLog4j(String value) {
+  public void setSeveritaLog4jRawEnumValue(String value) {
     this.severitaLog4j = (Severita) Severita.toEnumConstantFromString(value);
   }
 
-  public String get_value_severitaLog4j() {
+  public String getSeveritaLog4jRawEnumValue() {
     if(this.severitaLog4j == null){
     	return null;
     }else{
@@ -160,73 +160,19 @@ public class MessaggiDiagnostici extends org.openspcoop2.utils.beans.BaseBeanWit
 
 
   @XmlElement(name="openspcoop-appender",required=true,nillable=false)
-  protected List<OpenspcoopAppender> openspcoopAppender = new ArrayList<OpenspcoopAppender>();
-
-  /**
-   * @deprecated Use method getOpenspcoopAppenderList
-   * @return List&lt;OpenspcoopAppender&gt;
-  */
-  @Deprecated
-  public List<OpenspcoopAppender> getOpenspcoopAppender() {
-  	return this.openspcoopAppender;
-  }
-
-  /**
-   * @deprecated Use method setOpenspcoopAppenderList
-   * @param openspcoopAppender List&lt;OpenspcoopAppender&gt;
-  */
-  @Deprecated
-  public void setOpenspcoopAppender(List<OpenspcoopAppender> openspcoopAppender) {
-  	this.openspcoopAppender=openspcoopAppender;
-  }
-
-  /**
-   * @deprecated Use method sizeOpenspcoopAppenderList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeOpenspcoopAppender() {
-  	return this.openspcoopAppender.size();
-  }
+  private List<OpenspcoopAppender> openspcoopAppender = new ArrayList<>();
 
   @XmlElement(name="openspcoop-sorgente-dati",required=true,nillable=false)
-  protected List<OpenspcoopSorgenteDati> openspcoopSorgenteDati = new ArrayList<OpenspcoopSorgenteDati>();
-
-  /**
-   * @deprecated Use method getOpenspcoopSorgenteDatiList
-   * @return List&lt;OpenspcoopSorgenteDati&gt;
-  */
-  @Deprecated
-  public List<OpenspcoopSorgenteDati> getOpenspcoopSorgenteDati() {
-  	return this.openspcoopSorgenteDati;
-  }
-
-  /**
-   * @deprecated Use method setOpenspcoopSorgenteDatiList
-   * @param openspcoopSorgenteDati List&lt;OpenspcoopSorgenteDati&gt;
-  */
-  @Deprecated
-  public void setOpenspcoopSorgenteDati(List<OpenspcoopSorgenteDati> openspcoopSorgenteDati) {
-  	this.openspcoopSorgenteDati=openspcoopSorgenteDati;
-  }
-
-  /**
-   * @deprecated Use method sizeOpenspcoopSorgenteDatiList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeOpenspcoopSorgenteDati() {
-  	return this.openspcoopSorgenteDati.size();
-  }
+  private List<OpenspcoopSorgenteDati> openspcoopSorgenteDati = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_severita;
+  protected java.lang.String severitaRawEnumValue;
 
   @XmlAttribute(name="severita",required=false)
   protected Severita severita = (Severita) Severita.toEnumConstantFromString("infoIntegration");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_severitaLog4j;
+  protected java.lang.String severitaLog4jRawEnumValue;
 
   @XmlAttribute(name="severita-log4j",required=false)
   protected Severita severitaLog4j = (Severita) Severita.toEnumConstantFromString("infoIntegration");

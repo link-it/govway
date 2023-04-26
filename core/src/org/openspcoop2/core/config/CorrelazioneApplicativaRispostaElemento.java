@@ -66,11 +66,11 @@ public class CorrelazioneApplicativaRispostaElemento extends org.openspcoop2.uti
     this.nome = nome;
   }
 
-  public void set_value_identificazione(String value) {
+  public void setIdentificazioneRawEnumValue(String value) {
     this.identificazione = (CorrelazioneApplicativaRispostaIdentificazione) CorrelazioneApplicativaRispostaIdentificazione.toEnumConstantFromString(value);
   }
 
-  public String get_value_identificazione() {
+  public String getIdentificazioneRawEnumValue() {
     if(this.identificazione == null){
     	return null;
     }else{
@@ -94,11 +94,11 @@ public class CorrelazioneApplicativaRispostaElemento extends org.openspcoop2.uti
     this.pattern = pattern;
   }
 
-  public void set_value_identificazioneFallita(String value) {
+  public void setIdentificazioneFallitaRawEnumValue(String value) {
     this.identificazioneFallita = (CorrelazioneApplicativaGestioneIdentificazioneFallita) CorrelazioneApplicativaGestioneIdentificazioneFallita.toEnumConstantFromString(value);
   }
 
-  public String get_value_identificazioneFallita() {
+  public String getIdentificazioneFallitaRawEnumValue() {
     if(this.identificazioneFallita == null){
     	return null;
     }else{
@@ -123,7 +123,7 @@ public class CorrelazioneApplicativaRispostaElemento extends org.openspcoop2.uti
   protected java.lang.String nome;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_identificazione;
+  protected java.lang.String identificazioneRawEnumValue;
 
   @XmlAttribute(name="identificazione",required=false)
   protected CorrelazioneApplicativaRispostaIdentificazione identificazione = (CorrelazioneApplicativaRispostaIdentificazione) CorrelazioneApplicativaRispostaIdentificazione.toEnumConstantFromString("contentBased");
@@ -133,7 +133,7 @@ public class CorrelazioneApplicativaRispostaElemento extends org.openspcoop2.uti
   protected java.lang.String pattern;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_identificazioneFallita;
+  protected java.lang.String identificazioneFallitaRawEnumValue;
 
   @XmlAttribute(name="identificazione-fallita",required=false)
   protected CorrelazioneApplicativaGestioneIdentificazioneFallita identificazioneFallita = (CorrelazioneApplicativaGestioneIdentificazioneFallita) CorrelazioneApplicativaGestioneIdentificazioneFallita.toEnumConstantFromString("blocca");

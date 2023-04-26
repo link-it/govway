@@ -559,8 +559,8 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getTransazioneFieldConverter().toTable(Transazione.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, id),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, id),
 				this.getTransazioneFieldConverter(), this, null, updateFields);
 	}
 	
@@ -569,8 +569,8 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getTransazioneFieldConverter().toTable(Transazione.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, id),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, id),
 				this.getTransazioneFieldConverter(), this, condition, updateFields);
 	}
 	
@@ -579,8 +579,8 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getTransazioneFieldConverter().toTable(Transazione.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, id),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, id),
 				this.getTransazioneFieldConverter(), this, updateModels);
 	}	
 	
@@ -624,11 +624,11 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 			throw new ServiceException("IdTransazione non presente nell'oggetto");
 		}
 		
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, idObject);
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, idObject);
         
 	}
 
-	private void _delete(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Object id) throws NotImplementedException,ServiceException,Exception {
+	private void deleteEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Object id) throws NotImplementedException,ServiceException,Exception {
 		
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
@@ -655,7 +655,7 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 		}catch(NotFoundException notFound){
 			return;
 		}			
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, id);
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, id);
 		
 	}
 	
@@ -672,7 +672,7 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 		java.util.List<Object> lst = this._findAllObjectIds(jdbcProperties, log, connection, sqlQueryObject, new JDBCPaginatedExpression(expression));
 		
 		for(Object id : lst) {
-			this._delete(jdbcProperties, log, connection, sqlQueryObject, id);
+			this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, id);
 		}
 		
 		return new NonNegativeNumber(lst.size());

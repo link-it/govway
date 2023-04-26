@@ -91,33 +91,6 @@ public class CorsConfigurazioneMethods extends org.openspcoop2.utils.beans.BaseB
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="method",required=true,nillable=false)
-  protected List<java.lang.String> method = new ArrayList<java.lang.String>();
-
-  /**
-   * @deprecated Use method getMethodList
-   * @return List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public List<java.lang.String> getMethod() {
-  	return this.method;
-  }
-
-  /**
-   * @deprecated Use method setMethodList
-   * @param method List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public void setMethod(List<java.lang.String> method) {
-  	this.method=method;
-  }
-
-  /**
-   * @deprecated Use method sizeMethodList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeMethod() {
-  	return this.method.size();
-  }
+  private List<java.lang.String> method = new ArrayList<>();
 
 }

@@ -72,11 +72,11 @@ public class IdDumpMessaggio extends org.openspcoop2.utils.beans.BaseBeanWithId 
     this.idTransazione = idTransazione;
   }
 
-  public void set_value_tipoMessaggio(String value) {
+  public void setTipoMessaggioRawEnumValue(String value) {
     this.tipoMessaggio = (TipoMessaggio) TipoMessaggio.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipoMessaggio() {
+  public String getTipoMessaggioRawEnumValue() {
     if(this.tipoMessaggio == null){
     	return null;
     }else{
@@ -109,7 +109,7 @@ public class IdDumpMessaggio extends org.openspcoop2.utils.beans.BaseBeanWithId 
   protected java.lang.String idTransazione;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipoMessaggio;
+  protected java.lang.String tipoMessaggioRawEnumValue;
 
   @XmlElement(name="tipo-messaggio",required=true,nillable=false)
   protected TipoMessaggio tipoMessaggio;

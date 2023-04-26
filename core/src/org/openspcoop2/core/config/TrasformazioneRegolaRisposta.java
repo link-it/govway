@@ -186,34 +186,7 @@ public class TrasformazioneRegolaRisposta extends org.openspcoop2.utils.beans.Ba
   protected TrasformazioneRegolaApplicabilitaRisposta applicabilita;
 
   @XmlElement(name="header",required=true,nillable=false)
-  protected List<TrasformazioneRegolaParametro> header = new ArrayList<TrasformazioneRegolaParametro>();
-
-  /**
-   * @deprecated Use method getHeaderList
-   * @return List&lt;TrasformazioneRegolaParametro&gt;
-  */
-  @Deprecated
-  public List<TrasformazioneRegolaParametro> getHeader() {
-  	return this.header;
-  }
-
-  /**
-   * @deprecated Use method setHeaderList
-   * @param header List&lt;TrasformazioneRegolaParametro&gt;
-  */
-  @Deprecated
-  public void setHeader(List<TrasformazioneRegolaParametro> header) {
-  	this.header=header;
-  }
-
-  /**
-   * @deprecated Use method sizeHeaderList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeHeader() {
-  	return this.header.size();
-  }
+  private List<TrasformazioneRegolaParametro> header = new ArrayList<>();
 
   @XmlElement(name="trasformazione-soap",required=false,nillable=false)
   protected TrasformazioneSoapRisposta trasformazioneSoap;

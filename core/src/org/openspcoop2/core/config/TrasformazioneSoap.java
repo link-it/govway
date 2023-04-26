@@ -86,11 +86,11 @@ public class TrasformazioneSoap extends org.openspcoop2.utils.beans.BaseBeanWith
     this.envelope = envelope;
   }
 
-  public void set_value_versione(String value) {
+  public void setVersioneRawEnumValue(String value) {
     this.versione = (VersioneSOAP) VersioneSOAP.toEnumConstantFromString(value);
   }
 
-  public String get_value_versione() {
+  public String getVersioneRawEnumValue() {
     if(this.versione == null){
     	return null;
     }else{
@@ -147,7 +147,7 @@ public class TrasformazioneSoap extends org.openspcoop2.utils.beans.BaseBeanWith
   protected boolean envelope = true;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_versione;
+  protected java.lang.String versioneRawEnumValue;
 
   @XmlAttribute(name="versione",required=false)
   protected VersioneSOAP versione;

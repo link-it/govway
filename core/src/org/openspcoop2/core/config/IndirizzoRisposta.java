@@ -54,11 +54,11 @@ public class IndirizzoRisposta extends org.openspcoop2.utils.beans.BaseBeanWithI
     super();
   }
 
-  public void set_value_utilizzo(String value) {
+  public void setUtilizzoRawEnumValue(String value) {
     this.utilizzo = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_utilizzo() {
+  public String getUtilizzoRawEnumValue() {
     if(this.utilizzo == null){
     	return null;
     }else{
@@ -79,7 +79,7 @@ public class IndirizzoRisposta extends org.openspcoop2.utils.beans.BaseBeanWithI
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_utilizzo;
+  protected java.lang.String utilizzoRawEnumValue;
 
   @XmlAttribute(name="utilizzo",required=false)
   protected StatoFunzionalita utilizzo = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");

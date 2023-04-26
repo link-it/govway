@@ -58,11 +58,11 @@ public class GestioneTokenAutenticazione extends org.openspcoop2.utils.beans.Bas
     super();
   }
 
-  public void set_value_issuer(String value) {
+  public void setIssuerRawEnumValue(String value) {
     this.issuer = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_issuer() {
+  public String getIssuerRawEnumValue() {
     if(this.issuer == null){
     	return null;
     }else{
@@ -78,11 +78,11 @@ public class GestioneTokenAutenticazione extends org.openspcoop2.utils.beans.Bas
     this.issuer = issuer;
   }
 
-  public void set_value_clientId(String value) {
+  public void setClientIdRawEnumValue(String value) {
     this.clientId = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_clientId() {
+  public String getClientIdRawEnumValue() {
     if(this.clientId == null){
     	return null;
     }else{
@@ -98,11 +98,11 @@ public class GestioneTokenAutenticazione extends org.openspcoop2.utils.beans.Bas
     this.clientId = clientId;
   }
 
-  public void set_value_subject(String value) {
+  public void setSubjectRawEnumValue(String value) {
     this.subject = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_subject() {
+  public String getSubjectRawEnumValue() {
     if(this.subject == null){
     	return null;
     }else{
@@ -118,11 +118,11 @@ public class GestioneTokenAutenticazione extends org.openspcoop2.utils.beans.Bas
     this.subject = subject;
   }
 
-  public void set_value_username(String value) {
+  public void setUsernameRawEnumValue(String value) {
     this.username = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_username() {
+  public String getUsernameRawEnumValue() {
     if(this.username == null){
     	return null;
     }else{
@@ -138,11 +138,11 @@ public class GestioneTokenAutenticazione extends org.openspcoop2.utils.beans.Bas
     this.username = username;
   }
 
-  public void set_value_email(String value) {
+  public void setEmailRawEnumValue(String value) {
     this.email = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_email() {
+  public String getEmailRawEnumValue() {
     if(this.email == null){
     	return null;
     }else{
@@ -163,31 +163,31 @@ public class GestioneTokenAutenticazione extends org.openspcoop2.utils.beans.Bas
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_issuer;
+  protected java.lang.String issuerRawEnumValue;
 
   @XmlAttribute(name="issuer",required=false)
   protected StatoFunzionalita issuer = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_clientId;
+  protected java.lang.String clientIdRawEnumValue;
 
   @XmlAttribute(name="client-id",required=false)
   protected StatoFunzionalita clientId = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_subject;
+  protected java.lang.String subjectRawEnumValue;
 
   @XmlAttribute(name="subject",required=false)
   protected StatoFunzionalita subject = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_username;
+  protected java.lang.String usernameRawEnumValue;
 
   @XmlAttribute(name="username",required=false)
   protected StatoFunzionalita username = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_email;
+  protected java.lang.String emailRawEnumValue;
 
   @XmlAttribute(name="email",required=false)
   protected StatoFunzionalita email = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");

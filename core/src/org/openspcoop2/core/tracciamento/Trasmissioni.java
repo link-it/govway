@@ -90,33 +90,6 @@ public class Trasmissioni extends org.openspcoop2.utils.beans.BaseBeanWithId imp
 
 
   @XmlElement(name="trasmissione",required=true,nillable=false)
-  protected List<Trasmissione> trasmissione = new ArrayList<Trasmissione>();
-
-  /**
-   * @deprecated Use method getTrasmissioneList
-   * @return List&lt;Trasmissione&gt;
-  */
-  @Deprecated
-  public List<Trasmissione> getTrasmissione() {
-  	return this.trasmissione;
-  }
-
-  /**
-   * @deprecated Use method setTrasmissioneList
-   * @param trasmissione List&lt;Trasmissione&gt;
-  */
-  @Deprecated
-  public void setTrasmissione(List<Trasmissione> trasmissione) {
-  	this.trasmissione=trasmissione;
-  }
-
-  /**
-   * @deprecated Use method sizeTrasmissioneList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeTrasmissione() {
-  	return this.trasmissione.size();
-  }
+  private List<Trasmissione> trasmissione = new ArrayList<>();
 
 }

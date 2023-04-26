@@ -120,11 +120,11 @@ public class Dump extends org.openspcoop2.utils.beans.BaseBeanWithId implements 
     return this.openspcoopAppender.size();
   }
 
-  public void set_value_stato(String value) {
+  public void setStatoRawEnumValue(String value) {
     this.stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_stato() {
+  public String getStatoRawEnumValue() {
     if(this.stato == null){
     	return null;
     }else{
@@ -140,11 +140,11 @@ public class Dump extends org.openspcoop2.utils.beans.BaseBeanWithId implements 
     this.stato = stato;
   }
 
-  public void set_value_dumpBinarioPortaDelegata(String value) {
+  public void setDumpBinarioPortaDelegataRawEnumValue(String value) {
     this.dumpBinarioPortaDelegata = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_dumpBinarioPortaDelegata() {
+  public String getDumpBinarioPortaDelegataRawEnumValue() {
     if(this.dumpBinarioPortaDelegata == null){
     	return null;
     }else{
@@ -160,11 +160,11 @@ public class Dump extends org.openspcoop2.utils.beans.BaseBeanWithId implements 
     this.dumpBinarioPortaDelegata = dumpBinarioPortaDelegata;
   }
 
-  public void set_value_dumpBinarioPortaApplicativa(String value) {
+  public void setDumpBinarioPortaApplicativaRawEnumValue(String value) {
     this.dumpBinarioPortaApplicativa = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_dumpBinarioPortaApplicativa() {
+  public String getDumpBinarioPortaApplicativaRawEnumValue() {
     if(this.dumpBinarioPortaApplicativa == null){
     	return null;
     }else{
@@ -194,49 +194,22 @@ public class Dump extends org.openspcoop2.utils.beans.BaseBeanWithId implements 
   protected DumpConfigurazione configurazionePortaApplicativa;
 
   @XmlElement(name="openspcoop-appender",required=true,nillable=false)
-  protected List<OpenspcoopAppender> openspcoopAppender = new ArrayList<OpenspcoopAppender>();
-
-  /**
-   * @deprecated Use method getOpenspcoopAppenderList
-   * @return List&lt;OpenspcoopAppender&gt;
-  */
-  @Deprecated
-  public List<OpenspcoopAppender> getOpenspcoopAppender() {
-  	return this.openspcoopAppender;
-  }
-
-  /**
-   * @deprecated Use method setOpenspcoopAppenderList
-   * @param openspcoopAppender List&lt;OpenspcoopAppender&gt;
-  */
-  @Deprecated
-  public void setOpenspcoopAppender(List<OpenspcoopAppender> openspcoopAppender) {
-  	this.openspcoopAppender=openspcoopAppender;
-  }
-
-  /**
-   * @deprecated Use method sizeOpenspcoopAppenderList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeOpenspcoopAppender() {
-  	return this.openspcoopAppender.size();
-  }
+  private List<OpenspcoopAppender> openspcoopAppender = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_stato;
+  protected java.lang.String statoRawEnumValue;
 
   @XmlAttribute(name="stato",required=false)
   protected StatoFunzionalita stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_dumpBinarioPortaDelegata;
+  protected java.lang.String dumpBinarioPortaDelegataRawEnumValue;
 
   @XmlAttribute(name="dump-binario-porta-delegata",required=false)
   protected StatoFunzionalita dumpBinarioPortaDelegata = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_dumpBinarioPortaApplicativa;
+  protected java.lang.String dumpBinarioPortaApplicativaRawEnumValue;
 
   @XmlAttribute(name="dump-binario-porta-applicativa",required=false)
   protected StatoFunzionalita dumpBinarioPortaApplicativa = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");

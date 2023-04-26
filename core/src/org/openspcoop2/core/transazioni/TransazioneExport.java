@@ -105,11 +105,11 @@ public class TransazioneExport extends org.openspcoop2.utils.beans.BaseBeanWithI
     this.nome = nome;
   }
 
-  public void set_value_exportState(String value) {
+  public void setExportStateRawEnumValue(String value) {
     this.exportState = (ExportState) ExportState.toEnumConstantFromString(value);
   }
 
-  public String get_value_exportState() {
+  public String getExportStateRawEnumValue() {
     if(this.exportState == null){
     	return null;
     }else{
@@ -149,11 +149,11 @@ public class TransazioneExport extends org.openspcoop2.utils.beans.BaseBeanWithI
     this.exportTimeEnd = exportTimeEnd;
   }
 
-  public void set_value_deleteState(String value) {
+  public void setDeleteStateRawEnumValue(String value) {
     this.deleteState = (DeleteState) DeleteState.toEnumConstantFromString(value);
   }
 
-  public String get_value_deleteState() {
+  public String getDeleteStateRawEnumValue() {
     if(this.deleteState == null){
     	return null;
     }else{
@@ -224,7 +224,7 @@ public class TransazioneExport extends org.openspcoop2.utils.beans.BaseBeanWithI
   protected java.lang.String nome;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_exportState;
+  protected java.lang.String exportStateRawEnumValue;
 
   @XmlElement(name="export-state",required=true,nillable=false)
   protected ExportState exportState;
@@ -244,7 +244,7 @@ public class TransazioneExport extends org.openspcoop2.utils.beans.BaseBeanWithI
   protected java.util.Date exportTimeEnd;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_deleteState;
+  protected java.lang.String deleteStateRawEnumValue;
 
   @XmlElement(name="delete-state",required=true,nillable=false)
   protected DeleteState deleteState;

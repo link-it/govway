@@ -306,127 +306,19 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBeanWithId impleme
   protected Connettore connettore;
 
   @XmlElement(name="proprieta",required=true,nillable=false)
-  protected List<Proprieta> proprieta = new ArrayList<Proprieta>();
-
-  /**
-   * @deprecated Use method getProprietaList
-   * @return List&lt;Proprieta&gt;
-  */
-  @Deprecated
-  public List<Proprieta> getProprieta() {
-  	return this.proprieta;
-  }
-
-  /**
-   * @deprecated Use method setProprietaList
-   * @param proprieta List&lt;Proprieta&gt;
-  */
-  @Deprecated
-  public void setProprieta(List<Proprieta> proprieta) {
-  	this.proprieta=proprieta;
-  }
-
-  /**
-   * @deprecated Use method sizeProprietaList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeProprieta() {
-  	return this.proprieta.size();
-  }
+  private List<Proprieta> proprieta = new ArrayList<>();
 
   @XmlElement(name="protocol-property",required=true,nillable=false)
-  protected List<ProtocolProperty> protocolProperty = new ArrayList<ProtocolProperty>();
-
-  /**
-   * @deprecated Use method getProtocolPropertyList
-   * @return List&lt;ProtocolProperty&gt;
-  */
-  @Deprecated
-  public List<ProtocolProperty> getProtocolProperty() {
-  	return this.protocolProperty;
-  }
-
-  /**
-   * @deprecated Use method setProtocolPropertyList
-   * @param protocolProperty List&lt;ProtocolProperty&gt;
-  */
-  @Deprecated
-  public void setProtocolProperty(List<ProtocolProperty> protocolProperty) {
-  	this.protocolProperty=protocolProperty;
-  }
-
-  /**
-   * @deprecated Use method sizeProtocolPropertyList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeProtocolProperty() {
-  	return this.protocolProperty.size();
-  }
+  private List<ProtocolProperty> protocolProperty = new ArrayList<>();
 
   @XmlElement(name="credenziali",required=true,nillable=false)
-  protected List<CredenzialiSoggetto> credenziali = new ArrayList<CredenzialiSoggetto>();
-
-  /**
-   * @deprecated Use method getCredenzialiList
-   * @return List&lt;CredenzialiSoggetto&gt;
-  */
-  @Deprecated
-  public List<CredenzialiSoggetto> getCredenziali() {
-  	return this.credenziali;
-  }
-
-  /**
-   * @deprecated Use method setCredenzialiList
-   * @param credenziali List&lt;CredenzialiSoggetto&gt;
-  */
-  @Deprecated
-  public void setCredenziali(List<CredenzialiSoggetto> credenziali) {
-  	this.credenziali=credenziali;
-  }
-
-  /**
-   * @deprecated Use method sizeCredenzialiList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeCredenziali() {
-  	return this.credenziali.size();
-  }
+  private List<CredenzialiSoggetto> credenziali = new ArrayList<>();
 
   @XmlElement(name="ruoli",required=false,nillable=false)
   protected RuoliSoggetto ruoli;
 
   @XmlElement(name="accordo-servizio-parte-specifica",required=true,nillable=false)
-  protected List<AccordoServizioParteSpecifica> accordoServizioParteSpecifica = new ArrayList<AccordoServizioParteSpecifica>();
-
-  /**
-   * @deprecated Use method getAccordoServizioParteSpecificaList
-   * @return List&lt;AccordoServizioParteSpecifica&gt;
-  */
-  @Deprecated
-  public List<AccordoServizioParteSpecifica> getAccordoServizioParteSpecifica() {
-  	return this.accordoServizioParteSpecifica;
-  }
-
-  /**
-   * @deprecated Use method setAccordoServizioParteSpecificaList
-   * @param accordoServizioParteSpecifica List&lt;AccordoServizioParteSpecifica&gt;
-  */
-  @Deprecated
-  public void setAccordoServizioParteSpecifica(List<AccordoServizioParteSpecifica> accordoServizioParteSpecifica) {
-  	this.accordoServizioParteSpecifica=accordoServizioParteSpecifica;
-  }
-
-  /**
-   * @deprecated Use method sizeAccordoServizioParteSpecificaList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeAccordoServizioParteSpecifica() {
-  	return this.accordoServizioParteSpecifica.size();
-  }
+  private List<AccordoServizioParteSpecifica> accordoServizioParteSpecifica = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String superUser;

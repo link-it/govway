@@ -135,64 +135,10 @@ public class AccordoServizioParteComuneServizioComposto extends org.openspcoop2.
 
 
   @XmlElement(name="servizio-componente",required=true,nillable=false)
-  protected List<AccordoServizioParteComuneServizioCompostoServizioComponente> servizioComponente = new ArrayList<AccordoServizioParteComuneServizioCompostoServizioComponente>();
-
-  /**
-   * @deprecated Use method getServizioComponenteList
-   * @return List&lt;AccordoServizioParteComuneServizioCompostoServizioComponente&gt;
-  */
-  @Deprecated
-  public List<AccordoServizioParteComuneServizioCompostoServizioComponente> getServizioComponente() {
-  	return this.servizioComponente;
-  }
-
-  /**
-   * @deprecated Use method setServizioComponenteList
-   * @param servizioComponente List&lt;AccordoServizioParteComuneServizioCompostoServizioComponente&gt;
-  */
-  @Deprecated
-  public void setServizioComponente(List<AccordoServizioParteComuneServizioCompostoServizioComponente> servizioComponente) {
-  	this.servizioComponente=servizioComponente;
-  }
-
-  /**
-   * @deprecated Use method sizeServizioComponenteList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeServizioComponente() {
-  	return this.servizioComponente.size();
-  }
+  private List<AccordoServizioParteComuneServizioCompostoServizioComponente> servizioComponente = new ArrayList<>();
 
   @XmlElement(name="specifica-coordinamento",required=true,nillable=false)
-  protected List<Documento> specificaCoordinamento = new ArrayList<Documento>();
-
-  /**
-   * @deprecated Use method getSpecificaCoordinamentoList
-   * @return List&lt;Documento&gt;
-  */
-  @Deprecated
-  public List<Documento> getSpecificaCoordinamento() {
-  	return this.specificaCoordinamento;
-  }
-
-  /**
-   * @deprecated Use method setSpecificaCoordinamentoList
-   * @param specificaCoordinamento List&lt;Documento&gt;
-  */
-  @Deprecated
-  public void setSpecificaCoordinamento(List<Documento> specificaCoordinamento) {
-  	this.specificaCoordinamento=specificaCoordinamento;
-  }
-
-  /**
-   * @deprecated Use method sizeSpecificaCoordinamentoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeSpecificaCoordinamento() {
-  	return this.specificaCoordinamento.size();
-  }
+  private List<Documento> specificaCoordinamento = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Long idAccordoCooperazione;

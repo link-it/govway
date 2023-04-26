@@ -118,11 +118,11 @@ public class ResponseCachingConfigurazioneHashGenerator extends org.openspcoop2.
     return this.queryParameter.size();
   }
 
-  public void set_value_requestUri(String value) {
+  public void setRequestUriRawEnumValue(String value) {
     this.requestUri = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_requestUri() {
+  public String getRequestUriRawEnumValue() {
     if(this.requestUri == null){
     	return null;
     }else{
@@ -138,11 +138,11 @@ public class ResponseCachingConfigurazioneHashGenerator extends org.openspcoop2.
     this.requestUri = requestUri;
   }
 
-  public void set_value_queryParameters(String value) {
+  public void setQueryParametersRawEnumValue(String value) {
     this.queryParameters = (StatoFunzionalitaCacheDigestQueryParameter) StatoFunzionalitaCacheDigestQueryParameter.toEnumConstantFromString(value);
   }
 
-  public String get_value_queryParameters() {
+  public String getQueryParametersRawEnumValue() {
     if(this.queryParameters == null){
     	return null;
     }else{
@@ -158,11 +158,11 @@ public class ResponseCachingConfigurazioneHashGenerator extends org.openspcoop2.
     this.queryParameters = queryParameters;
   }
 
-  public void set_value_headers(String value) {
+  public void setHeadersRawEnumValue(String value) {
     this.headers = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_headers() {
+  public String getHeadersRawEnumValue() {
     if(this.headers == null){
     	return null;
     }else{
@@ -178,11 +178,11 @@ public class ResponseCachingConfigurazioneHashGenerator extends org.openspcoop2.
     this.headers = headers;
   }
 
-  public void set_value_payload(String value) {
+  public void setPayloadRawEnumValue(String value) {
     this.payload = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_payload() {
+  public String getPayloadRawEnumValue() {
     if(this.payload == null){
     	return null;
     }else{
@@ -204,86 +204,32 @@ public class ResponseCachingConfigurazioneHashGenerator extends org.openspcoop2.
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="header",required=true,nillable=false)
-  protected List<java.lang.String> header = new ArrayList<java.lang.String>();
-
-  /**
-   * @deprecated Use method getHeaderList
-   * @return List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public List<java.lang.String> getHeader() {
-  	return this.header;
-  }
-
-  /**
-   * @deprecated Use method setHeaderList
-   * @param header List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public void setHeader(List<java.lang.String> header) {
-  	this.header=header;
-  }
-
-  /**
-   * @deprecated Use method sizeHeaderList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeHeader() {
-  	return this.header.size();
-  }
+  private List<java.lang.String> header = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="query-parameter",required=true,nillable=false)
-  protected List<java.lang.String> queryParameter = new ArrayList<java.lang.String>();
-
-  /**
-   * @deprecated Use method getQueryParameterList
-   * @return List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public List<java.lang.String> getQueryParameter() {
-  	return this.queryParameter;
-  }
-
-  /**
-   * @deprecated Use method setQueryParameterList
-   * @param queryParameter List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public void setQueryParameter(List<java.lang.String> queryParameter) {
-  	this.queryParameter=queryParameter;
-  }
-
-  /**
-   * @deprecated Use method sizeQueryParameterList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeQueryParameter() {
-  	return this.queryParameter.size();
-  }
+  private List<java.lang.String> queryParameter = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_requestUri;
+  protected java.lang.String requestUriRawEnumValue;
 
   @XmlAttribute(name="request-uri",required=false)
   protected StatoFunzionalita requestUri = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_queryParameters;
+  protected java.lang.String queryParametersRawEnumValue;
 
   @XmlAttribute(name="query-parameters",required=false)
   protected StatoFunzionalitaCacheDigestQueryParameter queryParameters = (StatoFunzionalitaCacheDigestQueryParameter) StatoFunzionalitaCacheDigestQueryParameter.toEnumConstantFromString("abilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_headers;
+  protected java.lang.String headersRawEnumValue;
 
   @XmlAttribute(name="headers",required=false)
   protected StatoFunzionalita headers = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_payload;
+  protected java.lang.String payloadRawEnumValue;
 
   @XmlAttribute(name="payload",required=false)
   protected StatoFunzionalita payload = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");

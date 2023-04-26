@@ -70,7 +70,7 @@ public class ProtocolPropertiesUtilities {
 		return isMatch(fruitore.getProtocolPropertyList(), list);
 	}
 	public static boolean isMatch(List<ProtocolProperty> protocolProperties ,List<FiltroRicercaProtocolPropertyRegistry> list){
-		if(list==null || list.size()<=0){
+		if(list==null || list.isEmpty()){
 			return true;
 		}
 		for (int i = 0; i < list.size(); i++) {

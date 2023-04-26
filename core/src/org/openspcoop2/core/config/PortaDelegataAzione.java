@@ -93,11 +93,11 @@ public class PortaDelegataAzione extends org.openspcoop2.utils.beans.BaseBeanWit
     return this.azioneDelegata.size();
   }
 
-  public void set_value_identificazione(String value) {
+  public void setIdentificazioneRawEnumValue(String value) {
     this.identificazione = (PortaDelegataAzioneIdentificazione) PortaDelegataAzioneIdentificazione.toEnumConstantFromString(value);
   }
 
-  public String get_value_identificazione() {
+  public String getIdentificazioneRawEnumValue() {
     if(this.identificazione == null){
     	return null;
     }else{
@@ -137,11 +137,11 @@ public class PortaDelegataAzione extends org.openspcoop2.utils.beans.BaseBeanWit
     this.nomePortaDelegante = nomePortaDelegante;
   }
 
-  public void set_value_forceInterfaceBased(String value) {
+  public void setForceInterfaceBasedRawEnumValue(String value) {
     this.forceInterfaceBased = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_forceInterfaceBased() {
+  public String getForceInterfaceBasedRawEnumValue() {
     if(this.forceInterfaceBased == null){
     	return null;
     }else{
@@ -163,37 +163,10 @@ public class PortaDelegataAzione extends org.openspcoop2.utils.beans.BaseBeanWit
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="azione-delegata",required=true,nillable=false)
-  protected List<java.lang.String> azioneDelegata = new ArrayList<java.lang.String>();
-
-  /**
-   * @deprecated Use method getAzioneDelegataList
-   * @return List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public List<java.lang.String> getAzioneDelegata() {
-  	return this.azioneDelegata;
-  }
-
-  /**
-   * @deprecated Use method setAzioneDelegataList
-   * @param azioneDelegata List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public void setAzioneDelegata(List<java.lang.String> azioneDelegata) {
-  	this.azioneDelegata=azioneDelegata;
-  }
-
-  /**
-   * @deprecated Use method sizeAzioneDelegataList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeAzioneDelegata() {
-  	return this.azioneDelegata.size();
-  }
+  private List<java.lang.String> azioneDelegata = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_identificazione;
+  protected java.lang.String identificazioneRawEnumValue;
 
   @XmlAttribute(name="identificazione",required=false)
   protected PortaDelegataAzioneIdentificazione identificazione = (PortaDelegataAzioneIdentificazione) PortaDelegataAzioneIdentificazione.toEnumConstantFromString("static");
@@ -211,7 +184,7 @@ public class PortaDelegataAzione extends org.openspcoop2.utils.beans.BaseBeanWit
   protected java.lang.String nomePortaDelegante;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_forceInterfaceBased;
+  protected java.lang.String forceInterfaceBasedRawEnumValue;
 
   @XmlAttribute(name="force-interface-based",required=false)
   protected StatoFunzionalita forceInterfaceBased = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");

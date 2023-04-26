@@ -90,33 +90,6 @@ public class CorrelazioneApplicativaRisposta extends org.openspcoop2.utils.beans
 
 
   @XmlElement(name="elemento",required=true,nillable=false)
-  protected List<CorrelazioneApplicativaRispostaElemento> elemento = new ArrayList<CorrelazioneApplicativaRispostaElemento>();
-
-  /**
-   * @deprecated Use method getElementoList
-   * @return List&lt;CorrelazioneApplicativaRispostaElemento&gt;
-  */
-  @Deprecated
-  public List<CorrelazioneApplicativaRispostaElemento> getElemento() {
-  	return this.elemento;
-  }
-
-  /**
-   * @deprecated Use method setElementoList
-   * @param elemento List&lt;CorrelazioneApplicativaRispostaElemento&gt;
-  */
-  @Deprecated
-  public void setElemento(List<CorrelazioneApplicativaRispostaElemento> elemento) {
-  	this.elemento=elemento;
-  }
-
-  /**
-   * @deprecated Use method sizeElementoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeElemento() {
-  	return this.elemento.size();
-  }
+  private List<CorrelazioneApplicativaRispostaElemento> elemento = new ArrayList<>();
 
 }

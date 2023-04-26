@@ -101,34 +101,7 @@ public class AttributeAuthority extends org.openspcoop2.utils.beans.BaseBeanWith
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="attributo",required=true,nillable=false)
-  protected List<java.lang.String> attributo = new ArrayList<java.lang.String>();
-
-  /**
-   * @deprecated Use method getAttributoList
-   * @return List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public List<java.lang.String> getAttributo() {
-  	return this.attributo;
-  }
-
-  /**
-   * @deprecated Use method setAttributoList
-   * @param attributo List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public void setAttributo(List<java.lang.String> attributo) {
-  	this.attributo=attributo;
-  }
-
-  /**
-   * @deprecated Use method sizeAttributoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeAttributo() {
-  	return this.attributo.size();
-  }
+  private List<java.lang.String> attributo = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=true)

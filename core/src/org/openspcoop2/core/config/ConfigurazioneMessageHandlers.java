@@ -194,153 +194,18 @@ public class ConfigurazioneMessageHandlers extends org.openspcoop2.utils.beans.B
 
 
   @XmlElement(name="pre-in",required=true,nillable=false)
-  protected List<ConfigurazioneHandler> preIn = new ArrayList<ConfigurazioneHandler>();
-
-  /**
-   * @deprecated Use method getPreInList
-   * @return List&lt;ConfigurazioneHandler&gt;
-  */
-  @Deprecated
-  public List<ConfigurazioneHandler> getPreIn() {
-  	return this.preIn;
-  }
-
-  /**
-   * @deprecated Use method setPreInList
-   * @param preIn List&lt;ConfigurazioneHandler&gt;
-  */
-  @Deprecated
-  public void setPreIn(List<ConfigurazioneHandler> preIn) {
-  	this.preIn=preIn;
-  }
-
-  /**
-   * @deprecated Use method sizePreInList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizePreIn() {
-  	return this.preIn.size();
-  }
+  private List<ConfigurazioneHandler> preIn = new ArrayList<>();
 
   @XmlElement(name="in",required=true,nillable=false)
-  protected List<ConfigurazioneHandler> in = new ArrayList<ConfigurazioneHandler>();
-
-  /**
-   * @deprecated Use method getInList
-   * @return List&lt;ConfigurazioneHandler&gt;
-  */
-  @Deprecated
-  public List<ConfigurazioneHandler> getIn() {
-  	return this.in;
-  }
-
-  /**
-   * @deprecated Use method setInList
-   * @param in List&lt;ConfigurazioneHandler&gt;
-  */
-  @Deprecated
-  public void setIn(List<ConfigurazioneHandler> in) {
-  	this.in=in;
-  }
-
-  /**
-   * @deprecated Use method sizeInList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeIn() {
-  	return this.in.size();
-  }
+  private List<ConfigurazioneHandler> in = new ArrayList<>();
 
   @XmlElement(name="inProtocolInfo",required=true,nillable=false)
-  protected List<ConfigurazioneHandler> inProtocolInfo = new ArrayList<ConfigurazioneHandler>();
-
-  /**
-   * @deprecated Use method getInProtocolInfoList
-   * @return List&lt;ConfigurazioneHandler&gt;
-  */
-  @Deprecated
-  public List<ConfigurazioneHandler> getInProtocolInfo() {
-  	return this.inProtocolInfo;
-  }
-
-  /**
-   * @deprecated Use method setInProtocolInfoList
-   * @param inProtocolInfo List&lt;ConfigurazioneHandler&gt;
-  */
-  @Deprecated
-  public void setInProtocolInfo(List<ConfigurazioneHandler> inProtocolInfo) {
-  	this.inProtocolInfo=inProtocolInfo;
-  }
-
-  /**
-   * @deprecated Use method sizeInProtocolInfoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeInProtocolInfo() {
-  	return this.inProtocolInfo.size();
-  }
+  private List<ConfigurazioneHandler> inProtocolInfo = new ArrayList<>();
 
   @XmlElement(name="out",required=true,nillable=false)
-  protected List<ConfigurazioneHandler> out = new ArrayList<ConfigurazioneHandler>();
-
-  /**
-   * @deprecated Use method getOutList
-   * @return List&lt;ConfigurazioneHandler&gt;
-  */
-  @Deprecated
-  public List<ConfigurazioneHandler> getOut() {
-  	return this.out;
-  }
-
-  /**
-   * @deprecated Use method setOutList
-   * @param out List&lt;ConfigurazioneHandler&gt;
-  */
-  @Deprecated
-  public void setOut(List<ConfigurazioneHandler> out) {
-  	this.out=out;
-  }
-
-  /**
-   * @deprecated Use method sizeOutList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeOut() {
-  	return this.out.size();
-  }
+  private List<ConfigurazioneHandler> out = new ArrayList<>();
 
   @XmlElement(name="postOut",required=true,nillable=false)
-  protected List<ConfigurazioneHandler> postOut = new ArrayList<ConfigurazioneHandler>();
-
-  /**
-   * @deprecated Use method getPostOutList
-   * @return List&lt;ConfigurazioneHandler&gt;
-  */
-  @Deprecated
-  public List<ConfigurazioneHandler> getPostOut() {
-  	return this.postOut;
-  }
-
-  /**
-   * @deprecated Use method setPostOutList
-   * @param postOut List&lt;ConfigurazioneHandler&gt;
-  */
-  @Deprecated
-  public void setPostOut(List<ConfigurazioneHandler> postOut) {
-  	this.postOut=postOut;
-  }
-
-  /**
-   * @deprecated Use method sizePostOutList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizePostOut() {
-  	return this.postOut.size();
-  }
+  private List<ConfigurazioneHandler> postOut = new ArrayList<>();
 
 }

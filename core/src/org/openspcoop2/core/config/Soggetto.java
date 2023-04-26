@@ -291,124 +291,16 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBeanWithId impleme
   protected IDSoggetto oldIDSoggettoForUpdate;
 
   @XmlElement(name="porta-delegata",required=true,nillable=false)
-  protected List<PortaDelegata> portaDelegata = new ArrayList<PortaDelegata>();
-
-  /**
-   * @deprecated Use method getPortaDelegataList
-   * @return List&lt;PortaDelegata&gt;
-  */
-  @Deprecated
-  public List<PortaDelegata> getPortaDelegata() {
-  	return this.portaDelegata;
-  }
-
-  /**
-   * @deprecated Use method setPortaDelegataList
-   * @param portaDelegata List&lt;PortaDelegata&gt;
-  */
-  @Deprecated
-  public void setPortaDelegata(List<PortaDelegata> portaDelegata) {
-  	this.portaDelegata=portaDelegata;
-  }
-
-  /**
-   * @deprecated Use method sizePortaDelegataList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizePortaDelegata() {
-  	return this.portaDelegata.size();
-  }
+  private List<PortaDelegata> portaDelegata = new ArrayList<>();
 
   @XmlElement(name="porta-applicativa",required=true,nillable=false)
-  protected List<PortaApplicativa> portaApplicativa = new ArrayList<PortaApplicativa>();
-
-  /**
-   * @deprecated Use method getPortaApplicativaList
-   * @return List&lt;PortaApplicativa&gt;
-  */
-  @Deprecated
-  public List<PortaApplicativa> getPortaApplicativa() {
-  	return this.portaApplicativa;
-  }
-
-  /**
-   * @deprecated Use method setPortaApplicativaList
-   * @param portaApplicativa List&lt;PortaApplicativa&gt;
-  */
-  @Deprecated
-  public void setPortaApplicativa(List<PortaApplicativa> portaApplicativa) {
-  	this.portaApplicativa=portaApplicativa;
-  }
-
-  /**
-   * @deprecated Use method sizePortaApplicativaList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizePortaApplicativa() {
-  	return this.portaApplicativa.size();
-  }
+  private List<PortaApplicativa> portaApplicativa = new ArrayList<>();
 
   @XmlElement(name="servizio-applicativo",required=true,nillable=false)
-  protected List<ServizioApplicativo> servizioApplicativo = new ArrayList<ServizioApplicativo>();
-
-  /**
-   * @deprecated Use method getServizioApplicativoList
-   * @return List&lt;ServizioApplicativo&gt;
-  */
-  @Deprecated
-  public List<ServizioApplicativo> getServizioApplicativo() {
-  	return this.servizioApplicativo;
-  }
-
-  /**
-   * @deprecated Use method setServizioApplicativoList
-   * @param servizioApplicativo List&lt;ServizioApplicativo&gt;
-  */
-  @Deprecated
-  public void setServizioApplicativo(List<ServizioApplicativo> servizioApplicativo) {
-  	this.servizioApplicativo=servizioApplicativo;
-  }
-
-  /**
-   * @deprecated Use method sizeServizioApplicativoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeServizioApplicativo() {
-  	return this.servizioApplicativo.size();
-  }
+  private List<ServizioApplicativo> servizioApplicativo = new ArrayList<>();
 
   @XmlElement(name="connettore",required=true,nillable=false)
-  protected List<Connettore> connettore = new ArrayList<Connettore>();
-
-  /**
-   * @deprecated Use method getConnettoreList
-   * @return List&lt;Connettore&gt;
-  */
-  @Deprecated
-  public List<Connettore> getConnettore() {
-  	return this.connettore;
-  }
-
-  /**
-   * @deprecated Use method setConnettoreList
-   * @param connettore List&lt;Connettore&gt;
-  */
-  @Deprecated
-  public void setConnettore(List<Connettore> connettore) {
-  	this.connettore=connettore;
-  }
-
-  /**
-   * @deprecated Use method sizeConnettoreList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeConnettore() {
-  	return this.connettore.size();
-  }
+  private List<Connettore> connettore = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String superUser;

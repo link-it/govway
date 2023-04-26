@@ -124,11 +124,11 @@ public class GestioneErrore extends org.openspcoop2.utils.beans.BaseBeanWithId i
     this.nome = nome;
   }
 
-  public void set_value_comportamento(String value) {
+  public void setComportamentoRawEnumValue(String value) {
     this.comportamento = (GestioneErroreComportamento) GestioneErroreComportamento.toEnumConstantFromString(value);
   }
 
-  public String get_value_comportamento() {
+  public String getComportamentoRawEnumValue() {
     if(this.comportamento == null){
     	return null;
     }else{
@@ -157,71 +157,17 @@ public class GestioneErrore extends org.openspcoop2.utils.beans.BaseBeanWithId i
 
 
   @XmlElement(name="codice-trasporto",required=true,nillable=false)
-  protected List<GestioneErroreCodiceTrasporto> codiceTrasporto = new ArrayList<GestioneErroreCodiceTrasporto>();
-
-  /**
-   * @deprecated Use method getCodiceTrasportoList
-   * @return List&lt;GestioneErroreCodiceTrasporto&gt;
-  */
-  @Deprecated
-  public List<GestioneErroreCodiceTrasporto> getCodiceTrasporto() {
-  	return this.codiceTrasporto;
-  }
-
-  /**
-   * @deprecated Use method setCodiceTrasportoList
-   * @param codiceTrasporto List&lt;GestioneErroreCodiceTrasporto&gt;
-  */
-  @Deprecated
-  public void setCodiceTrasporto(List<GestioneErroreCodiceTrasporto> codiceTrasporto) {
-  	this.codiceTrasporto=codiceTrasporto;
-  }
-
-  /**
-   * @deprecated Use method sizeCodiceTrasportoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeCodiceTrasporto() {
-  	return this.codiceTrasporto.size();
-  }
+  private List<GestioneErroreCodiceTrasporto> codiceTrasporto = new ArrayList<>();
 
   @XmlElement(name="soap-fault",required=true,nillable=false)
-  protected List<GestioneErroreSoapFault> soapFault = new ArrayList<GestioneErroreSoapFault>();
-
-  /**
-   * @deprecated Use method getSoapFaultList
-   * @return List&lt;GestioneErroreSoapFault&gt;
-  */
-  @Deprecated
-  public List<GestioneErroreSoapFault> getSoapFault() {
-  	return this.soapFault;
-  }
-
-  /**
-   * @deprecated Use method setSoapFaultList
-   * @param soapFault List&lt;GestioneErroreSoapFault&gt;
-  */
-  @Deprecated
-  public void setSoapFault(List<GestioneErroreSoapFault> soapFault) {
-  	this.soapFault=soapFault;
-  }
-
-  /**
-   * @deprecated Use method sizeSoapFaultList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeSoapFault() {
-  	return this.soapFault.size();
-  }
+  private List<GestioneErroreSoapFault> soapFault = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=false)
   protected java.lang.String nome;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_comportamento;
+  protected java.lang.String comportamentoRawEnumValue;
 
   @XmlAttribute(name="comportamento",required=true)
   protected GestioneErroreComportamento comportamento;

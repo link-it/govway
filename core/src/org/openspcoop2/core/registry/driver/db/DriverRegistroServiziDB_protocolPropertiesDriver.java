@@ -187,7 +187,7 @@ public class DriverRegistroServiziDB_protocolPropertiesDriver {
 		}
 	}
 	private void _setProtocolPropertiesForSearch(ISQLQueryObject sqlQueryObject, List<FiltroRicercaProtocolPropertyRegistry> list, String tabella) throws SQLQueryObjectException{
-		if(list!=null && list.size()>0){
+		if(list!=null && !list.isEmpty()){
 			List<org.openspcoop2.core.mapping.FiltroRicercaProtocolProperty> l = new ArrayList<>();
 			l.addAll(list);
 			DBProtocolPropertiesUtils.setProtocolPropertiesForSearch(sqlQueryObject, l, tabella);
@@ -237,7 +237,7 @@ public class DriverRegistroServiziDB_protocolPropertiesDriver {
 	
 	private void _setProtocolPropertiesForSearch(PreparedStatement stmt, int index, 
 			List<FiltroRicercaProtocolPropertyRegistry> list, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException, JDBCAdapterException, UtilsException{
-		if(list!=null && list.size()>0){
+		if(list!=null && !list.isEmpty()){
 			List<org.openspcoop2.core.mapping.FiltroRicercaProtocolProperty> l = new ArrayList<>();
 			l.addAll(list);
 			DBProtocolPropertiesUtils.setProtocolPropertiesForSearch(stmt, index, l, proprietario, this.driver.tipoDB, this.driver.log);

@@ -114,11 +114,11 @@ public class CanaliConfigurazione extends org.openspcoop2.utils.beans.BaseBeanWi
     return this.nodo.size();
   }
 
-  public void set_value_stato(String value) {
+  public void setStatoRawEnumValue(String value) {
     this.stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_stato() {
+  public String getStatoRawEnumValue() {
     if(this.stato == null){
     	return null;
     }else{
@@ -139,67 +139,13 @@ public class CanaliConfigurazione extends org.openspcoop2.utils.beans.BaseBeanWi
 
 
   @XmlElement(name="canale",required=true,nillable=false)
-  protected List<CanaleConfigurazione> canale = new ArrayList<CanaleConfigurazione>();
-
-  /**
-   * @deprecated Use method getCanaleList
-   * @return List&lt;CanaleConfigurazione&gt;
-  */
-  @Deprecated
-  public List<CanaleConfigurazione> getCanale() {
-  	return this.canale;
-  }
-
-  /**
-   * @deprecated Use method setCanaleList
-   * @param canale List&lt;CanaleConfigurazione&gt;
-  */
-  @Deprecated
-  public void setCanale(List<CanaleConfigurazione> canale) {
-  	this.canale=canale;
-  }
-
-  /**
-   * @deprecated Use method sizeCanaleList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeCanale() {
-  	return this.canale.size();
-  }
+  private List<CanaleConfigurazione> canale = new ArrayList<>();
 
   @XmlElement(name="nodo",required=true,nillable=false)
-  protected List<CanaleConfigurazioneNodo> nodo = new ArrayList<CanaleConfigurazioneNodo>();
-
-  /**
-   * @deprecated Use method getNodoList
-   * @return List&lt;CanaleConfigurazioneNodo&gt;
-  */
-  @Deprecated
-  public List<CanaleConfigurazioneNodo> getNodo() {
-  	return this.nodo;
-  }
-
-  /**
-   * @deprecated Use method setNodoList
-   * @param nodo List&lt;CanaleConfigurazioneNodo&gt;
-  */
-  @Deprecated
-  public void setNodo(List<CanaleConfigurazioneNodo> nodo) {
-  	this.nodo=nodo;
-  }
-
-  /**
-   * @deprecated Use method sizeNodoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeNodo() {
-  	return this.nodo.size();
-  }
+  private List<CanaleConfigurazioneNodo> nodo = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_stato;
+  protected java.lang.String statoRawEnumValue;
 
   @XmlAttribute(name="stato",required=false)
   protected StatoFunzionalita stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");

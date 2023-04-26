@@ -204,7 +204,7 @@ public class DriverRegistroServiziDB_soggettiCredenzialiDriver {
 	
 	protected Soggetto getSoggettoByCredenzialiBasic(
 			String user,String password, CryptConfig config) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
-		return this._getSoggettoAutenticato(CredenzialeTipo.BASIC, user, password, 
+		return this.getEngineSoggettoAutenticato(CredenzialeTipo.BASIC, user, password, 
 				null, null, null, false, 
 				null,
 				config,
@@ -214,7 +214,7 @@ public class DriverRegistroServiziDB_soggettiCredenzialiDriver {
 	
 	protected Soggetto getSoggettoByCredenzialiApiKey(
 			String user,String password, boolean appId, CryptConfig config) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
-		return this._getSoggettoAutenticato(CredenzialeTipo.APIKEY, user, password, 
+		return this.getEngineSoggettoAutenticato(CredenzialeTipo.APIKEY, user, password, 
 				null, null, null, false, 
 				null,
 				config,
@@ -225,7 +225,7 @@ public class DriverRegistroServiziDB_soggettiCredenzialiDriver {
 	protected Soggetto getSoggettoByCredenzialiSsl(
 			String subject, String issuer) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		try {
-			return this._getSoggettoAutenticato(CredenzialeTipo.SSL, null, null, 
+			return this.getEngineSoggettoAutenticato(CredenzialeTipo.SSL, null, null, 
 					subject, issuer, null, false,
 					null,
 					null,
@@ -233,7 +233,7 @@ public class DriverRegistroServiziDB_soggettiCredenzialiDriver {
 					false);
 		}catch(DriverRegistroServiziNotFound notFound) {
 			// provo a cercare in credenziali ulteriori
-			return this._getSoggettoAutenticato(CredenzialeTipo.SSL, null, null, 
+			return this.getEngineSoggettoAutenticato(CredenzialeTipo.SSL, null, null, 
 					subject, issuer, null, false,
 					null,
 					null,
@@ -244,7 +244,7 @@ public class DriverRegistroServiziDB_soggettiCredenzialiDriver {
 	
 	protected Soggetto getSoggettoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		try {
-			return this._getSoggettoAutenticato(CredenzialeTipo.SSL, null, null, 
+			return this.getEngineSoggettoAutenticato(CredenzialeTipo.SSL, null, null, 
 					null, null, certificate, strictVerifier,
 					null,
 					null,
@@ -252,7 +252,7 @@ public class DriverRegistroServiziDB_soggettiCredenzialiDriver {
 					false);
 		}catch(DriverRegistroServiziNotFound notFound) {
 			// provo a cercare in credenziali ulteriori
-			return this._getSoggettoAutenticato(CredenzialeTipo.SSL, null, null, 
+			return this.getEngineSoggettoAutenticato(CredenzialeTipo.SSL, null, null, 
 					null, null, certificate, strictVerifier,
 					null,
 					null,
@@ -263,7 +263,7 @@ public class DriverRegistroServiziDB_soggettiCredenzialiDriver {
 	
 	protected Soggetto getSoggettoByCredenzialiPrincipal(
 			String principal) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
-		return this._getSoggettoAutenticato(CredenzialeTipo.PRINCIPAL, null, null, 
+		return this.getEngineSoggettoAutenticato(CredenzialeTipo.PRINCIPAL, null, null, 
 				null, null, null, false,
 				principal,
 				null,
@@ -271,7 +271,7 @@ public class DriverRegistroServiziDB_soggettiCredenzialiDriver {
 				false);
 	}
 	
-	private Soggetto _getSoggettoAutenticato(
+	private Soggetto getEngineSoggettoAutenticato(
 			CredenzialeTipo tipoCredenziale, String user,String password, 
 			String aSubject, String aIssuer, CertificateInfo aCertificate, boolean aStrictVerifier, 
 			String principal,

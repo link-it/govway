@@ -90,33 +90,6 @@ public class PortaApplicativaAutorizzazioneSoggetti extends org.openspcoop2.util
 
 
   @XmlElement(name="soggetto",required=true,nillable=false)
-  protected List<PortaApplicativaAutorizzazioneSoggetto> soggetto = new ArrayList<PortaApplicativaAutorizzazioneSoggetto>();
-
-  /**
-   * @deprecated Use method getSoggettoList
-   * @return List&lt;PortaApplicativaAutorizzazioneSoggetto&gt;
-  */
-  @Deprecated
-  public List<PortaApplicativaAutorizzazioneSoggetto> getSoggetto() {
-  	return this.soggetto;
-  }
-
-  /**
-   * @deprecated Use method setSoggettoList
-   * @param soggetto List&lt;PortaApplicativaAutorizzazioneSoggetto&gt;
-  */
-  @Deprecated
-  public void setSoggetto(List<PortaApplicativaAutorizzazioneSoggetto> soggetto) {
-  	this.soggetto=soggetto;
-  }
-
-  /**
-   * @deprecated Use method sizeSoggettoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeSoggetto() {
-  	return this.soggetto.size();
-  }
+  private List<PortaApplicativaAutorizzazioneSoggetto> soggetto = new ArrayList<>();
 
 }

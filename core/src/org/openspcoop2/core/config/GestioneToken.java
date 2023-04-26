@@ -85,11 +85,11 @@ public class GestioneToken extends org.openspcoop2.utils.beans.BaseBeanWithId im
     this.policy = policy;
   }
 
-  public void set_value_tokenOpzionale(String value) {
+  public void setTokenOpzionaleRawEnumValue(String value) {
     this.tokenOpzionale = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_tokenOpzionale() {
+  public String getTokenOpzionaleRawEnumValue() {
     if(this.tokenOpzionale == null){
     	return null;
     }else{
@@ -105,11 +105,11 @@ public class GestioneToken extends org.openspcoop2.utils.beans.BaseBeanWithId im
     this.tokenOpzionale = tokenOpzionale;
   }
 
-  public void set_value_validazione(String value) {
+  public void setValidazioneRawEnumValue(String value) {
     this.validazione = (StatoFunzionalitaConWarning) StatoFunzionalitaConWarning.toEnumConstantFromString(value);
   }
 
-  public String get_value_validazione() {
+  public String getValidazioneRawEnumValue() {
     if(this.validazione == null){
     	return null;
     }else{
@@ -125,11 +125,11 @@ public class GestioneToken extends org.openspcoop2.utils.beans.BaseBeanWithId im
     this.validazione = validazione;
   }
 
-  public void set_value_introspection(String value) {
+  public void setIntrospectionRawEnumValue(String value) {
     this.introspection = (StatoFunzionalitaConWarning) StatoFunzionalitaConWarning.toEnumConstantFromString(value);
   }
 
-  public String get_value_introspection() {
+  public String getIntrospectionRawEnumValue() {
     if(this.introspection == null){
     	return null;
     }else{
@@ -145,11 +145,11 @@ public class GestioneToken extends org.openspcoop2.utils.beans.BaseBeanWithId im
     this.introspection = introspection;
   }
 
-  public void set_value_userInfo(String value) {
+  public void setUserInfoRawEnumValue(String value) {
     this.userInfo = (StatoFunzionalitaConWarning) StatoFunzionalitaConWarning.toEnumConstantFromString(value);
   }
 
-  public String get_value_userInfo() {
+  public String getUserInfoRawEnumValue() {
     if(this.userInfo == null){
     	return null;
     }else{
@@ -165,11 +165,11 @@ public class GestioneToken extends org.openspcoop2.utils.beans.BaseBeanWithId im
     this.userInfo = userInfo;
   }
 
-  public void set_value_forward(String value) {
+  public void setForwardRawEnumValue(String value) {
     this.forward = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_forward() {
+  public String getForwardRawEnumValue() {
     if(this.forward == null){
     	return null;
     }else{
@@ -205,31 +205,31 @@ public class GestioneToken extends org.openspcoop2.utils.beans.BaseBeanWithId im
   protected java.lang.String policy;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tokenOpzionale;
+  protected java.lang.String tokenOpzionaleRawEnumValue;
 
   @XmlAttribute(name="token-opzionale",required=false)
   protected StatoFunzionalita tokenOpzionale = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_validazione;
+  protected java.lang.String validazioneRawEnumValue;
 
   @XmlAttribute(name="validazione",required=false)
   protected StatoFunzionalitaConWarning validazione = (StatoFunzionalitaConWarning) StatoFunzionalitaConWarning.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_introspection;
+  protected java.lang.String introspectionRawEnumValue;
 
   @XmlAttribute(name="introspection",required=false)
   protected StatoFunzionalitaConWarning introspection = (StatoFunzionalitaConWarning) StatoFunzionalitaConWarning.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_userInfo;
+  protected java.lang.String userInfoRawEnumValue;
 
   @XmlAttribute(name="userInfo",required=false)
   protected StatoFunzionalitaConWarning userInfo = (StatoFunzionalitaConWarning) StatoFunzionalitaConWarning.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_forward;
+  protected java.lang.String forwardRawEnumValue;
 
   @XmlAttribute(name="forward",required=false)
   protected StatoFunzionalita forward = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");

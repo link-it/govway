@@ -90,33 +90,6 @@ public class Eccezioni extends org.openspcoop2.utils.beans.BaseBeanWithId implem
 
 
   @XmlElement(name="eccezione",required=true,nillable=false)
-  protected List<Eccezione> eccezione = new ArrayList<Eccezione>();
-
-  /**
-   * @deprecated Use method getEccezioneList
-   * @return List&lt;Eccezione&gt;
-  */
-  @Deprecated
-  public List<Eccezione> getEccezione() {
-  	return this.eccezione;
-  }
-
-  /**
-   * @deprecated Use method setEccezioneList
-   * @param eccezione List&lt;Eccezione&gt;
-  */
-  @Deprecated
-  public void setEccezione(List<Eccezione> eccezione) {
-  	this.eccezione=eccezione;
-  }
-
-  /**
-   * @deprecated Use method sizeEccezioneList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeEccezione() {
-  	return this.eccezione.size();
-  }
+  private List<Eccezione> eccezione = new ArrayList<>();
 
 }

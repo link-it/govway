@@ -101,11 +101,11 @@ public class AccessoRegistroRegistro extends org.openspcoop2.utils.beans.BaseBea
     this.nome = nome;
   }
 
-  public void set_value_tipo(String value) {
+  public void setTipoRawEnumValue(String value) {
     this.tipo = (RegistroTipo) RegistroTipo.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipo() {
+  public String getTipoRawEnumValue() {
     if(this.tipo == null){
     	return null;
     }else{
@@ -151,33 +151,6 @@ public class AccessoRegistroRegistro extends org.openspcoop2.utils.beans.BaseBea
 
   protected Map<java.lang.String,String> genericProperties = new HashMap<java.lang.String,String>();
 
-  /**
-   * @deprecated Use method getGenericPropertiesMap
-   * @return Map&lt;java.lang.String,String&gt;
-  */
-  @Deprecated
-  public Map<java.lang.String,String> getGenericProperties() {
-  	return this.genericProperties;
-  }
-
-  /**
-   * @deprecated Use method setGenericPropertiesMap
-   * @param genericProperties Map&lt;java.lang.String,String&gt;
-  */
-  @Deprecated
-  public void setGenericProperties(Map<java.lang.String,String> genericProperties) {
-  	this.genericProperties=genericProperties;
-  }
-
-  /**
-   * @deprecated Use method sizeGenericPropertiesMap
-   * @return lunghezza della mappa
-  */
-  @Deprecated
-  public int sizeGenericProperties() {
-  	return this.genericProperties.size();
-  }
-
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="tipo-database",required=false)
   protected java.lang.String tipoDatabase;
@@ -187,7 +160,7 @@ public class AccessoRegistroRegistro extends org.openspcoop2.utils.beans.BaseBea
   protected java.lang.String nome;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipo;
+  protected java.lang.String tipoRawEnumValue;
 
   @XmlAttribute(name="tipo",required=false)
   protected RegistroTipo tipo = (RegistroTipo) RegistroTipo.toEnumConstantFromString("xml");

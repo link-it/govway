@@ -399,7 +399,7 @@ public class DriverConfigurazioneDB_handlerLIB {
 	}
 	
 	private static void createConfigurazioneHandlers(Connection con, List<ConfigurazioneHandler> list, String tabella, String tipologia, Long idPorta) throws Exception {
-		if(list!=null && list.size()>0) {
+		if(list!=null && !list.isEmpty()) {
 			for (ConfigurazioneHandler handler : list) {
 				PreparedStatement updateStmt = null;
 				try {

@@ -54,11 +54,11 @@ public class Risposte extends org.openspcoop2.utils.beans.BaseBeanWithId impleme
     super();
   }
 
-  public void set_value_connessione(String value) {
+  public void setConnessioneRawEnumValue(String value) {
     this.connessione = (TipoConnessioneRisposte) TipoConnessioneRisposte.toEnumConstantFromString(value);
   }
 
-  public String get_value_connessione() {
+  public String getConnessioneRawEnumValue() {
     if(this.connessione == null){
     	return null;
     }else{
@@ -79,7 +79,7 @@ public class Risposte extends org.openspcoop2.utils.beans.BaseBeanWithId impleme
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_connessione;
+  protected java.lang.String connessioneRawEnumValue;
 
   @XmlAttribute(name="connessione",required=false)
   protected TipoConnessioneRisposte connessione = (TipoConnessioneRisposte) TipoConnessioneRisposte.toEnumConstantFromString("reply");

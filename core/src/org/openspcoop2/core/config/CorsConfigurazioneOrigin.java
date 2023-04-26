@@ -91,33 +91,6 @@ public class CorsConfigurazioneOrigin extends org.openspcoop2.utils.beans.BaseBe
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="origin",required=true,nillable=false)
-  protected List<java.lang.String> origin = new ArrayList<java.lang.String>();
-
-  /**
-   * @deprecated Use method getOriginList
-   * @return List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public List<java.lang.String> getOrigin() {
-  	return this.origin;
-  }
-
-  /**
-   * @deprecated Use method setOriginList
-   * @param origin List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public void setOrigin(List<java.lang.String> origin) {
-  	this.origin=origin;
-  }
-
-  /**
-   * @deprecated Use method sizeOriginList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeOrigin() {
-  	return this.origin.size();
-  }
+  private List<java.lang.String> origin = new ArrayList<>();
 
 }

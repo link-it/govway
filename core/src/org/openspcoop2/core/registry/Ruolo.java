@@ -87,11 +87,11 @@ public class Ruolo extends org.openspcoop2.utils.beans.BaseBeanWithId implements
     this.descrizione = descrizione;
   }
 
-  public void set_value_tipologia(String value) {
+  public void setTipologiaRawEnumValue(String value) {
     this.tipologia = (RuoloTipologia) RuoloTipologia.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipologia() {
+  public String getTipologiaRawEnumValue() {
     if(this.tipologia == null){
     	return null;
     }else{
@@ -115,11 +115,11 @@ public class Ruolo extends org.openspcoop2.utils.beans.BaseBeanWithId implements
     this.nomeEsterno = nomeEsterno;
   }
 
-  public void set_value_contestoUtilizzo(String value) {
+  public void setContestoUtilizzoRawEnumValue(String value) {
     this.contestoUtilizzo = (RuoloContesto) RuoloContesto.toEnumConstantFromString(value);
   }
 
-  public String get_value_contestoUtilizzo() {
+  public String getContestoUtilizzoRawEnumValue() {
     if(this.contestoUtilizzo == null){
     	return null;
     }else{
@@ -179,7 +179,7 @@ public class Ruolo extends org.openspcoop2.utils.beans.BaseBeanWithId implements
   protected java.lang.String descrizione;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipologia;
+  protected java.lang.String tipologiaRawEnumValue;
 
   @XmlAttribute(name="tipologia",required=false)
   protected RuoloTipologia tipologia = (RuoloTipologia) RuoloTipologia.toEnumConstantFromString("qualsiasi");
@@ -189,7 +189,7 @@ public class Ruolo extends org.openspcoop2.utils.beans.BaseBeanWithId implements
   protected java.lang.String nomeEsterno;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_contestoUtilizzo;
+  protected java.lang.String contestoUtilizzoRawEnumValue;
 
   @XmlAttribute(name="contesto-utilizzo",required=false)
   protected RuoloContesto contestoUtilizzo = (RuoloContesto) RuoloContesto.toEnumConstantFromString("qualsiasi");

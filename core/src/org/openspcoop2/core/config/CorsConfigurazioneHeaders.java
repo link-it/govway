@@ -91,33 +91,6 @@ public class CorsConfigurazioneHeaders extends org.openspcoop2.utils.beans.BaseB
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="header",required=true,nillable=false)
-  protected List<java.lang.String> header = new ArrayList<java.lang.String>();
-
-  /**
-   * @deprecated Use method getHeaderList
-   * @return List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public List<java.lang.String> getHeader() {
-  	return this.header;
-  }
-
-  /**
-   * @deprecated Use method setHeaderList
-   * @param header List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public void setHeader(List<java.lang.String> header) {
-  	this.header=header;
-  }
-
-  /**
-   * @deprecated Use method sizeHeaderList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeHeader() {
-  	return this.header.size();
-  }
+  private List<java.lang.String> header = new ArrayList<>();
 
 }

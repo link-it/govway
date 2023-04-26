@@ -474,11 +474,11 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			if (StringUtils.isEmpty(newRes.getNome()) && newRes.getMethod() == null)
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il campo nome non è stato definito");
 
-			if (env.apcCore.existsAccordoServizioResource(newRes.get_value_method(), newRes.getPath(), as.getId(), null))
+			if (env.apcCore.existsAccordoServizioResource(newRes.getMethodRawEnumValue(), newRes.getPath(), as.getId(), null))
 				throw FaultCode.CONFLITTO.toException("La risorsa " + newRes.getNome() + " è già stata associata alla Api");
 
 			if (!env.apcHelper.accordiResourceCheckData(TipoOperazione.ADD, as.getId().toString(),
-					body.getNome() != null ? body.getNome() : "", newRes.getNome(), newRes.getPath(), newRes.get_value_method(),
+					body.getNome() != null ? body.getNome() : "", newRes.getNome(), newRes.getPath(), newRes.getMethodRawEnumValue(),
 					newRes.getDescrizione(), env.apcCore.toMessageMessageType(newRes.getMessageType()), null, // oldNomeRisorsa
 					null, // oldNomeRisorsaGenerato
 					null, // oldPath
@@ -2453,7 +2453,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				throw FaultCode.NOT_FOUND.toException("Nessuna risorsa trovata con nome " + nomeRisorsa);
 
 			final String oldPath = oldResource.getPath();
-			final String oldHttpMethod = oldResource.get_value_method();
+			final String oldHttpMethod = oldResource.getMethodRawEnumValue();
 			final String oldNomeRisorsaGenerato = oldHttpMethod != null
 					? APIUtils.normalizeResourceName(HttpMethod.toEnumConstant(oldHttpMethod), oldPath)
 					: null;
@@ -2471,7 +2471,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			}
 
 			if (!env.apcHelper.accordiResourceCheckData(TipoOperazione.CHANGE, as.getId().toString(),
-					body.getNome() != null ? body.getNome() : "", newRes.getNome(), newRes.getPath(), newRes.get_value_method(),
+					body.getNome() != null ? body.getNome() : "", newRes.getNome(), newRes.getPath(), newRes.getMethodRawEnumValue(),
 					newRes.getDescrizione(), env.apcCore.toMessageMessageType(newRes.getMessageType()), nomeRisorsa,
 					oldNomeRisorsaGenerato, oldPath, oldHttpMethod,
 					AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO,

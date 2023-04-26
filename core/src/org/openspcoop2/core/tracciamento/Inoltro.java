@@ -71,11 +71,11 @@ public class Inoltro extends org.openspcoop2.utils.beans.BaseBeanWithId implemen
     this.base=base;
   }
 
-  public void set_value_tipo(String value) {
+  public void setTipoRawEnumValue(String value) {
     this.tipo = (TipoInoltro) TipoInoltro.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipo() {
+  public String getTipoRawEnumValue() {
     if(this.tipo == null){
     	return null;
     }else{
@@ -100,7 +100,7 @@ public class Inoltro extends org.openspcoop2.utils.beans.BaseBeanWithId implemen
   public String base;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipo;
+  protected java.lang.String tipoRawEnumValue;
 
   @XmlAttribute(name="tipo",required=true)
   protected TipoInoltro tipo;

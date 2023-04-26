@@ -115,11 +115,11 @@ public class Tracciamento extends org.openspcoop2.utils.beans.BaseBeanWithId imp
     return this.openspcoopSorgenteDati.size();
   }
 
-  public void set_value_stato(String value) {
+  public void setStatoRawEnumValue(String value) {
     this.stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_stato() {
+  public String getStatoRawEnumValue() {
     if(this.stato == null){
     	return null;
     }else{
@@ -148,67 +148,13 @@ public class Tracciamento extends org.openspcoop2.utils.beans.BaseBeanWithId imp
 
 
   @XmlElement(name="openspcoop-appender",required=true,nillable=false)
-  protected List<OpenspcoopAppender> openspcoopAppender = new ArrayList<OpenspcoopAppender>();
-
-  /**
-   * @deprecated Use method getOpenspcoopAppenderList
-   * @return List&lt;OpenspcoopAppender&gt;
-  */
-  @Deprecated
-  public List<OpenspcoopAppender> getOpenspcoopAppender() {
-  	return this.openspcoopAppender;
-  }
-
-  /**
-   * @deprecated Use method setOpenspcoopAppenderList
-   * @param openspcoopAppender List&lt;OpenspcoopAppender&gt;
-  */
-  @Deprecated
-  public void setOpenspcoopAppender(List<OpenspcoopAppender> openspcoopAppender) {
-  	this.openspcoopAppender=openspcoopAppender;
-  }
-
-  /**
-   * @deprecated Use method sizeOpenspcoopAppenderList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeOpenspcoopAppender() {
-  	return this.openspcoopAppender.size();
-  }
+  private List<OpenspcoopAppender> openspcoopAppender = new ArrayList<>();
 
   @XmlElement(name="openspcoop-sorgente-dati",required=true,nillable=false)
-  protected List<OpenspcoopSorgenteDati> openspcoopSorgenteDati = new ArrayList<OpenspcoopSorgenteDati>();
-
-  /**
-   * @deprecated Use method getOpenspcoopSorgenteDatiList
-   * @return List&lt;OpenspcoopSorgenteDati&gt;
-  */
-  @Deprecated
-  public List<OpenspcoopSorgenteDati> getOpenspcoopSorgenteDati() {
-  	return this.openspcoopSorgenteDati;
-  }
-
-  /**
-   * @deprecated Use method setOpenspcoopSorgenteDatiList
-   * @param openspcoopSorgenteDati List&lt;OpenspcoopSorgenteDati&gt;
-  */
-  @Deprecated
-  public void setOpenspcoopSorgenteDati(List<OpenspcoopSorgenteDati> openspcoopSorgenteDati) {
-  	this.openspcoopSorgenteDati=openspcoopSorgenteDati;
-  }
-
-  /**
-   * @deprecated Use method sizeOpenspcoopSorgenteDatiList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeOpenspcoopSorgenteDati() {
-  	return this.openspcoopSorgenteDati.size();
-  }
+  private List<OpenspcoopSorgenteDati> openspcoopSorgenteDati = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_stato;
+  protected java.lang.String statoRawEnumValue;
 
   @XmlAttribute(name="stato",required=false)
   protected StatoFunzionalita stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");

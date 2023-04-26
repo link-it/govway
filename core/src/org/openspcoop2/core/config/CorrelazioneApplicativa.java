@@ -100,34 +100,7 @@ public class CorrelazioneApplicativa extends org.openspcoop2.utils.beans.BaseBea
 
 
   @XmlElement(name="elemento",required=true,nillable=false)
-  protected List<CorrelazioneApplicativaElemento> elemento = new ArrayList<CorrelazioneApplicativaElemento>();
-
-  /**
-   * @deprecated Use method getElementoList
-   * @return List&lt;CorrelazioneApplicativaElemento&gt;
-  */
-  @Deprecated
-  public List<CorrelazioneApplicativaElemento> getElemento() {
-  	return this.elemento;
-  }
-
-  /**
-   * @deprecated Use method setElementoList
-   * @param elemento List&lt;CorrelazioneApplicativaElemento&gt;
-  */
-  @Deprecated
-  public void setElemento(List<CorrelazioneApplicativaElemento> elemento) {
-  	this.elemento=elemento;
-  }
-
-  /**
-   * @deprecated Use method sizeElementoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeElemento() {
-  	return this.elemento.size();
-  }
+  private List<CorrelazioneApplicativaElemento> elemento = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="scadenza",required=false)

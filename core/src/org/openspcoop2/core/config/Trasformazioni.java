@@ -90,33 +90,6 @@ public class Trasformazioni extends org.openspcoop2.utils.beans.BaseBeanWithId i
 
 
   @XmlElement(name="regola",required=true,nillable=false)
-  protected List<TrasformazioneRegola> regola = new ArrayList<TrasformazioneRegola>();
-
-  /**
-   * @deprecated Use method getRegolaList
-   * @return List&lt;TrasformazioneRegola&gt;
-  */
-  @Deprecated
-  public List<TrasformazioneRegola> getRegola() {
-  	return this.regola;
-  }
-
-  /**
-   * @deprecated Use method setRegolaList
-   * @param regola List&lt;TrasformazioneRegola&gt;
-  */
-  @Deprecated
-  public void setRegola(List<TrasformazioneRegola> regola) {
-  	this.regola=regola;
-  }
-
-  /**
-   * @deprecated Use method sizeRegolaList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeRegola() {
-  	return this.regola.size();
-  }
+  private List<TrasformazioneRegola> regola = new ArrayList<>();
 
 }

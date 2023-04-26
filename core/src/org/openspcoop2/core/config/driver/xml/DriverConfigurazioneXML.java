@@ -1097,15 +1097,15 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 	
 	@Override
 	public List<PortaApplicativa> getPorteApplicative(IDServizio idServizio, boolean ricercaPuntuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		return this._getPorteApplicative_engine(idServizio, null, ricercaPuntuale);
+		return this.getEnginePorteApplicative_engine(idServizio, null, ricercaPuntuale);
 	}
 	
 	@Override
 	public List<PortaApplicativa> getPorteApplicativeVirtuali(IDSoggetto soggettoVirtuale,IDServizio idServizio, boolean ricercaPuntuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		return this._getPorteApplicative_engine(idServizio, soggettoVirtuale, ricercaPuntuale);
+		return this.getEnginePorteApplicative_engine(idServizio, soggettoVirtuale, ricercaPuntuale);
 	}
 	
-	private List<PortaApplicativa> _getPorteApplicative_engine(IDServizio service,IDSoggetto soggettoVirtuale,boolean ricercaPuntuale) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+	private List<PortaApplicativa> getEnginePorteApplicative_engine(IDServizio service,IDSoggetto soggettoVirtuale,boolean ricercaPuntuale) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 
 		if(service == null)
 			throw new DriverConfigurazioneException("[getPortaApplicativa] Parametro idServizio non definito");
@@ -2452,7 +2452,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 			}
 		}
 		
-		if(list.size()<=0) {
+		if(list.isEmpty()) {
 			throw new DriverConfigurazioneNotFound("[getGenericProperties] Configurazione Generic Properties non presenti con tipologia '"+tipologia+"'");
 		}
 		

@@ -109,7 +109,7 @@ public class WSDLValidator {
 	}
 	
 	/* ------ Costruttore -------------- */
-	private static Element _getEnvelopeCatchException(OpenSPCoop2Message msg, boolean bufferMessage_readOnly, String idTransazione) throws WSDLException {
+	private static Element getEngineEnvelopeCatchException(OpenSPCoop2Message msg, boolean bufferMessage_readOnly, String idTransazione) throws WSDLException {
 		try {
 			boolean checkSoapBodyEmpty = true;
 			return MessageUtils.getContentElement(msg, checkSoapBodyEmpty, bufferMessage_readOnly, idTransazione);
@@ -120,7 +120,7 @@ public class WSDLValidator {
 	public WSDLValidator(OpenSPCoop2Message msg,AbstractXMLUtils xmlUtils,AccordoServizioWrapper accordoServizioWrapper,Logger log,
 			boolean gestioneXsiType_rpcLiteral, boolean rpcAcceptRootElementUnqualified, boolean addPrefixError,
 			boolean bufferMessage_readOnly, String idTransazione)throws WSDLException{
-		this(msg.getMessageType(), _getEnvelopeCatchException(msg,bufferMessage_readOnly,idTransazione), xmlUtils, accordoServizioWrapper, log, 
+		this(msg.getMessageType(), getEngineEnvelopeCatchException(msg,bufferMessage_readOnly,idTransazione), xmlUtils, accordoServizioWrapper, log, 
 				gestioneXsiType_rpcLiteral, rpcAcceptRootElementUnqualified, addPrefixError);
 		this.openspcoop2Message = msg;
 	}

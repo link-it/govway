@@ -103,7 +103,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 	
 
     protected ServizioApplicativo getServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-            return this._getServizioApplicativo(idServizioApplicativo, null, null, 
+            return this.getEngineServizioApplicativo(idServizioApplicativo, null, null, 
             		null, null, null, false,
             		null, 
             		null,
@@ -112,7 +112,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
             		null, null, false);
     }
     protected ServizioApplicativo getServizioApplicativoByCredenzialiBasic(String aUser,String aPassword, CryptConfig config) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-            return this._getServizioApplicativo(null, aUser, aPassword, 
+            return this.getEngineServizioApplicativo(null, aUser, aPassword, 
             		null, null, null, false,
             		null, 
             		null,
@@ -121,7 +121,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
             		null, null, false);
     }
     protected ServizioApplicativo getServizioApplicativoByCredenzialiApiKey(String aUser,String aPassword, boolean appId, CryptConfig config) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-            return this._getServizioApplicativo(null, aUser, aPassword, 
+            return this.getEngineServizioApplicativo(null, aUser, aPassword, 
             		null, null, null, false,
             		null, 
             		null,
@@ -130,7 +130,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
             		null, null, false);
     }
     protected ServizioApplicativo getServizioApplicativoByCredenzialiToken(String tokenPolicy, String tokenClientId, boolean tokenWithHttpsEnabled) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-            return this._getServizioApplicativo(null, null, null, 
+            return this.getEngineServizioApplicativo(null, null, null, 
             		null, null, null, false,
             		null, 
             		null,
@@ -139,7 +139,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
             		tokenPolicy, tokenClientId, tokenWithHttpsEnabled);
     }
     protected ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String aSubject, String aIssuer) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-            return this._getServizioApplicativo(null, null, null, 
+            return this.getEngineServizioApplicativo(null, null, null, 
             		aSubject, aIssuer, null, false,
             		null, 
             		null,
@@ -148,7 +148,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
             		null, null, false);
     }
     protected ServizioApplicativo getServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-    	 return this._getServizioApplicativo(null, null, null, 
+    	 return this.getEngineServizioApplicativo(null, null, null, 
          		null, null, certificate, strictVerifier,
          		null, 
          		null,
@@ -157,7 +157,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
         		null, null, false);
     }
     protected ServizioApplicativo getServizioApplicativoByCredenzialiPrincipal(String principal) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-    	return this._getServizioApplicativo(null, null, null, 
+    	return this.getEngineServizioApplicativo(null, null, null, 
     			null, null, null, false,
     			principal, 
     			null,
@@ -166,7 +166,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
         		null, null, false);
     }
     protected ServizioApplicativo getServizioApplicativo(long idServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
-            return this._getServizioApplicativo(null, null, null, 
+            return this.getEngineServizioApplicativo(null, null, null, 
             		null, null, null, false,
             		null, 
             		idServizioApplicativo,
@@ -175,7 +175,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
             		null, null, false);
     }
 
-    private ServizioApplicativo _getServizioApplicativo(IDServizioApplicativo idServizioApplicativoObject, 
+    private ServizioApplicativo getEngineServizioApplicativo(IDServizioApplicativo idServizioApplicativoObject, 
     		String aUser, String aPassord, 
     		String aSubject, String aIssuer, CertificateInfo aCertificate, boolean aStrictVerifier, 
     		String principal,

@@ -109,11 +109,11 @@ public class ResourceRepresentation extends org.openspcoop2.utils.beans.BaseBean
     this.descrizione = descrizione;
   }
 
-  public void set_value_messageType(String value) {
+  public void setMessageTypeRawEnumValue(String value) {
     this.messageType = (MessageType) MessageType.toEnumConstantFromString(value);
   }
 
-  public String get_value_messageType() {
+  public String getMessageTypeRawEnumValue() {
     if(this.messageType == null){
     	return null;
     }else{
@@ -129,11 +129,11 @@ public class ResourceRepresentation extends org.openspcoop2.utils.beans.BaseBean
     this.messageType = messageType;
   }
 
-  public void set_value_representationType(String value) {
+  public void setRepresentationTypeRawEnumValue(String value) {
     this.representationType = (RepresentationType) RepresentationType.toEnumConstantFromString(value);
   }
 
-  public String get_value_representationType() {
+  public String getRepresentationTypeRawEnumValue() {
     if(this.representationType == null){
     	return null;
     }else{
@@ -172,13 +172,13 @@ public class ResourceRepresentation extends org.openspcoop2.utils.beans.BaseBean
   protected java.lang.String descrizione;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_messageType;
+  protected java.lang.String messageTypeRawEnumValue;
 
   @XmlAttribute(name="message-type",required=false)
   protected MessageType messageType;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_representationType;
+  protected java.lang.String representationTypeRawEnumValue;
 
   @XmlAttribute(name="representation-type",required=false)
   protected RepresentationType representationType;

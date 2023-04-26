@@ -67,7 +67,7 @@ public class TransazioneExportFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "export_time_start", TransazioneExport.model().EXPORT_TIME_START.getFieldType()));
 				setParameter(object, "setExportTimeEnd", TransazioneExport.model().EXPORT_TIME_END.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "export_time_end", TransazioneExport.model().EXPORT_TIME_END.getFieldType()));
-				setParameter(object, "set_value_deleteState", String.class,
+				setParameter(object, "set_valuedeleteEngineState", String.class,
 					jdbcParameterUtilities.readParameter(rs, "delete_state", TransazioneExport.model().DELETE_STATE.getFieldType())+"");
 				setParameter(object, "setDeleteError", TransazioneExport.model().DELETE_ERROR.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "delete_error", TransazioneExport.model().DELETE_ERROR.getFieldType()));
@@ -111,7 +111,7 @@ public class TransazioneExportFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"export-time-start"));
 				setParameter(object, "setExportTimeEnd", TransazioneExport.model().EXPORT_TIME_END.getFieldType(),
 					this.getObjectFromMap(map,"export-time-end"));
-				setParameter(object, "set_value_deleteState", String.class,
+				setParameter(object, "set_valuedeleteEngineState", String.class,
 					this.getObjectFromMap(map,"delete-state"));
 				setParameter(object, "setDeleteError", TransazioneExport.model().DELETE_ERROR.getFieldType(),
 					this.getObjectFromMap(map,"delete-error"));

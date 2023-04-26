@@ -373,11 +373,11 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
     this.byteSpecificaConversazioneFruitore = byteSpecificaConversazioneFruitore;
   }
 
-  public void set_value_serviceBinding(String value) {
+  public void setServiceBindingRawEnumValue(String value) {
     this.serviceBinding = (ServiceBinding) ServiceBinding.toEnumConstantFromString(value);
   }
 
-  public String get_value_serviceBinding() {
+  public String getServiceBindingRawEnumValue() {
     if(this.serviceBinding == null){
     	return null;
     }else{
@@ -393,11 +393,11 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
     this.serviceBinding = serviceBinding;
   }
 
-  public void set_value_messageType(String value) {
+  public void setMessageTypeRawEnumValue(String value) {
     this.messageType = (MessageType) MessageType.toEnumConstantFromString(value);
   }
 
-  public String get_value_messageType() {
+  public String getMessageTypeRawEnumValue() {
     if(this.messageType == null){
     	return null;
     }else{
@@ -429,11 +429,11 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
     this.descrizione = descrizione;
   }
 
-  public void set_value_profiloCollaborazione(String value) {
+  public void setProfiloCollaborazioneRawEnumValue(String value) {
     this.profiloCollaborazione = (ProfiloCollaborazione) ProfiloCollaborazione.toEnumConstantFromString(value);
   }
 
-  public String get_value_profiloCollaborazione() {
+  public String getProfiloCollaborazioneRawEnumValue() {
     if(this.profiloCollaborazione == null){
     	return null;
     }else{
@@ -449,11 +449,11 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
     this.profiloCollaborazione = profiloCollaborazione;
   }
 
-  public void set_value_formatoSpecifica(String value) {
+  public void setFormatoSpecificaRawEnumValue(String value) {
     this.formatoSpecifica = (FormatoSpecifica) FormatoSpecifica.toEnumConstantFromString(value);
   }
 
-  public String get_value_formatoSpecifica() {
+  public String getFormatoSpecificaRawEnumValue() {
     if(this.formatoSpecifica == null){
     	return null;
     }else{
@@ -537,11 +537,11 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
     this.utilizzoSenzaAzione = utilizzoSenzaAzione;
   }
 
-  public void set_value_filtroDuplicati(String value) {
+  public void setFiltroDuplicatiRawEnumValue(String value) {
     this.filtroDuplicati = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_filtroDuplicati() {
+  public String getFiltroDuplicatiRawEnumValue() {
     if(this.filtroDuplicati == null){
     	return null;
     }else{
@@ -557,11 +557,11 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
     this.filtroDuplicati = filtroDuplicati;
   }
 
-  public void set_value_confermaRicezione(String value) {
+  public void setConfermaRicezioneRawEnumValue(String value) {
     this.confermaRicezione = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_confermaRicezione() {
+  public String getConfermaRicezioneRawEnumValue() {
     if(this.confermaRicezione == null){
     	return null;
     }else{
@@ -577,11 +577,11 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
     this.confermaRicezione = confermaRicezione;
   }
 
-  public void set_value_idCollaborazione(String value) {
+  public void setIdCollaborazioneRawEnumValue(String value) {
     this.idCollaborazione = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_idCollaborazione() {
+  public String getIdCollaborazioneRawEnumValue() {
     if(this.idCollaborazione == null){
     	return null;
     }else{
@@ -597,11 +597,11 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
     this.idCollaborazione = idCollaborazione;
   }
 
-  public void set_value_idRiferimentoRichiesta(String value) {
+  public void setIdRiferimentoRichiestaRawEnumValue(String value) {
     this.idRiferimentoRichiesta = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_idRiferimentoRichiesta() {
+  public String getIdRiferimentoRichiestaRawEnumValue() {
     if(this.idRiferimentoRichiesta == null){
     	return null;
     }else{
@@ -617,11 +617,11 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
     this.idRiferimentoRichiesta = idRiferimentoRichiesta;
   }
 
-  public void set_value_consegnaInOrdine(String value) {
+  public void setConsegnaInOrdineRawEnumValue(String value) {
     this.consegnaInOrdine = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_consegnaInOrdine() {
+  public String getConsegnaInOrdineRawEnumValue() {
     if(this.consegnaInOrdine == null){
     	return null;
     }else{
@@ -695,184 +695,22 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
   protected AccordoServizioParteComuneServizioComposto servizioComposto;
 
   @XmlElement(name="azione",required=true,nillable=false)
-  protected List<Azione> azione = new ArrayList<Azione>();
-
-  /**
-   * @deprecated Use method getAzioneList
-   * @return List&lt;Azione&gt;
-  */
-  @Deprecated
-  public List<Azione> getAzione() {
-  	return this.azione;
-  }
-
-  /**
-   * @deprecated Use method setAzioneList
-   * @param azione List&lt;Azione&gt;
-  */
-  @Deprecated
-  public void setAzione(List<Azione> azione) {
-  	this.azione=azione;
-  }
-
-  /**
-   * @deprecated Use method sizeAzioneList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeAzione() {
-  	return this.azione.size();
-  }
+  private List<Azione> azione = new ArrayList<>();
 
   @XmlElement(name="port-type",required=true,nillable=false)
-  protected List<PortType> portType = new ArrayList<PortType>();
-
-  /**
-   * @deprecated Use method getPortTypeList
-   * @return List&lt;PortType&gt;
-  */
-  @Deprecated
-  public List<PortType> getPortType() {
-  	return this.portType;
-  }
-
-  /**
-   * @deprecated Use method setPortTypeList
-   * @param portType List&lt;PortType&gt;
-  */
-  @Deprecated
-  public void setPortType(List<PortType> portType) {
-  	this.portType=portType;
-  }
-
-  /**
-   * @deprecated Use method sizePortTypeList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizePortType() {
-  	return this.portType.size();
-  }
+  private List<PortType> portType = new ArrayList<>();
 
   @XmlElement(name="resource",required=true,nillable=false)
-  protected List<Resource> resource = new ArrayList<Resource>();
-
-  /**
-   * @deprecated Use method getResourceList
-   * @return List&lt;Resource&gt;
-  */
-  @Deprecated
-  public List<Resource> getResource() {
-  	return this.resource;
-  }
-
-  /**
-   * @deprecated Use method setResourceList
-   * @param resource List&lt;Resource&gt;
-  */
-  @Deprecated
-  public void setResource(List<Resource> resource) {
-  	this.resource=resource;
-  }
-
-  /**
-   * @deprecated Use method sizeResourceList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeResource() {
-  	return this.resource.size();
-  }
+  private List<Resource> resource = new ArrayList<>();
 
   @XmlElement(name="allegato",required=true,nillable=false)
-  protected List<Documento> allegato = new ArrayList<Documento>();
-
-  /**
-   * @deprecated Use method getAllegatoList
-   * @return List&lt;Documento&gt;
-  */
-  @Deprecated
-  public List<Documento> getAllegato() {
-  	return this.allegato;
-  }
-
-  /**
-   * @deprecated Use method setAllegatoList
-   * @param allegato List&lt;Documento&gt;
-  */
-  @Deprecated
-  public void setAllegato(List<Documento> allegato) {
-  	this.allegato=allegato;
-  }
-
-  /**
-   * @deprecated Use method sizeAllegatoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeAllegato() {
-  	return this.allegato.size();
-  }
+  private List<Documento> allegato = new ArrayList<>();
 
   @XmlElement(name="specifica-semiformale",required=true,nillable=false)
-  protected List<Documento> specificaSemiformale = new ArrayList<Documento>();
-
-  /**
-   * @deprecated Use method getSpecificaSemiformaleList
-   * @return List&lt;Documento&gt;
-  */
-  @Deprecated
-  public List<Documento> getSpecificaSemiformale() {
-  	return this.specificaSemiformale;
-  }
-
-  /**
-   * @deprecated Use method setSpecificaSemiformaleList
-   * @param specificaSemiformale List&lt;Documento&gt;
-  */
-  @Deprecated
-  public void setSpecificaSemiformale(List<Documento> specificaSemiformale) {
-  	this.specificaSemiformale=specificaSemiformale;
-  }
-
-  /**
-   * @deprecated Use method sizeSpecificaSemiformaleList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeSpecificaSemiformale() {
-  	return this.specificaSemiformale.size();
-  }
+  private List<Documento> specificaSemiformale = new ArrayList<>();
 
   @XmlElement(name="protocol-property",required=true,nillable=false)
-  protected List<ProtocolProperty> protocolProperty = new ArrayList<ProtocolProperty>();
-
-  /**
-   * @deprecated Use method getProtocolPropertyList
-   * @return List&lt;ProtocolProperty&gt;
-  */
-  @Deprecated
-  public List<ProtocolProperty> getProtocolProperty() {
-  	return this.protocolProperty;
-  }
-
-  /**
-   * @deprecated Use method setProtocolPropertyList
-   * @param protocolProperty List&lt;ProtocolProperty&gt;
-  */
-  @Deprecated
-  public void setProtocolProperty(List<ProtocolProperty> protocolProperty) {
-  	this.protocolProperty=protocolProperty;
-  }
-
-  /**
-   * @deprecated Use method sizeProtocolPropertyList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeProtocolProperty() {
-  	return this.protocolProperty.size();
-  }
+  private List<ProtocolProperty> protocolProperty = new ArrayList<>();
 
   @XmlElement(name="gruppi",required=false,nillable=false)
   protected GruppiAccordo gruppi;
@@ -917,13 +755,13 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
   protected byte[] byteSpecificaConversazioneFruitore;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_serviceBinding;
+  protected java.lang.String serviceBindingRawEnumValue;
 
   @XmlAttribute(name="service-binding",required=true)
   protected ServiceBinding serviceBinding;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_messageType;
+  protected java.lang.String messageTypeRawEnumValue;
 
   @XmlAttribute(name="message-type",required=false)
   protected MessageType messageType;
@@ -937,13 +775,13 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
   protected java.lang.String descrizione;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_profiloCollaborazione;
+  protected java.lang.String profiloCollaborazioneRawEnumValue;
 
   @XmlAttribute(name="profilo-collaborazione",required=true)
   protected ProfiloCollaborazione profiloCollaborazione;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_formatoSpecifica;
+  protected java.lang.String formatoSpecificaRawEnumValue;
 
   @XmlAttribute(name="formato-specifica",required=false)
   protected FormatoSpecifica formatoSpecifica;
@@ -981,31 +819,31 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
   protected boolean utilizzoSenzaAzione = false;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_filtroDuplicati;
+  protected java.lang.String filtroDuplicatiRawEnumValue;
 
   @XmlAttribute(name="filtro-duplicati",required=false)
   protected StatoFunzionalita filtroDuplicati = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_confermaRicezione;
+  protected java.lang.String confermaRicezioneRawEnumValue;
 
   @XmlAttribute(name="conferma-ricezione",required=false)
   protected StatoFunzionalita confermaRicezione = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_idCollaborazione;
+  protected java.lang.String idCollaborazioneRawEnumValue;
 
   @XmlAttribute(name="id-collaborazione",required=false)
   protected StatoFunzionalita idCollaborazione = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_idRiferimentoRichiesta;
+  protected java.lang.String idRiferimentoRichiestaRawEnumValue;
 
   @XmlAttribute(name="id-riferimento-richiesta",required=false)
   protected StatoFunzionalita idRiferimentoRichiesta = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_consegnaInOrdine;
+  protected java.lang.String consegnaInOrdineRawEnumValue;
 
   @XmlAttribute(name="consegna-in-ordine",required=false)
   protected StatoFunzionalita consegnaInOrdine = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");

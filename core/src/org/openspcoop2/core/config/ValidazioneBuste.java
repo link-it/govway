@@ -59,11 +59,11 @@ public class ValidazioneBuste extends org.openspcoop2.utils.beans.BaseBeanWithId
     super();
   }
 
-  public void set_value_stato(String value) {
+  public void setStatoRawEnumValue(String value) {
     this.stato = (StatoFunzionalitaConWarning) StatoFunzionalitaConWarning.toEnumConstantFromString(value);
   }
 
-  public String get_value_stato() {
+  public String getStatoRawEnumValue() {
     if(this.stato == null){
     	return null;
     }else{
@@ -79,11 +79,11 @@ public class ValidazioneBuste extends org.openspcoop2.utils.beans.BaseBeanWithId
     this.stato = stato;
   }
 
-  public void set_value_controllo(String value) {
+  public void setControlloRawEnumValue(String value) {
     this.controllo = (ValidazioneBusteTipoControllo) ValidazioneBusteTipoControllo.toEnumConstantFromString(value);
   }
 
-  public String get_value_controllo() {
+  public String getControlloRawEnumValue() {
     if(this.controllo == null){
     	return null;
     }else{
@@ -99,11 +99,11 @@ public class ValidazioneBuste extends org.openspcoop2.utils.beans.BaseBeanWithId
     this.controllo = controllo;
   }
 
-  public void set_value_profiloCollaborazione(String value) {
+  public void setProfiloCollaborazioneRawEnumValue(String value) {
     this.profiloCollaborazione = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_profiloCollaborazione() {
+  public String getProfiloCollaborazioneRawEnumValue() {
     if(this.profiloCollaborazione == null){
     	return null;
     }else{
@@ -119,11 +119,11 @@ public class ValidazioneBuste extends org.openspcoop2.utils.beans.BaseBeanWithId
     this.profiloCollaborazione = profiloCollaborazione;
   }
 
-  public void set_value_manifestAttachments(String value) {
+  public void setManifestAttachmentsRawEnumValue(String value) {
     this.manifestAttachments = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_manifestAttachments() {
+  public String getManifestAttachmentsRawEnumValue() {
     if(this.manifestAttachments == null){
     	return null;
     }else{
@@ -144,25 +144,25 @@ public class ValidazioneBuste extends org.openspcoop2.utils.beans.BaseBeanWithId
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_stato;
+  protected java.lang.String statoRawEnumValue;
 
   @XmlAttribute(name="stato",required=false)
   protected StatoFunzionalitaConWarning stato = (StatoFunzionalitaConWarning) StatoFunzionalitaConWarning.toEnumConstantFromString("abilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_controllo;
+  protected java.lang.String controlloRawEnumValue;
 
   @XmlAttribute(name="controllo",required=false)
   protected ValidazioneBusteTipoControllo controllo = (ValidazioneBusteTipoControllo) ValidazioneBusteTipoControllo.toEnumConstantFromString("normale");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_profiloCollaborazione;
+  protected java.lang.String profiloCollaborazioneRawEnumValue;
 
   @XmlAttribute(name="profiloCollaborazione",required=false)
   protected StatoFunzionalita profiloCollaborazione = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_manifestAttachments;
+  protected java.lang.String manifestAttachmentsRawEnumValue;
 
   @XmlAttribute(name="manifestAttachments",required=false)
   protected StatoFunzionalita manifestAttachments = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");

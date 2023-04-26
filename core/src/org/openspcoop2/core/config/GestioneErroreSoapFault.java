@@ -82,11 +82,11 @@ public class GestioneErroreSoapFault extends org.openspcoop2.utils.beans.BaseBea
     this.faultString = faultString;
   }
 
-  public void set_value_comportamento(String value) {
+  public void setComportamentoRawEnumValue(String value) {
     this.comportamento = (GestioneErroreComportamento) GestioneErroreComportamento.toEnumConstantFromString(value);
   }
 
-  public String get_value_comportamento() {
+  public String getComportamentoRawEnumValue() {
     if(this.comportamento == null){
     	return null;
     }else{
@@ -127,7 +127,7 @@ public class GestioneErroreSoapFault extends org.openspcoop2.utils.beans.BaseBea
   protected java.lang.String faultString;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_comportamento;
+  protected java.lang.String comportamentoRawEnumValue;
 
   @XmlAttribute(name="comportamento",required=true)
   protected GestioneErroreComportamento comportamento;

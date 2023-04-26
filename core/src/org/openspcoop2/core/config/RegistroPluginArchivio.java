@@ -121,11 +121,11 @@ public class RegistroPluginArchivio extends org.openspcoop2.utils.beans.BaseBean
     this.data = data;
   }
 
-  public void set_value_sorgente(String value) {
+  public void setSorgenteRawEnumValue(String value) {
     this.sorgente = (PluginSorgenteArchivio) PluginSorgenteArchivio.toEnumConstantFromString(value);
   }
 
-  public String get_value_sorgente() {
+  public String getSorgenteRawEnumValue() {
     if(this.sorgente == null){
     	return null;
     }else{
@@ -170,7 +170,7 @@ public class RegistroPluginArchivio extends org.openspcoop2.utils.beans.BaseBean
   protected java.util.Date data;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_sorgente;
+  protected java.lang.String sorgenteRawEnumValue;
 
   @XmlAttribute(name="sorgente",required=true)
   protected PluginSorgenteArchivio sorgente;

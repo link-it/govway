@@ -58,11 +58,11 @@ public class ValidazioneContenutiApplicativi extends org.openspcoop2.utils.beans
     super();
   }
 
-  public void set_value_stato(String value) {
+  public void setStatoRawEnumValue(String value) {
     this.stato = (StatoFunzionalitaConWarning) StatoFunzionalitaConWarning.toEnumConstantFromString(value);
   }
 
-  public String get_value_stato() {
+  public String getStatoRawEnumValue() {
     if(this.stato == null){
     	return null;
     }else{
@@ -78,11 +78,11 @@ public class ValidazioneContenutiApplicativi extends org.openspcoop2.utils.beans
     this.stato = stato;
   }
 
-  public void set_value_tipo(String value) {
+  public void setTipoRawEnumValue(String value) {
     this.tipo = (ValidazioneContenutiApplicativiTipo) ValidazioneContenutiApplicativiTipo.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipo() {
+  public String getTipoRawEnumValue() {
     if(this.tipo == null){
     	return null;
     }else{
@@ -98,11 +98,11 @@ public class ValidazioneContenutiApplicativi extends org.openspcoop2.utils.beans
     this.tipo = tipo;
   }
 
-  public void set_value_acceptMtomMessage(String value) {
+  public void setAcceptMtomMessageRawEnumValue(String value) {
     this.acceptMtomMessage = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_acceptMtomMessage() {
+  public String getAcceptMtomMessageRawEnumValue() {
     if(this.acceptMtomMessage == null){
     	return null;
     }else{
@@ -123,19 +123,19 @@ public class ValidazioneContenutiApplicativi extends org.openspcoop2.utils.beans
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_stato;
+  protected java.lang.String statoRawEnumValue;
 
   @XmlAttribute(name="stato",required=false)
   protected StatoFunzionalitaConWarning stato = (StatoFunzionalitaConWarning) StatoFunzionalitaConWarning.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipo;
+  protected java.lang.String tipoRawEnumValue;
 
   @XmlAttribute(name="tipo",required=false)
   protected ValidazioneContenutiApplicativiTipo tipo = (ValidazioneContenutiApplicativiTipo) ValidazioneContenutiApplicativiTipo.toEnumConstantFromString("xsd");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_acceptMtomMessage;
+  protected java.lang.String acceptMtomMessageRawEnumValue;
 
   @XmlAttribute(name="accept-mtom-message",required=false)
   protected StatoFunzionalita acceptMtomMessage = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");

@@ -383,7 +383,7 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 			newRes.setNome(nomeRisorsaProposto);
 			newRes.setDescrizione(descr);
 			newRes.setPath("".equals(pathNormalizzato) ? null : pathNormalizzato);
-			newRes.set_value_method("".equals(httpMethod) ? null : httpMethod);
+			newRes.setMethodRawEnumValue("".equals(httpMethod) ? null : httpMethod);
 			newRes.setMessageType(apcCore.fromMessageMessageType(messageType));
 			newRes.setRequestMessageType(apcCore.fromMessageMessageType(messageTypeRequest));
 			newRes.setResponseMessageType(apcCore.fromMessageMessageType(messageTypeResponse));

@@ -156,7 +156,7 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
         else {
 		
         	Long id_transazioneApplicativoServer = ( (id!=null && id.getId()!=null && id.getId()>0) ? id.getId() : this.findIdTransazioneApplicativoServer(jdbcProperties, log, connection, sqlQueryObject, id, true));
-        	return this._get(jdbcProperties, log, connection, sqlQueryObject, id_transazioneApplicativoServer,idMappingResolutionBehaviour);
+        	return this.getEngine(jdbcProperties, log, connection, sqlQueryObject, id_transazioneApplicativoServer,idMappingResolutionBehaviour);
 		
         }
 	}
@@ -342,7 +342,7 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 		
 		sqlQueryObject.addSelectCountField(this.getTransazioneApplicativoServerFieldConverter().toTable(TransazioneApplicativoServer.model())+".id","tot",true);
 		
-		_join(expression,sqlQueryObject);
+		joinEngine(expression,sqlQueryObject);
 		
 		return org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.count(jdbcProperties, log, connection, sqlQueryObject, expression,
 																			this.getTransazioneApplicativoServerFieldConverter(), TransazioneApplicativoServer.model(),listaQuery);
@@ -352,7 +352,7 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 	public InUse inUse(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdTransazioneApplicativoServer id) throws NotFoundException, NotImplementedException, ServiceException,Exception {
 		
 		Long id_transazioneApplicativoServer = this.findIdTransazioneApplicativoServer(jdbcProperties, log, connection, sqlQueryObject, id, true);
-        return this._inUse(jdbcProperties, log, connection, sqlQueryObject, id_transazioneApplicativoServer);
+        return this.inUseEngine(jdbcProperties, log, connection, sqlQueryObject, id_transazioneApplicativoServer);
 		
 	}
 
@@ -389,7 +389,7 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 						org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareSqlQueryObjectForSelectDistinct(distinct,sqlQueryObject, paginatedExpression, log,
 												this.getTransazioneApplicativoServerFieldConverter(), field);
 
-			return _select(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression, sqlQueryObjectDistinct);
+			return selectEngine(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression, sqlQueryObjectDistinct);
 			
 		}finally{
 			org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.removeFields(sqlQueryObject,paginatedExpression,field);
@@ -410,7 +410,7 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 		
 		org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.setFields(sqlQueryObject,expression,functionField);
 		try{
-			List<Map<String,Object>> list = _select(jdbcProperties, log, connection, sqlQueryObject, expression);
+			List<Map<String,Object>> list = selectEngine(jdbcProperties, log, connection, sqlQueryObject, expression);
 			return list.get(0);
 		}finally{
 			org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.removeFields(sqlQueryObject,expression,functionField);
@@ -421,13 +421,13 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 	public List<Map<String,Object>> groupBy(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
 													JDBCExpression expression, FunctionField ... functionField) throws ServiceException,NotFoundException,NotImplementedException,Exception {
 		
-		if(expression.getGroupByFields().size()<=0){
+		if(expression.getGroupByFields().isEmpty()){
 			throw new ServiceException("GroupBy conditions not found in expression");
 		}
 		
 		org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.setFields(sqlQueryObject,expression,functionField);
 		try{
-			return _select(jdbcProperties, log, connection, sqlQueryObject, expression);
+			return selectEngine(jdbcProperties, log, connection, sqlQueryObject, expression);
 		}finally{
 			org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.removeFields(sqlQueryObject,expression,functionField);
 		}
@@ -438,23 +438,23 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 	public List<Map<String,Object>> groupBy(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
 													JDBCPaginatedExpression paginatedExpression, FunctionField ... functionField) throws ServiceException,NotFoundException,NotImplementedException,Exception {
 		
-		if(paginatedExpression.getGroupByFields().size()<=0){
+		if(paginatedExpression.getGroupByFields().isEmpty()){
 			throw new ServiceException("GroupBy conditions not found in expression");
 		}
 		
 		org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.setFields(sqlQueryObject,paginatedExpression,functionField);
 		try{
-			return _select(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression);
+			return selectEngine(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression);
 		}finally{
 			org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.removeFields(sqlQueryObject,paginatedExpression,functionField);
 		}
 	}
 	
-	protected List<Map<String,Object>> _select(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
+	protected List<Map<String,Object>> selectEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
 												IExpression expression) throws ServiceException,NotFoundException,NotImplementedException,Exception {
-		return _select(jdbcProperties, log, connection, sqlQueryObject, expression, null);
+		return selectEngine(jdbcProperties, log, connection, sqlQueryObject, expression, null);
 	}
-	protected List<Map<String,Object>> _select(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
+	protected List<Map<String,Object>> selectEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
 												IExpression expression, ISQLQueryObject sqlQueryObjectDistinct) throws ServiceException,NotFoundException,NotImplementedException,Exception {
 		
 		List<Object> listaQuery = new ArrayList<>();
@@ -463,17 +463,17 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
         						expression, this.getTransazioneApplicativoServerFieldConverter(), TransazioneApplicativoServer.model(), 
         						listaQuery,listaParams);
 		
-		_join(expression,sqlQueryObject);
+		joinEngine(expression,sqlQueryObject);
         
         List<Map<String,Object>> list = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.select(jdbcProperties, log, connection,
         								org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareSqlQueryObjectForSelectDistinct(sqlQueryObject,sqlQueryObjectDistinct), 
         								expression, this.getTransazioneApplicativoServerFieldConverter(), TransazioneApplicativoServer.model(),
         								listaQuery,listaParams,returnField);
-		if(list!=null && list.size()>0){
+		if(list!=null && !list.isEmpty()){
 			return list;
 		}
 		else{
-			throw new NotFoundException("Not Found");
+			throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 		}
 	}
 	
@@ -491,18 +491,18 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 			for (int i = 0; i < unionExpression.length; i++) {
 				UnionExpression ue = unionExpression[i];
 				IExpression expression = ue.getExpression();
-				_join(expression,sqlQueryObjectInnerList.get(i));
+				joinEngine(expression,sqlQueryObjectInnerList.get(i));
 			}
 		}
         
         List<Map<String,Object>> list = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.union(jdbcProperties, log, connection, sqlQueryObject, 
         								this.getTransazioneApplicativoServerFieldConverter(), TransazioneApplicativoServer.model(), 
         								sqlQueryObjectInnerList, jdbcObjects, returnClassTypes, union, unionExpression);
-        if(list!=null && list.size()>0){
+        if(list!=null && !list.isEmpty()){
 			return list;
 		}
 		else{
-			throw new NotFoundException("Not Found");
+			throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 		}								
 	}
 	
@@ -520,7 +520,7 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 			for (int i = 0; i < unionExpression.length; i++) {
 				UnionExpression ue = unionExpression[i];
 				IExpression expression = ue.getExpression();
-				_join(expression,sqlQueryObjectInnerList.get(i));
+				joinEngine(expression,sqlQueryObjectInnerList.get(i));
 			}
 		}
         
@@ -531,7 +531,7 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 			return number;
 		}
 		else{
-			throw new NotFoundException("Not Found");
+			throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 		}
 	}
 
@@ -601,10 +601,10 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 	
 	@Override
 	public TransazioneApplicativoServer get(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException, Exception {
-		return this._get(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId), idMappingResolutionBehaviour);
+		return this.getEngine(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId), idMappingResolutionBehaviour);
 	}
 	
-	private TransazioneApplicativoServer _get(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long tableId, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException, Exception {
+	private TransazioneApplicativoServer getEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long tableId, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException, Exception {
 	
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
@@ -702,13 +702,13 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 	
 	}
 	
-	private void _join(IExpression expression, ISQLQueryObject sqlQueryObject) throws NotImplementedException, ServiceException, Exception{
+	private void joinEngine(IExpression expression, ISQLQueryObject sqlQueryObject) throws NotImplementedException, ServiceException, Exception{
 	
 		// NOP;
         
 	}
 	
-	protected java.util.List<Object> _getRootTablePrimaryKeyValues(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdTransazioneApplicativoServer id) throws NotFoundException, ServiceException, NotImplementedException, Exception{
+	protected java.util.List<Object> getRootTablePrimaryKeyValuesEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdTransazioneApplicativoServer id) throws NotFoundException, ServiceException, NotImplementedException, Exception{
 	    // Identificativi
         java.util.List<Object> rootTableIdValues = new java.util.ArrayList<>();
         Long longId = this.findIdTransazioneApplicativoServer(jdbcProperties, log, connection, sqlQueryObject.newSQLQueryObject(), id, true);
@@ -716,7 +716,7 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
         return rootTableIdValues;
 	}
 	
-	protected Map<String, List<IField>> _getMapTableToPKColumn() throws NotImplementedException, Exception{
+	protected Map<String, List<IField>> getMapTableToPKColumnEngine() throws NotImplementedException, Exception{
 	
 		TransazioneApplicativoServerFieldConverter converter = this.getTransazioneApplicativoServerFieldConverter();
 		Map<String, List<IField>> mapTableToPKColumn = new java.util.HashMap<>();
@@ -745,7 +745,7 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 		List<Object> listaQuery = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareFindAll(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression,
 												this.getTransazioneApplicativoServerFieldConverter(), TransazioneApplicativoServer.model());
 		
-		_join(paginatedExpression,sqlQueryObject);
+		joinEngine(paginatedExpression,sqlQueryObject);
 		
 		List<Object> listObjects = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.findAll(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression,
 																			this.getTransazioneApplicativoServerFieldConverter(), TransazioneApplicativoServer.model(), objectIdClass, listaQuery);
@@ -768,7 +768,7 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 		List<Object> listaQuery = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareFind(jdbcProperties, log, connection, sqlQueryObject, expression,
 												this.getTransazioneApplicativoServerFieldConverter(), TransazioneApplicativoServer.model());
 		
-		_join(expression,sqlQueryObject);
+		joinEngine(expression,sqlQueryObject);
 
 		Object res = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.find(jdbcProperties, log, connection, sqlQueryObject, expression,
 														this.getTransazioneApplicativoServerFieldConverter(), TransazioneApplicativoServer.model(), objectIdClass, listaQuery);
@@ -776,17 +776,17 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 			return ((Long) res).longValue();
 		}
 		else{
-			throw new NotFoundException("Not Found");
+			throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 		}
 		
 	}
 
 	@Override
 	public InUse inUse(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId) throws ServiceException, NotFoundException, NotImplementedException, Exception {
-		return this._inUse(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
+		return this.inUseEngine(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
 	}
 
-	private InUse _inUse(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long tableId) throws ServiceException, NotFoundException, NotImplementedException, Exception {
+	private InUse inUseEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long tableId) throws ServiceException, NotFoundException, NotImplementedException, Exception {
 
 		InUse inUse = new InUse();
 		inUse.setInUse(false);
@@ -834,7 +834,7 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 				listaFieldIdReturnType_transazioneApplicativoServer, searchParams_transazioneApplicativoServer);
 		if(listaFieldId_transazioneApplicativoServer==null || listaFieldId_transazioneApplicativoServer.size()<=0){
 			if(throwNotFound){
-				throw new NotFoundException("Not Found");
+				throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 			}
 		}
 		else{
@@ -907,7 +907,7 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 		}
 		if(id_transazioneApplicativoServer==null || id_transazioneApplicativoServer<=0){
 			if(throwNotFound){
-				throw new NotFoundException("Not Found");
+				throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 			}
 		}
 		

@@ -68,11 +68,11 @@ public class CorrelazioneApplicativaElemento extends org.openspcoop2.utils.beans
     this.nome = nome;
   }
 
-  public void set_value_identificazione(String value) {
+  public void setIdentificazioneRawEnumValue(String value) {
     this.identificazione = (CorrelazioneApplicativaRichiestaIdentificazione) CorrelazioneApplicativaRichiestaIdentificazione.toEnumConstantFromString(value);
   }
 
-  public String get_value_identificazione() {
+  public String getIdentificazioneRawEnumValue() {
     if(this.identificazione == null){
     	return null;
     }else{
@@ -96,11 +96,11 @@ public class CorrelazioneApplicativaElemento extends org.openspcoop2.utils.beans
     this.pattern = pattern;
   }
 
-  public void set_value_identificazioneFallita(String value) {
+  public void setIdentificazioneFallitaRawEnumValue(String value) {
     this.identificazioneFallita = (CorrelazioneApplicativaGestioneIdentificazioneFallita) CorrelazioneApplicativaGestioneIdentificazioneFallita.toEnumConstantFromString(value);
   }
 
-  public String get_value_identificazioneFallita() {
+  public String getIdentificazioneFallitaRawEnumValue() {
     if(this.identificazioneFallita == null){
     	return null;
     }else{
@@ -116,11 +116,11 @@ public class CorrelazioneApplicativaElemento extends org.openspcoop2.utils.beans
     this.identificazioneFallita = identificazioneFallita;
   }
 
-  public void set_value_riusoIdentificativo(String value) {
+  public void setRiusoIdentificativoRawEnumValue(String value) {
     this.riusoIdentificativo = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_riusoIdentificativo() {
+  public String getRiusoIdentificativoRawEnumValue() {
     if(this.riusoIdentificativo == null){
     	return null;
     }else{
@@ -145,7 +145,7 @@ public class CorrelazioneApplicativaElemento extends org.openspcoop2.utils.beans
   protected java.lang.String nome;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_identificazione;
+  protected java.lang.String identificazioneRawEnumValue;
 
   @XmlAttribute(name="identificazione",required=false)
   protected CorrelazioneApplicativaRichiestaIdentificazione identificazione = (CorrelazioneApplicativaRichiestaIdentificazione) CorrelazioneApplicativaRichiestaIdentificazione.toEnumConstantFromString("contentBased");
@@ -155,13 +155,13 @@ public class CorrelazioneApplicativaElemento extends org.openspcoop2.utils.beans
   protected java.lang.String pattern;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_identificazioneFallita;
+  protected java.lang.String identificazioneFallitaRawEnumValue;
 
   @XmlAttribute(name="identificazione-fallita",required=false)
   protected CorrelazioneApplicativaGestioneIdentificazioneFallita identificazioneFallita = (CorrelazioneApplicativaGestioneIdentificazioneFallita) CorrelazioneApplicativaGestioneIdentificazioneFallita.toEnumConstantFromString("blocca");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_riusoIdentificativo;
+  protected java.lang.String riusoIdentificativoRawEnumValue;
 
   @XmlAttribute(name="riuso-identificativo",required=false)
   protected StatoFunzionalita riusoIdentificativo = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");

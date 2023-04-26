@@ -100,34 +100,7 @@ public class Protocollo extends org.openspcoop2.utils.beans.BaseBeanWithId imple
 
 
   @XmlElement(name="proprieta",required=true,nillable=false)
-  protected List<Proprieta> proprieta = new ArrayList<Proprieta>();
-
-  /**
-   * @deprecated Use method getProprietaList
-   * @return List&lt;Proprieta&gt;
-  */
-  @Deprecated
-  public List<Proprieta> getProprieta() {
-  	return this.proprieta;
-  }
-
-  /**
-   * @deprecated Use method setProprietaList
-   * @param proprieta List&lt;Proprieta&gt;
-  */
-  @Deprecated
-  public void setProprieta(List<Proprieta> proprieta) {
-  	this.proprieta=proprieta;
-  }
-
-  /**
-   * @deprecated Use method sizeProprietaList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeProprieta() {
-  	return this.proprieta.size();
-  }
+  private List<Proprieta> proprieta = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="identificativo",required=true)

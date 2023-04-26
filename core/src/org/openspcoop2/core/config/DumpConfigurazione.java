@@ -100,11 +100,11 @@ public class DumpConfigurazione extends org.openspcoop2.utils.beans.BaseBeanWith
     this.rispostaUscita = rispostaUscita;
   }
 
-  public void set_value_realtime(String value) {
+  public void setRealtimeRawEnumValue(String value) {
     this.realtime = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_realtime() {
+  public String getRealtimeRawEnumValue() {
     if(this.realtime == null){
     	return null;
     }else{
@@ -137,7 +137,7 @@ public class DumpConfigurazione extends org.openspcoop2.utils.beans.BaseBeanWith
   protected DumpConfigurazioneRegola rispostaUscita;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_realtime;
+  protected java.lang.String realtimeRawEnumValue;
 
   @XmlAttribute(name="realtime",required=false)
   protected StatoFunzionalita realtime = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");

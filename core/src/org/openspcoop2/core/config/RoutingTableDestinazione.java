@@ -109,34 +109,7 @@ public class RoutingTableDestinazione extends org.openspcoop2.utils.beans.BaseBe
 
 
   @XmlElement(name="route",required=true,nillable=false)
-  protected List<Route> route = new ArrayList<Route>();
-
-  /**
-   * @deprecated Use method getRouteList
-   * @return List&lt;Route&gt;
-  */
-  @Deprecated
-  public List<Route> getRoute() {
-  	return this.route;
-  }
-
-  /**
-   * @deprecated Use method setRouteList
-   * @param route List&lt;Route&gt;
-  */
-  @Deprecated
-  public void setRoute(List<Route> route) {
-  	this.route=route;
-  }
-
-  /**
-   * @deprecated Use method sizeRouteList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeRoute() {
-  	return this.route.size();
-  }
+  private List<Route> route = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="tipo",required=true)

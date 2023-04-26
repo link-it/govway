@@ -277,34 +277,7 @@ public class AccordoCooperazione extends org.openspcoop2.utils.beans.BaseBeanWit
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="uri-servizi-composti",required=true,nillable=false)
-  protected List<java.lang.String> uriServiziComposti = new ArrayList<java.lang.String>();
-
-  /**
-   * @deprecated Use method getUriServiziCompostiList
-   * @return List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public List<java.lang.String> getUriServiziComposti() {
-  	return this.uriServiziComposti;
-  }
-
-  /**
-   * @deprecated Use method setUriServiziCompostiList
-   * @param uriServiziComposti List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public void setUriServiziComposti(List<java.lang.String> uriServiziComposti) {
-  	this.uriServiziComposti=uriServiziComposti;
-  }
-
-  /**
-   * @deprecated Use method sizeUriServiziCompostiList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeUriServiziComposti() {
-  	return this.uriServiziComposti.size();
-  }
+  private List<java.lang.String> uriServiziComposti = new ArrayList<>();
 
   @XmlElement(name="soggetto-referente",required=false,nillable=false)
   protected IdSoggetto soggettoReferente;
@@ -313,94 +286,13 @@ public class AccordoCooperazione extends org.openspcoop2.utils.beans.BaseBeanWit
   protected AccordoCooperazionePartecipanti elencoPartecipanti;
 
   @XmlElement(name="allegato",required=true,nillable=false)
-  protected List<Documento> allegato = new ArrayList<Documento>();
-
-  /**
-   * @deprecated Use method getAllegatoList
-   * @return List&lt;Documento&gt;
-  */
-  @Deprecated
-  public List<Documento> getAllegato() {
-  	return this.allegato;
-  }
-
-  /**
-   * @deprecated Use method setAllegatoList
-   * @param allegato List&lt;Documento&gt;
-  */
-  @Deprecated
-  public void setAllegato(List<Documento> allegato) {
-  	this.allegato=allegato;
-  }
-
-  /**
-   * @deprecated Use method sizeAllegatoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeAllegato() {
-  	return this.allegato.size();
-  }
+  private List<Documento> allegato = new ArrayList<>();
 
   @XmlElement(name="specifica-semiformale",required=true,nillable=false)
-  protected List<Documento> specificaSemiformale = new ArrayList<Documento>();
-
-  /**
-   * @deprecated Use method getSpecificaSemiformaleList
-   * @return List&lt;Documento&gt;
-  */
-  @Deprecated
-  public List<Documento> getSpecificaSemiformale() {
-  	return this.specificaSemiformale;
-  }
-
-  /**
-   * @deprecated Use method setSpecificaSemiformaleList
-   * @param specificaSemiformale List&lt;Documento&gt;
-  */
-  @Deprecated
-  public void setSpecificaSemiformale(List<Documento> specificaSemiformale) {
-  	this.specificaSemiformale=specificaSemiformale;
-  }
-
-  /**
-   * @deprecated Use method sizeSpecificaSemiformaleList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeSpecificaSemiformale() {
-  	return this.specificaSemiformale.size();
-  }
+  private List<Documento> specificaSemiformale = new ArrayList<>();
 
   @XmlElement(name="protocol-property",required=true,nillable=false)
-  protected List<ProtocolProperty> protocolProperty = new ArrayList<ProtocolProperty>();
-
-  /**
-   * @deprecated Use method getProtocolPropertyList
-   * @return List&lt;ProtocolProperty&gt;
-  */
-  @Deprecated
-  public List<ProtocolProperty> getProtocolProperty() {
-  	return this.protocolProperty;
-  }
-
-  /**
-   * @deprecated Use method setProtocolPropertyList
-   * @param protocolProperty List&lt;ProtocolProperty&gt;
-  */
-  @Deprecated
-  public void setProtocolProperty(List<ProtocolProperty> protocolProperty) {
-  	this.protocolProperty=protocolProperty;
-  }
-
-  /**
-   * @deprecated Use method sizeProtocolPropertyList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeProtocolProperty() {
-  	return this.protocolProperty.size();
-  }
+  private List<ProtocolProperty> protocolProperty = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String superUser;

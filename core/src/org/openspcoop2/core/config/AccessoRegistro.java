@@ -103,33 +103,6 @@ public class AccessoRegistro extends org.openspcoop2.utils.beans.BaseBeanWithId 
   protected Cache cache;
 
   @XmlElement(name="registro",required=true,nillable=false)
-  protected List<AccessoRegistroRegistro> registro = new ArrayList<AccessoRegistroRegistro>();
-
-  /**
-   * @deprecated Use method getRegistroList
-   * @return List&lt;AccessoRegistroRegistro&gt;
-  */
-  @Deprecated
-  public List<AccessoRegistroRegistro> getRegistro() {
-  	return this.registro;
-  }
-
-  /**
-   * @deprecated Use method setRegistroList
-   * @param registro List&lt;AccessoRegistroRegistro&gt;
-  */
-  @Deprecated
-  public void setRegistro(List<AccessoRegistroRegistro> registro) {
-  	this.registro=registro;
-  }
-
-  /**
-   * @deprecated Use method sizeRegistroList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeRegistro() {
-  	return this.registro.size();
-  }
+  private List<AccessoRegistroRegistro> registro = new ArrayList<>();
 
 }

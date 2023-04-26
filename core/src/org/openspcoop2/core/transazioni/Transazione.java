@@ -490,11 +490,11 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBeanWithId impl
     this.pddNomeSoggetto = pddNomeSoggetto;
   }
 
-  public void set_value_pddRuolo(String value) {
+  public void setPddRuoloRawEnumValue(String value) {
     this.pddRuolo = (PddRuolo) PddRuolo.toEnumConstantFromString(value);
   }
 
-  public String get_value_pddRuolo() {
+  public String getPddRuoloRawEnumValue() {
     if(this.pddRuolo == null){
     	return null;
     }else{
@@ -1289,7 +1289,7 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBeanWithId impl
   protected java.lang.String pddNomeSoggetto;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_pddRuolo;
+  protected java.lang.String pddRuoloRawEnumValue;
 
   @XmlElement(name="pdd-ruolo",required=false,nillable=false)
   protected PddRuolo pddRuolo;
@@ -1581,93 +1581,12 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBeanWithId impl
   protected java.lang.String gruppi;
 
   @XmlElement(name="dump-messaggio",required=true,nillable=false)
-  protected List<DumpMessaggio> dumpMessaggio = new ArrayList<DumpMessaggio>();
-
-  /**
-   * @deprecated Use method getDumpMessaggioList
-   * @return List&lt;DumpMessaggio&gt;
-  */
-  @Deprecated
-  public List<DumpMessaggio> getDumpMessaggio() {
-  	return this.dumpMessaggio;
-  }
-
-  /**
-   * @deprecated Use method setDumpMessaggioList
-   * @param dumpMessaggio List&lt;DumpMessaggio&gt;
-  */
-  @Deprecated
-  public void setDumpMessaggio(List<DumpMessaggio> dumpMessaggio) {
-  	this.dumpMessaggio=dumpMessaggio;
-  }
-
-  /**
-   * @deprecated Use method sizeDumpMessaggioList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeDumpMessaggio() {
-  	return this.dumpMessaggio.size();
-  }
+  private List<DumpMessaggio> dumpMessaggio = new ArrayList<>();
 
   @XmlElement(name="transazione-applicativo-server",required=true,nillable=false)
-  protected List<TransazioneApplicativoServer> transazioneApplicativoServer = new ArrayList<TransazioneApplicativoServer>();
-
-  /**
-   * @deprecated Use method getTransazioneApplicativoServerList
-   * @return List&lt;TransazioneApplicativoServer&gt;
-  */
-  @Deprecated
-  public List<TransazioneApplicativoServer> getTransazioneApplicativoServer() {
-  	return this.transazioneApplicativoServer;
-  }
-
-  /**
-   * @deprecated Use method setTransazioneApplicativoServerList
-   * @param transazioneApplicativoServer List&lt;TransazioneApplicativoServer&gt;
-  */
-  @Deprecated
-  public void setTransazioneApplicativoServer(List<TransazioneApplicativoServer> transazioneApplicativoServer) {
-  	this.transazioneApplicativoServer=transazioneApplicativoServer;
-  }
-
-  /**
-   * @deprecated Use method sizeTransazioneApplicativoServerList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeTransazioneApplicativoServer() {
-  	return this.transazioneApplicativoServer.size();
-  }
+  private List<TransazioneApplicativoServer> transazioneApplicativoServer = new ArrayList<>();
 
   @XmlElement(name="transazione-extended-info",required=true,nillable=false)
-  protected List<TransazioneExtendedInfo> transazioneExtendedInfo = new ArrayList<TransazioneExtendedInfo>();
-
-  /**
-   * @deprecated Use method getTransazioneExtendedInfoList
-   * @return List&lt;TransazioneExtendedInfo&gt;
-  */
-  @Deprecated
-  public List<TransazioneExtendedInfo> getTransazioneExtendedInfo() {
-  	return this.transazioneExtendedInfo;
-  }
-
-  /**
-   * @deprecated Use method setTransazioneExtendedInfoList
-   * @param transazioneExtendedInfo List&lt;TransazioneExtendedInfo&gt;
-  */
-  @Deprecated
-  public void setTransazioneExtendedInfo(List<TransazioneExtendedInfo> transazioneExtendedInfo) {
-  	this.transazioneExtendedInfo=transazioneExtendedInfo;
-  }
-
-  /**
-   * @deprecated Use method sizeTransazioneExtendedInfoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeTransazioneExtendedInfo() {
-  	return this.transazioneExtendedInfo.size();
-  }
+  private List<TransazioneExtendedInfo> transazioneExtendedInfo = new ArrayList<>();
 
 }

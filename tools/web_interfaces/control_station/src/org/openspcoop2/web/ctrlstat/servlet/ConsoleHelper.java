@@ -14939,16 +14939,16 @@ public class ConsoleHelper implements IConsoleHelper {
 			newConfigurazione.setRispostaUscita(new DumpConfigurazioneRegola());
 			
 			// realtime			
-			newConfigurazione.set_value_realtime(realtime);
+			newConfigurazione.setRealtimeRawEnumValue(realtime);
 
 			if(statoDumpRichiesta.equals(StatoFunzionalita.ABILITATO.getValue())) {
-				newConfigurazione.getRichiestaIngresso().set_value_headers(dumpRichiestaIngressoHeader);
-				newConfigurazione.getRichiestaIngresso().set_value_payload(dumpRichiestaIngressoPayload);
+				newConfigurazione.getRichiestaIngresso().setHeadersRawEnumValue(dumpRichiestaIngressoHeader);
+				newConfigurazione.getRichiestaIngresso().setPayloadRawEnumValue(dumpRichiestaIngressoPayload);
 				if(StatoFunzionalita.ABILITATO.equals(newConfigurazione.getRichiestaIngresso().getPayload())){
-					newConfigurazione.getRichiestaIngresso().set_value_payloadParsing(dumpRichiestaIngressoPayloadParsing);
+					newConfigurazione.getRichiestaIngresso().setPayloadParsingRawEnumValue(dumpRichiestaIngressoPayloadParsing);
 					if(StatoFunzionalita.ABILITATO.equals(newConfigurazione.getRichiestaIngresso().getPayloadParsing())){
-						newConfigurazione.getRichiestaIngresso().set_value_body(dumpRichiestaIngressoBody);
-						newConfigurazione.getRichiestaIngresso().set_value_attachments(dumpRichiestaIngressoAttachments);
+						newConfigurazione.getRichiestaIngresso().setBodyRawEnumValue(dumpRichiestaIngressoBody);
+						newConfigurazione.getRichiestaIngresso().setAttachmentsRawEnumValue(dumpRichiestaIngressoAttachments);
 					}
 					else {
 						newConfigurazione.getRichiestaIngresso().setBody(StatoFunzionalita.DISABILITATO);
@@ -14961,13 +14961,13 @@ public class ConsoleHelper implements IConsoleHelper {
 					newConfigurazione.getRichiestaIngresso().setAttachments(StatoFunzionalita.DISABILITATO);
 				}
 				
-				newConfigurazione.getRichiestaUscita().set_value_headers(dumpRichiestaUscitaHeader);
-				newConfigurazione.getRichiestaUscita().set_value_payload(dumpRichiestaUscitaPayload);
+				newConfigurazione.getRichiestaUscita().setHeadersRawEnumValue(dumpRichiestaUscitaHeader);
+				newConfigurazione.getRichiestaUscita().setPayloadRawEnumValue(dumpRichiestaUscitaPayload);
 				if(StatoFunzionalita.ABILITATO.equals(newConfigurazione.getRichiestaUscita().getPayload())){
-					newConfigurazione.getRichiestaUscita().set_value_payloadParsing(dumpRichiestaUscitaPayloadParsing);
+					newConfigurazione.getRichiestaUscita().setPayloadParsingRawEnumValue(dumpRichiestaUscitaPayloadParsing);
 					if(StatoFunzionalita.ABILITATO.equals(newConfigurazione.getRichiestaUscita().getPayloadParsing())){
-						newConfigurazione.getRichiestaUscita().set_value_body(dumpRichiestaUscitaBody);
-						newConfigurazione.getRichiestaUscita().set_value_attachments(dumpRichiestaUscitaAttachments);
+						newConfigurazione.getRichiestaUscita().setBodyRawEnumValue(dumpRichiestaUscitaBody);
+						newConfigurazione.getRichiestaUscita().setAttachmentsRawEnumValue(dumpRichiestaUscitaAttachments);
 					}
 					else {
 						newConfigurazione.getRichiestaUscita().setBody(StatoFunzionalita.DISABILITATO);
@@ -14993,13 +14993,13 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 			if(statoDumpRisposta.equals(StatoFunzionalita.ABILITATO.getValue())) {
-				newConfigurazione.getRispostaIngresso().set_value_headers(dumpRispostaIngressoHeader);
-				newConfigurazione.getRispostaIngresso().set_value_payload(dumpRispostaIngressoPayload);
+				newConfigurazione.getRispostaIngresso().setHeadersRawEnumValue(dumpRispostaIngressoHeader);
+				newConfigurazione.getRispostaIngresso().setPayloadRawEnumValue(dumpRispostaIngressoPayload);
 				if(StatoFunzionalita.ABILITATO.equals(newConfigurazione.getRispostaIngresso().getPayload())){
-					newConfigurazione.getRispostaIngresso().set_value_payloadParsing(dumpRispostaIngressoPayloadParsing);
+					newConfigurazione.getRispostaIngresso().setPayloadParsingRawEnumValue(dumpRispostaIngressoPayloadParsing);
 					if(StatoFunzionalita.ABILITATO.equals(newConfigurazione.getRispostaIngresso().getPayloadParsing())){
-						newConfigurazione.getRispostaIngresso().set_value_body(dumpRispostaIngressoBody);
-						newConfigurazione.getRispostaIngresso().set_value_attachments(dumpRispostaIngressoAttachments);
+						newConfigurazione.getRispostaIngresso().setBodyRawEnumValue(dumpRispostaIngressoBody);
+						newConfigurazione.getRispostaIngresso().setAttachmentsRawEnumValue(dumpRispostaIngressoAttachments);
 					}
 					else {
 						newConfigurazione.getRispostaIngresso().setBody(StatoFunzionalita.DISABILITATO);
@@ -15012,13 +15012,13 @@ public class ConsoleHelper implements IConsoleHelper {
 					newConfigurazione.getRispostaIngresso().setAttachments(StatoFunzionalita.DISABILITATO);
 				}
 				
-				newConfigurazione.getRispostaUscita().set_value_headers(dumpRispostaUscitaHeader);
-				newConfigurazione.getRispostaUscita().set_value_payload(dumpRispostaUscitaPayload);
+				newConfigurazione.getRispostaUscita().setHeadersRawEnumValue(dumpRispostaUscitaHeader);
+				newConfigurazione.getRispostaUscita().setPayloadRawEnumValue(dumpRispostaUscitaPayload);
 				if(StatoFunzionalita.ABILITATO.equals(newConfigurazione.getRispostaUscita().getPayload())){
-					newConfigurazione.getRispostaUscita().set_value_payloadParsing(dumpRispostaUscitaPayloadParsing);
+					newConfigurazione.getRispostaUscita().setPayloadParsingRawEnumValue(dumpRispostaUscitaPayloadParsing);
 					if(StatoFunzionalita.ABILITATO.equals(newConfigurazione.getRispostaUscita().getPayloadParsing())){
-						newConfigurazione.getRispostaUscita().set_value_body(dumpRispostaUscitaBody);
-						newConfigurazione.getRispostaUscita().set_value_attachments(dumpRispostaUscitaAttachments);
+						newConfigurazione.getRispostaUscita().setBodyRawEnumValue(dumpRispostaUscitaBody);
+						newConfigurazione.getRispostaUscita().setAttachmentsRawEnumValue(dumpRispostaUscitaAttachments);
 					}
 					else {
 						newConfigurazione.getRispostaUscita().setBody(StatoFunzionalita.DISABILITATO);

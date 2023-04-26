@@ -100,34 +100,7 @@ public class Openspcoop2 extends org.openspcoop2.utils.beans.BaseBeanWithId impl
 
 
   @XmlElement(name="soggetto",required=true,nillable=false)
-  protected List<Soggetto> soggetto = new ArrayList<Soggetto>();
-
-  /**
-   * @deprecated Use method getSoggettoList
-   * @return List&lt;Soggetto&gt;
-  */
-  @Deprecated
-  public List<Soggetto> getSoggetto() {
-  	return this.soggetto;
-  }
-
-  /**
-   * @deprecated Use method setSoggettoList
-   * @param soggetto List&lt;Soggetto&gt;
-  */
-  @Deprecated
-  public void setSoggetto(List<Soggetto> soggetto) {
-  	this.soggetto=soggetto;
-  }
-
-  /**
-   * @deprecated Use method sizeSoggettoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeSoggetto() {
-  	return this.soggetto.size();
-  }
+  private List<Soggetto> soggetto = new ArrayList<>();
 
   @XmlElement(name="configurazione",required=true,nillable=false)
   protected Configurazione configurazione;

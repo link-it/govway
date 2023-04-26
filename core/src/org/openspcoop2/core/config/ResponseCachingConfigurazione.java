@@ -110,11 +110,11 @@ public class ResponseCachingConfigurazione extends org.openspcoop2.utils.beans.B
     return this.regola.size();
   }
 
-  public void set_value_stato(String value) {
+  public void setStatoRawEnumValue(String value) {
     this.stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_stato() {
+  public String getStatoRawEnumValue() {
     if(this.stato == null){
     	return null;
     }else{
@@ -157,37 +157,10 @@ public class ResponseCachingConfigurazione extends org.openspcoop2.utils.beans.B
   protected ResponseCachingConfigurazioneControl control;
 
   @XmlElement(name="regola",required=true,nillable=false)
-  protected List<ResponseCachingConfigurazioneRegola> regola = new ArrayList<ResponseCachingConfigurazioneRegola>();
-
-  /**
-   * @deprecated Use method getRegolaList
-   * @return List&lt;ResponseCachingConfigurazioneRegola&gt;
-  */
-  @Deprecated
-  public List<ResponseCachingConfigurazioneRegola> getRegola() {
-  	return this.regola;
-  }
-
-  /**
-   * @deprecated Use method setRegolaList
-   * @param regola List&lt;ResponseCachingConfigurazioneRegola&gt;
-  */
-  @Deprecated
-  public void setRegola(List<ResponseCachingConfigurazioneRegola> regola) {
-  	this.regola=regola;
-  }
-
-  /**
-   * @deprecated Use method sizeRegolaList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeRegola() {
-  	return this.regola.size();
-  }
+  private List<ResponseCachingConfigurazioneRegola> regola = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_stato;
+  protected java.lang.String statoRawEnumValue;
 
   @XmlAttribute(name="stato",required=false)
   protected StatoFunzionalita stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");

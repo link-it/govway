@@ -103,33 +103,6 @@ public class ConfigurazioneServizio extends org.openspcoop2.utils.beans.BaseBean
   protected Connettore connettore;
 
   @XmlElement(name="configurazione-azione",required=true,nillable=false)
-  protected List<ConfigurazioneServizioAzione> configurazioneAzione = new ArrayList<ConfigurazioneServizioAzione>();
-
-  /**
-   * @deprecated Use method getConfigurazioneAzioneList
-   * @return List&lt;ConfigurazioneServizioAzione&gt;
-  */
-  @Deprecated
-  public List<ConfigurazioneServizioAzione> getConfigurazioneAzione() {
-  	return this.configurazioneAzione;
-  }
-
-  /**
-   * @deprecated Use method setConfigurazioneAzioneList
-   * @param configurazioneAzione List&lt;ConfigurazioneServizioAzione&gt;
-  */
-  @Deprecated
-  public void setConfigurazioneAzione(List<ConfigurazioneServizioAzione> configurazioneAzione) {
-  	this.configurazioneAzione=configurazioneAzione;
-  }
-
-  /**
-   * @deprecated Use method sizeConfigurazioneAzioneList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeConfigurazioneAzione() {
-  	return this.configurazioneAzione.size();
-  }
+  private List<ConfigurazioneServizioAzione> configurazioneAzione = new ArrayList<>();
 
 }

@@ -90,33 +90,6 @@ public class GruppiAccordo extends org.openspcoop2.utils.beans.BaseBeanWithId im
 
 
   @XmlElement(name="gruppo",required=true,nillable=false)
-  protected List<GruppoAccordo> gruppo = new ArrayList<GruppoAccordo>();
-
-  /**
-   * @deprecated Use method getGruppoList
-   * @return List&lt;GruppoAccordo&gt;
-  */
-  @Deprecated
-  public List<GruppoAccordo> getGruppo() {
-  	return this.gruppo;
-  }
-
-  /**
-   * @deprecated Use method setGruppoList
-   * @param gruppo List&lt;GruppoAccordo&gt;
-  */
-  @Deprecated
-  public void setGruppo(List<GruppoAccordo> gruppo) {
-  	this.gruppo=gruppo;
-  }
-
-  /**
-   * @deprecated Use method sizeGruppoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeGruppo() {
-  	return this.gruppo.size();
-  }
+  private List<GruppoAccordo> gruppo = new ArrayList<>();
 
 }

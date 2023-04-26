@@ -224,7 +224,7 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 			if(resourceOLD != null){
 				oldProtocolPropertyList = resourceOLD.getProtocolPropertyList();
 				oldPath = resourceOLD.getPath();
-				oldHttpMethod = resourceOLD.get_value_method();
+				oldHttpMethod = resourceOLD.getMethodRawEnumValue();
 				oldNomeRisorsa = resourceOLD.getNome();
 				if(oldHttpMethod!=null) {
 					oldNomeRisorsaGenerato = APIUtils.normalizeResourceName(HttpMethod.toEnumConstant(oldHttpMethod), oldPath);
@@ -243,7 +243,7 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 			boolean inUse = apcCore.isRisorsaInUso(idRisorsa, whereIsInUso, normalizeObjectIds);
 			consoleConfiguration = consoleDynamicConfiguration.getDynamicConfigResource(consoleOperationType, apcHelper, 
 					registryReader, configRegistryReader, idRisorsa, 
-					(nomeRisorsa == null ? resourceOLD.get_value_method() : httpMethod), 
+					(nomeRisorsa == null ? resourceOLD.getMethodRawEnumValue() : httpMethod), 
 					(nomeRisorsa == null ? resourceOLD.getPath() : path));
 			protocolProperties = apcHelper.estraiProtocolPropertiesDaRequest(consoleConfiguration, consoleOperationType);
 
@@ -291,7 +291,7 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 					nomeRisorsa = resourceOLD.getNome();
 					descr = resourceOLD.getDescrizione();
 					path = resourceOLD.getPath();
-					httpMethod = resourceOLD.get_value_method();
+					httpMethod = resourceOLD.getMethodRawEnumValue();
 					messageType = apcCore.toMessageMessageType(resourceOLD.getMessageType());
 					messageTypeRequest = apcCore.toMessageMessageType(resourceOLD.getRequestMessageType());
 					messageTypeResponse = apcCore.toMessageMessageType(resourceOLD.getResponseMessageType());
@@ -491,7 +491,7 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 			newResource.setNome(nomeRisorsaProposto);
 			newResource.setDescrizione(descr);
 			newResource.setPath("".equals(pathNormalizzato) ? null : pathNormalizzato);
-			newResource.set_value_method("".equals(httpMethod) ? null : httpMethod);
+			newResource.setMethodRawEnumValue("".equals(httpMethod) ? null : httpMethod);
 			newResource.setMessageType(apcCore.fromMessageMessageType(messageType));
 			newResource.setRequestMessageType(apcCore.fromMessageMessageType(messageTypeRequest));
 			newResource.setResponseMessageType(apcCore.fromMessageMessageType(messageTypeResponse));

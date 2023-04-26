@@ -90,33 +90,6 @@ public class SystemProperties extends org.openspcoop2.utils.beans.BaseBeanWithId
 
 
   @XmlElement(name="system-property",required=true,nillable=false)
-  protected List<Property> systemProperty = new ArrayList<Property>();
-
-  /**
-   * @deprecated Use method getSystemPropertyList
-   * @return List&lt;Property&gt;
-  */
-  @Deprecated
-  public List<Property> getSystemProperty() {
-  	return this.systemProperty;
-  }
-
-  /**
-   * @deprecated Use method setSystemPropertyList
-   * @param systemProperty List&lt;Property&gt;
-  */
-  @Deprecated
-  public void setSystemProperty(List<Property> systemProperty) {
-  	this.systemProperty=systemProperty;
-  }
-
-  /**
-   * @deprecated Use method sizeSystemPropertyList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeSystemProperty() {
-  	return this.systemProperty.size();
-  }
+  private List<Property> systemProperty = new ArrayList<>();
 
 }

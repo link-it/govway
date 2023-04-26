@@ -274,64 +274,10 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBeanWit
   protected RispostaAsincrona rispostaAsincrona;
 
   @XmlElement(name="proprieta",required=true,nillable=false)
-  protected List<Proprieta> proprieta = new ArrayList<Proprieta>();
-
-  /**
-   * @deprecated Use method getProprietaList
-   * @return List&lt;Proprieta&gt;
-  */
-  @Deprecated
-  public List<Proprieta> getProprieta() {
-  	return this.proprieta;
-  }
-
-  /**
-   * @deprecated Use method setProprietaList
-   * @param proprieta List&lt;Proprieta&gt;
-  */
-  @Deprecated
-  public void setProprieta(List<Proprieta> proprieta) {
-  	this.proprieta=proprieta;
-  }
-
-  /**
-   * @deprecated Use method sizeProprietaList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeProprieta() {
-  	return this.proprieta.size();
-  }
+  private List<Proprieta> proprieta = new ArrayList<>();
 
   @XmlElement(name="protocol-property",required=true,nillable=false)
-  protected List<ProtocolProperty> protocolProperty = new ArrayList<ProtocolProperty>();
-
-  /**
-   * @deprecated Use method getProtocolPropertyList
-   * @return List&lt;ProtocolProperty&gt;
-  */
-  @Deprecated
-  public List<ProtocolProperty> getProtocolProperty() {
-  	return this.protocolProperty;
-  }
-
-  /**
-   * @deprecated Use method setProtocolPropertyList
-   * @param protocolProperty List&lt;ProtocolProperty&gt;
-  */
-  @Deprecated
-  public void setProtocolProperty(List<ProtocolProperty> protocolProperty) {
-  	this.protocolProperty=protocolProperty;
-  }
-
-  /**
-   * @deprecated Use method sizeProtocolPropertyList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeProtocolProperty() {
-  	return this.protocolProperty.size();
-  }
+  private List<ProtocolProperty> protocolProperty = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Long idSoggetto;

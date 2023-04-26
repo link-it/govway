@@ -55,11 +55,11 @@ public class PortaTracciamento extends org.openspcoop2.utils.beans.BaseBeanWithI
     super();
   }
 
-  public void set_value_severita(String value) {
+  public void setSeveritaRawEnumValue(String value) {
     this.severita = (Severita) Severita.toEnumConstantFromString(value);
   }
 
-  public String get_value_severita() {
+  public String getSeveritaRawEnumValue() {
     if(this.severita == null){
     	return null;
     }else{
@@ -88,7 +88,7 @@ public class PortaTracciamento extends org.openspcoop2.utils.beans.BaseBeanWithI
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_severita;
+  protected java.lang.String severitaRawEnumValue;
 
   @XmlAttribute(name="severita",required=false)
   protected Severita severita;

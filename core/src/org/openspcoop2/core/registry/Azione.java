@@ -123,11 +123,11 @@ public class Azione extends org.openspcoop2.utils.beans.BaseBeanWithId implement
     this.nome = nome;
   }
 
-  public void set_value_profiloCollaborazione(String value) {
+  public void setProfiloCollaborazioneRawEnumValue(String value) {
     this.profiloCollaborazione = (ProfiloCollaborazione) ProfiloCollaborazione.toEnumConstantFromString(value);
   }
 
-  public String get_value_profiloCollaborazione() {
+  public String getProfiloCollaborazioneRawEnumValue() {
     if(this.profiloCollaborazione == null){
     	return null;
     }else{
@@ -143,11 +143,11 @@ public class Azione extends org.openspcoop2.utils.beans.BaseBeanWithId implement
     this.profiloCollaborazione = profiloCollaborazione;
   }
 
-  public void set_value_filtroDuplicati(String value) {
+  public void setFiltroDuplicatiRawEnumValue(String value) {
     this.filtroDuplicati = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_filtroDuplicati() {
+  public String getFiltroDuplicatiRawEnumValue() {
     if(this.filtroDuplicati == null){
     	return null;
     }else{
@@ -163,11 +163,11 @@ public class Azione extends org.openspcoop2.utils.beans.BaseBeanWithId implement
     this.filtroDuplicati = filtroDuplicati;
   }
 
-  public void set_value_confermaRicezione(String value) {
+  public void setConfermaRicezioneRawEnumValue(String value) {
     this.confermaRicezione = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_confermaRicezione() {
+  public String getConfermaRicezioneRawEnumValue() {
     if(this.confermaRicezione == null){
     	return null;
     }else{
@@ -183,11 +183,11 @@ public class Azione extends org.openspcoop2.utils.beans.BaseBeanWithId implement
     this.confermaRicezione = confermaRicezione;
   }
 
-  public void set_value_idCollaborazione(String value) {
+  public void setIdCollaborazioneRawEnumValue(String value) {
     this.idCollaborazione = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_idCollaborazione() {
+  public String getIdCollaborazioneRawEnumValue() {
     if(this.idCollaborazione == null){
     	return null;
     }else{
@@ -203,11 +203,11 @@ public class Azione extends org.openspcoop2.utils.beans.BaseBeanWithId implement
     this.idCollaborazione = idCollaborazione;
   }
 
-  public void set_value_idRiferimentoRichiesta(String value) {
+  public void setIdRiferimentoRichiestaRawEnumValue(String value) {
     this.idRiferimentoRichiesta = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_idRiferimentoRichiesta() {
+  public String getIdRiferimentoRichiestaRawEnumValue() {
     if(this.idRiferimentoRichiesta == null){
     	return null;
     }else{
@@ -223,11 +223,11 @@ public class Azione extends org.openspcoop2.utils.beans.BaseBeanWithId implement
     this.idRiferimentoRichiesta = idRiferimentoRichiesta;
   }
 
-  public void set_value_consegnaInOrdine(String value) {
+  public void setConsegnaInOrdineRawEnumValue(String value) {
     this.consegnaInOrdine = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_consegnaInOrdine() {
+  public String getConsegnaInOrdineRawEnumValue() {
     if(this.consegnaInOrdine == null){
     	return null;
     }else{
@@ -264,34 +264,7 @@ public class Azione extends org.openspcoop2.utils.beans.BaseBeanWithId implement
 
 
   @XmlElement(name="protocol-property",required=true,nillable=false)
-  protected List<ProtocolProperty> protocolProperty = new ArrayList<ProtocolProperty>();
-
-  /**
-   * @deprecated Use method getProtocolPropertyList
-   * @return List&lt;ProtocolProperty&gt;
-  */
-  @Deprecated
-  public List<ProtocolProperty> getProtocolProperty() {
-  	return this.protocolProperty;
-  }
-
-  /**
-   * @deprecated Use method setProtocolPropertyList
-   * @param protocolProperty List&lt;ProtocolProperty&gt;
-  */
-  @Deprecated
-  public void setProtocolProperty(List<ProtocolProperty> protocolProperty) {
-  	this.protocolProperty=protocolProperty;
-  }
-
-  /**
-   * @deprecated Use method sizeProtocolPropertyList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeProtocolProperty() {
-  	return this.protocolProperty.size();
-  }
+  private List<ProtocolProperty> protocolProperty = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="prof-azione",required=false)
@@ -305,37 +278,37 @@ public class Azione extends org.openspcoop2.utils.beans.BaseBeanWithId implement
   protected java.lang.String nome;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_profiloCollaborazione;
+  protected java.lang.String profiloCollaborazioneRawEnumValue;
 
   @XmlAttribute(name="profilo-collaborazione",required=false)
   protected ProfiloCollaborazione profiloCollaborazione;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_filtroDuplicati;
+  protected java.lang.String filtroDuplicatiRawEnumValue;
 
   @XmlAttribute(name="filtro-duplicati",required=false)
   protected StatoFunzionalita filtroDuplicati;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_confermaRicezione;
+  protected java.lang.String confermaRicezioneRawEnumValue;
 
   @XmlAttribute(name="conferma-ricezione",required=false)
   protected StatoFunzionalita confermaRicezione;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_idCollaborazione;
+  protected java.lang.String idCollaborazioneRawEnumValue;
 
   @XmlAttribute(name="id-collaborazione",required=false)
   protected StatoFunzionalita idCollaborazione;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_idRiferimentoRichiesta;
+  protected java.lang.String idRiferimentoRichiestaRawEnumValue;
 
   @XmlAttribute(name="id-riferimento-richiesta",required=false)
   protected StatoFunzionalita idRiferimentoRichiesta;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_consegnaInOrdine;
+  protected java.lang.String consegnaInOrdineRawEnumValue;
 
   @XmlAttribute(name="consegna-in-ordine",required=false)
   protected StatoFunzionalita consegnaInOrdine;

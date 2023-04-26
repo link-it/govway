@@ -102,11 +102,11 @@ public class Scope extends org.openspcoop2.utils.beans.BaseBeanWithId implements
     this.nomeEsterno = nomeEsterno;
   }
 
-  public void set_value_contestoUtilizzo(String value) {
+  public void setContestoUtilizzoRawEnumValue(String value) {
     this.contestoUtilizzo = (ScopeContesto) ScopeContesto.toEnumConstantFromString(value);
   }
 
-  public String get_value_contestoUtilizzo() {
+  public String getContestoUtilizzoRawEnumValue() {
     if(this.contestoUtilizzo == null){
     	return null;
     }else{
@@ -174,7 +174,7 @@ public class Scope extends org.openspcoop2.utils.beans.BaseBeanWithId implements
   protected java.lang.String nomeEsterno;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_contestoUtilizzo;
+  protected java.lang.String contestoUtilizzoRawEnumValue;
 
   @XmlAttribute(name="contesto-utilizzo",required=false)
   protected ScopeContesto contestoUtilizzo = (ScopeContesto) ScopeContesto.toEnumConstantFromString("qualsiasi");

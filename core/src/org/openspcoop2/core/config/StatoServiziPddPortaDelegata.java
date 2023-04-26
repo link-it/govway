@@ -114,11 +114,11 @@ public class StatoServiziPddPortaDelegata extends org.openspcoop2.utils.beans.Ba
     return this.filtroDisabilitazione.size();
   }
 
-  public void set_value_stato(String value) {
+  public void setStatoRawEnumValue(String value) {
     this.stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_stato() {
+  public String getStatoRawEnumValue() {
     if(this.stato == null){
     	return null;
     }else{
@@ -139,67 +139,13 @@ public class StatoServiziPddPortaDelegata extends org.openspcoop2.utils.beans.Ba
 
 
   @XmlElement(name="filtro-abilitazione",required=true,nillable=false)
-  protected List<TipoFiltroAbilitazioneServizi> filtroAbilitazione = new ArrayList<TipoFiltroAbilitazioneServizi>();
-
-  /**
-   * @deprecated Use method getFiltroAbilitazioneList
-   * @return List&lt;TipoFiltroAbilitazioneServizi&gt;
-  */
-  @Deprecated
-  public List<TipoFiltroAbilitazioneServizi> getFiltroAbilitazione() {
-  	return this.filtroAbilitazione;
-  }
-
-  /**
-   * @deprecated Use method setFiltroAbilitazioneList
-   * @param filtroAbilitazione List&lt;TipoFiltroAbilitazioneServizi&gt;
-  */
-  @Deprecated
-  public void setFiltroAbilitazione(List<TipoFiltroAbilitazioneServizi> filtroAbilitazione) {
-  	this.filtroAbilitazione=filtroAbilitazione;
-  }
-
-  /**
-   * @deprecated Use method sizeFiltroAbilitazioneList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeFiltroAbilitazione() {
-  	return this.filtroAbilitazione.size();
-  }
+  private List<TipoFiltroAbilitazioneServizi> filtroAbilitazione = new ArrayList<>();
 
   @XmlElement(name="filtro-disabilitazione",required=true,nillable=false)
-  protected List<TipoFiltroAbilitazioneServizi> filtroDisabilitazione = new ArrayList<TipoFiltroAbilitazioneServizi>();
-
-  /**
-   * @deprecated Use method getFiltroDisabilitazioneList
-   * @return List&lt;TipoFiltroAbilitazioneServizi&gt;
-  */
-  @Deprecated
-  public List<TipoFiltroAbilitazioneServizi> getFiltroDisabilitazione() {
-  	return this.filtroDisabilitazione;
-  }
-
-  /**
-   * @deprecated Use method setFiltroDisabilitazioneList
-   * @param filtroDisabilitazione List&lt;TipoFiltroAbilitazioneServizi&gt;
-  */
-  @Deprecated
-  public void setFiltroDisabilitazione(List<TipoFiltroAbilitazioneServizi> filtroDisabilitazione) {
-  	this.filtroDisabilitazione=filtroDisabilitazione;
-  }
-
-  /**
-   * @deprecated Use method sizeFiltroDisabilitazioneList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeFiltroDisabilitazione() {
-  	return this.filtroDisabilitazione.size();
-  }
+  private List<TipoFiltroAbilitazioneServizi> filtroDisabilitazione = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_stato;
+  protected java.lang.String statoRawEnumValue;
 
   @XmlAttribute(name="stato",required=false)
   protected StatoFunzionalita stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");

@@ -107,11 +107,11 @@ public class CorsConfigurazione extends org.openspcoop2.utils.beans.BaseBeanWith
     this.accessControlExposeHeaders = accessControlExposeHeaders;
   }
 
-  public void set_value_stato(String value) {
+  public void setStatoRawEnumValue(String value) {
     this.stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_stato() {
+  public String getStatoRawEnumValue() {
     if(this.stato == null){
     	return null;
     }else{
@@ -127,11 +127,11 @@ public class CorsConfigurazione extends org.openspcoop2.utils.beans.BaseBeanWith
     this.stato = stato;
   }
 
-  public void set_value_tipo(String value) {
+  public void setTipoRawEnumValue(String value) {
     this.tipo = (TipoGestioneCORS) TipoGestioneCORS.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipo() {
+  public String getTipoRawEnumValue() {
     if(this.tipo == null){
     	return null;
     }else{
@@ -147,11 +147,11 @@ public class CorsConfigurazione extends org.openspcoop2.utils.beans.BaseBeanWith
     this.tipo = tipo;
   }
 
-  public void set_value_accessControlAllAllowOrigins(String value) {
+  public void setAccessControlAllAllowOriginsRawEnumValue(String value) {
     this.accessControlAllAllowOrigins = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_accessControlAllAllowOrigins() {
+  public String getAccessControlAllAllowOriginsRawEnumValue() {
     if(this.accessControlAllAllowOrigins == null){
     	return null;
     }else{
@@ -167,11 +167,11 @@ public class CorsConfigurazione extends org.openspcoop2.utils.beans.BaseBeanWith
     this.accessControlAllAllowOrigins = accessControlAllAllowOrigins;
   }
 
-  public void set_value_accessControlAllAllowMethods(String value) {
+  public void setAccessControlAllAllowMethodsRawEnumValue(String value) {
     this.accessControlAllAllowMethods = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_accessControlAllAllowMethods() {
+  public String getAccessControlAllAllowMethodsRawEnumValue() {
     if(this.accessControlAllAllowMethods == null){
     	return null;
     }else{
@@ -187,11 +187,11 @@ public class CorsConfigurazione extends org.openspcoop2.utils.beans.BaseBeanWith
     this.accessControlAllAllowMethods = accessControlAllAllowMethods;
   }
 
-  public void set_value_accessControlAllAllowHeaders(String value) {
+  public void setAccessControlAllAllowHeadersRawEnumValue(String value) {
     this.accessControlAllAllowHeaders = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_accessControlAllAllowHeaders() {
+  public String getAccessControlAllAllowHeadersRawEnumValue() {
     if(this.accessControlAllAllowHeaders == null){
     	return null;
     }else{
@@ -207,11 +207,11 @@ public class CorsConfigurazione extends org.openspcoop2.utils.beans.BaseBeanWith
     this.accessControlAllAllowHeaders = accessControlAllAllowHeaders;
   }
 
-  public void set_value_accessControlAllowCredentials(String value) {
+  public void setAccessControlAllowCredentialsRawEnumValue(String value) {
     this.accessControlAllowCredentials = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_accessControlAllowCredentials() {
+  public String getAccessControlAllowCredentialsRawEnumValue() {
     if(this.accessControlAllowCredentials == null){
     	return null;
     }else{
@@ -252,37 +252,37 @@ public class CorsConfigurazione extends org.openspcoop2.utils.beans.BaseBeanWith
   protected CorsConfigurazioneHeaders accessControlExposeHeaders;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_stato;
+  protected java.lang.String statoRawEnumValue;
 
   @XmlAttribute(name="stato",required=false)
   protected StatoFunzionalita stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipo;
+  protected java.lang.String tipoRawEnumValue;
 
   @XmlAttribute(name="tipo",required=false)
   protected TipoGestioneCORS tipo = (TipoGestioneCORS) TipoGestioneCORS.toEnumConstantFromString("gateway");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_accessControlAllAllowOrigins;
+  protected java.lang.String accessControlAllAllowOriginsRawEnumValue;
 
   @XmlAttribute(name="access-control-all-allow-origins",required=false)
   protected StatoFunzionalita accessControlAllAllowOrigins = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_accessControlAllAllowMethods;
+  protected java.lang.String accessControlAllAllowMethodsRawEnumValue;
 
   @XmlAttribute(name="access-control-all-allow-methods",required=false)
   protected StatoFunzionalita accessControlAllAllowMethods = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_accessControlAllAllowHeaders;
+  protected java.lang.String accessControlAllAllowHeadersRawEnumValue;
 
   @XmlAttribute(name="access-control-all-allow-headers",required=false)
   protected StatoFunzionalita accessControlAllAllowHeaders = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_accessControlAllowCredentials;
+  protected java.lang.String accessControlAllowCredentialsRawEnumValue;
 
   @XmlAttribute(name="access-control-allow-credentials",required=false)
   protected StatoFunzionalita accessControlAllowCredentials = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");

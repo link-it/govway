@@ -88,11 +88,11 @@ public class MtomProcessorFlow extends org.openspcoop2.utils.beans.BaseBeanWithI
     return this.parameter.size();
   }
 
-  public void set_value_mode(String value) {
+  public void setModeRawEnumValue(String value) {
     this.mode = (MTOMProcessorType) MTOMProcessorType.toEnumConstantFromString(value);
   }
 
-  public String get_value_mode() {
+  public String getModeRawEnumValue() {
     if(this.mode == null){
     	return null;
     }else{
@@ -113,37 +113,10 @@ public class MtomProcessorFlow extends org.openspcoop2.utils.beans.BaseBeanWithI
 
 
   @XmlElement(name="parameter",required=true,nillable=false)
-  protected List<MtomProcessorFlowParameter> parameter = new ArrayList<MtomProcessorFlowParameter>();
-
-  /**
-   * @deprecated Use method getParameterList
-   * @return List&lt;MtomProcessorFlowParameter&gt;
-  */
-  @Deprecated
-  public List<MtomProcessorFlowParameter> getParameter() {
-  	return this.parameter;
-  }
-
-  /**
-   * @deprecated Use method setParameterList
-   * @param parameter List&lt;MtomProcessorFlowParameter&gt;
-  */
-  @Deprecated
-  public void setParameter(List<MtomProcessorFlowParameter> parameter) {
-  	this.parameter=parameter;
-  }
-
-  /**
-   * @deprecated Use method sizeParameterList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeParameter() {
-  	return this.parameter.size();
-  }
+  private List<MtomProcessorFlowParameter> parameter = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_mode;
+  protected java.lang.String modeRawEnumValue;
 
   @XmlAttribute(name="mode",required=false)
   protected MTOMProcessorType mode = (MTOMProcessorType) MTOMProcessorType.toEnumConstantFromString("disable");

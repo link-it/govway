@@ -56,11 +56,11 @@ public class ResourceRepresentationXml extends org.openspcoop2.utils.beans.BaseB
     super();
   }
 
-  public void set_value_xmlType(String value) {
+  public void setXmlTypeRawEnumValue(String value) {
     this.xmlType = (RepresentationXmlType) RepresentationXmlType.toEnumConstantFromString(value);
   }
 
-  public String get_value_xmlType() {
+  public String getXmlTypeRawEnumValue() {
     if(this.xmlType == null){
     	return null;
     }else{
@@ -97,7 +97,7 @@ public class ResourceRepresentationXml extends org.openspcoop2.utils.beans.BaseB
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_xmlType;
+  protected java.lang.String xmlTypeRawEnumValue;
 
   @XmlAttribute(name="xml-type",required=true)
   protected RepresentationXmlType xmlType;

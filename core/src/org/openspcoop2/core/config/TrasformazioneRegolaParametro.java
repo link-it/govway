@@ -58,11 +58,11 @@ public class TrasformazioneRegolaParametro extends org.openspcoop2.utils.beans.B
     super();
   }
 
-  public void set_value_conversioneTipo(String value) {
+  public void setConversioneTipoRawEnumValue(String value) {
     this.conversioneTipo = (TrasformazioneRegolaParametroTipoAzione) TrasformazioneRegolaParametroTipoAzione.toEnumConstantFromString(value);
   }
 
-  public String get_value_conversioneTipo() {
+  public String getConversioneTipoRawEnumValue() {
     if(this.conversioneTipo == null){
     	return null;
     }else{
@@ -94,11 +94,11 @@ public class TrasformazioneRegolaParametro extends org.openspcoop2.utils.beans.B
     this.valore = valore;
   }
 
-  public void set_value_identificazioneFallita(String value) {
+  public void setIdentificazioneFallitaRawEnumValue(String value) {
     this.identificazioneFallita = (TrasformazioneIdentificazioneRisorsaFallita) TrasformazioneIdentificazioneRisorsaFallita.toEnumConstantFromString(value);
   }
 
-  public String get_value_identificazioneFallita() {
+  public String getIdentificazioneFallitaRawEnumValue() {
     if(this.identificazioneFallita == null){
     	return null;
     }else{
@@ -119,7 +119,7 @@ public class TrasformazioneRegolaParametro extends org.openspcoop2.utils.beans.B
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_conversioneTipo;
+  protected java.lang.String conversioneTipoRawEnumValue;
 
   @XmlAttribute(name="conversione-tipo",required=true)
   protected TrasformazioneRegolaParametroTipoAzione conversioneTipo;
@@ -133,7 +133,7 @@ public class TrasformazioneRegolaParametro extends org.openspcoop2.utils.beans.B
   protected java.lang.String valore;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_identificazioneFallita;
+  protected java.lang.String identificazioneFallitaRawEnumValue;
 
   @XmlAttribute(name="identificazione-fallita",required=false)
   protected TrasformazioneIdentificazioneRisorsaFallita identificazioneFallita;

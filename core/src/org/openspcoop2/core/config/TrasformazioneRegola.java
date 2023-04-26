@@ -126,11 +126,11 @@ public class TrasformazioneRegola extends org.openspcoop2.utils.beans.BaseBeanWi
     this.posizione = posizione;
   }
 
-  public void set_value_stato(String value) {
+  public void setStatoRawEnumValue(String value) {
     this.stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_stato() {
+  public String getStatoRawEnumValue() {
     if(this.stato == null){
     	return null;
     }else{
@@ -157,34 +157,7 @@ public class TrasformazioneRegola extends org.openspcoop2.utils.beans.BaseBeanWi
   protected TrasformazioneRegolaRichiesta richiesta;
 
   @XmlElement(name="risposta",required=true,nillable=false)
-  protected List<TrasformazioneRegolaRisposta> risposta = new ArrayList<TrasformazioneRegolaRisposta>();
-
-  /**
-   * @deprecated Use method getRispostaList
-   * @return List&lt;TrasformazioneRegolaRisposta&gt;
-  */
-  @Deprecated
-  public List<TrasformazioneRegolaRisposta> getRisposta() {
-  	return this.risposta;
-  }
-
-  /**
-   * @deprecated Use method setRispostaList
-   * @param risposta List&lt;TrasformazioneRegolaRisposta&gt;
-  */
-  @Deprecated
-  public void setRisposta(List<TrasformazioneRegolaRisposta> risposta) {
-  	this.risposta=risposta;
-  }
-
-  /**
-   * @deprecated Use method sizeRispostaList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeRisposta() {
-  	return this.risposta.size();
-  }
+  private List<TrasformazioneRegolaRisposta> risposta = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=true)
@@ -195,7 +168,7 @@ public class TrasformazioneRegola extends org.openspcoop2.utils.beans.BaseBeanWi
   protected int posizione;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_stato;
+  protected java.lang.String statoRawEnumValue;
 
   @XmlAttribute(name="stato",required=false)
   protected StatoFunzionalita stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");

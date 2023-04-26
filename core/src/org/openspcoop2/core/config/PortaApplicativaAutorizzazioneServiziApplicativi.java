@@ -90,33 +90,6 @@ public class PortaApplicativaAutorizzazioneServiziApplicativi extends org.opensp
 
 
   @XmlElement(name="servizio-applicativo",required=true,nillable=false)
-  protected List<PortaApplicativaAutorizzazioneServizioApplicativo> servizioApplicativo = new ArrayList<PortaApplicativaAutorizzazioneServizioApplicativo>();
-
-  /**
-   * @deprecated Use method getServizioApplicativoList
-   * @return List&lt;PortaApplicativaAutorizzazioneServizioApplicativo&gt;
-  */
-  @Deprecated
-  public List<PortaApplicativaAutorizzazioneServizioApplicativo> getServizioApplicativo() {
-  	return this.servizioApplicativo;
-  }
-
-  /**
-   * @deprecated Use method setServizioApplicativoList
-   * @param servizioApplicativo List&lt;PortaApplicativaAutorizzazioneServizioApplicativo&gt;
-  */
-  @Deprecated
-  public void setServizioApplicativo(List<PortaApplicativaAutorizzazioneServizioApplicativo> servizioApplicativo) {
-  	this.servizioApplicativo=servizioApplicativo;
-  }
-
-  /**
-   * @deprecated Use method sizeServizioApplicativoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeServizioApplicativo() {
-  	return this.servizioApplicativo.size();
-  }
+  private List<PortaApplicativaAutorizzazioneServizioApplicativo> servizioApplicativo = new ArrayList<>();
 
 }

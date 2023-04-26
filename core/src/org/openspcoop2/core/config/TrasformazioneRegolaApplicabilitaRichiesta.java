@@ -205,65 +205,11 @@ public class TrasformazioneRegolaApplicabilitaRichiesta extends org.openspcoop2.
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="azione",required=true,nillable=false)
-  protected List<java.lang.String> azione = new ArrayList<java.lang.String>();
-
-  /**
-   * @deprecated Use method getAzioneList
-   * @return List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public List<java.lang.String> getAzione() {
-  	return this.azione;
-  }
-
-  /**
-   * @deprecated Use method setAzioneList
-   * @param azione List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public void setAzione(List<java.lang.String> azione) {
-  	this.azione=azione;
-  }
-
-  /**
-   * @deprecated Use method sizeAzioneList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeAzione() {
-  	return this.azione.size();
-  }
+  private List<java.lang.String> azione = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="content-type",required=true,nillable=false)
-  protected List<java.lang.String> contentType = new ArrayList<java.lang.String>();
-
-  /**
-   * @deprecated Use method getContentTypeList
-   * @return List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public List<java.lang.String> getContentType() {
-  	return this.contentType;
-  }
-
-  /**
-   * @deprecated Use method setContentTypeList
-   * @param contentType List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public void setContentType(List<java.lang.String> contentType) {
-  	this.contentType=contentType;
-  }
-
-  /**
-   * @deprecated Use method sizeContentTypeList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeContentType() {
-  	return this.contentType.size();
-  }
+  private List<java.lang.String> contentType = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="pattern",required=false,nillable=false)
@@ -271,93 +217,12 @@ public class TrasformazioneRegolaApplicabilitaRichiesta extends org.openspcoop2.
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="connettore",required=true,nillable=false)
-  protected List<java.lang.String> connettore = new ArrayList<java.lang.String>();
-
-  /**
-   * @deprecated Use method getConnettoreList
-   * @return List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public List<java.lang.String> getConnettore() {
-  	return this.connettore;
-  }
-
-  /**
-   * @deprecated Use method setConnettoreList
-   * @param connettore List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public void setConnettore(List<java.lang.String> connettore) {
-  	this.connettore=connettore;
-  }
-
-  /**
-   * @deprecated Use method sizeConnettoreList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeConnettore() {
-  	return this.connettore.size();
-  }
+  private List<java.lang.String> connettore = new ArrayList<>();
 
   @XmlElement(name="soggetto",required=true,nillable=false)
-  protected List<TrasformazioneRegolaApplicabilitaSoggetto> soggetto = new ArrayList<TrasformazioneRegolaApplicabilitaSoggetto>();
-
-  /**
-   * @deprecated Use method getSoggettoList
-   * @return List&lt;TrasformazioneRegolaApplicabilitaSoggetto&gt;
-  */
-  @Deprecated
-  public List<TrasformazioneRegolaApplicabilitaSoggetto> getSoggetto() {
-  	return this.soggetto;
-  }
-
-  /**
-   * @deprecated Use method setSoggettoList
-   * @param soggetto List&lt;TrasformazioneRegolaApplicabilitaSoggetto&gt;
-  */
-  @Deprecated
-  public void setSoggetto(List<TrasformazioneRegolaApplicabilitaSoggetto> soggetto) {
-  	this.soggetto=soggetto;
-  }
-
-  /**
-   * @deprecated Use method sizeSoggettoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeSoggetto() {
-  	return this.soggetto.size();
-  }
+  private List<TrasformazioneRegolaApplicabilitaSoggetto> soggetto = new ArrayList<>();
 
   @XmlElement(name="servizio-applicativo",required=true,nillable=false)
-  protected List<TrasformazioneRegolaApplicabilitaServizioApplicativo> servizioApplicativo = new ArrayList<TrasformazioneRegolaApplicabilitaServizioApplicativo>();
-
-  /**
-   * @deprecated Use method getServizioApplicativoList
-   * @return List&lt;TrasformazioneRegolaApplicabilitaServizioApplicativo&gt;
-  */
-  @Deprecated
-  public List<TrasformazioneRegolaApplicabilitaServizioApplicativo> getServizioApplicativo() {
-  	return this.servizioApplicativo;
-  }
-
-  /**
-   * @deprecated Use method setServizioApplicativoList
-   * @param servizioApplicativo List&lt;TrasformazioneRegolaApplicabilitaServizioApplicativo&gt;
-  */
-  @Deprecated
-  public void setServizioApplicativo(List<TrasformazioneRegolaApplicabilitaServizioApplicativo> servizioApplicativo) {
-  	this.servizioApplicativo=servizioApplicativo;
-  }
-
-  /**
-   * @deprecated Use method sizeServizioApplicativoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeServizioApplicativo() {
-  	return this.servizioApplicativo.size();
-  }
+  private List<TrasformazioneRegolaApplicabilitaServizioApplicativo> servizioApplicativo = new ArrayList<>();
 
 }

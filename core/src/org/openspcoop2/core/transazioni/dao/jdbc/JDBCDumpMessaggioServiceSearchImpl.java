@@ -122,7 +122,7 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 	@Override
 	public DumpMessaggio get(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdDumpMessaggio id, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException,Exception {
 		Long id_dumpMessaggio = ( (id!=null && id.getId()!=null && id.getId()>0) ? id.getId() : this.findIdDumpMessaggio(jdbcProperties, log, connection, sqlQueryObject, id, true));
-		return this._get(jdbcProperties, log, connection, sqlQueryObject, id_dumpMessaggio,idMappingResolutionBehaviour);
+		return this.getEngine(jdbcProperties, log, connection, sqlQueryObject, id_dumpMessaggio,idMappingResolutionBehaviour);
 		
 		
 	}
@@ -267,7 +267,7 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 		
 		sqlQueryObject.addSelectCountField(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model())+".id","tot",true);
 		
-		_join(expression,sqlQueryObject);
+		joinEngine(expression,sqlQueryObject);
 		
 		return org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.count(jdbcProperties, log, connection, sqlQueryObject, expression,
 																			this.getDumpMessaggioFieldConverter(), DumpMessaggio.model(),listaQuery);
@@ -277,7 +277,7 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 	public InUse inUse(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdDumpMessaggio id) throws NotFoundException, NotImplementedException, ServiceException,Exception {
 		
 		Long id_dumpMessaggio = this.findIdDumpMessaggio(jdbcProperties, log, connection, sqlQueryObject, id, true);
-        return this._inUse(jdbcProperties, log, connection, sqlQueryObject, id_dumpMessaggio);
+        return this.inUseEngine(jdbcProperties, log, connection, sqlQueryObject, id_dumpMessaggio);
 		
 	}
 
@@ -314,7 +314,7 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 						org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareSqlQueryObjectForSelectDistinct(distinct,sqlQueryObject, paginatedExpression, log,
 												this.getDumpMessaggioFieldConverter(), field);
 
-			return _select(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression, sqlQueryObjectDistinct);
+			return selectEngine(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression, sqlQueryObjectDistinct);
 			
 		}finally{
 			org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.removeFields(sqlQueryObject,paginatedExpression,field);
@@ -335,7 +335,7 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 		
 		org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.setFields(sqlQueryObject,expression,functionField);
 		try{
-			List<Map<String,Object>> list = _select(jdbcProperties, log, connection, sqlQueryObject, expression);
+			List<Map<String,Object>> list = selectEngine(jdbcProperties, log, connection, sqlQueryObject, expression);
 			return list.get(0);
 		}finally{
 			org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.removeFields(sqlQueryObject,expression,functionField);
@@ -346,13 +346,13 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 	public List<Map<String,Object>> groupBy(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
 													JDBCExpression expression, FunctionField ... functionField) throws ServiceException,NotFoundException,NotImplementedException,Exception {
 		
-		if(expression.getGroupByFields().size()<=0){
+		if(expression.getGroupByFields().isEmpty()){
 			throw new ServiceException("GroupBy conditions not found in expression");
 		}
 		
 		org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.setFields(sqlQueryObject,expression,functionField);
 		try{
-			return _select(jdbcProperties, log, connection, sqlQueryObject, expression);
+			return selectEngine(jdbcProperties, log, connection, sqlQueryObject, expression);
 		}finally{
 			org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.removeFields(sqlQueryObject,expression,functionField);
 		}
@@ -363,23 +363,23 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 	public List<Map<String,Object>> groupBy(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
 													JDBCPaginatedExpression paginatedExpression, FunctionField ... functionField) throws ServiceException,NotFoundException,NotImplementedException,Exception {
 		
-		if(paginatedExpression.getGroupByFields().size()<=0){
+		if(paginatedExpression.getGroupByFields().isEmpty()){
 			throw new ServiceException("GroupBy conditions not found in expression");
 		}
 		
 		org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.setFields(sqlQueryObject,paginatedExpression,functionField);
 		try{
-			return _select(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression);
+			return selectEngine(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression);
 		}finally{
 			org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.removeFields(sqlQueryObject,paginatedExpression,functionField);
 		}
 	}
 	
-	protected List<Map<String,Object>> _select(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
+	protected List<Map<String,Object>> selectEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
 												IExpression expression) throws ServiceException,NotFoundException,NotImplementedException,Exception {
-		return _select(jdbcProperties, log, connection, sqlQueryObject, expression, null);
+		return selectEngine(jdbcProperties, log, connection, sqlQueryObject, expression, null);
 	}
-	protected List<Map<String,Object>> _select(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
+	protected List<Map<String,Object>> selectEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
 												IExpression expression, ISQLQueryObject sqlQueryObjectDistinct) throws ServiceException,NotFoundException,NotImplementedException,Exception {
 		
 		List<Object> listaQuery = new ArrayList<>();
@@ -388,17 +388,17 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
         						expression, this.getDumpMessaggioFieldConverter(), DumpMessaggio.model(), 
         						listaQuery,listaParams);
 		
-		_join(expression,sqlQueryObject);
+		joinEngine(expression,sqlQueryObject);
         
         List<Map<String,Object>> list = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.select(jdbcProperties, log, connection,
         								org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareSqlQueryObjectForSelectDistinct(sqlQueryObject,sqlQueryObjectDistinct), 
         								expression, this.getDumpMessaggioFieldConverter(), DumpMessaggio.model(),
         								listaQuery,listaParams,returnField);
-		if(list!=null && list.size()>0){
+		if(list!=null && !list.isEmpty()){
 			return list;
 		}
 		else{
-			throw new NotFoundException("Not Found");
+			throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 		}
 	}
 	
@@ -416,18 +416,18 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 			for (int i = 0; i < unionExpression.length; i++) {
 				UnionExpression ue = unionExpression[i];
 				IExpression expression = ue.getExpression();
-				_join(expression,sqlQueryObjectInnerList.get(i));
+				joinEngine(expression,sqlQueryObjectInnerList.get(i));
 			}
 		}
         
         List<Map<String,Object>> list = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.union(jdbcProperties, log, connection, sqlQueryObject, 
         								this.getDumpMessaggioFieldConverter(), DumpMessaggio.model(), 
         								sqlQueryObjectInnerList, jdbcObjects, returnClassTypes, union, unionExpression);
-        if(list!=null && list.size()>0){
+        if(list!=null && !list.isEmpty()){
 			return list;
 		}
 		else{
-			throw new NotFoundException("Not Found");
+			throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 		}								
 	}
 	
@@ -445,7 +445,7 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 			for (int i = 0; i < unionExpression.length; i++) {
 				UnionExpression ue = unionExpression[i];
 				IExpression expression = ue.getExpression();
-				_join(expression,sqlQueryObjectInnerList.get(i));
+				joinEngine(expression,sqlQueryObjectInnerList.get(i));
 			}
 		}
         
@@ -456,7 +456,7 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 			return number;
 		}
 		else{
-			throw new NotFoundException("Not Found");
+			throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 		}
 	}
 
@@ -626,10 +626,10 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 	
 	@Override
 	public DumpMessaggio get(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException, Exception {
-		return this._get(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId), idMappingResolutionBehaviour);
+		return this.getEngine(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId), idMappingResolutionBehaviour);
 	}
 	
-	protected DumpMessaggio _get(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long tableId, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException, Exception {
+	protected DumpMessaggio getEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long tableId, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException, Exception {
 	
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
@@ -849,7 +849,7 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 	
 	}
 	
-	private void _join(IExpression expression, ISQLQueryObject sqlQueryObject) throws NotImplementedException, ServiceException, Exception{
+	private void joinEngine(IExpression expression, ISQLQueryObject sqlQueryObject) throws NotImplementedException, ServiceException, Exception{
 	
 		if(expression.inUseModel(DumpMessaggio.model().ALLEGATO,false)){
 			String tableName1 = this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().ALLEGATO);
@@ -885,7 +885,7 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
         
 	}
 	
-	protected java.util.List<Object> _getRootTablePrimaryKeyValues(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdDumpMessaggio id) throws NotFoundException, ServiceException, NotImplementedException, Exception{
+	protected java.util.List<Object> getRootTablePrimaryKeyValuesEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdDumpMessaggio id) throws NotFoundException, ServiceException, NotImplementedException, Exception{
 	    // Identificativi
         java.util.List<Object> rootTableIdValues = new java.util.ArrayList<>();
         Long longId = this.findIdDumpMessaggio(jdbcProperties, log, connection, sqlQueryObject.newSQLQueryObject(), id, true);
@@ -893,7 +893,7 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
         return rootTableIdValues;
 	}
 	
-	protected Map<String, List<IField>> _getMapTableToPKColumn() throws NotImplementedException, Exception{
+	protected Map<String, List<IField>> getMapTableToPKColumnEngine() throws NotImplementedException, Exception{
 	
 		DumpMessaggioFieldConverter converter = this.getDumpMessaggioFieldConverter();
 		Map<String, List<IField>> mapTableToPKColumn = new java.util.HashMap<>();
@@ -940,7 +940,7 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 		List<Object> listaQuery = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareFindAll(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression,
 												this.getDumpMessaggioFieldConverter(), DumpMessaggio.model());
 		
-		_join(paginatedExpression,sqlQueryObject);
+		joinEngine(paginatedExpression,sqlQueryObject);
 		
 		List<Object> listObjects = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.findAll(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression,
 																			this.getDumpMessaggioFieldConverter(), DumpMessaggio.model(), objectIdClass, listaQuery);
@@ -963,7 +963,7 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 		List<Object> listaQuery = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.prepareFind(jdbcProperties, log, connection, sqlQueryObject, expression,
 												this.getDumpMessaggioFieldConverter(), DumpMessaggio.model());
 		
-		_join(expression,sqlQueryObject);
+		joinEngine(expression,sqlQueryObject);
 
 		Object res = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.find(jdbcProperties, log, connection, sqlQueryObject, expression,
 														this.getDumpMessaggioFieldConverter(), DumpMessaggio.model(), objectIdClass, listaQuery);
@@ -971,17 +971,17 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 			return ((Long) res).longValue();
 		}
 		else{
-			throw new NotFoundException("Not Found");
+			throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 		}
 		
 	}
 
 	@Override
 	public InUse inUse(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId) throws ServiceException, NotFoundException, NotImplementedException, Exception {
-		return this._inUse(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
+		return this.inUseEngine(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
 	}
 
-	private InUse _inUse(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long tableId) throws ServiceException, NotFoundException, NotImplementedException, Exception {
+	private InUse inUseEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long tableId) throws ServiceException, NotFoundException, NotImplementedException, Exception {
 
 		InUse inUse = new InUse();
 		inUse.setInUse(false);
@@ -1031,7 +1031,7 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 				listaFieldIdReturnType_dumpMessaggio, searchParams_dumpMessaggio);
 		if(listaFieldId_dumpMessaggio==null || listaFieldId_dumpMessaggio.size()<=0){
 			if(throwNotFound){
-				throw new NotFoundException("Not Found");
+				throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 			}
 		}
 		else{
@@ -1098,29 +1098,29 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 		}
 		
 		// Recupero _dumpMessaggio
-		List<org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject> searchParams_dumpMessaggio_list = new ArrayList<>();
-		searchParams_dumpMessaggio_list.add(new JDBCObject(id.getIdTransazione(), String.class));
-		searchParams_dumpMessaggio_list.add(new JDBCObject(id.get_value_tipoMessaggio(), String.class));
+		List<org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject> searchParamsDumpMessaggioList = new ArrayList<>();
+		searchParamsDumpMessaggioList.add(new JDBCObject(id.getIdTransazione(), String.class));
+		searchParamsDumpMessaggioList.add(new JDBCObject(id.getTipoMessaggioRawEnumValue(), String.class));
 		if(id.getServizioApplicativoErogatore() != null) {
-			searchParams_dumpMessaggio_list.add(new JDBCObject(id.getServizioApplicativoErogatore(), String.class));
+			searchParamsDumpMessaggioList.add(new JDBCObject(id.getServizioApplicativoErogatore(), String.class));
 		}
-		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] searchParams_dumpMessaggio = searchParams_dumpMessaggio_list.toArray(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [1]);
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] searchParamsDumpMessaggio = searchParamsDumpMessaggioList.toArray(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [1]);
 
-		Long id_dumpMessaggio = null;
+		Long idDumpMessaggio = null;
 		try{
-			id_dumpMessaggio = (Long) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet.createSQLQuery(), jdbcProperties.isShowSql(),
-						Long.class, searchParams_dumpMessaggio);
+			idDumpMessaggio = (Long) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet.createSQLQuery(), jdbcProperties.isShowSql(),
+						Long.class, searchParamsDumpMessaggio);
 		}catch(NotFoundException notFound){
 			if(throwNotFound){
 				throw new NotFoundException(notFound);
 			}
 		}
-		if(id_dumpMessaggio==null || id_dumpMessaggio<=0){
+		if(idDumpMessaggio==null || idDumpMessaggio<=0){
 			if(throwNotFound){
-				throw new NotFoundException("Not Found");
+				throw org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.newNotFoundException();
 			}
 		}
 		
-		return id_dumpMessaggio;
+		return idDumpMessaggio;
 	}
 }

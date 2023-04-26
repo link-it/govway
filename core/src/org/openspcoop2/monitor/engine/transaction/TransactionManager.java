@@ -416,7 +416,7 @@ public class TransactionManager {
 	
 	public static void setContentResourcesInTransaction(Transaction transaction, DumpMessaggio dumpMessaggio){
 		MessageType tipoMessaggio = MessageType.valueOf(dumpMessaggio
-				.get_value_tipoMessaggio());
+				.getTipoMessaggioRawEnumValue());
 
 		
 		// **** SOAP ENVELOPE **** 

@@ -111,11 +111,11 @@ public class ConfigurazioneUrlInvocazioneRegola extends org.openspcoop2.utils.be
     this.posizione = posizione;
   }
 
-  public void set_value_stato(String value) {
+  public void setStatoRawEnumValue(String value) {
     this.stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_stato() {
+  public String getStatoRawEnumValue() {
     if(this.stato == null){
     	return null;
     }else{
@@ -183,11 +183,11 @@ public class ConfigurazioneUrlInvocazioneRegola extends org.openspcoop2.utils.be
     this.protocollo = protocollo;
   }
 
-  public void set_value_ruolo(String value) {
+  public void setRuoloRawEnumValue(String value) {
     this.ruolo = (RuoloContesto) RuoloContesto.toEnumConstantFromString(value);
   }
 
-  public String get_value_ruolo() {
+  public String getRuoloRawEnumValue() {
     if(this.ruolo == null){
     	return null;
     }else{
@@ -203,11 +203,11 @@ public class ConfigurazioneUrlInvocazioneRegola extends org.openspcoop2.utils.be
     this.ruolo = ruolo;
   }
 
-  public void set_value_serviceBinding(String value) {
+  public void setServiceBindingRawEnumValue(String value) {
     this.serviceBinding = (ServiceBinding) ServiceBinding.toEnumConstantFromString(value);
   }
 
-  public String get_value_serviceBinding() {
+  public String getServiceBindingRawEnumValue() {
     if(this.serviceBinding == null){
     	return null;
     }else{
@@ -242,7 +242,7 @@ public class ConfigurazioneUrlInvocazioneRegola extends org.openspcoop2.utils.be
   protected int posizione;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_stato;
+  protected java.lang.String statoRawEnumValue;
 
   @XmlAttribute(name="stato",required=false)
   protected StatoFunzionalita stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
@@ -272,13 +272,13 @@ public class ConfigurazioneUrlInvocazioneRegola extends org.openspcoop2.utils.be
   protected java.lang.String protocollo;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_ruolo;
+  protected java.lang.String ruoloRawEnumValue;
 
   @XmlAttribute(name="ruolo",required=false)
   protected RuoloContesto ruolo;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_serviceBinding;
+  protected java.lang.String serviceBindingRawEnumValue;
 
   @XmlAttribute(name="service-binding",required=false)
   protected ServiceBinding serviceBinding;

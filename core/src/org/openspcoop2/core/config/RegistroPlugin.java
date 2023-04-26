@@ -131,11 +131,11 @@ public class RegistroPlugin extends org.openspcoop2.utils.beans.BaseBeanWithId i
     return this.compatibilita.size();
   }
 
-  public void set_value_stato(String value) {
+  public void setStatoRawEnumValue(String value) {
     this.stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_stato() {
+  public String getStatoRawEnumValue() {
     if(this.stato == null){
     	return null;
     }else{
@@ -191,68 +191,14 @@ public class RegistroPlugin extends org.openspcoop2.utils.beans.BaseBeanWithId i
   protected String oldNome;
 
   @XmlElement(name="archivio",required=true,nillable=false)
-  protected List<RegistroPluginArchivio> archivio = new ArrayList<RegistroPluginArchivio>();
-
-  /**
-   * @deprecated Use method getArchivioList
-   * @return List&lt;RegistroPluginArchivio&gt;
-  */
-  @Deprecated
-  public List<RegistroPluginArchivio> getArchivio() {
-  	return this.archivio;
-  }
-
-  /**
-   * @deprecated Use method setArchivioList
-   * @param archivio List&lt;RegistroPluginArchivio&gt;
-  */
-  @Deprecated
-  public void setArchivio(List<RegistroPluginArchivio> archivio) {
-  	this.archivio=archivio;
-  }
-
-  /**
-   * @deprecated Use method sizeArchivioList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeArchivio() {
-  	return this.archivio.size();
-  }
+  private List<RegistroPluginArchivio> archivio = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="compatibilita",required=true,nillable=false)
-  protected List<java.lang.String> compatibilita = new ArrayList<java.lang.String>();
-
-  /**
-   * @deprecated Use method getCompatibilitaList
-   * @return List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public List<java.lang.String> getCompatibilita() {
-  	return this.compatibilita;
-  }
-
-  /**
-   * @deprecated Use method setCompatibilitaList
-   * @param compatibilita List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public void setCompatibilita(List<java.lang.String> compatibilita) {
-  	this.compatibilita=compatibilita;
-  }
-
-  /**
-   * @deprecated Use method sizeCompatibilitaList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeCompatibilita() {
-  	return this.compatibilita.size();
-  }
+  private List<java.lang.String> compatibilita = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_stato;
+  protected java.lang.String statoRawEnumValue;
 
   @XmlAttribute(name="stato",required=false)
   protected StatoFunzionalita stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");

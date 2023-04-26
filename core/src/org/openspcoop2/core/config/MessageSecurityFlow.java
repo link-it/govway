@@ -89,11 +89,11 @@ public class MessageSecurityFlow extends org.openspcoop2.utils.beans.BaseBeanWit
     return this.parameter.size();
   }
 
-  public void set_value_applyToMtom(String value) {
+  public void setApplyToMtomRawEnumValue(String value) {
     this.applyToMtom = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_applyToMtom() {
+  public String getApplyToMtomRawEnumValue() {
     if(this.applyToMtom == null){
     	return null;
     }else{
@@ -122,37 +122,10 @@ public class MessageSecurityFlow extends org.openspcoop2.utils.beans.BaseBeanWit
 
 
   @XmlElement(name="parameter",required=true,nillable=false)
-  protected List<MessageSecurityFlowParameter> parameter = new ArrayList<MessageSecurityFlowParameter>();
-
-  /**
-   * @deprecated Use method getParameterList
-   * @return List&lt;MessageSecurityFlowParameter&gt;
-  */
-  @Deprecated
-  public List<MessageSecurityFlowParameter> getParameter() {
-  	return this.parameter;
-  }
-
-  /**
-   * @deprecated Use method setParameterList
-   * @param parameter List&lt;MessageSecurityFlowParameter&gt;
-  */
-  @Deprecated
-  public void setParameter(List<MessageSecurityFlowParameter> parameter) {
-  	this.parameter=parameter;
-  }
-
-  /**
-   * @deprecated Use method sizeParameterList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeParameter() {
-  	return this.parameter.size();
-  }
+  private List<MessageSecurityFlowParameter> parameter = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_applyToMtom;
+  protected java.lang.String applyToMtomRawEnumValue;
 
   @XmlAttribute(name="apply-to-mtom",required=false)
   protected StatoFunzionalita applyToMtom;

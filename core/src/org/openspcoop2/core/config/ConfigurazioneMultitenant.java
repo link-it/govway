@@ -58,11 +58,11 @@ public class ConfigurazioneMultitenant extends org.openspcoop2.utils.beans.BaseB
     super();
   }
 
-  public void set_value_stato(String value) {
+  public void setStatoRawEnumValue(String value) {
     this.stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_stato() {
+  public String getStatoRawEnumValue() {
     if(this.stato == null){
     	return null;
     }else{
@@ -78,11 +78,11 @@ public class ConfigurazioneMultitenant extends org.openspcoop2.utils.beans.BaseB
     this.stato = stato;
   }
 
-  public void set_value_fruizioneSceltaSoggettiErogatori(String value) {
+  public void setFruizioneSceltaSoggettiErogatoriRawEnumValue(String value) {
     this.fruizioneSceltaSoggettiErogatori = (PortaDelegataSoggettiErogatori) PortaDelegataSoggettiErogatori.toEnumConstantFromString(value);
   }
 
-  public String get_value_fruizioneSceltaSoggettiErogatori() {
+  public String getFruizioneSceltaSoggettiErogatoriRawEnumValue() {
     if(this.fruizioneSceltaSoggettiErogatori == null){
     	return null;
     }else{
@@ -98,11 +98,11 @@ public class ConfigurazioneMultitenant extends org.openspcoop2.utils.beans.BaseB
     this.fruizioneSceltaSoggettiErogatori = fruizioneSceltaSoggettiErogatori;
   }
 
-  public void set_value_erogazioneSceltaSoggettiFruitori(String value) {
+  public void setErogazioneSceltaSoggettiFruitoriRawEnumValue(String value) {
     this.erogazioneSceltaSoggettiFruitori = (PortaApplicativaSoggettiFruitori) PortaApplicativaSoggettiFruitori.toEnumConstantFromString(value);
   }
 
-  public String get_value_erogazioneSceltaSoggettiFruitori() {
+  public String getErogazioneSceltaSoggettiFruitoriRawEnumValue() {
     if(this.erogazioneSceltaSoggettiFruitori == null){
     	return null;
     }else{
@@ -123,19 +123,19 @@ public class ConfigurazioneMultitenant extends org.openspcoop2.utils.beans.BaseB
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_stato;
+  protected java.lang.String statoRawEnumValue;
 
   @XmlAttribute(name="stato",required=false)
   protected StatoFunzionalita stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_fruizioneSceltaSoggettiErogatori;
+  protected java.lang.String fruizioneSceltaSoggettiErogatoriRawEnumValue;
 
   @XmlAttribute(name="fruizioneSceltaSoggettiErogatori",required=false)
   protected PortaDelegataSoggettiErogatori fruizioneSceltaSoggettiErogatori = (PortaDelegataSoggettiErogatori) PortaDelegataSoggettiErogatori.toEnumConstantFromString("soggettiEsterni");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_erogazioneSceltaSoggettiFruitori;
+  protected java.lang.String erogazioneSceltaSoggettiFruitoriRawEnumValue;
 
   @XmlAttribute(name="erogazioneSceltaSoggettiFruitori",required=false)
   protected PortaApplicativaSoggettiFruitori erogazioneSceltaSoggettiFruitori = (PortaApplicativaSoggettiFruitori) PortaApplicativaSoggettiFruitori.toEnumConstantFromString("soggettiEsterni");

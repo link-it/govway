@@ -119,33 +119,6 @@ public class CanaleConfigurazioneNodo extends org.openspcoop2.utils.beans.BaseBe
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="canale",required=true,nillable=false)
-  protected List<java.lang.String> canale = new ArrayList<java.lang.String>();
-
-  /**
-   * @deprecated Use method getCanaleList
-   * @return List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public List<java.lang.String> getCanale() {
-  	return this.canale;
-  }
-
-  /**
-   * @deprecated Use method setCanaleList
-   * @param canale List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public void setCanale(List<java.lang.String> canale) {
-  	this.canale=canale;
-  }
-
-  /**
-   * @deprecated Use method sizeCanaleList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeCanale() {
-  	return this.canale.size();
-  }
+  private List<java.lang.String> canale = new ArrayList<>();
 
 }

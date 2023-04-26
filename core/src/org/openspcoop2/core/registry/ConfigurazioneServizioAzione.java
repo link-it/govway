@@ -104,33 +104,6 @@ public class ConfigurazioneServizioAzione extends org.openspcoop2.utils.beans.Ba
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="azione",required=true,nillable=false)
-  protected List<java.lang.String> azione = new ArrayList<java.lang.String>();
-
-  /**
-   * @deprecated Use method getAzioneList
-   * @return List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public List<java.lang.String> getAzione() {
-  	return this.azione;
-  }
-
-  /**
-   * @deprecated Use method setAzioneList
-   * @param azione List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public void setAzione(List<java.lang.String> azione) {
-  	this.azione=azione;
-  }
-
-  /**
-   * @deprecated Use method sizeAzioneList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeAzione() {
-  	return this.azione.size();
-  }
+  private List<java.lang.String> azione = new ArrayList<>();
 
 }

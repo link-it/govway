@@ -109,34 +109,7 @@ public class ConfigurazioneUrlInvocazione extends org.openspcoop2.utils.beans.Ba
 
 
   @XmlElement(name="regola",required=true,nillable=false)
-  protected List<ConfigurazioneUrlInvocazioneRegola> regola = new ArrayList<ConfigurazioneUrlInvocazioneRegola>();
-
-  /**
-   * @deprecated Use method getRegolaList
-   * @return List&lt;ConfigurazioneUrlInvocazioneRegola&gt;
-  */
-  @Deprecated
-  public List<ConfigurazioneUrlInvocazioneRegola> getRegola() {
-  	return this.regola;
-  }
-
-  /**
-   * @deprecated Use method setRegolaList
-   * @param regola List&lt;ConfigurazioneUrlInvocazioneRegola&gt;
-  */
-  @Deprecated
-  public void setRegola(List<ConfigurazioneUrlInvocazioneRegola> regola) {
-  	this.regola=regola;
-  }
-
-  /**
-   * @deprecated Use method sizeRegolaList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeRegola() {
-  	return this.regola.size();
-  }
+  private List<ConfigurazioneUrlInvocazioneRegola> regola = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="base-url",required=true)

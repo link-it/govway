@@ -67,17 +67,17 @@ public class DriverConfigurazioneDB_porteDriver {
 		int idLista = Liste.PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA;
 		String nomeMetodo = "portaApplicativaResponseCachingConfigurazioneRegolaList";
 		boolean delegata = false;
-		return _getResponseCachingConfigurazioneRegolaList(idPA, ricerca, idLista, nomeMetodo, delegata);
+		return getEngineResponseCachingConfigurazioneRegolaList(idPA, ricerca, idLista, nomeMetodo, delegata);
 	}
 	
 	protected List<ResponseCachingConfigurazioneRegola> portaDelegataResponseCachingConfigurazioneRegolaList(long idPD, ISearch ricerca) throws DriverConfigurazioneException {
 		String nomeMetodo = "portaDelegataResponseCachingConfigurazioneRegolaList";
 		int idLista = Liste.PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA;
 		boolean delegata = true;
-		return _getResponseCachingConfigurazioneRegolaList(idPD, ricerca, idLista, nomeMetodo, delegata);
+		return getEngineResponseCachingConfigurazioneRegolaList(idPD, ricerca, idLista, nomeMetodo, delegata);
 	}
 	
-	private List<ResponseCachingConfigurazioneRegola> _getResponseCachingConfigurazioneRegolaList(long idPA, ISearch ricerca, int idLista, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+	private List<ResponseCachingConfigurazioneRegola> getEngineResponseCachingConfigurazioneRegolaList(long idPA, ISearch ricerca, int idLista, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		int offset; 
 		int limit;
 		String queryString;

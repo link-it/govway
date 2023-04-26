@@ -1561,7 +1561,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 	public Soggetto getSoggettoByCredenzialiBasic(
 			String user,String password, 
 			CryptConfig config) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
-		return this._getSoggettoAutenticato(CredenzialeTipo.BASIC, user, password, 
+		return this.getEngineSoggettoAutenticato(CredenzialeTipo.BASIC, user, password, 
 				null, null, null, false,
 				null,
 				config,
@@ -1572,7 +1572,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 	public Soggetto getSoggettoByCredenzialiApiKey(
 			String user,String password, boolean appId, 
 			CryptConfig config) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
-		return this._getSoggettoAutenticato(CredenzialeTipo.BASIC, user, password, 
+		return this.getEngineSoggettoAutenticato(CredenzialeTipo.BASIC, user, password, 
 				null, null, null, false,
 				null,
 				config,
@@ -1582,7 +1582,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 	@Override
 	public Soggetto getSoggettoByCredenzialiSsl(
 			String subject, String issuer) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
-		return this._getSoggettoAutenticato(CredenzialeTipo.SSL, null, null, 
+		return this.getEngineSoggettoAutenticato(CredenzialeTipo.SSL, null, null, 
 				subject, issuer, null, false,
 				null,
 				null,
@@ -1591,7 +1591,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 	
 	@Override
 	public Soggetto getSoggettoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this._getSoggettoAutenticato(CredenzialeTipo.SSL, null, null, 
+		return this.getEngineSoggettoAutenticato(CredenzialeTipo.SSL, null, null, 
 				null, null, certificate, strictVerifier,
 				null,
 				null,
@@ -1601,13 +1601,13 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 	@Override
 	public Soggetto getSoggettoByCredenzialiPrincipal(
 			String principal) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
-		return this._getSoggettoAutenticato(CredenzialeTipo.PRINCIPAL, null, null, 
+		return this.getEngineSoggettoAutenticato(CredenzialeTipo.PRINCIPAL, null, null, 
 				null, null, null, false,
 				principal,
 				null,
 				false);
 	}
-	private org.openspcoop2.core.registry.Soggetto _getSoggettoAutenticato(CredenzialeTipo tipoCredenziale, String user,String password, 
+	private org.openspcoop2.core.registry.Soggetto getEngineSoggettoAutenticato(CredenzialeTipo tipoCredenziale, String user,String password, 
 			String aSubject, String aIssuer, CertificateInfo aCertificate, boolean aStrictVerifier, 
 			String principal, 
 			CryptConfig config,

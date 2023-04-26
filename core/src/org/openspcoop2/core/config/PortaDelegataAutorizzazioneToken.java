@@ -83,11 +83,11 @@ public class PortaDelegataAutorizzazioneToken extends org.openspcoop2.utils.bean
     this.ruoli = ruoli;
   }
 
-  public void set_value_autorizzazioneApplicativi(String value) {
+  public void setAutorizzazioneApplicativiRawEnumValue(String value) {
     this.autorizzazioneApplicativi = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_autorizzazioneApplicativi() {
+  public String getAutorizzazioneApplicativiRawEnumValue() {
     if(this.autorizzazioneApplicativi == null){
     	return null;
     }else{
@@ -103,11 +103,11 @@ public class PortaDelegataAutorizzazioneToken extends org.openspcoop2.utils.bean
     this.autorizzazioneApplicativi = autorizzazioneApplicativi;
   }
 
-  public void set_value_autorizzazioneRuoli(String value) {
+  public void setAutorizzazioneRuoliRawEnumValue(String value) {
     this.autorizzazioneRuoli = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_autorizzazioneRuoli() {
+  public String getAutorizzazioneRuoliRawEnumValue() {
     if(this.autorizzazioneRuoli == null){
     	return null;
     }else{
@@ -123,11 +123,11 @@ public class PortaDelegataAutorizzazioneToken extends org.openspcoop2.utils.bean
     this.autorizzazioneRuoli = autorizzazioneRuoli;
   }
 
-  public void set_value_tipologiaRuoli(String value) {
+  public void setTipologiaRuoliRawEnumValue(String value) {
     this.tipologiaRuoli = (RuoloTipologia) RuoloTipologia.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipologiaRuoli() {
+  public String getTipologiaRuoliRawEnumValue() {
     if(this.tipologiaRuoli == null){
     	return null;
     }else{
@@ -154,19 +154,19 @@ public class PortaDelegataAutorizzazioneToken extends org.openspcoop2.utils.bean
   protected AutorizzazioneRuoli ruoli;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_autorizzazioneApplicativi;
+  protected java.lang.String autorizzazioneApplicativiRawEnumValue;
 
   @XmlAttribute(name="autorizzazione-applicativi",required=false)
   protected StatoFunzionalita autorizzazioneApplicativi = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_autorizzazioneRuoli;
+  protected java.lang.String autorizzazioneRuoliRawEnumValue;
 
   @XmlAttribute(name="autorizzazione-ruoli",required=false)
   protected StatoFunzionalita autorizzazioneRuoli = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipologiaRuoli;
+  protected java.lang.String tipologiaRuoliRawEnumValue;
 
   @XmlAttribute(name="tipologia-ruoli",required=false)
   protected RuoloTipologia tipologiaRuoli = (RuoloTipologia) RuoloTipologia.toEnumConstantFromString("qualsiasi");

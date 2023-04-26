@@ -144,64 +144,10 @@ public class ResourceResponse extends org.openspcoop2.utils.beans.BaseBeanWithId
 
 
   @XmlElement(name="parameter",required=true,nillable=false)
-  protected List<ResourceParameter> parameter = new ArrayList<ResourceParameter>();
-
-  /**
-   * @deprecated Use method getParameterList
-   * @return List&lt;ResourceParameter&gt;
-  */
-  @Deprecated
-  public List<ResourceParameter> getParameter() {
-  	return this.parameter;
-  }
-
-  /**
-   * @deprecated Use method setParameterList
-   * @param parameter List&lt;ResourceParameter&gt;
-  */
-  @Deprecated
-  public void setParameter(List<ResourceParameter> parameter) {
-  	this.parameter=parameter;
-  }
-
-  /**
-   * @deprecated Use method sizeParameterList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeParameter() {
-  	return this.parameter.size();
-  }
+  private List<ResourceParameter> parameter = new ArrayList<>();
 
   @XmlElement(name="representation",required=true,nillable=false)
-  protected List<ResourceRepresentation> representation = new ArrayList<ResourceRepresentation>();
-
-  /**
-   * @deprecated Use method getRepresentationList
-   * @return List&lt;ResourceRepresentation&gt;
-  */
-  @Deprecated
-  public List<ResourceRepresentation> getRepresentation() {
-  	return this.representation;
-  }
-
-  /**
-   * @deprecated Use method setRepresentationList
-   * @param representation List&lt;ResourceRepresentation&gt;
-  */
-  @Deprecated
-  public void setRepresentation(List<ResourceRepresentation> representation) {
-  	this.representation=representation;
-  }
-
-  /**
-   * @deprecated Use method sizeRepresentationList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeRepresentation() {
-  	return this.representation.size();
-  }
+  private List<ResourceRepresentation> representation = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Long idResource;

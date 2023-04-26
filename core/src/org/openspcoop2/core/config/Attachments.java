@@ -54,11 +54,11 @@ public class Attachments extends org.openspcoop2.utils.beans.BaseBeanWithId impl
     super();
   }
 
-  public void set_value_gestioneManifest(String value) {
+  public void setGestioneManifestRawEnumValue(String value) {
     this.gestioneManifest = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_gestioneManifest() {
+  public String getGestioneManifestRawEnumValue() {
     if(this.gestioneManifest == null){
     	return null;
     }else{
@@ -79,7 +79,7 @@ public class Attachments extends org.openspcoop2.utils.beans.BaseBeanWithId impl
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_gestioneManifest;
+  protected java.lang.String gestioneManifestRawEnumValue;
 
   @XmlAttribute(name="gestione-manifest",required=false)
   protected StatoFunzionalita gestioneManifest = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");

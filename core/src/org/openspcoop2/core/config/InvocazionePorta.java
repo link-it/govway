@@ -109,11 +109,11 @@ public class InvocazionePorta extends org.openspcoop2.utils.beans.BaseBeanWithId
     this.gestioneErrore = gestioneErrore;
   }
 
-  public void set_value_invioPerRiferimento(String value) {
+  public void setInvioPerRiferimentoRawEnumValue(String value) {
     this.invioPerRiferimento = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_invioPerRiferimento() {
+  public String getInvioPerRiferimentoRawEnumValue() {
     if(this.invioPerRiferimento == null){
     	return null;
     }else{
@@ -129,11 +129,11 @@ public class InvocazionePorta extends org.openspcoop2.utils.beans.BaseBeanWithId
     this.invioPerRiferimento = invioPerRiferimento;
   }
 
-  public void set_value_sbustamentoInformazioniProtocollo(String value) {
+  public void setSbustamentoInformazioniProtocolloRawEnumValue(String value) {
     this.sbustamentoInformazioniProtocollo = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public String get_value_sbustamentoInformazioniProtocollo() {
+  public String getSbustamentoInformazioniProtocolloRawEnumValue() {
     if(this.sbustamentoInformazioniProtocollo == null){
     	return null;
     }else{
@@ -154,34 +154,7 @@ public class InvocazionePorta extends org.openspcoop2.utils.beans.BaseBeanWithId
 
 
   @XmlElement(name="credenziali",required=true,nillable=false)
-  protected List<Credenziali> credenziali = new ArrayList<Credenziali>();
-
-  /**
-   * @deprecated Use method getCredenzialiList
-   * @return List&lt;Credenziali&gt;
-  */
-  @Deprecated
-  public List<Credenziali> getCredenziali() {
-  	return this.credenziali;
-  }
-
-  /**
-   * @deprecated Use method setCredenzialiList
-   * @param credenziali List&lt;Credenziali&gt;
-  */
-  @Deprecated
-  public void setCredenziali(List<Credenziali> credenziali) {
-  	this.credenziali=credenziali;
-  }
-
-  /**
-   * @deprecated Use method sizeCredenzialiList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeCredenziali() {
-  	return this.credenziali.size();
-  }
+  private List<Credenziali> credenziali = new ArrayList<>();
 
   @XmlElement(name="ruoli",required=false,nillable=false)
   protected ServizioApplicativoRuoli ruoli;
@@ -190,13 +163,13 @@ public class InvocazionePorta extends org.openspcoop2.utils.beans.BaseBeanWithId
   protected InvocazionePortaGestioneErrore gestioneErrore;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_invioPerRiferimento;
+  protected java.lang.String invioPerRiferimentoRawEnumValue;
 
   @XmlAttribute(name="invio-per-riferimento",required=false)
   protected StatoFunzionalita invioPerRiferimento = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_sbustamentoInformazioniProtocollo;
+  protected java.lang.String sbustamentoInformazioniProtocolloRawEnumValue;
 
   @XmlAttribute(name="sbustamento-informazioni-protocollo",required=false)
   protected StatoFunzionalita sbustamentoInformazioniProtocollo = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");

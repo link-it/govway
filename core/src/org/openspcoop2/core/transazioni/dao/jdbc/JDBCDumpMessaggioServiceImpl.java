@@ -423,13 +423,13 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 
 		// elimino tutte le occorrenze di dumpMessaggio_multipartHeader non presenti nell'update
 
-		ISQLQueryObject sqlQueryObjectUpdate_multipartHeader_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
-		sqlQueryObjectUpdate_multipartHeader_deleteList.setANDLogicOperator(true);
-		sqlQueryObjectUpdate_multipartHeader_deleteList.addDeleteTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().MULTIPART_HEADER));
-		java.util.List<JDBCObject> jdbcObjects_dumpMessaggio_multipartHeader_delete = new java.util.ArrayList<>();
+		ISQLQueryObject sqlQueryObjectUpdate_multipartHeaderdeleteEngineList = sqlQueryObjectUpdate.newSQLQueryObject();
+		sqlQueryObjectUpdate_multipartHeaderdeleteEngineList.setANDLogicOperator(true);
+		sqlQueryObjectUpdate_multipartHeaderdeleteEngineList.addDeleteTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().MULTIPART_HEADER));
+		java.util.List<JDBCObject> jdbcObjects_dumpMessaggio_multipartHeaderdeleteEngine = new java.util.ArrayList<>();
 
-		sqlQueryObjectUpdate_multipartHeader_deleteList.addWhereCondition("id_messaggio=?");
-		jdbcObjects_dumpMessaggio_multipartHeader_delete.add(new JDBCObject(dumpMessaggio.getId(), Long.class));
+		sqlQueryObjectUpdate_multipartHeaderdeleteEngineList.addWhereCondition("id_messaggio=?");
+		jdbcObjects_dumpMessaggio_multipartHeaderdeleteEngine.add(new JDBCObject(dumpMessaggio.getId(), Long.class));
 
 		StringBuilder marks_dumpMessaggio_multipartHeader = new StringBuilder();
 		if(ids_dumpMessaggio_multipartHeader_da_non_eliminare.size() > 0) {
@@ -438,13 +438,13 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 					marks_dumpMessaggio_multipartHeader.append(",");
 				}
 				marks_dumpMessaggio_multipartHeader.append("?");
-				jdbcObjects_dumpMessaggio_multipartHeader_delete.add(new JDBCObject(ids, Long.class));
+				jdbcObjects_dumpMessaggio_multipartHeaderdeleteEngine.add(new JDBCObject(ids, Long.class));
 
 			}
-			sqlQueryObjectUpdate_multipartHeader_deleteList.addWhereCondition("id NOT IN ("+marks_dumpMessaggio_multipartHeader.toString()+")");
+			sqlQueryObjectUpdate_multipartHeaderdeleteEngineList.addWhereCondition("id NOT IN ("+marks_dumpMessaggio_multipartHeader.toString()+")");
 		}
 
-		jdbcUtilities.execute(sqlQueryObjectUpdate_multipartHeader_deleteList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_dumpMessaggio_multipartHeader_delete.toArray(new JDBCObject[]{}));
+		jdbcUtilities.execute(sqlQueryObjectUpdate_multipartHeaderdeleteEngineList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_dumpMessaggio_multipartHeaderdeleteEngine.toArray(new JDBCObject[]{}));
 
 		// for dumpMessaggio_headerTrasporto
 
@@ -512,13 +512,13 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 
 		// elimino tutte le occorrenze di dumpMessaggio_headerTrasporto non presenti nell'update
 
-		ISQLQueryObject sqlQueryObjectUpdate_headerTrasporto_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
-		sqlQueryObjectUpdate_headerTrasporto_deleteList.setANDLogicOperator(true);
-		sqlQueryObjectUpdate_headerTrasporto_deleteList.addDeleteTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().HEADER_TRASPORTO));
-		java.util.List<JDBCObject> jdbcObjects_dumpMessaggio_headerTrasporto_delete = new java.util.ArrayList<>();
+		ISQLQueryObject sqlQueryObjectUpdate_headerTrasportodeleteEngineList = sqlQueryObjectUpdate.newSQLQueryObject();
+		sqlQueryObjectUpdate_headerTrasportodeleteEngineList.setANDLogicOperator(true);
+		sqlQueryObjectUpdate_headerTrasportodeleteEngineList.addDeleteTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().HEADER_TRASPORTO));
+		java.util.List<JDBCObject> jdbcObjects_dumpMessaggio_headerTrasportodeleteEngine = new java.util.ArrayList<>();
 
-		sqlQueryObjectUpdate_headerTrasporto_deleteList.addWhereCondition("id_messaggio=?");
-		jdbcObjects_dumpMessaggio_headerTrasporto_delete.add(new JDBCObject(dumpMessaggio.getId(), Long.class));
+		sqlQueryObjectUpdate_headerTrasportodeleteEngineList.addWhereCondition("id_messaggio=?");
+		jdbcObjects_dumpMessaggio_headerTrasportodeleteEngine.add(new JDBCObject(dumpMessaggio.getId(), Long.class));
 
 		StringBuilder marks_dumpMessaggio_headerTrasporto = new StringBuilder();
 		if(ids_dumpMessaggio_headerTrasporto_da_non_eliminare.size() > 0) {
@@ -527,13 +527,13 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 					marks_dumpMessaggio_headerTrasporto.append(",");
 				}
 				marks_dumpMessaggio_headerTrasporto.append("?");
-				jdbcObjects_dumpMessaggio_headerTrasporto_delete.add(new JDBCObject(ids, Long.class));
+				jdbcObjects_dumpMessaggio_headerTrasportodeleteEngine.add(new JDBCObject(ids, Long.class));
 
 			}
-			sqlQueryObjectUpdate_headerTrasporto_deleteList.addWhereCondition("id NOT IN ("+marks_dumpMessaggio_headerTrasporto.toString()+")");
+			sqlQueryObjectUpdate_headerTrasportodeleteEngineList.addWhereCondition("id NOT IN ("+marks_dumpMessaggio_headerTrasporto.toString()+")");
 		}
 
-		jdbcUtilities.execute(sqlQueryObjectUpdate_headerTrasporto_deleteList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_dumpMessaggio_headerTrasporto_delete.toArray(new JDBCObject[]{}));
+		jdbcUtilities.execute(sqlQueryObjectUpdate_headerTrasportodeleteEngineList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_dumpMessaggio_headerTrasportodeleteEngine.toArray(new JDBCObject[]{}));
 
 		// for dumpMessaggio_allegato
 
@@ -686,13 +686,13 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 
 				// elimino tutte le occorrenze di dumpMessaggio_allegato_header non presenti nell'update
 
-				ISQLQueryObject sqlQueryObjectUpdate_dumpMessaggio_allegato_header_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
-				sqlQueryObjectUpdate_dumpMessaggio_allegato_header_deleteList.setANDLogicOperator(true);
-				sqlQueryObjectUpdate_dumpMessaggio_allegato_header_deleteList.addDeleteTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().ALLEGATO.HEADER));
-				java.util.List<JDBCObject> jdbcObjects_dumpMessaggio_allegato_header_delete = new java.util.ArrayList<>();
+				ISQLQueryObject sqlQueryObjectUpdate_dumpMessaggio_allegato_headerdeleteEngineList = sqlQueryObjectUpdate.newSQLQueryObject();
+				sqlQueryObjectUpdate_dumpMessaggio_allegato_headerdeleteEngineList.setANDLogicOperator(true);
+				sqlQueryObjectUpdate_dumpMessaggio_allegato_headerdeleteEngineList.addDeleteTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().ALLEGATO.HEADER));
+				java.util.List<JDBCObject> jdbcObjects_dumpMessaggio_allegato_headerdeleteEngine = new java.util.ArrayList<>();
 
-				sqlQueryObjectUpdate_dumpMessaggio_allegato_header_deleteList.addWhereCondition("id_allegato=?");
-				jdbcObjects_dumpMessaggio_allegato_header_delete.add(new JDBCObject(dumpMessaggio_allegato.getId(), Long.class));
+				sqlQueryObjectUpdate_dumpMessaggio_allegato_headerdeleteEngineList.addWhereCondition("id_allegato=?");
+				jdbcObjects_dumpMessaggio_allegato_headerdeleteEngine.add(new JDBCObject(dumpMessaggio_allegato.getId(), Long.class));
 
 				StringBuilder marks_dumpMessaggio_allegato_header = new StringBuilder();
 				if(ids_dumpMessaggio_allegato_header_da_non_eliminare.size() > 0) {
@@ -701,26 +701,26 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 							marks_dumpMessaggio_allegato_header.append(",");
 						}
 						marks_dumpMessaggio_allegato_header.append("?");
-						jdbcObjects_dumpMessaggio_allegato_header_delete.add(new JDBCObject(ids, Long.class));
+						jdbcObjects_dumpMessaggio_allegato_headerdeleteEngine.add(new JDBCObject(ids, Long.class));
 
 					}
-					sqlQueryObjectUpdate_dumpMessaggio_allegato_header_deleteList.addWhereCondition("id NOT IN ("+marks_dumpMessaggio_allegato_header.toString()+")");
+					sqlQueryObjectUpdate_dumpMessaggio_allegato_headerdeleteEngineList.addWhereCondition("id NOT IN ("+marks_dumpMessaggio_allegato_header.toString()+")");
 				}
 
-				jdbcUtilities.execute(sqlQueryObjectUpdate_dumpMessaggio_allegato_header_deleteList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_dumpMessaggio_allegato_header_delete.toArray(new JDBCObject[]{}));
+				jdbcUtilities.execute(sqlQueryObjectUpdate_dumpMessaggio_allegato_headerdeleteEngineList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_dumpMessaggio_allegato_headerdeleteEngine.toArray(new JDBCObject[]{}));
 
 			}
 		} // fine for dumpMessaggio_allegato
 
 		// elimino tutte le occorrenze di dumpMessaggio_allegato non presenti nell'update
 
-		ISQLQueryObject sqlQueryObjectUpdate_allegato_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
-		sqlQueryObjectUpdate_allegato_deleteList.setANDLogicOperator(true);
-		sqlQueryObjectUpdate_allegato_deleteList.addDeleteTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().ALLEGATO));
-		java.util.List<JDBCObject> jdbcObjects_dumpMessaggio_allegato_delete = new java.util.ArrayList<>();
+		ISQLQueryObject sqlQueryObjectUpdate_allegatodeleteEngineList = sqlQueryObjectUpdate.newSQLQueryObject();
+		sqlQueryObjectUpdate_allegatodeleteEngineList.setANDLogicOperator(true);
+		sqlQueryObjectUpdate_allegatodeleteEngineList.addDeleteTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().ALLEGATO));
+		java.util.List<JDBCObject> jdbcObjects_dumpMessaggio_allegatodeleteEngine = new java.util.ArrayList<>();
 
-		sqlQueryObjectUpdate_allegato_deleteList.addWhereCondition("id_messaggio=?");
-		jdbcObjects_dumpMessaggio_allegato_delete.add(new JDBCObject(dumpMessaggio.getId(), Long.class));
+		sqlQueryObjectUpdate_allegatodeleteEngineList.addWhereCondition("id_messaggio=?");
+		jdbcObjects_dumpMessaggio_allegatodeleteEngine.add(new JDBCObject(dumpMessaggio.getId(), Long.class));
 
 		StringBuilder marks_dumpMessaggio_allegato = new StringBuilder();
 		if(ids_dumpMessaggio_allegato_da_non_eliminare.size() > 0) {
@@ -729,13 +729,13 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 					marks_dumpMessaggio_allegato.append(",");
 				}
 				marks_dumpMessaggio_allegato.append("?");
-				jdbcObjects_dumpMessaggio_allegato_delete.add(new JDBCObject(ids, Long.class));
+				jdbcObjects_dumpMessaggio_allegatodeleteEngine.add(new JDBCObject(ids, Long.class));
 
 			}
-			sqlQueryObjectUpdate_allegato_deleteList.addWhereCondition("id NOT IN ("+marks_dumpMessaggio_allegato.toString()+")");
+			sqlQueryObjectUpdate_allegatodeleteEngineList.addWhereCondition("id NOT IN ("+marks_dumpMessaggio_allegato.toString()+")");
 		}
 
-		jdbcUtilities.execute(sqlQueryObjectUpdate_allegato_deleteList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_dumpMessaggio_allegato_delete.toArray(new JDBCObject[]{}));
+		jdbcUtilities.execute(sqlQueryObjectUpdate_allegatodeleteEngineList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_dumpMessaggio_allegatodeleteEngine.toArray(new JDBCObject[]{}));
 
 		// for dumpMessaggio_contenuto
 
@@ -798,13 +798,13 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 
 		// elimino tutte le occorrenze di dumpMessaggio_contenuto non presenti nell'update
 
-		ISQLQueryObject sqlQueryObjectUpdate_contenuto_deleteList = sqlQueryObjectUpdate.newSQLQueryObject();
-		sqlQueryObjectUpdate_contenuto_deleteList.setANDLogicOperator(true);
-		sqlQueryObjectUpdate_contenuto_deleteList.addDeleteTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().CONTENUTO));
-		java.util.List<JDBCObject> jdbcObjects_dumpMessaggio_contenuto_delete = new java.util.ArrayList<>();
+		ISQLQueryObject sqlQueryObjectUpdate_contenutodeleteEngineList = sqlQueryObjectUpdate.newSQLQueryObject();
+		sqlQueryObjectUpdate_contenutodeleteEngineList.setANDLogicOperator(true);
+		sqlQueryObjectUpdate_contenutodeleteEngineList.addDeleteTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().CONTENUTO));
+		java.util.List<JDBCObject> jdbcObjects_dumpMessaggio_contenutodeleteEngine = new java.util.ArrayList<>();
 
-		sqlQueryObjectUpdate_contenuto_deleteList.addWhereCondition("id_messaggio=?");
-		jdbcObjects_dumpMessaggio_contenuto_delete.add(new JDBCObject(dumpMessaggio.getId(), Long.class));
+		sqlQueryObjectUpdate_contenutodeleteEngineList.addWhereCondition("id_messaggio=?");
+		jdbcObjects_dumpMessaggio_contenutodeleteEngine.add(new JDBCObject(dumpMessaggio.getId(), Long.class));
 
 		StringBuilder marks_dumpMessaggio_contenuto = new StringBuilder();
 		if(ids_dumpMessaggio_contenuto_da_non_eliminare.size() > 0) {
@@ -813,13 +813,13 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 					marks_dumpMessaggio_contenuto.append(",");
 				}
 				marks_dumpMessaggio_contenuto.append("?");
-				jdbcObjects_dumpMessaggio_contenuto_delete.add(new JDBCObject(ids, Long.class));
+				jdbcObjects_dumpMessaggio_contenutodeleteEngine.add(new JDBCObject(ids, Long.class));
 
 			}
-			sqlQueryObjectUpdate_contenuto_deleteList.addWhereCondition("id NOT IN ("+marks_dumpMessaggio_contenuto.toString()+")");
+			sqlQueryObjectUpdate_contenutodeleteEngineList.addWhereCondition("id NOT IN ("+marks_dumpMessaggio_contenuto.toString()+")");
 		}
 
-		jdbcUtilities.execute(sqlQueryObjectUpdate_contenuto_deleteList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_dumpMessaggio_contenuto_delete.toArray(new JDBCObject[]{}));
+		jdbcUtilities.execute(sqlQueryObjectUpdate_contenutodeleteEngineList.createSQLDelete(), jdbcProperties.isShowSql(), jdbcObjects_dumpMessaggio_contenutodeleteEngine.toArray(new JDBCObject[]{}));
 
 
 
@@ -830,8 +830,8 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, id),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, id),
 				this.getDumpMessaggioFieldConverter(), this, null, updateFields);
 	}
 	
@@ -840,8 +840,8 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, id),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, id),
 				this.getDumpMessaggioFieldConverter(), this, condition, updateFields);
 	}
 	
@@ -850,8 +850,8 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model()), 
-				this._getMapTableToPKColumn(), 
-				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, id),
+				this.getMapTableToPKColumnEngine(), 
+				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, id),
 				this.getDumpMessaggioFieldConverter(), this, updateModels);
 	}	
 	
@@ -861,7 +861,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getDumpMessaggioFieldConverter(), this, null, updateFields);
 	}
@@ -872,7 +872,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getDumpMessaggioFieldConverter(), this, condition, updateFields);
 	}
@@ -883,7 +883,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		ids.add(tableId);
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model()), 
-				this._getMapTableToPKColumn(), 
+				this.getMapTableToPKColumnEngine(), 
 				ids,
 				this.getDumpMessaggioFieldConverter(), this, updateModels);
 	}
@@ -924,11 +924,11 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 			}
 		}		
 		
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, longId);
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, longId);
 		
 	}
 
-	private void _delete(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long id) throws NotImplementedException,ServiceException,Exception {
+	private void deleteEngine(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long id) throws NotImplementedException,ServiceException,Exception {
 	
 		if(id==null) {
 			throw new ServiceException("Id is null");
@@ -944,11 +944,11 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		
 
 		//Recupero oggetto _dumpMessaggio_multipartHeader
-		ISQLQueryObject sqlQueryObjectDelete_dumpMessaggio_multipartHeader_getToDelete = sqlQueryObjectDelete.newSQLQueryObject();
-		sqlQueryObjectDelete_dumpMessaggio_multipartHeader_getToDelete.setANDLogicOperator(true);
-		sqlQueryObjectDelete_dumpMessaggio_multipartHeader_getToDelete.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().MULTIPART_HEADER));
-		sqlQueryObjectDelete_dumpMessaggio_multipartHeader_getToDelete.addWhereCondition("id_messaggio=?");
-		java.util.List<Object> dumpMessaggio_multipartHeader_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_dumpMessaggio_multipartHeader_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().MULTIPART_HEADER, this.getDumpMessaggioFetch(),
+		ISQLQueryObject sqlQueryObjectDelete_dumpMessaggio_multipartHeadergetEngineToDelete = sqlQueryObjectDelete.newSQLQueryObject();
+		sqlQueryObjectDelete_dumpMessaggio_multipartHeadergetEngineToDelete.setANDLogicOperator(true);
+		sqlQueryObjectDelete_dumpMessaggio_multipartHeadergetEngineToDelete.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().MULTIPART_HEADER));
+		sqlQueryObjectDelete_dumpMessaggio_multipartHeadergetEngineToDelete.addWhereCondition("id_messaggio=?");
+		java.util.List<Object> dumpMessaggio_multipartHeader_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_dumpMessaggio_multipartHeadergetEngineToDelete.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().MULTIPART_HEADER, this.getDumpMessaggioFetch(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id,Long.class));
 
 		// for dumpMessaggio_multipartHeader
@@ -969,11 +969,11 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		} // fine for dumpMessaggio_multipartHeader
 
 		//Recupero oggetto _dumpMessaggio_headerTrasporto
-		ISQLQueryObject sqlQueryObjectDelete_dumpMessaggio_headerTrasporto_getToDelete = sqlQueryObjectDelete.newSQLQueryObject();
-		sqlQueryObjectDelete_dumpMessaggio_headerTrasporto_getToDelete.setANDLogicOperator(true);
-		sqlQueryObjectDelete_dumpMessaggio_headerTrasporto_getToDelete.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().HEADER_TRASPORTO));
-		sqlQueryObjectDelete_dumpMessaggio_headerTrasporto_getToDelete.addWhereCondition("id_messaggio=?");
-		java.util.List<Object> dumpMessaggio_headerTrasporto_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_dumpMessaggio_headerTrasporto_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().HEADER_TRASPORTO, this.getDumpMessaggioFetch(),
+		ISQLQueryObject sqlQueryObjectDelete_dumpMessaggio_headerTrasportogetEngineToDelete = sqlQueryObjectDelete.newSQLQueryObject();
+		sqlQueryObjectDelete_dumpMessaggio_headerTrasportogetEngineToDelete.setANDLogicOperator(true);
+		sqlQueryObjectDelete_dumpMessaggio_headerTrasportogetEngineToDelete.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().HEADER_TRASPORTO));
+		sqlQueryObjectDelete_dumpMessaggio_headerTrasportogetEngineToDelete.addWhereCondition("id_messaggio=?");
+		java.util.List<Object> dumpMessaggio_headerTrasporto_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_dumpMessaggio_headerTrasportogetEngineToDelete.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().HEADER_TRASPORTO, this.getDumpMessaggioFetch(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id,Long.class));
 
 		// for dumpMessaggio_headerTrasporto
@@ -994,11 +994,11 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		} // fine for dumpMessaggio_headerTrasporto
 
 		//Recupero oggetto _dumpMessaggio_allegato
-		ISQLQueryObject sqlQueryObjectDelete_dumpMessaggio_allegato_getToDelete = sqlQueryObjectDelete.newSQLQueryObject();
-		sqlQueryObjectDelete_dumpMessaggio_allegato_getToDelete.setANDLogicOperator(true);
-		sqlQueryObjectDelete_dumpMessaggio_allegato_getToDelete.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().ALLEGATO));
-		sqlQueryObjectDelete_dumpMessaggio_allegato_getToDelete.addWhereCondition("id_messaggio=?");
-		java.util.List<Object> dumpMessaggio_allegato_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_dumpMessaggio_allegato_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().ALLEGATO, this.getDumpMessaggioFetch(),
+		ISQLQueryObject sqlQueryObjectDelete_dumpMessaggio_allegatogetEngineToDelete = sqlQueryObjectDelete.newSQLQueryObject();
+		sqlQueryObjectDelete_dumpMessaggio_allegatogetEngineToDelete.setANDLogicOperator(true);
+		sqlQueryObjectDelete_dumpMessaggio_allegatogetEngineToDelete.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().ALLEGATO));
+		sqlQueryObjectDelete_dumpMessaggio_allegatogetEngineToDelete.addWhereCondition("id_messaggio=?");
+		java.util.List<Object> dumpMessaggio_allegato_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_dumpMessaggio_allegatogetEngineToDelete.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().ALLEGATO, this.getDumpMessaggioFetch(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id,Long.class));
 
 		// for dumpMessaggio_allegato
@@ -1010,11 +1010,11 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 			}
 			
 			//Recupero oggetto _dumpMessaggio_allegato_header
-			ISQLQueryObject sqlQueryObjectDelete_dumpMessaggio_allegato_dumpMessaggio_allegato_header_getToDelete = sqlQueryObjectDelete.newSQLQueryObject();
-			sqlQueryObjectDelete_dumpMessaggio_allegato_dumpMessaggio_allegato_header_getToDelete.setANDLogicOperator(true);
-			sqlQueryObjectDelete_dumpMessaggio_allegato_dumpMessaggio_allegato_header_getToDelete.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().ALLEGATO.HEADER));
-			sqlQueryObjectDelete_dumpMessaggio_allegato_dumpMessaggio_allegato_header_getToDelete.addWhereCondition("id_allegato=?");
-			java.util.List<Object> dumpMessaggio_allegato_header_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_dumpMessaggio_allegato_dumpMessaggio_allegato_header_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().ALLEGATO.HEADER, this.getDumpMessaggioFetch(),
+			ISQLQueryObject sqlQueryObjectDelete_dumpMessaggio_allegato_dumpMessaggio_allegato_headergetEngineToDelete = sqlQueryObjectDelete.newSQLQueryObject();
+			sqlQueryObjectDelete_dumpMessaggio_allegato_dumpMessaggio_allegato_headergetEngineToDelete.setANDLogicOperator(true);
+			sqlQueryObjectDelete_dumpMessaggio_allegato_dumpMessaggio_allegato_headergetEngineToDelete.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().ALLEGATO.HEADER));
+			sqlQueryObjectDelete_dumpMessaggio_allegato_dumpMessaggio_allegato_headergetEngineToDelete.addWhereCondition("id_allegato=?");
+			java.util.List<Object> dumpMessaggio_allegato_header_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_dumpMessaggio_allegato_dumpMessaggio_allegato_headergetEngineToDelete.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().ALLEGATO.HEADER, this.getDumpMessaggioFetch(),
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio_allegato.getId(),Long.class));
 
 			// for dumpMessaggio_allegato_header
@@ -1048,11 +1048,11 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		} // fine for dumpMessaggio_allegato
 
 		//Recupero oggetto _dumpMessaggio_contenuto
-		ISQLQueryObject sqlQueryObjectDelete_dumpMessaggio_contenuto_getToDelete = sqlQueryObjectDelete.newSQLQueryObject();
-		sqlQueryObjectDelete_dumpMessaggio_contenuto_getToDelete.setANDLogicOperator(true);
-		sqlQueryObjectDelete_dumpMessaggio_contenuto_getToDelete.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().CONTENUTO));
-		sqlQueryObjectDelete_dumpMessaggio_contenuto_getToDelete.addWhereCondition("id_messaggio=?");
-		java.util.List<Object> dumpMessaggio_contenuto_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_dumpMessaggio_contenuto_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().CONTENUTO, this.getDumpMessaggioFetch(),
+		ISQLQueryObject sqlQueryObjectDelete_dumpMessaggio_contenutogetEngineToDelete = sqlQueryObjectDelete.newSQLQueryObject();
+		sqlQueryObjectDelete_dumpMessaggio_contenutogetEngineToDelete.setANDLogicOperator(true);
+		sqlQueryObjectDelete_dumpMessaggio_contenutogetEngineToDelete.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().CONTENUTO));
+		sqlQueryObjectDelete_dumpMessaggio_contenutogetEngineToDelete.addWhereCondition("id_messaggio=?");
+		java.util.List<Object> dumpMessaggio_contenuto_toDelete_list = jdbcUtilities.executeQuery(sqlQueryObjectDelete_dumpMessaggio_contenutogetEngineToDelete.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().CONTENUTO, this.getDumpMessaggioFetch(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id,Long.class));
 
 		// for dumpMessaggio_contenuto
@@ -1093,7 +1093,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		}catch(NotFoundException notFound){
 			return;
 		}
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, id);
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, id);
 		
 	}
 	
@@ -1110,7 +1110,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		java.util.List<Long> lst = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, new JDBCPaginatedExpression(expression));
 		
 		for(Long id : lst) {
-			this._delete(jdbcProperties, log, connection, sqlQueryObject, id);
+			this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, id);
 		}
 		
 		return new NonNegativeNumber(lst.size());
@@ -1123,7 +1123,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 	
 	@Override
 	public void deleteById(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId) throws ServiceException, NotImplementedException, Exception {
-		this._delete(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
+		this.deleteEngine(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
 	}
 	
 	@Override

@@ -244,97 +244,16 @@ public class Fruitore extends org.openspcoop2.utils.beans.BaseBeanWithId impleme
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="servizio-applicativo",required=true,nillable=false)
-  protected List<java.lang.String> servizioApplicativo = new ArrayList<java.lang.String>();
-
-  /**
-   * @deprecated Use method getServizioApplicativoList
-   * @return List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public List<java.lang.String> getServizioApplicativo() {
-  	return this.servizioApplicativo;
-  }
-
-  /**
-   * @deprecated Use method setServizioApplicativoList
-   * @param servizioApplicativo List&lt;java.lang.String&gt;
-  */
-  @Deprecated
-  public void setServizioApplicativo(List<java.lang.String> servizioApplicativo) {
-  	this.servizioApplicativo=servizioApplicativo;
-  }
-
-  /**
-   * @deprecated Use method sizeServizioApplicativoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeServizioApplicativo() {
-  	return this.servizioApplicativo.size();
-  }
+  private List<java.lang.String> servizioApplicativo = new ArrayList<>();
 
   @XmlElement(name="connettore",required=false,nillable=false)
   protected Connettore connettore;
 
   @XmlElement(name="configurazione-azione",required=true,nillable=false)
-  protected List<ConfigurazioneServizioAzione> configurazioneAzione = new ArrayList<ConfigurazioneServizioAzione>();
-
-  /**
-   * @deprecated Use method getConfigurazioneAzioneList
-   * @return List&lt;ConfigurazioneServizioAzione&gt;
-  */
-  @Deprecated
-  public List<ConfigurazioneServizioAzione> getConfigurazioneAzione() {
-  	return this.configurazioneAzione;
-  }
-
-  /**
-   * @deprecated Use method setConfigurazioneAzioneList
-   * @param configurazioneAzione List&lt;ConfigurazioneServizioAzione&gt;
-  */
-  @Deprecated
-  public void setConfigurazioneAzione(List<ConfigurazioneServizioAzione> configurazioneAzione) {
-  	this.configurazioneAzione=configurazioneAzione;
-  }
-
-  /**
-   * @deprecated Use method sizeConfigurazioneAzioneList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeConfigurazioneAzione() {
-  	return this.configurazioneAzione.size();
-  }
+  private List<ConfigurazioneServizioAzione> configurazioneAzione = new ArrayList<>();
 
   @XmlElement(name="protocol-property",required=true,nillable=false)
-  protected List<ProtocolProperty> protocolProperty = new ArrayList<ProtocolProperty>();
-
-  /**
-   * @deprecated Use method getProtocolPropertyList
-   * @return List&lt;ProtocolProperty&gt;
-  */
-  @Deprecated
-  public List<ProtocolProperty> getProtocolProperty() {
-  	return this.protocolProperty;
-  }
-
-  /**
-   * @deprecated Use method setProtocolPropertyList
-   * @param protocolProperty List&lt;ProtocolProperty&gt;
-  */
-  @Deprecated
-  public void setProtocolProperty(List<ProtocolProperty> protocolProperty) {
-  	this.protocolProperty=protocolProperty;
-  }
-
-  /**
-   * @deprecated Use method sizeProtocolPropertyList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeProtocolProperty() {
-  	return this.protocolProperty.size();
-  }
+  private List<ProtocolProperty> protocolProperty = new ArrayList<>();
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="stato-package",required=false)

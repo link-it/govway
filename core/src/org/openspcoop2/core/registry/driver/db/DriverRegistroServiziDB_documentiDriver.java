@@ -311,18 +311,18 @@ public class DriverRegistroServiziDB_documentiDriver {
 	}
 
 	protected Documento getAllegato(IDServizio idASPS, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return _getDocumento(idASPS, RuoliDocumento.allegato.toString(), null, nome);
+		return getEngineDocumento(idASPS, RuoliDocumento.allegato.toString(), null, nome);
 	}
 	protected Documento getSpecificaSemiformale(IDServizio idASPS, TipiDocumentoSemiformale tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return _getDocumento(idASPS, RuoliDocumento.specificaSemiformale.toString(), tipo.toString(), nome);
+		return getEngineDocumento(idASPS, RuoliDocumento.specificaSemiformale.toString(), tipo.toString(), nome);
 	}
 	protected Documento getSpecificaSicurezza(IDServizio idASPS, TipiDocumentoSicurezza tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return _getDocumento(idASPS, RuoliDocumento.specificaSicurezza.toString(), tipo.toString(), nome);
+		return getEngineDocumento(idASPS, RuoliDocumento.specificaSicurezza.toString(), tipo.toString(), nome);
 	}
 	protected Documento getSpecificaLivelloServizio(IDServizio idASPS, TipiDocumentoLivelloServizio tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return _getDocumento(idASPS, RuoliDocumento.specificaLivelloServizio.toString(), tipo.toString(), nome);
+		return getEngineDocumento(idASPS, RuoliDocumento.specificaLivelloServizio.toString(), tipo.toString(), nome);
 	}
-	private Documento _getDocumento(IDServizio idASPS, String ruolo, String tipo, String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	private Documento getEngineDocumento(IDServizio idASPS, String ruolo, String tipo, String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		String nomeMetodo = "getDocumento";
 		String queryString;
 		
@@ -396,12 +396,12 @@ public class DriverRegistroServiziDB_documentiDriver {
 
 	
 	protected Documento getAllegato(IDAccordo idAccordo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return _getDocumento(idAccordo, RuoliDocumento.allegato.toString(), null, nome);
+		return getEngineDocumento(idAccordo, RuoliDocumento.allegato.toString(), null, nome);
 	}
 	protected Documento getSpecificaSemiformale(IDAccordo idAccordo, TipiDocumentoSemiformale tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return _getDocumento(idAccordo, RuoliDocumento.specificaSemiformale.toString(), tipo.toString(), nome);
+		return getEngineDocumento(idAccordo, RuoliDocumento.specificaSemiformale.toString(), tipo.toString(), nome);
 	}
-	private Documento _getDocumento(IDAccordo idAccordo, String ruolo, String tipo, String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	private Documento getEngineDocumento(IDAccordo idAccordo, String ruolo, String tipo, String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		String nomeMetodo = "getDocumento";
 		String queryString;
 		
