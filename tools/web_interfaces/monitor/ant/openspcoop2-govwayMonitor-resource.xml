@@ -313,6 +313,21 @@
 			</then>
 		</if>
 		
+		<!-- Copia della configurazione cookie same site per WF26 -->
+		<if>
+			<matches string="${as}" pattern="wildfly.*"/>
+			<then>
+				<if>
+					<or>
+						<matches string="${as}" pattern="wildfly26"/>
+					</or>
+					<then>
+						<copy file="${appSec.dir}/cookieSameSite/wildfly26/undertow-handlers.conf" tofile="${build_govwayMonitor_war}/WEB-INF/${cookie_same_site}" />
+					</then>
+				</if>
+			</then>
+		</if>
+		
 	</target>
 
 

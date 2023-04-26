@@ -138,6 +138,7 @@
 			<webinf dir="${build_govwayMonitor_war}/WEB-INF">
 				<include name="${jboss_deployment_structure}" />
 				<include name="jboss-web.xml" />
+				<include name="${cookie_same_site}" />
 			</webinf>
 			<classes dir="${properties_govwayMonitor}">
 				<include name="monitor.log4j2.properties" />
