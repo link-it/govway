@@ -68,14 +68,14 @@ public class ContentAuthorizationFilter implements Filter {
 	private static final String msgErrorePost = " non dispone delle autorizzazioni necessarie per visualizzare la pagina richiesta";
 
 	// pagina da mostrare all'utente al posto di quella richiesta
-	private static final String jspErrore = "/commons/pages/welcome.jsf";
-	private static final String jspLogin = "/public/login.jsf";
+	public static final String jspErrore = "/commons/pages/welcome.jsf";
+	public static final String jspLogin = "/public/login.jsf";
 
 	// id delle variabili in sessione per il controllo del messaggio da
 	// visualizzare all'utente
-	private static final String msgErroreKey = "acclim";
+	public static final String msgErroreKey = "acclim";
 
-	private static final String accLimKey = "acclimflag";
+	public static final String accLimKey = "acclimflag";
 
 
 	private List<String> excludedPaths = null;
