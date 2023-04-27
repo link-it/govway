@@ -381,8 +381,15 @@ public class Costanti {
 	/** CSP */
 	public static final String REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE = "_csp_random_nonce";
 	public static final String SESSION_ATTRIBUTE_CSP_RANDOM_NONCE =  REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE;
+	
+	/** LIB JQUERY */
+	
 	public static final String REQUEST_ATTRIBUTE_JQUERY_VERSION = "__jquery_version__";
 	public static final String FILTER_INIT_PARAMETER_JQUERY_VERSION = "jquery_version";
+	public static final String FILTER_INIT_PARAMETER_JQUERY_UI_VERSION = "jquery-ui_version";
+	public static final String LIB_JQUERY_PATH = "webjars/jquery/{0}/jquery.min.js";
+	public static final String LIB_JQUERY_UI_PATH = "webjars/jquery-ui/{0}/jquery-ui.min.js";
+	public static final String WEBJARS_DIR = "webjars";
 	
 	/** VALIDAZIONE INPUT */
 	

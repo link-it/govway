@@ -86,10 +86,15 @@ public final class AuthorizationFilter implements Filter {
 	private String loginErroreInternoRedirectUrl = null;
 	private String loginSessioneScadutaRedirectUrl = null;
 	
+	private String jQueryVersion = null;
+	private String jQueryUiVersion = null;
+	
 	@Override
 	public void init(FilterConfig filterConfig) {
 		
 		this.filterConfig = filterConfig;
+		this.jQueryVersion = this.filterConfig.getInitParameter(Costanti.FILTER_INIT_PARAMETER_JQUERY_VERSION);
+		this.jQueryUiVersion = this.filterConfig.getInitParameter(Costanti.FILTER_INIT_PARAMETER_JQUERY_UI_VERSION);
 		try {
 			this.core = new ControlStationCore();
 		} catch (Exception e) {
@@ -333,6 +338,26 @@ public final class AuthorizationFilter implements Filter {
 							String servletRichiesta = urlRichiesta.substring((contextPath+"/").length());
 							ControlStationCore.logError("Autorizzazione negata all'utente "+userLogin+" per la servlet ["+servletRichiesta+"]: l'utenza autenticata non puo' visualizzare la schermata di login.");
 							setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA,MessageType.ERROR_SINTETICO, this.filterConfig);
+							// return so that we do not chain to other filters
+							return;
+						}
+					}
+					
+					// Controllo risorse jQuery
+					if ( (urlRichiesta.indexOf(CostantiControlStation.WEBJARS_DIR) != -1) ){
+						if(!isValidJQueryResource(request)) {
+							if(generalHelper==null) {
+								try{
+									generalHelper = new GeneralHelper(session);
+								}catch(Exception eClose){
+									ControlStationCore.logError("Errore rilevato durante l'authorizationFilter (reInit General Helper)",eClose);
+								}
+							}
+							
+							String userLogin = ServletUtils.getUserLoginFromSession(session);
+							ControlStationCore.logError("Autorizzazione negata all'utente "+userLogin+" per la risorsa jQuery ["+urlRichiesta+"]");
+							response.sendRedirect(getRedirectToMessageServletAutorizzazioneNegata(request.getContextPath()));
+//							setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA,MessageType.ERROR_SINTETICO, this.filterConfig);
 							// return so that we do not chain to other filters
 							return;
 						}
@@ -636,6 +661,27 @@ public final class AuthorizationFilter implements Filter {
 						}
 						ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd, true);
 					}
+					
+					// Controllo risorse jQuery
+					if ( (urlRichiesta.indexOf(CostantiControlStation.WEBJARS_DIR) != -1) ){
+						if(!isValidJQueryResource(request)) {
+							if(generalHelper==null) {
+								try{
+									generalHelper = new GeneralHelper(session);
+								}catch(Exception eClose){
+									ControlStationCore.logError("Errore rilevato durante l'authorizationFilter (reInit General Helper)",eClose);
+								}
+							}
+							
+							String userLogin = ServletUtils.getUserLoginFromSession(session);
+							ControlStationCore.logError("Autorizzazione negata all'utente "+userLogin+" per la risorsa jQuery ["+urlRichiesta+"]");
+							// faccio un redirect esplicito alla servlet dei messaggi
+							response.sendRedirect(getRedirectToMessageServletAutorizzazioneNegata(request.getContextPath()));
+//							setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA,MessageType.ERROR_SINTETICO, this.filterConfig);
+							// return so that we do not chain to other filters
+							return;
+						}
+					}
 				}
 			}
 			// allow others filter to be chained
@@ -678,7 +724,6 @@ public final class AuthorizationFilter implements Filter {
 			return false;
 		}
 		
-		
 		if ((urlRichiesta.indexOf("/"+LoginCostanti.SERVLET_NAME_LOGIN) == -1) 
 				&& (urlRichiesta.indexOf("/"+LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE) == -1) 
 				&& (urlRichiesta.indexOf("/"+CostantiControlStation.IMAGES_DIR) == -1) 
@@ -687,7 +732,7 @@ public final class AuthorizationFilter implements Filter {
 				&& (urlRichiesta.indexOf("/"+CostantiControlStation.JS_DIR) == -1)
 				&& (urlRichiesta.indexOf("/"+AboutCostanti.SERVLET_NAME_ABOUT) == -1) 
 				&& (urlRichiesta.indexOf("/"+CostantiControlStation.PUBLIC_DIR) == -1) // risorse public
-				&& (urlRichiesta.indexOf("/"+CostantiControlStation.WEBJARS_DIR) == -1) // jquery da jar
+				&& (urlRichiesta.indexOf("/"+CostantiControlStation.WEBJARS_DIR) == -1) // risorse jquery
 				) {
 			return true;
 		}
@@ -787,6 +832,13 @@ public final class AuthorizationFilter implements Filter {
 				new Parameter(Costanti.PARAMETER_MESSAGE_TYPE,MessageType.INFO_SINTETICO.toString())
 				).getValue();
 	}
+	
+	private String getRedirectToMessageServletAutorizzazioneNegata(String contextPath) {
+		return new Parameter("", contextPath + "/" + LoginCostanti.SERVLET_NAME_MESSAGE_PAGE,
+				new Parameter(Costanti.PARAMETER_MESSAGE_TEXT,LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA),
+				new Parameter(Costanti.PARAMETER_MESSAGE_TYPE,MessageType.ERROR_SINTETICO.toString())
+				).getValue();
+	}
 		
 	private String verificaCSRF(GeneralHelper gh, HttpSession session, HttpServletRequest request, LoginHelper loginHelper) throws Exception {
 		
@@ -836,12 +888,25 @@ public final class AuthorizationFilter implements Filter {
 		return false;
 	}
 	
-	private boolean isGeneraNuovoTokenCSRF(HttpServletRequest request, LoginHelper loginHelper) throws Exception{
+	private boolean isGeneraNuovoTokenCSRF(HttpServletRequest request, LoginHelper loginHelper) {
 		// token attuale viene invalidato e ne viene generato uno nuovo
 		// tranne che per le richieste verso la servlet informazioniUtilizzoOggettoRegistro
 		String urlRichiesta = request.getRequestURI();
 		if ((urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_INFORMAZIONI_UTILIZZO_OGGETTO) != -1))  {
 			ControlStationCore.logDebug("Richiesta Risorsa ["+urlRichiesta+"], Token CSRF non verra' aggiornato.");
+			return false;
+		}
+		
+		return true;
+	}
+	
+	private boolean isValidJQueryResource(HttpServletRequest request) {
+		String urlRichiesta = request.getRequestURI();
+		
+		// regola speciale per le risorse jquery, sono ammesse solo le due librerie jquery-min e jquery-ui-min
+		if((urlRichiesta.indexOf("/"+MessageFormat.format(Costanti.LIB_JQUERY_PATH, this.jQueryVersion)) == -1) // jquery da jar
+		&& (urlRichiesta.indexOf("/"+MessageFormat.format(Costanti.LIB_JQUERY_UI_PATH, this.jQueryUiVersion)) == -1) // jquery-ui da jar
+		) {
 			return false;
 		}
 		

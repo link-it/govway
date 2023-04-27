@@ -76,6 +76,14 @@
 	<filter>
    		<filter-name>contentAuthorizationFilter</filter-name>
    		<filter-class>org.openspcoop2.web.monitor.core.filters.ContentAuthorizationFilter</filter-class>
+		<init-param>
+			<param-name>jquery_version</param-name>
+			<param-value>3.6.4</param-value>
+		</init-param>
+		<init-param>
+			<param-name>jquery-ui_version</param-name>
+			<param-value>1.13.2</param-value>
+		</init-param>
 	</filter>
 	<filter-mapping>
    		<filter-name>contentAuthorizationFilter</filter-name>

@@ -47,7 +47,7 @@ public class ContentAuthorizationCostanti {
 		"/timeout.jsp",
 		"/report/statistica",
 		"/report/configurazione",
-		"/webjars/",
+		"/webjars/",  
 		
 		// Cambio Password Scaduta Utente
 		"/core/pages/form/userPasswordScaduta.jsf"

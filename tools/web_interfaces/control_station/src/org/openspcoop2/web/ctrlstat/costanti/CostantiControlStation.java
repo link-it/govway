@@ -1546,7 +1546,7 @@ public class CostantiControlStation {
 	public static final String JS_DIR = "js";
 	public static final String FONTS_DIR = "fonts";
 	public static final String PUBLIC_DIR = "public";
-	public static final String WEBJARS_DIR = "webjars";
+	public static final String WEBJARS_DIR = Costanti.WEBJARS_DIR;
 	public static final String OPERATIONS_DELIMITER = "\n--------------------------------------------\n\n";
 	
 	/** ICONE */
