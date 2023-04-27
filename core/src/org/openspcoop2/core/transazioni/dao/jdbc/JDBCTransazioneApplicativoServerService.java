@@ -74,9 +74,6 @@ public class JDBCTransazioneApplicativoServerService extends JDBCTransazioneAppl
 	private ServiceException newServiceExceptionParameterOldIdIsNull(){
 		return new ServiceException(PARAMETER_TYPE_PREFIX+IdTransazioneApplicativoServer.class.getName()+") 'oldId' is null");
 	}
-	private ServiceException newServiceExceptionParameterIdIsNull(){
-		return new ServiceException(PARAMETER_TYPE_PREFIX+IdTransazioneApplicativoServer.class.getName()+") 'id' is null");
-	}
 	private ServiceException newServiceExceptionParameterConditionIsNull(){
 		return new ServiceException(PARAMETER_TYPE_PREFIX+IExpression.class.getName()+") 'condition' is null");
 	}

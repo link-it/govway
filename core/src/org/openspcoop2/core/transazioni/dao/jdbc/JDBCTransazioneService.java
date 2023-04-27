@@ -71,9 +71,6 @@ public class JDBCTransazioneService extends JDBCTransazioneServiceSearch  implem
 	private ServiceException newServiceExceptionParameterOldIdIsNull(){
 		return new ServiceException(PARAMETER_TYPE_PREFIX+String.class.getName()+") 'oldId' is null");
 	}
-	private ServiceException newServiceExceptionParameterIdIsNull(){
-		return new ServiceException(PARAMETER_TYPE_PREFIX+String.class.getName()+") 'id' is null");
-	}
 	private ServiceException newServiceExceptionParameterConditionIsNull(){
 		return new ServiceException(PARAMETER_TYPE_PREFIX+IExpression.class.getName()+") 'condition' is null");
 	}

@@ -109,7 +109,7 @@ public class JDBCRuoloServiceSearch implements IDBRuoloServiceSearch, IDBService
 	private ServiceException newServiceExceptionParameterObjIsNull(){
 		return new ServiceException(PARAMETER_TYPE_PREFIX+Ruolo.class.getName()+") 'obj' is null");
 	}
-	private ServiceException newServiceExceptionParameterIdIsNull(){
+	protected ServiceException newServiceExceptionParameterIdIsNull(){
 		return new ServiceException(PARAMETER_TYPE_PREFIX+IdRuolo.class.getName()+") 'id' is null");
 	}
 	private ServiceException newServiceExceptionParameterIdMappingResolutionBehaviourIsNull(){

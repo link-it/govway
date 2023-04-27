@@ -109,7 +109,7 @@ public class JDBCServizioApplicativoServiceSearch implements IDBServizioApplicat
 	private ServiceException newServiceExceptionParameterObjIsNull(){
 		return new ServiceException(PARAMETER_TYPE_PREFIX+ServizioApplicativo.class.getName()+") 'obj' is null");
 	}
-	private ServiceException newServiceExceptionParameterIdIsNull(){
+	protected ServiceException newServiceExceptionParameterIdIsNull(){
 		return new ServiceException(PARAMETER_TYPE_PREFIX+IdServizioApplicativo.class.getName()+") 'id' is null");
 	}
 	private ServiceException newServiceExceptionParameterIdMappingResolutionBehaviourIsNull(){

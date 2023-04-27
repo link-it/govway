@@ -109,7 +109,7 @@ public class JDBCConfigurazioneStatisticaServiceSearch implements IDBConfigurazi
 	private ServiceException newServiceExceptionParameterObjIsNull(){
 		return new ServiceException(PARAMETER_TYPE_PREFIX+ConfigurazioneStatistica.class.getName()+") 'obj' is null");
 	}
-	private ServiceException newServiceExceptionParameterIdIsNull(){
+	protected ServiceException newServiceExceptionParameterIdIsNull(){
 		return new ServiceException(PARAMETER_TYPE_PREFIX+IdConfigurazioneStatistica.class.getName()+") 'id' is null");
 	}
 	private ServiceException newServiceExceptionParameterIdMappingResolutionBehaviourIsNull(){

@@ -74,9 +74,6 @@ public class JDBCConfigurazioneStatisticaService extends JDBCConfigurazioneStati
 	private ServiceException newServiceExceptionParameterOldIdIsNull(){
 		return new ServiceException(PARAMETER_TYPE_PREFIX+IdConfigurazioneStatistica.class.getName()+") 'oldId' is null");
 	}
-	private ServiceException newServiceExceptionParameterIdIsNull(){
-		return new ServiceException(PARAMETER_TYPE_PREFIX+IdConfigurazioneStatistica.class.getName()+") 'id' is null");
-	}
 	private ServiceException newServiceExceptionParameterConditionIsNull(){
 		return new ServiceException(PARAMETER_TYPE_PREFIX+IExpression.class.getName()+") 'condition' is null");
 	}

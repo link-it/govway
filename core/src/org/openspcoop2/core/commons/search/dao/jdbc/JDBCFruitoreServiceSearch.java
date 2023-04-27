@@ -109,7 +109,7 @@ public class JDBCFruitoreServiceSearch implements IDBFruitoreServiceSearch, IDBS
 	private ServiceException newServiceExceptionParameterObjIsNull(){
 		return new ServiceException(PARAMETER_TYPE_PREFIX+Fruitore.class.getName()+") 'obj' is null");
 	}
-	private ServiceException newServiceExceptionParameterIdIsNull(){
+	protected ServiceException newServiceExceptionParameterIdIsNull(){
 		return new ServiceException(PARAMETER_TYPE_PREFIX+IdFruitore.class.getName()+") 'id' is null");
 	}
 	private ServiceException newServiceExceptionParameterIdMappingResolutionBehaviourIsNull(){

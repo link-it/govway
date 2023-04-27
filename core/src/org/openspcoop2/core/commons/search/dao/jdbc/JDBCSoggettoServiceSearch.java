@@ -109,7 +109,7 @@ public class JDBCSoggettoServiceSearch implements IDBSoggettoServiceSearch, IDBS
 	private ServiceException newServiceExceptionParameterObjIsNull(){
 		return new ServiceException(PARAMETER_TYPE_PREFIX+Soggetto.class.getName()+") 'obj' is null");
 	}
-	private ServiceException newServiceExceptionParameterIdIsNull(){
+	protected ServiceException newServiceExceptionParameterIdIsNull(){
 		return new ServiceException(PARAMETER_TYPE_PREFIX+IdSoggetto.class.getName()+") 'id' is null");
 	}
 	private ServiceException newServiceExceptionParameterIdMappingResolutionBehaviourIsNull(){
