@@ -94,16 +94,4 @@ public class SecurityProperties {
 		}
 	}
 
-	public Boolean getBooleanProp(String property) throws UtilsException {
-		String tmp = this.getProperty( property );
-		if ( tmp == null ) {
-			return null;
-		}
-		if("true".equalsIgnoreCase(tmp)==false && "false".equalsIgnoreCase(tmp)==false){
-			throw new UtilsException("Property ["+property+"] with uncorrect value ["+tmp+"] (true/value expected)");
-		}
-		return Boolean.parseBoolean(tmp) ;
-	}
-
-
 }

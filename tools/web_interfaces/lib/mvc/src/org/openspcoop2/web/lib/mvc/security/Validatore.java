@@ -79,7 +79,7 @@ public class Validatore {
 			if ( p != null ) {
 				patternsToCheck.add(p);
 			} else {
-				throw new ValidationException("Non e' stata trovato un pattern di validazione per il tipo [" + pattern + "].");
+				throw new ValidationException("Non e' stata trovato un pattern di validazione per il tipo [" + StringUtils.join(pattern,",") + "].");
 			}
 		}
 		
