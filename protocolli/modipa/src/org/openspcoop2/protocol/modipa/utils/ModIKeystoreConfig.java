@@ -80,7 +80,7 @@ public class ModIKeystoreConfig extends ModIKeystoreUtils {
 	}
 	private static String getSicurezzaMessaggio_certificati_keyStore_tipo() throws ProtocolException {
 		try {
-			return getModiProperties().getSicurezzaMessaggio_certificati_keyStore_tipo();
+			return getModiProperties().getSicurezzaMessaggioCertificatiKeyStoreTipo();
 		}catch(Exception e) {
 			throw new ProtocolException(e.getMessage(),e);
 		}
@@ -88,7 +88,7 @@ public class ModIKeystoreConfig extends ModIKeystoreUtils {
 	private static String getSicurezzaMessaggio_certificati_keyStore_path() throws ProtocolException {
 		try {
 			if(getSicurezzaMessaggio_certificati_keyStore_tipo()!=null) {
-				return getModiProperties().getSicurezzaMessaggio_certificati_keyStore_path();
+				return getModiProperties().getSicurezzaMessaggioCertificatiKeyStorePath();
 			}
 			return null;
 		}catch(Exception e) {
@@ -98,7 +98,7 @@ public class ModIKeystoreConfig extends ModIKeystoreUtils {
 	private static String getSicurezzaMessaggio_certificati_keyStore_password() throws ProtocolException {
 		try {
 			if(getSicurezzaMessaggio_certificati_keyStore_tipo()!=null) {
-				return getModiProperties().getSicurezzaMessaggio_certificati_keyStore_password();
+				return getModiProperties().getSicurezzaMessaggioCertificatiKeyStorePassword();
 			}
 			return null;
 		}catch(Exception e) {
@@ -108,7 +108,7 @@ public class ModIKeystoreConfig extends ModIKeystoreUtils {
 	private static String getSicurezzaMessaggio_certificati_key_alias() throws ProtocolException {
 		try {
 			if(getSicurezzaMessaggio_certificati_keyStore_tipo()!=null) {
-				return getModiProperties().getSicurezzaMessaggio_certificati_key_alias();
+				return getModiProperties().getSicurezzaMessaggioCertificatiKeyAlias();
 			}
 			return null;
 		}catch(Exception e) {
@@ -118,7 +118,7 @@ public class ModIKeystoreConfig extends ModIKeystoreUtils {
 	private static String getSicurezzaMessaggio_certificati_key_password() throws ProtocolException {
 		try {
 			if(getSicurezzaMessaggio_certificati_keyStore_tipo()!=null) {
-				return getModiProperties().getSicurezzaMessaggio_certificati_key_password();
+				return getModiProperties().getSicurezzaMessaggioCertificatiKeyPassword();
 			}
 			return null;
 		}catch(Exception e) {

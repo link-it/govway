@@ -35,6 +35,7 @@ import org.openspcoop2.protocol.sdk.constants.InitialIdConversationType;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
+import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 
 /**
@@ -307,6 +308,13 @@ public interface IProtocolConfiguration extends IComponentFactory {
 	 * @return lista di BypassMustUnderstandCheck
 	 */
 	public List<BypassMustUnderstandCheck> getBypassMustUnderstandCheck();
+	
+	/**
+	 * Ritorna i remote store config
+	 * 
+	 * @return i remote store config
+	 */
+	public List<RemoteStoreConfig> getRemoteStoreConfig() throws ProtocolException;
 	
 	
 }

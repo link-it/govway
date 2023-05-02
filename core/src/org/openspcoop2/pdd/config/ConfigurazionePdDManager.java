@@ -383,7 +383,7 @@ public class ConfigurazionePdDManager {
 						messageContent = new MessageContent(message.castAsRestJson(), bufferMessage_readOnly, pddContext);
 					}
 
-					Map<String, Object> dynamicMap = new HashMap<String, Object>();
+					Map<String, Object> dynamicMap = new HashMap<>();
 					ErrorHandler errorHandler = new ErrorHandler();
 					DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione, message, messageContent, busta, 
 							pTrasporto, 

@@ -1331,7 +1331,7 @@ public class TrasformazioniTest {
 		
 		RicezioneContenutiApplicativiInternalErrorGenerator generator = null;
 		
-		Map<String, Object> dynamicMapXmlRequest = new HashMap<String, Object>();
+		Map<String, Object> dynamicMapXmlRequest = new HashMap<>();
 		ErrorHandler errorHandlerXmlRequest = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_REQUEST_FAILED, pddContext);
 		DynamicUtils.fillDynamicMapRequest(log, dynamicMapXmlRequest, pddContext, urlInvocazione,
 				xmlMessageRequest,
@@ -1342,7 +1342,7 @@ public class TrasformazioniTest {
 				parametriForm,
 				errorHandlerXmlRequest);
 		
-		Map<String, Object> dynamicMapXmlResponse = new HashMap<String, Object>();
+		Map<String, Object> dynamicMapXmlResponse = new HashMap<>();
 		ErrorHandler errorHandlerXmlResponse = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_RESPONSE_FAILED, pddContext);
 		DynamicUtils.fillDynamicMapResponse(log, dynamicMapXmlResponse, dynamicMapXmlRequest, pddContext, 
 				xmlMessageResponse,
@@ -1350,7 +1350,7 @@ public class TrasformazioniTest {
 				busta, parametriTrasportoRisposta,
 				errorHandlerXmlResponse);
 		
-		Map<String, Object> dynamicMapJsonRequest = new HashMap<String, Object>();
+		Map<String, Object> dynamicMapJsonRequest = new HashMap<>();
 		ErrorHandler errorHandlerJsonRequest = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_REQUEST_FAILED, pddContext);
 		DynamicUtils.fillDynamicMapRequest(log, dynamicMapJsonRequest, pddContext, urlInvocazione,
 				jsonMessageRequest,
@@ -1361,7 +1361,7 @@ public class TrasformazioniTest {
 				parametriForm,
 				errorHandlerJsonRequest);
 		
-		Map<String, Object> dynamicMapJsonResponse = new HashMap<String, Object>();
+		Map<String, Object> dynamicMapJsonResponse = new HashMap<>();
 		ErrorHandler errorHandlerJsonResponse = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_RESPONSE_FAILED, pddContext);
 		DynamicUtils.fillDynamicMapResponse(log, dynamicMapJsonResponse, dynamicMapJsonRequest, pddContext, 
 				jsonMessageResponse,
@@ -1369,7 +1369,7 @@ public class TrasformazioniTest {
 				busta, parametriTrasportoRisposta,
 				errorHandlerJsonResponse);
 		
-		Map<String, Object> dynamicMapJsonTestAlterazioni = new HashMap<String, Object>();
+		Map<String, Object> dynamicMapJsonTestAlterazioni = new HashMap<>();
 		ErrorHandler errorHandlerJsonTestAlterazioni = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_REQUEST_FAILED, pddContext);
 		DynamicUtils.fillDynamicMapRequest(log, dynamicMapJsonTestAlterazioni, pddContext, urlInvocazione,
 				jsonMessageTestAlterazioni,
@@ -1380,7 +1380,7 @@ public class TrasformazioniTest {
 				parametriForm,
 				errorHandlerJsonTestAlterazioni);
 		
-		Map<String, Object> dynamicMapRequestCheckPatternExtractorSOAP11 = new HashMap<String, Object>();
+		Map<String, Object> dynamicMapRequestCheckPatternExtractorSOAP11 = new HashMap<>();
 		ErrorHandler errorHandlerRequestCheckPatternExtractorSOAP11 = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_REQUEST_FAILED, pddContext);
 		DynamicUtils.fillDynamicMapRequest(log, dynamicMapRequestCheckPatternExtractorSOAP11, pddContext, urlInvocazione,
 				messageRequestPatternExtractorSOAP11,
@@ -1391,7 +1391,7 @@ public class TrasformazioniTest {
 				parametriForm,
 				errorHandlerRequestCheckPatternExtractorSOAP11);
 		
-		Map<String, Object> dynamicMapResponseCheckPatternExtractorSOAP11 = new HashMap<String, Object>();
+		Map<String, Object> dynamicMapResponseCheckPatternExtractorSOAP11 = new HashMap<>();
 		ErrorHandler errorHandlerResponseCheckPatternExtractorSOAP11 = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_RESPONSE_FAILED, pddContext);
 		DynamicUtils.fillDynamicMapResponse(log, dynamicMapResponseCheckPatternExtractorSOAP11, dynamicMapRequestCheckPatternExtractorSOAP11, pddContext, 
 				messageResponsePatternExtractorSOAP11,
@@ -1399,7 +1399,7 @@ public class TrasformazioniTest {
 				busta, parametriTrasportoRisposta,
 				errorHandlerResponseCheckPatternExtractorSOAP11);
 		
-		Map<String, Object> dynamicMapRequestCheckPatternExtractorSOAP12 = new HashMap<String, Object>();
+		Map<String, Object> dynamicMapRequestCheckPatternExtractorSOAP12 = new HashMap<>();
 		ErrorHandler errorHandlerRequestCheckPatternExtractorSOAP12 = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_REQUEST_FAILED, pddContext);
 		DynamicUtils.fillDynamicMapRequest(log, dynamicMapRequestCheckPatternExtractorSOAP12, pddContext, urlInvocazione,
 				messageRequestPatternExtractorSOAP12,
@@ -1410,7 +1410,7 @@ public class TrasformazioniTest {
 				parametriForm,
 				errorHandlerRequestCheckPatternExtractorSOAP12);
 		
-		Map<String, Object> dynamicMapResponseCheckPatternExtractorSOAP12 = new HashMap<String, Object>();
+		Map<String, Object> dynamicMapResponseCheckPatternExtractorSOAP12 = new HashMap<>();
 		ErrorHandler errorHandlerResponseCheckPatternExtractorSOAP12 = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_RESPONSE_FAILED, pddContext);
 		DynamicUtils.fillDynamicMapResponse(log, dynamicMapResponseCheckPatternExtractorSOAP12, dynamicMapRequestCheckPatternExtractorSOAP12, pddContext, 
 				messageResponsePatternExtractorSOAP12,
@@ -1418,7 +1418,7 @@ public class TrasformazioniTest {
 				busta, parametriTrasportoRisposta,
 				errorHandlerResponseCheckPatternExtractorSOAP12);
 		
-		Map<String, Object> dynamicMapRequestCheckPatternExtractorXML = new HashMap<String, Object>();
+		Map<String, Object> dynamicMapRequestCheckPatternExtractorXML = new HashMap<>();
 		ErrorHandler errorHandlerRequestCheckPatternExtractorXML = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_REQUEST_FAILED, pddContext);
 		DynamicUtils.fillDynamicMapRequest(log, dynamicMapRequestCheckPatternExtractorXML, pddContext, urlInvocazione,
 				messageRequestPatternExtractorXML,
@@ -1429,7 +1429,7 @@ public class TrasformazioniTest {
 				parametriForm,
 				errorHandlerRequestCheckPatternExtractorXML);
 		
-		Map<String, Object> dynamicMapResponseCheckPatternExtractorXML = new HashMap<String, Object>();
+		Map<String, Object> dynamicMapResponseCheckPatternExtractorXML = new HashMap<>();
 		ErrorHandler errorHandlerResponseCheckPatternExtractorXML = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_RESPONSE_FAILED, pddContext);
 		DynamicUtils.fillDynamicMapResponse(log, dynamicMapResponseCheckPatternExtractorXML, dynamicMapRequestCheckPatternExtractorXML, pddContext, 
 				messageResponsePatternExtractorXML,
@@ -1437,7 +1437,7 @@ public class TrasformazioniTest {
 				busta, parametriTrasportoRisposta,
 				errorHandlerResponseCheckPatternExtractorXML);
 		
-		Map<String, Object> dynamicMapRequestCheckPatternExtractorJSON = new HashMap<String, Object>();
+		Map<String, Object> dynamicMapRequestCheckPatternExtractorJSON = new HashMap<>();
 		ErrorHandler errorHandlerRequestCheckPatternExtractorJSON = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_REQUEST_FAILED, pddContext);
 		DynamicUtils.fillDynamicMapRequest(log, dynamicMapRequestCheckPatternExtractorJSON, pddContext, urlInvocazione,
 				messageRequestPatternExtractorJSON,
@@ -1448,7 +1448,7 @@ public class TrasformazioniTest {
 				parametriForm,
 				errorHandlerRequestCheckPatternExtractorJSON);
 		
-		Map<String, Object> dynamicMapResponseCheckPatternExtractorJSON = new HashMap<String, Object>();
+		Map<String, Object> dynamicMapResponseCheckPatternExtractorJSON = new HashMap<>();
 		ErrorHandler errorHandlerResponseCheckPatternExtractorJSON = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_RESPONSE_FAILED, pddContext);
 		DynamicUtils.fillDynamicMapResponse(log, dynamicMapResponseCheckPatternExtractorJSON, dynamicMapRequestCheckPatternExtractorJSON, pddContext, 
 				messageResponsePatternExtractorJSON,

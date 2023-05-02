@@ -29,9 +29,12 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPHeaderElement;
 
+import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -88,14 +91,27 @@ public class ModIImbustamentoSoap {
 		this.modiProperties = ModIProperties.getInstance();
 	}
 	
+	private static String getHeaderSoapPrefix(String hdr) {
+		return "Header SOAP '"+hdr+"'";
+	}
+	
 	public void addAsyncInteractionProfile(OpenSPCoop2Message msg, Busta busta, RuoloMessaggio ruoloMessaggio,
 			String asyncInteractionType, String asyncInteractionRole,
 			String replyTo,
-			AccordoServizioParteComune apiContenenteRisorsa, String azione) throws Exception {
+			AccordoServizioParteComune apiContenenteRisorsa, String azione) throws ProtocolException {
 		
-		OpenSPCoop2SoapMessage soapMessage = msg.castAsSoap();
+		if(apiContenenteRisorsa!=null && azione!=null) {
+			// nop
+		}
 		
-		boolean bufferMessage_readOnly = true;
+		OpenSPCoop2SoapMessage soapMessage = null;
+		try {
+			soapMessage = msg.castAsSoap();
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+		
+		boolean bufferMessageReadOnly = true;
 		String idTransazione = soapMessage.getTransactionId();
 		
 		if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)) {
@@ -108,16 +124,16 @@ public class ModIImbustamentoSoap {
 									
 					if(this.modiProperties.isSoapSecurityTokenPushReplyToUpdateOrCreateInFruizione()) {
 						
-						ModIUtilities.addSOAPHeaderReplyTo(soapMessage, !bufferMessage_readOnly, idTransazione, replyTo); // aggiorna il valore se già esistente
+						ModIUtilities.addSOAPHeaderReplyTo(soapMessage, !bufferMessageReadOnly, idTransazione, replyTo); // aggiorna il valore se già esistente
 						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_REPLY_TO, replyTo);
 					}
 					else {
-						String replyToFound = ModIUtilities.getSOAPHeaderReplyToValue(soapMessage, bufferMessage_readOnly, idTransazione);
+						String replyToFound = ModIUtilities.getSOAPHeaderReplyToValue(soapMessage, bufferMessageReadOnly, idTransazione);
 						if(replyToFound!=null && !"".equals(replyToFound)) {
 							busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_REPLY_TO, replyToFound);
 						}
 						else {
-							ProtocolException pe = new ProtocolException("Header SOAP '"+this.modiProperties.getSoapReplyToName()+"', richiesto dal profilo non bloccante PUSH, non trovato");
+							ProtocolException pe = new ProtocolException(getHeaderSoapPrefix(this.modiProperties.getSoapReplyToName())+", richiesto dal profilo non bloccante PUSH, non trovato");
 							pe.setInteroperabilityError(true);
 							throw pe;
 						}
@@ -156,12 +172,12 @@ public class ModIImbustamentoSoap {
 					if(!foundCorrelationId) {
 					
 						if(this.modiProperties.isSoapSecurityTokenPushCorrelationIdUseTransactionIdIfNotExists()) {
-							ModIUtilities.addSOAPHeaderCorrelationId(soapMessage, !bufferMessage_readOnly, idTransazione, idTransazione); 
+							ModIUtilities.addSOAPHeaderCorrelationId(soapMessage, !bufferMessageReadOnly, idTransazione, idTransazione); 
 							busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_ID_CORRELAZIONE, idTransazione);
 							busta.setCollaborazione(idTransazione);
 						}
 						else {
-							ProtocolException pe = new ProtocolException("Header SOAP '"+this.modiProperties.getSoapCorrelationIdName()+"', richiesto dal profilo non bloccante PUSH, non trovato");
+							ProtocolException pe = new ProtocolException(getHeaderSoapPrefix(this.modiProperties.getSoapCorrelationIdName())+", richiesto dal profilo non bloccante PUSH, non trovato");
 							pe.setInteroperabilityError(true);
 							throw pe;
 						}
@@ -181,12 +197,12 @@ public class ModIImbustamentoSoap {
 					if(!foundCorrelationId) {
 					
 						if(this.modiProperties.isSoapSecurityTokenPullCorrelationIdUseTransactionIdIfNotExists()) {
-							ModIUtilities.addSOAPHeaderCorrelationId(soapMessage, !bufferMessage_readOnly, idTransazione, idTransazione); 
+							ModIUtilities.addSOAPHeaderCorrelationId(soapMessage, !bufferMessageReadOnly, idTransazione, idTransazione); 
 							busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_ID_CORRELAZIONE, idTransazione);
 							busta.setCollaborazione(idTransazione);
 						}
 						else {
-							ProtocolException pe = new ProtocolException("Header SOAP '"+this.modiProperties.getSoapCorrelationIdName()+"', richiesto dal profilo non bloccante PULL, non trovato");
+							ProtocolException pe = new ProtocolException(getHeaderSoapPrefix(this.modiProperties.getSoapCorrelationIdName())+", richiesto dal profilo non bloccante PULL, non trovato");
 							pe.setInteroperabilityError(true);
 							throw pe;
 						}
@@ -199,12 +215,12 @@ public class ModIImbustamentoSoap {
 		
 	}
 	
-	private boolean processCorrelationId(OpenSPCoop2SoapMessage soapMessage, Busta busta, boolean notFoundException, String profilo, boolean useAlternativeMethod) throws Exception {
+	private boolean processCorrelationId(OpenSPCoop2SoapMessage soapMessage, Busta busta, boolean notFoundException, String profilo, boolean useAlternativeMethod) throws ProtocolException {
 		
-		boolean bufferMessage_readOnly = true;
+		boolean bufferMessageReadOnly = true;
 		String idTransazione = soapMessage.getTransactionId();
 		
-		String correlationIdFound = ModIUtilities.getSOAPHeaderCorrelationIdValue(soapMessage, bufferMessage_readOnly, idTransazione); 
+		String correlationIdFound = ModIUtilities.getSOAPHeaderCorrelationIdValue(soapMessage, bufferMessageReadOnly, idTransazione); 
 		if(correlationIdFound!=null && !"".equals(correlationIdFound)) {
 			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_ID_CORRELAZIONE, correlationIdFound);
 			if(correlationIdFound.length()<=255) {
@@ -229,25 +245,25 @@ public class ModIImbustamentoSoap {
 				if(correlationIdFoundHttp.length()<=255) {
 					busta.setCollaborazione(correlationIdFoundHttp);
 				}
-				ModIUtilities.addSOAPHeaderCorrelationId(soapMessage, !bufferMessage_readOnly, idTransazione, correlationIdFoundHttp); 
+				ModIUtilities.addSOAPHeaderCorrelationId(soapMessage, !bufferMessageReadOnly, idTransazione, correlationIdFoundHttp); 
 				return true;
 			}
 			else if(busta.getCollaborazione()!=null) {
 				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_ID_CORRELAZIONE, busta.getCollaborazione());
-				ModIUtilities.addSOAPHeaderCorrelationId(soapMessage, !bufferMessage_readOnly, idTransazione, busta.getCollaborazione()); 
+				ModIUtilities.addSOAPHeaderCorrelationId(soapMessage, !bufferMessageReadOnly, idTransazione, busta.getCollaborazione()); 
 				return true;
 			}
 			else if(busta.getRiferimentoMessaggio()!=null) {
 				busta.setCollaborazione(busta.getRiferimentoMessaggio());
 				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_ID_CORRELAZIONE, busta.getRiferimentoMessaggio());
-				ModIUtilities.addSOAPHeaderCorrelationId(soapMessage, !bufferMessage_readOnly, idTransazione, busta.getRiferimentoMessaggio());
+				ModIUtilities.addSOAPHeaderCorrelationId(soapMessage, !bufferMessageReadOnly, idTransazione, busta.getRiferimentoMessaggio());
 				return true;
 			}
 			
 		}
 		
 		if(notFoundException) {
-			ProtocolException pe = new ProtocolException("Header SOAP '"+this.modiProperties.getSoapCorrelationIdName()+"', richiesto dal profilo non bloccante "+profilo+", non trovato");
+			ProtocolException pe = new ProtocolException(getHeaderSoapPrefix(this.modiProperties.getSoapCorrelationIdName())+", richiesto dal profilo non bloccante "+profilo+", non trovato");
 			pe.setInteroperabilityError(true);
 			throw pe;
 		}
@@ -261,35 +277,49 @@ public class ModIImbustamentoSoap {
 			Busta busta, String securityMessageProfile, boolean corniceSicurezza, RuoloMessaggio ruoloMessaggio, boolean includiRequestDigest,
 			boolean signAttachments,
 			Map<String, Object> dynamicMap,
-			RequestInfo requestInfo) throws Exception {
+			RequestInfo requestInfo) throws ProtocolException {
 	
 		ModIProperties modIProperties = ModIProperties.getInstance();
 	
 		OpenSPCoop2MessageFactory messageFactory = msg!=null ? msg.getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		
 		if(msg==null) {
-			throw new Exception("Param msg is null");
+			throw new ProtocolException("Param msg is null");
 		}
 		
-		OpenSPCoop2SoapMessage soapMessage = msg.castAsSoap();
-		SOAPEnvelope soapEnvelope = soapMessage.getSOAPPart().getEnvelope();
-		boolean bufferMessage_readOnly = true;
+		OpenSPCoop2SoapMessage soapMessage = null;
+		SOAPEnvelope soapEnvelope = null;
+		try {
+			soapMessage = msg.castAsSoap();
+			soapEnvelope = soapMessage.getSOAPPart().getEnvelope();
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+		boolean bufferMessageReadOnly = true;
 		String idTransazione = soapMessage.getTransactionId();
 		
-		boolean integrita = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile) || 
+		boolean integritaX509 = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile) || 
 				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile);
+		boolean integritaKid = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile) || 
+				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile);
+		boolean integrita = integritaX509 || integritaKid;
 		
+		if(integritaKid) {
+			String labelPattern = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile) ?
+					CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0401_REST :
+					CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0402_REST;
+			throw new ProtocolException("Sicurezza Messaggio con pattern '"+labelPattern+"' non utilizzabile su API SOAP");
+		}
 
 		/*
 		 * == request digest ==
 		 */
 		SOAPHeaderElement requestDigest = null;
-		if(integrita && RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio) && includiRequestDigest) {
-			if(context.containsKey(ModICostanti.MODIPA_CONTEXT_REQUEST_DIGEST)) {
-				Object o = context.getObject(ModICostanti.MODIPA_CONTEXT_REQUEST_DIGEST);
-				NodeList nodeList = (NodeList) o;
-				requestDigest = ModIUtilities.addSOAPHeaderRequestDigest(soapMessage, !bufferMessage_readOnly, idTransazione, nodeList); 
-			}
+		if(integrita && RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio) && includiRequestDigest &&
+			context.containsKey(ModICostanti.MODIPA_CONTEXT_REQUEST_DIGEST)) {
+			Object o = context.getObject(ModICostanti.MODIPA_CONTEXT_REQUEST_DIGEST);
+			NodeList nodeList = (NodeList) o;
+			requestDigest = ModIUtilities.addSOAPHeaderRequestDigest(soapMessage, !bufferMessageReadOnly, idTransazione, nodeList); 
 		}
 		
 		
@@ -335,7 +365,7 @@ public class ModIImbustamentoSoap {
 				Object buildSecurityTokenInRequestObject = null;
 				if(context!=null) {
 					buildSecurityTokenInRequestObject = context.getObject(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_BUILD_SECURITY_REQUEST_TOKEN);
-					if(buildSecurityTokenInRequestObject!=null && buildSecurityTokenInRequestObject instanceof Boolean) {
+					if(buildSecurityTokenInRequestObject instanceof Boolean) {
 						buildSecurityTokenInRequest = (Boolean) buildSecurityTokenInRequestObject;
 					}
 				}
@@ -351,30 +381,37 @@ public class ModIImbustamentoSoap {
 		wsAddressingValue.setReplyToAnonymouys();
 		
 		if(this.modiProperties.isSoapSecurityTokenWsaToSoapAction()) {
-			if(soapMessage.getSoapAction()!=null) {
-				String soapAction = soapMessage.getSoapAction();
-				soapAction = soapAction.trim();
-				if(soapAction.startsWith("\"")) {
-					if(soapAction.length()>1) {
+			try {
+				if(soapMessage.getSoapAction()!=null) {
+					String soapAction = soapMessage.getSoapAction();
+					soapAction = soapAction.trim();
+					if(soapAction.startsWith("\"") &&
+						soapAction.length()>1) {
 						soapAction = soapAction.substring(1);
 					}
-				}
-				if(soapAction.endsWith("\"")) {
-					if(soapAction.length()>1) {
+					if(soapAction.endsWith("\"") &&
+						soapAction.length()>1) {
 						soapAction = soapAction.substring(0,(soapAction.length()-1));
 					}
+					wsAddressingValue.setAction(soapAction);
 				}
-				wsAddressingValue.setAction(soapAction);
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
 			}
 		}
 		else if(this.modiProperties.isSoapSecurityTokenWsaToOperation()) {
 			wsAddressingValue.setAction(busta.getAzione());
 		}
 		
-		WSAddressingHeader wsAddressingHeaders = wsaddressingUtilities.build(soapMessage, 
-				modIProperties.getSoapWSAddressingActor(), modIProperties.isSoapWSAddressingMustUnderstand(), 
-				wsAddressingValue);
-		wsaddressingUtilities.addHeader(wsAddressingHeaders, soapMessage);
+		WSAddressingHeader wsAddressingHeaders = null;
+		try {
+			wsAddressingHeaders = wsaddressingUtilities.build(soapMessage, 
+					modIProperties.getSoapWSAddressingActor(), modIProperties.isSoapWSAddressingMustUnderstand(), 
+					wsAddressingValue);
+			wsaddressingUtilities.addHeader(wsAddressingHeaders, soapMessage);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
 		
 		
 		
@@ -401,7 +438,7 @@ public class ModIImbustamentoSoap {
 			corniceSicurezza = false; // permessa solo per i messaggi di richiesta
 		}
 		if(corniceSicurezza) {
-			addCorniceSicurezza(secProperties, msg, context, busta, securityConfig, dynamicMap);
+			addCorniceSicurezza(secProperties, context, busta, securityConfig, dynamicMap);
 		}
 		
 		// action
@@ -417,7 +454,7 @@ public class ModIImbustamentoSoap {
 		StringBuilder bf = new StringBuilder();
 		
 		// -- Timestamp
-		addSignaturePart(soapHeaderAggiuntiviDaFirmare, busta, bf, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "Timestamp");
+		addSignaturePart(soapHeaderAggiuntiviDaFirmare, busta, bf, SecurityConstants.WSS_HEADER_UTILITY_NAMESPACE, "Timestamp");
 		
 		// -- WSAddressing
 		if(wsAddressingHeaders.getTo()!=null) {
@@ -458,7 +495,7 @@ public class ModIImbustamentoSoap {
 			addSignaturePart(soapHeaderAggiuntiviDaFirmare, busta, bf, requestDigest.getNamespaceURI(), requestDigest.getLocalName());
 		}
 		if(soapHeaderAggiuntiviDaFirmare!=null && !soapHeaderAggiuntiviDaFirmare.isEmpty()) {
-			while(soapHeaderAggiuntiviDaFirmare.size()>0) {
+			while(!soapHeaderAggiuntiviDaFirmare.isEmpty()) {
 				SOAPHeader soapHeader = soapHeaderAggiuntiviDaFirmare.get(0);
 				addSignaturePart(soapHeaderAggiuntiviDaFirmare, busta, bf, soapHeader.getNamespace(), soapHeader.getLocalName());
 			}
@@ -485,11 +522,17 @@ public class ModIImbustamentoSoap {
 		
 		// keystore
 		Properties pKeystore = new Properties();
-		//pKeystore.put(KeystoreConstants.PROPERTY_PROVIDER, KeystoreConstants.PROVIDER_DEFAULT);
+		/**pKeystore.put(KeystoreConstants.PROPERTY_PROVIDER, KeystoreConstants.PROVIDER_DEFAULT);*/
 		pKeystore.put(KeystoreConstants.PROPERTY_PROVIDER, KeystoreConstants.PROVIDER_GOVWAY);
 		pKeystore.put(KeystoreConstants.PROPERTY_KEYSTORE_TYPE, keystoreConfig.getSecurityMessageKeystoreType());
 		pKeystore.put(KeystoreConstants.PROPERTY_KEYSTORE_PASSWORD, keystoreConfig.getSecurityMessageKeystorePassword());
 		if(keystoreConfig.getSecurityMessageKeystorePath()!=null || keystoreConfig.isSecurityMessageKeystoreHSM()) {
+			if(CostantiDB.KEYSTORE_TYPE_JWK.equalsIgnoreCase(keystoreConfig.getSecurityMessageKeystoreType())) {
+				throw new ProtocolException("Keystore di tipo '"+CostantiLabel.KEYSTORE_TYPE_JWK+"' non utilizzabile su API SOAP");
+			}
+			else if(CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(keystoreConfig.getSecurityMessageKeystoreType())) {
+				throw new ProtocolException("Keystore di tipo '"+CostantiLabel.KEYSTORE_TYPE_KEY_PAIR+"' non utilizzabile su API SOAP");
+			}
 			pKeystore.put(KeystoreConstants.PROPERTY_KEYSTORE_PATH, keystoreConfig.getSecurityMessageKeystorePath());
 		}
 		else {
@@ -503,31 +546,52 @@ public class ModIImbustamentoSoap {
 		secProperties.put(SecurityConstants.PASSWORD_CALLBACK_REF, SecurityConstants.TRUE);
 		
 		// setProperties
-		messageSecurityContext.setOutgoingProperties(secProperties, false);
+		try {
+			messageSecurityContext.setOutgoingProperties(secProperties, false);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
 				
 		// firma
-		wss4jSignature.process(messageSecurityContext, msg, context);
+		try {
+			wss4jSignature.process(messageSecurityContext, msg, context);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
 		
 		// Aggiungo a traccia informazioni sul certificato utilizzato
 		KeyStore ks = null;
 		if(keystoreConfig.getSecurityMessageKeystorePath()!=null) {
-			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(requestInfo, keystoreConfig.getSecurityMessageKeystorePath(), keystoreConfig.getSecurityMessageKeystoreType(), 
-					keystoreConfig.getSecurityMessageKeystorePassword());
-			if(merlinKs==null) {
-				throw new Exception("Accesso al keystore '"+keystoreConfig.getSecurityMessageKeystorePath()+"' non riuscito");
+			try {
+				MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(requestInfo, keystoreConfig.getSecurityMessageKeystorePath(), keystoreConfig.getSecurityMessageKeystoreType(), 
+						keystoreConfig.getSecurityMessageKeystorePassword());
+				if(merlinKs==null) {
+					throw new ProtocolException("Accesso al keystore '"+keystoreConfig.getSecurityMessageKeystorePath()+"' non riuscito");
+				}
+				ks = merlinKs.getKeyStore();
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
 			}
-			ks = merlinKs.getKeyStore();
 		}
 		else {
-			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(requestInfo, keystoreConfig.getSecurityMessageKeystoreArchive(), keystoreConfig.getSecurityMessageKeystoreType(), 
-					keystoreConfig.getSecurityMessageKeystorePassword());
-			if(merlinKs==null) {
-				throw new Exception("Accesso al keystore non riuscito");
+			try {
+				MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(requestInfo, keystoreConfig.getSecurityMessageKeystoreArchive(), keystoreConfig.getSecurityMessageKeystoreType(), 
+						keystoreConfig.getSecurityMessageKeystorePassword());
+				if(merlinKs==null) {
+					throw new ProtocolException("Accesso al keystore non riuscito");
+				}
+				ks = merlinKs.getKeyStore();
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
 			}
-			ks = merlinKs.getKeyStore();
 		}
-		Certificate certificate = ks.getCertificate(keystoreConfig.getSecurityMessageKeyAlias());
-		if(certificate!=null && certificate instanceof X509Certificate) {
+		Certificate certificate = null;
+		try {
+			certificate = ks.getCertificate(keystoreConfig.getSecurityMessageKeyAlias());
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+		if(certificate instanceof X509Certificate) {
 			X509Certificate x509 = (X509Certificate) certificate;
 			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_X509_SUBJECT, x509.getSubjectX500Principal().toString());
 			if(x509.getIssuerX500Principal()!=null) {
@@ -543,14 +607,18 @@ public class ModIImbustamentoSoap {
 		SOAPHeaderElement securityHeader = messageSecurityContext.getSecurityHeader(msg, modIProperties.getSoapSecurityTokenActor());
 		
 		DynamicNamespaceContext dnc = MessageDynamicNamespaceContextFactory.getInstance(messageFactory).getNamespaceContext(securityHeader);
-		String wsuNamespace = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
+		String wsuNamespace = SecurityConstants.WSS_HEADER_UTILITY_NAMESPACE;
 		XPathExpressionEngine xpathEngine = new XPathExpressionEngine(messageFactory);
 		
 		String patternCreated = "//{"+wsuNamespace+"}Timestamp/{"+wsuNamespace+"}Created/text()";
 		String created = null;
 		try {
 			created = xpathEngine.getStringMatchPattern(securityHeader, dnc, patternCreated);
-		}catch(XPathNotFoundException notFound) {}
+		}catch(XPathNotFoundException notFound) {
+			// ignore
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
 		if(created!=null) {
 			java.time.Instant iCreated = java.time.Instant.parse(created);
 			Date dCreated = new Date(iCreated.toEpochMilli());
@@ -561,22 +629,31 @@ public class ModIImbustamentoSoap {
 		String expires = null;
 		try {
 			expires = xpathEngine.getStringMatchPattern(securityHeader, dnc, patternExpires);
-		}catch(XPathNotFoundException notFound) {}
+		}catch(XPathNotFoundException notFound) {
+			// ignore	
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
 		if(expires!=null) {
 			java.time.Instant iExpires = java.time.Instant.parse(expires);
 			Date dExpires = new Date(iExpires.toEpochMilli());
 			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP, DateUtils.getSimpleDateFormatMs().format(dExpires));
 		}
 		
-		//WSAddressingHeader wsAddressingHeader = wsaddressingUtilities.read(soapMessage, this.modiProperties.getSoapWSAddressingActor(), true);
 		
 		ModISOAPSecurity soapSecurity = new ModISOAPSecurity();		
 		soapSecurity.setSecurityHeader(securityHeader);
 		soapSecurity.setWsAddressingHeader(wsAddressingHeaders);
 		soapSecurity.setRequestDigestHeader(requestDigest);
 		if(integrita) {
-			QName qname = new QName("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "Id");
-			String wsuIdBodyRef = msg.castAsSoap().getSOAPBody().getAttributeValue(qname);
+			QName qname = new QName(SecurityConstants.WSS_HEADER_UTILITY_NAMESPACE, "Id");
+			SOAPBody soapBody = null;
+			try {
+				soapBody = msg.castAsSoap().getSOAPBody();
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
+			String wsuIdBodyRef = soapBody.getAttributeValue(qname);
 			soapSecurity.setWsuIdBodyRef(wsuIdBodyRef);
 			
 			if(wsuIdBodyRef!=null) {
@@ -588,11 +665,19 @@ public class ModIImbustamentoSoap {
 				String digestValue = null;
 				try {
 					digestValue = xpathEngine.getStringMatchPattern(securityHeader, dnc, digestValuePattern);
-				}catch(XPathNotFoundException notFound) {}
+				}catch(XPathNotFoundException notFound) {
+					// ignore
+				}catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
+				}
 				String digestAlgorithm = null;
 				try {
 					digestAlgorithm = xpathEngine.getStringMatchPattern(securityHeader, dnc, digestAlgorithmPattern);
-				}catch(XPathNotFoundException notFound) {}
+				}catch(XPathNotFoundException notFound) {
+					// ignore
+				}catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
+				}
 				
 				if(digestValue!=null && digestAlgorithm!=null) {
 					SignatureDigestAlgorithm s = SignatureDigestAlgorithm.toEnumConstant(digestAlgorithm);
@@ -603,7 +688,11 @@ public class ModIImbustamentoSoap {
 			}
 		}
 		
-		return soapSecurity.buildTraccia(msg.getMessageType());
+		try {
+			return soapSecurity.buildTraccia(msg.getMessageType());
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
 	}
 	
 	private void addSignaturePart(List<SOAPHeader> soapHeaderAggiuntiviDaFirmare, Busta busta, StringBuilder bf, String namespace, String localName) {
@@ -623,10 +712,14 @@ public class ModIImbustamentoSoap {
 		ModIImbustamentoSoap.senderVouche = senderVouche;
 	}
 
+	private static final String ATTR_0 = "ATTR_0";
+	private static final String ATTR_1 = "ATTR_1";
+	private static final String ATTR_2 = "ATTR_2";
+	
 	private void addCorniceSicurezza(Map<String,Object> secProperties, 
-			OpenSPCoop2Message msg, Context context, Busta busta,
+			Context context, Busta busta,
 			ModISecurityConfig securityConfig,
-			Map<String, Object> dynamicMap) throws Exception {
+			Map<String, Object> dynamicMap) throws ProtocolException {
 		
 		String nomeSoggettoMittente = busta.getMittente();
 				
@@ -695,42 +788,42 @@ public class ModIImbustamentoSoap {
 		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_CONDITIONS_DATA_NOT_ON_OR_AFTER, "60");
 		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_CONDITIONS_DATA_NOT_BEFORE, "0");
 		
-		//pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+".enabled", SecurityConstants.TRUE);
+		/**pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+".enabled", SecurityConstants.TRUE);*/
 		
 		if(attributeNameCodiceEnte!=null && !"".equals(attributeNameCodiceEnte)) {
 			// se si desidera avere un attributo anche per il codice utente oltre al saml2:subject
 			
-			pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+"ATTR_0"+
+			pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+ATTR_0+
 					SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_QUALIFIED_NAME, attributeNameCodiceEnte);
-			pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+"ATTR_0"+
+			pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+ATTR_0+
 					SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_FORMAT_NAME, 
 					SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_FORMAT_NAME_VALUE_UNSPECIFIED);
-			pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+"ATTR_0"+
+			pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+ATTR_0+
 					SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_VALUE_SEPARATOR, ",");
-			pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+"ATTR_0"+
+			pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+ATTR_0+
 					SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_VALUE, codiceEnte);
 			
 		}
 		
-		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+"ATTR_1"+
+		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+ATTR_1+
 				SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_QUALIFIED_NAME, attributeNameUser);
-		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+"ATTR_1"+
+		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+ATTR_1+
 				SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_FORMAT_NAME, 
 				SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_FORMAT_NAME_VALUE_UNSPECIFIED);
-		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+"ATTR_1"+
+		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+ATTR_1+
 				SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_VALUE_SEPARATOR, ",");
-		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+"ATTR_1"+
+		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+ATTR_1+
 				SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_VALUE, utente);
 		busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER, utente);
 		
-		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+"ATTR_2"+
+		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+ATTR_2+
 				SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_QUALIFIED_NAME, attributeNameIpUser);
-		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+"ATTR_2"+
+		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+ATTR_2+
 				SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_FORMAT_NAME, 
 				SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_FORMAT_NAME_VALUE_UNSPECIFIED);
-		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+"ATTR_2"+
+		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+ATTR_2+
 				SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_VALUE_SEPARATOR, ",");
-		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+"ATTR_2"+
+		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+ATTR_2+
 				SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_VALUE, indirizzoIpPostazione);
 		busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER_IP, indirizzoIpPostazione);
 		

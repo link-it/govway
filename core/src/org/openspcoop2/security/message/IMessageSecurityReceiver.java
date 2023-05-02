@@ -99,6 +99,7 @@ public interface IMessageSecurityReceiver {
 	public String getCertificate() throws SecurityException;
 	public X509Certificate getX509Certificate() throws SecurityException;
 	public PublicKey getPublicKey() throws SecurityException;
+	public String getCertificateId() throws SecurityException;
 	
 	
 }

@@ -531,7 +531,7 @@ public class DBOggettiInUsoUtils_accordiParteSpecifica {
 			if(idServizio!=null) {
 				
 				int max = 2;
-				if(!CostantiDB.ALLARMI_ENABLED) {
+				if(!CostantiDB.isAllarmiEnabled()) {
 					max=1;
 				}
 				for (int i = 0; i < max; i++) {

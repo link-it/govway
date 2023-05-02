@@ -56,6 +56,7 @@ import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.digest.DigestEncoding;
 import org.openspcoop2.utils.io.Base64Utilities;
@@ -1304,7 +1305,7 @@ public class HttpUtilities {
 								keystoreProvider = keystoreParam.getProvider();
 							}
 							else {
-								keystoreParam = KeyStore.getInstance(request.getKeyStoreType()!=null ? request.getKeyStoreType() : "JKS"); // JKS,PKCS12,jceks,bks,uber,gkr
+								keystoreParam = KeyStore.getInstance(request.getKeyStoreType()!=null ? request.getKeyStoreType() : KeystoreType.JKS.getNome()); 
 								File file = new File(location);
 								if(file.exists()) {
 									finKeyStore = new FileInputStream(file);
@@ -1327,7 +1328,7 @@ public class HttpUtilities {
 							}
 							if(hsmKeystore) {
 								// uso un JKS come tmp
-								keystore = KeyStore.getInstance("JKS");
+								keystore = KeyStore.getInstance(KeystoreType.JKS.getNome());
 							}
 							else {
 								keystore = KeyStore.getInstance(request.getKeyStoreType());

@@ -347,9 +347,9 @@ public final class Exporter extends Action {
 			if(exportModes.size()<1){
 				errore = true;
 				if(protocolli.size() > 1)
-					motivoErrore = "E' stata richiesta una export di oggetti appartenenti a protocolli ("+protocolli.toString()+") che non prevedono il medesimo formato di esportazione";
+					motivoErrore = "&Egrave; stata richiesta una export di oggetti appartenenti a protocolli ("+protocolli.toString()+") che non prevedono il medesimo formato di esportazione";
 				else 
-					motivoErrore = "E' stata richiesta una export di oggetti appartenenti a protocolli ("+protocolli.toString()+") che non prevedono un formato di esportazione";
+					motivoErrore = "&Egrave; stata richiesta una export di oggetti appartenenti a protocolli ("+protocolli.toString()+") che non prevedono un formato di esportazione";
 			}
 			String exportMode = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO);
 			if(exportMode!=null){

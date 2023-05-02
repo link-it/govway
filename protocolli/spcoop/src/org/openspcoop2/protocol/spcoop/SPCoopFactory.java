@@ -95,7 +95,7 @@ public class SPCoopFactory extends BasicFactory<SOAPHeaderElement> {
 		if(staticInstanceConfig!=null) {
 			if(staticInstanceConfig.isStaticConfig()) {
 				staticInstanceProtocolManager = new SPCoopProtocolManager(this);
-				staticInstanceProtocolVersionManager = new HashMap<String, IProtocolVersionManager>();
+				staticInstanceProtocolVersionManager = new HashMap<>();
 				staticInstanceTraduttore = new SPCoopTraduttore(this);
 				staticInstanceProtocolConfiguration = new SPCoopProtocolConfiguration(this);
 			}

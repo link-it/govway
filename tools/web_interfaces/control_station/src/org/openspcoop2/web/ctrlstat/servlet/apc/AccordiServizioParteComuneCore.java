@@ -734,11 +734,11 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		return this.serviziCompostiCore.idAccordiServizioCompostiList(superuser, ricerca, soloAccordiConsistentiRest, soloAccordiConsistentiSoap);
 	}
 	
-	public List<AccordoServizioParteComune> accordiServizio_serviziComponentiConSoggettoErogatore(IDSoggetto idSoggetto) throws DriverRegistroServiziException {
+	public List<AccordoServizioParteComune> accordiServizioServiziComponentiConSoggettoErogatore(IDSoggetto idSoggetto) throws DriverRegistroServiziException {
 		return this.serviziCompostiCore.accordiServizio_serviziComponentiConSoggettoErogatore(idSoggetto);
 	}
 
-	public List<AccordoServizioParteComune> accordiServizio_serviziComponenti(IDServizio idServizio) throws DriverRegistroServiziException {
+	public List<AccordoServizioParteComune> accordiServizioServiziComponenti(IDServizio idServizio) throws DriverRegistroServiziException {
 		return this.serviziCompostiCore.accordiServizio_serviziComponenti(idServizio);
 	}
 
@@ -789,6 +789,9 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 	
 	
 	
+	
+	/* In uso */
+	
 	public String getDettagliAccordoInUso(IDAccordo idAccordo) throws DriverRegistroServiziException {
 		return this.inUsoCore.getDettagliAccordoInUso(idAccordo);
 	}
@@ -816,4 +819,5 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 	public String getDettagliOperazioneInUso(IDPortTypeAzione idOperazione) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		return this.inUsoCore.getDettagliOperazioneInUso(idOperazione);
 	}
+	
 }

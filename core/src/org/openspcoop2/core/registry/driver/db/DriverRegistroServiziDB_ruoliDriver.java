@@ -1058,7 +1058,7 @@ public class DriverRegistroServiziDB_ruoliDriver {
 				existsConditions.add(sqlQueryObjectControlloTrafficoPorteApplicative.getWhereExistsCondition(false, sqlQueryObjectControlloTrafficoPorteApplicative));
 			} 
 			
-			if(CostantiDB.ALLARMI_ENABLED) {
+			if(CostantiDB.isAllarmiEnabled()) {
 				
 				// Allarmi sulle porte delegate
 				if(isFilterGruppoFruizione  || TipoPdD.DELEGATA.equals(apiContesto) || apiImplementazioneFruizione!=null) {

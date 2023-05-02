@@ -58,6 +58,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.random.RandomGenerator;
@@ -412,7 +413,7 @@ public class SSLUtilities {
 						}
 						if(hsmKeystore) {
 							// uso un JKS come tmp
-							keystore = KeyStore.getInstance("JKS");
+							keystore = KeyStore.getInstance(KeystoreType.JKS.getNome());
 						}
 						else {
 							keystore = KeyStore.getInstance(sslConfig.getKeyStoreType());

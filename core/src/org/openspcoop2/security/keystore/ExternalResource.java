@@ -21,6 +21,7 @@ package org.openspcoop2.security.keystore;
 
 import java.io.Serializable;
 
+import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.utils.id.IDUtilities;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
 import org.openspcoop2.utils.transport.http.ExternalResourceConfig;

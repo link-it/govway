@@ -63,10 +63,10 @@ public class NonBloccantePushSoapTest extends ConfigLoader {
 	@BeforeClass
     public static void beforeClass() {       
         File file = FileUtils.getFileRelativeTo(NonBloccantePushSoapTest.class, "proxy.feature");
-        mock = FeatureServer.start(file, Integer.valueOf(prop.getProperty("http_port")), false, new HashMap<String,Object>((Map) prop));
+        mock = FeatureServer.start(file, Integer.valueOf(prop.getProperty("http_port")), false, new HashMap<>((Map) prop));
 
         file = FileUtils.getFileRelativeTo(NonBloccantePushSoapTest.class, "mock.feature");
-        proxy = FeatureServer.start(file, Integer.valueOf(prop.getProperty("http_mock_port")), false, new HashMap<String,Object>((Map) prop));
+        proxy = FeatureServer.start(file, Integer.valueOf(prop.getProperty("http_mock_port")), false, new HashMap<>((Map) prop));
     }
         
     @AfterClass

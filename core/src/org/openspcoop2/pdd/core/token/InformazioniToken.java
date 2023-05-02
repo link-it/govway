@@ -310,7 +310,7 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	private InformazioniTokenUserInfo userInfo;
 		
 	// Claims
-	private Map<String,Object> claims = new HashMap<String,Object>();
+	private Map<String,Object> claims = new HashMap<>();
 		
 	// NOTA: l'ordine stabilisce come viene serializzato nell'oggetto json
 

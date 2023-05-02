@@ -178,7 +178,7 @@ public class DriverRegistroServiziDB_soggettiCredenzialiDriver {
 			int index = 1;
 			stmt.setString(index++, CredenzialeTipo.APIKEY.getValue());
 			stmt.setString(index++, utente);
-			stmt.setString(index++, CostantiDB.getISSUER_APIKEY(appId));
+			stmt.setString(index++, CostantiDB.getIssuerApiKey(appId));
 			risultato = stmt.executeQuery();
 
 			if (risultato.next()) {
@@ -421,8 +421,8 @@ public class DriverRegistroServiziDB_soggettiCredenzialiDriver {
 			case APIKEY:
 				stm.setString(index++, user);
 				//stm.setString(index++, password);
-				stm.setString(index++, CostantiDB.getISSUER_APIKEY(appId));
-				this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, tipoCredenziale.toString(), user, CostantiDB.getISSUER_APIKEY(appId)));
+				stm.setString(index++, CostantiDB.getIssuerApiKey(appId));
+				this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, tipoCredenziale.toString(), user, CostantiDB.getIssuerApiKey(appId)));
 				break;
 			case SSL:
 				if(aSubject!=null && !"".equals(aSubject)) {
@@ -761,7 +761,7 @@ public class DriverRegistroServiziDB_soggettiCredenzialiDriver {
 			if(credenziale != null) {
 				stmt.setString(index++, credenziale.toString());
 				if(CredenzialeTipo.APIKEY.equals(credenziale) && appId!=null) {
-					stmt.setString(index++, CostantiDB.getISSUER_APIKEY(appId));
+					stmt.setString(index++, CostantiDB.getIssuerApiKey(appId));
 				}
 			}
 			if(pddTipologia!=null) {

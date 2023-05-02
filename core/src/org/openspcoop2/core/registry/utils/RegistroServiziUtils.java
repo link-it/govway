@@ -54,9 +54,9 @@ public class RegistroServiziUtils {
 			org.openspcoop2.message.xml.MessageXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
-			return RegistroServiziUtils.isRegistroServizi_engine(elemXML,localName);
+			return RegistroServiziUtils.isRegistroServiziEngine(elemXML,localName);
 		}catch(Exception e){
-			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			/** System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage()); */
 			return false;
 		}
 	}
@@ -66,31 +66,25 @@ public class RegistroServiziUtils {
 	public static boolean isRegistroServizi(Document docXML,String localName){
 		try{
 			Element elemXML = docXML.getDocumentElement();
-			return RegistroServiziUtils.isRegistroServizi_engine(elemXML,localName);
+			return RegistroServiziUtils.isRegistroServiziEngine(elemXML,localName);
 		}catch(Exception e){
-			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			/** System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage()); */
 			return false;
 		}
 	}
 	public static boolean isRegistroServizi(Element elemXML,String localName){
-		return isRegistroServizi_engine(elemXML,localName);
+		return isRegistroServiziEngine(elemXML,localName);
 	}
 	public static boolean isRegistroServizi(Node nodeXml,String localName){
-		return isRegistroServizi_engine(nodeXml,localName);
+		return isRegistroServiziEngine(nodeXml,localName);
 	}
-	private static boolean isRegistroServizi_engine(Node nodeXml,String localName){
+	private static boolean isRegistroServiziEngine(Node nodeXml,String localName){
 		try{
-			//System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME_DETTAGLIO_ECCEZIONE+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");
-			if(localName.equals(nodeXml.getLocalName()) && 
-					CostantiRegistroServizi.TARGET_NAMESPACE.equals(nodeXml.getNamespaceURI() ) 
-				){
-				return true;
-			}
-			else{
-				return false;
-			}
+			/** System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME_DETTAGLIO_ECCEZIONE+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]"); */
+			return localName.equals(nodeXml.getLocalName()) && 
+					CostantiRegistroServizi.TARGET_NAMESPACE.equals(nodeXml.getNamespaceURI() );
 		}catch(Exception e){
-			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			/** System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage()); */
 			return false;
 		}
 	}
@@ -99,11 +93,11 @@ public class RegistroServiziUtils {
 		if(serviceBinding==null) {
 			return null;
 		}
-		switch (serviceBinding) {
-		case SOAP:
-			return org.openspcoop2.core.registry.constants.ServiceBinding.SOAP;
-		case REST:
+		if(org.openspcoop2.message.constants.ServiceBinding.REST.equals(serviceBinding)) {
 			return org.openspcoop2.core.registry.constants.ServiceBinding.REST;
+		}
+		if(org.openspcoop2.message.constants.ServiceBinding.SOAP.equals(serviceBinding)) {
+			return org.openspcoop2.core.registry.constants.ServiceBinding.SOAP;
 		}
 		return null;
 	}
@@ -112,22 +106,25 @@ public class RegistroServiziUtils {
 		if(serviceBinding==null) {
 			return null;
 		}
-		switch (serviceBinding) {
-		case SOAP:
-			return org.openspcoop2.message.constants.ServiceBinding.SOAP;
-		case REST:
+		if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
 			return org.openspcoop2.message.constants.ServiceBinding.REST;
+		}
+		if(org.openspcoop2.core.registry.constants.ServiceBinding.SOAP.equals(serviceBinding)) {
+			return org.openspcoop2.message.constants.ServiceBinding.SOAP;
 		}
 		return null;
 	}
 	
+	private static String getBooleanValueAsString(ProtocolProperty pp) {
+		return pp.getBooleanValue()!=null ? pp.getBooleanValue().toString() : "false";
+	}
 	public static List<String> fillPropertyProtocollo(String propertyName, AccordoServizioParteComune api, String portType, boolean booleanValue) {
 		
 		List<String> apiValues = new ArrayList<>();
 		
 		for (ProtocolProperty pp : api.getProtocolPropertyList()) {
 			if(propertyName.equals(pp.getName())) {
-				String apiValue = booleanValue ? (pp.getBooleanValue()!=null ? pp.getBooleanValue().toString() : "false") : pp.getValue();
+				String apiValue = booleanValue ? getBooleanValueAsString(pp) : pp.getValue();
 				if(apiValue!=null && !apiValues.contains(apiValue)) {
 					apiValues.add(apiValue);
 				}
@@ -149,7 +146,7 @@ public class RegistroServiziUtils {
 					if(ridefinito) {
 						for (ProtocolProperty pp : resource.getProtocolPropertyList()) {
 							if(propertyName.equals(pp.getName())) {
-								String apiValue = booleanValue ? (pp.getBooleanValue()!=null ? pp.getBooleanValue().toString() : "false") : pp.getValue();
+								String apiValue = booleanValue ? getBooleanValueAsString(pp) : pp.getValue();
 								if(apiValue!=null && !apiValues.contains(apiValue)) {
 									apiValues.add(apiValue);
 								}
@@ -177,7 +174,7 @@ public class RegistroServiziUtils {
 							if(ridefinito) {
 								for (ProtocolProperty pp : op.getProtocolPropertyList()) {
 									if(propertyName.equals(pp.getName())) {
-										String apiValue = booleanValue ? (pp.getBooleanValue()!=null ? pp.getBooleanValue().toString() : "false") : pp.getValue();
+										String apiValue = booleanValue ? getBooleanValueAsString(pp) : pp.getValue();
 										if(apiValue!=null && !apiValues.contains(apiValue)) {
 											apiValues.add(apiValue);
 										}

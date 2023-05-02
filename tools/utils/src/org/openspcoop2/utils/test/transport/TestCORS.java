@@ -1273,7 +1273,7 @@ public class TestCORS {
 
 	private class TestHttpServletRequest extends WrappedHttpServletRequest{
 
-		private Map<String, Object> attributes = new HashMap<String, Object>();
+		private Map<String, Object> attributes = new HashMap<>();
 		private Map<String, List<String>> headers = new HashMap<>();
 		private String method;
 		private String contentType;

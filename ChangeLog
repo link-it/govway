@@ -1,3 +1,14 @@
+2023-05-02  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Aggiunta funzionalità OP-1580
+	Nella personalizzazione dei keystore è adesso possibile utilizzare una chiave privata, 
+	protetta da password o meno, nei formati pkcs1 o pkcs8 in codifica PEM o DER. 
+	È inoltre possibile utilizzare un keystore JWK sia come keystore che come truststore.
+	Infine come truststore è adesso possibile utilizzare il tipo 'PDND' che consente di recuperare la chiave pubblica, riferita dal kid presente nel token, dalla PDND.
+	La validazione 'PDND' è utilizzabile con il nuovo pattern per la sicurezza messaggio supportato 'INTEGRITY_REST_02'.
+	È stata infine rivista la definizione del pattern di sicurezza nella API al fine di indicare chi genera il token ID_AUTH tra il mittente o la PDND.
+
 2023-04-26  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

@@ -22,6 +22,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.aps;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -58,6 +59,7 @@ import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
@@ -358,9 +360,33 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 
 			boolean forceHttps = false;
 			boolean forceHttpsClient = false;
+			boolean forcePDND = false;
+			boolean forceOAuth = false;
 			if(idAccordo!=null && apsHelper.isProfiloModIPA(protocollo)) {
 				forceHttps = apsHelper.forceHttpsProfiloModiPA();
-				forceHttpsClient = apsHelper.forceHttpsClientProfiloModiPA(idAccordo,portType);
+				
+				BooleanNullable forceHttpsClientWrapper = BooleanNullable.NULL(); 
+				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL(); 
+				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL(); 
+				
+				List<String> azioniList = null;
+				if(azioni!=null && azioni.length>0) {
+					azioniList = Arrays.asList(azioni);
+				}
+				apsHelper.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, 
+						idAccordo,portType, 
+						azioniList);
+				
+				if(forceHttpsClientWrapper.getValue()!=null) {
+					forceHttpsClient = forceHttpsClientWrapper.getValue().booleanValue();
+				}
+				if(forcePDNDWrapper.getValue()!=null) {
+					forcePDND = forcePDNDWrapper.getValue().booleanValue();
+				}
+				if(forceOAuthWrapper.getValue()!=null) {
+					forceOAuth = forceOAuthWrapper.getValue().booleanValue();
+				}
+				
 			}
 			
 			// Prendo le azioni  disponibili
@@ -675,7 +701,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 								requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-								autenticazioneToken, tokenPolicy,
+								autenticazioneToken, tokenPolicy, forcePDND, forceOAuth,
 								listExtendedConnettore, forceEnableConnettore,
 								protocollo, forceHttps, forceHttpsClient, false, servizioApplicativoServerEnabled,servizioApplicativoServer, null);
 					}
@@ -768,7 +794,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							autenticazioneToken, tokenPolicy,
+							autenticazioneToken, tokenPolicy, forcePDND, forceOAuth,
 							listExtendedConnettore, forceEnableConnettore,
 							protocollo, forceHttps, forceHttpsClient, false, servizioApplicativoServerEnabled,servizioApplicativoServer, null);
 				}

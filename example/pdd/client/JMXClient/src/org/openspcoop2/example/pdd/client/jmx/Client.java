@@ -177,7 +177,7 @@ public class Client {
 			Map<String, Object> env = null;
 			if(username!=null && password!=null){
 				String[] creds = {username, password};
-				env = new HashMap<String, Object>();
+				env = new HashMap<>();
 				env.put(JMXConnector.CREDENTIALS, creds);
 			}
 			JMXConnector jmxConnector = JMXConnectorFactory.connect(serviceURL, env);             
@@ -185,7 +185,7 @@ public class Client {
 //			}
 //			else{
 //				
-//				Map<String, Object> env = new HashMap<String, Object>();
+//				Map<String, Object> env = new HashMap<>();
 //				env.put(javax.naming.Context.INITIAL_CONTEXT_FACTORY, factory);
 //				env.put(javax.naming.Context.PROVIDER_URL, serverUrl);
 //				

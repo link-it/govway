@@ -340,6 +340,10 @@ public class ModiApiApiHelper {
 			profiloSicurezzaMessaggioPattern = ModISicurezzaMessaggioEnum.INTEGRITY01_AUTH01;
 		} else if(sicurezzaMessaggioPatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302)) {
 			profiloSicurezzaMessaggioPattern = ModISicurezzaMessaggioEnum.INTEGRITY01_AUTH02;
+		} else if(sicurezzaMessaggioPatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401)) {
+			profiloSicurezzaMessaggioPattern = ModISicurezzaMessaggioEnum.INTEGRITY02_AUTH01;
+		} else if(sicurezzaMessaggioPatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402)) {
+			profiloSicurezzaMessaggioPattern = ModISicurezzaMessaggioEnum.INTEGRITY02_AUTH02;
 		}
 		sicurezzaMessaggio.setPattern(profiloSicurezzaMessaggioPattern);
 
@@ -825,7 +829,12 @@ public class ModiApiApiHelper {
 		case INTEGRITY01_AUTH01: profiloSicurezzaMessaggio = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301;
 		break;
 		case INTEGRITY01_AUTH02: profiloSicurezzaMessaggio = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302;
-		break;}
+		break;
+		case INTEGRITY02_AUTH01: profiloSicurezzaMessaggio = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401;
+		break;
+		case INTEGRITY02_AUTH02: profiloSicurezzaMessaggio = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402;
+		break;
+		}
 
 
 		p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, profiloSicurezzaMessaggio);
@@ -1035,7 +1044,11 @@ public class ModiApiApiHelper {
 		case INTEGRITY01_AUTH01: profiloSicurezzaMessaggio = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301;
 		break;
 		case INTEGRITY01_AUTH02: profiloSicurezzaMessaggio = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302;
-		break;}
+		break;
+		case INTEGRITY02_AUTH01: 
+		case INTEGRITY02_AUTH02:
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("sicurezza_messaggio con pattern " + sicurezzaMessaggio.getPattern()+" non utilizzabile con API SOAP");
+		}
 
 
 		p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, profiloSicurezzaMessaggio);

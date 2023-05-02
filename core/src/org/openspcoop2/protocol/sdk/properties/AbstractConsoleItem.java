@@ -21,10 +21,11 @@ package org.openspcoop2.protocol.sdk.properties;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeMap;
 
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleItemType;
+import org.openspcoop2.utils.SortedMap;
+import org.openspcoop2.utils.UtilsRuntimeException;
 
 /**
  * AbstractConsoleItem
@@ -40,14 +41,16 @@ public abstract class AbstractConsoleItem<T> extends BaseConsoleItem {
 	private boolean reloadOnChange;
 	private boolean required;
 	private String regexpr;
-	private TreeMap<String,T> mapLabelValues;
+	private SortedMap<T> mapLabelValues;
+	/**private TreeMap<String,T> mapLabelValues;*/
 	private String note;
 	private ConsoleItemInfo info;
 	private String labelRight;
 
 	protected AbstractConsoleItem(String id, String label, ConsoleItemType type) throws ProtocolException{
 		super(id, label, type);
-		this.mapLabelValues = new TreeMap<String,T>();
+		/**this.mapLabelValues = new TreeMap<String,T>();*/
+		this.mapLabelValues = new SortedMap<>();
 	}
 
 	public T getDefaultValue() {
@@ -78,30 +81,39 @@ public abstract class AbstractConsoleItem<T> extends BaseConsoleItem {
 		this.regexpr = regexpr;
 	}
 	
-	public TreeMap<String, T> getMapLabelValues() {
+	public SortedMap<T> getMapLabelValues() {
 		return this.mapLabelValues;
 	}
 	public List<String> getLabels(){
+		List<String> labels = null;
 		if(this.mapLabelValues!=null && this.mapLabelValues.size()>0){	
-			List<String> labels = new ArrayList<>();
-			labels.addAll(this.mapLabelValues.keySet());
+			labels = new ArrayList<>();
+			labels.addAll(this.mapLabelValues.keys());
 			return labels;
 		}
-		return null;
+		return labels;
 	}
 	public List<T> getValues(){
+		List<T> values = null;
 		if(this.mapLabelValues!=null && this.mapLabelValues.size()>0){	
-			List<T> values = new ArrayList<T>();
+			values = new ArrayList<>();
 			values.addAll(this.mapLabelValues.values());
 			return values;
 		}
-		return null;
+		return values;
 	}
 	public void clearMapLabelValues(){
 		this.mapLabelValues.clear();
 	}
-	public void addLabelValue(String key, T value){
-		this.mapLabelValues.put(key, value);
+	public void addLabelValue(String key, T value) {
+		try {
+			if(this.mapLabelValues.containsKey(key)) {
+				this.mapLabelValues.remove(key);
+			}
+			this.mapLabelValues.put(key, value);
+		}catch(Exception e) {
+			throw new UtilsRuntimeException(e.getMessage(),e);
+		}
 	}
 	
 	public void removeLabelValue(String label){
@@ -131,7 +143,7 @@ public abstract class AbstractConsoleItem<T> extends BaseConsoleItem {
 	
 	public void setUseDefaultValueForCloseableSection(boolean useDefaultValueForCloseableSection) throws ProtocolException {
 		if(this.defaultValue==null) {
-			throw new ProtocolException("Default value undefined");
+			throw new ProtocolException("Default value undefined (useDefaultValue:"+useDefaultValueForCloseableSection+")");
 		}
 		this.defaultValueForCloseableSection = cloneValue(this.defaultValue);
 	}

@@ -190,7 +190,7 @@ public class DiagnosticProducer extends BasicProducer implements IDiagnosticProd
 					this.log.debug("@@ log idTransazione["+idTransazione+"] idBusta["+idBusta+"] (inserimentoDiagnostico) ....");
 				}
 				
-				List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+				List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<>();
 				java.sql.Timestamp gdoT = null;
 				if(gdo!=null)
 					gdoT =  new java.sql.Timestamp(gdo.getTime());

@@ -27,6 +27,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.openspcoop2.utils.certificate.KeyStore;
+import org.openspcoop2.utils.certificate.KeystoreType;
 
 /**
  * OCSPTrustManager
@@ -76,7 +77,7 @@ public class OCSPTrustManager implements X509TrustManager {
 				// il truststore serve per porte generare la richiesta OCSP
 				if(this.ocspValidator.getTrustStore()==null) {
 					try {
-						java.security.KeyStore ks = java.security.KeyStore.getInstance("jks");
+						java.security.KeyStore ks = java.security.KeyStore.getInstance(KeystoreType.JKS.getNome());
 						ks.load(null, null);
 						KeyStore trustStore = new KeyStore(ks);
 						int index = 0;

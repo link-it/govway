@@ -839,6 +839,15 @@ public class ErogazioniDetailsUtilities {
 						
 			if(sicurezzaMessaggio) {
 				
+				// Sorgente Token
+				v = map.get(ModIUtils.API_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_ID_AUTH);
+				if(StringUtils.isNotEmpty(v)) {
+					sb.append(newLine);
+					sb.append(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH);
+					sb.append(separator);
+					sb.append(v);
+				}
+				
 				if(rest) {
 					
 					// Header
@@ -2309,16 +2318,15 @@ public class ErogazioniDetailsUtilities {
 		return null;
 	}
 	
-	private static void addProfiloModISicurezza(StringBuilder sb, Map<String, String> map,
+	private static void addProfiloModISicurezza(StringBuilder sbParam, Map<String, String> map,
 			String labelProtocollo, boolean rest, boolean fruizione, boolean request, 
 			boolean digest, boolean corniceSicurezza, boolean headerDuplicati,
 			String separator, String newLine) {
 		
 		String prefixKey = ModIUtils.getPrefixKey(fruizione, request);
-				
-		sb.append(newLine);
-		sb.append("- "+(request? "Request" : "Response")+" -");
-				
+								
+		StringBuilder sb = new StringBuilder();
+		
 		// Ttl (Iat / Expiration)
 		String ttlV = map.get(prefixKey+ModIUtils.API_IMPL_SICUREZZA_MESSAGGIO_TTL);
 		if(StringUtils.isNotEmpty(ttlV)) {
@@ -2549,6 +2557,14 @@ public class ErogazioniDetailsUtilities {
 			}
 			
 		}
+		
+		// Intestazione e fine
+		if(sb.length()>0) {
+			sbParam.append(newLine);
+			sbParam.append("- "+(request? "Request" : "Response")+" -");
+			
+			sbParam.append(sb.toString());
+		}
 	}
 	
 	private static void addStore(StringBuilder sb,Map<String, String> map, 
@@ -2580,12 +2596,15 @@ public class ErogazioniDetailsUtilities {
 						
 			String type = map.get(prefixKey+ModIUtils.API_IMPL_SICUREZZA_MESSAGGIO_STORE_TYPE);
 			String path = map.get(prefixKey+ModIUtils.API_IMPL_SICUREZZA_MESSAGGIO_STORE_PATH);
-			if(StringUtils.isNotEmpty(type) && StringUtils.isNotEmpty(path)) {
+			if(StringUtils.isNotEmpty(type)) {
 			
 				sb.append(newLine);
 				sb.append(label);
 				sb.append(separator);
-				sb.append("(").append(type).append(") ").append(path);
+				sb.append("(").append(type).append(")");
+				if(StringUtils.isNotEmpty(path)) {
+					sb.append(" ").append(path);
+				}
 				
 				// OCSP
 				String ocsp = map.get(prefixKey+ModIUtils.API_IMPL_SICUREZZA_MESSAGGIO_STORE_OCSP_POLICY);

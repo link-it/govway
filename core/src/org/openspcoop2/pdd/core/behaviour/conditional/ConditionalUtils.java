@@ -280,7 +280,7 @@ public class ConditionalUtils  {
 						pattern = "";
 					}
 					msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
-					Map<String, Object> dynamicMap = new HashMap<String, Object>();
+					Map<String, Object> dynamicMap = new HashMap<>();
 					ErrorHandler errorHandler = new ErrorHandler();
 					DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione,
 							message,
@@ -304,7 +304,7 @@ public class ConditionalUtils  {
 						pattern = "";
 					}
 					msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
-					dynamicMap = new HashMap<String, Object>();
+					dynamicMap = new HashMap<>();
 					errorHandler = new ErrorHandler();
 					DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione,
 							message,
@@ -336,7 +336,7 @@ public class ConditionalUtils  {
 						pattern = "";
 					}
 					msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
-					dynamicMap = new HashMap<String, Object>();
+					dynamicMap = new HashMap<>();
 					errorHandler = new ErrorHandler();
 					DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione,
 							message,

@@ -692,7 +692,7 @@ public class ExporterArchiveUtils {
 	
 	private void readAllarmiConfigurazione(Archive archive, boolean policyGlobali, boolean policyFruizioniErogazioni, ArchiveType provenienza) throws Exception {
 		
-		if(!CostantiDB.ALLARMI_ENABLED) {
+		if(!CostantiDB.isAllarmiEnabled()) {
 			return;
 		}
 		
@@ -708,7 +708,7 @@ public class ExporterArchiveUtils {
 				listAllarmi = this.archiveEngine.getAllIdAllarmi_erogazioniFruizioni(null);
 			}
 		}catch(DriverConfigurazioneNotFound notFound) {}
-		if(listAllarmi!=null && listAllarmi.size()>0) {
+		if(listAllarmi!=null && !listAllarmi.isEmpty()) {
 			for (IdAllarme idAllarme : listAllarmi) {
 				String keyAllarme = ArchiveAllarme.buildKey(idAllarme.getFiltroRuoloPorta(), idAllarme.getFiltroNomePorta(), idAllarme.getAlias());
 				if(archive.getAllarmi().containsKey(keyAllarme)==false) {
@@ -735,7 +735,7 @@ public class ExporterArchiveUtils {
 	
 	private void readAllarmiPorta(Archive archive, boolean delegata, String nomePorta,  ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception {
 		
-		if(!CostantiDB.ALLARMI_ENABLED) {
+		if(!CostantiDB.isAllarmiEnabled()) {
 			return;
 		}
 		

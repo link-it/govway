@@ -152,7 +152,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			
 			
 			// Costruisco Mappa per dynamic name
-			Map<String, Object> dynamicMap = new HashMap<String, Object>();
+			Map<String, Object> dynamicMap = new HashMap<>();
 			DynamicInfo dInfo = new DynamicInfo(request, this.getPddContext());
 			DynamicUtils.fillDynamicMap(this.logger.getLogger(),dynamicMap, dInfo);
 			

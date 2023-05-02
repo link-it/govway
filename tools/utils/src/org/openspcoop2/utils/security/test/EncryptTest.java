@@ -44,6 +44,7 @@ import org.openspcoop2.utils.certificate.CRLCertstore;
 import org.openspcoop2.utils.certificate.JWK;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.certificate.KeyStore;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.ocsp.IOCSPResourceReader;
 import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
@@ -184,7 +185,7 @@ public class EncryptTest {
 			Logger log = LoggerWrapperFactory.getLogger(EncryptTest.class);
 			
 			isKeystoreJKS = EncryptTest.class.getResourceAsStream("/org/openspcoop2/utils/security/test/keystore_example.jks");
-			fKeystoreJKS = File.createTempFile("keystore", "jks");
+			fKeystoreJKS = File.createTempFile("keystore", KeystoreType.JKS.getNome());
 			FileSystemUtilities.writeFile(fKeystoreJKS, Utilities.getAsByteArray(isKeystoreJKS));
 			
 			isKeystoreP12 = EncryptTest.class.getResourceAsStream("/org/openspcoop2/utils/security/test/keystore_example.p12");
@@ -192,7 +193,7 @@ public class EncryptTest {
 			FileSystemUtilities.writeFile(fKeystoreP12, Utilities.getAsByteArray(isKeystoreP12));
 			
 			isTruststore = EncryptTest.class.getResourceAsStream("/org/openspcoop2/utils/security/test/truststore_example.jks");
-			fTruststore = File.createTempFile("truststore", "jks");
+			fTruststore = File.createTempFile("truststore", KeystoreType.JKS.getNome());
 			FileSystemUtilities.writeFile(fTruststore, Utilities.getAsByteArray(isTruststore));
 
 			fKeystoreP11 = File.createTempFile("keystore_hsm", ".properties");
@@ -266,36 +267,36 @@ public class EncryptTest {
 			HashMap<String, String> keystore_mapAliasPassword = new HashMap<>();
 			keystore_mapAliasPassword.put(alias, passwordChiavePrivata);
 			
-			KeyStore keystoreJKS = new KeyStore(fKeystoreJKS.getAbsolutePath(), "jks", passwordStore);
-			if(!"jks".equalsIgnoreCase(keystoreJKS.getKeystoreType())) {
+			KeyStore keystoreJKS = new KeyStore(fKeystoreJKS.getAbsolutePath(), KeystoreType.JKS.getNome(), passwordStore);
+			if(!KeystoreType.JKS.getNome().equalsIgnoreCase(keystoreJKS.getKeystoreType())) {
 				throw new Exception("Atteso tipo JKS, trovato '"+keystoreJKS.getKeystoreType()+"'");
 			}
-			KeyStore keystoreP12 = new KeyStore(fKeystoreP12.getAbsolutePath(), "pkcs12", passwordStore);
-			if(!"pkcs12".equalsIgnoreCase(keystoreP12.getKeystoreType())) {
+			KeyStore keystoreP12 = new KeyStore(fKeystoreP12.getAbsolutePath(), KeystoreType.PKCS12.getNome(), passwordStore);
+			if(!KeystoreType.PKCS12.getNome().equalsIgnoreCase(keystoreP12.getKeystoreType())) {
 				throw new Exception("Atteso tipo PKCS12, trovato '"+keystoreP12.getKeystoreType()+"'");
 			}
 			KeyStore truststore = new KeyStore(fTruststore.getAbsolutePath(), passwordStore);
-			if(!"jks".equalsIgnoreCase(truststore.getKeystoreType())) {
+			if(!KeystoreType.JKS.getNome().equalsIgnoreCase(truststore.getKeystoreType())) {
 				throw new Exception("Atteso tipo JKS, trovato '"+truststore.getKeystoreType()+"'");
 			}
 			
-			KeyStore keystoreP12_crl_valid = new KeyStore(fKeystore_crl_valid.getAbsolutePath(), "pkcs12", passwordStore);
-			if(!"pkcs12".equalsIgnoreCase(keystoreP12_crl_valid.getKeystoreType())) {
+			KeyStore keystoreP12_crl_valid = new KeyStore(fKeystore_crl_valid.getAbsolutePath(), KeystoreType.PKCS12.getNome(), passwordStore);
+			if(!KeystoreType.PKCS12.getNome().equalsIgnoreCase(keystoreP12_crl_valid.getKeystoreType())) {
 				throw new Exception("Atteso tipo PKCS12, trovato '"+keystoreP12_crl_valid.getKeystoreType()+"'");
 			}
 			
-			KeyStore keystoreP12_crl_expired = new KeyStore(fKeystore_crl_expired.getAbsolutePath(), "pkcs12", passwordStore);
-			if(!"pkcs12".equalsIgnoreCase(keystoreP12_crl_expired.getKeystoreType())) {
+			KeyStore keystoreP12_crl_expired = new KeyStore(fKeystore_crl_expired.getAbsolutePath(), KeystoreType.PKCS12.getNome(), passwordStore);
+			if(!KeystoreType.PKCS12.getNome().equalsIgnoreCase(keystoreP12_crl_expired.getKeystoreType())) {
 				throw new Exception("Atteso tipo PKCS12, trovato '"+keystoreP12_crl_expired.getKeystoreType()+"'");
 			}
 			
-			KeyStore keystoreP12_crl_revoked = new KeyStore(fKeystore_crl_revoked.getAbsolutePath(), "pkcs12", passwordStore);
-			if(!"pkcs12".equalsIgnoreCase(keystoreP12_crl_revoked.getKeystoreType())) {
+			KeyStore keystoreP12_crl_revoked = new KeyStore(fKeystore_crl_revoked.getAbsolutePath(), KeystoreType.PKCS12.getNome(), passwordStore);
+			if(!KeystoreType.PKCS12.getNome().equalsIgnoreCase(keystoreP12_crl_revoked.getKeystoreType())) {
 				throw new Exception("Atteso tipo PKCS12, trovato '"+keystoreP12_crl_revoked.getKeystoreType()+"'");
 			}
 			
 			KeyStore truststoreCRL = new KeyStore(fTruststore_crl.getAbsolutePath(), passwordStore);
-			if(!"jks".equalsIgnoreCase(truststoreCRL.getKeystoreType())) {
+			if(!KeystoreType.JKS.getNome().equalsIgnoreCase(truststoreCRL.getKeystoreType())) {
 				throw new Exception("Atteso tipo JKS, trovato '"+truststoreCRL.getKeystoreType()+"'");
 			}
 			
@@ -312,18 +313,18 @@ public class EncryptTest {
 			
 			
 			
-			KeyStore keystoreP12_ocsp_valid = new KeyStore(fKeystore_ocsp_valid.getAbsolutePath(), "pkcs12", passwordStore);
-			if(!"pkcs12".equalsIgnoreCase(keystoreP12_ocsp_valid.getKeystoreType())) {
+			KeyStore keystoreP12_ocsp_valid = new KeyStore(fKeystore_ocsp_valid.getAbsolutePath(), KeystoreType.PKCS12.getNome(), passwordStore);
+			if(!KeystoreType.PKCS12.getNome().equalsIgnoreCase(keystoreP12_ocsp_valid.getKeystoreType())) {
 				throw new Exception("Atteso tipo PKCS12, trovato '"+keystoreP12_ocsp_valid.getKeystoreType()+"'");
 			}
 			
-			KeyStore keystoreP12_ocsp_revoked = new KeyStore(fKeystore_ocsp_revoked.getAbsolutePath(), "pkcs12", passwordStore);
-			if(!"pkcs12".equalsIgnoreCase(keystoreP12_ocsp_revoked.getKeystoreType())) {
+			KeyStore keystoreP12_ocsp_revoked = new KeyStore(fKeystore_ocsp_revoked.getAbsolutePath(), KeystoreType.PKCS12.getNome(), passwordStore);
+			if(!KeystoreType.PKCS12.getNome().equalsIgnoreCase(keystoreP12_ocsp_revoked.getKeystoreType())) {
 				throw new Exception("Atteso tipo PKCS12, trovato '"+keystoreP12_ocsp_revoked.getKeystoreType()+"'");
 			}
 			
 			KeyStore truststoreOCSP = new KeyStore(fTruststore_ocsp.getAbsolutePath(), passwordStore);
-			if(!"jks".equalsIgnoreCase(truststoreOCSP.getKeystoreType())) {
+			if(!KeystoreType.JKS.getNome().equalsIgnoreCase(truststoreOCSP.getKeystoreType())) {
 				throw new Exception("Atteso tipo JKS, trovato '"+truststoreOCSP.getKeystoreType()+"'");
 			}
 			
@@ -364,18 +365,18 @@ public class EncryptTest {
 			hsmManager.providerInit(log, uniqueProviderInstance);
 			System.out.println("PKCS11 Keystore registered: "+hsmManager.getKeystoreTypes());
 			KeyStore keystoreP11 = hsmManager.getKeystore(KeystoreTest.PKCS11_SERVER);
-			if(!"pkcs11".equalsIgnoreCase(keystoreP11.getKeystoreType())) {
+			if(!KeystoreType.PKCS11.getNome().equalsIgnoreCase(keystoreP11.getKeystoreType())) {
 				throw new Exception("Atteso tipo PKCS11, trovato '"+keystoreP12.getKeystoreType()+"'");
 			}
 			KeyStore truststoreP11 = null;
 			if(useP11asTrustStore) {
 				truststoreP11 = hsmManager.getKeystore(KeystoreTest.PKCS11_SERVER);
-				if(!"pkcs11".equalsIgnoreCase(truststoreP11.getKeystoreType())) {
+				if(!KeystoreType.PKCS11.getNome().equalsIgnoreCase(truststoreP11.getKeystoreType())) {
 					throw new Exception("Atteso tipo PKCS11, trovato '"+truststoreP11.getKeystoreType()+"'");
 				}
 			}
 			else {
-				java.security.KeyStore tP11 = java.security.KeyStore.getInstance("JKS");
+				java.security.KeyStore tP11 = java.security.KeyStore.getInstance(KeystoreType.JKS.getNome());
 				tP11.load(null); // inizializza il keystore
 				tP11.setCertificateEntry(KeystoreTest.ALIAS_PKCS11_CLIENT1, 
 						hsmManager.getKeystore(KeystoreTest.PKCS11_CLIENT1).getCertificate(KeystoreTest.ALIAS_PKCS11_CLIENT1));
@@ -390,7 +391,7 @@ public class EncryptTest {
 					tP11.store(fout, passwordStore.toCharArray());
 					fout.flush();
 				}
-				if(!"jks".equalsIgnoreCase(truststoreP11.getKeystoreType())) {
+				if(!KeystoreType.JKS.getNome().equalsIgnoreCase(truststoreP11.getKeystoreType())) {
 					throw new Exception("Atteso tipo JKS, trovato '"+truststoreP11.getKeystoreType()+"'");
 				}
 			}
@@ -401,13 +402,13 @@ public class EncryptTest {
 			}
 			
 			KeyStore keystoreSecretP11 = hsmManager.getKeystore(KeystoreTest.PKCS11_CLIENT1);
-			if(!"pkcs11".equalsIgnoreCase(keystoreSecretP11.getKeystoreType())) {
+			if(!KeystoreType.PKCS11.getNome().equalsIgnoreCase(keystoreSecretP11.getKeystoreType())) {
 				throw new Exception("Atteso tipo PKCS11, trovato '"+keystoreSecretP11.getKeystoreType()+"'");
 			}
 			KeyStore truststoreSecretP11 = null;
 			if(useP11asTrustStore) {
 				truststoreSecretP11 = hsmManager.getKeystore(KeystoreTest.PKCS11_CLIENT1);
-				if(!"pkcs11".equalsIgnoreCase(truststoreSecretP11.getKeystoreType())) {
+				if(!KeystoreType.PKCS11.getNome().equalsIgnoreCase(truststoreSecretP11.getKeystoreType())) {
 					throw new Exception("Atteso tipo PKCS11, trovato '"+truststoreSecretP11.getKeystoreType()+"'");
 				}
 			}
@@ -1684,7 +1685,7 @@ public class EncryptTest {
 	
 	private static String getLabelTest(TipoTest tipo, boolean useP11asTrustStore) {
 		String tipoL = tipo.toString();
-		if( tipoL.toLowerCase().contains("pkcs11") ) {
+		if( tipoL.toLowerCase().contains(KeystoreType.PKCS11.getNome()) ) {
 			tipoL = tipoL + " - useP11asTrustStore:" + useP11asTrustStore;
 		}
 		return tipoL;
@@ -1883,12 +1884,12 @@ public class EncryptTest {
 				TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM.equals(tipo) ||
 				TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
 			
-			encryptProps.put("rs.security.keystore.type", "jks");
+			encryptProps.put("rs.security.keystore.type", KeystoreType.JKS.getNome());
 			
 			if(TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11.equals(tipo) || 
 					TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_HEADER_CUSTOM.equals(tipo)) {
 				if(useP11asTrustStore) {
-					encryptProps.put("rs.security.keystore.type", "pkcs11");
+					encryptProps.put("rs.security.keystore.type", KeystoreType.PKCS11.getNome());
 				}
 				
 				encryptProps.remove("rs.security.keystore.alias");
@@ -1945,7 +1946,7 @@ public class EncryptTest {
 			
 			if(TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_SECRET.equals(tipo) || 
 					TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_SECRET_HEADER_CUSTOM.equals(tipo)) {
-				encryptProps.put("rs.security.keystore.type", "pkcs11");
+				encryptProps.put("rs.security.keystore.type", KeystoreType.PKCS11.getNome());
 				
 				encryptProps.remove("rs.security.keystore.alias");
 				encryptProps.put("rs.security.keystore.alias", alias);
@@ -1954,14 +1955,14 @@ public class EncryptTest {
 		else if(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK.equals(tipo) ||
 				TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM.equals(tipo)  ||
 				TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
-			encryptProps.put("rs.security.keystore.type", "jwk");
+			encryptProps.put("rs.security.keystore.type", KeystoreType.JWK_SET.getNome());
 			
 			encryptProps.remove("rs.security.encryption.include.cert.sha1");
 			encryptProps.remove("rs.security.encryption.include.cert.sha256");
 		}
 		else if(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC.equals(tipo) ||
 				TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM.equals(tipo)  ) {
-			encryptProps.put("rs.security.keystore.type", "jwk");
+			encryptProps.put("rs.security.keystore.type", KeystoreType.JWK_SET.getNome());
 			encryptProps.put("rs.security.encryption.content.algorithm","A256GCM");
 			encryptProps.put("rs.security.encryption.key.algorithm","DIRECT");
 			encryptProps.put("rs.security.encryption.include.key.id","false"); // non e' possibile aggiungerlo
@@ -2024,15 +2025,15 @@ public class EncryptTest {
 			
 			if(TipoTest.JSON_ENCRYPT_PROPERTIES_JKS.equals(tipo) || 
 					TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM.equals(tipo)) {
-				decryptProps.put("rs.security.keystore.type", "jks");
+				decryptProps.put("rs.security.keystore.type", KeystoreType.JKS.getNome());
 			}
 			else if(TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS12.equals(tipo) || 
 					TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS12_HEADER_CUSTOM.equals(tipo)) {
-				decryptProps.put("rs.security.keystore.type", "pkcs12");
+				decryptProps.put("rs.security.keystore.type", KeystoreType.PKCS12.getNome());
 			}
 			else if(TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11.equals(tipo) || 
 					TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_HEADER_CUSTOM.equals(tipo)) {
-				decryptProps.put("rs.security.keystore.type", "pkcs11");
+				decryptProps.put("rs.security.keystore.type", KeystoreType.PKCS11.getNome());
 				
 				decryptProps.remove("rs.security.keystore.alias");
 				decryptProps.put("rs.security.keystore.alias", alias);
@@ -2060,7 +2061,7 @@ public class EncryptTest {
 					TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP.equals(tipo) || 
 					TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM.equals(tipo) ||
 					TipoTest.JSON_ENCRYPT_PROPERTIES_OCSP_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
-				decryptProps.put("rs.security.keystore.type", "pkcs12");
+				decryptProps.put("rs.security.keystore.type", KeystoreType.PKCS12.getNome());
 				
 				decryptProps.remove("rs.security.keystore.alias");
 				decryptProps.put("rs.security.keystore.alias", alias);
@@ -2079,7 +2080,7 @@ public class EncryptTest {
 			
 			if(TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_SECRET.equals(tipo) || 
 					TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_SECRET_HEADER_CUSTOM.equals(tipo)) {
-				decryptProps.put("rs.security.keystore.type", "pkcs11");
+				decryptProps.put("rs.security.keystore.type", KeystoreType.PKCS11.getNome());
 				
 				decryptProps.remove("rs.security.keystore.alias");
 				decryptProps.put("rs.security.keystore.alias", alias);
@@ -2088,18 +2089,18 @@ public class EncryptTest {
 		else if(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK.equals(tipo) ||
 				TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM.equals(tipo) ||
 				TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY.equals(tipo) ) {
-			decryptProps.put("rs.security.keystore.type", "jwk");
+			decryptProps.put("rs.security.keystore.type", KeystoreType.JWK_SET.getNome());
 		}
 		else if(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC.equals(tipo) ||
 				TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM.equals(tipo)  ) {
-			decryptProps.put("rs.security.keystore.type", "jwk");
+			decryptProps.put("rs.security.keystore.type", KeystoreType.JWK_SET.getNome());
 			decryptProps.put("rs.security.encryption.content.algorithm","A256GCM");
 			decryptProps.put("rs.security.encryption.key.algorithm","DIRECT");
 			decryptProps.put("rs.security.encryption.include.key.id","false"); // non e' possibile aggiungerlo
 			decryptProps.put("rs.security.encryption.include.public.key","false"); // non e' possibile aggiungerlo"			
 		}
 		else if(TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_HEADER_CUSTOM_KID_ONLY.equals(tipo) ) {
-			decryptProps.put("rs.security.keystore.type", "pkcs11");
+			decryptProps.put("rs.security.keystore.type", KeystoreType.PKCS11.getNome());
 			
 			decryptProps.remove("rs.security.keystore.alias");
 			decryptProps.put("rs.security.keystore.alias", alias);
@@ -3752,7 +3753,7 @@ public class EncryptTest {
 			}
 			
 			String tipo = signatureProps.getProperty("rs.security.keystore.type");
-			if("jwk".equals(tipo)) {
+			if(KeystoreType.JWK_SET.getNome().equals(tipo)) {
 				String jwk = signatureProps.getProperty("rs.security.encryption.include.public.key");
 				if("true".equals(jwk)) {
 					list.add(JwtHeaders.JWT_HDR_JWK);

@@ -364,7 +364,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 				
 				String issuer = null;
 				if(credenziali != null && org.openspcoop2.core.registry.constants.CredenzialeTipo.APIKEY.equals(credenziali.getTipo())) {
-					updateStmt.setString(index++, CostantiDB.getISSUER_APIKEY(credenziali.isAppId()));
+					updateStmt.setString(index++, CostantiDB.getIssuerApiKey(credenziali.isAppId()));
 				}
 				else {
 					if(credenziali!=null && credenziali.getIssuer()!=null && !"".equals(credenziali.getIssuer()))
@@ -487,7 +487,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 						
 						String issuerCredenziali = null;
 						if(credenzialiSoggetto != null && org.openspcoop2.core.registry.constants.CredenzialeTipo.APIKEY.equals(credenzialiSoggetto.getTipo())) {
-							updateStmt.setString(index++, CostantiDB.getISSUER_APIKEY(credenzialiSoggetto.isAppId()));
+							updateStmt.setString(index++, CostantiDB.getIssuerApiKey(credenzialiSoggetto.isAppId()));
 						}
 						else {
 							if(credenzialiSoggetto!=null && credenzialiSoggetto.getIssuer()!=null && !"".equals(credenzialiSoggetto.getIssuer()))
@@ -634,7 +634,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 				
 				issuer = null;
 				if(credenziali != null && org.openspcoop2.core.registry.constants.CredenzialeTipo.APIKEY.equals(credenziali.getTipo())) {
-					updateStmt.setString(index++, CostantiDB.getISSUER_APIKEY(credenziali.isAppId()));
+					updateStmt.setString(index++, CostantiDB.getIssuerApiKey(credenziali.isAppId()));
 				}
 				else {
 					if(credenziali!=null && credenziali.getIssuer()!=null && !"".equals(credenziali.getIssuer()))
@@ -760,7 +760,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 						
 						String issuerCredenziali = null;
 						if(credenzialiSoggetto != null && org.openspcoop2.core.registry.constants.CredenzialeTipo.APIKEY.equals(credenzialiSoggetto.getTipo())) {
-							updateStmt.setString(index++, CostantiDB.getISSUER_APIKEY(credenzialiSoggetto.isAppId()));
+							updateStmt.setString(index++, CostantiDB.getIssuerApiKey(credenzialiSoggetto.isAppId()));
 						}
 						else {
 							if(credenzialiSoggetto!=null && credenzialiSoggetto.getIssuer()!=null && !"".equals(credenzialiSoggetto.getIssuer()))

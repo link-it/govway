@@ -46,20 +46,47 @@ import org.openspcoop2.web.lib.mvc.BinaryParameter;
 public class AccordiServizioParteSpecificaAddStrutsBean {
 
 	protected String connettoreDebug;
-	protected String   nomeservizio, tiposervizio, provider, accordo,
-	servcorr, endpointtype, tipoconn, url, nome, tipo, user, password, initcont,
-	urlpgk, provurl, connfact, sendas, 
-	profilo, portType,descrizione,
-	httpsurl, httpstipologia, httpspath,
-	httpstipo, httpspwd, httpsalgoritmo,
-	httpskeystore, httpspwdprivatekeytrust, httpspathkey,
-	httpstipokey, httpspwdkey, httpspwdprivatekey,
-	httpsalgoritmokey,
-	httpsKeyAlias,
-	httpsTrustStoreCRLs,
-	httpsTrustStoreOCSPPolicy;
-	protected String httpshostverifyS, httpsstatoS;
-	protected boolean httpshostverify, httpsstato, httpsTrustVerifyCert;
+	protected String   nomeservizio;
+	protected String tiposervizio;
+	protected String provider;
+	protected String accordo;
+	protected String servcorr;
+	protected String endpointtype;
+	protected String tipoconn;
+	protected String url;
+	protected String nome;
+	protected String tipo;
+	protected String user;
+	protected String password;
+	protected String initcont;
+	protected String urlpgk;
+	protected String provurl;
+	protected String connfact;
+	protected String sendas;
+	protected String profilo;
+	protected String portType;
+	protected String descrizione;
+	protected String httpsurl;
+	protected String httpstipologia;
+	protected String httpspath;
+	protected String httpstipo;
+	protected String httpspwd;
+	protected String httpsalgoritmo;
+	protected String httpskeystore;
+	protected String httpspwdprivatekeytrust;
+	protected String httpspathkey;
+	protected String httpstipokey;
+	protected String httpspwdkey;
+	protected String httpspwdprivatekey;
+	protected String httpsalgoritmokey;
+	protected String httpsKeyAlias;
+	protected String httpsTrustStoreCRLs;
+	protected String httpsTrustStoreOCSPPolicy;
+	protected String httpshostverifyS;
+	protected String httpsstatoS;
+	protected boolean httpshostverify;
+	protected boolean httpsstato;
+	protected boolean httpsTrustVerifyCert;
 	protected String nomeSoggettoErogatore = "";
 	protected String tipoSoggettoErogatore = "";
 	String providerSoggettoFruitore = null;
@@ -74,24 +101,34 @@ public class AccordiServizioParteSpecificaAddStrutsBean {
 	protected String nomeSA = null;
 	protected String oldPortType = null;
 	protected String autenticazioneHttp;
-	//protected Properties parametersPOST;
 	protected ServiceBinding serviceBinding = null;
 	protected org.openspcoop2.protocol.manifest.constants.InterfaceType formatoSpecifica = null;
 
 	protected boolean autenticazioneToken = false;
-	protected String token_policy = null;
+	protected String tokenPolicy = null;
 	
-	protected String proxy_enabled, proxy_hostname,proxy_port,proxy_username,proxy_password;
+	protected String proxyEnabled;
+	protected String proxyHostname;
+	protected String proxyPort;
+	protected String proxyUsername;
+	protected String proxyPassword;
 	
-	protected String tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta;
+	protected String tempiRispostaEnabled;
+	protected String tempiRispostaConnectionTimeout;
+	protected String tempiRispostaReadTimeout;
+	protected String tempiRispostaTempoMedioRisposta;
 
-	protected String transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop, opzioniAvanzate;
+	protected String transferMode;
+	protected String transferModeChunkSize;
+	protected String redirectMode;
+	protected String redirectMaxHop;
+	protected String opzioniAvanzate;
 
 	// file
 	protected String requestOutputFileName = null;
-	protected String requestOutputFileName_permissions = null;
+	protected String requestOutputFileNamePermissions = null;
 	protected String requestOutputFileNameHeaders = null;
-	protected String requestOutputFileNameHeaders_permissions = null;
+	protected String requestOutputFileNameHeadersPermissions = null;
 	protected String requestOutputParentDirCreateIfNotExists = null;
 	protected String requestOutputOverwriteIfExists = null;
 	protected String responseInputMode = null;
@@ -109,7 +146,8 @@ public class AccordiServizioParteSpecificaAddStrutsBean {
 	protected IConfigIntegrationReader configRegistryReader = null; 
 	protected ConsoleOperationType consoleOperationType = null;
 	
-	protected BinaryParameter wsdlimpler, wsdlimplfru;
+	protected BinaryParameter wsdlimpler;
+	protected BinaryParameter wsdlimplfru;
 
 	protected String controlloAccessiStato;
 	
@@ -119,7 +157,10 @@ public class AccordiServizioParteSpecificaAddStrutsBean {
 	protected TipoAutenticazionePrincipal erogazioneAutenticazionePrincipal;
 	protected List<String> erogazioneAutenticazioneParametroList;
 	protected String erogazioneAutorizzazione;
-	protected String erogazioneAutorizzazioneAutenticati, erogazioneAutorizzazioneRuoli, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch;
+	protected String erogazioneAutorizzazioneAutenticati;
+	protected String erogazioneAutorizzazioneRuoli;
+	protected String erogazioneAutorizzazioneRuoliTipologia;
+	protected String erogazioneAutorizzazioneRuoliMatch;
 	protected String erogazioneSoggettoAutenticato; 
 	
 	protected String fruizioneServizioApplicativo;
@@ -129,13 +170,17 @@ public class AccordiServizioParteSpecificaAddStrutsBean {
 	protected TipoAutenticazionePrincipal fruizioneAutenticazionePrincipal;
 	protected List<String> fruizioneAutenticazioneParametroList;
 	protected String fruizioneAutorizzazione;
-	protected String fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch;
+	protected String fruizioneAutorizzazioneAutenticati;
+	protected String fruizioneAutorizzazioneRuoli;
+	protected String fruizioneAutorizzazioneRuoliTipologia;
+	protected String fruizioneAutorizzazioneRuoliMatch;
 	
 	protected String tipoProtocollo;
 	
 	protected String erogazioneServizioApplicativoServer;
 	protected boolean erogazioneServizioApplicativoServerEnabled = false;
 	
-	protected String canale, canaleStato;
+	protected String canale;
+	protected String canaleStato;
 	
 }

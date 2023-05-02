@@ -20,12 +20,15 @@
 
 package org.openspcoop2.protocol.modipa.config;
 
+import java.util.List;
+
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.basic.config.BasicConfiguration;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
+import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 
 /**
  * Classe che implementa, in base al protocollo ModI, l'interfaccia {@link org.openspcoop2.protocol.sdk.config.IProtocolConfiguration} 
@@ -62,7 +65,7 @@ public class ModIProtocolConfiguration extends BasicConfiguration {
 	
 	@Override
 	public boolean isAbilitataGenerazioneTracce() {
-		if(this.properties.isGenerazioneTracce()) {
+		if(this.properties.isGenerazioneTracce()!=null && this.properties.isGenerazioneTracce().booleanValue()) {
 			return true;
 		}
 		return super.isAbilitataGenerazioneTracce();
@@ -92,4 +95,8 @@ public class ModIProtocolConfiguration extends BasicConfiguration {
 		return !this.properties.generateIDasUUID();
 	}
 	
+	@Override
+	public List<RemoteStoreConfig> getRemoteStoreConfig() throws ProtocolException{
+		return this.properties.getRemoteStoreConfig();
+	}
 }

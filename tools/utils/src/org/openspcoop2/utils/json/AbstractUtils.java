@@ -384,7 +384,7 @@ public abstract class AbstractUtils {
 		return _convertToMap(log, source, jsonResponse, claimsToConvert);
 	}
 	private Map<String, Object> _convertToMap(Logger log, String source, JsonNode jsonResponse, List<String> claimsToConvert) {
-		Map<String, Object> returnMap = new HashMap<String, Object>();
+		Map<String, Object> returnMap = new HashMap<>();
 			
 		try {
 			if(jsonResponse!=null && jsonResponse instanceof ObjectNode) {

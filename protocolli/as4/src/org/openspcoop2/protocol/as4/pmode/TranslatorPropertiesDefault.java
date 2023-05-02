@@ -114,7 +114,7 @@ public class TranslatorPropertiesDefault {
 			else {
 				if(this.propertyDefault==null) {
 					//System.out.println("================ getPropertyDefault ==================");
-					Map<String, Object> map = new HashMap<String, Object>();
+					Map<String, Object> map = new HashMap<>();
 					StringWriter writer = new StringWriter();
 					this.templatePropertyDefault.process(map, writer);
 					//System.out.println("LETTO: "+writer.toString());
@@ -171,7 +171,7 @@ public class TranslatorPropertiesDefault {
 		try {
 			if(this.payloadPropertySetDefault==null) {
 				//System.out.println("================ getPropertySetDefault ==================");
-				Map<String, Object> map = new HashMap<String, Object>();
+				Map<String, Object> map = new HashMap<>();
 				StringWriter writer = new StringWriter();
 				this.templatePropertySetDefault.process(map, writer);
 				//System.out.println("LETTO: "+writer.toString());

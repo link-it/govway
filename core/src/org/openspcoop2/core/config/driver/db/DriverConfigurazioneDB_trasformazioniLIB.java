@@ -180,7 +180,7 @@ public class DriverConfigurazioneDB_trasformazioniLIB {
 						}
 					}
 					
-					List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+					List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<>();
 					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("id_porta", idProprietario , InsertAndGeneratedKeyJDBCType.LONG) );
 					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome", regola.getNome() , InsertAndGeneratedKeyJDBCType.STRING) );
 					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("posizione", regola.getPosizione() , InsertAndGeneratedKeyJDBCType.INT) );
@@ -407,7 +407,7 @@ public class DriverConfigurazioneDB_trasformazioniLIB {
 								}
 							}
 							
-							listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+							listInsertAndGeneratedKeyObject = new ArrayList<>();
 							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("id_trasformazione", idtrasformazione , InsertAndGeneratedKeyJDBCType.LONG) );
 							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome", regolaRisposta.getNome() , InsertAndGeneratedKeyJDBCType.STRING) );
 							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("posizione", regolaRisposta.getPosizione() , InsertAndGeneratedKeyJDBCType.INT) );

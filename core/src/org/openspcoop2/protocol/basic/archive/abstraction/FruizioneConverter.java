@@ -328,7 +328,7 @@ public class FruizioneConverter extends AbstractConverter {
 					fruizione.getDescrizione());
 			
 			// Creazione mappa per FreeMarker
-			Map<String, Object> data = new HashMap<String, Object>();
+			Map<String, Object> data = new HashMap<>();
 			data.put(CostantiAbstraction.EROGAZIONE_MAP_KEY_SERVIZIO, datiServizio);
 			data.put(CostantiAbstraction.EROGAZIONE_MAP_KEY_SOGGETTO, datiSoggetto);
 			data.put(CostantiAbstraction.EROGAZIONE_MAP_KEY_FRUIZIONE, datiFruizione);

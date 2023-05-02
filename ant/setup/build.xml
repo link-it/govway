@@ -538,6 +538,7 @@
 		<copy file="${deploy_resources}/protocolli/modipa/modipa_local.properties" todir="${tmp_cfg}"/>
 
 		<replace file="${tmp_cfg}/modipa_local.properties" token="WORK_DIR" value="${work_dir}"/>
+		<replace file="${tmp_cfg}/modipa_local.properties" token="/SOGGETTO_LOCALE/" value="/${antinstaller_nomesoggetto}/"/>
 		<antcall target="dos2unix">
 			<param name="dir" value="${tmp_cfg}"/>
 		    <param name="file" value="modipa_local.properties"/>
@@ -813,6 +814,18 @@
 						<delete dir="${tmp_archivi}/apiSoapStatusZIP"/>
 					</then>
 				</if>
+				<if>
+					<and>
+						<istrue value="${antinstaller_protocollo_modipa}"/>
+					</and>
+					<then>
+						<unzip src="${tmp_archivi}/govway.ear/properties/apiPDND.zip" dest="${tmp_archivi}/apiPDNDZIP"/>
+						<replace dir="${tmp_archivi}/apiPDNDZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<delete file="${tmp_archivi}/govway.ear/properties/apiPDND.zip" />
+						<zip destfile="${tmp_archivi}/govway.ear/properties/apiPDND.zip" basedir="${tmp_archivi}/apiPDNDZIP"/>
+						<delete dir="${tmp_archivi}/apiPDNDZIP"/>
+					</then>
+				</if>
 	
 				<!-- govwaySec -->
 				<if>
@@ -901,6 +914,18 @@
 						<delete file="${tmp_archivi}/govway.war/WEB-INF/classes/apiSoapStatus.zip" />
 						<zip destfile="${tmp_archivi}/govway.war/WEB-INF/classes/apiSoapStatus.zip" basedir="${tmp_archivi}/apiSoapStatusZIP"/>
 						<delete dir="${tmp_archivi}/apiSoapStatusZIP"/>
+					</then>
+				</if>
+				<if>
+					<and>
+						<istrue value="${antinstaller_protocollo_modipa}"/>
+					</and>
+					<then>
+						<unzip src="${tmp_archivi}/govway.war/WEB-INF/classes/apiPDND.zip" dest="${tmp_archivi}/apiPDNDZIP"/>
+						<replace dir="${tmp_archivi}/apiPDNDZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<delete file="${tmp_archivi}/govway.war/WEB-INF/classes/apiPDND.zip" />
+						<zip destfile="${tmp_archivi}/govway.war/WEB-INF/classes/apiPDND.zip" basedir="${tmp_archivi}/apiPDNDZIP"/>
+						<delete dir="${tmp_archivi}/apiPDNDZIP"/>
 					</then>
 				</if>
 

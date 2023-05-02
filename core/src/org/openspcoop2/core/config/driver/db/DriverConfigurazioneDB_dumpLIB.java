@@ -163,7 +163,7 @@ public class DriverConfigurazioneDB_dumpLIB {
 				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.DUMP_CONFIGURAZIONE);
-				if(!CostantiDB._DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG.equals(tipoProprietario) &&
+				if(!CostantiDB.OLD_BACKWARD_COMPATIBILITY_DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG.equals(tipoProprietario) &&
 						!CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD.equals(tipoProprietario) &&
 						!CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA.equals(tipoProprietario)) {
 					sqlQueryObject.addWhereCondition("id_proprietario=?");
@@ -173,7 +173,7 @@ public class DriverConfigurazioneDB_dumpLIB {
 				updateQuery = sqlQueryObject.createSQLDelete();
 				updateStmt = con.prepareStatement(updateQuery);
 				index = 1;
-				if(!CostantiDB._DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG.equals(tipoProprietario) &&
+				if(!CostantiDB.OLD_BACKWARD_COMPATIBILITY_DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG.equals(tipoProprietario) &&
 						!CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD.equals(tipoProprietario) &&
 						!CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA.equals(tipoProprietario)) {
 					updateStmt.setLong(index++, idProprietario);
@@ -196,7 +196,7 @@ public class DriverConfigurazioneDB_dumpLIB {
 	}
 	
 	private static long createDumpConfigurazioneRegola(DumpConfigurazioneRegola dumpRegola, Connection con) throws Exception {
-		List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+		List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<>();
 		listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("body", DriverConfigurazioneDB_LIB.getValue(dumpRegola.getBody()) , InsertAndGeneratedKeyJDBCType.STRING) );
 		listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("payload", DriverConfigurazioneDB_LIB.getValue(dumpRegola.getPayload()) , InsertAndGeneratedKeyJDBCType.STRING) );
 		listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("payload_parsing", DriverConfigurazioneDB_LIB.getValue(dumpRegola.getPayloadParsing()) , InsertAndGeneratedKeyJDBCType.STRING) );
@@ -220,7 +220,7 @@ public class DriverConfigurazioneDB_dumpLIB {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.DUMP_CONFIGURAZIONE);
 			sqlQueryObject.addSelectField("*");
-			if(!CostantiDB._DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG.equals(tipoProprietario) &&
+			if(!CostantiDB.OLD_BACKWARD_COMPATIBILITY_DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG.equals(tipoProprietario) &&
 					!CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD.equals(tipoProprietario) &&
 					!CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA.equals(tipoProprietario)) {
 				sqlQueryObject.addWhereCondition("id_proprietario=?");
@@ -232,7 +232,7 @@ public class DriverConfigurazioneDB_dumpLIB {
 			
 			stm1 = con.prepareStatement(sqlQuery);
 			int index = 1;
-			if(!CostantiDB._DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG.equals(tipoProprietario) &&
+			if(!CostantiDB.OLD_BACKWARD_COMPATIBILITY_DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG.equals(tipoProprietario) &&
 					!CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD.equals(tipoProprietario) &&
 					!CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA.equals(tipoProprietario)) {
 				stm1.setLong(index++, idProprietario);

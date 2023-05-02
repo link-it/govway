@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/db2/configurazionePdD/2023-05-02-patch.sql

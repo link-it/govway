@@ -2820,28 +2820,28 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			boolean httpshostverify = false;
 			boolean httpsstato = false;
 			
-			String proxy_enabled = null;
-			String proxy_hostname = null;
-			String proxy_port = null;
-			String proxy_username = null;
-			String proxy_password = null;
+			String proxyEnabled = null;
+			String proxyHostname = null;
+			String proxyPort = null;
+			String proxyUsername = null;
+			String proxyPassword = null;
 			
-			String tempiRisposta_enabled = null;
-			String tempiRisposta_connectionTimeout = null; 
-			String tempiRisposta_readTimeout = null;
-			String tempiRisposta_tempoMedioRisposta = null;
+			String tempiRispostaEnabled = null;
+			String tempiRispostaConnectionTimeout = null; 
+			String tempiRispostaReadTimeout = null;
+			String tempiRispostaTempoMedioRisposta = null;
 			
-			String transfer_mode = null;
-			String transfer_mode_chunk_size = null;
-			String redirect_mode = null;
-			String redirect_max_hop = null;
+			String transferMode = null;
+			String transferModeChunkSize = null;
+			String redirectMode = null;
+			String redirectMaxHop = null;
 			String opzioniAvanzate = null;
 			
 			// file
 			String requestOutputFileName = null;
-			String requestOutputFileName_permissions = null;
+			String requestOutputFileNamePermissions = null;
 			String requestOutputFileNameHeaders = null;
-			String requestOutputFileNameHeaders_permissions = null;
+			String requestOutputFileNameHeadersPermissions = null;
 			String requestOutputParentDirCreateIfNotExists = null;
 			String requestOutputOverwriteIfExists = null;
 			String responseInputMode = null;
@@ -2850,13 +2850,12 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			String responseInputDeleteAfterRead = null;
 			String responseInputWaitTime = null;
 
-			// gestito nel metodo getParameter:  if(readedDatiConnettori==false){
 			
-			// NON POSSO USARE QUESTO METODO, SENNO NON LEGGO I PARMETRI DI DEFAULT: endpointtype = this.readEndPointType();
+			/** NON POSSO USARE QUESTO METODO, SENNO NON LEGGO I PARMETRI DI DEFAULT: endpointtype = this.readEndPointType(); */
 			endpointtype = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
-			String endpointtype_check = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_CHECK);
-			String endpointtype_ssl = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTPS);
-			endpointtype = this.readEndPointType(endpointtype, endpointtype_check, endpointtype_ssl);
+			String endpointtypeCheck = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_CHECK);
+			String endpointtypeSsl = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTPS);
+			endpointtype = this.readEndPointType(endpointtype, endpointtypeCheck, endpointtypeSsl);
 			if(endpointtype==null || (forceEnabled && TipiConnettore.DISABILITATO.getNome().equals(endpointtype)) ){
 				endpointtype = TipiConnettore.HTTP.toString();
 			}
@@ -2868,27 +2867,29 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			// token policy
 			String autenticazioneTokenS = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
-			String token_policy = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
+			String tokenPolicy = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
+			boolean forcePDND = false;
+			boolean forceOAuth = false;
 			
 			// proxy
-			proxy_enabled = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
-			proxy_hostname = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
-			proxy_port = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
-			proxy_username = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
-			proxy_password = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+			proxyEnabled = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
+			proxyHostname = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
+			proxyPort = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
+			proxyUsername = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
+			proxyPassword = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
 			
 			// tempi risposta
-			tempiRisposta_enabled = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
-			tempiRisposta_connectionTimeout = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
-			tempiRisposta_readTimeout = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
-			tempiRisposta_tempoMedioRisposta = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
+			tempiRispostaEnabled = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
+			tempiRispostaConnectionTimeout = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
+			tempiRispostaReadTimeout = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
+			tempiRispostaTempoMedioRisposta = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
 			
 			// opzioni avanzate
-			transfer_mode = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
-			transfer_mode_chunk_size = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
-			redirect_mode = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
-			redirect_max_hop = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
-			opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(this, transfer_mode, redirect_mode);
+			transferMode = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
+			transferModeChunkSize = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
+			redirectMode = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
+			redirectMaxHop = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
+			opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(this, transferMode, redirectMode);
 			
 			// http
 			url = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
@@ -2940,9 +2941,9 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			
 			// file
 			requestOutputFileName = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
-			requestOutputFileName_permissions = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
+			requestOutputFileNamePermissions = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
 			requestOutputFileNameHeaders = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
-			requestOutputFileNameHeaders_permissions = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
+			requestOutputFileNameHeadersPermissions = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
 			requestOutputParentDirCreateIfNotExists = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
 			requestOutputOverwriteIfExists = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME);
 			responseInputMode = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE);
@@ -2977,13 +2978,13 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					"", "", null, null, null,null,
 					null, null, showSectionTitle,
 					isConnettoreCustomUltimaImmagineSalvata, 
-					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-					requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+					proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+					tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+					requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-					autenticazioneToken,token_policy,
+					autenticazioneToken,tokenPolicy, forcePDND, forceOAuth,
 					listExtendedConnettore, forceEnabled,
 					null, false,false
 					, false, false, null, null

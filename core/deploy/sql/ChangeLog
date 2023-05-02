@@ -1,3 +1,9 @@
+2023-05-02  Andrea Poli <apoli@link.it>
+
+	Aggiunte colonne per memorizzare chiavi ottenute tramite remote store
+	- remote_store
+	- remote_store_key
+
 2023-04-11  Andrea Poli <apoli@link.it>
 
 	Aggiunte colonne per memorizzare il contesto della transazione

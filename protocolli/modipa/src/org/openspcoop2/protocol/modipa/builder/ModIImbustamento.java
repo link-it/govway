@@ -54,7 +54,6 @@ import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.ProtocolMessage;
-import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
@@ -81,9 +80,28 @@ public class ModIImbustamento {
 		this.modiProperties = ModIProperties.getInstance();
 	}
 	
+	private static String getReplyToErogazione(IDSoggetto idSoggettoMittente, AccordoServizioParteComune aspc, String nomePortType, String azione,
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, 
+			IProtocolFactory<?> protocolFactory, IState state,
+			RequestInfo requestInfo) throws ProtocolException {
+		try {
+			return ModIUtilities.getReplyToErogazione(idSoggettoMittente, aspc, nomePortType, azione, 
+					registryReader, configIntegrationReader, protocolFactory, state, requestInfo);
+		}catch(Exception e) {
+			throw new ProtocolException("Configurazione presente nel registro non corretta: "+e.getMessage(),e);
+		}
+	}
+	
+	private static String newUniqueIdentifier() throws ProtocolException {
+		try{
+			return UniqueIdentifierManager.newUniqueIdentifier().getAsString();
+		}catch(Exception e){
+			throw new ProtocolException(e.getMessage());
+		}
+	}
+	
 	public ProtocolMessage buildMessage(OpenSPCoop2Message msg, Context context, Busta busta, Busta bustaRichiesta,
 			RuoloMessaggio ruoloMessaggio,
-			ProprietaManifestAttachments proprietaManifestAttachments,
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, 
 			IProtocolFactory<?> protocolFactory, IState state) throws ProtocolException{
 		
@@ -177,12 +195,10 @@ public class ModIImbustamento {
 					if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio) && ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PUSH.equals(asyncInteractionType)) {
 						// devo cercare l'url di invocazione del servizio erogato correlato.
 						
-						try {
-							replyTo = ModIUtilities.getReplyToErogazione(idSoggettoMittente, aspc, nomePortType, azione, 
-									registryReader, configIntegrationReader, protocolFactory, state, requestInfo);
-						}catch(Exception e) {
-							throw new Exception("Configurazione presente nel registro non corretta: "+e.getMessage(),e);
-						}
+						replyTo = getReplyToErogazione(idSoggettoMittente, aspc, nomePortType, azione,
+								registryReader, configIntegrationReader, 
+								protocolFactory, state,
+								requestInfo);
 					}
 					
 					apiContenenteRisorsa = aspc;
@@ -251,7 +267,8 @@ public class ModIImbustamento {
 			
 			
 			/* *** SICUREZZA MESSAGGIO *** */
-			String securityMessageProfile = ModIPropertiesUtils.readPropertySecurityMessageProfile(aspc, nomePortType, azione);
+			boolean filterPDND = true;
+			String securityMessageProfile = ModIPropertiesUtils.readPropertySecurityMessageProfile(aspc, nomePortType, azione, filterPDND);
 			if(securityMessageProfile!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED.equals(securityMessageProfile)) {
 				
 				// check config
@@ -271,7 +288,7 @@ public class ModIImbustamento {
 					Boolean multipleHeaderAuthorizationConfig = null;
 					boolean integritaCustom = false;
 					if(rest) {
-						headerTokenRest = ModIPropertiesUtils.readPropertySecurityMessageHeader(aspc, nomePortType, azione, isRichiesta);
+						headerTokenRest = ModIPropertiesUtils.readPropertySecurityMessageHeader(aspc, nomePortType, azione, isRichiesta, filterPDND);
 						if(headerTokenRest.contains(" ")) {
 							String [] tmp = headerTokenRest.split(" ");
 							if(tmp!=null && tmp.length==2 && tmp[0]!=null && tmp[1]!=null) {
@@ -311,12 +328,17 @@ public class ModIImbustamento {
 						}
 					}
 					
+					boolean kidMode = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile)
+							||
+							ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile);
+					
+					
 					ModIKeystoreConfig keystoreConfig = null;
 					ModISecurityConfig securityConfig = new ModISecurityConfig(msg, idSoggettoMittente, asps, sa, 
 							rest, fruizione, MessageRole.REQUEST.equals(messageRole), corniceSicurezza,
 							busta, bustaRichiesta, 
 							multipleHeaderAuthorizationConfig,
-							keystoreDefinitoInFruizione);
+							keystoreDefinitoInFruizione, kidMode);
 					
 					if(MessageRole.REQUEST.equals(messageRole)) {
 					
@@ -334,24 +356,24 @@ public class ModIImbustamento {
 						
 					}
 					
-					boolean bufferMessage_readOnly = this.modiProperties.isReadByPathBufferEnabled();
+					boolean bufferMessageReadOnly = this.modiProperties.isReadByPathBufferEnabled();
 					Map<String, Object> dynamicMap = null;
 					Map<String, Object> dynamicMapRequest = null;
 					if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio)) {
 						dynamicMapRequest = ModIUtilities.removeDynamicMapRequest(context);
 					}
 					if(dynamicMapRequest!=null) {
-						dynamicMap = DynamicUtils.buildDynamicMapResponse(msg, context, busta, this.log, bufferMessage_readOnly, dynamicMapRequest);
+						dynamicMap = DynamicUtils.buildDynamicMapResponse(msg, context, busta, this.log, bufferMessageReadOnly, dynamicMapRequest);
 					}
 					else {
-						dynamicMap = DynamicUtils.buildDynamicMap(msg, context, busta, this.log, bufferMessage_readOnly);
+						dynamicMap = DynamicUtils.buildDynamicMap(msg, context, busta, this.log, bufferMessageReadOnly);
 						ModIUtilities.saveDynamicMapRequest(context, dynamicMap);
 					}
 					
 					if(rest) {
 						if(headerTokenRestIntegrity==null) {
 							String token = imbustamentoRest.addToken(msg, context, keystoreConfig, securityConfig, busta, 
-									securityMessageProfile, headerTokenRest, corniceSicurezza, ruoloMessaggio, includiRequestDigest,
+									securityMessageProfile, false, headerTokenRest, corniceSicurezza, ruoloMessaggio, includiRequestDigest,
 									null, busta.getID(), ModIHeaderType.SINGLE, integritaCustom,
 									dynamicMap, requestInfo);
 							protocolMessage.setBustaRawContent(new ModIBustaRawContent(headerTokenRest, token));
@@ -362,27 +384,31 @@ public class ModIImbustamento {
 							String jtiAuthorization = busta.getID();
 							String jtiIntegrity = busta.getID();
 							if(!securityConfig.isMultipleHeaderUseSameJti()) {
-								try{
-									if(securityConfig.isMultipleHeaderUseJtiAuthorizationAsIdMessaggio()) {
-										jtiIntegrity = UniqueIdentifierManager.newUniqueIdentifier().getAsString();
-									}else {
-										jtiAuthorization = UniqueIdentifierManager.newUniqueIdentifier().getAsString();
-									}
-								}catch(Exception e){
-									throw new ProtocolException(e.getMessage());
+								if(securityConfig.isMultipleHeaderUseJtiAuthorizationAsIdMessaggio()) {
+									jtiIntegrity = newUniqueIdentifier();
+								}else {
+									jtiAuthorization = newUniqueIdentifier();
 								}
 							}
 							
 							// Authorization
 							String securityMessageProfileAuthorization = null;
-							if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile)) {
+							boolean useKIDforIdAUTH = false;
+							if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile)
+									||
+									ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile)) {
 								securityMessageProfileAuthorization = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01; 
 							}
 							else {
 								securityMessageProfileAuthorization = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02; 
 							}
+							if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile)
+									||
+									ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile)) {
+								useKIDforIdAUTH = true;
+							}
 							String tokenAuthorization = imbustamentoRest.addToken(msg, context, keystoreConfig, securityConfig, busta, 
-									securityMessageProfileAuthorization, headerTokenRest, corniceSicurezza, ruoloMessaggio, includiRequestDigest,
+									securityMessageProfileAuthorization, useKIDforIdAUTH, headerTokenRest, corniceSicurezza, ruoloMessaggio, includiRequestDigest,
 									now, jtiAuthorization, ModIHeaderType.BOTH_AUTH, integritaCustom,
 									dynamicMap, requestInfo);
 							
@@ -393,13 +419,12 @@ public class ModIImbustamento {
 							if(securityConfig.getHttpHeaders()!=null && !securityConfig.getHttpHeaders().isEmpty()) {
 								Map<String, List<String>> mapForceTransportHeaders = msg.getForceTransportHeaders();
 								for (String httpHeader : securityConfig.getHttpHeaders()) {
-									if(httpHeader.toLowerCase().equals(HttpConstants.DIGEST.toLowerCase())) {
-										continue; // se non c'è payload non ha senso, altrimenti entrera' nell'opzione hasContent
-									}
-									List<String> values = ModIImbustamentoRest.getHeaderValues(ruoloMessaggio, msg, mapForceTransportHeaders, httpHeader);
-									if(values!=null && !values.isEmpty()) {
-										signedHeaders = true;
-										break;
+									if(!httpHeader.equalsIgnoreCase(HttpConstants.DIGEST)) {
+										List<String> values = ModIImbustamentoRest.getHeaderValues(ruoloMessaggio, msg, mapForceTransportHeaders, httpHeader);
+										if(values!=null && !values.isEmpty()) {
+											signedHeaders = true;
+											break;
+										}
 									}
 								}
 							}
@@ -412,9 +437,9 @@ public class ModIImbustamento {
 										rest, fruizione, MessageRole.REQUEST.equals(messageRole), corniceSicurezza,
 										busta, bustaRichiesta, 
 										false,
-										keystoreDefinitoInFruizione);
+										keystoreDefinitoInFruizione, kidMode);
 								tokenIntegrity = imbustamentoRest.addToken(msg, context, keystoreConfig, securityConfigIntegrity, busta, 
-										securityMessageProfile, headerTokenRestIntegrity, corniceSicurezza, ruoloMessaggio, includiRequestDigest,
+										securityMessageProfile, false, headerTokenRestIntegrity, corniceSicurezza, ruoloMessaggio, includiRequestDigest,
 										now, jtiIntegrity, ModIHeaderType.BOTH_INTEGRITY, integritaCustom,
 										dynamicMap, requestInfo);
 							}
@@ -444,10 +469,9 @@ public class ModIImbustamento {
 		
 		}
 		catch(ProtocolException pe) {
-			if(pe.isInteroperabilityError()) {
-				if(context!=null) {
-					context.addObject(Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO, Costanti.ERRORE_TRUE);
-				}
+			if(pe.isInteroperabilityError() &&
+				context!=null) {
+				context.addObject(Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO, Costanti.ERRORE_TRUE);
 			}
 			throw pe;
 		}

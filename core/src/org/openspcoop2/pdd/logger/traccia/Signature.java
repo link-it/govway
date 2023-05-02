@@ -27,6 +27,7 @@ import java.lang.reflect.Field;
 import java.util.Properties;
 
 import org.openspcoop2.message.xml.MessageXMLUtils;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWSOptions;
 import org.openspcoop2.utils.security.JsonSignature;
@@ -42,7 +43,7 @@ import org.w3c.dom.Element;
  */
 public class Signature {
 
-	private String keystore_type = "JKS";
+	private String keystore_type = KeystoreType.JKS.getNome();
 	private String keystore_path = null;
 	private String keystore_password = null;
 	private String key_alias = null;

@@ -48,6 +48,7 @@ import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.random.RandomUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -96,7 +97,7 @@ public class TracciaProducerTest {
 		TransazioneBase transazione = newTransazione(extended, log, init);
 		
 		InputStream isKeystore = SignatureTest.class.getResourceAsStream("/org/openspcoop2/utils/security/test/keystore_example.jks");
-		File fKeystore = File.createTempFile("keystore", "jks");
+		File fKeystore = File.createTempFile("keystore", KeystoreType.JKS.getNome());
 		FileSystemUtilities.writeFile(fKeystore, Utilities.getAsByteArray(isKeystore));
 		
 		Properties pSerializerConf = new Properties();
@@ -106,7 +107,7 @@ public class TracciaProducerTest {
 		Serializer serializer = new Serializer(pSerializerConf);
 		
 		Properties pSignatureConf = new Properties();
-		pSignatureConf.setProperty("keystore.type", "jks");
+		pSignatureConf.setProperty("keystore.type", KeystoreType.JKS.getNome());
 		pSignatureConf.setProperty("keystore.path", fKeystore.getPath());
 		pSignatureConf.setProperty("keystore.password", "123456");
 		pSignatureConf.setProperty("key.alias", "openspcoop");

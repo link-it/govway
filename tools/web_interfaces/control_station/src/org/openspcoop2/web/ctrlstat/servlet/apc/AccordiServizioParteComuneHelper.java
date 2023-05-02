@@ -902,7 +902,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			// Campi obbligatori
 			if (nomeop.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare un Nome");
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare un Nome");
 				return false;
 			}
 
@@ -1683,7 +1683,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		try{
 			// Campi obbligatori
 			if (nomept.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare un Nome");
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare un Nome");
 				return false;
 			}
 
@@ -2323,7 +2323,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 			if (nomeaz.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare un Nome");
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare un Nome");
 				return false;
 			}
 
@@ -4935,17 +4935,17 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			// Campi obbligatori
 			if (nome==null || nome.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare un Nome");
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare un Nome");
 				return false;
 			}
 			//if(this.core.isBackwardCompatibilityAccordo11()==false){
 			if (versione==null || versione.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare una Versione dell'accordo");
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare una Versione dell'accordo");
 				return false;
 			}
 			if(referente==null || referente.equals("") || referente.equals("-")){
 				if(!TipoOperazione.ADD.equals(tipoOperazione) || checkReferente) {
-					this.pd.setMessage("Dati incompleti. E' necessario indicare un Soggetto Referente");
+					this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare un Soggetto Referente");
 					return false;
 				}
 			}
@@ -4953,13 +4953,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			
 			// service binding
 			if (serviceBinding ==null) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare un Service Binding");
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare un Service Binding");
 				return false;
 			}
 			
 			// formato specifica
 			if (formatoSpecifica ==null) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare un Formato Specifica");
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare un Formato Specifica");
 				return false;
 			}
 
@@ -5763,7 +5763,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		try{
 
 			if(idServizioComponente==null || "".equals(idServizioComponente) || "-1".equals(idServizioComponente)){
-				this.pd.setMessage("E' necessario selezionare un componente.");
+				this.pd.setMessage("&Egrave; necessario selezionare un componente.");
 				return false;
 			}
 			return true;
@@ -6173,7 +6173,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				m = operation.getMessageOutput();
 
 			if (messagePartName == null || messagePartName.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare il "+AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_NAME+".");
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare il "+AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_NAME+".");
 				return false;
 			}
 
@@ -6184,7 +6184,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 
 			if (messagePartLocalName == null || messagePartLocalName.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare il "+AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_LOCAL_NAME+".");
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare il "+AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_LOCAL_NAME+".");
 				return false;
 			}
 
@@ -6194,7 +6194,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 			if (messagePartNs == null || messagePartNs.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare il "+AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_NS+".");
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare il "+AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_NS+".");
 				return false;
 			}
 
@@ -7081,7 +7081,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if ((path==null || path.equals("")) && httpMethod!=null) {
 				boolean httpMethodAndPathQualsiasi = this.apcCore.isApiResourceHttpMethodAndPathQualsiasiEnabled();
 				if(!httpMethodAndPathQualsiasi) {
-					this.pd.setMessage("Dati incompleti. E' necessario indicare un Path");
+					this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare un Path");
 					return false;
 				}
 			}
@@ -7093,7 +7093,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 			
 //			if (nomeRisorsa.equals("")) {
-//				this.pd.setMessage("Dati incompleti. E' necessario indicare un Nome");
+//				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare un Nome");
 //				return false;
 //			}
 
@@ -7112,7 +7112,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			else {
 				HttpMethod http = HttpMethod.toEnumConstant(httpMethod);
 				if(http==null) {
-					this.pd.setMessage("Dati incompleti. E' necessario indicare un Nome");
+					this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare un Nome");
 					return false;
 				}
 			}
@@ -8293,7 +8293,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			// Campi obbligatori
 			// mediaType
 			if (mediaType.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare un "+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_MEDIA_TYPE);
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare un "+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_MEDIA_TYPE);
 				return false;
 			}
 			
@@ -8517,18 +8517,18 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			// Campi obbligatori
 			// tipoparametro
 			if (tipoParametro == null) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare un "+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO);
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare un "+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO);
 				return false;
 			}
 			// nome			
 			if (nome == null || nome.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare un "+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_NOME);
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare un "+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_NOME);
 				return false;
 			}
 			
 			// tipo			
 			if (tipo == null || tipo.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare un "+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO);
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare un "+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO);
 				return false;
 			}
 			

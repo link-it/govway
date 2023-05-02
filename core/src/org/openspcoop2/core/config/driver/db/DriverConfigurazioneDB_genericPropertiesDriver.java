@@ -85,7 +85,7 @@ public class DriverConfigurazioneDB_genericPropertiesDriver {
 			listTipologia.add(tipologia);
 		}
 		List<GenericProperties> l = getGenericProperties(listTipologia, null, null,true, name);
-		if(l==null || l.size()<=0) {
+		if(l==null || l.isEmpty()) {
 			throw new DriverConfigurazioneNotFound("[getGenericProperties] Configurazione Generic Properties non presenti con tipologia '"+tipologia+"' e nome '"+name+"'");
 		}
 		else if(l.size()>1) {

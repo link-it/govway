@@ -40,35 +40,58 @@ import org.openspcoop2.utils.transport.TransportUtils;
  * @version $Rev$, $Date$
  */
 public class ExternalResourceUtils {
+	
+	private ExternalResourceUtils() {}
 
 	public static byte[] readResource(String resource, ExternalResourceConfig externalConfig) throws UtilsException {
+		return readResourceReturnHttpResponse(resource, externalConfig).getContent();
+	}
+	public static HttpResponse readResourceReturnHttpResponse(String resource, ExternalResourceConfig externalConfig) throws UtilsException {
 		
+		HttpResponse res = null;
 		try {
 			if(!resource.trim().startsWith("http") && !resource.trim().startsWith("file")) {
 				try {
 					File f = new File(resource);
 					if(f.exists()) {
-						return FileSystemUtilities.readBytesFromFile(f);
+						byte[] content = FileSystemUtilities.readBytesFromFile(f);
+						HttpResponse response = new HttpResponse();
+						response.setResultHTTPOperation(200);
+						response.setContent(content);
+						return response;
 					}
-				}catch(Throwable t) {
+				}catch(Exception t) {
 					// ignore
 				}
-				throw new Exception("Unsupported protocol");
+				throw new UtilsException("Unsupported protocol");
 			}
 			
 			HttpRequest req = new HttpRequest();
 			req.setMethod(HttpRequestMethod.GET);
 			
-			resource = resource.trim();
-			if(externalConfig.getForwardProxy_url()!=null && StringUtils.isNotEmpty(externalConfig.getForwardProxy_url())) {
-				String forwardProxyUrl = externalConfig.getForwardProxy_url();
-				String remoteLocation = externalConfig.isForwardProxy_base64() ? Base64Utilities.encodeAsString(resource.getBytes()) : resource;
-				if(externalConfig.getForwardProxy_header()!=null && StringUtils.isNotEmpty(externalConfig.getForwardProxy_header())) {
-					req.addHeader(externalConfig.getForwardProxy_header(), remoteLocation);
+			if(externalConfig.getHeaders()!=null && !externalConfig.getHeaders().isEmpty()) {
+				for (Map.Entry<String,String> entry : externalConfig.getHeaders().entrySet()) {
+					if(entry.getKey()!=null && entry.getValue()!=null) {
+						req.addHeader(entry.getKey(),entry.getValue());
+					}
 				}
-				else if(externalConfig.getForwardProxy_queryParameter()!=null && StringUtils.isNotEmpty(externalConfig.getForwardProxy_queryParameter())) {
+			}
+			
+			resource = resource.trim();
+			
+			if(externalConfig.getQueryParameters()!=null && !externalConfig.getQueryParameters().isEmpty()) {
+				resource = TransportUtils.buildUrlWithParameters(TransportUtils.convertToMapListValues(externalConfig.getQueryParameters()), resource);
+			}
+			
+			if(externalConfig.getForwardProxyUrl()!=null && StringUtils.isNotEmpty(externalConfig.getForwardProxyUrl())) {
+				String forwardProxyUrl = externalConfig.getForwardProxyUrl();
+				String remoteLocation = externalConfig.isForwardProxyBase64() ? Base64Utilities.encodeAsString(resource.getBytes()) : resource;
+				if(externalConfig.getForwardProxyHeader()!=null && StringUtils.isNotEmpty(externalConfig.getForwardProxyHeader())) {
+					req.addHeader(externalConfig.getForwardProxyHeader(), remoteLocation);
+				}
+				else if(externalConfig.getForwardProxyQueryParameter()!=null && StringUtils.isNotEmpty(externalConfig.getForwardProxyQueryParameter())) {
 					Map<String, List<String>> queryParameters = new HashMap<>();
-					TransportUtils.addParameter(queryParameters,externalConfig.getForwardProxy_queryParameter(), remoteLocation);
+					TransportUtils.addParameter(queryParameters,externalConfig.getForwardProxyQueryParameter(), remoteLocation);
 					forwardProxyUrl = TransportUtils.buildUrlWithParameters(queryParameters, forwardProxyUrl, false, null);
 				}
 				else {
@@ -94,9 +117,23 @@ public class ExternalResourceUtils {
 			}
 			req.setConnectTimeout(externalConfig.getConnectTimeout());
 			req.setReadTimeout(externalConfig.getReadTimeout());
+			
+			req.setUsername(externalConfig.getBasicUsername());
+			req.setPassword(externalConfig.getBasicPassword());
+			
+			res = HttpUtilities.httpInvoke(req);
 
-			HttpResponse res = HttpUtilities.httpInvoke(req);
+		}catch(Exception t) {
+			throw new UtilsException("Retrieve external resource '"+resource+"' failed: "+t.getMessage(),t);
+		}
 
+		validateResponse(res, resource, externalConfig);
+		
+		return res;
+	}
+	
+	private static void validateResponse(HttpResponse res, String resource, ExternalResourceConfig externalConfig) throws UtilsException {
+		try {
 			List<Integer> returnCodeValid = externalConfig.getReturnCode();
 			if(returnCodeValid==null) {
 				returnCodeValid = new ArrayList<>();
@@ -111,15 +148,12 @@ public class ExternalResourceUtils {
 					break;
 				}
 			}
-
+	
 			byte[] response = res.getContent();
-
+	
 			if(isValid) {
-				if(response!=null && response.length>0) {
-					return res.getContent();
-				}
-				else {
-					throw new Exception("Empty response (http code: "+res.getResultHTTPOperation()+")");
+				if(response==null || response.length<=0) {
+					throw new UtilsException("Empty response (http code: "+res.getResultHTTPOperation()+")");
 				}
 			}
 			else {
@@ -136,13 +170,13 @@ public class ExternalResourceUtils {
 				else {
 					error = ": "+error;
 				}
-				throw new Exception("(http code: "+res.getResultHTTPOperation()+")"+error);
+				
+				throw new UtilsException("(http code: "+res.getResultHTTPOperation()+")"+error);
 			}
-
-		}catch(Throwable t) {
+	
+		}catch(Exception t) {
 			throw new UtilsException("Retrieve external resource '"+resource+"' failed: "+t.getMessage(),t);
 		}
-
 	}
 
 }

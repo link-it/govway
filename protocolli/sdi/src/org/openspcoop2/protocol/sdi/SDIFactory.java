@@ -78,7 +78,7 @@ public class SDIFactory extends BasicFactory<SOAPElement> {
 		if(staticInstanceConfig!=null) {
 			if(staticInstanceConfig.isStaticConfig()) {
 				staticInstanceProtocolManager = new SDIProtocolManager(this);
-				staticInstanceProtocolVersionManager = new HashMap<String, IProtocolVersionManager>();
+				staticInstanceProtocolVersionManager = new HashMap<>();
 				staticInstanceTraduttore = new SDITraduttore(this);
 				staticInstanceProtocolConfiguration = new SDIProtocolConfiguration(this);
 			}

@@ -1424,7 +1424,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						tmpElenco = tmpElenco + ", Valore";
 					}
 				}
-				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
 				return false;
 			}
 
@@ -1617,7 +1617,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// Campi obbligatori
 			if (rottaenabled.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) &&
 					tiporotta.equals(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA_GATEWAY) && ( (tiposoggrotta.equals("") || tiposoggrotta.equals("-")) || nomesoggrotta.equals(""))) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare Tipo e Nome Soggetto");
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare Tipo e Nome Soggetto");
 				return false;
 			}
 
@@ -1676,11 +1676,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			// Campi obbligatori
 			if (tipo.equals("") || nome.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare Tipo e Nome");
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare Tipo e Nome");
 				return false;
 			}
 			if (tiporotta.equals(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA_GATEWAY) && (tiposoggrotta.equals("") || nomesoggrotta.equals(""))) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare Tipo e Nome Soggetto");
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare Tipo e Nome Soggetto");
 				return false;
 			}
 
@@ -1847,7 +1847,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			// Campi obbligatori
 			if (statocache.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare lo Stato in "+nomeCache);
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare lo Stato in "+nomeCache);
 				return false;
 			}
 
@@ -1933,7 +1933,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						tmpElenco = tmpElenco + ", "+ ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO;
 					}
 				}
-				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
 				return false;
 			}
 
@@ -2264,7 +2264,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			// Campi obbligatori
 			if (inoltromin.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare una cadenza");
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare una cadenza");
 				return false;
 			}
 
@@ -7148,7 +7148,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 	
 	public boolean checkConfigurazioneTracciamento(TipoOperazione tipoOperazione, String configurazioneEsiti)	throws Exception {
-		// E' possibile disabilitare anche tutti gli esiti
+		// &Egrave; possibile disabilitare anche tutti gli esiti
 //		if(configurazioneEsiti ==null || "".equals(configurazioneEsiti.trim())){
 //			this.pd.setMessage("Deve essere selezionato almeno un esito");
 //			return false;

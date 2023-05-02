@@ -48,6 +48,7 @@ import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
@@ -274,9 +275,29 @@ public class PorteDelegateConnettoreDefault extends Action {
 			
 			boolean forceHttps = false;
 			boolean forceHttpsClient = false;
+			boolean forcePDND = false;
+			boolean forceOAuth = false;
 			if(asps!=null && porteDelegateHelper.isProfiloModIPA(protocollo)) {
 				forceHttps = porteDelegateHelper.forceHttpsProfiloModiPA();
-				forceHttpsClient = porteDelegateHelper.forceHttpsClientProfiloModiPA(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), asps.getPortType());
+				
+				BooleanNullable forceHttpsClientWrapper = BooleanNullable.NULL(); 
+				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL(); 
+				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL(); 
+				
+				porteDelegateHelper.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, 
+						IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), asps.getPortType(), 
+						null);
+				
+				if(forceHttpsClientWrapper.getValue()!=null) {
+					forceHttpsClient = forceHttpsClientWrapper.getValue().booleanValue();
+				}
+				if(forcePDNDWrapper.getValue()!=null) {
+					forcePDND = forcePDNDWrapper.getValue().booleanValue();
+				}
+				if(forceOAuthWrapper.getValue()!=null) {
+					forceOAuth = forceOAuthWrapper.getValue().booleanValue();
+				}
+				
 			}
 			
 			String modalita = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODALITA_CONNETTORE);
@@ -452,7 +473,7 @@ public class PorteDelegateConnettoreDefault extends Action {
 							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							autenticazioneToken,tokenPolicy,
+							autenticazioneToken,tokenPolicy,forcePDND,forceOAuth,
 							listExtendedConnettore, forceEnableConnettore,
 							protocollo, forceHttps, forceHttpsClient, false, servizioApplicativoServerEnabled,servizioApplicativoServer, null);
 				}
@@ -528,7 +549,7 @@ public class PorteDelegateConnettoreDefault extends Action {
 							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							autenticazioneToken,tokenPolicy,
+							autenticazioneToken,tokenPolicy,forcePDND,forceOAuth,
 							listExtendedConnettore, forceEnableConnettore,
 							protocollo, forceHttps, forceHttpsClient, false, servizioApplicativoServerEnabled,servizioApplicativoServer, null);
 				}

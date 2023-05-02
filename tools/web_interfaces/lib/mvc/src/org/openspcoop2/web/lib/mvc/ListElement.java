@@ -40,7 +40,7 @@ public class ListElement implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private String oggetto; 
-	private Map<String,Object> parameters = new HashMap<String,Object>();
+	private Map<String,Object> parameters = new HashMap<>();
 
 	public String getOggetto() {
 		return this.oggetto;

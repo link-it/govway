@@ -21,6 +21,7 @@ package org.openspcoop2.web.ctrlstat.servlet.aps;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -38,11 +39,13 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.config.CanaleConfigurazione;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataServizio;
+import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -94,8 +97,9 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
@@ -6326,7 +6330,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String gestioneTokenPolicy, String gestioneTokenOpzionale, 
 			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
 			String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail,
-			String autorizzazione_token, String autorizzazione_tokenOptions,
+			String autorizzazioneToken, String autorizzazioneTokenOptions,
 			String autorizzazioneScope,  String scope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
 			boolean moreThenOneImplementation, String canaleStato, String canaleAPI, String canale, List<CanaleConfigurazione> canaleList, boolean gestioneCanaliEnabled,
 			String identificazioneAttributiStato, String[] attributeAuthorityLabels, String[] attributeAuthorityValues, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi,
@@ -6618,7 +6622,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		}
 		
 		// Accordo 
-		//if(tipoOp.equals("add") || modificaAbilitata){
 		IDAccordo idAccordoParteComune = null;
 		boolean apiChanged = false;
 		if(tipoOp.equals(TipoOperazione.ADD)){
@@ -6628,7 +6631,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ACCORDO);
 			de.setValues(accordiList);
 			de.setLabels(accordiListLabel);
-			//			de.setOnChange("CambiaAccordoServizio('" + tipoOp + "')");
 			de.setPostBack(true);
 			if (accordo != null)
 				de.setSelected(accordo);
@@ -6666,7 +6668,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ACCORDO);
 				de.setValues(newAccordi);
 				de.setLabels(newAccordiLabel);
-				//			de.setOnChange("CambiaAccordoServizio('" + tipoOp + "')");
 				de.setPostBack(true);
 				if (accordo != null)
 					de.setSelected(accordo);
@@ -6772,10 +6773,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de.setType(DataElementType.SELECT);
 						de.setValues(accordiCompatibiliList);
 						de.setLabels(accordiCompatibiliLabelList);
-						//if(showModificaAPIErogazioniFruizioniView==null) {
 						// Lasciare il postback, l'evento serve ad allineare la versione dell'API con la versione del servizio in automatico
 						de.setPostBack(true);
-						//}
 						de.setSelected(accordo);
 					}
 				}
@@ -6944,7 +6943,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			dati.add(de);
 		}
 
-		//if(isModalitaAvanzata || gestioneErogatori || gestioneFruitori){
 		if(isModalitaCompleta()) {
 			
 			de = new DataElement();
@@ -6973,13 +6971,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 		}
 		
-		/*if (!isModalitaAvanzata) {
-		    de = new DataElement();
-		    de.setValue("SPC");
-		    de.setType("hidden");
-		    de.setName("tiposervizio");
-		    dati.add(de);
-		} else {*/
 
 
 		if(showTipoServizio) {
@@ -7366,13 +7357,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					de = new DataElement();
 					de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_PROVIDER_EROGATORE);
 					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_TEXT);
-					//if(this.core.isTerminologiaSICA_RegistroServizi()==false){
 					de.setType(DataElementType.TEXT);
-					/*}else{
-						Soggetto soggEr = this.core.getSoggettoRegistro(new IDSoggetto(provString.split("/")[0],provString.split("/")[1]));
-						de.setType("link");
-						de.setUrl("soggettiChange.do?id=" + soggEr.getId() + "&nomeprov=" + soggEr.getNome() + "&tipoprov=" + soggEr.getTipo());
-					}*/
 					de.setValue(this.getLabelNomeSoggetto(tipoProtocollo, tipoSoggetto, nomeSoggetto));
 					dati.add(de);
 				}
@@ -7444,7 +7429,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if(contaListe){
 				try{
 					// BugFix OP-674
-					//int num = this.apsCore.serviziAllegatiList(Integer.parseInt(id), new Search(true)).size();
+					/**int num = this.apsCore.serviziAllegatiList(Integer.parseInt(id), new Search(true)).size();*/
 					ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 					this.apsCore.serviziAllegatiList(Integer.parseInt(id), searchForCount);
 					int num = searchForCount.getNumEntries(Liste.SERVIZI_ALLEGATI);
@@ -7475,7 +7460,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de = new DataElement();
 				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_VALIDAZIONE_DOCUMENTI_ESTESA);
 				de.setValue(""+validazioneDocumenti);
-				//		if (tipoOp.equals(TipoOperazione.ADD) && InterfaceType.AVANZATA.equals(user.getInterfaceType())) {
+				/**		if (tipoOp.equals(TipoOperazione.ADD) && InterfaceType.AVANZATA.equals(user.getInterfaceType())) { */
 				if (tipoOp.equals(TipoOperazione.ADD) ) {
 					de.setType(DataElementType.CHECKBOX);
 					if(validazioneDocumenti){
@@ -7500,38 +7485,38 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							dati.addAll(wsdlimpler.getFileNameDataElement());
 							dati.add(wsdlimpler.getFileIdDataElement());
 							
-	//						de = new DataElement();
+	/**						de = new DataElement();
 	//						de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_EROGATORE);
 	//						de.setValue(wsdlimpler);
 	//						de.setType(DataElementType.FILE);
 	//						de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE);
 	//						de.setSize(this.getSize());
-	//						dati.add(de);
+	//						dati.add(de);*/
 						} else {
 							dati.add(wsdlimplfru.getFileDataElement(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_FRUITORE_COMPATTO, "", getSize()));
 							dati.addAll(wsdlimplfru.getFileNameDataElement());
 							dati.add(wsdlimplfru.getFileIdDataElement());
 							
-	//						de = new DataElement();
+	/**						de = new DataElement();
 	//						de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_FRUITORE);
 	//						de.setValue(wsdlimplfru);
 	//						de.setType(DataElementType.FILE);
 	//						de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_FRUITORE);
 	//						de.setSize(this.getSize());
-	//						dati.add(de);
+	//						dati.add(de);*/
 						}
 					}else {
 						dati.add(wsdlimpler.getFileDataElement(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO, "", getSize()));
 						dati.addAll(wsdlimpler.getFileNameDataElement());
 						dati.add(wsdlimpler.getFileIdDataElement());
 						
-	//					de = new DataElement();
+	/**					de = new DataElement();
 	//					de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO);
 	//					de.setValue(wsdlimpler);
 	//					de.setType(DataElementType.FILE);
 	//					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE);
 	//					de.setSize(this.getSize());
-	//					dati.add(de);
+	//					dati.add(de);*/
 					}
 				} else {
 					
@@ -7629,20 +7614,118 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			boolean forceAutenticato = false; 
 			boolean forceHttps = false;
 			boolean forceDisableOptional = false;
+			boolean forceGestioneToken = false;
+			boolean forceMostraSezioneToken = false;
+			
 			if(this.isProfiloModIPA(tipoProtocollo)) {
 				if(idAccordoParteComune==null) {
 					idAccordoParteComune = this.idAccordoFactory.getIDAccordoFromUri(uriAccordo);
 				}
 				forceAutenticato = true; // in modI ci vuole sempre autenticazione https sull'erogazione (cambia l'opzionalita' o meno)
 				forceHttps = forceAutenticato;
-				forceDisableOptional = this.forceHttpsClientProfiloModiPA(idAccordoParteComune, portType);
+				
+				boolean forcePDND = false;
+				boolean forceOAuth = false;
+								
+				BooleanNullable forceHttpsClientWrapper = BooleanNullable.NULL(); 
+				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL(); 
+				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL(); 
+				
+				this.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, 
+						idAccordoParteComune, portType, 
+						null);
+				
+				if(forceHttpsClientWrapper.getValue()!=null) {
+					forceDisableOptional = forceHttpsClientWrapper.getValue().booleanValue();
+				}
+				if(forcePDNDWrapper.getValue()!=null) {
+					forcePDND = forcePDNDWrapper.getValue().booleanValue();
+				}
+				if(forceOAuthWrapper.getValue()!=null) {
+					forceOAuth = forceOAuthWrapper.getValue().booleanValue();
+				}
+				
+				if (forcePDND || forceOAuth) {
+					
+					forceGestioneToken = true;
+					forceMostraSezioneToken = true;
+					
+					gestioneToken = StatoFunzionalita.ABILITATO.getValue();
+					
+					if(forcePDND) {
+						List<String> tokenPolicies = this.getTokenPolicyGestione(true, false, 
+								false); // alla posizione 0 NON viene aggiunto -
+						if(tokenPolicies!=null && !tokenPolicies.isEmpty()) {
+							if(gestioneTokenPolicy==null || StringUtils.isEmpty(gestioneTokenPolicy) || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(gestioneTokenPolicy)) {
+								gestioneTokenPolicy = tokenPolicies.get(0); 
+							}
+							gestioneTokenPolicyLabels = tokenPolicies.toArray(new String[1]);
+							gestioneTokenPolicyValues = tokenPolicies.toArray(new String[1]);
+						}
+					}
+					else {
+						List<String> tokenPolicies = this.getTokenPolicyGestione(false, true, 
+								false); // alla posizione 0 NON viene aggiunto -
+						if(tokenPolicies!=null && !tokenPolicies.isEmpty()) {
+							if(gestioneTokenPolicy==null || StringUtils.isEmpty(gestioneTokenPolicy) || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(gestioneTokenPolicy)) {
+								gestioneTokenPolicy = tokenPolicies.get(0); 
+							}
+							gestioneTokenPolicyLabels = tokenPolicies.toArray(new String[1]);
+							gestioneTokenPolicyValues = tokenPolicies.toArray(new String[1]);
+						}
+					}
+					
+					gestioneTokenOpzionale = StatoFunzionalita.DISABILITATO.getValue();
+					
+					if(gestioneTokenPolicy!=null && StringUtils.isNotEmpty(gestioneTokenPolicy) && 
+							!CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(gestioneTokenPolicy)) {
+						GenericProperties gp = this.confCore.getGenericProperties(gestioneTokenPolicy, CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION, false);
+						if(gp!=null && gp.sizePropertyList()>0) {
+							for (Property p : gp.getPropertyList()) {
+								if(org.openspcoop2.pdd.core.token.Costanti.POLICY_VALIDAZIONE_STATO.equals(p.getNome())) {
+									if("true".equalsIgnoreCase(p.getValore())) {
+										gestioneTokenValidazioneInput = StatoFunzionalita.ABILITATO.getValue();
+									}
+									else {
+										gestioneTokenValidazioneInput = StatoFunzionalita.DISABILITATO.getValue();
+									}
+								}
+								else if(org.openspcoop2.pdd.core.token.Costanti.POLICY_INTROSPECTION_STATO.equals(p.getNome())) {
+									if("true".equalsIgnoreCase(p.getValore())) {
+										gestioneTokenIntrospection = StatoFunzionalita.ABILITATO.getValue();
+									}
+									else {
+										gestioneTokenIntrospection = StatoFunzionalita.DISABILITATO.getValue();
+									}
+								}
+								else if(org.openspcoop2.pdd.core.token.Costanti.POLICY_USER_INFO_STATO.equals(p.getNome())) {
+									if("true".equalsIgnoreCase(p.getValore())) {
+										gestioneTokenUserInfo = StatoFunzionalita.ABILITATO.getValue();
+									}
+									else {
+										gestioneTokenUserInfo = StatoFunzionalita.DISABILITATO.getValue();
+									}
+								}
+								else if(org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_FORWARD_STATO.equals(p.getNome())) {
+									if("true".equalsIgnoreCase(p.getValore())) {
+										gestioneTokenForward = StatoFunzionalita.ABILITATO.getValue();
+									}
+									else {
+										gestioneTokenForward = StatoFunzionalita.DISABILITATO.getValue();
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 			
 			this.controlloAccessiAdd(dati, tipoOp, controlloAccessiStato, forceAutenticato);
 			
 			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale, 
-					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,tipoProtocollo, false);
+					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,tipoProtocollo, false,
+					forceGestioneToken, forceMostraSezioneToken);
 			
 			this.controlloAccessiAutenticazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, pa, tipoProtocollo,
 					erogazioneAutenticazione, null, erogazioneAutenticazioneOpzionale, erogazioneAutenticazionePrincipal, erogazioneAutenticazioneParametroList, false, erogazioneIsSupportatoAutenticazioneSoggetti,false,
@@ -7658,7 +7741,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch, 
 					false, erogazioneIsSupportatoAutenticazioneSoggetti, contaListe, false, false,autorizzazioneScope,null,0,scope,autorizzazioneScopeMatch,
 					gestioneToken, gestioneTokenPolicy, 
-					autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
+					autorizzazioneToken, autorizzazioneTokenOptions,allegatoXacmlPolicy,
 					null, 0, null, 0,
 					identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
 					autorizzazioneAutenticatiToken, null, 0,
@@ -7679,7 +7762,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale, 
-					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,tipoProtocollo, true);
+					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,tipoProtocollo, true,
+					false);
 
 			this.controlloAccessiAutenticazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,pd, tipoProtocollo,
 					fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList, false, true,true,
@@ -7695,7 +7779,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch, 
 					false, true, contaListe, true, false,autorizzazioneScope,null,0,scope,autorizzazioneScopeMatch,
 					gestioneToken, gestioneTokenPolicy, 
-					autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
+					autorizzazioneToken, autorizzazioneTokenOptions,allegatoXacmlPolicy,
 					null, 0, null, 0,
 					identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
 					autorizzazioneAutenticatiToken, null, 0,
@@ -7704,131 +7788,64 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		}
 
 
-		/*
-		 * de = new DataElement(); de.setLabel("Servizio pubblico");
-		 * de.setType("checkbox"); de.setName("servpub"); if ((servpub != null)
-		 * && servpub.equals(Costanti.CHECK_BOX_ENABLED)) { de.setSelected(Costanti.CHECK_BOX_ENABLED); }
-		 * dati.add(de);
-		 */
 
-		if (tipoOp.equals(TipoOperazione.ADD) == false) {
 
-//			IDPortaApplicativa idPA = null;
-//			Integer versioneInt = Integer.parseInt(versione);
-//			IDServizio idServizio = this.idServizioFactory.getIDServizioFromValues(tipoServizioEffettivo, nomeServizioEffettivo, 
-//					tipoSoggetto, nomeSoggetto, versioneInt); 
-//			if(isModalitaAvanzata==false){
-//				idPA = this.porteApplicativeCore.getIDPortaApplicativaAssociataDefault(idServizio);
-//			}
-			
-			
-			
-//			de = new DataElement();
-//			if(isModalitaAvanzata || idPA==null){
-//				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_APPLICATIVE);
-//			}
-//			else{
-//				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SPECIFICA_PORTA_APPLICATIVA);
-//			}
-//			de.setType(DataElementType.TITLE);
-//			dati.add(de);
-//			
-//			de = new DataElement();
-//			de.setType(DataElementType.LINK);
-//			if(isModalitaAvanzata || idPA==null){
-//				de.setUrl(
-//						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_PORTE_APPLICATIVE_LIST,
-//						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id),
-//						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+idSoggettoErogatore),
-//						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, nomeServizioEffettivo),
-//						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, tipoServizioEffettivo));
-//				if(contaListe){
-//					try{
-//						// BugFix OP-674
-//						//int num = this.apsCore.serviziPorteAppList(tipoServizioEffettivo,nomeServizioEffettivo,Long.parseLong(id),idSoggettoErogatore, new Search(true)).size();
-//						Search searchForCount = new Search(true,1);
-//						this.apsCore.mappingServiziPorteAppList(idServizio, Integer.parseInt(id), (int) idSoggettoErogatore, searchForCount);
-//						int num = searchForCount.getNumEntries(Liste.CONFIGURAZIONE_EROGAZIONE);
-//						ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_APPLICATIVE, (long) num);
-//					}catch(Exception e){
-//						this.log.error("Calcolo numero pa non riuscito",e);
-//						ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_APPLICATIVE, "N.D.");
-//					}
-//				}else{
-//					de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_APPLICATIVE);
-//				}
-//			}
-//			else{
-//				// Utilizza la configurazione come parent
-//				ServletUtils.setObjectIntoSession(this.session, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT);
-//				
-//				PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(idPA);
-//				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE,
-//						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, pa.getId()+""),
-//						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, pa.getIdSoggetto()+""),
-//						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA, pa.getNome())
-//						);
-//				de.setValue(Costanti.LABEL_VISUALIZZA);
-//			}
-//			dati.add(de);
-			
-			
-			
-			if(this.isModalitaCompleta()) {
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALTRE_INFORMAZIONI);
-				de.setType(DataElementType.TITLE);
-				dati.add(de);
-	
-				de = new DataElement();
-				de.setType(DataElementType.LINK);
-				de.setUrl(
-						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST,
-						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id),
-						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+idSoggettoErogatore),
-						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, nomeServizioEffettivo),
-						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, tipoServizioEffettivo)
-						);
-				if(contaListe){
-					try{
-						// BugFix OP-674
-						//int num = this.apsCore.serviziFruitoriList(Integer.parseInt(id), new Search(true)).size();
-						ConsoleSearch searchForCount = new ConsoleSearch(true,1);
-						this.apsCore.serviziFruitoriList(Integer.parseInt(id), searchForCount);
-						int num = searchForCount.getNumEntries(Liste.SERVIZI_FRUITORI);
-						ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, (long) num);
-					}catch(Exception e){
-						this.log.error("Calcolo numero fruitori non riuscito",e);
-						ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, AccordiServizioParteSpecificaCostanti.LABEL_N_D);
-					}
-				}else{
-					de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI);
+		if (!tipoOp.equals(TipoOperazione.ADD) &&
+
+			this.isModalitaCompleta()) {
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALTRE_INFORMAZIONI);
+			de.setType(DataElementType.TITLE);
+			dati.add(de);
+
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(
+					AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST,
+					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id),
+					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+idSoggettoErogatore),
+					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, nomeServizioEffettivo),
+					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, tipoServizioEffettivo)
+					);
+			if(contaListe!=null && contaListe.booleanValue()){
+				try{
+					// BugFix OP-674
+					/**int num = this.apsCore.serviziFruitoriList(Integer.parseInt(id), new Search(true)).size();*/
+					ConsoleSearch searchForCount = new ConsoleSearch(true,1);
+					this.apsCore.serviziFruitoriList(Integer.parseInt(id), searchForCount);
+					int num = searchForCount.getNumEntries(Liste.SERVIZI_FRUITORI);
+					ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, (long) num);
+				}catch(Exception e){
+					this.log.error("Calcolo numero fruitori non riuscito",e);
+					ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, AccordiServizioParteSpecificaCostanti.LABEL_N_D);
 				}
-				dati.add(de);
-	
-				de = new DataElement();
-				de.setType(DataElementType.LINK);
-				de.setUrl(
-						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ALLEGATI_LIST,
-						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id));
-				if(contaListe){
-					try{
-						// BugFix OP-674
-						//int num = this.apsCore.serviziAllegatiList(Integer.parseInt(id), new Search(true)).size();
-						ConsoleSearch searchForCount = new ConsoleSearch(true,1);
-						this.apsCore.serviziAllegatiList(Integer.parseInt(id), searchForCount);
-						int num = searchForCount.getNumEntries(Liste.SERVIZI_ALLEGATI);
-						ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI, (long) num);
-					}catch(Exception e){
-						this.log.error("Calcolo numero Allegati non riuscito",e);
-						ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI, AccordiServizioParteSpecificaCostanti.LABEL_N_D);
-					}
-				}else{
-					de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI  );
-				}
-				dati.add(de);
-
+			}else{
+				de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI);
 			}
+			dati.add(de);
+
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(
+					AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ALLEGATI_LIST,
+					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id));
+			if(contaListe!=null && contaListe.booleanValue()){
+				try{
+					// BugFix OP-674
+					/**int num = this.apsCore.serviziAllegatiList(Integer.parseInt(id), new Search(true)).size();*/
+					ConsoleSearch searchForCount = new ConsoleSearch(true,1);
+					this.apsCore.serviziAllegatiList(Integer.parseInt(id), searchForCount);
+					int num = searchForCount.getNumEntries(Liste.SERVIZI_ALLEGATI);
+					ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI, (long) num);
+				}catch(Exception e){
+					this.log.error("Calcolo numero Allegati non riuscito",e);
+					ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI, AccordiServizioParteSpecificaCostanti.LABEL_N_D);
+				}
+			}else{
+				de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI  );
+			}
+			dati.add(de);
+
 		}
 
 		if(cambiaAPI && !apiChanged) {
@@ -8448,7 +8465,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String gestioneTokenPolicy, String gestioneTokenOpzionale, 
 			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
 			String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail,
-			String autorizzazione_token, String autorizzazione_tokenOptions,
+			String autorizzazioneToken, String autorizzazioneTokenOptions,
 			String autorizzazioneScope,  String scope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
 			String identificazioneAttributiStato, String[] attributeAuthorityLabels, String[] attributeAuthorityValues, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi,
 			String autorizzazioneAutenticatiToken, 
@@ -8576,7 +8593,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				
 				this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 						gestioneTokenPolicy, gestioneTokenOpzionale,
-						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,protocolloSoggettoGestitoPorta,true);
+						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,protocolloSoggettoGestitoPorta,true,
+						false);
 
 				this.controlloAccessiAutenticazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,null,protocolloSoggettoGestitoPorta,
 						fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList, false, true,true,
@@ -8592,7 +8610,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch, 
 						false, true, contaListe, true, false,autorizzazioneScope,null,0,scope,autorizzazioneScopeMatch,
 						gestioneToken, gestioneTokenPolicy, 
-						autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
+						autorizzazioneToken, autorizzazioneTokenOptions,allegatoXacmlPolicy,
 						null, 0, null, 0,
 						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
 						autorizzazioneAutenticatiToken, null, 0,
@@ -9425,7 +9443,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String gestioneTokenPolicy, String gestioneTokenOpzionale, 
 			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
 			String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail,
-			String autorizzazione_token, String autorizzazione_tokenOptions,
+			String autorizzazioneToken, String autorizzazioneTokenOptions,
 			String autorizzazioneScope, String scope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
 			String identificazioneAttributiStato, String[] attributeAuthorityLabels, String[] attributeAuthorityValues, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi,
 			String autorizzazioneAutenticatiToken, 
@@ -9455,16 +9473,16 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		dati.add(de);
 		
 		// Azione
-		de = new DataElement();
-		de.setLabel(this.getLabelAzioni(serviceBinding));
-		de.setValues(azioniDisponibiliList);
-		de.setLabels(azioniDisponibiliLabelList);
-		de.setSelezionati(azioni);
-		de.setType(DataElementType.MULTI_SELECT);
-		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONI);
-		de.setRows(CostantiControlStation.RIGHE_MULTISELECT_AZIONI);
-		de.setRequired(true); 
-		dati.add(de);
+		DataElement deAzione = new DataElement();
+		deAzione.setLabel(this.getLabelAzioni(serviceBinding));
+		deAzione.setValues(azioniDisponibiliList);
+		deAzione.setLabels(azioniDisponibiliLabelList);
+		deAzione.setSelezionati(azioni);
+		deAzione.setType(DataElementType.MULTI_SELECT);
+		deAzione.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONI);
+		deAzione.setRows(CostantiControlStation.RIGHE_MULTISELECT_AZIONI);
+		deAzione.setRequired(true); 
+		dati.add(deAzione);
 		
 		
 		// Nome
@@ -9529,18 +9547,140 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			boolean forceAutenticato = false; 
 			boolean forceHttps = false;
 			boolean forceDisableOptional = false;
+			boolean forceGestioneToken = false;
+			boolean forceMostraSezioneToken = false;
 			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(asps.getTipoSoggettoErogatore());
 			if(this.isProfiloModIPA(protocollo)) {
 				forceAutenticato = true; // in modI ci vuole sempre autenticazione https sull'erogazione (cambia l'opzionalita' o meno)
 				forceHttps = forceAutenticato;
-				forceDisableOptional = this.forceHttpsClientProfiloModiPA(this.idAccordoFactory.getIDAccordoFromAccordo(as),asps.getPortType());
+				
+				if(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA.equals(modeCreazione)) {
+					
+					BooleanNullable forcePDNDWrapper = BooleanNullable.NULL(); 
+					BooleanNullable forceOAuthWrapper = BooleanNullable.NULL(); 
+					this.readModIConfiguration(BooleanNullable.NULL(), forcePDNDWrapper, forceOAuthWrapper, 
+							this.idAccordoFactory.getIDAccordoFromAccordo(as),asps.getPortType(), 
+							azioniDisponibiliList!=null && azioniDisponibiliList.length>0 ? Arrays.asList(azioniDisponibiliList) : null); // verifica per tutte le azioni disponibili
+					boolean forcePDND = false;
+					boolean forceOAuth = false;
+					if(forcePDNDWrapper.getValue()!=null) {
+						forcePDND = forcePDNDWrapper.getValue().booleanValue();
+					}
+					if(forceOAuthWrapper.getValue()!=null) {
+						forceOAuth = forceOAuthWrapper.getValue().booleanValue();
+					}
+					if (forcePDND || forceOAuth) {
+						deAzione.setPostBack(true);
+					}
+					
+				}
+				
+				boolean forcePDND = false;
+				boolean forceOAuth = false;
+								
+				BooleanNullable forceHttpsClientWrapper = BooleanNullable.NULL(); 
+				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL(); 
+				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL(); 
+				
+				List<String> azioniList = null;
+				if(azioni!=null && azioni.length>0) {
+					azioniList = Arrays.asList(azioni);
+				}
+				this.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, 
+						this.idAccordoFactory.getIDAccordoFromAccordo(as),asps.getPortType(), 
+						azioniList);
+				
+				if(forceHttpsClientWrapper.getValue()!=null) {
+					forceDisableOptional = forceHttpsClientWrapper.getValue().booleanValue();
+				}
+				if(forcePDNDWrapper.getValue()!=null) {
+					forcePDND = forcePDNDWrapper.getValue().booleanValue();
+				}
+				if(forceOAuthWrapper.getValue()!=null) {
+					forceOAuth = forceOAuthWrapper.getValue().booleanValue();
+				}
+				
+				if (forcePDND || forceOAuth) {
+					
+					forceGestioneToken = true;
+					forceMostraSezioneToken = true;
+										
+					gestioneToken = StatoFunzionalita.ABILITATO.getValue();
+					
+					if(forcePDND) {
+						List<String> tokenPolicies = this.getTokenPolicyGestione(true, false, 
+								false); // alla posizione 0 NON viene aggiunto -
+						if(tokenPolicies!=null && !tokenPolicies.isEmpty()) {
+							if(gestioneTokenPolicy==null || StringUtils.isEmpty(gestioneTokenPolicy) || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(gestioneTokenPolicy)) {
+								gestioneTokenPolicy = tokenPolicies.get(0); 
+							}
+							gestioneTokenPolicyLabels = tokenPolicies.toArray(new String[1]);
+							gestioneTokenPolicyValues = tokenPolicies.toArray(new String[1]);
+						}
+					}
+					else {
+						List<String> tokenPolicies = this.getTokenPolicyGestione(false, true, 
+								false); // alla posizione 0 NON viene aggiunto -
+						if(tokenPolicies!=null && !tokenPolicies.isEmpty()) {
+							if(gestioneTokenPolicy==null || StringUtils.isEmpty(gestioneTokenPolicy) || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(gestioneTokenPolicy)) {
+								gestioneTokenPolicy = tokenPolicies.get(0); 
+							}
+							gestioneTokenPolicyLabels = tokenPolicies.toArray(new String[1]);
+							gestioneTokenPolicyValues = tokenPolicies.toArray(new String[1]);
+						}
+					}
+					
+					gestioneTokenOpzionale = StatoFunzionalita.DISABILITATO.getValue();
+					
+					if(gestioneTokenPolicy!=null && StringUtils.isNotEmpty(gestioneTokenPolicy) && 
+							!CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(gestioneTokenPolicy)) {
+						GenericProperties gp = this.confCore.getGenericProperties(gestioneTokenPolicy, CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION, false);
+						if(gp!=null && gp.sizePropertyList()>0) {
+							for (Property p : gp.getPropertyList()) {
+								if(org.openspcoop2.pdd.core.token.Costanti.POLICY_VALIDAZIONE_STATO.equals(p.getNome())) {
+									if("true".equalsIgnoreCase(p.getValore())) {
+										gestioneTokenValidazioneInput = StatoFunzionalita.ABILITATO.getValue();
+									}
+									else {
+										gestioneTokenValidazioneInput = StatoFunzionalita.DISABILITATO.getValue();
+									}
+								}
+								else if(org.openspcoop2.pdd.core.token.Costanti.POLICY_INTROSPECTION_STATO.equals(p.getNome())) {
+									if("true".equalsIgnoreCase(p.getValore())) {
+										gestioneTokenIntrospection = StatoFunzionalita.ABILITATO.getValue();
+									}
+									else {
+										gestioneTokenIntrospection = StatoFunzionalita.DISABILITATO.getValue();
+									}
+								}
+								else if(org.openspcoop2.pdd.core.token.Costanti.POLICY_USER_INFO_STATO.equals(p.getNome())) {
+									if("true".equalsIgnoreCase(p.getValore())) {
+										gestioneTokenUserInfo = StatoFunzionalita.ABILITATO.getValue();
+									}
+									else {
+										gestioneTokenUserInfo = StatoFunzionalita.DISABILITATO.getValue();
+									}
+								}
+								else if(org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_FORWARD_STATO.equals(p.getNome())) {
+									if("true".equalsIgnoreCase(p.getValore())) {
+										gestioneTokenForward = StatoFunzionalita.ABILITATO.getValue();
+									}
+									else {
+										gestioneTokenForward = StatoFunzionalita.DISABILITATO.getValue();
+									}
+								}
+							}
+						}
+					}
+				} 
 			}
 			
 			this.controlloAccessiAdd(dati, tipoOperazione, controlloAccessiStato, forceAutenticato);
 			
 			this.controlloAccessiGestioneToken(dati, tipoOperazione, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale,
-					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,protocollo, false);
+					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,protocollo, false,
+					forceGestioneToken, forceMostraSezioneToken);
 			
 			this.controlloAccessiAutenticazione(dati, tipoOperazione, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null,protocollo,
 					erogazioneAutenticazione, null, erogazioneAutenticazioneOpzionale, erogazioneAutenticazionePrincipal, erogazioneAutenticazioneParametroList, false, erogazioneIsSupportatoAutenticazioneSoggetti,false,
@@ -9556,7 +9696,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch, 
 					false, erogazioneIsSupportatoAutenticazioneSoggetti, contaListe, false, false,autorizzazioneScope,null,0,scope,autorizzazioneScopeMatch,
 					gestioneToken, gestioneTokenPolicy, 
-					autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
+					autorizzazioneToken, autorizzazioneTokenOptions,allegatoXacmlPolicy,
 					null, 0, null, 0,
 					identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
 					autorizzazioneAutenticatiToken, null, 0,
@@ -9843,7 +9983,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String gestioneTokenPolicy, String gestioneTokenOpzionale, 
 			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
 			String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail,
-			String autorizzazione_token, String autorizzazione_tokenOptions,
+			String autorizzazioneToken, String autorizzazioneTokenOptions,
 			String autorizzazioneScope,  String scope, String autorizzazioneScopeMatch, BinaryParameter allegatoXacmlPolicy,
 			String identificazioneAttributiStato, String[] attributeAuthorityLabels, String[] attributeAuthorityValues, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi,
 			String autorizzazioneAutenticatiToken, 
@@ -9952,7 +10092,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale,
-					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,protocollo,true);
+					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,protocollo,true,
+					false);
 		
 			this.controlloAccessiAutenticazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,null,protocollo,
 					fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList, false, true,true,
@@ -9968,7 +10109,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch, 
 				false, erogazioneIsSupportatoAutenticazioneSoggetti, contaListe, true, false,autorizzazioneScope,null,0,scope,autorizzazioneScopeMatch,
 				gestioneToken, gestioneTokenPolicy, 
-				autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
+				autorizzazioneToken, autorizzazioneTokenOptions,allegatoXacmlPolicy,
 				null, 0 , null, 0,
 				identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
 				autorizzazioneAutenticatiToken, null, 0,

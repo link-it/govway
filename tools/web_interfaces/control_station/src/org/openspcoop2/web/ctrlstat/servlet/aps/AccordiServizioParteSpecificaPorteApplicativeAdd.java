@@ -22,6 +22,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.aps;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -32,12 +33,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.GenericProperties;
+import org.openspcoop2.core.config.Property;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
@@ -58,6 +62,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.db.IDSoggettoDB;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
@@ -166,7 +171,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			String gestioneTokenValidazioneInput = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
 			String gestioneTokenIntrospection = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
 			String gestioneTokenUserInfo = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
-			String gestioneTokenTokenForward = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
+			String gestioneTokenForward = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
 			
 			String autenticazioneTokenIssuer = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_ISSUER);
 			String autenticazioneTokenClientId = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_CLIENT_ID);
@@ -203,6 +208,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			String autenticazioneTokenS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
 			String tokenPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
+			boolean forcePDND = false;
+			boolean forceOAuth = false;
 			
 			// proxy
 			String proxyEnabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
@@ -362,12 +369,13 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 
 			AccordoServizioParteComuneSintetico as = null;
 			ServiceBinding serviceBinding = null;
+			IDAccordo idAccordo = null;
 			if (asps != null) {
-				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+				idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
 				as = apcCore.getAccordoServizioSintetico(idAccordo);
 				serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 			}
-
+			
 			// Prendo le azioni  disponibili
 			boolean addTrattinoSelezioneNonEffettuata = false;
 			int sogliaAzioni = addTrattinoSelezioneNonEffettuata ? 1 : 0;
@@ -571,7 +579,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						gestioneTokenValidazioneInput = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_VALIDAZIONE_INPUT;
 						gestioneTokenIntrospection = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_INTROSPECTION;
 						gestioneTokenUserInfo = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_USER_INFO;
-						gestioneTokenTokenForward = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TOKEN_FORWARD;
+						gestioneTokenForward = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TOKEN_FORWARD;
 						autenticazioneTokenIssuer = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_ISSUER;
 						autenticazioneTokenClientId = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_CLIENT_ID;
 						autenticazioneTokenSubject = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_SUBJECT;
@@ -688,7 +696,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 							erogazioneAutorizzazioneRuoli, erogazioneRuolo, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,soggettiAutenticati,soggettiAutenticatiLabel,erogazioneSoggettoAutenticato,
 							gestioneToken, policyLabels, policyValues, 
 							gestioneTokenPolicy, gestioneTokenOpzionale,
-							gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
+							gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward,
 							autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 							autorizzazioneToken,autorizzazioneTokenOptions,
 							autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
@@ -722,7 +730,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 								requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-								autenticazioneToken, tokenPolicy,
+								autenticazioneToken, tokenPolicy, forcePDND, forceOAuth,
 								listExtendedConnettore, forceEnableConnettore,
 								protocollo,false,false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
 								erogazioneServizioApplicativoServer, saSoggetti);
@@ -784,7 +792,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						erogazioneAutorizzazioneRuoli, erogazioneRuolo, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,soggettiAutenticati,soggettiAutenticatiLabel,erogazioneSoggettoAutenticato,
 						gestioneToken, policyLabels, policyValues, 
 						gestioneTokenPolicy, gestioneTokenOpzionale,
-						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
+						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazioneToken,autorizzazioneTokenOptions,
 						autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
@@ -816,7 +824,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							autenticazioneToken, tokenPolicy,
+							autenticazioneToken, tokenPolicy, forcePDND, forceOAuth,
 							listExtendedConnettore, forceEnableConnettore,
 							protocollo,false,false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
 							erogazioneServizioApplicativoServer, saSoggetti);
@@ -844,6 +852,107 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 				erogazioneAutorizzazioneRuoliTipologia = null;
 				erogazioneAutorizzazioneRuoliMatch = null;
 				
+			}
+			
+			if(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA.equals(modeCreazione)) {
+				
+			}
+			
+			if (apsHelper.isProfiloModIPA(protocollo) && asps != null) {
+				BooleanNullable forceHttpsClientWrapper = BooleanNullable.NULL(); 
+				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL(); 
+				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL(); 
+				
+				List<String> azioniList = null;
+				if(azioni!=null && azioni.length>0) {
+					azioniList = Arrays.asList(azioni);
+				}
+				apsHelper.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, 
+						idAccordo,asps.getPortType(), 
+						azioniList);
+				
+				boolean forceDisableOptional = false;
+				if(forceHttpsClientWrapper.getValue()!=null) {
+					forceDisableOptional = forceHttpsClientWrapper.getValue().booleanValue();
+				}
+				if(forcePDNDWrapper.getValue()!=null) {
+					forcePDND = forcePDNDWrapper.getValue().booleanValue();
+				}
+				if(forceOAuthWrapper.getValue()!=null) {
+					forceOAuth = forceOAuthWrapper.getValue().booleanValue();
+				}
+				
+				erogazioneAutenticazioneOpzionale = forceDisableOptional ? Costanti.CHECK_BOX_DISABLED : Costanti.CHECK_BOX_ENABLED;
+				if(!forceDisableOptional) {
+					erogazioneAutorizzazione = AutorizzazioneUtilities.STATO_DISABILITATO;
+				}
+				
+				if(forcePDND || forceOAuth) {
+					
+					gestioneToken = StatoFunzionalita.ABILITATO.getValue();
+					
+					if(forcePDND) {
+						List<String> tokenPolicies = apsHelper.getTokenPolicyGestione(true, false, 
+								false); // alla posizione 0 NON viene aggiunto -
+						if(tokenPolicies!=null && !tokenPolicies.isEmpty() &&
+							(gestioneTokenPolicy==null || StringUtils.isEmpty(gestioneTokenPolicy)) 
+							){
+							gestioneTokenPolicy = tokenPolicies.get(0);  // dovrebbe già essere stata selezionata prima
+						}
+					}
+					else {
+						List<String> tokenPolicies = apsHelper.getTokenPolicyGestione(false, true, 
+								false); // alla posizione 0 NON viene aggiunto -
+						if(tokenPolicies!=null && !tokenPolicies.isEmpty() &&
+							(gestioneTokenPolicy==null || StringUtils.isEmpty(gestioneTokenPolicy)) 
+						){
+							gestioneTokenPolicy = tokenPolicies.get(0);  // dovrebbe già essere stata selezionata prima
+						}
+					}
+					
+					gestioneTokenOpzionale = StatoFunzionalita.DISABILITATO.getValue();
+					
+					if(gestioneTokenPolicy!=null && StringUtils.isNotEmpty(gestioneTokenPolicy) && 
+							!CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(gestioneTokenPolicy)) {
+						GenericProperties gp = confCore.getGenericProperties(gestioneTokenPolicy, CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION, false);
+						if(gp!=null && gp.sizePropertyList()>0) {
+							for (Property p : gp.getPropertyList()) {
+								if(org.openspcoop2.pdd.core.token.Costanti.POLICY_VALIDAZIONE_STATO.equals(p.getNome())) {
+									if("true".equalsIgnoreCase(p.getValore())) {
+										gestioneTokenValidazioneInput = StatoFunzionalita.ABILITATO.getValue();
+									}
+									else {
+										gestioneTokenValidazioneInput = StatoFunzionalita.DISABILITATO.getValue();
+									}
+								}
+								else if(org.openspcoop2.pdd.core.token.Costanti.POLICY_INTROSPECTION_STATO.equals(p.getNome())) {
+									if("true".equalsIgnoreCase(p.getValore())) {
+										gestioneTokenIntrospection = StatoFunzionalita.ABILITATO.getValue();
+									}
+									else {
+										gestioneTokenIntrospection = StatoFunzionalita.DISABILITATO.getValue();
+									}
+								}
+								else if(org.openspcoop2.pdd.core.token.Costanti.POLICY_USER_INFO_STATO.equals(p.getNome())) {
+									if("true".equalsIgnoreCase(p.getValore())) {
+										gestioneTokenUserInfo = StatoFunzionalita.ABILITATO.getValue();
+									}
+									else {
+										gestioneTokenUserInfo = StatoFunzionalita.DISABILITATO.getValue();
+									}
+								}
+								else if(org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_FORWARD_STATO.equals(p.getNome())) {
+									if("true".equalsIgnoreCase(p.getValore())) {
+										gestioneTokenForward = StatoFunzionalita.ABILITATO.getValue();
+									}
+									else {
+										gestioneTokenForward = StatoFunzionalita.DISABILITATO.getValue();
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 			
 			AccordiServizioParteSpecificaUtilities.addAccordoServizioParteSpecificaPorteApplicative(mappingDefault,
@@ -879,7 +988,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 					autorizzazioneScope, scope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
 					gestioneToken, 
 					gestioneTokenPolicy,  gestioneTokenOpzionale,  
-					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
+					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward,
 					autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 					asps, 
 					protocollo, userLogin,

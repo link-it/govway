@@ -41,6 +41,7 @@ import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.certificate.KeyUtils;
 import org.openspcoop2.utils.certificate.KeystoreParams;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.ocsp.IOCSPResourceReader;
@@ -204,7 +205,7 @@ public class CertificateUtils {
 				keyStoreLocation = "NONE";
 			}
 			if(keyStoreType==null) {
-				keyStoreType = "JKS";
+				keyStoreType = KeystoreType.JKS.getNome();
 			}
 			params = new KeystoreParams();
 			params.setPath(keyStoreLocation);
@@ -225,7 +226,7 @@ public class CertificateUtils {
 		
 		if(trustStoreLocation!=null) {
 			if(trustStoreType==null) {
-				trustStoreType = "JKS";
+				trustStoreType = KeystoreType.JKS.getNome();
 			}
 			params = new KeystoreParams();
 			params.setPath(trustStoreLocation);

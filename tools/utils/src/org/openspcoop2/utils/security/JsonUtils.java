@@ -23,6 +23,7 @@ package org.openspcoop2.utils.security;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Files;
 import java.security.Key;
 import java.security.PrivateKey;
 import java.security.cert.CertStore;
@@ -65,6 +66,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.KeyStore;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -83,6 +85,8 @@ import com.fasterxml.jackson.databind.JsonNode;
  * 
  */
 public class JsonUtils {
+	
+	private JsonUtils(){}
 
 	public static Message newMessage() {
 		Message m = new MessageImpl();
@@ -91,11 +95,19 @@ public class JsonUtils {
 		return m;
 	}
 	
-	public static boolean SIGNATURE = true;
-	public static boolean ENCRYPT = false;
-	public static boolean DECRYPT = false;
-	public static boolean SENDER = true;
-	public static boolean RECEIVER = false;
+	private static final String KEYSTORE_PREFIX_FILE = "keystore";
+	
+	private static final String JCEKS_SIGNATURE_ALGO_UNDEFINED = "(JCEKS) Signature Algorithm undefined";
+	private static final String PKCS11_SIGNATURE_ALGO_UNDEFINED = "(SecretKey PKCS11) Signature Algorithm undefined";
+	private static final String SECRET_SIGNATURE_ALGO_UNDEFINED = "(Secret) Signature Algorithm undefined";
+	
+	private static final String JCEKS_CONTENT_ALGO_UNDEFINED = "(JCEKS) Content Algorithm undefined";
+	
+	public static final boolean SIGNATURE = true;
+	public static final boolean ENCRYPT = false;
+	public static final boolean DECRYPT = false;
+	public static final boolean SENDER = true;
+	public static final boolean RECEIVER = false;
 	public static UtilsException convert(JOSESerialization serialization, boolean signature, boolean roleSender, Throwable t) {
 		
 		StringBuilder bf = new StringBuilder();
@@ -164,11 +176,10 @@ public class JsonUtils {
 		
 		String messaggio = null;
 		if(msg!=null && !"".equals(msg) && !"null".equals(msg)) {
-			messaggio = new String(msg);
-			if(innerMsg!=null && !"".equals(innerMsg) && !"null".equals(innerMsg) && !innerMsg.equals(msg)) {
-				if(!messaggio.contains(innerMsg)) {
-					messaggio = messaggio + " ; " + innerMsg;
-				}
+			messaggio = msg+"";
+			if(innerMsg!=null && !"".equals(innerMsg) && !"null".equals(innerMsg) && !innerMsg.equals(msg) &&
+				!messaggio.contains(innerMsg)) {
+				messaggio = messaggio + " ; " + innerMsg;
 			}
 		}
 		else{
@@ -184,7 +195,7 @@ public class JsonUtils {
 		return new UtilsException(bf.toString(),t);
 	}
 	
-	public static byte[] readKeystoreFromURI(Properties props) throws Exception {
+	public static byte[] readKeystoreFromURI(Properties props) throws UtilsException {
 		
 		String propertyKeystoreName = RSSecurityConstants.RSSEC_KEY_STORE_FILE;
 		String path = props.getProperty(propertyKeystoreName);
@@ -199,37 +210,41 @@ public class JsonUtils {
 			String trustStoreType = props.getProperty(trustStoreTypeProperty);
 			if(trustStore!=null) {
 				if(trustStorePassword==null) {
-					throw new Exception("TrustStore ssl password undefined");
+					throw new UtilsException("TrustStore ssl password undefined");
 				}
 				if(trustStoreType==null) {
-					throw new Exception("TrustStore ssl type undefined");
+					throw new UtilsException("TrustStore ssl type undefined");
 				}
 			}
 			if( (path.startsWith("https:") && trustStore==null) || path.startsWith("http:") ) {
-				//System.out.println("http");
+				/**System.out.println("http");*/
 				httpResponse = HttpUtilities.getHTTPResponse(path, 60000, 10000);
 			}
 			else {
-				//System.out.println("https");
+				/**System.out.println("https");*/
 				httpResponse = HttpUtilities.getHTTPSResponse(path, 60000, 10000, trustStore, trustStorePassword, trustStoreType);
 			}
 			if(httpResponse==null || httpResponse.getContent()==null) {
-				throw new Exception("Keystore '"+path+"' unavailable");
+				throw new UtilsException("Keystore '"+path+"' unavailable");
 			}
 			if(httpResponse.getResultHTTPOperation()!=200) {
-				throw new Exception("Retrieve keystore '"+path+"' failed (returnCode:"+httpResponse.getResultHTTPOperation()+")");
+				throw new UtilsException("Retrieve keystore '"+path+"' failed (returnCode:"+httpResponse.getResultHTTPOperation()+")");
 			}
 			content = httpResponse.getContent();
 		}
 		else if(path!=null && (path.startsWith("file"))){
-			File f = new File(new URI(path));
-			content = FileSystemUtilities.readBytesFromFile(f);
+			try {
+				File f = new File(new URI(path));
+				content = FileSystemUtilities.readBytesFromFile(f);
+			}catch(Exception e) {
+				throw new UtilsException(e.getMessage(),e);
+			}
 		}
 		
 		return content;
 	}
 	
-	public static File normalizeProperties(Properties props) throws Exception {
+	public static File normalizeProperties(Properties props) throws UtilsException {
 		
 		String propertyKeystoreName = RSSecurityConstants.RSSEC_KEY_STORE_FILE;
 		byte[] content = readKeystoreFromURI(props);
@@ -239,10 +254,14 @@ public class JsonUtils {
 		
 			String tipo = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
 			if(tipo==null) {
-				tipo = "jks";
+				tipo = KeystoreType.JKS.getNome();
 			}
 			
-			fTmp = FileSystemUtilities.createTempFile("keystore", "."+tipo);
+			try {
+				fTmp = FileSystemUtilities.createTempFile(KEYSTORE_PREFIX_FILE, "."+tipo);
+			}catch(Exception e) {
+				throw new UtilsException(e.getMessage(),e);
+			}
 			FileSystemUtilities.writeFile(fTmp, content);
 			props.remove(propertyKeystoreName);
 			props.put(propertyKeystoreName, fTmp.getAbsolutePath());
@@ -252,7 +271,7 @@ public class JsonUtils {
 		return fTmp;
 	}
 	
-	public static boolean isDynamicProvider(Properties props) throws Exception {
+	public static boolean isDynamicProvider(Properties props) {
 		String alias = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS);
 		if("*".equalsIgnoreCase(alias)) {
 			props.remove(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS);
@@ -261,19 +280,19 @@ public class JsonUtils {
 		return false;
 	}
 	
-	public static String readAlias(String jsonString) throws Exception {
-		if(jsonString.contains(".")==false) {
-			throw new Exception("Invalid format (expected COMPACT)");
+	public static String readAlias(String jsonString) throws UtilsException {
+		if(!jsonString.contains(".")) {
+			throw new UtilsException("Invalid format (expected COMPACT)");
 		}
 		String [] tmp = jsonString.split("\\.");
 		byte[] header = Base64Utilities.decode(tmp[0].trim());
 		JsonNode node = JSONUtils.getInstance().getAsNode(header).get("kid");
 		if(node==null) {
-			throw new Exception("Claim 'kid' not found");
+			throw new UtilsException("Claim 'kid' not found");
 		}
 		String kid = node.asText();
 		if(kid==null) {
-			throw new Exception("Claim 'kid' without value");
+			throw new UtilsException("Claim 'kid' without value");
 		}
 		return kid;
 	}
@@ -289,14 +308,13 @@ public class JsonUtils {
 		return jsonWebKey;
 	}
 	
-	public static KeyStore getKeyStore(Properties props) throws Exception {
+	public static KeyStore getKeyStore(Properties props) throws UtilsException {
 		Object oKeystore = props.get(RSSecurityConstants.RSSEC_KEY_STORE);
-		if(oKeystore!=null && oKeystore instanceof KeyStore) {
+		if(oKeystore instanceof KeyStore) {
 			return (KeyStore) oKeystore;
 		}
-		else if(oKeystore!=null && oKeystore instanceof java.security.KeyStore) {
-			KeyStore k = new KeyStore((java.security.KeyStore) oKeystore);
-			return k;
+		else if(oKeystore instanceof java.security.KeyStore) {
+			return new KeyStore((java.security.KeyStore) oKeystore);
 		}
 		else {
 			String fileK = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
@@ -305,12 +323,16 @@ public class JsonUtils {
 				String type = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
 				
 				if(password==null || "".equals(password)){
-					throw new Exception("Keystore password undefined");
+					throw new UtilsException("Keystore password undefined");
 				}
 				if(type==null || "".equals(type)){
-					type = "jks";
+					type = KeystoreType.JKS.getNome();
 				}
-				if("jwk".equalsIgnoreCase(type)) {
+				if(KeystoreType.JWK_SET.getNome().equalsIgnoreCase(type)
+					||
+					KeystoreType.PUBLIC_KEY.getNome().equalsIgnoreCase(type)
+					||
+					KeystoreType.KEY_PAIR.getNome().equalsIgnoreCase(type)) {
 					return null;
 				}
 				
@@ -324,21 +346,25 @@ public class JsonUtils {
 					try {
 						if(is!=null) {
 							byte[] f = Utilities.getAsByteArray(is);
-							fTmp = FileSystemUtilities.createTempFile("keystore", ".tmp");
-							FileSystemUtilities.writeFile(fTmp, f);
-							return new KeyStore(fTmp.getAbsolutePath(), type, password);
+							try {
+								fTmp = FileSystemUtilities.createTempFile(KEYSTORE_PREFIX_FILE, ".tmp");
+								FileSystemUtilities.writeFile(fTmp, f);
+								return new KeyStore(fTmp.getAbsolutePath(), type, password);
+							}catch(Exception e) {
+								throw new UtilsException(e.getMessage(),e);
+							}
 						}
 					}finally {
 						try {
 							if(is!=null) {
 								is.close();
 							}
-						}catch(Exception e) {}
+						}catch(Exception e) {
+							// ignore
+						}
 						try {
 							if(fTmp!=null) {
-								if(!fTmp.delete()) {
-									// ignore
-								}
+								Files.delete(fTmp.toPath());
 							}
 						}catch(Exception e) {
 							// delete
@@ -349,30 +375,35 @@ public class JsonUtils {
 		}
 		return null;
 	}
-	public static Certificate getCertificateKey(Properties props) throws Exception {
+	public static Certificate getCertificateKey(Properties props) throws UtilsException {
 		KeyStore keystore = getKeyStore(props);
 		if(keystore!=null) {
 			String alias = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS);
-			if(alias!=null || !"".equals(alias)){
+			if(alias!=null && !"".equals(alias)){
 				return keystore.getCertificate(alias);
 			}
 		}
 		return null;
 	}
 	
-	public static SecretKeyPkcs11 getSecretKeyPKCS11(Properties props) throws Exception {
+	public static SecretKeyPkcs11 getSecretKeyPKCS11(Properties props) throws UtilsException {
 		if(props.containsKey(RSSecurityConstants.RSSEC_KEY_STORE_TYPE)) {
 			String type = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
 			
-			if("pkcs11".equalsIgnoreCase(type)) {
+			if(KeystoreType.PKCS11.getNome().equalsIgnoreCase(type)) {
 				Object oKeystore = props.get(RSSecurityConstants.RSSEC_KEY_STORE);
-				if(oKeystore!=null && oKeystore instanceof java.security.KeyStore) {
+				if(oKeystore instanceof java.security.KeyStore) {
 					java.security.KeyStore keystorePKCS11 = (java.security.KeyStore) oKeystore;
 					String alias = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS);
 					if(alias==null || "".equals(alias)){
-						throw new Exception("(Secret-PKCS11) Alias key undefined");
+						throw new UtilsException("(Secret-PKCS11) Alias key undefined");
 					}				
-					Key key = keystorePKCS11.getKey(alias, null);
+					Key key = null;
+					try {
+						key = keystorePKCS11.getKey(alias, null);
+					}catch(Exception e) {
+						throw new UtilsException(e.getMessage(),e);
+					}
 					if(key instanceof SecretKey) {
 						return new SecretKeyPkcs11(keystorePKCS11.getProvider(), (SecretKey) key);
 					}
@@ -381,40 +412,43 @@ public class JsonUtils {
 		}
 		return null;
 	}
-	public static SecretKey getSecretKey(Properties props) throws Exception {
+	public static SecretKey getSecretKey(Properties props) throws UtilsException {
 		if(props.containsKey(RSSecurityConstants.RSSEC_KEY_STORE_TYPE)) {
 			String type = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
 			
-			if("jceks".equalsIgnoreCase(type)) {
+			if(KeystoreType.JCEKS.getNome().equalsIgnoreCase(type)) {
 				Object oKeystore = props.get(RSSecurityConstants.RSSEC_KEY_STORE);
 				String fileK = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
 				String password = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_PSWD);
 				String alias = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS);
 				String passwordKey = props.getProperty(RSSecurityConstants.RSSEC_KEY_PSWD);
 				
-				if(oKeystore!=null && oKeystore instanceof java.security.KeyStore) {
+				if(oKeystore instanceof java.security.KeyStore) {
 					java.security.KeyStore keystoreJCEKS = (java.security.KeyStore) oKeystore;
 					
 					if(alias==null || "".equals(alias)){
-						throw new Exception("(JCEKS) Alias key undefined");
+						throw new UtilsException("(JCEKS) Alias key undefined");
 					}
 					if(passwordKey==null || "".equals(passwordKey)){
-						throw new Exception("(JCEKS) Password key undefined");
+						throw new UtilsException("(JCEKS) Password key undefined");
 					}
 					
-					SecretKey secretKey = (SecretKey) keystoreJCEKS.getKey(alias, passwordKey.toCharArray());
-					return  secretKey;
+					try {
+						return (SecretKey) keystoreJCEKS.getKey(alias, passwordKey.toCharArray());
+					}catch(Exception e) {
+						throw new UtilsException(e.getMessage(),e);
+					}
 				}
 				else if(fileK!=null) {
 					
 					if(password==null || "".equals(password)){
-						throw new Exception("(JCEKS) Keystore password undefined");
+						throw new UtilsException("(JCEKS) Keystore password undefined");
 					}
 					
 					File file = new File(fileK);
 					KeyStore keystoreJCEKS = null;
 					if(file.exists()) {
-						keystoreJCEKS = new KeyStore(file.getAbsolutePath(), "JCEKS", password);
+						keystoreJCEKS = new KeyStore(file.getAbsolutePath(), KeystoreType.JCEKS.getNome(), password);
 					}
 					else {
 						InputStream is = JsonUtils.class.getResourceAsStream(fileK);
@@ -422,21 +456,25 @@ public class JsonUtils {
 						try {
 							if(is!=null) {
 								byte[] f = Utilities.getAsByteArray(is);
-								fTmp = FileSystemUtilities.createTempFile("keystore", ".jceks");
-								FileSystemUtilities.writeFile(fTmp, f);
-								keystoreJCEKS = new KeyStore(fTmp.getAbsolutePath(), "JCEKS", password);
+								try {
+									fTmp = FileSystemUtilities.createTempFile(KEYSTORE_PREFIX_FILE, ".jceks");
+									FileSystemUtilities.writeFile(fTmp, f);
+								}catch(Exception e) {
+									throw new UtilsException(e.getMessage(),e);
+								}
+								keystoreJCEKS = new KeyStore(fTmp.getAbsolutePath(), KeystoreType.JCEKS.getNome(), password);
 							}
 						}finally {
 							try {
 								if(is!=null) {
 									is.close();
 								}
-							}catch(Exception e) {}
+							}catch(Exception e) {
+								// ignore
+							}
 							try {
 								if(fTmp!=null) {
-									if(!fTmp.delete()) {
-										// ignore
-									}
+									java.nio.file.Files.delete(fTmp.toPath());
 								}
 							}catch(Exception e) {
 								// delete
@@ -446,14 +484,13 @@ public class JsonUtils {
 					if(keystoreJCEKS!=null) {
 						
 						if(alias==null || "".equals(alias)){
-							throw new Exception("(JCEKS) Alias key undefined");
+							throw new UtilsException("(JCEKS) Alias key undefined");
 						}
 						if(passwordKey==null || "".equals(passwordKey)){
-							throw new Exception("(JCEKS) Password key undefined");
+							throw new UtilsException("(JCEKS) Password key undefined");
 						}
 						
-						SecretKey secretKey = (SecretKey) keystoreJCEKS.getSecretKey(alias, passwordKey);
-						return  secretKey;
+						return keystoreJCEKS.getSecretKey(alias, passwordKey);
 					}
 
 				}
@@ -462,7 +499,7 @@ public class JsonUtils {
 		return null;
 	}
 	public static final String RSSEC_KEY_STORE_TYPE_SECRET = "secret";
-	public static String getSecret(Properties props, org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algorithm) throws Exception {
+	public static String getSecret(Properties props, org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algorithm) {
 		if(props.containsKey(RSSecurityConstants.RSSEC_KEY_STORE_TYPE)) {
 			String type = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
 			if(RSSEC_KEY_STORE_TYPE_SECRET.equalsIgnoreCase(type)) { // customized
@@ -491,17 +528,17 @@ public class JsonUtils {
 		}
 		return null;
 	}
-	
-	public static JwsSignatureProvider getJwsSymmetricProvider(Properties props) throws Exception {
+		
+	public static JwsSignatureProvider getJwsSymmetricProvider(Properties props) throws UtilsException {
 		String algorithm = props.getProperty(RSSecurityConstants.RSSEC_SIGNATURE_ALGORITHM);
 		return getJwsSymmetricProvider(props, algorithm);
 	}
-	public static JwsSignatureProvider getJwsSymmetricProvider(Properties props, String algorithm) throws Exception {
+	public static JwsSignatureProvider getJwsSymmetricProvider(Properties props, String algorithm) throws UtilsException {
 		org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = null;
 		if(algorithm==null || "".equals(algorithm)) {
 			String type = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
-			if("jceks".equalsIgnoreCase(type)) {
-				throw new Exception("(JCEKS) Signature Algorithm undefined");	
+			if(KeystoreType.JCEKS.getNome().equalsIgnoreCase(type)) {
+				throw new UtilsException(JCEKS_SIGNATURE_ALGO_UNDEFINED);	
 			}
 		}
 		else{
@@ -509,26 +546,25 @@ public class JsonUtils {
 		}
 		return getJwsSymmetricProvider(props, algo);
 	}
-	public static JwsSignatureProvider getJwsSymmetricProvider(Properties props, org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algorithm) throws Exception {
+	public static JwsSignatureProvider getJwsSymmetricProvider(Properties props, org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algorithm) throws UtilsException {
 		
 		SecretKeyPkcs11 secretKeyPkcs11 = getSecretKeyPKCS11(props);
 		if(secretKeyPkcs11!=null) {
 			if(algorithm==null) {
-				throw new Exception("(SecretKey PKCS11) Signature Algorithm undefined");
+				throw new UtilsException(PKCS11_SIGNATURE_ALGO_UNDEFINED);
 			}
-			JwsSignatureProvider provider = new HmacJwsSignatureProviderExtended(secretKeyPkcs11, algorithm);
-			return provider;
+			return new HmacJwsSignatureProviderExtended(secretKeyPkcs11, algorithm);
 		}
 		
 		SecretKey secretKey = getSecretKey(props);
 		if(secretKey!=null) {
 			if(algorithm==null) {
-				throw new Exception("(JCEKS) Signature Algorithm undefined");
+				throw new UtilsException(JCEKS_SIGNATURE_ALGO_UNDEFINED);
 			}
 			byte[] encoded = secretKey.getEncoded();
 			JwsSignatureProvider provider = JwsUtils.getHmacSignatureProvider(encoded, algorithm);
 			if(provider==null) {
-				throw new Exception("(JCEKS) JwsSignatureProvider init failed; check signature algorithm ("+algorithm+")");
+				throw new UtilsException("(JCEKS) JwsSignatureProvider init failed; check signature algorithm ("+algorithm+")");
 			}
 			return provider;
 		}
@@ -536,12 +572,12 @@ public class JsonUtils {
 			String secret = getSecret(props, algorithm);
 			if(secret!=null) {
 				if(algorithm==null) {
-					throw new Exception("(Secret) Signature Algorithm undefined");
+					throw new UtilsException(SECRET_SIGNATURE_ALGO_UNDEFINED);
 				}
 				byte[] encoded = secret.getBytes();
 				JwsSignatureProvider provider = JwsUtils.getHmacSignatureProvider(encoded, algorithm);
 				if(provider==null) {
-					throw new Exception("(Secret) JwsSignatureProvider init failed; check signature algorithm ("+algorithm+")");
+					throw new UtilsException("(Secret) JwsSignatureProvider init failed; check signature algorithm ("+algorithm+")");
 				}
 				return provider;
 			}
@@ -550,43 +586,43 @@ public class JsonUtils {
 	}
 	
 	// ** INIZIO METODI PER OTTENERE UN JwsSignatureProvider CON PKCS11
-	public static JwsSignatureProvider getJwsAsymmetricProvider(Properties props) throws Exception {
+	public static JwsSignatureProvider getJwsAsymmetricProvider(Properties props) throws UtilsException {
 		String algorithm = props.getProperty(RSSecurityConstants.RSSEC_SIGNATURE_ALGORITHM);
 		return getJwsAsymmetricProvider(props, algorithm);
 	}
-	public static JwsSignatureProvider getJwsAsymmetricProvider(Properties props, String algorithm) throws Exception {
+	public static JwsSignatureProvider getJwsAsymmetricProvider(Properties props, String algorithm) throws UtilsException {
 		org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = null;
 		if(algorithm!=null && !"".equals(algorithm)) {
 			algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(algorithm);
 		}
 		return getJwsAsymmetricProvider(props, algo);
 	}
-	public static JwsSignatureProvider getJwsAsymmetricProvider(Properties props, org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algorithm) throws Exception {
+	public static JwsSignatureProvider getJwsAsymmetricProvider(Properties props, org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algorithm) throws UtilsException {
 		String type = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
 		if(type==null || "".equals(type)) {
 			type="undefined";
 		}
 		if(algorithm==null) {
-			throw new Exception("("+type+") Signature Algorithm undefined");
+			throw new UtilsException("("+type+") Signature Algorithm undefined");
 		}
 		PrivateKey pKey = KeyManagementUtils.loadPrivateKey(null, props, KeyOperation.SIGN);
 		return getJwsAsymmetricProvider(pKey, algorithm);
 	}
-	public static JwsSignatureProvider getJwsAsymmetricProvider(PrivateKey pKey, org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algorithm) throws Exception {
+	public static JwsSignatureProvider getJwsAsymmetricProvider(PrivateKey pKey, org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algorithm) {
 		return new PrivateKeyJwsSignatureProvider(pKey, algorithm);
 	}
 	// ** FINE METODI PER OTTENERE UN JwsSignatureProvider CON PKCS11
 	
-	public static JwsSignatureVerifier getJwsSignatureVerifier(Properties props) throws Exception {
+	public static JwsSignatureVerifier getJwsSignatureVerifier(Properties props) throws UtilsException {
 		String algorithm = props.getProperty(RSSecurityConstants.RSSEC_SIGNATURE_ALGORITHM);
 		return getJwsSignatureVerifier(props, algorithm);
 	}
-	public static JwsSignatureVerifier getJwsSignatureVerifier(Properties props, String algorithm) throws Exception {
+	public static JwsSignatureVerifier getJwsSignatureVerifier(Properties props, String algorithm) throws UtilsException {
 		org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = null;
 		if(algorithm==null || "".equals(algorithm)) {
 			String type = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
-			if("jceks".equalsIgnoreCase(type)) {
-				throw new Exception("(JCEKS) Signature Algorithm undefined");
+			if(KeystoreType.JCEKS.getNome().equalsIgnoreCase(type)) {
+				throw new UtilsException(JCEKS_SIGNATURE_ALGO_UNDEFINED);
 			}
 		}
 		else {
@@ -594,16 +630,16 @@ public class JsonUtils {
 		}
 		return getJwsSignatureVerifier(props, algo);
 	}
-	public static JwsSignatureVerifier getJwsSignatureVerifier(Properties props, org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algorithm) throws Exception {
+	public static JwsSignatureVerifier getJwsSignatureVerifier(Properties props, org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algorithm) throws UtilsException {
 		
 		SecretKey secretKey = getSecretKey(props);
 		if(secretKey!=null) {
 			if(algorithm==null) {
-				throw new Exception("(JCEKS) Signature Algorithm undefined");
+				throw new UtilsException(JCEKS_SIGNATURE_ALGO_UNDEFINED);
 			}
 			JwsSignatureVerifier verifier = JwsUtils.getHmacSignatureVerifier(secretKey.getEncoded(), algorithm);
 			if(verifier==null) {
-				throw new Exception("(JCEKS) JwsSignatureVerifier init failed; check signature algorithm ("+algorithm+")");
+				throw new UtilsException("(JCEKS) JwsSignatureVerifier init failed; check signature algorithm ("+algorithm+")");
 			}
 			return verifier;
 		}
@@ -611,12 +647,12 @@ public class JsonUtils {
 			String secret = getSecret(props, algorithm);
 			if(secret!=null) {
 				if(algorithm==null) {
-					throw new Exception("(Secret) Signature Algorithm undefined");
+					throw new UtilsException(SECRET_SIGNATURE_ALGO_UNDEFINED);
 				}
 				byte[] encoded = secret.getBytes();
 				JwsSignatureVerifier verifier = JwsUtils.getHmacSignatureVerifier(encoded, algorithm);
 				if(verifier==null) {
-					throw new Exception("(Secret) JwsSignatureVerifier init failed; check signature algorithm ("+algorithm+")");
+					throw new UtilsException("(Secret) JwsSignatureVerifier init failed; check signature algorithm ("+algorithm+")");
 				}
 				return verifier;
 			}
@@ -626,16 +662,16 @@ public class JsonUtils {
 	
 	
 	
-	public static JweEncryptionProvider getJweEncryptionProvider(Properties props) throws Exception {
+	public static JweEncryptionProvider getJweEncryptionProvider(Properties props) throws UtilsException {
 		String algorithm = props.getProperty(JoseConstants.RSSEC_ENCRYPTION_CONTENT_ALGORITHM);
 		return getJweEncryptionProvider(props, algorithm);
 	}
-	public static JweEncryptionProvider getJweEncryptionProvider(Properties props, String algorithm) throws Exception {
+	public static JweEncryptionProvider getJweEncryptionProvider(Properties props, String algorithm) throws UtilsException {
 		org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm algo = null;
 		if(algorithm==null || "".equals(algorithm)) {
 			String type = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
-			if("jceks".equalsIgnoreCase(type)) {
-				throw new Exception("(JCEKS) Content Algorithm undefined");
+			if(KeystoreType.JCEKS.getNome().equalsIgnoreCase(type)) {
+				throw new UtilsException(JCEKS_CONTENT_ALGO_UNDEFINED);
 			}
 		}
 		else {
@@ -643,32 +679,32 @@ public class JsonUtils {
 		}
 		return getJweEncryptionProvider(props, algo);
 	}
-	public static JweEncryptionProvider getJweEncryptionProvider(Properties props, org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm algorithm) throws Exception {
+	public static JweEncryptionProvider getJweEncryptionProvider(Properties props, org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm algorithm) throws UtilsException {
 		
 		SecretKey secretKey = getSecretKey(props);
 		if(secretKey!=null) {
 			if(algorithm==null) {
-				throw new Exception("(JCEKS) Content Algorithm undefined");
+				throw new UtilsException(JCEKS_CONTENT_ALGO_UNDEFINED);
 			}
 			JweEncryptionProvider provider = JweUtils.getDirectKeyJweEncryption(secretKey, algorithm);
 			if(provider==null) {
-				throw new Exception("(JCEKS) JweEncryptionProvider init failed; check content algorithm ("+algorithm+")");
+				throw new UtilsException("(JCEKS) JweEncryptionProvider init failed; check content algorithm ("+algorithm+")");
 			}
 			return provider;
 		}
 		return null;
 	}
 	
-	public static JweDecryptionProvider getJweDecryptionProvider(Properties props) throws Exception {
+	public static JweDecryptionProvider getJweDecryptionProvider(Properties props) throws UtilsException {
 		String algorithm = props.getProperty(JoseConstants.RSSEC_ENCRYPTION_CONTENT_ALGORITHM);
 		return getJweDecryptionProvider(props, algorithm);
 	}
-	public static JweDecryptionProvider getJweDecryptionProvider(Properties props, String algorithm) throws Exception {
+	public static JweDecryptionProvider getJweDecryptionProvider(Properties props, String algorithm) throws UtilsException {
 		org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm algo = null;
 		if(algorithm==null || "".equals(algorithm)) {
 			String type = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
-			if("jceks".equalsIgnoreCase(type)) {
-				throw new Exception("(JCEKS) Content Algorithm undefined");
+			if(KeystoreType.JCEKS.getNome().equalsIgnoreCase(type)) {
+				throw new UtilsException(JCEKS_CONTENT_ALGO_UNDEFINED);
 			}
 		}
 		else {
@@ -676,16 +712,16 @@ public class JsonUtils {
 		}
 		return getJweDecryptionProvider(props, algo);
 	}
-	public static JweDecryptionProvider getJweDecryptionProvider(Properties props, org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm algorithm) throws Exception {
+	public static JweDecryptionProvider getJweDecryptionProvider(Properties props, org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm algorithm) throws UtilsException {
 		
 		SecretKey secretKey = getSecretKey(props);
 		if(secretKey!=null) {
 			if(algorithm==null) {
-				throw new Exception("(JCEKS) Content Algorithm undefined");
+				throw new UtilsException(JCEKS_CONTENT_ALGO_UNDEFINED);
 			}
 			JweDecryptionProvider verifier = JweUtils.getDirectKeyJweDecryption(secretKey, algorithm);
 			if(verifier==null) {
-				throw new Exception("(JCEKS) JweDecryptionProvider init failed; check content algorithm ("+algorithm+")");
+				throw new UtilsException("(JCEKS) JweDecryptionProvider init failed; check content algorithm ("+algorithm+")");
 			}
 			return verifier;
 		}
@@ -693,12 +729,12 @@ public class JsonUtils {
 	}
 	
 	// ** INIZIO METODI PER OTTENERE UN JweDecryptionProvider CON PKCS11
-	public static JweDecryptionProvider getJweAsymmetricDecryptionProvider(Properties props) throws Exception {
+	public static JweDecryptionProvider getJweAsymmetricDecryptionProvider(Properties props) throws UtilsException {
 		String  contentAlgorithm = props.getProperty(JoseConstants.RSSEC_ENCRYPTION_CONTENT_ALGORITHM);
 		String  keyAlgorithm = props.getProperty(JoseConstants.RSSEC_ENCRYPTION_KEY_ALGORITHM);
 		return getJweAsymmetricDecryptionProvider(props, keyAlgorithm, contentAlgorithm);
 	}
-	public static JweDecryptionProvider getJweAsymmetricDecryptionProvider(Properties props, String keyAlgorithm, String contentAlgorithm) throws Exception {
+	public static JweDecryptionProvider getJweAsymmetricDecryptionProvider(Properties props, String keyAlgorithm, String contentAlgorithm) throws UtilsException {
 		org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm contentAlgo = null;
 		if(contentAlgorithm!=null && !"".equals(contentAlgorithm)) {
 			contentAlgo = org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm.getAlgorithm(contentAlgorithm);
@@ -711,23 +747,23 @@ public class JsonUtils {
 	}
 	public static JweDecryptionProvider getJweAsymmetricDecryptionProvider(Properties props, 
 			org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm keyAlgorithm,
-			org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm contentAlgorithm) throws Exception {
+			org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm contentAlgorithm) throws UtilsException {
 		String type = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
 		if(type==null || "".equals(type)) {
 			type="undefined";
 		}
 		if(contentAlgorithm==null) {
-			throw new Exception("("+type+") Content Algorithm undefined");
+			throw new UtilsException("("+type+") Content Algorithm undefined");
 		}
 		if(keyAlgorithm==null) {
-			throw new Exception("("+type+") Key Algorithm undefined");
+			throw new UtilsException("("+type+") Key Algorithm undefined");
 		}
 		PrivateKey privateKey = KeyManagementUtils.loadPrivateKey(null, props, KeyOperation.DECRYPT);
 		return getJweAsymmetricDecryptionProvider(privateKey, keyAlgorithm, contentAlgorithm);
 	}
 	public static JweDecryptionProvider getJweAsymmetricDecryptionProvider(PrivateKey privateKey,
 			org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm keyAlgorithm,
-			org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm contentAlgorithm) throws Exception {
+			org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm contentAlgorithm) {
 		WrappedKeyDecryptionAlgorithm privateKeyDecryptionProvider = new WrappedKeyDecryptionAlgorithm(privateKey, keyAlgorithm, false);
 		return JweUtils.createJweDecryptionProvider(privateKeyDecryptionProvider, contentAlgorithm);
 	}
@@ -771,6 +807,10 @@ public class JsonUtils {
 
 		// Metodo copiato da JweUtils per risolvere il problema indicato sotto.
 		
+		if(headers!=null) {
+			// nop
+		}
+		
 		Message m = PhaseInterceptorChain.getCurrentMessage();
 		
 		JsonWebKey jwk = JwkUtils.loadJsonWebKey(m, props, KeyOperation.DECRYPT);
@@ -789,35 +829,39 @@ public class JsonUtils {
         return JweUtils.getDirectKeyJweDecryption(ctDecryptionKey, contentAlgo);
 	}
 	
+	private static String getErrorNonValido(Exception e) {
+		return "non valido: "+e.getMessage();
+	}
+	
 	public static void validate(CertificateInfo certificatoInfo,
 			KeyStore trustStoreCertificatiX509, CertStore crlX509, IOCSPValidator ocspValidatorX509, String headerName,
-			boolean verifaCA) throws Exception {
+			boolean verifaCA) throws UtilsException {
 		if(trustStoreCertificatiX509!=null) {
 			String prefisso = headerName!=null ? ("Certificato presente nell'header '"+headerName+"' ") : "Certificato di firma ";
-			if(verifaCA && certificatoInfo.isVerified(trustStoreCertificatiX509, true)==false) {
-				throw new Exception(prefisso+"non è verificabile rispetto alle CA conosciute");
+			if(verifaCA && !certificatoInfo.isVerified(trustStoreCertificatiX509, true)) {
+				throw new UtilsException(prefisso+"non è verificabile rispetto alle CA conosciute");
 			}
 			try {
 				certificatoInfo.checkValid();
 			}catch(CertificateExpiredException e) {
-				throw new Exception(prefisso+"scaduto: "+e.getMessage(),e);
+				throw new UtilsException(prefisso+"scaduto: "+e.getMessage(),e);
 			}catch(CertificateNotYetValidException e) {
-				throw new Exception(prefisso+"non ancora valido: "+e.getMessage(),e);
+				throw new UtilsException(prefisso+"non ancora valido: "+e.getMessage(),e);
 			}catch(Exception e) {
-				throw new Exception(prefisso+"non valido: "+e.getMessage(),e);
+				throw new UtilsException(prefisso+getErrorNonValido(e),e);
 			}
 			if(ocspValidatorX509!=null) {
 				try {
 					ocspValidatorX509.valid(certificatoInfo.getCertificate());
 				}catch(Exception e) {
-					throw new Exception(prefisso+"non valido: "+e.getMessage(),e);
+					throw new UtilsException(prefisso+getErrorNonValido(e),e);
 				}
 			}
 			if(crlX509!=null) {
 				try {
 					certificatoInfo.checkValid(crlX509, trustStoreCertificatiX509);
 				}catch(Exception e) {
-					throw new Exception(prefisso+"non valido: "+e.getMessage(),e);
+					throw new UtilsException(prefisso+getErrorNonValido(e),e);
 				}
 			}
 		}

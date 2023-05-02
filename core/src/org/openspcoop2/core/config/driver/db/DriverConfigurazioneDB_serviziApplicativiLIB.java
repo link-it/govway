@@ -259,7 +259,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				
 				String issuer = null;
 				if(credenzialiInvocazionePorta != null && org.openspcoop2.core.config.constants.CredenzialeTipo.APIKEY.equals(credenzialiInvocazionePorta.getTipo())) {
-					stm.setString(index++, CostantiDB.getISSUER_APIKEY(credenzialiInvocazionePorta.isAppId()));
+					stm.setString(index++, CostantiDB.getIssuerApiKey(credenzialiInvocazionePorta.isAppId()));
 				}
 				else {
 					if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getIssuer()!=null && !"".equals(credenzialiInvocazionePorta.getIssuer()))
@@ -442,7 +442,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 						
 						String issuerCredenziale = null;
 						if(credenziale != null && org.openspcoop2.core.config.constants.CredenzialeTipo.APIKEY.equals(credenziale.getTipo())) {
-							stm.setString(index++, CostantiDB.getISSUER_APIKEY(credenziale.isAppId()));
+							stm.setString(index++, CostantiDB.getIssuerApiKey(credenziale.isAppId()));
 						}
 						else {
 							if(credenziale!=null && credenziale.getIssuer()!=null && !"".equals(credenziale.getIssuer()))
@@ -704,7 +704,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				
 				issuer = null;
 				if(credenzialiInvocazionePorta != null && org.openspcoop2.core.config.constants.CredenzialeTipo.APIKEY.equals(credenzialiInvocazionePorta.getTipo())) {
-					stm.setString(index++, CostantiDB.getISSUER_APIKEY(credenzialiInvocazionePorta.isAppId()));
+					stm.setString(index++, CostantiDB.getIssuerApiKey(credenzialiInvocazionePorta.isAppId()));
 				}
 				else {
 					if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getIssuer()!=null && !"".equals(credenzialiInvocazionePorta.getIssuer()))
@@ -860,7 +860,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 						
 						String issuerCredenziale = null;
 						if(credenziale != null && org.openspcoop2.core.config.constants.CredenzialeTipo.APIKEY.equals(credenziale.getTipo())) {
-							stm.setString(index++, CostantiDB.getISSUER_APIKEY(credenziale.isAppId()));
+							stm.setString(index++, CostantiDB.getIssuerApiKey(credenziale.isAppId()));
 						}
 						else {
 							if(credenziale!=null && credenziale.getIssuer()!=null && !"".equals(credenziale.getIssuer()))

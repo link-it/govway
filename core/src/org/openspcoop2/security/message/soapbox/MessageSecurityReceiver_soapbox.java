@@ -444,31 +444,33 @@ public class MessageSecurityReceiver_soapbox extends AbstractSOAPMessageSecurity
 	
 	@Override
 	public String getCertificate() throws SecurityException{
-		if(this.certificates!=null){
-			if(this.certificates.length > 0){
-				return this.certificates[0].getSubjectX500Principal().toString();
-			}
+		if(this.certificates!=null &&
+			this.certificates.length > 0){
+			return this.certificates[0].getSubjectX500Principal().toString();
 		}
 		return null;
 	}
 	
 	@Override
 	public X509Certificate getX509Certificate() throws SecurityException {
-		if(this.certificates!=null){
-			if(this.certificates.length > 0){
-				return this.certificates[0];
-			}
+		if(this.certificates!=null &&
+			this.certificates.length > 0){
+			return this.certificates[0];
 		}
 		return null;
 	}
 
 	@Override
 	public PublicKey getPublicKey() {
-		if(this.certificates!=null){
-			if(this.certificates.length > 0){
-				return this.certificates[0].getPublicKey();
-			}
+		if(this.certificates!=null &&
+			this.certificates.length > 0){
+			return this.certificates[0].getPublicKey();
 		}
+		return null;
+	}
+	
+	@Override
+	public String getCertificateId() throws SecurityException{
 		return null;
 	}
 	

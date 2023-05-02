@@ -78,6 +78,8 @@ public class ConnettoriCostanti {
 	public static final String LABEL_CONNETTORE_PROXY = "Proxy";
 	public static final String LABEL_CONNETTORE_HTTP = "Autenticazione Http";
 	public static final String LABEL_CONNETTORE_BEARER = "Autenticazione Token";
+	public static final String LABEL_CONNETTORE_BEARER_MODI_PDND = "Negoziazione Token tramite PDND";
+	public static final String LABEL_CONNETTORE_BEARER_MODI_OAUTH = "Negoziazione Token tramite Authorization Server OAuth";
 	public static final String LABEL_CONNETTORE_HTTPS = "Autenticazione Https";
 	public static final String LABEL_CONNETTORE_TEMPI_RISPOSTA = "Tempi Risposta";
 	public static final String LABEL_CONNETTORE_OPZIONI_AVANZATE = "Opzioni Avanzate";

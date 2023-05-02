@@ -119,7 +119,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 		
 		Busta bustaRitornata = basicResult.getBusta();
 		
-		String erroreProcessamento_internalMessage = null;
+		String erroreProcessamentoInternalMessage = null;
 		try {
 					
 			IDServizio idServizio = null;
@@ -200,10 +200,9 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 				
 				if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_BLOCCANTE.equals(interactionProfile)) {
 					
-					if(!isFault) {
-						if(rest) {
-							validatoreSintatticoRest.validateSyncInteractionProfile(msg, request, erroriValidazione);
-						}
+					if(!isFault &&
+						rest) {
+						validatoreSintatticoRest.validateSyncInteractionProfile(msg, request, erroriValidazione);
 					}
 					
 				}
@@ -260,16 +259,15 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 					}
 					
 					String replyTo = null;
-					if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA.equals(asyncInteractionRole)) {
-						if(request &&  ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PUSH.equals(asyncInteractionType)) {
-							// devo cercare l'url di invocazione del servizio fruito correlato.
-							
-							try {
-								replyTo = ModIUtilities.getReplyToFruizione(idServizio.getSoggettoErogatore(), idSoggettoMittente, aspc, nomePortType, azione, 
-										registryReader, configIntegrationReader, this.protocolFactory, this.state, requestInfo);
-							}catch(Exception e) {
-								throw new Exception("Configurazione presente nel registro non corretta: "+e.getMessage(),e);
-							}
+					if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA.equals(asyncInteractionRole) &&
+						request &&  ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PUSH.equals(asyncInteractionType)) {
+						// devo cercare l'url di invocazione del servizio fruito correlato.
+						
+						try {
+							replyTo = ModIUtilities.getReplyToFruizione(idServizio.getSoggettoErogatore(), idSoggettoMittente, aspc, nomePortType, azione, 
+									registryReader, configIntegrationReader, this.protocolFactory, this.state, requestInfo);
+						}catch(Exception e) {
+							throw new ProtocolException("Configurazione presente nel registro non corretta: "+e.getMessage(),e);
 						}
 					}
 					
@@ -304,7 +302,8 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 				
 				/* *** SICUREZZA MESSAGGIO *** */
 				
-				String securityMessageProfile = ModIPropertiesUtils.readPropertySecurityMessageProfile(aspc, nomePortType, azione);
+				boolean filterPDND = true;
+				String securityMessageProfile = ModIPropertiesUtils.readPropertySecurityMessageProfile(aspc, nomePortType, azione, filterPDND);
 				if(securityMessageProfile!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED.equals(securityMessageProfile)) {
 					
 					boolean processSecurity = ModIPropertiesUtils.processSecurity(aspc, nomePortType, azione, request, 
@@ -322,7 +321,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 						Boolean multipleHeaderAuthorizationConfig = null;
 						boolean integritaCustom = false;
 						if(rest) {
-							headerTokenRest = ModIPropertiesUtils.readPropertySecurityMessageHeader(aspc, nomePortType, azione, request);
+							headerTokenRest = ModIPropertiesUtils.readPropertySecurityMessageHeader(aspc, nomePortType, azione, request, filterPDND);
 							if(headerTokenRest.contains(" ")) {
 								String [] tmp = headerTokenRest.split(" ");
 								if(tmp!=null && tmp.length==2 && tmp[0]!=null && tmp[1]!=null) {
@@ -341,9 +340,14 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 							}
 						}
 	
+						boolean kidMode = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile)
+								||
+								ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile);
+						
 						ModISecurityConfig securityConfig = new ModISecurityConfig(msg, this.protocolFactory, this.state, requestInfo, idSoggettoMittente, 
 								aspc, asps, sa, rest, fruizione, request,
-								multipleHeaderAuthorizationConfig);
+								multipleHeaderAuthorizationConfig,
+								kidMode);
 						ModITruststoreConfig trustStoreCertificati = new ModITruststoreConfig(fruizione, idSoggettoMittente, asps, false);
 						ModITruststoreConfig trustStoreSsl = null;
 						if(securityConfig.isX5u()) {
@@ -377,7 +381,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 						}
 					
 						// FIX: va inizializzato dentro il metodo 'validateSecurityProfile' dopo aver identificato l'applicativo
-//						boolean bufferMessage_readOnly = this.modiProperties.isReadByPathBufferEnabled();
+/**						boolean bufferMessage_readOnly = this.modiProperties.isReadByPathBufferEnabled();
 //						Map<String, Object> dynamicMap = null;
 //						Map<String, Object> dynamicMapRequest = null;
 //						if(!request) {
@@ -389,8 +393,8 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 //						else {
 //							dynamicMap = DynamicUtils.buildDynamicMap(msg, this.context, datiRichiesta, this.log, bufferMessage_readOnly);
 //							ModIUtilities.saveDynamicMapRequest(this.context, dynamicMap);
-//						}
-						Map<String, Object> dynamicMap = new HashMap<String, Object>();
+//						}*/
+						Map<String, Object> dynamicMap = new HashMap<>();
 						
 						if(rest) {
 							boolean securityHeaderObbligatorio = true;
@@ -412,7 +416,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 													audience = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE, 
 															audience, dynamicMap, this.context);
 												}catch(Exception e) {
-													this.log.error(e.getMessage(),e);
+													this.logError(e.getMessage(),e);
 													throw e;
 												}
 											}
@@ -427,7 +431,8 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 								
 								// Authorization
 								String securityMessageProfileAuthorization = null;
-								if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile)) {
+								if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile) ||
+										ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile)) {
 									securityMessageProfileAuthorization = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01; 
 								}
 								else {
@@ -439,24 +444,21 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 										dynamicMap, datiRichiesta);
 								
 								String audAuthorization = null;
-								if(tokenAuthorization!=null) {
-									
-									if(securityConfig.getAudience()!=null) {
-										if(request || (securityConfig.isCheckAudience())) {
-											audAuthorization = securityConfig.getAudience();
-											if(fruizione && !request) {
-												try {
-													audAuthorization = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE, 
-															audAuthorization, dynamicMap, this.context);
-												}catch(Exception e) {
-													this.log.error(e.getMessage(),e);
-													throw e;
-												}
-											}
-											msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK, audAuthorization);
+								if(tokenAuthorization!=null &&
+									securityConfig.getAudience()!=null &&
+									(request || (securityConfig.isCheckAudience()))
+									){
+									audAuthorization = securityConfig.getAudience();
+									if(fruizione && !request) {
+										try {
+											audAuthorization = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE, 
+													audAuthorization, dynamicMap, this.context);
+										}catch(Exception e) {
+											this.logError(e.getMessage(),e);
+											throw e;
 										}
 									}
-									
+									msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK, audAuthorization);				
 								}
 								
 								// Integrity
@@ -464,31 +466,28 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 								boolean securityHeaderIntegrityObbligatorio = msg.castAsRest().hasContent();
 								ModISecurityConfig securityConfigIntegrity = new ModISecurityConfig(msg, this.protocolFactory, this.state, requestInfo, idSoggettoMittente, 
 										aspc, asps, sa, rest, fruizione, request,
-										false);
+										false,
+										kidMode);
 								String tokenIntegrity = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfile, headerTokenRestIntegrity, corniceSicurezza, includiRequestDigest, bustaRitornata, 
 										erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfigIntegrity,
 										buildSecurityTokenInRequest, ModIHeaderType.BOTH_INTEGRITY, integritaCustom, securityHeaderIntegrityObbligatorio,
 										null, null); // gia' inizializzato sopra
 								
-								if(tokenIntegrity!=null) {
-									
-									if(securityConfigIntegrity.getAudience()!=null) {
-										if(request || (securityConfigIntegrity.isCheckAudience())) {
-											String audIntegrity = securityConfigIntegrity.getAudience();
-											audIntegrity = securityConfigIntegrity.getAudience();
-											if(fruizione && !request) {
-												try {
-													audIntegrity = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE, 
-															audIntegrity, dynamicMap, this.context);
-												}catch(Exception e) {
-													this.log.error(e.getMessage(),e);
-													throw e;
-												}
-											}
-											msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_INTEGRITY_CHECK, audIntegrity);
+								if(tokenIntegrity!=null &&
+									securityConfigIntegrity.getAudience()!=null &&
+									(request || (securityConfigIntegrity.isCheckAudience())) 
+									){
+									String audIntegrity = securityConfigIntegrity.getAudience();
+									if(fruizione && !request) {
+										try {
+											audIntegrity = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE, 
+													audIntegrity, dynamicMap, this.context);
+										}catch(Exception e) {
+											this.logError(e.getMessage(),e);
+											throw e;
 										}
 									}
-									
+									msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_INTEGRITY_CHECK, audIntegrity);
 								}
 								
 								// Finalizzo
@@ -515,20 +514,20 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 							
 							if(token!=null) {
 								
-								if(securityConfig.getAudience()!=null) {
-									if(request || (securityConfig.isCheckAudience())) {
-										String audience = securityConfig.getAudience();
-										if(fruizione && !request) {
-											try {
-												audience = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SOAP_WSA_TO, 
-														audience, dynamicMap, this.context);
-											}catch(Exception e) {
-												this.log.error(e.getMessage(),e);
-												throw e;
-											}
+								if(securityConfig.getAudience()!=null &&
+									(request || (securityConfig.isCheckAudience())) 
+									){
+									String audience = securityConfig.getAudience();
+									if(fruizione && !request) {
+										try {
+											audience = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SOAP_WSA_TO, 
+													audience, dynamicMap, this.context);
+										}catch(Exception e) {
+											this.logError(e.getMessage(),e);
+											throw e;
 										}
-										msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK, audience);
 									}
+									msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK, audience);
 								}
 								
 								rawContent = new ModIBustaRawContent(token);
@@ -542,11 +541,11 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 			}
 						
 		}catch(Exception e) {
-			erroreProcessamento_internalMessage = e.getMessage();
+			erroreProcessamentoInternalMessage = e.getMessage();
 			String msgErrore =  "[ErroreInterno]: "+e.getMessage();
-			this.log.error(msgErrore,e);
+			this.logError(msgErrore,e);
 			if(request) {
-				ValidazioneSintatticaResult<AbstractModISecurityToken<?>> errorResult = new ValidazioneSintatticaResult<AbstractModISecurityToken<?>>(null, null, null, 
+				ValidazioneSintatticaResult<AbstractModISecurityToken<?>> errorResult = new ValidazioneSintatticaResult<>(null, null, null, 
 						bustaRitornata, new ErroreCooperazione(msgErrore, CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO), null, null, false);
 				errorResult.setErrore_integrationFunctionError(IntegrationFunctionError.INTERNAL_REQUEST_ERROR);
 				return errorResult;
@@ -555,7 +554,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 				try {
 					erroriProcessamento.add(this.validazioneUtils.newEccezioneProcessamento(CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO));
 				}catch(Exception eInternal) {
-					ValidazioneSintatticaResult<AbstractModISecurityToken<?>> errorResult = new ValidazioneSintatticaResult<AbstractModISecurityToken<?>>(null, null, null, 
+					ValidazioneSintatticaResult<AbstractModISecurityToken<?>> errorResult = new ValidazioneSintatticaResult<>(null, null, null, 
 							bustaRitornata, new ErroreCooperazione(msgErrore, CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO), null, null, false);
 					errorResult.setErrore_integrationFunctionError(IntegrationFunctionError.INTERNAL_RESPONSE_ERROR);
 					return errorResult;
@@ -563,15 +562,14 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 			}
 		}
 		
-		if(erroriValidazione.size()>0 || erroriProcessamento.size()>0) {
-			ValidazioneSintatticaResult<AbstractModISecurityToken<?>> resultError = new ValidazioneSintatticaResult<AbstractModISecurityToken<?>>(erroriValidazione, erroriProcessamento, null, 
+		if(!erroriValidazione.isEmpty() || !erroriProcessamento.isEmpty()) {
+			ValidazioneSintatticaResult<AbstractModISecurityToken<?>> resultError = new ValidazioneSintatticaResult<>(erroriValidazione, erroriProcessamento, null, 
 					bustaRitornata, null, null, rawContent, true);
-			resultError.setErroreProcessamento_internalMessage(erroreProcessamento_internalMessage);
+			resultError.setErroreProcessamento_internalMessage(erroreProcessamentoInternalMessage);
 			
-			if(erroriValidazione.size()>0) {
-				if(this.context!=null) {
-					this.context.addObject(Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO, Costanti.ERRORE_TRUE);
-				}
+			if(!erroriValidazione.isEmpty() &&
+				this.context!=null) {
+				this.context.addObject(Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO, Costanti.ERRORE_TRUE);
 			}
 			
 			return resultError;
@@ -581,10 +579,8 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 		return basicResult;
 	}
 	
-	
-	
-	
-	
-	
+	private void logError(String msg, Exception e) {
+		this.log.error(msg,e);
+	}
 	
 }

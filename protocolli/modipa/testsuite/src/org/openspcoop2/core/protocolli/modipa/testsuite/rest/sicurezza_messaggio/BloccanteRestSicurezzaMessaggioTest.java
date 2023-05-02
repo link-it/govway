@@ -65,10 +65,10 @@ public class BloccanteRestSicurezzaMessaggioTest extends ConfigLoader {
 	@BeforeClass
     public static void beforeClass() {       
         File file = FileUtils.getFileRelativeTo(BloccanteRestSicurezzaMessaggioTest.class, "mock.feature");
-        server = FeatureServer.start(file, Integer.valueOf(prop.getProperty("http_mock_port")), false, new HashMap<String,Object>((Map) prop));
+        server = FeatureServer.start(file, Integer.valueOf(prop.getProperty("http_mock_port")), false, new HashMap<>((Map) prop));
 
         file = FileUtils.getFileRelativeTo(BloccanteRestSicurezzaMessaggioTest.class, "proxy.feature");
-        proxy = FeatureServer.start(file, Integer.valueOf(prop.getProperty("http_port")), false, new HashMap<String,Object>((Map) prop));
+        proxy = FeatureServer.start(file, Integer.valueOf(prop.getProperty("http_port")), false, new HashMap<>((Map) prop));
     }
         
     @AfterClass

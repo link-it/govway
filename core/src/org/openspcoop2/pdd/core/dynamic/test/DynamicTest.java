@@ -1656,15 +1656,15 @@ public class DynamicTest {
 		}
 		
 		
-		Map<String, Object> mapLivello1 = new HashMap<String, Object>();
-		Map<String, Object> mapLivello2 = new HashMap<String, Object>();
+		Map<String, Object> mapLivello1 = new HashMap<>();
+		Map<String, Object> mapLivello2 = new HashMap<>();
 		mapLivello1.put("aa", mapLivello2);
 		mapLivello2.put("attr1", "value1");
 		mapLivello2.put("attr2", "value2");
-		Map<String, Object> mapLivello22 = new HashMap<String, Object>();
+		Map<String, Object> mapLivello22 = new HashMap<>();
 		mapLivello1.put("aa2", mapLivello22);
 		mapLivello22.put("attr21", "value21");
-		Map<String, Object> mapLivello3 = new HashMap<String, Object>();
+		Map<String, Object> mapLivello3 = new HashMap<>();
 		mapLivello3.put("attr31", "value31");
 		mapLivello3.put("attr32", "value32");
 		mapLivello2.put("attr3", mapLivello3);

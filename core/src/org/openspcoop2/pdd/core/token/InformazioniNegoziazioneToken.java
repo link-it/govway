@@ -153,7 +153,7 @@ public class InformazioniNegoziazioneToken extends org.openspcoop2.utils.beans.B
 	private List<String> scopes;
 	
 	// Claims
-	private Map<String,Object> claims = new HashMap<String,Object>();
+	private Map<String,Object> claims = new HashMap<>();
 		
 	// NOTA: l'ordine stabilisce come viene serializzato nell'oggetto json
 	

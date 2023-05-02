@@ -175,7 +175,7 @@ public class Deserializer {
 			for (Record record : pr.getRecords()) {
 	
 				// Costruisco Mappa
-				Map<String, Object> mapFreemarker = new HashMap<String, Object>();
+				Map<String, Object> mapFreemarker = new HashMap<>();
 				if(record.getMap().size()<=0){
 					throw new ProtocolException("Csv Record at line ["+record.getCsvLine()+"] not correct, mapping produce 0 fields");
 				}
@@ -331,7 +331,7 @@ public class Deserializer {
 			for (Record record : pr.getRecords()) {
 	
 				// Costruisco Mappa
-				Map<String, Object> mapFreemarker = new HashMap<String, Object>();
+				Map<String, Object> mapFreemarker = new HashMap<>();
 				if(record.getMap().size()<=0){
 					throw new ProtocolException("Csv Record at line ["+record.getCsvLine()+"] not correct, mapping produce 0 fields");
 				}

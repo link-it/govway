@@ -653,7 +653,7 @@ public class GestoreTrasformazioni {
 		// *** Costruzione Dynamic Map ****
 		
 		this.log.debug("Costruzione dynamic map ...");
-		Map<String, Object> dynamicMap = new HashMap<String, Object>();
+		Map<String, Object> dynamicMap = new HashMap<>();
 		ErrorHandler errorHandler = new ErrorHandler(this.errorGenerator, IntegrationFunctionError.TRANSFORMATION_RULE_REQUEST_FAILED, this.pddContext);
 		DynamicUtils.fillDynamicMapRequest(this.log, dynamicMap, this.pddContext, urlInvocazione,
 				messageP,
@@ -671,7 +671,7 @@ public class GestoreTrasformazioni {
 						(MessaggioDaNotificare.RISPOSTA.equals(messageTypeForNotifier))
 				)
 			) {
-			Map<String, Object> dynamicMapWithResponse = new HashMap<String, Object>();
+			Map<String, Object> dynamicMapWithResponse = new HashMap<>();
 			boolean preserveRequest = true;
 			if(MessaggioDaNotificare.RISPOSTA.equals(messageTypeForNotifier)) {
 				Object o = dynamicMap.remove(Costanti.MAP_RESPONSE); // essendo di ruolo response, viene scritto cosi
@@ -1050,7 +1050,7 @@ public class GestoreTrasformazioni {
 		// *** Costruzione Dynamic Map ****
 		
 		this.log.debug("Costruzione dynamic map ...");
-		Map<String, Object> dynamicMap = new HashMap<String, Object>();
+		Map<String, Object> dynamicMap = new HashMap<>();
 		ErrorHandler errorHandler = new ErrorHandler(this.errorGenerator, IntegrationFunctionError.TRANSFORMATION_RULE_RESPONSE_FAILED, this.pddContext);
 		DynamicUtils.fillDynamicMapResponse(this.log, dynamicMap, this.dynamicMapRequest, this.pddContext, 
 				message,

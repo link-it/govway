@@ -397,7 +397,7 @@ public class DataElement implements Serializable {
 		this.values = s;
 	}
 	public void setValues(List<String> s) {
-		if(s==null || s.size()<=0){
+		if(s==null || s.isEmpty()){
 			return;
 		}
 		this.setValues(s.toArray(new String[1]));

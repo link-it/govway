@@ -73,12 +73,11 @@ public class ModIFactory extends BasicFactory<AbstractModISecurityToken<?>> {
 		
 		BasicStaticInstanceConfig staticInstanceConfig = properties.getStaticInstanceConfig();
 		super.initStaticInstance(staticInstanceConfig);
-		if(staticInstanceConfig!=null) {
-			if(staticInstanceConfig.isStaticConfig()) {
-				staticInstanceProtocolManager = new ModIProtocolManager(this);
-				staticInstanceProtocolVersionManager = new HashMap<String, IProtocolVersionManager>();
-				staticInstanceProtocolConfiguration = new ModIProtocolConfiguration(this);
-			}
+		if(staticInstanceConfig!=null &&
+			staticInstanceConfig.isStaticConfig()) {
+			staticInstanceProtocolManager = new ModIProtocolManager(this);
+			staticInstanceProtocolVersionManager = new HashMap<>();
+			staticInstanceProtocolConfiguration = new ModIProtocolConfiguration(this);
 		}
 	}
 	

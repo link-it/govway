@@ -142,7 +142,7 @@ public class GestoreCodaRunnable extends BaseThread{
 				return; // termino subito
 			}
 			
-			HashMap<String, Object> context = new HashMap<String, Object>();
+			HashMap<String, Object> context = new HashMap<>();
 			this.gestoreRunnable.logCheckInProgress(context);
 			
 			while(this.isStop() == false) {
@@ -220,7 +220,7 @@ public class GestoreCodaRunnable extends BaseThread{
 					
 					this.sleepForNextCheck(this.getTimeout(), 1000);
 					
-					context = new HashMap<String, Object>();
+					context = new HashMap<>();
 					this.gestoreRunnable.logCheckInProgress(context);
 				}
 			}

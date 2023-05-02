@@ -32,6 +32,8 @@ import org.openspcoop2.utils.resources.Loader;
  * @version $Rev$, $Date$
  */
 public class NegoziazioneTokenDynamicParametersModIUtils {
+	
+	private NegoziazioneTokenDynamicParametersModIUtils() {}
 
 	private static Class<?> modIPropertiesClass = null;
 	private static Object modIProperties = null;
@@ -53,20 +55,20 @@ public class NegoziazioneTokenDynamicParametersModIUtils {
 		}
 		return modIProperties;
 	}
-	public static String getSicurezzaMessaggio_certificati_keyStore_tipo() throws ProtocolException {
+	public static String getSicurezzaMessaggioCertificatiKeyStoreTipo() throws ProtocolException {
 		try {
 			Object o = getModiProperties();
-			Method m = modIPropertiesClass.getMethod("getSicurezzaMessaggio_certificati_keyStore_tipo");
+			Method m = modIPropertiesClass.getMethod("getSicurezzaMessaggioCertificatiKeyStoreTipo");
 			return (String) m.invoke(o);
 		}catch(Exception e) {
 			throw new ProtocolException(e.getMessage(),e);
 		}
 	}
-	public static String getSicurezzaMessaggio_certificati_keyStore_path() throws ProtocolException {
+	public static String getSicurezzaMessaggioCertificatiKeyStorePath() throws ProtocolException {
 		try {
-			if(getSicurezzaMessaggio_certificati_keyStore_tipo()!=null) {
+			if(getSicurezzaMessaggioCertificatiKeyStoreTipo()!=null) {
 				Object o = getModiProperties();
-				Method m = modIPropertiesClass.getMethod("getSicurezzaMessaggio_certificati_keyStore_path");
+				Method m = modIPropertiesClass.getMethod("getSicurezzaMessaggioCertificatiKeyStorePath");
 				return (String) m.invoke(o);
 			}
 			return null;
@@ -74,11 +76,11 @@ public class NegoziazioneTokenDynamicParametersModIUtils {
 			throw new ProtocolException(e.getMessage(),e);
 		}
 	}
-	public static String getSicurezzaMessaggio_certificati_keyStore_password() throws ProtocolException {
+	public static String getSicurezzaMessaggioCertificatiKeyStorePassword() throws ProtocolException {
 		try {
-			if(getSicurezzaMessaggio_certificati_keyStore_tipo()!=null) {
+			if(getSicurezzaMessaggioCertificatiKeyStoreTipo()!=null) {
 				Object o = getModiProperties();
-				Method m = modIPropertiesClass.getMethod("getSicurezzaMessaggio_certificati_keyStore_password");
+				Method m = modIPropertiesClass.getMethod("getSicurezzaMessaggioCertificatiKeyStorePassword");
 				return (String) m.invoke(o);
 			}
 			return null;
@@ -86,11 +88,11 @@ public class NegoziazioneTokenDynamicParametersModIUtils {
 			throw new ProtocolException(e.getMessage(),e);
 		}
 	}
-	public static String getSicurezzaMessaggio_certificati_key_alias() throws ProtocolException {
+	public static String getSicurezzaMessaggioCertificatiKeyAlias() throws ProtocolException {
 		try {
-			if(getSicurezzaMessaggio_certificati_keyStore_tipo()!=null) {
+			if(getSicurezzaMessaggioCertificatiKeyStoreTipo()!=null) {
 				Object o = getModiProperties();
-				Method m = modIPropertiesClass.getMethod("getSicurezzaMessaggio_certificati_key_alias");
+				Method m = modIPropertiesClass.getMethod("getSicurezzaMessaggioCertificatiKeyAlias");
 				return (String) m.invoke(o);
 			}
 			return null;
@@ -98,11 +100,11 @@ public class NegoziazioneTokenDynamicParametersModIUtils {
 			throw new ProtocolException(e.getMessage(),e);
 		}
 	}
-	public static String getSicurezzaMessaggio_certificati_key_password() throws ProtocolException {
+	public static String getSicurezzaMessaggioCertificatiKeyPassword() throws ProtocolException {
 		try {
-			if(getSicurezzaMessaggio_certificati_keyStore_tipo()!=null) {
+			if(getSicurezzaMessaggioCertificatiKeyStoreTipo()!=null) {
 				Object o = getModiProperties();
-				Method m = modIPropertiesClass.getMethod("getSicurezzaMessaggio_certificati_key_password");
+				Method m = modIPropertiesClass.getMethod("getSicurezzaMessaggioCertificatiKeyPassword");
 				return (String) m.invoke(o);
 			}
 			return null;

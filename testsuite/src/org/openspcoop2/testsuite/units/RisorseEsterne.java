@@ -176,13 +176,13 @@ public class RisorseEsterne extends GestioneViaJmx {
 		Map<String, Object> env = null;
 		if(unitsTestsuiteProperties.getJMXUsername()!=null && unitsTestsuiteProperties.getJMXPassword()!=null){
 			String[] creds = {unitsTestsuiteProperties.getJMXUsername(), unitsTestsuiteProperties.getJMXPassword()};
-			env = new HashMap<String, Object>();
+			env = new HashMap<>();
 			env.put(JMXConnector.CREDENTIALS, creds);
 		}
 		JMXConnector jmxConnector = JMXConnectorFactory.connect(serviceURL, env);           
 		jmxconn = jmxConnector.getMBeanServerConnection();	
 //		}else{
-//			Map<String, Object> env = new HashMap<String, Object>();
+//			Map<String, Object> env = new HashMap<>();
 //			env.put(javax.naming.Context.INITIAL_CONTEXT_FACTORY, this.unitsTestsuiteProperties.getJMXFactory());
 //			env.put(javax.naming.Context.PROVIDER_URL, this.unitsTestsuiteProperties.getJMXServer());
 //			

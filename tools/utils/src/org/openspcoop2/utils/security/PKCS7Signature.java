@@ -43,6 +43,7 @@ import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.util.Store;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.KeyStore;
+import org.openspcoop2.utils.certificate.KeystoreType;
 
 /**	
  * Signature
@@ -55,14 +56,13 @@ public class PKCS7Signature {
 
 	public static final String DEFAULT_SIGNATURE_METHOD = SignatureMethod.RSA_SHA256;
 	
-	private KeyStore keystore;
 	private PrivateKey privateKey;
 	private Certificate certificate;
 	private Provider provider;
 	
 	public PKCS7Signature(KeyStore keystore, String alias, String passwordPrivateKey) throws UtilsException{
 		boolean useKeystoreProvider = false;
-		if(keystore!=null && "pkcs11".equalsIgnoreCase(keystore.getKeystoreType())) {
+		if(keystore!=null && KeystoreType.PKCS11.getNome().equalsIgnoreCase(keystore.getKeystoreType())) {
 			useKeystoreProvider = true;
 			// Prendo il provider dal keystore per PKCS11, il cui provider implementa l'algoritmo di firma specifica per la chiave memorizzata nel dispositivo.
 		}
@@ -90,9 +90,8 @@ public class PKCS7Signature {
 		if(keystore==null) {
 			throw new UtilsException("Keystore undefined");
 		}
-		this.keystore = keystore;
-		this.privateKey = this.keystore.getPrivateKey(alias, passwordPrivateKey);
-		this.certificate = this.keystore.getCertificate(alias);
+		this.privateKey = keystore.getPrivateKey(alias, passwordPrivateKey);
+		this.certificate = keystore.getCertificate(alias);
 		
 		if(useKeystoreProvider) {
 			this.provider = keystore.getKeystoreProvider();

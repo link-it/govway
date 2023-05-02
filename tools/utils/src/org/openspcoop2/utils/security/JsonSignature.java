@@ -38,6 +38,7 @@ import org.apache.cxf.rs.security.jose.jws.JwsSignatureProvider;
 import org.apache.cxf.rs.security.jose.jws.JwsUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.KeyStore;
+import org.openspcoop2.utils.certificate.KeystoreType;
 
 /**	
  * JsonSignature
@@ -64,7 +65,7 @@ public class JsonSignature {
 				try {
 					this.provider = JwsUtils.loadSignatureProvider(JsonUtils.newMessage(), props, this.headers);
 				}catch(JwsException jwsExc) {
-					if(jwsExc!=null && jwsExc.getMessage()!=null && jwsExc.getMessage().contains("NO_PROVIDER")) {
+					if(jwsExc.getMessage()!=null && jwsExc.getMessage().contains("NO_PROVIDER")) {
 						// caso in cui la chiave privata PKCS11 non e' stata mappata in un PrivateKeyJwsSignatureProvider
 						// caso pkcs11 dove la chiave privata non e' ne ECPrivateKey ne RSAPrivateKey gestita dal metodo getPrivateKeySignatureProvider
 						// ad es. può essere sun.security.pkcs11.P11Key$P11PrivateKey
@@ -78,7 +79,7 @@ public class JsonSignature {
 			}
 			this.options=options;
 			this.jwtHeaders = jwtHeaders;
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw JsonUtils.convert(options.getSerialization(), JsonUtils.SIGNATURE,JsonUtils.SENDER,t);
 		}
 	}
@@ -101,10 +102,10 @@ public class JsonSignature {
 			
 			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(signatureAlgorithm);
 			if(secretKey) {
-				String tipo = "JCEKS";
+				String tipo = KeystoreType.JCEKS.getLabel();
 				SecretKey secret = keystore.getSecretKey(alias, passwordPrivateKey);
-				if("pkcs11".equalsIgnoreCase(keystore.getKeystoreType())) {
-					tipo = "PKCS11";
+				if(KeystoreType.PKCS11.getNome().equalsIgnoreCase(keystore.getKeystoreType())) {
+					tipo = KeystoreType.PKCS11.getLabel();
 					SecretKeyPkcs11 secretKeyPkcs11 = new SecretKeyPkcs11(keystore.getKeystoreProvider(), secret);
 					this.provider = new HmacJwsSignatureProviderExtended(secretKeyPkcs11, algo);
 				}
@@ -112,7 +113,7 @@ public class JsonSignature {
 					this.provider = JwsUtils.getHmacSignatureProvider(secret.getEncoded(), algo);
 				}
 				if(this.provider==null) {
-					throw new Exception("("+tipo+") JwsSignatureProvider init failed; check signature algorithm ("+signatureAlgorithm+")");
+					throw new UtilsException("("+tipo+") JwsSignatureProvider init failed; check signature algorithm ("+signatureAlgorithm+")");
 				}
 			}
 			else {
@@ -124,13 +125,13 @@ public class JsonSignature {
 					// ad es. può essere sun.security.pkcs11.P11Key$P11PrivateKey
 					this.provider = JsonUtils.getJwsAsymmetricProvider(pKey, algo);
 					if(this.provider==null) {
-						throw new Exception("("+keystore.getKeystore().getType()+") JwsSignatureProvider init failed; check signature algorithm ("+signatureAlgorithm+")");
+						throw new UtilsException("("+keystore.getKeystore().getType()+") JwsSignatureProvider init failed; check signature algorithm ("+signatureAlgorithm+")");
 					}
 				}
 			}
 			this.options=options;
 			this.jwtHeaders = jwtHeaders;
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw JsonUtils.convert(options.getSerialization(), JsonUtils.SIGNATURE,JsonUtils.SENDER,t);
 		}
 	}
@@ -153,17 +154,16 @@ public class JsonSignature {
 		try {
 			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(signatureAlgorithm);
 			if(secretKey) {
-				//this.provider = JwsUtils.getHmacSignatureProvider(JwkUtils.toSecretKey(jsonWebKey).getEncoded(), algo);
 				this.provider = JwsUtils.getSignatureProvider(jsonWebKey, algo);
 				if(this.provider==null) {
-					throw new Exception("(JsonWebKey) JwsSignatureProvider init failed; check signature algorithm ("+signatureAlgorithm+")");
+					throw new UtilsException("(JsonWebKey) JwsSignatureProvider init failed; check signature algorithm ("+signatureAlgorithm+")");
 				}
 			}else {
 				this.provider = JwsUtils.getPrivateKeySignatureProvider(JwkUtils.toRSAPrivateKey(jsonWebKey), algo);
 			}
 			this.options=options;
 			this.jwtHeaders = jwtHeaders;
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw JsonUtils.convert(options.getSerialization(), JsonUtils.SIGNATURE,JsonUtils.SENDER,t);
 		}
 	}
@@ -177,11 +177,11 @@ public class JsonSignature {
 			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(signatureAlgorithm);
 			this.provider = JwsUtils.getHmacSignatureProvider(secret.getBytes(), algo);
 			if(this.provider==null) {
-				throw new Exception("(Secret) JwsSignatureProvider init failed; check signature algorithm ("+signatureAlgorithm+")");
+				throw new UtilsException("(Secret) JwsSignatureProvider init failed; check signature algorithm ("+signatureAlgorithm+")");
 			}
 			this.options=options;
 			this.jwtHeaders = jwtHeaders;
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw JsonUtils.convert(options.getSerialization(), JsonUtils.SIGNATURE,JsonUtils.SENDER,t);
 		}
 	}
@@ -194,44 +194,43 @@ public class JsonSignature {
 				default: throw new UtilsException("Unsupported serialization '"+this.options.getSerialization()+"'");
 			}
 		}
-		catch(Throwable t) {
+		catch(Exception t) {
 			throw JsonUtils.convert(this.options.getSerialization(), JsonUtils.SIGNATURE,JsonUtils.SENDER,t);
 		}
 	}
 
 	private String signCompact(String jsonString) throws Exception {
-		JwsHeaders headers = new JwsHeaders(this.provider.getAlgorithm());
+		JwsHeaders headersInternal = new JwsHeaders(this.provider.getAlgorithm());
 		// utilizzabile solamente per JSON. Per COMPACT è sconsigliato poichè limitato nei caratteri, non utilizzabile quindi per un json https://tools.ietf.org/html/rfc7797#page-8
 		// Infatti JwsCompactProducer di cxf non lo implementa proprio se si va a vedere il codice, il metodo 'getUnsignedEncodedJws' utilizzato per comporre il jwt non prevede il caso di lasciarlo in chiaro
-//		if(this.options.isPayloadEncoding()==false) {
+/**		if(this.options.isPayloadEncoding()==false) {
 //			headers.setPayloadEncodingStatus(this.options.isPayloadEncoding()); // RFC: https://tools.ietf.org/html/rfc7797
-//		}
-		JwsCompactProducer jwsProducer = new JwsCompactProducer(headers, jsonString, this.options.isDetached());
+//		}*/
+		JwsCompactProducer jwsProducer = new JwsCompactProducer(headersInternal, jsonString, this.options.isDetached());
 		fillJwtHeaders(jwsProducer.getJwsHeaders(), this.provider.getAlgorithm());
 		return jwsProducer.signWith(this.provider);
 	}
 
 	private String signJson(String jsonString) throws Exception {
 		JwsJsonProducer jwsProducer = new JwsJsonProducer(jsonString, false, this.options.isDetached());
-		JwsHeaders headers = new JwsHeaders(this.provider.getAlgorithm());
-		if(this.options.isPayloadEncoding()==false) {
-			headers.setPayloadEncodingStatus(this.options.isPayloadEncoding()); // RFC: https://tools.ietf.org/html/rfc7797
+		JwsHeaders headersInternal = new JwsHeaders(this.provider.getAlgorithm());
+		if(!this.options.isPayloadEncoding()) {
+			headersInternal.setPayloadEncodingStatus(this.options.isPayloadEncoding()); // RFC: https://tools.ietf.org/html/rfc7797
 		}
-		fillJwtHeaders(headers, this.provider.getAlgorithm());
-		return jwsProducer.signWith(this.provider, headers);
+		fillJwtHeaders(headersInternal, this.provider.getAlgorithm());
+		return jwsProducer.signWith(this.provider, headersInternal);
 	}
 
 	
 	private void fillJwtHeaders(JwsHeaders headers,
 			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm signatureAlgo) throws Exception {
-		if(this.headers!=null) {
-			if(this.headers.asMap()!=null && !this.headers.asMap().isEmpty()) {
-				Iterator<String> itKeys = this.headers.asMap().keySet().iterator();
-				while (itKeys.hasNext()) {
-					String key = (String) itKeys.next();
-					if(!headers.containsHeader(key)) {
-						headers.setHeader(key, this.headers.getHeader(key));
-					}
+		if(this.headers!=null &&
+			this.headers.asMap()!=null && !this.headers.asMap().isEmpty()) {
+			Iterator<String> itKeys = this.headers.asMap().keySet().iterator();
+			while (itKeys.hasNext()) {
+				String key = itKeys.next();
+				if(!headers.containsHeader(key)) {
+					headers.setHeader(key, this.headers.getHeader(key));
 				}
 			}
 		}

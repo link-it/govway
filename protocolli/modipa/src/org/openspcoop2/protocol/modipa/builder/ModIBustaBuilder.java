@@ -83,24 +83,23 @@ public class ModIBustaBuilder extends BustaBuilder<AbstractModISecurityToken<?>>
 				ruoloMessaggio, proprietaManifestAttachments, faseImbustamento);
 		
 		boolean imbusta = true;
-		if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio)) {
-			if(busta.sizeListaEccezioni()>0) {
-				boolean ignoraEccezioniNonGravi = this.protocolFactory.createProtocolManager().isIgnoraEccezioniNonGravi();
-				if(ignoraEccezioniNonGravi){
-					if(busta.containsEccezioniGravi() ){
-						imbusta = false;
-					}
-				}
-				else{
+		if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio) &&
+			busta.sizeListaEccezioni()>0) {
+			boolean ignoraEccezioniNonGravi = this.protocolFactory.createProtocolManager().isIgnoraEccezioniNonGravi();
+			if(ignoraEccezioniNonGravi){
+				if(busta.containsEccezioniGravi() ){
 					imbusta = false;
 				}
+			}
+			else{
+				imbusta = false;
 			}
 		}
 		
 		if(imbusta) {
 			ModIImbustamento imbustamento = new ModIImbustamento(this.getLog());
 			protocolMessage = imbustamento.buildMessage(msg, context, busta, bustaRichiesta,
-					ruoloMessaggio, proprietaManifestAttachments, 
+					ruoloMessaggio,  
 					this.getProtocolFactory().getCachedRegistryReader(this.state, requestInfo), 
 					this.getProtocolFactory().getCachedConfigIntegrationReader(this.state, requestInfo),
 					this.getProtocolFactory(), this.state);
@@ -193,7 +192,6 @@ public class ModIBustaBuilder extends BustaBuilder<AbstractModISecurityToken<?>>
 	@Override
 	public String newID(IDSoggetto idSoggetto, String idTransazione, RuoloMessaggio ruoloMessaggio) throws ProtocolException {
 		return super.newID( idSoggetto, idTransazione, ruoloMessaggio, this.modipaProperties.generateIDasUUID());
-		//return "PROVA-"+ruoloMessaggio.name();
 	}
 	
 	

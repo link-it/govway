@@ -58,12 +58,12 @@ public class LoginHelper extends ConsoleHelper {
 				
 			// Campi obbligatori
 			if (login.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare un "+LoginCostanti.LABEL_USERNAME,MessageType.ERROR_SINTETICO);
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare un "+LoginCostanti.LABEL_USERNAME,MessageType.ERROR_SINTETICO);
 				return false;
 			}
 			if (tipoCheck.equals(LoginTipologia.WITH_PASSWORD)) {
 				if (password.equals("")) {
-					this.pd.setMessage("Dati incompleti. E' necessario indicare una Password",MessageType.ERROR_SINTETICO);
+					this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare una Password",MessageType.ERROR_SINTETICO);
 					return false;
 				}
 			}

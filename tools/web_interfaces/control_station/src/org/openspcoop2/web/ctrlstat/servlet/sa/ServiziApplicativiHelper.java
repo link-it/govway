@@ -151,7 +151,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			
 				// Campi obbligatori
 				if (tipoauth.equals("")) {
-					this.pd.setMessage("Dati incompleti. E' necessario indicare il Tipo");
+					this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare il Tipo");
 					return false;
 				}
 				if (tipoauth.equals(CostantiConfigurazione.CREDENZIALE_BASIC.toString()) && (utente.equals("") || password.equals("") /*
@@ -179,7 +179,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					 * "Conferma password"; } else { tmpElenco = tmpElenco + ", Conferma
 					 * password"; } }
 					 */
-					this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+					this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
 					return false;
 				}
 	
@@ -224,11 +224,11 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					}
 					
 					if(getmsgUsername==null || "".equals(getmsgUsername)) {
-						this.pd.setMessage("Dati incompleti. E' necessario indicare 'Username' per il servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"'");
+						this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare 'Username' per il servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"'");
 						return false;
 					}
 					if(passwordEmpty) {
-						this.pd.setMessage("Dati incompleti. E' necessario indicare 'Password' per il servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"'");
+						this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare 'Password' per il servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"'");
 						return false;
 					}
 					if (((getmsgUsername.indexOf(" ") != -1) || (validaPassword && getmsgPassword.indexOf(" ") != -1))) {
@@ -1434,7 +1434,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-					autenticazioneToken, tokenPolicy,
+					autenticazioneToken, tokenPolicy, false, false,
 					listExtendedConnettore, connettoreErogatoreForceEnabled,
 					nomeProtocollo, false, false
 					, false, servizioApplicativoServerEnabled, null, null
@@ -1520,7 +1520,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						tmpElenco = tmpElenco + ", "+ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER;
 					}
 				}
-				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
 				return false;
 			}
 //			if (tipoauth.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_BASIC) && (utente.equals("") || password.equals("") /*
@@ -1548,12 +1548,12 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 //				 * tmpElenco = "Conferma password"; } else { tmpElenco =
 //				 * tmpElenco + ", Conferma password"; } }
 //				 */
-//				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+//				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
 //				return false;
 //			}
 //			if (tipoauth.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_SSL)){
 //				if (subject.equals("")) {
-//					this.pd.setMessage("Dati incompleti. E' necessario indicare il "+
+//					this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare il "+
 //							ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_SUBJECT);
 //					return false;
 //				}else{

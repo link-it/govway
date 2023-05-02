@@ -37,8 +37,7 @@ import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.utils.RegistroServiziUtils;
-//import org.openspcoop2.security.message.constants.SecurityConstants;
-//import org.openspcoop2.security.message.constants.SignatureC14NAlgorithm;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.digest.DigestEncoding;
@@ -51,6 +50,8 @@ import org.openspcoop2.utils.digest.DigestEncoding;
  * @version $Rev$, $Date$
  */
 public class ModIUtils {
+	
+	private ModIUtils() {}
 
 	// COSTANTI boolean
 	public static final String INTEGRITY = "integrity";
@@ -69,6 +70,7 @@ public class ModIUtils {
 	public static final String API_SICUREZZA_CANALE_PATTERN = API_PREFIX+"channel-security-pattern";
 	public static final String API_SICUREZZA_MESSAGGIO_PREFIX = API_PREFIX+"message-security";
 	public static final String API_SICUREZZA_MESSAGGIO_PATTERN = API_SICUREZZA_MESSAGGIO_PREFIX+"-pattern";
+	public static final String API_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_ID_AUTH = API_SICUREZZA_MESSAGGIO_PREFIX+"-sorgente-token-id-auth";
 	public static final String API_SICUREZZA_MESSAGGIO_HTTP_HEADER = API_SICUREZZA_MESSAGGIO_PREFIX+"-http-header";
 	public static final String API_SICUREZZA_MESSAGGIO_APPLICABILITA = API_SICUREZZA_MESSAGGIO_PREFIX+"-applicability";
 	public static final String API_SICUREZZA_MESSAGGIO_REQUEST_DIGEST = API_SICUREZZA_MESSAGGIO_PREFIX+"-request-digest";
@@ -107,7 +109,7 @@ public class ModIUtils {
 	public static Map<String, String> configToMap(AccordoServizioParteComune aspc, AccordoServizioParteSpecifica asps,
 			String urlInvocazione, 
 			Fruitore fruitore, String urlConnettoreFruitoreModI
-			) throws Exception{
+			) throws ProtocolException{
 		
 		boolean gestioneErogatori = (fruitore==null);
 		boolean gestioneFruitori = !gestioneErogatori;
@@ -117,7 +119,7 @@ public class ModIUtils {
 		List<ProtocolProperty> protocolPropertyList = gestioneErogatori ? asps.getProtocolPropertyList() : fruitore.getProtocolPropertyList();
 		
 		boolean rest = ServiceBinding.REST.equals(aspc.getServiceBinding());
-		boolean digest = isProfiloSicurezzaMessaggioConIntegrita(aspc, asps.getPortType());
+		boolean digest = isProfiloSicurezzaMessaggioConIntegritaX509(aspc, asps.getPortType()) || isProfiloSicurezzaMessaggioConIntegritaKid(aspc, asps.getPortType());
 		boolean digestRichiesta = isProfiloSicurezzaMessaggioRequestDigest(aspc, asps.getPortType());
 		boolean corniceSicurezza = isProfiloSicurezzaMessaggioCorniceSicurezza(aspc, asps.getPortType());
 		boolean headerDuplicati = false;
@@ -172,6 +174,18 @@ public class ModIUtils {
 					}
 					sbMes.append(rest ? CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0302_REST : CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0302_SOAP );
 				}
+				else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(pattern) && rest) {
+					if(sbMes.length()>0) {
+						sbMes.append(", ");
+					}
+					sbMes.append(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0401_REST);
+				}
+				else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(pattern) && rest) {
+					if(sbMes.length()>0) {
+						sbMes.append(", ");
+					}
+					sbMes.append(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0402_REST);
+				}
 			}
 			if(sbMes.length()>0) {
 				sicurezzaMessaggio = true;
@@ -180,6 +194,35 @@ public class ModIUtils {
 		}
 		
 		if(sicurezzaMessaggio) {
+			
+			// Sorgente Token ID AUTH
+			tmp = RegistroServiziUtils.fillPropertyProtocollo(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH, aspc, asps.getPortType(), false);
+			if(tmp!=null && !tmp.isEmpty()) {
+				StringBuilder sbMes = new StringBuilder();
+				for (String mode : tmp) {
+					if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_LOCALE.equals(mode)) {
+						if(sbMes.length()>0) {
+							sbMes.append(", ");
+						}
+						sbMes.append(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_LOCALE);
+					}
+					else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND.equals(mode)) {
+						if(sbMes.length()>0) {
+							sbMes.append(", ");
+						}
+						sbMes.append(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_PDND);
+					}
+					else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH.equals(mode)) {
+						if(sbMes.length()>0) {
+							sbMes.append(", ");
+						}
+						sbMes.append(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_OAUTH);
+					}
+				}
+				if(sbMes.length()>0) {
+					map.put(API_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_ID_AUTH, sbMes.toString());
+				}
+			}
 			
 			if(rest) {
 				// Header (duplicati)
@@ -339,7 +382,10 @@ public class ModIUtils {
 	
 	public static String getPrefixKey(boolean fruizione, boolean request) {
 		String prefixKey = null;
-		/*if(request) {
+		if(fruizione) {
+			// nop
+		}
+		/**if(request) {
 			prefixKey = fruizione ? "out-request-" : "in-request-"; 
 		}
 		else {
@@ -387,15 +433,12 @@ public class ModIUtils {
 				if(v!=null) {
 					try {
 						DigestEncoding de = DigestEncoding.valueOf(v);
-						switch (de) {
-						case BASE64:
+						if(DigestEncoding.BASE64.equals(de)) {
 							map.put(prefixKey+API_IMPL_SICUREZZA_MESSAGGIO_DIGEST_ENCODING, CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_DIGEST_ENCODING_LABEL_BASE64);
-							break;
-						case HEX:
+						}else{ //HEX:
 							map.put(prefixKey+API_IMPL_SICUREZZA_MESSAGGIO_DIGEST_ENCODING, CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_DIGEST_ENCODING_LABEL_HEX);
-							break;
 						}
-					}catch(Throwable t) {
+					}catch(Exception t) {
 						map.put(prefixKey+API_IMPL_SICUREZZA_MESSAGGIO_DIGEST_ENCODING, v);
 					}
 				}
@@ -404,12 +447,12 @@ public class ModIUtils {
 				}
 			}
 			
-			if(digest) {
+			if(digest &&
 				// header firmati
-				if( (request && fruizione) || (!request && !fruizione) ) {
-					map.put(prefixKey+API_IMPL_SICUREZZA_MESSAGGIO_HTTP_HEADER_FIRMATI, 
-							getStringValue(protocolPropertyList, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST));
-				}
+				( (request && fruizione) || (!request && !fruizione) ) 
+				){
+				map.put(prefixKey+API_IMPL_SICUREZZA_MESSAGGIO_HTTP_HEADER_FIRMATI, 
+						getStringValue(protocolPropertyList, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST));
 			}
 			
 			// Posizione Certificato
@@ -472,14 +515,18 @@ public class ModIUtils {
 				map.put(prefixKey+API_IMPL_SICUREZZA_MESSAGGIO_CANONICALIZATION_ALGORITHM,algoLabel);
 			}
 			
-			if(digest) {
+			if(digest &&
 				// header firmati
-				if( (request && fruizione) || (!request && !fruizione) ) {
-					String v = getStringValue(protocolPropertyList, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_HEADERS_SOAP);
-					if(v!=null) {
-						v = v.replaceAll("\n", ", ");
-						map.put(prefixKey+API_IMPL_SICUREZZA_MESSAGGIO_SOAP_HEADER_FIRMATI, v);
+				( (request && fruizione) || (!request && !fruizione) ) 
+			){
+				String v = getStringValue(protocolPropertyList, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_HEADERS_SOAP);
+				if(v!=null) {
+					int index = 0;
+					while(v.contains("\n") && index<1000) {
+						v = v.replace("\n", ", ");
+						index++;
 					}
+					map.put(prefixKey+API_IMPL_SICUREZZA_MESSAGGIO_SOAP_HEADER_FIRMATI, v);
 				}
 			}
 			
@@ -590,9 +637,12 @@ public class ModIUtils {
 		boolean audit = false;
 		if(request) {
 			String v = getStringValue(protocolPropertyList, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE);
-			String aud = (v!=null ? 
-					v : 
-					fruizione ? urlConnettoreFruitoreModI : urlInvocazione);
+			String aud = null;
+			if(v!=null) {
+				aud = v;
+			}else {
+				aud = fruizione ? urlConnettoreFruitoreModI : urlInvocazione;
+			}
 			map.put(prefixKey+API_IMPL_SICUREZZA_MESSAGGIO_AUDIENCE, 
 					aud);
 			audit = true;
@@ -630,6 +680,11 @@ public class ModIUtils {
 			}
 		}
 		
+		// CorniceSicurezza
+		if(corniceSicurezza) {
+			// nop
+		}
+		
 		// Header Duplicati
 		if(rest && headerDuplicati && 
 				( 
@@ -637,22 +692,19 @@ public class ModIUtils {
 						||
 						(request && !fruizione)
 				)
-			) {
-			
-			if(audit) {
-				String idAuditDifferent = request ? CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_AUDIENCE  :
-					CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_DOPPI_HEADER_AUDIENCE;
-				String v = getStringValue(protocolPropertyList, idAuditDifferent);
-				if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_AUDIENCE_VALUE_DIFFERENT.equals(v)) {
-					String idAudit = request ? CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_AUDIENCE_INTEGRITY :
-						CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_DOPPI_HEADER_AUDIENCE_INTEGRITY;					
-					v = getStringValue(protocolPropertyList, idAudit);
-					if(v!=null && StringUtils.isNotEmpty(v)) {
-						map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_INTEGRITY_AUDIENCE, v);
-					}
+				&&
+				audit) {
+			String idAuditDifferent = request ? CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_AUDIENCE  :
+				CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_DOPPI_HEADER_AUDIENCE;
+			String v = getStringValue(protocolPropertyList, idAuditDifferent);
+			if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_AUDIENCE_VALUE_DIFFERENT.equals(v)) {
+				String idAudit = request ? CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_AUDIENCE_INTEGRITY :
+					CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_DOPPI_HEADER_AUDIENCE_INTEGRITY;					
+				v = getStringValue(protocolPropertyList, idAudit);
+				if(v!=null && StringUtils.isNotEmpty(v)) {
+					map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_INTEGRITY_AUDIENCE, v);
 				}
 			}	
-			
 		}
 		
 		
@@ -754,7 +806,6 @@ public class ModIUtils {
 			String crl = null;
 			String ocsp = null;
 			String aliasKey = null;
-			@SuppressWarnings("unused")
 			boolean keystoreModePath = false;
 			boolean keystoreModeArchive = false;
 			boolean keystoreModeHsm = false;
@@ -790,6 +841,10 @@ public class ModIUtils {
 			if(type!=null) {
 				vType = getStringValue(protocolPropertyList, type);
 				map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_STORE_TYPE,vType);
+			}
+			
+			if(keystoreModePath) {
+				// nop
 			}
 			
 			boolean hsm = false;
@@ -833,12 +888,24 @@ public class ModIUtils {
 		
 	}
 		
-	private static boolean isProfiloSicurezzaMessaggioConIntegrita(AccordoServizioParteComune api, String portType) {
+	private static boolean isProfiloSicurezzaMessaggioConIntegritaX509(AccordoServizioParteComune api, String portType) {
 		List<String> tmp = RegistroServiziUtils.fillPropertyProtocollo(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, api, portType, false);
 		if(tmp!=null && !tmp.isEmpty()) {
 			for (String profiloSicurezzaMessaggio : tmp) {
 				if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(profiloSicurezzaMessaggio) ||
 						CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(profiloSicurezzaMessaggio)) {
+					return true;
+				}		
+			}
+		}
+		return false;
+	}
+	private static boolean isProfiloSicurezzaMessaggioConIntegritaKid(AccordoServizioParteComune api, String portType) {
+		List<String> tmp = RegistroServiziUtils.fillPropertyProtocollo(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, api, portType, false);
+		if(tmp!=null && !tmp.isEmpty()) {
+			for (String profiloSicurezzaMessaggio : tmp) {
+				if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(profiloSicurezzaMessaggio) ||
+						CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(profiloSicurezzaMessaggio)) {
 					return true;
 				}		
 			}
@@ -882,12 +949,16 @@ public class ModIUtils {
 		return false;
 	}
 	
-	private static String getHeaderModI() throws Exception {
-		Class<?> modiPropertiesClass = Class.forName("org.openspcoop2.protocol.modipa.config.ModIProperties");
-		Method mGetInstance = modiPropertiesClass.getMethod("getInstance");
-		Object instance = mGetInstance.invoke(null);
-		Method mGetRestSecurityTokenHeaderModI = instance.getClass().getMethod("getRestSecurityTokenHeaderModI");
-		return (String) mGetRestSecurityTokenHeaderModI.invoke(instance);
+	private static String getHeaderModI() throws ProtocolException {
+		try {
+			Class<?> modiPropertiesClass = Class.forName("org.openspcoop2.protocol.modipa.config.ModIProperties");
+			Method mGetInstance = modiPropertiesClass.getMethod("getInstance");
+			Object instance = mGetInstance.invoke(null);
+			Method mGetRestSecurityTokenHeaderModI = instance.getClass().getMethod("getRestSecurityTokenHeaderModI");
+			return (String) mGetRestSecurityTokenHeaderModI.invoke(instance);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
 	}
 	
 	public static KeystoreParams getApplicativoKeystoreParams(List<org.openspcoop2.core.config.ProtocolProperty> protocolPropertyList) {
@@ -898,14 +969,13 @@ public class ModIUtils {
 		
 		KeystoreParams keystoreParams = null;
 		
-		String sicurezza = getStringValue_config(protocolPropertyList,CostantiDB.MODIPA_SICUREZZA_MESSAGGIO);
+		String sicurezza = getStringValueConfig(protocolPropertyList,CostantiDB.MODIPA_SICUREZZA_MESSAGGIO);
 		if("true".equals(sicurezza)) {
 			
-			@SuppressWarnings("unused")
 			boolean keystoreModePath = false;
 			boolean keystoreModeArchive = false;
 			boolean keystoreModeHsm = false;
-			String mode = getStringValue_config(protocolPropertyList, CostantiDB.MODIPA_KEYSTORE_MODE);
+			String mode = getStringValueConfig(protocolPropertyList, CostantiDB.MODIPA_KEYSTORE_MODE);
 			String path =null;
 			String type = CostantiDB.MODIPA_KEYSTORE_TYPE;
 			if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(mode)) {
@@ -921,7 +991,11 @@ public class ModIUtils {
 			
 			String vType = null;
 			if(type!=null) {
-				vType = getStringValue_config(protocolPropertyList, type);
+				vType = getStringValueConfig(protocolPropertyList, type);
+			}
+			
+			if(keystoreModePath) {
+				// nop
 			}
 			
 			String vPath = null;
@@ -930,18 +1004,18 @@ public class ModIUtils {
 				vPath = CostantiLabel.STORE_HSM;
 			}
 			else if(path!=null) {
-				vPath = getStringValue_config(protocolPropertyList, path);
+				vPath = getStringValueConfig(protocolPropertyList, path);
 			}
 			else if(keystoreModeArchive) {
 				vPath = CostantiLabel.STORE_CARICATO_BASEDATI;
-				vStore = getBinaryValue_config(protocolPropertyList, CostantiDB.MODIPA_KEYSTORE_ARCHIVE);
+				vStore = getBinaryValueConfig(protocolPropertyList, CostantiDB.MODIPA_KEYSTORE_ARCHIVE);
 			}
 			
 			String pw = CostantiDB.MODIPA_KEYSTORE_PASSWORD;
-			String vPassword = getStringValue_config(protocolPropertyList, pw);
+			String vPassword = getStringValueConfig(protocolPropertyList, pw);
 			
 			String aliasKey = CostantiDB.MODIPA_KEY_ALIAS;
-			String vAliasKey = getStringValue_config(protocolPropertyList, aliasKey);
+			String vAliasKey = getStringValueConfig(protocolPropertyList, aliasKey);
 			
 			keystoreParams = new KeystoreParams();
 			keystoreParams.setType(vType);
@@ -957,30 +1031,32 @@ public class ModIUtils {
 	
 	public static byte[] getApplicativoKeystoreCertificate(List<org.openspcoop2.core.config.ProtocolProperty> protocolPropertyList) {
 		
+		byte[] b = null;
+		
 		if(protocolPropertyList==null || protocolPropertyList.isEmpty()) {
-			return null;
+			return b;
 		}
 		
-		String sicurezza = getStringValue_config(protocolPropertyList,CostantiDB.MODIPA_SICUREZZA_MESSAGGIO);
+		String sicurezza = getStringValueConfig(protocolPropertyList,CostantiDB.MODIPA_SICUREZZA_MESSAGGIO);
 		if("true".equals(sicurezza)) {
 			
-			return getBinaryValue_config(protocolPropertyList, CostantiDB.MODIPA_KEYSTORE_CERTIFICATE);
+			return getBinaryValueConfig(protocolPropertyList, CostantiDB.MODIPA_KEYSTORE_CERTIFICATE);
 			
 		}
 	
-		return null;
+		return b;
 	}
 	
 	public static KeystoreParams getKeyStoreParams(List<org.openspcoop2.core.registry.ProtocolProperty> protocolPropertyList) {
-		return _getKeystoreParams(protocolPropertyList, false, false);
+		return getKeystoreParamsEngine(protocolPropertyList, false, false);
 	}
 	public static KeystoreParams getTrustStoreParams(List<org.openspcoop2.core.registry.ProtocolProperty> protocolPropertyList) {
-		return _getKeystoreParams(protocolPropertyList, false, true);
+		return getKeystoreParamsEngine(protocolPropertyList, false, true);
 	}
 	public static KeystoreParams getTrustStoreSSLParams(List<org.openspcoop2.core.registry.ProtocolProperty> protocolPropertyList) {
-		return _getKeystoreParams(protocolPropertyList, true, false);
+		return getKeystoreParamsEngine(protocolPropertyList, true, false);
 	}
-	private static KeystoreParams _getKeystoreParams(List<org.openspcoop2.core.registry.ProtocolProperty> protocolPropertyList,
+	private static KeystoreParams getKeystoreParamsEngine(List<org.openspcoop2.core.registry.ProtocolProperty> protocolPropertyList,
 			boolean ssl, boolean truststore) {
 		
 		if(protocolPropertyList==null || protocolPropertyList.isEmpty()) {
@@ -1010,7 +1086,6 @@ public class ModIUtils {
 			String crl = null;
 			String ocsp = null;
 			String aliasKey = null;
-			@SuppressWarnings("unused")
 			boolean keystoreModePath = false;
 			boolean keystoreModeArchive = false;
 			boolean keystoreModeHsm = false;
@@ -1049,6 +1124,10 @@ public class ModIUtils {
 			String vType = null;
 			if(type!=null) {
 				vType = getStringValue(protocolPropertyList, type);
+			}
+			
+			if(keystoreModePath) {
+				// nop
 			}
 			
 			String vPassword = null;
@@ -1139,17 +1218,17 @@ public class ModIUtils {
 		}
 		return null;
 	}
-	@SuppressWarnings("unused")
-	private static byte[] getBinaryValue(List<ProtocolProperty> protocolPropertyList, String id) {
+	static byte[] getBinaryValue(List<ProtocolProperty> protocolPropertyList, String id) {
+		byte[] b = null;
 		for (ProtocolProperty protocolProperty : protocolPropertyList) {
 			if(protocolProperty.getName().equals(id)) {
 				return protocolProperty.getByteFile();
 			}
 		}
-		return null;
+		return b;
 	}
 	
-	private static String getStringValue_config(List<org.openspcoop2.core.config.ProtocolProperty> protocolPropertyList, String id) {
+	private static String getStringValueConfig(List<org.openspcoop2.core.config.ProtocolProperty> protocolPropertyList, String id) {
 		for (org.openspcoop2.core.config.ProtocolProperty protocolProperty : protocolPropertyList) {
 			if(protocolProperty.getName().equals(id)) {
 				if(StringUtils.isNotEmpty(protocolProperty.getValue())) {
@@ -1171,8 +1250,7 @@ public class ModIUtils {
 		}
 		return null;
 	}
-	@SuppressWarnings("unused")
-	private static String getBooleanValueAsStato_config(List<org.openspcoop2.core.config.ProtocolProperty> protocolPropertyList, String id) {
+	static String getBooleanValueAsStatoConfig(List<org.openspcoop2.core.config.ProtocolProperty> protocolPropertyList, String id) {
 		for (org.openspcoop2.core.config.ProtocolProperty protocolProperty : protocolPropertyList) {
 			if(protocolProperty.getName().equals(id)) {
 				return protocolProperty.getBooleanValue()!=null && protocolProperty.getBooleanValue() ? 
@@ -1181,19 +1259,19 @@ public class ModIUtils {
 		}
 		return null;
 	}
-	private static byte[] getBinaryValue_config(List<org.openspcoop2.core.config.ProtocolProperty> protocolPropertyList, String id) {
+	private static byte[] getBinaryValueConfig(List<org.openspcoop2.core.config.ProtocolProperty> protocolPropertyList, String id) {
+		byte[] b = null;
 		for (org.openspcoop2.core.config.ProtocolProperty protocolProperty : protocolPropertyList) {
 			if(protocolProperty.getName().equals(id)) {
 				return protocolProperty.getByteFile();
 			}
 		}
-		return null;
+		return b;
 	}
 	
 	public static String getMessaggioErroreDominioCanaleDifferenteDominioApplicativo(IDServizioApplicativo idServizioApplicativoMessaggio, IDSoggetto idSoggettoMittenteCanale) {
-		String msgError = "Token di sicurezza firmato da un applicativo '"+idServizioApplicativoMessaggio.getNome()+
+		return "Token di sicurezza firmato da un applicativo '"+idServizioApplicativoMessaggio.getNome()+
 				"' risiedente nel dominio del soggetto '"+idServizioApplicativoMessaggio.getIdSoggettoProprietario().toString()+"'; il dominio differisce dal soggetto identificato sul canale di trasporto ("+idSoggettoMittenteCanale+
 				")";
-		return msgError;
 	}
 }

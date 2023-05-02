@@ -21,7 +21,6 @@ package org.openspcoop2.web.ctrlstat.servlet.protocol_properties;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import org.openspcoop2.core.constants.ProprietariProtocolProperty;
@@ -40,14 +39,15 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.properties.StringConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.SubtitleConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.TitleConsoleItem;
+import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElement.STATO_APERTURA_SEZIONI;
 import org.openspcoop2.web.lib.mvc.DataElementInfo;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.DataElement.STATO_APERTURA_SEZIONI;
 
 
 /**
@@ -572,8 +572,8 @@ public class ProtocolPropertiesUtilities {
 			Boolean selectedBooleanValue = getSelectedValue(booleanItem, defaultItemValue);
 			de.setSelected(selectedBooleanValue);
 
-			Map<String, Boolean> booleanMapLabelValues = booleanItem.getMapLabelValues();
-			for (String key : booleanMapLabelValues.keySet()) {
+			SortedMap<Boolean> booleanMapLabelValues = booleanItem.getMapLabelValues();
+			for (String key : booleanMapLabelValues.keys()) {
 				labels.add(key);
 				values.add(booleanMapLabelValues.get(key)+ "");
 			}
@@ -583,8 +583,8 @@ public class ProtocolPropertiesUtilities {
 			String selectedNumberValue = getSelectedValue(numberItem, defaultItemValue);
 			de.setSelected(selectedNumberValue);
 
-			Map<String, Long> numberMapLabelValues = numberItem.getMapLabelValues();
-			for (String key : numberMapLabelValues.keySet()) {
+			SortedMap<Long> numberMapLabelValues = numberItem.getMapLabelValues();
+			for (String key : numberMapLabelValues.keys()) {
 				labels.add(key);
 				values.add(numberMapLabelValues.get(key)+ "");
 			}
@@ -594,8 +594,8 @@ public class ProtocolPropertiesUtilities {
 			String selectedStringValue = getSelectedValue(stringItem, defaultItemValue);
 			de.setSelected(selectedStringValue);
 
-			Map<String, String> stringMapLabelValues = stringItem.getMapLabelValues();
-			for (String key : stringMapLabelValues.keySet()) {
+			SortedMap<String> stringMapLabelValues = stringItem.getMapLabelValues();
+			for (String key : stringMapLabelValues.keys()) {
 				labels.add(key);
 				values.add(stringMapLabelValues.get(key)+ "");
 			}
@@ -651,8 +651,8 @@ public class ProtocolPropertiesUtilities {
 				de.setRows(stringItem.getRows());
 			}
 			
-			Map<String, String> stringMapLabelValues = stringItem.getMapLabelValues();
-			for (String key : stringMapLabelValues.keySet()) {
+			SortedMap<String> stringMapLabelValues = stringItem.getMapLabelValues();
+			for (String key : stringMapLabelValues.keys()) {
 				labels.add(key);
 				values.add(stringMapLabelValues.get(key)+ "");
 			}

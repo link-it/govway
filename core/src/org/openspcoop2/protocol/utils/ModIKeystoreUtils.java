@@ -48,6 +48,8 @@ public class ModIKeystoreUtils {
 	protected String securityMessageKeystoreType = null;
 	protected boolean securityMessageKeystoreHSM = false;
 	protected String securityMessageKeystorePath = null;
+	protected String securityMessageKeystorePathPublicKey = null;
+	protected String securityMessageKeystoreKeyAlgorithm = null;
 	protected String securityMessageKeystorePassword = null;
 	protected String securityMessageKeyAlias = null;
 	protected String securityMessageKeyPassword = null;
@@ -89,15 +91,46 @@ public class ModIKeystoreUtils {
 		}
 		
 		if(!this.securityMessageKeystoreHSM) {
-			this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), CostantiDB.MODIPA_KEYSTORE_PASSWORD);
+			if(CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType)) {
+				this.securityMessageKeystorePathPublicKey = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), CostantiDB.MODIPA_KEYSTORE_PATH_PUBLIC_KEY);
+			}
+			
+			if(CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType) || 
+				CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(this.securityMessageKeystoreType)) {
+				this.securityMessageKeystoreKeyAlgorithm = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), CostantiDB.MODIPA_KEYSTORE_KEY_ALGORITHM);
+			}
+		}
+		
+		if(!this.securityMessageKeystoreHSM) {
+			if(!CostantiDB.KEYSTORE_TYPE_JWK.equalsIgnoreCase(this.securityMessageKeystoreType) && 
+					!CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType) && 
+					!CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(this.securityMessageKeystoreType)) {
+				this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), CostantiDB.MODIPA_KEYSTORE_PASSWORD);
+			}
+			else {
+				this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), CostantiDB.MODIPA_KEYSTORE_PASSWORD);
+			}
 		}
 		else {
 			this.securityMessageKeystorePassword = HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED;
 		}
 		
-		this.securityMessageKeyAlias = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), CostantiDB.MODIPA_KEY_ALIAS);
+		if(!CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType) && 
+				!CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(this.securityMessageKeystoreType)) {
+			this.securityMessageKeyAlias = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), CostantiDB.MODIPA_KEY_ALIAS);
+		}
 		
-		if(!this.securityMessageKeystoreHSM || HSMUtils.isHsmConfigurableKeyPassword()) {
+		if(!this.securityMessageKeystoreHSM) {
+			if(!CostantiDB.KEYSTORE_TYPE_JWK.equalsIgnoreCase(this.securityMessageKeystoreType) && 
+					!CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType) && 
+					!CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(this.securityMessageKeystoreType)) {
+				this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), CostantiDB.MODIPA_KEY_PASSWORD);
+			}
+			else {
+				this.securityMessageKeyPassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), CostantiDB.MODIPA_KEY_PASSWORD);
+			}
+		}
+		else if(HSMUtils.isHsmConfigurableKeyPassword()) {
 			this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), CostantiDB.MODIPA_KEY_PASSWORD);
 		}
 		else {
@@ -107,11 +140,11 @@ public class ModIKeystoreUtils {
 	}
 	
 	public ModIKeystoreUtils(boolean fruizione, IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica asps, String securityMessageProfile,
-			String modIproperties_securityMessageKeystoreType,
-			String modIproperties_securityMessageKeystorePath,
-			String modIproperties_securityMessageKeystorePassword,
-			String modIproperties_securityMessageKeyAlias,
-			String modIproperties_securityMessageKeyPassword) throws ProtocolException, UtilsException {
+			String modIpropertiesSecurityMessageKeystoreType,
+			String modIpropertiesSecurityMessageKeystorePath,
+			String modIpropertiesSecurityMessageKeystorePassword,
+			String modIpropertiesSecurityMessageKeyAlias,
+			String modIpropertiesSecurityMessageKeyPassword) throws ProtocolException, UtilsException {
 		
 		try {
 			List<ProtocolProperty> listProtocolProperties = ProtocolPropertiesUtils.getProtocolProperties(fruizione, soggettoFruitore, asps);
@@ -148,15 +181,46 @@ public class ModIKeystoreUtils {
 				}
 				
 				if(!this.securityMessageKeystoreHSM) {
-					this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, CostantiDB.MODIPA_KEYSTORE_PASSWORD);
+					if(CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType)) {
+						this.securityMessageKeystorePathPublicKey = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, CostantiDB.MODIPA_KEYSTORE_PATH_PUBLIC_KEY);
+					}
+					
+					if(CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType) || 
+						CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(this.securityMessageKeystoreType)) {
+						this.securityMessageKeystoreKeyAlgorithm = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, CostantiDB.MODIPA_KEYSTORE_KEY_ALGORITHM);
+					}
+				}
+				
+				if(!this.securityMessageKeystoreHSM) {
+					if(!CostantiDB.KEYSTORE_TYPE_JWK.equalsIgnoreCase(this.securityMessageKeystoreType) && 
+						!CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType) && 
+						!CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(this.securityMessageKeystoreType)) {
+						this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, CostantiDB.MODIPA_KEYSTORE_PASSWORD);
+					}
+					else {
+						this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, CostantiDB.MODIPA_KEYSTORE_PASSWORD);
+					}
 				}
 				else {
 					this.securityMessageKeystorePassword = HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED;
 				}
 				
-				this.securityMessageKeyAlias = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, CostantiDB.MODIPA_KEY_ALIAS);
+				if(!CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType) && 
+						!CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(this.securityMessageKeystoreType)) {
+					this.securityMessageKeyAlias = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, CostantiDB.MODIPA_KEY_ALIAS);
+				}
 				
-				if(!this.securityMessageKeystoreHSM || HSMUtils.isHsmConfigurableKeyPassword()) {
+				if(!this.securityMessageKeystoreHSM) {
+					if(!CostantiDB.KEYSTORE_TYPE_JWK.equalsIgnoreCase(this.securityMessageKeystoreType) && 
+							!CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType) && 
+							!CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(this.securityMessageKeystoreType)) {
+						this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, CostantiDB.MODIPA_KEY_PASSWORD);
+					}
+					else {
+						this.securityMessageKeyPassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, CostantiDB.MODIPA_KEY_PASSWORD);
+					}
+				}
+				else if(HSMUtils.isHsmConfigurableKeyPassword()) {
 					this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, CostantiDB.MODIPA_KEY_PASSWORD);
 				}
 				else {
@@ -166,7 +230,7 @@ public class ModIKeystoreUtils {
 			}
 			else {
 				
-				this.securityMessageKeystoreType = modIproperties_securityMessageKeystoreType; 
+				this.securityMessageKeystoreType = modIpropertiesSecurityMessageKeystoreType; 
 				if(this.securityMessageKeystoreType!=null) {
 					
 					this.securityMessageKeystoreHSM = HSMUtils.isKeystoreHSM(this.securityMessageKeystoreType);
@@ -176,7 +240,7 @@ public class ModIKeystoreUtils {
 					}
 					else {
 					
-						this.securityMessageKeystorePath = modIproperties_securityMessageKeystorePath;
+						this.securityMessageKeystorePath = modIpropertiesSecurityMessageKeystorePath;
 						try {
 							HttpUtilities.validateUri(this.securityMessageKeystorePath, true);
 						}catch(Exception e) {
@@ -186,16 +250,16 @@ public class ModIKeystoreUtils {
 					}
 					
 					if(!this.securityMessageKeystoreHSM) {
-						this.securityMessageKeystorePassword = modIproperties_securityMessageKeystorePassword;
+						this.securityMessageKeystorePassword = modIpropertiesSecurityMessageKeystorePassword;
 					}
 					else {
 						this.securityMessageKeystorePassword = HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED;
 					}
 					
-					this.securityMessageKeyAlias = modIproperties_securityMessageKeyAlias;
+					this.securityMessageKeyAlias = modIpropertiesSecurityMessageKeyAlias;
 					
 					if(!this.securityMessageKeystoreHSM || HSMUtils.isHsmConfigurableKeyPassword()) {
-						this.securityMessageKeyPassword = modIproperties_securityMessageKeyPassword;
+						this.securityMessageKeyPassword = modIpropertiesSecurityMessageKeyPassword;
 					}
 					else {
 						this.securityMessageKeyPassword = HSMUtils.KEYSTORE_HSM_PRIVATE_KEY_PASSWORD_UNDEFINED;
@@ -245,5 +309,13 @@ public class ModIKeystoreUtils {
 
 	public String getSecurityMessageKeyPassword() {
 		return this.securityMessageKeyPassword;
+	}
+	
+	public String getSecurityMessageKeystorePathPublicKey() {
+		return this.securityMessageKeystorePathPublicKey;
+	}
+
+	public String getSecurityMessageKeystoreKeyAlgorithm() {
+		return this.securityMessageKeystoreKeyAlgorithm;
 	}
 }

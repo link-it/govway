@@ -37,6 +37,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wss4j.dom.WSDataRef;
 import org.apache.wss4j.dom.message.token.Timestamp;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -60,6 +61,7 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.SoapMessageSecurityToken;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
@@ -98,24 +100,40 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			ModIProperties modiProperties, ValidazioneUtils validazioneUtils) {
 		super(log, state, context, factory, requestInfo, modiProperties, validazioneUtils);
 	}
-
+	
+	private void logError(String msg) {
+		this.log.error(msg);
+	}
+	private void logError(String msg, Exception e) {
+		this.log.error(msg,e);
+	}
+	
+	private String getErrorHeaderSoapNonPresente(String hdr) {
+		return "Header SOAP '"+hdr+"' non presente";
+	}
+	
 	public void validateAsyncInteractionProfile(OpenSPCoop2Message msg, boolean request, String asyncInteractionType, String asyncInteractionRole, 
 			Busta busta, List<Eccezione> erroriValidazione,
-			String replyTo) throws Exception {
+			String replyTo) throws ProtocolException {
 		
-		boolean bufferMessage_readOnly = this.modiProperties.isValidazioneBufferEnabled();
+		boolean bufferMessageReadOnly = this.modiProperties.isValidazioneBufferEnabled();
 		String idTransazione = null;
 		if(this.context!=null) {
 			idTransazione = (String)this.context.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 		}
 		
-		OpenSPCoop2SoapMessage soapMessage = msg.castAsSoap();
+		OpenSPCoop2SoapMessage soapMessage = null;
+		try {
+			soapMessage = msg.castAsSoap();
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
 		
 		String correlationIdName = this.modiProperties.getSoapCorrelationIdName();
-		String correlationId = ModIUtilities.getSOAPHeaderCorrelationIdValue(soapMessage, bufferMessage_readOnly, idTransazione);
+		String correlationId = ModIUtilities.getSOAPHeaderCorrelationIdValue(soapMessage, bufferMessageReadOnly, idTransazione);
 		
 		String replyToName = this.modiProperties.getSoapReplyToName();
-		String replyToAddress = ModIUtilities.getSOAPHeaderReplyToValue(soapMessage, bufferMessage_readOnly, idTransazione);
+		String replyToAddress = ModIUtilities.getSOAPHeaderReplyToValue(soapMessage, bufferMessageReadOnly, idTransazione);
 
 		
 		if(replyToAddress!=null) {
@@ -134,28 +152,25 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 					if(request) {
 						if(replyToAddress==null || "".equals(replyToAddress)) {
 							erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SERVIZIO_CORRELATO_NON_PRESENTE, 
-									"Header SOAP '"+replyToName+"' non presente"));
-							return;
+									getErrorHeaderSoapNonPresente(replyToName)));
 						}
 						if(this.modiProperties.isSoapSecurityTokenPushReplyToUpdateInErogazione()) {
-							ModIUtilities.addSOAPHeaderReplyTo(soapMessage, bufferMessage_readOnly, idTransazione, replyTo); // aggiorna il valore se già esistente
+							ModIUtilities.addSOAPHeaderReplyTo(soapMessage, bufferMessageReadOnly, idTransazione, replyTo); // aggiorna il valore se già esistente
 						}
 					}
 					else {
 						if(correlationId==null || "".equals(correlationId)) {
 							erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.COLLABORAZIONE_NON_PRESENTE, 
-									"Header SOAP '"+correlationIdName+"' non presente"));
-							return;
+									getErrorHeaderSoapNonPresente(correlationIdName)));
 						}
 					}
 				}
 				else {
-					if(request) {
-						if(correlationId==null || "".equals(correlationId)) {
-							erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.COLLABORAZIONE_NON_PRESENTE, 
-									"Header SOAP '"+correlationIdName+"' non presente"));
-							return;
-						}
+					if(request &&
+						(correlationId==null || "".equals(correlationId)) 
+						){
+						erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.COLLABORAZIONE_NON_PRESENTE, 
+								getErrorHeaderSoapNonPresente(correlationIdName)));
 					}
 				}
 			}
@@ -165,15 +180,17 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 					
 					// Flusso di richiesta
 					
-					if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA_STATO.equals(asyncInteractionRole) ||
-							ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RISPOSTA.equals(asyncInteractionRole)) {
-					
-						if(correlationId==null || "".equals(correlationId)) {
-							erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.COLLABORAZIONE_NON_PRESENTE, 
-									"Header SOAP '"+correlationIdName+"' non presente"));
-							return;
-						}
-						
+					if( 
+							(
+									ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA_STATO.equals(asyncInteractionRole) 
+									||
+									ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RISPOSTA.equals(asyncInteractionRole)
+							)
+							&&
+							(correlationId==null || "".equals(correlationId))
+						){
+						erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.COLLABORAZIONE_NON_PRESENTE, 
+								getErrorHeaderSoapNonPresente(correlationIdName)));	
 					}
 					
 					
@@ -182,14 +199,11 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 					
 					// Flusso di risposta
 					
-					if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA.equals(asyncInteractionRole)) {
-						
-						if(correlationId==null || "".equals(correlationId)) {
-							erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.COLLABORAZIONE_NON_PRESENTE, 
-									"Header SOAP '"+correlationIdName+"' non presente"));
-							return;
-						}
-						
+					if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA.equals(asyncInteractionRole) &&
+						(correlationId==null || "".equals(correlationId)) 
+					){
+						erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.COLLABORAZIONE_NON_PRESENTE, 
+								getErrorHeaderSoapNonPresente(correlationIdName)));
 					}
 					
 				}
@@ -202,10 +216,10 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			Busta busta, List<Eccezione> erroriValidazione,
 			ModITruststoreConfig trustStoreCertificati, ModISecurityConfig securityConfig,
 			boolean buildSecurityTokenInRequest,
-			Map<String, Object> dynamicMapParameter, Busta datiRichiesta, RequestInfo requestInfo) throws Exception {
+			Map<String, Object> dynamicMapParameter, Busta datiRichiesta, RequestInfo requestInfo) throws ProtocolException {
 		
 		if(msg==null) {
-			throw new Exception("Param msg is null");
+			throw new ProtocolException("Param msg is null");
 		}
 		
 		MessageSecurityContextParameters messageSecurityContextParameters = new MessageSecurityContextParameters();
@@ -215,20 +229,24 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		
 		boolean attesoSecurityHeader = true;
 		if(!request) {
-			if(msg.isFault()) {
-				attesoSecurityHeader = false;
+			try {
+				if(msg.isFault()) {
+					attesoSecurityHeader = false;
+				}
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
 			}
 		}
 		
-		boolean bufferMessage_readOnly = this.modiProperties.isValidazioneBufferEnabled();
+		boolean bufferMessageReadOnly = this.modiProperties.isValidazioneBufferEnabled();
 		String idTransazione = null;
 		if(this.context!=null) {
 			idTransazione = (String)this.context.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 		}
 		
 				
-		if(messageSecurityContext.existsSecurityHeader(msg, this.modiProperties.getSoapSecurityTokenActor(),
-				bufferMessage_readOnly, idTransazione)==false){
+		if(!messageSecurityContext.existsSecurityHeader(msg, this.modiProperties.getSoapSecurityTokenActor(),
+				bufferMessageReadOnly, idTransazione)){
 			if(attesoSecurityHeader) {
 				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_PRESENTE, 
 						"Header Message Security non riscontrato nella SOAPEnvelope ricevuta"));
@@ -236,15 +254,42 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			return null;
 		}
 		
-		OpenSPCoop2SoapMessage soapMessage = msg.castAsSoap();
+		OpenSPCoop2SoapMessage soapMessage = null;
+		try {
+			soapMessage = msg.castAsSoap();
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
 		SOAPInfo soapInfo = new SOAPInfo();
 		boolean useSoapReader = false; // i riferimenti recuperati (header, requestDigestHeader, wsAddressing vengono salvati nel contesto per poi eliminarli successivamente)
-		soapInfo.read(useSoapReader, soapMessage, bufferMessage_readOnly, idTransazione, true, true, false);
+		try {
+			soapInfo.read(useSoapReader, soapMessage, bufferMessageReadOnly, idTransazione, true, true, false);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
 		
 		boolean filtroDuplicati = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02.equals(securityMessageProfile) || 
-				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile);
-		boolean integrita =ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile) ||
-				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile);
+				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile) || 
+				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile);
+		
+		boolean integritaX5c = false;
+		if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile) ||
+				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile)) {
+			integritaX5c = true;
+		}
+		boolean integritaKid = false;
+		if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile) ||
+				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile)) {
+			integritaKid = true;
+		}
+		boolean integrita = integritaX5c || integritaKid;
+		
+		if(integritaKid) {
+			String labelPattern = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile) ?
+					CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0401_REST :
+					CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0402_REST;
+			throw new ProtocolException("Sicurezza Messaggio con pattern '"+labelPattern+"' non utilizzabile su API SOAP");
+		}
 
 		/*
 		 * == requestDigest ==
@@ -252,7 +297,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		
 		SOAPHeaderElement requestDigestHeader = null;
 		if(integrita && !request && includiRequestDigest) {
-			requestDigestHeader = ModIUtilities.getSOAPHeaderRequestDigest(useSoapReader, soapMessage, bufferMessage_readOnly, idTransazione);
+			requestDigestHeader = ModIUtilities.getSOAPHeaderRequestDigest(useSoapReader, soapMessage, bufferMessageReadOnly, idTransazione);
 		}
 		
 		
@@ -269,7 +314,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		WSDataRef wsaMessageIdRef = null;
 		WSDataRef bodyRef = null;
 		WSDataRef requestDigestRef = null;
-		List<WSDataRef> attachmentsRef = new ArrayList<WSDataRef>();
+		List<WSDataRef> attachmentsRef = new ArrayList<>();
 		MessageSecurityReceiver_wss4j wss4jSignature = null;
 		try {
 		
@@ -300,7 +345,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			// parti attese come firmate
 			// La funzionalità solleva errori se trova anche altre parti firmate non attese.
 			// Implemento questo controllo tramite i WSDataRef
-			/*
+			/**
 			StringBuilder bf = new StringBuilder();
 			bf.append("{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp");
 			bf.append(";");
@@ -329,7 +374,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			
 			// truststore
 			Properties pTruststore = new Properties();
-			//pTruststore.put(KeystoreConstants.PROPERTY_PROVIDER, KeystoreConstants.PROVIDER_DEFAULT);
+			/**pTruststore.put(KeystoreConstants.PROPERTY_PROVIDER, KeystoreConstants.PROVIDER_DEFAULT);*/
 			pTruststore.put(KeystoreConstants.PROPERTY_PROVIDER, KeystoreConstants.PROVIDER_GOVWAY);
 			pTruststore.put(KeystoreConstants.PROPERTY_TRUSTSTORE_TYPE, trustStoreCertificati.getSecurityMessageTruststoreType());
 			pTruststore.put(KeystoreConstants.PROPERTY_TRUSTSTORE_PASSWORD, trustStoreCertificati.getSecurityMessageTruststorePassword());
@@ -357,14 +402,13 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			if(securityConfig.getCheckTtlIatMilliseconds()!=null) {
 				timeToLive = securityConfig.getCheckTtlIatMilliseconds();
 			}
-			boolean set_TimeToLive = false;
-			if(timeToLive!=null) {
-				if(msg!=null) {
-					msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_IAT_TTL_CHECK, timeToLive);
-				}
+			boolean setTimeToLive = false;
+			if(timeToLive!=null &&
+				msg!=null) {
+				msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_IAT_TTL_CHECK, timeToLive);
 				// Non imposto il valore qua, ma inseriro un valoro alto (3650 giorni) in modo che la libreria non effettui il controllo, che invece avviene nella validazione semantica
 				// In modo da uniformare l'errore rispetto anche a REST
-				/*
+				/**
 				int value = timeToLive.intValue();
 				if(value>=1000) {
 					value = value / 1000; // riporto in secondi
@@ -372,7 +416,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 					set_TimeToLive = true;
 				}*/
 			}
-			if(!set_TimeToLive) {
+			if(!setTimeToLive) {
 				// devo impostare un valore alto, altrimenti il default di wss4j e' 60 secondi
 				// 3650 giorni (60s * 60m * 24h * 3650 giorni = 315360000)
 				secProperties.put(SecurityConstants.TIMESTAMP_TTL, 315360000+"");
@@ -381,7 +425,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			Long futureTimeToLive = this.modiProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_futureToleranceMilliseconds();
 			if(futureTimeToLive!=null) {
 				// Non imposto il valore qua, in modo che la libreria non effettui il controllo, che invece avviene nella validazione semantica
-				/*
+				/**
 				long value = futureTimeToLive.longValue();
 				if(value>=1000) {
 					value = value / 1000l; // riporto in secondi
@@ -407,9 +451,9 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			
 			
 			// ** Verifica firma elementi richiesti dalla configurazione ** /
-			List<SubErrorCodeSecurity> listaErroriRiscontrati = new ArrayList<SubErrorCodeSecurity>();
+			List<SubErrorCodeSecurity> listaErroriRiscontrati = new ArrayList<>();
 			wss4jSignature.checkEncryptSignatureParts(messageSecurityContext,elementsToClean, soapMessage,listaErroriRiscontrati);
-			if(listaErroriRiscontrati.size()>0){
+			if(!listaErroriRiscontrati.isEmpty()){
 				StringBuilder bf = new StringBuilder();
 				for (Iterator<?> iterator = listaErroriRiscontrati.iterator(); iterator.hasNext();) {
 					SubErrorCodeSecurity subCodiceErroreSicurezza = (SubErrorCodeSecurity) iterator.next();
@@ -426,7 +470,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			
 			// ** Applico sicurezza tramite engine **/
 			wss4jSignature.process(messageSecurityContext, soapMessage, busta, 
-					bufferMessage_readOnly, idTransazione, this.context);
+					bufferMessageReadOnly, idTransazione, this.context);
 			
 			
 			// ** Leggo certificato client **/
@@ -435,7 +479,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			
 			// ** Leggo security header **/
 			securityHeader = messageSecurityContext.getSecurityHeader(msg, this.modiProperties.getSoapSecurityTokenActor(), 
-					bufferMessage_readOnly, idTransazione);
+					bufferMessageReadOnly, idTransazione);
 			timestamp = wss4jSignature.getTimestamp();
 			List<WSDataRef> signatureRefs = wss4jSignature.getSignatureRefs();	
 			if(signatureRefs!=null && !signatureRefs.isEmpty()) {
@@ -476,14 +520,14 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 							WSSAttachmentsConstants.SWA_NS.equals(wsDataRef.getName().getNamespaceURI())) {
 						attachmentsRef.add(wsDataRef);
 					}
-//					else {
+/**					else {
 //						System.out.println("TROVATO ALTRO WS DATA Name["+wsDataRef.getName()+"] wsuId["+wsDataRef.getWsuId()+"]");
-//					}
+//					}*/
 				}
 			}
 			
 		}catch(Exception e) {
-			this.log.error("Errore durante la validazione del token di sicurezza: "+e.getMessage(),e);
+			this.logError("Errore durante la validazione del token di sicurezza: "+e.getMessage(),e);
 			erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_VALIDA, 
 					e.getMessage(),e));
 			return null;
@@ -504,11 +548,16 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			
 			if(request) {
 				if(msg==null || msg.getTransportRequestContext()==null || msg.getTransportRequestContext().getInterfaceName()==null) {
-					throw new Exception("ID Porta non presente");
+					throw new ProtocolException("ID Porta non presente");
 				}
 				IDPortaApplicativa idPA = new IDPortaApplicativa();
 				idPA.setNome(msg.getTransportRequestContext().getInterfaceName());
-				PortaApplicativa pa = this.factory.getCachedConfigIntegrationReader(this.state, this.requestInfo).getPortaApplicativa(idPA);
+				PortaApplicativa pa = null;
+				try {
+					pa = this.factory.getCachedConfigIntegrationReader(this.state, this.requestInfo).getPortaApplicativa(idPA);
+				}catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
+				}
 				boolean autenticazioneToken = pa!=null && pa.getGestioneToken()!=null && pa.getGestioneToken().getPolicy()!=null && StringUtils.isNotEmpty(pa.getGestioneToken().getPolicy());
 				if(autenticazioneToken) {
 					// l'autenticazione dell'applicativo mittente avviene per token
@@ -538,12 +587,16 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		if(!request) {
 			dynamicMapRequest = ModIUtilities.removeDynamicMapRequest(this.context);
 		}
-		if(dynamicMapRequest!=null) {
-			dynamicMap = DynamicUtils.buildDynamicMapResponse(msg, this.context, null, this.log, bufferMessage_readOnly, dynamicMapRequest);
-		}
-		else {
-			dynamicMap = DynamicUtils.buildDynamicMap(msg, this.context, datiRichiesta, this.log, bufferMessage_readOnly);
-			ModIUtilities.saveDynamicMapRequest(this.context, dynamicMap);
+		try {
+			if(dynamicMapRequest!=null) {
+				dynamicMap = DynamicUtils.buildDynamicMapResponse(msg, this.context, null, this.log, bufferMessageReadOnly, dynamicMapRequest);
+			}
+			else {
+				dynamicMap = DynamicUtils.buildDynamicMap(msg, this.context, datiRichiesta, this.log, bufferMessageReadOnly);
+				ModIUtilities.saveDynamicMapRequest(this.context, dynamicMap);
+			}
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
 		}
 		if(dynamicMapParameter!=null && dynamicMap!=null) {
 			dynamicMapParameter.putAll(dynamicMap);
@@ -594,7 +647,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			else {
 				SignatureDigestAlgorithm s = SignatureDigestAlgorithm.toEnumConstant(bodyRef.getDigestAlgorithm());
 				String digestValue = s!=null ? (s.name()+"=") : "";
-				//System.out.println("In Hex: "+org.apache.commons.codec.binary.Hex.encodeHexString(bodyRef.getDigestValue()));
+				/**System.out.println("In Hex: "+org.apache.commons.codec.binary.Hex.encodeHexString(bodyRef.getDigestValue()));*/
 				digestValue = digestValue + Base64Utilities.encodeAsString(bodyRef.getDigestValue());
 				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_DIGEST, digestValue);
 				
@@ -609,14 +662,18 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 					Object res = null;
 					try {
 						res = xpathEngine.getMatchPattern(securityHeader, dnc, digestReferencePattern, XPathReturnType.NODESET);
-					}catch(XPathNotFoundException notFound) {}
+					}catch(XPathNotFoundException notFound) {
+						// ignore
+					}catch(Exception e) {
+						throw new ProtocolException(e.getMessage(),e);
+					}
 					if(res!=null) {
 						if(res instanceof NodeList) {
 							NodeList nodeList = (NodeList) res;
 							this.context.addObject(ModICostanti.MODIPA_CONTEXT_REQUEST_DIGEST, nodeList);
 						}
 						else {
-							this.log.error("Tipo non gestito ritornato dal xpath engine durante la raccolta delle signature references ["+res.getClass().getName()+"]");
+							this.logError("Tipo non gestito ritornato dal xpath engine durante la raccolta delle signature references ["+res.getClass().getName()+"]");
 						}
 					}
 				}
@@ -636,14 +693,18 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			if(signAttachments) {
 				
 				List<String> cidAttachments = new ArrayList<>();
-				if(msg.castAsSoap().hasAttachments()){
-					Iterator<?> itAttach = msg.castAsSoap().getAttachments();
-					while (itAttach.hasNext()) {
-						AttachmentPart ap = (AttachmentPart) itAttach.next();
-						String contentId = normalizeContentID(ap.getContentId());
-						cidAttachments.add(contentId);
-						//System.out.println("ADD '"+contentId+"'");
+				try {
+					if(msg.castAsSoap().hasAttachments()){
+						Iterator<?> itAttach = msg.castAsSoap().getAttachments();
+						while (itAttach.hasNext()) {
+							AttachmentPart ap = (AttachmentPart) itAttach.next();
+							String contentId = normalizeContentID(ap.getContentId());
+							cidAttachments.add(contentId);
+							/**System.out.println("ADD '"+contentId+"'");*/
+						}
 					}
+				}catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
 				}
 				
 				if(attachmentsRef.isEmpty()) {
@@ -707,7 +768,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 						"Header WSAddressing non presenti"));
 			}
 		}catch(Exception e) {
-			this.log.error("Errore durante la letttura degli header WSAddressing: "+e.getMessage(),e);
+			this.logError("Errore durante la letttura degli header WSAddressing: "+e.getMessage(),e);
 			erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_INTESTAZIONE_NON_PRESENTE, 
 					"Header WSAddressing; process failed: "+e.getMessage(),e));
 		}
@@ -778,10 +839,10 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			DynamicNamespaceContext dnc = MessageDynamicNamespaceContextFactory.getInstance(msg.getFactory()).getNamespaceContext(securityHeader);
 			XPathExpressionEngine engine = new XPathExpressionEngine(msg.getFactory());
 			
-			String xpathSaml2_CodiceEnte = new StringBuilder().append("//{").append(org.openspcoop2.message.constants.Costanti.SAML_20_NAMESPACE).
+			String xpathSaml2CodiceEnte = new StringBuilder().append("//{").append(org.openspcoop2.message.constants.Costanti.SAML_20_NAMESPACE).
 					append("}NameID/text()").toString();
 			try {
-				String codiceEnte = engine.getStringMatchPattern(securityHeader, dnc, xpathSaml2_CodiceEnte);
+				String codiceEnte = engine.getStringMatchPattern(securityHeader, dnc, xpathSaml2CodiceEnte);
 				if(codiceEnte==null || "".equals(codiceEnte)) {
 					throw new XPathNotFoundException("non trovato");
 				}
@@ -796,11 +857,11 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			}
 			
 			String attributeNameUser = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_soap_user();
-			String xpathSaml2_User = new StringBuilder().append("//{").append(org.openspcoop2.message.constants.Costanti.SAML_20_NAMESPACE).
+			String xpathSaml2User = new StringBuilder().append("//{").append(org.openspcoop2.message.constants.Costanti.SAML_20_NAMESPACE).
 					append("}Attribute[@Name='").append(attributeNameUser).append("']//{").
 					append(org.openspcoop2.message.constants.Costanti.SAML_20_NAMESPACE).append("}AttributeValue/text()").toString();
 			try {
-				String user = engine.getStringMatchPattern(securityHeader, dnc, xpathSaml2_User);
+				String user = engine.getStringMatchPattern(securityHeader, dnc, xpathSaml2User);
 				if(user==null || "".equals(user)) {
 					throw new XPathNotFoundException("non trovato");
 				}
@@ -815,11 +876,11 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			}
 			
 			String attributeNameIpUser = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_soap_ipuser();
-			String xpathSaml2_IpUser = new StringBuilder().append("//{").append(org.openspcoop2.message.constants.Costanti.SAML_20_NAMESPACE).
+			String xpathSaml2IpUser = new StringBuilder().append("//{").append(org.openspcoop2.message.constants.Costanti.SAML_20_NAMESPACE).
 					append("}Attribute[@Name='").append(attributeNameIpUser).append("']//{").
 					append(org.openspcoop2.message.constants.Costanti.SAML_20_NAMESPACE).append("}AttributeValue/text()").toString();
 			try {
-				String ipUser = engine.getStringMatchPattern(securityHeader, dnc, xpathSaml2_IpUser);
+				String ipUser = engine.getStringMatchPattern(securityHeader, dnc, xpathSaml2IpUser);
 				if(ipUser==null || "".equals(ipUser)) {
 					throw new XPathNotFoundException("non trovato");
 				}
@@ -857,11 +918,15 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		soapSecurity.setWss4jSignature(wss4jSignature);
 		msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_SBUSTAMENTO_SOAP, soapSecurity);
 		
-		SOAPEnvelope soapEnvelope = soapSecurity.buildTraccia(msg.getMessageType());
-		if(soapSecurityToken!=null) {
-			soapSecurityToken.setToken(soapEnvelope);
+		try {
+			SOAPEnvelope soapEnvelope = soapSecurity.buildTraccia(msg.getMessageType());
+			if(soapSecurityToken!=null) {
+				soapSecurityToken.setToken(soapEnvelope);
+			}
+			return soapEnvelope;
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
 		}
-		return soapEnvelope;
 		
 	}
 	

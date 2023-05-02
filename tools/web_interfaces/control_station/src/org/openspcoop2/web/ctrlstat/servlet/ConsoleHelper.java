@@ -91,6 +91,7 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataAutorizzazioneToken;
 import org.openspcoop2.core.config.PortaDelegataLocalForward;
 import org.openspcoop2.core.config.PortaTracciamento;
+import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneControl;
@@ -155,8 +156,12 @@ import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.Documento;
+import org.openspcoop2.core.registry.Operation;
+import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.beans.ResourceSintetica;
@@ -236,6 +241,7 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
 import org.openspcoop2.utils.mime.MimeMultipart;
@@ -356,6 +362,10 @@ public class ConsoleHelper implements IConsoleHelper {
 	@Override
 	public HttpSession getSession() {
 		return this.session;
+	}
+	
+	private void logError(String msg,Exception e) {
+		this.log.error(msg,e);
 	}
 	
 	@Override
@@ -590,7 +600,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			core = new ControlStationCore();
 		} catch (Exception e) {
 			if(this.log!=null) {
-				this.log.error("Exception ctrlstatHelper: " + e.getMessage(), e);
+				this.logError("Exception ctrlstatHelper: " + e.getMessage(), e);
 			}
 			this.errorInit = true;
 			this.eErrorInit = e;
@@ -601,7 +611,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				pd.setPostBackResult(true);
 			}
 		} catch (Exception e) {
-			this.log.error("Exception ctrlstatHelper: " + e.getMessage(), e);
+			this.logError("Exception ctrlstatHelper: " + e.getMessage(), e);
 		}
 	}
 	public ConsoleHelper(ControlStationCore core, HttpServletRequest request, PageData pd, HttpSession session) {
@@ -714,7 +724,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			// inizializzo l'id tab
 			this.getTabId(); 
 		} catch (Exception e) {
-			this.log.error("Exception ctrlstatHelper: " + e.getMessage(), e);
+			this.logError("Exception ctrlstatHelper: " + e.getMessage(), e);
 			this.errorInit = true;
 			this.eErrorInit = e;
 		}
@@ -2574,7 +2584,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			this.pd.setMenu(menu);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -2667,7 +2677,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 			return ricerca;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -2689,7 +2699,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				usaSmistatore = false;
 			return usaSmistatore;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -3186,7 +3196,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -3308,7 +3318,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							ConfigBean configurazioneBean = this.porteApplicativeCore.leggiConfigurazione(configurazione, mappaDB);
 							valida = this.checkPropertiesConfigurationData(TipoOperazione.OTHER, configurazioneBean, null, null, configurazione);
 						}catch(Exception e) {
-							this.log.error(e.getMessage(),e);
+							this.logError(e.getMessage(),e);
 						}
 						if(valida) {
 							de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_PROPERTIES);
@@ -3406,7 +3416,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							ConfigBean configurazioneBean = this.porteApplicativeCore.leggiConfigurazione(configurazione, mappaDB);
 							valida = this.checkPropertiesConfigurationData(TipoOperazione.OTHER, configurazioneBean, null, null, configurazione);
 						}catch(Exception e) {
-							this.log.error(e.getMessage(),e);
+							this.logError(e.getMessage(),e);
 						}
 						if(valida) {
 							de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_PROPERTIES);
@@ -3603,7 +3613,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -3720,7 +3730,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -3838,7 +3848,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -3872,7 +3882,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -3988,7 +3998,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -4536,7 +4546,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -4552,7 +4562,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -4770,7 +4780,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			TipoAutenticazionePrincipal autenticazionePrincipal,  List<String> autenticazioneParametroList,
 			boolean confPers, boolean isSupportatoAutenticazioneSoggetti,boolean isPortaDelegata,
 			String gestioneToken,String gestioneTokenPolicy,String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail,
-			boolean old_autenticazione_custom, String urlAutenticazioneCustomProperties, int numAutenticazioneCustomPropertiesList,
+			boolean oldAutenticazioneCustom, String urlAutenticazioneCustomProperties, int numAutenticazioneCustomPropertiesList,
 			boolean forceHttps, boolean forceDisableOptional) throws Exception{
 		
 		boolean tokenAbilitato = StatoFunzionalita.ABILITATO.getValue().equalsIgnoreCase(gestioneToken) &&
@@ -4803,20 +4813,20 @@ public class ConsoleHelper implements IConsoleHelper {
 		boolean existsAutorizzazioniPuntuali = false;
 		if(oggetto!=null) {
 			if(isPortaDelegata){
-				PortaDelegata pd = (PortaDelegata) oggetto;
-				if(pd!=null && pd.sizeServizioApplicativoList()>0) {
+				PortaDelegata pdObject = (PortaDelegata) oggetto;
+				if(pdObject!=null && pdObject.sizeServizioApplicativoList()>0) {
 					existsAutorizzazioniPuntuali = true;
 				}
 			}
 			else {
 				PortaApplicativa pa = (PortaApplicativa) oggetto;
-				if(pa!=null) {
-					if(pa.getSoggetti()!=null && pa.getSoggetti().sizeSoggettoList()>0) {
-						existsAutorizzazioniPuntuali = true;
-					}
-					else if(pa.getServiziApplicativiAutorizzati()!=null && pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0) {
-						existsAutorizzazioniPuntuali = true;
-					}
+				if(pa!=null &&
+					(
+							(pa.getSoggetti()!=null && pa.getSoggetti().sizeSoggettoList()>0)
+							||
+							(pa.getServiziApplicativiAutorizzati()!=null && pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0)) 
+					){
+					existsAutorizzazioniPuntuali = true;
 				}
 			}
 		}
@@ -4996,7 +5006,6 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setType(DataElementType.SELECT);
 						de.setValues(tipoAutenticazione);
 						de.setLabels(labelTipoAutenticazione);
-						//		de.setOnChange("CambiaTipoAuth('" + tipoOp + "', " + numCorrApp + ")");
 						de.setPostBack(true);
 						de.setSelected(autenticazione);
 						de.setValoreDefaultSelect(TipoAutenticazione.DISABILITATO.getValue());
@@ -5014,7 +5023,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM, 
 						autenticazioneCustom, autenticazioneCustomHidden, dati,
 						false); 	
-				/*
+				/**
 				de = new DataElement();
 				de.setLabel("");
 				if(allHidden) {
@@ -5034,7 +5043,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				// se ho salvato il tipo custom faccio vedere il link alle proprieta'
 				if(autenticazione != null && autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM)) {
-					if(old_autenticazione_custom) {
+					if(oldAutenticazioneCustom) {
 						Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 						de = new DataElement();
 						de.setType(DataElementType.LINK);
@@ -5204,7 +5213,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							de.setType(DataElementType.SELECT);
 							
 							List<String> values = new ArrayList<>();
-							//values.add(ParametriAutenticazionePrincipal.TOKEN_CLAIM_ISSUER);
+							/**values.add(ParametriAutenticazionePrincipal.TOKEN_CLAIM_ISSUER);*/
 							values.add(ParametriAutenticazionePrincipal.TOKEN_CLAIM_SUBJECT);
 							values.add(ParametriAutenticazionePrincipal.TOKEN_CLAIM_CLIENT_ID);
 							values.add(ParametriAutenticazionePrincipal.TOKEN_CLAIM_EMAIL);
@@ -5505,16 +5514,29 @@ public class ConsoleHelper implements IConsoleHelper {
 		dati.add(de);
 	}
 	
+	
 	public void controlloAccessiGestioneToken(List<DataElement> dati, TipoOperazione tipoOperazione, String gestioneToken, String[] gestioneTokenPolicyLabels, String[] gestioneTokenPolicyValues,
-			String gestioneTokenPolicy, String gestioneTokenOpzionale, String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,Object oggetto, String protocolloParam ,boolean isPortaDelegata) throws Exception {
+			String gestioneTokenPolicy, String gestioneTokenOpzionale, String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
+			Object oggetto, String protocolloParam ,boolean isPortaDelegata, boolean forceGestioneToken) throws Exception {
+		this.controlloAccessiGestioneToken(dati, tipoOperazione, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues,
+				gestioneTokenPolicy, gestioneTokenOpzionale, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward,
+				oggetto, protocolloParam ,isPortaDelegata, forceGestioneToken, false);
+	}
+	public void controlloAccessiGestioneToken(List<DataElement> dati, TipoOperazione tipoOperazione, String gestioneToken, String[] gestioneTokenPolicyLabels, String[] gestioneTokenPolicyValues,
+			String gestioneTokenPolicy, String gestioneTokenOpzionale, String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
+			Object oggetto, String protocolloParam ,boolean isPortaDelegata, boolean forceGestioneToken, boolean forceMostraSezione) throws Exception {
+		
+		if(oggetto!=null) {
+			// nop
+		}
 		
 		boolean mostraSezione = !tipoOperazione.equals(TipoOperazione.ADD) || 
 				(isPortaDelegata ? this.core.isEnabledToken_generazioneAutomaticaPorteDelegate() : this.core.isEnabledToken_generazioneAutomaticaPorteApplicative());
 		
-		if(mostraSezione) {
+		if(mostraSezione || forceMostraSezione) {
 			
 			DataElement de = new DataElement();
-			de.setType(DataElementType.TITLE); //SUBTITLE);
+			de.setType(DataElementType.TITLE);
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TITLE);
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_GESTIONE_TOKEN);
 			de.setStatoAperturaSezioni(STATO_APERTURA_SEZIONI.CHIUSO);
@@ -5525,12 +5547,18 @@ public class ConsoleHelper implements IConsoleHelper {
 			// stato abilitazione
 			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN);
-			de.setType(DataElementType.SELECT);
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN);
-			de.setValues(valoriAbilitazione);
-			de.setValoreDefaultSelect(StatoFunzionalita.DISABILITATO.getValue());
-			de.setPostBack(true);
-			de.setSelected(gestioneToken);
+			if(forceGestioneToken) {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(gestioneToken);
+			}
+			else {
+				de.setType(DataElementType.SELECT);
+				de.setValues(valoriAbilitazione);
+				de.setValoreDefaultSelect(StatoFunzionalita.DISABILITATO.getValue());
+				de.setPostBack(true);
+				de.setSelected(gestioneToken);
+			}
 			dati.add(de);
 			
 			if(StatoFunzionalita.ABILITATO.getValue().equals(gestioneToken)){
@@ -5543,6 +5571,9 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setValues(gestioneTokenPolicyLabels);
 				de.setSelected(gestioneTokenPolicy);
 				de.setRequired(true);
+				if(forceGestioneToken) {
+					de.setValoreDefaultSelect(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO);
+				}
 				de.setPostBack(true);
 				dati.add(de);
 				
@@ -5557,7 +5588,14 @@ public class ConsoleHelper implements IConsoleHelper {
 					if(!isPortaDelegata && protocolloParam!=null && this.core.isProfiloModIPA(protocolloParam) &&
 							(!StatoFunzionalita.ABILITATO.getValue().equals(gestioneTokenOpzionale) )
 						) {
-						de.setType(DataElementType.HIDDEN);
+						if(forceGestioneToken) {
+							de.setType(DataElementType.HIDDEN);
+						}
+						else {
+							/** Ripristino la possibilità di impostarlo opzionale se non previsto l'utilizzo da pattern tramite indicazione sorgente */
+							de.setType(DataElementType.CHECKBOX);
+							de.setSelected(ServletUtils.isCheckBoxEnabled(gestioneTokenOpzionale));
+						}
 					}
 					else {
 						de.setType(DataElementType.CHECKBOX);
@@ -5637,6 +5675,85 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN);
 			de.setValue(gestioneToken);
 			dati.add(de);
+			
+			if(StatoFunzionalita.ABILITATO.getValue().equals(gestioneToken)){
+				
+				// nome della policy da utilizzare
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY);
+				de.setType(DataElementType.HIDDEN);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY);
+				de.setValue(gestioneTokenPolicy);
+				dati.add(de);
+				
+				if(gestioneTokenPolicy != null && !gestioneTokenPolicy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
+					
+					GenericProperties policySelezionata = this.confCore.getGenericProperties(gestioneTokenPolicy, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN,true);
+					Map<String, Properties> mappaDB = this.confCore.readGestorePolicyTokenPropertiesConfiguration(policySelezionata.getId()); 
+					
+					de = new DataElement();
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_OPZIONALE);
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_OPZIONALE);
+					if(!isPortaDelegata && protocolloParam!=null && this.core.isProfiloModIPA(protocolloParam) &&
+							(!StatoFunzionalita.ABILITATO.getValue().equals(gestioneTokenOpzionale) )
+						) {
+						de.setType(DataElementType.HIDDEN);
+					}
+					else {
+						de.setType(DataElementType.HIDDEN);
+						de.setValue(ServletUtils.isCheckBoxEnabled(gestioneTokenOpzionale) ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
+					}
+					dati.add(de);
+					
+					// validazione input
+					de = new DataElement();
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
+					de.setType(DataElementType.HIDDEN);
+					if(TokenUtilities.isValidazioneEnabled(mappaDB)) {
+						de.setValue(gestioneTokenValidazioneInput);
+					}else {
+						de.setValue(StatoFunzionalita.DISABILITATO.getValue());
+					}
+					dati.add(de);
+					
+					// introspection
+					de = new DataElement();
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
+					de.setType(DataElementType.HIDDEN);
+					if(TokenUtilities.isIntrospectionEnabled(mappaDB)) {
+						de.setValue(gestioneTokenIntrospection);
+					}else {
+						de.setValue(StatoFunzionalita.DISABILITATO.getValue());
+					}
+					dati.add(de);
+					
+					// userInfo
+					de = new DataElement();
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
+					de.setType(DataElementType.HIDDEN);
+					if(TokenUtilities.isUserInfoEnabled(mappaDB)) {
+						de.setValue(gestioneTokenUserInfo);
+					}else {
+						de.setValue(StatoFunzionalita.DISABILITATO.getValue());
+					}
+					dati.add(de);
+					
+					// token forward
+					de = new DataElement();
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
+					de.setType(DataElementType.HIDDEN);
+					if(TokenUtilities.isTokenForwardEnabled(mappaDB)) {
+						de.setValue(gestioneTokenForward);
+					}else {
+						de.setValue(StatoFunzionalita.DISABILITATO.getValue());
+					}
+					dati.add(de);
+				}
+			}
 		}
 	}
 	
@@ -7744,8 +7861,8 @@ public class ConsoleHelper implements IConsoleHelper {
 								modiSicurezzaMessaggio = true;
 							}
 						}
-					}catch(Throwable t) {
-						this.log.error(t.getMessage(),t);
+					}catch(Exception t) {
+						this.logError(t.getMessage(),t);
 					}
 					
 					if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(gestioneToken)){
@@ -8083,7 +8200,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -11212,7 +11329,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 				de.setSize(this.getSize());
 			} catch (Exception e) {
-				this.log.error("Exception: " + e.getMessage(), e);
+				this.logError("Exception: " + e.getMessage(), e);
 				throw new Exception(e);
 			}
 		} else {
@@ -11285,7 +11402,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			de.setSize(this.getSize());
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 		return de;
@@ -11353,7 +11470,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			de.setSize(this.getSize());
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 		return de;
@@ -11660,7 +11777,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -11769,7 +11886,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_SERVICE_BINDING, label, selectedValue, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -11794,7 +11911,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_STATO_ACCORDO, label, selectedValue, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -11819,7 +11936,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_HTTP_METHOD, label, selectedValue, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -11848,7 +11965,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_RUOLO_TIPOLOGIA, label, selectedValue, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -11877,7 +11994,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_RUOLO_CONTESTO, label, selectedValue, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -11906,7 +12023,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_SCOPE_TIPOLOGIA, label, selectedValue, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -11935,7 +12052,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_SCOPE_CONTESTO, label, selectedValue, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -11959,7 +12076,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_DOMINIO, SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DOMINIO, selectedValue, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 
@@ -11990,7 +12107,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_RUOLO, RuoliCostanti.LABEL_RUOLO, ruolo, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -12007,7 +12124,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					postBack, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -12046,7 +12163,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_GRUPPO, GruppiCostanti.LABEL_GRUPPO, gruppo, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -12103,7 +12220,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_API, AccordiServizioParteComuneCostanti.LABEL_APC, api, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -12134,7 +12251,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_CANALE, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALE, canale, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -12200,7 +12317,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_API_CONTESTO, label, selectedValue, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -12294,7 +12411,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_API_IMPLEMENTAZIONE, label, selectedValue, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -12358,7 +12475,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_SERVIZIO_APPLICATIVO, label, selectedValue, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -12384,7 +12501,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_TIPO_CREDENZIALI, label, selectedValue, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -12410,7 +12527,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -12423,11 +12540,96 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
 
+	public List<String> getTokenPolicyGestione(boolean forcePDND, boolean forceOAuth,
+			boolean addElementNonSelezionatoSeMaggioreUno) throws DriverConfigurazioneException{
+		return getTokenPolicy(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, forcePDND, forceOAuth,
+				addElementNonSelezionatoSeMaggioreUno);
+	}
+	public List<String> getTokenPolicyNegoziazione(boolean forcePDND, boolean forceOAuth,
+			boolean addElementNonSelezionatoSeMaggioreUno) throws DriverConfigurazioneException{
+		return getTokenPolicy(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN, forcePDND, forceOAuth,
+				addElementNonSelezionatoSeMaggioreUno);
+	}
+	private List<String> getTokenPolicy(String tipologia, boolean forcePDND, boolean forceOAuth,
+			boolean addElementNonSelezionatoSeMaggioreUno) throws DriverConfigurazioneException{
+		List<GenericProperties> gestorePolicyTokenList = this.confCore.gestorePolicyTokenList(null, tipologia, null);
+		
+		boolean retrieve = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN.equals(tipologia);
+		List<String> l = filterPolicy(retrieve, gestorePolicyTokenList, forcePDND, forceOAuth);
+		
+		List<String> returnList = new ArrayList<>();
+		if(!l.isEmpty()) {
+			if(addElementNonSelezionatoSeMaggioreUno && l.size()>1) {
+				returnList.add(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO);
+			}
+			returnList.addAll(l);
+		}
+		else if(addElementNonSelezionatoSeMaggioreUno) {
+			returnList.add(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO);
+		}
+		
+		return returnList;
+	}
+	private List<String> filterPolicy(boolean retrieve, List<GenericProperties> gestorePolicyTokenList, boolean forcePDND, boolean forceOAuth){
+		List<String> policyFiltered = new ArrayList<>();
+		for (int i = 0; i < gestorePolicyTokenList.size(); i++) {
+			GenericProperties genericProperties = gestorePolicyTokenList.get(i);
+			String nome = genericProperties.getNome();
+			if(forcePDND || forceOAuth) {
+				if(retrieve) {
+					addFilteredPolicyNegoziazione(genericProperties.getPropertyList(), policyFiltered, nome, forcePDND, forceOAuth);
+				}
+				else {
+					addFilteredPolicyGestione(policyFiltered, nome, forcePDND, forceOAuth);
+				}
+			}
+			else {
+				policyFiltered.add(nome);
+			}
+		}
+		return policyFiltered;
+	}
+	private void addFilteredPolicyGestione(List<String> policyFiltered, String nome, boolean forcePDND, boolean forceOAuth){
+		if(this.connettoriCore.isPolicyGestioneTokenPDND(nome)) {
+			if(forcePDND) {
+				policyFiltered.add(nome);
+			}
+		}
+		else {
+			if(forceOAuth) {
+				policyFiltered.add(nome);
+			}
+		}
+	}
+	private void addFilteredPolicyNegoziazione(List<Property> gp, List<String> policyFiltered, String nome, boolean forcePDND, boolean forceOAuth){
+		
+		boolean pdnd = false;
+		if(gp!=null && !gp.isEmpty()) {
+			for (Property p : gp) {
+				if(org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_MODE_PDND.equals(p.getNome())) {
+					pdnd = "true".equalsIgnoreCase(p.getValore());
+					break;
+				}
+			}
+		}
+		
+		if(pdnd) {
+			if(forcePDND) {
+				policyFiltered.add(nome);
+			}
+		}
+		else {
+			if(forceOAuth) {
+				policyFiltered.add(nome);
+			}
+		}
+	}
+	
 	public void addFilterCredenzialeTokenPolicy(String tokenPolicy, boolean postBack) throws Exception{
 		try {
 			List<GenericProperties> gestorePolicyTokenList = this.confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, null);
@@ -12450,7 +12652,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_CREDENZIALE_TOKEN_POLICY, label, selectedValue, policyValues, policyLabels, postBack, this.getSize());
 				
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -12489,7 +12691,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_STATO, label, selectedValue, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -12537,7 +12739,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -12545,7 +12747,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		try {
 			this.pd.removeFilter(Filtri.FILTRO_TIPO_RISORSA_POLICY);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -12569,7 +12771,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				this.pd.addFilter(Filtri.FILTRO_TIPO_TOKEN_POLICY, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO, tipo, values, labels, postBack, this.getSize());
 			}
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -12650,7 +12852,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 				
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -12690,7 +12892,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_SOGGETTO, SoggettiCostanti.LABEL_SOGGETTO, soggetto, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -12704,7 +12906,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addTextFilter(Filtri.FILTRO_SOGGETTO_EROGATORE_CONTAINS, filterLabel, soggettoErogatoreValue, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -12750,7 +12952,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_CONFIGURAZIONE_STATO, CostantiControlStation.LABEL_FILTRO_CONFIGURAZIONE_STATO, statoValue, values, labels, false, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -12782,7 +12984,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -12820,7 +13022,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_AUTENTICAZIONE_TRASPORTO_TIPO, label, tipoAutenticazioneValue, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 		
@@ -12854,7 +13056,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 			}
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -12882,7 +13084,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_CONFIGURAZIONE_RATE_LIMITING_STATO, CostantiControlStation.LABEL_FILTRO_CONFIGURAZIONE_RATE_LIMITING_STATO, statoValue, values, labels, false, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -12910,7 +13112,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_CONFIGURAZIONE_VALIDAZIONE_STATO, CostantiControlStation.LABEL_FILTRO_CONFIGURAZIONE_VALIDAZIONE_STATO, statoValue, values, labels, false, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -12938,7 +13140,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_CONFIGURAZIONE_CACHE_RISPOSTA_STATO, CostantiControlStation.LABEL_FILTRO_CONFIGURAZIONE_CACHE_RISPOSTA_STATO, statoValue, values, labels, false, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -12968,7 +13170,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_CONFIGURAZIONE_MESSAGE_SECURITY_STATO, CostantiControlStation.LABEL_FILTRO_CONFIGURAZIONE_MESSAGE_SECURITY_STATO, statoValue, values, labels, false, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -13003,7 +13205,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -13031,7 +13233,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_CONFIGURAZIONE_TRASFORMAZIONE_STATO, CostantiControlStation.LABEL_FILTRO_CONFIGURAZIONE_TRASFORMAZIONE_STATO, statoValue, values, labels, false, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -13061,7 +13263,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_STATO, CostantiControlStation.LABEL_FILTRO_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_STATO, statoValue, values, labels, false, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -13113,7 +13315,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_CONFIGURAZIONE_DUMP_TIPO, CostantiControlStation.LABEL_FILTRO_CONFIGURAZIONE_TIPO_DUMP, configurazioneDumpTipoValue, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 		
@@ -13146,7 +13348,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			return statoValue;
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -13160,7 +13362,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				this.pd.addTextFilter(Filtri.FILTRO_CONFIGURAZIONE_CORS_ORIGIN, CostantiControlStation.LABEL_FILTRO_CONFIGURAZIONE_CORS_ORIGIN, corsOriginValue, this.getSize());
 			}
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -13241,7 +13443,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_CONNETTORE_TIPO, ConnettoriCostanti.LABEL_FILTRO_TIPO_CONNETTORE, tipoConnettoreValue, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 		
@@ -13274,7 +13476,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 			}
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -13309,7 +13511,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 			}
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -13338,7 +13540,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				this.pd.addTextFilter(Filtri.FILTRO_CONNETTORE_ENDPOINT, filterLabel, endpointValue, this.getSize());
 			}
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -13355,7 +13557,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				this.pd.addTextFilter(Filtri.FILTRO_CONNETTORE_KEYSTORE, filterLabel, keystoreValue, this.getSize());
 			}
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -13383,7 +13585,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_CONNETTORE_DEBUG, ConnettoriCostanti.LABEL_FILTRO_CONNETTORE_DEBUG, debugValue, values, labels, false, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -13398,7 +13600,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			return nomeValue;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -13414,7 +13616,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				this.pd.addTextFilter(Filtri.FILTRO_CONNETTORE_MULTIPLO_FILTRO, filterLabel, filtroValue, this.getSize());
 			}
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -13427,7 +13629,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addTextFilter(Filtri.FILTRO_MODI_KEYSTORE_PATH, filterPathLabel, keystorePathValue, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -13440,7 +13642,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addTextFilter(Filtri.FILTRO_MODI_KEYSTORE_SUBJECT, filterSubjectLabel, keystoreSubjectValue, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -13453,7 +13655,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addTextFilter(Filtri.FILTRO_MODI_KEYSTORE_ISSUER, filterIssuerLabel, keystoreIssuerValue, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -13481,7 +13683,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_MODI_SICUREZZA_TOKEN_POLICY, label, selectedValue, policyValues, policyLabels, postBack, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -13494,7 +13696,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addTextFilter(Filtri.FILTRO_MODI_SICUREZZA_TOKEN_CLIENT_ID, tokenClientIdLabel, tokenClientIdValue, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -13526,7 +13728,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 			this.pd.addTextFilter(Filtri.FILTRO_MODI_AUDIENCE, filterLabel, audienceValue, this.getSize());
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -13552,7 +13754,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			this.pd.addFilter(Filtri.FILTRO_MODI_SICUREZZA_CANALE, CostantiLabel.MODIPA_API_PROFILO_CANALE_LABEL, sicurezzaCanaleValue, values, labels, false, this.getSize());
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -13561,7 +13763,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		try {
 			// controllo esistenza token policy
 			List<String> labelsList = this.getProfiloModIPAFiltroSicurezzaMessaggioLabels(serviceBindingValue);
-			List<String> valuesList = this.getProfiloModIPAFiltroSicurezzaMessaggioValues();
+			List<String> valuesList = this.getProfiloModIPAFiltroSicurezzaMessaggioValues(serviceBindingValue);
 			int length = valuesList.size() + 1;
 				
 			String [] values = new String[length];
@@ -13578,7 +13780,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			this.pd.addFilter(Filtri.FILTRO_MODI_SICUREZZA_MESSAGGIO, CostantiLabel.MODIPA_API_PROFILO_SICUREZZA_MESSAGGIO_LABEL, sicurezzaCanaleValue, values, labels, false, this.getSize());
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -13608,7 +13810,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			return sicurezzaMessaggioValue;
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -13638,7 +13840,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			return sicurezzaMessaggioValue;
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -13666,7 +13868,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_MODI_DIGEST_RICHIESTA, CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REQUEST_DIGEST_LABEL, 
 					digestRichiestaValue, values, labels, false, this.getSize());
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -13693,7 +13895,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			this.pd.addFilter(Filtri.FILTRO_MODI_INFORMAZIONI_UTENTE, CostantiControlStation.LABEL_FILTRO_MODIPA_INFO_UTENTE, infoUtenteValue, values, labels, false, this.getSize());
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -13710,38 +13912,49 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public List<String> getProfiloModIPAFiltroSicurezzaCanaleLabels() {
+		List<String> labels = null;
 		try {
-			List<String> labels = new ArrayList<>();
+			labels = new ArrayList<>();
 			labels.add(CostantiLabel.MODIPA_PROFILO_SICUREZZA_CANALE_LABEL_IDAC01);
 			labels.add(CostantiLabel.MODIPA_PROFILO_SICUREZZA_CANALE_LABEL_IDAC02);
 			return labels;
-		}catch(Throwable t) {
-			return null;
+		}catch(Exception t) {
+			return labels;
 		}
 	}
 	
-	public List<String> getProfiloModIPAFiltroSicurezzaMessaggioValues() {
+	public List<String> getProfiloModIPAFiltroSicurezzaMessaggioValues(String serviceBindingValue) {
+		List<String> values = null;
 		try {
-			List<String> values = new ArrayList<>();
+			values = new ArrayList<>();
 			values.add(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01);
 			values.add(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02);
 			values.add(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301);
 			values.add(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302);
+			if(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_REST.toLowerCase().equals(serviceBindingValue) 
+					||
+					!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_SOAP.toLowerCase().equals(serviceBindingValue)) {
+				values.add(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401);
+				values.add(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402);
+			}
 			return values;
-		}catch(Throwable t) {
-			return null;
+		}catch(Exception t) {
+			return values;
 		}
 	}
 	
 	public List<String> getProfiloModIPAFiltroSicurezzaMessaggioLabels(String serviceBindingValue) {
+		List<String> labels = null;
 		try {
-			List<String> labels = new ArrayList<>();
+			labels = new ArrayList<>();
 			
 			if(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_REST.toLowerCase().equals(serviceBindingValue) ) {
 				labels.add(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM01_REST);
 				labels.add(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM02_REST);
 				labels.add(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0301_REST);
 				labels.add(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0302_REST);
+				labels.add(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0401_REST);
+				labels.add(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0402_REST);
 			} 
 			else if(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_SOAP.toLowerCase().equals(serviceBindingValue) ) {
 				labels.add(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM01_SOAP);
@@ -13754,11 +13967,13 @@ public class ConsoleHelper implements IConsoleHelper {
 				labels.add(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM02);
 				labels.add(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0301);
 				labels.add(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0302);
+				labels.add(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0401);
+				labels.add(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0402);
 			}
 			
 			return labels;
-		}catch(Throwable t) {
-			return null;
+		}catch(Exception t) {
+			return labels;
 		}
 	}
 	
@@ -13782,7 +13997,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			this.pd.addFilter(Filtri.FILTRO_PROPRIETA_NOME, CostantiControlStation.LABEL_FILTRO_PROPRIETA_NOME, nomeProprietaValue, values, labels, false, this.getSize());
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -13795,7 +14010,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 			this.pd.addTextFilter(Filtri.FILTRO_PROPRIETA_VALORE, filterLabel, valoreProprietaValue, this.getSize());
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -14101,7 +14316,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					selectedValue, values, labels, false, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -18010,7 +18225,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -18180,7 +18395,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -18340,7 +18555,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -19602,7 +19817,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -19649,7 +19864,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -19696,7 +19911,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -20224,19 +20439,172 @@ public class ConsoleHelper implements IConsoleHelper {
 	public boolean forceHttpsProfiloModiPA() {
 		return true;
 	}
-	public boolean forceHttpsClientProfiloModiPA(IDAccordo idAccordoParteComune, String portType) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
+	public void readModIConfiguration(BooleanNullable forceHttpsClient, BooleanNullable forcePDND, BooleanNullable forceOAuth, 
+			IDAccordo idAccordoParteComune, String portType, 
+			List<String> azioneGruppo) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
 		AccordoServizioParteComune aspc = this.apcCore.getAccordoServizioFull(idAccordoParteComune,false);
+		
+		// Sicurezza canale
+		readForceHttpsClient(aspc, forceHttpsClient);
+		
+		// SorgenteToken
+		String propertyNameSicurezzaRidefinita = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE;
+		
+		BooleanNullable forcePDNDApi=null;
+		BooleanNullable forceOAuthApi=null;
+		if(azioneGruppo==null || azioneGruppo.isEmpty()) {
+			readForceTokenPolicy(aspc.getProtocolPropertyList(), forcePDND, forceOAuth);
+			if(forcePDND.getValue()!=null && forceOAuth.getValue()!=null) {
+				return;
+			}
+		}
+		else {
+			forcePDNDApi=BooleanNullable.NULL();
+			forceOAuthApi=BooleanNullable.NULL();
+			readForceTokenPolicy(aspc.getProtocolPropertyList(), forcePDNDApi, forceOAuthApi);
+		}
+		
+		if(org.openspcoop2.core.registry.constants.ServiceBinding.SOAP.equals(aspc.getServiceBinding())) {
+			readForceTokenPolicySoap(forcePDND, forceOAuth, 
+					aspc, portType, azioneGruppo,
+					propertyNameSicurezzaRidefinita, forcePDNDApi, forceOAuthApi);
+		}
+		else {
+			readForceTokenPolicyRest(forcePDND, forceOAuth, 
+					aspc, azioneGruppo,
+					propertyNameSicurezzaRidefinita, forcePDNDApi, forceOAuthApi);
+		}
+		
+		if(forcePDND.getValue()==null) {
+			forcePDND.setValue(false);
+		}
+		if(forceOAuth.getValue()==null) {
+			forceOAuth.setValue(false);
+		}
+	}
+	private void readForceHttpsClient(AccordoServizioParteComune aspc, BooleanNullable forceHttpsClient) {
 		String propertyName = CostantiDB.MODIPA_PROFILO_SICUREZZA_CANALE;
 		for (ProtocolProperty pp : aspc.getProtocolPropertyList()) {
 			if(pp.getName().equals(propertyName)) {
 				String value = pp.getValue();
 				if(CostantiDB.MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC02.equals(value)) {
-					return true;
+					forceHttpsClient.setValue(true);
 				} 
 				break;
 			}
 		}
-		return false;
+		forceHttpsClient.setValue(false);
+	}
+	private void readForceTokenPolicySoap(BooleanNullable forcePDND, BooleanNullable forceOAuth, 
+			AccordoServizioParteComune aspc, String portType, List<String> azioneGruppo, 
+			String propertyNameSicurezzaRidefinita, BooleanNullable forcePDNDApi, BooleanNullable forceOAuthApi) {
+		if(portType!=null) {
+			if(aspc.sizePortTypeList()>0) {
+				for (PortType pt : aspc.getPortTypeList()) {
+					if(portType.equals(pt.getNome()) &&
+						pt.sizeAzioneList()>0) {
+						readForceTokenPolicySoapOperation(forcePDND, forceOAuth, 
+								pt, azioneGruppo, 
+								propertyNameSicurezzaRidefinita, forcePDNDApi, forceOAuthApi);
+					}
+				}
+			}
+		}
+		else {
+			readForceTokenPolicySoapAzione(forcePDND, forceOAuth, 
+					aspc, azioneGruppo, 
+					propertyNameSicurezzaRidefinita, forcePDNDApi, forceOAuthApi);
+		}
+	}
+	private void readForceTokenPolicySoapOperation(BooleanNullable forcePDND, BooleanNullable forceOAuth, 
+			PortType pt, List<String> azioneGruppo, 
+			String propertyNameSicurezzaRidefinita, BooleanNullable forcePDNDApi, BooleanNullable forceOAuthApi) {
+		for (Operation op : pt.getAzioneList()) {
+			if(azioneGruppo==null || azioneGruppo.contains(op.getNome())) {
+				readForceTokenPolicy(op.getProtocolPropertyList(), forcePDND, forceOAuth,  
+						propertyNameSicurezzaRidefinita, forcePDNDApi, forceOAuthApi);
+				if(forcePDND.getValue()!=null && forceOAuth.getValue()!=null) {
+					return;
+				}
+			}
+		}
+	}
+	private void readForceTokenPolicySoapAzione(BooleanNullable forcePDND, BooleanNullable forceOAuth, 
+			AccordoServizioParteComune aspc, List<String> azioneGruppo, 
+			String propertyNameSicurezzaRidefinita, BooleanNullable forcePDNDApi, BooleanNullable forceOAuthApi) {
+		if(aspc.sizeAzioneList()>0) {
+			for (Azione az : aspc.getAzioneList()) {
+				if(azioneGruppo==null || azioneGruppo.contains(az.getNome())) {
+					readForceTokenPolicy(az.getProtocolPropertyList(), forcePDND, forceOAuth,  
+							propertyNameSicurezzaRidefinita, forcePDNDApi, forceOAuthApi);
+					if(forcePDND.getValue()!=null && forceOAuth.getValue()!=null) {
+						return;
+					}
+				}
+			}
+		}
+	}
+	private void readForceTokenPolicyRest(BooleanNullable forcePDND, BooleanNullable forceOAuth, 
+			AccordoServizioParteComune aspc, List<String> azioneGruppo, 
+			String propertyNameSicurezzaRidefinita, BooleanNullable forcePDNDApi, BooleanNullable forceOAuthApi) {
+		if(aspc.sizeResourceList()>0) {
+			for (Resource res : aspc.getResource()) {
+				if(azioneGruppo==null || azioneGruppo.contains(res.getNome())) {
+					readForceTokenPolicy(res.getProtocolPropertyList(), forcePDND, forceOAuth, 
+							propertyNameSicurezzaRidefinita, forcePDNDApi, forceOAuthApi);
+					if(forcePDND.getValue()!=null && forceOAuth.getValue()!=null) {
+						return;
+					}
+				}
+			}
+		}
+	}
+	private void readForceTokenPolicy(List<ProtocolProperty> list, BooleanNullable forcePDND, BooleanNullable forceOAuth, 
+			String propertyNameSicurezzaRidefinita, BooleanNullable forcePDNDApi, BooleanNullable forceOAuthApi) {
+		if(list!=null && !list.isEmpty()) {
+			boolean leggiSorgente = true;
+			if(propertyNameSicurezzaRidefinita!=null) {
+				leggiSorgente = false;
+				for (ProtocolProperty pp : list) {
+					if(pp.getName().equals(propertyNameSicurezzaRidefinita)) {
+						if(CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(pp.getValue())) {
+							leggiSorgente = true;
+						}
+						else {
+							if(forcePDNDApi!=null && forcePDNDApi.getValue()!=null) {
+								forcePDND.setValue(forcePDNDApi.getValue());
+							}
+							if(forceOAuthApi!=null && forceOAuthApi.getValue()!=null) {
+								forceOAuth.setValue(forceOAuthApi.getValue());
+							}
+						}
+					}
+				}
+			}
+			if(leggiSorgente) {
+				readForceTokenPolicy(list, forcePDND, forceOAuth);
+			}
+		}
+	}
+	private void readForceTokenPolicy(List<ProtocolProperty> list, BooleanNullable forcePDND, BooleanNullable forceOAuth) {
+		String propertyNameSorgenteToken = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH;
+		for (ProtocolProperty pp : list) {
+			if(pp.getName().equals(propertyNameSorgenteToken)) {
+				String value = pp.getValue();
+				setForceTokenPolicy(forcePDND, forceOAuth, value);
+				if(forcePDND.getValue()!=null && forceOAuth.getValue()!=null) {
+					break;
+				}
+			}
+		}
+	}
+	private void setForceTokenPolicy(BooleanNullable forcePDND, BooleanNullable forceOAuth, String value) {
+		if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND.equals(value)) {
+			forcePDND.setValue(true);
+		}
+		else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH.equals(value)) {
+			forceOAuth.setValue(true);
+		}
 	}
 
 	public List<DataElement> addProxyPassConfigurazioneRegola(TipoOperazione tipoOp, List<DataElement> dati,
@@ -22321,7 +22689,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					dati.add(de);
 					
 				}catch(Exception e) {
-					this.log.error("Errore durante l'identificazione dell'endpoint: "+e.getMessage(),e);
+					this.logError("Errore durante l'identificazione dell'endpoint: "+e.getMessage(),e);
 				}
 			}
 		}

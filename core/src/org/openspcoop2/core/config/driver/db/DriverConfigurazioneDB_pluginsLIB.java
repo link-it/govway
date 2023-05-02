@@ -116,7 +116,7 @@ public class DriverConfigurazioneDB_pluginsLIB {
 		
 				// insert
 
-				List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+				List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<>();
 				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome", plugin.getNome() , InsertAndGeneratedKeyJDBCType.STRING) );
 				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("posizione", plugin.getPosizione() , InsertAndGeneratedKeyJDBCType.INT) );
 				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("stato",  DriverConfigurazioneDB_LIB.getValue(plugin.getStato()) , InsertAndGeneratedKeyJDBCType.STRING) );

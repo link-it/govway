@@ -38,7 +38,7 @@ import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 public class UnionExpression {
 
 	private IExpression expression;
-	private Map<String,Object> returnFieldMap = new HashMap<String, Object>();
+	private Map<String,Object> returnFieldMap = new HashMap<>();
 	private List<String> keys = new ArrayList<>(); // contiene le keys della mappa per preservare l'ordine di inserimento.
 	
 	public UnionExpression(IExpression expression){

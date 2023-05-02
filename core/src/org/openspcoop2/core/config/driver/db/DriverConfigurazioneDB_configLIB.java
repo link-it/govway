@@ -881,7 +881,7 @@ public class DriverConfigurazioneDB_configLIB {
 		
 				// insert
 
-				List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+				List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<>();
 				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome", genericProperties.getNome() , InsertAndGeneratedKeyJDBCType.STRING) );
 				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("descrizione", genericProperties.getDescrizione() , InsertAndGeneratedKeyJDBCType.STRING) );
 				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipologia", genericProperties.getTipologia() , InsertAndGeneratedKeyJDBCType.STRING) );
@@ -1901,7 +1901,7 @@ public class DriverConfigurazioneDB_configLIB {
 					for(int k=0; k<config.getMessaggiDiagnostici().sizeOpenspcoopAppenderList();k++){
 						OpenspcoopAppender appender = config.getMessaggiDiagnostici().getOpenspcoopAppender(k);
 						
-						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<>();
 						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo", appender.getTipo() , InsertAndGeneratedKeyJDBCType.STRING) );
 						
 						long idMsgDiagAppender = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(DriverConfigurazioneDB_LIB.tipoDB), 
@@ -1951,7 +1951,7 @@ public class DriverConfigurazioneDB_configLIB {
 					for(int k=0; k<config.getTracciamento().sizeOpenspcoopAppenderList();k++){
 						OpenspcoopAppender appender = config.getTracciamento().getOpenspcoopAppender(k);
 						
-						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<>();
 						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo", appender.getTipo() , InsertAndGeneratedKeyJDBCType.STRING) );
 						
 						long idTracceAppender = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(DriverConfigurazioneDB_LIB.tipoDB), 
@@ -2002,7 +2002,7 @@ public class DriverConfigurazioneDB_configLIB {
 					for(int k=0; k<config.getDump().sizeOpenspcoopAppenderList();k++){
 						OpenspcoopAppender appender = config.getDump().getOpenspcoopAppender(k);
 						
-						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<>();
 						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo", appender.getTipo() , InsertAndGeneratedKeyJDBCType.STRING) );
 						
 						long idDumpAppender = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(DriverConfigurazioneDB_LIB.tipoDB), 
@@ -2073,9 +2073,9 @@ public class DriverConfigurazioneDB_configLIB {
 				// dumpConfigurazione
 				
 				// per backward compatibility elimino una config esistente
-				DumpConfigurazione dumpConfigOldBackwardCompatibility = DriverConfigurazioneDB_dumpLIB.readDumpConfigurazione(con, null, CostantiDB._DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG);
+				DumpConfigurazione dumpConfigOldBackwardCompatibility = DriverConfigurazioneDB_dumpLIB.readDumpConfigurazione(con, null, CostantiDB.OLD_BACKWARD_COMPATIBILITY_DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG);
 				if(dumpConfigOldBackwardCompatibility!=null) {
-					DriverConfigurazioneDB_dumpLIB.CRUDDumpConfigurazione(DELETE, con, dumpConfigOldBackwardCompatibility, null, CostantiDB._DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG);
+					DriverConfigurazioneDB_dumpLIB.CRUDDumpConfigurazione(DELETE, con, dumpConfigOldBackwardCompatibility, null, CostantiDB.OLD_BACKWARD_COMPATIBILITY_DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG);
 				}
 				
 				DriverConfigurazioneDB_dumpLIB.CRUDDumpConfigurazione(type, con, dumpConfigPA, null, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA);
@@ -2103,7 +2103,7 @@ public class DriverConfigurazioneDB_configLIB {
 					for(int k=0; k<config.getMessaggiDiagnostici().sizeOpenspcoopSorgenteDatiList();k++){
 						OpenspcoopSorgenteDati ds = config.getMessaggiDiagnostici().getOpenspcoopSorgenteDati(k);
 						
-						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<>();
 						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome", ds.getNome() , InsertAndGeneratedKeyJDBCType.STRING) );
 						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome_jndi", ds.getNomeJndi() , InsertAndGeneratedKeyJDBCType.STRING) );
 						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo_database", ds.getTipoDatabase() , InsertAndGeneratedKeyJDBCType.STRING) );
@@ -2155,7 +2155,7 @@ public class DriverConfigurazioneDB_configLIB {
 					for(int k=0; k<config.getTracciamento().sizeOpenspcoopSorgenteDatiList();k++){
 						OpenspcoopSorgenteDati ds = config.getTracciamento().getOpenspcoopSorgenteDati(k);
 						
-						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<>();
 						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome", ds.getNome() , InsertAndGeneratedKeyJDBCType.STRING) );
 						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome_jndi", ds.getNomeJndi() , InsertAndGeneratedKeyJDBCType.STRING) );
 						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo_database", ds.getTipoDatabase() , InsertAndGeneratedKeyJDBCType.STRING) );
@@ -2555,7 +2555,7 @@ public class DriverConfigurazioneDB_configLIB {
 					for(int k=0; k<config.getMessaggiDiagnostici().sizeOpenspcoopAppenderList();k++){
 						OpenspcoopAppender appender = config.getMessaggiDiagnostici().getOpenspcoopAppender(k);
 						
-						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<>();
 						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo", appender.getTipo() , InsertAndGeneratedKeyJDBCType.STRING) );
 						
 						long idMsgDiagAppender = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(DriverConfigurazioneDB_LIB.tipoDB), 
@@ -2606,7 +2606,7 @@ public class DriverConfigurazioneDB_configLIB {
 					for(int k=0; k<config.getTracciamento().sizeOpenspcoopAppenderList();k++){
 						OpenspcoopAppender appender = config.getTracciamento().getOpenspcoopAppender(k);
 						
-						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<>();
 						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo", appender.getTipo() , InsertAndGeneratedKeyJDBCType.STRING) );
 						
 						long idTracceAppender = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(DriverConfigurazioneDB_LIB.tipoDB), 
@@ -2658,7 +2658,7 @@ public class DriverConfigurazioneDB_configLIB {
 					for(int k=0; k<config.getDump().sizeOpenspcoopAppenderList();k++){
 						OpenspcoopAppender appender = config.getDump().getOpenspcoopAppender(k);
 						
-						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<>();
 						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo", appender.getTipo() , InsertAndGeneratedKeyJDBCType.STRING) );
 						
 						long idDumpAppender = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(DriverConfigurazioneDB_LIB.tipoDB), 
@@ -2738,9 +2738,9 @@ public class DriverConfigurazioneDB_configLIB {
 				// dumpConfigurazione
 				
 				// per backward compatibility elimino una config esistente
-				dumpConfigOldBackwardCompatibility = DriverConfigurazioneDB_dumpLIB.readDumpConfigurazione(con, null, CostantiDB._DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG);
+				dumpConfigOldBackwardCompatibility = DriverConfigurazioneDB_dumpLIB.readDumpConfigurazione(con, null, CostantiDB.OLD_BACKWARD_COMPATIBILITY_DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG);
 				if(dumpConfigOldBackwardCompatibility!=null) {
-					DriverConfigurazioneDB_dumpLIB.CRUDDumpConfigurazione(DELETE, con, dumpConfigOldBackwardCompatibility, null, CostantiDB._DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG);
+					DriverConfigurazioneDB_dumpLIB.CRUDDumpConfigurazione(DELETE, con, dumpConfigOldBackwardCompatibility, null, CostantiDB.OLD_BACKWARD_COMPATIBILITY_DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG);
 				}
 				
 				DriverConfigurazioneDB_dumpLIB.CRUDDumpConfigurazione(type, con, dumpConfigPA, null, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA);
@@ -2768,7 +2768,7 @@ public class DriverConfigurazioneDB_configLIB {
 					for(int k=0; k<config.getMessaggiDiagnostici().sizeOpenspcoopSorgenteDatiList();k++){
 						OpenspcoopSorgenteDati ds = config.getMessaggiDiagnostici().getOpenspcoopSorgenteDati(k);
 						
-						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<>();
 						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome", ds.getNome() , InsertAndGeneratedKeyJDBCType.STRING) );
 						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome_jndi", ds.getNomeJndi() , InsertAndGeneratedKeyJDBCType.STRING) );
 						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo_database", ds.getTipoDatabase() , InsertAndGeneratedKeyJDBCType.STRING) );
@@ -2820,7 +2820,7 @@ public class DriverConfigurazioneDB_configLIB {
 					for(int k=0; k<config.getTracciamento().sizeOpenspcoopSorgenteDatiList();k++){
 						OpenspcoopSorgenteDati ds = config.getTracciamento().getOpenspcoopSorgenteDati(k);
 						
-						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<>();
 						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome", ds.getNome() , InsertAndGeneratedKeyJDBCType.STRING) );
 						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome_jndi", ds.getNomeJndi() , InsertAndGeneratedKeyJDBCType.STRING) );
 						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo_database", ds.getTipoDatabase() , InsertAndGeneratedKeyJDBCType.STRING) );

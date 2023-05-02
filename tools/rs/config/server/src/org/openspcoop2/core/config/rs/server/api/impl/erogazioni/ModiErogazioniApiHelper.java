@@ -170,6 +170,8 @@ public class ModiErogazioniApiHelper {
 		valueAbilitato.add(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02);
 		valueAbilitato.add(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301);
 		valueAbilitato.add(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302);
+		valueAbilitato.add(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401);
+		valueAbilitato.add(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402);
 		return _isAbilitata(aspc, portType, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, valueAbilitato, null);
 	}
 	private static boolean isSicurezzaMessaggioHeaderDuplicati(AccordoServizioParteComune aspc, String portType) throws Exception {

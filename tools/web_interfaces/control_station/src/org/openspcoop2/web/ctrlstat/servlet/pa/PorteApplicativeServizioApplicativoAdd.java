@@ -334,9 +334,9 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 
 				if (!isProfiloOneWay && numSAassociati > 0 && !behaviourDefined) {
 					if ((nomeAzione != null && !nomeAzione.equals("")) && (profiloCollaborazioneAzione != null && !profiloCollaborazioneAzione.equals("")))
-						pd.setMessage("E' possibile associare un solo Servizio Applicativo alla Porta Applicativa [" + nomePorta + "] in quanto l'Azione [" + nomeAzione + "] dell'Accordo di Servizio [" + nomeAccordo + "] e' stata definito con profilo [" + profiloCollaborazioneAzione + "]");
+						pd.setMessage("&Egrave; possibile associare un solo Servizio Applicativo alla Porta Applicativa [" + nomePorta + "] in quanto l'Azione [" + nomeAzione + "] dell'Accordo di Servizio [" + nomeAccordo + "] e' stata definito con profilo [" + profiloCollaborazioneAzione + "]");
 					else
-						pd.setMessage("E' possibile associare un solo Servizio Applicativo alla Porta Applicativa [" + nomePorta + "] in quanto l'Accordo di Servizio [" + nomeAccordo + "] e' stato definito con profilo [" + profiloCollaborazioneAccordo + "]");
+						pd.setMessage("&Egrave; possibile associare un solo Servizio Applicativo alla Porta Applicativa [" + nomePorta + "] in quanto l'Accordo di Servizio [" + nomeAccordo + "] e' stato definito con profilo [" + profiloCollaborazioneAccordo + "]");
 
 					pd.setInserisciBottoni(false);
 					pd.setMode(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME);
@@ -466,9 +466,9 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 				//						if (profiloCollaborazioneAzione != null && !profiloCollaborazioneAzione.equals(""))
 				//							profiloCollaborazioneAzione = profiloCollaborazioneAccordo;
 				//
-				//						pd.setMessage("E' possibile associare un solo Servizio Applicativo alla Porta Applicativa [" + nomePorta + "] in quanto l'Azione [" + nomeAzione + "] dell'Accordo di Servizio [" + nomeAccordo + "]e' stata definito con profilo [" + profiloCollaborazioneAzione + "]");
+				//						pd.setMessage("&Egrave; possibile associare un solo Servizio Applicativo alla Porta Applicativa [" + nomePorta + "] in quanto l'Azione [" + nomeAzione + "] dell'Accordo di Servizio [" + nomeAccordo + "]e' stata definito con profilo [" + profiloCollaborazioneAzione + "]");
 				//					} else {
-				//						pd.setMessage("E' possibile associare un solo Servizio Applicativo alla Porta Applicativa [" + nomePorta + "] in quanto l'Accordo di Servizio e' stato definito con profilo [" + profiloCollaborazioneAccordo + "]");
+				//						pd.setMessage("&Egrave; possibile associare un solo Servizio Applicativo alla Porta Applicativa [" + nomePorta + "] in quanto l'Accordo di Servizio e' stato definito con profilo [" + profiloCollaborazioneAccordo + "]");
 				//					}
 				//					
 				//					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);

@@ -49,21 +49,18 @@ import org.openspcoop2.utils.UtilsException;
  * @version $Rev$, $Date$
  */
 public class KeyStore {
-
-	public static final String TYPE_JKS = "JKS";
-	public static final String TYPE_PKCS12 = "PKCS12";
 	
 	private java.security.KeyStore keystoreArchive;
 	private boolean keystoreHsm;
 	
 	public KeyStore(String keystorePath,String passwordKeystore) throws UtilsException{
-		this(keystorePath,TYPE_JKS,passwordKeystore);
+		this(keystorePath,KeystoreType.JKS.getNome(),passwordKeystore);
 	}
 	public KeyStore(String keystorePath,String tipoKeystore, String passwordKeystore) throws UtilsException{
 		this(new File(keystorePath),tipoKeystore,passwordKeystore);
 	}
 	public KeyStore(File keystorePath,String passwordKeystore) throws UtilsException{
-		this(keystorePath,TYPE_JKS,passwordKeystore);
+		this(keystorePath,KeystoreType.JKS.getNome(),passwordKeystore);
 	}
 	public KeyStore(File keystorePath,String tipoKeystore, String passwordKeystore) throws UtilsException{
 		
@@ -83,7 +80,7 @@ public class KeyStore {
 	}
 	
 	public KeyStore(byte[] keystore,String passwordKeystore) throws UtilsException{
-		this(keystore,TYPE_JKS,passwordKeystore);
+		this(keystore,KeystoreType.JKS.getNome(),passwordKeystore);
 	}
 	public KeyStore(byte[] keystore,String tipoKeystore, String passwordKeystore) throws UtilsException{
 		

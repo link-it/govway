@@ -89,6 +89,7 @@ import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
@@ -1604,7 +1605,7 @@ public class XMLDataConverter {
 			if(connettore.getProperties().containsKey(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_TYPE)==false){
 				Property cp = new Property();
 				cp.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_TYPE);
-				cp.setValore("jks"); // default
+				cp.setValore(KeystoreType.JKS.getNome()); // default
 				connettore.addProperty(cp);
 			}
 			if(connettore.getProperties().containsKey(CostantiDB.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM)==false){
@@ -1617,7 +1618,7 @@ public class XMLDataConverter {
 				if(connettore.getProperties().containsKey(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_TYPE)==false){
 					Property cp = new Property();
 					cp.setNome(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_TYPE);
-					cp.setValore("jks"); // default
+					cp.setValore(KeystoreType.JKS.getNome()); // default
 					connettore.addProperty(cp);
 				}
 				if(connettore.getProperties().containsKey(CostantiDB.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM)==false){

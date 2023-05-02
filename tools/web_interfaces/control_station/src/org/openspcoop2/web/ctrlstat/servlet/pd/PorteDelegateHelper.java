@@ -821,7 +821,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			
 			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale,
-					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,protocollo,true);
+					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,protocollo,true,
+					false);
 			
 			this.controlloAccessiAutenticazione(dati, tipoOp, servletChiamante,null,protocollo,
 					autenticazione, autenticazioneCustom, autenticazioneOpzionale, 
@@ -2143,7 +2144,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			// Campi obbligatori
 			if (servizioApplicativo.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare un Servizio Applicativo");
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare un Servizio Applicativo");
 				return false;
 			}
 
@@ -3249,7 +3250,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						tmpElenco = tmpElenco + ", Valore";
 					}
 				}
-				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
 				return false;
 			}
 
@@ -5492,7 +5493,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			
 			// Campi obbligatori
 			if (servizioApplicativo.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare un Servizio Applicativo");
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare un Servizio Applicativo");
 				return false;
 			}
 

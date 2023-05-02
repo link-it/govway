@@ -83,8 +83,8 @@ import org.slf4j.Logger;
 public abstract class MessageSecurityContext{
 	
       
-	protected Map<String,Object> incomingProperties = new HashMap<String,Object>();
-	protected Map<String,Object> outgoingProperties = new HashMap<String,Object>();
+	protected Map<String,Object> incomingProperties = new HashMap<>();
+	protected Map<String,Object> outgoingProperties = new HashMap<>();
 
 	protected boolean useActorDefaultIfNotDefined = true;
 	protected String actorDefault = null;
@@ -93,7 +93,7 @@ public abstract class MessageSecurityContext{
 	protected String msgErrore;
 	protected CodiceErroreCooperazione codiceErrore;
 	/** Eventuale subCodici di errore */
-	protected List<SubErrorCodeSecurity> listaSubCodiceErrore = new ArrayList<SubErrorCodeSecurity>();
+	protected List<SubErrorCodeSecurity> listaSubCodiceErrore = new ArrayList<>();
 		
 	protected boolean functionAsClient = true;
 	
@@ -178,7 +178,7 @@ public abstract class MessageSecurityContext{
 	 * 
 	 * @param messageSecurityContextParameters contextParameters
 	 */
-	public MessageSecurityContext(MessageSecurityContextParameters messageSecurityContextParameters){
+	protected MessageSecurityContext(MessageSecurityContextParameters messageSecurityContextParameters){
 		this.useActorDefaultIfNotDefined = messageSecurityContextParameters.isUseActorDefaultIfNotDefined();
     	this.actorDefault = messageSecurityContextParameters.getActorDefault();
     	if(messageSecurityContextParameters.getLog()!=null)
@@ -315,11 +315,11 @@ public abstract class MessageSecurityContext{
 			for (String key : securityProperties.keySet()) {
 				String value = null;
 				Object oValue = securityProperties.get(key);
-				if(oValue!=null && oValue instanceof String) {
+				if(oValue instanceof String) {
 					value = (String) oValue;
 				}
 				
-				//System.out.println(key + " -> " + value );
+				/**System.out.println(key + " -> " + value );*/
 				// check actor
 				if(ConfigurationConstants.ACTOR.equals(key)){
 					this.actor = value;
@@ -407,15 +407,14 @@ public abstract class MessageSecurityContext{
 				for (String key : secProperties.keySet()) {
 					Object value = secProperties.get(key);
 					String v = null;
-					if(value!=null && value instanceof String) {
+					if(value instanceof String) {
 						v = (String) value;
 					}
 					map.put(key, v);
 					
-					if(preserveNotStringProperty) {
-						if(value!=null && !(value instanceof String)) {
-							mapNoStringProperty.put(key, value);
-						}
+					if(preserveNotStringProperty &&
+						value!=null && !(value instanceof String)) {
+						mapNoStringProperty.put(key, value);
 					}
 				}
 	    	}
@@ -428,12 +427,12 @@ public abstract class MessageSecurityContext{
 	    	if(defaultProperties!=null && defaultProperties.size()>0) {
 	    		Iterator<?> it = defaultProperties.keySet().iterator();
 	    		while (it.hasNext()) {
-					Object oKey = (Object) it.next();
+					Object oKey = it.next();
 					if(oKey instanceof String) {
 						String key = (String) oKey;
 						String value = null;
 						Object oValue = defaultProperties.get(key);
-						if(oValue!=null && oValue instanceof String) {
+						if(oValue instanceof String) {
 							value = (String) oValue;
 						}
 						table.put(key, value);
@@ -450,7 +449,7 @@ public abstract class MessageSecurityContext{
 	    			
 	    			Iterator<String> it = mapNoStringProperty.keySet().iterator();
 	    			while (it.hasNext()) {
-						String keyWithPrefix = (String) it.next();
+						String keyWithPrefix = it.next();
 						Object object = mapNoStringProperty.get(keyWithPrefix);
 						
 		    			String prefix = DBPropertiesUtils.startsWith(keysMultiMap, keyWithPrefix);	
@@ -518,7 +517,7 @@ public abstract class MessageSecurityContext{
     		if(engineProperty!=null){
     			engineProperty = engineProperty.trim();
     			if(SecurityConstants.SECURITY_ENGINE_WSS4J.equals(engineProperty)){
-    				this.securityEngine = SecurityConstants.SECURITY_ENGINE_WSS4J;
+    				// DEFAULT: this.securityEngine = SecurityConstants.SECURITY_ENGINE_WSS4J;
     			}
     			else if(SecurityConstants.SECURITY_ENGINE_SOAPBOX.equals(engineProperty)){
     				this.securityEngine = SecurityConstants.SECURITY_ENGINE_SOAPBOX;
@@ -529,9 +528,6 @@ public abstract class MessageSecurityContext{
     			else if(SecurityConstants.SECURITY_ENGINE_XML.equals(engineProperty)){
     				this.securityEngine = SecurityConstants.SECURITY_ENGINE_XML;
     			}
-//    			else if(SecurityConstants.SECURITY_ENGINE_DSS.equals(engineProperty)){
-//    				this.securityEngine = SecurityConstants.SECURITY_ENGINE_DSS;
-//    			}
     			else{
     				throw new SecurityException("Security engine impostato ["+engineProperty+"] non supportato");
     			}
@@ -556,11 +552,6 @@ public abstract class MessageSecurityContext{
     			this.messageSecuritySender = (IMessageSecuritySender) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.xml.MessageSecuritySender_xml");
     			this.messageSecurityReceiver = (IMessageSecurityReceiver) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.xml.MessageSecurityReceiver_xml");
     			this.messageSecurityDigest = (IMessageSecurityDigest) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.xml.MessageSecurityDigest_xml");
-//    		} else if(SecurityConstants.SECURITY_ENGINE_DSS.equals(this.securityEngine)){
-//			this.messageSecurityContext = (IMessageSecurityContext) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.dss.MessageSecurityContext_dss");
-//			this.messageSecuritySender = (IMessageSecuritySender) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.dss.MessageSecuritySender_dss");
-//			this.messageSecurityReceiver = (IMessageSecurityReceiver) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.dss.MessageSecurityReceiver_dss");
-//			this.messageSecurityDigest = (IMessageSecurityDigest) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.dss.MessageSecurityDigest_dss");
     		}
     		this.messageSecurityContext.init(this);
     		
@@ -690,7 +681,6 @@ public abstract class MessageSecurityContext{
 	    		header = soapMsg.getSOAPHeader();
 	    	}
 	    	else{
-	    		// TODO
 	    		return true;
 	    	}
     	}catch(Exception e){
@@ -716,7 +706,6 @@ public abstract class MessageSecurityContext{
 	    		}
 	    	}
 	    	else{
-	    		// TODO
 	    		return true;
 	    	}
     	}catch(Exception e){
@@ -743,7 +732,7 @@ public abstract class MessageSecurityContext{
     public boolean existsSecurityHeader(OpenSPCoop2MessageFactory messageFactory, MessageType messageType, 
     		SOAPHeader header,String actor){
     	try{
-	    	if(header==null || (SoapUtils.getNotEmptyChildNodes(messageFactory, header).size()==0) ){
+	    	if(header==null || (SoapUtils.getNotEmptyChildNodes(messageFactory, header).isEmpty()) ){
 	    		return false;
 	    	}
 	       	java.util.Iterator<?> it = header.examineAllHeaderElements();
@@ -788,7 +777,6 @@ public abstract class MessageSecurityContext{
 	    		header = soapMsg.getSOAPHeader();
 	    	}
 	    	else{
-	    		// TODO
 	    		return null;
 	    	}
     	}catch(Exception e){
@@ -800,7 +788,7 @@ public abstract class MessageSecurityContext{
     			header, actor);
     }
     public SOAPHeaderElement getSecurityHeader(OpenSPCoop2Message msg,String actor, 
-    		boolean bufferMessage_readOnly, String idTransazione){
+    		boolean bufferMessageReadOnly, String idTransazione){
     	SOAPEnvelope soapEnvelope = null;
     	try{
     		if(msg==null){
@@ -808,13 +796,12 @@ public abstract class MessageSecurityContext{
 	    	}
 	    	if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
 	    		OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
-	    		SOAPPart soapPart = MessageUtils.getSOAPPart(soapMsg, bufferMessage_readOnly, idTransazione);
+	    		SOAPPart soapPart = MessageUtils.getSOAPPart(soapMsg, bufferMessageReadOnly, idTransazione);
 	    		if(soapPart!=null) {
 	    			soapEnvelope = soapPart.getEnvelope();
 	    		}
 	    	}
 	    	else{
-	    		// TODO
 	    		return null;
 	    	}
     	}catch(Exception e){
@@ -841,7 +828,7 @@ public abstract class MessageSecurityContext{
     public SOAPHeaderElement getSecurityHeader(OpenSPCoop2MessageFactory messageFactory, MessageType messageType, 
     		SOAPHeader header,String actor){
     	try{
-    		if(header==null || (SoapUtils.getNotEmptyChildNodes(messageFactory, header).size()==0) ){
+    		if(header==null || (SoapUtils.getNotEmptyChildNodes(messageFactory, header).isEmpty()) ){
 	    		return null;
 	    	}
 	       	java.util.Iterator<?> it = header.examineAllHeaderElements();
@@ -893,7 +880,9 @@ public abstract class MessageSecurityContext{
     		try {
     			Object o = xpathExpressionEngine.getMatchPattern(securityHeader, dnc, xpath, XPathReturnType.NODE);
     			samlElement = (SOAPElement) o;
-    		} catch(XPathNotFoundException e) {}
+    		} catch(XPathNotFoundException e) {
+    			// ignore
+    		}
     		
     		return samlElement;
 
@@ -922,7 +911,9 @@ public abstract class MessageSecurityContext{
 			try {
 				Object o = xpathExpressionEngine.getMatchPattern(samlToken, dnc, xpath, XPathReturnType.STRING);
 				method = (String) o;
-			} catch(XPathNotFoundException e) {}
+			} catch(XPathNotFoundException e) {
+				// ignore
+			}
     		
 			return method;
 

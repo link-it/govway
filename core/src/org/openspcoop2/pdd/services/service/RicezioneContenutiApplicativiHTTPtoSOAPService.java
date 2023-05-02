@@ -582,7 +582,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			preInRequestContext.setIdModulo(idModulo);
 			preInRequestContext.setProtocolFactory(protocolFactory);
 			preInRequestContext.setRequestInfo(requestInfo);
-			Map<String, Object> transportContext = new HashMap<String, Object>();
+			Map<String, Object> transportContext = new HashMap<>();
 			transportContext.put(PreInRequestContext.SERVLET_REQUEST, req);
 			transportContext.put(PreInRequestContext.SERVLET_RESPONSE, res);
 			preInRequestContext.setTransportContext(transportContext);	

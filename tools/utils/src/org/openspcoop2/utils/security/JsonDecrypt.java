@@ -415,11 +415,15 @@ public class JsonDecrypt {
 	
 	private X509Certificate x509Certificate;
 	private RSAPublicKey rsaPublicKey;
+	private String kid;
 	public X509Certificate getX509Certificate() {
 		return this.x509Certificate;
 	}
 	public RSAPublicKey getRsaPublicKey() {
 		return this.rsaPublicKey;
+	}
+	public String getKid() {
+		return this.kid;
 	}
 	
 	private JweDecryptionProvider getProvider(JweHeaders jweHeaders, JweHeaders jweUnprotectedHeaders) throws Exception {
@@ -563,11 +567,11 @@ public class JsonDecrypt {
 				//   decrypt the JWE.  This parameter allows originators to explicitly
 				//   signal a change of key to JWE recipients.
 				try {
-					String kid = jweHeaders.getKeyId();
+					this.kid = jweHeaders.getKeyId();
 					if(this.jsonWebKeys!=null) {
 						JsonWebKey jsonWebKey = null;
 						try {
-							jsonWebKey = this.jsonWebKeys.getKey(kid);
+							jsonWebKey = this.jsonWebKeys.getKey(this.kid);
 						}catch(Exception e) {
 							// key non esistente
 						}
@@ -575,25 +579,23 @@ public class JsonDecrypt {
 							provider = getProviderJWK(jsonWebKey, keyAlgo, contentAlgo);
 						}
 					}
-					if(provider==null) {
-						if(this.keyStore!=null) {
-							if(this.keyStore.existsAlias(kid)) {
-								Certificate cer = this.keyStore.getCertificate(kid);
-								if(cer instanceof X509Certificate) {
-									X509Certificate x509Certificate = (X509Certificate) cer;
-									
-									// La validazione serve per verificare la data e il crl
-									if(this.trustStoreVerificaCertificatiX509!=null) {
-										JsonUtils.validate(new CertificateInfo(x509Certificate, kid), this.trustStoreVerificaCertificatiX509, this.crlX509, this.ocspValidatorX509, JwtHeaders.JWT_HDR_KID, false);
-									}
-									else {
-										JsonUtils.validate(new CertificateInfo(x509Certificate, kid), this.keyStore, this.crlX509, this.ocspValidatorX509, JwtHeaders.JWT_HDR_KID, false);
-									}
-									
-									CertificateInfo certificatoInfo = new CertificateInfo(x509Certificate, kid);
-									provider = getProviderX509(certificatoInfo, keyAlgo, contentAlgo);
-								}
+					if(provider==null &&
+						this.keyStore!=null &&
+						this.keyStore.existsAlias(this.kid)) {
+						Certificate cer = this.keyStore.getCertificate(this.kid);
+						if(cer instanceof X509Certificate) {
+							X509Certificate x509Certificate = (X509Certificate) cer;
+							
+							// La validazione serve per verificare la data e il crl
+							if(this.trustStoreVerificaCertificatiX509!=null) {
+								JsonUtils.validate(new CertificateInfo(x509Certificate, this.kid), this.trustStoreVerificaCertificatiX509, this.crlX509, this.ocspValidatorX509, JwtHeaders.JWT_HDR_KID, false);
 							}
+							else {
+								JsonUtils.validate(new CertificateInfo(x509Certificate, this.kid), this.keyStore, this.crlX509, this.ocspValidatorX509, JwtHeaders.JWT_HDR_KID, false);
+							}
+							
+							CertificateInfo certificatoInfo = new CertificateInfo(x509Certificate, this.kid);
+							provider = getProviderX509(certificatoInfo, keyAlgo, contentAlgo);
 						}
 					}
 				}catch(Exception e) {

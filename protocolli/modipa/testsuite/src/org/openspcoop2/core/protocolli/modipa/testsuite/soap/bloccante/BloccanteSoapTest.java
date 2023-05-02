@@ -58,7 +58,7 @@ public class BloccanteSoapTest extends ConfigLoader {
 	@BeforeClass
     public static void beforeClass() {       
         File file = FileUtils.getFileRelativeTo(BloccanteSoapTest.class, "mock.feature");
-        server = FeatureServer.start(file, Integer.valueOf(prop.getProperty("http_port")), false, new HashMap<String,Object>((Map) prop));
+        server = FeatureServer.start(file, Integer.valueOf(prop.getProperty("http_port")), false, new HashMap<>((Map) prop));
     }
         
     @AfterClass

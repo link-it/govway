@@ -105,7 +105,7 @@ public class Translator {
 		
 		this.checkInitDriver();
 		
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("policies", this.reader.findAllPolicies());
 		List<APC> apcList = this.reader.findAllAPC();
 		map.put("apcList", apcList);

@@ -95,7 +95,7 @@ public class BasicProtocolFactory extends BasicEmptyRawContentFactory {
 	private static Map<String, IProtocolVersionManager> staticInstanceProtocolVersionManager = null;
 	private static synchronized void initStaticInstanceProtocolVersionManager() {
 		if(staticInstanceProtocolVersionManager==null) {
-			staticInstanceProtocolVersionManager = new HashMap<String, IProtocolVersionManager>();
+			staticInstanceProtocolVersionManager = new HashMap<>();
 		}
 	}
 	@Override

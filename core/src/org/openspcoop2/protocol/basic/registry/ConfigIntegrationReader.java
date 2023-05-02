@@ -48,6 +48,7 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPorteApplicative;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPorteDelegate;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaServiziApplicativi;
@@ -74,9 +75,8 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 	
 	private IConfigIntegrationReaderInUso inUsoDriver = null;
 	
-	@SuppressWarnings("unused")
 	private Logger log;
-	public ConfigIntegrationReader(IDriverConfigurazioneGet driverConfigurazione,Logger log) throws Exception{
+	public ConfigIntegrationReader(IDriverConfigurazioneGet driverConfigurazione,Logger log) throws ProtocolException{
 		this.driverConfigurazioneGET = driverConfigurazione;
 		if(this.driverConfigurazioneGET instanceof IDriverConfigurazioneCRUD){
 			this.driverConfigurazioneCRUD = (IDriverConfigurazioneCRUD) this.driverConfigurazioneGET;
@@ -84,10 +84,15 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 		this.log = log;
 		
 		Loader loader = new Loader();
-		this.inUsoDriver = (IConfigIntegrationReaderInUso) loader.newInstance("org.openspcoop2.protocol.engine.registry.ConfigIntegrationReaderInUso");
+		try {
+			this.inUsoDriver = (IConfigIntegrationReaderInUso) loader.newInstance("org.openspcoop2.protocol.engine.registry.ConfigIntegrationReaderInUso");
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
 		this.inUsoDriver.init(this.driverConfigurazioneGET, log);
 	}
 	
+	private static final String NOT_IMPLEMENTED = "Not Implemented";
 
 	
 	// SERVIZI APPLICATIVI
@@ -321,14 +326,14 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			
 		}
 		else {
-			throw new RegistryException("Not Implemented");
+			throw new RegistryException(NOT_IMPLEMENTED);
 		}
 	}
 	
 	@Override
 	public List<Allarme> getAllarmi(IDPortaDelegata idPortaDelegata) throws RegistryNotFound,RegistryException{
-		if(!CostantiDB.ALLARMI_ENABLED) {
-			return new ArrayList<Allarme>();
+		if(!CostantiDB.isAllarmiEnabled()) {
+			return new ArrayList<>();
 		}
 		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
 			
@@ -357,7 +362,7 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			
 		}
 		else {
-			throw new RegistryException("Not Implemented");
+			throw new RegistryException(NOT_IMPLEMENTED);
 		}
 	}
 		
@@ -447,14 +452,14 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			
 		}
 		else {
-			throw new RegistryException("Not Implemented");
+			throw new RegistryException(NOT_IMPLEMENTED);
 		}
 	}
 	
 	@Override
 	public List<Allarme> getAllarmi(IDPortaApplicativa idPortaApplicativa) throws RegistryNotFound,RegistryException{
-		if(!CostantiDB.ALLARMI_ENABLED) {
-			return new ArrayList<Allarme>();
+		if(!CostantiDB.isAllarmiEnabled()) {
+			return new ArrayList<>();
 		}
 		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
 			
@@ -483,7 +488,7 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			
 		}
 		else {
-			throw new RegistryException("Not Implemented");
+			throw new RegistryException(NOT_IMPLEMENTED);
 		}
 	}
 	
@@ -546,7 +551,7 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			
 		}
 		else {
-			throw new RegistryException("Not Implemented");
+			throw new RegistryException(NOT_IMPLEMENTED);
 		}
 	}
 	
@@ -578,14 +583,14 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			
 		}
 		else {
-			throw new RegistryException("Not Implemented");
+			throw new RegistryException(NOT_IMPLEMENTED);
 		}
 	}
 
 	@Override
 	public List<Allarme> getAllarmiGlobali() throws RegistryNotFound,RegistryException{
-		if(!CostantiDB.ALLARMI_ENABLED) {
-			return new ArrayList<Allarme>();
+		if(!CostantiDB.isAllarmiEnabled()) {
+			return new ArrayList<>();
 		}
 		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
 			
@@ -614,13 +619,13 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			
 		}
 		else {
-			throw new RegistryException("Not Implemented");
+			throw new RegistryException(NOT_IMPLEMENTED);
 		}
 	}
 	
 	@Override
 	public String getNextAlarmInstanceSerialId(String tipoPlugin) throws RegistryException{
-		if(!CostantiDB.ALLARMI_ENABLED) {
+		if(!CostantiDB.isAllarmiEnabled()) {
 			throw new RegistryException("Alarm not supported");
 		}
 		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
@@ -649,7 +654,7 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			
 		}
 		else {
-			throw new RegistryException("Not Implemented");
+			throw new RegistryException(NOT_IMPLEMENTED);
 		}
 	}
 	
@@ -670,7 +675,7 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			
 		}
 		else {
-			throw new RegistryException("Not Implemented");
+			throw new RegistryException(NOT_IMPLEMENTED);
 		}
 	}
 	@Override
@@ -693,7 +698,7 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			
 		}
 		else {
-			throw new RegistryException("Not Implemented");
+			throw new RegistryException(NOT_IMPLEMENTED);
 		}
 	}
 	
@@ -714,7 +719,7 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			
 		}
 		else {
-			throw new RegistryException("Not Implemented");
+			throw new RegistryException(NOT_IMPLEMENTED);
 		}
 	}
 	@Override
@@ -737,7 +742,7 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			
 		}
 		else {
-			throw new RegistryException("Not Implemented");
+			throw new RegistryException(NOT_IMPLEMENTED);
 		}
 	}
 	
@@ -758,7 +763,7 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			
 		}
 		else {
-			throw new RegistryException("Not Implemented");
+			throw new RegistryException(NOT_IMPLEMENTED);
 		}
 	}
 	@Override
@@ -781,7 +786,7 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			
 		}
 		else {
-			throw new RegistryException("Not Implemented");
+			throw new RegistryException(NOT_IMPLEMENTED);
 		}
 	}
 

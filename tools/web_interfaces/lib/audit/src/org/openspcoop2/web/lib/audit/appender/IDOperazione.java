@@ -36,7 +36,7 @@ import java.util.HashMap;
  */
 public class IDOperazione {
 
-	private HashMap<String, Object> idOperazioneRegistrata = new HashMap<String, Object>();
+	private HashMap<String, Object> idOperazioneRegistrata = new HashMap<>();
 	
 	public void addIdOperazione(String appenderName,Object idOperazione){
 		this.idOperazioneRegistrata.put(appenderName, idOperazione);

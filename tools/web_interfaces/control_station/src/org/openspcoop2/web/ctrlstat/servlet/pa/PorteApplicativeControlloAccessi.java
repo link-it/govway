@@ -31,6 +31,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.AutorizzazioneScope;
@@ -55,6 +56,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
@@ -186,7 +188,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 			
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			if(pa==null) {
-				throw new Exception("PortaApplicativa con id '"+idInt+"' non trovata");
+				throw new CoreException("PortaApplicativa con id '"+idInt+"' non trovata");
 			}
 			String idporta = pa.getNome();
 
@@ -265,10 +267,34 @@ public class PorteApplicativeControlloAccessi extends Action {
 			boolean forceAutenticato = false; 
 			boolean forceHttps = false;
 			boolean forceDisableOptional = false;
+			boolean forcePDND = false;
+			boolean forceOAuth = false;
+			boolean forceGestioneToken = false;
 			if(porteApplicativeHelper.isProfiloModIPA(protocollo)) {
 				forceAutenticato = true; // in modI ci vuole sempre autenticazione https sull'erogazione (cambia l'opzionalita' o meno)
 				forceHttps = forceAutenticato;
-				forceDisableOptional = porteApplicativeHelper.forceHttpsClientProfiloModiPA(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), asps.getPortType());
+				
+				BooleanNullable forceHttpsClientWrapper = BooleanNullable.NULL(); 
+				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL(); 
+				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL(); 
+				
+				porteApplicativeHelper.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, 
+						IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), asps.getPortType(), 
+						pa.getAzione()!=null && pa.getAzione().getAzioneDelegataList()!=null && !pa.getAzione().getAzioneDelegataList().isEmpty() ? pa.getAzione().getAzioneDelegataList() : null);
+				
+				if(forceHttpsClientWrapper.getValue()!=null) {
+					forceDisableOptional = forceHttpsClientWrapper.getValue().booleanValue();
+				}
+				if(forcePDNDWrapper.getValue()!=null) {
+					forcePDND = forcePDNDWrapper.getValue().booleanValue();
+				}
+				if(forceOAuthWrapper.getValue()!=null) {
+					forceOAuth = forceOAuthWrapper.getValue().booleanValue();
+				}
+
+				if(forcePDND || forceOAuth) {
+					forceGestioneToken = true;
+				}
 			}
 			
 			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
@@ -358,18 +384,41 @@ public class PorteApplicativeControlloAccessi extends Action {
 			String servletChiamante = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI;
 
 			// Token Policy
-			List<GenericProperties> gestorePolicyTokenList = confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, null);
-			String [] policyLabels = new String[gestorePolicyTokenList.size() + 1];
-			String [] policyValues = new String[gestorePolicyTokenList.size() + 1];
-
-			policyLabels[0] = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
-			policyValues[0] = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
-
-			for (int i = 0; i < gestorePolicyTokenList.size(); i++) {
-				GenericProperties genericProperties = gestorePolicyTokenList.get(i);
-				policyLabels[(i+1)] = genericProperties.getNome();
-				policyValues[(i+1)] = genericProperties.getNome();
+			String [] policyLabels = null;
+			String [] policyValues = null;
+			if(forcePDND || forceOAuth) {
+				if(forcePDND) {
+					List<String> tokenPolicies = porteApplicativeHelper.getTokenPolicyGestione(true, false, 
+							true);
+					if(tokenPolicies!=null && !tokenPolicies.isEmpty()) {
+						policyLabels = tokenPolicies.toArray(new String[1]);
+						policyValues = tokenPolicies.toArray(new String[1]);
+					}
+				}
+				else {
+					List<String> tokenPolicies = porteApplicativeHelper.getTokenPolicyGestione(false, true, 
+							true);
+					if(tokenPolicies!=null && !tokenPolicies.isEmpty()) {
+						policyLabels = tokenPolicies.toArray(new String[1]);
+						policyValues = tokenPolicies.toArray(new String[1]);
+					}
+				}
 			}
+			else {
+				List<GenericProperties> gestorePolicyTokenList = confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, null);
+				policyLabels = new String[gestorePolicyTokenList.size() + 1];
+				policyValues = new String[gestorePolicyTokenList.size() + 1];
+	
+				policyLabels[0] = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+				policyValues[0] = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+	
+				for (int i = 0; i < gestorePolicyTokenList.size(); i++) {
+					GenericProperties genericProperties = gestorePolicyTokenList.get(i);
+					policyLabels[(i+1)] = genericProperties.getNome();
+					policyValues[(i+1)] = genericProperties.getNome();
+				}
+			}
+
 
 			// La XACML Policy, se definita nella porta delegata può solo essere cambiata, non annullata.
 			if(allegatoXacmlPolicy!=null && allegatoXacmlPolicy.getValue()==null &&
@@ -623,7 +672,8 @@ public class PorteApplicativeControlloAccessi extends Action {
 
 				porteApplicativeHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, 
 						gestioneTokenPolicy, gestioneTokenOpzionale, 
-						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, pa,protocollo,false);
+						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, pa,protocollo,false,
+						forceGestioneToken);
 
 				porteApplicativeHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, servletChiamante,pa,protocollo,
 						autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, confPers, isSupportatoAutenticazione,false,
@@ -681,7 +731,8 @@ public class PorteApplicativeControlloAccessi extends Action {
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				porteApplicativeHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, 
-						gestioneTokenPolicy, gestioneTokenOpzionale, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, pa,protocollo,false);
+						gestioneTokenPolicy, gestioneTokenOpzionale, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, pa,protocollo,false,
+						forceGestioneToken);
 
 				porteApplicativeHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, servletChiamante,pa,protocollo,
 						autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, confPers, isSupportatoAutenticazione,false,
@@ -927,9 +978,8 @@ public class PorteApplicativeControlloAccessi extends Action {
 
 			pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			if(pa==null) {
-				throw new Exception("PortaApplicativa con id '"+idInt+"' non trovata");
+				throw new CoreException("PortaApplicativa con id '"+idInt+"' non trovata");
 			}
-			idporta = pa.getNome();
 
 			ruoli = new ArrayList<>();
 			if(pa!=null && pa.getRuoli()!=null && pa.getRuoli().sizeRuoloList()>0){
@@ -1161,7 +1211,8 @@ public class PorteApplicativeControlloAccessi extends Action {
 			
 			porteApplicativeHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale, 
-					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, pa,protocollo,false);
+					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, pa,protocollo,false,
+					forceGestioneToken);
 
 			porteApplicativeHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, servletChiamante,pa,protocollo,
 					autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList,confPers, isSupportatoAutenticazione,false,

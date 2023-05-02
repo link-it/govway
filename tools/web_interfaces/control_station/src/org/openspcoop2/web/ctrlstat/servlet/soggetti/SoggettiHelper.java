@@ -772,7 +772,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 						tmpElenco = tmpElenco + ", "+SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_TIPO;
 					}
 				}
-				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
 				return false;
 			}
 

@@ -91,10 +91,10 @@ public class OCSPResourceReader implements IOCSPResourceReader {
 			}
 			
 			if(this.config.getForwardProxy_url()!=null) {
-				externalConfig.setForwardProxy_url(this.config.getForwardProxy_url());
-				externalConfig.setForwardProxy_header(this.config.getForwardProxy_header());
-				externalConfig.setForwardProxy_queryParameter(this.config.getForwardProxy_queryParameter());
-				externalConfig.setForwardProxy_base64(this.config.isForwardProxy_base64());
+				externalConfig.setForwardProxyUrl(this.config.getForwardProxy_url());
+				externalConfig.setForwardProxyHeader(this.config.getForwardProxy_header());
+				externalConfig.setForwardProxyQueryParameter(this.config.getForwardProxy_queryParameter());
+				externalConfig.setForwardProxyBase64(this.config.isForwardProxy_base64());
 			}
 			
 			externalConfig.setConnectTimeout(this.config.getConnectTimeout());

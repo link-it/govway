@@ -1248,7 +1248,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     protected Map<String, Object> dynamicMap = null;
     protected Map<String, Object> buildDynamicMap(ConnettoreMsg connettoreMsg){
     	if(this.dynamicMap==null) {
-    		this.dynamicMap = new HashMap<String, Object>();
+    		this.dynamicMap = new HashMap<>();
     	}
     	DynamicInfo dInfo = new DynamicInfo(connettoreMsg, this.getPddContext());
     	Logger log = null;

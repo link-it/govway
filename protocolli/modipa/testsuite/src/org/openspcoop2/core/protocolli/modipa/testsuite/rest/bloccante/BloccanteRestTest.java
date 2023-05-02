@@ -57,7 +57,7 @@ public class BloccanteRestTest extends ConfigLoader {
 	@BeforeClass
     public static void beforeClass() {       
         File file = FileUtils.getFileRelativeTo(BloccanteRestTest.class, "modipa-mock.feature");
-        server = FeatureServer.start(file, Integer.valueOf(prop.getProperty("http_port")), false, new HashMap<String,Object>((Map) prop));
+        server = FeatureServer.start(file, Integer.valueOf(prop.getProperty("http_port")), false, new HashMap<>((Map) prop));
     }
         
     @AfterClass

@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.mail.Mail;
 import org.openspcoop2.utils.mail.MailAttach;
 import org.openspcoop2.utils.mail.MailBinaryAttach;
@@ -52,7 +53,7 @@ public class MailTest {
 		String password = "password";
 		SSLConfig sslConfig = new SSLConfig();
 		sslConfig.setSslType("TLS");
-		sslConfig.setTrustStoreType("JKS");
+		sslConfig.setTrustStoreType(KeystoreType.JKS.getNome());
 		sslConfig.setTrustStoreLocation("keystore.jks");
 		sslConfig.setTrustStorePassword("keyserver");
 		sslConfig.setTrustManagementAlgorithm("PKIX");

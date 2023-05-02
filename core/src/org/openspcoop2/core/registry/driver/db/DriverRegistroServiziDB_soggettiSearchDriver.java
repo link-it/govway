@@ -860,7 +860,7 @@ public class DriverRegistroServiziDB_soggettiSearchDriver {
 					existsConditions.add(sqlQueryObjectControlloTrafficoPorteApplicative.getWhereExistsCondition(false, sqlQueryObjectControlloTrafficoPorteApplicative));
 				} 
 				
-				if(CostantiDB.ALLARMI_ENABLED) {
+				if(CostantiDB.isAllarmiEnabled()) {
 					
 					// allarmi (fruitore)
 					

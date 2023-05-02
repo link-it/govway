@@ -313,11 +313,11 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 					
 					try {
 						this.keystoreFruizioneModI = new ModIKeystoreUtils(true, this.idFruizione.getIdFruitore(), asps, "Token Policy Negoziazione - Signed JWT",
-								NegoziazioneTokenDynamicParametersModIUtils.getSicurezzaMessaggio_certificati_keyStore_tipo(),
-								NegoziazioneTokenDynamicParametersModIUtils.getSicurezzaMessaggio_certificati_keyStore_path(),
-								NegoziazioneTokenDynamicParametersModIUtils.getSicurezzaMessaggio_certificati_keyStore_password(),
-								NegoziazioneTokenDynamicParametersModIUtils.getSicurezzaMessaggio_certificati_key_alias(),
-								NegoziazioneTokenDynamicParametersModIUtils.getSicurezzaMessaggio_certificati_key_password());
+								NegoziazioneTokenDynamicParametersModIUtils.getSicurezzaMessaggioCertificatiKeyStoreTipo(),
+								NegoziazioneTokenDynamicParametersModIUtils.getSicurezzaMessaggioCertificatiKeyStorePath(),
+								NegoziazioneTokenDynamicParametersModIUtils.getSicurezzaMessaggioCertificatiKeyStorePassword(),
+								NegoziazioneTokenDynamicParametersModIUtils.getSicurezzaMessaggioCertificatiKeyAlias(),
+								NegoziazioneTokenDynamicParametersModIUtils.getSicurezzaMessaggioCertificatiKeyPassword());
 					}catch(Exception t) {
 						throw new TokenException(prefixError+"non è utilizzabile: "+t.getMessage(),t);
 					}

@@ -31,6 +31,7 @@ import org.apache.wss4j.common.ConfigurationConstants;
 import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.dom.handler.WSHandlerConstants;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.digest.Constants;
 
@@ -264,6 +265,7 @@ public class SecurityConstants {
     public static final String JOSE_KID = "joseKeyId";
     public static final String JOSE_KID_TRUE = "true";
     public static final String JOSE_KID_FALSE = "false";
+    public static final String JOSE_KID_CUSTOM = "joseKeyIdCustom";
     public static final String JOSE_INCLUDE_CERT = "joseIncludeCert";
     public static final String JOSE_INCLUDE_CERT_TRUE = "true";
     public static final String JOSE_INCLUDE_CERT_FALSE = "false";
@@ -298,6 +300,7 @@ public class SecurityConstants {
     
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_TYPE = "joseUseHeaders.truststore.type";
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_FILE = "joseUseHeaders.truststore.file";
+    public static final String JOSE_USE_HEADERS_TRUSTSTORE_KEY_PAIR_ALGORITHM = "joseUseHeaders.truststore.file.algorithm";
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_PASSWORD = "joseUseHeaders.truststore.password";
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_CRL =  "joseUseHeaders.truststore.crl";
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_OCSP =  "joseUseHeaders.truststore.ocsp";
@@ -308,13 +311,18 @@ public class SecurityConstants {
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_CRL =  RSSecurityConstants.RSSEC_KEY_STORE+".ssl.crl";
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_OCSP =  RSSecurityConstants.RSSEC_KEY_STORE+".ssl.ocsp";
     
+    public static final String JOSE_USE_HEADERS_TRUSTSTORE_REMOTE_STORE_PROVIDER = "joseUseHeaders.truststore.remoteStoreProvider";
+    public static final String JOSE_USE_HEADERS_TRUSTSTORE_REMOTE_STORE_KEY_TYPE = "joseUseHeaders.truststore.remoteStoreKeyType";
+    public static final String JOSE_USE_HEADERS_TRUSTSTORE_REMOTE_STORE_CONFIG = "joseUseHeaders.truststore.remoteStoreConfig";
+    
     public static final String JOSE_USE_HEADERS_KEYSTORE_TYPE = "joseUseHeaders.keystore.type";
     public static final String JOSE_USE_HEADERS_KEYSTORE_FILE = "joseUseHeaders.keystore.file";
+    public static final String JOSE_USE_HEADERS_KEYSTORE_KEY_PAIR_ALGORITHM = "joseUseHeaders.keystore.file.algorithm";
     public static final String JOSE_USE_HEADERS_KEYSTORE_PASSWORD = "joseUseHeaders.keystore.password";
     public static final String JOSE_USE_HEADERS_KEYSTORE_MAP_ALIAS_PW = "joseUseHeaders.key.";
     public static final String JOSE_USE_HEADERS_KEYSTORE_MAP_ALIAS_PW_SUFFIX_ALIAS = ".alias";
     public static final String JOSE_USE_HEADERS_KEYSTORE_MAP_ALIAS_PW_SUFFIX_PW = ".password";
-    
+        
     public static final String TIMESTAMP_ACTION = ConfigurationConstants.TIMESTAMP;
     public static final String TIMESTAMP_TTL = ConfigurationConstants.TTL_TIMESTAMP;
     
@@ -461,19 +469,21 @@ public class SecurityConstants {
     public static final String TRUE = "true";
     public static final String FALSE = "false";
     
-    public static final String KEYSTORE_TYPE_KEY_PAIR_VALUE = "keys";
-    public static final String KEYSTORE_TYPE_KEY_PAIR_LABEL = "Key Pair";
+    public static final String KEYSTORE_TYPE_KEY_PAIR_VALUE = CostantiDB.KEYSTORE_TYPE_KEY_PAIR;
+    public static final String KEYSTORE_TYPE_KEY_PAIR_LABEL = CostantiLabel.KEYSTORE_TYPE_KEY_PAIR;
     
-    public static final String KEYSTORE_TYPE_PUBLIC_KEY_VALUE = "public";
-    public static final String KEYSTORE_TYPE_PUBLIC_KEY_LABEL = "Public Key";
+    public static final String KEYSTORE_TYPE_PUBLIC_KEY_VALUE = CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY;
+    public static final String KEYSTORE_TYPE_PUBLIC_KEY_LABEL = CostantiLabel.KEYSTORE_TYPE_PUBLIC_KEY;
     
-    public static final String KEYSTORE_TYPE_JWK_VALUE = "jwk";
-    public static final String KEYSTORE_TYPE_JWK_LABEL = "JWK Set";
+    public static final String KEYSTORE_TYPE_JWK_VALUE = CostantiDB.KEYSTORE_TYPE_JWK;
+    public static final String KEYSTORE_TYPE_JWK_LABEL = CostantiLabel.KEYSTORE_TYPE_JWK;
     
-    public static final String KEYSTORE_TYPE_JKS_VALUE = "jks";
-    public static final String KEYSTORE_TYPE_JKS_LABEL = "JKS";
-    public static final String KEYSTORE_TYPE_PKCS12_VALUE = "pkcs12";
-    public static final String KEYSTORE_TYPE_PKCS12_LABEL = "PKCS12";
+    public static final String KEYSTORE_TYPE_JKS_VALUE = CostantiDB.KEYSTORE_TYPE_JKS;
+    public static final String KEYSTORE_TYPE_JKS_LABEL = CostantiLabel.KEYSTORE_TYPE_JKS;
+    
+    public static final String KEYSTORE_TYPE_PKCS12_VALUE = CostantiDB.KEYSTORE_TYPE_PKCS12;
+    public static final String KEYSTORE_TYPE_PKCS12_LABEL = CostantiLabel.KEYSTORE_TYPE_PKCS12;
+    
     public static List<String> getTipologieKeystoreValues(boolean truststore){
 		// NOTA:far ricreare la lista ogni volta, poiche' poi viene modificata
 		List<String> l = new ArrayList<>();

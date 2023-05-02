@@ -53,6 +53,9 @@ import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.certificate.KeyStore;
+import org.openspcoop2.utils.certificate.remote.IRemoteStoreProvider;
+import org.openspcoop2.utils.certificate.remote.RemoteKeyType;
+import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWTOptions;
 import org.openspcoop2.utils.security.JsonDecrypt;
@@ -82,16 +85,16 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				false, null, ctx);
 	}
 	public void process(MessageSecurityContext messageSecurityContext,OpenSPCoop2Message messageParam,Busta busta,
-			boolean bufferMessage_readOnly, String idTransazione,org.openspcoop2.utils.Map<Object> ctx) throws SecurityException{
+			boolean bufferMessageReadOnly, String idTransazione,org.openspcoop2.utils.Map<Object> ctx) throws SecurityException{
 		
 		boolean signatureProcess = false;
 		boolean encryptProcess = false;
 		try{
 			
-			if(ServiceBinding.REST.equals(messageParam.getServiceBinding())==false){
+			if(!ServiceBinding.REST.equals(messageParam.getServiceBinding())){
 				throw new SecurityException(JOSECostanti.JOSE_ENGINE_DESCRIPTION+" usable only with REST Binding");
 			}
-			if(MessageType.JSON.equals(messageParam.getMessageType())==false) {
+			if(!MessageType.JSON.equals(messageParam.getMessageType())) {
 				throw new SecurityException(JOSECostanti.JOSE_ENGINE_DESCRIPTION+" usable only with REST Binding and a json message, found: "+messageParam.getMessageType());
 			}
 			OpenSPCoop2RestJsonMessage restJsonMessage = messageParam.castAsRestJson();
@@ -160,10 +163,34 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 					this.jsonVerifierSignature = new JsonVerifySignature(signatureProperties, options);	
 				}
 				else if(useHeaders) {
-					KeyStore trustStore = JOSEUtils.readTrustStoreJwtX509Cert(requestInfo, messageSecurityContext.getIncomingProperties());
-					KeyStore trustStoreSsl = JOSEUtils.readTrustStoreSsl(requestInfo, messageSecurityContext.getIncomingProperties());
-					// La versione con le properties non usa le cache: Properties trustStoreSsl = JOSEUtils.toSslConfigJwtUrlHeader(messageSecurityContext.getIncomingProperties());
-					this.jsonVerifierSignature = new JsonVerifySignature(trustStoreSsl, trustStore, options);
+					
+					if(JOSEUtils.isRemoteStore(messageSecurityContext.getIncomingProperties())) {
+						IRemoteStoreProvider provider = (IRemoteStoreProvider) messageSecurityContext.getIncomingProperties().get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_REMOTE_STORE_PROVIDER);
+						RemoteKeyType keyType = (RemoteKeyType) messageSecurityContext.getIncomingProperties().get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_REMOTE_STORE_KEY_TYPE);
+						RemoteStoreConfig config = (RemoteStoreConfig) messageSecurityContext.getIncomingProperties().get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_REMOTE_STORE_CONFIG);
+						this.jsonVerifierSignature = new JsonVerifySignature(provider, keyType, config, options);
+					}
+					else if(JOSEUtils.isJWKSetTrustStore(messageSecurityContext.getIncomingProperties())) {
+						JsonWebKeys jsonWebKeys = null;
+						JWKSet jkwSet = JOSEUtils.readTrustStoreJwtJsonWebKeysCert(requestInfo, messageSecurityContext.getIncomingProperties());
+						if(jkwSet!=null) {
+							jsonWebKeys = jkwSet.getJsonWebKeys();
+						}
+						this.jsonVerifierSignature = new JsonVerifySignature(jsonWebKeys, options);
+					}
+					else if(JOSEUtils.isPublicKeyTrustStore(messageSecurityContext.getIncomingProperties())) {
+						JsonWebKeys jsonWebKeys = null;
+						JWKSet jkwSet = JOSEUtils.readTrustStorePublicKey(requestInfo, messageSecurityContext.getIncomingProperties());
+						if(jkwSet!=null) {
+							jsonWebKeys = jkwSet.getJsonWebKeys();
+						}
+						this.jsonVerifierSignature = new JsonVerifySignature(jsonWebKeys, options);
+					}
+					else {
+						KeyStore trustStore = JOSEUtils.readTrustStoreJwtX509Cert(requestInfo, messageSecurityContext.getIncomingProperties());
+						KeyStore trustStoreSsl = JOSEUtils.readTrustStoreSsl(requestInfo, messageSecurityContext.getIncomingProperties());
+						this.jsonVerifierSignature = new JsonVerifySignature(trustStoreSsl, trustStore, options);
+					}
 				}
 				else {	
 					KeyStore signatureKS = null;
@@ -265,7 +292,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				if(signatureCRL!=null && !"".equals(signatureCRL) && !crlByOcsp) {
 					CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(requestInfo, signatureCRL);
 					if(crlCertstore==null) {
-						throw new Exception("Process CRL '"+signatureCRL+"' failed");
+						throw new SecurityException("Process CRL '"+signatureCRL+"' failed");
 					}
 					this.jsonVerifierSignature.setCrlX509(crlCertstore.getCertStore());
 				}
@@ -301,7 +328,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				if(httpsCRL!=null && !"".equals(httpsCRL) && !httpsCrlByOcsp) {
 					CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(requestInfo, httpsCRL);
 					if(crlCertstore==null) {
-						throw new Exception("Process CRL '"+httpsCRL+"' failed");
+						throw new SecurityException("Process CRL '"+httpsCRL+"' failed");
 					}
 					this.jsonVerifierSignature.setCrlHttps(crlCertstore.getCertStore());
 				}
@@ -312,15 +339,15 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				boolean verify = false;
 				try {
 					if(this.detached) {
-						verify = this.jsonVerifierSignature.verifyDetached(detachedSignature, restJsonMessage.getContent(bufferMessage_readOnly, idTransazione));
+						verify = this.jsonVerifierSignature.verifyDetached(detachedSignature, restJsonMessage.getContent(bufferMessageReadOnly, idTransazione));
 					}else {
-						verify = this.jsonVerifierSignature.verify(restJsonMessage.getContent(bufferMessage_readOnly, idTransazione));
+						verify = this.jsonVerifierSignature.verify(restJsonMessage.getContent(bufferMessageReadOnly, idTransazione));
 					}
 				}catch(Exception e) {
-					throw new Exception("Signature verification failed: "+e.getMessage(),e);
+					throw new SecurityException("Signature verification failed: "+e.getMessage(),e);
 				}
 				if(!verify) {
-					throw new Exception("Signature verification failed");
+					throw new SecurityException("Signature verification failed");
 				}
 				
 			} // fine signature
@@ -358,10 +385,9 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				}
 				else if(useHeaders) {
 					KeyStore trustStoreSsl = JOSEUtils.readTrustStoreSsl(requestInfo, messageSecurityContext.getIncomingProperties());
-					// La versione con le properties non usa le cache: Properties trustStoreSsl = JOSEUtils.toSslConfigJwtUrlHeader(messageSecurityContext.getIncomingProperties());
-					if(JOSEUtils.isJWKSetKeystore(messageSecurityContext.getIncomingProperties())) {
+					if(JOSEUtils.isJWKSetKeyStore(messageSecurityContext.getIncomingProperties())) {
 						JsonWebKeys jsonWebKeys = null;
-						JWKSet jkwSet = JOSEUtils.readKeyStoreJwtJsonWebKeysCert(messageSecurityContext.getIncomingProperties());
+						JWKSet jkwSet = JOSEUtils.readKeyStoreJwtJsonWebKeysCert(requestInfo, messageSecurityContext.getIncomingProperties());
 						if(jkwSet!=null) {
 							jsonWebKeys = jkwSet.getJsonWebKeys();
 						}
@@ -370,8 +396,8 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 					else {
 						KeyStore trustStore = JOSEUtils.readTrustStoreJwtX509Cert(requestInfo, messageSecurityContext.getIncomingProperties());
 						KeyStore keyStore = JOSEUtils.readKeyStoreJwtX509Cert(requestInfo, messageSecurityContext.getIncomingProperties());
-						Map<String, String> keystore_mapAliasPassword = JOSEUtils.covertToJwtX509CertMapAliasPassword(messageSecurityContext.getIncomingProperties());						
-						this.jsonDecrypt = new JsonDecrypt(trustStoreSsl, trustStore, keyStore, keystore_mapAliasPassword, options);
+						Map<String, String> keystoreMapAliasPassword = JOSEUtils.covertToJwtX509CertMapAliasPassword(messageSecurityContext.getIncomingProperties());						
+						this.jsonDecrypt = new JsonDecrypt(trustStoreSsl, trustStore, keyStore, keystoreMapAliasPassword, options);
 					}
 				}
 				else {	
@@ -471,7 +497,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				if(encryptionCRL!=null && !"".equals(encryptionCRL) && !crlByOcsp) {
 					CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(requestInfo, encryptionCRL);
 					if(crlCertstore==null) {
-						throw new Exception("Process CRL '"+encryptionCRL+"' failed");
+						throw new SecurityException("Process CRL '"+encryptionCRL+"' failed");
 					}
 					this.jsonDecrypt.setCrlX509(crlCertstore.getCertStore());
 				}
@@ -507,7 +533,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				if(httpsCRL!=null && !"".equals(httpsCRL) && !httpsCrlByOcsp) {
 					CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(requestInfo, httpsCRL);
 					if(crlCertstore==null) {
-						throw new Exception("Process CRL '"+httpsCRL+"' failed");
+						throw new SecurityException("Process CRL '"+httpsCRL+"' failed");
 					}
 					this.jsonDecrypt.setCrlHttps(crlCertstore.getCertStore());
 				}
@@ -517,9 +543,9 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 							
 				encryptProcess = true; // le eccezioni lanciate da adesso sono registrato con codice relative alla verifica
 				try {
-					this.jsonDecrypt.decrypt(restJsonMessage.getContent(bufferMessage_readOnly, idTransazione));
+					this.jsonDecrypt.decrypt(restJsonMessage.getContent(bufferMessageReadOnly, idTransazione));
 				}catch(Exception e) {
-					throw new Exception("Decrypt failed: "+e.getMessage(),e);
+					throw new SecurityException("Decrypt failed: "+e.getMessage(),e);
 				}
 		
 			
@@ -544,7 +570,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 			
 			String messaggio = null;
 			if(msg!=null){
-				messaggio = new String(msg);
+				messaggio = msg + "";
 				if(innerMsg!=null && !innerMsg.equals(msg)){
 					messaggio = messaggio + " ; " + innerMsg;
 				}
@@ -582,10 +608,10 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 		
 		try {
 		
-			if(ServiceBinding.REST.equals(messageParam.getServiceBinding())==false){
+			if(!ServiceBinding.REST.equals(messageParam.getServiceBinding())){
 				throw new SecurityException(JOSECostanti.JOSE_ENGINE_DESCRIPTION+" usable only with REST Binding");
 			}
-			if(MessageType.JSON.equals(messageParam.getMessageType())==false) {
+			if(!MessageType.JSON.equals(messageParam.getMessageType())) {
 				throw new SecurityException(JOSECostanti.JOSE_ENGINE_DESCRIPTION+" usable only with REST Binding and a json message, found: "+messageParam.getMessageType());
 			}
 			OpenSPCoop2RestJsonMessage restJsonMessage = messageParam.castAsRestJson();
@@ -610,6 +636,10 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 		}
 	}
 
+	public JOSESerialization getJoseSerialization() {
+		return this.joseSerialization;
+	}
+	
 	@Override
 	public String getCertificate() throws SecurityException {
 		if(this.jsonVerifierSignature!=null && this.jsonVerifierSignature.getX509Certificate()!=null) {
@@ -643,6 +673,15 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 		return null;
 	}
 
-
+	@Override
+	public String getCertificateId() {
+		if(this.jsonVerifierSignature!=null) {
+			return this.jsonVerifierSignature.getKid();
+		}
+		else if(this.jsonDecrypt!=null) {
+			return this.jsonDecrypt.getKid();
+		}
+		return null;
+	}
 	
 }

@@ -59,13 +59,13 @@ public class NonBloccanteRestPushTest extends ConfigLoader {
         File file = FileUtils.getFileRelativeTo(NonBloccanteRestPushTest.class, "proxy.feature");
         proxy = FeatureServer.start(file, Integer.valueOf(prop.getProperty("http_port")), 
                 false,
-                new HashMap<String,Object>((Map) prop)
+                new HashMap<>((Map) prop)
             );
 
         file = FileUtils.getFileRelativeTo(NonBloccanteRestPushTest.class, "mock.feature");
         server = FeatureServer.start(file, Integer.valueOf(prop.getProperty("http_mock_port")),
                 false,
-                new HashMap<String,Object>((Map) prop)
+                new HashMap<>((Map) prop)
             );
     }
         

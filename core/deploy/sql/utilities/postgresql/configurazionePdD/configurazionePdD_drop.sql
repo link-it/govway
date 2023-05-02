@@ -2,6 +2,8 @@
 -- DROP INDEX index_registro_plug_jar_1;
 -- DROP INDEX index_generic_property_1;
 -- DROP INDEX index_dump_config_1;
+DROP TABLE remote_store_key;
+DROP TABLE remote_store;
 DROP TABLE nodi_runtime;
 DROP TABLE config_handlers;
 DROP TABLE registro_plug_jar;
@@ -31,6 +33,8 @@ DROP TABLE configurazione;
 DROP TABLE config_cache_regole;
 DROP TABLE routing;
 DROP TABLE registri;
+DROP SEQUENCE seq_remote_store_key;
+DROP SEQUENCE seq_remote_store;
 DROP SEQUENCE seq_nodi_runtime;
 DROP SEQUENCE seq_config_handlers;
 DROP SEQUENCE seq_registro_plug_jar;

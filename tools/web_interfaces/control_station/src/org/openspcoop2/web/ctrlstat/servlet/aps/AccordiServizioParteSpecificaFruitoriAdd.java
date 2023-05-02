@@ -70,6 +70,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.ProtocolSubscription;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -199,27 +200,27 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			// token policy
 			String autenticazioneTokenS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 			strutsBean.autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
-			strutsBean.token_policy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
+			strutsBean.tokenPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 			
 			// proxy
-			strutsBean.proxy_enabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
-			strutsBean.proxy_hostname = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
-			strutsBean.proxy_port = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
-			strutsBean.proxy_username = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
-			strutsBean.proxy_password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+			strutsBean.proxyEnabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
+			strutsBean.proxyHostname = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
+			strutsBean.proxyPort = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
+			strutsBean.proxyUsername = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
+			strutsBean.proxyPassword = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
 
 			// tempi risposta
-			strutsBean.tempiRisposta_enabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
-			strutsBean.tempiRisposta_connectionTimeout = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
-			strutsBean.tempiRisposta_readTimeout = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
-			strutsBean.tempiRisposta_tempoMedioRisposta = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
+			strutsBean.tempiRispostaEnabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
+			strutsBean.tempiRispostaConnectionTimeout = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
+			strutsBean.tempiRispostaReadTimeout = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
+			strutsBean.tempiRispostaTempoMedioRisposta = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
 			
 			// opzioni avanzate
-			strutsBean.transfer_mode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
-			strutsBean.transfer_mode_chunk_size = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
-			strutsBean.redirect_mode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
-			strutsBean.redirect_max_hop = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
-			strutsBean.opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, strutsBean.transfer_mode, strutsBean.redirect_mode);
+			strutsBean.transferMode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
+			strutsBean.transferModeChunkSize = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
+			strutsBean.redirectMode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
+			strutsBean.redirectMaxHop = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
+			strutsBean.opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, strutsBean.transferMode, strutsBean.redirectMode);
 
 			// http
 			strutsBean.url = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL  );
@@ -269,9 +270,9 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			
 			// file
 			strutsBean.requestOutputFileName = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
-			strutsBean.requestOutputFileName_permissions = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
+			strutsBean.requestOutputFileNamePermissions = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
 			strutsBean.requestOutputFileNameHeaders = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
-			strutsBean.requestOutputFileNameHeaders_permissions = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
+			strutsBean.requestOutputFileNameHeadersPermissions = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
 			strutsBean.requestOutputParentDirCreateIfNotExists = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
 			strutsBean.requestOutputOverwriteIfExists = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME);
 			strutsBean.responseInputMode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE);
@@ -511,9 +512,29 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			
 			boolean forceHttps = false;
 			boolean forceHttpsClient = false;
+			boolean forcePDND = false;
+			boolean forceOAuth = false;
 			if(apsHelper.isProfiloModIPA(protocollo)) {
 				forceHttps = apsHelper.forceHttpsProfiloModiPA();
-				forceHttpsClient = apsHelper.forceHttpsClientProfiloModiPA(IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as), asps.getPortType());
+				
+				BooleanNullable forceHttpsClientWrapper = BooleanNullable.NULL(); 
+				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL(); 
+				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL(); 
+				
+				apsHelper.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, 
+						IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as), asps.getPortType(), 
+						null);
+				
+				if(forceHttpsClientWrapper.getValue()!=null) {
+					forceHttpsClient = forceHttpsClientWrapper.getValue().booleanValue();
+				}
+				if(forcePDNDWrapper.getValue()!=null) {
+					forcePDND = forcePDNDWrapper.getValue().booleanValue();
+				}
+				if(forceOAuthWrapper.getValue()!=null) {
+					forceOAuth = forceOAuthWrapper.getValue().booleanValue();
+				}
+				
 			}
 			
 			// Token Policy
@@ -681,23 +702,23 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 					strutsBean.autenticazioneHttp = apsHelper.getAutenticazioneHttp(strutsBean.autenticazioneHttp, strutsBean.endpointtype, strutsBean.user);
 
-					if(strutsBean.tempiRisposta_connectionTimeout==null || "".equals(strutsBean.tempiRisposta_connectionTimeout) 
+					if(strutsBean.tempiRispostaConnectionTimeout==null || "".equals(strutsBean.tempiRispostaConnectionTimeout) 
 							|| 
-							strutsBean.tempiRisposta_readTimeout==null || "".equals(strutsBean.tempiRisposta_readTimeout) 
+							strutsBean.tempiRispostaReadTimeout==null || "".equals(strutsBean.tempiRispostaReadTimeout) 
 							|| 
-							strutsBean.tempiRisposta_tempoMedioRisposta==null || "".equals(strutsBean.tempiRisposta_tempoMedioRisposta) ){
+							strutsBean.tempiRispostaTempoMedioRisposta==null || "".equals(strutsBean.tempiRispostaTempoMedioRisposta) ){
 						
 						ConfigurazioneCore configCore = new ConfigurazioneCore(soggettiCore);
 						ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
 						
-						if(strutsBean.tempiRisposta_connectionTimeout==null || "".equals(strutsBean.tempiRisposta_connectionTimeout) ) {
-							strutsBean.tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaFruizione().getConnectionTimeout().intValue()+"";
+						if(strutsBean.tempiRispostaConnectionTimeout==null || "".equals(strutsBean.tempiRispostaConnectionTimeout) ) {
+							strutsBean.tempiRispostaConnectionTimeout = configGenerale.getTempiRispostaFruizione().getConnectionTimeout().intValue()+"";
 						}
-						if(strutsBean.tempiRisposta_readTimeout==null || "".equals(strutsBean.tempiRisposta_readTimeout) ) {
-							strutsBean.tempiRisposta_readTimeout = configGenerale.getTempiRispostaFruizione().getReadTimeout().intValue()+"";
+						if(strutsBean.tempiRispostaReadTimeout==null || "".equals(strutsBean.tempiRispostaReadTimeout) ) {
+							strutsBean.tempiRispostaReadTimeout = configGenerale.getTempiRispostaFruizione().getReadTimeout().intValue()+"";
 						}
-						if(strutsBean.tempiRisposta_tempoMedioRisposta==null || "".equals(strutsBean.tempiRisposta_tempoMedioRisposta) ) {
-							strutsBean.tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaFruizione().getTempoMedioRisposta().intValue()+"";
+						if(strutsBean.tempiRispostaTempoMedioRisposta==null || "".equals(strutsBean.tempiRispostaTempoMedioRisposta) ) {
+							strutsBean.tempiRispostaTempoMedioRisposta = configGenerale.getTempiRispostaFruizione().getTempoMedioRisposta().intValue()+"";
 						}
 						
 					}
@@ -746,13 +767,13 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								strutsBean.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD, null,
 								null, null, null, null, null, null, null, true,
 								isConnettoreCustomUltimaImmagineSalvata, 
-								strutsBean.proxy_enabled, strutsBean.proxy_hostname, strutsBean.proxy_port, strutsBean.proxy_username, strutsBean.proxy_password,
-								strutsBean.tempiRisposta_enabled, strutsBean.tempiRisposta_connectionTimeout, strutsBean.tempiRisposta_readTimeout, strutsBean.tempiRisposta_tempoMedioRisposta,
-								strutsBean.opzioniAvanzate, strutsBean.transfer_mode, strutsBean.transfer_mode_chunk_size, strutsBean.redirect_mode, strutsBean.redirect_max_hop,
-								strutsBean.requestOutputFileName, strutsBean.requestOutputFileName_permissions, strutsBean.requestOutputFileNameHeaders, strutsBean.requestOutputFileNameHeaders_permissions,
+								strutsBean.proxyEnabled, strutsBean.proxyHostname, strutsBean.proxyPort, strutsBean.proxyUsername, strutsBean.proxyPassword,
+								strutsBean.tempiRispostaEnabled, strutsBean.tempiRispostaConnectionTimeout, strutsBean.tempiRispostaReadTimeout, strutsBean.tempiRispostaTempoMedioRisposta,
+								strutsBean.opzioniAvanzate, strutsBean.transferMode, strutsBean.transferModeChunkSize, strutsBean.redirectMode, strutsBean.redirectMaxHop,
+								strutsBean.requestOutputFileName, strutsBean.requestOutputFileNamePermissions, strutsBean.requestOutputFileNameHeaders, strutsBean.requestOutputFileNameHeadersPermissions,
 								strutsBean.requestOutputParentDirCreateIfNotExists,strutsBean.requestOutputOverwriteIfExists,
 								strutsBean.responseInputMode, strutsBean.responseInputFileName, strutsBean.responseInputFileNameHeaders, strutsBean.responseInputDeleteAfterRead, strutsBean.responseInputWaitTime,
-								strutsBean.autenticazioneToken,strutsBean.token_policy,
+								strutsBean.autenticazioneToken,strutsBean.tokenPolicy, forcePDND, forceOAuth,
 								listExtendedConnettore, false,
 								protocollo, forceHttps, forceHttpsClient, false, false, null, null);
 					}else{
@@ -787,16 +808,16 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					strutsBean.httpsalgoritmokey, 
 					strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy,
 					strutsBean.tipoconn,strutsBean.validazioneDocumenti,null,strutsBean.autenticazioneHttp,
-					strutsBean.proxy_enabled, strutsBean.proxy_hostname, strutsBean.proxy_port, strutsBean.proxy_username, strutsBean.proxy_password,
-					strutsBean.tempiRisposta_enabled, strutsBean.tempiRisposta_connectionTimeout, strutsBean.tempiRisposta_readTimeout, strutsBean.tempiRisposta_tempoMedioRisposta,
-					strutsBean.opzioniAvanzate, strutsBean.transfer_mode, strutsBean.transfer_mode_chunk_size, strutsBean.redirect_mode, strutsBean.redirect_max_hop,
-					strutsBean.requestOutputFileName, strutsBean.requestOutputFileName_permissions, strutsBean.requestOutputFileNameHeaders, strutsBean.requestOutputFileNameHeaders_permissions,
+					strutsBean.proxyEnabled, strutsBean.proxyHostname, strutsBean.proxyPort, strutsBean.proxyUsername, strutsBean.proxyPassword,
+					strutsBean.tempiRispostaEnabled, strutsBean.tempiRispostaConnectionTimeout, strutsBean.tempiRispostaReadTimeout, strutsBean.tempiRispostaTempoMedioRisposta,
+					strutsBean.opzioniAvanzate, strutsBean.transferMode, strutsBean.transferModeChunkSize, strutsBean.redirectMode, strutsBean.redirectMaxHop,
+					strutsBean.requestOutputFileName, strutsBean.requestOutputFileNamePermissions, strutsBean.requestOutputFileNameHeaders, strutsBean.requestOutputFileNameHeadersPermissions,
 					strutsBean.requestOutputParentDirCreateIfNotExists,strutsBean.requestOutputOverwriteIfExists,
 					strutsBean.responseInputMode, strutsBean.responseInputFileName, strutsBean.responseInputFileNameHeaders, strutsBean.responseInputDeleteAfterRead, strutsBean.responseInputWaitTime,
 					strutsBean.fruizioneServizioApplicativo,strutsBean.fruizioneRuolo,strutsBean.fruizioneAutenticazione,strutsBean.fruizioneAutenticazioneOpzionale,strutsBean.fruizioneAutenticazionePrincipal, strutsBean.fruizioneAutenticazioneParametroList, strutsBean.fruizioneAutorizzazione,
 					strutsBean.fruizioneAutorizzazioneAutenticati, strutsBean.fruizioneAutorizzazioneRuoli, strutsBean.fruizioneAutorizzazioneRuoliTipologia, strutsBean.fruizioneAutorizzazioneRuoliMatch,
 					allegatoXacmlPolicy,
-					strutsBean.autenticazioneToken,strutsBean.token_policy,
+					strutsBean.autenticazioneToken,strutsBean.tokenPolicy,
 					listExtendedConnettore);
 
 			// updateDynamic
@@ -894,13 +915,13 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							strutsBean.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD, null,
 							null, null, null, null, null, null, null, true,
 							isConnettoreCustomUltimaImmagineSalvata, 
-							strutsBean.proxy_enabled, strutsBean.proxy_hostname, strutsBean.proxy_port, strutsBean.proxy_username, strutsBean.proxy_password,
-							strutsBean.tempiRisposta_enabled, strutsBean.tempiRisposta_connectionTimeout, strutsBean.tempiRisposta_readTimeout, strutsBean.tempiRisposta_tempoMedioRisposta,
-							strutsBean.opzioniAvanzate, strutsBean.transfer_mode, strutsBean.transfer_mode_chunk_size, strutsBean.redirect_mode, strutsBean.redirect_max_hop,
-							strutsBean.requestOutputFileName, strutsBean.requestOutputFileName_permissions, strutsBean.requestOutputFileNameHeaders, strutsBean.requestOutputFileNameHeaders_permissions,
+							strutsBean.proxyEnabled, strutsBean.proxyHostname, strutsBean.proxyPort, strutsBean.proxyUsername, strutsBean.proxyPassword,
+							strutsBean.tempiRispostaEnabled, strutsBean.tempiRispostaConnectionTimeout, strutsBean.tempiRispostaReadTimeout, strutsBean.tempiRispostaTempoMedioRisposta,
+							strutsBean.opzioniAvanzate, strutsBean.transferMode, strutsBean.transferModeChunkSize, strutsBean.redirectMode, strutsBean.redirectMaxHop,
+							strutsBean.requestOutputFileName, strutsBean.requestOutputFileNamePermissions, strutsBean.requestOutputFileNameHeaders, strutsBean.requestOutputFileNameHeadersPermissions,
 							strutsBean.requestOutputParentDirCreateIfNotExists,strutsBean.requestOutputOverwriteIfExists,
 							strutsBean.responseInputMode, strutsBean.responseInputFileName, strutsBean.responseInputFileNameHeaders, strutsBean.responseInputDeleteAfterRead, strutsBean.responseInputWaitTime,
-							strutsBean.autenticazioneToken,strutsBean.token_policy,
+							strutsBean.autenticazioneToken,strutsBean.tokenPolicy, forcePDND, forceOAuth,
 							listExtendedConnettore, false,
 							protocollo, forceHttps, forceHttpsClient, false, false, null, null);
 				}else{
@@ -946,13 +967,13 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						strutsBean.httpspwdkey, strutsBean.httpspwdprivatekey,
 						strutsBean.httpsalgoritmokey,
 						strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy,
-						strutsBean.proxy_enabled, strutsBean.proxy_hostname, strutsBean.proxy_port, strutsBean.proxy_username, strutsBean.proxy_password,
-						strutsBean.tempiRisposta_enabled, strutsBean.tempiRisposta_connectionTimeout, strutsBean.tempiRisposta_readTimeout, strutsBean.tempiRisposta_tempoMedioRisposta,
-						strutsBean.opzioniAvanzate, strutsBean.transfer_mode, strutsBean.transfer_mode_chunk_size, strutsBean.redirect_mode, strutsBean.redirect_max_hop,
-						strutsBean.requestOutputFileName, strutsBean.requestOutputFileName_permissions, strutsBean.requestOutputFileNameHeaders, strutsBean.requestOutputFileNameHeaders_permissions,
+						strutsBean.proxyEnabled, strutsBean.proxyHostname, strutsBean.proxyPort, strutsBean.proxyUsername, strutsBean.proxyPassword,
+						strutsBean.tempiRispostaEnabled, strutsBean.tempiRispostaConnectionTimeout, strutsBean.tempiRispostaReadTimeout, strutsBean.tempiRispostaTempoMedioRisposta,
+						strutsBean.opzioniAvanzate, strutsBean.transferMode, strutsBean.transferModeChunkSize, strutsBean.redirectMode, strutsBean.redirectMaxHop,
+						strutsBean.requestOutputFileName, strutsBean.requestOutputFileNamePermissions, strutsBean.requestOutputFileNameHeaders, strutsBean.requestOutputFileNameHeadersPermissions,
 						strutsBean.requestOutputParentDirCreateIfNotExists,strutsBean.requestOutputOverwriteIfExists,
 						strutsBean.responseInputMode, strutsBean.responseInputFileName, strutsBean.responseInputFileNameHeaders, strutsBean.responseInputDeleteAfterRead, strutsBean.responseInputWaitTime,
-						strutsBean.token_policy,
+						strutsBean.tokenPolicy,
 						listExtendedConnettore);
 			}
 
@@ -1056,13 +1077,13 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD, null,
 								null, null, null, null, null, null, null, true,
 								isConnettoreCustomUltimaImmagineSalvata, 
-								strutsBean.proxy_enabled, strutsBean.proxy_hostname, strutsBean.proxy_port, strutsBean.proxy_username, strutsBean.proxy_password,
-								strutsBean.tempiRisposta_enabled, strutsBean.tempiRisposta_connectionTimeout, strutsBean.tempiRisposta_readTimeout, strutsBean.tempiRisposta_tempoMedioRisposta,
-								strutsBean.opzioniAvanzate, strutsBean.transfer_mode, strutsBean.transfer_mode_chunk_size, strutsBean.redirect_mode, strutsBean.redirect_max_hop,
-								strutsBean.requestOutputFileName, strutsBean.requestOutputFileName_permissions, strutsBean.requestOutputFileNameHeaders, strutsBean.requestOutputFileNameHeaders_permissions,
+								strutsBean.proxyEnabled, strutsBean.proxyHostname, strutsBean.proxyPort, strutsBean.proxyUsername, strutsBean.proxyPassword,
+								strutsBean.tempiRispostaEnabled, strutsBean.tempiRispostaConnectionTimeout, strutsBean.tempiRispostaReadTimeout, strutsBean.tempiRispostaTempoMedioRisposta,
+								strutsBean.opzioniAvanzate, strutsBean.transferMode, strutsBean.transferModeChunkSize, strutsBean.redirectMode, strutsBean.redirectMaxHop,
+								strutsBean.requestOutputFileName, strutsBean.requestOutputFileNamePermissions, strutsBean.requestOutputFileNameHeaders, strutsBean.requestOutputFileNameHeadersPermissions,
 								strutsBean.requestOutputParentDirCreateIfNotExists,strutsBean.requestOutputOverwriteIfExists,
 								strutsBean.responseInputMode, strutsBean.responseInputFileName, strutsBean.responseInputFileNameHeaders, strutsBean.responseInputDeleteAfterRead, strutsBean.responseInputWaitTime,
-								strutsBean.autenticazioneToken,strutsBean.token_policy,
+								strutsBean.autenticazioneToken,strutsBean.tokenPolicy, forcePDND, forceOAuth,
 								listExtendedConnettore, false,
 								protocollo, forceHttps, forceHttpsClient, false, false, null, null);
 					}else{

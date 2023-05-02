@@ -63,7 +63,8 @@ public class ModIProtocolVersionManager extends ModIProtocolManager implements I
 		if(valore!=null) {
 			String securityMessageProfile = ModIPropertiesUtils.convertProfiloSicurezzaToConfigurationValue(valore);
 			if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02.equals(securityMessageProfile) ||
-					ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile)) {
+					ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile) ||
+					ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile)) {
 				return StatoFunzionalitaProtocollo.ABILITATA;
 			}
 		}

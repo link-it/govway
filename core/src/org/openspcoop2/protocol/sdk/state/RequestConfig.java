@@ -156,6 +156,7 @@ public class RequestConfig implements java.io.Serializable {
 	private Map<String, Serializable> jwkSetStore = null;
 	private Map<String, Serializable> keyPairStore = null;
 	private Map<String, Serializable> publicKeyStore = null;
+	private Map<String, Serializable> remoteStore = null;
 	private Map<String, Serializable> httpStore = null;
 	private Map<String, Serializable> crlCertstore = null;
 	private Map<String, Serializable> sslSocketFactory = null;
@@ -404,6 +405,9 @@ public class RequestConfig implements java.io.Serializable {
 		}
 		if(source.publicKeyStore!=null) {
 			this.publicKeyStore = source.publicKeyStore;
+		}
+		if(source.remoteStore!=null) {
+			this.remoteStore = source.remoteStore;
 		}
 		if(source.httpStore!=null) {
 			this.httpStore = source.httpStore;
@@ -1332,6 +1336,36 @@ public class RequestConfig implements java.io.Serializable {
 			return null;
 		}
 		return this.publicKeyStore.get(key);
+	}
+	
+	public void addRemoteStore(String key, Serializable remoteStore, String idTransazione) {
+		 
+		
+		if(this.semaphoreStore==null) {
+			// serializzazione da transient
+			initSemaphoreStore();
+		}
+		
+		this.semaphoreStore.acquireThrowRuntime("addRemoteStore", idTransazione);
+		try {
+			if(this.remoteStore==null) {
+				this.remoteStore = new HashMap<>(3);
+			}
+			this.remoteStore.put(key, remoteStore);
+		}finally {
+			this.semaphoreStore.release("addRemoteStore", idTransazione);
+		}
+	}
+	public Serializable getRemoteStore(String key) {
+		if(this.remoteStore==null) {
+			return null;
+		}
+		return this.remoteStore.get(key);
+	}
+	public void removeRemoteStore(String key) {
+		if(this.remoteStore!=null) {
+			this.remoteStore.remove(key);
+		}
 	}
 
 	public void addHttpStore(String key, Serializable httpStore, String idTransazione) {

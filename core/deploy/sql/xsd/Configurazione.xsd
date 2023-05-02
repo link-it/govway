@@ -61,6 +61,9 @@
                                 <linkit:sql-table object-name="handlers" object-type="handlers"/>
                                 <linkit:sql-comment><![CDATA[**** Nodi Runtime ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="nodi-runtime" object-type="nodi-runtime"/>
+				<linkit:sql-comment><![CDATA[**** Keystore ****]]></linkit:sql-comment>
+                                <linkit:sql-table object-name="remote-store" object-type="remote-store"/>
+				<linkit:sql-table object-name="remote-store-key" object-type="remote-store-key"/>
                             </linkit:sql-table-list>
                         </linkit:sql-script>
                         <linkit:sql-mapping single-table-mapping="false"
@@ -3203,6 +3206,100 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_numerico" />
                                 <linkit:sql-ddl-column-comment>Identificativo numerico del nodo</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+
+
+
+   <xsd:element name="remote-store">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="remote_store"
+                        comment="KeyStore remoti">
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-column name="nome" />
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="nome" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Identificativo univoco dello store</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="remote-store-key">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="remote_store_key"
+                        comment="Entry di una chiave appartanenete allo store remoto">
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="remote-store"
+                            reference-object-type="remote-store"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_remote_store"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-field name="id_remote_store"/>
+                            <linkit:sql-table-unique-field name="kid"/>
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_remote_store" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_remote_store"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del remote store associato (FK verso tabella remote_store(id))</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="kid" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="kid"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della chiave</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="key" type="xsd:hexBinary">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="key" long-binary="true" />
+                                <linkit:sql-ddl-column-comment>Chiave</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

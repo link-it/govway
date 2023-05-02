@@ -317,11 +317,11 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				stm.setString(2, aUser);
 				//stm.setString(3, aPassord);
 				if(apiKey) {
-					stm.setString(3, CostantiDB.getISSUER_APIKEY(appId));
+					stm.setString(3, CostantiDB.getIssuerApiKey(appId));
 				}
 
 				if(apiKey) {
-					this.driver.log.debug("eseguo query :" + DBUtils.formatSQLString(sqlQuery, tipoCredenziale, aUser, CostantiDB.getISSUER_APIKEY(appId)));
+					this.driver.log.debug("eseguo query :" + DBUtils.formatSQLString(sqlQuery, tipoCredenziale, aUser, CostantiDB.getIssuerApiKey(appId)));
 				}
 				else {
 					this.driver.log.debug("eseguo query :" + DBUtils.formatSQLString(sqlQuery, tipoCredenziale, aUser));
@@ -1378,7 +1378,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 			int index = 1;
 			stmt.setString(index++, CredenzialeTipo.APIKEY.getValue());
 			stmt.setString(index++, utente);
-			stmt.setString(index++, CostantiDB.getISSUER_APIKEY(appId));
+			stmt.setString(index++, CostantiDB.getIssuerApiKey(appId));
 			risultato = stmt.executeQuery();
 
 			ServizioApplicativo sa;
@@ -2022,7 +2022,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 					// trasporto
 					stmt.setString(index++, credenziale.getValue());
 					if(CredenzialeTipo.APIKEY.equals(credenziale) && appId!=null) {
-						stmt.setString(index++, CostantiDB.getISSUER_APIKEY(appId));
+						stmt.setString(index++, CostantiDB.getIssuerApiKey(appId));
 					}
 					
 					// token
@@ -2047,7 +2047,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 					}
 
 					if(CredenzialeTipo.APIKEY.equals(credenziale) && appId!=null) {
-						stmt.setString(index++, CostantiDB.getISSUER_APIKEY(appId));
+						stmt.setString(index++, CostantiDB.getIssuerApiKey(appId));
 					}
 					if(tokenPolicy!=null) {
 						stmt.setString(index++, tokenPolicy);

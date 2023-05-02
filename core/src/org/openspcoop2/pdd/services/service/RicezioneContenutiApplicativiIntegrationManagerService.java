@@ -441,7 +441,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			preInRequestContext.setIdModulo(idModulo);
 			preInRequestContext.setProtocolFactory(protocolFactory);
 			preInRequestContext.setRequestInfo(requestInfo);
-			Map<String, Object> transportContext = new HashMap<String, Object>();
+			Map<String, Object> transportContext = new HashMap<>();
 			HttpServletConnectorInMessage httpIn = null;
 			try{
 				httpIn = new HttpServletConnectorInMessage(requestInfo, req, IntegrationManager.ID_SERVICE, IntegrationManager.ID_MODULO);

@@ -105,6 +105,8 @@ public final class SoggettiEndPoint extends Action {
 			String autenticazioneTokenS = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
 			String tokenPolicy = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
+			boolean forcePDND = false;
+			boolean forceOAuth = false;
 			
 			// proxy
 			String proxyEnabled = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
@@ -418,7 +420,7 @@ public final class SoggettiEndPoint extends Action {
 					httpspwdprivatekey = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_PASSWORD);
 					httpsalgoritmokey = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
 					httpsKeyAlias = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_ALIAS);
-					httpsTrustStoreCRLs = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+					httpsTrustStoreCRLs = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLS);
 					httpsTrustStoreOCSPPolicy = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
 					if (httpspathkey == null) {
 						httpsstato = false;
@@ -525,7 +527,7 @@ public final class SoggettiEndPoint extends Action {
 						requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						autenticazioneToken,tokenPolicy,
+						autenticazioneToken,tokenPolicy, forcePDND, forceOAuth,
 						listExtendedConnettore, false,
 						protocollo, false, false
 						, false, false, null, null
@@ -578,7 +580,7 @@ public final class SoggettiEndPoint extends Action {
 						requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						autenticazioneToken,tokenPolicy,
+						autenticazioneToken,tokenPolicy, forcePDND, forceOAuth,
 						listExtendedConnettore, false,
 						protocollo, false, false
 						, false, false, null, null

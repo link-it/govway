@@ -406,7 +406,7 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 			}
 			
 			httpsServer.setTruststoreCrl(
-					evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs))
+					evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLS))
 				);
 			
 			httpsServer.setTruststoreOcspPolicy(

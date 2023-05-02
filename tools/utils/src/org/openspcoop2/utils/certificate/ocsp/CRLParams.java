@@ -37,6 +37,7 @@ import org.openspcoop2.utils.certificate.CRLDistributionPoints;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.KeyStore;
+import org.openspcoop2.utils.certificate.KeystoreType;
 
 /**
  * OCSPRequestParams
@@ -202,7 +203,7 @@ public class CRLParams {
 						if(trustStore!=null) {
 							try {
 								if(crlTrustStore==null) {
-									java.security.KeyStore ks = java.security.KeyStore.getInstance("jks");
+									java.security.KeyStore ks = java.security.KeyStore.getInstance(KeystoreType.JKS.getNome());
 									ks.load(null, null);
 									crlTrustStore = new KeyStore(ks);
 								}
@@ -224,7 +225,7 @@ public class CRLParams {
 						if(alternativeTrustStore!=null) {
 							try {
 								if(crlTrustStore==null) {
-									java.security.KeyStore ks = java.security.KeyStore.getInstance("jks");
+									java.security.KeyStore ks = java.security.KeyStore.getInstance(KeystoreType.JKS.getNome());
 									ks.load(null, null);
 									crlTrustStore = new KeyStore(ks);
 								}
@@ -263,7 +264,7 @@ public class CRLParams {
 														Certificate cer = ArchiveLoader.load(issuer);
 														if(cer!=null && cer.getCertificate()!=null) {
 															if(crlTrustStore==null) {
-																java.security.KeyStore ks = java.security.KeyStore.getInstance("jks");
+																java.security.KeyStore ks = java.security.KeyStore.getInstance(KeystoreType.JKS.getNome());
 																ks.load(null, null);
 																crlTrustStore = new KeyStore(ks);
 															}
@@ -299,7 +300,7 @@ public class CRLParams {
 												Certificate cer = ArchiveLoader.load(issCert);
 												if(cer!=null && cer.getCertificate()!=null) {
 													if(crlTrustStore==null) {
-														java.security.KeyStore ks = java.security.KeyStore.getInstance("jks");
+														java.security.KeyStore ks = java.security.KeyStore.getInstance(KeystoreType.JKS.getNome());
 														ks.load(null, null);
 														crlTrustStore = new KeyStore(ks);
 													}
@@ -325,10 +326,10 @@ public class CRLParams {
 		if(!crlPaths.isEmpty()) {
 			params.crlCertstore = reader.readCRL(crlPaths, localResources).getCertStore();
 			
-//			boolean newTrustStore = false;
+/**			boolean newTrustStore = false;
 //			if(crlTrustStore==null) {
 //				try {
-//					java.security.KeyStore ks = java.security.KeyStore.getInstance("JKS");
+//					java.security.KeyStore ks = java.security.KeyStore.getInstance(KeystoreType.JKS.getNome());
 //					ks.load(null, null);
 //					crlTrustStore = new KeyStore(ks);
 //					newTrustStore = true;
@@ -345,7 +346,7 @@ public class CRLParams {
 //				}
 //			}catch(Throwable t) {
 //				throw new UtilsException(t.getMessage(),t);
-//			}
+//			}*/
 			
 			params.crlTrustStore = crlTrustStore;
 		}

@@ -64,10 +64,12 @@ public class BasicDynamicConfiguration extends BasicComponentFactory implements 
 	public void updateDynamicConfigSoggetto(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, 
 			ProtocolProperties properties, 
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDSoggetto id) throws ProtocolException{
+		// nop
 	}
 	@Override
 	public void validateDynamicConfigSoggetto(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties, 
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDSoggetto id) throws ProtocolException{
+		// nop
 	}
 	
 	@Override
@@ -79,10 +81,12 @@ public class BasicDynamicConfiguration extends BasicComponentFactory implements 
 	public void updateDynamicConfigAccordoCooperazione(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, 
 			ProtocolProperties properties, 
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException{
+		// nop
 	}
 	@Override
 	public void validateDynamicConfigCooperazione(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties, 
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException{
+		// nop
 	}
 	
 	@Override
@@ -94,10 +98,12 @@ public class BasicDynamicConfiguration extends BasicComponentFactory implements 
 	public void updateDynamicConfigAccordoServizioParteComune(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, 
 			ProtocolProperties properties, 
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException{
+		// nop
 	}
 	@Override
 	public void validateDynamicConfigAccordoServizioParteComune(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties, 
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException{
+		// nop
 	}
 	
 	@Override
@@ -109,10 +115,12 @@ public class BasicDynamicConfiguration extends BasicComponentFactory implements 
 	public void updateDynamicConfigAccordoServizioComposto(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, 
 			ProtocolProperties properties, 
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException{
+		// nop
 	}
 	@Override
 	public void validateDynamicConfigAccordoServizioComposto(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties, 
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException{
+		// nop
 	}
 	
 	@Override
@@ -124,10 +132,12 @@ public class BasicDynamicConfiguration extends BasicComponentFactory implements 
 	public void updateDynamicConfigPortType(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, 
 			ProtocolProperties properties, 
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDPortType id) throws ProtocolException{
+		// nop
 	}
 	@Override
 	public void validateDynamicConfigPortType(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties, 
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDPortType id) throws ProtocolException{
+		// nop
 	}
 	
 	@Override
@@ -139,10 +149,12 @@ public class BasicDynamicConfiguration extends BasicComponentFactory implements 
 	public void updateDynamicConfigOperation(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, 
 			ProtocolProperties properties, 
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDPortTypeAzione id) throws ProtocolException{
+		// nop
 	}
 	@Override
 	public void validateDynamicConfigOperation(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties, 
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDPortTypeAzione id) throws ProtocolException{
+		// nop
 	}
 	
 	@Override
@@ -154,10 +166,12 @@ public class BasicDynamicConfiguration extends BasicComponentFactory implements 
 	public void updateDynamicConfigAzione(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, 
 			ProtocolProperties properties, 
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordoAzione id) throws ProtocolException{
+		// nop
 	}
 	@Override
 	public void validateDynamicConfigAzione(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties, 
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordoAzione id) throws ProtocolException{
+		// nop
 	}
 	
 	@Override
@@ -170,11 +184,13 @@ public class BasicDynamicConfiguration extends BasicComponentFactory implements 
 	public void updateDynamicConfigResource(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, 
 			ProtocolProperties properties, 
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDResource id, String httpMethod, String path) throws ProtocolException{
+		// nop
 	}
 	
 	@Override
 	public void validateDynamicConfigResource(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties, 
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDResource id, String httpMethod, String path) throws ProtocolException{
+		// nop
 	}
 	
 	@Override
@@ -186,10 +202,12 @@ public class BasicDynamicConfiguration extends BasicComponentFactory implements 
 	public void updateDynamicConfigAccordoServizioParteSpecifica(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, 
 			ProtocolProperties properties, 
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDServizio id) throws ProtocolException{
+		// nop
 	}
 	@Override
 	public void validateDynamicConfigAccordoServizioParteSpecifica(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties, 
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDServizio id) throws ProtocolException{
+		// nop
 	}
 	
 	@Override
@@ -201,10 +219,12 @@ public class BasicDynamicConfiguration extends BasicComponentFactory implements 
 	public void updateDynamicConfigFruizioneAccordoServizioParteSpecifica(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, 
 			ProtocolProperties properties,  
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDFruizione id) throws ProtocolException{
+		// nop
 	}
 	@Override
 	public void validateDynamicConfigFruizioneAccordoServizioParteSpecifica(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties, 
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDFruizione id) throws ProtocolException{
+		// nop
 	}
 
 	@Override
@@ -215,11 +235,13 @@ public class BasicDynamicConfiguration extends BasicComponentFactory implements 
 	@Override
 	public void updateDynamicConfigServizioApplicativo(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, 
 			ProtocolProperties properties, 
-			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDServizioApplicativo id) throws ProtocolException{	
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDServizioApplicativo id) throws ProtocolException{
+		// nop
 	}
 	@Override
 	public void validateDynamicConfigServizioApplicativo(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties, 
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDServizioApplicativo id) throws ProtocolException{	
+		// nop
 	}
 
 }

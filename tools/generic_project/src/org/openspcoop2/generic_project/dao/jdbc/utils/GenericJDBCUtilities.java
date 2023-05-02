@@ -669,7 +669,7 @@ public class GenericJDBCUtilities {
 				if(lista.size()!=returnField.size()){
 					throw new ServiceException("Result["+i+"] has wrong length (expected:"+returnField.size()+" founded:"+lista.size()+")");
 				}
-				Map<String,Object> resultList = new HashMap<String, Object>();
+				Map<String,Object> resultList = new HashMap<>();
 				for (int j = 0; j < lista.size(); j++) {
 					Object object = lista.get(j);
 					for (String key : returnClassAliases.get(j)) {
@@ -1123,7 +1123,7 @@ public class GenericJDBCUtilities {
 				if(lista.size()!=returnClassAliases.size()){
 					throw new ServiceException("Result["+i+"] has wrong length (alias) (expected:"+returnClassAliases.size()+" founded:"+lista.size()+")");
 				}
-				Map<String,Object> resultList = new HashMap<String, Object>();
+				Map<String,Object> resultList = new HashMap<>();
 				int j = 0;
 				for (String alias : returnClassAliases) {
 					Object object = lista.get(j);

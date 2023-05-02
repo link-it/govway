@@ -65,7 +65,7 @@ public class InformazioniJWTClientAssertion extends org.openspcoop2.utils.beans.
 								JsonNode root = jsonUtils.getAsNode(this.jsonHeader);
 								Map<String, Object> readClaims = jsonUtils.convertToSimpleMap(root);
 								if(readClaims!=null && readClaims.size()>0) {
-									this.header = new HashMap<String,Object>();
+									this.header = new HashMap<>();
 									this.header.putAll(readClaims);
 								}
 							}	
@@ -88,7 +88,7 @@ public class InformazioniJWTClientAssertion extends org.openspcoop2.utils.beans.
 								JsonNode root = jsonUtils.getAsNode(this.jsonPayload);
 								Map<String, Object> readClaims = jsonUtils.convertToSimpleMap(root);
 								if(readClaims!=null && readClaims.size()>0) {
-									this.payload = new HashMap<String,Object>();
+									this.payload = new HashMap<>();
 									this.payload.putAll(readClaims);
 								}
 							}	

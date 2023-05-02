@@ -44,6 +44,7 @@ import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.ExtendedKeyUsage;
 import org.openspcoop2.utils.certificate.Extensions;
 import org.openspcoop2.utils.certificate.KeyUsage;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.OID;
 import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.certificate.SubjectAlternativeNames;
@@ -292,7 +293,7 @@ public class CertificateTest {
 		for (int i = 0; i < types.size(); i++) {
 
 			ArchiveType srcType = types.get(i);
-			String srcExt = "jks";
+			String srcExt = KeystoreType.JKS.getNome();
 			if(ArchiveType.PKCS12.equals(srcType)) {
 				srcExt = "p12";
 			}
@@ -306,7 +307,7 @@ public class CertificateTest {
 			for (int j = 0; j < types.size(); j++) {
 
 				ArchiveType destType = types.get(j);
-				String destExt = "jks";
+				String destExt = KeystoreType.JKS.getNome();
 				if(ArchiveType.PKCS12.equals(destType)) {
 					destExt = "p12";
 				}

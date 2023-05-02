@@ -50,6 +50,8 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
  * @version $Rev$, $Date$
  */
 public class ModIPropertiesUtils {
+	
+	private ModIPropertiesUtils() {}
 
 	public static String readPropertySecurityChannelProfile(AccordoServizioParteComune aspc) throws ProtocolException {
 		return ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(aspc.getProtocolPropertyList(), 
@@ -61,64 +63,87 @@ public class ModIPropertiesUtils {
 	// ACTION
 	
 	public static String readPropertyInteractionProfile(AccordoServizioParteComune aspc, String nomePortType, String azione) throws ProtocolException {
-		return _readProperty(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_INTERAZIONE);
+		return readPropertyEngine(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_INTERAZIONE);
 	}
 	public static String readPropertyAsyncInteractionProfile(AccordoServizioParteComune aspc, String nomePortType, String azione) throws ProtocolException {
-		return _readProperty(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA);
+		return readPropertyEngine(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA);
 	}
 	public static String readPropertyAsyncInteractionRole(AccordoServizioParteComune aspc, String nomePortType, String azione) throws ProtocolException {
-		return _readProperty(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO);
+		return readPropertyEngine(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO);
 	}
 	public static String readPropertyAsyncInteractionRequestApi(AccordoServizioParteComune aspc, String nomePortType, String azione) throws ProtocolException {
-		return _readProperty(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA);
+		return readPropertyEngine(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA);
 	}
 	public static String readPropertyAsyncInteractionRequestService(AccordoServizioParteComune aspc, String nomePortType, String azione) throws ProtocolException {
-		return _readProperty(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_SERVIZIO_RICHIESTA_CORRELATA);
+		return readPropertyEngine(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_SERVIZIO_RICHIESTA_CORRELATA);
 	}
 	public static String readPropertyAsyncInteractionRequestAction(AccordoServizioParteComune aspc, String nomePortType, String azione) throws ProtocolException {
-		return _readProperty(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA);
+		return readPropertyEngine(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA);
 	}
-	public static String readPropertySecurityMessageProfile(AccordoServizioParteComune aspc, String nomePortType, String azione) throws ProtocolException {
-		return _readProperty(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO);
+	public static String readPropertySecurityMessageProfile(AccordoServizioParteComune aspc, String nomePortType, String azione, boolean filterPDND) throws ProtocolException {
+		String profile = readPropertyEngine(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO);
+		if(filterPDND &&
+			(
+				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01.equals(profile) 
+				|| 
+				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02.equals(profile)
+			)
+		){
+			String sorgenteToken = readPropertyEngine(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH);
+			if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND.equals(sorgenteToken) ||
+					ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH.equals(sorgenteToken)) {
+				profile = null;
+			}
+		}
+		return profile;
 	}
-	public static String readPropertySecurityMessageHeader(AccordoServizioParteComune aspc, String nomePortType, String azione, boolean request) throws ProtocolException {
-		return _readProperty(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER, request);
+	public static String readPropertySecurityMessageHeader(AccordoServizioParteComune aspc, String nomePortType, String azione, boolean request, boolean filterPDND) throws ProtocolException {
+		String header = readPropertyEngine(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER, request);
+		if(header!=null && filterPDND) {
+			String sorgenteToken = readPropertyEngine(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH);
+			if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND.equals(sorgenteToken) ||
+					ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH.equals(sorgenteToken)) {
+				header = header.replace(HttpConstants.AUTHORIZATION, "");
+				header = header.trim();
+			}
+		}
+		return header;
 	}
 	public static boolean isPropertySecurityMessageHeaderCustom(AccordoServizioParteComune aspc, String nomePortType, String azione, boolean request) throws ProtocolException {
-		String tmp = _readProperty(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM, request);
-		return tmp!=null ? Boolean.valueOf(tmp) : false;
+		String tmp = readPropertyEngine(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM, request);
+		return tmp!=null && Boolean.valueOf(tmp);
 	}
 	public static boolean isPropertySecurityMessageConCorniceSicurezza(AccordoServizioParteComune aspc, String nomePortType, String azione) throws ProtocolException {
-		String tmp = _readProperty(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA);
-		return tmp!=null ? Boolean.valueOf(tmp) : false;
+		String tmp = readPropertyEngine(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA);
+		return tmp!=null && Boolean.valueOf(tmp);
 	}
 	public static boolean isPropertySecurityMessageIncludiRequestDigest(AccordoServizioParteComune aspc, String nomePortType, String azione) throws ProtocolException {
-		String tmp = _readProperty(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST);
-		return tmp!=null ? Boolean.valueOf(tmp) : false;
+		String tmp = readPropertyEngine(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST);
+		return tmp!=null && Boolean.valueOf(tmp);
 	}
 	public static String readPropertySecurityMessageApplicabilita(AccordoServizioParteComune aspc, String nomePortType, String azione) throws ProtocolException {
-		return _readProperty(aspc, nomePortType, azione, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE);
+		return readPropertyEngine(aspc, nomePortType, azione, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE);
 	}
 	public static String readPropertySecurityMessageApplicabilitaRichiesta(AccordoServizioParteComune aspc, String nomePortType, String azione) throws ProtocolException {
-		return _readProperty(aspc, nomePortType, azione, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE);
+		return readPropertyEngine(aspc, nomePortType, azione, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE);
 	}
 	public static String readPropertySecurityMessageApplicabilitaRichiestaContentType(AccordoServizioParteComune aspc, String nomePortType, String azione) throws ProtocolException {
-		return _readProperty(aspc, nomePortType, azione, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_CONTENT_TYPE_MODE_ID);
+		return readPropertyEngine(aspc, nomePortType, azione, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_CONTENT_TYPE_MODE_ID);
 	}
 	public static String readPropertySecurityMessageApplicabilitaRisposta(AccordoServizioParteComune aspc, String nomePortType, String azione) throws ProtocolException {
-		return _readProperty(aspc, nomePortType, azione, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE);
+		return readPropertyEngine(aspc, nomePortType, azione, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE);
 	}
 	public static String readPropertySecurityMessageApplicabilitaRispostaContentType(AccordoServizioParteComune aspc, String nomePortType, String azione) throws ProtocolException {
-		return _readProperty(aspc, nomePortType, azione, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_CONTENT_TYPE_MODE_ID);
+		return readPropertyEngine(aspc, nomePortType, azione, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_CONTENT_TYPE_MODE_ID);
 	}
 	public static String readPropertySecurityMessageApplicabilitaRispostaReturnCode(AccordoServizioParteComune aspc, String nomePortType, String azione) throws ProtocolException {
-		return _readProperty(aspc, nomePortType, azione, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_RETURN_CODE_MODE_ID);
+		return readPropertyEngine(aspc, nomePortType, azione, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_RETURN_CODE_MODE_ID);
 	}
-	private static String _readProperty(AccordoServizioParteComune aspc, String nomePortType, String azione,
+	private static String readPropertyEngine(AccordoServizioParteComune aspc, String nomePortType, String azione,
 			String propertyName) throws ProtocolException {
-		return _readProperty(aspc, nomePortType, azione, propertyName, null);
+		return readPropertyEngine(aspc, nomePortType, azione, propertyName, null);
 	}
-	private static String _readProperty(AccordoServizioParteComune aspc, String nomePortType, String azione,
+	private static String readPropertyEngine(AccordoServizioParteComune aspc, String nomePortType, String azione,
 			String propertyName, Boolean request) throws ProtocolException {
 		String interactionProfile = null;
 		String asyncInteractionProfile = null;
@@ -128,6 +153,8 @@ public class ModIPropertiesUtils {
 		String asyncInteractionRequestAction = null;
 		String securityMessageProfile = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(aspc.getProtocolPropertyList(), 
 				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO);
+		String securityMessageProfileSorgenteTokenIdAuth = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(aspc.getProtocolPropertyList(), 
+				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH);
 		String securityMessageProfileHeader = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(aspc.getProtocolPropertyList(), 
 				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER);
 		String securityMessageProfileHeaderCustom = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(aspc.getProtocolPropertyList(), 
@@ -188,6 +215,8 @@ public class ModIPropertiesUtils {
 					if(ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(securityMessageProfileMode)) {
 						securityMessageProfile = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(resource.getProtocolPropertyList(), 
 								ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO);
+						securityMessageProfileSorgenteTokenIdAuth = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(resource.getProtocolPropertyList(), 
+								ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH);
 						securityMessageProfileHeader = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(resource.getProtocolPropertyList(), 
 								ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER);
 						securityMessageProfileHeaderCustom = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(resource.getProtocolPropertyList(), 
@@ -256,6 +285,8 @@ public class ModIPropertiesUtils {
 								if(ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(securityMessageProfileMode)) {
 									securityMessageProfile = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(op.getProtocolPropertyList(), 
 											ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO);
+									securityMessageProfileSorgenteTokenIdAuth = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(op.getProtocolPropertyList(), 
+											ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH);
 									securityMessageProfileHeader = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(op.getProtocolPropertyList(), 
 											ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER);
 									securityMessageProfileHeaderCustom = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(op.getProtocolPropertyList(), 
@@ -324,6 +355,8 @@ public class ModIPropertiesUtils {
 						if(ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(securityMessageProfileMode)) {
 							securityMessageProfile = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(azioneAccordo.getProtocolPropertyList(), 
 									ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO);
+							securityMessageProfileSorgenteTokenIdAuth = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(azioneAccordo.getProtocolPropertyList(), 
+									ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH);
 							securityMessageProfileHeader = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(azioneAccordo.getProtocolPropertyList(), 
 									ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER);
 							securityMessageProfileHeaderCustom = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(azioneAccordo.getProtocolPropertyList(), 
@@ -371,11 +404,17 @@ public class ModIPropertiesUtils {
 		else if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO.equals(propertyName)) {
 			return securityMessageProfile;
 		}
+		else if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH.equals(propertyName)) {
+			return securityMessageProfileSorgenteTokenIdAuth;
+		}
 		else if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER.equals(propertyName)) {
 			
 			if(securityMessageProfileHeader==null || StringUtils.isEmpty(securityMessageProfileHeader)) {
-				boolean integrita = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile) || 
+				boolean integritaX5c = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile) || 
 						ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile);
+				boolean integritaKid = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile) || 
+						ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile);
+				boolean integrita = integritaX5c || integritaKid;
 				if(integrita) {
 					securityMessageProfileHeader = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_IDAM03_DEFAULT_VALUE;
 				}
@@ -401,9 +440,9 @@ public class ModIPropertiesUtils {
 				}
 			}
 			else if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_CUSTOM.equals(securityMessageProfileHeader)) {
-				String integrityCustom = (securityMessageProfileHeaderCustom!=null && StringUtils.isNotEmpty(securityMessageProfileHeaderCustom)) ? 
+				// integrityCustom
+				return (securityMessageProfileHeaderCustom!=null && StringUtils.isNotEmpty(securityMessageProfileHeaderCustom)) ? 
 						securityMessageProfileHeaderCustom : ModIProperties.getInstance().getRestSecurityTokenHeaderModI();
-				return integrityCustom;
 			}
 			else if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM_AUTH_IN_RESPONSE.equals(securityMessageProfileHeader)) {
 				String integrityCustom = (securityMessageProfileHeaderCustom!=null && StringUtils.isNotEmpty(securityMessageProfileHeaderCustom)) ? 
@@ -487,7 +526,7 @@ public class ModIPropertiesUtils {
 	}
 
 	public static boolean isAttachmentsSignature(AccordoServizioParteComune aspc, String nomePortType, String azione, boolean isRichiesta, 
-			OpenSPCoop2Message message) throws Exception {
+			OpenSPCoop2Message message) throws ProtocolException {
 		boolean sign = false;
 		String securityMessageApplicabilita = ModIPropertiesUtils.readPropertySecurityMessageApplicabilita(aspc, nomePortType, azione);
 		if(securityMessageApplicabilita==null || StringUtils.isEmpty(securityMessageApplicabilita)) {
@@ -505,7 +544,11 @@ public class ModIPropertiesUtils {
 		}
 		
 		if(sign) {
-			return message.castAsSoap().hasAttachments();
+			try {
+				return message.castAsSoap().hasAttachments();
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
 		}
 		
 		return false;
@@ -553,7 +596,7 @@ public class ModIPropertiesUtils {
 					
 					String securityMessageApplicabilitaRichiestaContentType = ModIPropertiesUtils.readPropertySecurityMessageApplicabilitaRichiestaContentType(aspc, nomePortType, azione);
 					List<String> check = readValues(securityMessageApplicabilitaRichiestaContentType);
-					if(check.size()>0) {
+					if(!check.isEmpty()) {
 						try {
 							processSecurity = ContentTypeUtilities.isMatch(message.getContentType(), check);
 						}catch(Exception e) {
@@ -582,7 +625,7 @@ public class ModIPropertiesUtils {
 					
 					String securityMessageApplicabilitaRispostaContentType = ModIPropertiesUtils.readPropertySecurityMessageApplicabilitaRispostaContentType(aspc, nomePortType, azione);
 					List<String> check = readValues(securityMessageApplicabilitaRispostaContentType);
-					if(check.size()>0) {
+					if(!check.isEmpty()) {
 						try {
 							processSecurity = ContentTypeUtilities.isMatch(message.getContentType(), check);
 						}catch(Exception e) {
@@ -657,7 +700,7 @@ public class ModIPropertiesUtils {
 								}
 								else {
 									try {
-										int codiceInt = Integer.valueOf(codice);
+										int codiceInt = Integer.parseInt(codice);
 										if(codiceInt == httpStatus) {
 											match = true;
 											break;

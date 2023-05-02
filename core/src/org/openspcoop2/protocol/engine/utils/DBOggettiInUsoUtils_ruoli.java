@@ -370,7 +370,7 @@ public class DBOggettiInUsoUtils_ruoli {
 			if(config){
 				
 				int max = 2;
-				if(!CostantiDB.ALLARMI_ENABLED) {
+				if(!CostantiDB.isAllarmiEnabled()) {
 					max=1;
 				}
 				

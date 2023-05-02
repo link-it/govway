@@ -437,6 +437,8 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			String httpsTrustStoreOCSPPolicy = null;
 			boolean autenticazioneToken = false;
 			String tokenPolicy = null;
+			boolean forcePDND = false;
+			boolean forceOAuth = false;
 			String proxyEnabled = null;
 			String proxyHostname  = null;
 			String proxyPort  = null;
@@ -679,7 +681,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					httpspwdprivatekey = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_PASSWORD);
 					httpsalgoritmokey = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
 					httpsKeyAlias = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_ALIAS);
-					httpsTrustStoreCRLs = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+					httpsTrustStoreCRLs = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLS);
 					httpsTrustStoreOCSPPolicy = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
 					if (httpspathkey == null) {
 						httpsstato = false;
@@ -847,7 +849,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-					autenticazioneToken, tokenPolicy,
+					autenticazioneToken, tokenPolicy, forcePDND, forceOAuth,
 					listExtendedConnettore, false,
 					protocollo,false,false
 					, false, servizioApplicativoServerEnabled, servizioApplicativoServer, null

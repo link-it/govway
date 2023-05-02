@@ -1,4 +1,6 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
+-- DROP INDEX index_remote_store_key_1;
+-- DROP INDEX index_remote_store_1;
 -- DROP INDEX index_nodi_runtime_2;
 -- DROP INDEX index_nodi_runtime_1;
 -- DROP INDEX index_config_handlers_1;
@@ -10,6 +12,8 @@
 -- DROP INDEX index_registro_plug_jar_1;
 -- DROP INDEX index_generic_property_1;
 -- DROP INDEX index_dump_config_1;
+DROP TABLE remote_store_key;
+DROP TABLE remote_store;
 DROP TABLE nodi_runtime;
 DROP TABLE config_handlers;
 DROP TABLE registro_plug_jar;

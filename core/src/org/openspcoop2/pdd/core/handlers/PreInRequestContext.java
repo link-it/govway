@@ -42,7 +42,7 @@ public class PreInRequestContext extends PreInAcceptRequestContext {
 	public static final String CONTEXT = "CONTEXT";
 	
 	/** Trasporto */
-	private Map<String, Object> transportContext = new HashMap<String, Object>();
+	private Map<String, Object> transportContext = new HashMap<>();
 
 	/** PdDContext */
 	private PdDContext pddContext = null;

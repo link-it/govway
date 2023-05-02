@@ -140,6 +140,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.VersionUtilities;
 import org.openspcoop2.utils.cache.CacheType;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.date.DateEngineType;
 import org.openspcoop2.utils.date.DateUtils;
@@ -17750,7 +17751,7 @@ public class OpenSPCoop2Properties {
 					this.getAutenticazioneHttpsPortaDelegataTruststoreType = value;
 				}
 				else {
-					this.getAutenticazioneHttpsPortaDelegataTruststoreType = "jks";
+					this.getAutenticazioneHttpsPortaDelegataTruststoreType = KeystoreType.JKS.getNome();
 				}
 			}catch(java.lang.Exception e) {
 				throw new Exception("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
@@ -17885,7 +17886,7 @@ public class OpenSPCoop2Properties {
 					this.getAutenticazioneHttpsPortaApplicativaTruststoreType = value;
 				}
 				else {
-					this.getAutenticazioneHttpsPortaApplicativaTruststoreType = "jks";
+					this.getAutenticazioneHttpsPortaApplicativaTruststoreType = KeystoreType.JKS.getNome();
 				}
 			}catch(java.lang.Exception e) {
 				throw new Exception("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);

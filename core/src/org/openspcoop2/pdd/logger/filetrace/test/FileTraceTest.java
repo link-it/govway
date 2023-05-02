@@ -351,7 +351,7 @@ public class FileTraceTest {
 		FileTraceConfig.init(is, path, true);
 		FileTraceConfig config = FileTraceConfig.getConfig(new File(path), true); // inizializzato sopra
 			
-		Map<String, Object> attributes = new HashMap<String, Object>();
+		Map<String, Object> attributes = new HashMap<>();
 		attributes.put("a1", "v1");
 		List<String> l2 = new ArrayList<>();
 		l2.add("v2a");

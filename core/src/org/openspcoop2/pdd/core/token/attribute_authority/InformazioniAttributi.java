@@ -148,7 +148,7 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 			for (int i = 0; i < informazioniTokens.length; i++) {
 				if(informazioniTokens[i].getAttributes()!=null && informazioniTokens[i].getAttributes().size()>0) {
 					if(this.attributes==null) {
-						this.attributes = new HashMap<String, Object>();
+						this.attributes = new HashMap<>();
 					}
 					this.attributes.put(informazioniTokens[i].getSourceAttributeAuthority(),informazioniTokens[i].getAttributes());
 				}
@@ -257,7 +257,7 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 	private Map<String, String> aaIdentifier;
 	
 	// Claims
-	private Map<String,Object> claims = new HashMap<String,Object>();
+	private Map<String,Object> claims = new HashMap<>();
 	
 	// NOTA: l'ordine stabilisce come viene serializzato nell'oggetto json
 	

@@ -1197,7 +1197,7 @@ public class AccordiServizioParteSpecificaUtilities {
 
 			IDServizio idServizioOLD =  asps.getOldIDServizioForUpdate();
 			String uriOLD = IDServizioFactory.getInstance().getUriFromIDServizio(idServizioOLD);
-			List<AccordoServizioParteComune> ass = apcCore.accordiServizio_serviziComponenti(idServizioOLD);
+			List<AccordoServizioParteComune> ass = apcCore.accordiServizioServiziComponenti(idServizioOLD);
 			for(int i=0; i<ass.size(); i++){
 				AccordoServizioParteComune accordoServizioComposto = ass.get(i);
 				if(accordoServizioComposto.getServizioComposto()!=null){

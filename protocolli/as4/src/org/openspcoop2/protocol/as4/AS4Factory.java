@@ -76,7 +76,7 @@ public class AS4Factory extends BasicFactory<SOAPElement> {
 		if(staticInstanceConfig!=null) {
 			if(staticInstanceConfig.isStaticConfig()) {
 				staticInstanceProtocolManager = new AS4ProtocolManager(this);
-				staticInstanceProtocolVersionManager = new HashMap<String, IProtocolVersionManager>();
+				staticInstanceProtocolVersionManager = new HashMap<>();
 				staticInstanceProtocolConfiguration = new AS4ProtocolConfiguration(this);
 			}
 		}

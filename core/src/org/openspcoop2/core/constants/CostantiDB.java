@@ -22,6 +22,8 @@
 
 package org.openspcoop2.core.constants;
 
+import org.openspcoop2.utils.certificate.KeystoreType;
+
 /**
  * CostantiDB
  *
@@ -30,6 +32,8 @@ package org.openspcoop2.core.constants;
  * @version $Rev$, $Date$
  */
 public final class CostantiDB {
+	
+	private CostantiDB() {}
 	    
 
     /** TABELLE*/
@@ -200,8 +204,21 @@ public final class CostantiDB {
     public static final String REGISTRO_CLASSI_COMPATIBILITA_AZIONE = "plugins_azioni_comp";
     public static final String REGISTRO_CLASSI_COMPATIBILITA_PROPRIETA = "plugins_props_comp";
     
-    public static boolean ALLARMI_ENABLED = false;
-    public static final String ALLARMI = "allarmi";
+    public static final String REMOTE_STORE = "remote_store";
+    public static final String REMOTE_STORE_COLUMN_ID = "id";
+    public static final String REMOTE_STORE_SEQUENCE = "seq_remote_store";
+    public static final String REMOTE_STORE_TABLE_FOR_ID = "remote_store_init_seq";
+    
+    public static final String REMOTE_STORE_KEY = "remote_store_key";
+    
+    private static boolean allarmiEnabled = false;
+    public static boolean isAllarmiEnabled() {
+		return allarmiEnabled;
+	}
+	public static void setAllarmiEnabled(boolean allarmiEnabled) {
+		CostantiDB.allarmiEnabled = allarmiEnabled;
+	}
+	public static final String ALLARMI = "allarmi";
     public static final String ALLARMI_PARAMETRI = "allarmi_parametri";
     public static final String ALLARMI_HISTORY = "allarmi_history";
     public static final String ALLARMI_NOTIFICHE = "allarmi_notifiche";
@@ -245,9 +262,7 @@ public final class CostantiDB {
     public static final String DUMP_CONFIGURAZIONE_REGOLA_SEQUENCE = "seq_dump_config_regola";
     public static final String DUMP_CONFIGURAZIONE_REGOLA_TABLE_FOR_ID = "dump_config_regola_init_seq";
 
-    @Deprecated
-    public static final String DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG = "config";
-    public static final String _DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG = DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG;
+    public static final String OLD_BACKWARD_COMPATIBILITY_DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG = "config";
     public static final String DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD = "configpd";
     public static final String DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA = "configpa";
     public static final String DUMP_CONFIGURAZIONE_PROPRIETARIO_PD = "pd";
@@ -521,6 +536,12 @@ public final class CostantiDB {
     public static final String EXCLUSIVE_C14N_10_OMITS_COMMENTS_URI = "http://www.w3.org/2001/10/xml-exc-c14n#";
     public static final String EXCLUSIVE_C14N_10_WITH_COMMENTS_URI = "http://www.w3.org/2001/10/xml-exc-c14n#WithComments";
     
+    public static final String KEYSTORE_TYPE_KEY_PAIR = KeystoreType.KEY_PAIR.getNome();
+    public static final String KEYSTORE_TYPE_PUBLIC_KEY = KeystoreType.PUBLIC_KEY.getNome();   
+    public static final String KEYSTORE_TYPE_JWK = KeystoreType.JWK_SET.getNome();  
+    public static final String KEYSTORE_TYPE_JKS = KeystoreType.JKS.getNome();    
+    public static final String KEYSTORE_TYPE_PKCS12 = KeystoreType.PKCS12.getNome();
+    
     
     /**
      * PROPRIETA CONNETTORE
@@ -571,7 +592,7 @@ public final class CostantiDB {
     public static final String CONNETTORE_HTTPS_TRUST_STORE_PASSWORD = CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD;
     public static final String CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM = CostantiConnettori.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITHM;
     public static final String CONNETTORE_HTTPS_TRUST_STORE_TYPE = CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_TYPE;
-    public static final String CONNETTORE_HTTPS_TRUST_STORE_CRLs = CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs;
+    public static final String CONNETTORE_HTTPS_TRUST_STORE_CRLS = CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs;
     public static final String CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY = CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY;
     public static final String CONNETTORE_HTTPS_KEY_STORE_LOCATION = CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION;
     public static final String CONNETTORE_HTTPS_KEY_STORE_PASSWORD = CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD;
@@ -652,6 +673,13 @@ public final class CostantiDB {
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02 = "idam02";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301 = "idam0301";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302 = "idam0302";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401 = "idam0401";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402 = "idam0402";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH = "modipaSecurityMessageSorgenteToken";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_LOCALE = "locale";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND = "pdnd";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH = "oauth";
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER = "modipaSecurityMessageHeaderName";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_MODIPA = "modipa";
@@ -704,10 +732,12 @@ public final class CostantiDB {
     public static final String MODIPA_KEYSTORE_MODE_VALUE_HSM = "hsm";
     
     public static final String MODIPA_KEYSTORE_TYPE = "modipaKeystoreType";
-    public static final String MODIPA_KEYSTORE_TYPE_VALUE_JKS = "jks";
-    public static final String MODIPA_KEYSTORE_TYPE_VALUE_PKCS12 = "pkcs12";
     
     public static final String MODIPA_KEYSTORE_PATH = "modipaKeystorePath";
+    
+    public static final String MODIPA_KEYSTORE_PATH_PUBLIC_KEY = "modipaKeystorePathPublicKey";
+    
+    public static final String MODIPA_KEYSTORE_KEY_ALGORITHM = "modipaKeystoreKeyPairAlgo";
     
     public static final String MODIPA_KEYSTORE_PASSWORD = "modipaKeystorePassword";
     
@@ -828,11 +858,11 @@ public final class CostantiDB {
     public static final String API_RESOURCE_PATH_ALL_VALUE = "*";
     public static final String API_RESOURCE_DETAIL_REQUEST = "REQUEST";
     public static final String API_RESOURCE_DETAIL_RESPONSE = "RESPONSE";
-//    public static final int API_RESOURCE_DETAIL_STATUS_UNDEFINED = -1;
+/**    public static final int API_RESOURCE_DETAIL_STATUS_UNDEFINED = -1; */
     
     public static final String ISSUER_APIKEY = "apiKey";
     public static final String ISSUER_APIKEY_APPID = "apiKey_appId";
-    public static String getISSUER_APIKEY(boolean appId) {
+    public static String getIssuerApiKey(boolean appId) {
     	return appId ? ISSUER_APIKEY_APPID : ISSUER_APIKEY;
     }
     public static boolean isAPPID(String issuer) {

@@ -23,6 +23,7 @@ import java.security.KeyStore;
 import java.security.cert.CertStore;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * ExternalResourceConfig
@@ -40,6 +41,9 @@ public class ExternalResourceConfig {
 	{
 		this.returnCode.add(200);
 	}
+
+	private String basicUsername;
+	private String basicPassword;
 	
 	private boolean hostnameVerifier = true;
 	
@@ -53,11 +57,14 @@ public class ExternalResourceConfig {
 	private String keyAlias;
 	private String keyPassword;
 	
-	private String forwardProxy_url;
-	private String forwardProxy_header;
-	private String forwardProxy_queryParameter;
-	private boolean forwardProxy_base64;
+	private String forwardProxyUrl;
+	private String forwardProxyHeader;
+	private String forwardProxyQueryParameter;
+	private boolean forwardProxyBase64;
 
+	private Map<String, String> headers;
+	private Map<String, String> queryParameters;
+	
 	public int getReadTimeout() {
 		return this.readTimeout;
 	}
@@ -80,6 +87,22 @@ public class ExternalResourceConfig {
 
 	public void setReturnCode(List<Integer> returnCode) {
 		this.returnCode = returnCode;
+	}
+	
+	public String getBasicUsername() {
+		return this.basicUsername;
+	}
+
+	public void setBasicUsername(String basicUsername) {
+		this.basicUsername = basicUsername;
+	}
+
+	public String getBasicPassword() {
+		return this.basicPassword;
+	}
+
+	public void setBasicPassword(String basicPassword) {
+		this.basicPassword = basicPassword;
 	}
 	
 	public boolean isHostnameVerifier() {
@@ -139,35 +162,51 @@ public class ExternalResourceConfig {
 		this.keyPassword = keyPassword;
 	}
 	
-	public String getForwardProxy_url() {
-		return this.forwardProxy_url;
+	public String getForwardProxyUrl() {
+		return this.forwardProxyUrl;
 	}
 
-	public void setForwardProxy_url(String forwardProxy_url) {
-		this.forwardProxy_url = forwardProxy_url;
+	public void setForwardProxyUrl(String forwardProxyUrl) {
+		this.forwardProxyUrl = forwardProxyUrl;
 	}
 
-	public String getForwardProxy_header() {
-		return this.forwardProxy_header;
+	public String getForwardProxyHeader() {
+		return this.forwardProxyHeader;
 	}
 
-	public void setForwardProxy_header(String forwardProxy_header) {
-		this.forwardProxy_header = forwardProxy_header;
+	public void setForwardProxyHeader(String forwardProxyHeader) {
+		this.forwardProxyHeader = forwardProxyHeader;
 	}
 
-	public String getForwardProxy_queryParameter() {
-		return this.forwardProxy_queryParameter;
+	public String getForwardProxyQueryParameter() {
+		return this.forwardProxyQueryParameter;
 	}
 
-	public void setForwardProxy_queryParameter(String forwardProxy_queryParameter) {
-		this.forwardProxy_queryParameter = forwardProxy_queryParameter;
+	public void setForwardProxyQueryParameter(String forwardProxyQueryParameter) {
+		this.forwardProxyQueryParameter = forwardProxyQueryParameter;
 	}
 
-	public boolean isForwardProxy_base64() {
-		return this.forwardProxy_base64;
+	public boolean isForwardProxyBase64() {
+		return this.forwardProxyBase64;
 	}
 
-	public void setForwardProxy_base64(boolean forwardProxy_base64) {
-		this.forwardProxy_base64 = forwardProxy_base64;
+	public void setForwardProxyBase64(boolean forwardProxyBase64) {
+		this.forwardProxyBase64 = forwardProxyBase64;
+	}
+	
+	public Map<String, String> getHeaders() {
+		return this.headers;
+	}
+
+	public void setHeaders(Map<String, String> headers) {
+		this.headers = headers;
+	}
+
+	public Map<String, String> getQueryParameters() {
+		return this.queryParameters;
+	}
+
+	public void setQueryParameters(Map<String, String> queryParameters) {
+		this.queryParameters = queryParameters;
 	}
 }

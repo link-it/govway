@@ -27,6 +27,7 @@ import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneUtils;
@@ -59,7 +60,7 @@ public class AbstractModIValidazioneSintatticaCommons {
 		this.validazioneUtils = validazioneUtils;
 	}
 	
-	protected void identificazioneApplicativoMittente(X509Certificate x509, OpenSPCoop2Message msg, Busta busta) throws Exception {
+	protected void identificazioneApplicativoMittente(X509Certificate x509, OpenSPCoop2Message msg, Busta busta) throws ProtocolException {
 		// invocato in ModIValidazioneSintatticaRest e ModIValidazioneSintatticaSoap durante il trattamento del token di sicurezza
 		IdentificazioneApplicativoMittenteUtils.identificazioneApplicativoMittenteByX509(this.log, this.state, x509, msg, busta, this.context, this.factory, this.requestInfo);
 	}

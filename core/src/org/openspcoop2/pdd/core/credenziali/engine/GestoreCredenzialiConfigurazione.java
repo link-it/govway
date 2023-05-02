@@ -29,6 +29,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.credenziali.GestoreCredenzialiException;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.utils.certificate.KeystoreType;
 
 /**     
  * GestoreCredenzialiConfigurazione
@@ -307,7 +308,7 @@ public class GestoreCredenzialiConfigurazione {
 				this.headerSslCertificateTrustStorePassword = password;
 				String type = getProperty(p, "header.ssl.certificate.truststore.type", protocollo, idSoggetto);
 				if(type==null) {
-					this.headerSslCertificateTrustStoreType = "jks";
+					this.headerSslCertificateTrustStoreType = KeystoreType.JKS.getNome();
 				}
 				else {
 					this.headerSslCertificateTrustStoreType = type;

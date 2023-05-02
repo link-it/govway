@@ -177,9 +177,9 @@ public abstract class AbstractXmlCipher {
 		this.keyWrapped = keystore.getPrivateKey(alias, passwordPrivateKey);
 		this.encryptedKeyMode = SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_ASYMMETRIC_KEY;
 		// Non sembra necessario
-//		if(keystore.getKeystoreType().equalsIgnoreCase("pkcs11")) {
+/**		if(keystore.getKeystoreType().equalsIgnoreCase(KeystoreType.PKCS11.getNome())) {
 //			this.provider = keystore.getKeystoreProvider();
-//		}
+//		}*/
 		this.init(addBouncyCastleProvider);
 	}
 
@@ -277,7 +277,7 @@ public abstract class AbstractXmlCipher {
 				}
 			}
 			if(this.secretKeyEncrypt==null) {
-				throw new Exception("Key for initialize cipher engine not found");
+				throw new UtilsException("Key for initialize cipher engine not found");
 			}
 			xmlCipher.init(this.mode, this.secretKeyEncrypt);
 			return xmlCipher;			
@@ -325,7 +325,7 @@ public abstract class AbstractXmlCipher {
 				xmlCipher.init(wrapMode, this.certificateWrapped.getPublicKey());
 			}
 			else {
-				throw new Exception("Key for initialize cipher engine 'wrapped key' not found");
+				throw new UtilsException("Key for initialize cipher engine 'wrapped key' not found");
 			}
 			return xmlCipher;			
 		}catch(Exception e){

@@ -26,6 +26,7 @@ import java.util.Properties;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ExtendedKeyUsage;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.random.SecureRandomAlgorithm;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
@@ -321,7 +322,7 @@ public class OCSPConfig {
 			this.alternativeTrustStoreCA_password = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CA_ALTERNATIVE_TRUST_STORE_PASSWORD, true);	
 			this.alternativeTrustStoreCA_type = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CA_ALTERNATIVE_TRUST_STORE_TYPE, false);
 			if(this.alternativeTrustStoreCA_type==null || StringUtils.isEmpty(this.alternativeTrustStoreCA_type)) {
-				this.alternativeTrustStoreCA_type = "jks";
+				this.alternativeTrustStoreCA_type = KeystoreType.JKS.getNome();
 			}
 		}
 		
@@ -332,7 +333,7 @@ public class OCSPConfig {
 			this.trustStoreSigner_password = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_SIGNER_TRUST_STORE_PASSWORD, true);	
 			this.trustStoreSigner_type = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_SIGNER_TRUST_STORE_TYPE, false);
 			if(this.trustStoreSigner_type==null || StringUtils.isEmpty(this.trustStoreSigner_type)) {
-				this.trustStoreSigner_type = "jks";
+				this.trustStoreSigner_type = KeystoreType.JKS.getNome();
 			}
 		}
 		
@@ -380,7 +381,7 @@ public class OCSPConfig {
 			this.externalResources_trustStorePassword = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_TRUST_STORE_PASSWORD, true);	
 			this.externalResources_trustStoreType = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_TRUST_STORE_TYPE, false);
 			if(this.externalResources_trustStoreType==null || StringUtils.isEmpty(this.externalResources_trustStoreType)) {
-				this.externalResources_trustStoreType = "jks";
+				this.externalResources_trustStoreType = KeystoreType.JKS.getNome();
 			}
 		}
 		
@@ -389,7 +390,7 @@ public class OCSPConfig {
 			this.externalResources_keyStorePassword = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_KEY_STORE_PASSWORD, true);	
 			this.externalResources_keyStoreType = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_KEY_STORE_TYPE, false);
 			if(this.externalResources_keyStoreType==null || StringUtils.isEmpty(this.externalResources_keyStoreType)) {
-				this.externalResources_keyStoreType = "jks";
+				this.externalResources_keyStoreType = KeystoreType.JKS.getNome();
 			}
 			
 			this.externalResources_keyPassword = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_KEY_PASSWORD, true);	
@@ -462,7 +463,7 @@ public class OCSPConfig {
 				this.alternativeTrustStoreCRL_password = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CRL_ALTERNATIVE_TRUST_STORE_PASSWORD, true);	
 				this.alternativeTrustStoreCRL_type = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CRL_ALTERNATIVE_TRUST_STORE_TYPE, false);
 				if(this.alternativeTrustStoreCRL_type==null || StringUtils.isEmpty(this.alternativeTrustStoreCRL_type)) {
-					this.alternativeTrustStoreCRL_type = "jks";
+					this.alternativeTrustStoreCRL_type = KeystoreType.JKS.getNome();
 				}
 			}
 		}

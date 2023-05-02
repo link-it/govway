@@ -53,6 +53,7 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.lang.StringUtils;
 import org.bouncycastle.crypto.CryptoServicesRegistrar;
 import org.jminix.console.tool.StandaloneMiniConsole;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
@@ -140,6 +141,7 @@ import org.openspcoop2.pdd.core.jmx.InformazioniStatoPorta;
 import org.openspcoop2.pdd.core.jmx.InformazioniStatoPortaCache;
 import org.openspcoop2.pdd.core.jmx.StatoServiziJMXResource;
 import org.openspcoop2.pdd.core.keystore.GestoreKeystoreCaching;
+import org.openspcoop2.pdd.core.keystore.RemoteStoreProviderDriver;
 import org.openspcoop2.pdd.core.response_caching.GestoreCacheResponseCaching;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
 import org.openspcoop2.pdd.core.token.GestoreToken;
@@ -204,6 +206,7 @@ import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.certificate.CertificateFactory;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
+import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
@@ -1762,7 +1765,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					GestoreKeystoreCaching.initialize(propertiesReader.getCacheType_keystore(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
 					
 					if(itemCrlLifeSecond>0) {
-						GestoreKeystoreCaching.setCacheCrlLifeSeconds(itemCrlLifeSecond, logCore);
+						GestoreKeystoreCaching.setCacheCrlLifeSeconds(itemCrlLifeSecond);
 					}
 				}
 				else{
@@ -1970,7 +1973,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				protocolFactoryManager = ProtocolFactoryManager.getInstance();
 				// Update protocolLogger
 				boolean isInitializeLoggerProtocol = OpenSPCoop2Logger.initializeProtocolLogger(OpenSPCoop2Startup.log, true, propertiesReader.getRootDirectory(),loggerP); 
-				if(isInitializeLoggerProtocol == false){
+				if(!isInitializeLoggerProtocol){
 					return;
 				}
 				// Initialize Protocols
@@ -1983,10 +1986,23 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						OpenSPCoop2MessageFactory factory = messageFactory.get(i);
 						Enumeration<String> protocolli = ProtocolFactoryManager.getInstance().getProtocolNames();
 						while (protocolli.hasMoreElements()) {
-							String protocollo = (String) protocolli.nextElement();
+							String protocollo = protocolli.nextElement();
 							if(ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).createValidazioneConSchema(null).initialize(factory)==false) {
-								throw new Exception("Inizializzazione validatore con schemi per il protocollo '"+protocollo+"' e messagefactory '"+factory.getClass().getName()+"' fallita");
+								throw new CoreException("Inizializzazione validatore con schemi per il protocollo '"+protocollo+"' e messagefactory '"+factory.getClass().getName()+"' fallita");
 							}
+						}
+					}
+				}
+				
+				// Inizializza RemoteStore
+				Enumeration<String> protocolli = ProtocolFactoryManager.getInstance().getProtocolNames();
+				while (protocolli.hasMoreElements()) {
+					String protocollo = protocolli.nextElement();
+					List<RemoteStoreConfig> lRSC = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).createProtocolConfiguration().getRemoteStoreConfig();
+					if(lRSC!=null && !lRSC.isEmpty()) {
+						for (RemoteStoreConfig remoteStoreConfig : lRSC) {
+							RemoteStoreProviderDriver.initialize(logCore, remoteStoreConfig);
+							OpenSPCoop2Startup.logStartupInfo("Inizializzazione RemoteStoreProvider ["+remoteStoreConfig.getStoreLabel()+"] effettuata.");
 						}
 					}
 				}
@@ -2022,15 +2038,15 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			/* ------------- Inizializzo il sistema di Logging per gli appender personalizzati --------------- */
 			boolean isInitializeAppender = false;
 			isInitializeAppender = OpenSPCoop2Logger.initializeMsgDiagnosticiOpenSPCoopAppender(configurazionePdDManager.getOpenSPCoopAppender_MsgDiagnostici());
-			if(isInitializeAppender == false){
+			if(!isInitializeAppender){
 				return;
 			}
 			isInitializeAppender = OpenSPCoop2Logger.initializeTracciamentoOpenSPCoopAppender(configurazionePdDManager.getOpenSPCoopAppender_Tracciamento());
-			if(isInitializeAppender == false){
+			if(!isInitializeAppender){
 				return;
 			}
 			isInitializeAppender = OpenSPCoop2Logger.initializeDumpOpenSPCoopAppender(configurazionePdDManager.getOpenSPCoopAppender_Dump());
-			if(isInitializeAppender == false){
+			if(!isInitializeAppender){
 				return;
 			}
 

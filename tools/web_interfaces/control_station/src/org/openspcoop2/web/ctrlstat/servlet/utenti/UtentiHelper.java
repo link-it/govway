@@ -1538,7 +1538,7 @@ public class UtentiHelper extends ConsoleHelper {
 //					}
 				}
 				if(!tmpElenco.equals("")){
-					this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+					this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
 					return false;
 				}
 			}
@@ -1924,7 +1924,7 @@ public class UtentiHelper extends ConsoleHelper {
 
 			// Campi obbligatori
 			if ( (newpw==null || newpw.equals("")) || (confpw==null || confpw.equals("")) ) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare una password");
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare una password");
 				return false;
 			}
 

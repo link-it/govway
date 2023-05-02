@@ -34,6 +34,7 @@ import org.openspcoop2.utils.certificate.CRLDistributionPoint;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.KeyStore;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.ocsp.CertificateStatus;
 import org.openspcoop2.utils.certificate.ocsp.CertificateStatusCode;
 import org.openspcoop2.utils.certificate.ocsp.OCSPConfig;
@@ -187,7 +188,7 @@ public class OCSPTest {
 			KeyStore trustStoreCA = null;
 			try(InputStream is = OCSPTest.class.getResourceAsStream("/org/openspcoop2/utils/certificate/ocsp/test/crl/trustStore_ca.jks")){
 				byte[] content = Utilities.getAsByteArray(is);
-				trustStoreCA = new KeyStore(content, "jks", "123456");
+				trustStoreCA = new KeyStore(content, KeystoreType.JKS.getNome(), "123456");
 			}
 			
 			File fCrl = null;
@@ -264,7 +265,7 @@ public class OCSPTest {
 			KeyStore trustStore_no_nonce = null;
 			try(InputStream is = OCSPTest.class.getResourceAsStream("/org/openspcoop2/utils/certificate/ocsp/test/ocsp/ca_TEST.jks")){
 				byte[] content = Utilities.getAsByteArray(is);
-				trustStore_no_nonce = new KeyStore(content, "jks", "123456");
+				trustStore_no_nonce = new KeyStore(content, KeystoreType.JKS.getNome(), "123456");
 			}
 					
 			OpenSSLThread sslThread = new OpenSSLThread(normalizeOpensslCommand(opensslCommandParam), 64900, "ocsp/ocsp_TEST.cert.pem", "ocsp/ocsp_TEST.key.pem", "ocsp/ca_TEST.cert.pem", "ocsp/index.txt", false);
@@ -354,7 +355,7 @@ public class OCSPTest {
 			KeyStore trustStore_no_nonce = null;
 			try(InputStream is = OCSPTest.class.getResourceAsStream("/org/openspcoop2/utils/certificate/ocsp/test/ocsp/ca_TEST.jks")){
 				byte[] content = Utilities.getAsByteArray(is);
-				trustStore_no_nonce = new KeyStore(content, "jks", "123456");
+				trustStore_no_nonce = new KeyStore(content, KeystoreType.JKS.getNome(), "123456");
 			}
 			
 			String configType_noextendedkeyusage = "signedByResponderCertificate_case3"+ "-noextendedkeyusage";

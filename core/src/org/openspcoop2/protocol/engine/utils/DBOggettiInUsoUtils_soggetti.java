@@ -530,7 +530,7 @@ public class DBOggettiInUsoUtils_soggetti {
 			// Controllo che il soggetto non sia associato a policy di controllo del traffico o allarmi
 			
 			int max = 2;
-			if(!CostantiDB.ALLARMI_ENABLED) {
+			if(!CostantiDB.isAllarmiEnabled()) {
 				max=1;
 			}
 			for (int i = 0; i < max; i++) {

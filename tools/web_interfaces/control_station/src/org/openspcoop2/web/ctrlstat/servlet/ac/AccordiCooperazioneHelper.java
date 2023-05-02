@@ -96,22 +96,22 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 
 			// Campi obbligatori
 			if (nome==null || nome.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare un Nome");
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare un Nome");
 				return false;
 			}
 			if(referente==null || referente.equals("") || referente.equals("-")){
-				this.pd.setMessage("Dati incompleti. E' necessario indicare un Soggetto Referente");
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare un Soggetto Referente");
 				return false;
 			}
 			//if(this.core.isBackwardCompatibilityAccordo11()==false){
 			if (versione==null || versione.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare una Versione dell'accordo");
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare una Versione dell'accordo");
 				return false;
 			}
 			//}
 
 //			if (gestioneWSBL.equals("yes") && (referente == null || "".equals(referente))) {
-//				this.pd.setMessage("Dati incompleti. E' necessario indicare un Soggetto referente");
+//				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare un Soggetto referente");
 //				return false;
 //			}
 

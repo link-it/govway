@@ -171,7 +171,7 @@ public class TracciaProducer extends BasicProducer implements ITracciaProducer{
 			if(this.debug){
 				this.log.debug("@@ log["+busta.getID()+"] (prima inserimento traccia) ....");
 			}
-			List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+			List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<>();
 			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_GDO, gdoT , InsertAndGeneratedKeyJDBCType.TIMESTAMP) );
 			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_GDO_INT, gdoT.getTime(), InsertAndGeneratedKeyJDBCType.LONG) );
 			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_PDD_CODICE, idSoggetto.getCodicePorta(), InsertAndGeneratedKeyJDBCType.STRING) );

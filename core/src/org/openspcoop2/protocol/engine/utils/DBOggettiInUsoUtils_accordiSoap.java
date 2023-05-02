@@ -965,7 +965,7 @@ public class DBOggettiInUsoUtils_accordiSoap {
 										// ** Controllo che non sia associato a policy di controllo del traffico o allarmi **
 										
 										int max = 2;
-										if(!CostantiDB.ALLARMI_ENABLED) {
+										if(!CostantiDB.isAllarmiEnabled()) {
 											max=1;
 										}
 										for (int i = 0; i < max; i++) {
@@ -1189,7 +1189,7 @@ public class DBOggettiInUsoUtils_accordiSoap {
 								// ** Controllo che non sia associato a policy di controllo del traffico o allarmi **
 								
 								int max = 2;
-								if(!CostantiDB.ALLARMI_ENABLED) {
+								if(!CostantiDB.isAllarmiEnabled()) {
 									max=1;
 								}
 								for (int i = 0; i < max; i++) {
@@ -1324,7 +1324,7 @@ public class DBOggettiInUsoUtils_accordiSoap {
 				for (IDServizio idServizio : listIDServizio) {
 			
 					int max = 2;
-					if(!CostantiDB.ALLARMI_ENABLED) {
+					if(!CostantiDB.isAllarmiEnabled()) {
 						max=1;
 					}
 					for (int i = 0; i < max; i++) {

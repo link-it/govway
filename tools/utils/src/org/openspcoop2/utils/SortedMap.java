@@ -34,7 +34,7 @@ import java.util.Map;
 public class SortedMap<T> {
 
 	protected List<String> list = new ArrayList<>(); // per preservare l'ordine
-	protected Map<String, T> map = new HashMap<String, T>();
+	protected Map<String, T> map = new HashMap<>();
 	
 	public int size(){
 		return this.list.size();
@@ -43,7 +43,18 @@ public class SortedMap<T> {
 	public List<String> keys(){
 		return this.list;
 	}
+	public List<T> values(){
+		return new ArrayList<>(this.map.values());
+	}
 	
+	public void clear() {
+		this.list.clear();
+		this.map.clear();
+	}
+	
+	public void put(String key, T archive) throws UtilsException{
+		this.add(key, archive);
+	}
 	public void add(String key, T archive) throws UtilsException{
 		if(this.map.containsKey(key)){
 			throw new UtilsException("Archivio con chiave ["+key+"] gia' precedentemente caricato");

@@ -287,7 +287,7 @@ public class SoggettoUpdateUtilities {
 
 
 				// - soggetti erogatore di servizi componenti
-				List<AccordoServizioParteComune> ass = this.apcCore.accordiServizio_serviziComponentiConSoggettoErogatore(new IDSoggetto(this.oldtipoprov,this.oldnomeprov));
+				List<AccordoServizioParteComune> ass = this.apcCore.accordiServizioServiziComponentiConSoggettoErogatore(new IDSoggetto(this.oldtipoprov,this.oldnomeprov));
 				for(int i=0; i<ass.size(); i++){
 					AccordoServizioParteComune as = ass.get(i);
 					// check accordi con referente (non effettuo il change 2 volte)

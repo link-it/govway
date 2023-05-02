@@ -155,7 +155,7 @@ public class GestoreRisorseJMX {
             		java.util.Map<String, Object> env = null;
                 	if(modalita2_username!=null && modalita2_password!=null){
         				String[] creds = {modalita2_username, modalita2_password};
-        				env = new HashMap<String, Object>();
+        				env = new HashMap<>();
         				env.put("jmx.remote.credentials", creds);
                 	}
                 	

@@ -50,6 +50,7 @@ import org.openspcoop2.core.plugins.utils.PluginsDriverUtils;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.utils.AbstractSecurityProvider;
 import org.openspcoop2.utils.certificate.KeystoreParams;
+import org.openspcoop2.utils.certificate.KeystoreType;
 
 /**     
  * TokenUtilities
@@ -185,7 +186,7 @@ public class TokenUtilities {
 			keystoreParams.setPath(p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE));
 			String type = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
 			if(type==null) {
-				type = "jks";
+				type = KeystoreType.JKS.getNome();
 			}
 			keystoreParams.setType(type);
 			keystoreParams.setPassword(p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_PSWD));
@@ -242,7 +243,7 @@ public class TokenUtilities {
 			keystoreParams.setPath(p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE));
 			String type = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
 			if(type==null) {
-				type = "jks";
+				type = KeystoreType.JKS.getNome();
 			}
 			keystoreParams.setType(type);
 			keystoreParams.setPassword(p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_PSWD));

@@ -94,7 +94,7 @@ public abstract class AbstractKeystoreCache<T extends Serializable> {
 		List<Object> lArgs = new ArrayList<>();
 		lArgs.add(keystore);
 		if(params!=null && params.length>0) {
-			lArgs.add(Arrays.asList(params));
+			lArgs.addAll(Arrays.asList(params));
 		}
 		return getKeystoreAndCreateIfNotExists(keyParam, lArgs.toArray());
 	}
@@ -126,6 +126,20 @@ public abstract class AbstractKeystoreCache<T extends Serializable> {
 			o = this.cacheMap.get(keyCache);
 		}
 		return o;
+	}
+	
+	public void removeObjectFromCache(String keyParam) throws SecurityException {
+		String keyCache = this.getPrefixKey() + keyParam;
+		if(this.cacheJCS!=null) {
+			try {
+				this.cacheJCS.remove(keyCache);
+			}catch(Exception e) {
+				throw new SecurityException(e.getMessage(),e);
+			}
+		}
+		else {
+			this.cacheMap.remove(keyCache);
+		}
 	}
 	
 	private T initKeystore(String keyParam,Object ... params) throws SecurityException{

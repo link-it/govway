@@ -382,6 +382,27 @@ public class MessageSecurityReceiver_xml extends AbstractRESTMessageSecurityRece
 		}
 	}
 
-
+	@Override
+	public String getCertificateId() throws SecurityException {
+		try {
+			if(this.xmlVerifierSignature!=null) {
+				if(	this.xmlVerifierSignature.getKeyInfo()!=null ) {
+					// RSA
+					if(	this.xmlVerifierSignature.getKeyInfo().getId()!=null) {
+						return this.xmlVerifierSignature.getKeyInfo().getId();
+					}
+				}
+				return null;
+			}
+			else if(this.xmlDecrypt!=null) {
+				return null;
+			}
+			else {
+				throw new SecurityException(XMLCostanti.XML_ENGINE_DESCRIPTION+" (getCertificate method) usable only after one function beetwen encrypt or signature");
+			}
+		}catch(Exception e) {
+			throw new SecurityException(e.getMessage(), e);
+		}
+	}
 	
 }

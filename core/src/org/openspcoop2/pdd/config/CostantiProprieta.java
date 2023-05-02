@@ -34,6 +34,7 @@ import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazioneCodifica;
 import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazioneSorgente;
 import org.openspcoop2.utils.BooleanNullable;
+import org.openspcoop2.utils.certificate.KeystoreType;
 
 /**
  * Classe che raccoglie le proprieta
@@ -220,7 +221,7 @@ public class CostantiProprieta {
 			type = typeDefaultValue;
 		}
 		if(type==null) {
-			type = "jks";
+			type = KeystoreType.JKS.getNome();
 		}
 		return type;
 	}

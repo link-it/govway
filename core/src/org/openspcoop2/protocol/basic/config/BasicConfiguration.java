@@ -47,6 +47,7 @@ import org.openspcoop2.protocol.sdk.constants.InitialIdConversationType;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
+import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 
 /**
@@ -464,5 +465,10 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 			}
 		}
 		return list;
+	}
+	
+	@Override
+	public List<RemoteStoreConfig> getRemoteStoreConfig() throws ProtocolException{
+		return new ArrayList<>();
 	}
 }

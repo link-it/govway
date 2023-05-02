@@ -33,6 +33,7 @@ import org.openspcoop2.core.config.MessageSecurityFlow;
 import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
+import org.openspcoop2.utils.certificate.KeystoreType;
 
 /**
  * Implementazione che estente l'implementazione di default e permette di caricare keystore utilizzando la cache o il binario passato direttamente.
@@ -337,10 +338,10 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 				||
 				(MerlinProvider.useBouncyCastleProvider);
 		if(useBC) {
-			if(this.truststore!=null && this.truststore.getType()!=null && this.truststore.getType().equalsIgnoreCase("pkcs11")) {
+			if(this.truststore!=null && this.truststore.getType()!=null && this.truststore.getType().equalsIgnoreCase(KeystoreType.PKCS11.getNome())) {
 				useBC=false;
 			}
-			if(this.keystore!=null && this.keystore.getType()!=null && this.keystore.getType().equalsIgnoreCase("pkcs11")) {
+			if(this.keystore!=null && this.keystore.getType()!=null && this.keystore.getType().equalsIgnoreCase(KeystoreType.PKCS11.getNome())) {
 				useBC=false;
 			}
 		}

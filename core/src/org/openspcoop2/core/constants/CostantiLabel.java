@@ -24,6 +24,7 @@ package org.openspcoop2.core.constants;
 
 import org.openspcoop2.utils.Map;
 import org.openspcoop2.utils.MapKey;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**
@@ -80,6 +81,12 @@ public final class CostantiLabel {
 	public static final String PRIVATE_KEY = "Private Key";
 	public static final String PUBLIC_KEY = "Public Key";
 	public static final String JWKS = "JWKs";
+	
+    public static final String KEYSTORE_TYPE_KEY_PAIR = KeystoreType.KEY_PAIR.getLabel();
+    public static final String KEYSTORE_TYPE_PUBLIC_KEY = KeystoreType.PUBLIC_KEY.getLabel();
+    public static final String KEYSTORE_TYPE_JWK = KeystoreType.JWK_SET.getLabel();
+    public static final String KEYSTORE_TYPE_JKS = KeystoreType.JKS.getLabel();
+    public static final String KEYSTORE_TYPE_PKCS12 = KeystoreType.PKCS12.getLabel();
 	
 	/**
      * PROPRIETA CERTIFICATI
@@ -210,18 +217,32 @@ public final class CostantiLabel {
 	
 	public static final String MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL = "Sicurezza Messaggio";
 	public static final String MODIPA_API_PROFILO_SICUREZZA_MESSAGGIO_LABEL = "Sicurezza Messaggio";
+	
 	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM01 = "ID_AUTH_01";
 	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM01_REST = "ID_AUTH_REST_01";
 	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM01_SOAP = "ID_AUTH_SOAP_01";
+	
 	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM02 = "ID_AUTH_02";
 	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM02_REST = "ID_AUTH_REST_02";
 	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM02_SOAP = "ID_AUTH_SOAP_02";
+	
 	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0301 = "INTEGRITY_01 con ID_AUTH_01";
 	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0301_REST = "INTEGRITY_REST_01 con ID_AUTH_REST_01";
 	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0301_SOAP = "INTEGRITY_SOAP_01 con ID_AUTH_SOAP_01";
+	
 	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0302 = "INTEGRITY_01 con ID_AUTH_02";
 	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0302_REST = "INTEGRITY_REST_01 con ID_AUTH_REST_02";
 	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0302_SOAP = "INTEGRITY_SOAP_01 con ID_AUTH_SOAP_02";
+	
+	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0401 = "INTEGRITY_02 con ID_AUTH_01";
+	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0401_REST = "INTEGRITY_REST_02 con ID_AUTH_REST_01";
+	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0402 = "INTEGRITY_02 con ID_AUTH_02";
+	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0402_REST = "INTEGRITY_REST_02 con ID_AUTH_REST_02";
+	
+	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH = "Generazione Token";
+	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_LOCALE = MODIPA_SICUREZZA_CHOICE_MESSAGE_LABEL;
+	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_PDND = MODIPA_SICUREZZA_CHOICE_TOKEN_PDND_LABEL;
+	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_OAUTH = MODIPA_SICUREZZA_CHOICE_TOKEN_OAUTH_LABEL;
 	
 	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL = "Header HTTP del Token";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_MODIPA = "Letto da property";
@@ -328,6 +349,9 @@ public final class CostantiLabel {
     
 	public static final String MODIPA_STORE_PATH_LABEL = "Path";
 	public static final String MODIPA_STORE_TYPE_LABEL = "Tipo";
+	public static final String MODIPA_STORE_PATH_PRIVATE_KEY_LABEL = "Chiave Privata";
+	public static final String MODIPA_STORE_PATH_PUBLIC_KEY_LABEL = "Chiave Pubblica";
+	public static final String MODIPA_STORE_ALGORITHM_ID_LABEL = "";
 	public static final String MODIPA_TRUSTSTORE_CRLS_LABEL = "CRL File(s)";
 	public static final String MODIPA_KEY_ALIAS_LABEL = "Alias Chiave Privata";
 	public static final String MODIPA_TRUSTSTORE_OCSP_LABEL = "OCSP Policy";

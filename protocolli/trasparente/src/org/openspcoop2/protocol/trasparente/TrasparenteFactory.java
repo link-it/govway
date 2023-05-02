@@ -72,7 +72,7 @@ public class TrasparenteFactory extends BasicEmptyRawContentFactory {
 		if(staticInstanceConfig!=null) {
 			if(staticInstanceConfig.isStaticConfig()) {
 				staticInstanceProtocolManager = new TrasparenteProtocolManager(this);
-				staticInstanceProtocolVersionManager = new HashMap<String, IProtocolVersionManager>();
+				staticInstanceProtocolVersionManager = new HashMap<>();
 				staticInstanceProtocolConfiguration = new TrasparenteProtocolConfiguration(this);
 			}
 		}

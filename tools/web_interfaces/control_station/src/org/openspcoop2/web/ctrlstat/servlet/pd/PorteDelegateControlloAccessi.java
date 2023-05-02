@@ -572,7 +572,8 @@ public class PorteDelegateControlloAccessi extends Action {
 
 				porteDelegateHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, 
 						gestioneTokenPolicy,gestioneTokenOpzionale, 
-						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, portaDelegata,protocollo,isPortaDelegata);
+						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, portaDelegata,protocollo,isPortaDelegata,
+						false);
 				
 				porteDelegateHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, servletChiamante,portaDelegata,protocollo,
 						autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, confPers, isSupportatoAutenticazione,isPortaDelegata,
@@ -634,7 +635,8 @@ public class PorteDelegateControlloAccessi extends Action {
 				
 				porteDelegateHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, 
 						gestioneTokenPolicy, gestioneTokenOpzionale, 
-						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, portaDelegata,protocollo,isPortaDelegata);
+						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, portaDelegata,protocollo,isPortaDelegata,
+						false);
 				
 				porteDelegateHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, servletChiamante,portaDelegata,protocollo,
 						autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, confPers, isSupportatoAutenticazione,isPortaDelegata,
@@ -1127,7 +1129,8 @@ public class PorteDelegateControlloAccessi extends Action {
 			
 			porteDelegateHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale,
-					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, portaDelegata,protocollo,isPortaDelegata);
+					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, portaDelegata,protocollo,isPortaDelegata,
+					false);
 			
 			porteDelegateHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, servletChiamante,portaDelegata,protocollo,
 					autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, confPers, isSupportatoAutenticazione,isPortaDelegata,

@@ -32,6 +32,7 @@ import org.openspcoop2.core.mvc.properties.utils.DBPropertiesUtils;
 import org.openspcoop2.pdd.core.token.TokenException;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.utils.certificate.KeystoreParams;
+import org.openspcoop2.utils.certificate.KeystoreType;
 
 /**     
  * AttributeAuthorityUtilities
@@ -131,7 +132,7 @@ public class AttributeAuthorityUtilities {
 			keystoreParams.setPath(p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE));
 			String type = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
 			if(type==null) {
-				type = "jks";
+				type = KeystoreType.JKS.getNome();
 			}
 			keystoreParams.setType(type);
 			keystoreParams.setPassword(p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_PSWD));

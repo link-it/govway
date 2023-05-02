@@ -120,6 +120,7 @@ import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -1708,7 +1709,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		
 		// *************** ServizioApplicativo Erogatore *********************
 		
-//		if(!isConfigurazione && TipoOperazione.CHANGE.equals(tipoOp)){
+/**		if(!isConfigurazione && TipoOperazione.CHANGE.equals(tipoOp)){
 				
 			// Il link richiede ulteriori parametri.
 			
@@ -1726,7 +1727,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 //			ServletUtils.setDataElementVisualizzaLabel(de);
 //
 //
-//			dati.add(de);
+//			dati.add(de);*/
 		
 			
 		//}
@@ -1738,14 +1739,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 				// Il link richiede ulteriori parametri.
 				
-//				this.controlloAccessi(dati);
+/**				this.controlloAccessi(dati);
 //				// 	controllo accessi
 //				de = new DataElement();
 //				de.setType(DataElementType.LINK);
 //				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, pIdSogg, pIdPorta, pIdAsps);
 //				String statoControlloAccessi = this.getLabelStatoControlloAccessi(gestioneToken,autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom);
 //				ServletUtils.setDataElementCustomLabel(de, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, statoControlloAccessi);
-//				dati.add(de);
+//				dati.add(de);*/
 			}
 		}else {
 			// Pintori 29/11/2017 Gestione Accessi spostata nella servlet PorteApplicativeControlloAccessi,  in ADD devo mostrare comunque la form.
@@ -1755,14 +1756,59 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			boolean forceAutenticato = false; 
 			boolean forceHttps = false;
 			boolean forceDisableOptional = false;
+			boolean forceGestioneToken = false;
 			if(this.isProfiloModIPA(protocollo)) {
 				forceAutenticato = true; // in modI ci vuole sempre autenticazione https sull'erogazione (cambia l'opzionalita' o meno)
 				forceHttps = forceAutenticato;
-				forceDisableOptional = this.forceHttpsClientProfiloModiPA(IDAccordoFactory.getInstance().getIDAccordoFromAccordo(aspc),asps!=null ? asps.getPortType() : null);
+				
+				boolean forcePDND = false;
+				boolean forceOAuth = false;
+				
+				BooleanNullable forceHttpsClientWrapper = BooleanNullable.NULL(); 
+				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL(); 
+				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL(); 
+				
+				this.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, 
+						IDAccordoFactory.getInstance().getIDAccordoFromAccordo(aspc),asps!=null ? asps.getPortType() : null, 
+						null);
+				
+				if(forceHttpsClientWrapper.getValue()!=null) {
+					forceDisableOptional = forceHttpsClientWrapper.getValue().booleanValue();
+				}
+				if(forcePDNDWrapper.getValue()!=null) {
+					forcePDND = forcePDNDWrapper.getValue().booleanValue();
+				}
+				if(forceOAuthWrapper.getValue()!=null) {
+					forceOAuth = forceOAuthWrapper.getValue().booleanValue();
+				}
+
+				if (forcePDND || forceOAuth) {
+					
+					forceGestioneToken = true;
+					
+					if(forcePDND) {
+						List<String> tokenPolicies = this.getTokenPolicyGestione(true, false, 
+								true);
+						if(tokenPolicies!=null && !tokenPolicies.isEmpty()) {
+							gestioneTokenPolicyLabels = tokenPolicies.toArray(new String[1]);
+							gestioneTokenPolicyValues = tokenPolicies.toArray(new String[1]);
+						}
+					}
+					else {
+						List<String> tokenPolicies = this.getTokenPolicyGestione(false, true, 
+								true);
+						if(tokenPolicies!=null && !tokenPolicies.isEmpty()) {
+							gestioneTokenPolicyLabels = tokenPolicies.toArray(new String[1]);
+							gestioneTokenPolicyValues = tokenPolicies.toArray(new String[1]);
+						}
+					}
+					
+				}
 			}
 			
 			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
-					gestioneTokenPolicy, gestioneTokenOpzionale, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,protocollo,false);
+					gestioneTokenPolicy, gestioneTokenOpzionale, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,protocollo,false,
+					forceGestioneToken);
 
 			this.controlloAccessiAutenticazione(dati, tipoOp, servletChiamante, null,protocollo,
 					autenticazione, autenticazioneCustom, autenticazioneOpzionale, 
@@ -9593,11 +9639,11 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				}
 				
 				if(getmsgUsername==null || "".equals(getmsgUsername)) {
-					this.pd.setMessage("Dati incompleti. E' necessario indicare 'Username' per il servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"'");
+					this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare 'Username' per il servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"'");
 					return false;
 				}
 				if(passwordEmpty) {
-					this.pd.setMessage("Dati incompleti. E' necessario indicare 'Password' per il servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"'");
+					this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare 'Password' per il servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"'");
 					return false;
 				}
 				if (((getmsgUsername.indexOf(" ") != -1) || (validaPassword && getmsgPassword.indexOf(" ") != -1))) {

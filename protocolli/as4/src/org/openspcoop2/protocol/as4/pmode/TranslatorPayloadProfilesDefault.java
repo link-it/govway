@@ -90,7 +90,7 @@ public class TranslatorPayloadProfilesDefault {
 		try {
 			if(this.payloadDefault==null) {
 				//System.out.println("================ getPayloadDefault ==================");
-				Map<String, Object> map = new HashMap<String, Object>();
+				Map<String, Object> map = new HashMap<>();
 				StringWriter writer = new StringWriter();
 				this.templatePayloadDefault.process(map, writer);
 				//System.out.println("LETTO: "+writer.toString());
@@ -146,7 +146,7 @@ public class TranslatorPayloadProfilesDefault {
 		try {
 			if(this.payloadProfileDefault==null) {
 				//System.out.println("================ getPayloadProfileDefault ==================");
-				Map<String, Object> map = new HashMap<String, Object>();
+				Map<String, Object> map = new HashMap<>();
 				StringWriter writer = new StringWriter();
 				this.templatePayloadProfileDefault.process(map, writer);
 				//System.out.println("LETTO: "+writer.toString());

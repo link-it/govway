@@ -1,3 +1,5 @@
+DELETE FROM remote_store_key;
+DELETE FROM remote_store;
 DELETE FROM nodi_runtime;
 DELETE FROM config_handlers;
 DELETE FROM registro_plug_jar;

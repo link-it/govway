@@ -211,7 +211,7 @@ public class InformazioniIntegrazione extends org.openspcoop2.utils.beans.BaseBe
 	private Map<String, Object> integrationInfo;
 	
 	// Claims
-	private Map<String,Object> claims = new HashMap<String,Object>();
+	private Map<String,Object> claims = new HashMap<>();
 	
 	// NOTA: l'ordine stabilisce come viene serializzato nell'oggetto json
 		

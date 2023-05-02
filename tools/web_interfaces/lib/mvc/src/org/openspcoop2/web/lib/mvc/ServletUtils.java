@@ -648,7 +648,7 @@ public class ServletUtils {
 				Map<String, Object> mapSrc = sessionMap.get(idSessionTab);
 				mapDest = (HashMap<String, Object>) SerializationUtils.clone(((HashMap<String, Object>)mapSrc));
 			} else {
-				mapDest = new HashMap<String, Object>();
+				mapDest = new HashMap<>();
 			}
 		}
 		

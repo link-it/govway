@@ -305,7 +305,7 @@ public class EngineTest {
 			//Processo il messaggio, applicandoci nell'ordine delle operazioni effettuate tra timestamp, firma e cifratura
 			List<Reference> elementsToClean = openspcoop2Message.getWSSDirtyElements(actorWSS, mustUnderstand);
 
-			Map<String, Object> wssProperties = new HashMap<String, Object>();
+			Map<String, Object> wssProperties = new HashMap<>();
 			
 			wssProperties.put(SecurityConstants.ENCRYPTION_PARTS, "{Content}{http://test.openspcoop.org/esempio}ciao;{Element}{}other;{Content}{Attach}{*}");
 			wssProperties.put(SecurityConstants.SIGNATURE_PARTS, "{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{Attach}{*}");

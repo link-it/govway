@@ -67,6 +67,7 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
@@ -533,9 +534,28 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			
 			boolean forceHttps = false;
 			boolean forceHttpsClient = false;
+			boolean forcePDND = false;
+			boolean forceOAuth = false;
 			if(apsHelper.isProfiloModIPA(protocollo)) {
 				forceHttps = apsHelper.forceHttpsProfiloModiPA();
-				forceHttpsClient = apsHelper.forceHttpsClientProfiloModiPA(IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as), asps.getPortType());
+				
+				BooleanNullable forceHttpsClientWrapper = BooleanNullable.NULL(); 
+				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL(); 
+				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL(); 
+				
+				apsHelper.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, 
+						IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as), asps.getPortType(), 
+						configurazioneServizioAzione!=null?configurazioneServizioAzione.getAzioneList() : null);
+				
+				if(forceHttpsClientWrapper.getValue()!=null) {
+					forceHttpsClient = forceHttpsClientWrapper.getValue().booleanValue();
+				}
+				if(forcePDNDWrapper.getValue()!=null) {
+					forcePDND = forcePDNDWrapper.getValue().booleanValue();
+				}
+				if(forceOAuthWrapper.getValue()!=null) {
+					forceOAuth = forceOAuthWrapper.getValue().booleanValue();
+				}
 			}
 			
 			// setto la barra del titolo
@@ -799,7 +819,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					httpspwdprivatekey = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_PASSWORD);
 					httpsalgoritmokey = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
 					httpsKeyAlias = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_ALIAS);
-					httpsTrustStoreCRLs = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+					httpsTrustStoreCRLs = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLS);
 					httpsTrustStoreOCSPPolicy = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
 					if (httpspathkey == null) {
 						httpsstato = false;
@@ -963,7 +983,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 								requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-								autenticazioneToken, tokenPolicy,
+								autenticazioneToken, tokenPolicy, forcePDND, forceOAuth,
 								listExtendedConnettore, forceEnableConnettore,
 								protocollo, forceHttps, forceHttpsClient, false, false, null, null);
 					}
@@ -1121,7 +1141,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							autenticazioneToken, tokenPolicy,
+							autenticazioneToken, tokenPolicy,  forcePDND, forceOAuth,
 							listExtendedConnettore, forceEnableConnettore,
 							protocollo, forceHttps, forceHttpsClient, false, false, null, null);
 				}
@@ -1197,7 +1217,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							autenticazioneToken, tokenPolicy,
+							autenticazioneToken, tokenPolicy, forcePDND, forceOAuth,
 							listExtendedConnettore, forceEnableConnettore,
 							protocollo, forceHttps, forceHttpsClient, false, false, null, null);
 
@@ -1446,7 +1466,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 								requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-								autenticazioneToken, tokenPolicy,
+								autenticazioneToken, tokenPolicy, forcePDND, forceOAuth,
 								listExtendedConnettore, forceEnableConnettore,
 								protocollo, forceHttps, forceHttpsClient, false, false, null, null);
 					}

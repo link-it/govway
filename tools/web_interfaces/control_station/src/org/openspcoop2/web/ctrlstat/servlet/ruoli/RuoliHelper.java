@@ -181,7 +181,7 @@ public class RuoliHelper extends ConsoleHelper{
 				if (nome.equals("")) {
 					tmpElenco = RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME;
 				}
-				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
 				return false;
 			}
 

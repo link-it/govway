@@ -12042,6 +12042,8 @@ components:
       - "auth02"
       - "integrity01-auth01"
       - "integrity01-auth02"
+      - "integrity02-auth01"
+      - "integrity02-auth02"
     ModISicurezzaMessaggioRestHeaderEnum:
       type: "string"
       enum:

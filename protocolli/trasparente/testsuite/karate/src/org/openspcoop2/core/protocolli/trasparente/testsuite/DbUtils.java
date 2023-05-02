@@ -169,7 +169,7 @@ public class DbUtils {
 
     private Map<String, Object> formatResult(Map<String, Object> mapReaded){
     	if(mapReaded!=null && !mapReaded.isEmpty()) {
-    		Map<String, Object> map = new HashMap<String, Object>();
+    		Map<String, Object> map = new HashMap<>();
     		for (String colonna : mapReaded.keySet()) {
 				Object value = mapReaded.get(colonna);
 				if(value instanceof java.math.BigDecimal) {

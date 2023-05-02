@@ -388,6 +388,10 @@
 						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
 						<equals name="jwtAsymmetricSignatureKidConFruizioneModi" value="custom"/>
 					</condition>
+					<condition and="true">
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+						<equals name="jwtAsymmetricSignatureKidKeyPair" value="custom"/>
+					</condition>
 				</conditions>
 			      	<property name="policy.retrieveToken.jwt.signature.include.key.id.value" />
 			</item>

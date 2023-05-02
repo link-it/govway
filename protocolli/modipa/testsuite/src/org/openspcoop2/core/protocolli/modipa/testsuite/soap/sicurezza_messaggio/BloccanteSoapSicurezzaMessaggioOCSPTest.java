@@ -60,10 +60,10 @@ public class BloccanteSoapSicurezzaMessaggioOCSPTest extends ConfigLoader {
 	@BeforeClass
     public static void beforeClass() {       
         File file = FileUtils.getFileRelativeTo(BloccanteSoapSicurezzaMessaggioTest.class, "mock.feature");
-        server = FeatureServer.start(file, Integer.valueOf(prop.getProperty("http_mock_port")), false, new HashMap<String,Object>((Map) prop));
+        server = FeatureServer.start(file, Integer.valueOf(prop.getProperty("http_mock_port")), false, new HashMap<>((Map) prop));
 
         file = FileUtils.getFileRelativeTo(BloccanteSoapSicurezzaMessaggioTest.class, "proxy.feature");
-        proxy = FeatureServer.start(file, Integer.valueOf(prop.getProperty("http_port")), false, new HashMap<String,Object>((Map) prop));
+        proxy = FeatureServer.start(file, Integer.valueOf(prop.getProperty("http_port")), false, new HashMap<>((Map) prop));
         
     	String opensslCommand = prop.getProperty("ocsp.opensslCommand");
     	int waitStartupServer = Integer.valueOf(prop.getProperty("ocsp.waitStartupServer"));

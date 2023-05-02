@@ -96,7 +96,7 @@ public class ExpressionImpl implements IExpression {
 	
 	protected List<Index> forceIndexes = new ArrayList<Index>();
 	
-	protected Map<String, Object> properties = new HashMap<String, Object>();
+	protected Map<String, Object> properties = new HashMap<>();
 
 	
 	

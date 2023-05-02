@@ -51,7 +51,9 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.certificate.KeyStore;
-import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.openspcoop2.utils.certificate.remote.IRemoteStoreProvider;
+import org.openspcoop2.utils.certificate.remote.RemoteKeyType;
+import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWTOptions;
 import org.openspcoop2.utils.security.JwtHeaders;
@@ -106,11 +108,14 @@ public class JOSEUtils {
 				value = value.trim();
 			}
 			if(SecurityConstants.JOSE_KID_TRUE.equalsIgnoreCase(value)) {
-				try {
-					hdrs.setKid(alias);
-				}catch(Exception e) {
-					throw new SecurityException(e.getMessage(),e);
-				}
+				hdrs.setKid(alias);
+			}
+		}
+		else if(properties.containsKey(SecurityConstants.JOSE_KID_CUSTOM)) {
+			String value = (String) properties.get(SecurityConstants.JOSE_KID_CUSTOM);
+			if(value!=null) {
+				value = value.trim();
+				hdrs.setKid(value);
 			}
 		}
 		
@@ -456,27 +461,160 @@ public class JOSEUtils {
 				SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_PASSWORD);
 	}
 
-	public static boolean isJWKSetKeystore(Map<String, Object> propertiesParam) {
+	public static boolean isJWKSetTrustStore(Map<String, Object> propertiesParam) {
 		Properties properties = new Properties();
 		properties.putAll(propertiesParam);
-		return isJWKSetKeystore(properties);
+		return isJWKSetTrustStore(properties);
 	}
-	public static boolean isJWKSetKeystore(Properties properties) {
-		if(properties.containsKey(SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_TYPE)) {
-			String keystoreType = (String) properties.get(SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_TYPE);
-			if(keystoreType!=null) {
-				return SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType);
+	public static boolean isJWKSetTrustStore(Properties properties) {
+		if(properties.containsKey(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_TYPE)) {
+			String truststoreType = (String) properties.get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_TYPE);
+			if(truststoreType!=null) {
+				return SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(truststoreType);
+			}
+		}
+		return false;
+	}
+		
+	public static JWKSet readTrustStoreJwtJsonWebKeysCert(RequestInfo requestInfo, Map<String, Object> propertiesParam) throws SecurityException, UtilsException {
+		Properties properties = new Properties();
+		properties.putAll(propertiesParam);
+		return readTrustStoreJwtJsonWebKeysCert(requestInfo, properties);
+	}
+	public static JWKSet readTrustStoreJwtJsonWebKeysCert(RequestInfo requestInfo, Properties properties) throws SecurityException, UtilsException {
+		
+		if(properties.containsKey(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_FILE)) {
+			String truststoreFile = (String) properties.get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_FILE);
+			if(truststoreFile!=null) {
+				truststoreFile = truststoreFile.trim();
+			}
+			else {
+				throw new SecurityException("Truststore value in property '"+SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_FILE+"' is null");
+			}
+			try {
+				return GestoreKeystoreCache.getJwkSetStore(requestInfo, truststoreFile).getJwkSet();
+			}catch(Exception e) {
+				throw new SecurityException(e.getMessage(),e);
+			}
+		}
+		
+		return null;
+	}
+	
+	public static boolean isPublicKeyTrustStore(Map<String, Object> propertiesParam) {
+		Properties properties = new Properties();
+		properties.putAll(propertiesParam);
+		return isPublicKeyTrustStore(properties);
+	}
+	public static boolean isPublicKeyTrustStore(Properties properties) {
+		if(properties.containsKey(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_TYPE)) {
+			String truststoreType = (String) properties.get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_TYPE);
+			if(truststoreType!=null) {
+				return SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(truststoreType);
 			}
 		}
 		return false;
 	}
 	
-	public static JWKSet readKeyStoreJwtJsonWebKeysCert(Map<String, Object> propertiesParam) throws SecurityException, UtilsException {
+	public static JWKSet readTrustStorePublicKey(RequestInfo requestInfo, Map<String, Object> propertiesParam) throws SecurityException, UtilsException {
 		Properties properties = new Properties();
 		properties.putAll(propertiesParam);
-		return readKeyStoreJwtJsonWebKeysCert(properties);
+		return readTrustStorePublicKey(requestInfo, properties);
 	}
-	public static JWKSet readKeyStoreJwtJsonWebKeysCert(Properties properties) throws SecurityException, UtilsException {
+	public static JWKSet readTrustStorePublicKey(RequestInfo requestInfo, Properties properties) throws SecurityException, UtilsException {
+		
+		if(properties.containsKey(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_FILE)) {
+			String truststoreFile = (String) properties.get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_FILE);
+			if(truststoreFile!=null) {
+				truststoreFile = truststoreFile.trim();
+			}
+			else {
+				throw new SecurityException("Truststore value in property '"+SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_FILE+"' is null");
+			}
+			String truststoreAlgo = (String) properties.get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_KEY_PAIR_ALGORITHM);
+			if(truststoreAlgo!=null) {
+				truststoreAlgo = truststoreAlgo.trim();
+			}
+			else {
+				throw new SecurityException("Key algorithm value in property '"+SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_KEY_PAIR_ALGORITHM+"' is null");
+			}
+			try {
+				return GestoreKeystoreCache.getPublicKeyStore(requestInfo, truststoreFile, truststoreAlgo).getJwkSet();
+			}catch(Exception e) {
+				throw new SecurityException(e.getMessage(),e);
+			}
+		}
+		
+		return null;
+	}
+	
+	public static boolean isRemoteStore(Map<String, Object> propertiesParam) {
+		Properties properties = new Properties();
+		properties.putAll(propertiesParam);
+		return isRemoteStore(properties);
+	}
+	public static boolean isRemoteStore(Properties properties) {
+		try {
+			IRemoteStoreProvider provider = null; 
+			if(properties.containsKey(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_REMOTE_STORE_PROVIDER)) {
+				provider = (IRemoteStoreProvider) properties.get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_REMOTE_STORE_PROVIDER);
+			}
+			
+			RemoteKeyType keyType = null; 
+			if(properties.containsKey(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_REMOTE_STORE_KEY_TYPE)) {
+				keyType = (RemoteKeyType) properties.get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_REMOTE_STORE_KEY_TYPE);
+			}
+			
+			RemoteStoreConfig config = null; 
+			if(properties.containsKey(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_REMOTE_STORE_CONFIG)) {
+				config = (RemoteStoreConfig) properties.get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_REMOTE_STORE_CONFIG);
+			}
+			
+			return provider!=null && keyType!=null && config!=null;
+			
+		}catch(Exception e) {
+			return false;
+		}
+		
+	}
+	
+	
+	public static boolean isKeyPairKeystore(Map<String, Object> propertiesParam) {
+		Properties properties = new Properties();
+		properties.putAll(propertiesParam);
+		return isKeyPairKeystore(properties);
+	}
+	public static boolean isKeyPairKeystore(Properties properties) {
+		if(properties.containsKey(SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_TYPE)) {
+			String keystoreType = (String) properties.get(SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_TYPE);
+			if(keystoreType!=null) {
+				return SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType);
+			}
+		}
+		return false;
+	}
+	
+	public static boolean isJWKSetKeyStore(Map<String, Object> propertiesParam) {
+		Properties properties = new Properties();
+		properties.putAll(propertiesParam);
+		return isJWKSetKeyStore(properties);
+	}
+	public static boolean isJWKSetKeyStore(Properties properties) {
+		if(properties.containsKey(SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_TYPE)) {
+			String truststoreType = (String) properties.get(SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_TYPE);
+			if(truststoreType!=null) {
+				return SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(truststoreType);
+			}
+		}
+		return false;
+	}
+	
+	public static JWKSet readKeyStoreJwtJsonWebKeysCert(RequestInfo requestInfo, Map<String, Object> propertiesParam) throws SecurityException, UtilsException {
+		Properties properties = new Properties();
+		properties.putAll(propertiesParam);
+		return readKeyStoreJwtJsonWebKeysCert(requestInfo, properties);
+	}
+	public static JWKSet readKeyStoreJwtJsonWebKeysCert(RequestInfo requestInfo, Properties properties) throws SecurityException, UtilsException {
 		
 		if(properties.containsKey(SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_FILE)) {
 			String keystoreFile = (String) properties.get(SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_FILE);
@@ -487,7 +625,7 @@ public class JOSEUtils {
 				throw new SecurityException("Keystore value in property '"+SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_FILE+"' is null");
 			}
 			try {
-				return new JWKSet(FileSystemUtilities.readFile(keystoreFile));
+				return GestoreKeystoreCache.getJwkSetStore(requestInfo, keystoreFile).getJwkSet();
 			}catch(Exception e) {
 				throw new SecurityException(e.getMessage(),e);
 			}
@@ -495,7 +633,7 @@ public class JOSEUtils {
 		
 		return null;
 	}
-	
+		
 	public static KeyStore readKeyStoreJwtX509Cert(RequestInfo requestInfo, Map<String, Object> propertiesParam) throws SecurityException, UtilsException {
 		Properties properties = new Properties();
 		properties.putAll(propertiesParam);

@@ -131,6 +131,12 @@ public class ModITracciaSerializer extends TracciaSerializer {
 								else if(ModIPropertiesUtils.convertProfiloSicurezzaToSDKValue(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302,true).equalsIgnoreCase(p.getValore())) {
 									p.setValore(terminologiaBozza ? ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0302_REST_OLD : ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0302_REST_NEW);
 								}
+								else if(ModIPropertiesUtils.convertProfiloSicurezzaToSDKValue(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401,true).equalsIgnoreCase(p.getValore())) {
+									p.setValore(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0401_REST);
+								}
+								else if(ModIPropertiesUtils.convertProfiloSicurezzaToSDKValue(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402,true).equalsIgnoreCase(p.getValore())) {
+									p.setValore(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0402_REST);
+								}
 							}
 							else if(tipoApi!=null && ServiceBinding.SOAP.equals(tipoApi)) {
 								if(ModIPropertiesUtils.convertProfiloSicurezzaToSDKValue(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01,false).equalsIgnoreCase(p.getValore())) {

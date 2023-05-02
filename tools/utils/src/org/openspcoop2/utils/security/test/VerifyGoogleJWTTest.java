@@ -21,6 +21,7 @@
 package org.openspcoop2.utils.security.test;
 import java.util.Properties;
 
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWTOptions;
 import org.openspcoop2.utils.security.JsonVerifySignature;
@@ -43,11 +44,11 @@ public class VerifyGoogleJWTTest {
 		// https://developers.google.com/identity/protocols/OpenIDConnect#discovery
 		
 		Properties verifySignatureProps = new Properties();
-		verifySignatureProps.setProperty("rs.security.keystore.type", "jwk");
+		verifySignatureProps.setProperty("rs.security.keystore.type", KeystoreType.JWK_SET.getNome());
 		verifySignatureProps.setProperty("rs.security.keystore.file", "https://www.googleapis.com/oauth2/v3/certs");
 		verifySignatureProps.setProperty("rs.security.keystore.alias", "*");
 		
-//		verifySignatureProps.setProperty("rs.security.keystore.type.ssl", "jks");
+//		verifySignatureProps.setProperty("rs.security.keystore.type.ssl", KeystoreType.JKS.getNome());
 //		verifySignatureProps.setProperty("rs.security.keystore.file.ssl", "/opt/local/GIT_GOV/GovWay/core/deploy/jks/Token.jks");
 //		verifySignatureProps.setProperty("rs.security.keystore.password.ssl", "123456");
 //		

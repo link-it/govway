@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/mysql/configurazionePdD/2023-05-02-patch.sql

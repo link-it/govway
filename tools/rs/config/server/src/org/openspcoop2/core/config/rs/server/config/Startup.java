@@ -207,7 +207,7 @@ public class Startup implements ServletContextListener {
 					Startup.log.info("Inizializzazione Allarmi in corso...");
 					AlarmEngineConfig alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(log, ServerProperties.getInstance().getAllarmiConfigurazione(), ServerProperties.getInstance().getConfDirectory());
 					AlarmManager.setAlarmEngineConfig(alarmEngineConfig);
-					CostantiDB.ALLARMI_ENABLED=true;
+					CostantiDB.setAllarmiEnabled(true);
 					Startup.log.info("Inizializzazione Allarmi effettuata con successo");
 				}
 			} catch (Exception e) {

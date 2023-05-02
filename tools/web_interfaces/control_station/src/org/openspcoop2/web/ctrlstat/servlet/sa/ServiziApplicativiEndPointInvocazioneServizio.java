@@ -180,6 +180,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			String autenticazioneTokenS = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
 			String tokenPolicy = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
+			boolean forcePDND = false;
+			boolean forceOAuth = false;
 
 			// proxy
 			String proxyEnabled = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
@@ -884,7 +886,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 					httpspwdprivatekey = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_PASSWORD);
 					httpsalgoritmokey = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
 					httpsKeyAlias = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_ALIAS);
-					httpsTrustStoreCRLs = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+					httpsTrustStoreCRLs = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLS);
 					httpsTrustStoreOCSPPolicy = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
 					if (httpspathkey == null) {
 						httpsstato = false;
@@ -994,7 +996,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						autenticazioneToken,tokenPolicy,
+						autenticazioneToken,tokenPolicy, forcePDND, forceOAuth,
 						listExtendedConnettore, forceEnabled,
 						nomeProtocollo, false, false
 						, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
@@ -1052,7 +1054,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						autenticazioneToken,tokenPolicy,
+						autenticazioneToken,tokenPolicy, forcePDND, forceOAuth,
 						listExtendedConnettore, forceEnabled,
 						nomeProtocollo, false, false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
 						erogazioneServizioApplicativoServer, ServiziApplicativiHelper.toArray(listaIdSAServer)

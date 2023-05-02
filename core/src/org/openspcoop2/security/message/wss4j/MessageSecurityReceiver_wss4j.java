@@ -333,6 +333,10 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 	public PublicKey getPublicKey() {
 		return this.publicKey;
 	}
+	@Override
+	public String getCertificateId() throws SecurityException{
+		return null;
+	}
 
 	private IOCSPValidator ocspValidator;
 	private org.openspcoop2.utils.certificate.KeyStore trustStore = null;

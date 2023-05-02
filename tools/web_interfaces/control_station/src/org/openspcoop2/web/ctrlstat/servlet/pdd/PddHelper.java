@@ -335,7 +335,7 @@ public class PddHelper extends ConsoleHelper {
 
 			if (CostantiConfigurazione.ABILITATO.toString().equals(clientAuth)){
 				if (subject == null || "".equals(subject)) {
-					this.pd.setMessage("E' necessario specificare il subject in caso di Client Auth abilitato.");
+					this.pd.setMessage("&Egrave; necessario specificare il subject in caso di Client Auth abilitato.");
 					return false;
 				}
 			}
@@ -356,7 +356,7 @@ public class PddHelper extends ConsoleHelper {
 
 				// nome
 				if ((nome == null) || nome.equals("")) {
-					this.pd.setMessage("Dati incompleti. E' necessario indicare il Nome.");
+					this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare il Nome.");
 					return false;
 				}
 				
@@ -414,7 +414,7 @@ public class PddHelper extends ConsoleHelper {
 							tmpElenco = tmpElenco + ", Porta Gestione";
 						}
 					}
-					this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+					this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
 					return false;
 				}
 

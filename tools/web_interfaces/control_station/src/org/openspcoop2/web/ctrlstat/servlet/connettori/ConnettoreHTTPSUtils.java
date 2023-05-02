@@ -103,7 +103,7 @@ public class ConnettoreHTTPSUtils {
 			
 			if(httpsTrustStoreCRLs!=null && !"".equals(httpsTrustStoreCRLs)) {
 				prop = new org.openspcoop2.core.config.Property();
-				prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+				prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLS);
 				prop.setValore(httpsTrustStoreCRLs);
 				connettore.addProperty(prop);
 			}
@@ -127,7 +127,7 @@ public class ConnettoreHTTPSUtils {
 			if(!httpsTrustVerifyCert &&
 				httpsTrustStoreCRLs!=null && !"".equals(httpsTrustStoreCRLs)) {
 				prop = new org.openspcoop2.core.config.Property();
-				prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+				prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLS);
 				prop.setValore(httpsTrustStoreCRLs);
 				connettore.addProperty(prop);
 			}
@@ -267,7 +267,7 @@ public class ConnettoreHTTPSUtils {
 	
 			if(httpsTrustStoreCRLs!=null && !"".equals(httpsTrustStoreCRLs)) {
 				prop = new org.openspcoop2.core.registry.Property();
-				prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+				prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLS);
 				prop.setValore(httpsTrustStoreCRLs);
 				connettore.addProperty(prop);
 			}
@@ -292,7 +292,7 @@ public class ConnettoreHTTPSUtils {
 			if(!httpsTrustVerifyCert &&
 				httpsTrustStoreCRLs!=null && !"".equals(httpsTrustStoreCRLs)) {
 				prop = new org.openspcoop2.core.registry.Property();
-				prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+				prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLS);
 				prop.setValore(httpsTrustStoreCRLs);
 				connettore.addProperty(prop);
 			}

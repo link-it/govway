@@ -262,7 +262,7 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 		return this.message.getMessageType();
 	}
 	
-	private Map<String, Object> attributes = new HashMap<String, Object>();
+	private Map<String, Object> attributes = new HashMap<>();
 	public void setAttribute(String key, Object object) throws ConnectorException {
 		this.attributes.put(key, object);
 	}

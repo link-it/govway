@@ -2234,7 +2234,7 @@ public class DriverConfigurazioneDB_configDriver {
 				stm1.close();
 
 				// dump_config
-				DumpConfigurazione dumpConfig = DriverConfigurazioneDB_dumpLIB.readDumpConfigurazione(con, null, CostantiDB._DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG);
+				DumpConfigurazione dumpConfig = DriverConfigurazioneDB_dumpLIB.readDumpConfigurazione(con, null, CostantiDB.OLD_BACKWARD_COMPATIBILITY_DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG);
 				if(dumpConfig!=null) {
 					// backward compatibility, lo uso sia per erogazione che per fruizione
 					dump.setConfigurazionePortaApplicativa(dumpConfig);

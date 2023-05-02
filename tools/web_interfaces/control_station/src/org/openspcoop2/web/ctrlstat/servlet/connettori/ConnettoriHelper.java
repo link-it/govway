@@ -34,6 +34,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.GenericProperties;
@@ -655,7 +656,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new CoreException(e);
 		}
 	}
 	
@@ -675,12 +676,12 @@ public class ConnettoriHelper extends ConsoleHelper {
 			boolean showSectionTitle,
 			Boolean isConnettoreCustomUltimaImmagineSalvata,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
-			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
-			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
-			String requestOutputFileName, String requestOutputFileName_permissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeaders_permissions,
+			String tempiRispostaEnabled, String tempiRispostaConnectionTimeout, String tempiRispostaReadTimeout, String tempiRispostaTempoMedioRisposta,
+			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop,
+			String requestOutputFileName, String requestOutputFileNamePermissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeadersPermissions,
 			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
-			boolean autenticazioneToken, String tokenPolicy,
+			boolean autenticazioneToken, String tokenPolicy, boolean forcePDND, boolean forceOAuth,
 			List<ExtendedConnettore> listExtendedConnettore, boolean forceEnabled,
 			String protocollo, boolean forceHttps, boolean forceHttpsClient,
 			boolean visualizzaSezioneSAServer, boolean servizioApplicativoServerEnabled, String servizioApplicativoServer, String[] listaSAServer) throws Exception {
@@ -696,12 +697,12 @@ public class ConnettoriHelper extends ConsoleHelper {
 				elem4, elem5, elem6, elem7, elem8, null, showSectionTitle,
 				isConnettoreCustomUltimaImmagineSalvata,
 				proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword,
-				tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-				opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-				requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+				tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+				opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+				requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 				requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 				responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-				autenticazioneToken, tokenPolicy,
+				autenticazioneToken, tokenPolicy, forcePDND, forceOAuth,
 				listExtendedConnettore, forceEnabled,
 				protocollo, forceHttps, forceHttpsClient,visualizzaSezioneSAServer, servizioApplicativoServerEnabled, servizioApplicativoServer, listaSAServer);
 	}
@@ -737,7 +738,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						tmpElenco = tmpElenco + ", "+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_CUSTOM_VALORE;
 					}
 				}
-				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
 				return false;
 			}
 
@@ -854,7 +855,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			return true;
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new CoreException(e);
 		}
 	}
 
@@ -1134,21 +1135,16 @@ public class ConnettoriHelper extends ConsoleHelper {
 		return dati;
 	}
 	
-	public List<DataElement> addTokenPolicy(List<DataElement> dati, String tokenPolicy) throws DriverConfigurazioneException{
+
 	
-		List<GenericProperties> gestorePolicyTokenList = this.confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN, null);
-		String [] policyLabels = new String[gestorePolicyTokenList.size() + 1];
-		String [] policyValues = new String[gestorePolicyTokenList.size() + 1];
-		
-		policyLabels[0] = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
-		policyValues[0] = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
-		
-		for (int i = 0; i < gestorePolicyTokenList.size(); i++) {
-			GenericProperties genericProperties = gestorePolicyTokenList.get(i);
-			policyLabels[(i+1)] = genericProperties.getNome();
-			policyValues[(i+1)] = genericProperties.getNome();
+	public List<DataElement> addTokenPolicy(List<DataElement> dati, String tokenPolicy, boolean forcePDND, boolean forceOAuth) throws DriverConfigurazioneException{
+	
+		List<String> policyFiltered = getTokenPolicyNegoziazione(forcePDND, forceOAuth, 
+				true);
+		if(!policyFiltered.contains(tokenPolicy)) {
+			tokenPolicy = null;
 		}
-		
+			
 		DataElement de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_BEARER);
 		de.setType(DataElementType.TITLE);
@@ -1158,8 +1154,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TOKEN_POLICY);
 		de.setType(DataElementType.SELECT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
-		de.setValues(policyValues);
-		de.setValues(policyLabels);
+		de.setValues(policyFiltered);
+		de.setLabels(policyFiltered);
 		de.setSelected(tokenPolicy);
 		de.setRequired(true);
 		de.setPostBack(true);
@@ -1319,7 +1315,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			boolean dominioEsterno, String protocollo) throws Exception{
 		
 		if(dati==null) {
-			throw new Exception("Param dati is null");
+			throw new CoreException("Param dati is null");
 		}
 		
 		if(subtitleConfigurazione==null) {
@@ -2336,18 +2332,26 @@ public class ConnettoriHelper extends ConsoleHelper {
 			boolean showSectionTitle,
 			Boolean isConnettoreCustomUltimaImmagineSalvata,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
-			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
-			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
-			String requestOutputFileName, String requestOutputFileName_permissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeaders_permissions,
+			String tempiRispostaEnabled, String tempiRispostaConnectionTimeout, String tempiRispostaReadTimeout, String tempiRispostaTempoMedioRisposta,
+			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop,
+			String requestOutputFileName, String requestOutputFileNamePermissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeadersPermissions,
 			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
-			boolean autenticazioneToken, String tokenPolicy,
+			boolean autenticazioneToken, String tokenPolicy, boolean forcePDND, boolean forceOAuth,
 			List<ExtendedConnettore> listExtendedConnettore, boolean forceEnabled,
 			String protocollo, boolean forceHttps, boolean forceHttpsClient,
 			boolean visualizzaSezioneSAServer, boolean servizioApplicativoServerEnabled, String servizioApplicativoServer, String[] listaSAServer) throws Exception {
 
+		if(forcePDND || forceOAuth) {
+			autenticazioneToken = true; // force
+		}
+		
+		if(elem8==null) {
+			// nop
+		}
+		
 		if(dati==null) {
-			throw new Exception("Param dati is null");
+			throw new CoreException("Param dati is null");
 		}
 
 		Boolean confPers = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
@@ -2365,7 +2369,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 		boolean fruizione = false;
 		boolean forceNoSec = false;
 		if(servletChiamante!=null) {
-			if (servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE)) {
+			if (servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE) || 
+					servletChiamante.equals(SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT)) {
 				fruizione = false;
 				forceNoSec = true;
 			}
@@ -2376,10 +2381,6 @@ public class ConnettoriHelper extends ConsoleHelper {
 					servletChiamante.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA) ||
 					servletChiamante.equals(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE)) {
 				fruizione = false;
-			}
-			else if(servletChiamante.equals(SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT)) {
-				fruizione = false;
-				forceNoSec = true;
 			}
 		}
 		
@@ -2450,9 +2451,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 						httpskeystore, httpspwdprivatekeytrust, httpspathkey, httpstipokey, httpspwdkey, httpspwdprivatekey, httpsalgoritmokey, httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
 						tipoconn, servletChiamante, elem1, elem2, elem3, elem4, elem5, elem6, elem7, stato, 
 						proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword, 
-						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta, 
-						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop, 
-						requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+						tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta, 
+						opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, 
+						requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 						requestOutputParentDirCreateIfNotExists, requestOutputOverwriteIfExists, 
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken, tokenPolicy);
@@ -2594,24 +2595,24 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setSize(this.getSize());
 				dati.add(de);
 				
-	//			if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
-	//				de = new DataElement();
-	//				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_URL);
-	//				de.setValue(tmpUrl);
-	//				de.setType(DataElementType.HIDDEN);
-	//				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_URL);
-	//				dati.add(de);
-	//			}
 				
 				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
 					
 					boolean showAutenticazioneHttpBasic = true;
 					if(autenticazioneToken) {
-						showAutenticazioneHttpBasic = !isTokenPolicyMode_useAuthorizationHeader(tokenPolicy);
+						if(forcePDND || forceOAuth) {
+							if(tokenPolicy!=null && !"".equals(tokenPolicy) && !CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicy)) {
+								showAutenticazioneHttpBasic = !isTokenPolicyMode_useAuthorizationHeader(tokenPolicy);
+							}
+							else {
+								showAutenticazioneHttpBasic = false;
+							}
+						}
+						else {
+							showAutenticazioneHttpBasic = !isTokenPolicyMode_useAuthorizationHeader(tokenPolicy);
+						}
 					}
 					
-	//				if(!ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT.equals(servletChiamante) &&
-	//						!ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA.equals(servletChiamante) ){
 					de = new DataElement();
 					de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_HTTP);
 					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
@@ -2628,15 +2629,35 @@ public class ConnettoriHelper extends ConsoleHelper {
 						autenticazioneHttp = Costanti.CHECK_BOX_DISABLED;
 					}
 					dati.add(de);		
-					//}
+					
 					
 					de = new DataElement();
 					de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_BEARER);
 					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
-					de.setType(DataElementType.CHECKBOX);
-					de.setSelected(autenticazioneToken);
-					de.setPostBack(true);
-					dati.add(de);	
+					if(forcePDND || forceOAuth) {
+						de.setType(DataElementType.HIDDEN);
+						de.setValue(Costanti.CHECK_BOX_ENABLED_TRUE);
+					}
+					else {
+						de.setType(DataElementType.CHECKBOX);
+						de.setSelected(autenticazioneToken);
+						de.setPostBack(true);
+					}
+					dati.add(de);
+					
+					if(forcePDND || forceOAuth) {
+						de = new DataElement();
+						de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_BEARER);
+						de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO+"__LABEL");
+						de.setType(DataElementType.TEXT);
+						if(forcePDND) {
+							de.setValue(ConnettoriCostanti.LABEL_CONNETTORE_BEARER_MODI_PDND);
+						}
+						else {
+							de.setValue(ConnettoriCostanti.LABEL_CONNETTORE_BEARER_MODI_OAUTH);
+						}
+						dati.add(de);
+					}
 					
 					de = new DataElement();
 					de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_HTTPS);
@@ -2664,7 +2685,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
 					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
 					de.setType(DataElementType.CHECKBOX);
-					if ( ServletUtils.isCheckBoxEnabled(tempiRisposta_enabled)) {
+					if ( ServletUtils.isCheckBoxEnabled(tempiRispostaEnabled)) {
 						de.setSelected(true);
 					}
 					de.setPostBack(true);
@@ -2706,7 +2727,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				// Token Autenticazione
 				if (autenticazioneToken) {
-					this.addTokenPolicy(dati, tokenPolicy);
+					this.addTokenPolicy(dati, tokenPolicy, forcePDND, forceOAuth);
 				}
 				
 				
@@ -2731,8 +2752,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				// TempiRisposta
 				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
-					if (ServletUtils.isCheckBoxEnabled(tempiRisposta_enabled)) {
-						this.addTempiRispostaToDati(dati, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta);
+					if (ServletUtils.isCheckBoxEnabled(tempiRispostaEnabled)) {
+						this.addTempiRispostaToDati(dati, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta);
 					}
 				}
 				
@@ -2743,7 +2764,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				// Opzioni Avanzate
 				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
-					this.addOpzioniAvanzateHttpToDati(dati, opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop);
+					this.addOpzioniAvanzateHttpToDati(dati, opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop);
 				}
 				
 			} else {
@@ -2779,8 +2800,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				if (confPers &&
 						TipologiaConnettori.TIPOLOGIA_CONNETTORI_ALL.equals(tipologiaConnettori))
 					tipoEP[newCount] = TipiConnettore.CUSTOM.toString();
-				//String[] tipoEP = { TipiConnettore.DISABILITATO.toString(), TipiConnettore.HTTP.toString(), TipiConnettore.JMS.toString(), TipiConnettore.NULL.toString(), TipiConnettore.NULL_ECHO.toString() };
-	
+				
 				DataElement de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
 				de.setType(DataElementType.SELECT);
@@ -2816,7 +2836,6 @@ public class ConnettoriHelper extends ConsoleHelper {
 				if(tipoC!=null) {
 					de.setNote(tipoC.getNote());
 				}
-				//		    de.setOnChange("CambiaEndPoint('" + tipoOp + "')");
 				de.setPostBack(true);
 				dati.add(de);
 	
@@ -2864,23 +2883,22 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 				de.setSize(this.getSize());
 				dati.add(de);
-				
-	//			if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
-	//				de = new DataElement();
-	//				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_URL);
-	//				de.setValue(tmpUrl);
-	//				de.setType(DataElementType.HIDDEN);
-	//				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_URL);
-	//				dati.add(de);
-	//			}
-	
+					
 				if (TipiConnettore.HTTP.toString().equals(endpointtype) || TipiConnettore.HTTPS.toString().equals(endpointtype)){
-	//				if(!ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT.equals(servletChiamante) &&
-	//						!ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA.equals(servletChiamante) ){
 								
 					boolean showAutenticazioneHttpBasic = true;
 					if(autenticazioneToken) {
-						showAutenticazioneHttpBasic = !isTokenPolicyMode_useAuthorizationHeader(tokenPolicy);
+						if(forcePDND || forceOAuth) {
+							if(tokenPolicy!=null && !"".equals(tokenPolicy) && !CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicy)) {
+								showAutenticazioneHttpBasic = !isTokenPolicyMode_useAuthorizationHeader(tokenPolicy);
+							}
+							else {
+								showAutenticazioneHttpBasic = false;
+							}
+						}
+						else {
+							showAutenticazioneHttpBasic = !isTokenPolicyMode_useAuthorizationHeader(tokenPolicy);
+						}
 					}
 					
 					de = new DataElement();
@@ -2904,10 +2922,30 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de = new DataElement();
 					de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_BEARER);
 					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
-					de.setType(DataElementType.CHECKBOX);
-					de.setSelected(autenticazioneToken);
-					de.setPostBack(true);
+					if(forcePDND || forceOAuth) {
+						de.setType(DataElementType.HIDDEN);
+						de.setValue(Costanti.CHECK_BOX_ENABLED_TRUE);
+					}
+					else {
+						de.setType(DataElementType.CHECKBOX);
+						de.setSelected(autenticazioneToken);
+						de.setPostBack(true);
+					}
 					dati.add(de);
+					
+					if(forcePDND || forceOAuth) {
+						de = new DataElement();
+						de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_BEARER);
+						de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO+"__LABEL");
+						de.setType(DataElementType.TEXT);
+						if(forcePDND) {
+							de.setValue(ConnettoriCostanti.LABEL_CONNETTORE_BEARER_MODI_PDND);
+						}
+						else {
+							de.setValue(ConnettoriCostanti.LABEL_CONNETTORE_BEARER_MODI_OAUTH);
+						}
+						dati.add(de);
+					}
 					
 					de = new DataElement();
 					de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_PROXY);
@@ -2924,7 +2962,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
 					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
 					de.setType(DataElementType.CHECKBOX);
-					if ( ServletUtils.isCheckBoxEnabled(tempiRisposta_enabled)) {
+					if ( ServletUtils.isCheckBoxEnabled(tempiRispostaEnabled)) {
 						de.setSelected(true);
 					}
 					de.setPostBack(true);
@@ -2986,7 +3024,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				// Token Autenticazione
 				if (autenticazioneToken) {
-					this.addTokenPolicy(dati, tokenPolicy);
+					this.addTokenPolicy(dati, tokenPolicy, forcePDND, forceOAuth);
 				}
 				
 				// Custom
@@ -3207,7 +3245,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				// FileSystem
 				if (TipiConnettore.FILE.toString().equals(endpointtype)) {
 					ConnettoreFileUtils.addFileDati(dati, this.getSize(),this,
-							requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 							modi, fruizione, forceNoSec
@@ -3223,8 +3261,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				// TempiRisposta
 				if (TipiConnettore.HTTP.toString().equals(endpointtype) || TipiConnettore.HTTPS.toString().equals(endpointtype)){
-					if (ServletUtils.isCheckBoxEnabled(tempiRisposta_enabled)) {
-						this.addTempiRispostaToDati(dati, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta);
+					if (ServletUtils.isCheckBoxEnabled(tempiRispostaEnabled)) {
+						this.addTempiRispostaToDati(dati, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta);
 					}
 				}
 				
@@ -3235,7 +3273,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				// Opzioni Avanzate
 				if (TipiConnettore.HTTP.toString().equals(endpointtype) || TipiConnettore.HTTPS.toString().equals(endpointtype)){
-					this.addOpzioniAvanzateHttpToDati(dati, opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop);
+					this.addOpzioniAvanzateHttpToDati(dati, opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop);
 				}
 	
 			}
@@ -3643,7 +3681,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new CoreException(e);
 		}
 	}
 
@@ -3893,7 +3931,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					try{
 						int v = Integer.parseInt(tempiRisposta_connectionTimeout);
 						if(v<=0) {
-							throw new Exception("fornire un valore maggiore di zero");
+							throw new CoreException("fornire un valore maggiore di zero");
 						}
 					}catch(Exception e){
 						this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT+" indicato nella sezione '"+
@@ -3904,7 +3942,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					try{
 						int v = Integer.parseInt(tempiRisposta_readTimeout);
 						if(v<=0) {
-							throw new Exception("fornire un valore maggiore di zero");
+							throw new CoreException("fornire un valore maggiore di zero");
 						}
 					}catch(Exception e){
 						this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT+" indicato nella sezione '"+
@@ -3915,7 +3953,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					try{
 						int v = Integer.parseInt(tempiRisposta_tempoMedioRisposta);
 						if(v<=0) {
-							throw new Exception("fornire un valore maggiore di zero");
+							throw new CoreException("fornire un valore maggiore di zero");
 						}
 					}catch(Exception e){
 						this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA+" indicato nella sezione '"+
@@ -4515,7 +4553,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			return true;			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new CoreException(e);
 		}
 	}
 
@@ -4757,7 +4795,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new CoreException(e);
 		}
 
 	}
@@ -4985,7 +5023,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new CoreException(e);
 		}
 
 	}
@@ -5073,7 +5111,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				 * tmpElenco = "Conferma password"; } else { tmpElenco =
 				 * tmpElenco + ", Conferma password"; } }
 				 */
-				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
 				return false;
 			}
 			if(this.checkLength255(utente, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME)==false) {
@@ -5111,7 +5149,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			
 			if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_CONFIGURAZIONE_MANUALE)) { 
 				if (subject.equals("")) {
-					this.pd.setMessage("Dati incompleti. E' necessario indicare il "+ ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
+					this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare il "+ ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
 					return false;
 				}
 				
@@ -5132,7 +5170,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					
 					// e' opzionale!
 //					if (issuer.equals("")) {
-//						this.pd.setMessage("Dati incompleti. E' necessario indicare il "+ ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_ISSUER);
+//						this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare il "+ ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_ISSUER);
 //						return false;
 //					}
 					
@@ -5166,7 +5204,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				if(validaFieldCert) {
 					if(tipoCredenzialiSSLFileCertificato.getValue() == null || tipoCredenzialiSSLFileCertificato.getValue().length == 0) {
-						this.pd.setMessage("Dati incompleti. E' necessario indicare il " + ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO);
+						this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare il " + ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO);
 						return false;
 					}
 					
@@ -5182,7 +5220,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						String tipoCredenzialiSSLFileCertificatoPassword = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
 						
 						if(StringUtils.isEmpty(tipoCredenzialiSSLFileCertificatoPassword)) {
-							this.pd.setMessage("Dati incompleti. E' necessario indicare la " + ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
+							this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare la " + ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
 							return false;
 						}
 						List<String> listaAliasEstrattiCertificato = new ArrayList<>();
@@ -5195,7 +5233,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						String tipoCredenzialiSSLAliasCertificato = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO);
 						
 						if(StringUtils.isEmpty(tipoCredenzialiSSLAliasCertificato)) {
-							this.pd.setMessage("Dati incompleti. E' necessario indicare un " + ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO);
+							this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare un " + ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO);
 							return false;
 						}
 						
@@ -5223,7 +5261,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					if (utente.equals("")) {
 						tmpElenco = ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID;
 					}
-					this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+					this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
 					return false;
 				}
 				if(this.checkLengthSubject_SSL_Principal(utente, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID)==false) {
@@ -5238,7 +5276,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				if (principal.equals("")) {
 					tmpElenco = ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL;
 				}
-				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
 				return false;
 			}
 			if(this.checkLengthSubject_SSL_Principal(principal, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL)==false) {
@@ -5261,7 +5299,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				sb.append(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID);
 			}
 			if(sb.length()>0) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + sb.toString());
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + sb.toString());
 				return false;
 			}
 			
