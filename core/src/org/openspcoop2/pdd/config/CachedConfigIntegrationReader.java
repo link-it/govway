@@ -29,6 +29,7 @@ import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
@@ -63,7 +64,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 
 	@SuppressWarnings("unused")
 	private Logger log;
-	private ConfigurazionePdDManager configurazionePdDMangager;
+	private ConfigurazionePdDManager configurazionePdDManager;
 	@SuppressWarnings("unused")
 	private IProtocolFactory<?> protocolFactory;
 	private RequestInfo requestInfo;
@@ -75,13 +76,13 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	public CachedConfigIntegrationReader(Logger log,IProtocolFactory<?> protocolFactory, IState state, RequestInfo requestInfo) throws Exception{
 		this.log = log;
 		this.protocolFactory = protocolFactory;
-		this.configurazionePdDMangager = ConfigurazionePdDManager.getInstance(state);
+		this.configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
 		this.requestInfo = requestInfo;
 	}
 	public CachedConfigIntegrationReader(Logger log,IProtocolFactory<?> protocolFactory, ConfigurazionePdDManager configurazionePdDManager, RequestInfo requestInfo) throws Exception{
 		this.log = log;
 		this.protocolFactory = protocolFactory;
-		this.configurazionePdDMangager = configurazionePdDManager;
+		this.configurazionePdDManager = configurazionePdDManager;
 		this.requestInfo = requestInfo;
 	}
 
@@ -92,7 +93,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public boolean existsServizioApplicativo(IDServizioApplicativo idServizioApplicativo) {
 		try{
-			return this.configurazionePdDMangager.getServizioApplicativo(idServizioApplicativo, this.requestInfo)!=null;
+			return this.configurazionePdDManager.getServizioApplicativo(idServizioApplicativo, this.requestInfo)!=null;
 		} catch(Exception e){
 			return false;
 		}
@@ -101,7 +102,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public boolean existsServizioApplicativoByCredenzialiBasic(String username, String password, CryptConfig config){
 		try{
-			return this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiBasic(username, password, config)!=null;
+			return this.configurazionePdDManager.getIdServizioApplicativoByCredenzialiBasic(username, password, config)!=null;
 		} catch(Exception e){
 			return false;
 		}
@@ -110,8 +111,8 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(String username, String password, CryptConfig config) throws RegistryNotFound,RegistryException{
 		try{
-			IDServizioApplicativo idSA = this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiBasic(username, password, config);
-			return this.configurazionePdDMangager.getServizioApplicativo(idSA, this.requestInfo);
+			IDServizioApplicativo idSA = this.configurazionePdDManager.getIdServizioApplicativoByCredenzialiBasic(username, password, config);
+			return this.configurazionePdDManager.getServizioApplicativo(idSA, this.requestInfo);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -122,7 +123,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public boolean existsServizioApplicativoByCredenzialiSsl(String subject, String aIssuer){
 		try{
-			return this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiSsl(subject,aIssuer)!=null;
+			return this.configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(subject,aIssuer)!=null;
 		} catch(Exception e){
 			return false;
 		}
@@ -131,8 +132,8 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String subject, String aIssuer) throws RegistryNotFound,RegistryException{
 		try{
-			IDServizioApplicativo idSA = this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiSsl(subject,aIssuer);
-			return this.configurazionePdDMangager.getServizioApplicativo(idSA, this.requestInfo);
+			IDServizioApplicativo idSA = this.configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(subject,aIssuer);
+			return this.configurazionePdDManager.getServizioApplicativo(idSA, this.requestInfo);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -143,7 +144,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public boolean existsServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier){
 		try{
-			return this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiSsl(certificate,strictVerifier)!=null;
+			return this.configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(certificate,strictVerifier)!=null;
 		} catch(Exception e){
 			return false;
 		}
@@ -152,8 +153,8 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier) throws RegistryNotFound,RegistryException{
 		try{
-			IDServizioApplicativo idSA = this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiSsl(certificate,strictVerifier);
-			return this.configurazionePdDMangager.getServizioApplicativo(idSA, this.requestInfo);
+			IDServizioApplicativo idSA = this.configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(certificate,strictVerifier);
+			return this.configurazionePdDManager.getServizioApplicativo(idSA, this.requestInfo);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -164,7 +165,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public boolean existsServizioApplicativoByCredenzialiPrincipal(String principal){
 		try{
-			return this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiPrincipal(principal)!=null;
+			return this.configurazionePdDManager.getIdServizioApplicativoByCredenzialiPrincipal(principal)!=null;
 		} catch(Exception e){
 			return false;
 		}
@@ -173,8 +174,8 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public ServizioApplicativo getServizioApplicativoByCredenzialiPrincipal(String principal) throws RegistryNotFound,RegistryException{
 		try{
-			IDServizioApplicativo idSA = this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiPrincipal(principal);
-			return this.configurazionePdDMangager.getServizioApplicativo(idSA, this.requestInfo);
+			IDServizioApplicativo idSA = this.configurazionePdDManager.getIdServizioApplicativoByCredenzialiPrincipal(principal);
+			return this.configurazionePdDManager.getServizioApplicativo(idSA, this.requestInfo);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -185,7 +186,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public boolean existsServizioApplicativoByCredenzialiToken(String tokenPolicy, String tokenClientId, boolean tokenWithHttpsEnabled) {
 		try{
-			return this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiToken(tokenPolicy, tokenClientId)!=null;
+			return this.configurazionePdDManager.getIdServizioApplicativoByCredenzialiToken(tokenPolicy, tokenClientId)!=null;
 		} catch(Exception e){
 			return false;
 		}
@@ -194,8 +195,8 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public ServizioApplicativo getServizioApplicativoByCredenzialiToken(String tokenPolicy, String tokenClientId, boolean tokenWithHttpsEnabled) throws RegistryNotFound,RegistryException{
 		try{
-			IDServizioApplicativo idSA = this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiToken(tokenPolicy, tokenClientId);
-			return this.configurazionePdDMangager.getServizioApplicativo(idSA, this.requestInfo);
+			IDServizioApplicativo idSA = this.configurazionePdDManager.getIdServizioApplicativoByCredenzialiToken(tokenPolicy, tokenClientId);
+			return this.configurazionePdDManager.getServizioApplicativo(idSA, this.requestInfo);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -206,7 +207,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public ServizioApplicativo getServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws RegistryNotFound,RegistryException{
 		try{
-			return this.configurazionePdDMangager.getServizioApplicativo(idServizioApplicativo, this.requestInfo);
+			return this.configurazionePdDManager.getServizioApplicativo(idServizioApplicativo, this.requestInfo);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -217,7 +218,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public List<IDServizioApplicativo> findIdServiziApplicativi(ProtocolFiltroRicercaServiziApplicativi filtroRicerca) throws RegistryNotFound,RegistryException{
 		try{
-			return this.configurazionePdDMangager.getAllIdServiziApplicativi(filtroRicerca);
+			return this.configurazionePdDManager.getAllIdServiziApplicativi(filtroRicerca);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -242,7 +243,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public IDPortaDelegata getIdPortaDelegata(String nome, IProtocolFactory<?> protocolFactory) throws RegistryNotFound,RegistryException{
 		try{
-			return this.configurazionePdDMangager.getIDPortaDelegata(nome,this.requestInfo,protocolFactory);
+			return this.configurazionePdDManager.getIDPortaDelegata(nome,this.requestInfo,protocolFactory);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -253,7 +254,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public boolean existsPortaDelegata(IDPortaDelegata idPortaDelegata){
 		try{
-			return this.configurazionePdDMangager.getPortaDelegata(idPortaDelegata, this.requestInfo)!=null;
+			return this.configurazionePdDManager.getPortaDelegata(idPortaDelegata, this.requestInfo)!=null;
 		} catch (DriverConfigurazioneNotFound de) {
 			return false;
 		}catch(Exception e){
@@ -264,7 +265,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public PortaDelegata getPortaDelegata(IDPortaDelegata idPortaDelegata) throws RegistryNotFound,RegistryException{
 		try{
-			return this.configurazionePdDMangager.getPortaDelegata(idPortaDelegata, this.requestInfo);
+			return this.configurazionePdDManager.getPortaDelegata(idPortaDelegata, this.requestInfo);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -273,13 +274,13 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	}
 	public String getAzione(PortaDelegata pd,URLProtocolContext transportContext, RequestInfo requestInfo, IProtocolFactory<?> protocolFactory,
 			OpenSPCoop2MessageSoapStreamReader soapStreamReader) throws DriverConfigurazioneException, DriverConfigurazioneNotFound, IdentificazioneDinamicaException{
-		return this.configurazionePdDMangager.getAzione(pd, transportContext, requestInfo, null, soapStreamReader, null, false, protocolFactory);
+		return this.configurazionePdDManager.getAzione(pd, transportContext, requestInfo, null, soapStreamReader, null, false, protocolFactory);
 	}
 	
 	@Override
 	public List<IDPortaDelegata> findIdPorteDelegate(ProtocolFiltroRicercaPorteDelegate filtroRicerca) throws RegistryNotFound,RegistryException{
 		try{
-			return this.configurazionePdDMangager.getAllIdPorteDelegate(filtroRicerca);
+			return this.configurazionePdDManager.getAllIdPorteDelegate(filtroRicerca);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -303,7 +304,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public IDPortaApplicativa getIdPortaApplicativa(String nome, IProtocolFactory<?> protocolFactory) throws RegistryNotFound,RegistryException{
 		try{
-			return this.configurazionePdDMangager.getIDPortaApplicativa(nome, this.requestInfo, protocolFactory);
+			return this.configurazionePdDManager.getIDPortaApplicativa(nome, this.requestInfo, protocolFactory);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -313,7 +314,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public boolean existsPortaApplicativa(IDPortaApplicativa idPortaApplicativa){
 		try{
-			return this.configurazionePdDMangager.getPortaApplicativa(idPortaApplicativa, this.requestInfo)!=null;
+			return this.configurazionePdDManager.getPortaApplicativa(idPortaApplicativa, this.requestInfo)!=null;
 		} catch (DriverConfigurazioneNotFound de) {
 			return false;
 		}catch(Exception e){
@@ -323,7 +324,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public PortaApplicativa getPortaApplicativa(IDPortaApplicativa idPortaApplicativa) throws RegistryNotFound,RegistryException{
 		try{
-			return this.configurazionePdDMangager.getPortaApplicativa(idPortaApplicativa, this.requestInfo);
+			return this.configurazionePdDManager.getPortaApplicativa(idPortaApplicativa, this.requestInfo);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -332,13 +333,13 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	}
 	public String getAzione(PortaApplicativa pa,URLProtocolContext transportContext, RequestInfo requestInfo, IProtocolFactory<?> protocolFactory,
 			OpenSPCoop2Message message, OpenSPCoop2MessageSoapStreamReader soapStreamReader) throws DriverConfigurazioneException, DriverConfigurazioneNotFound, IdentificazioneDinamicaException{
-		return this.configurazionePdDMangager.getAzione(pa, transportContext, requestInfo, message, soapStreamReader, null, false, protocolFactory);
+		return this.configurazionePdDManager.getAzione(pa, transportContext, requestInfo, message, soapStreamReader, null, false, protocolFactory);
 	}
 	
 	@Override
 	public List<IDPortaApplicativa> findIdPorteApplicative(ProtocolFiltroRicercaPorteApplicative filtroRicerca) throws RegistryNotFound,RegistryException{
 		try{
-			return this.configurazionePdDMangager.getAllIdPorteApplicative(filtroRicerca);
+			return this.configurazionePdDManager.getAllIdPorteApplicative(filtroRicerca);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -362,7 +363,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public ConfigurazioneMultitenant getConfigurazioneMultitenant() throws RegistryNotFound,RegistryException{
 		try{
-			return this.configurazionePdDMangager.getConfigurazioneMultitenant();
+			return this.configurazionePdDManager.getConfigurazioneMultitenant();
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -373,7 +374,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public CanaliConfigurazione getCanaliConfigurazione() throws RegistryNotFound,RegistryException{
 		try{
-			return this.configurazionePdDMangager.getCanaliConfigurazione();
+			return this.configurazionePdDManager.getCanaliConfigurazione();
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -403,29 +404,59 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	
 	@Override
 	public List<GenericProperties> getTokenPolicyValidazione() throws RegistryException {
-		throw new RegistryException("Not Implemented");
+		try{
+			return this.configurazionePdDManager.getGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
 	}
 	@Override
 	public GenericProperties getTokenPolicyValidazione(String nome) throws RegistryNotFound,RegistryException{
-		throw new RegistryException("Not Implemented");
+		try{
+			return this.configurazionePdDManager.getGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION, nome);
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
 	}
 	
 	@Override
 	public List<GenericProperties> getTokenPolicyNegoziazione() throws RegistryException {
-		throw new RegistryException("Not Implemented");
+		try{
+			return this.configurazionePdDManager.getGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
 	}
 	@Override
 	public GenericProperties getTokenPolicyNegoziazione(String nome) throws RegistryNotFound,RegistryException{
-		throw new RegistryException("Not Implemented");
+		try{
+			return this.configurazionePdDManager.getGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE, nome);
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
 	}
 	
 	@Override
 	public List<GenericProperties> getAttributeAuthority() throws RegistryException {
-		throw new RegistryException("Not Implemented");
+		try{
+			return this.configurazionePdDManager.getGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
 	}
 	@Override
 	public GenericProperties getAttributeAuthority(String nome) throws RegistryNotFound,RegistryException{
-		throw new RegistryException("Not Implemented");
+		try{
+			return this.configurazionePdDManager.getGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY, nome);
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
 	}
 }
 

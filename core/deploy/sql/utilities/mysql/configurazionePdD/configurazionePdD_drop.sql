@@ -9,6 +9,8 @@
 -- DROP INDEX index_pdd_sys_props_1 ON pdd_sys_props ;
 -- DROP INDEX index_servizi_pdd_1 ON servizi_pdd ;
 -- DROP INDEX index_config_url_regole_1 ON config_url_regole ;
+-- DROP INDEX REMOTE_STORE_CREATE ON remote_store_key ;
+-- DROP INDEX REMOTE_STORE_UPDATE ON remote_store_key ;
 -- DROP INDEX index_registro_plug_jar_1 ON registro_plug_jar ;
 -- DROP INDEX index_generic_property_1 ON generic_property ;
 -- DROP INDEX index_dump_config_1 ON dump_config ;

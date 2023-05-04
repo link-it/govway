@@ -33,6 +33,9 @@ import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
 public abstract class AbstractModISecurityToken<T> {
 
 	private T token;
+	
+	protected String tokenAuditHeaderName;
+	protected String tokenAudit;
 
 	public AbstractModISecurityToken(T token) {
 		this.token = token;
@@ -46,4 +49,8 @@ public abstract class AbstractModISecurityToken<T> {
 	
 	public abstract byte[] toByteArray(TipoSerializzazione tipoSerializzazione) throws ProtocolException;
 
+	public void setTokenAudit(String tokenAuditHeaderName, String tokenAudit) {
+		this.tokenAuditHeaderName = tokenAuditHeaderName;
+		this.tokenAudit = tokenAudit;
+	}
 }

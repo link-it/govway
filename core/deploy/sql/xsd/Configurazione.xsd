@@ -3265,6 +3265,12 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:sql-table-unique-field name="id_remote_store"/>
                             <linkit:sql-table-unique-field name="kid"/>
                         </linkit:sql-table-unique>
+                        <linkit:sql-table-index name="REMOTE_STORE_UPDATE">
+                            <linkit:sql-table-index-field name="data-aggiornamento" ignoreTypeCompatibility="true"/>
+                        </linkit:sql-table-index>
+                        <linkit:sql-table-index name="REMOTE_STORE_CREATE">
+                            <linkit:sql-table-index-field name="data-registrazione" ignoreTypeCompatibility="true"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>
@@ -3300,6 +3306,28 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="key" long-binary="true" />
                                 <linkit:sql-ddl-column-comment>Chiave</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="data-registrazione" type="xsd:dateTime">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="data_registrazione" />
+                                <linkit:sql-ddl-column-comment>Data di ultima modifica</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="data-aggiornamento" type="xsd:dateTime">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="data_aggiornamento" />
+                                <linkit:sql-ddl-column-comment>Data di ultima modifica</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

@@ -31,14 +31,18 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.RuoloTipologia;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.Costanti;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.token.parser.Claims;
+import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
+import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.basic.validator.ValidazioneSemantica;
 import org.openspcoop2.protocol.engine.SecurityTokenUtilities;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
@@ -52,6 +56,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazione;
@@ -80,9 +85,9 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 	protected ModIProperties modiProperties;
 	
 	/** Errori di validazione riscontrati sulla busta */
-	protected java.util.List<Eccezione> erroriValidazione = new ArrayList<Eccezione>();
+	protected java.util.List<Eccezione> erroriValidazione = new ArrayList<>();
 	/** Errori di processamento riscontrati sulla busta */
-	protected java.util.List<Eccezione> erroriProcessamento = new ArrayList<Eccezione>();
+	protected java.util.List<Eccezione> erroriProcessamento = new ArrayList<>();
 	
 	public ModIValidazioneSemantica(IProtocolFactory<?> factory, IState state) throws ProtocolException {
 		super(factory, state);
@@ -90,6 +95,23 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		this.validazioneUtils = new ValidazioneUtils(factory);
 	}
 
+	private static final String DIAGNOSTIC_VALIDATE = "validazioneSemantica";
+	private static final String DIAGNOSTIC_IN_CORSO = "inCorso";
+	private static final String DIAGNOSTIC_COMPLETATA = "completata";
+	private static final String DIAGNOSTIC_FALLITA = "fallita";
+	
+	private String getErroreClaimNonValido(String claim) {
+		return "Token contenente un claim '"+claim+"' non valido";
+	}
+	private Eccezione getErroreMittenteNonAutorizzato(Busta busta, String msgErrore) throws ProtocolException {
+		String idApp = busta.getServizioApplicativoFruitore() + " (Soggetto: "+busta.getMittente()+")";
+		return this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA, 
+				"Applicativo Mittente "+idApp+" non autorizzato"+(msgErrore!=null ? "; "+msgErrore: ""));
+	}
+	private void addErroreMittenteNonAutorizzato(Busta busta, String msgErrore) throws ProtocolException {
+		this.erroriValidazione.add(getErroreMittenteNonAutorizzato(busta, msgErrore));
+	}
+	
 	@Override
 	public ValidazioneSemanticaResult valida(OpenSPCoop2Message msg, Busta busta, 
 			ProprietaValidazione proprietaValidazione, 
@@ -97,24 +119,28 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		
 		this.valida(msg,busta,tipoBusta, this.protocolFactory, this.state);
 		
-		java.util.List<Eccezione> erroriValidazione = null;
-		if(this.erroriValidazione.size()>0){
-			erroriValidazione = this.erroriValidazione;
+		java.util.List<Eccezione> erroriValidazioneList = null;
+		if(!this.erroriValidazione.isEmpty()){
+			erroriValidazioneList = this.erroriValidazione;
 			if(this.context!=null) {
 				this.context.addObject(Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO, Costanti.ERRORE_TRUE);
 			}
 		}
-		java.util.List<Eccezione> erroriProcessamento = null;
-		if(this.erroriProcessamento.size()>0){
-			erroriValidazione = this.erroriProcessamento;
+		java.util.List<Eccezione> erroriProcessamentoList = null;
+		if(!this.erroriProcessamento.isEmpty()){
+			erroriValidazioneList = this.erroriProcessamento;
 		}
-		ValidazioneSemanticaResult validazioneSemantica = new ValidazioneSemanticaResult(erroriValidazione, erroriProcessamento, null, null, null, null);
-		return validazioneSemantica;
+		return new ValidazioneSemanticaResult(erroriValidazioneList, erroriProcessamentoList, null, null, null, null);
 		
 	}
 
 	private void valida(OpenSPCoop2Message msg,Busta busta, RuoloBusta tipoBusta, IProtocolFactory<?> factory, IState state) throws ProtocolException{
+		
+		MsgDiagnostico msgDiag = null;
+		String tipoDiagnostico = null;
 		try{
+		
+			String prefixIntegrity = "[Header '"+this.modiProperties.getRestSecurityTokenHeaderModI()+"'] ";
 			
 			RequestInfo requestInfo = null;
 			if(this.context!=null && this.context.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
@@ -125,6 +151,40 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 			
 			boolean rest = ServiceBinding.REST.equals(msg.getServiceBinding());
 			
+			TipoPdD tipoPdD = isRichiesta ? TipoPdD.APPLICATIVA : TipoPdD.DELEGATA;
+			IDSoggetto idSoggetto = null;
+			if(busta!=null) {
+				idSoggetto = TipoPdD.DELEGATA.equals(tipoPdD) ? 
+						new IDSoggetto(busta.getTipoMittente(),busta.getMittente()) : 
+						new IDSoggetto(busta.getTipoDestinatario(),busta.getDestinatario());
+			}
+			if(idSoggetto==null || idSoggetto.getTipo()==null || idSoggetto.getNome()==null) {
+				idSoggetto = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(this.protocolFactory.getProtocol(), requestInfo);
+			}
+			else {
+				IRegistryReader registryReader = this.getProtocolFactory().getCachedRegistryReader(this.state, requestInfo);
+				idSoggetto.setCodicePorta(registryReader.getDominio(idSoggetto));
+			}
+			msgDiag = MsgDiagnostico.newInstance(TipoPdD.DELEGATA, 
+					idSoggetto,
+					"ModI", requestInfo!=null && requestInfo.getProtocolContext()!=null ? requestInfo.getProtocolContext().getInterfaceName() : null,
+					requestInfo,
+					this.state);
+			if(TipoPdD.DELEGATA.equals(tipoPdD)){
+				msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI);
+			}
+			else {
+				msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE);
+			}
+			msgDiag.setPddContext(this.context, this.protocolFactory);
+			tipoDiagnostico = isRichiesta ? ".richiesta." : ".risposta.";
+			
+			msgDiag.logPersonalizzato(DIAGNOSTIC_VALIDATE+tipoDiagnostico+DIAGNOSTIC_IN_CORSO);
+			
+			
+			
+			
+			
 			String securityMessageProfile = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO);
 			
 			if(securityMessageProfile!=null) {
@@ -133,10 +193,8 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 			
 			boolean sicurezzaMessaggio = securityMessageProfile!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED.equals(securityMessageProfile);
 			if(sicurezzaMessaggio) {
-				
+								
 				Date now = DateManager.getDate();
-				
-				String prefixIntegrity = "[Header '"+this.modiProperties.getRestSecurityTokenHeaderModI()+"'] ";
 				
 				String exp = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP);
 				if(exp!=null) {
@@ -178,7 +236,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 						
 						boolean buildSecurityTokenInRequest = true;
 						Object buildSecurityTokenInRequestObject = msg.getContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_BUILD_SECURITY_REQUEST_TOKEN);
-						if(buildSecurityTokenInRequestObject!=null && buildSecurityTokenInRequestObject instanceof Boolean) {
+						if(buildSecurityTokenInRequestObject instanceof Boolean) {
 							buildSecurityTokenInRequest = (Boolean) buildSecurityTokenInRequestObject;
 						}
 						
@@ -187,7 +245,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 							this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
 									isRichiesta ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_VALIDO :
 										CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_VALIDO, 
-									"Token contenente un claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE+"' non valido"));
+										getErroreClaimNonValido(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE)));
 							
 						}
 					}
@@ -201,16 +259,31 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 							// significa che l'audience tra i due token ricevuto e' identico
 							audienceIntegrity = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE);
 						}
-						String prefix = "[Header '"+this.modiProperties.getRestSecurityTokenHeaderModI()+"'] ";
 						if(!audienceIntegrityAtteso.equals(audienceIntegrity)) {
 							this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
 									isRichiesta ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_VALIDO :
 										CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_VALIDO, 
-									prefix+"Token contenente un claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE+"' non valido"));
+									prefixIntegrity+getErroreClaimNonValido(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE)));
 						}
 					}
 				}
 				
+				Object audienceAuditAttesoObject = msg.getContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_AUDIT_CHECK);
+				if(audienceAuditAttesoObject!=null) {
+					String audienceAuditAtteso = (String) audienceAuditAttesoObject;
+					String audienceAudit = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_AUDIENCE);
+					if(audienceAudit==null) {
+						// significa che l'audience tra i due token ricevuto e' identico
+						audienceAudit = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE);
+					}
+					String prefix = "[Header '"+this.modiProperties.getSecurityTokenHeaderModIAudit()+"'] ";
+					if(!audienceAuditAtteso.equals(audienceAudit)) {
+						this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+								isRichiesta ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_VALIDO :
+									CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_VALIDO, 
+								prefix+getErroreClaimNonValido(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE)));
+					}
+				}
 			}
 			
 			if(isRichiesta) {
@@ -220,7 +293,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				// viene quindi inserito dentro busta e usato per i controlli sottostanti
 				
 				if(msg.getTransportRequestContext()==null || msg.getTransportRequestContext().getInterfaceName()==null) {
-					throw new Exception("ID Porta non presente");
+					throw new ProtocolException("ID Porta non presente");
 				}
 				IDPortaApplicativa idPA = new IDPortaApplicativa();
 				idPA.setNome(msg.getTransportRequestContext().getInterfaceName());
@@ -252,11 +325,10 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 					saIdentificatoByToken = idSAbyToken!=null;
 					
 					if(saIdentificatoByToken) {
-						//	&& !saIdentificatoBySecurity) {
-						// L'identificazione per sicurezza, se c'è abilitata l'autenticazione per token, non dovrebbe esserci mai poichè la funzionalità è stata disabilitata.
-						// Con autenticazione token attiva, gli applicativi anche se presente un x509 non vengono identificati dall'autenticazione https effettuata in AbstractModIValidazioneSintatticaCommons e di conseguenza in ModIValidazioneSintatticaRest e ModIValidazioneSintatticaSoap durante il trattamento del token di sicurezza
-						//
-						// bisogna quindi verificare, se è presente un certificato x509 di firma, che corrisponda a quello registrato nell'applicativo di tipo token identificato
+						/**	&& !saIdentificatoBySecurity) { 
+						L'identificazione per sicurezza, se c'è abilitata l'autenticazione per token, non dovrebbe esserci mai poichè la funzionalità è stata disabilitata.
+						Con autenticazione token attiva, gli applicativi anche se presente un x509 non vengono identificati dall'autenticazione https effettuata in AbstractModIValidazioneSintatticaCommons e di conseguenza in ModIValidazioneSintatticaRest e ModIValidazioneSintatticaSoap durante il trattamento del token di sicurezza
+						bisogna quindi verificare, se è presente un certificato x509 di firma, che corrisponda a quello registrato nell'applicativo di tipo token identificato*/
 						
 						SecurityToken securityTokenForContext = SecurityTokenUtilities.readSecurityToken(this.context);
 						if(securityTokenForContext!=null) {
@@ -333,38 +405,37 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				}
 				
 				/** Verifica consistenza identificazione del mittente */
-				if(autorizzazionePerRichiedente || 
-						(autorizzazionePerRuolo && checkRuoloRegistro && !checkRuoloEsterno) ) {	
-					if(saFruitoreAnonimo) {
+				if(
+						(
+								autorizzazionePerRichiedente 
+								|| 
+								(autorizzazionePerRuolo && checkRuoloRegistro && !checkRuoloEsterno)
+						)
+						&&
+						saFruitoreAnonimo
+				){	
+					this.context.addObject(Costanti.ERRORE_AUTORIZZAZIONE, Costanti.ERRORE_TRUE);
+					this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA, 
+							"Applicativo Mittente non identificato"));
+					return;
+				}
+				if(!saFruitoreAnonimo &&
+					(autorizzazionePerRichiedente || checkRuoloRegistro) 
+					){
+					// se utilizzo l'informazione dell'applicativo, tale informazione deve essere consistente rispetto a tutti i criteri di sicurezza
+					if(sicurezzaMessaggio &&
+						!saIdentificatoBySecurity && !saVerificatoBySecurity) {
 						this.context.addObject(Costanti.ERRORE_AUTORIZZAZIONE, Costanti.ERRORE_TRUE);
-						this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA, 
-								"Applicativo Mittente non identificato"));
+						addErroreMittenteNonAutorizzato(busta, "il certificato di firma non corrisponde all'applicativo");
 						return;
 					}
-				}
-				if(!saFruitoreAnonimo) {
-					if(autorizzazionePerRichiedente || checkRuoloRegistro) {
-						// se utilizzo l'informazione dell'applicativo, tale informazione deve essere consistente rispetto a tutti i criteri di sicurezza
-						if(sicurezzaMessaggio) {
-							if(!saIdentificatoBySecurity && !saVerificatoBySecurity) {
-								this.context.addObject(Costanti.ERRORE_AUTORIZZAZIONE, Costanti.ERRORE_TRUE);
-								String idApp = busta.getServizioApplicativoFruitore() + " (Soggetto: "+busta.getMittente()+")";
-								this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA, 
-										"Applicativo Mittente "+idApp+" non autorizzato; il certificato di firma non corrisponde all'applicativo"));
-								return;
-							}
-						}
-						if(sicurezzaToken) {
-							if(!saIdentificatoByToken) {
-								// CASO DEPRECATO: questo caso non puo' succedere poiche' nel caso di sicurezza token l'identificazione avviene SOLO per token
-								//                 quindi si rientra nel caso sopra 'Applicativo Mittente non identificato'
-								this.context.addObject(Costanti.ERRORE_AUTORIZZAZIONE, Costanti.ERRORE_TRUE);
-								String idApp = busta.getServizioApplicativoFruitore() + " (Soggetto: "+busta.getMittente()+")";
-								this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA, 
-										"Applicativo Mittente "+idApp+" non autorizzato; il claim 'clientId' presente nel token non corrisponde all'applicativo"));
-								return;
-							}
-						}
+					if(sicurezzaToken &&
+						!saIdentificatoByToken) {
+						// CASO DEPRECATO: questo caso non puo' succedere poiche' nel caso di sicurezza token l'identificazione avviene SOLO per token
+						//                 quindi si rientra nel caso sopra 'Applicativo Mittente non identificato'
+						this.context.addObject(Costanti.ERRORE_AUTORIZZAZIONE, Costanti.ERRORE_TRUE);
+						addErroreMittenteNonAutorizzato(busta, "il claim 'clientId' presente nel token non corrisponde all'applicativo");
+						return;
 					}
 				}
 				
@@ -382,9 +453,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 						}
 					}
 					if(!autorizzato) {
-						String idApp = busta.getServizioApplicativoFruitore() + " (Soggetto: "+busta.getMittente()+")";
-						eccezioneAutorizzazionePerRichiedente = this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA, 
-								"Applicativo Mittente "+idApp+" non autorizzato");
+						eccezioneAutorizzazionePerRichiedente = getErroreMittenteNonAutorizzato(busta, null);
 					}
 				}
 				
@@ -441,14 +510,35 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				
 			}
 			
+			if(this.erroriValidazione.isEmpty() && this.erroriProcessamento.isEmpty()) {
+				msgDiag.logPersonalizzato(DIAGNOSTIC_VALIDATE+tipoDiagnostico+DIAGNOSTIC_COMPLETATA);
+			}
+			else {
+				String errore = null;
+				if(!this.erroriValidazione.isEmpty()) {
+					errore = ModIValidazioneSintattica.buildErrore(this.erroriValidazione, factory);
+				}
+				else {
+					errore = ModIValidazioneSintattica.buildErrore(this.erroriProcessamento, factory);
+				}
+				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, errore);
+				msgDiag.logPersonalizzato(DIAGNOSTIC_VALIDATE+tipoDiagnostico+DIAGNOSTIC_FALLITA);
+						
+			}
+			
 		}catch(Exception e){
+			
+			if(msgDiag!=null) {
+				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
+				msgDiag.logPersonalizzato(DIAGNOSTIC_VALIDATE+tipoDiagnostico+DIAGNOSTIC_FALLITA);
+			}
+			
 			this.erroriProcessamento.add(this.validazioneUtils.newEccezioneProcessamento(CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO, 
 					e.getMessage(),e));
-			return;
 		}
 	}
 
-	private void checkExp(String exp, Date now, boolean rest, String prefix) throws Exception {
+	private void checkExp(String exp, Date now, boolean rest, String prefix) throws ProtocolException {
 		
 		boolean enabled = true;
 		if(rest) {
@@ -464,7 +554,12 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		if(prefix==null) {
 			prefix="";
 		}
-		Date dateExp = DateUtils.getSimpleDateFormatMs().parse(exp);
+		Date dateExp = null;
+		try {
+			dateExp = DateUtils.getSimpleDateFormatMs().parse(exp);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
 		/*
 		 *   The "exp" (expiration time) claim identifies the expiration time on
 			 *   or after which the JWT MUST NOT be accepted for processing.  The
@@ -488,11 +583,16 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		}
 	}
 	
-	private void checkNbf(String nbf, Date now, String prefix) throws Exception {
+	private void checkNbf(String nbf, Date now, String prefix) throws ProtocolException {
 		if(prefix==null) {
 			prefix="";
 		}
-		Date dateNbf = DateUtils.getSimpleDateFormatMs().parse(nbf);
+		Date dateNbf = null;
+		try {
+			dateNbf = DateUtils.getSimpleDateFormatMs().parse(nbf);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
 		/*
 		 *   The "nbf" (not before) claim identifies the time before which the JWT
 		 *   MUST NOT be accepted for processing.  The processing of the "nbf"
@@ -505,11 +605,16 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		}
 	}
 	
-	private void checkIat(String iat, OpenSPCoop2Message msg, boolean rest, String prefix) throws Exception {
+	private void checkIat(String iat, OpenSPCoop2Message msg, boolean rest, String prefix) throws ProtocolException {
 		if(prefix==null) {
 			prefix="";
 		}
-		Date dateIat = DateUtils.getSimpleDateFormatMs().parse(iat);
+		Date dateIat = null;
+		try {
+			dateIat = DateUtils.getSimpleDateFormatMs().parse(iat);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
 		/*
 		 *   The "iat" (issued at) claim identifies the time at which the JWT was
 			 *   issued.  This claim can be used to determine the age of the JWT.
@@ -521,7 +626,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		if(msg!=null) {
 			iatObject = msg.getContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_IAT_TTL_CHECK);
 		}
-		if(iatObject!=null && iatObject instanceof Long) {
+		if(iatObject instanceof Long) {
 			old = (Long) iatObject;
 		}
 		if(old==null) {
@@ -535,7 +640,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		if(old!=null) {
 			Date oldMax = new Date((DateManager.getTimeMillis() - old.longValue()));
 			if(dateIat.before(oldMax)) {
-				this.log.error(prefix+"Token creato da troppo tempo (data creazione: '"+iat+"', data più vecchia consentita: '"+DateUtils.getSimpleDateFormatMs().format(oldMax)+"', configurazione ms: '"+old.longValue()+"')");
+				logError(prefix+"Token creato da troppo tempo (data creazione: '"+iat+"', data più vecchia consentita: '"+DateUtils.getSimpleDateFormatMs().format(oldMax)+"', configurazione ms: '"+old.longValue()+"')");
 				this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.MESSAGGIO_SCADUTO, 
 						prefix+"Token creato da troppo tempo (data creazione: '"+iat+"')"));
 			}
@@ -552,10 +657,16 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		if(future!=null) {
 			Date futureMax = new Date((DateManager.getTimeMillis() + future.longValue()));
 			if(dateIat.after(futureMax)) {
-				this.log.error(prefix+"Token creato nel futuro (data creazione: '"+iat+"', data massima futura consentita: '"+DateUtils.getSimpleDateFormatMs().format(futureMax)+"', configurazione ms: '"+future.longValue()+"')");
+				logError(prefix+"Token creato nel futuro (data creazione: '"+iat+"', data massima futura consentita: '"+DateUtils.getSimpleDateFormatMs().format(futureMax)+"', configurazione ms: '"+future.longValue()+"')");
 				this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.ORA_REGISTRAZIONE_NON_VALIDA, 
 						prefix+"Token creato nel futuro (data creazione: '"+iat+"')"));
 			}
+		}
+	}
+	
+	private void logError(String msg) {
+		if(this.log!=null) {
+			this.log.error(msg);
 		}
 	}
 }

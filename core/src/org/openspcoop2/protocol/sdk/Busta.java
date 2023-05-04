@@ -77,13 +77,13 @@ public class Busta implements java.io.Serializable {
 	protected String riferimentoMsgBustaRichiedenteServizio;
 	
 	// ListaEccezioni
-	protected List<Eccezione> listaEccezioni = new ArrayList<Eccezione>();
+	protected List<Eccezione> listaEccezioni = new ArrayList<>();
 	
 	// ListaRiscontri
-	protected List<Riscontro> listaRiscontri = new ArrayList<Riscontro>();
+	protected List<Riscontro> listaRiscontri = new ArrayList<>();
 	
 	// ListaTrasmissioni
-	protected List<Trasmissione> listaTrasmissioni = new ArrayList<Trasmissione>();
+	protected List<Trasmissione> listaTrasmissioni = new ArrayList<>();
 	
 	public Busta(String protocollo){
 		
@@ -1249,7 +1249,7 @@ public class Busta implements java.io.Serializable {
 
 	public List<Eccezione> cloneListaEccezioni() {
 		if(this.listaEccezioni!=null){
-			List<Eccezione> eccs = new ArrayList<Eccezione>();
+			List<Eccezione> eccs = new ArrayList<>();
 			for(int i=0; i<this.sizeListaEccezioni(); i++){
 				eccs.add(this.getEccezione(i).newInstance());
 			}
@@ -1400,7 +1400,7 @@ public class Busta implements java.io.Serializable {
 
 	public List<Riscontro> getListaRiscontri() {
 		if (this.listaRiscontri == null) {
-			this.listaRiscontri = new ArrayList<Riscontro>();
+			this.listaRiscontri = new ArrayList<>();
 		}
 		return this.listaRiscontri;
 	}
@@ -1438,7 +1438,7 @@ public class Busta implements java.io.Serializable {
 	
 	public List<Trasmissione> getListaTrasmissioni() {
 		if (this.listaTrasmissioni == null) {
-			this.listaTrasmissioni = new ArrayList<Trasmissione>();
+			this.listaTrasmissioni = new ArrayList<>();
 		}
 		return this.listaTrasmissioni;
 	}

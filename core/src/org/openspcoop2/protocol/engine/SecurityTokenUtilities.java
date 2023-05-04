@@ -33,6 +33,8 @@ import org.openspcoop2.protocol.sdk.state.RequestInfo;
  * @version $Rev$, $Date$
  */
 public class SecurityTokenUtilities {
+	
+	private SecurityTokenUtilities() {}
 
 	public static SecurityToken readSecurityToken(Context context) {
 		SecurityToken securityTokenForContext = null;

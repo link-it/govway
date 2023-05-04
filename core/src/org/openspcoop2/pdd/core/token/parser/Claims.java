@@ -27,6 +27,8 @@ package org.openspcoop2.pdd.core.token.parser;
  * @version $Rev$, $Date$
  */
 public class Claims {
+	
+	private Claims() {}
 
 	// https://tools.ietf.org/html/rfc7519
 	

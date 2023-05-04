@@ -260,6 +260,9 @@ public class GestoreToken {
 	
 	static final String KEY_ALIAS_UNDEFINED = "JWT Signature key alias undefined";
 	static final String KEY_PASSWORD_UNDEFINED = "JWT Signature key password undefined";
+	static final String KEYSTORE_TYPE_UNDEFINED = "JWT Signature keystore type undefined";
+	static final String KEYSTORE_KEYPAIR_UNDEFINED = "JWT Signature keyPair undefined";
+	static final String KEYSTORE_KEYSTORE_UNDEFINED = "JWT Signature keystore undefined";
 	
 	/** Connettore Utils */
 	static void addProperties(ConnettoreMsg connettoreMsg, Properties p) {

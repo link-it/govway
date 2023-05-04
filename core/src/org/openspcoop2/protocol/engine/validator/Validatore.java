@@ -93,9 +93,9 @@ public class Validatore  {
 	ErroreCooperazione errore;
 	IntegrationFunctionError errore_integrationFunctionError;
 	/** Errori di validazione riscontrati sulla busta */
-	private java.util.List<Eccezione> erroriValidazione = new ArrayList<Eccezione>();
+	private java.util.List<Eccezione> erroriValidazione = new ArrayList<>();
 	/** Errori di processamento riscontrati sulla busta */
-	private java.util.List<Eccezione> erroriProcessamento = new ArrayList<Eccezione>();
+	private java.util.List<Eccezione> erroriProcessamento = new ArrayList<>();
 	private String erroreProcessamento_internalMessage;	
 	/** Indicazione se la busta validata e' un messaggio errore */
 	private boolean isMessaggioErrore;
@@ -448,7 +448,7 @@ public class Validatore  {
 			if(messageSecurityContext!= null && messageSecurityContext.getIncomingProperties() != null && messageSecurityContext.getIncomingProperties().size() > 0){
 				boolean existsHeaderMessageSecurity = messageSecurityContext.existsSecurityHeader(this.msg, messageSecurityContext.getActor());
 				if(messageSecurityContext.processIncoming(this.msg,this.busta,this.context, tempiElaborazione) == false){  
-					List<Eccezione> eccezioniSicurezza = new ArrayList<Eccezione>();
+					List<Eccezione> eccezioniSicurezza = new ArrayList<>();
 					if(messageSecurityContext.getListaSubCodiceErrore()!=null && messageSecurityContext.getListaSubCodiceErrore().size()>0){
 						List<SubErrorCodeSecurity> subCodiciErrore = messageSecurityContext.getListaSubCodiceErrore();
 						for (Iterator<?> iterator = subCodiciErrore.iterator(); iterator.hasNext();) {

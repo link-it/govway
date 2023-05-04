@@ -37,8 +37,11 @@ import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
+import org.openspcoop2.pdd.core.token.Costanti;
 import org.openspcoop2.pdd.core.token.parser.Claims;
+import org.openspcoop2.protocol.modipa.config.ModIAuditClaimConfig;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.constants.ModIHeaderType;
@@ -48,6 +51,8 @@ import org.openspcoop2.protocol.modipa.utils.ModIUtilities;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.RestMessageSecurityToken;
+import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.keystore.JWKSetStore;
@@ -60,6 +65,7 @@ import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.engine.MessageSecurityContext_impl;
 import org.openspcoop2.security.message.jose.MessageSecuritySender_jose;
 import org.openspcoop2.security.message.utils.SignatureBean;
+import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
@@ -158,6 +164,9 @@ public class ModIImbustamentoRest {
 	
 	private static String getHeaderHttpPrefix(String hdr) {
 		return "Header http '"+hdr+"'";
+	}
+	private ProtocolException newProtocolExceptionAccessoKeystoreNonRiuscito(String type,String path) {
+		return new ProtocolException("Accesso al keystore ["+type+"] '"+path+"' non riuscito");
 	}
 	private static final String RICHIESTO_NON_BLOCCANTE_PUSH = ", richiesto dal profilo non bloccante PUSH, non trovato";
 	
@@ -415,10 +424,13 @@ public class ModIImbustamentoRest {
 		
 	}
 	
-	public String addToken(OpenSPCoop2Message msg, Context context, ModIKeystoreConfig keystoreConfig, ModISecurityConfig securityConfig,
-			Busta busta, String securityMessageProfile, boolean useKIDforIdAUTH, String headerTokenRest, boolean corniceSicurezza, RuoloMessaggio ruoloMessaggio, boolean includiRequestDigest,
+	public String addToken(OpenSPCoop2Message msg, boolean request, Context context, ModIKeystoreConfig keystoreConfig, ModISecurityConfig securityConfig,
+			Busta busta, String securityMessageProfile, boolean useKIDtokenHeader, String headerTokenRest, 
+			boolean corniceSicurezza, String corniceSicurezzaPattern, String corniceSicurezzaSchema,
+			RuoloMessaggio ruoloMessaggio, boolean includiRequestDigest,
 			Long now, String jti, ModIHeaderType headerType, boolean integritaCustom,
-			Map<String, Object> dynamicMap, RequestInfo requestInfo) throws ProtocolException {
+			Map<String, Object> dynamicMap, RequestInfo requestInfo,
+			String purposeId) throws ProtocolException {
 		
 		if(busta==null) {
 			throw new ProtocolException("Param busta is null");
@@ -431,6 +443,11 @@ public class ModIImbustamentoRest {
 		boolean integrita = integritaX509 || integritaKid;
 		
 		boolean headerDuplicati = headerType.isHeaderDuplicati();
+		boolean headerAuthentication = headerType.isUsabledForAuthentication();
+		
+		boolean tokenAudit = corniceSicurezza && !CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD.equals(corniceSicurezzaPattern) && corniceSicurezzaSchema!=null;
+		
+		boolean apiSoap = ServiceBinding.SOAP.equals(msg.getServiceBinding());
 		
 		/*
 		 * == realizzo token ==
@@ -453,7 +470,8 @@ public class ModIImbustamentoRest {
 		payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT, nowSeconds);
 		String iatValue = DateUtils.getSimpleDateFormatMs().format(nowDateUsatoPerProprietaTraccia);
 		if(!headerDuplicati || HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
-			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_IAT, iatValue);
+			busta.addProperty(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_IAT : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_IAT,
+					iatValue);
 		}
 		else {
 			String iatAuthorization = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_IAT);
@@ -465,7 +483,8 @@ public class ModIImbustamentoRest {
 		payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_NOT_TO_BE_USED_BEFORE, nowSeconds);
 		String nbfValue = DateUtils.getSimpleDateFormatMs().format(nowDateUsatoPerProprietaTraccia);
 		if(!headerDuplicati || HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
-			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_NBF, nbfValue);
+			busta.addProperty(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_NBF : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_NBF, 
+					nbfValue);
 		}
 		else {
 			String nbfAuthorization = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_NBF);
@@ -479,7 +498,8 @@ public class ModIImbustamentoRest {
 		payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED, expired);
 		String expValue = DateUtils.getSimpleDateFormatMs().format(expiredDateUsatoPerProprietaTraccia);
 		if(!headerDuplicati || HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
-			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP, expValue);
+			busta.addProperty(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_EXP : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP, 
+					expValue);
 		}
 		else {
 			String expAuthorization = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP);
@@ -490,20 +510,44 @@ public class ModIImbustamentoRest {
 		
 		if(jti!=null) {
 			payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID, jti);
-			if(headerDuplicati && (busta==null || !jti.equals(busta.getID()))) {
-				if(integrita) {
-					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_ID, jti);
-				}
-				else {
-					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUTHORIZATION_ID, jti);
-				}
+			if(tokenAudit) {
+				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_ID, jti);
 			}
 			else {
-				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID, jti);
+				if(headerDuplicati && (busta==null || !jti.equals(busta.getID()))) {
+					if(integrita) {
+						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_ID, jti);
+					}
+					else {
+						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUTHORIZATION_ID, jti);
+					}
+				}
+				else {
+					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID, jti);
+				}
 			}
 		}
 		
-		if(securityConfig.getAudience()!=null) {
+		if(tokenAudit) {
+			String audience = securityConfig.getCorniceSicurezzaAudience();
+			// sulla richiesta direttamente come valore dinamico, sulla risposta come claims
+			try {
+				audience = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_AUDIENCE, 
+						audience, dynamicMap, context);
+			}catch(Exception e) {
+				this.log.error(e.getMessage(),e);
+				ProtocolException pe = new ProtocolException(e.getMessage());
+				pe.setInteroperabilityError(true);
+				throw pe;
+			}
+			/**}*/
+			payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE, audience);
+			String audAuthorization = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE);
+			if(audAuthorization==null || !audience.equals(audAuthorization)) {
+				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_AUDIENCE, audience);
+			}
+		}
+		else if(securityConfig.getAudience()!=null) {
 			String audience = securityConfig.getAudience();
 			/**if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio)) {*/
 			// sulla richiesta direttamente come valore dinamico, sulla risposta come claims
@@ -529,33 +573,31 @@ public class ModIImbustamentoRest {
 			}
 		}
 		
+		boolean addClientId = false;
+		if(tokenAudit) {
+			if(useKIDtokenHeader) {
+				addClientId = securityConfig.getCorniceSicurezzaSchemaConfig().isClientIdOAuth();
+			}
+			else {
+				addClientId = securityConfig.getCorniceSicurezzaSchemaConfig().isClientIdLocale();
+			}
+		}
+		else {
+			addClientId = true;
+		}
+		
+		String clientId = null;
 		if(securityConfig.getClientId()!=null &&
 				!DynamicHelperCostanti.NOT_GENERATE.equalsIgnoreCase(securityConfig.getClientId())) {
-			String claimName = this.modiProperties.getRestSecurityTokenClaimsClientIdHeader(); 
-			String clientId = securityConfig.getClientId();
-			boolean clientIdKid = false;
-			if(integritaKid || useKIDforIdAUTH) {
-				String clientIdIntegritaKid = securityConfig.getTokenClientId();
-				if(clientIdIntegritaKid!=null) {
-					try {
-						clientIdIntegritaKid = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_CLIENT_ID, 
-								clientIdIntegritaKid, dynamicMap, context);
-					}catch(Exception e) {
-						this.log.error(e.getMessage(),e);
-						ProtocolException pe = new ProtocolException(e.getMessage());
-						pe.setInteroperabilityError(true);
-						throw pe;
-					}
-				}
-				if(clientIdIntegritaKid!=null && StringUtils.isNotEmpty(clientIdIntegritaKid)) {
-					clientId = clientIdIntegritaKid;
-					clientIdKid = true;
-				}
-			}
-			if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio) && !clientIdKid) {
+			clientId = securityConfig.getClientId();
+		}
+		boolean clientIdKid = false;
+		if(integritaKid || useKIDtokenHeader || tokenAudit) {
+			String clientIdIntegritaKid = securityConfig.getTokenClientId();
+			if(clientIdIntegritaKid!=null) {
 				try {
-					clientId = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_CLIENT_ID, 
-							clientId, dynamicMap, context);
+					clientIdIntegritaKid = ModIUtilities.getDynamicValue(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_CLIENT_ID : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_CLIENT_ID, 
+							clientIdIntegritaKid, dynamicMap, context);
 				}catch(Exception e) {
 					this.log.error(e.getMessage(),e);
 					ProtocolException pe = new ProtocolException(e.getMessage());
@@ -563,12 +605,30 @@ public class ModIImbustamentoRest {
 					throw pe;
 				}
 			}
+			if(clientIdIntegritaKid!=null && StringUtils.isNotEmpty(clientIdIntegritaKid)) {
+				clientId = clientIdIntegritaKid;
+				clientIdKid = true;
+			}
+		}
+		if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio) && clientId!=null && !clientIdKid) {
+			try {
+				clientId = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_CLIENT_ID, 
+						clientId, dynamicMap, context);
+			}catch(Exception e) {
+				this.log.error(e.getMessage(),e);
+				ProtocolException pe = new ProtocolException(e.getMessage());
+				pe.setInteroperabilityError(true);
+				throw pe;
+			}
+		}
+		if(addClientId && clientId!=null) {
+			String claimName = this.modiProperties.getRestSecurityTokenClaimsClientIdHeader(); 
 			payloadToken.put(claimName, clientId);
-			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_CLIENT_ID, clientId);
+			busta.addProperty(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_CLIENT_ID : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_CLIENT_ID, clientId);
 		}
 		
 		String kid = null;
-		if(integritaKid || useKIDforIdAUTH) {
+		if(integritaKid || useKIDtokenHeader) {
 			kid = securityConfig.getTokenKid();
 			if(kid!=null) {
 				try {
@@ -599,87 +659,125 @@ public class ModIImbustamentoRest {
 		
 		if(corniceSicurezza) {
 			
-			String claimNameCodiceEnte = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_rest_codice_ente();
-			if(Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER.equals(claimNameCodiceEnte)) {
-				addIss = false;
+			if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD.equals(corniceSicurezzaPattern)) {
+				
+				addIss = addCorniceSicurezzaLegacyCodiceEnte(securityConfig,
+						dynamicMap, context,
+						payloadToken, busta);
+				
+				addSub = addCorniceSicurezzaLegacyUser(securityConfig,
+						dynamicMap, context,
+						payloadToken, busta);
+				
+				addCorniceSicurezzaLegacyIpUser(securityConfig,
+						dynamicMap, context,
+						payloadToken, busta);
 			}
-			String codiceEnte = null;
-			try {
-				codiceEnte = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL+" - "+ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE_LABEL, 
-						securityConfig.getCorniceSicurezzaCodiceEnteRule(), dynamicMap, context);
-			}catch(Exception e) {
-				this.log.error(e.getMessage(),e);
-				ProtocolException pe = new ProtocolException(e.getMessage());
-				pe.setInteroperabilityError(true);
-				throw pe;
+			else {
+				
+				addCorniceSicurezzaSchema(securityConfig,
+						dynamicMap, context,
+						payloadToken, busta,
+						corniceSicurezzaSchema);
+				
+				if(useKIDtokenHeader) {
+					addIss = securityConfig.getCorniceSicurezzaSchemaConfig().isIssOAuth();
+					addSub = securityConfig.getCorniceSicurezzaSchemaConfig().isSubOAuth();
+				}
+				else {
+					addIss = securityConfig.getCorniceSicurezzaSchemaConfig().isIssLocale();
+					addSub = securityConfig.getCorniceSicurezzaSchemaConfig().isSubLocale();
+				}
+				
 			}
-			payloadToken.put(claimNameCodiceEnte, codiceEnte);
-			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_ENTE, codiceEnte);
-			
-			String claimNameUser = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_rest_user();
-			if(Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT.equals(claimNameUser)) {
-				addSub = false;
-			}
-			String utente = null;
-			try {
-				utente = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL+" - "+ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE_LABEL,
-						securityConfig.getCorniceSicurezzaUserRule(), dynamicMap, context);
-			}catch(Exception e) {
-				this.log.error(e.getMessage(),e);
-				ProtocolException pe = new ProtocolException(e.getMessage());
-				pe.setInteroperabilityError(true);
-				throw pe;
-			}
-			payloadToken.put(claimNameUser, utente);
-			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER, utente);
-			
-			String claimNameIpUser = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_rest_ipuser();
-			String indirizzoIpPostazione = null;
-			try {
-				indirizzoIpPostazione = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL+" - "+ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE_LABEL,
-						securityConfig.getCorniceSicurezzaIpUserRule(), dynamicMap, context);
-			}catch(Exception e) {
-				this.log.error(e.getMessage(),e);
-				ProtocolException pe = new ProtocolException(e.getMessage());
-				pe.setInteroperabilityError(true);
-				throw pe;
-			}
-			payloadToken.put(claimNameIpUser, indirizzoIpPostazione);
-			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER_IP, indirizzoIpPostazione);
 						
 		}
 		
-		if(addIss &&
-			securityConfig.getIssuer()!=null &&
-			!DynamicHelperCostanti.NOT_GENERATE.equalsIgnoreCase(securityConfig.getIssuer())) {
+		if(addIss) {
 			String issuer = null;
-			try {
-				issuer = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_ISSUER, 
-						securityConfig.getIssuer(), dynamicMap, context);
-			}catch(Exception e) {
-				this.log.error(e.getMessage(),e);
-				ProtocolException pe = new ProtocolException(e.getMessage());
-				pe.setInteroperabilityError(true);
-				throw pe;
+			if(tokenAudit) {
+				if(clientId==null) {
+					ProtocolException pe = new ProtocolException("ClientId undefined; required in audit token 'iss' claim");
+					pe.setInteroperabilityError(true);
+					throw pe;
+				}
+				issuer = clientId;
 			}
-			payloadToken.put(Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER, issuer);
-			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_ISSUER, issuer);
+			else if(securityConfig.getIssuer()!=null &&
+					!DynamicHelperCostanti.NOT_GENERATE.equalsIgnoreCase(securityConfig.getIssuer())) {
+				try {
+					issuer = ModIUtilities.getDynamicValue(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_ISSUER : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_ISSUER, 
+							securityConfig.getIssuer(), dynamicMap, context);
+				}catch(Exception e) {
+					this.log.error(e.getMessage(),e);
+					ProtocolException pe = new ProtocolException(e.getMessage());
+					pe.setInteroperabilityError(true);
+					throw pe;
+				}
+			}
+			if(issuer!=null) {
+				payloadToken.put(Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER, issuer);
+				busta.addProperty(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_ISSUER : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_ISSUER, 
+						issuer);
+			}
 		}
-		if(addSub &&
-			securityConfig.getSubject()!=null &&
-			!DynamicHelperCostanti.NOT_GENERATE.equalsIgnoreCase(securityConfig.getSubject())) {
+		if(addSub) {
 			String subject = null;
-			try {
-				subject = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_SUBJECT, 
-						securityConfig.getSubject(), dynamicMap, context);
-			}catch(Exception e) {
-				this.log.error(e.getMessage(),e);
-				ProtocolException pe = new ProtocolException(e.getMessage());
-				pe.setInteroperabilityError(true);
-				throw pe;
+			if(tokenAudit) {
+				if(clientId==null) {
+					ProtocolException pe = new ProtocolException("ClientId undefined; required in audit token 'sub' claim");
+					pe.setInteroperabilityError(true);
+					throw pe;
+				}
+				subject = clientId;
 			}
-			payloadToken.put(Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT, subject);
-			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_SUBJECT, subject);
+			else if(securityConfig.getSubject()!=null &&
+					!DynamicHelperCostanti.NOT_GENERATE.equalsIgnoreCase(securityConfig.getSubject())) {
+				try {
+					subject = ModIUtilities.getDynamicValue(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_SUBJECT : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_SUBJECT, 
+							securityConfig.getSubject(), dynamicMap, context);
+				}catch(Exception e) {
+					this.log.error(e.getMessage(),e);
+					ProtocolException pe = new ProtocolException(e.getMessage());
+					pe.setInteroperabilityError(true);
+					throw pe;
+				}
+			}
+			if(subject!=null) {
+				payloadToken.put(Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT, subject);
+				busta.addProperty(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_SUBJECT : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_SUBJECT, 
+						subject);
+			}
+		}
+		
+		if(purposeId!=null) {
+			boolean addPurposeId = false;
+			if(tokenAudit) {
+				addPurposeId = this.modiProperties.isSecurityTokenAuditAddPurposeId();
+			}
+			else if(integritaX509) {
+				addPurposeId = this.modiProperties.isSecurityTokenIntegrity01AddPurposeId();
+			}
+			else if(integritaKid) {
+				addPurposeId = this.modiProperties.isSecurityTokenIntegrity02AddPurposeId();
+			}
+			if(addPurposeId) {
+				String purposeValue = null;
+				try {
+					purposeValue = ModIUtilities.getDynamicValue(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PURPOSE_ID : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_PURPOSE_ID, 
+							purposeId, dynamicMap, context);
+				}catch(Exception e) {
+					this.log.error(e.getMessage(),e);
+					ProtocolException pe = new ProtocolException(e.getMessage());
+					pe.setInteroperabilityError(true);
+					throw pe;
+				}
+				if(purposeValue!=null) {
+					payloadToken.put(Costanti.PDND_PURPOSE_ID, purposeValue);
+					busta.addProperty(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PURPOSE_ID : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_PURPOSE_ID, 
+							purposeValue);
+				}
+			}
 		}
 		
 		Map<String, String> claimsCustom = new HashMap<>();
@@ -864,10 +962,15 @@ public class ModIImbustamentoRest {
 		secProperties.put(SecurityConstants.JOSE_TYPE, org.apache.cxf.rs.security.jose.common.JoseConstants.TYPE_JWT);
 		
 		// algoritmi
-		secProperties.put(SecurityConstants.SIGNATURE_ALGORITHM, securityConfig.getAlgorithm());
+		if(tokenAudit && apiSoap) {
+			secProperties.put(SecurityConstants.SIGNATURE_ALGORITHM, securityConfig.getAlgorithmConvertForREST());
+		}
+		else {
+			secProperties.put(SecurityConstants.SIGNATURE_ALGORITHM, securityConfig.getAlgorithm());
+		}
 		
 		// spedizione certificato
-		if(integritaKid || useKIDforIdAUTH) {
+		if(integritaKid || useKIDtokenHeader) {
 			if(kid==null) {
 				// utilizzo l'alias
 				kid = keystoreConfig.getSecurityMessageKeyAlias();
@@ -878,17 +981,24 @@ public class ModIImbustamentoRest {
 			secProperties.put(SecurityConstants.JOSE_KID_CUSTOM, kid); // kid
 		}
 		else {
-			secProperties.put(SecurityConstants.JOSE_KID, SecurityConstants.JOSE_KID_TRUE); // kid
-			if(securityConfig.isX5c()) {
+			boolean addKid = tokenAudit ? this.modiProperties.isSecurityTokenAuditX509AddKid() : this.modiProperties.isSecurityTokenX509AddKid();
+			if(addKid) {
+				secProperties.put(SecurityConstants.JOSE_KID, SecurityConstants.JOSE_KID_TRUE); // kid
+			}
+			boolean x5c = tokenAudit && apiSoap ? this.modiProperties.isSecurityTokenAuditApiSoapX509RiferimentoX5c() : securityConfig.isX5c();
+			if(x5c) {
 				secProperties.put(SecurityConstants.JOSE_INCLUDE_CERT, SecurityConstants.JOSE_INCLUDE_CERT_TRUE);
-				if(!securityConfig.isUseSingleCertificate()) {
+				boolean x5cUseSingleCertificate = tokenAudit && apiSoap ? this.modiProperties.isSecurityTokenAuditApiSoapX509RiferimentoX5cSingleCertificate() : securityConfig.isUseSingleCertificate();
+				if(!x5cUseSingleCertificate) {
 					secProperties.put(SecurityConstants.JOSE_INCLUDE_CERT_CHAIN, SecurityConstants.JOSE_INCLUDE_CERT_CHAIN_TRUE);
 				}
 			}
-			if(securityConfig.isX5t()) {
+			boolean x5t = tokenAudit && apiSoap ? this.modiProperties.isSecurityTokenAuditApiSoapX509RiferimentoX5t() : securityConfig.isX5t();
+			if(x5t) {
 				secProperties.put(SecurityConstants.JOSE_INCLUDE_CERT_SHA, SecurityConstants.JOSE_INCLUDE_CERT_SHA_256);
 			}
-			if(securityConfig.isX5u()) {
+			boolean x5u = tokenAudit && apiSoap ? this.modiProperties.isSecurityTokenAuditApiSoapX509RiferimentoX5u() : securityConfig.isX5u();
+			if(x5u) {
 				secProperties.put(SecurityConstants.JOSE_X509_URL, securityConfig.getX5url());
 			}
 		}
@@ -901,7 +1011,7 @@ public class ModIImbustamentoRest {
 				try {
 					JWKSetStore jwtStore = GestoreKeystoreCache.getJwkSetStore(requestInfo, keystoreConfig.getSecurityMessageKeystorePath());
 					if(jwtStore==null) {
-						throw new ProtocolException("Accesso al keystore ["+keystoreConfig.getSecurityMessageKeystoreType()+"] '"+keystoreConfig.getSecurityMessageKeystorePath()+"' non riuscito");
+						throw newProtocolExceptionAccessoKeystoreNonRiuscito(keystoreConfig.getSecurityMessageKeystoreType(),keystoreConfig.getSecurityMessageKeystorePath());
 					}
 					jwkSet = jwtStore.getJwkSet();
 				}catch(Exception e) {
@@ -913,7 +1023,7 @@ public class ModIImbustamentoRest {
 					KeyPairStore keyPairStore = GestoreKeystoreCache.getKeyPairStore(requestInfo, keystoreConfig.getSecurityMessageKeystorePath(), keystoreConfig.getSecurityMessageKeystorePathPublicKey(), 
 							keystoreConfig.getSecurityMessageKeyPassword(), keystoreConfig.getSecurityMessageKeystoreKeyAlgorithm());
 					if(keyPairStore==null) {
-						throw new ProtocolException("Accesso al keystore ["+keystoreConfig.getSecurityMessageKeystoreType()+"] '"+keystoreConfig.getSecurityMessageKeystorePath()+"' non riuscito");
+						throw newProtocolExceptionAccessoKeystoreNonRiuscito(keystoreConfig.getSecurityMessageKeystoreType(),keystoreConfig.getSecurityMessageKeystorePath());
 					}
 					jwkSet = keyPairStore.getJwkSet();
 				}catch(Exception e) {
@@ -926,7 +1036,7 @@ public class ModIImbustamentoRest {
 							keystoreConfig.getSecurityMessageKeystorePath(), keystoreConfig.getSecurityMessageKeystoreType(), 
 							keystoreConfig.getSecurityMessageKeystorePassword());
 					if(merlinKs==null) {
-						throw new ProtocolException("Accesso al keystore ["+keystoreConfig.getSecurityMessageKeystoreType()+"] '"+keystoreConfig.getSecurityMessageKeystorePath()+"' non riuscito");
+						throw newProtocolExceptionAccessoKeystoreNonRiuscito(keystoreConfig.getSecurityMessageKeystoreType(),keystoreConfig.getSecurityMessageKeystorePath());
 					}
 					ks = merlinKs.getKeyStore();
 				}catch(Exception e) {
@@ -968,6 +1078,7 @@ public class ModIImbustamentoRest {
 		}
 		
 		// Aggiungo a traccia informazioni sul certificato utilizzato
+		X509Certificate x509 = null;
 		if(ks!=null) {
 			Certificate certificate = null;
 			try {
@@ -976,15 +1087,18 @@ public class ModIImbustamentoRest {
 				throw new ProtocolException(e.getMessage(),e);
 			}
 			if(certificate instanceof X509Certificate) {
-				X509Certificate x509 = (X509Certificate) certificate;
-				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_X509_SUBJECT, x509.getSubjectX500Principal().toString());
+				x509 = (X509Certificate) certificate;
+				busta.addProperty(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_X509_SUBJECT : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_X509_SUBJECT, 
+						x509.getSubjectX500Principal().toString());
 				if(x509.getIssuerX500Principal()!=null) {
-					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_X509_ISSUER, x509.getIssuerX500Principal().toString());
+					busta.addProperty(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_X509_ISSUER : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_X509_ISSUER, 
+							x509.getIssuerX500Principal().toString());
 				}
 			}
 		}
 		if(jwkSet!=null) {
-			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_KID, kid);
+			busta.addProperty(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_KID : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_KID,
+					kid);
 		}
 		
 		
@@ -1009,7 +1123,52 @@ public class ModIImbustamentoRest {
 			msg.forceTransportHeader(securityTokenHeader, bout.toString());
 		}
 		
-		return bout.toString();
+		String token = bout.toString();
+		
+		
+		
+		
+		
+		if(request && context!=null) {
+			
+			SecurityToken securityTokenForContext = ModIUtilities.newSecurityToken(context);
+			
+			RestMessageSecurityToken restSecurityToken = new RestMessageSecurityToken();
+			
+			if(x509!=null) {
+				restSecurityToken.setCertificate(new CertificateInfo(x509, securityTokenHeader));
+			}
+			if(kid!=null) {
+				restSecurityToken.setKid(kid);
+			}
+			restSecurityToken.setToken(token);
+			restSecurityToken.setHttpHeaderName(securityTokenHeader);
+			if(tokenAudit) {
+				securityTokenForContext.setAudit(restSecurityToken);
+			}
+			else if(headerDuplicati) {
+				if(headerAuthentication) {
+					securityTokenForContext.setAuthorization(restSecurityToken);
+				}
+				else {
+					securityTokenForContext.setIntegrity(restSecurityToken);	
+				}
+			}
+			else {
+				if(HttpConstants.AUTHORIZATION.equalsIgnoreCase(securityTokenHeader)) {
+					securityTokenForContext.setAuthorization(restSecurityToken);
+				}
+				else {
+					securityTokenForContext.setIntegrity(restSecurityToken);
+				}
+			}
+			
+		}
+		
+		
+		
+		
+		return token;
 	}
 	
 	public static List<String> getHeaderValues(RuoloMessaggio ruoloMessaggio, OpenSPCoop2Message msg, Map<String, List<String>> mapForceTransportHeaders, String httpHeader){
@@ -1031,5 +1190,150 @@ public class ModIImbustamentoRest {
 		}
 		
 		return values;
+	}
+	
+	private void addCorniceSicurezzaSchema(ModISecurityConfig securityConfig,
+			Map<String, Object> dynamicMap, Context context,
+			ObjectNode payloadToken, Busta busta,
+			String corniceSicurezzaSchema) throws ProtocolException {
+		if(corniceSicurezzaSchema!=null && StringUtils.isNotEmpty(corniceSicurezzaSchema)) {
+			addCorniceSicurezzaSchema(
+					dynamicMap, context,
+					payloadToken, busta,
+					securityConfig.getCorniceSicurezzaSchemaConfig()!=null ? securityConfig.getCorniceSicurezzaSchemaConfig().getClaims() : null,
+					securityConfig.getCorniceSicurezzaRules());
+		}
+	}
+	private void addCorniceSicurezzaSchema(
+			Map<String, Object> dynamicMap, Context context,
+			ObjectNode payloadToken, Busta busta,
+			List<ModIAuditClaimConfig> schemas, Map<String, List<String>> rules) throws ProtocolException {
+		if(schemas!=null && !schemas.isEmpty()) {
+			for (ModIAuditClaimConfig modIAuditClaimConfig : schemas) {
+				
+				String claimName = modIAuditClaimConfig.getNome();
+				String valore = null;
+				try {
+					if(rules==null) {
+						throw new ProtocolException("Rules not available");
+					}
+					List<String> claimRules = rules.get(claimName);
+					if(claimRules==null || claimRules.isEmpty()) {
+						throw new ProtocolException("Rules not available for claim '"+claimName+"'");
+					}
+					
+					valore = addCorniceSicurezzaSchemaPayload(dynamicMap, context,
+							payloadToken, 
+							modIAuditClaimConfig, claimName, claimRules);
+					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PREFIX+claimName, valore);
+				}catch(Exception e) {
+					if(modIAuditClaimConfig.isRequired()) {
+						this.log.error(e.getMessage(),e);
+						ProtocolException pe = new ProtocolException(e.getMessage());
+						pe.setInteroperabilityError(true);
+						throw pe;
+					}
+					else {
+						this.log.debug(e.getMessage(),e);
+					}
+				}
+				
+			}
+		}
+	}
+	private String addCorniceSicurezzaSchemaPayload(Map<String, Object> dynamicMap, Context context,
+			ObjectNode payloadToken, 
+			ModIAuditClaimConfig modIAuditClaimConfig, String claimName, List<String> rules) throws ProtocolException {
+		String valore = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL+" - "+modIAuditClaimConfig.getLabel(), 
+				rules, dynamicMap, context);
+		if(modIAuditClaimConfig.isStringType()) {
+			payloadToken.put(claimName, valore);
+		}
+		else {
+			if("true".equals(valore)) {
+				payloadToken.put(claimName, true);
+			}
+			else if("false".equals(valore)) {
+				payloadToken.put(claimName, false);
+			}
+			else {
+				long l = Long.parseLong(valore);
+				payloadToken.put(claimName, l);
+			}
+		}
+		return valore;
+	}
+	
+	private boolean addCorniceSicurezzaLegacyCodiceEnte(ModISecurityConfig securityConfig,
+			Map<String, Object> dynamicMap, Context context,
+			ObjectNode payloadToken, Busta busta) throws ProtocolException {
+		
+		boolean addIss = true;
+		
+		String claimNameCodiceEnte = this.modiProperties.getSicurezzaMessaggioCorniceSicurezzaRestCodiceEnte();
+		if(Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER.equals(claimNameCodiceEnte)) {
+			addIss = false;
+		}
+		String codiceEnte = null;
+		try {
+			codiceEnte = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL+" - "+ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE_LABEL, 
+					securityConfig.getCorniceSicurezzaCodiceEnteRule(), dynamicMap, context);
+		}catch(Exception e) {
+			this.log.error(e.getMessage(),e);
+			ProtocolException pe = new ProtocolException(e.getMessage());
+			pe.setInteroperabilityError(true);
+			throw pe;
+		}
+		payloadToken.put(claimNameCodiceEnte, codiceEnte);
+		busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_ENTE, codiceEnte);
+		
+		return addIss;
+		
+	}
+	
+	private boolean addCorniceSicurezzaLegacyUser(ModISecurityConfig securityConfig,
+			Map<String, Object> dynamicMap, Context context,
+			ObjectNode payloadToken, Busta busta) throws ProtocolException {
+		
+		boolean addSub = true;
+		
+		String claimNameUser = this.modiProperties.getSicurezzaMessaggioCorniceSicurezzaRestUser();
+		if(Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT.equals(claimNameUser)) {
+			addSub = false;
+		}
+		String utente = null;
+		try {
+			utente = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL+" - "+ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE_LABEL,
+					securityConfig.getCorniceSicurezzaUserRule(), dynamicMap, context);
+		}catch(Exception e) {
+			this.log.error(e.getMessage(),e);
+			ProtocolException pe = new ProtocolException(e.getMessage());
+			pe.setInteroperabilityError(true);
+			throw pe;
+		}
+		payloadToken.put(claimNameUser, utente);
+		busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER, utente);
+		
+		return addSub;
+		
+	}
+		
+	private void addCorniceSicurezzaLegacyIpUser(ModISecurityConfig securityConfig,
+			Map<String, Object> dynamicMap, Context context,
+			ObjectNode payloadToken, Busta busta) throws ProtocolException {
+	
+		String claimNameIpUser = this.modiProperties.getSicurezzaMessaggioCorniceSicurezzaRestIpuser();
+		String indirizzoIpPostazione = null;
+		try {
+			indirizzoIpPostazione = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL+" - "+ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE_LABEL,
+					securityConfig.getCorniceSicurezzaIpUserRule(), dynamicMap, context);
+		}catch(Exception e) {
+			this.log.error(e.getMessage(),e);
+			ProtocolException pe = new ProtocolException(e.getMessage());
+			pe.setInteroperabilityError(true);
+			throw pe;
+		}
+		payloadToken.put(claimNameIpUser, indirizzoIpPostazione);
+		busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER_IP, indirizzoIpPostazione);
 	}
 }

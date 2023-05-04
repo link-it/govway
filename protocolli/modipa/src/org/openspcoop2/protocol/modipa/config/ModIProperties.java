@@ -221,17 +221,29 @@ public class ModIProperties {
 			
 			/* **** CORNICE SICUREZZA **** */
 			
-			if(isSicurezzaMessaggio_corniceSicurezza_enabled()) {
-				getSicurezzaMessaggio_corniceSicurezza_rest_codice_ente();
-				getSicurezzaMessaggio_corniceSicurezza_rest_user();
-				getSicurezzaMessaggio_corniceSicurezza_rest_ipuser();	
-				getSicurezzaMessaggio_corniceSicurezza_soap_codice_ente();
-				getSicurezzaMessaggio_corniceSicurezza_soap_user();
-				getSicurezzaMessaggio_corniceSicurezza_soap_ipuser();	
-				getSicurezzaMessaggio_corniceSicurezza_dynamic_codice_ente();
-				getSicurezzaMessaggio_corniceSicurezza_dynamic_user();
-				getSicurezzaMessaggio_corniceSicurezza_dynamic_ipuser();	
+			if(isSicurezzaMessaggioCorniceSicurezzaEnabled()!=null && isSicurezzaMessaggioCorniceSicurezzaEnabled().booleanValue()) {
+				getSicurezzaMessaggioCorniceSicurezzaRestCodiceEnte();
+				getSicurezzaMessaggioCorniceSicurezzaRestUser();
+				getSicurezzaMessaggioCorniceSicurezzaRestIpuser();	
+				getSicurezzaMessaggioCorniceSicurezzaSoapCodiceEnte();
+				getSicurezzaMessaggioCorniceSicurezzaSoapUser();
+				getSicurezzaMessaggioCorniceSicurezzaSoapIpuser();	
+				getSicurezzaMessaggioCorniceSicurezzaDynamicCodiceEnte();
+				getSicurezzaMessaggioCorniceSicurezzaDynamicUser();
+				getSicurezzaMessaggioCorniceSicurezzaDynamicIpuser();	
 			}
+			
+			/* **** AUDIT **** */
+			
+			getAuditConfig();
+			getSecurityTokenHeaderModIAudit();
+			isSecurityTokenAuditX509AddKid();
+			isSecurityTokenAuditApiSoapX509RiferimentoX5c();
+			isSecurityTokenAuditApiSoapX509RiferimentoX5cSingleCertificate();
+			isSecurityTokenAuditApiSoapX509RiferimentoX5u();
+			isSecurityTokenAuditApiSoapX509RiferimentoX5t();
+			isSecurityTokenAuditAddPurposeId();
+					
 			
 			/* **** TRACCE **** */ 
 			
@@ -244,6 +256,9 @@ public class ModIProperties {
 			/* **** REST **** */ 
 			
 			getRestSecurityTokenHeaderModI();
+			isSecurityTokenX509AddKid();
+			isSecurityTokenIntegrity01AddPurposeId();
+			isSecurityTokenIntegrity02AddPurposeId();
 			if(isRestSecurityTokenClaimsIssuerEnabled()) {
 				getRestSecurityTokenClaimsIssuerHeaderValue();
 			}
@@ -887,9 +902,9 @@ public class ModIProperties {
 	
 	/* **** CORNICE SICUREZZA **** */
 	
-	private Boolean isSicurezzaMessaggio_corniceSicurezza_enabled = null;
-	public Boolean isSicurezzaMessaggio_corniceSicurezza_enabled(){
-		if(this.isSicurezzaMessaggio_corniceSicurezza_enabled==null){
+	private Boolean isSicurezzaMessaggioCorniceSicurezzaEnabled = null;
+	public Boolean isSicurezzaMessaggioCorniceSicurezzaEnabled(){
+		if(this.isSicurezzaMessaggioCorniceSicurezzaEnabled==null){
 			
 			Boolean defaultValue = false;
 			String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.corniceSicurezza";
@@ -899,24 +914,24 @@ public class ModIProperties {
 
 				if (value != null){
 					value = value.trim();
-					this.isSicurezzaMessaggio_corniceSicurezza_enabled = Boolean.parseBoolean(value);
+					this.isSicurezzaMessaggioCorniceSicurezzaEnabled = Boolean.parseBoolean(value);
 				}else{
 					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
-					this.isSicurezzaMessaggio_corniceSicurezza_enabled = defaultValue;
+					this.isSicurezzaMessaggioCorniceSicurezzaEnabled = defaultValue;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
-				this.isSicurezzaMessaggio_corniceSicurezza_enabled = defaultValue;
+				this.isSicurezzaMessaggioCorniceSicurezzaEnabled = defaultValue;
 			}
 		}
 
-		return this.isSicurezzaMessaggio_corniceSicurezza_enabled;
+		return this.isSicurezzaMessaggioCorniceSicurezzaEnabled;
 	}
 	
-	private String sicurezzaMessaggio_corniceSicurezza_rest_codice_ente= null;
-	public String getSicurezzaMessaggio_corniceSicurezza_rest_codice_ente() throws ProtocolException{
-    	if(this.sicurezzaMessaggio_corniceSicurezza_rest_codice_ente==null){
+	private String sicurezzaMessaggioCorniceSicurezzaRestCodiceEnte= null;
+	public String getSicurezzaMessaggioCorniceSicurezzaRestCodiceEnte() throws ProtocolException{
+    	if(this.sicurezzaMessaggioCorniceSicurezzaRestCodiceEnte==null){
 	    	
     		String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.corniceSicurezza.rest.codice_ente";
     		try{  
@@ -924,7 +939,7 @@ public class ModIProperties {
 				
 				if (value != null){
 					value = value.trim();
-					this.sicurezzaMessaggio_corniceSicurezza_rest_codice_ente = value;
+					this.sicurezzaMessaggioCorniceSicurezzaRestCodiceEnte = value;
 				}
 				else {
 					throw newProtocolExceptionPropertyNonDefinita();
@@ -936,12 +951,12 @@ public class ModIProperties {
 			}
     	}
     	
-    	return this.sicurezzaMessaggio_corniceSicurezza_rest_codice_ente;
+    	return this.sicurezzaMessaggioCorniceSicurezzaRestCodiceEnte;
 	}
 	
-	private String sicurezzaMessaggio_corniceSicurezza_rest_user= null;
-	public String getSicurezzaMessaggio_corniceSicurezza_rest_user() throws ProtocolException{
-    	if(this.sicurezzaMessaggio_corniceSicurezza_rest_user==null){
+	private String sicurezzaMessaggioCorniceSicurezzaRestUser= null;
+	public String getSicurezzaMessaggioCorniceSicurezzaRestUser() throws ProtocolException{
+    	if(this.sicurezzaMessaggioCorniceSicurezzaRestUser==null){
 	    	
     		String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.corniceSicurezza.rest.user";
     		try{  
@@ -949,7 +964,7 @@ public class ModIProperties {
 				
 				if (value != null){
 					value = value.trim();
-					this.sicurezzaMessaggio_corniceSicurezza_rest_user = value;
+					this.sicurezzaMessaggioCorniceSicurezzaRestUser = value;
 				}
 				else {
 					throw newProtocolExceptionPropertyNonDefinita();
@@ -961,12 +976,12 @@ public class ModIProperties {
 			}
     	}
     	
-    	return this.sicurezzaMessaggio_corniceSicurezza_rest_user;
+    	return this.sicurezzaMessaggioCorniceSicurezzaRestUser;
 	}
 	
-	private String sicurezzaMessaggio_corniceSicurezza_rest_ipuser= null;
-	public String getSicurezzaMessaggio_corniceSicurezza_rest_ipuser() throws ProtocolException{
-    	if(this.sicurezzaMessaggio_corniceSicurezza_rest_ipuser==null){
+	private String sicurezzaMessaggioCorniceSicurezzaRestIpuser= null;
+	public String getSicurezzaMessaggioCorniceSicurezzaRestIpuser() throws ProtocolException{
+    	if(this.sicurezzaMessaggioCorniceSicurezzaRestIpuser==null){
 	    	
     		String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.corniceSicurezza.rest.ipuser";
     		try{  
@@ -974,7 +989,7 @@ public class ModIProperties {
 				
 				if (value != null){
 					value = value.trim();
-					this.sicurezzaMessaggio_corniceSicurezza_rest_ipuser = value;
+					this.sicurezzaMessaggioCorniceSicurezzaRestIpuser = value;
 				}
 				else {
 					throw newProtocolExceptionPropertyNonDefinita();
@@ -986,13 +1001,13 @@ public class ModIProperties {
 			}
     	}
     	
-    	return this.sicurezzaMessaggio_corniceSicurezza_rest_ipuser;
+    	return this.sicurezzaMessaggioCorniceSicurezzaRestIpuser;
 	}
 	
-	private String sicurezzaMessaggio_corniceSicurezza_soap_codice_ente= null;
-	private Boolean sicurezzaMessaggio_corniceSicurezza_soap_codice_enteReaded= null;
-	public String getSicurezzaMessaggio_corniceSicurezza_soap_codice_ente() throws ProtocolException{
-    	if(this.sicurezzaMessaggio_corniceSicurezza_soap_codice_enteReaded==null){
+	private String sicurezzaMessaggioCorniceSicurezzaSoapCodiceEnte= null;
+	private Boolean sicurezzaMessaggioCorniceSicurezzaSoapCodiceEnteReaded= null;
+	public String getSicurezzaMessaggioCorniceSicurezzaSoapCodiceEnte() throws ProtocolException{
+    	if(this.sicurezzaMessaggioCorniceSicurezzaSoapCodiceEnteReaded==null){
 	    	
     		String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.corniceSicurezza.soap.codice_ente";
     		try{  
@@ -1000,27 +1015,27 @@ public class ModIProperties {
 				
 				if (value != null){
 					value = value.trim();
-					this.sicurezzaMessaggio_corniceSicurezza_soap_codice_ente = value;
+					this.sicurezzaMessaggioCorniceSicurezzaSoapCodiceEnte = value;
 				}
 				// In soap il codice utente viene inserito anche in saml2:Subject
-//				else {
+/**				else {
 //					throw newProtocolExceptionPropertyNonDefinita();
-//				}
+//				}*/
 				
 			}catch(java.lang.Exception e) {
 				this.logError(getMessaggioErroreProprietaNonImpostata(propertyName, e));
 				throw new ProtocolException(e.getMessage(),e);
 			}
     		
-    		this.sicurezzaMessaggio_corniceSicurezza_soap_codice_enteReaded = true;
+    		this.sicurezzaMessaggioCorniceSicurezzaSoapCodiceEnteReaded = true;
     	}
     	
-    	return this.sicurezzaMessaggio_corniceSicurezza_soap_codice_ente;
+    	return this.sicurezzaMessaggioCorniceSicurezzaSoapCodiceEnte;
 	}
 	
-	private String sicurezzaMessaggio_corniceSicurezza_soap_user= null;
-	public String getSicurezzaMessaggio_corniceSicurezza_soap_user() throws ProtocolException{
-    	if(this.sicurezzaMessaggio_corniceSicurezza_soap_user==null){
+	private String sicurezzaMessaggioCorniceSicurezzaSoapUser= null;
+	public String getSicurezzaMessaggioCorniceSicurezzaSoapUser() throws ProtocolException{
+    	if(this.sicurezzaMessaggioCorniceSicurezzaSoapUser==null){
 	    	
     		String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.corniceSicurezza.soap.user";
     		try{  
@@ -1028,7 +1043,7 @@ public class ModIProperties {
 				
 				if (value != null){
 					value = value.trim();
-					this.sicurezzaMessaggio_corniceSicurezza_soap_user = value;
+					this.sicurezzaMessaggioCorniceSicurezzaSoapUser = value;
 				}
 				else {
 					throw newProtocolExceptionPropertyNonDefinita();
@@ -1040,12 +1055,12 @@ public class ModIProperties {
 			}
     	}
     	
-    	return this.sicurezzaMessaggio_corniceSicurezza_soap_user;
+    	return this.sicurezzaMessaggioCorniceSicurezzaSoapUser;
 	}
 	
-	private String sicurezzaMessaggio_corniceSicurezza_soap_ipuser= null;
-	public String getSicurezzaMessaggio_corniceSicurezza_soap_ipuser() throws ProtocolException{
-    	if(this.sicurezzaMessaggio_corniceSicurezza_soap_ipuser==null){
+	private String sicurezzaMessaggioCorniceSicurezzaSoapIpuser= null;
+	public String getSicurezzaMessaggioCorniceSicurezzaSoapIpuser() throws ProtocolException{
+    	if(this.sicurezzaMessaggioCorniceSicurezzaSoapIpuser==null){
 	    	
     		String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.corniceSicurezza.soap.ipuser";
     		try{  
@@ -1053,7 +1068,7 @@ public class ModIProperties {
 				
 				if (value != null){
 					value = value.trim();
-					this.sicurezzaMessaggio_corniceSicurezza_soap_ipuser = value;
+					this.sicurezzaMessaggioCorniceSicurezzaSoapIpuser = value;
 				}
 				else {
 					throw newProtocolExceptionPropertyNonDefinita();
@@ -1065,62 +1080,298 @@ public class ModIProperties {
 			}
     	}
     	
-    	return this.sicurezzaMessaggio_corniceSicurezza_soap_ipuser;
+    	return this.sicurezzaMessaggioCorniceSicurezzaSoapIpuser;
 	}
 	
-	private List<String> sicurezzaMessaggio_corniceSicurezza_dynamic_codice_ente= null;
-	public List<String> getSicurezzaMessaggio_corniceSicurezza_dynamic_codice_ente() throws ProtocolException{
-    	if(this.sicurezzaMessaggio_corniceSicurezza_dynamic_codice_ente==null){
+	private List<String> sicurezzaMessaggioCorniceSicurezzaDynamicCodiceEnte= null;
+	public List<String> getSicurezzaMessaggioCorniceSicurezzaDynamicCodiceEnte() throws ProtocolException{
+    	if(this.sicurezzaMessaggioCorniceSicurezzaDynamicCodiceEnte==null){
 	    	
     		String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.corniceSicurezza.codice_ente";
     		try{  
-				//String value = this.reader.getValue_convertEnvProperties(propertyName);
+				/**String value = this.reader.getValue_convertEnvProperties(propertyName);*/
     			String value = this.reader.getValue(propertyName); // contiene ${} da non risolvere
-				this.sicurezzaMessaggio_corniceSicurezza_dynamic_codice_ente = ModISecurityConfig.convertToList(value);
+				this.sicurezzaMessaggioCorniceSicurezzaDynamicCodiceEnte = ModISecurityConfig.convertToList(value);
 			}catch(java.lang.Exception e) {
 				this.logError(getMessaggioErroreProprietaNonImpostata(propertyName, e));
 				throw new ProtocolException(e.getMessage(),e);
 			}
     	}
     	
-    	return this.sicurezzaMessaggio_corniceSicurezza_dynamic_codice_ente;
+    	return this.sicurezzaMessaggioCorniceSicurezzaDynamicCodiceEnte;
 	}
 	
-	private List<String> sicurezzaMessaggio_corniceSicurezza_dynamic_user= null;
-	public List<String> getSicurezzaMessaggio_corniceSicurezza_dynamic_user() throws ProtocolException{
-    	if(this.sicurezzaMessaggio_corniceSicurezza_dynamic_user==null){
+	private List<String> sicurezzaMessaggioCorniceSicurezzaDynamicUser= null;
+	public List<String> getSicurezzaMessaggioCorniceSicurezzaDynamicUser() throws ProtocolException{
+    	if(this.sicurezzaMessaggioCorniceSicurezzaDynamicUser==null){
 	    	
     		String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.corniceSicurezza.user";
     		try{  
-    			//String value = this.reader.getValue_convertEnvProperties(propertyName);
+    			/**String value = this.reader.getValue_convertEnvProperties(propertyName);*/
     			String value = this.reader.getValue(propertyName); // contiene ${} da non risolvere
-				this.sicurezzaMessaggio_corniceSicurezza_dynamic_user = ModISecurityConfig.convertToList(value);
+				this.sicurezzaMessaggioCorniceSicurezzaDynamicUser = ModISecurityConfig.convertToList(value);
 			}catch(java.lang.Exception e) {
 				this.logError(getMessaggioErroreProprietaNonImpostata(propertyName, e));
 				throw new ProtocolException(e.getMessage(),e);
 			}
     	}
     	
-    	return this.sicurezzaMessaggio_corniceSicurezza_dynamic_user;
+    	return this.sicurezzaMessaggioCorniceSicurezzaDynamicUser;
 	}
 	
-	private List<String> sicurezzaMessaggio_corniceSicurezza_dynamic_ipuser= null;
-	public List<String> getSicurezzaMessaggio_corniceSicurezza_dynamic_ipuser() throws ProtocolException{
-    	if(this.sicurezzaMessaggio_corniceSicurezza_dynamic_ipuser==null){
+	private List<String> sicurezzaMessaggioCorniceSicurezzaDynamicIpuser= null;
+	public List<String> getSicurezzaMessaggioCorniceSicurezzaDynamicIpuser() throws ProtocolException{
+    	if(this.sicurezzaMessaggioCorniceSicurezzaDynamicIpuser==null){
 	    	
     		String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.corniceSicurezza.ipuser";
     		try{  
-    			//String value = this.reader.getValue_convertEnvProperties(propertyName);
+    			/**String value = this.reader.getValue_convertEnvProperties(propertyName);*/
     			String value = this.reader.getValue(propertyName); // contiene ${} da non risolvere
-				this.sicurezzaMessaggio_corniceSicurezza_dynamic_ipuser = ModISecurityConfig.convertToList(value);
+				this.sicurezzaMessaggioCorniceSicurezzaDynamicIpuser = ModISecurityConfig.convertToList(value);
 			}catch(java.lang.Exception e) {
 				this.logError(getMessaggioErroreProprietaNonImpostata(propertyName, e));
 				throw new ProtocolException(e.getMessage(),e);
 			}
     	}
     	
-    	return this.sicurezzaMessaggio_corniceSicurezza_dynamic_ipuser;
+    	return this.sicurezzaMessaggioCorniceSicurezzaDynamicIpuser;
 	}
+	
+	
+	
+	
+	
+	private List<ModIAuditConfig> auditConfig = null;
+	public List<ModIAuditConfig> getAuditConfig() throws ProtocolException{
+    	if(this.auditConfig==null){
+    		String pName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern";
+        	try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+				
+				if (value != null){
+					value = value.trim();
+					
+					this.auditConfig= new ArrayList<>();
+					
+					readAuditConf(value);
+					
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioErroreProprietaNonCorretta(pName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}
+    	}
+    	
+    	return this.auditConfig;
+	}
+	private void readAuditConf(String value) throws UtilsException, ProtocolException {
+		String [] tmp = value.split(",");
+		if(tmp!=null && tmp.length>0) {
+			for (String auditConf : tmp) {
+				auditConf = auditConf.trim();
+				
+				String debugPrefix = "Pattern audit '"+auditConf+"'";
+				
+				String propertyPrefix = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern."+auditConf;
+				Properties p = this.reader.readProperties(propertyPrefix+"."); // non devo convertire le properties poiche' possoono contenere ${ che useremo per la risoluzione dinamica
+				if(p==null || p.isEmpty()) {
+					throw new ProtocolException(debugPrefix+" non trovata");
+				}
+				ModIAuditConfig config = new ModIAuditConfig(propertyPrefix, propertyPrefix, p);
+				this.auditConfig.add(config);
+			}
+		}
+	}
+	
+	private String getSecurityTokenHeaderAudit= null;
+	public String getSecurityTokenHeaderModIAudit() throws ProtocolException{
+    	if(this.getSecurityTokenHeaderAudit==null){
+	    	String name = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.securityToken.header";
+    		try{  
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					this.getSecurityTokenHeaderAudit = value;
+				}
+				else {
+					throw newProtocolExceptionPropertyNonDefinita();
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = getMessaggioErroreProprietaNonImpostata(name, e); 
+				this.logError(msgErrore);
+				throw new ProtocolException(msgErrore,e);
+			}
+    	}
+    	
+    	return this.getSecurityTokenHeaderAudit;
+	}
+	
+    private Boolean isSecurityTokenAuditX509AddKid = null;
+	public boolean isSecurityTokenAuditX509AddKid(){
+		if(this.isSecurityTokenAuditX509AddKid==null){
+			
+			boolean defaultValue = false;
+			String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.x509.kid";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isSecurityTokenAuditX509AddKid = Boolean.parseBoolean(value);
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.isSecurityTokenAuditX509AddKid = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.isSecurityTokenAuditX509AddKid = defaultValue;
+			}
+		}
+
+		return this.isSecurityTokenAuditX509AddKid;
+	}
+	
+    private Boolean isSecurityTokenAuditApiSoapX509RiferimentoX5c = null;
+	public boolean isSecurityTokenAuditApiSoapX509RiferimentoX5c(){
+		if(this.isSecurityTokenAuditApiSoapX509RiferimentoX5c==null){
+			
+			boolean defaultValue = true;
+			String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.soap.x509.x5c";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isSecurityTokenAuditApiSoapX509RiferimentoX5c = Boolean.parseBoolean(value);
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.isSecurityTokenAuditApiSoapX509RiferimentoX5c = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.isSecurityTokenAuditApiSoapX509RiferimentoX5c = defaultValue;
+			}
+		}
+
+		return this.isSecurityTokenAuditApiSoapX509RiferimentoX5c;
+	}
+	
+    private Boolean isSecurityTokenAuditApiSoapX509RiferimentoX5cSingleCertificate = null;
+	public boolean isSecurityTokenAuditApiSoapX509RiferimentoX5cSingleCertificate(){
+		if(this.isSecurityTokenAuditApiSoapX509RiferimentoX5cSingleCertificate==null){
+			
+			boolean defaultValue = true;
+			String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.soap.x509.x5c.singleCertificate";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isSecurityTokenAuditApiSoapX509RiferimentoX5cSingleCertificate = Boolean.parseBoolean(value);
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.isSecurityTokenAuditApiSoapX509RiferimentoX5cSingleCertificate = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.isSecurityTokenAuditApiSoapX509RiferimentoX5cSingleCertificate = defaultValue;
+			}
+		}
+
+		return this.isSecurityTokenAuditApiSoapX509RiferimentoX5cSingleCertificate;
+	}
+	
+    private Boolean isSecurityTokenAuditApiSoapX509RiferimentoX5u = null;
+	public boolean isSecurityTokenAuditApiSoapX509RiferimentoX5u(){
+		if(this.isSecurityTokenAuditApiSoapX509RiferimentoX5u==null){
+			
+			boolean defaultValue = false;
+			String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.soap.x509.x5u";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isSecurityTokenAuditApiSoapX509RiferimentoX5u = Boolean.parseBoolean(value);
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.isSecurityTokenAuditApiSoapX509RiferimentoX5u = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.isSecurityTokenAuditApiSoapX509RiferimentoX5u = defaultValue;
+			}
+		}
+
+		return this.isSecurityTokenAuditApiSoapX509RiferimentoX5u;
+	}
+	
+    private Boolean isSecurityTokenAuditApiSoapX509RiferimentoX5t = null;
+	public boolean isSecurityTokenAuditApiSoapX509RiferimentoX5t(){
+		if(this.isSecurityTokenAuditApiSoapX509RiferimentoX5t==null){
+			
+			boolean defaultValue = false;
+			String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.soap.x509.x5t";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isSecurityTokenAuditApiSoapX509RiferimentoX5t = Boolean.parseBoolean(value);
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.isSecurityTokenAuditApiSoapX509RiferimentoX5t = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.isSecurityTokenAuditApiSoapX509RiferimentoX5t = defaultValue;
+			}
+		}
+
+		return this.isSecurityTokenAuditApiSoapX509RiferimentoX5t;
+	}
+	
+    private Boolean isSecurityTokenAuditAddPurposeId = null;
+	public boolean isSecurityTokenAuditAddPurposeId(){
+		if(this.isSecurityTokenAuditAddPurposeId==null){
+			
+			boolean defaultValue = true;
+			String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.addPurposeId";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isSecurityTokenAuditAddPurposeId = Boolean.parseBoolean(value);
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.isSecurityTokenAuditAddPurposeId = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.isSecurityTokenAuditAddPurposeId = defaultValue;
+			}
+		}
+
+		return this.isSecurityTokenAuditAddPurposeId;
+	}
+	
+	
 	
 	
 	
@@ -1154,9 +1405,9 @@ public class ModIProperties {
 		return this.isGenerazioneTracce;
 	}
 	
-    private Boolean isGenerazioneTracce_registraToken = null;
-	public Boolean isGenerazioneTracce_registraToken(){
-		if(this.isGenerazioneTracce_registraToken==null){
+    private Boolean isGenerazioneTracceRegistraToken = null;
+	public Boolean isGenerazioneTracceRegistraToken(){
+		if(this.isGenerazioneTracceRegistraToken==null){
 			
 			Boolean defaultValue = false;
 			String propertyName = "org.openspcoop2.protocol.modipa.generazioneTracce.registrazioneToken.enabled";
@@ -1166,19 +1417,19 @@ public class ModIProperties {
 
 				if (value != null){
 					value = value.trim();
-					this.isGenerazioneTracce_registraToken = Boolean.parseBoolean(value);
+					this.isGenerazioneTracceRegistraToken = Boolean.parseBoolean(value);
 				}else{
 					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
-					this.isGenerazioneTracce_registraToken = defaultValue;
+					this.isGenerazioneTracceRegistraToken = defaultValue;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
-				this.isGenerazioneTracce_registraToken = defaultValue;
+				this.isGenerazioneTracceRegistraToken = defaultValue;
 			}
 		}
 
-		return this.isGenerazioneTracce_registraToken;
+		return this.isGenerazioneTracceRegistraToken;
 	}
 	
 	
@@ -1241,6 +1492,87 @@ public class ModIProperties {
     	}
     	
     	return this.getRestSecurityTokenHeader;
+	}
+	
+    private Boolean isSecurityTokenX509AddKid = null;
+	public boolean isSecurityTokenX509AddKid(){
+		if(this.isSecurityTokenX509AddKid==null){
+			
+			boolean defaultValue = false;
+			String propertyName = "org.openspcoop2.protocol.modipa.rest.securityToken.x509.kid";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isSecurityTokenX509AddKid = Boolean.parseBoolean(value);
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.isSecurityTokenX509AddKid = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.isSecurityTokenX509AddKid = defaultValue;
+			}
+		}
+
+		return this.isSecurityTokenX509AddKid;
+	}
+	
+    private Boolean isSecurityTokenIntegrity01AddPurposeId = null;
+	public boolean isSecurityTokenIntegrity01AddPurposeId(){
+		if(this.isSecurityTokenIntegrity01AddPurposeId==null){
+			
+			boolean defaultValue = false;
+			String propertyName = "org.openspcoop2.protocol.modipa.rest.securityToken.integrity_01.addPurposeId";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isSecurityTokenIntegrity01AddPurposeId = Boolean.parseBoolean(value);
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.isSecurityTokenIntegrity01AddPurposeId = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.isSecurityTokenIntegrity01AddPurposeId = defaultValue;
+			}
+		}
+
+		return this.isSecurityTokenIntegrity01AddPurposeId;
+	}
+	
+    private Boolean isSecurityTokenIntegrity02AddPurposeId = null;
+	public boolean isSecurityTokenIntegrity02AddPurposeId(){
+		if(this.isSecurityTokenIntegrity02AddPurposeId==null){
+			
+			boolean defaultValue = false;
+			String propertyName = "org.openspcoop2.protocol.modipa.rest.securityToken.integrity_02.addPurposeId";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isSecurityTokenIntegrity02AddPurposeId = Boolean.parseBoolean(value);
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.isSecurityTokenIntegrity02AddPurposeId = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.isSecurityTokenIntegrity02AddPurposeId = defaultValue;
+			}
+		}
+
+		return this.isSecurityTokenIntegrity02AddPurposeId;
 	}
 	
 	private Boolean getRestSecurityTokenClaimsIssuerEnabledReaded= null;
@@ -1846,7 +2178,7 @@ public class ModIProperties {
     	}
 	}	
 	
-	public List<String> getUsedRestSecurityClaims(boolean request, boolean integrita, boolean corniceSicurezza) throws ProtocolException{
+	public List<String> getUsedRestSecurityClaims(boolean request, boolean integrita) throws ProtocolException{
 		List<String> l = new ArrayList<>();
 		
 		l.add(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT);
@@ -1871,25 +2203,25 @@ public class ModIProperties {
 		}
 		
 		/*
-		 * Possono sempre essere definiti, poiche' utilizzati per sovrascrivere i default
+		 ** Possono sempre essere definiti, poiche' utilizzati per sovrascrivere i default
 		boolean addIss = true;
 		boolean addSub = true;
 		if(corniceSicurezza) {
-			v = getSicurezzaMessaggio_corniceSicurezza_rest_codice_ente();
+			v = getSicurezzaMessaggioCorniceSicurezzaRestCodiceEnte();
 			if(v!=null && StringUtils.isNotEmpty(v)) {
 				if(Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER.equals(v)) {
 					addIss = false;
 				}
 				l.add(v);
 			}
-			v = getSicurezzaMessaggio_corniceSicurezza_rest_user();
+			v = getSicurezzaMessaggioCorniceSicurezzaRestUser();
 			if(v!=null && StringUtils.isNotEmpty(v)) {
 				if(Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT.equals(v)) {
 					addSub = false;
 				}
 				l.add(v);
 			}
-			v = getSicurezzaMessaggio_corniceSicurezza_rest_ipuser();
+			v = getSicurezzaMessaggioCorniceSicurezzaRestIpuser();
 			if(v!=null && StringUtils.isNotEmpty(v)) {
 				l.add(v);
 			}

@@ -1,3 +1,10 @@
+2023-05-04  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Aggiunta funzionalità OP-1580
+	Aggiunto supporto per il nuovo pattern 'AUDIT_REST_01'.
+	L'insieme di claim da includere nel JWT di audit 'Agid-JWT-TrackingEvidence' è configurabile consentendo di definire insiemi differenti da associare alle API.
+
 2023-05-02  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]

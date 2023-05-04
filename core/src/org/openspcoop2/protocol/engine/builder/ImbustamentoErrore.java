@@ -226,7 +226,7 @@ public class ImbustamentoErrore  {
 	 */
 	public Busta buildMessaggioErroreProtocollo_Processamento(Eccezione ecc,Busta busta,String id_busta,TipoOraRegistrazione tipoTempo) throws ProtocolException{
 
-		List<Eccezione> eccs = new ArrayList<Eccezione>();
+		List<Eccezione> eccs = new ArrayList<>();
 		eccs.add(ecc);
 		return this.buildMessaggioErroreProtocollo(eccs,busta,id_busta,tipoTempo);
 	}
@@ -1110,7 +1110,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			
 			// Lista trasmissioni della richiesta
 			ArrayList<Trasmissione> listaTrasmissioniBustaRichiesta = 
-				new ArrayList<Trasmissione>();
+				new ArrayList<>();
 			if(busta!=null) {
 				for(int i=0;i<busta.sizeListaTrasmissioni();i++){
 					listaTrasmissioniBustaRichiesta.add(busta.getTrasmissione(i));
@@ -1121,7 +1121,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 					this.imbustamento.buildID(identitaPdD, idTransazione, attesaAttiva, checkInterval, RuoloMessaggio.RISPOSTA);
 
 			if(errori==null){
-				errori = new ArrayList<Eccezione>();
+				errori = new ArrayList<>();
 			}
 			if(erroreCooperazione!=null){
 				Eccezione ecc = 
@@ -1322,7 +1322,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			
 			// Lista trasmissioni della richiesta
 			ArrayList<Trasmissione> listaTrasmissioniBustaRichiesta = 
-				new ArrayList<Trasmissione>();
+				new ArrayList<>();
 			if(busta!=null) {
 				for(int i=0;i<busta.sizeListaTrasmissioni();i++){
 					listaTrasmissioniBustaRichiesta.add(busta.getTrasmissione(i));
@@ -1334,7 +1334,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 
 
 			if(errori==null){
-				errori = new ArrayList<Eccezione>();
+				errori = new ArrayList<>();
 			}
 			if(erroreCooperazione!=null){
 				Eccezione ecc = Eccezione.getEccezioneValidazione(erroreCooperazione, this.protocolFactory);

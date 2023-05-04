@@ -59,7 +59,7 @@ public class ModITracciaSerializer extends TracciaSerializer {
 	
 	@Override
 	public List<TracciaExtInfoDefinition> getExtInfoDefinition(){
-		List<TracciaExtInfoDefinition> list = new ArrayList<TracciaExtInfoDefinition>();
+		List<TracciaExtInfoDefinition> list = new ArrayList<>();
 		
 		TracciaExtInfoDefinition interazioneAsincrona = new TracciaExtInfoDefinition();
 		interazioneAsincrona.setPrefixId(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_PREFIX);
@@ -80,6 +80,11 @@ public class ModITracciaSerializer extends TracciaSerializer {
 		sicurezzaMessaggioSignedSoapParts.setPrefixId(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_SOAP_PREFIX);
 		sicurezzaMessaggioSignedSoapParts.setLabel(ModIConsoleCostanti.MODIPA_API_TRACCIA_EXT_INFO_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_SOAP_LABEL);
 		list.add(sicurezzaMessaggioSignedSoapParts);
+		
+		TracciaExtInfoDefinition sicurezzaMessaggioTokenAudit = new TracciaExtInfoDefinition();
+		sicurezzaMessaggioTokenAudit.setPrefixId(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PREFIX);
+		sicurezzaMessaggioTokenAudit.setLabel(ModIConsoleCostanti.MODIPA_API_TRACCIA_EXT_INFO_PROFILO_SICUREZZA_MESSAGGIO_AUDIT_LABEL);
+		list.add(sicurezzaMessaggioTokenAudit);
 		
 		return list;
 	}

@@ -56,6 +56,8 @@ import org.openspcoop2.protocol.modipa.validator.ModISOAPSecurity;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.SecurityToken;
+import org.openspcoop2.protocol.sdk.SoapMessageSecurityToken;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.keystore.KeystoreConstants;
@@ -68,6 +70,7 @@ import org.openspcoop2.security.message.constants.SignatureDigestAlgorithm;
 import org.openspcoop2.security.message.engine.MessageSecurityContext_impl;
 import org.openspcoop2.security.message.saml.SAMLBuilderConfigConstants;
 import org.openspcoop2.security.message.wss4j.MessageSecuritySender_wss4j;
+import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
@@ -273,7 +276,7 @@ public class ModIImbustamentoSoap {
 		
 	}
 	
-	public SOAPEnvelope addSecurity(OpenSPCoop2Message msg, Context context, ModIKeystoreConfig keystoreConfig, ModISecurityConfig securityConfig,
+	public SOAPEnvelope addSecurity(OpenSPCoop2Message msg, boolean request, Context context, ModIKeystoreConfig keystoreConfig, ModISecurityConfig securityConfig,
 			Busta busta, String securityMessageProfile, boolean corniceSicurezza, RuoloMessaggio ruoloMessaggio, boolean includiRequestDigest,
 			boolean signAttachments,
 			Map<String, Object> dynamicMap,
@@ -591,8 +594,9 @@ public class ModIImbustamentoSoap {
 		}catch(Exception e) {
 			throw new ProtocolException(e.getMessage(),e);
 		}
+		X509Certificate x509 = null;
 		if(certificate instanceof X509Certificate) {
-			X509Certificate x509 = (X509Certificate) certificate;
+			x509 = (X509Certificate) certificate;
 			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_X509_SUBJECT, x509.getSubjectX500Principal().toString());
 			if(x509.getIssuerX500Principal()!=null) {
 				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_X509_ISSUER, x509.getIssuerX500Principal().toString());
@@ -688,11 +692,31 @@ public class ModIImbustamentoSoap {
 			}
 		}
 		
+		
+		SOAPEnvelope soapEnvelopeTraccia = null;
 		try {
-			return soapSecurity.buildTraccia(msg.getMessageType());
+			soapEnvelopeTraccia = soapSecurity.buildTraccia(msg.getMessageType());
 		}catch(Exception e) {
 			throw new ProtocolException(e.getMessage(),e);
 		}
+		
+		
+		SoapMessageSecurityToken soapSecurityToken = null;
+		if(request && context!=null) {
+			
+			SecurityToken securityTokenForContext = ModIUtilities.newSecurityToken(context);
+			
+			soapSecurityToken = new SoapMessageSecurityToken();
+			soapSecurityToken.setCertificate(new CertificateInfo(x509, "soapEnvelope"));
+			if(soapEnvelopeTraccia!=null) {
+				soapSecurityToken.setToken(soapEnvelopeTraccia);
+			}
+			securityTokenForContext.setEnvelope(soapSecurityToken);
+			
+		}
+		
+		
+		return soapEnvelopeTraccia;
 	}
 	
 	private void addSignaturePart(List<SOAPHeader> soapHeaderAggiuntiviDaFirmare, Busta busta, StringBuilder bf, String namespace, String localName) {
@@ -723,7 +747,7 @@ public class ModIImbustamentoSoap {
 		
 		String nomeSoggettoMittente = busta.getMittente();
 				
-		String attributeNameCodiceEnte = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_soap_codice_ente();
+		String attributeNameCodiceEnte = this.modiProperties.getSicurezzaMessaggioCorniceSicurezzaSoapCodiceEnte();
 		String codiceEnte = null;
 		try {
 			codiceEnte = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL+" - "+ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE_LABEL, 
@@ -734,7 +758,7 @@ public class ModIImbustamentoSoap {
 			throw pe;
 		}
 			
-		String attributeNameUser = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_soap_user();
+		String attributeNameUser = this.modiProperties.getSicurezzaMessaggioCorniceSicurezzaSoapUser();
 		String utente = null;
 		try {
 			utente = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL+" - "+ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE_LABEL, 
@@ -745,7 +769,7 @@ public class ModIImbustamentoSoap {
 			throw pe;
 		}
 		
-		String attributeNameIpUser = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_soap_ipuser();
+		String attributeNameIpUser = this.modiProperties.getSicurezzaMessaggioCorniceSicurezzaSoapIpuser();
 		String indirizzoIpPostazione = null;
 		try {
 			indirizzoIpPostazione = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL+" - "+ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE_LABEL, 

@@ -38,12 +38,19 @@ public abstract class AbstractSecurityTokenInfo implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private CertificateInfo certificate;
+	private String kid;
 	
 	public CertificateInfo getCertificate() {
 		return this.certificate;
 	}
 	public void setCertificate(CertificateInfo certificate) {
 		this.certificate = certificate;
+	}
+	public String getKid() {
+		return this.kid;
+	}
+	public void setKid(String kid) {
+		this.kid = kid;
 	}
 	
 }

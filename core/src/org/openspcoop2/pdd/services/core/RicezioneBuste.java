@@ -4776,7 +4776,7 @@ public class RicezioneBuste {
 				if(this.msgContext.isGestioneRisposta()){
 					
 					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-					List<Eccezione> errs = new ArrayList<Eccezione>();
+					List<Eccezione> errs = new ArrayList<>();
 					for(int add = 0; add < erroriValidazione.size() ; add++){
 						errs.add(erroriValidazione.get(add));
 					}

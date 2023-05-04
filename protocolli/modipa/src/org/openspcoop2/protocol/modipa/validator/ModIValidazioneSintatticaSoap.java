@@ -856,7 +856,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 						ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL+"; elemento 'Subject/NameID'"));
 			}
 			
-			String attributeNameUser = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_soap_user();
+			String attributeNameUser = this.modiProperties.getSicurezzaMessaggioCorniceSicurezzaSoapUser();
 			String xpathSaml2User = new StringBuilder().append("//{").append(org.openspcoop2.message.constants.Costanti.SAML_20_NAMESPACE).
 					append("}Attribute[@Name='").append(attributeNameUser).append("']//{").
 					append(org.openspcoop2.message.constants.Costanti.SAML_20_NAMESPACE).append("}AttributeValue/text()").toString();
@@ -875,7 +875,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 						ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL+"; elemento 'Attribute/"+attributeNameUser+"'"));
 			}
 			
-			String attributeNameIpUser = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_soap_ipuser();
+			String attributeNameIpUser = this.modiProperties.getSicurezzaMessaggioCorniceSicurezzaSoapIpuser();
 			String xpathSaml2IpUser = new StringBuilder().append("//{").append(org.openspcoop2.message.constants.Costanti.SAML_20_NAMESPACE).
 					append("}Attribute[@Name='").append(attributeNameIpUser).append("']//{").
 					append(org.openspcoop2.message.constants.Costanti.SAML_20_NAMESPACE).append("}AttributeValue/text()").toString();

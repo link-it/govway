@@ -45,7 +45,13 @@ public class ModISecuritySoapToken extends AbstractModISecurityToken<SOAPEnvelop
 		switch (tipoSerializzazione) {
 		case XML:
 		case DEFAULT:
-			return Utilities.toString(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), this.getToken(),false);
+			StringBuilder sb = new StringBuilder();
+			sb.append( Utilities.toString(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), this.getToken(),false) );
+			if(this.tokenAudit!=null) {
+				sb.append("\n");
+				sb.append(this.tokenAuditHeaderName).append(": ").append(this.tokenAudit);
+			}
+			return sb.toString();
 		default:
 			throw new ProtocolException("Tipo di serializzazione ["+tipoSerializzazione+"] non supportata");
 		}
@@ -56,7 +62,8 @@ public class ModISecuritySoapToken extends AbstractModISecurityToken<SOAPEnvelop
 		switch (tipoSerializzazione) {
 		case XML:
 		case DEFAULT:
-			return Utilities.toByteArray(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), this.getToken(),false);
+			/**return Utilities.toByteArray(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), this.getToken(),false);*/
+			return this.toString(tipoSerializzazione).getBytes();
 		default:
 			throw new ProtocolException("Tipo di serializzazione ["+tipoSerializzazione+"] non supportata");
 		}

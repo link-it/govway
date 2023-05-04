@@ -700,6 +700,13 @@ public final class CostantiDB {
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA = "modipaSecurityMessageCorniceSicurezza";
     
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN = "modipaSecurityMessageCorniceSicurezzaPattern";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_01 = "audit01";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_02 = "audit02";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD = "old";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA = "modipaSecurityMessageCorniceSicurezzaSchema";
+    
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST = "modipaSecurityMessageRequestDigest";
 
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_ALG = "modipaSecurityMessageRestRequestAlg";
@@ -781,10 +788,13 @@ public final class CostantiDB {
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_JWT_CLAIMS = "modipaSecurityMessageRequestClaims";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_JWT_CLAIMS = "modipaSecurityMessageResponseClaims";
     
+    public static final String MODIPA_VALUE_SAME = "same";
+    public static final String MODIPA_VALUE_DIFFERENT = "different";
+    
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_JTI = "modipaSecurityMessageRequestJti";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_DOPPI_HEADER_JTI = "modipaSecurityMessageResponseJti";
-    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_JTI_VALUE_SAME = "same";
-    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_JTI_VALUE_DIFFERENT = "different";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_JTI_VALUE_SAME = MODIPA_VALUE_SAME;
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_JTI_VALUE_DIFFERENT = MODIPA_VALUE_DIFFERENT;
 
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_JTI_AS_ID_MESSAGGIO = "modipaSecurityMessageRequestJtiIdMsg";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_DOPPI_HEADER_JTI_AS_ID_MESSAGGIO = "modipaSecurityMessageResponseJtiIdMsg";
@@ -793,11 +803,17 @@ public final class CostantiDB {
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_AUDIENCE = "modipaSecurityMessageRequestIntegrityAudMode";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_DOPPI_HEADER_AUDIENCE = "modipaSecurityMessageResponseIntegrityAudMode";
-    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_AUDIENCE_VALUE_SAME = "same";
-    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_AUDIENCE_VALUE_DIFFERENT = "different";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_AUDIENCE_VALUE_SAME = MODIPA_VALUE_SAME;
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_AUDIENCE_VALUE_DIFFERENT = MODIPA_VALUE_DIFFERENT;
 
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_AUDIENCE_INTEGRITY = "modipaSecurityMessageRequestIntegrityAud";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_DOPPI_HEADER_AUDIENCE_INTEGRITY = "modipaSecurityMessageResponseIntegrityAud";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIT_AUDIENCE = "modipaSecurityMessageRequestAuditAudMode";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTE_AUDIT_AUDIENCE_VALUE_SAME = MODIPA_VALUE_SAME;
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIT_AUDIENCE_VALUE_DIFFERENT = MODIPA_VALUE_DIFFERENT;
+
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE_CUSTOM_AUDIT = "modipaSecurityMessageRequestAuditAud";
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_JWT_CLAIMS_AUTHORIZATION = "modipaSecurityMessageRequestClaimsAuth";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_DOPPI_HEADER_JWT_CLAIMS_AUTHORIZATION = "modipaSecurityMessageResponseClaimsAuth";
@@ -813,6 +829,18 @@ public final class CostantiDB {
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST = "modipaSecurityMessageHttpHeaders";
 
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_HEADERS_SOAP = "modipaSecurityMessageSoapHeaders";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA_MODE_PREFIX = "modipaSecurityMessageCorniceSicurezzaSchemaMode";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA_PREFIX = "modipaSecurityMessageCorniceSicurezzaSchemaValue";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE = "modipaSecurityMessageCorniceSicurezzaCodiceEnteMode";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE = "modipaSecurityMessageCorniceSicurezzaCodiceEnte";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE = "modipaSecurityMessageCorniceSicurezzaUserMode";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER = "modipaSecurityMessageCorniceSicurezzaUser";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE = "modipaSecurityMessageCorniceSicurezzaIPUserMode";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER = "modipaSecurityMessageCorniceSicurezzaIPUser";
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509 = "modipaSecurityMessageRestRequestX509Cert";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509 = "modipaSecurityMessageRestResponseX509Cert";

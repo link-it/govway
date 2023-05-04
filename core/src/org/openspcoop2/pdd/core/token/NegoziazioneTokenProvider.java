@@ -808,18 +808,21 @@ public class NegoziazioneTokenProvider implements IProvider {
 	public String dynamicUpdate(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue, ExternalResources externalResources) {
 	
 		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_FILE.equals(item.getName()) ||
+				Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_FILE_PRIVATE_KEY.equals(item.getName()) ||
+				Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_FILE_PUBLIC_KEY.equals(item.getName()) ||
 				Costanti.ID_HTTPS_TRUSTSTORE_FILE.equals(item.getName()) ||
 				Costanti.ID_HTTPS_KEYSTORE_FILE.equals(item.getName())) {
-			dynamicUpdateStoreFile(items, mapNameValue, item, actualValue);
+			return dynamicUpdateStoreFile(items, mapNameValue, item, actualValue);
 		}
 		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD.equals(item.getName()) ||
 				Costanti.ID_HTTPS_TRUSTSTORE_PASSWORD.equals(item.getName()) ||
 				Costanti.ID_HTTPS_KEYSTORE_PASSWORD.equals(item.getName())) {
-			dynamicUpdateStorePassword(items, mapNameValue, item, actualValue);
+			return dynamicUpdateStorePassword(items, mapNameValue, item, actualValue);
 		}
 		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD_PRIVATE_KEY.equals(item.getName()) ||
+				Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD_PRIVATE_KEY_OPZIONALE.equals(item.getName()) ||
 				Costanti.ID_HTTPS_KEYSTORE_PASSWORD_PRIVATE_KEY.equals(item.getName()) ) {
-			dynamicUpdateStoreKeyPassword(items, mapNameValue, item, actualValue);	
+			return dynamicUpdateStoreKeyPassword(items, mapNameValue, item, actualValue);	
 		}
 		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_ALIAS_PRIVATE_KEY.equals(item.getName()) ) {
 			

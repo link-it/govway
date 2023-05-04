@@ -777,7 +777,7 @@ public class ErogazioniDetailsUtilities {
 		
 		
 		// Altra sezione dedicata a ModI
-		/*org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration consoleDynamicConfiguration = protocolFactory.createDynamicConfigurationConsole();
+		/**org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration consoleDynamicConfiguration = protocolFactory.createDynamicConfigurationConsole();
 		org.openspcoop2.protocol.sdk.registry.IRegistryReader registryReader = apcCore.getRegistryReader(protocolFactory); 
 		org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader configRegistryReader = apcCore.getConfigIntegrationReader(protocolFactory);
 		org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration consoleConfiguration = null;
@@ -805,6 +805,12 @@ public class ErogazioniDetailsUtilities {
 						
 			boolean digest = "true".equals(map.get(ModIUtils.INTEGRITY));
 			boolean corniceSicurezza = "true".equals(map.get(ModIUtils.CORNICE_SICUREZZA));
+			String patternDatiCorniceSicurezza = null;
+			String schemaDatiCorniceSicurezza = null;
+			if(corniceSicurezza) {
+				patternDatiCorniceSicurezza = map.get(ModIUtils.CORNICE_SICUREZZA_PATTERN);
+				schemaDatiCorniceSicurezza = map.get(ModIUtils.CORNICE_SICUREZZA_SCHEMA);
+			}
 			boolean headerDuplicati = "true".equals(map.get(ModIUtils.HEADER_DUPLICATI));
 			
 			sb.append(newLine);
@@ -886,12 +892,16 @@ public class ErogazioniDetailsUtilities {
 				addProfiloModISicurezza(sb,
 						map,
 						labelProtocollo, rest, gestioneFruitori, request, 
-						digest, corniceSicurezza, headerDuplicati,
+						digest, 
+						patternDatiCorniceSicurezza, schemaDatiCorniceSicurezza, 
+						headerDuplicati,
 						separator, newLine);
 				addProfiloModISicurezza(sb, 
 						map,
 						labelProtocollo, rest, gestioneFruitori, !request, 
-						digest, corniceSicurezza, headerDuplicati,
+						digest, 
+						patternDatiCorniceSicurezza, schemaDatiCorniceSicurezza, 
+						headerDuplicati,
 						separator, newLine);
 			}
 			else {
@@ -903,7 +913,7 @@ public class ErogazioniDetailsUtilities {
 					v = map.get(ModIUtils.API_IMPL_SICUREZZA_OAUTH_IDENTIFICATIVO);
 					if(StringUtils.isNotEmpty(v)) {
 						sb.append(newLine);
-						//sb.append(CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID);
+						/**sb.append(CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID);*/
 						sb.append(CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID_SEARCH);
 						sb.append(separator);
 						sb.append(v);
@@ -949,13 +959,13 @@ public class ErogazioniDetailsUtilities {
 		boolean allScope = false;
 		List<String> authzTokenClaims = null;
 		if(paAssociata.getSoggetti()!=null && paAssociata.getSoggetti().sizeSoggettoList()>0) {
-			authzSoggetti = new ArrayList<IDSoggetto>();
+			authzSoggetti = new ArrayList<>();
 			for (PortaApplicativaAutorizzazioneSoggetto soggetto : paAssociata.getSoggetti().getSoggettoList()) {
 				authzSoggetti.add(new IDSoggetto(soggetto.getTipo(), soggetto.getNome()));
 			}
 		}
 		if(paAssociata.getServiziApplicativiAutorizzati()!=null && paAssociata.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0) {
-			authzApplicativi = new ArrayList<IDServizioApplicativo>();
+			authzApplicativi = new ArrayList<>();
 			for (PortaApplicativaAutorizzazioneServizioApplicativo sa : paAssociata.getServiziApplicativiAutorizzati().getServizioApplicativoList()) {
 				IDServizioApplicativo idSA = new IDServizioApplicativo();
 				idSA.setIdSoggettoProprietario(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
@@ -976,7 +986,7 @@ public class ErogazioniDetailsUtilities {
 			authzApplicativiTokenEnabled = StatoFunzionalita.ABILITATO.equals(paAssociata.getAutorizzazioneToken().getAutorizzazioneApplicativi());
 			if(authzApplicativiTokenEnabled) {
 				if(paAssociata.getAutorizzazioneToken().getServiziApplicativi()!=null && paAssociata.getAutorizzazioneToken().getServiziApplicativi().sizeServizioApplicativoList()>0) {
-					authzApplicativiToken = new ArrayList<IDServizioApplicativo>();
+					authzApplicativiToken = new ArrayList<>();
 					for (PortaApplicativaAutorizzazioneServizioApplicativo sa : paAssociata.getAutorizzazioneToken().getServiziApplicativi().getServizioApplicativoList()) {
 						IDServizioApplicativo idSA = new IDServizioApplicativo();
 						idSA.setIdSoggettoProprietario(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
@@ -1015,7 +1025,7 @@ public class ErogazioniDetailsUtilities {
 			if(properties!=null && properties.size()>0) {
 				authzTokenClaims = new ArrayList<>();
 				for (Object key : properties.keySet()) {
-					if(key!=null && key instanceof String) {
+					if(key instanceof String) {
 						authzTokenClaims.add((String)key);
 					}
 				}
@@ -2308,7 +2318,7 @@ public class ErogazioniDetailsUtilities {
 
 	}
 	private static String getProprieta(String nome,List<org.openspcoop2.core.config.Proprieta> list){
-		if(list!=null && list.size()>0){
+		if(list!=null && !list.isEmpty()){
 			for (org.openspcoop2.core.config.Proprieta property : list) {
 				if(property.getNome().equals(nome)){
 					return property.getValore();
@@ -2320,7 +2330,9 @@ public class ErogazioniDetailsUtilities {
 	
 	private static void addProfiloModISicurezza(StringBuilder sbParam, Map<String, String> map,
 			String labelProtocollo, boolean rest, boolean fruizione, boolean request, 
-			boolean digest, boolean corniceSicurezza, boolean headerDuplicati,
+			boolean digest, 
+			String patternDatiCorniceSicurezza, String schemaDatiCorniceSicurezza,
+			boolean headerDuplicati,
 			String separator, String newLine) {
 		
 		String prefixKey = ModIUtils.getPrefixKey(fruizione, request);
@@ -2533,6 +2545,36 @@ public class ErogazioniDetailsUtilities {
 				sb.append(v);
 			}
 			
+		}
+		
+		// Info Audit
+		
+		if(patternDatiCorniceSicurezza!=null) {
+			
+			if(!CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD.equals(patternDatiCorniceSicurezza) && schemaDatiCorniceSicurezza!=null) {
+				String label = CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_AUDIENCE_LABEL;
+				String vAud = map.get(prefixKey+ModIUtils.API_IMPL_SICUREZZA_MESSAGGIO_AUDIT_AUDIENCE);
+				if(StringUtils.isNotEmpty(vAud)) {
+					sb.append(newLine);
+					sb.append(label);
+					sb.append(separator);
+					sb.append(vAud);
+				}
+			}
+			
+			
+			for (Map.Entry<String,String> entry : map.entrySet()) {
+				String key = entry.getKey();
+				String sKey = prefixKey+ModIUtils.API_IMPL_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PREFIX;
+				if(key.startsWith(sKey)) {
+					String claim = key.substring(sKey.length());
+					sb.append(newLine);
+					sb.append(claim);
+					sb.append(separator);
+					String v = entry.getValue();
+					sb.append(v);
+				}
+			}
 		}
 		
 		// Sicurezza OAuth

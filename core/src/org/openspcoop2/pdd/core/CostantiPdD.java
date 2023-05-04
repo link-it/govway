@@ -25,6 +25,7 @@ package org.openspcoop2.pdd.core;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.controllo_traffico.beans.JMXConstants;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.utils.Costanti;
 import org.openspcoop2.utils.Map;
 import org.openspcoop2.utils.MapKey;
@@ -833,17 +834,19 @@ public class CostantiPdD {
     public static final MapKey<String> KEY_INFO_IN_CACHE_FUNZIONE_AUTORIZZAZIONE = Map.newMapKey("RESULT_AUTHZ_IN_CACHE");
     public static final MapKey<String> KEY_INFO_IN_CACHE_FUNZIONE_AUTORIZZAZIONE_CONTENUTI = Map.newMapKey("RESULT_AUTHZ_CONTENUTI_IN_CACHE");
     public static final MapKey<String> KEY_INFO_IN_CACHE_FUNZIONE_AUTENTICAZIONE_TOKEN = Map.newMapKey("RESULT_AUTHN_TOKEN_IN_CACHE");
-    public static final void addKeywordInCache(MsgDiagnostico msgDiag, boolean isEsitoPresenteInCache, PdDContext pddContext, MapKey<String> idFUNCTION) {
+    public static final void addKeywordInCache(MsgDiagnostico msgDiag, boolean isEsitoPresenteInCache, Context pddContext, MapKey<String> idFUNCTION) {
     	if(isEsitoPresenteInCache){
 			msgDiag.addKeyword(CostantiPdD.KEY_INFO_IN_CACHE, CostantiPdD.KEY_INFO_IN_CACHE_VALUE);
 		}else{
 			msgDiag.addKeyword(CostantiPdD.KEY_INFO_IN_CACHE, "");
 		}
-    	pddContext.addObject(idFUNCTION, isEsitoPresenteInCache);
+    	if(idFUNCTION!=null) {
+    		pddContext.addObject(idFUNCTION, isEsitoPresenteInCache);
+    	}
     }
     
     public static final MapKey<String> KEY_INFO_IN_CACHE_FUNZIONE_AUTENTICAZIONE_FALLITA = Map.newMapKey("RESULT_AUTHN_FALLITA");
-    public static final void addKeywordAutenticazioneFallita(MsgDiagnostico msgDiag, String motivo, PdDContext pddContext, MapKey<String> idFUNCTION) {
+    public static final void addKeywordAutenticazioneFallita(MsgDiagnostico msgDiag, String motivo, Context pddContext, MapKey<String> idFUNCTION) {
     	msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, motivo);
     	pddContext.addObject(idFUNCTION, motivo);
     }

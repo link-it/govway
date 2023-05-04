@@ -58,6 +58,7 @@ import org.openspcoop2.protocol.engine.BasicProtocolFactory;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.builder.DiagnosticoBuilder;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
@@ -116,7 +117,7 @@ public class MsgDiagnostico {
 	/** Identificativo della risposta */
 	private String idMessaggioRisposta;
 	/** PdDContext */
-	private PdDContext pddContext;
+	private Context pddContext;
 	/** XMLBuilder */
 	private DiagnosticoBuilder diagnosticoBuilder;
 	
@@ -439,7 +440,7 @@ public class MsgDiagnostico {
 	 * @param pddContext Contesto della PdD
 	 * 
 	 */
-	public void setPddContext(PdDContext pddContext, IProtocolFactory<?> protocolFactory) {
+	public void setPddContext(Context pddContext, IProtocolFactory<?> protocolFactory) {
 		this.pddContext = pddContext;
 		this.protocolFactory = protocolFactory;
 		try{

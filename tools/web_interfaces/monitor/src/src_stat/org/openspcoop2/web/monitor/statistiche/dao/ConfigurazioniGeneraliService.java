@@ -70,7 +70,6 @@ import org.openspcoop2.core.mapping.DBMappingUtils;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Property;
-import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
@@ -1195,63 +1194,58 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		try {
 			AccordoServizioParteSpecifica asps = this.driverRegistroDB.getAccordoServizioParteSpecifica(idServizio,false);
 	
-			boolean useOldMethod = false;
-			if(useOldMethod) {
-				return this._old_readConfigurazioneProfiloFruizione(asps, idFruitore);
+				
+			Fruitore fruitore = null;
+			for (Fruitore check : asps.getFruitoreList()) {
+				if(check.getTipo().equals(idFruitore.getTipo()) && check.getNome().equals(idFruitore.getNome())) {
+					fruitore = check;
+					break;
+				}
 			}
-			else {
 				
-				Fruitore fruitore = null;
-				for (Fruitore check : asps.getFruitoreList()) {
-					if(check.getTipo().equals(idFruitore.getTipo()) && check.getNome().equals(idFruitore.getNome())) {
-						fruitore = check;
-						break;
+			String urlConnettoreFruitoreModI = null;
+			org.openspcoop2.core.registry.Connettore connettore = fruitore!=null ? fruitore.getConnettore() : null;
+			if(connettore!=null && connettore.sizePropertyList()>0) {
+				for (Property p : connettore.getPropertyList()) {
+					if(CostantiDB.CONNETTORE_HTTP_LOCATION.equals(p.getNome())) {
+						urlConnettoreFruitoreModI = p.getValore();
 					}
 				}
+			}
+			
+			IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+			org.openspcoop2.core.registry.AccordoServizioParteComune aspc = this.driverRegistroDB.getAccordoServizioParteComune(idAccordo, false, false);
+			Map<String, String> map = ModIUtils.configToMap(aspc, asps, urlInvocazione, fruitore, urlConnettoreFruitoreModI);
+			if(map!=null && !map.isEmpty()) {
+				List<String> keys = new ArrayList<>();
+				keys.addAll(map.keySet());
+				Collections.sort(keys);
+				StringBuilder sb = new StringBuilder();
+				for (String key : keys) {
 					
-				String urlConnettoreFruitoreModI = null;
-				org.openspcoop2.core.registry.Connettore connettore = fruitore!=null ? fruitore.getConnettore() : null;
-				if(connettore!=null && connettore.sizePropertyList()>0) {
-					for (Property p : connettore.getPropertyList()) {
-						if(CostantiDB.CONNETTORE_HTTP_LOCATION.equals(p.getNome())) {
-							urlConnettoreFruitoreModI = p.getValore();
-						}
-					}
-				}
-				
-				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
-				org.openspcoop2.core.registry.AccordoServizioParteComune aspc = this.driverRegistroDB.getAccordoServizioParteComune(idAccordo, false, false);
-				Map<String, String> map = ModIUtils.configToMap(aspc, asps, urlInvocazione, fruitore, urlConnettoreFruitoreModI);
-				if(map!=null && !map.isEmpty()) {
-					List<String> keys = new ArrayList<>();
-					keys.addAll(map.keySet());
-					Collections.sort(keys);
-					StringBuilder sb = new StringBuilder();
-					for (String key : keys) {
-						
-						if(ModIUtils.isBooleanIndicator(key)) {
-							continue;
-						}
-						
-						if(sb.length()>0) {
-							sb.append("\n");
-						}
-						sb.append(key);
-						sb.append(":");
-						String v = map.get(key);
-						if(v!=null && StringUtils.isNotEmpty(v)) {
-							if(v.contains("\n")){
-								v = v.replaceAll("\n"," ");
-							}
-							sb.append(v);
-						}
+					if(ModIUtils.isBooleanIndicator(key)) {
+						continue;
 					}
 					
 					if(sb.length()>0) {
-						return sb.toString();
+						sb.append("\n");
+					}
+					sb.append(key);
+					sb.append(":");
+					String v = map.get(key);
+					if(v!=null && StringUtils.isNotEmpty(v)) {
+						if(v.contains("\n")){
+							v = v.replaceAll("\n"," ");
+						}
+						sb.append(v);
 					}
 				}
+				
+				if(sb.length()>0) {
+					return sb.toString();
+				}
 			}
+			
 		}catch(Exception e) {
 			ConfigurazioniGeneraliService.log.error("Read ProfiloInteroperabilità ModI configuration idServizio["+idServizio+"] idFruitore["+idFruitore+"] failed: "+e.getMessage(),e);
 		}
@@ -1259,152 +1253,6 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		return null;
 	}
 	
-	private String _old_readConfigurazioneProfiloFruizione(AccordoServizioParteSpecifica asps, IDSoggetto idFruitore) {
-		if(asps.sizeFruitoreList()>0) {
-			for (Fruitore fr : asps.getFruitoreList()) {
-				if(fr.getTipo().equals(idFruitore.getTipo()) && fr.getNome().equals(idFruitore.getNome())) {
-					
-					List<ProtocolProperty> ppList = fr.getProtocolPropertyList();
-					if(ppList!=null && !ppList.isEmpty()) {
-						StringBuilder sb = new StringBuilder();
-						
-						boolean trustStore = false;
-						boolean trustStoreSsl = false;
-						for (ProtocolProperty protocolProperty : ppList) {
-							
-							if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE.equals(protocolProperty.getName()) &&
-									StringUtils.isNotEmpty(protocolProperty.getValue())) {
-								boolean ridefinisci = CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(protocolProperty.getValue());
-								if(ridefinisci) {
-									trustStore = true;
-								}
-							}
-							else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_MODE.equals(protocolProperty.getName()) &&
-									StringUtils.isNotEmpty(protocolProperty.getValue())) {
-								boolean ridefinisci = CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(protocolProperty.getValue());
-								if(ridefinisci) {
-									trustStoreSsl = true;
-								}
-							}
-							
-						}
-						
-						
-						for (ProtocolProperty protocolProperty : ppList) {
-							
-							if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE.equals(protocolProperty.getName()) &&
-									StringUtils.isNotEmpty(protocolProperty.getValue())) {
-								if(sb.length()>0) {
-									sb.append("\n");
-								}
-								sb.append("request-audience:").append(protocolProperty.getValue());
-							}
-							else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_AUDIENCE_INTEGRITY.equals(protocolProperty.getName()) &&
-									StringUtils.isNotEmpty(protocolProperty.getValue())) {
-								if(sb.length()>0) {
-									sb.append("\n");
-								}
-								sb.append("request-integrity-audience:").append(protocolProperty.getValue());
-							}
-							else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE.equals(protocolProperty.getName()) &&
-									StringUtils.isNotEmpty(protocolProperty.getValue())) {
-								if(sb.length()>0) {
-									sb.append("\n");
-								}
-								sb.append("response-audience:").append(protocolProperty.getValue());
-							}
-							else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_DOPPI_HEADER_AUDIENCE_INTEGRITY.equals(protocolProperty.getName()) &&
-									StringUtils.isNotEmpty(protocolProperty.getValue())) {
-								if(sb.length()>0) {
-									sb.append("\n");
-								}
-								sb.append("response-integrity-audience:").append(protocolProperty.getValue());
-							}
-							else {
-								if(trustStoreSsl) {
-									if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE.equals(protocolProperty.getName()) &&
-											StringUtils.isNotEmpty(protocolProperty.getValue())) {
-										if(sb.length()>0) {
-											sb.append("\n");
-										}
-										sb.append("response-truststore-ssl-type:").append(protocolProperty.getValue());
-										continue;
-									}
-									else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PATH.equals(protocolProperty.getName()) &&
-											StringUtils.isNotEmpty(protocolProperty.getValue())) {
-										if(sb.length()>0) {
-											sb.append("\n");
-										}
-										sb.append("response-truststore-ssl-path:").append(protocolProperty.getValue());
-										continue;
-									}
-									else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_CRLS.equals(protocolProperty.getName()) &&
-											StringUtils.isNotEmpty(protocolProperty.getValue())) {
-										if(sb.length()>0) {
-											sb.append("\n");
-										}
-										sb.append("response-truststore-ssl-crls:").append(protocolProperty.getValue());
-										continue;
-									}
-									else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_OCSP_POLICY.equals(protocolProperty.getName()) &&
-											StringUtils.isNotEmpty(protocolProperty.getValue())) {
-										if(sb.length()>0) {
-											sb.append("\n");
-										}
-										sb.append("response-truststore-ssl-ocsp-policy:").append(protocolProperty.getValue());
-										continue;
-									}
-								}
-								if(trustStore) {
-									if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE.equals(protocolProperty.getName()) &&
-											StringUtils.isNotEmpty(protocolProperty.getValue())) {
-										if(sb.length()>0) {
-											sb.append("\n");
-										}
-										sb.append("response-truststore-type:").append(protocolProperty.getValue());
-										continue;
-									}
-									else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH.equals(protocolProperty.getName()) &&
-											StringUtils.isNotEmpty(protocolProperty.getValue())) {
-										if(sb.length()>0) {
-											sb.append("\n");
-										}
-										sb.append("response-truststore-path:").append(protocolProperty.getValue());
-										continue;
-									}
-									else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS.equals(protocolProperty.getName()) &&
-											StringUtils.isNotEmpty(protocolProperty.getValue())) {
-										if(sb.length()>0) {
-											sb.append("\n");
-										}
-										sb.append("response-truststore-crls:").append(protocolProperty.getValue());
-										continue;
-									}
-									else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_OCSP_POLICY.equals(protocolProperty.getName()) &&
-											StringUtils.isNotEmpty(protocolProperty.getValue())) {
-										if(sb.length()>0) {
-											sb.append("\n");
-										}
-										sb.append("response-truststore-ocsp-policy:").append(protocolProperty.getValue());
-										continue;
-									}
-								}
-							}
-							
-						}
-						
-						if(sb.length()>0) {
-							return sb.toString();
-						}
-					}
-					
-					break;
-				}
-			}
-		}
-		
-		return null;
-	}
 
 	@SuppressWarnings("deprecation")
 	private ConfigurazioneGenerale fillDettaglioPA(PortaApplicativa portaApplicativa, boolean configurazioniFiglie) throws ServiceException, NotFoundException,
@@ -1528,42 +1376,36 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		
 			AccordoServizioParteSpecifica asps = this.driverRegistroDB.getAccordoServizioParteSpecifica(idServizio,false);
 			
-			boolean useOldMethod = false;
-			if(useOldMethod) {
-				return this._old_readConfigurazioneProfiloErogazione(asps);
-			}
-			else {
-				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
-				org.openspcoop2.core.registry.AccordoServizioParteComune aspc = this.driverRegistroDB.getAccordoServizioParteComune(idAccordo, false, false);
-				Map<String, String> map = ModIUtils.configToMap(aspc, asps, urlInvocazione, null, null);
-				if(map!=null && !map.isEmpty()) {
-					List<String> keys = new ArrayList<>();
-					keys.addAll(map.keySet());
-					Collections.sort(keys);
-					StringBuilder sb = new StringBuilder();
-					for (String key : keys) {
-						
-						if(ModIUtils.isBooleanIndicator(key)) {
-							continue;
-						}
-						
-						if(sb.length()>0) {
-							sb.append("\n");
-						}
-						sb.append(key);
-						sb.append(":");
-						String v = map.get(key);
-						if(v!=null && StringUtils.isNotEmpty(v)) {
-							if(v.contains("\n")){
-								v = v.replaceAll("\n"," ");
-							}
-							sb.append(v);
-						}
+			IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+			org.openspcoop2.core.registry.AccordoServizioParteComune aspc = this.driverRegistroDB.getAccordoServizioParteComune(idAccordo, false, false);
+			Map<String, String> map = ModIUtils.configToMap(aspc, asps, urlInvocazione, null, null);
+			if(map!=null && !map.isEmpty()) {
+				List<String> keys = new ArrayList<>();
+				keys.addAll(map.keySet());
+				Collections.sort(keys);
+				StringBuilder sb = new StringBuilder();
+				for (String key : keys) {
+					
+					if(ModIUtils.isBooleanIndicator(key)) {
+						continue;
 					}
 					
 					if(sb.length()>0) {
-						return sb.toString();
+						sb.append("\n");
 					}
+					sb.append(key);
+					sb.append(":");
+					String v = map.get(key);
+					if(v!=null && StringUtils.isNotEmpty(v)) {
+						if(v.contains("\n")){
+							v = v.replaceAll("\n"," ");
+						}
+						sb.append(v);
+					}
+				}
+				
+				if(sb.length()>0) {
+					return sb.toString();
 				}
 			}
 		
@@ -1572,185 +1414,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		}
 		return null;
 	}
-	private String _old_readConfigurazioneProfiloErogazione(AccordoServizioParteSpecifica asps) {
-		List<ProtocolProperty> ppList = asps.getProtocolPropertyList();
-		if(ppList!=null && !ppList.isEmpty()) {
-			StringBuilder sb = new StringBuilder();
-			
-			boolean keyStore = false;
-			boolean trustStore = false;
-			boolean trustStoreSsl = false;
-			for (ProtocolProperty protocolProperty : ppList) {
-				
-				if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE.equals(protocolProperty.getName()) &&
-						StringUtils.isNotEmpty(protocolProperty.getValue())) {
-					boolean ridefinisci = CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(protocolProperty.getValue());
-					if(ridefinisci) {
-						keyStore = true;
-					}
-				}
-				else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE.equals(protocolProperty.getName()) &&
-						StringUtils.isNotEmpty(protocolProperty.getValue())) {
-					boolean ridefinisci = CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(protocolProperty.getValue());
-					if(ridefinisci) {
-						trustStore = true;
-					}
-				}
-				else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_MODE.equals(protocolProperty.getName()) &&
-						StringUtils.isNotEmpty(protocolProperty.getValue())) {
-					boolean ridefinisci = CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(protocolProperty.getValue());
-					if(ridefinisci) {
-						trustStoreSsl = true;
-					}
-				}
-				
-			}
-			
-			
-			for (ProtocolProperty protocolProperty : ppList) {
-				
-				if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE.equals(protocolProperty.getName()) &&
-						StringUtils.isNotEmpty(protocolProperty.getValue())) {
-					if(sb.length()>0) {
-						sb.append("\n");
-					}
-					sb.append("request-audience:").append(protocolProperty.getValue());
-				}
-				else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_AUDIENCE_INTEGRITY.equals(protocolProperty.getName()) &&
-						StringUtils.isNotEmpty(protocolProperty.getValue())) {
-					if(sb.length()>0) {
-						sb.append("\n");
-					}
-					sb.append("request-integrity-audience:").append(protocolProperty.getValue());
-				}
-				else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE.equals(protocolProperty.getName()) &&
-						StringUtils.isNotEmpty(protocolProperty.getValue())) {
-					if(sb.length()>0) {
-						sb.append("\n");
-					}
-					sb.append("response-audience:").append(protocolProperty.getValue());
-				}
-				else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_DOPPI_HEADER_AUDIENCE_INTEGRITY.equals(protocolProperty.getName()) &&
-						StringUtils.isNotEmpty(protocolProperty.getValue())) {
-					if(sb.length()>0) {
-						sb.append("\n");
-					}
-					sb.append("response-integrity-audience:").append(protocolProperty.getValue());
-				}
-				else {
-					if(keyStore) {
-						if(CostantiDB.MODIPA_KEYSTORE_MODE.equals(protocolProperty.getName()) &&
-								StringUtils.isNotEmpty(protocolProperty.getValue())) {
-							if(sb.length()>0) {
-								sb.append("\n");
-							}
-							sb.append("response-keystore-mode:").append(protocolProperty.getValue());
-							continue;
-						}
-						else if(CostantiDB.MODIPA_KEYSTORE_TYPE.equals(protocolProperty.getName()) &&
-								StringUtils.isNotEmpty(protocolProperty.getValue())) {
-							if(sb.length()>0) {
-								sb.append("\n");
-							}
-							sb.append("response-keystore-type:").append(protocolProperty.getValue());
-							continue;
-						}
-						else if(CostantiDB.MODIPA_KEYSTORE_PATH.equals(protocolProperty.getName()) &&
-								StringUtils.isNotEmpty(protocolProperty.getValue())) {
-							if(sb.length()>0) {
-								sb.append("\n");
-							}
-							sb.append("response-keystore-path:").append(protocolProperty.getValue());
-							continue;
-						}
-						else if(CostantiDB.MODIPA_KEY_ALIAS.equals(protocolProperty.getName()) &&
-								StringUtils.isNotEmpty(protocolProperty.getValue())) {
-							if(sb.length()>0) {
-								sb.append("\n");
-							}
-							sb.append("response-key-alias:").append(protocolProperty.getValue());
-							continue;
-						}
-					}
-					if(trustStoreSsl) {
-						if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE.equals(protocolProperty.getName()) &&
-								StringUtils.isNotEmpty(protocolProperty.getValue())) {
-							if(sb.length()>0) {
-								sb.append("\n");
-							}
-							sb.append("request-truststore-ssl-type:").append(protocolProperty.getValue());
-							continue;
-						}
-						else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PATH.equals(protocolProperty.getName()) &&
-								StringUtils.isNotEmpty(protocolProperty.getValue())) {
-							if(sb.length()>0) {
-								sb.append("\n");
-							}
-							sb.append("request-truststore-ssl-path:").append(protocolProperty.getValue());
-							continue;
-						}
-						else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_CRLS.equals(protocolProperty.getName()) &&
-								StringUtils.isNotEmpty(protocolProperty.getValue())) {
-							if(sb.length()>0) {
-								sb.append("\n");
-							}
-							sb.append("request-truststore-ssl-crls:").append(protocolProperty.getValue());
-							continue;
-						}
-						else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_OCSP_POLICY.equals(protocolProperty.getName()) &&
-								StringUtils.isNotEmpty(protocolProperty.getValue())) {
-							if(sb.length()>0) {
-								sb.append("\n");
-							}
-							sb.append("request-truststore-ssl-ocsp-policy:").append(protocolProperty.getValue());
-							continue;
-						}
-					}
-					if(trustStore) {
-						if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE.equals(protocolProperty.getName()) &&
-								StringUtils.isNotEmpty(protocolProperty.getValue())) {
-							if(sb.length()>0) {
-								sb.append("\n");
-							}
-							sb.append("request-truststore-type:").append(protocolProperty.getValue());
-							continue;
-						}
-						else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH.equals(protocolProperty.getName()) &&
-								StringUtils.isNotEmpty(protocolProperty.getValue())) {
-							if(sb.length()>0) {
-								sb.append("\n");
-							}
-							sb.append("request-truststore-path:").append(protocolProperty.getValue());
-							continue;
-						}
-						else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS.equals(protocolProperty.getName()) &&
-								StringUtils.isNotEmpty(protocolProperty.getValue())) {
-							if(sb.length()>0) {
-								sb.append("\n");
-							}
-							sb.append("request-truststore-crls:").append(protocolProperty.getValue());
-							continue;
-						}
-						else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_OCSP_POLICY.equals(protocolProperty.getName()) &&
-								StringUtils.isNotEmpty(protocolProperty.getValue())) {
-							if(sb.length()>0) {
-								sb.append("\n");
-							}
-							sb.append("request-truststore-ocsp-policy:").append(protocolProperty.getValue());
-							continue;
-						}
-					}
-				}
-				
-			}
-			
-			if(sb.length()>0) {
-				return sb.toString();
-			}
-		}
-		
-		return null;
-	}
+
 	
 	@Override
 	public ConfigurazioniGeneraliSearchForm getSearch() {

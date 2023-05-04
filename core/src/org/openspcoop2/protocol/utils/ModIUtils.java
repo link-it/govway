@@ -21,6 +21,7 @@
 package org.openspcoop2.protocol.utils;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +58,8 @@ public class ModIUtils {
 	public static final String INTEGRITY = "integrity";
 	public static final String DIGEST_RICHIESTA = "request-digest";
 	public static final String CORNICE_SICUREZZA = "user-info";
+	public static final String CORNICE_SICUREZZA_PATTERN = "user-info-pattern";
+	public static final String CORNICE_SICUREZZA_SCHEMA = "user-info-schema";
 	public static final String HEADER_DUPLICATI = "contemporary-headers";
 	public static boolean isBooleanIndicator(String key) {
 		return ModIUtils.INTEGRITY.equals(key) || 
@@ -93,6 +96,8 @@ public class ModIUtils {
 	public static final String API_IMPL_SICUREZZA_MESSAGGIO_INTEGRITY_AUDIENCE = "integrity-audience";
 	public static final String API_IMPL_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE = "fruizione-keystore-mode";
 	public static final String API_IMPL_SICUREZZA_MESSAGGIO_X5U_CERTIFICATE_URL = "x5u-certificate-url";
+	public static final String API_IMPL_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PREFIX = "audit-info-";
+	public static final String API_IMPL_SICUREZZA_MESSAGGIO_AUDIT_AUDIENCE = "audit-audience";
 	
 	public static final String API_IMPL_SICUREZZA_MESSAGGIO_STORE_TYPE = "type";
 	public static final String API_IMPL_SICUREZZA_MESSAGGIO_STORE_PATH = "path";
@@ -122,6 +127,18 @@ public class ModIUtils {
 		boolean digest = isProfiloSicurezzaMessaggioConIntegritaX509(aspc, asps.getPortType()) || isProfiloSicurezzaMessaggioConIntegritaKid(aspc, asps.getPortType());
 		boolean digestRichiesta = isProfiloSicurezzaMessaggioRequestDigest(aspc, asps.getPortType());
 		boolean corniceSicurezza = isProfiloSicurezzaMessaggioCorniceSicurezza(aspc, asps.getPortType());
+		String patternDatiCorniceSicurezza = null;
+		String schemaDatiCorniceSicurezza = null;
+		if(corniceSicurezza) {
+			patternDatiCorniceSicurezza = getProfiloSicurezzaMessaggioCorniceSicurezzaPattern(aspc, asps.getPortType());
+			if(patternDatiCorniceSicurezza==null) {
+				// backward compatibility
+				patternDatiCorniceSicurezza = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD;
+			}
+			if(!CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD.equals(patternDatiCorniceSicurezza)) {
+				schemaDatiCorniceSicurezza = getProfiloSicurezzaMessaggioCorniceSicurezzaSchema(aspc, asps.getPortType());
+			}
+		}
 		boolean headerDuplicati = false;
 		if(rest) {
 			headerDuplicati = isProfiloSicurezzaMessaggioConHeaderDuplicati(aspc, asps.getPortType());
@@ -129,6 +146,12 @@ public class ModIUtils {
 		map.put(INTEGRITY, digest+"");
 		map.put(DIGEST_RICHIESTA, digestRichiesta+"");
 		map.put(CORNICE_SICUREZZA, corniceSicurezza+"");
+		if(corniceSicurezza) {
+			map.put(CORNICE_SICUREZZA_PATTERN, patternDatiCorniceSicurezza);
+			if(schemaDatiCorniceSicurezza!=null) {
+				map.put(CORNICE_SICUREZZA_SCHEMA, schemaDatiCorniceSicurezza);
+			}
+		}
 		map.put(HEADER_DUPLICATI, headerDuplicati+"");
 		
 		// sicurezza canale
@@ -341,19 +364,39 @@ public class ModIUtils {
 					digestRichiesta ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
 			
 			// Cornice Sicurezza
-			map.put(API_SICUREZZA_MESSAGGIO_USER_INFO,
-					corniceSicurezza ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
+			if(corniceSicurezza) {
+				if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD.equals(patternDatiCorniceSicurezza)) {
+					map.put(API_SICUREZZA_MESSAGGIO_USER_INFO,
+							CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD);
+				}
+				else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_01.equals(patternDatiCorniceSicurezza)) {
+					map.put(API_SICUREZZA_MESSAGGIO_USER_INFO,
+							CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_01+" (schema:"+schemaDatiCorniceSicurezza+")");
+				}
+				else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_02.equals(patternDatiCorniceSicurezza)) {
+					map.put(API_SICUREZZA_MESSAGGIO_USER_INFO,
+							CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_02+" (schema:"+schemaDatiCorniceSicurezza+")");
+				}
+			}
+			else {
+				map.put(API_SICUREZZA_MESSAGGIO_USER_INFO,
+					StatoFunzionalita.DISABILITATO.getValue());
+			}
 							
 			boolean request = true;
 			addProfiloModISicurezza(map,
 					protocolPropertyList,
 					rest, gestioneFruitori, request, 
-					digest, corniceSicurezza, headerDuplicati,
+					digest, 
+					patternDatiCorniceSicurezza, schemaDatiCorniceSicurezza, 
+					headerDuplicati,
 					urlInvocazione, urlConnettoreFruitoreModI);
 			addProfiloModISicurezza(map,
 					protocolPropertyList,
 					rest, gestioneFruitori, !request, 
-					digest, corniceSicurezza, headerDuplicati,
+					digest, 
+					patternDatiCorniceSicurezza, schemaDatiCorniceSicurezza, 
+					headerDuplicati,
 					urlInvocazione, urlConnettoreFruitoreModI);
 		}
 		else {
@@ -398,7 +441,9 @@ public class ModIUtils {
 	private static void addProfiloModISicurezza(Map<String, String> map,
 			List<ProtocolProperty> protocolPropertyList,
 			boolean rest, boolean fruizione, boolean request, 
-			boolean digest, boolean corniceSicurezza, boolean headerDuplicati,
+			boolean digest, 
+			String patternDatiCorniceSicurezza, String schemaDatiCorniceSicurezza, 
+			boolean headerDuplicati,
 			String urlInvocazione, String urlConnettoreFruitoreModI) {
 		
 		String prefixKey = getPrefixKey(fruizione, request);
@@ -681,8 +726,88 @@ public class ModIUtils {
 		}
 		
 		// CorniceSicurezza
-		if(corniceSicurezza) {
-			// nop
+		if(patternDatiCorniceSicurezza!=null) {
+			if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD.equals(patternDatiCorniceSicurezza)) {
+				
+				String claimCodiceEnte = CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE;
+				String idCodiceEnteMode = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE;
+				String vCodiceEnteMode = getStringValue(protocolPropertyList, idCodiceEnteMode);
+				if(vCodiceEnteMode!=null && CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(vCodiceEnteMode)) {
+					String idValue = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE;
+					String value = getStringValue(protocolPropertyList, idValue);
+					if(value!=null) {
+						map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PREFIX+claimCodiceEnte, value);
+					}
+				}
+				else {
+					map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PREFIX+claimCodiceEnte, CostantiDB.MODIPA_PROFILO_DEFAULT);
+				}
+				
+				String claimUser = CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER;
+				String idUserMode = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE;
+				String vUserMode = getStringValue(protocolPropertyList, idUserMode);
+				if(vUserMode!=null && CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(vUserMode)) {
+					String idValue = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER;
+					String value = getStringValue(protocolPropertyList, idValue);
+					if(value!=null) {
+						map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PREFIX+claimUser, value);
+					}
+				}
+				else {
+					map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PREFIX+claimUser, CostantiDB.MODIPA_PROFILO_DEFAULT);
+				}
+				
+				String claimUserIP = CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER;
+				String idUserIPMode = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE;
+				String vUserIPMode = getStringValue(protocolPropertyList, idUserIPMode);
+				if(vUserIPMode!=null && CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(vUserIPMode)) {
+					String idValue = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER;
+					String value = getStringValue(protocolPropertyList, idValue);
+					if(value!=null) {
+						map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PREFIX+claimUserIP, value);
+					}
+				}
+				else {
+					map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PREFIX+claimUserIP, CostantiDB.MODIPA_PROFILO_DEFAULT);
+				}
+				
+			}
+			else if(schemaDatiCorniceSicurezza!=null){
+				
+				String idAuditDifferent = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIT_AUDIENCE ;
+				String v = getStringValue(protocolPropertyList, idAuditDifferent);
+				if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIT_AUDIENCE_VALUE_DIFFERENT.equals(v)) {
+					String idAudit = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE_CUSTOM_AUDIT;					
+					v = getStringValue(protocolPropertyList, idAudit);
+					if(v!=null && StringUtils.isNotEmpty(v)) {
+						map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_AUDIT_AUDIENCE, v);
+					}
+				}	
+				
+				List<String> l = new ArrayList<>();
+				for (ProtocolProperty pp : protocolPropertyList) {
+					if(pp.getName().startsWith(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA_MODE_PREFIX)) {
+						String claim = pp.getName().substring(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA_MODE_PREFIX.length());
+						l.add(claim);
+					}
+				}
+				if(l!=null && !l.isEmpty()) {
+					for (String c : l) {
+						String idMode = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA_MODE_PREFIX+c;
+						String vMode = getStringValue(protocolPropertyList, idMode);
+						if(vMode!=null && CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(vMode)) {
+							String idValue = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA_PREFIX+c;
+							String value = getStringValue(protocolPropertyList, idValue);
+							if(value!=null) {
+								map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PREFIX+c, value);
+							}
+						}
+						else {
+							map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PREFIX+c, CostantiDB.MODIPA_PROFILO_DEFAULT);
+						}
+					}
+				}
+			}
 		}
 		
 		// Header Duplicati
@@ -922,6 +1047,20 @@ public class ModIUtils {
 			}
 		}
 		return false;
+	}
+	private static String getProfiloSicurezzaMessaggioCorniceSicurezzaPattern(AccordoServizioParteComune api, String portType) {
+		List<String> tmp = RegistroServiziUtils.fillPropertyProtocollo(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN, api, portType, false);
+		if(tmp!=null && !tmp.isEmpty()) {
+			return tmp.get(0);
+		}
+		return null;
+	}
+	private static String getProfiloSicurezzaMessaggioCorniceSicurezzaSchema(AccordoServizioParteComune api, String portType) {
+		List<String> tmp = RegistroServiziUtils.fillPropertyProtocollo(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA, api, portType, false);
+		if(tmp!=null && !tmp.isEmpty()) {
+			return tmp.get(0);
+		}
+		return null;
 	}
 	private static boolean isProfiloSicurezzaMessaggioRequestDigest(AccordoServizioParteComune api, String portType) {
 		List<String> tmp = RegistroServiziUtils.fillPropertyProtocollo(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST, api, portType, true);

@@ -67,6 +67,12 @@ public class ModISecurityRestToken extends AbstractModISecurityToken<String> {
 					sb.append(this.headerName).append(": ").append(this.tokenIntegrity);
 				}
 			}
+			
+			if(this.tokenAudit!=null) {
+				sb.append("\n");
+				sb.append(this.tokenAuditHeaderName).append(": ").append(this.tokenAudit);
+			}
+			
 			return sb.toString();
 		default:
 			throw new ProtocolException("Tipo di serializzazione ["+tipoSerializzazione+"] non supportata");
@@ -77,7 +83,7 @@ public class ModISecurityRestToken extends AbstractModISecurityToken<String> {
 	public byte[] toByteArray(TipoSerializzazione tipoSerializzazione) throws ProtocolException{
 		switch (tipoSerializzazione) {
 		case DEFAULT:
-			//return this.getToken().getBytes();
+			/**return this.getToken().getBytes();*/
 			return this.toString(tipoSerializzazione).getBytes();
 		default:
 			throw new ProtocolException("Tipo di serializzazione ["+tipoSerializzazione+"] non supportata");

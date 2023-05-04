@@ -22,9 +22,12 @@ package org.openspcoop2.protocol.modipa.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -47,6 +50,8 @@ import org.openspcoop2.pdd.core.autorizzazione.canali.CanaliUtils;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
+import org.openspcoop2.protocol.modipa.config.ModIAuditClaimConfig;
+import org.openspcoop2.protocol.modipa.config.ModIAuditConfig;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
@@ -106,6 +111,10 @@ public class ModISecurityConfig {
 	private List<String> corniceSicurezzaUserRule = null;
 	private List<String> corniceSicurezzaIpUserRule = null;
 	
+	private ModIAuditConfig corniceSicurezzaSchemaConfig = null;
+	private Map<String,List<String>> corniceSicurezzaRules = null;
+	private String corniceSicurezzaAudience;
+	
 	private boolean fruizione;
 	private List<ProtocolProperty> listProtocolPropertiesInternal = null;
 	
@@ -113,7 +122,8 @@ public class ModISecurityConfig {
 	private String tokenClientId;
 	
 	public ModISecurityConfig(OpenSPCoop2Message msg, IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica aspsParam, ServizioApplicativo sa, 
-			boolean rest, boolean fruizione,  boolean request, boolean corniceSicurezza,
+			boolean rest, boolean fruizione,  boolean request, 
+			String patternCorniceSicurezza, String schemaCorniceSicurezza, 
 			Busta busta, Busta bustaRichiesta,
 			Boolean multipleHeaderAuthorizationConfig,
 			boolean keystoreDefinitoInFruizione, boolean kidMode) throws ProtocolException {
@@ -407,75 +417,14 @@ public class ModISecurityConfig {
 			
 			
 			/* Cornice Sicurezza */
-			if(corniceSicurezza) {
-				try {
-					String codiceEnteMode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this.listProtocolPropertiesInternal, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE);
-					String claimNameCodiceEnte = modiProperties.getSicurezzaMessaggio_corniceSicurezza_rest_codice_ente();
-					if(ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(codiceEnteMode)) {
-						this.corniceSicurezzaCodiceEnteRule = convertToList(ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(this.listProtocolPropertiesInternal, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE));
-						if(this.multipleHeaderAuthorizationConfig!=null) {
-							ModIUtilities.remove(this.multipleHeaderClaims, claimNameCodiceEnte);
-						}
-						ModIUtilities.remove(this.claims, claimNameCodiceEnte);
-					}
-					else {
-						if(this.multipleHeaderAuthorizationConfig!=null && 
-								ModIUtilities.exists(this.multipleHeaderClaims, claimNameCodiceEnte)) {
-							this.corniceSicurezzaCodiceEnteRule = convertToList(ModIUtilities.get(this.multipleHeaderClaims, claimNameCodiceEnte, ModIUtilities.REMOVE));
-						}
-						else if(ModIUtilities.exists(this.claims, claimNameCodiceEnte)) {
-							this.corniceSicurezzaCodiceEnteRule = convertToList(ModIUtilities.get(this.claims, claimNameCodiceEnte, ModIUtilities.REMOVE));
-						}
-						else {
-							this.corniceSicurezzaCodiceEnteRule = modiProperties.getSicurezzaMessaggio_corniceSicurezza_dynamic_codice_ente();
-						}
-					}
-					
-					String userMode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this.listProtocolPropertiesInternal, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE);
-					String claimNameUser = modiProperties.getSicurezzaMessaggio_corniceSicurezza_rest_user();
-					if(ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(userMode)) {
-						this.corniceSicurezzaUserRule = convertToList(ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(this.listProtocolPropertiesInternal, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER));
-						if(this.multipleHeaderAuthorizationConfig!=null) {
-							ModIUtilities.remove(this.multipleHeaderClaims, claimNameUser);
-						}
-						ModIUtilities.remove(this.claims, claimNameUser);
-					}
-					else {
-						if(this.multipleHeaderAuthorizationConfig!=null && 
-								ModIUtilities.exists(this.multipleHeaderClaims, claimNameUser)) {
-							this.corniceSicurezzaUserRule = convertToList(ModIUtilities.get(this.multipleHeaderClaims, claimNameUser, ModIUtilities.REMOVE));
-						}
-						else if(ModIUtilities.exists(this.claims, claimNameUser)) {
-							this.corniceSicurezzaUserRule = convertToList(ModIUtilities.get(this.claims, claimNameUser, ModIUtilities.REMOVE));
-						}
-						else {
-							this.corniceSicurezzaUserRule = modiProperties.getSicurezzaMessaggio_corniceSicurezza_dynamic_user();
-						}
-					}
-					
-					String ipUserMode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this.listProtocolPropertiesInternal, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE);
-					String claimNameIpUser = modiProperties.getSicurezzaMessaggio_corniceSicurezza_rest_ipuser();
-					if(ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(ipUserMode)) {
-						this.corniceSicurezzaIpUserRule = convertToList(ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(this.listProtocolPropertiesInternal, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER));
-						if(this.multipleHeaderAuthorizationConfig!=null) {
-							ModIUtilities.remove(this.multipleHeaderClaims, claimNameIpUser);
-						}
-						ModIUtilities.remove(this.claims, claimNameIpUser);
-					}
-					else {
-						if(this.multipleHeaderAuthorizationConfig!=null && 
-								ModIUtilities.exists(this.multipleHeaderClaims, claimNameIpUser)) {
-							this.corniceSicurezzaIpUserRule = convertToList(ModIUtilities.get(this.multipleHeaderClaims, claimNameIpUser, ModIUtilities.REMOVE));
-						}
-						else if(ModIUtilities.exists(this.claims, claimNameIpUser)) {
-							this.corniceSicurezzaIpUserRule = convertToList(ModIUtilities.get(this.claims, claimNameIpUser, ModIUtilities.REMOVE));
-						}
-						else {
-							this.corniceSicurezzaIpUserRule = modiProperties.getSicurezzaMessaggio_corniceSicurezza_dynamic_ipuser();
-						}
-					}
-				}catch(Exception e) {
-					throw new ProtocolException(e.getMessage(),e);
+			if(patternCorniceSicurezza!=null){
+				if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD.equals(patternCorniceSicurezza)) {
+					readCorniceSicurezzaCodiceEnteLegacy(modiProperties);
+					readCorniceSicurezzaUserLegacy(modiProperties);
+					readCorniceSicurezzaIpUserLegacy(modiProperties);
+				}
+				else {
+					readCorniceSicurezzaSchema(modiProperties, schemaCorniceSicurezza);
 				}
 			}
 			
@@ -644,10 +593,160 @@ public class ModISecurityConfig {
 		}
 		
 	}
+	private void readCorniceSicurezzaSchemaAudience(String schemaCorniceSicurezza) throws ProtocolException {
+		if(schemaCorniceSicurezza!=null && StringUtils.isNotEmpty(schemaCorniceSicurezza)) {
+			String modalita = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this.listProtocolPropertiesInternal, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIT_AUDIENCE);
+			if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIT_AUDIENCE_VALUE_DIFFERENT.equals(modalita)) {
+				this.corniceSicurezzaAudience = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this.listProtocolPropertiesInternal, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE_CUSTOM_AUDIT);
+			}
+			
+			if(this.corniceSicurezzaAudience==null) {
+				this.corniceSicurezzaAudience = this.audience; // inizializzato precedentemnte
+			}
+			if(this.corniceSicurezzaAudience==null) {
+				throw new ProtocolException("Audit Audience undefined");
+			}
+		}
+	}
+	private void readCorniceSicurezzaSchema(ModIProperties modiProperties, String schemaCorniceSicurezza) throws ProtocolException {
+		try {
+			if(schemaCorniceSicurezza!=null && StringUtils.isNotEmpty(schemaCorniceSicurezza)) {
+				
+				/* Audience */
+				readCorniceSicurezzaSchemaAudience(schemaCorniceSicurezza);
+
+				/* Claims */
+				readCorniceSicurezzaSchemaClaims(modiProperties, schemaCorniceSicurezza);
+			}
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	private void readCorniceSicurezzaSchemaClaims(ModIProperties modiProperties, String schemaCorniceSicurezza) throws ProtocolException {
+		if(modiProperties.getAuditConfig()!=null && !modiProperties.getAuditConfig().isEmpty()) {
+			for (ModIAuditConfig modIAuditConfig : modiProperties.getAuditConfig()) {
+				if(modIAuditConfig.getNome().equals(schemaCorniceSicurezza)) {
+					this.corniceSicurezzaSchemaConfig = modIAuditConfig;
+					this.corniceSicurezzaRules = new HashMap<>();
+					readCorniceSicurezzaSchemaClaimsRule(this.corniceSicurezzaSchemaConfig.getClaims());
+					break;
+				}
+			}
+		}
+	}
+	private void readCorniceSicurezzaSchemaClaimsRule(List<ModIAuditClaimConfig> list) throws ProtocolException {
+		if(list!=null && !list.isEmpty()) {
+			for (ModIAuditClaimConfig modIAuditClaimConfig : list) {
+				readCorniceSicurezzaSchemaClaimRule(modIAuditClaimConfig);
+			}
+		}
+	}
+	private void readCorniceSicurezzaSchemaClaimRule(ModIAuditClaimConfig claimConfig) throws ProtocolException {
+		try {
+			String claimName = claimConfig.getNome();
+			String claimMode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this.listProtocolPropertiesInternal, 
+					ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA_MODE_PREFIX+claimName);
+			List<String> rules = null;
+			if(ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(claimMode)) {
+				String claimValue = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this.listProtocolPropertiesInternal, 
+						ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA_PREFIX+claimName);
+				rules = convertToList(claimValue);
+				ModIUtilities.remove(this.claims, claimName);
+			}
+			else {
+				rules = claimConfig.getDefaultRule();
+			}
+			this.corniceSicurezzaRules.put(claimName, rules);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	private void readCorniceSicurezzaCodiceEnteLegacy(ModIProperties modiProperties) throws ProtocolException {
+		try {
+			String codiceEnteMode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this.listProtocolPropertiesInternal, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE);
+			String claimNameCodiceEnte = modiProperties.getSicurezzaMessaggioCorniceSicurezzaRestCodiceEnte();
+			if(ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(codiceEnteMode)) {
+				this.corniceSicurezzaCodiceEnteRule = convertToList(ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(this.listProtocolPropertiesInternal, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE));
+				if(this.multipleHeaderAuthorizationConfig!=null) {
+					ModIUtilities.remove(this.multipleHeaderClaims, claimNameCodiceEnte);
+				}
+				ModIUtilities.remove(this.claims, claimNameCodiceEnte);
+			}
+			else {
+				if(this.multipleHeaderAuthorizationConfig!=null && 
+						ModIUtilities.exists(this.multipleHeaderClaims, claimNameCodiceEnte)) {
+					this.corniceSicurezzaCodiceEnteRule = convertToList(ModIUtilities.get(this.multipleHeaderClaims, claimNameCodiceEnte, ModIUtilities.REMOVE));
+				}
+				else if(ModIUtilities.exists(this.claims, claimNameCodiceEnte)) {
+					this.corniceSicurezzaCodiceEnteRule = convertToList(ModIUtilities.get(this.claims, claimNameCodiceEnte, ModIUtilities.REMOVE));
+				}
+				else {
+					this.corniceSicurezzaCodiceEnteRule = modiProperties.getSicurezzaMessaggioCorniceSicurezzaDynamicCodiceEnte();
+				}
+			}
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	private void readCorniceSicurezzaUserLegacy(ModIProperties modiProperties) throws ProtocolException {
+		try {
+			String userMode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this.listProtocolPropertiesInternal, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE);
+			String claimNameUser = modiProperties.getSicurezzaMessaggioCorniceSicurezzaRestUser();
+			if(ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(userMode)) {
+				this.corniceSicurezzaUserRule = convertToList(ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(this.listProtocolPropertiesInternal, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER));
+				if(this.multipleHeaderAuthorizationConfig!=null) {
+					ModIUtilities.remove(this.multipleHeaderClaims, claimNameUser);
+				}
+				ModIUtilities.remove(this.claims, claimNameUser);
+			}
+			else {
+				if(this.multipleHeaderAuthorizationConfig!=null && 
+						ModIUtilities.exists(this.multipleHeaderClaims, claimNameUser)) {
+					this.corniceSicurezzaUserRule = convertToList(ModIUtilities.get(this.multipleHeaderClaims, claimNameUser, ModIUtilities.REMOVE));
+				}
+				else if(ModIUtilities.exists(this.claims, claimNameUser)) {
+					this.corniceSicurezzaUserRule = convertToList(ModIUtilities.get(this.claims, claimNameUser, ModIUtilities.REMOVE));
+				}
+				else {
+					this.corniceSicurezzaUserRule = modiProperties.getSicurezzaMessaggioCorniceSicurezzaDynamicUser();
+				}
+			}
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	private void readCorniceSicurezzaIpUserLegacy(ModIProperties modiProperties) throws ProtocolException {
+		try {
+			String ipUserMode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this.listProtocolPropertiesInternal, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE);
+			String claimNameIpUser = modiProperties.getSicurezzaMessaggioCorniceSicurezzaRestIpuser();
+			if(ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(ipUserMode)) {
+				this.corniceSicurezzaIpUserRule = convertToList(ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(this.listProtocolPropertiesInternal, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER));
+				if(this.multipleHeaderAuthorizationConfig!=null) {
+					ModIUtilities.remove(this.multipleHeaderClaims, claimNameIpUser);
+				}
+				ModIUtilities.remove(this.claims, claimNameIpUser);
+			}
+			else {
+				if(this.multipleHeaderAuthorizationConfig!=null && 
+						ModIUtilities.exists(this.multipleHeaderClaims, claimNameIpUser)) {
+					this.corniceSicurezzaIpUserRule = convertToList(ModIUtilities.get(this.multipleHeaderClaims, claimNameIpUser, ModIUtilities.REMOVE));
+				}
+				else if(ModIUtilities.exists(this.claims, claimNameIpUser)) {
+					this.corniceSicurezzaIpUserRule = convertToList(ModIUtilities.get(this.claims, claimNameIpUser, ModIUtilities.REMOVE));
+				}
+				else {
+					this.corniceSicurezzaIpUserRule = modiProperties.getSicurezzaMessaggioCorniceSicurezzaDynamicIpuser();
+				}
+			}
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
 	
 	public ModISecurityConfig(OpenSPCoop2Message msg, IProtocolFactory<?> protocolFactory, IState state, RequestInfo requestInfo, IDSoggetto soggettoFruitore, 
 			AccordoServizioParteComune aspc, AccordoServizioParteSpecifica aspsParam, ServizioApplicativo sa, boolean rest, boolean fruizione, boolean request,
-			Boolean multipleHeaderAuthorizationConfig, boolean kidMode) throws ProtocolException {
+			Boolean multipleHeaderAuthorizationConfig, boolean kidMode,
+			String patternCorniceSicurezza, String schemaCorniceSicurezza) throws ProtocolException {
 		
 		// METODO USATO IN VALIDAZIONE
 		
@@ -774,6 +873,12 @@ public class ModISecurityConfig {
 				}
 				if(this.audience==null) {
 					throw new ProtocolException("Audience undefined");
+				}
+				
+				
+				/* Cornice Sicurezza */
+				if(patternCorniceSicurezza!=null && !CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD.equals(patternCorniceSicurezza) && schemaCorniceSicurezza!=null) {
+					readCorniceSicurezzaSchemaAudience(schemaCorniceSicurezza);
 				}
 			}
 			else if(fruizione && !request) {
@@ -1005,17 +1110,18 @@ public class ModISecurityConfig {
 	}
 		
 	public static List<String> convertToList(String value) throws ProtocolException{
+		String nonDefinita = "non definita";
 		List<String> l = null;
 		if (value != null){
 			value = value.trim();
 			if("".equals(value)) {
-				throw new ProtocolException("non definita");
+				throw new ProtocolException(nonDefinita);
 			}
 			l = new ArrayList<>();
 			if(value.contains(",")) {
 				String [] tmp = value.split(",");
 				if(tmp==null || tmp.length<=0) {
-					throw new ProtocolException("non definita");
+					throw new ProtocolException(nonDefinita);
 				}
 				for (String s : tmp) {
 					if(s!=null) {
@@ -1026,7 +1132,7 @@ public class ModISecurityConfig {
 					}
 				}
 				if(l.isEmpty()) {
-					throw new ProtocolException("non definita");
+					throw new ProtocolException(nonDefinita);
 				}
 			}
 			else {
@@ -1034,7 +1140,7 @@ public class ModISecurityConfig {
 			}
 		}
 		else {
-			throw new ProtocolException("non definita");
+			throw new ProtocolException(nonDefinita);
 		}
 		return l;
 	}
@@ -1042,6 +1148,41 @@ public class ModISecurityConfig {
 
 	public String getAlgorithm() {
 		return this.algorithm;
+	}
+	
+	private static final String RSA = "RSA";
+	private static final String ECDSA = "ECDSA";
+	public String getAlgorithmConvertForREST() throws ProtocolException {
+		String algoLowerCase = this.algorithm.toLowerCase();
+		String size256 = "256";
+		String size384 = "384";
+		String size512 = "512";
+		if(algoLowerCase.contains(RSA.toLowerCase())) {
+			if(this.algorithm.contains(size256)) {
+				return ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_RS256;
+			}
+			else if(this.algorithm.contains(size384)) {
+				return ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_RS384;
+			}
+		}
+		else if(algoLowerCase.contains(ECDSA.toLowerCase())) {
+			if(this.algorithm.contains(size256)) {
+				return ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_ES256;
+			}
+			else if(this.algorithm.contains(size384)) {
+				return ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_ES384;
+			}
+		}
+		else if(algoLowerCase.contains(ECDSA.toLowerCase())) {
+			if(this.algorithm.contains(size512)) {
+				return ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_ES512;
+			}
+			else if(this.algorithm.contains(size512)) {
+				return ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_ES512;
+			}
+		}
+		
+		throw new ProtocolException("Convert signature algorithm '"+this.algorithm+"' for audt token failed");
 	}
 	
 	public String getDigestAlgorithm() {
@@ -1141,6 +1282,18 @@ public class ModISecurityConfig {
 	
 	public List<String> getCorniceSicurezzaCodiceEnteRule() {
 		return this.corniceSicurezzaCodiceEnteRule;
+	}
+	
+	public ModIAuditConfig getCorniceSicurezzaSchemaConfig() {
+		return this.corniceSicurezzaSchemaConfig;
+	}
+
+	public Map<String, List<String>> getCorniceSicurezzaRules() {
+		return this.corniceSicurezzaRules;
+	}
+	
+	public String getCorniceSicurezzaAudience() {
+		return this.corniceSicurezzaAudience;
 	}
 	
 	public boolean isCheckAudience() {

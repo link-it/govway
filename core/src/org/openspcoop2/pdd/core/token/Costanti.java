@@ -544,9 +544,12 @@ public class Costanti {
 	
 	public static final String ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE = "jwtKeystoreType";
 	public static final String ID_NEGOZIAZIONE_JWT_KEYSTORE_FILE = "jwtKeystoreFile";
+	public static final String ID_NEGOZIAZIONE_JWT_KEYSTORE_FILE_PRIVATE_KEY = "jwtKeystorePrivateKey";
+	public static final String ID_NEGOZIAZIONE_JWT_KEYSTORE_FILE_PUBLIC_KEY = "jwtKeystorePublicKey";
 	public static final String ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD = "jwtKeystorePassword";
 	public static final String ID_NEGOZIAZIONE_JWT_KEYSTORE_ALIAS_PRIVATE_KEY = "jwtAliasChiavePrivata";
 	public static final String ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD_PRIVATE_KEY = "jwtPasswordChiavePrivata";
+	public static final String ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD_PRIVATE_KEY_OPZIONALE = "jwtPasswordChiavePrivataOpzionale";
 		
 	public static final String ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CLASSNAME = "customTokenParserCustomPlugin";
 	public static final String ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CHOICE = "customTokenParserCustomPluginChoice";

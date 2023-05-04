@@ -690,6 +690,8 @@ CREATE TABLE remote_store_key
 	id_remote_store BIGINT NOT NULL,
 	kid VARCHAR(255) NOT NULL,
 	key BLOB NOT NULL,
+	data_registrazione TIMESTAMP NOT NULL,
+	data_aggiornamento TIMESTAMP NOT NULL,
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
 	-- unique constraints
@@ -701,5 +703,7 @@ CREATE TABLE remote_store_key
 
 -- index
 CREATE UNIQUE INDEX index_remote_store_key_1 ON remote_store_key (id_remote_store,kid);
+CREATE INDEX REMOTE_STORE_UPDATE ON remote_store_key (data_aggiornamento);
+CREATE INDEX REMOTE_STORE_CREATE ON remote_store_key (data_registrazione);
 
 

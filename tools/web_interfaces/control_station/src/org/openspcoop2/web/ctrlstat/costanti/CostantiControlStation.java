@@ -833,7 +833,7 @@ public class CostantiControlStation {
 	
 	public static final String LABEL_SUBTITLE_FILTRI_MODIPA = "Dati Profilo ModI";
 	public static final String NAME_SUBTITLE_FILTRI_MODIPA = "subtDatiProfiloModI";
-	public static final String LABEL_FILTRO_MODIPA_INFO_UTENTE = "Informazioni Utente";
+	public static final String LABEL_FILTRO_MODIPA_INFO_UTENTE = "Informazioni Audit";
 	
 	public static final String LABEL_SUBTITLE_PROPRIETA = "Dati Propriet&agrave;";
 	public static final String NAME_SUBTITLE_PROPRIETA = "subtDatiProp";

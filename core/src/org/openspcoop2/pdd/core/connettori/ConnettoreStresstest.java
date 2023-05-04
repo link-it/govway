@@ -45,7 +45,6 @@ import org.openspcoop2.protocol.engine.builder.Imbustamento;
 import org.openspcoop2.protocol.engine.driver.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
 import org.openspcoop2.protocol.sdk.Busta;
-import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.Integrazione;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
@@ -366,7 +365,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
 					
 					// repository
 					RepositoryBuste repositoryBuste = new RepositoryBuste(state, true,this.getProtocolFactory());
-					repositoryBuste.registraBustaIntoInBox(bustaRichiesta, new ArrayList<Eccezione>() ,
+					repositoryBuste.registraBustaIntoInBox(bustaRichiesta, new ArrayList<>() ,
 							OpenSPCoop2Properties.getInstance().getRepositoryIntervalloScadenzaMessaggi());
 					Integrazione infoIntegrazione = new Integrazione();
 					infoIntegrazione.setIdModuloInAttesa(null);

@@ -63,9 +63,9 @@ public class SDIValidazioneSemantica extends ValidazioneSemantica {
 	protected SDIProperties sdiProperties;
 	
 	/** Errori di validazione riscontrati sulla busta */
-	protected java.util.List<Eccezione> erroriValidazione = new ArrayList<Eccezione>();
+	protected java.util.List<Eccezione> erroriValidazione = new ArrayList<>();
 	/** Errori di processamento riscontrati sulla busta */
-	protected java.util.List<Eccezione> erroriProcessamento = new ArrayList<Eccezione>();
+	protected java.util.List<Eccezione> erroriProcessamento = new ArrayList<>();
 	
 	public SDIValidazioneSemantica(IProtocolFactory<?> factory, IState state) throws ProtocolException {
 		super(factory, state);

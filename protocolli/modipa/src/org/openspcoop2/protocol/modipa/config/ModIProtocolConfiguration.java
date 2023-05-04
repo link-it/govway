@@ -73,7 +73,7 @@ public class ModIProtocolConfiguration extends BasicConfiguration {
 	
 	@Override
 	public boolean isAbilitatoSalvataggioHeaderProtocolloTracce() {
-		return this.properties.isGenerazioneTracce_registraToken();
+		return this.properties.isGenerazioneTracceRegistraToken();
 	}
 	
 	@Override

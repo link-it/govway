@@ -2382,7 +2382,7 @@ public class RepositoryBuste  {
 
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
-			List<Eccezione> errors = new ArrayList<Eccezione>();
+			List<Eccezione> errors = new ArrayList<>();
 			try{
 
 				// Costruzione Query

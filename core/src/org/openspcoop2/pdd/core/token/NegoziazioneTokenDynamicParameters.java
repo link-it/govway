@@ -52,6 +52,8 @@ import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.utils.ModIKeystoreUtils;
 import org.openspcoop2.security.SecurityException;
+import org.openspcoop2.security.keystore.JWKSetStore;
+import org.openspcoop2.security.keystore.KeyPairStore;
 import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -939,6 +941,37 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 	public String getKidApplicativoModI() {
 		return this.kidApplicativoModI;
 	}
+	public String getTipoKeystoreApplicativoModI() {
+		return this.keystoreApplicativoModI.getSecurityMessageKeystoreType();
+	}
+	public KeyPairStore getKeyPairStoreApplicativoModI() throws TokenException, SecurityException{
+		
+		String keystoreFile = this.keystoreApplicativoModI.getSecurityMessageKeystorePath();
+		if(keystoreFile==null) {
+			throw new TokenException("JWT Signature private key file undefined");
+		}
+		String keystoreFilePublicKey = this.keystoreApplicativoModI.getSecurityMessageKeystorePathPublicKey();
+		if(keystoreFilePublicKey==null) {
+			throw new TokenException("JWT Signature public key file undefined");
+		}
+		String keyPairAlgorithm = this.keystoreApplicativoModI.getSecurityMessageKeystoreKeyAlgorithm();
+		if(keyPairAlgorithm==null) {
+			throw new TokenException("JWT Signature key pair algorithm undefined");
+		}
+		
+		String keyPassword = this.keystoreApplicativoModI.getSecurityMessageKeyPassword();
+		
+		return GestoreKeystoreCache.getKeyPairStore(this.getRequestInfo(), keystoreFile, keystoreFilePublicKey, keyPassword, keyPairAlgorithm);
+	}
+	public JWKSetStore getJWKSetStoreApplicativoModI() throws TokenException, SecurityException{
+		
+		String keystoreFile = this.keystoreApplicativoModI.getSecurityMessageKeystorePath();
+		if(keystoreFile==null) {
+			throw new TokenException("JWT Signature keystore file undefined");
+		}
+		
+		return GestoreKeystoreCache.getJwkSetStore(this.getRequestInfo(), keystoreFile);
+	}
 	public org.openspcoop2.utils.certificate.KeyStore getKeystoreApplicativoModI() throws TokenException, SecurityException{
 		if(this.keystoreApplicativoModI.getSecurityMessageKeystorePath()!=null || this.keystoreApplicativoModI.isSecurityMessageKeystoreHSM()) {
 			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(this.getRequestInfo(), this.keystoreApplicativoModI.getSecurityMessageKeystorePath(), this.keystoreApplicativoModI.getSecurityMessageKeystoreType(), 
@@ -969,6 +1002,37 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 	}
 	public String getKidFruizioneModI() {
 		return this.kidFruizioneModI;
+	}
+	public String getTipoKeystoreFruizioneModI() {
+		return this.keystoreFruizioneModI.getSecurityMessageKeystoreType();
+	}
+	public KeyPairStore getKeyPairStoreFruizioneModI() throws TokenException, SecurityException{
+		
+		String keystoreFile = this.keystoreFruizioneModI.getSecurityMessageKeystorePath();
+		if(keystoreFile==null) {
+			throw new TokenException("JWT Signature private key file undefined");
+		}
+		String keystoreFilePublicKey = this.keystoreFruizioneModI.getSecurityMessageKeystorePathPublicKey();
+		if(keystoreFilePublicKey==null) {
+			throw new TokenException("JWT Signature public key file undefined");
+		}
+		String keyPairAlgorithm = this.keystoreFruizioneModI.getSecurityMessageKeystoreKeyAlgorithm();
+		if(keyPairAlgorithm==null) {
+			throw new TokenException("JWT Signature key pair algorithm undefined");
+		}
+		
+		String keyPassword = this.keystoreFruizioneModI.getSecurityMessageKeyPassword();
+		
+		return GestoreKeystoreCache.getKeyPairStore(this.getRequestInfo(), keystoreFile, keystoreFilePublicKey, keyPassword, keyPairAlgorithm);
+	}
+	public JWKSetStore getJWKSetStoreFruizioneModI() throws TokenException, SecurityException{
+		
+		String keystoreFile = this.keystoreFruizioneModI.getSecurityMessageKeystorePath();
+		if(keystoreFile==null) {
+			throw new TokenException("JWT Signature keystore file undefined");
+		}
+		
+		return GestoreKeystoreCache.getJwkSetStore(this.getRequestInfo(), keystoreFile);
 	}
 	public org.openspcoop2.utils.certificate.KeyStore getKeystoreFruizioneModI() throws TokenException, SecurityException{
 		if(this.keystoreFruizioneModI.getSecurityMessageKeystorePath()!=null || this.keystoreFruizioneModI.isSecurityMessageKeystoreHSM()) {

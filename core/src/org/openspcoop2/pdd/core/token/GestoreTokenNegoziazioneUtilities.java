@@ -992,37 +992,87 @@ public class GestoreTokenNegoziazioneUtilities {
 		if(policyNegoziazioneToken.isRfc7523x509Grant()) {
 			
 			if(policyNegoziazioneToken.isJwtSignKeystoreApplicativoModI()) {
-				ks = dynamicParameters.getKeystoreApplicativoModI();
-				if(ks==null) {
-					throw new TokenException("JWT Signature keystore undefined");
+				
+				String keystoreType = dynamicParameters.getTipoKeystoreApplicativoModI();
+				if(keystoreType==null) {
+					throw new TokenException(GestoreToken.KEYSTORE_TYPE_UNDEFINED);
 				}
+				if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
+					keyPairStore = dynamicParameters.getKeyPairStoreApplicativoModI();
+					if(keyPairStore==null) {
+						throw new TokenException(GestoreToken.KEYSTORE_KEYPAIR_UNDEFINED);
+					}
+				}
+				else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType)) {
+					jwtStore =  dynamicParameters.getJWKSetStoreApplicativoModI();
+					if(jwtStore==null) {
+						throw new TokenException(GestoreToken.KEYSTORE_KEYSTORE_UNDEFINED);
+					}
+				}
+				else {
+					ks = dynamicParameters.getKeystoreApplicativoModI();
+					if(ks==null) {
+						throw new TokenException(GestoreToken.KEYSTORE_KEYSTORE_UNDEFINED);
+					}
+				}
+				
 				keyAlias = dynamicParameters.getKeyAliasApplicativoModI();
-				if(keyAlias==null) {
+				if(keyAlias==null && 
+						!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
+						!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
 					throw new TokenException(GestoreToken.KEY_ALIAS_UNDEFINED);
 				}
 				keyPassword = dynamicParameters.getKeyPasswordApplicativoModI();
-				if(keyPassword==null) {
+				if(keyPassword==null && 
+						!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) && 
+						!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
+						!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
 					throw new TokenException(GestoreToken.KEY_PASSWORD_UNDEFINED);
 				}
 			}
 			else if(policyNegoziazioneToken.isJwtSignKeystoreFruizioneModI()) {
-				ks = dynamicParameters.getKeystoreFruizioneModI();
-				if(ks==null) {
-					throw new TokenException("JWT Signature keystore undefined");
+				
+				String keystoreType = dynamicParameters.getTipoKeystoreFruizioneModI();
+				if(keystoreType==null) {
+					throw new TokenException(GestoreToken.KEYSTORE_TYPE_UNDEFINED);
 				}
+				if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
+					keyPairStore = dynamicParameters.getKeyPairStoreFruizioneModI();
+					if(keyPairStore==null) {
+						throw new TokenException(GestoreToken.KEYSTORE_KEYPAIR_UNDEFINED);
+					}
+				}
+				else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType)) {
+					jwtStore =  dynamicParameters.getJWKSetStoreFruizioneModI();
+					if(jwtStore==null) {
+						throw new TokenException(GestoreToken.KEYSTORE_KEYSTORE_UNDEFINED);
+					}
+				}
+				else {
+					ks = dynamicParameters.getKeystoreFruizioneModI();
+					if(ks==null) {
+						throw new TokenException(GestoreToken.KEYSTORE_KEYSTORE_UNDEFINED);
+					}
+				}
+				
 				keyAlias = dynamicParameters.getKeyAliasFruizioneModI();
-				if(keyAlias==null) {
+				if(keyAlias==null && 
+						!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
+						!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
 					throw new TokenException(GestoreToken.KEY_ALIAS_UNDEFINED);
 				}
 				keyPassword = dynamicParameters.getKeyPasswordFruizioneModI();
-				if(keyPassword==null) {
+				if(keyPassword==null && 
+						!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) && 
+						!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
+						!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
 					throw new TokenException(GestoreToken.KEY_PASSWORD_UNDEFINED);
 				}
 			}
 			else {
 				String keystoreType = policyNegoziazioneToken.getJwtSignKeystoreType();
 				if(keystoreType==null) {
-					throw new TokenException("JWT Signature keystore type undefined");
+					throw new TokenException(GestoreToken.KEYSTORE_TYPE_UNDEFINED);
 				}
 				
 				String keystoreFile = null;

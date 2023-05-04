@@ -71,9 +71,9 @@ public class SDIValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 	protected IProtocolConfiguration protocolConfiguration;
 	
 	/** Errori di validazione riscontrati sulla busta */
-	protected java.util.List<Eccezione> erroriValidazione = new ArrayList<Eccezione>();
+	protected java.util.List<Eccezione> erroriValidazione = new ArrayList<>();
 	/** Errori di processamento riscontrati sulla busta */
-	protected java.util.List<Eccezione> erroriProcessamento = new ArrayList<Eccezione>();
+	protected java.util.List<Eccezione> erroriProcessamento = new ArrayList<>();
 	/** Eventuale codice di errore avvenuto durante il processo di validazione  */
 	private CodiceErroreCooperazione codiceErrore;
 	/** Eventuale messaggio di errore avvenuto durante il processo di validazione */

@@ -27,6 +27,7 @@ import javax.xml.soap.SOAPEnvelope;
 
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.constants.Costanti;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -38,8 +39,11 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
+import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
+import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.modipa.ModIBustaRawContent;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
@@ -79,6 +83,12 @@ public class ModIImbustamento {
 		this.log = log;
 		this.modiProperties = ModIProperties.getInstance();
 	}
+	
+	private static final String DIAGNOSTIC_ADD_TOKEN_ID_AUTH = "addTokenIdAuth";
+	private static final String DIAGNOSTIC_ADD_TOKEN_INTEGRITY = "addTokenIntegrity";
+	private static final String DIAGNOSTIC_IN_CORSO = "inCorso";
+	private static final String DIAGNOSTIC_COMPLETATA = "completata";
+	private static final String DIAGNOSTIC_FALLITA = "fallita";
 	
 	private static String getReplyToErogazione(IDSoggetto idSoggettoMittente, AccordoServizioParteComune aspc, String nomePortType, String azione,
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, 
@@ -268,25 +278,104 @@ public class ModIImbustamento {
 			
 			/* *** SICUREZZA MESSAGGIO *** */
 			boolean filterPDND = true;
-			String securityMessageProfile = ModIPropertiesUtils.readPropertySecurityMessageProfile(aspc, nomePortType, azione, filterPDND);
-			if(securityMessageProfile!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED.equals(securityMessageProfile)) {
+			String securityMessageProfileNonFiltratoPDND = ModIPropertiesUtils.readPropertySecurityMessageProfile(aspc, nomePortType, azione, !filterPDND);
+			if(securityMessageProfileNonFiltratoPDND!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED.equals(securityMessageProfileNonFiltratoPDND)) {
+				
+				String securityMessageProfile = ModIPropertiesUtils.readPropertySecurityMessageProfile(aspc, nomePortType, azione, filterPDND);
+								
+				MsgDiagnostico msgDiag = null;
+				TipoPdD tipoPdD = RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio) ? TipoPdD.DELEGATA : TipoPdD.APPLICATIVA;
+				IDSoggetto idSoggetto = TipoPdD.DELEGATA.equals(tipoPdD) ? idSoggettoMittente : idSoggettoDestinatario;
+				if(idSoggetto==null || idSoggetto.getTipo()==null || idSoggetto.getNome()==null) {
+					idSoggetto = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolFactory.getProtocol(), requestInfo);
+				}
+				else {
+					idSoggetto.setCodicePorta(registryReader.getDominio(idSoggetto));
+				}
+				msgDiag = MsgDiagnostico.newInstance(TipoPdD.DELEGATA, 
+						idSoggetto,
+						"ModI", requestInfo!=null && requestInfo.getProtocolContext()!=null ? requestInfo.getProtocolContext().getInterfaceName() : null,
+						requestInfo,
+						state);
+				if(TipoPdD.DELEGATA.equals(tipoPdD)){
+					msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI);
+				}
+				else {
+					msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE);
+				}
+				msgDiag.setPddContext(context, protocolFactory);
+				String tipoDiagnostico = RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio) ? ".richiesta." : ".risposta.";
 				
 				// check config
 				boolean isRichiesta = MessageRole.REQUEST.equals(messageRole);
-				boolean addSecurity = ModIPropertiesUtils.processSecurity(aspc, nomePortType, azione, isRichiesta, 
-						msg, rest, this.modiProperties);
-												
-				if(addSecurity) {
 				
-					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO,
-							ModIPropertiesUtils.convertProfiloSicurezzaToSDKValue(securityMessageProfile, rest));
+				boolean addSecurity = false;
+				boolean securityMessageProfilePrevedeTokenLocale = securityMessageProfile!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED.equals(securityMessageProfile);
+				if(securityMessageProfilePrevedeTokenLocale) {
+					addSecurity = ModIPropertiesUtils.processSecurity(aspc, nomePortType, azione, isRichiesta, 
+						msg, rest, this.modiProperties);
+				}
+				
+				boolean corniceSicurezza = ModIPropertiesUtils.isPropertySecurityMessageConCorniceSicurezza(aspc, nomePortType, azione);
+				String patternCorniceSicurezza = null;
+				String schemaCorniceSicurezza = null;
+				if(corniceSicurezza) {
+					patternCorniceSicurezza = ModIPropertiesUtils.readPropertySecurityMessageCorniceSicurezzaPattern(aspc, nomePortType, azione);
+					if(patternCorniceSicurezza==null) {
+						// backward compatibility
+						patternCorniceSicurezza = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_VALUE_OLD;
+					}
+					if(!ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_VALUE_OLD.equals(patternCorniceSicurezza)) {
+						schemaCorniceSicurezza = ModIPropertiesUtils.readPropertySecurityMessageCorniceSicurezzaSchema(aspc, nomePortType, azione);
+					}
+				}
+				
+				boolean fruizione = isRichiesta;
+				
+				boolean addAudit = fruizione && corniceSicurezza && 
+						patternCorniceSicurezza!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_VALUE_OLD.equals(patternCorniceSicurezza);
+				
+				String sorgenteToken = ModIPropertiesUtils.readPropertySecurityMessageSorgenteToken(aspc, nomePortType, azione, true);
+				boolean sorgenteLocale = true;
+				if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND.equals(sorgenteToken) ||
+						ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH.equals(sorgenteToken)) {
+					sorgenteLocale = false;
+				}
+				
+				boolean keystoreKidMode = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile)
+						||
+						ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile)
+						||
+						!sorgenteLocale;
+				
+				Map<String, Object> dynamicMap = null;
+				
+				ModISecurityConfig securityConfig = null;
+				ModIKeystoreConfig keystoreConfig = null;
+				boolean keystoreDefinitoInFruizione = false;
+				
+				String headerTokenRest = null;
+				String headerTokenRestIntegrity = null; // nel caso di Authorization insieme a Agid-JWT-Signature
+				boolean integritaCustom = false;
+				
+				if(addSecurity || addAudit) {
+				
+					// dynamicMap
+					boolean bufferMessageReadOnly = this.modiProperties.isReadByPathBufferEnabled();
+					Map<String, Object> dynamicMapRequest = null;
+					if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio)) {
+						dynamicMapRequest = ModIUtilities.removeDynamicMapRequest(context);
+					}
+					if(dynamicMapRequest!=null) {
+						dynamicMap = DynamicUtils.buildDynamicMapResponse(msg, context, busta, this.log, bufferMessageReadOnly, dynamicMapRequest);
+					}
+					else {
+						dynamicMap = DynamicUtils.buildDynamicMap(msg, context, busta, this.log, bufferMessageReadOnly);
+						ModIUtilities.saveDynamicMapRequest(context, dynamicMap);
+					}
 					
-					boolean fruizione = MessageRole.REQUEST.equals(messageRole);
-					
-					String headerTokenRest = null;
-					String headerTokenRestIntegrity = null; // nel caso di Authorization insieme a Agid-JWT-Signature
+					// header
 					Boolean multipleHeaderAuthorizationConfig = null;
-					boolean integritaCustom = false;
 					if(rest) {
 						headerTokenRest = ModIPropertiesUtils.readPropertySecurityMessageHeader(aspc, nomePortType, azione, isRichiesta, filterPDND);
 						if(headerTokenRest.contains(" ")) {
@@ -307,17 +396,8 @@ public class ModIImbustamento {
 						}
 					}
 					
-					boolean corniceSicurezza = ModIPropertiesUtils.isPropertySecurityMessageConCorniceSicurezza(aspc, nomePortType, azione);
-					
-					boolean includiRequestDigest = ModIPropertiesUtils.isPropertySecurityMessageIncludiRequestDigest(aspc, nomePortType, azione);
-					
-					boolean signAttachments = false;
-					if(!rest) {
-						signAttachments = ModIPropertiesUtils.isAttachmentsSignature(aspc, nomePortType, azione, isRichiesta, msg);
-					}
-					
-					boolean keystoreDefinitoInFruizione = false;
-					if(MessageRole.REQUEST.equals(messageRole)) {
+					// modalita Keystore
+					if(isRichiesta) {
 						
 						keystoreDefinitoInFruizione = ModIKeystoreConfig.isKeystoreDefinitoInFruizione(idSoggettoMittente, asps);
 						
@@ -328,19 +408,15 @@ public class ModIImbustamento {
 						}
 					}
 					
-					boolean kidMode = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile)
-							||
-							ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile);
-					
-					
-					ModIKeystoreConfig keystoreConfig = null;
-					ModISecurityConfig securityConfig = new ModISecurityConfig(msg, idSoggettoMittente, asps, sa, 
-							rest, fruizione, MessageRole.REQUEST.equals(messageRole), corniceSicurezza,
+					// keystore
+					securityConfig = new ModISecurityConfig(msg, idSoggettoMittente, asps, sa, 
+							rest, fruizione, isRichiesta, 
+							patternCorniceSicurezza, schemaCorniceSicurezza,
 							busta, bustaRichiesta, 
 							multipleHeaderAuthorizationConfig,
-							keystoreDefinitoInFruizione, kidMode);
+							keystoreDefinitoInFruizione, keystoreKidMode);
 					
-					if(MessageRole.REQUEST.equals(messageRole)) {
+					if(isRichiesta) {
 					
 						if(keystoreDefinitoInFruizione) {
 							keystoreConfig = new ModIKeystoreConfig(fruizione, idSoggettoMittente, asps, securityMessageProfile);
@@ -355,28 +431,61 @@ public class ModIImbustamento {
 						keystoreConfig = new ModIKeystoreConfig(fruizione, idSoggettoMittente, asps, securityMessageProfile);
 						
 					}
+				}
+				
+				
+				String purposeId = null;
+				if(addSecurity || addAudit) {
+					purposeId =  ModIPropertiesUtils.readPurposeId(configIntegrationReader, asps, idSoggettoMittente, azione);
+				}
+				
+				
+				
+				
+				// security (ID_AUTH e INTEGRITY)
+				if(addSecurity) {
+				
+					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO,
+							ModIPropertiesUtils.convertProfiloSicurezzaToSDKValue(securityMessageProfile, rest));
+														
+					boolean includiRequestDigest = ModIPropertiesUtils.isPropertySecurityMessageIncludiRequestDigest(aspc, nomePortType, azione);
 					
-					boolean bufferMessageReadOnly = this.modiProperties.isReadByPathBufferEnabled();
-					Map<String, Object> dynamicMap = null;
-					Map<String, Object> dynamicMapRequest = null;
-					if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio)) {
-						dynamicMapRequest = ModIUtilities.removeDynamicMapRequest(context);
+					boolean signAttachments = false;
+					if(!rest) {
+						signAttachments = ModIPropertiesUtils.isAttachmentsSignature(aspc, nomePortType, azione, isRichiesta, msg);
 					}
-					if(dynamicMapRequest!=null) {
-						dynamicMap = DynamicUtils.buildDynamicMapResponse(msg, context, busta, this.log, bufferMessageReadOnly, dynamicMapRequest);
-					}
-					else {
-						dynamicMap = DynamicUtils.buildDynamicMap(msg, context, busta, this.log, bufferMessageReadOnly);
-						ModIUtilities.saveDynamicMapRequest(context, dynamicMap);
-					}
-					
+						
 					if(rest) {
 						if(headerTokenRestIntegrity==null) {
-							String token = imbustamentoRest.addToken(msg, context, keystoreConfig, securityConfig, busta, 
-									securityMessageProfile, false, headerTokenRest, corniceSicurezza, ruoloMessaggio, includiRequestDigest,
-									null, busta.getID(), ModIHeaderType.SINGLE, integritaCustom,
-									dynamicMap, requestInfo);
-							protocolMessage.setBustaRawContent(new ModIBustaRawContent(headerTokenRest, token));
+							String prefixMsgDiag = null;
+							if(HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
+								prefixMsgDiag = DIAGNOSTIC_ADD_TOKEN_ID_AUTH;
+							}
+							else {
+								prefixMsgDiag = DIAGNOSTIC_ADD_TOKEN_INTEGRITY;
+							}
+							try {
+								msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_IN_CORSO);
+							
+								String token = imbustamentoRest.addToken(msg, isRichiesta, context, keystoreConfig, securityConfig, busta, 
+										securityMessageProfile, false, headerTokenRest, 
+										corniceSicurezza, patternCorniceSicurezza, 
+										null, // devo fornirlo solo durante la generazione dell'Audit Token 
+										ruoloMessaggio, includiRequestDigest,
+										null, busta.getID(), ModIHeaderType.SINGLE, integritaCustom,
+										dynamicMap, requestInfo,
+										purposeId);
+								protocolMessage.setBustaRawContent(new ModIBustaRawContent(headerTokenRest, token));
+								
+								CostantiPdD.addKeywordInCache(msgDiag, false, context, null); // aggiungere gestione dell'informazione quando si aggiunge la cache
+								msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_COMPLETATA);
+							}
+							catch(ProtocolException pe) {
+								msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, pe.getMessage());
+								msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_FALLITA);
+								throw pe;
+							}
+							
 						}
 						else {
 							long now = DateManager.getTimeMillis();
@@ -393,7 +502,6 @@ public class ModIImbustamento {
 							
 							// Authorization
 							String securityMessageProfileAuthorization = null;
-							boolean useKIDforIdAUTH = false;
 							if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile)
 									||
 									ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile)) {
@@ -402,15 +510,35 @@ public class ModIImbustamento {
 							else {
 								securityMessageProfileAuthorization = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02; 
 							}
+							
+							boolean useKIDforIdAUTH = false; // normalmente il token authorization sarà PDND, se cmq è locale lo genero uguale per il kid
 							if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile)
 									||
 									ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile)) {
 								useKIDforIdAUTH = true;
 							}
-							String tokenAuthorization = imbustamentoRest.addToken(msg, context, keystoreConfig, securityConfig, busta, 
-									securityMessageProfileAuthorization, useKIDforIdAUTH, headerTokenRest, corniceSicurezza, ruoloMessaggio, includiRequestDigest,
-									now, jtiAuthorization, ModIHeaderType.BOTH_AUTH, integritaCustom,
-									dynamicMap, requestInfo);
+
+							String tokenAuthorization = null;
+							try {
+								msgDiag.logPersonalizzato(DIAGNOSTIC_ADD_TOKEN_ID_AUTH+tipoDiagnostico+DIAGNOSTIC_IN_CORSO);
+							
+								tokenAuthorization = imbustamentoRest.addToken(msg, isRichiesta, context, keystoreConfig, securityConfig, busta, 
+										securityMessageProfileAuthorization, useKIDforIdAUTH, headerTokenRest, 
+										corniceSicurezza, patternCorniceSicurezza, 
+										null, // devo fornirlo solo durante la generazione dell'Audit Token 
+										ruoloMessaggio, includiRequestDigest,
+										now, jtiAuthorization, ModIHeaderType.BOTH_AUTH, integritaCustom,
+										dynamicMap, requestInfo,
+										purposeId);
+								
+								CostantiPdD.addKeywordInCache(msgDiag, false, context, null); // aggiungere gestione dell'informazione quando si aggiunge la cache
+								msgDiag.logPersonalizzato(DIAGNOSTIC_ADD_TOKEN_ID_AUTH+tipoDiagnostico+DIAGNOSTIC_COMPLETATA);
+							}
+							catch(ProtocolException pe) {
+								msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, pe.getMessage());
+								msgDiag.logPersonalizzato(DIAGNOSTIC_ADD_TOKEN_ID_AUTH+tipoDiagnostico+DIAGNOSTIC_FALLITA);
+								throw pe;
+							}
 							
 							// Integrity
 							// !! Nel caso di 2 header, quello integrity viene prodotto solo se c'è un payload o uno degli header indicati da firmare.
@@ -433,15 +561,32 @@ public class ModIImbustamento {
 							}
 							String tokenIntegrity = null;
 							if(addIntegrity) {
-								ModISecurityConfig securityConfigIntegrity = new ModISecurityConfig(msg, idSoggettoMittente, asps, sa, 
-										rest, fruizione, MessageRole.REQUEST.equals(messageRole), corniceSicurezza,
-										busta, bustaRichiesta, 
-										false,
-										keystoreDefinitoInFruizione, kidMode);
-								tokenIntegrity = imbustamentoRest.addToken(msg, context, keystoreConfig, securityConfigIntegrity, busta, 
-										securityMessageProfile, false, headerTokenRestIntegrity, corniceSicurezza, ruoloMessaggio, includiRequestDigest,
-										now, jtiIntegrity, ModIHeaderType.BOTH_INTEGRITY, integritaCustom,
-										dynamicMap, requestInfo);
+								try {
+									msgDiag.logPersonalizzato(DIAGNOSTIC_ADD_TOKEN_INTEGRITY+tipoDiagnostico+DIAGNOSTIC_IN_CORSO);
+									
+									ModISecurityConfig securityConfigIntegrity = new ModISecurityConfig(msg, idSoggettoMittente, asps, sa, 
+											rest, fruizione, isRichiesta, 
+											patternCorniceSicurezza, schemaCorniceSicurezza,
+											busta, bustaRichiesta, 
+											false,
+											keystoreDefinitoInFruizione, keystoreKidMode);
+									tokenIntegrity = imbustamentoRest.addToken(msg, isRichiesta, context, keystoreConfig, securityConfigIntegrity, busta, 
+											securityMessageProfile, false, headerTokenRestIntegrity, 
+											corniceSicurezza, patternCorniceSicurezza, 
+											null, // devo fornirlo solo durante la generazione dell'Audit Token 
+											ruoloMessaggio, includiRequestDigest,
+											now, jtiIntegrity, ModIHeaderType.BOTH_INTEGRITY, integritaCustom,
+											dynamicMap, requestInfo,
+											purposeId);
+									
+									CostantiPdD.addKeywordInCache(msgDiag, false, context, null); // aggiungere gestione dell'informazione quando si aggiunge la cache
+									msgDiag.logPersonalizzato(DIAGNOSTIC_ADD_TOKEN_INTEGRITY+tipoDiagnostico+DIAGNOSTIC_COMPLETATA);
+								}
+								catch(ProtocolException pe) {
+									msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, pe.getMessage());
+									msgDiag.logPersonalizzato(DIAGNOSTIC_ADD_TOKEN_INTEGRITY+tipoDiagnostico+DIAGNOSTIC_FALLITA);
+									throw pe;
+								}
 							}
 							
 							if(tokenIntegrity!=null) {
@@ -454,12 +599,95 @@ public class ModIImbustamento {
 						}
 					}
 					else {
-						SOAPEnvelope env = imbustamentoSoap.addSecurity(msg, context, keystoreConfig, securityConfig, busta, 
-								securityMessageProfile, corniceSicurezza, ruoloMessaggio, includiRequestDigest, signAttachments,
-								dynamicMap, requestInfo);
-						protocolMessage.setBustaRawContent(new ModIBustaRawContent(env));
+						// soap
+						boolean integritaX509 = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile) || 
+								ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile);
+						boolean integritaKid = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile) || 
+								ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile);
+						boolean integrita = integritaX509 || integritaKid;
+						
+						String prefixMsgDiag = null;
+						if(integrita) {
+							prefixMsgDiag = DIAGNOSTIC_ADD_TOKEN_INTEGRITY;
+						}
+						else {
+							prefixMsgDiag = DIAGNOSTIC_ADD_TOKEN_ID_AUTH;
+						}
+						try {
+							msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_IN_CORSO);
+							
+							boolean corniceSicurezzaLegacySoap = corniceSicurezza && !addAudit;
+							
+							SOAPEnvelope env = imbustamentoSoap.addSecurity(msg, isRichiesta, context, keystoreConfig, securityConfig, busta, 
+									securityMessageProfile, corniceSicurezzaLegacySoap, ruoloMessaggio, includiRequestDigest, signAttachments,
+									dynamicMap, requestInfo);
+							protocolMessage.setBustaRawContent(new ModIBustaRawContent(env));
+							CostantiPdD.addKeywordInCache(msgDiag, false, context, null); // aggiungere gestione dell'informazione quando si aggiunge la cache
+							msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_COMPLETATA);
+						}
+						catch(ProtocolException pe) {
+							msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, pe.getMessage());
+							msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_FALLITA);
+							throw pe;
+						}
 					}
 					
+				}
+				
+				// audit (ID_AUDIT)
+				if(addAudit) {
+					
+					if(imbustamentoRest==null) {
+						// audit su api soap
+						imbustamentoRest = new ModIImbustamentoRest(this.log);
+					}
+					
+					String securityMessageProfileAudit = null;
+					if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile)
+							||
+							ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile)) {
+						securityMessageProfileAudit = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01; 
+					}
+					else {
+						securityMessageProfileAudit = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02; 
+					}
+										
+					boolean useKIDforAudit = false;
+					if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile)
+							||
+							ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile)
+							||
+							!sorgenteLocale) {
+						useKIDforAudit = true;
+					}
+					
+					String headerTokenAudit = this.modiProperties.getSecurityTokenHeaderModIAudit();
+					
+					String jtiAudit = newUniqueIdentifier();
+					
+					try {
+						msgDiag.logPersonalizzato("addTokenAudit.richiesta.inCorso");
+					
+						String tokenAudit = imbustamentoRest.addToken(msg, isRichiesta, context, keystoreConfig, securityConfig, busta, 
+								securityMessageProfileAudit, useKIDforAudit, headerTokenAudit, 
+								corniceSicurezza, patternCorniceSicurezza, schemaCorniceSicurezza,
+								ruoloMessaggio, false,
+								null, jtiAudit, ModIHeaderType.SINGLE, false,
+								dynamicMap, requestInfo,
+								purposeId);
+						if(protocolMessage.getBustaRawContent() instanceof ModIBustaRawContent) {
+							ModIBustaRawContent raw = (ModIBustaRawContent) protocolMessage.getBustaRawContent();
+							raw.getElement().setTokenAudit(headerTokenAudit, tokenAudit);
+						}
+						
+						CostantiPdD.addKeywordInCache(msgDiag, false, context, null); // aggiungere gestione dell'informazione quando si aggiunge la cache
+						msgDiag.logPersonalizzato("addTokenAudit.richiesta.completata");
+					}
+					catch(ProtocolException pe) {
+						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, pe.getMessage());
+						msgDiag.logPersonalizzato("addTokenAudit.richiesta.fallita");
+						throw pe;
+					}
 				}
 
 			}

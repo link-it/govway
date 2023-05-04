@@ -1,4 +1,6 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
+-- DROP INDEX REMOTE_STORE_CREATE;
+-- DROP INDEX REMOTE_STORE_UPDATE;
 -- DROP INDEX index_registro_plug_jar_1;
 -- DROP INDEX index_generic_property_1;
 -- DROP INDEX index_dump_config_1;

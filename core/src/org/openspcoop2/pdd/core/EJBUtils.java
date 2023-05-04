@@ -2580,7 +2580,7 @@ public class EJBUtils {
 			Throwable eProcessamento, ParseException parseException)throws EJBUtilsException,ProtocolException{ 
 		Eccezione ecc = new Eccezione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreProcessamento(errore.getDescrizione(this.protocolFactory)),
 				false,this.idModulo,this.protocolFactory);
-		List<Eccezione> errs = new ArrayList<Eccezione>();
+		List<Eccezione> errs = new ArrayList<>();
 		errs.add(ecc);
 		this._sendAsRispostaBustaErroreProcessamento(idModuloInAttesa,busta,errs,errore,idCorrelazioneApplicativa,null,servizioApplicativoFruitore,eProcessamento,parseException,null);
 	}
@@ -2590,7 +2590,7 @@ public class EJBUtils {
 			String servizioApplicativoFruitore,
 			Throwable eProcessamento, ParseException parseException)throws EJBUtilsException,ProtocolException{ 
 		Eccezione ecc = new Eccezione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreProcessamento(errore.getDescrizione(this.protocolFactory)),false,this.idModulo,this.protocolFactory);
-		List<Eccezione> errs = new ArrayList<Eccezione>();
+		List<Eccezione> errs = new ArrayList<>();
 		errs.add(ecc);
 		this._sendAsRispostaBustaErroreProcessamento(idModuloInAttesa,busta,errs,errore,idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,eProcessamento,parseException,null);
 	}
@@ -2608,7 +2608,7 @@ public class EJBUtils {
 			OpenSPCoop2Message errorMessageParam, String errorDetail)throws EJBUtilsException,ProtocolException{ 
 		Eccezione ecc = new Eccezione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreProcessamento(errorDetail),
 				false,this.idModulo,this.protocolFactory);
-		List<Eccezione> errs = new ArrayList<Eccezione>();
+		List<Eccezione> errs = new ArrayList<>();
 		errs.add(ecc);
 		this._sendAsRispostaBustaErroreProcessamento(idModuloInAttesa,busta,errs,null,idCorrelazioneApplicativa,null,servizioApplicativoFruitore,null,null,errorMessageParam);
 	}
@@ -2617,7 +2617,7 @@ public class EJBUtils {
 			String servizioApplicativoFruitore,
 			OpenSPCoop2Message errorMessageParam, String errorDetail)throws EJBUtilsException,ProtocolException{ 
 		Eccezione ecc = new Eccezione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreProcessamento(errorDetail),false,this.idModulo,this.protocolFactory);
-		List<Eccezione> errs = new ArrayList<Eccezione>();
+		List<Eccezione> errs = new ArrayList<>();
 		errs.add(ecc);
 		this._sendAsRispostaBustaErroreProcessamento(idModuloInAttesa,busta,errs,null,idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,null,null,errorMessageParam);
 	}
@@ -2735,13 +2735,13 @@ public class EJBUtils {
 
 	public void sendAsRispostaBustaErroreValidazione(String idModuloInAttesa,Busta busta,Eccezione eccezione,
 			String idCorrelazioneApplicativa,String servizioApplicativoFruitore)throws EJBUtilsException,ProtocolException{ 
-		List<Eccezione> v = new ArrayList<Eccezione>();
+		List<Eccezione> v = new ArrayList<>();
 		v.add(eccezione);
 		this._sendAsRispostaBustaErroreValidazione(idModuloInAttesa,busta,v,idCorrelazioneApplicativa,null,servizioApplicativoFruitore);
 	}
 	public void sendAsRispostaBustaErroreValidazione(String idModuloInAttesa,Busta busta,Eccezione eccezione,
 			String idCorrelazioneApplicativa,String idCorrelazioneApplicativaRisposta,String servizioApplicativoFruitore)throws EJBUtilsException,ProtocolException{ 
-		List<Eccezione> v = new ArrayList<Eccezione>();
+		List<Eccezione> v = new ArrayList<>();
 		v.add(eccezione);
 		this._sendAsRispostaBustaErroreValidazione(idModuloInAttesa,busta,v,idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore);
 	}

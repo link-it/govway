@@ -347,7 +347,7 @@ public class SDIImbustamento {
 			// Leggo Fattura
 			if(SDICostanti.SDI_TIPO_FATTURA_XML.equals(tipoInvioFattura)){
 				try{
-					List<Eccezione> erroriValidazione = new ArrayList<Eccezione>();
+					List<Eccezione> erroriValidazione = new ArrayList<>();
 					boolean forceDisableValidazioneXsd = true; // la validazione se abilitata e' stata fatta prima
 					SDIFatturaUtils.validazioneFattura(fatturaBytes,this.sdiProperties,
 							erroriValidazione,

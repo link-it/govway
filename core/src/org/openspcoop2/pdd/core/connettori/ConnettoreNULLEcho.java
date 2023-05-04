@@ -56,7 +56,6 @@ import org.openspcoop2.protocol.engine.validator.Validatore;
 import org.openspcoop2.protocol.engine.validator.ValidazioneSintattica;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.BustaRawContent;
-import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.Integrazione;
 import org.openspcoop2.protocol.sdk.ProtocolMessage;
@@ -463,7 +462,7 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 						
 						// repository
 						RepositoryBuste repositoryBuste = new RepositoryBuste(state, true,protocolFactory);
-						repositoryBuste.registraBustaIntoInBox(busta, new ArrayList<Eccezione>() ,
+						repositoryBuste.registraBustaIntoInBox(busta, new ArrayList<>() ,
 								OpenSPCoop2Properties.getInstance().getRepositoryIntervalloScadenzaMessaggi());
 						Integrazione infoIntegrazione = new Integrazione();
 						infoIntegrazione.setIdModuloInAttesa(null);

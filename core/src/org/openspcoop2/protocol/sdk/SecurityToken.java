@@ -90,5 +90,14 @@ public class SecurityToken implements Serializable {
 		}
 		this.modI.setEnvelope(envelope);
 	}
+	public RestMessageSecurityToken getAudit() {
+		return this.modI!=null ? this.modI.getAudit() : null;
+	}
+	public void setAudit(RestMessageSecurityToken audit) {
+		if(this.modI==null) {
+			this.modI = new SecurityTokenModI();
+		}
+		this.modI.setAudit(audit);
+	}
 
 }

@@ -38,6 +38,7 @@ public class SecurityTokenModI implements Serializable {
 	private RestMessageSecurityToken authorization;
 	private RestMessageSecurityToken integrity;
 	private SoapMessageSecurityToken envelope;
+	private RestMessageSecurityToken audit;
 	
 	public RestMessageSecurityToken getAuthorization() {
 		return this.authorization;
@@ -56,6 +57,12 @@ public class SecurityTokenModI implements Serializable {
 	}
 	protected void setEnvelope(SoapMessageSecurityToken envelope) {
 		this.envelope = envelope;
+	}
+	public RestMessageSecurityToken getAudit() {
+		return this.audit;
+	}
+	protected void setAudit(RestMessageSecurityToken audit) {
+		this.audit = audit;
 	}
 
 }

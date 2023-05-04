@@ -608,7 +608,7 @@ public class LocalForwardEngine {
 			}
 			
 			/* *** MessageSecurity *** */
-			List<Eccezione> eccezioniSicurezza = new ArrayList<Eccezione>();
+			List<Eccezione> eccezioniSicurezza = new ArrayList<>();
 			if(erroreIntegrazione==null && messageSecurityContext!=null){
 				try{
 					if(org.openspcoop2.security.message.engine.WSSUtilities.isNormalizeToSaajImpl(messageSecurityContext)){

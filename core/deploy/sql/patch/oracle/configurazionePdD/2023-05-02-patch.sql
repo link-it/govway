@@ -32,6 +32,8 @@ CREATE TABLE remote_store_key
 	id_remote_store NUMBER NOT NULL,
 	kid VARCHAR2(255) NOT NULL,
 	key BLOB NOT NULL,
+	data_registrazione TIMESTAMP NOT NULL,
+	data_aggiornamento TIMESTAMP NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
@@ -41,6 +43,9 @@ CREATE TABLE remote_store_key
 	CONSTRAINT pk_remote_store_key PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX REMOTE_STORE_UPDATE ON remote_store_key (data_aggiornamento);
+CREATE INDEX REMOTE_STORE_CREATE ON remote_store_key (data_registrazione);
 CREATE TRIGGER trg_remote_store_key
 BEFORE
 insert on remote_store_key

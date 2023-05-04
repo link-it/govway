@@ -32,6 +32,7 @@ import javax.xml.soap.SOAPEnvelope;
 
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.constants.Costanti;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -42,7 +43,10 @@ import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
+import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.basic.validator.ValidazioneSintattica;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.modipa.AbstractModISecurityToken;
@@ -69,6 +73,7 @@ import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazioneErrori;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneSintatticaResult;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneUtils;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**
  * Classe che implementa, in base al protocollo ModI, l'interfaccia {@link org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica}
@@ -89,6 +94,12 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 		this.validazioneUtils = new ValidazioneUtils(factory);
 		this.modiProperties = ModIProperties.getInstance();
 	}
+	
+	private static final String DIAGNOSTIC_VALIDATE_TOKEN_ID_AUTH = "validateTokenIdAuth";
+	private static final String DIAGNOSTIC_VALIDATE_TOKEN_INTEGRITY = "validateTokenIntegrity";
+	private static final String DIAGNOSTIC_IN_CORSO = "inCorso";
+	private static final String DIAGNOSTIC_COMPLETATA = "completata";
+	private static final String DIAGNOSTIC_FALLITA = "fallita";
 
 	
 	@Override
@@ -303,23 +314,106 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 				/* *** SICUREZZA MESSAGGIO *** */
 				
 				boolean filterPDND = true;
-				String securityMessageProfile = ModIPropertiesUtils.readPropertySecurityMessageProfile(aspc, nomePortType, azione, filterPDND);
-				if(securityMessageProfile!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED.equals(securityMessageProfile)) {
+				String securityMessageProfileNonFiltratoPDND = ModIPropertiesUtils.readPropertySecurityMessageProfile(aspc, nomePortType, azione, !filterPDND);
+				if(securityMessageProfileNonFiltratoPDND!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED.equals(securityMessageProfileNonFiltratoPDND)) {
 					
-					boolean processSecurity = ModIPropertiesUtils.processSecurity(aspc, nomePortType, azione, request, 
-							msg, rest, this.modiProperties);
-																		
-					if(processSecurity) {
+					String securityMessageProfile = ModIPropertiesUtils.readPropertySecurityMessageProfile(aspc, nomePortType, azione, filterPDND);
+										
+					MsgDiagnostico msgDiag = null;
+					TipoPdD tipoPdD = request ? TipoPdD.APPLICATIVA : TipoPdD.DELEGATA;
+					IDSoggetto idSoggetto = TipoPdD.DELEGATA.equals(tipoPdD) ? idSoggettoMittente : idServizio.getSoggettoErogatore();
+					if(idSoggetto==null || idSoggetto.getTipo()==null || idSoggetto.getNome()==null) {
+						idSoggetto = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(this.protocolFactory.getProtocol(), requestInfo);
+					}
+					else {
+						idSoggetto.setCodicePorta(registryReader.getDominio(idSoggetto));
+					}
+					msgDiag = MsgDiagnostico.newInstance(TipoPdD.DELEGATA, 
+							idSoggetto,
+							"ModI", requestInfo!=null && requestInfo.getProtocolContext()!=null ? requestInfo.getProtocolContext().getInterfaceName() : null,
+							requestInfo,
+							this.state);
+					if(TipoPdD.DELEGATA.equals(tipoPdD)){
+						msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI);
+					}
+					else {
+						msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE);
+					}
+					msgDiag.setPddContext(this.context, this.protocolFactory);
+					String tipoDiagnostico = request ? ".richiesta." : ".risposta.";
 					
-						bustaRitornata.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO, 
-								ModIPropertiesUtils.convertProfiloSicurezzaToSDKValue(securityMessageProfile, rest));
-						
-						boolean fruizione = !request;
+					boolean processSecurity = false;
+					boolean securityMessageProfilePrevedeTokenLocale = securityMessageProfile!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED.equals(securityMessageProfile);
+					if(securityMessageProfilePrevedeTokenLocale) {
+						processSecurity = ModIPropertiesUtils.processSecurity(aspc, nomePortType, azione, request, 
+								msg, rest, this.modiProperties);
+					}
+					
+					boolean corniceSicurezza = ModIPropertiesUtils.isPropertySecurityMessageConCorniceSicurezza(aspc, nomePortType, azione);
+					String patternCorniceSicurezza = null;
+					String schemaCorniceSicurezza = null;
+					if(corniceSicurezza) {
+						patternCorniceSicurezza = ModIPropertiesUtils.readPropertySecurityMessageCorniceSicurezzaPattern(aspc, nomePortType, azione);
+						if(patternCorniceSicurezza==null) {
+							// backward compatibility
+							patternCorniceSicurezza = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_VALUE_OLD;
+						}
+						if(!ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_VALUE_OLD.equals(patternCorniceSicurezza)) {
+							schemaCorniceSicurezza = ModIPropertiesUtils.readPropertySecurityMessageCorniceSicurezzaSchema(aspc, nomePortType, azione);
+						}
+					}
+					
+					boolean fruizione = !request;
+					
+					boolean processAudit = !fruizione && corniceSicurezza && 
+							patternCorniceSicurezza!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_VALUE_OLD.equals(patternCorniceSicurezza);
 							
-						String headerTokenRest = null;
-						String headerTokenRestIntegrity = null; // nel caso di Authorization insieme a Agid-JWT-Signature
+					String sorgenteToken = ModIPropertiesUtils.readPropertySecurityMessageSorgenteToken(aspc, nomePortType, azione, true);
+					boolean sorgenteLocale = true;
+					if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND.equals(sorgenteToken) ||
+							ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH.equals(sorgenteToken)) {
+						sorgenteLocale = false;
+					}
+					
+					boolean keystoreKidMode = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile)
+							||
+							ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile)
+							||
+							!sorgenteLocale;
+					
+					Map<String, Object> dynamicMap = null;
+					
+					ModISecurityConfig securityConfig = null;
+					ModITruststoreConfig trustStoreCertificati = null;
+					ModITruststoreConfig trustStoreSsl = null;
+					
+					String headerTokenRest = null;
+					String headerTokenRestIntegrity = null; // nel caso di Authorization insieme a Agid-JWT-Signature
+					boolean integritaCustom = false;
+					
+					boolean buildSecurityTokenInRequest = true;
+										
+					if(processSecurity || processAudit) {
+						
+						// dynamicMap
+						// FIX: va inizializzato dentro il metodo 'validateSecurityProfile' dopo aver identificato l'applicativo
+/**						boolean bufferMessage_readOnly = this.modiProperties.isReadByPathBufferEnabled();
+//						Map<String, Object> dynamicMap = null;
+//						Map<String, Object> dynamicMapRequest = null;
+//						if(!request) {
+//							dynamicMapRequest = ModIUtilities.removeDynamicMapRequest(this.context);
+//						}
+//						if(dynamicMapRequest!=null) {
+//							dynamicMap = DynamicUtils.buildDynamicMapResponse(msg, this.context, null, this.log, bufferMessage_readOnly, dynamicMapRequest);
+//						}
+//						else {
+//							dynamicMap = DynamicUtils.buildDynamicMap(msg, this.context, datiRichiesta, this.log, bufferMessage_readOnly);
+//							ModIUtilities.saveDynamicMapRequest(this.context, dynamicMap);
+//						}*/
+						dynamicMap = new HashMap<>();
+						
+						// header
 						Boolean multipleHeaderAuthorizationConfig = null;
-						boolean integritaCustom = false;
 						if(rest) {
 							headerTokenRest = ModIPropertiesUtils.readPropertySecurityMessageHeader(aspc, nomePortType, azione, request, filterPDND);
 							if(headerTokenRest.contains(" ")) {
@@ -339,31 +433,19 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 								bustaRitornata.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CUSTOM_HEADER,hdrCustom);
 							}
 						}
-	
-						boolean kidMode = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile)
-								||
-								ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile);
 						
-						ModISecurityConfig securityConfig = new ModISecurityConfig(msg, this.protocolFactory, this.state, requestInfo, idSoggettoMittente, 
+						// truststore
+						securityConfig = new ModISecurityConfig(msg, this.protocolFactory, this.state, requestInfo, idSoggettoMittente, 
 								aspc, asps, sa, rest, fruizione, request,
 								multipleHeaderAuthorizationConfig,
-								kidMode);
-						ModITruststoreConfig trustStoreCertificati = new ModITruststoreConfig(fruizione, idSoggettoMittente, asps, false);
-						ModITruststoreConfig trustStoreSsl = null;
+								keystoreKidMode,
+								patternCorniceSicurezza, schemaCorniceSicurezza);
+						trustStoreCertificati = new ModITruststoreConfig(fruizione, idSoggettoMittente, asps, false);
 						if(securityConfig.isX5u()) {
 							trustStoreSsl = new ModITruststoreConfig(fruizione, idSoggettoMittente, asps, true);
 						}
 						
-						boolean corniceSicurezza = ModIPropertiesUtils.isPropertySecurityMessageConCorniceSicurezza(aspc, nomePortType, azione);
-						
-						boolean includiRequestDigest = ModIPropertiesUtils.isPropertySecurityMessageIncludiRequestDigest(aspc, nomePortType, azione);
-						
-						boolean signAttachments = false;
-						if(!rest) {
-							signAttachments = ModIPropertiesUtils.isAttachmentsSignature(aspc, nomePortType, azione, request, msg);
-						}
-						
-						boolean buildSecurityTokenInRequest = true;
+						// securityToken
 						if(!request) {
 							String securityMessageRequest = null;
 							if(datiRichiesta!=null) {
@@ -379,49 +461,77 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 								this.context.addObject(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_BUILD_SECURITY_REQUEST_TOKEN, processSecurity);
 							}
 						}
+					}
 					
-						// FIX: va inizializzato dentro il metodo 'validateSecurityProfile' dopo aver identificato l'applicativo
-/**						boolean bufferMessage_readOnly = this.modiProperties.isReadByPathBufferEnabled();
-//						Map<String, Object> dynamicMap = null;
-//						Map<String, Object> dynamicMapRequest = null;
-//						if(!request) {
-//							dynamicMapRequest = ModIUtilities.removeDynamicMapRequest(this.context);
-//						}
-//						if(dynamicMapRequest!=null) {
-//							dynamicMap = DynamicUtils.buildDynamicMapResponse(msg, this.context, null, this.log, bufferMessage_readOnly, dynamicMapRequest);
-//						}
-//						else {
-//							dynamicMap = DynamicUtils.buildDynamicMap(msg, this.context, datiRichiesta, this.log, bufferMessage_readOnly);
-//							ModIUtilities.saveDynamicMapRequest(this.context, dynamicMap);
-//						}*/
-						Map<String, Object> dynamicMap = new HashMap<>();
+					// security (ID_AUTH e INTEGRITY)
+					if(processSecurity) {
+					
+						bustaRitornata.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO, 
+								ModIPropertiesUtils.convertProfiloSicurezzaToSDKValue(securityMessageProfile, rest));
+																	
+						boolean includiRequestDigest = ModIPropertiesUtils.isPropertySecurityMessageIncludiRequestDigest(aspc, nomePortType, azione);
 						
+						boolean signAttachments = false;
+						if(!rest) {
+							signAttachments = ModIPropertiesUtils.isAttachmentsSignature(aspc, nomePortType, azione, request, msg);
+						}
+												
 						if(rest) {
 							boolean securityHeaderObbligatorio = true;
 							
 							if(headerTokenRestIntegrity==null) {
 								
-								String token = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfile, headerTokenRest, corniceSicurezza, includiRequestDigest, bustaRitornata, 
-										erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfig,
-										buildSecurityTokenInRequest, ModIHeaderType.SINGLE, integritaCustom, securityHeaderObbligatorio,
-										dynamicMap, datiRichiesta);
-								
+								String token = null;
+								String prefixMsgDiag = null;
+								if(HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
+									prefixMsgDiag = DIAGNOSTIC_VALIDATE_TOKEN_ID_AUTH;
+								}
+								else {
+									prefixMsgDiag = DIAGNOSTIC_VALIDATE_TOKEN_INTEGRITY;
+								}
+								try {
+									msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_IN_CORSO);
+									
+									token = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfile, false, headerTokenRest, 
+											corniceSicurezza, patternCorniceSicurezza, 
+											null, // devo fornirlo solo durante la validazione dell'Audit Token 
+											includiRequestDigest, bustaRitornata, 
+											erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfig,
+											buildSecurityTokenInRequest, ModIHeaderType.SINGLE, integritaCustom, securityHeaderObbligatorio,
+											dynamicMap, datiRichiesta);
+									
+									if(erroriValidazione.isEmpty()) {
+										msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_COMPLETATA);
+									}
+									else {
+										String errore = buildErrore(erroriValidazione, this.protocolFactory);
+										msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, errore);
+										msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_FALLITA);
+									}
+								}
+								catch(ProtocolException pe) {
+									msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, pe.getMessage());
+									msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_FALLITA);
+									throw pe;
+								}
+									
+									
 								if(token!=null) {
 									
-									if(securityConfig.getAudience()!=null) {
-										if(request || (securityConfig.isCheckAudience())) {
-											String audience = securityConfig.getAudience();
-											if(fruizione && !request) {
-												try {
-													audience = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE, 
-															audience, dynamicMap, this.context);
-												}catch(Exception e) {
-													this.logError(e.getMessage(),e);
-													throw e;
-												}
+									if(securityConfig.getAudience()!=null &&
+										(request || (securityConfig.isCheckAudience())) 
+									){
+										String audience = securityConfig.getAudience();
+										if(fruizione && !request) {
+											try {
+												audience = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE, 
+														audience, dynamicMap, this.context);
+											}catch(Exception e) {
+												this.logError(e.getMessage(),e);
+												throw e;
 											}
-											msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK, audience);
 										}
+										msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK, audience);
 									}
 									
 									rawContent = new ModIBustaRawContent(headerTokenRest, token);
@@ -429,49 +539,102 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 							}
 							else {
 								
-								// Authorization
-								String securityMessageProfileAuthorization = null;
-								if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile) ||
-										ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile)) {
-									securityMessageProfileAuthorization = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01; 
+								boolean useKIDforIdAUTH = false; // normalmente il token authorization sarà PDND, se cmq è locale lo genero uguale per il kid
+								if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile)
+										||
+										ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile)) {
+									useKIDforIdAUTH = true;
 								}
-								else {
-									securityMessageProfileAuthorization = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02; 
-								}
-								String tokenAuthorization = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfileAuthorization, headerTokenRest, corniceSicurezza, includiRequestDigest, bustaRitornata, 
-										erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfig,
-										buildSecurityTokenInRequest, ModIHeaderType.BOTH_AUTH, integritaCustom, securityHeaderObbligatorio,
-										dynamicMap, datiRichiesta);
 								
-								String audAuthorization = null;
-								if(tokenAuthorization!=null &&
-									securityConfig.getAudience()!=null &&
-									(request || (securityConfig.isCheckAudience()))
-									){
-									audAuthorization = securityConfig.getAudience();
-									if(fruizione && !request) {
-										try {
-											audAuthorization = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE, 
-													audAuthorization, dynamicMap, this.context);
-										}catch(Exception e) {
-											this.logError(e.getMessage(),e);
-											throw e;
-										}
+								// Authorization
+								String tokenAuthorization = null;
+								try {
+									msgDiag.logPersonalizzato(DIAGNOSTIC_VALIDATE_TOKEN_ID_AUTH+tipoDiagnostico+DIAGNOSTIC_IN_CORSO);
+									
+									String securityMessageProfileAuthorization = null;
+									if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile) ||
+											ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile)) {
+										securityMessageProfileAuthorization = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01; 
 									}
-									msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK, audAuthorization);				
+									else {
+										securityMessageProfileAuthorization = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02; 
+									}
+									tokenAuthorization = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfileAuthorization, useKIDforIdAUTH, headerTokenRest, 
+											corniceSicurezza, patternCorniceSicurezza, 
+											null, // devo fornirlo solo durante la validazione dell'Audit Token   
+											includiRequestDigest, bustaRitornata, 
+											erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfig,
+											buildSecurityTokenInRequest, ModIHeaderType.BOTH_AUTH, integritaCustom, securityHeaderObbligatorio,
+											dynamicMap, datiRichiesta);
+									
+									String audAuthorization = null;
+									if(tokenAuthorization!=null &&
+										securityConfig.getAudience()!=null &&
+										(request || (securityConfig.isCheckAudience()))
+										){
+										audAuthorization = securityConfig.getAudience();
+										if(fruizione && !request) {
+											try {
+												audAuthorization = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE, 
+														audAuthorization, dynamicMap, this.context);
+											}catch(Exception e) {
+												this.logError(e.getMessage(),e);
+												throw e;
+											}
+										}
+										msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK, audAuthorization);				
+									}
+									
+									if(erroriValidazione.isEmpty()) {
+										msgDiag.logPersonalizzato(DIAGNOSTIC_VALIDATE_TOKEN_ID_AUTH+tipoDiagnostico+DIAGNOSTIC_COMPLETATA);
+									}
+									else {
+										String errore = buildErrore(erroriValidazione, this.protocolFactory);
+										msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, errore);
+										msgDiag.logPersonalizzato(DIAGNOSTIC_VALIDATE_TOKEN_ID_AUTH+tipoDiagnostico+DIAGNOSTIC_FALLITA);
+									}
+								}
+								catch(ProtocolException pe) {
+									msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, pe.getMessage());
+									msgDiag.logPersonalizzato(DIAGNOSTIC_VALIDATE_TOKEN_ID_AUTH+tipoDiagnostico+DIAGNOSTIC_FALLITA);
+									throw pe;
 								}
 								
 								// Integrity
-								// !! Nel caso di 2 header, quello integrity è obbligatorio solo se c'è un payload, altrimenti se presente viene validato, altrimenti non da errore.
-								boolean securityHeaderIntegrityObbligatorio = msg.castAsRest().hasContent();
-								ModISecurityConfig securityConfigIntegrity = new ModISecurityConfig(msg, this.protocolFactory, this.state, requestInfo, idSoggettoMittente, 
-										aspc, asps, sa, rest, fruizione, request,
-										false,
-										kidMode);
-								String tokenIntegrity = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfile, headerTokenRestIntegrity, corniceSicurezza, includiRequestDigest, bustaRitornata, 
-										erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfigIntegrity,
-										buildSecurityTokenInRequest, ModIHeaderType.BOTH_INTEGRITY, integritaCustom, securityHeaderIntegrityObbligatorio,
-										null, null); // gia' inizializzato sopra
+								String tokenIntegrity = null;
+								ModISecurityConfig securityConfigIntegrity = null;
+								try {
+									msgDiag.logPersonalizzato(DIAGNOSTIC_VALIDATE_TOKEN_INTEGRITY+tipoDiagnostico+DIAGNOSTIC_IN_CORSO);
+									
+									// !! Nel caso di 2 header, quello integrity è obbligatorio solo se c'è un payload, altrimenti se presente viene validato, altrimenti non da errore.
+									boolean securityHeaderIntegrityObbligatorio = msg.castAsRest().hasContent();
+									securityConfigIntegrity = new ModISecurityConfig(msg, this.protocolFactory, this.state, requestInfo, idSoggettoMittente, 
+											aspc, asps, sa, rest, fruizione, request,
+											false,
+											keystoreKidMode,
+											patternCorniceSicurezza, schemaCorniceSicurezza);
+									tokenIntegrity = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfile, useKIDforIdAUTH, headerTokenRestIntegrity, 
+											corniceSicurezza, patternCorniceSicurezza, 
+											null, // devo fornirlo solo durante la validazione dell'Audit Token 
+											includiRequestDigest, bustaRitornata, 
+											erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfigIntegrity,
+											buildSecurityTokenInRequest, ModIHeaderType.BOTH_INTEGRITY, integritaCustom, securityHeaderIntegrityObbligatorio,
+											null, null); // gia' inizializzato sopra
+									
+									if(erroriValidazione.isEmpty()) {
+										msgDiag.logPersonalizzato(DIAGNOSTIC_VALIDATE_TOKEN_INTEGRITY+tipoDiagnostico+DIAGNOSTIC_COMPLETATA);
+									}
+									else {
+										String errore = buildErrore(erroriValidazione, this.protocolFactory);
+										msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, errore);
+										msgDiag.logPersonalizzato(DIAGNOSTIC_VALIDATE_TOKEN_INTEGRITY+tipoDiagnostico+DIAGNOSTIC_FALLITA);
+									}
+								}
+								catch(ProtocolException pe) {
+									msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, pe.getMessage());
+									msgDiag.logPersonalizzato(DIAGNOSTIC_VALIDATE_TOKEN_INTEGRITY+tipoDiagnostico+DIAGNOSTIC_FALLITA);
+									throw pe;
+								}
 								
 								if(tokenIntegrity!=null &&
 									securityConfigIntegrity.getAudience()!=null &&
@@ -507,32 +670,139 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 						}
 						else {
 
-							SOAPEnvelope token = validatoreSintatticoSoap.validateSecurityProfile(msg, request, securityMessageProfile, corniceSicurezza, includiRequestDigest, signAttachments, bustaRitornata, 
-									erroriValidazione, trustStoreCertificati, securityConfig,
-									buildSecurityTokenInRequest,
-									dynamicMap, datiRichiesta, requestInfo );
+							// soap
 							
-							if(token!=null) {
+							boolean integritaX509 = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile) || 
+									ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile);
+							boolean integritaKid = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile) || 
+									ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile);
+							boolean integrita = integritaX509 || integritaKid;
+							
+							String prefixMsgDiag = null;
+							if(integrita) {
+								prefixMsgDiag = DIAGNOSTIC_VALIDATE_TOKEN_INTEGRITY;
+							}
+							else {
+								prefixMsgDiag = DIAGNOSTIC_VALIDATE_TOKEN_ID_AUTH;
+							}
+							try {
+								msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_IN_CORSO);
+							
+								boolean corniceSicurezzaLegacySoap = corniceSicurezza && !processAudit;
 								
-								if(securityConfig.getAudience()!=null &&
-									(request || (securityConfig.isCheckAudience())) 
-									){
-									String audience = securityConfig.getAudience();
-									if(fruizione && !request) {
-										try {
-											audience = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SOAP_WSA_TO, 
-													audience, dynamicMap, this.context);
-										}catch(Exception e) {
-											this.logError(e.getMessage(),e);
-											throw e;
+								SOAPEnvelope token = validatoreSintatticoSoap.validateSecurityProfile(msg, request, securityMessageProfile, corniceSicurezzaLegacySoap, includiRequestDigest, signAttachments, bustaRitornata, 
+										erroriValidazione, trustStoreCertificati, securityConfig,
+										buildSecurityTokenInRequest,
+										dynamicMap, datiRichiesta, requestInfo );
+								
+								if(token!=null) {
+									
+									if(securityConfig.getAudience()!=null &&
+										(request || (securityConfig.isCheckAudience())) 
+										){
+										String audience = securityConfig.getAudience();
+										if(fruizione && !request) {
+											try {
+												audience = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SOAP_WSA_TO, 
+														audience, dynamicMap, this.context);
+											}catch(Exception e) {
+												this.logError(e.getMessage(),e);
+												throw e;
+											}
 										}
+										msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK, audience);
 									}
-									msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK, audience);
+									
+									rawContent = new ModIBustaRawContent(token);
 								}
-								
-								rawContent = new ModIBustaRawContent(token);
+
+								if(erroriValidazione.isEmpty()) {
+									msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_COMPLETATA);
+								}
+								else {
+									String errore = buildErrore(erroriValidazione, this.protocolFactory);
+									msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, errore);
+									msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_FALLITA);
+								}
+							}
+							catch(ProtocolException pe) {
+								msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, pe.getMessage());
+								msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_FALLITA);
+								throw pe;
 							}
 							
+						}
+					
+					}
+					
+					// audit (ID_AUDIT)
+					if(processAudit) {
+						
+						if(validatoreSintatticoRest==null) {
+							// audit su api soap
+							validatoreSintatticoRest = new ModIValidazioneSintatticaRest(this.log, this.state, this.context, this.protocolFactory, requestInfo, this.modiProperties, this.validazioneUtils);
+						}
+						
+						String securityMessageProfileAudit = null;
+						if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile)
+								||
+								ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile)) {
+							securityMessageProfileAudit = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01; 
+						}
+						else {
+							securityMessageProfileAudit = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02; 
+						}
+												
+						boolean useKIDforAudit = false;
+						if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile)
+								||
+								ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile)
+								||
+								!sorgenteLocale) {
+							useKIDforAudit = true;
+						}
+						
+						String headerTokenAudit = this.modiProperties.getSecurityTokenHeaderModIAudit();
+						
+						try {
+							msgDiag.logPersonalizzato("validateTokenAudit.richiesta.inCorso");
+						
+							String tokenAudit = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfileAudit, useKIDforAudit, headerTokenAudit, 
+									corniceSicurezza, patternCorniceSicurezza, schemaCorniceSicurezza,
+									false, bustaRitornata, 
+									erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfig,
+									buildSecurityTokenInRequest, ModIHeaderType.SINGLE, integritaCustom, true,
+									dynamicMap, datiRichiesta);
+							
+							if(tokenAudit!=null){
+								String audExpected = securityConfig.getCorniceSicurezzaAudience();
+								try {
+									audExpected = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_AUDIENCE, 
+											audExpected, dynamicMap, this.context);
+								}catch(Exception e) {
+									this.logError(e.getMessage(),e);
+									throw e;
+								}
+								msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_AUDIT_CHECK, audExpected);				
+							}
+							
+							if(rawContent!=null) {
+								rawContent.getElement().setTokenAudit(headerTokenAudit, tokenAudit);
+							}
+							
+							if(erroriValidazione.isEmpty()) {
+								msgDiag.logPersonalizzato("validateTokenAudit.richiesta.completata");
+							}
+							else {
+								String errore = buildErrore(erroriValidazione, this.protocolFactory);
+								msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, errore);
+								msgDiag.logPersonalizzato("validateTokenAudit.richiesta.fallita");
+							}
+						}
+						catch(ProtocolException pe) {
+							msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, pe.getMessage());
+							msgDiag.logPersonalizzato("validateTokenAudit.richiesta.fallita");
+							throw pe;
 						}
 						
 					}
@@ -582,5 +852,27 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 	private void logError(String msg, Exception e) {
 		this.log.error(msg,e);
 	}
-	
+
+	static String buildErrore(List<Eccezione> list, IProtocolFactory<?> protocolFactory) throws ProtocolException {
+		StringBuilder sb = new StringBuilder();
+		if(list!=null && !list.isEmpty()) {
+			if(list.size()==1) {
+				Eccezione eccezione = list.get(0);
+				sb.append("[");
+				sb.append(eccezione.getCodiceEccezioneValue(protocolFactory));
+				sb.append("] ");
+				sb.append(eccezione.getDescrizione(protocolFactory));
+			}
+			else {
+				sb.append("Riscontrate "+list.size()+" eccezioni.");
+				for (Eccezione eccezione : list) {
+					sb.append("\n[");
+					sb.append(eccezione.getCodiceEccezioneValue(protocolFactory));
+					sb.append("] ");
+					sb.append(eccezione.getDescrizione(protocolFactory));
+				}
+			}
+		}
+		return sb.toString();
+	}
 }

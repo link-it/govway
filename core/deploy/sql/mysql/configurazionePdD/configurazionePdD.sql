@@ -694,6 +694,10 @@ CREATE TABLE remote_store_key
 	id_remote_store BIGINT NOT NULL,
 	kid VARCHAR(255) NOT NULL,
 	key LONGBLOB NOT NULL,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_registrazione TIMESTAMP(3) NOT NULL DEFAULT 0,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_aggiornamento TIMESTAMP(3) NOT NULL DEFAULT 0,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- unique constraints
@@ -705,5 +709,7 @@ CREATE TABLE remote_store_key
 
 -- index
 CREATE UNIQUE INDEX index_remote_store_key_1 ON remote_store_key (id_remote_store,kid);
+CREATE INDEX REMOTE_STORE_UPDATE ON remote_store_key (data_aggiornamento);
+CREATE INDEX REMOTE_STORE_CREATE ON remote_store_key (data_registrazione);
 
 
