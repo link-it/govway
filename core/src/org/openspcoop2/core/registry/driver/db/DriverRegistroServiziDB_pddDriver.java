@@ -65,7 +65,7 @@ public class DriverRegistroServiziDB_pddDriver {
 	
 	protected org.openspcoop2.core.registry.PortaDominio getPortaDominio(String nomePdD) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
-		this.driver.log.debug("richiesto getPortaDominio: " + nomePdD);
+		this.driver.logDebug("richiesto getPortaDominio: " + nomePdD);
 		// conrollo consistenza
 		if (nomePdD == null)
 			throw new DriverRegistroServiziException("[getPortaDominio] Parametro nomePdD is null");
@@ -88,7 +88,7 @@ public class DriverRegistroServiziDB_pddDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
 
@@ -144,10 +144,10 @@ public class DriverRegistroServiziDB_pddDriver {
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 
-		this.driver.log.debug("getAllIdPorteDominio...");
+		this.driver.logDebug("getAllIdPorteDominio...");
 
 		try {
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if (this.driver.atomica)
 				con = this.driver.getConnectionFromDatasource("getAllIdPorteDominio");
@@ -171,27 +171,27 @@ public class DriverRegistroServiziDB_pddDriver {
 
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
-			this.driver.log.debug("eseguo query : " + sqlQuery );
+			this.driver.logDebug("eseguo query : " + sqlQuery );
 			stm = con.prepareStatement(sqlQuery);
 			int indexStmt = 1;
 			if(filtroRicerca!=null){
 				if(filtroRicerca.getMinDate()!=null){
-					this.driver.log.debug("minDate stmt.setTimestamp("+filtroRicerca.getMinDate()+")");
+					this.driver.logDebug("minDate stmt.setTimestamp("+filtroRicerca.getMinDate()+")");
 					stm.setTimestamp(indexStmt, new Timestamp(filtroRicerca.getMinDate().getTime()));
 					indexStmt++;
 				}
 				if(filtroRicerca.getMaxDate()!=null){
-					this.driver.log.debug("maxDate stmt.setTimestamp("+filtroRicerca.getMaxDate()+")");
+					this.driver.logDebug("maxDate stmt.setTimestamp("+filtroRicerca.getMaxDate()+")");
 					stm.setTimestamp(indexStmt, new Timestamp(filtroRicerca.getMaxDate().getTime()));
 					indexStmt++;
 				}	
 				if(filtroRicerca.getNome()!=null){
-					this.driver.log.debug("nome stmt.setString("+filtroRicerca.getNome()+")");
+					this.driver.logDebug("nome stmt.setString("+filtroRicerca.getNome()+")");
 					stm.setString(indexStmt, filtroRicerca.getNome());
 					indexStmt++;
 				}	
 				if(filtroRicerca.getTipo()!=null){
-					this.driver.log.debug("tipoPdd stmt.setString("+filtroRicerca.getTipo()+")");
+					this.driver.logDebug("tipoPdd stmt.setString("+filtroRicerca.getTipo()+")");
 					stm.setString(indexStmt, filtroRicerca.getTipo());
 					indexStmt++;
 				}
@@ -245,10 +245,10 @@ public class DriverRegistroServiziDB_pddDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDPortaDominio type = 1");
+			this.driver.logDebug("CRUDPortaDominio type = 1");
 			DriverRegistroServiziDB_soggettiLIB.CRUDPortaDominio(CostantiDB.CREATE, pdd, con);
 
 		} catch (Exception qe) {
@@ -332,11 +332,11 @@ public class DriverRegistroServiziDB_pddDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
 
-			this.driver.log.debug("CRUDPortaDominio type = 2");
+			this.driver.logDebug("CRUDPortaDominio type = 2");
 			DriverRegistroServiziDB_soggettiLIB.CRUDPortaDominio(CostantiDB.UPDATE, pdd, con);
 
 		} catch (Exception qe) {
@@ -371,7 +371,7 @@ public class DriverRegistroServiziDB_pddDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
 
@@ -386,7 +386,7 @@ public class DriverRegistroServiziDB_pddDriver {
 			stm.setString(1, tipo);
 			stm.setString(2, nomePdd);
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, tipo, nomePdd));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, tipo, nomePdd));
 			stm.executeUpdate();
 
 		} catch (Exception qe) {
@@ -476,10 +476,10 @@ public class DriverRegistroServiziDB_pddDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDPortaDominio type = 3");
+			this.driver.logDebug("CRUDPortaDominio type = 3");
 			DriverRegistroServiziDB_soggettiLIB.CRUDPortaDominio(CostantiDB.DELETE, pdd, con);
 
 		} catch (Exception qe) {
@@ -526,7 +526,7 @@ public class DriverRegistroServiziDB_pddDriver {
 			con = this.driver.globalConnection;
 		}
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -666,7 +666,7 @@ public class DriverRegistroServiziDB_pddDriver {
 			con = this.driver.globalConnection;
 		}
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -735,7 +735,7 @@ public class DriverRegistroServiziDB_pddDriver {
 			con = this.driver.globalConnection;
 		}
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		ArrayList<Soggetto> lista = null;
 
@@ -897,7 +897,7 @@ public class DriverRegistroServiziDB_pddDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.atomica = " + this.driver.atomica);
 
 		try {
 

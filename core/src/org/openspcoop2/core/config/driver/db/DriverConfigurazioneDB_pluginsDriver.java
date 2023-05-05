@@ -81,7 +81,7 @@ public class DriverConfigurazioneDB_pluginsDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		RegistroPlugins registro = null;
 		
@@ -173,7 +173,7 @@ public class DriverConfigurazioneDB_pluginsDriver {
 		
 		String sqlQuery = "";
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		RegistroPlugin plugin = null;
 		
@@ -296,7 +296,7 @@ public class DriverConfigurazioneDB_pluginsDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		RegistroPlugin plugin = null;
 		
@@ -415,7 +415,7 @@ public class DriverConfigurazioneDB_pluginsDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		int count = -1;
 		
@@ -465,7 +465,7 @@ public class DriverConfigurazioneDB_pluginsDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			
@@ -511,7 +511,7 @@ public class DriverConfigurazioneDB_pluginsDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		int count = -1;
 		
@@ -561,10 +561,10 @@ public class DriverConfigurazioneDB_pluginsDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDRegistroPlugin type = 1");
+			this.driver.logDebug("CRUDRegistroPlugin type = 1");
 			DriverConfigurazioneDB_pluginsLIB.CRUDRegistroPlugin(1, plugin, con);
 
 		} catch (Exception qe) {
@@ -592,10 +592,10 @@ public class DriverConfigurazioneDB_pluginsDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDRegistroPlugin type = 2");
+			this.driver.logDebug("CRUDRegistroPlugin type = 2");
 			DriverConfigurazioneDB_pluginsLIB.CRUDRegistroPlugin(2, plugin, con);
 
 		} catch (Exception qe) {
@@ -623,10 +623,10 @@ public class DriverConfigurazioneDB_pluginsDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDRegistroPlugin type = 3");
+			this.driver.logDebug("CRUDRegistroPlugin type = 3");
 			DriverConfigurazioneDB_pluginsLIB.CRUDRegistroPlugin(3, plugin, con);
 
 		} catch (Exception qe) {
@@ -654,10 +654,10 @@ public class DriverConfigurazioneDB_pluginsDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("updateDatiRegistroPlugin");
+			this.driver.logDebug("updateDatiRegistroPlugin");
 			DriverConfigurazioneDB_pluginsLIB.updateDatiRegistroPlugin(nomePlugin, plugin, con);
 
 		} catch (Exception qe) {
@@ -686,7 +686,7 @@ public class DriverConfigurazioneDB_pluginsDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		RegistroPluginArchivio archivio = null;
 		
@@ -776,7 +776,7 @@ public class DriverConfigurazioneDB_pluginsDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		int count = -1;
 		
@@ -842,7 +842,7 @@ public class DriverConfigurazioneDB_pluginsDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		int count = -1;
 		
@@ -922,10 +922,10 @@ public class DriverConfigurazioneDB_pluginsDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDRegistroPlugin type = 1");
+			this.driver.logDebug("CRUDRegistroPlugin type = 1");
 			DriverConfigurazioneDB_pluginsLIB.CRUDRegistroPluginArchivio(1, nomePlugin, plugin, con);
 
 		} catch (Exception qe) {
@@ -953,10 +953,10 @@ public class DriverConfigurazioneDB_pluginsDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDRegistroPlugin type = 2");
+			this.driver.logDebug("CRUDRegistroPlugin type = 2");
 			DriverConfigurazioneDB_pluginsLIB.CRUDRegistroPluginArchivio(2, nomePlugin, plugin, con);
 
 		} catch (Exception qe) {
@@ -984,10 +984,10 @@ public class DriverConfigurazioneDB_pluginsDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDRegistroPlugin type = 3");
+			this.driver.logDebug("CRUDRegistroPlugin type = 3");
 			DriverConfigurazioneDB_pluginsLIB.CRUDRegistroPluginArchivio(3, nomePlugin, plugin, con);
 
 		} catch (Exception qe) {
@@ -1029,7 +1029,7 @@ public class DriverConfigurazioneDB_pluginsDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1143,7 +1143,7 @@ public class DriverConfigurazioneDB_pluginsDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 

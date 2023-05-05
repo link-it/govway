@@ -121,14 +121,14 @@ public class DriverRegistroServiziDB_accordiFindAllDriver {
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 
-		this.driver.log.debug(nomeMetodo+"...");
+		this.driver.logDebug(nomeMetodo+"...");
 
 		if(listReturn==null){
 			throw new DriverRegistroServiziException("Lista per collezionare i risultati non definita");
 		}
 		
 		try {
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if (this.driver.atomica)
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
@@ -315,49 +315,49 @@ public class DriverRegistroServiziDB_accordiFindAllDriver {
 
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
-			this.driver.log.debug("eseguo query : " + sqlQuery );
+			this.driver.logDebug("eseguo query : " + sqlQuery );
 			stm = con.prepareStatement(sqlQuery);
 			int indexStmt = 1;
 			if(filtroRicercaBase!=null){
 				if(filtroRicercaBase.getMinDate()!=null){
-					this.driver.log.debug("minDate stmt.setTimestamp("+filtroRicercaBase.getMinDate()+")");
+					this.driver.logDebug("minDate stmt.setTimestamp("+filtroRicercaBase.getMinDate()+")");
 					stm.setTimestamp(indexStmt, new Timestamp(filtroRicercaBase.getMinDate().getTime()));
 					indexStmt++;
 				}
 				if(filtroRicercaBase.getMaxDate()!=null){
-					this.driver.log.debug("maxDate stmt.setTimestamp("+filtroRicercaBase.getMaxDate()+")");
+					this.driver.logDebug("maxDate stmt.setTimestamp("+filtroRicercaBase.getMaxDate()+")");
 					stm.setTimestamp(indexStmt, new Timestamp(filtroRicercaBase.getMaxDate().getTime()));
 					indexStmt++;
 				}	
 				if(filtroRicercaBase.getNomeAccordo()!=null){
-					this.driver.log.debug("nomeAccordo stmt.setString("+filtroRicercaBase.getNomeAccordo()+")");
+					this.driver.logDebug("nomeAccordo stmt.setString("+filtroRicercaBase.getNomeAccordo()+")");
 					stm.setString(indexStmt, filtroRicercaBase.getNomeAccordo());
 					indexStmt++;
 				}	
 				if(filtroRicercaBase.getVersione()!=null){
-					this.driver.log.debug("versioneAccordo stmt.setString("+filtroRicercaBase.getVersione()+")");
+					this.driver.logDebug("versioneAccordo stmt.setString("+filtroRicercaBase.getVersione()+")");
 					stm.setInt(indexStmt, filtroRicercaBase.getVersione());
 					indexStmt++;
 				}	
 				if(filtroRicercaBase.getTipoSoggettoReferente()!=null || filtroRicercaBase.getNomeSoggettoReferente()!=null){
 					if(filtroRicercaBase.getTipoSoggettoReferente()!=null){
-						this.driver.log.debug("tipoSoggettoReferenteAccordo stmt.setString("+filtroRicercaBase.getTipoSoggettoReferente()+")");
+						this.driver.logDebug("tipoSoggettoReferenteAccordo stmt.setString("+filtroRicercaBase.getTipoSoggettoReferente()+")");
 						stm.setString(indexStmt, filtroRicercaBase.getTipoSoggettoReferente());
 						indexStmt++;
 					}
 					if(filtroRicercaBase.getNomeSoggettoReferente()!=null){
-						this.driver.log.debug("nomeSoggettoReferenteAccordo stmt.setString("+filtroRicercaBase.getNomeSoggettoReferente()+")");
+						this.driver.logDebug("nomeSoggettoReferenteAccordo stmt.setString("+filtroRicercaBase.getNomeSoggettoReferente()+")");
 						stm.setString(indexStmt, filtroRicercaBase.getNomeSoggettoReferente());
 						indexStmt++;
 					}
 				}
 				if(filtroRicercaBase.getServiceBinding()!=null) {
-					this.driver.log.debug("serviceBinding stmt.setString("+filtroRicercaBase.getServiceBinding().getValue()+")");
+					this.driver.logDebug("serviceBinding stmt.setString("+filtroRicercaBase.getServiceBinding().getValue()+")");
 					stm.setString(indexStmt, filtroRicercaBase.getServiceBinding().getValue());
 					indexStmt++;
 				}
 				if(filtroRicercaBase.getIdGruppo()!=null && filtroRicercaBase.getIdGruppo().getNome()!=null) {
-					this.driver.log.debug("gruppo stmt.setString("+filtroRicercaBase.getIdGruppo().getNome()+")");
+					this.driver.logDebug("gruppo stmt.setString("+filtroRicercaBase.getIdGruppo().getNome()+")");
 					stm.setString(indexStmt, filtroRicercaBase.getIdGruppo().getNome());
 					indexStmt++;
 				}	
@@ -367,19 +367,19 @@ public class DriverRegistroServiziDB_accordiFindAllDriver {
 						filtroRicercaBase.getIdAccordoCooperazione().getSoggettoReferente()!=null || 
 						filtroRicercaBase.getIdAccordoCooperazione().getVersione()!=null) ){
 					if(filtroRicercaBase.getIdAccordoCooperazione().getNome()!=null){
-						this.driver.log.debug("nomeAccordoCooperazione stmt.setString("+filtroRicercaBase.getIdAccordoCooperazione().getNome()+")");
+						this.driver.logDebug("nomeAccordoCooperazione stmt.setString("+filtroRicercaBase.getIdAccordoCooperazione().getNome()+")");
 						stm.setString(indexStmt, filtroRicercaBase.getIdAccordoCooperazione().getNome());
 						indexStmt++;
 					}
 					if(filtroRicercaBase.getIdAccordoCooperazione().getSoggettoReferente()!=null){
 						long idReferenteAccordoCooperazione = DBUtils.getIdSoggetto(filtroRicercaBase.getIdAccordoCooperazione().getSoggettoReferente().getNome(), 
 								filtroRicercaBase.getIdAccordoCooperazione().getSoggettoReferente().getTipo(), con, this.driver.tipoDB, this.driver.tabellaSoggetti);
-						this.driver.log.debug("referenteAccordoCooperazione stmt.setLong("+idReferenteAccordoCooperazione+")");
+						this.driver.logDebug("referenteAccordoCooperazione stmt.setLong("+idReferenteAccordoCooperazione+")");
 						stm.setLong(indexStmt, idReferenteAccordoCooperazione);
 						indexStmt++;
 					}
 					if(filtroRicercaBase.getIdAccordoCooperazione().getVersione()!=null){
-						this.driver.log.debug("versioneAccordoCooperazione stmt.setString("+filtroRicercaBase.getIdAccordoCooperazione().getVersione()+")");
+						this.driver.logDebug("versioneAccordoCooperazione stmt.setString("+filtroRicercaBase.getIdAccordoCooperazione().getVersione()+")");
 						stm.setInt(indexStmt, filtroRicercaBase.getIdAccordoCooperazione().getVersione());
 						indexStmt++;
 					}

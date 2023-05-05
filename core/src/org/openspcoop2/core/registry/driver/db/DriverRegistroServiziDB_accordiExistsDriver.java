@@ -65,7 +65,7 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		} else
 			connection = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 		try {
 
 			// Check soggetto referente se esiste.
@@ -97,7 +97,7 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 	protected boolean existsAccordoServizioParteComune(long idAccordo) throws DriverRegistroServiziException {
 
 		Connection connection = null;
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 		PreparedStatement stm=null;
 		ResultSet rs=null;
 		try {
@@ -194,7 +194,7 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		} else
 			connection = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.ACCORDI_AZIONI);
@@ -249,7 +249,7 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		} else
 			connection = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.ACCORDI_AZIONI);
@@ -326,7 +326,7 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		} else
 			connection = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORT_TYPE_AZIONI);
@@ -381,7 +381,7 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		} else
 			connection = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORT_TYPE);
@@ -470,7 +470,7 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		} else
 			connection = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORT_TYPE_AZIONI);
@@ -529,7 +529,7 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		} else
 			connection = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES);
@@ -578,7 +578,7 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		} else
 			connection = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES);
@@ -654,7 +654,7 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		} else
 			connection = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES_RESPONSE);
@@ -704,7 +704,7 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		} else
 			connection = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES_MEDIA);
@@ -759,7 +759,7 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		} else
 			connection = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES_PARAMETER);

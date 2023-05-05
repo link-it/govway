@@ -92,7 +92,7 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 		if (idAccordo.getNome().trim().equals(""))
 			throw new DriverRegistroServiziException("[getAccordoCooperazione] Parametro idAccordo.getNome non e' definito");
 
-		this.driver.log.debug("richiesto getAccordoCooperazione: " + idAccordo.toString());
+		this.driver.logDebug("richiesto getAccordoCooperazione: " + idAccordo.toString());
 
 		org.openspcoop2.core.registry.AccordoCooperazione accordoCooperazione = null;
 		Connection con = null;
@@ -103,7 +103,7 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 
 		try {
 
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if (this.driver.atomica)
 				con = this.driver.getConnectionFromDatasource("getAccordoCooperazione(idAccordo)");
@@ -130,7 +130,7 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 			stm.setLong(1, idAccordoLong);
 
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordoLong));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordoLong));
 			rs = stm.executeQuery();
 
 			if (rs.next()) {
@@ -199,7 +199,7 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 				stm = con.prepareStatement(sqlQuery);
 				stm.setLong(1, idAccordoLong);
 
-				this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordoLong));
+				this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordoLong));
 
 				rs = stm.executeQuery();
 
@@ -254,7 +254,7 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 				stm = con.prepareStatement(sqlQuery);
 				stm.setLong(1, idAccordoLong);
 
-				this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordoLong));
+				this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordoLong));
 
 				rs = stm.executeQuery();
 
@@ -335,7 +335,7 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 		return getIdAccordoCooperazione(id,null);
 	}
 	protected IDAccordoCooperazione getIdAccordoCooperazione(long id,Connection conParam) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
-		this.driver.log.debug("richiesto getIdAccordoCooperazione: " + id);
+		this.driver.logDebug("richiesto getIdAccordoCooperazione: " + id);
 		// conrollo consistenza
 		if (id <= 0)
 			return null;
@@ -354,7 +354,7 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 			sqlQueryObject.addWhereCondition("id = ?");
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if(conParam!=null){
 				con = conParam;
@@ -368,7 +368,7 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 
 			stm.setLong(1, id);
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, id));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, id));
 			rs = stm.executeQuery();
 
 
@@ -417,7 +417,7 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 		return getAccordoCooperazione(id,null);
 	}
 	protected AccordoCooperazione getAccordoCooperazione(long id,Connection conParam) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
-		this.driver.log.debug("richiesto getAccordoCooperazione: " + id);
+		this.driver.logDebug("richiesto getAccordoCooperazione: " + id);
 		// conrollo consistenza
 		if (id <= 0)
 			return null;
@@ -436,7 +436,7 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 			sqlQueryObject.addWhereCondition("id = ?");
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if(conParam!=null){
 				con = conParam;
@@ -450,7 +450,7 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 
 			stm.setLong(1, id);
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, id));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, id));
 			rs = stm.executeQuery();
 
 
@@ -507,10 +507,10 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 
-		this.driver.log.debug("getAllIdAccordiCooperazione...");
+		this.driver.logDebug("getAllIdAccordiCooperazione...");
 
 		try {
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if (this.driver.atomica)
 				con = this.driver.getConnectionFromDatasource("getAllIdAccordiCooperazione");
@@ -546,37 +546,37 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
-			this.driver.log.debug("eseguo query : " + sqlQuery );
+			this.driver.logDebug("eseguo query : " + sqlQuery );
 			stm = con.prepareStatement(sqlQuery);
 			int indexStmt = 1;
 			if(filtroRicerca!=null){
 				if(filtroRicerca.getMinDate()!=null){
-					this.driver.log.debug("minDate stmt.setTimestamp("+filtroRicerca.getMinDate()+")");
+					this.driver.logDebug("minDate stmt.setTimestamp("+filtroRicerca.getMinDate()+")");
 					stm.setTimestamp(indexStmt, new Timestamp(filtroRicerca.getMinDate().getTime()));
 					indexStmt++;
 				}
 				if(filtroRicerca.getMaxDate()!=null){
-					this.driver.log.debug("maxDate stmt.setTimestamp("+filtroRicerca.getMaxDate()+")");
+					this.driver.logDebug("maxDate stmt.setTimestamp("+filtroRicerca.getMaxDate()+")");
 					stm.setTimestamp(indexStmt, new Timestamp(filtroRicerca.getMaxDate().getTime()));
 					indexStmt++;
 				}	
 				if(filtroRicerca.getNomeAccordo()!=null){
-					this.driver.log.debug("nomeAccordo stmt.setString("+filtroRicerca.getNomeAccordo()+")");
+					this.driver.logDebug("nomeAccordo stmt.setString("+filtroRicerca.getNomeAccordo()+")");
 					stm.setString(indexStmt, filtroRicerca.getNomeAccordo());
 					indexStmt++;
 				}	
 				if(filtroRicerca.getVersione()!=null){
-					this.driver.log.debug("versioneAccordo stmt.setString("+filtroRicerca.getVersione()+")");
+					this.driver.logDebug("versioneAccordo stmt.setString("+filtroRicerca.getVersione()+")");
 					stm.setInt(indexStmt, filtroRicerca.getVersione());
 					indexStmt++;
 				}	
 				if(filtroRicerca.getTipoSoggettoReferente()!=null){
-					this.driver.log.debug("tipoSoggettoReferenteAccordo stmt.setString("+filtroRicerca.getTipoSoggettoReferente()+")");
+					this.driver.logDebug("tipoSoggettoReferenteAccordo stmt.setString("+filtroRicerca.getTipoSoggettoReferente()+")");
 					stm.setString(indexStmt, filtroRicerca.getTipoSoggettoReferente());
 					indexStmt++;
 				}
 				if(filtroRicerca.getNomeSoggettoReferente()!=null){
-					this.driver.log.debug("nomeSoggettoReferenteAccordo stmt.setString("+filtroRicerca.getNomeSoggettoReferente()+")");
+					this.driver.logDebug("nomeSoggettoReferenteAccordo stmt.setString("+filtroRicerca.getNomeSoggettoReferente()+")");
 					stm.setString(indexStmt, filtroRicerca.getNomeSoggettoReferente());
 					indexStmt++;
 				}	
@@ -640,10 +640,10 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDServizio tupe=1");
+			this.driver.logDebug("CRUDServizio tupe=1");
 			// CREATE
 			DriverRegistroServiziDB_accordiCooperazioneLIB.CRUDAccordoCooperazione(CostantiDB.CREATE, accordoCooperazione, con, this.driver.tipoDB);
 
@@ -676,7 +676,7 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 		} else
 			connection = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 		try {
 			long idAccordoLong = DBUtils.getIdAccordoCooperazione(idAccordo, connection, this.driver.tipoDB);
 			if (idAccordoLong <= 0)
@@ -714,7 +714,7 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
 
@@ -754,10 +754,10 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDServizio type = 3");
+			this.driver.logDebug("CRUDServizio type = 3");
 			// creo soggetto
 			DriverRegistroServiziDB_accordiCooperazioneLIB.CRUDAccordoCooperazione(CostantiDB.DELETE, accordoCooperazione, con, this.driver.tipoDB);
 
@@ -793,10 +793,10 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 
 		String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
 
-		this.driver.log.debug("search : " + search);
-		this.driver.log.debug("filterProtocollo : " + filterProtocollo);
-		this.driver.log.debug("filterProtocolli : " + filterProtocolli);
-		this.driver.log.debug("filterStatoAccordo : " + filterStatoAccordo);
+		this.driver.logDebug("search : " + search);
+		this.driver.logDebug("filterProtocollo : " + filterProtocollo);
+		this.driver.logDebug("filterProtocolli : " + filterProtocolli);
+		this.driver.logDebug("filterStatoAccordo : " + filterStatoAccordo);
 
 		Connection con = null;
 		PreparedStatement stmt = null;
@@ -816,7 +816,7 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -931,7 +931,7 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 			}
 
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(queryString));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(queryString));
 
 			stmt = con.prepareStatement(queryString);
 			index = 1;
@@ -960,7 +960,7 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 
 			}
 
-			this.driver.log.debug("size lista :" + ((idAccordi == null) ? null : idAccordi.size()));
+			this.driver.logDebug("size lista :" + ((idAccordi == null) ? null : idAccordi.size()));
 
 
 		} catch (Exception se) {
@@ -999,7 +999,7 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 		ricerca.getSearchString(idLista);
 
-		this.driver.log.debug("search : " + search);
+		this.driver.logDebug("search : " + search);
 
 		Connection con = null;
 		PreparedStatement stmt = null;
@@ -1019,7 +1019,7 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1101,7 +1101,7 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 			}
 
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(queryString));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(queryString));
 
 			stmt = con.prepareStatement(queryString);
 			stmt.setLong(1, idAccordo);
@@ -1154,7 +1154,7 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			ISQLQueryObject sqlQueryObjectSoggetti = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -1169,7 +1169,7 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 			sqlQueryObjectSoggetti.setANDLogicOperator(true);
 			queryString = sqlQueryObjectSoggetti.createSQLQuery();
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(queryString));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(queryString));
 
 			stmt = con.prepareStatement(queryString);
 			stmt.setString(1,idSoggetto.getTipo());

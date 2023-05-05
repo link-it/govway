@@ -81,7 +81,7 @@ public class DriverRegistroServiziDB_documentiDriver {
 		} else
 			connection = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.DOCUMENTI);

@@ -110,7 +110,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		List<TrasformazioneRegola> lista = new ArrayList<TrasformazioneRegola>();
 		try {
@@ -370,7 +370,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 								stm1 = con.prepareStatement(sqlQuery);
 								stm1.setLong(1, idSA);
 		
-								this.driver.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idSA));
+								this.driver.logDebug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idSA));
 		
 								rs1 = stm1.executeQuery();
 		
@@ -450,7 +450,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			
@@ -542,7 +542,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 		TrasformazioneRegola regola = null;
 		try {
 
@@ -722,7 +722,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 		TrasformazioneRegola regola = null;
 		try {
 
@@ -915,7 +915,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1018,7 +1018,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1100,7 +1100,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		List<TrasformazioneRegolaRisposta> lista = new ArrayList<TrasformazioneRegolaRisposta>();
 		try {
@@ -1249,7 +1249,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 		TrasformazioneRegolaRisposta risposta = null;
 		try {
 
@@ -1370,7 +1370,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 		TrasformazioneRegolaRisposta risposta = null;
 		try {
 
@@ -1559,7 +1559,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1668,7 +1668,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1756,7 +1756,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		List<TrasformazioneRegolaApplicabilitaServizioApplicativo> lista = new ArrayList<TrasformazioneRegolaApplicabilitaServizioApplicativo>();
 		try {
@@ -1907,7 +1907,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		List<TrasformazioneRegolaApplicabilitaSoggetto> lista = new ArrayList<TrasformazioneRegolaApplicabilitaSoggetto>();
 		try {
@@ -2061,7 +2061,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		List<TrasformazioneRegolaParametro> lista = new ArrayList<TrasformazioneRegolaParametro>();
 		try {
@@ -2220,7 +2220,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -2306,7 +2306,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 		TrasformazioneRegolaParametro parametro = null;
 		try {
 
@@ -2410,7 +2410,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		List<TrasformazioneRegolaParametro> lista = new ArrayList<TrasformazioneRegolaParametro>();
 		try {
@@ -2559,7 +2559,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -2640,7 +2640,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 		TrasformazioneRegolaParametro parametro = null;
 		try {
 
@@ -2740,7 +2740,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		List<TrasformazioneRegolaParametro> lista = new ArrayList<TrasformazioneRegolaParametro>();
 		try {
@@ -2884,7 +2884,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -2965,7 +2965,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 		TrasformazioneRegolaParametro parametro = null;
 		try {
 

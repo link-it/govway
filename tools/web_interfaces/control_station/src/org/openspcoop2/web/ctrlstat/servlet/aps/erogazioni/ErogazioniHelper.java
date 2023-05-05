@@ -711,6 +711,9 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				// filtro sicurezza messaggio
 				this.addFilterModISicurezzaMessaggio(ricerca, idLista, filterTipoAccordo);
 				
+				// filtro sorgente token
+				this.addFilterModIGenerazioneToken(ricerca, idLista);
+				
 				// filtro sicurezza canale
 				this.addFilterModIDigestRichiesta(ricerca, idLista);
 				

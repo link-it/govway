@@ -108,7 +108,7 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		List<String> listIdRuoli = null;
 		try {
@@ -230,7 +230,7 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		List<String> listIdScope = null;
 		try {
@@ -353,7 +353,7 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -462,9 +462,9 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
 		
-		this.driver.log.debug("search : " + search);
-		this.driver.log.debug("filterProtocollo : " + filterProtocollo);
-		this.driver.log.debug("filterProtocolli : " + filterProtocolli);
+		this.driver.logDebug("search : " + search);
+		this.driver.logDebug("filterProtocollo : " + filterProtocollo);
+		this.driver.logDebug("filterProtocolli : " + filterProtocolli);
 		
 		Connection con = null;
 		boolean error = false;
@@ -484,7 +484,7 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -630,7 +630,7 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -747,7 +747,7 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -869,7 +869,7 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -988,7 +988,7 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1110,7 +1110,7 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1220,7 +1220,7 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1366,7 +1366,7 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1482,7 +1482,7 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1592,7 +1592,7 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1712,7 +1712,7 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1833,7 +1833,7 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1959,7 +1959,7 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -2086,7 +2086,7 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 			} else
 				con = this.driver.globalConnection;
 
-			this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 			
 			if (!search.equals("")) {
 				//query con search
@@ -2258,7 +2258,7 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -2391,7 +2391,7 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -2526,7 +2526,7 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -2635,7 +2635,7 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 

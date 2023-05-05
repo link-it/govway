@@ -130,7 +130,7 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			AccessoRegistro car = new AccessoRegistro();
@@ -194,7 +194,7 @@ public class DriverConfigurazioneDB_configDriver {
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
 
-			this.driver.log.debug("eseguo query : " + sqlQuery);
+			this.driver.logDebug("eseguo query : " + sqlQuery);
 
 			rs = stm.executeQuery();
 
@@ -267,10 +267,10 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDAccessoRegistro type = 1");
+			this.driver.logDebug("CRUDAccessoRegistro type = 1");
 			DriverConfigurazioneDB_configLIB.CRUDAccessoRegistro(1, registro, con);
 
 		} catch (Exception qe) {
@@ -298,10 +298,10 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDAccessoRegistro type = 2");
+			this.driver.logDebug("CRUDAccessoRegistro type = 2");
 			DriverConfigurazioneDB_configLIB.CRUDAccessoRegistro(2, registro, con);
 
 		} catch (Exception qe) {
@@ -329,10 +329,10 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDAccessoRegistro type = 3");
+			this.driver.logDebug("CRUDAccessoRegistro type = 3");
 			DriverConfigurazioneDB_configLIB.CRUDAccessoRegistro(3, registro, con);
 
 		} catch (Exception qe) {
@@ -366,7 +366,7 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			AccessoConfigurazione accessoConfigurazione = new AccessoConfigurazione();
@@ -378,7 +378,7 @@ public class DriverConfigurazioneDB_configDriver {
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
 
-			this.driver.log.debug("eseguo query : " + sqlQuery);
+			this.driver.logDebug("eseguo query : " + sqlQuery);
 
 			rs = stm.executeQuery();
 
@@ -442,10 +442,10 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDAccessoConfigurazione type = 1");
+			this.driver.logDebug("CRUDAccessoConfigurazione type = 1");
 			DriverConfigurazioneDB_configLIB.CRUDAccessoConfigurazione(1, accessoConfigurazione, con);
 
 		} catch (Exception qe) {
@@ -473,10 +473,10 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDAccessoConfigurazione type = 2");
+			this.driver.logDebug("CRUDAccessoConfigurazione type = 2");
 			DriverConfigurazioneDB_configLIB.CRUDAccessoConfigurazione(2, accessoConfigurazione, con);
 
 		} catch (Exception qe) {
@@ -504,10 +504,10 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDAccessoConfigurazione type = 3");
+			this.driver.logDebug("CRUDAccessoConfigurazione type = 3");
 			DriverConfigurazioneDB_configLIB.CRUDAccessoConfigurazione(3, accessoConfigurazione, con);
 
 		} catch (Exception qe) {
@@ -542,7 +542,7 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			AccessoDatiAutorizzazione accessoDatiAutorizzazione = new AccessoDatiAutorizzazione();
@@ -554,7 +554,7 @@ public class DriverConfigurazioneDB_configDriver {
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
 
-			this.driver.log.debug("eseguo query : " + sqlQuery);
+			this.driver.logDebug("eseguo query : " + sqlQuery);
 
 			rs = stm.executeQuery();
 
@@ -622,7 +622,7 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			AccessoDatiAutenticazione accessoDatiAutenticazione = new AccessoDatiAutenticazione();
@@ -634,7 +634,7 @@ public class DriverConfigurazioneDB_configDriver {
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
 
-			this.driver.log.debug("eseguo query : " + sqlQuery);
+			this.driver.logDebug("eseguo query : " + sqlQuery);
 
 			rs = stm.executeQuery();
 
@@ -701,7 +701,7 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			AccessoDatiGestioneToken accessoDatiGestioneToken = new AccessoDatiGestioneToken();
@@ -713,7 +713,7 @@ public class DriverConfigurazioneDB_configDriver {
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
 
-			this.driver.log.debug("eseguo query : " + sqlQuery);
+			this.driver.logDebug("eseguo query : " + sqlQuery);
 
 			rs = stm.executeQuery();
 
@@ -781,7 +781,7 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			AccessoDatiKeystore accessoDatiKeystore = new AccessoDatiKeystore();
@@ -793,7 +793,7 @@ public class DriverConfigurazioneDB_configDriver {
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
 
-			this.driver.log.debug("eseguo query : " + sqlQuery);
+			this.driver.logDebug("eseguo query : " + sqlQuery);
 
 			rs = stm.executeQuery();
 
@@ -865,7 +865,7 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			AccessoDatiConsegnaApplicativi accessoDatiConsegnaApplicativi = new AccessoDatiConsegnaApplicativi();
@@ -877,7 +877,7 @@ public class DriverConfigurazioneDB_configDriver {
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
 
-			this.driver.log.debug("eseguo query : " + sqlQuery);
+			this.driver.logDebug("eseguo query : " + sqlQuery);
 
 			rs = stm.executeQuery();
 
@@ -944,7 +944,7 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			AccessoDatiRichieste accessoDatiRichieste = new AccessoDatiRichieste();
@@ -956,7 +956,7 @@ public class DriverConfigurazioneDB_configDriver {
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
 
-			this.driver.log.debug("eseguo query : " + sqlQuery);
+			this.driver.logDebug("eseguo query : " + sqlQuery);
 
 			rs = stm.executeQuery();
 
@@ -1022,10 +1022,10 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDAccessoDatiAutorizzazione type = 1");
+			this.driver.logDebug("CRUDAccessoDatiAutorizzazione type = 1");
 			DriverConfigurazioneDB_configLIB.CRUDAccessoDatiAutorizzazione(1, accessoDatiAutorizzazione, con);
 
 		} catch (Exception qe) {
@@ -1053,10 +1053,10 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDAccessoDatiAutorizzazione type = 2");
+			this.driver.logDebug("CRUDAccessoDatiAutorizzazione type = 2");
 			DriverConfigurazioneDB_configLIB.CRUDAccessoDatiAutorizzazione(2, accessoDatiAutorizzazione, con);
 
 		} catch (Exception qe) {
@@ -1084,10 +1084,10 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDAccessoDatiAutorizzazione type = 3");
+			this.driver.logDebug("CRUDAccessoDatiAutorizzazione type = 3");
 			DriverConfigurazioneDB_configLIB.CRUDAccessoDatiAutorizzazione(3, accessoDatiAutorizzazione, con);
 
 		} catch (Exception qe) {
@@ -1127,7 +1127,7 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			StatoServiziPdd servizi = null;
@@ -1141,7 +1141,7 @@ public class DriverConfigurazioneDB_configDriver {
 			sqlQueryObjectFiltri.addWhereCondition("id_servizio_pdd=?");
 			String sqlQueryFiltro = sqlQueryObjectFiltri.createSQLQuery();
 
-			this.driver.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery));
+			this.driver.logDebug("eseguo query: " + DBUtils.formatSQLString(sqlQuery));
 			stm = con.prepareStatement(sqlQuery);
 			rs = stm.executeQuery();
 
@@ -1170,7 +1170,7 @@ public class DriverConfigurazioneDB_configDriver {
 					StatoServiziPddPortaDelegata sPD = new StatoServiziPddPortaDelegata();
 					sPD.setStato(stato);
 
-					this.driver.log.debug("eseguo query filtro: " + DBUtils.formatSQLString(sqlQueryFiltro,id));
+					this.driver.logDebug("eseguo query filtro: " + DBUtils.formatSQLString(sqlQueryFiltro,id));
 					stmFiltri = con.prepareStatement(sqlQueryFiltro);
 					stmFiltri.setLong(1, id);
 					rsFiltri = stmFiltri.executeQuery();
@@ -1185,7 +1185,7 @@ public class DriverConfigurazioneDB_configDriver {
 					StatoServiziPddPortaApplicativa sPA = new StatoServiziPddPortaApplicativa();
 					sPA.setStato(stato);
 
-					this.driver.log.debug("eseguo query filtro: " + DBUtils.formatSQLString(sqlQueryFiltro,id));
+					this.driver.logDebug("eseguo query filtro: " + DBUtils.formatSQLString(sqlQueryFiltro,id));
 					stmFiltri = con.prepareStatement(sqlQueryFiltro);
 					stmFiltri.setLong(1, id);
 					rsFiltri = stmFiltri.executeQuery();
@@ -1294,10 +1294,10 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("createServiziAttiviPdD type = 1");
+			this.driver.logDebug("createServiziAttiviPdD type = 1");
 			DriverConfigurazioneDB_configLIB.CRUDServiziPdD(1, servizi, con);
 
 		} catch (Exception qe) {
@@ -1331,10 +1331,10 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("createServiziAttiviPdD type = 2");
+			this.driver.logDebug("createServiziAttiviPdD type = 2");
 			DriverConfigurazioneDB_configLIB.CRUDServiziPdD(2, servizi, con);
 
 		} catch (Exception qe) {
@@ -1369,10 +1369,10 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("createServiziAttiviPdD type = 3");
+			this.driver.logDebug("createServiziAttiviPdD type = 3");
 			DriverConfigurazioneDB_configLIB.CRUDServiziPdD(3, servizi, con);
 
 		} catch (Exception qe) {
@@ -1415,7 +1415,7 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			SystemProperties systemProperties = null;
@@ -1424,7 +1424,7 @@ public class DriverConfigurazioneDB_configDriver {
 			sqlQueryObject.addFromTable(CostantiDB.SYSTEM_PROPERTIES_PDD);
 			sqlQuery = sqlQueryObject.createSQLQuery();
 
-			this.driver.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery));
+			this.driver.logDebug("eseguo query: " + DBUtils.formatSQLString(sqlQuery));
 			stm = con.prepareStatement(sqlQuery);
 			rs = stm.executeQuery();
 
@@ -1486,10 +1486,10 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("createSystemPropertiesPdD type = 1");
+			this.driver.logDebug("createSystemPropertiesPdD type = 1");
 			DriverConfigurazioneDB_configLIB.CRUDSystemPropertiesPdD(1, systemProperties, con);
 
 		} catch (Exception qe) {
@@ -1523,10 +1523,10 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("updateSystemPropertiesPdD type = 2");
+			this.driver.logDebug("updateSystemPropertiesPdD type = 2");
 			DriverConfigurazioneDB_configLIB.CRUDSystemPropertiesPdD(2, systemProperties, con);
 
 		} catch (Exception qe) {
@@ -1561,10 +1561,10 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("deleteSystemPropertiesPdD type = 3");
+			this.driver.logDebug("deleteSystemPropertiesPdD type = 3");
 			DriverConfigurazioneDB_configLIB.CRUDSystemPropertiesPdD(3, systemProperties, con);
 
 		} catch (Exception qe) {
@@ -1593,7 +1593,7 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		ConfigurazioneUrlInvocazioneRegola regola = null;
 		
@@ -1658,7 +1658,7 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			
@@ -1743,10 +1743,10 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDUrlInvocazioneRegola type = 1");
+			this.driver.logDebug("CRUDUrlInvocazioneRegola type = 1");
 			DriverConfigurazioneDB_configLIB.CRUDUrlInvocazioneRegola(1, regola, con);
 
 		} catch (Exception qe) {
@@ -1774,10 +1774,10 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDUrlInvocazioneRegola type = 2");
+			this.driver.logDebug("CRUDUrlInvocazioneRegola type = 2");
 			DriverConfigurazioneDB_configLIB.CRUDUrlInvocazioneRegola(2, regola, con);
 
 		} catch (Exception qe) {
@@ -1805,10 +1805,10 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDUrlInvocazioneRegola type = 3");
+			this.driver.logDebug("CRUDUrlInvocazioneRegola type = 3");
 			DriverConfigurazioneDB_configLIB.CRUDUrlInvocazioneRegola(3, regola, con);
 
 		} catch (Exception qe) {
@@ -1857,7 +1857,7 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 		Configurazione config = new Configurazione();
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -1865,7 +1865,7 @@ public class DriverConfigurazioneDB_configDriver {
 			sqlQueryObject.addSelectField("*");
 			sqlQuery = sqlQueryObject.createSQLQuery();
 
-			this.driver.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery));
+			this.driver.logDebug("eseguo query: " + DBUtils.formatSQLString(sqlQuery));
 			stm = con.prepareStatement(sqlQuery);
 			rs = stm.executeQuery();
 
@@ -2457,9 +2457,9 @@ public class DriverConfigurazioneDB_configDriver {
 		
 		try {
 			
-			this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 			
-			this.driver.log.debug("getConfigurazioneExtended("+idExtendedConfiguration+")");
+			this.driver.logDebug("getConfigurazioneExtended("+idExtendedConfiguration+")");
 			
 			ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
 			IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoConfigurazione();
@@ -2506,10 +2506,10 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDConfigurazioneGenerale type = 1");
+			this.driver.logDebug("CRUDConfigurazioneGenerale type = 1");
 			DriverConfigurazioneDB_configLIB.CRUDConfigurazioneGenerale(1, configurazione, con);
 
 		} catch (Exception qe) {
@@ -2538,10 +2538,10 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDConfigurazioneGenerale type = 2");
+			this.driver.logDebug("CRUDConfigurazioneGenerale type = 2");
 			DriverConfigurazioneDB_configLIB.CRUDConfigurazioneGenerale(2, configurazione, con);
 
 		} catch (Exception qe) {
@@ -2570,10 +2570,10 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDConfigurazioneGenerale type = 3");
+			this.driver.logDebug("CRUDConfigurazioneGenerale type = 3");
 			DriverConfigurazioneDB_configLIB.CRUDConfigurazioneGenerale(CostantiDB.DELETE, configurazione, con);
 
 		} catch (Exception qe) {
@@ -2611,10 +2611,10 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDAccessoRegistro type = 1");
+			this.driver.logDebug("CRUDAccessoRegistro type = 1");
 			DriverConfigurazioneDB_configLIB.CRUDAccessoRegistro(1, registro, con);
 
 		} catch (Exception qe) {
@@ -2648,10 +2648,10 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDAccessoRegistro type = 2");
+			this.driver.logDebug("CRUDAccessoRegistro type = 2");
 			DriverConfigurazioneDB_configLIB.CRUDAccessoRegistro(2, registro, con);
 
 		} catch (Exception qe) {
@@ -2685,10 +2685,10 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDAccessoRegistro type = 3");
+			this.driver.logDebug("CRUDAccessoRegistro type = 3");
 			DriverConfigurazioneDB_configLIB.CRUDAccessoRegistro(3, registro, con);
 
 		} catch (Exception qe) {
@@ -2721,7 +2721,7 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -2803,7 +2803,7 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -2860,7 +2860,7 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -2917,7 +2917,7 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -2988,7 +2988,7 @@ public class DriverConfigurazioneDB_configDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 		CanaliConfigurazione config = new CanaliConfigurazione();
 		config.setStato(StatoFunzionalita.DISABILITATO);
 		try {
@@ -2997,7 +2997,7 @@ public class DriverConfigurazioneDB_configDriver {
 			sqlQueryObject.addSelectField(CostantiDB.CONFIGURAZIONE + ".canali_stato");
 			sqlQuery = sqlQueryObject.createSQLQuery();
 
-			this.driver.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery));
+			this.driver.logDebug("eseguo query: " + DBUtils.formatSQLString(sqlQuery));
 			stm = con.prepareStatement(sqlQuery);
 			rs = stm.executeQuery();
 

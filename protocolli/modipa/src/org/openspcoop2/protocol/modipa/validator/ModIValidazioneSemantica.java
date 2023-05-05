@@ -151,13 +151,14 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 			
 			boolean rest = ServiceBinding.REST.equals(msg.getServiceBinding());
 			
+			if(busta==null) {
+				throw new ProtocolException("Busta undefined");
+			}
+			
 			TipoPdD tipoPdD = isRichiesta ? TipoPdD.APPLICATIVA : TipoPdD.DELEGATA;
-			IDSoggetto idSoggetto = null;
-			if(busta!=null) {
-				idSoggetto = TipoPdD.DELEGATA.equals(tipoPdD) ? 
+			IDSoggetto idSoggetto = TipoPdD.DELEGATA.equals(tipoPdD) ? 
 						new IDSoggetto(busta.getTipoMittente(),busta.getMittente()) : 
 						new IDSoggetto(busta.getTipoDestinatario(),busta.getDestinatario());
-			}
 			if(idSoggetto==null || idSoggetto.getTipo()==null || idSoggetto.getNome()==null) {
 				idSoggetto = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(this.protocolFactory.getProtocol(), requestInfo);
 			}

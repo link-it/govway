@@ -106,7 +106,7 @@ public class DriverConfigurazioneDB_serviziApplicativiSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -228,7 +228,7 @@ public class DriverConfigurazioneDB_serviziApplicativiSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -561,38 +561,38 @@ public class DriverConfigurazioneDB_serviziApplicativiSearchDriver {
 		}
 		boolean filtroProprieta = filtroProprietaNome!=null || filtroProprietaValore!=null;
 		
-		this.driver.log.debug("search : " + search);
-		this.driver.log.debug("filterProtocollo : " + filterProtocollo);
-		this.driver.log.debug("filterProtocolli : " + filterProtocolli);
-		this.driver.log.debug("filterDominio : " + filterDominio);
-		this.driver.log.debug("filterSoggettoNome : " + filterSoggettoNome);
-		this.driver.log.debug("filterSoggettoTipo : " + filterSoggettoTipo);
-		this.driver.log.debug("filterRuoloServizioApplicativo : " + filterRuoloServizioApplicativo);
-		this.driver.log.debug("filterRuolo : " + filterRuolo);
-		this.driver.log.debug("filterTipoServizioApplicativo : " + filterTipoServizioApplicativo);
-		this.driver.log.debug("filterTipoCredenziali : " + filterTipoCredenziali);
-		this.driver.log.debug("filterCredenziale : " + filterCredenziale);
-		this.driver.log.debug("filterCredenzialeIssuer : " + filterCredenzialeIssuer);
-		this.driver.log.debug("filterCredenzialeTokenPolicy : " + filterCredenzialeTokenPolicy);
-		this.driver.log.debug("filterGruppo : " + filterGruppo);
-		this.driver.log.debug("filterApiContesto : " + filterApiContesto);
-		this.driver.log.debug("filterApiImplementazione : " + filterApiImplementazione);
-		this.driver.log.debug("filtroConnettoreTipo : " + filtroConnettoreTipo);
-		this.driver.log.debug("filtroConnettoreTokenPolicy : " + filtroConnettoreTokenPolicy);
-		this.driver.log.debug("filtroConnettoreEndpoint : " + filtroConnettoreEndpoint);
-		this.driver.log.debug("filtroConnettoreKeystore : " + filtroConnettoreKeystore);
-		this.driver.log.debug("filtroConnettoreDebug : " + filtroConnettoreDebug);
-		this.driver.log.debug("filtroConnettoreTipoPlugin : " + filtroConnettoreTipoPlugin);
-		this.driver.log.debug("filtroModISicurezzaMessaggio : " + filtroModISicurezzaMessaggio);
-		this.driver.log.debug("filtroModIKeystorePath : " + filtroModIKeystorePath);
-		this.driver.log.debug("filtroModIKeystoreSubject : " + filtroModIKeystoreSubject);
-		this.driver.log.debug("filtroModIKeystoreIssuer : " + filtroModIKeystoreIssuer);
-		this.driver.log.debug("filtroModISicurezzaToken : " + filtroModISicurezzaToken);
-		this.driver.log.debug("filtroModITokenPolicy : " + filtroModITokenPolicy);
-		this.driver.log.debug("filtroModITokenClientId : " + filtroModITokenClientId);
-		this.driver.log.debug("filtroModIAudience : " + filtroModIAudience);
-		this.driver.log.debug("filtroProprietaNome : " + filtroProprietaNome);
-		this.driver.log.debug("filtroProprietaValore : " + filtroProprietaValore);
+		this.driver.logDebug("search : " + search);
+		this.driver.logDebug("filterProtocollo : " + filterProtocollo);
+		this.driver.logDebug("filterProtocolli : " + filterProtocolli);
+		this.driver.logDebug("filterDominio : " + filterDominio);
+		this.driver.logDebug("filterSoggettoNome : " + filterSoggettoNome);
+		this.driver.logDebug("filterSoggettoTipo : " + filterSoggettoTipo);
+		this.driver.logDebug("filterRuoloServizioApplicativo : " + filterRuoloServizioApplicativo);
+		this.driver.logDebug("filterRuolo : " + filterRuolo);
+		this.driver.logDebug("filterTipoServizioApplicativo : " + filterTipoServizioApplicativo);
+		this.driver.logDebug("filterTipoCredenziali : " + filterTipoCredenziali);
+		this.driver.logDebug("filterCredenziale : " + filterCredenziale);
+		this.driver.logDebug("filterCredenzialeIssuer : " + filterCredenzialeIssuer);
+		this.driver.logDebug("filterCredenzialeTokenPolicy : " + filterCredenzialeTokenPolicy);
+		this.driver.logDebug("filterGruppo : " + filterGruppo);
+		this.driver.logDebug("filterApiContesto : " + filterApiContesto);
+		this.driver.logDebug("filterApiImplementazione : " + filterApiImplementazione);
+		this.driver.logDebug("filtroConnettoreTipo : " + filtroConnettoreTipo);
+		this.driver.logDebug("filtroConnettoreTokenPolicy : " + filtroConnettoreTokenPolicy);
+		this.driver.logDebug("filtroConnettoreEndpoint : " + filtroConnettoreEndpoint);
+		this.driver.logDebug("filtroConnettoreKeystore : " + filtroConnettoreKeystore);
+		this.driver.logDebug("filtroConnettoreDebug : " + filtroConnettoreDebug);
+		this.driver.logDebug("filtroConnettoreTipoPlugin : " + filtroConnettoreTipoPlugin);
+		this.driver.logDebug("filtroModISicurezzaMessaggio : " + filtroModISicurezzaMessaggio);
+		this.driver.logDebug("filtroModIKeystorePath : " + filtroModIKeystorePath);
+		this.driver.logDebug("filtroModIKeystoreSubject : " + filtroModIKeystoreSubject);
+		this.driver.logDebug("filtroModIKeystoreIssuer : " + filtroModIKeystoreIssuer);
+		this.driver.logDebug("filtroModISicurezzaToken : " + filtroModISicurezzaToken);
+		this.driver.logDebug("filtroModITokenPolicy : " + filtroModITokenPolicy);
+		this.driver.logDebug("filtroModITokenClientId : " + filtroModITokenClientId);
+		this.driver.logDebug("filtroModIAudience : " + filtroModIAudience);
+		this.driver.logDebug("filtroProprietaNome : " + filtroProprietaNome);
+		this.driver.logDebug("filtroProprietaValore : " + filtroProprietaValore);
 		
 		Connection con = null;
 		PreparedStatement stmt=null;
@@ -612,7 +612,7 @@ public class DriverConfigurazioneDB_serviziApplicativiSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1296,7 +1296,7 @@ public class DriverConfigurazioneDB_serviziApplicativiSearchDriver {
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			this.driver.log.debug("Execute query: "+queryString);
+			this.driver.logDebug("Execute query: "+queryString);
 			int index = 1;
 			if(this.driver.useSuperUser && superuser!=null && !superuser.equals("")) {
 				stmt.setString(index++, superuser);
@@ -1600,7 +1600,7 @@ public class DriverConfigurazioneDB_serviziApplicativiSearchDriver {
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			this.driver.log.debug("Execute query: "+queryString);
+			this.driver.logDebug("Execute query: "+queryString);
 			index = 1;
 			if(this.driver.useSuperUser && superuser!=null && (!"".equals(superuser))) {
 				stmt.setString(index++, superuser);
@@ -1844,31 +1844,31 @@ public class DriverConfigurazioneDB_serviziApplicativiSearchDriver {
 		boolean filtroProprieta = filtroProprietaNome!=null || filtroProprietaValore!=null;
 		
 		
-		this.driver.log.debug("search : " + search);
-		this.driver.log.debug("filterProtocollo : " + filterProtocollo);
-		this.driver.log.debug("filterProtocolli : " + filterProtocolli);
-		this.driver.log.debug("filterRuoloServizioApplicativo : " + filterRuoloServizioApplicativo);
-		this.driver.log.debug("filterTipoServizioApplicativo : " + filterTipoServizioApplicativo);
-		this.driver.log.debug("filterTipoCredenziali : " + filterTipoCredenziali);
-		this.driver.log.debug("filterCredenziale : " + filterCredenziale);
-		this.driver.log.debug("filterCredenzialeIssuer : " + filterCredenzialeIssuer);
-		this.driver.log.debug("filterCredenzialeTokenPolicy : " + filterCredenzialeTokenPolicy);
-		this.driver.log.debug("filtroConnettoreTipo : " + filtroConnettoreTipo);
-		this.driver.log.debug("filtroConnettoreTokenPolicy : " + filtroConnettoreTokenPolicy);
-		this.driver.log.debug("filtroConnettoreEndpoint : " + filtroConnettoreEndpoint);
-		this.driver.log.debug("filtroConnettoreKeystore : " + filtroConnettoreKeystore);
-		this.driver.log.debug("filtroConnettoreDebug : " + filtroConnettoreDebug);
-		this.driver.log.debug("filtroConnettoreTipoPlugin : " + filtroConnettoreTipoPlugin);
-		this.driver.log.debug("filtroModISicurezzaMessaggio : " + filtroModISicurezzaMessaggio);
-		this.driver.log.debug("filtroModIKeystorePath : " + filtroModIKeystorePath);
-		this.driver.log.debug("filtroModIKeystoreSubject : " + filtroModIKeystoreSubject);
-		this.driver.log.debug("filtroModIKeystoreIssuer : " + filtroModIKeystoreIssuer);
-		this.driver.log.debug("filtroModISicurezzaToken : " + filtroModISicurezzaToken);
-		this.driver.log.debug("filtroModITokenPolicy : " + filtroModITokenPolicy);
-		this.driver.log.debug("filtroModITokenClientId : " + filtroModITokenClientId);
-		this.driver.log.debug("filtroModIAudience : " + filtroModIAudience);
-		this.driver.log.debug("filtroProprietaNome : " + filtroProprietaNome);
-		this.driver.log.debug("filtroProprietaValore : " + filtroProprietaValore);
+		this.driver.logDebug("search : " + search);
+		this.driver.logDebug("filterProtocollo : " + filterProtocollo);
+		this.driver.logDebug("filterProtocolli : " + filterProtocolli);
+		this.driver.logDebug("filterRuoloServizioApplicativo : " + filterRuoloServizioApplicativo);
+		this.driver.logDebug("filterTipoServizioApplicativo : " + filterTipoServizioApplicativo);
+		this.driver.logDebug("filterTipoCredenziali : " + filterTipoCredenziali);
+		this.driver.logDebug("filterCredenziale : " + filterCredenziale);
+		this.driver.logDebug("filterCredenzialeIssuer : " + filterCredenzialeIssuer);
+		this.driver.logDebug("filterCredenzialeTokenPolicy : " + filterCredenzialeTokenPolicy);
+		this.driver.logDebug("filtroConnettoreTipo : " + filtroConnettoreTipo);
+		this.driver.logDebug("filtroConnettoreTokenPolicy : " + filtroConnettoreTokenPolicy);
+		this.driver.logDebug("filtroConnettoreEndpoint : " + filtroConnettoreEndpoint);
+		this.driver.logDebug("filtroConnettoreKeystore : " + filtroConnettoreKeystore);
+		this.driver.logDebug("filtroConnettoreDebug : " + filtroConnettoreDebug);
+		this.driver.logDebug("filtroConnettoreTipoPlugin : " + filtroConnettoreTipoPlugin);
+		this.driver.logDebug("filtroModISicurezzaMessaggio : " + filtroModISicurezzaMessaggio);
+		this.driver.logDebug("filtroModIKeystorePath : " + filtroModIKeystorePath);
+		this.driver.logDebug("filtroModIKeystoreSubject : " + filtroModIKeystoreSubject);
+		this.driver.logDebug("filtroModIKeystoreIssuer : " + filtroModIKeystoreIssuer);
+		this.driver.logDebug("filtroModISicurezzaToken : " + filtroModISicurezzaToken);
+		this.driver.logDebug("filtroModITokenPolicy : " + filtroModITokenPolicy);
+		this.driver.logDebug("filtroModITokenClientId : " + filtroModITokenClientId);
+		this.driver.logDebug("filtroModIAudience : " + filtroModIAudience);
+		this.driver.logDebug("filtroProprietaNome : " + filtroProprietaNome);
+		this.driver.logDebug("filtroProprietaValore : " + filtroProprietaValore);
 		
 		Connection con = null;
 		PreparedStatement stmt=null;
@@ -1888,7 +1888,7 @@ public class DriverConfigurazioneDB_serviziApplicativiSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -2395,7 +2395,7 @@ public class DriverConfigurazioneDB_serviziApplicativiSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		List<String> listIdRuoli = null;
 		try {
@@ -2525,7 +2525,7 @@ public class DriverConfigurazioneDB_serviziApplicativiSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		List<Proprieta> lista = null;
 		try {
@@ -2784,7 +2784,7 @@ public class DriverConfigurazioneDB_serviziApplicativiSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 	
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 	
 		try {
 	
@@ -2802,7 +2802,7 @@ public class DriverConfigurazioneDB_serviziApplicativiSearchDriver {
 					filters, checkAssociazionePorta, search, true,
 					fruizioneIsBound, erogazioneIsBound);
 			String queryString = sqlQueryObject.createSQLQuery();
-			this.driver.log.debug("QueryCount=["+queryString+"]");
+			this.driver.logDebug("QueryCount=["+queryString+"]");
 			stmt = con.prepareStatement(queryString);
 			int index = 1;
 			if(proprietario!=null){
@@ -3017,7 +3017,7 @@ public class DriverConfigurazioneDB_serviziApplicativiSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 	
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 	
 		try {
 	
@@ -3049,7 +3049,7 @@ public class DriverConfigurazioneDB_serviziApplicativiSearchDriver {
 			sqlQueryObject.setOffset(offset);
 			sqlQueryObject.setLimit(limit);
 			String queryString = sqlQueryObject.createSQLQuery();
-			this.driver.log.debug("Query=["+queryString+"]");
+			this.driver.logDebug("Query=["+queryString+"]");
 			stmt = con.prepareStatement(queryString);
 			int index = 1;
 			if(proprietario!=null)
@@ -3290,7 +3290,7 @@ public class DriverConfigurazioneDB_serviziApplicativiSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 	
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 	
 		try {
 	

@@ -78,7 +78,7 @@ public class DriverRegistroServiziDB_protocolPropertiesDriver {
 		} else
 			connection = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 		try {
 			return DBProtocolPropertiesUtils.existsProtocolProperty(proprietarioProtocolProperty, idProprietario, nome, connection, this.driver.tipoDB);
 		} catch (Exception e) {

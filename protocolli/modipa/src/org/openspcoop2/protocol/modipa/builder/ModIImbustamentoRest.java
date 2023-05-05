@@ -706,7 +706,7 @@ public class ModIImbustamentoRest {
 			else if(securityConfig.getIssuer()!=null &&
 					!DynamicHelperCostanti.NOT_GENERATE.equalsIgnoreCase(securityConfig.getIssuer())) {
 				try {
-					issuer = ModIUtilities.getDynamicValue(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_ISSUER : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_ISSUER, 
+					issuer = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_ISSUER, 
 							securityConfig.getIssuer(), dynamicMap, context);
 				}catch(Exception e) {
 					this.log.error(e.getMessage(),e);
@@ -734,7 +734,7 @@ public class ModIImbustamentoRest {
 			else if(securityConfig.getSubject()!=null &&
 					!DynamicHelperCostanti.NOT_GENERATE.equalsIgnoreCase(securityConfig.getSubject())) {
 				try {
-					subject = ModIUtilities.getDynamicValue(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_SUBJECT : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_SUBJECT, 
+					subject = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_SUBJECT, 
 							securityConfig.getSubject(), dynamicMap, context);
 				}catch(Exception e) {
 					this.log.error(e.getMessage(),e);

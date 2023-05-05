@@ -1164,6 +1164,9 @@ public class ModISecurityConfig {
 			else if(this.algorithm.contains(size384)) {
 				return ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_RS384;
 			}
+			else if(this.algorithm.contains(size512)) {
+				return ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_RS512;
+			}
 		}
 		else if(algoLowerCase.contains(ECDSA.toLowerCase())) {
 			if(this.algorithm.contains(size256)) {
@@ -1171,11 +1174,6 @@ public class ModISecurityConfig {
 			}
 			else if(this.algorithm.contains(size384)) {
 				return ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_ES384;
-			}
-		}
-		else if(algoLowerCase.contains(ECDSA.toLowerCase())) {
-			if(this.algorithm.contains(size512)) {
-				return ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_ES512;
 			}
 			else if(this.algorithm.contains(size512)) {
 				return ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_ES512;

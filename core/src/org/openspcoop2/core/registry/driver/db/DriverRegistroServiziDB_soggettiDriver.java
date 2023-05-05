@@ -118,7 +118,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -134,7 +134,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 			stm.setString(1, nomeSogg);
 			stm.setString(2, tipoSogg);
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, nomeSogg, tipoSogg));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, nomeSogg, tipoSogg));
 			rs = stm.executeQuery();
 
 			if (rs.next()) {
@@ -191,7 +191,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -204,7 +204,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 
 			stm.setLong(1, idSoggetto);
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idSoggetto));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idSoggetto));
 			rs = stm.executeQuery();
 
 			if (rs.next()) {
@@ -299,7 +299,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 				sqlQuery = sqlQueryObject.createSQLQuery();
 				stm = con.prepareStatement(sqlQuery);
 				stm.setLong(1, soggetto.getId());
-				this.driver.log.debug("eseguo query ruoli: " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, soggetto.getId()));
+				this.driver.logDebug("eseguo query ruoli: " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, soggetto.getId()));
 				rs = stm.executeQuery();
 				while (rs.next()) {
 					if(soggetto.getRuoli()==null){
@@ -331,7 +331,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 				sqlQuery = sqlQueryObject.createSQLQuery();
 				stm = con.prepareStatement(sqlQuery);
 				stm.setLong(1, soggetto.getId());
-				this.driver.log.debug("eseguo query credenziali: " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, soggetto.getId()));
+				this.driver.logDebug("eseguo query credenziali: " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, soggetto.getId()));
 				rs = stm.executeQuery();
 				while (rs.next()) {
 					CredenzialiSoggetto credenziali = new CredenzialiSoggetto();
@@ -367,7 +367,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 				sqlQuery = sqlQueryObject.createSQLQuery();
 				stm = con.prepareStatement(sqlQuery);
 				stm.setLong(1, soggetto.getId());
-				this.driver.log.debug("eseguo query ruoli: " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, soggetto.getId()));
+				this.driver.logDebug("eseguo query ruoli: " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, soggetto.getId()));
 				rs = stm.executeQuery();
 				while (rs.next()) {
 					
@@ -419,11 +419,11 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 
-		this.driver.log.debug("getAllIdSoggettiRegistro...");
+		this.driver.logDebug("getAllIdSoggettiRegistro...");
 
 		Certificate certificatoFiltro = null;
 		try {
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if (this.driver.atomica)
 				con = this.driver.getConnectionFromDatasource("getAllIdSoggetti");
@@ -556,59 +556,59 @@ public class DriverRegistroServiziDB_soggettiDriver {
 
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
-			this.driver.log.debug("eseguo query : " + sqlQuery );
+			this.driver.logDebug("eseguo query : " + sqlQuery );
 			stm = con.prepareStatement(sqlQuery);
 			int indexStmt = 1;
 			if(filtroRicerca!=null){
 				if(filtroRicerca.getMinDate()!=null){
-					this.driver.log.debug("minDate stmt.setTimestamp("+filtroRicerca.getMinDate()+")");
+					this.driver.logDebug("minDate stmt.setTimestamp("+filtroRicerca.getMinDate()+")");
 					stm.setTimestamp(indexStmt, new Timestamp(filtroRicerca.getMinDate().getTime()));
 					indexStmt++;
 				}
 				if(filtroRicerca.getMaxDate()!=null){
-					this.driver.log.debug("maxDate stmt.setTimestamp("+filtroRicerca.getMaxDate()+")");
+					this.driver.logDebug("maxDate stmt.setTimestamp("+filtroRicerca.getMaxDate()+")");
 					stm.setTimestamp(indexStmt, new Timestamp(filtroRicerca.getMaxDate().getTime()));
 					indexStmt++;
 				}	
 				if(filtroRicerca.getTipo()!=null){
-					this.driver.log.debug("tipoSoggetto stmt.setString("+filtroRicerca.getTipo()+")");
+					this.driver.logDebug("tipoSoggetto stmt.setString("+filtroRicerca.getTipo()+")");
 					stm.setString(indexStmt, filtroRicerca.getTipo());
 					indexStmt++;
 				}
 				if(filtroRicerca.getNome()!=null){
-					this.driver.log.debug("nomeSoggetto stmt.setString("+filtroRicerca.getNome()+")");
+					this.driver.logDebug("nomeSoggetto stmt.setString("+filtroRicerca.getNome()+")");
 					stm.setString(indexStmt, filtroRicerca.getNome());
 					indexStmt++;
 				}	
 				if(filtroRicerca.getNomePdd()!=null){
-					this.driver.log.debug("nomePdD stmt.setString("+filtroRicerca.getNomePdd()+")");
+					this.driver.logDebug("nomePdD stmt.setString("+filtroRicerca.getNomePdd()+")");
 					stm.setString(indexStmt, filtroRicerca.getNomePdd());
 					indexStmt++;
 				}
 				if(filtroRicerca.getIdRuolo()!=null){
-					this.driver.log.debug("ruolo stmt.setString("+filtroRicerca.getIdRuolo().getNome()+")");
+					this.driver.logDebug("ruolo stmt.setString("+filtroRicerca.getIdRuolo().getNome()+")");
 					stm.setString(indexStmt, filtroRicerca.getIdRuolo().getNome());
 					indexStmt++;
 				}
 				if(filtroRicerca.getCredenzialiSoggetto()!=null){
 					if(filtroRicerca.getCredenzialiSoggetto().getTipo()!=null){
-						this.driver.log.debug("credenziali.tipo stmt.setString("+filtroRicerca.getCredenzialiSoggetto().getTipo().getValue()+")");
+						this.driver.logDebug("credenziali.tipo stmt.setString("+filtroRicerca.getCredenzialiSoggetto().getTipo().getValue()+")");
 						stm.setString(indexStmt, filtroRicerca.getCredenzialiSoggetto().getTipo().getValue());
 						indexStmt++;
 						if(CredenzialeTipo.APIKEY.equals(filtroRicerca.getCredenzialiSoggetto().getTipo())){
 							int v = filtroRicerca.getCredenzialiSoggetto().isCertificateStrictVerification() ?  CostantiDB.TRUE :  CostantiDB.FALSE;
-							this.driver.log.debug("credenziali.certificateStrictVerification stmt.setInt("+v+")");
+							this.driver.logDebug("credenziali.certificateStrictVerification stmt.setInt("+v+")");
 							stm.setInt(indexStmt, v);
 							indexStmt++;
 						}
 					}
 					if(filtroRicerca.getCredenzialiSoggetto().getUser()!=null){
-						this.driver.log.debug("credenziali.user stmt.setString("+filtroRicerca.getCredenzialiSoggetto().getUser()+")");
+						this.driver.logDebug("credenziali.user stmt.setString("+filtroRicerca.getCredenzialiSoggetto().getUser()+")");
 						stm.setString(indexStmt, filtroRicerca.getCredenzialiSoggetto().getUser());
 						indexStmt++;
 					}
 //					if(filtroRicerca.getCredenzialiSoggetto().getPassword()!=null){
-//						this.driver.log.debug("credenziali.password stmt.setString("+filtroRicerca.getCredenzialiSoggetto().getPassword()+")");
+//						this.driver.logDebug("credenziali.password stmt.setString("+filtroRicerca.getCredenzialiSoggetto().getPassword()+")");
 //						stm.setString(indexStmt, filtroRicerca.getCredenzialiSoggetto().getPassword());
 //						indexStmt++;
 //					}
@@ -622,15 +622,15 @@ public class DriverRegistroServiziDB_soggettiDriver {
 						String cnIssuer = certificatoFiltro.getCertificate().getIssuer().getCN();
 						
 						stm.setString(indexStmt++, cnSubject);
-						this.driver.log.debug("credenziali.cnSubject stmt.setString(" + cnSubject +")");
+						this.driver.logDebug("credenziali.cnSubject stmt.setString(" + cnSubject +")");
 						stm.setString(indexStmt++, cnIssuer);
-						this.driver.log.debug("credenziali.cnIssuer stmt.setString(" + cnIssuer +")");
+						this.driver.logDebug("credenziali.cnIssuer stmt.setString(" + cnIssuer +")");
 						if(filtroRicerca.getCredenzialiSoggetto().isCertificateStrictVerification()) {
-							this.driver.log.debug("credenziali.strict stmt.setInt(" + CostantiDB.TRUE +")");
+							this.driver.logDebug("credenziali.strict stmt.setInt(" + CostantiDB.TRUE +")");
 							stm.setInt(indexStmt++, CostantiDB.TRUE);
 						}
 						else {
-							this.driver.log.debug("credenziali.strict stmt.setInt(" + CostantiDB.FALSE +")");
+							this.driver.logDebug("credenziali.strict stmt.setInt(" + CostantiDB.FALSE +")");
 							stm.setInt(indexStmt++, CostantiDB.FALSE);
 						}
 					}
@@ -745,10 +745,10 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDSoggetto type = 1");
+			this.driver.logDebug("CRUDSoggetto type = 1");
 			// creo soggetto
 			DriverRegistroServiziDB_soggettiLIB.CRUDSoggetto(1, soggetto, con, this.driver.tipoDB);
 
@@ -1069,7 +1069,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1129,7 +1129,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 					String oldNomeConnettore=connettore.getNome();
 					//controllo se il nome connettore matcha la regex
 					if(oldNomeConnettore.matches(regex)){
-						this.driver.log.debug("Tento aggiornamento connettore id: ["+idConnettore+"] oldNome: ["+oldNomeConnettore+"]...");
+						this.driver.logDebug("Tento aggiornamento connettore id: ["+idConnettore+"] oldNome: ["+oldNomeConnettore+"]...");
 						//splitto la stringa in modo da prendermi i valori separatamente
 						//l'array sara composto da [CNT,SF,tipo/nomeFruitore,tipo/nomeErogatore,tipo/nomeServizio]
 						String[] val=oldNomeConnettore.split("_");
@@ -1137,7 +1137,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 						//i=3 contiene il tipo/nome del soggetto erogatore (che bisogna cambiare)
 						//i=4 contiene il tipo/nome del servizio
 						String newNomeConnettore = "CNT_SF_"+val[2]+ tipoSoggetto+"/"+nomeSoggetto +val[4];
-						this.driver.log.debug("nuovo nome connettore ["+newNomeConnettore+"]");
+						this.driver.logDebug("nuovo nome connettore ["+newNomeConnettore+"]");
 						connettore.setNome(newNomeConnettore);
 						//aggiorno il connettore
 						DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(CostantiDB.UPDATE, connettore, con);
@@ -1169,7 +1169,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 					String oldNomeConnettore=connettore.getNome();
 					//controllo se il nome connettore matcha la regex
 					if(oldNomeConnettore.matches(regex)){
-						this.driver.log.debug("Tento aggiornamento connettore id: ["+idConnettore+"] oldNome: ["+oldNomeConnettore+"]...");
+						this.driver.logDebug("Tento aggiornamento connettore id: ["+idConnettore+"] oldNome: ["+oldNomeConnettore+"]...");
 						//splitto la stringa in modo da prendermi i valori separatamente
 						//l'array sara composto da [CNT,SF,tipo/nomeFruitore,tipo/nomeErogatore,tipo/nomeServizio]
 						String[] val=oldNomeConnettore.split("_");
@@ -1177,7 +1177,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 						//i=3 contiene il tipo/nome del soggetto erogatore 
 						//i=4 contiene il tipo/nome del servizio
 						String newNomeConnettore = "CNT_SF_"+tipoSoggetto+"/"+nomeSoggetto+val[3]+val[4];
-						this.driver.log.debug("nuovo nome connettore ["+newNomeConnettore+"]");
+						this.driver.logDebug("nuovo nome connettore ["+newNomeConnettore+"]");
 						connettore.setNome(newNomeConnettore);
 						//aggiorno il connettore
 						DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(CostantiDB.UPDATE, connettore, con);
@@ -1220,10 +1220,10 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDSoggetto type = 3");
+			this.driver.logDebug("CRUDSoggetto type = 3");
 			// DELETE soggetto
 			DriverRegistroServiziDB_soggettiLIB.CRUDSoggetto(3, soggetto, con, this.driver.tipoDB);
 
@@ -1257,7 +1257,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			List<IDSoggetto> idTrovati = new ArrayList<IDSoggetto>();
@@ -1272,7 +1272,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 
 			stm.setString(1, user);
 
-			this.driver.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, CostantiRegistroServizi.ABILITATO));
+			this.driver.logDebug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, CostantiRegistroServizi.ABILITATO));
 			rs = stm.executeQuery();
 
 			// prendo il primo router se c'e' altrimenti lancio eccezione.
@@ -1321,7 +1321,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1385,7 +1385,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.atomica = " + this.driver.atomica);
 
 		try {
 			boolean isInUso = false;
@@ -1612,7 +1612,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -1626,7 +1626,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 
 			stm.setLong(1, idSoggetto);
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idSoggetto));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idSoggetto));
 			rs = stm.executeQuery();
 
 			if (rs.next()) {
@@ -1689,7 +1689,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -1704,7 +1704,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 
 			stm.setInt(1, CostantiDB.TRUE);
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, CostantiDB.TRUE));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, CostantiDB.TRUE));
 			rs = stm.executeQuery();
 
 			while (rs.next()) {

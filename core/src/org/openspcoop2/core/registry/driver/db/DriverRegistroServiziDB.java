@@ -153,6 +153,16 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 	/** Logger utilizzato per info. */
 	protected Logger log = null;
+	void logDebug(String msg) {
+		if(this.log!=null) {
+			this.log.debug(msg);
+		}
+	}
+	void logDebug(String msg, Exception e) {
+		if(this.log!=null) {
+			this.log.debug(msg,e);
+		}
+	}
 
 	// Tipo database passato al momento della creazione dell'oggetto
 	protected String tipoDB = null;

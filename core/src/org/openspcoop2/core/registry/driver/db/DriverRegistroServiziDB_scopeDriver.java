@@ -70,7 +70,7 @@ public class DriverRegistroServiziDB_scopeDriver {
 	protected Scope getScope(
 			IDScope idScope) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 
-		this.driver.log.debug("richiesto getScope: " + idScope);
+		this.driver.logDebug("richiesto getScope: " + idScope);
 		// conrollo consistenza
 		if (idScope == null)
 			throw new DriverRegistroServiziException("[getScope] Parametro idScope is null");
@@ -93,7 +93,7 @@ public class DriverRegistroServiziDB_scopeDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
 
@@ -152,7 +152,7 @@ public class DriverRegistroServiziDB_scopeDriver {
 	protected Scope getScope(
 			long idScope) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 
-		this.driver.log.debug("richiesto getScope: " + idScope);
+		this.driver.logDebug("richiesto getScope: " + idScope);
 		// conrollo consistenza
 		if (idScope <=0)
 			throw new DriverRegistroServiziException("[getScope] Parametro idScope non valido");
@@ -173,7 +173,7 @@ public class DriverRegistroServiziDB_scopeDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		IDScope idScopeObject = null;
 		try {
@@ -237,10 +237,10 @@ public class DriverRegistroServiziDB_scopeDriver {
 			listContesto.add(filtroRicerca.getContesto().getValue());
 		}
 		
-		this.driver.log.debug("getAllIdScope...");
+		this.driver.logDebug("getAllIdScope...");
 
 		try {
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if (this.driver.atomica)
 				con = this.driver.getConnectionFromDatasource("getAllIdScope");
@@ -269,35 +269,35 @@ public class DriverRegistroServiziDB_scopeDriver {
 
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
-			this.driver.log.debug("eseguo query : " + sqlQuery );
+			this.driver.logDebug("eseguo query : " + sqlQuery );
 			stm = con.prepareStatement(sqlQuery);
 			int indexStmt = 1;
 			if(filtroRicerca!=null){
 				if(filtroRicerca.getMinDate()!=null){
-					this.driver.log.debug("minDate stmt.setTimestamp("+filtroRicerca.getMinDate()+")");
+					this.driver.logDebug("minDate stmt.setTimestamp("+filtroRicerca.getMinDate()+")");
 					stm.setTimestamp(indexStmt, new Timestamp(filtroRicerca.getMinDate().getTime()));
 					indexStmt++;
 				}
 				if(filtroRicerca.getMaxDate()!=null){
-					this.driver.log.debug("maxDate stmt.setTimestamp("+filtroRicerca.getMaxDate()+")");
+					this.driver.logDebug("maxDate stmt.setTimestamp("+filtroRicerca.getMaxDate()+")");
 					stm.setTimestamp(indexStmt, new Timestamp(filtroRicerca.getMaxDate().getTime()));
 					indexStmt++;
 				}	
 				if(filtroRicerca.getNome()!=null){
-					this.driver.log.debug("nome stmt.setString("+filtroRicerca.getNome()+")");
+					this.driver.logDebug("nome stmt.setString("+filtroRicerca.getNome()+")");
 					stm.setString(indexStmt, filtroRicerca.getNome());
 					indexStmt++;
 				}	
 				if(filtroRicercaTipo){
 					for (int i = 0; i < listTipologia.size(); i++) {
-						this.driver.log.debug("tipo stmt.setString("+listTipologia.get(i)+")");
+						this.driver.logDebug("tipo stmt.setString("+listTipologia.get(i)+")");
 						stm.setString(indexStmt, listTipologia.get(i));
 						indexStmt++;
 					}
 				}
 				if(filtroRicercaContesto){
 					for (int i = 0; i < listContesto.size(); i++) {
-						this.driver.log.debug("contesto stmt.setString("+listContesto.get(i)+")");
+						this.driver.logDebug("contesto stmt.setString("+listContesto.get(i)+")");
 						stm.setString(indexStmt, listContesto.get(i));
 						indexStmt++;
 					}
@@ -350,10 +350,10 @@ public class DriverRegistroServiziDB_scopeDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDScope type = 1");
+			this.driver.logDebug("CRUDScope type = 1");
 			DriverRegistroServiziDB_LIB.CRUDScope(CostantiDB.CREATE, scope, con);
 
 		} catch (Exception qe) {
@@ -437,11 +437,11 @@ public class DriverRegistroServiziDB_scopeDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
 
-			this.driver.log.debug("CRUDScope type = 2");
+			this.driver.logDebug("CRUDScope type = 2");
 			DriverRegistroServiziDB_LIB.CRUDScope(CostantiDB.UPDATE, scope, con);
 
 		} catch (Exception qe) {
@@ -472,10 +472,10 @@ public class DriverRegistroServiziDB_scopeDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDScope type = 3");
+			this.driver.logDebug("CRUDScope type = 3");
 			DriverRegistroServiziDB_LIB.CRUDScope(CostantiDB.DELETE, scope, con);
 
 		} catch (Exception qe) {
@@ -588,16 +588,16 @@ public class DriverRegistroServiziDB_scopeDriver {
 			}
 		}
 		
-		this.driver.log.debug("search : " + search);
-		this.driver.log.debug("filterScopeTipologia : " + filterScopeTipologia);
-		this.driver.log.debug("filterScopeContesto : " + filterScopeContesto);
-		this.driver.log.debug("filterGruppo : " + filterGruppo);
-		this.driver.log.debug("filterApiContesto : " + filterApiContesto);
-		this.driver.log.debug("filterProtocollo : " + filterProtocollo);
-		this.driver.log.debug("filterProtocolli : " + filterProtocolli);
-		this.driver.log.debug("filterSoggettoNome : " + filterSoggettoNome);
-		this.driver.log.debug("filterSoggettoTipo : " + filterSoggettoTipo);
-		this.driver.log.debug("filterApiImplementazione : " + filterApiImplementazione);
+		this.driver.logDebug("search : " + search);
+		this.driver.logDebug("filterScopeTipologia : " + filterScopeTipologia);
+		this.driver.logDebug("filterScopeContesto : " + filterScopeContesto);
+		this.driver.logDebug("filterGruppo : " + filterGruppo);
+		this.driver.logDebug("filterApiContesto : " + filterApiContesto);
+		this.driver.logDebug("filterProtocollo : " + filterProtocollo);
+		this.driver.logDebug("filterProtocolli : " + filterProtocolli);
+		this.driver.logDebug("filterSoggettoNome : " + filterSoggettoNome);
+		this.driver.logDebug("filterSoggettoTipo : " + filterSoggettoTipo);
+		this.driver.logDebug("filterApiImplementazione : " + filterApiImplementazione);
 		
 		Connection con = null;
 		boolean error = false;
@@ -617,7 +617,7 @@ public class DriverRegistroServiziDB_scopeDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		List<IDScope> listIdScope = null;
 		try {

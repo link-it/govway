@@ -97,7 +97,7 @@ public class DriverRegistroServiziDB_soggettiSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		List<String> listIdRuoli = null;
 		try {
@@ -233,7 +233,7 @@ public class DriverRegistroServiziDB_soggettiSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		List<Proprieta> lista = null;
 		try {
@@ -462,21 +462,21 @@ public class DriverRegistroServiziDB_soggettiSearchDriver {
 		}
 		boolean filtroProprieta = filtroProprietaNome!=null || filtroProprietaValore!=null;
 		
-		this.driver.log.debug("search : " + search);
-		this.driver.log.debug("filterProtocollo : " + filterProtocollo);
-		this.driver.log.debug("filterProtocolli : " + filterProtocolli);
-		this.driver.log.debug("filterDominio : " + filterDominio);
-		this.driver.log.debug("filterSoggettoDefault : " + filterSoggettoDefault);
-		this.driver.log.debug("filterRuolo : " + filterRuolo);
-		this.driver.log.debug("filterTipoCredenziali : " + filterTipoCredenziali);
-		this.driver.log.debug("filterCredenziale : " + filterCredenziale);
-		this.driver.log.debug("filterCredenzialeIssuer : " + filterCredenzialeIssuer);
-		this.driver.log.debug("filterTipologiaSoggetto : " + filterTipologia);
-		this.driver.log.debug("filterGruppo : " + filterGruppo);
-		this.driver.log.debug("filterApiContesto : " + filterApiContesto);
-		this.driver.log.debug("filterApiImplementazione : " + filterApiImplementazione);
-		this.driver.log.debug("filtroProprietaNome : " + filtroProprietaNome);
-		this.driver.log.debug("filtroProprietaValore : " + filtroProprietaValore);
+		this.driver.logDebug("search : " + search);
+		this.driver.logDebug("filterProtocollo : " + filterProtocollo);
+		this.driver.logDebug("filterProtocolli : " + filterProtocolli);
+		this.driver.logDebug("filterDominio : " + filterDominio);
+		this.driver.logDebug("filterSoggettoDefault : " + filterSoggettoDefault);
+		this.driver.logDebug("filterRuolo : " + filterRuolo);
+		this.driver.logDebug("filterTipoCredenziali : " + filterTipoCredenziali);
+		this.driver.logDebug("filterCredenziale : " + filterCredenziale);
+		this.driver.logDebug("filterCredenzialeIssuer : " + filterCredenzialeIssuer);
+		this.driver.logDebug("filterTipologiaSoggetto : " + filterTipologia);
+		this.driver.logDebug("filterGruppo : " + filterGruppo);
+		this.driver.logDebug("filterApiContesto : " + filterApiContesto);
+		this.driver.logDebug("filterApiImplementazione : " + filterApiImplementazione);
+		this.driver.logDebug("filtroProprietaNome : " + filtroProprietaNome);
+		this.driver.logDebug("filtroProprietaValore : " + filtroProprietaValore);
 		
 		Connection con = null;
 		boolean error = false;
@@ -496,7 +496,7 @@ public class DriverRegistroServiziDB_soggettiSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 

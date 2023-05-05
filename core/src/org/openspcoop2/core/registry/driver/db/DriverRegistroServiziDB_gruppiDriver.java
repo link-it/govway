@@ -66,7 +66,7 @@ public class DriverRegistroServiziDB_gruppiDriver {
 	protected Gruppo getGruppo(
 			IDGruppo idGruppo) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 
-		this.driver.log.debug("richiesto getGruppo: " + idGruppo);
+		this.driver.logDebug("richiesto getGruppo: " + idGruppo);
 		// conrollo consistenza
 		if (idGruppo == null)
 			throw new DriverRegistroServiziException("[getGruppo] Parametro idGruppo is null");
@@ -89,7 +89,7 @@ public class DriverRegistroServiziDB_gruppiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
 
@@ -143,7 +143,7 @@ public class DriverRegistroServiziDB_gruppiDriver {
 	protected Gruppo getGruppo(
 			long idGruppo) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 
-		this.driver.log.debug("richiesto getGruppo: " + idGruppo);
+		this.driver.logDebug("richiesto getGruppo: " + idGruppo);
 		// conrollo consistenza
 		if (idGruppo <=0)
 			throw new DriverRegistroServiziException("[getGruppo] Parametro idGruppo non valido");
@@ -164,7 +164,7 @@ public class DriverRegistroServiziDB_gruppiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		IDGruppo idGruppoObject = null;
 		try {
@@ -222,10 +222,10 @@ public class DriverRegistroServiziDB_gruppiDriver {
 		}
 		boolean searchByTipoSoggetto = (tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0);
 		
-		this.driver.log.debug("getAllIdGruppi...");
+		this.driver.logDebug("getAllIdGruppi...");
 
 		try {
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if (this.driver.atomica)
 				con = this.driver.getConnectionFromDatasource("getAllIdGruppi");
@@ -275,27 +275,27 @@ public class DriverRegistroServiziDB_gruppiDriver {
 
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
-			this.driver.log.debug("eseguo query : " + sqlQuery );
+			this.driver.logDebug("eseguo query : " + sqlQuery );
 			stm = con.prepareStatement(sqlQuery);
 			int indexStmt = 1;
 			if(filtroRicerca!=null){
 				if(filtroRicerca.getMinDate()!=null){
-					this.driver.log.debug("minDate stmt.setTimestamp("+filtroRicerca.getMinDate()+")");
+					this.driver.logDebug("minDate stmt.setTimestamp("+filtroRicerca.getMinDate()+")");
 					stm.setTimestamp(indexStmt, new Timestamp(filtroRicerca.getMinDate().getTime()));
 					indexStmt++;
 				}
 				if(filtroRicerca.getMaxDate()!=null){
-					this.driver.log.debug("maxDate stmt.setTimestamp("+filtroRicerca.getMaxDate()+")");
+					this.driver.logDebug("maxDate stmt.setTimestamp("+filtroRicerca.getMaxDate()+")");
 					stm.setTimestamp(indexStmt, new Timestamp(filtroRicerca.getMaxDate().getTime()));
 					indexStmt++;
 				}	
 				if(filtroRicerca.getNome()!=null){
-					this.driver.log.debug("nome stmt.setString("+filtroRicerca.getNome()+")");
+					this.driver.logDebug("nome stmt.setString("+filtroRicerca.getNome()+")");
 					stm.setString(indexStmt, filtroRicerca.getNome());
 					indexStmt++;
 				}	
 				if(filtroRicercaTipo){
-					this.driver.log.debug("serviceBinding stmt.setString("+filtroRicerca.getServiceBinding().getValue()+")");
+					this.driver.logDebug("serviceBinding stmt.setString("+filtroRicerca.getServiceBinding().getValue()+")");
 					stm.setString(indexStmt, filtroRicerca.getServiceBinding().getValue());
 					indexStmt++;
 				}
@@ -348,10 +348,10 @@ public class DriverRegistroServiziDB_gruppiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDGruppo type = 1");
+			this.driver.logDebug("CRUDGruppo type = 1");
 			DriverRegistroServiziDB_LIB.CRUDGruppo(CostantiDB.CREATE, gruppo, con);
 
 		} catch (Exception qe) {
@@ -435,11 +435,11 @@ public class DriverRegistroServiziDB_gruppiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
 
-			this.driver.log.debug("CRUDGruppo type = 2");
+			this.driver.logDebug("CRUDGruppo type = 2");
 			DriverRegistroServiziDB_LIB.CRUDGruppo(CostantiDB.UPDATE, gruppo, con);
 
 		} catch (Exception qe) {
@@ -470,10 +470,10 @@ public class DriverRegistroServiziDB_gruppiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDGruppo type = 3");
+			this.driver.logDebug("CRUDGruppo type = 3");
 			DriverRegistroServiziDB_LIB.CRUDGruppo(CostantiDB.DELETE, gruppo, con);
 
 		} catch (Exception qe) {
@@ -522,7 +522,7 @@ public class DriverRegistroServiziDB_gruppiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		List<IDGruppo> listIdGruppi = null;
 		try {

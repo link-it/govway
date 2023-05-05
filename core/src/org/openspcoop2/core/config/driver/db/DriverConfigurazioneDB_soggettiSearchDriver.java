@@ -85,11 +85,11 @@ public class DriverConfigurazioneDB_soggettiSearchDriver {
 		}
 		boolean filtroProprieta = filtroProprietaNome!=null || filtroProprietaValore!=null;
 
-		this.driver.log.debug("search : " + search);
-		this.driver.log.debug("filterProtocollo : " + filterProtocollo);
-		this.driver.log.debug("filterProtocolli : " + filterProtocolli);
-		this.driver.log.debug("filtroProprietaNome : " + filtroProprietaNome);
-		this.driver.log.debug("filtroProprietaValore : " + filtroProprietaValore);
+		this.driver.logDebug("search : " + search);
+		this.driver.logDebug("filterProtocollo : " + filterProtocollo);
+		this.driver.logDebug("filterProtocolli : " + filterProtocolli);
+		this.driver.logDebug("filtroProprietaNome : " + filtroProprietaNome);
+		this.driver.logDebug("filtroProprietaValore : " + filtroProprietaValore);
 		
 		Connection con = null;
 		boolean error = false;
@@ -109,7 +109,7 @@ public class DriverConfigurazioneDB_soggettiSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -278,7 +278,7 @@ public class DriverConfigurazioneDB_soggettiSearchDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 

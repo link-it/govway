@@ -99,7 +99,7 @@ public class DriverConfigurazioneDB_allarmiDriver {
 					listSoggettiProprietariAbilitati, listIDServizioAbilitati,
 					tipoSoggettiByProtocollo, tipoServiziByProtocollo, 
 					idSoggettoProprietario, listIDServizio);
-			this.driver.log.debug("eseguo query: " + sqlQuery);
+			this.driver.logDebug("eseguo query: " + sqlQuery);
 			
 			rs = stm.executeQuery();
 			long numeroAllarmi = 0;
@@ -177,7 +177,7 @@ public class DriverConfigurazioneDB_allarmiDriver {
 					listSoggettiProprietariAbilitati, listIDServizioAbilitati,
 					tipoSoggettiByProtocollo, tipoServiziByProtocollo, 
 					idSoggettoProprietario, listIDServizio);
-			this.driver.log.debug("eseguo query: " + sqlQuery);
+			this.driver.logDebug("eseguo query: " + sqlQuery);
 			
 			rs = stm.executeQuery();
 			while(rs.next()) {

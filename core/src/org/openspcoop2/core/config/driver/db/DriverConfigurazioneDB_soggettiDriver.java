@@ -89,7 +89,7 @@ public class DriverConfigurazioneDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -103,7 +103,7 @@ public class DriverConfigurazioneDB_soggettiDriver {
 
 			stm.setLong(1, idSoggetto);
 
-			this.driver.log.debug("eseguo query : " + DriverConfigurazioneDB_LIB.formatSQLString(sqlQuery, idSoggetto));
+			this.driver.logDebug("eseguo query : " + DriverConfigurazioneDB_LIB.formatSQLString(sqlQuery, idSoggetto));
 			rs = stm.executeQuery();
 
 			if (rs.next()) {
@@ -180,7 +180,7 @@ public class DriverConfigurazioneDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			idSoggetto=DBUtils.getIdSoggetto(nomeSogg, tipoSogg, con, this.driver.tipoDB,this.driver.tabellaSoggetti);
@@ -227,10 +227,10 @@ public class DriverConfigurazioneDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDSoggetto type = 1");
+			this.driver.logDebug("CRUDSoggetto type = 1");
 			// creo soggetto
 			DriverConfigurazioneDB_soggettiLIB.CRUDSoggetto(1, soggetto, con);
 
@@ -265,10 +265,10 @@ public class DriverConfigurazioneDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDSoggetto type = 2");
+			this.driver.logDebug("CRUDSoggetto type = 2");
 			// UPDATE soggetto
 			DriverConfigurazioneDB_soggettiLIB.CRUDSoggetto(2, soggetto, con);
 
@@ -304,10 +304,10 @@ public class DriverConfigurazioneDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDSoggetto type = 3");
+			this.driver.logDebug("CRUDSoggetto type = 3");
 			// DELETE soggetto
 			DriverConfigurazioneDB_soggettiLIB.CRUDSoggetto(3, soggetto, con);
 
@@ -344,7 +344,7 @@ public class DriverConfigurazioneDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 		long idRouter = -1;
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -357,7 +357,7 @@ public class DriverConfigurazioneDB_soggettiDriver {
 
 			stm.setInt(1, CostantiDB.TRUE);
 
-			this.driver.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.ABILITATO));
+			this.driver.logDebug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.ABILITATO));
 			rs = stm.executeQuery();
 
 			// prendo il primo router se c'e' altrimenti lancio eccezione.
@@ -406,7 +406,7 @@ public class DriverConfigurazioneDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			List<IDSoggetto> idTrovati = new ArrayList<IDSoggetto>();
@@ -421,7 +421,7 @@ public class DriverConfigurazioneDB_soggettiDriver {
 
 			stm.setString(1, user);
 
-			this.driver.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.ABILITATO));
+			this.driver.logDebug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.ABILITATO));
 			rs = stm.executeQuery();
 
 			// prendo il primo router se c'e' altrimenti lancio eccezione.
@@ -468,7 +468,7 @@ public class DriverConfigurazioneDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -483,7 +483,7 @@ public class DriverConfigurazioneDB_soggettiDriver {
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQuery = sqlQueryObject.createSQLQuery();
 
-			this.driver.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery));
+			this.driver.logDebug("eseguo query : " + DBUtils.formatSQLString(sqlQuery));
 
 			stm = con.prepareStatement(sqlQuery);
 			//stm.setString(1, "");
@@ -551,7 +551,7 @@ public class DriverConfigurazioneDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -561,13 +561,13 @@ public class DriverConfigurazioneDB_soggettiDriver {
 			sqlQueryObject.addWhereCondition("id=?");
 			sqlQuery = sqlQueryObject.createSQLQuery();
 
-			this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 			stm = con.prepareStatement(sqlQuery);
 
 			stm.setLong(1, idSoggetto);
 
-			this.driver.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idSoggetto));
+			this.driver.logDebug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idSoggetto));
 			rs = stm.executeQuery();
 
 			if (rs.next()) {
@@ -670,7 +670,7 @@ public class DriverConfigurazioneDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -687,7 +687,7 @@ public class DriverConfigurazioneDB_soggettiDriver {
 			sqlQueryObject.setANDLogicOperator(false);
 			sqlQuery = sqlQueryObject.createSQLQuery();
 
-			this.driver.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery));
+			this.driver.logDebug("eseguo query : " + DBUtils.formatSQLString(sqlQuery));
 
 			stm = con.prepareStatement(sqlQuery);
 			rs = stm.executeQuery();
@@ -772,7 +772,7 @@ public class DriverConfigurazioneDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -809,10 +809,10 @@ public class DriverConfigurazioneDB_soggettiDriver {
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 
-		this.driver.log.debug("getAllIdSoggetti...");
+		this.driver.logDebug("getAllIdSoggetti...");
 
 		try {
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if (this.driver.atomica)
 				con = this.driver.getConnectionFromDatasource("getAllIdSoggetti");
@@ -837,27 +837,27 @@ public class DriverConfigurazioneDB_soggettiDriver {
 
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
-			this.driver.log.debug("eseguo query : " + sqlQuery );
+			this.driver.logDebug("eseguo query : " + sqlQuery );
 			stm = con.prepareStatement(sqlQuery);
 			int indexStmt = 1;
 			if(filtroRicerca!=null){
 				if(filtroRicerca.getMinDate()!=null){
-					this.driver.log.debug("minDate stmt.setTimestamp("+filtroRicerca.getMinDate()+")");
+					this.driver.logDebug("minDate stmt.setTimestamp("+filtroRicerca.getMinDate()+")");
 					stm.setTimestamp(indexStmt, new Timestamp(filtroRicerca.getMinDate().getTime()));
 					indexStmt++;
 				}
 				if(filtroRicerca.getMaxDate()!=null){
-					this.driver.log.debug("maxDate stmt.setTimestamp("+filtroRicerca.getMaxDate()+")");
+					this.driver.logDebug("maxDate stmt.setTimestamp("+filtroRicerca.getMaxDate()+")");
 					stm.setTimestamp(indexStmt, new Timestamp(filtroRicerca.getMaxDate().getTime()));
 					indexStmt++;
 				}	
 				if(filtroRicerca.getTipo()!=null){
-					this.driver.log.debug("tipoSoggetto stmt.setString("+filtroRicerca.getTipo()+")");
+					this.driver.logDebug("tipoSoggetto stmt.setString("+filtroRicerca.getTipo()+")");
 					stm.setString(indexStmt, filtroRicerca.getTipo());
 					indexStmt++;
 				}
 				if(filtroRicerca.getNome()!=null){
-					this.driver.log.debug("nomeSoggetto stmt.setString("+filtroRicerca.getNome()+")");
+					this.driver.logDebug("nomeSoggetto stmt.setString("+filtroRicerca.getNome()+")");
 					stm.setString(indexStmt, filtroRicerca.getNome());
 					indexStmt++;
 				}	

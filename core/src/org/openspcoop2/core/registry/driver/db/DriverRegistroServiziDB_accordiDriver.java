@@ -98,12 +98,12 @@ public class DriverRegistroServiziDB_accordiDriver {
 		if (idAccordo.getNome().trim().equals(""))
 			throw new DriverRegistroServiziException("[getAccordoServizioParteComuneNextVersion] Parametro idAccordo.getNome non e' definito");
 
-		this.driver.log.debug("richiesto getAccordoServizioParteComuneNextVersion: " + idAccordo.toString());
+		this.driver.logDebug("richiesto getAccordoServizioParteComuneNextVersion: " + idAccordo.toString());
 
 		int nextVersion = -1;
 		Connection con = null;
 		try {
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if (this.driver.atomica)
 				con = this.driver.getConnectionFromDatasource("getAccordoServizioParteComuneNextVersion(idAccordo)");
@@ -131,7 +131,7 @@ public class DriverRegistroServiziDB_accordiDriver {
 		if (idAccordo.getNome().trim().equals(""))
 			throw new DriverRegistroServiziException("[getAccordoServizioParteComune] Parametro idAccordo.getNome non e' definito");
 
-		this.driver.log.debug("richiesto getAccordoServizioParteComune: " + idAccordo.toString());
+		this.driver.logDebug("richiesto getAccordoServizioParteComune: " + idAccordo.toString());
 
 		org.openspcoop2.core.registry.AccordoServizioParteComune accordoServizio = null;
 		Connection con = null;
@@ -140,7 +140,7 @@ public class DriverRegistroServiziDB_accordiDriver {
 
 		try {
 
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if (this.driver.atomica)
 				con = this.driver.getConnectionFromDatasource("getAccordoServizioParteComune(idAccordo)");
@@ -167,7 +167,7 @@ public class DriverRegistroServiziDB_accordiDriver {
 			stm.setLong(1, idAccordoLong);
 
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordoLong));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordoLong));
 			rs = stm.executeQuery();
 
 			if (rs.next()) {
@@ -319,7 +319,7 @@ public class DriverRegistroServiziDB_accordiDriver {
 				stm = con.prepareStatement(sqlQuery);
 				stm.setLong(1, idAccordoLong);
 
-				this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordoLong));
+				this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordoLong));
 
 				rs = stm.executeQuery();
 
@@ -485,7 +485,7 @@ public class DriverRegistroServiziDB_accordiDriver {
 		return getAccordoServizioParteComune(id,false,false,conParam);
 	}
 	protected AccordoServizioParteComune getAccordoServizioParteComune(long id, boolean readContenutoAllegati,boolean readDatiRegistro,Connection conParam) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
-		this.driver.log.debug("richiesto getAccordoServizio: " + id);
+		this.driver.logDebug("richiesto getAccordoServizio: " + id);
 		// conrollo consistenza
 		if (id <= 0)
 			return null;
@@ -502,7 +502,7 @@ public class DriverRegistroServiziDB_accordiDriver {
 			sqlQueryObject.addWhereCondition("id = ?");
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if(conParam!=null){
 				con = conParam;
@@ -516,7 +516,7 @@ public class DriverRegistroServiziDB_accordiDriver {
 
 			stm.setLong(1, id);
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, id));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, id));
 			rs = stm.executeQuery();
 
 
@@ -581,7 +581,7 @@ public class DriverRegistroServiziDB_accordiDriver {
 		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 		ricerca.getSearchString(idLista);
 
-		this.driver.log.debug("search : " + search);
+		this.driver.logDebug("search : " + search);
 
 		Connection con = null;
 		PreparedStatement stmt = null;
@@ -601,7 +601,7 @@ public class DriverRegistroServiziDB_accordiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -682,7 +682,7 @@ public class DriverRegistroServiziDB_accordiDriver {
 			}
 
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(queryString));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(queryString));
 
 			stmt = con.prepareStatement(queryString);
 			risultato = stmt.executeQuery();
@@ -755,7 +755,7 @@ public class DriverRegistroServiziDB_accordiDriver {
 		} else
 			connection = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
 			DriverRegistroServiziDB_accordiLIB.createAccordoServizioParteComune(accordoServizio, connection, this.driver.tabellaSoggetti, this.driver.log, this.driver.idAccordoFactory);
@@ -788,7 +788,7 @@ public class DriverRegistroServiziDB_accordiDriver {
 		} else
 			connection = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
 			DriverRegistroServiziDB_accordiLIB.updateAccordoServizioParteComune(accordoServizio, connection, this.driver.tabellaSoggetti, this.driver.log, this.driver.idAccordoFactory);
@@ -826,7 +826,7 @@ public class DriverRegistroServiziDB_accordiDriver {
 		} else
 			connection = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
 
@@ -901,13 +901,13 @@ public class DriverRegistroServiziDB_accordiDriver {
 			}
 		}
 		
-		this.driver.log.debug("search : " + search);
-		this.driver.log.debug("filterProtocollo : " + filterProtocollo);
-		this.driver.log.debug("filterProtocolli : " + filterProtocolli);
-		this.driver.log.debug("filterTipoAPI : " + filterTipoAPI);
-		this.driver.log.debug("filterStatoAccordo : " + filterStatoAccordo);
-		this.driver.log.debug("filterGruppo : " + filterGruppo);
-		this.driver.log.debug("filterCanale : " + filterCanale);
+		this.driver.logDebug("search : " + search);
+		this.driver.logDebug("filterProtocollo : " + filterProtocollo);
+		this.driver.logDebug("filterProtocolli : " + filterProtocolli);
+		this.driver.logDebug("filterTipoAPI : " + filterTipoAPI);
+		this.driver.logDebug("filterStatoAccordo : " + filterStatoAccordo);
+		this.driver.logDebug("filterGruppo : " + filterGruppo);
+		this.driver.logDebug("filterCanale : " + filterCanale);
 
 		Connection con = null;
 		PreparedStatement stmt = null;
@@ -927,7 +927,7 @@ public class DriverRegistroServiziDB_accordiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1134,7 +1134,7 @@ public class DriverRegistroServiziDB_accordiDriver {
 			sqlQueryObject.setOffset(offset);
 			queryString = sqlQueryObject.createSQLQuery();
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(queryString));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(queryString));
 
 			stmt = con.prepareStatement(queryString);
 			index = 1;
@@ -1166,7 +1166,7 @@ public class DriverRegistroServiziDB_accordiDriver {
 
 			}
 
-			this.driver.log.debug("size lista :" + ((lista == null) ? null : lista.size()));
+			this.driver.logDebug("size lista :" + ((lista == null) ? null : lista.size()));
 
 			return lista;
 
@@ -1188,10 +1188,10 @@ public class DriverRegistroServiziDB_accordiDriver {
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 
-		this.driver.log.debug("getAllIdAccordiWithSoggettoReferente...");
+		this.driver.logDebug("getAllIdAccordiWithSoggettoReferente...");
 
 		try {
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if (this.driver.atomica)
 				con = this.driver.getConnectionFromDatasource("getAllIdAccordiWithSoggettoReferente");
@@ -1207,7 +1207,7 @@ public class DriverRegistroServiziDB_accordiDriver {
 			sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".nome_soggetto=?");
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
-			this.driver.log.debug("eseguo query : " + sqlQuery );
+			this.driver.logDebug("eseguo query : " + sqlQuery );
 			stm = con.prepareStatement(sqlQuery);
 			stm.setString(1, idsoggetto.getTipo());
 			stm.setString(2, idsoggetto.getNome());
@@ -1242,7 +1242,7 @@ public class DriverRegistroServiziDB_accordiDriver {
 		return getIdAccordoServizioParteComune(id,null);
 	}
 	protected IDAccordo getIdAccordoServizioParteComune(long id,Connection conParam) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
-		this.driver.log.debug("richiesto getIdAccordoServizioParteComune: " + id);
+		this.driver.logDebug("richiesto getIdAccordoServizioParteComune: " + id);
 		// conrollo consistenza
 		if (id <= 0)
 			return null;
@@ -1261,7 +1261,7 @@ public class DriverRegistroServiziDB_accordiDriver {
 			sqlQueryObject.addWhereCondition("id = ?");
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if(conParam!=null){
 				con = conParam;
@@ -1275,7 +1275,7 @@ public class DriverRegistroServiziDB_accordiDriver {
 
 			stm.setLong(1, id);
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, id));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, id));
 			rs = stm.executeQuery();
 
 
@@ -1455,7 +1455,7 @@ public class DriverRegistroServiziDB_accordiDriver {
 			con = this.driver.globalConnection;
 		}
 
-		this.driver.log.debug("operazione this.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.atomica = " + this.driver.atomica);
 
 		List<IDServizio> idServizi = new ArrayList<IDServizio>(); 
 		try {

@@ -71,7 +71,7 @@ public class DriverRegistroServiziDB_ruoliDriver {
 	protected Ruolo getRuolo(
 			IDRuolo idRuolo) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 
-		this.driver.log.debug("richiesto getRuolo: " + idRuolo);
+		this.driver.logDebug("richiesto getRuolo: " + idRuolo);
 		// conrollo consistenza
 		if (idRuolo == null)
 			throw new DriverRegistroServiziException("[getRuolo] Parametro idRuolo is null");
@@ -92,7 +92,7 @@ public class DriverRegistroServiziDB_ruoliDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
 
@@ -109,7 +109,7 @@ public class DriverRegistroServiziDB_ruoliDriver {
 	protected Ruolo getRuolo(Connection conParam,
 			IDRuolo idRuolo) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 
-		this.driver.log.debug("richiesto getRuolo: " + idRuolo);
+		this.driver.logDebug("richiesto getRuolo: " + idRuolo);
 		// conrollo consistenza
 		if (idRuolo == null)
 			throw new DriverRegistroServiziException("[getRuolo] Parametro idRuolo is null");
@@ -175,7 +175,7 @@ public class DriverRegistroServiziDB_ruoliDriver {
 	protected Ruolo getRuolo(
 			long idRuolo) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 
-		this.driver.log.debug("richiesto getRuolo: " + idRuolo);
+		this.driver.logDebug("richiesto getRuolo: " + idRuolo);
 		// conrollo consistenza
 		if (idRuolo <=0)
 			throw new DriverRegistroServiziException("[getRuolo] Parametro idRuolo non valido");
@@ -194,7 +194,7 @@ public class DriverRegistroServiziDB_ruoliDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
 
@@ -211,7 +211,7 @@ public class DriverRegistroServiziDB_ruoliDriver {
 	protected Ruolo getRuolo(Connection conParam,
 			long idRuolo) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 
-		this.driver.log.debug("richiesto getRuolo: " + idRuolo);
+		this.driver.logDebug("richiesto getRuolo: " + idRuolo);
 		// conrollo consistenza
 		if (idRuolo <=0)
 			throw new DriverRegistroServiziException("[getRuolo] Parametro idRuolo non valido");
@@ -281,10 +281,10 @@ public class DriverRegistroServiziDB_ruoliDriver {
 			listContesto.add(filtroRicerca.getContesto().getValue());
 		}
 		
-		this.driver.log.debug("getAllIdRuoli...");
+		this.driver.logDebug("getAllIdRuoli...");
 
 		try {
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if (this.driver.atomica)
 				con = this.driver.getConnectionFromDatasource("getAllIdRuoli");
@@ -313,35 +313,35 @@ public class DriverRegistroServiziDB_ruoliDriver {
 
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
-			this.driver.log.debug("eseguo query : " + sqlQuery );
+			this.driver.logDebug("eseguo query : " + sqlQuery );
 			stm = con.prepareStatement(sqlQuery);
 			int indexStmt = 1;
 			if(filtroRicerca!=null){
 				if(filtroRicerca.getMinDate()!=null){
-					this.driver.log.debug("minDate stmt.setTimestamp("+filtroRicerca.getMinDate()+")");
+					this.driver.logDebug("minDate stmt.setTimestamp("+filtroRicerca.getMinDate()+")");
 					stm.setTimestamp(indexStmt, new Timestamp(filtroRicerca.getMinDate().getTime()));
 					indexStmt++;
 				}
 				if(filtroRicerca.getMaxDate()!=null){
-					this.driver.log.debug("maxDate stmt.setTimestamp("+filtroRicerca.getMaxDate()+")");
+					this.driver.logDebug("maxDate stmt.setTimestamp("+filtroRicerca.getMaxDate()+")");
 					stm.setTimestamp(indexStmt, new Timestamp(filtroRicerca.getMaxDate().getTime()));
 					indexStmt++;
 				}	
 				if(filtroRicerca.getNome()!=null){
-					this.driver.log.debug("nome stmt.setString("+filtroRicerca.getNome()+")");
+					this.driver.logDebug("nome stmt.setString("+filtroRicerca.getNome()+")");
 					stm.setString(indexStmt, filtroRicerca.getNome());
 					indexStmt++;
 				}	
 				if(filtroRicercaTipo){
 					for (int i = 0; i < listTipologia.size(); i++) {
-						this.driver.log.debug("tipo stmt.setString("+listTipologia.get(i)+")");
+						this.driver.logDebug("tipo stmt.setString("+listTipologia.get(i)+")");
 						stm.setString(indexStmt, listTipologia.get(i));
 						indexStmt++;
 					}
 				}
 				if(filtroRicercaContesto){
 					for (int i = 0; i < listContesto.size(); i++) {
-						this.driver.log.debug("contesto stmt.setString("+listContesto.get(i)+")");
+						this.driver.logDebug("contesto stmt.setString("+listContesto.get(i)+")");
 						stm.setString(indexStmt, listContesto.get(i));
 						indexStmt++;
 					}
@@ -394,10 +394,10 @@ public class DriverRegistroServiziDB_ruoliDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDRuolo type = 1");
+			this.driver.logDebug("CRUDRuolo type = 1");
 			DriverRegistroServiziDB_LIB.CRUDRuolo(CostantiDB.CREATE, ruolo, con);
 
 		} catch (Exception qe) {
@@ -481,11 +481,11 @@ public class DriverRegistroServiziDB_ruoliDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
 
-			this.driver.log.debug("CRUDRuolo type = 2");
+			this.driver.logDebug("CRUDRuolo type = 2");
 			DriverRegistroServiziDB_LIB.CRUDRuolo(CostantiDB.UPDATE, ruolo, con);
 
 		} catch (Exception qe) {
@@ -516,10 +516,10 @@ public class DriverRegistroServiziDB_ruoliDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDRuolo type = 3");
+			this.driver.logDebug("CRUDRuolo type = 3");
 			DriverRegistroServiziDB_LIB.CRUDRuolo(CostantiDB.DELETE, ruolo, con);
 
 		} catch (Exception qe) {
@@ -772,17 +772,17 @@ public class DriverRegistroServiziDB_ruoliDriver {
 		}
 		
 		
-		this.driver.log.debug("search : " + search);
-		this.driver.log.debug("filterRuoloTipologia : " + filterRuoloTipologia);
-		this.driver.log.debug("filterRuoloContesto : " + filterRuoloContesto);
-		this.driver.log.debug("filterGruppo : " + filterGruppo);
-		this.driver.log.debug("filterApiContesto : " + filterApiContesto);
-		this.driver.log.debug("filterProtocollo : " + filterProtocollo);
-		this.driver.log.debug("filterProtocolli : " + filterProtocolli);
-		this.driver.log.debug("filterSoggettoNome : " + filterSoggettoNome);
-		this.driver.log.debug("filterSoggettoTipo : " + filterSoggettoTipo);
-		this.driver.log.debug("filterApiImplementazione : " + filterApiImplementazione);
-		this.driver.log.debug("filterServizioApplicativo : " + filterServizioApplicativo);
+		this.driver.logDebug("search : " + search);
+		this.driver.logDebug("filterRuoloTipologia : " + filterRuoloTipologia);
+		this.driver.logDebug("filterRuoloContesto : " + filterRuoloContesto);
+		this.driver.logDebug("filterGruppo : " + filterGruppo);
+		this.driver.logDebug("filterApiContesto : " + filterApiContesto);
+		this.driver.logDebug("filterProtocollo : " + filterProtocollo);
+		this.driver.logDebug("filterProtocolli : " + filterProtocolli);
+		this.driver.logDebug("filterSoggettoNome : " + filterSoggettoNome);
+		this.driver.logDebug("filterSoggettoTipo : " + filterSoggettoTipo);
+		this.driver.logDebug("filterApiImplementazione : " + filterApiImplementazione);
+		this.driver.logDebug("filterServizioApplicativo : " + filterServizioApplicativo);
 		
 		Connection con = null;
 		boolean error = false;
@@ -802,7 +802,7 @@ public class DriverRegistroServiziDB_ruoliDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		List<IDRuolo> listIdRuoli = null;
 		try {

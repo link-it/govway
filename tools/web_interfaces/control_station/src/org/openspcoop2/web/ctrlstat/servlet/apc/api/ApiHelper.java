@@ -193,6 +193,9 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 				// filtro sicurezza messaggio
 				this.addFilterModISicurezzaMessaggio(ricerca, idLista, filterTipoAccordo);
 				
+				// filtro sorgente token
+				this.addFilterModIGenerazioneToken(ricerca, idLista);
+				
 				// filtro digest richiesta
 				this.addFilterModIDigestRichiesta(ricerca, idLista);
 				

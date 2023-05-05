@@ -68,6 +68,7 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.ApiKeyState;
@@ -339,7 +340,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(porteApplicativeCore);
 			ConfigurazioneCore confCore = new ConfigurazioneCore(porteApplicativeCore);
 			int idServizio = Integer.parseInt(idAsps);
-			AccordoServizioParteSpecifica asps  =apsCore.getAccordoServizioParteSpecifica(idServizio);
+			AccordoServizioParteSpecifica asps  = apsCore.getAccordoServizioParteSpecifica(idServizio);
 			IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
 			int soggInt = idSoggettoErogatoreDelServizio!=null ? Integer.parseInt(idSoggettoErogatoreDelServizio) : -1;
 			
@@ -853,11 +854,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 				erogazioneAutorizzazioneRuoliMatch = null;
 				
 			}
-			
-			if(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA.equals(modeCreazione)) {
-				
-			}
-			
+						
 			if (apsHelper.isProfiloModIPA(protocollo) && asps != null) {
 				BooleanNullable forceHttpsClientWrapper = BooleanNullable.NULL(); 
 				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL(); 
@@ -1003,6 +1000,9 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 
 			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 
+			if(asps==null) {
+				throw new DriverControlStationException("Asps is null");
+			}
 			List<MappingErogazionePortaApplicativa> lista = apsCore.mappingServiziPorteAppList(idServizio2,asps.getId(), ricerca);
 
 			apsHelper.prepareServiziConfigurazioneList(lista, idAsps, null, ricerca);

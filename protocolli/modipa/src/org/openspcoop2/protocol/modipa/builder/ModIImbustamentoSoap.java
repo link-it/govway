@@ -497,9 +497,9 @@ public class ModIImbustamentoSoap {
 		if(requestDigest!=null) {
 			addSignaturePart(soapHeaderAggiuntiviDaFirmare, busta, bf, requestDigest.getNamespaceURI(), requestDigest.getLocalName());
 		}
-		if(soapHeaderAggiuntiviDaFirmare!=null && !soapHeaderAggiuntiviDaFirmare.isEmpty()) {
+		if(soapHeaderAggiuntiviDaFirmare!=null) {
 			while(!soapHeaderAggiuntiviDaFirmare.isEmpty()) {
-				SOAPHeader soapHeader = soapHeaderAggiuntiviDaFirmare.get(0);
+				SOAPHeader soapHeader = soapHeaderAggiuntiviDaFirmare.get(0); // non è un errore la get, nella lista viene rimosso dentro uno dei metodi usati da addSignaturePart
 				addSignaturePart(soapHeaderAggiuntiviDaFirmare, busta, bf, soapHeader.getNamespace(), soapHeader.getLocalName());
 			}
 		}

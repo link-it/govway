@@ -70,7 +70,6 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 		this.driver = driver;
 	}
 	
-
 	protected org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico getAccordoServizioParteComuneSintetico(IDAccordo idAccordo) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
 		// conrollo consistenza
 		if (idAccordo == null)
@@ -80,12 +79,12 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 		if (idAccordo.getNome().trim().equals(""))
 			throw new DriverRegistroServiziException("[getAccordoServizioParteComuneSintetico] Parametro idAccordo.getNome non e' definito");
 
-		this.driver.log.debug("richiesto getAccordoServizioParteComuneSintetico: " + idAccordo.toString());
+		this.driver.logDebug("richiesto getAccordoServizioParteComuneSintetico: " + idAccordo.toString());
 
 		long idAccordoLong = -1;
 		Connection con = null;
 		try {
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if (this.driver.atomica)
 				con = this.driver.getConnectionFromDatasource("getAccordoServizioParteComuneSintetico(idAccordo)");
@@ -123,7 +122,7 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 
 		try {
 
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			if(conParam==null) {
 				// prendo la connessione dal pool
 				if (this.driver.atomica)
@@ -171,7 +170,7 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 			stm.setLong(1, idAccordo);
 
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordo));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordo));
 			rs = stm.executeQuery();
 
 			if (rs.next()) {
@@ -281,7 +280,7 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 				stm = con.prepareStatement(sqlQuery);
 				stm.setLong(1, idAccordo);
 
-				this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordo));
+				this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordo));
 
 				rs = stm.executeQuery();
 
@@ -331,7 +330,7 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 				stm = con.prepareStatement(sqlQuery);
 				stm.setLong(1, idAccordo);
 
-				this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordo));
+				this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordo));
 				rs = stm.executeQuery();
 
 				while (rs.next()) {
@@ -384,7 +383,7 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 						stm = con.prepareStatement(sqlQuery);
 						stm.setLong(1, pt.getId());
 
-						this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, pt.getId()));
+						this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, pt.getId()));
 
 						rs = stm.executeQuery();
 
@@ -444,7 +443,7 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 				stm = con.prepareStatement(sqlQuery);
 				stm.setLong(1, idAccordo);
 
-				this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordo));
+				this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordo));
 				rs = stm.executeQuery();
 
 				while (rs.next()) {
@@ -502,7 +501,7 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 				stm = con.prepareStatement(sqlQuery);
 				stm.setLong(1, idAccordo);
 
-				this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordo));
+				this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordo));
 				rs = stm.executeQuery();
 
 				while (rs.next()) {
@@ -527,7 +526,7 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 				stm = con.prepareStatement(sqlQuery);
 				stm.setLong(1, idAccordo);
 
-				this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordo));
+				this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordo));
 				rs = stm.executeQuery();
 
 				AccordoServizioParteComuneServizioCompostoSintetico asComposto = null;
@@ -555,7 +554,7 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 					sqlQuery = sqlQueryObject.createSQLQuery();
 					stm = con.prepareStatement(sqlQuery);
 					stm.setLong(1, asComposto.getId());
-					this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, asComposto.getId()));
+					this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, asComposto.getId()));
 					rs = stm.executeQuery();
 
 					while (rs.next()) {
@@ -647,6 +646,7 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 		
 		String filtroModISicurezzaCanale = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_CANALE);
 		String filtroModISicurezzaMessaggio = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_MESSAGGIO);
+		String filtroModISorgenteToken = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SORGENTE_TOKEN);
 		String filtroModIDigestRichiesta = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_DIGEST_RICHIESTA);
 		String filtroModIInfoUtente = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_INFORMAZIONI_UTENTE);
 		if((filtroModISicurezzaCanale!=null && "".equals(filtroModISicurezzaCanale))) {
@@ -655,6 +655,9 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 		if((filtroModISicurezzaMessaggio!=null && "".equals(filtroModISicurezzaMessaggio))) {
 			filtroModISicurezzaMessaggio=null;
 		}
+		if((filtroModISorgenteToken!=null && "".equals(filtroModISorgenteToken))) {
+			filtroModISorgenteToken=null;
+		}
 		Boolean filtroModIDigestRichiestaEnabled = null;
 		if(CostantiDB.STATO_FUNZIONALITA_ABILITATO.equals(filtroModIDigestRichiesta)) {
 			filtroModIDigestRichiestaEnabled = true;
@@ -662,14 +665,12 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 		else if(CostantiDB.STATO_FUNZIONALITA_DISABILITATO.equals(filtroModIDigestRichiesta)) {
 			filtroModIDigestRichiestaEnabled = false;
 		}
-		Boolean filtroModIInfoUtenteEnabled = null;
-		if(CostantiDB.STATO_FUNZIONALITA_ABILITATO.equals(filtroModIInfoUtente)) {
-			filtroModIInfoUtenteEnabled = true;
+		if((filtroModIInfoUtente!=null && "".equals(filtroModIInfoUtente))) {
+			filtroModIInfoUtente=null;
 		}
-		else if(CostantiDB.STATO_FUNZIONALITA_DISABILITATO.equals(filtroModIInfoUtente)) {
-			filtroModIInfoUtenteEnabled = false;
-		}
-		boolean filtroModI = filtroModISicurezzaCanale!=null || filtroModISicurezzaMessaggio!=null || filtroModIDigestRichiestaEnabled!=null || filtroModIInfoUtenteEnabled!=null;
+		boolean filtroModI = filtroModISicurezzaCanale!=null || filtroModISicurezzaMessaggio!=null ||
+				filtroModISorgenteToken!=null ||
+				filtroModIDigestRichiestaEnabled!=null || filtroModIInfoUtente!=null;
 		
 		boolean searchCanale = false;
 		boolean canaleDefault = false;
@@ -681,17 +682,18 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 			}
 		}
 
-		this.driver.log.debug("search : " + search);
-		this.driver.log.debug("filterProtocollo : " + filterProtocollo);
-		this.driver.log.debug("filterProtocolli : " + filterProtocolli);
-		this.driver.log.debug("filterTipoAPI : " + filterTipoAPI);
-		this.driver.log.debug("filterStatoAccordo : " + filterStatoAccordo);
-		this.driver.log.debug("filterGruppo : " + filterGruppo);
-		this.driver.log.debug("filterCanale : " + filterCanale);
-		this.driver.log.debug("filtroModISicurezzaCanale : " + filtroModISicurezzaCanale);
-		this.driver.log.debug("filtroModISicurezzaMessaggio : " + filtroModISicurezzaMessaggio);
-		this.driver.log.debug("filtroModIDigestRichiesta : " + filtroModIDigestRichiesta);
-		this.driver.log.debug("filtroModIInfoUtente : " + filtroModIInfoUtente);
+		this.driver.logDebug("search : " + search);
+		this.driver.logDebug("filterProtocollo : " + filterProtocollo);
+		this.driver.logDebug("filterProtocolli : " + filterProtocolli);
+		this.driver.logDebug("filterTipoAPI : " + filterTipoAPI);
+		this.driver.logDebug("filterStatoAccordo : " + filterStatoAccordo);
+		this.driver.logDebug("filterGruppo : " + filterGruppo);
+		this.driver.logDebug("filterCanale : " + filterCanale);
+		this.driver.logDebug("filtroModISicurezzaCanale : " + filtroModISicurezzaCanale);
+		this.driver.logDebug("filtroModISicurezzaMessaggio : " + filtroModISicurezzaMessaggio);
+		this.driver.logDebug("filtroModISorgenteToken : " + filtroModISorgenteToken);
+		this.driver.logDebug("filtroModIDigestRichiesta : " + filtroModIDigestRichiesta);
+		this.driver.logDebug("filtroModIInfoUtente : " + filtroModIInfoUtente);
 
 		Connection con = null;
 		PreparedStatement stmt = null;
@@ -711,7 +713,7 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -780,7 +782,8 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 			if(filtroModI) {
 				DBUtils.setFiltriModI(sqlQueryObject, this.driver.tipoDB,
 						filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
-						filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled);
+						filtroModISorgenteToken,
+						filtroModIDigestRichiestaEnabled, filtroModIInfoUtente);
 			}
 			
 			sqlQueryObject.setANDLogicOperator(true);
@@ -867,7 +870,8 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 			if(filtroModI) {
 				DBUtils.setFiltriModI(sqlQueryObject, this.driver.tipoDB,
 						filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
-						filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled);
+						filtroModISorgenteToken,
+						filtroModIDigestRichiestaEnabled, filtroModIInfoUtente);
 			}
 			
 			sqlQueryObject.setANDLogicOperator(true);
@@ -880,7 +884,7 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 			sqlQueryObject.setOffset(offset);
 			queryString = sqlQueryObject.createSQLQuery();
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(queryString));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(queryString));
 
 			stmt = con.prepareStatement(queryString);
 			index = 1;
@@ -910,7 +914,7 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 
 			}
 
-			this.driver.log.debug("size lista :" + ((lista == null) ? null : lista.size()));
+			this.driver.logDebug("size lista :" + ((lista == null) ? null : lista.size()));
 
 			return lista;
 

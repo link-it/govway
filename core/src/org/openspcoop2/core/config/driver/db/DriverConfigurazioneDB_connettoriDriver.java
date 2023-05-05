@@ -72,10 +72,10 @@ public class DriverConfigurazioneDB_connettoriDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDConnettore type = 1");
+			this.driver.logDebug("CRUDConnettore type = 1");
 			// creo connettore
 			DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(1, connettore, con);
 
@@ -109,10 +109,10 @@ public class DriverConfigurazioneDB_connettoriDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDConnettore type = 2");
+			this.driver.logDebug("CRUDConnettore type = 2");
 			// update connettore
 			DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(2, connettore, con);
 
@@ -147,10 +147,10 @@ public class DriverConfigurazioneDB_connettoriDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDConnettore type = 3");
+			this.driver.logDebug("CRUDConnettore type = 3");
 			// delete connettore
 			DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(3, connettore, con);
 
@@ -186,7 +186,7 @@ public class DriverConfigurazioneDB_connettoriDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -259,7 +259,7 @@ public class DriverConfigurazioneDB_connettoriDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -306,7 +306,7 @@ public class DriverConfigurazioneDB_connettoriDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -345,7 +345,7 @@ public class DriverConfigurazioneDB_connettoriDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 

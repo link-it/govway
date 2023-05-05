@@ -249,7 +249,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -270,7 +270,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				stm = con.prepareStatement(sqlQuery);
 				stm.setString(1, nome_sa);
 				stm.setLong(2, idSog);
-				this.driver.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, nome_sa));
+				this.driver.logDebug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, nome_sa));
 
 				break;
 			}
@@ -321,10 +321,10 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				}
 
 				if(apiKey) {
-					this.driver.log.debug("eseguo query :" + DBUtils.formatSQLString(sqlQuery, tipoCredenziale, aUser, CostantiDB.getIssuerApiKey(appId)));
+					this.driver.logDebug("eseguo query :" + DBUtils.formatSQLString(sqlQuery, tipoCredenziale, aUser, CostantiDB.getIssuerApiKey(appId)));
 				}
 				else {
-					this.driver.log.debug("eseguo query :" + DBUtils.formatSQLString(sqlQuery, tipoCredenziale, aUser));
+					this.driver.logDebug("eseguo query :" + DBUtils.formatSQLString(sqlQuery, tipoCredenziale, aUser));
 				}
 
 				rs = stm.executeQuery();
@@ -360,7 +360,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				stm = con.prepareStatement(sqlQueryObject.toString());
 				stm.setLong(1, idSA);
 
-				this.driver.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, idSA));
+				this.driver.logDebug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, idSA));
 				
 				break;
 			}	
@@ -413,7 +413,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				stm = con.prepareStatement(sqlQuery);
 				stm.setString(1, CostantiConfigurazione.CREDENZIALE_SSL.toString());
 
-				this.driver.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.CREDENZIALE_SSL.toString()));
+				this.driver.logDebug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.CREDENZIALE_SSL.toString()));
 
 				rs = stm.executeQuery();
 				long idSA = -1;
@@ -490,7 +490,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 					stm = con.prepareStatement(sqlQuery);
 					stm.setString(1, CostantiConfigurazione.CREDENZIALE_SSL.toString());
 
-					this.driver.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.CREDENZIALE_SSL.toString()));
+					this.driver.logDebug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.CREDENZIALE_SSL.toString()));
 
 					rs = stm.executeQuery();
 					while(rs.next()){
@@ -532,7 +532,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				stm = con.prepareStatement(sqlQueryObject.toString());
 				stm.setLong(1, idSA);
 
-				this.driver.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, idSA));
+				this.driver.logDebug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, idSA));
 
 				break;
 			}
@@ -576,7 +576,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 					stm.setInt(index++, CostantiDB.FALSE);
 				}
 
-				this.driver.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.CREDENZIALE_SSL.toString()));
+				this.driver.logDebug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.CREDENZIALE_SSL.toString()));
 
 				IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.driver.tipoDB);
 				
@@ -639,7 +639,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 						stm.setInt(index++, CostantiDB.FALSE);
 					}
 
-					this.driver.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.CREDENZIALE_SSL.toString()));
+					this.driver.logDebug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.CREDENZIALE_SSL.toString()));
 
 					jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.driver.tipoDB);
 					
@@ -674,7 +674,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				stm = con.prepareStatement(sqlQueryObject.toString());
 				stm.setLong(1, idSA);
 
-				this.driver.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, idSA));
+				this.driver.logDebug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, idSA));
 
 				break;
 			}	
@@ -692,7 +692,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				//stm.setString(1, nome_sa);
 				stm.setString(1, CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString());
 				stm.setString(2, principal);
-				this.driver.log.debug("eseguo query :" + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString(), principal));
+				this.driver.logDebug("eseguo query :" + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString(), principal));
 
 				break;
 			}
@@ -745,7 +745,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 					stm.setString(index++, tokenClientId);
 				}
 				
-				this.driver.log.debug("eseguo query (tokenPolicy:"+tokenPolicy+" tokenClientId:"+tokenClientId+"):" +sqlQuery);
+				this.driver.logDebug("eseguo query (tokenPolicy:"+tokenPolicy+" tokenClientId:"+tokenClientId+"):" +sqlQuery);
 
 				break;
 			}
@@ -758,7 +758,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				stm = con.prepareStatement(sqlQuery);
 				stm.setLong(1, idServizioApplicativo);
 
-				this.driver.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, idServizioApplicativo));
+				this.driver.logDebug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, idServizioApplicativo));
 				break;
 			}
 			
@@ -1161,10 +1161,10 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDServizioApplicativo type = 1");
+			this.driver.logDebug("CRUDServizioApplicativo type = 1");
 			// creo soggetto
 			DriverConfigurazioneDB_serviziApplicativiLIB.CRUDServizioApplicativo(1, aSA, con);
 
@@ -1207,10 +1207,10 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDServizioApplicativo type = 2");
+			this.driver.logDebug("CRUDServizioApplicativo type = 2");
 			// creo soggetto
 			DriverConfigurazioneDB_serviziApplicativiLIB.CRUDServizioApplicativo(2, aSA, con);
 
@@ -1248,10 +1248,10 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDServizioApplicativo type = 3");
+			this.driver.logDebug("CRUDServizioApplicativo type = 3");
 			// creo soggetto
 			DriverConfigurazioneDB_serviziApplicativiLIB.CRUDServizioApplicativo(3, aSA, con);
 
@@ -1290,7 +1290,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1360,7 +1360,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1426,7 +1426,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1564,7 +1564,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			
@@ -1683,7 +1683,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1746,7 +1746,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1798,7 +1798,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				stmt.setString(index++, tokenClientId);
 			}
 			
-			this.driver.log.debug("eseguo query (tokenPolicy:"+tokenPolicy+" tokenClientId:"+tokenClientId+"):" +queryString);
+			this.driver.logDebug("eseguo query (tokenPolicy:"+tokenPolicy+" tokenClientId:"+tokenClientId+"):" +queryString);
 			
 			risultato = stmt.executeQuery();
 
@@ -1845,7 +1845,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1922,7 +1922,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -2100,7 +2100,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -2239,7 +2239,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 			else if(checkIM) {
 				debugQuery = DBUtils.formatSQLString(debugQuery, DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.ABILITATO));
 			}
-			this.driver.log.debug("eseguo query : " + debugQuery);
+			this.driver.logDebug("eseguo query : " + debugQuery);
 			
 			rs = stm.executeQuery();
 
@@ -2362,7 +2362,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 
 			stm.setLong(1, idSoggetto);
 
-			this.driver.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idSoggetto));
+			this.driver.logDebug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idSoggetto));
 			rs = stm.executeQuery();
 
 			if (rs.next())
@@ -2462,7 +2462,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -2528,10 +2528,10 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 
-		this.driver.log.debug("getAllIdServiziApplicativi...");
+		this.driver.logDebug("getAllIdServiziApplicativi...");
 
 		try {
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if (this.driver.atomica)
 				con = this.driver.getConnectionFromDatasource("getAllIdServiziApplicativi");
@@ -2574,42 +2574,42 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
-			this.driver.log.debug("eseguo query : " + sqlQuery );
+			this.driver.logDebug("eseguo query : " + sqlQuery );
 			stm = con.prepareStatement(sqlQuery);
 			int indexStmt = 1;
 			if(filtroRicerca!=null){
 				if(filtroRicerca.getMinDate()!=null){
-					this.driver.log.debug("minDate stmt.setTimestamp("+filtroRicerca.getMinDate()+")");
+					this.driver.logDebug("minDate stmt.setTimestamp("+filtroRicerca.getMinDate()+")");
 					stm.setTimestamp(indexStmt, new Timestamp(filtroRicerca.getMinDate().getTime()));
 					indexStmt++;
 				}
 				if(filtroRicerca.getMaxDate()!=null){
-					this.driver.log.debug("maxDate stmt.setTimestamp("+filtroRicerca.getMaxDate()+")");
+					this.driver.logDebug("maxDate stmt.setTimestamp("+filtroRicerca.getMaxDate()+")");
 					stm.setTimestamp(indexStmt, new Timestamp(filtroRicerca.getMaxDate().getTime()));
 					indexStmt++;
 				}	
 				if(filtroRicerca.getTipoSoggetto()!=null){
-					this.driver.log.debug("tipoSoggetto stmt.setString("+filtroRicerca.getTipoSoggetto()+")");
+					this.driver.logDebug("tipoSoggetto stmt.setString("+filtroRicerca.getTipoSoggetto()+")");
 					stm.setString(indexStmt, filtroRicerca.getTipoSoggetto());
 					indexStmt++;
 				}
 				if(filtroRicerca.getNomeSoggetto()!=null){
-					this.driver.log.debug("nomeSoggetto stmt.setString("+filtroRicerca.getNomeSoggetto()+")");
+					this.driver.logDebug("nomeSoggetto stmt.setString("+filtroRicerca.getNomeSoggetto()+")");
 					stm.setString(indexStmt, filtroRicerca.getNomeSoggetto());
 					indexStmt++;
 				}		
 				if(filtroRicerca.getNome()!=null){
-					this.driver.log.debug("nome stmt.setString("+filtroRicerca.getNome()+")");
+					this.driver.logDebug("nome stmt.setString("+filtroRicerca.getNome()+")");
 					stm.setString(indexStmt, filtroRicerca.getNome());
 					indexStmt++;
 				}	
 				if(filtroRicerca.getIdRuolo()!=null){
-					this.driver.log.debug("ruolo stmt.setString("+filtroRicerca.getIdRuolo().getNome()+")");
+					this.driver.logDebug("ruolo stmt.setString("+filtroRicerca.getIdRuolo().getNome()+")");
 					stm.setString(indexStmt, filtroRicerca.getIdRuolo().getNome());
 					indexStmt++;
 				}
 				if(filtroRicerca.getTipo()!=null){
-					this.driver.log.debug("tipo stmt.setString("+filtroRicerca.getTipo()+")");
+					this.driver.logDebug("tipo stmt.setString("+filtroRicerca.getTipo()+")");
 					stm.setString(indexStmt, filtroRicerca.getTipo());
 					indexStmt++;
 				}
@@ -2731,7 +2731,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 			stm = con.prepareStatement(sqlQuery);
 			stm.setString(1, nomeServizioApplicativo);
 
-			this.driver.log.debug("eseguo query: " + sqlQuery);
+			this.driver.logDebug("eseguo query: " + sqlQuery);
 			
 			long idSA = -1;
 			String tipo = null;
@@ -2770,7 +2770,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				stm = con.prepareStatement(sqlQuery);
 				stm.setLong(1, idSA);
 
-				this.driver.log.debug("eseguo query: " + sqlQuery);
+				this.driver.logDebug("eseguo query: " + sqlQuery);
 				
 				List<IDServizio> nomiConnettore = new ArrayList<IDServizio>();
 				rs = stm.executeQuery();

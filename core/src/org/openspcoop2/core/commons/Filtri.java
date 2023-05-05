@@ -217,6 +217,7 @@ public final class Filtri
 	
 	public static final String FILTRO_MODI_SICUREZZA_CANALE = "filtroModiSicCanale";
 	public static final String FILTRO_MODI_SICUREZZA_MESSAGGIO = "filtroModiSicMessaggio";
+	public static final String FILTRO_MODI_SORGENTE_TOKEN = "filtroModiGenToken";
 	public static final String FILTRO_MODI_KEYSTORE_PATH = "filtroModiKeystorePath";
 	public static final String FILTRO_MODI_KEYSTORE_SUBJECT = "filtroModiKeystoreSubject";
 	public static final String FILTRO_MODI_KEYSTORE_ISSUER = "filtroModiKeystoreIssuer";

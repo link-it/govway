@@ -62,7 +62,7 @@ public class DriverRegistroServiziDB_accordiGruppiDriver {
 		String sqlQuery = null;
 
 		try {
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if(conParam!=null)
 				con = conParam;
@@ -88,7 +88,7 @@ public class DriverRegistroServiziDB_accordiGruppiDriver {
 			stm = con.prepareStatement(sqlQuery);
 			stm.setLong(1, as.getId());
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, as.getId()));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, as.getId()));
 			rs = stm.executeQuery();
 
 			while (rs.next()) {

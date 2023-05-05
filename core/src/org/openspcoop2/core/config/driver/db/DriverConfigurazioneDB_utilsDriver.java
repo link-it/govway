@@ -70,7 +70,7 @@ public class DriverConfigurazioneDB_utilsDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		//this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		//this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -592,7 +592,7 @@ public class DriverConfigurazioneDB_utilsDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		//this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		//this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);

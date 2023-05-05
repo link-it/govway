@@ -120,8 +120,8 @@ public class DriverConfigurazioneDB_genericPropertiesDriver {
 			
 			filterTipoTokenPolicy = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_TIPO_TOKEN_POLICY);
 			
-			this.driver.log.debug("search : " + search);
-			this.driver.log.debug("filterTipoTokenPolicy : " + filterTipoTokenPolicy);
+			this.driver.logDebug("search : " + search);
+			this.driver.logDebug("filterTipoTokenPolicy : " + filterTipoTokenPolicy);
 		}
 		
 		
@@ -137,7 +137,7 @@ public class DriverConfigurazioneDB_genericPropertiesDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		List<Long> listIdLong = new ArrayList<>();
 		
@@ -265,10 +265,10 @@ public class DriverConfigurazioneDB_genericPropertiesDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDGenericPropertiesPdD type = 1");
+			this.driver.logDebug("CRUDGenericPropertiesPdD type = 1");
 			DriverConfigurazioneDB_configLIB.CRUDGenericProperties(1, genericProperties, con);
 
 		} catch (Exception qe) {
@@ -302,10 +302,10 @@ public class DriverConfigurazioneDB_genericPropertiesDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("updateGenericProperties type = 2");
+			this.driver.logDebug("updateGenericProperties type = 2");
 			DriverConfigurazioneDB_configLIB.CRUDGenericProperties(2, genericProperties, con);
 
 		} catch (Exception qe) {
@@ -340,10 +340,10 @@ public class DriverConfigurazioneDB_genericPropertiesDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("deleteGenericProperties type = 3");
+			this.driver.logDebug("deleteGenericProperties type = 3");
 			DriverConfigurazioneDB_configLIB.CRUDGenericProperties(3, genericProperties, con);
 
 		} catch (Exception qe) {
@@ -374,7 +374,7 @@ public class DriverConfigurazioneDB_genericPropertiesDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.atomica = " + this.driver.atomica);
 
 		try {
 			GenericProperties genericProperties = null;

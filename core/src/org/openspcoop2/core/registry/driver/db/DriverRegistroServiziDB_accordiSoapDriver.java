@@ -76,7 +76,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 		String sqlQuery = null;
 
 		try {
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if(conParam!=null)
 				con = conParam;
@@ -99,7 +99,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 			stm = con.prepareStatement(sqlQuery);
 			stm.setLong(1, as.getId());
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, as.getId()));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, as.getId()));
 			rs = stm.executeQuery();
 
 			while (rs.next()) {
@@ -191,7 +191,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 		String sqlQuery = null;
 
 		try {
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if(conParam!=null)
 				con = conParam;
@@ -214,7 +214,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 			stm = con.prepareStatement(sqlQuery);
 			stm.setLong(1, pt.getId());
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, pt.getId()));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, pt.getId()));
 
 			rs = stm.executeQuery();
 
@@ -331,7 +331,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 		String sqlQuery = null;
 
 		try {
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if(conParam!=null)
 				con = conParam;
@@ -352,7 +352,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 			stm = con.prepareStatement(sqlQuery);
 			stm.setLong(1, azionePT.getId());
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, azionePT.getId()));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, azionePT.getId()));
 
 			rs = stm.executeQuery();
 
@@ -451,7 +451,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 			con = this.driver.globalConnection;
 		}
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -557,7 +557,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -717,7 +717,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 		} else
 			connection = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
 
@@ -773,7 +773,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 					stm.setLong(1, id);
 					int n=stm.executeUpdate();
 					stm.close();
-					this.driver.log.debug("Cancellate "+n+" operation messages associate all'azione con id "+id+" del port type "+portType.getNome()+ " dell'accordo: "+as.getNome());
+					this.driver.logDebug("Cancellate "+n+" operation messages associate all'azione con id "+id+" del port type "+portType.getNome()+ " dell'accordo: "+as.getNome());
 				}
 			}
 			
@@ -785,14 +785,14 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 			stm.setLong(1, portType.getId());
 			int n=stm.executeUpdate();
 			stm.close();
-			this.driver.log.debug("Cancellate "+n+" azioni associate al portType "+portType.getNome()+ " dell'accordo: "+as.getNome());
+			this.driver.logDebug("Cancellate "+n+" azioni associate al portType "+portType.getNome()+ " dell'accordo: "+as.getNome());
 			
 //			Operation azione = null;
 			for (int i = 0; i < portType.sizeAzioneList(); i++) {
 				Operation azione = portType.getAzione(i);			
 				DriverRegistroServiziDB_accordiSoapLIB.CRUDAzionePortType(CostantiDB.CREATE,as,portType,azione, connection, portType.getId());
 			}
-			this.driver.log.debug("inserite " + portType.sizeAzioneList() + " azioni relative al port type["+portType.getNome()+"] id-porttype["+portType.getId()+"]");
+			this.driver.logDebug("inserite " + portType.sizeAzioneList() + " azioni relative al port type["+portType.getNome()+"] id-porttype["+portType.getId()+"]");
 		} 
 //		catch (SQLException se) {
 //			this.driver.log.error(se);
@@ -842,7 +842,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -998,7 +998,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1138,7 +1138,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -1195,7 +1195,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1313,7 +1313,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1471,7 +1471,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1569,7 +1569,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 
 			queryString = sqlQueryObject.createSQLQuery();
 
-			this.driver.log.debug("Query: "+queryString);
+			this.driver.logDebug("Query: "+queryString);
 
 			stmt = con.prepareStatement(queryString);
 			stmt.setLong(1,idPortType);
@@ -1660,7 +1660,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1816,7 +1816,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1966,7 +1966,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {			
 
@@ -2039,7 +2039,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {			
 
@@ -2115,7 +2115,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {			
 
@@ -2133,7 +2133,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 				sqlQueryObject.addWhereCondition(false,CostantiDB.PORT_TYPE_AZIONI+".correlata is not null",CostantiDB.PORT_TYPE_AZIONI+".correlata_servizio is not null");
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
-				this.driver.log.debug("VERIFICO CORRELAZIONE AD UNA RICHIESTA ["+idPortType+"] ["+azioneDaVerificare+"]: "+queryString);
+				this.driver.logDebug("VERIFICO CORRELAZIONE AD UNA RICHIESTA ["+idPortType+"] ["+azioneDaVerificare+"]: "+queryString);
 				stmt = con.prepareStatement(queryString);
 				stmt.setLong(1, idPortType);
 				stmt.setString(2, azioneDaVerificare);
@@ -2145,7 +2145,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 				risultato.close();
 				stmt.close();
 				correlataAdUnaRichiesta = tot>0;
-				this.driver.log.debug("VERIFICO CORRELAZIONE AD UNA RICHIESTA, risultato ["+tot+"]: "+correlataAdUnaRichiesta);
+				this.driver.logDebug("VERIFICO CORRELAZIONE AD UNA RICHIESTA, risultato ["+tot+"]: "+correlataAdUnaRichiesta);
 			}
 
 			// VERIFICO CHE NON SIA CORRELATA DA UN'ALTRA AZIONE
@@ -2161,7 +2161,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 				stmt = con.prepareStatement(queryString);
-				this.driver.log.debug("VERIFICO CHE NON SIA CORRELATA DA UN'ALTRA AZIONE (AS e AA con PT diverso) ["+idAzioneDaVerificare+"] ["+azioneDaVerificare+"] ["+nomePortType+"]: "+queryString);
+				this.driver.logDebug("VERIFICO CHE NON SIA CORRELATA DA UN'ALTRA AZIONE (AS e AA con PT diverso) ["+idAzioneDaVerificare+"] ["+azioneDaVerificare+"] ["+nomePortType+"]: "+queryString);
 				stmt.setLong(1, idAzioneDaVerificare);
 				stmt.setString(2, azioneDaVerificare);
 				stmt.setString(3, nomePortType);
@@ -2173,7 +2173,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 				risultato.close();
 				stmt.close();
 				correlataDaUnAltraAzione = tot>0;
-				this.driver.log.debug("VERIFICO CHE NON SIA CORRELATA DA UN'ALTRA AZIONE (AS e AA con PT diverso), risultato ["+tot+"]: "+correlataDaUnAltraAzione);
+				this.driver.logDebug("VERIFICO CHE NON SIA CORRELATA DA UN'ALTRA AZIONE (AS e AA con PT diverso), risultato ["+tot+"]: "+correlataDaUnAltraAzione);
 
 				if(correlataDaUnAltraAzione==false){
 					// Correlazione sullo stesso port type
@@ -2185,7 +2185,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 					sqlQueryObject.setANDLogicOperator(true);
 					queryString = sqlQueryObject.createSQLQuery();
 					stmt = con.prepareStatement(queryString);
-					this.driver.log.debug("VERIFICO CHE NON SIA CORRELATA DA UN'ALTRA AZIONE (AA con stesso port type) ["+idAzioneDaVerificare+"] ["+azioneDaVerificare+"] ["+nomePortType+"] ["+azioneDaVerificare+"] ["+idPortType+"]: "+queryString);
+					this.driver.logDebug("VERIFICO CHE NON SIA CORRELATA DA UN'ALTRA AZIONE (AA con stesso port type) ["+idAzioneDaVerificare+"] ["+azioneDaVerificare+"] ["+nomePortType+"] ["+azioneDaVerificare+"] ["+idPortType+"]: "+queryString);
 					stmt.setLong(1, idAzioneDaVerificare);
 					stmt.setString(2, azioneDaVerificare);
 					stmt.setLong(3, idPortType);
@@ -2197,7 +2197,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 					risultato.close();
 					stmt.close();
 					correlataDaUnAltraAzione = tot>0;
-					this.driver.log.debug("VERIFICO CHE NON SIA CORRELATA DA UN'ALTRA AZIONE (AA con stesso port type), risultato ["+tot+"]: "+correlataDaUnAltraAzione);
+					this.driver.logDebug("VERIFICO CHE NON SIA CORRELATA DA UN'ALTRA AZIONE (AA con stesso port type), risultato ["+tot+"]: "+correlataDaUnAltraAzione);
 				}
 			}
 
@@ -2240,7 +2240,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 			con = this.driver.globalConnection;
 		}
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 		
@@ -2278,7 +2278,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 			con = this.driver.globalConnection;
 		}
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		List<IDServizio> idServizi = new ArrayList<IDServizio>(); 
 		try {
@@ -2352,7 +2352,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 			con = this.driver.globalConnection;
 		}
 
-		this.driver.log.debug("operazione this.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.atomica = " + this.driver.atomica);
 
 		try {
 

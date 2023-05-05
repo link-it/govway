@@ -1590,32 +1590,38 @@ public class DBUtils {
 	
 	public static void setFiltriModIErogazione(ISQLQueryObject sqlQueryObject, String tipoDB,
 			String filtroModISicurezzaCanale, String filtroModISicurezzaMessaggio,
-			Boolean filtroModIDigestRichiesta, Boolean filtroModIInfoUtente,
+			String filtroModISorgenteToken,
+			Boolean filtroModIDigestRichiesta, String filtroModIInfoUtente,
 			String filtroModIKeystore, String filtroModIAudience) throws Exception {
 		setFiltriModIErogazioneFruizione(sqlQueryObject, tipoDB,
 				filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
+				filtroModISorgenteToken,
 				filtroModIDigestRichiesta, filtroModIInfoUtente,
 				filtroModIKeystore, filtroModIAudience,
 				true);
 	}
 	public static void setFiltriModIFruizione(ISQLQueryObject sqlQueryObject, String tipoDB,
 			String filtroModISicurezzaCanale, String filtroModISicurezzaMessaggio,
-			Boolean filtroModIDigestRichiesta, Boolean filtroModIInfoUtente,
+			String filtroModISorgenteToken,
+			Boolean filtroModIDigestRichiesta, String filtroModIInfoUtente,
 			String filtroModIKeystore, String filtroModIAudience) throws Exception {
 		setFiltriModIErogazioneFruizione(sqlQueryObject, tipoDB,
 				filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
+				filtroModISorgenteToken,
 				filtroModIDigestRichiesta, filtroModIInfoUtente,
 				filtroModIKeystore, filtroModIAudience,
 				false);
 	}
 	private static void setFiltriModIErogazioneFruizione(ISQLQueryObject sqlQueryObject, String tipoDB,
 			String filtroModISicurezzaCanale, String filtroModISicurezzaMessaggio,
-			Boolean filtroModIDigestRichiesta, Boolean filtroModIInfoUtente,
+			String filtroModISorgenteToken,
+			Boolean filtroModIDigestRichiesta, String filtroModIInfoUtente,
 			String filtroModIKeystore, String filtroModIAudience,
 			boolean erogazione) throws Exception {
 		
 		setFiltriModI(sqlQueryObject, tipoDB,
 				filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
+				filtroModISorgenteToken,
 				filtroModIDigestRichiesta, filtroModIInfoUtente);
 		
 		ProprietariProtocolProperty proprietario = erogazione ? ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA : ProprietariProtocolProperty.FRUITORE;
@@ -1657,7 +1663,8 @@ public class DBUtils {
 	}
 	public static void setFiltriModI(ISQLQueryObject sqlQueryObject, String tipoDB,
 			String filtroModISicurezzaCanale, String filtroModISicurezzaMessaggio,
-			Boolean filtroModIDigestRichiesta, Boolean filtroModIInfoUtente) throws Exception {
+			String filtroModISorgenteToken,
+			Boolean filtroModIDigestRichiesta, String filtroModIInfoUtente) throws Exception {
 		
 		if(filtroModISicurezzaCanale!=null) {
 			ISQLQueryObject sql = buildSQLQueryObjectProtocolProperties(ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, CostantiDB.ACCORDI,
@@ -1675,6 +1682,22 @@ public class DBUtils {
 			addRestCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, filtroModISicurezzaMessaggio, null);
 			
 			addSoapCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, filtroModISicurezzaMessaggio, null);
+			
+			if(!query.isEmpty()) {
+				sqlQueryObject.addWhereCondition(false, query.toArray(new String[1]));
+			}
+		}
+		if(filtroModISorgenteToken!=null) {
+			
+			List<String> query = new ArrayList<>();
+			
+			ISQLQueryObject sqlAccordoSec = buildSQLQueryObjectProtocolProperties(ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, CostantiDB.ACCORDI,
+					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH, filtroModISorgenteToken, null, null);
+			query.add(sqlQueryObject.getWhereExistsCondition(false, sqlAccordoSec));
+			
+			addRestCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH, filtroModISorgenteToken, null);
+			
+			addSoapCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH, filtroModISorgenteToken, null);
 			
 			if(!query.isEmpty()) {
 				sqlQueryObject.addWhereCondition(false, query.toArray(new String[1]));
@@ -1700,13 +1723,29 @@ public class DBUtils {
 			
 			List<String> query = new ArrayList<>();
 			
+			boolean enabled = true;
 			ISQLQueryObject sqlAccordoSec = buildSQLQueryObjectProtocolProperties(ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, CostantiDB.ACCORDI,
-					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA, null, null, filtroModIInfoUtente);
+					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA, null, null, enabled);
 			query.add(sqlQueryObject.getWhereExistsCondition(false, sqlAccordoSec));
 			
-			addRestCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA, null, filtroModIInfoUtente);
+			addRestCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA, null, enabled);
 			
-			addSoapCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA, null, filtroModIInfoUtente);
+			addSoapCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA, null, enabled);
+			
+			if(!query.isEmpty()) {
+				sqlQueryObject.addWhereCondition(false, query.toArray(new String[1]));
+			}
+			
+
+			query = new ArrayList<>();
+			
+			ISQLQueryObject sqlAccordoSecPattern = buildSQLQueryObjectProtocolProperties(ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, CostantiDB.ACCORDI,
+					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN, filtroModIInfoUtente, null, null);
+			query.add(sqlQueryObject.getWhereExistsCondition(false, sqlAccordoSecPattern));
+			
+			addRestCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN, filtroModIInfoUtente, null);
+			
+			addSoapCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN, filtroModIInfoUtente, null);
 			
 			if(!query.isEmpty()) {
 				sqlQueryObject.addWhereCondition(false, query.toArray(new String[1]));

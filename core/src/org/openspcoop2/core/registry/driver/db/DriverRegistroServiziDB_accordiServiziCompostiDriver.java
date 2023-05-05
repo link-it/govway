@@ -76,7 +76,7 @@ public class DriverRegistroServiziDB_accordiServiziCompostiDriver {
 		String sqlQuery = null;
 
 		try {
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if(conParam!=null)
 				con = conParam;
@@ -97,7 +97,7 @@ public class DriverRegistroServiziDB_accordiServiziCompostiDriver {
 			stm = con.prepareStatement(sqlQuery);
 			stm.setLong(1, as.getId());
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, as.getId()));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, as.getId()));
 			rs = stm.executeQuery();
 
 			AccordoServizioParteComuneServizioComposto asComposto = null;
@@ -125,7 +125,7 @@ public class DriverRegistroServiziDB_accordiServiziCompostiDriver {
 				sqlQuery = sqlQueryObject.createSQLQuery();
 				stm = con.prepareStatement(sqlQuery);
 				stm.setLong(1, asComposto.getId());
-				this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, asComposto.getId()));
+				this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, asComposto.getId()));
 				rs = stm.executeQuery();
 
 				while (rs.next()) {
@@ -190,7 +190,7 @@ public class DriverRegistroServiziDB_accordiServiziCompostiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			ISQLQueryObject sqlQueryObjectSoggetti = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -211,7 +211,7 @@ public class DriverRegistroServiziDB_accordiServiziCompostiDriver {
 			sqlQueryObjectSoggetti.setANDLogicOperator(true);
 			queryString = sqlQueryObjectSoggetti.createSQLQuery();
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(queryString));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(queryString));
 
 			stmt = con.prepareStatement(queryString);
 			stmt.setString(1,idSoggetto.getTipo());
@@ -263,7 +263,7 @@ public class DriverRegistroServiziDB_accordiServiziCompostiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			ISQLQueryObject sqlQueryObjectSoggetti = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -287,7 +287,7 @@ public class DriverRegistroServiziDB_accordiServiziCompostiDriver {
 			sqlQueryObjectSoggetti.setANDLogicOperator(true);
 			queryString = sqlQueryObjectSoggetti.createSQLQuery();
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(queryString));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(queryString));
 
 			stmt = con.prepareStatement(queryString);
 			stmt.setString(1,idServizio.getSoggettoErogatore().getTipo());
@@ -343,7 +343,7 @@ public class DriverRegistroServiziDB_accordiServiziCompostiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			ISQLQueryObject sqlQueryObjectSoggetti = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -364,7 +364,7 @@ public class DriverRegistroServiziDB_accordiServiziCompostiDriver {
 			sqlQueryObjectSoggetti.setANDLogicOperator(true);
 			queryString = sqlQueryObjectSoggetti.createSQLQuery();
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(queryString));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(queryString));
 
 			stmt = con.prepareStatement(queryString);
 			stmt.setString(1,idAccordoCooperazione.getNome());

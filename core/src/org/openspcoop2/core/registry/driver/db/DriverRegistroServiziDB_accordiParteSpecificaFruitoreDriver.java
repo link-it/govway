@@ -90,7 +90,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 		} else
 			connection = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 		try {
 			long idServ = 0;
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -162,7 +162,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 		} else
 			connection = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI);
@@ -206,7 +206,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 		} else
 			connection = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI);
@@ -256,7 +256,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 			} else
 				con = this.driver.globalConnection;
 
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			if(escludiSoggettiEsterni){
@@ -328,7 +328,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -399,7 +399,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			ISQLQueryObject sqlQueryObjectSoggetti = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -415,7 +415,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 			sqlQueryObjectSoggetti.setANDLogicOperator(true);
 			queryString = sqlQueryObjectSoggetti.createSQLQuery();
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(queryString));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(queryString));
 
 			stmt = con.prepareStatement(queryString);
 			stmt.setString(1,idSoggetto.getTipo());
@@ -452,7 +452,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 	
 
 	protected Fruitore getAccordoErogatoreFruitore(long id) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
-		this.driver.log.debug("richiesto getAccordoErogatoreFruitore: " + id);
+		this.driver.logDebug("richiesto getAccordoErogatoreFruitore: " + id);
 		// conrollo consistenza
 		if (id <= 0)
 			return null;
@@ -472,7 +472,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if (this.driver.atomica)
 				con = this.driver.getConnectionFromDatasource("getAccordoErogatoreFruitore");
@@ -483,7 +483,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 
 			stm.setLong(1, id);
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, id));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, id));
 			rs = stm.executeQuery();
 
 			if (rs.next()) {
@@ -516,7 +516,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 	}
 
 	protected Fruitore getErogatoreFruitore(long id) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
-		this.driver.log.debug("richiesto getErogatoreFruitore: " + id);
+		this.driver.logDebug("richiesto getErogatoreFruitore: " + id);
 		// conrollo consistenza
 		if (id <= 0)
 			return null;
@@ -539,7 +539,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if (this.driver.atomica)
 				con = this.driver.getConnectionFromDatasource("getErogatoreFruitore");
@@ -550,7 +550,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 
 			stm.setLong(1, id);
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, id));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, id));
 			rs = stm.executeQuery();
 
 			if (rs.next()) {
@@ -605,7 +605,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.atomica = " + this.driver.atomica);
 
 		try {
 			// ricavo le entries
@@ -683,8 +683,8 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 
 		String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
 
-		this.driver.log.debug("search : " + search);
-		this.driver.log.debug("filterStatoAccordo : " + filterStatoAccordo);
+		this.driver.logDebug("search : " + search);
+		this.driver.logDebug("filterStatoAccordo : " + filterStatoAccordo);
 		
 
 		Connection con = null;
@@ -706,7 +706,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 			con = this.driver.globalConnection;
 		}
 
-		this.driver.log.debug("operazione this.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -860,7 +860,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 		} else
 			connection = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI);
@@ -912,7 +912,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 			con = this.driver.globalConnection;
 		}
 
-		this.driver.log.debug("operazione this.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -978,7 +978,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 			con = this.driver.globalConnection;
 		}
 
-		this.driver.log.debug("operazione this.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1036,7 +1036,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 			con = this.driver.globalConnection;
 		}
 
-		this.driver.log.debug("operazione this.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.atomica = " + this.driver.atomica);
 
 		try {
 

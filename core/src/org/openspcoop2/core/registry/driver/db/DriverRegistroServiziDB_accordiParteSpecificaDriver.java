@@ -143,10 +143,10 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 			filtroFruizioni = (FiltroRicercaFruizioniServizio) filtroRicerca;
 		}
 		
-		this.driver.log.debug(nomeMetodo+" ...");
+		this.driver.logDebug(nomeMetodo+" ...");
 
 		try {
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if (this.driver.atomica)
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
@@ -253,71 +253,71 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 			sqlQueryObject.setSelectDistinct(true);
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
-			this.driver.log.debug("eseguo query : " + sqlQuery );
+			this.driver.logDebug("eseguo query : " + sqlQuery );
 			stm = con.prepareStatement(sqlQuery);
 			int indexStmt = 1;
 			if(filtroRicerca!=null){
 				if(filtroRicerca.getMinDate()!=null){
-					this.driver.log.debug("minDate stmt.setTimestamp("+filtroRicerca.getMinDate()+")");
+					this.driver.logDebug("minDate stmt.setTimestamp("+filtroRicerca.getMinDate()+")");
 					stm.setTimestamp(indexStmt, new Timestamp(filtroRicerca.getMinDate().getTime()));
 					indexStmt++;
 				}
 				if(filtroRicerca.getMaxDate()!=null){
-					this.driver.log.debug("maxDate stmt.setTimestamp("+filtroRicerca.getMaxDate()+")");
+					this.driver.logDebug("maxDate stmt.setTimestamp("+filtroRicerca.getMaxDate()+")");
 					stm.setTimestamp(indexStmt, new Timestamp(filtroRicerca.getMaxDate().getTime()));
 					indexStmt++;
 				}	
 				if(filtroRicerca.getTipo()!=null){
-					this.driver.log.debug("tipoServizio stmt.setString("+filtroRicerca.getTipo()+")");
+					this.driver.logDebug("tipoServizio stmt.setString("+filtroRicerca.getTipo()+")");
 					stm.setString(indexStmt, filtroRicerca.getTipo());
 					indexStmt++;
 				}
 				if(filtroRicerca.getNome()!=null){
-					this.driver.log.debug("nomeServizio stmt.setString("+filtroRicerca.getNome()+")");
+					this.driver.logDebug("nomeServizio stmt.setString("+filtroRicerca.getNome()+")");
 					stm.setString(indexStmt, filtroRicerca.getNome());
 					indexStmt++;
 				}
 				if(filtroRicerca.getVersione()!=null){
-					this.driver.log.debug("versioneServizio stmt.setString("+filtroRicerca.getVersione()+")");
+					this.driver.logDebug("versioneServizio stmt.setString("+filtroRicerca.getVersione()+")");
 					stm.setInt(indexStmt, filtroRicerca.getVersione());
 					indexStmt++;
 				}
 				if(filtroRicerca.getPortType()!=null){
-					this.driver.log.debug("portType stmt.setString("+filtroRicerca.getPortType()+")");
+					this.driver.logDebug("portType stmt.setString("+filtroRicerca.getPortType()+")");
 					stm.setString(indexStmt, filtroRicerca.getPortType());
 					indexStmt++;
 				}
 				if(filtroRicerca.getTipologia()!=null){
 					StatoFunzionalita servizioCorrelato = (org.openspcoop2.core.constants.TipologiaServizio.CORRELATO.equals(filtroRicerca.getTipologia()) ? CostantiRegistroServizi.ABILITATO : CostantiRegistroServizi.DISABILITATO);
-					this.driver.log.debug("tipologiaServizio stmt.setString("+servizioCorrelato.getValue()+") original:["+filtroRicerca.getTipologia()+"]");
+					this.driver.logDebug("tipologiaServizio stmt.setString("+servizioCorrelato.getValue()+") original:["+filtroRicerca.getTipologia()+"]");
 					stm.setString(indexStmt, servizioCorrelato.getValue());
 					indexStmt++;
 				}
 				if(filtroRicerca.getTipologia()!=null){
 					if(org.openspcoop2.core.constants.TipologiaServizio.CORRELATO.equals(filtroRicerca.getTipologia())){
-						this.driver.log.debug("tipologiaServizio stmt.setString("+CostantiRegistroServizi.ABILITATO.toString()+")");
+						this.driver.logDebug("tipologiaServizio stmt.setString("+CostantiRegistroServizi.ABILITATO.toString()+")");
 						stm.setString(indexStmt, CostantiRegistroServizi.ABILITATO.toString());
 					}
 					else{
-						this.driver.log.debug("tipologiaServizio stmt.setString("+CostantiRegistroServizi.DISABILITATO.toString()+")");
+						this.driver.logDebug("tipologiaServizio stmt.setString("+CostantiRegistroServizi.DISABILITATO.toString()+")");
 						stm.setString(indexStmt, CostantiRegistroServizi.DISABILITATO.toString());
 					}
 					indexStmt++;
 				}
 				if(filtroRicerca.getTipoSoggettoErogatore()!=null){
-					this.driver.log.debug("tipoSoggettoErogatore stmt.setString("+filtroRicerca.getTipoSoggettoErogatore()+")");
+					this.driver.logDebug("tipoSoggettoErogatore stmt.setString("+filtroRicerca.getTipoSoggettoErogatore()+")");
 					stm.setString(indexStmt, filtroRicerca.getTipoSoggettoErogatore());
 					indexStmt++;
 				}
 				if(filtroRicerca.getNomeSoggettoErogatore()!=null){
-					this.driver.log.debug("nomeSoggettoErogatore stmt.setString("+filtroRicerca.getNomeSoggettoErogatore()+")");
+					this.driver.logDebug("nomeSoggettoErogatore stmt.setString("+filtroRicerca.getNomeSoggettoErogatore()+")");
 					stm.setString(indexStmt, filtroRicerca.getNomeSoggettoErogatore());
 					indexStmt++;
 				}
 				if(filtroRicerca.getIdAccordoServizioParteComune()!=null){
 					IDAccordo idAccordo = filtroRicerca.getIdAccordoServizioParteComune();
 					if(idAccordo.getNome()!=null){
-						this.driver.log.debug("nomeAccordo stmt.setString("+idAccordo.getNome()+")");
+						this.driver.logDebug("nomeAccordo stmt.setString("+idAccordo.getNome()+")");
 						stm.setString(indexStmt, idAccordo.getNome());
 						indexStmt++;
 					}
@@ -326,23 +326,23 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 						if(idSoggettoReferente<=0){
 							throw new Exception("Soggetto referente ["+idAccordo.getSoggettoReferente().toString()+"] non trovato");
 						}
-						this.driver.log.debug("idReferenteAccordi stmt.setLong("+idSoggettoReferente+")");
+						this.driver.logDebug("idReferenteAccordi stmt.setLong("+idSoggettoReferente+")");
 						stm.setLong(indexStmt, idSoggettoReferente);
 						indexStmt++;
 					}
 					if(idAccordo.getVersione()!=null){
-						this.driver.log.debug("versioneAccordo stmt.setString("+idAccordo.getVersione()+")");
+						this.driver.logDebug("versioneAccordo stmt.setString("+idAccordo.getVersione()+")");
 						stm.setInt(indexStmt, idAccordo.getVersione());
 						indexStmt++;
 					}
 				}
 				if(filtroRicerca.getTipoSoggettoFruitore()!=null){
-					this.driver.log.debug("tipoSoggettoFruitore stmt.setString("+filtroRicerca.getTipoSoggettoFruitore()+")");
+					this.driver.logDebug("tipoSoggettoFruitore stmt.setString("+filtroRicerca.getTipoSoggettoFruitore()+")");
 					stm.setString(indexStmt, filtroRicerca.getTipoSoggettoFruitore());
 					indexStmt++;
 				}
 				if(filtroRicerca.getNomeSoggettoFruitore()!=null){
-					this.driver.log.debug("nomeSoggettoFruitore stmt.setString("+filtroRicerca.getNomeSoggettoFruitore()+")");
+					this.driver.logDebug("nomeSoggettoFruitore stmt.setString("+filtroRicerca.getNomeSoggettoFruitore()+")");
 					stm.setString(indexStmt, filtroRicerca.getNomeSoggettoFruitore());
 					indexStmt++;
 				}
@@ -351,12 +351,12 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 			
 			if(filtroFruizioni!=null){
 				if(filtroFruizioni.getTipoSoggettoFruitore()!=null){
-					this.driver.log.debug("tipoSoggettoFruitore stmt.setString("+filtroFruizioni.getTipoSoggettoFruitore()+")");
+					this.driver.logDebug("tipoSoggettoFruitore stmt.setString("+filtroFruizioni.getTipoSoggettoFruitore()+")");
 					stm.setString(indexStmt, filtroFruizioni.getTipoSoggettoFruitore());
 					indexStmt++;
 				}
 				if(filtroFruizioni.getNomeSoggettoFruitore()!=null){
-					this.driver.log.debug("nomeSoggettoFruitore stmt.setString("+filtroFruizioni.getNomeSoggettoFruitore()+")");
+					this.driver.logDebug("nomeSoggettoFruitore stmt.setString("+filtroFruizioni.getNomeSoggettoFruitore()+")");
 					stm.setString(indexStmt, filtroFruizioni.getNomeSoggettoFruitore());
 					indexStmt++;
 				}
@@ -449,10 +449,10 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 
-		this.driver.log.debug(operazione+"...");
+		this.driver.logDebug(operazione+"...");
 
 		try {
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if (this.driver.atomica)
 				con = this.driver.getConnectionFromDatasource("getAllIdServiziWithSoggettoErogatore");
@@ -470,7 +470,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
-			this.driver.log.debug("eseguo query : " + sqlQuery );
+			this.driver.logDebug("eseguo query : " + sqlQuery );
 			stm = con.prepareStatement(sqlQuery);
 			stm.setLong(1, idSoggetto);
 			rs = stm.executeQuery();
@@ -521,10 +521,10 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDServizio tupe=1");
+			this.driver.logDebug("CRUDServizio tupe=1");
 			// CREATE
 			DriverRegistroServiziDB_accordiParteSpecificaLIB.CRUDAccordoServizioParteSpecifica(1, accordoServizioParteSpecifica, con, this.driver.tipoDB);
 
@@ -567,7 +567,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
 			long idS = DBUtils.getIdServizio(nomeServizio, tipoServizio, versioneServizio, nomeProprietario, tipoProprietario, con, false,this.driver.tipoDB);
@@ -652,7 +652,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		} else
 			connection = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
@@ -713,7 +713,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
 
@@ -748,10 +748,10 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDServizio type = 3");
+			this.driver.logDebug("CRUDServizio type = 3");
 			// creo soggetto
 			DriverRegistroServiziDB_accordiParteSpecificaLIB.CRUDAccordoServizioParteSpecifica(3, servizio, con, this.driver.tipoDB);
 
@@ -786,7 +786,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -835,7 +835,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		ResultSet rs1 = null;
 
 		if(idServizio!=null){
-			this.driver.log.debug("chiamato getAccordoServizioParteSpecifica (IDServizio)");
+			this.driver.logDebug("chiamato getAccordoServizioParteSpecifica (IDServizio)");
 			// in questi casi idService non deve essere null
 			// faccio i controlli vari
 			if (idServizio == null || idServizio.getNome() == null || idServizio.getNome().trim().equals("") || 
@@ -845,7 +845,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getAccordoServizioParteSpecifica] : errore nei parametri d'ingresso (IDServizio)");
 		}
 		else{
-			this.driver.log.debug("chiamato getAccordoServizioParteSpecifica (IDSoggetto e IDAccordo)");
+			this.driver.logDebug("chiamato getAccordoServizioParteSpecifica (IDSoggetto e IDAccordo)");
 			// in questo caso idSoggetto non deve essere null e anche
 			// nomeAccordo
 			if (idAccordoServizioParteComune == null || idAccordoServizioParteComune.getNome()==null || idAccordoServizioParteComune.getNome().trim().equals("") || idSoggetto == null || idSoggetto.getNome() == null || idSoggetto.getNome().trim().equals("") || idSoggetto.getTipo() == null || idSoggetto.getTipo().trim().equals(""))
@@ -867,7 +867,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
 
@@ -908,7 +908,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 				stm.setString(1, nomeSoggEr);
 				stm.setString(2, tipoSoggEr);
 
-				this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, nomeSoggEr, tipoSoggEr));
+				this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, nomeSoggEr, tipoSoggEr));
 
 				rs = stm.executeQuery();
 				if (rs.next()) {
@@ -943,7 +943,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 				stm.setString(1, nomeSoggEr);
 				stm.setString(2, tipoSoggEr);
 
-				this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, nomeSoggEr, tipoSoggEr));
+				this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, nomeSoggEr, tipoSoggEr));
 				rs = stm.executeQuery();
 				if (rs.next()) {
 					idSoggErogatore = rs.getLong("id");
@@ -966,7 +966,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 				stm.setLong(1, idSoggErogatore);
 				stm.setLong(2, longIdAccordoServizioParteComune);
 				stm.setString(3, DriverRegistroServiziDB_LIB.getValue(CostantiRegistroServizi.ABILITATO));
-				this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idSoggErogatore, longIdAccordoServizioParteComune, CostantiRegistroServizi.ABILITATO));
+				this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idSoggErogatore, longIdAccordoServizioParteComune, CostantiRegistroServizi.ABILITATO));
 				rs = stm.executeQuery();
 				if (rs.next()) {
 					nomeServizio = rs.getString("nome_servizio");
@@ -1001,7 +1001,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 			}
 			stm.setLong(4, idSoggErogatore);
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, nomeServizio, tipoServizio, versioneServizio, idSoggErogatore));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, nomeServizio, tipoServizio, versioneServizio, idSoggErogatore));
 			rs = stm.executeQuery();
 			if (rs.next()) {
 				longIdAccordoServizioParteSpecifica = rs.getLong("id");
@@ -1091,7 +1091,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 			stm = con.prepareStatement(sqlQuery);
 			stm.setLong(1, longIdAccordoServizioParteSpecifica);
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, longIdAccordoServizioParteSpecifica));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, longIdAccordoServizioParteSpecifica));
 			rs = stm.executeQuery();
 
 			while (rs.next()) {
@@ -1126,7 +1126,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 				sqlQuery = sqlQueryObject.createSQLQuery();
 				stm1 = con.prepareStatement(sqlQuery);
 				stm1.setLong(1, idSoggFruitore);
-				this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idSoggFruitore));
+				this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idSoggFruitore));
 				rs1 = stm1.executeQuery();
 
 				if (rs1.next()) {
@@ -1170,7 +1170,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 					stm = con.prepareStatement(sqlQuery);
 					stm.setLong(1, fruitoreLetto.getId());
 
-					this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, fruitoreLetto.getId()));
+					this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, fruitoreLetto.getId()));
 					rs = stm.executeQuery();
 
 					while (rs.next()) {
@@ -1200,7 +1200,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 							stm = con.prepareStatement(sqlQuery);
 							stm.setLong(1, conf.getId());
 
-							this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, conf.getId()));
+							this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, conf.getId()));
 							rs = stm.executeQuery();
 
 							while (rs.next()) {
@@ -1225,7 +1225,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 			stm = con.prepareStatement(sqlQuery);
 			stm.setLong(1, longIdAccordoServizioParteSpecifica);
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, longIdAccordoServizioParteSpecifica));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, longIdAccordoServizioParteSpecifica));
 			rs = stm.executeQuery();
 
 			while (rs.next()) {
@@ -1255,7 +1255,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 					stm = con.prepareStatement(sqlQuery);
 					stm.setLong(1, conf.getId());
 
-					this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, conf.getId()));
+					this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, conf.getId()));
 					rs = stm.executeQuery();
 
 					while (rs.next()) {
@@ -1279,7 +1279,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 			stm = con.prepareStatement(sqlQuery);
 			stm.setLong(1, longIdAccordoServizioParteComune);
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, longIdAccordoServizioParteComune));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, longIdAccordoServizioParteComune));
 			rs = stm.executeQuery();
 
 			if (rs.next()) {
@@ -1381,7 +1381,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		} catch (DriverRegistroServiziNotFound e) {
 			throw e;
 		}catch (Exception se) {
-			this.driver.log.debug("[DriverRegistroServiziDB::getAccordoServizioParteSpecifica] Exception:"+se.getMessage(),se);
+			this.driver.logDebug("[DriverRegistroServiziDB::getAccordoServizioParteSpecifica] Exception:"+se.getMessage(),se);
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getAccordoServizioParteSpecifica] Exception:" + se.getMessage(),se);
 
 		} finally {
@@ -1429,7 +1429,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		IDServizio idServizioObject = null;
 		try {
@@ -1451,7 +1451,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 
 			stm.setLong(1, idServizio);
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idServizio));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idServizio));
 
 			rs = stm.executeQuery();
 
@@ -1509,7 +1509,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -1563,7 +1563,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 				con = this.driver.globalConnection;
 			}
 
-			this.driver.log.debug("operazione this.atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione this.atomica = " + this.driver.atomica);
 			
 			//recupero idAccordo
 			IDAccordo idAccordo = this.driver.idAccordoFactory.getIDAccordoFromUri(uriAccordo);

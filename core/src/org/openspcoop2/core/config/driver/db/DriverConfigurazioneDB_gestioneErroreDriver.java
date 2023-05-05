@@ -104,7 +104,7 @@ public class DriverConfigurazioneDB_gestioneErroreDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			GestioneErrore gestioneErrore = null;
@@ -116,7 +116,7 @@ public class DriverConfigurazioneDB_gestioneErroreDriver {
 			sqlQueryObject.addSelectField(nomeColonna);
 			sqlQuery = sqlQueryObject.createSQLQuery();
 
-			this.driver.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery));
+			this.driver.logDebug("eseguo query: " + DBUtils.formatSQLString(sqlQuery));
 			stm = con.prepareStatement(sqlQuery);
 			rs = stm.executeQuery();
 
@@ -167,11 +167,11 @@ public class DriverConfigurazioneDB_gestioneErroreDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		PreparedStatement pstmt = null;
 		try {
-			this.driver.log.debug("CRUDGestioneErrore type = 1");
+			this.driver.logDebug("CRUDGestioneErrore type = 1");
 			DriverConfigurazioneDB_gestioneErroreLIB.CRUDGestioneErroreComponenteCooperazione(CostantiDB.CREATE, gestione, con);
 
 			// Aggiorno configurazione
@@ -217,10 +217,10 @@ public class DriverConfigurazioneDB_gestioneErroreDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDGestioneErrore type = 2");
+			this.driver.logDebug("CRUDGestioneErrore type = 2");
 			DriverConfigurazioneDB_gestioneErroreLIB.CRUDGestioneErroreComponenteCooperazione(CostantiDB.UPDATE, gestione, con);
 
 		} catch (Exception qe) {
@@ -254,10 +254,10 @@ public class DriverConfigurazioneDB_gestioneErroreDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDGestioneErrore type = 3");
+			this.driver.logDebug("CRUDGestioneErrore type = 3");
 			DriverConfigurazioneDB_gestioneErroreLIB.CRUDGestioneErroreComponenteCooperazione(CostantiDB.DELETE, gestione, con);
 
 		} catch (Exception qe) {
@@ -291,11 +291,11 @@ public class DriverConfigurazioneDB_gestioneErroreDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		PreparedStatement pstmt = null;
 		try {
-			this.driver.log.debug("CRUDGestioneErrore type = 1");
+			this.driver.logDebug("CRUDGestioneErrore type = 1");
 			DriverConfigurazioneDB_gestioneErroreLIB.CRUDGestioneErroreComponenteIntegrazione(CostantiDB.CREATE, gestione, con);
 
 			// Aggiorno configurazione
@@ -341,10 +341,10 @@ public class DriverConfigurazioneDB_gestioneErroreDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDGestioneErrore type = 2");
+			this.driver.logDebug("CRUDGestioneErrore type = 2");
 			DriverConfigurazioneDB_gestioneErroreLIB.CRUDGestioneErroreComponenteIntegrazione(CostantiDB.UPDATE, gestione, con);
 
 		} catch (Exception qe) {
@@ -378,10 +378,10 @@ public class DriverConfigurazioneDB_gestioneErroreDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDGestioneErrore type = 3");
+			this.driver.logDebug("CRUDGestioneErrore type = 3");
 			DriverConfigurazioneDB_gestioneErroreLIB.CRUDGestioneErroreComponenteIntegrazione(CostantiDB.DELETE, gestione, con);
 
 		} catch (Exception qe) {

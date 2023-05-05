@@ -75,7 +75,7 @@ public class DriverRegistroServiziDB_connettoriDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -110,7 +110,7 @@ public class DriverRegistroServiziDB_connettoriDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -167,7 +167,7 @@ public class DriverRegistroServiziDB_connettoriDriver {
 			stm = connection.prepareStatement(sqlQuery);
 			stm.setLong(1, idConnettore);
 
-			this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idConnettore));
+			this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idConnettore));
 
 			rs = stm.executeQuery();
 
@@ -495,7 +495,7 @@ public class DriverRegistroServiziDB_connettoriDriver {
 			stm = connection.prepareStatement(sqlQuery);
 			stm.setLong(1, idConnettore);
 
-			this.driver.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idConnettore));
+			this.driver.logDebug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idConnettore));
 
 			rs = stm.executeQuery();
 
@@ -554,7 +554,7 @@ public class DriverRegistroServiziDB_connettoriDriver {
 			stm = connection.prepareStatement(sqlQuery);
 			stm.setLong(1, idConnettore);
 
-			this.driver.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idConnettore));
+			this.driver.logDebug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idConnettore));
 
 			rs = stm.executeQuery();
 
@@ -638,10 +638,10 @@ public class DriverRegistroServiziDB_connettoriDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDConnettore type = 1");
+			this.driver.logDebug("CRUDConnettore type = 1");
 			// creo connettore
 			DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(1, connettore, con);
 
@@ -676,10 +676,10 @@ public class DriverRegistroServiziDB_connettoriDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDConnettore type = 2");
+			this.driver.logDebug("CRUDConnettore type = 2");
 			// update connettore
 			DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(2, connettore, con);
 
@@ -714,10 +714,10 @@ public class DriverRegistroServiziDB_connettoriDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDConnettore type = 3");
+			this.driver.logDebug("CRUDConnettore type = 3");
 			// delete connettore
 			DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(3, connettore, con);
 

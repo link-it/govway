@@ -104,7 +104,7 @@ public class DriverConfigurazioneDB_porteDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		List<ResponseCachingConfigurazioneRegola> lista = new ArrayList<ResponseCachingConfigurazioneRegola>();
 		try {
@@ -250,7 +250,7 @@ public class DriverConfigurazioneDB_porteDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -498,7 +498,7 @@ public class DriverConfigurazioneDB_porteDriver {
 					stmRegole.setLong(1, idPorta);
 				}
 		
-				this.driver.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idPorta));
+				this.driver.logDebug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idPorta));
 				rsRegole = stmRegole.executeQuery();
 		
 				while (rsRegole.next()) {

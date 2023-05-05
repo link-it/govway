@@ -369,21 +369,25 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	@Override
-	public void setMessage(String message, boolean append) throws Exception {
+	public void setMessage(String message, boolean append) throws DriverControlStationException {
 		this.setMessage(message, append, null);
 	}
 	@Override
-	public void setMessage(String message, boolean append, String type) throws Exception {
+	public void setMessage(String message, boolean append, String type) throws DriverControlStationException {
 		
 		org.openspcoop2.web.lib.mvc.MessageType messageType = org.openspcoop2.web.lib.mvc.MessageType.ERROR;
 		if(type!=null) {
 			try {
 				messageType = org.openspcoop2.web.lib.mvc.MessageType.fromValue(type);
-			}catch(Throwable t) {}
+			}catch(Exception t) {
+				// ignore
+			}
 			if(messageType==null) {
 				try {
 					messageType = org.openspcoop2.web.lib.mvc.MessageType.valueOf(type.toUpperCase());
-				}catch(Throwable t) {}
+				}catch(Exception t) {
+					// ignore
+				}
 			}
 			if(messageType==null) {
 				messageType = org.openspcoop2.web.lib.mvc.MessageType.ERROR;
@@ -405,30 +409,30 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	@Override
-	public boolean isEditModeInProgress() throws Exception{
+	public boolean isEditModeInProgress() throws DriverControlStationException{
 		String editMode = this.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 		return ServletUtils.isEditModeInProgress(editMode);		
 	}
 
 	@Override
-	public boolean isEditModeFinished() throws Exception{
+	public boolean isEditModeFinished() throws DriverControlStationException{
 		String editMode = this.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 		return ServletUtils.isEditModeFinished(editMode);		
 	}
 	
 	@Override
-	public String getPostBackElementName() throws Exception{
+	public String getPostBackElementName() throws DriverControlStationException{
 		return this.getParameter(Costanti.POSTBACK_ELEMENT_NAME);
 	}
 	
 	@Override
-	public boolean isPostBack() throws Exception{
+	public boolean isPostBack() throws DriverControlStationException{
 		String postbackElementName = this.getPostBackElementName();
 		return postbackElementName!=null && !"".equals(postbackElementName);
 	}
 	
 	@Override
-	public boolean isPostBackFilterElement() throws Exception{
+	public boolean isPostBackFilterElement() throws DriverControlStationException{
 		String postbackElementName = this.getPostBackElementName();
 		return postbackElementName!=null && postbackElementName.startsWith(Costanti.PARAMETRO_FILTER_VALUE);
 	}
@@ -438,7 +442,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return ServletUtils.getObjectFromSession(this.request, this.session, type, attributeName);
 	}
 	
-	public void clearFiltroSoggettoByPostBackProtocollo(int posizioneFiltroProtocollo, ISearch ricerca, int idLista) throws Exception {
+	public void clearFiltroSoggettoByPostBackProtocollo(int posizioneFiltroProtocollo, ISearch ricerca, int idLista) throws DriverControlStationException {
 		String postBackElement = this.getPostBackElementName();
 		if((Costanti.PARAMETRO_FILTER_VALUE+posizioneFiltroProtocollo).equals(postBackElement)) {
 			// verifico se si tratta del profilo di interoperabilita.
@@ -504,19 +508,26 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	private static String tmpDirectory = null;
 	
-	public static String getTmpDir() throws Exception {
+	public static String getTmpDir() throws DriverControlStationException {
 		if(tmpDirectory == null)
 			initTmpDir();
 		
 		return tmpDirectory;
 	}
 	
-	public static synchronized void initTmpDir() throws Exception {
+	public static synchronized void initTmpDir() throws DriverControlStationException {
 		if(tmpDirectory == null){
-			File file = FileSystemUtilities.createTempFile(CostantiControlStation.TEMP_FILE_PREFIX, CostantiControlStation.TEMP_FILE_SUFFIX);
+			File file = null;
+			try {
+				file = FileSystemUtilities.createTempFile(CostantiControlStation.TEMP_FILE_PREFIX, CostantiControlStation.TEMP_FILE_SUFFIX);
+			}catch(Exception e) {
+				throw new DriverControlStationException(e.getMessage(),e);
+			}
 			tmpDirectory = FilenameUtils.getFullPath(file.getAbsolutePath());
 			if(file.exists()) {
-				if(!file.delete()) {
+				try {
+					java.nio.file.Files.delete(file.toPath());
+				}catch(Exception eIgnore) {
 					// ignore
 				}
 			}
@@ -528,7 +539,6 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	
 	/** Modalita Interfaccia */
-//	protected InterfaceType tipoInterfaccia = InterfaceType.STANDARD;
 	
 	private static InterfaceType tipoInterfacciaAPI = null; // api rest
 	public static InterfaceType getTipoInterfacciaAPI() {
@@ -550,13 +560,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			return InterfaceType.STANDARD; // default
 		}
 	}
-//	public void setTipoInterfaccia(InterfaceType tipoInterfaccia) {
-//		this.tipoInterfaccia = tipoInterfaccia;
-//	}
-//	public void updateTipoInterfaccia() {
-//		User user = ServletUtils.getUserFromSession(this.request, this.session);
-//		this.tipoInterfaccia = user.getInterfaceType();
-//	}
+
 	@Override
 	public boolean isModalitaCompleta() {
 		return InterfaceType.equals(this.getTipoInterfaccia(), 
@@ -627,12 +631,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			if (this.request.getCharacterEncoding() == null) { 
 		        this.request.setCharacterEncoding(Charset.UTF_8.getValue());
 			}
-			
-//			User user = ServletUtils.getUserFromSession(this.request, this.session);
-//			if(user != null) {
-//				this.tipoInterfaccia = user.getInterfaceType();
-//			}
-			
+						
 			this.core = core;
 			this.pddCore = new PddCore(this.core);
 			this.utentiCore = new UtentiCore(this.core);
@@ -660,7 +659,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			if ((this.contentType != null) && (this.contentType.indexOf(Costanti.MULTIPART) != -1)) {
 				this.multipart = true;
 				this.mimeMultipart = new MimeMultipart(request.getInputStream(), this.contentType);
-				this.mapParametri = new HashMap<String, List<InputStream>>();
+				this.mapParametri = new HashMap<>();
 				this.mapParametriReaded = new HashMap<>();
 				this.mapNomiFileParametri = new HashMap<>();
 
@@ -669,7 +668,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					String partName = getBodyPartName(bodyPart);
 					
 					if(partName==null) {
-						throw new Exception("Part name non trovato per body part alla posizione '"+i+"'");
+						throw new DriverControlStationException("Part name non trovato per body part alla posizione '"+i+"'");
 					}
 					
 					List<InputStream> list = null;
@@ -700,7 +699,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						nomiFiles.add(fileName);
 					}
 					//}
-					//else throw new Exception("Parametro ["+partName+"] Duplicato.");
+					//else throw new DriverControlStationException("Parametro ["+partName+"] Duplicato.");
 				}
 			} else {
 				Enumeration<String> parameterNames = this.request.getParameterNames();
@@ -733,11 +732,11 @@ public class ConsoleHelper implements IConsoleHelper {
 		this.idServizioFactory = IDServizioFactory.getInstance();
 	}
 	
-	public String getTabId() throws Exception {
+	public String getTabId() throws DriverControlStationException {
 		return getTabId(this.log, this, this.request);
 	}
 	
-	public static String getTabId(Logger log, ConsoleHelper helper, HttpServletRequest request) throws Exception {
+	public static String getTabId(Logger log, ConsoleHelper helper, HttpServletRequest request) throws DriverControlStationException {
 		Object idTabObj = request.getAttribute(Costanti.PARAMETER_TAB_KEY);
 		
 		if(idTabObj == null) {
@@ -770,52 +769,73 @@ public class ConsoleHelper implements IConsoleHelper {
 		return this.core.isShowGestioneWorkflowStatoDocumenti(this);
 	}
 	
-	public IDAccordo getIDAccordoFromValues(String nomeAS, String soggettoReferente, String versione) throws Exception{
-		Soggetto s = this.soggettiCore.getSoggetto(Integer.parseInt(soggettoReferente));			
-		IDSoggetto assr = new IDSoggetto();
-		assr.setTipo(s.getTipo());
-		assr.setNome(s.getNome());
-		int versioneInt = 1;
-		if(versione!=null && !"".equals(versione)) {
-			versioneInt = Integer.parseInt(versione);
+	public IDAccordo getIDAccordoFromValues(String nomeAS, String soggettoReferente, String versione) throws DriverControlStationException{
+		try {
+			Soggetto s = this.soggettiCore.getSoggetto(Integer.parseInt(soggettoReferente));			
+			IDSoggetto assr = new IDSoggetto();
+			assr.setTipo(s.getTipo());
+			assr.setNome(s.getNome());
+			int versioneInt = 1;
+			if(versione!=null && !"".equals(versione)) {
+				versioneInt = Integer.parseInt(versione);
+			}
+			return this.idAccordoFactory.getIDAccordoFromValues(nomeAS, assr, versioneInt);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
 		}
-		return this.idAccordoFactory.getIDAccordoFromValues(nomeAS, assr, versioneInt);
 	}
 	
-	public IDServizio getIDServizioFromValues(String tipo, String nome, String soggettoErogatore, String versione) throws Exception{
-		Soggetto s = this.soggettiCore.getSoggetto(Integer.parseInt(soggettoErogatore));			
-		IDSoggetto assr = new IDSoggetto();
-		assr.setTipo(s.getTipo());
-		assr.setNome(s.getNome());
-		int versioneInt = 1;
-		if(versione!=null && !"".equals(versione)) {
-			versioneInt = Integer.parseInt(versione);
+	public IDServizio getIDServizioFromValues(String tipo, String nome, String soggettoErogatore, String versione) throws DriverControlStationException{
+		try {
+			Soggetto s = this.soggettiCore.getSoggetto(Integer.parseInt(soggettoErogatore));			
+			IDSoggetto assr = new IDSoggetto();
+			assr.setTipo(s.getTipo());
+			assr.setNome(s.getNome());
+			int versioneInt = 1;
+			if(versione!=null && !"".equals(versione)) {
+				versioneInt = Integer.parseInt(versione);
+			}
+			return this.idServizioFactory.getIDServizioFromValues(tipo, nome, assr, versioneInt);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
 		}
-		return this.idServizioFactory.getIDServizioFromValues(tipo, nome, assr, versioneInt);
 	}
 	
-	public IDServizio getIDServizioFromValues(String tipo, String nome, String tipoSoggettoErogatore, String soggettoErogatore, String versione) throws Exception{
-		IDSoggetto assr = new IDSoggetto();
-		assr.setTipo(tipoSoggettoErogatore);
-		assr.setNome(soggettoErogatore);
-		int versioneInt = 1;
-		if(versione!=null && !"".equals(versione)) {
-			versioneInt = Integer.parseInt(versione);
+	public IDServizio getIDServizioFromValues(String tipo, String nome, String tipoSoggettoErogatore, String soggettoErogatore, String versione) throws DriverControlStationException{
+		try {
+			IDSoggetto assr = new IDSoggetto();
+			assr.setTipo(tipoSoggettoErogatore);
+			assr.setNome(soggettoErogatore);
+			int versioneInt = 1;
+			if(versione!=null && !"".equals(versione)) {
+				versioneInt = Integer.parseInt(versione);
+			}
+			return this.idServizioFactory.getIDServizioFromValues(tipo, nome, assr,versioneInt);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
 		}
-		return this.idServizioFactory.getIDServizioFromValues(tipo, nome, assr,versioneInt);
 	}
 	
-	public IDAccordo getIDAccordoFromUri(String uriAccordo) throws Exception{
-		return this.idAccordoFactory.getIDAccordoFromUri(uriAccordo);
+	public IDAccordo getIDAccordoFromUri(String uriAccordo) throws DriverControlStationException{
+		try {
+			return this.idAccordoFactory.getIDAccordoFromUri(uriAccordo);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
 	
 	public int getSize() {
 		return this.size;
 	}
 
-	private String getBodyPartName (BodyPart bodyPart) throws Exception{
+	private String getBodyPartName (BodyPart bodyPart) throws DriverControlStationException{
 		String partName =  null;
-		String[] headers = bodyPart.getHeader(CostantiControlStation.PARAMETRO_CONTENT_DISPOSITION);
+		String[] headers = null;
+		try {
+			headers = bodyPart.getHeader(CostantiControlStation.PARAMETRO_CONTENT_DISPOSITION);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 		if(headers != null && headers.length > 0){
 			String header = headers[0];
 
@@ -830,9 +850,14 @@ public class ConsoleHelper implements IConsoleHelper {
 		return partName;
 	}
 
-	private String getBodyPartFileName (BodyPart bodyPart) throws Exception{
+	private String getBodyPartFileName (BodyPart bodyPart) throws DriverControlStationException{
 		String partName =  null;
-		String[] headers = bodyPart.getHeader(CostantiControlStation.PARAMETRO_CONTENT_DISPOSITION);
+		String[] headers = null;
+		try {
+			headers = bodyPart.getHeader(CostantiControlStation.PARAMETRO_CONTENT_DISPOSITION);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 		if(headers != null && headers.length > 0){
 			String header = headers[0];
 
@@ -852,21 +877,17 @@ public class ConsoleHelper implements IConsoleHelper {
 		return partName;
 	}
 
-	//	public String getProtocolloFromParameter(String parameterName) throws Exception {
-	//		return getParameter(parameterName, String.class, this.core.getProtocolloDefault());
-	//	}
-
-	private void checkErrorInit() throws Exception {
+	private void checkErrorInit() throws DriverControlStationException {
 		if(this.errorInit) {
-			throw new Exception("Inizializzazione fallita: "+this.eErrorInit.getMessage(),this.eErrorInit);
+			throw new DriverControlStationException("Inizializzazione fallita: "+this.eErrorInit.getMessage(),this.eErrorInit);
 		}
 	}
 	
 	@Override
-	public Enumeration<?> getParameterNames() throws Exception {
+	public Enumeration<?> getParameterNames() throws DriverControlStationException {
 		this.checkErrorInit();
 		if(this.multipart){
-			throw new Exception("Not Implemented");
+			throw new DriverControlStationException("Not Implemented");
 		}
 		else {
 			return this.request.getParameterNames();
@@ -874,7 +895,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	@Override
-	public String [] getParameterValues(String parameterName) throws Exception {
+	public String [] getParameterValues(String parameterName) throws DriverControlStationException {
 		this.checkErrorInit();
 		if(this.multipart){
 			
@@ -889,9 +910,13 @@ public class ConsoleHelper implements IConsoleHelper {
 					for (InputStream inputStream : list) {
 						if(inputStream != null){
 							ByteArrayOutputStream baos = new ByteArrayOutputStream();
-							IOUtils.copy(inputStream, baos);
-							baos.flush();
-							baos.close();
+							try {
+								IOUtils.copy(inputStream, baos);
+								baos.flush();
+								baos.close();
+							}catch(Exception e) {
+								throw new DriverControlStationException(e.getMessage(),e);
+							}
 							if(sb.length()>0) {
 								sb.append(",");
 							}
@@ -914,17 +939,17 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	@Override
-	public String getParameter(String parameterName) throws Exception {
+	public String getParameter(String parameterName) throws DriverControlStationException {
 		return getParameter(parameterName, String.class, null);
 	}
 
 	@Override
-	public <T> T getParameter(String parameterName, Class<T> type) throws Exception {
+	public <T> T getParameter(String parameterName, Class<T> type) throws DriverControlStationException {
 		return getParameter(parameterName, type, null);
 	}
 
 	@Override
-	public <T> T getParameter(String parameterName, Class<T> type, T defaultValue) throws Exception {
+	public <T> T getParameter(String parameterName, Class<T> type, T defaultValue) throws DriverControlStationException {
 		
 		this.checkErrorInit();
 		
@@ -932,7 +957,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		T toReturn = null;
 
 		if(type == byte[].class){
-			throw new Exception("Per leggere un parametro di tipo byte[] utilizzare il metodo getBinaryParameter");
+			throw new DriverControlStationException("Per leggere un parametro di tipo byte[] utilizzare il metodo getBinaryParameter");
 		}
 
 		String paramAsString = null;
@@ -947,14 +972,18 @@ public class ConsoleHelper implements IConsoleHelper {
 				if(list != null && !list.isEmpty()){
 					
 					if(list.size()>1) {
-						throw new Exception("Parametro ["+parameterName+"] Duplicato.");
+						throw new DriverControlStationException("Parametro ["+parameterName+"] Duplicato.");
 					}
 					InputStream inputStream = list.get(0);
 					if(inputStream != null){
 						ByteArrayOutputStream baos = new ByteArrayOutputStream();
-						IOUtils.copy(inputStream, baos);
-						baos.flush();
-						baos.close();
+						try {
+							IOUtils.copy(inputStream, baos);
+							baos.flush();
+							baos.close();
+						}catch(Exception e) {
+							throw new DriverControlStationException(e.getMessage(),e);
+						}
 						paramAsString = baos.toString();
 						this.mapParametriReaded.put(parameterName, paramAsString);
 					}
@@ -971,11 +1000,15 @@ public class ConsoleHelper implements IConsoleHelper {
 				paramAsString = paramAsString.replace("\r\n", "\n");
 			}
 						
-			Constructor<T> constructor = type.getConstructor(String.class);
-			if(constructor != null)
-				toReturn = constructor.newInstance(paramAsString);
-			else
-				toReturn = type.cast(paramAsString);
+			try {
+				Constructor<T> constructor = type.getConstructor(String.class);
+				if(constructor != null)
+					toReturn = constructor.newInstance(paramAsString);
+				else
+					toReturn = type.cast(paramAsString);
+			}catch(Exception e) {
+				throw new DriverControlStationException(e.getMessage(),e);
+			}
 		}
 
 		if(toReturn == null && defaultValue != null)
@@ -986,51 +1019,20 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	@Override
-	public byte[] getBinaryParameterContent(String parameterName) throws Exception {
-		
-//		this.checkErrorInit();
-//		
-//		
-//		if(this.multipart){
-//			if(this.mapParametriReaded.containsKey(parameterName)) {
-//				return (byte[]) this.mapParametriReaded.get(parameterName);
-//			}
-//			else {
-//				// La lista dovrebbe al massimo avere sempre un solo valore
-//				List<InputStream> list = this.mapParametri.get(parameterName);
-//				if(list != null && !list.isEmpty()){
-//					
-//					if(list.size()>1) {
-//						throw new Exception("Parametro ["+parameterName+"] Duplicato.");
-//					}
-//					InputStream inputStream = list.get(0);
-//					if(inputStream != null){
-//						ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//						IOUtils.copy(inputStream, baos);
-//						byte[] b = baos.toByteArray();
-//						this.mapParametriReaded.put(parameterName, b);
-//						return b;
-//					}
-//				}
-//			}
-//		}else{
-//			String paramAsString = this.request.getParameter(parameterName);
-//			if(paramAsString != null)
-//				return paramAsString.getBytes();
-//		}
-//
-//		return null;
+	public byte[] getBinaryParameterContent(String parameterName) throws DriverControlStationException {
+				
+		byte [] b = null;
 		
 		List<byte[]> bpContents = this._getBinaryParameterContent(parameterName);
 		
-		if(bpContents != null && bpContents.size() > 0)
+		if(bpContents != null && !bpContents.isEmpty())
 			return bpContents.get(0);
 		
-		return null;
+		return b;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<byte[]> _getBinaryParameterContent(String parameterName) throws Exception {
+	public List<byte[]> _getBinaryParameterContent(String parameterName) throws DriverControlStationException {
 		
 		this.checkErrorInit();
 		
@@ -1048,12 +1050,16 @@ public class ConsoleHelper implements IConsoleHelper {
 					for (InputStream inputStream : list) {
 						if(inputStream != null){
 							ByteArrayOutputStream baosInner = new ByteArrayOutputStream();
-							IOUtils.copy(inputStream, baosInner);
+							try {
+								IOUtils.copy(inputStream, baosInner);
+							}catch(Exception e) {
+								throw new DriverControlStationException(e.getMessage(),e);
+							}
 							byte[] b = baosInner.toByteArray();
 							bpContents.add(b);
 						}
 					}
-					if(bpContents.size() > 0) {
+					if(!bpContents.isEmpty()) {
 						this.mapParametriReaded.put(parameterName, bpContents);
 						return bpContents;
 					}
@@ -1072,7 +1078,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 
 	@Override
-	public String getFileNameParameter(String parameterName) throws Exception {
+	public String getFileNameParameter(String parameterName) throws DriverControlStationException {
 		
 		this.checkErrorInit();
 				
@@ -1084,7 +1090,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 	}
 	
-	public List<String> getFileNamesParameter(String parameterName) throws Exception {
+	public List<String> getFileNamesParameter(String parameterName) throws DriverControlStationException {
 		
 		this.checkErrorInit();
 				
@@ -1104,12 +1110,12 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	
-	public BinaryParameter newBinaryParameter(String parameterName) throws Exception {
+	public BinaryParameter newBinaryParameter(String parameterName) throws DriverControlStationException {
 		BinaryParameter bp = new BinaryParameter();
 		bp.setName(parameterName); 
 		return bp;
 	}
-	public BinaryParameter getBinaryParameter(String parameterName) throws Exception {
+	public BinaryParameter getBinaryParameter(String parameterName) throws DriverControlStationException {
 		
 		this.checkErrorInit();
 				
@@ -1148,7 +1154,11 @@ public class ConsoleHelper implements IConsoleHelper {
 
 			//salvataggio nuovo contenuto
 			filename = this.getFileNameParameter(parameterName);
-			file = FileSystemUtilities.createTempFile(CostantiControlStation.TEMP_FILE_PREFIX, CostantiControlStation.TEMP_FILE_SUFFIX);
+			try {
+				file = FileSystemUtilities.createTempFile(CostantiControlStation.TEMP_FILE_PREFIX, CostantiControlStation.TEMP_FILE_SUFFIX);
+			}catch(Exception e) {
+				throw new DriverControlStationException(e.getMessage(),e);
+			}
 			fileId = file.getName().substring(0, file.getName().indexOf(CostantiControlStation.TEMP_FILE_SUFFIX));
 			fileId = fileId.substring(fileId.indexOf(CostantiControlStation.TEMP_FILE_PREFIX) + CostantiControlStation.TEMP_FILE_PREFIX.length());
 			
@@ -1157,6 +1167,8 @@ public class ConsoleHelper implements IConsoleHelper {
 				fos = new FileOutputStream(file);
 				
 				IOUtils.copy(bais, fos);
+			}catch(Exception e) {
+				throw new DriverControlStationException(e.getMessage(),e);
 			}
 			finally {
 				try {
@@ -1195,6 +1207,8 @@ public class ConsoleHelper implements IConsoleHelper {
 						baos.flush();
 						bpContent = baos.toByteArray();
 						
+					}catch(Exception e) {
+						throw new DriverControlStationException(e.getMessage(),e);
 					}
 					finally {
 						try {
@@ -1240,7 +1254,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	
-	public List<BinaryParameter> getBinaryParameters(String parameterName) throws Exception {
+	public List<BinaryParameter> getBinaryParameters(String parameterName) throws DriverControlStationException {
 		
 		this.checkErrorInit();
 				
@@ -1301,7 +1315,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			for (int i = 0; i < bpContents.size() ; i++ ) {
 				bpContent = bpContents.get(i);
 				filename = fileNamesParameter.get(i);
-				file = FileSystemUtilities.createTempFile(CostantiControlStation.TEMP_FILE_PREFIX, CostantiControlStation.TEMP_FILE_SUFFIX);
+				try {
+					file = FileSystemUtilities.createTempFile(CostantiControlStation.TEMP_FILE_PREFIX, CostantiControlStation.TEMP_FILE_SUFFIX);
+				}catch(Exception e) {
+					throw new DriverControlStationException(e.getMessage(),e);
+				}
 				fileId = file.getName().substring(0, file.getName().indexOf(CostantiControlStation.TEMP_FILE_SUFFIX));
 				fileId = fileId.substring(fileId.indexOf(CostantiControlStation.TEMP_FILE_PREFIX) + CostantiControlStation.TEMP_FILE_PREFIX.length());
 				
@@ -1310,6 +1328,8 @@ public class ConsoleHelper implements IConsoleHelper {
 					fos = new FileOutputStream(file);
 					
 					IOUtils.copy(bais, fos);
+				}catch(Exception e) {
+					throw new DriverControlStationException(e.getMessage(),e);
 				}
 				finally {
 					try {
@@ -1360,6 +1380,8 @@ public class ConsoleHelper implements IConsoleHelper {
 							baos.flush();
 							bpContent = baos.toByteArray();
 							
+						}catch(Exception e) {
+							throw new DriverControlStationException(e.getMessage(),e);
 						}
 						finally {
 							try {
@@ -1428,9 +1450,9 @@ public class ConsoleHelper implements IConsoleHelper {
 	 * cancella i file temporanei dei parametri binari del protocollo, da usare dopo il salvataggio dell'oggetto.
 	 * 
 	 * @param protocolProperties
-	 * @throws Exception
+	 * @throws DriverControlStationException
 	 */
-	public void deleteBinaryProtocolPropertiesTmpFiles(ProtocolProperties protocolProperties) throws Exception{
+	public void deleteBinaryProtocolPropertiesTmpFiles(ProtocolProperties protocolProperties) throws DriverControlStationException{
 		
 		this.checkErrorInit();
 				
@@ -1456,9 +1478,9 @@ public class ConsoleHelper implements IConsoleHelper {
 	 * 
 	 * @param protocolProperties
 	 * @param propertyId
-	 * @throws Exception
+	 * @throws DriverControlStationException
 	 */
-	public void deleteBinaryProtocolPropertyTmpFiles(ProtocolProperties protocolProperties, String propertyId) throws Exception{
+	public void deleteBinaryProtocolPropertyTmpFiles(ProtocolProperties protocolProperties, String propertyId) throws DriverControlStationException{
 		
 		this.checkErrorInit();
 				
@@ -1486,9 +1508,9 @@ public class ConsoleHelper implements IConsoleHelper {
 	 * @param protocolProperties
 	 * @param propertyId
 	 * @param aliasId
-	 * @throws Exception
+	 * @throws DriverControlStationException
 	 */
-	public void deleteBinaryProtocolPropertyTmpFiles(ProtocolProperties protocolProperties, String propertyId, String aliasId) throws Exception{
+	public void deleteBinaryProtocolPropertyTmpFiles(ProtocolProperties protocolProperties, String propertyId, String aliasId) throws DriverControlStationException{
 		
 		this.checkErrorInit();
 				
@@ -1515,9 +1537,9 @@ public class ConsoleHelper implements IConsoleHelper {
 	 * 
 	 * 
 	 * @param parameters
-	 * @throws Exception
+	 * @throws DriverControlStationException
 	 */
-	public void deleteProtocolPropertiesBinaryParameters(BinaryParameter ... parameters) throws Exception{
+	public void deleteProtocolPropertiesBinaryParameters(BinaryParameter ... parameters) throws DriverControlStationException{
 		
 		this.checkErrorInit();
 				
@@ -1553,9 +1575,9 @@ public class ConsoleHelper implements IConsoleHelper {
 	 * Cancella i file temporanei per i parametri passati.
 	 * 
 	 * @param parameters
-	 * @throws Exception
+	 * @throws DriverControlStationException
 	 */
-	public void deleteBinaryParameters(BinaryParameter ... parameters) throws Exception{
+	public void deleteBinaryParameters(BinaryParameter ... parameters) throws DriverControlStationException{
 		
 		this.checkErrorInit();
 				
@@ -1566,7 +1588,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	private void deleteBinaryParameter(BinaryParameter bp) throws Exception{
+	private void deleteBinaryParameter(BinaryParameter bp) throws DriverControlStationException{
 		
 		this.checkErrorInit();
 				
@@ -1588,7 +1610,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 
 	public ProtocolProperties estraiProtocolPropertiesDaRequest(ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
-			String propertyId, BinaryParameter contenutoDocumentoParameter) throws Exception {
+			String propertyId, BinaryParameter contenutoDocumentoParameter) throws DriverControlStationException {
 		
 		this.checkErrorInit();
 		
@@ -1675,7 +1697,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 		return properties;
 	}
-	public ProtocolProperties estraiProtocolPropertiesDaRequest(ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType) throws Exception {
+	public ProtocolProperties estraiProtocolPropertiesDaRequest(ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType) throws DriverControlStationException {
 		
 		this.checkErrorInit();
 				
@@ -1683,7 +1705,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 
 	// Prepara il menu'
-	public void makeMenu() throws Exception {
+	public void makeMenu() throws DriverControlStationException {
 		try {
 			String userLogin = ServletUtils.getUserLoginFromSession(this.session);
 
@@ -2585,7 +2607,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.setMenu(menu);
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -2602,7 +2624,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 	// *** Utilities generiche ***
 
-	public void initializeFilter(ConsoleSearch ricerca) throws Exception {
+	public void initializeFilter(ConsoleSearch ricerca) throws DriverControlStationException {
 		initializeFilter(ricerca, Liste.SOGGETTI);
 		initializeFilter(ricerca, Liste.SERVIZIO_APPLICATIVO);
 		initializeFilter(ricerca, Liste.ACCORDI);
@@ -2611,7 +2633,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		initializeFilter(ricerca, Liste.PORTE_DELEGATE);
 		initializeFilter(ricerca, Liste.PORTE_APPLICATIVE);
 	}
-	public void initializeFilter(ConsoleSearch ricerca, int idLista) throws Exception {
+	public void initializeFilter(ConsoleSearch ricerca, int idLista) throws DriverControlStationException {
 		// Non devo inizializzare la lista degli utenti
 		if(Liste.UTENTI_SERVIZI != idLista && Liste.UTENTI_SOGGETTI != idLista) {
 			this.setFilterSelectedProtocol(ricerca, idLista);
@@ -2620,7 +2642,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public ConsoleSearch checkSearchParameters(int idLista, ConsoleSearch ricerca)
-			throws Exception {
+			throws DriverControlStationException {
 		try {
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
@@ -2678,7 +2700,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			return ricerca;
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -2687,7 +2709,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	 * 
 	 * @return boolean
 	 */
-	public boolean smista() throws Exception {
+	public boolean smista() throws DriverControlStationException {
 		try {
 			if(this.core.isUsedByApi()) {
 				return false;
@@ -2700,7 +2722,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			return usaSmistatore;
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -2809,7 +2831,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	// *** Utilities per i nomi ***
 	
 	// In effetti iniziare con un '.' o un '-' e' brutto, per adesso si elimina questa possibilita
-//	public boolean checkName(String name, String object) throws Exception{
+//	public boolean checkName(String name, String object) throws DriverControlStationException{
 //		// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
 //		if (!RegularExpressionEngine.isMatch(name,"^[0-9A-Za-z_\\-\\.]+$")) {
 //			this.pd.setMessage("Il campo '"+object+"' deve essere formato solo da caratteri, cifre, '_' , '-' e '.'");
@@ -2818,72 +2840,96 @@ public class ConsoleHelper implements IConsoleHelper {
 //		return true;
 //	}	
 
-	public boolean checkNCName(String name, String object) throws Exception{
+	public boolean checkNCName(String name, String object) throws DriverControlStationException{
 		// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
-		if (!RegularExpressionEngine.isMatch(name,"^[_A-Za-z][\\-\\._A-Za-z0-9]*$")) {
-			this.pd.setMessage("Il campo '"+object+"' può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e dev'essere formato solo da caratteri, cifre, '_' , '-' e '.'");
-			return false;
+		try {
+			if (!RegularExpressionEngine.isMatch(name,"^[_A-Za-z][\\-\\._A-Za-z0-9]*$")) {
+				this.pd.setMessage("Il campo '"+object+"' può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e dev'essere formato solo da caratteri, cifre, '_' , '-' e '.'");
+				return false;
+			}
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
 		}
 		return true;
 	}
 	
-	public boolean checkNCNameAndSerial(String name, String object) throws Exception{
+	public boolean checkNCNameAndSerial(String name, String object) throws DriverControlStationException{
 		// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
-		if (!RegularExpressionEngine.isMatch(name,"^[_A-Za-z][\\-\\._A-Za-z0-9]*@[0-9]*$")) {
-			this.pd.setMessage("Il campo '"+object+"' può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e dev'essere formato solo da caratteri, cifre, '_' , '-' e '.', infine deve terminare con @ e numeri interi");
-			return false;
+		try {
+			if (!RegularExpressionEngine.isMatch(name,"^[_A-Za-z][\\-\\._A-Za-z0-9]*@[0-9]*$")) {
+				this.pd.setMessage("Il campo '"+object+"' può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e dev'essere formato solo da caratteri, cifre, '_' , '-' e '.', infine deve terminare con @ e numeri interi");
+				return false;
+			}
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
 		}
 		return true;
 	}
 	
-	public boolean checkSimpleName(String name, String object) throws Exception{
-		if (!RegularExpressionEngine.isMatch(name,"^[0-9A-Za-z]+$")) {
-			this.pd.setMessage("Il campo '"+object+"' deve essere formato solo da caratteri e cifre");
-			return false;
-		}		
-		return true;
-	}
-	
-	public boolean checkIntegrationEntityName(String name, String object) throws Exception{
-		// Il nome deve contenere solo lettere e numeri e '_' '-' '.' '/'
-		if (!RegularExpressionEngine.isMatch(name,"^[_A-Za-z][\\-\\._/A-Za-z0-9]*$")) {
-			this.pd.setMessage("Il campo '"+object+"' può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e dev'essere formato solo da caratteri, cifre, '_' , '-', '.' e '/'");
-			return false;
-		}
-		return true;
-	}
-	
-	
-	public boolean checkNumber(String value, String object, boolean permitZeroAsValue) throws Exception{
-		if(permitZeroAsValue){
-			if (!RegularExpressionEngine.isMatch(value,"^[0-9]+$")) {
-				this.pd.setMessage("Il campo '"+object+"' deve essere formato solo da cifre");
+	public boolean checkSimpleName(String name, String object) throws DriverControlStationException{
+		try {
+			if (!RegularExpressionEngine.isMatch(name,"^[0-9A-Za-z]+$")) {
+				this.pd.setMessage("Il campo '"+object+"' deve essere formato solo da caratteri e cifre");
 				return false;
 			}	
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
+		return true;
+	}
+	
+	public boolean checkIntegrationEntityName(String name, String object) throws DriverControlStationException{
+		// Il nome deve contenere solo lettere e numeri e '_' '-' '.' '/'
+		try {
+			if (!RegularExpressionEngine.isMatch(name,"^[_A-Za-z][\\-\\._/A-Za-z0-9]*$")) {
+				this.pd.setMessage("Il campo '"+object+"' può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e dev'essere formato solo da caratteri, cifre, '_' , '-', '.' e '/'");
+				return false;
+			}
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
+		return true;
+	}
+	
+	
+	public boolean checkNumber(String value, String object, boolean permitZeroAsValue) throws DriverControlStationException{
+		if(permitZeroAsValue){
+			try {
+				if (!RegularExpressionEngine.isMatch(value,"^[0-9]+$")) {
+					this.pd.setMessage("Il campo '"+object+"' deve essere formato solo da cifre");
+					return false;
+				}	
+			}catch(Exception e) {
+				throw new DriverControlStationException(e.getMessage(),e);
+			}
 		}
 		else{
-			if (!RegularExpressionEngine.isMatch(value,"^[1-9]+[0-9]*$")) {
-				if(value.charAt(0) == '0' && value.length()>1){
-					this.pd.setMessage("Il campo '"+object+"' deve contenere un numero intero maggiore di zero e non deve iniziare con la cifra '0'");
-				}else{
-					this.pd.setMessage("Il campo '"+object+"' deve contenere un numero intero maggiore di zero");
+			try {
+				if (!RegularExpressionEngine.isMatch(value,"^[1-9]+[0-9]*$")) {
+					if(value.charAt(0) == '0' && value.length()>1){
+						this.pd.setMessage("Il campo '"+object+"' deve contenere un numero intero maggiore di zero e non deve iniziare con la cifra '0'");
+					}else{
+						this.pd.setMessage("Il campo '"+object+"' deve contenere un numero intero maggiore di zero");
+					}
+					return false;
 				}
-				return false;
+			}catch(Exception e) {
+				throw new DriverControlStationException(e.getMessage(),e);
 			}
 		}
 		return true;
 	}
 	
-	public boolean checkLength4000(String value, String object) throws Exception{
+	public boolean checkLength4000(String value, String object) throws DriverControlStationException{
 		return this.checkLength(value, object, -1, 4000);
 	}
-	public boolean checkLength255(String value, String object) throws Exception{
+	public boolean checkLength255(String value, String object) throws DriverControlStationException{
 		return this.checkLength(value, object, -1, 255);
 	}
-	public boolean checkLengthSubject_SSL_Principal(String value, String object) throws Exception{
+	public boolean checkLengthSubject_SSL_Principal(String value, String object) throws DriverControlStationException{
 		return this.checkLength(value, object, -1, 2800);
 	}
-	public boolean checkLength(String value, String object, int minLength, int maxLength) throws Exception{
+	public boolean checkLength(String value, String object, int minLength, int maxLength) throws DriverControlStationException{
 		if(minLength>0) {
 			if(value==null || value.length()<minLength) {
 				this.pd.setMessage("L'informazione fornita nel campo '"+object+"' deve possedere una lunghezza maggiore di "+(minLength-1));
@@ -2899,7 +2945,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 	
-	public boolean checkSpazi(String value, String object) throws Exception{
+	public boolean checkSpazi(String value, String object) throws DriverControlStationException{
 		if(value.contains(" ")) {
 			this.pd.setMessage("L'informazione fornita nel campo '"+object+"' non deve contenere spazi");
 			return false;
@@ -2907,16 +2953,20 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 
-	public boolean checkEmail(String email, String object) throws Exception{
+	public boolean checkEmail(String email, String object) throws DriverControlStationException{
 		// Email deve rispettare il pattern
-		if (!RegularExpressionEngine.isMatch(email,CostantiControlStation.EMAIL_PATTERN)) {
-			this.pd.setMessage("Il campo '"+object+"' non contiene un indirizzo e-mail valido");
-			return false;
+		try {
+			if (!RegularExpressionEngine.isMatch(email,CostantiControlStation.EMAIL_PATTERN)) {
+				this.pd.setMessage("Il campo '"+object+"' non contiene un indirizzo e-mail valido");
+				return false;
+			}
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
 		}
 		return true;
 	}
 	
-	public boolean checkRegexp(String pattern, String object) throws Exception{
+	public boolean checkRegexp(String pattern, String object) throws DriverControlStationException{
 		try {
 			RegularExpressionEngine.validate(pattern);
 		}catch(Exception e) {
@@ -2926,7 +2976,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 	
-	public boolean checkXPath(String pattern, String object) throws Exception{
+	public boolean checkXPath(String pattern, String object) throws DriverControlStationException{
 		try {
 			AbstractXPathExpressionEngine engine = new XPathExpressionEngine();
 			engine.validate(pattern);
@@ -2936,10 +2986,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		return true;
 	}
-	public boolean checkJsonPath(String pattern, String object) throws Exception{
+	public boolean checkJsonPath(String pattern, String object) throws DriverControlStationException{
 		try {
-			//JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
-			//engine.validate(pattern);
 			JsonXmlPathExpressionEngine.validate(pattern, this.log); // per poter validare anche la funzionalità 'Espressioni XPath su messaggi JSON'
 		}catch(Exception e) {
 			this.pd.setMessage("Il campo '"+object+"' non contiene un'espressione json-path valida: "+e.getMessage());
@@ -2947,7 +2995,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		return true;
 	}
-	public boolean checkXPathOrJsonPath(String pattern, String object) throws Exception{
+	public boolean checkXPathOrJsonPath(String pattern, String object) throws DriverControlStationException{
 		StringBuilder sb = new StringBuilder();
 		try {
 			AbstractXPathExpressionEngine engine = new XPathExpressionEngine();
@@ -2961,8 +3009,6 @@ public class ConsoleHelper implements IConsoleHelper {
 			sb.append("XPath: "+e.getMessage());
 		}
 		try {
-			//JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
-			//engine.validate(pattern);
 			JsonXmlPathExpressionEngine.validate(pattern, this.log); // per poter validare anche la funzionalità 'Espressioni XPath su messaggi JSON'
 			return true;
 		}catch(Exception e) {
@@ -3170,7 +3216,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 	
 	// Controlla i dati del Message-Security
-	public boolean WSCheckData(TipoOperazione tipoOp) throws Exception {
+	public boolean WSCheckData(TipoOperazione tipoOp) throws DriverControlStationException {
 		try{
 			String messageSecurity = this.getParameter(CostantiControlStation.PARAMETRO_MESSAGE_SECURITY);
 
@@ -3197,7 +3243,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			return true;
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -3593,7 +3639,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	// Controlla i dati della correlazione applicativa
-	public boolean correlazioneApplicativaCheckData(TipoOperazione tipoOp,boolean portaDelegata,String scadcorr) throws Exception {
+	public boolean correlazioneApplicativaCheckData(TipoOperazione tipoOp,boolean portaDelegata,String scadcorr) throws DriverControlStationException {
 		try{
 			// scadenza correlazione intero > 0 opzionale
 			if(scadcorr != null && !scadcorr.equals("")){
@@ -3614,13 +3660,13 @@ public class ConsoleHelper implements IConsoleHelper {
 			return true;
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
 	// Controlla i dati della correlazione applicativa richiesta della porta delegata
 	public boolean correlazioneApplicativaRichiestaCheckData(TipoOperazione tipoOp,boolean portaDelegata,
-			ServiceBinding serviceBinding) throws Exception {
+			ServiceBinding serviceBinding) throws DriverControlStationException {
 		try {
 			String id = this.getParameter(CostantiControlStation.PARAMETRO_ID);
 			int idInt = Integer.parseInt(id);
@@ -3731,7 +3777,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			return true;
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -3740,7 +3786,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 	// Controlla i dati della correlazione applicativa della porta delegata
 	public boolean correlazioneApplicativaRispostaCheckData(TipoOperazione tipoOp,boolean portaDelegata,
-			ServiceBinding serviceBinding) throws Exception {
+			ServiceBinding serviceBinding) throws DriverControlStationException {
 		try {
 			String id = this.getParameter(CostantiControlStation.PARAMETRO_ID);
 			int idInt = Integer.parseInt(id);
@@ -3849,7 +3895,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			return true;
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -3858,7 +3904,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 
 	// Controlla i dati del Message-Security
-	public boolean MTOMCheckData(TipoOperazione tipoOp) throws Exception {
+	public boolean MTOMCheckData(TipoOperazione tipoOp) throws DriverControlStationException {
 		try{
 			String mtomRichiesta = this.getParameter(CostantiControlStation.PARAMETRO_MTOM_RICHIESTA);
 			String mtomRisposta = this.getParameter(CostantiControlStation.PARAMETRO_MTOM_RISPOSTA);
@@ -3883,12 +3929,12 @@ public class ConsoleHelper implements IConsoleHelper {
 			return true;
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
 	// Controlla i dati dei parametri MTOM 
-	public boolean MTOMParameterCheckData(TipoOperazione tipoOp, boolean isRisposta, boolean isPortaDelegata) throws Exception {
+	public boolean MTOMParameterCheckData(TipoOperazione tipoOp, boolean isRisposta, boolean isPortaDelegata) throws DriverControlStationException {
 		try {
 			String id = this.getParameter(CostantiControlStation.PARAMETRO_ID);
 			int idInt = Integer.parseInt(id);
@@ -3999,7 +4045,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -4091,11 +4137,11 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 
 	public List<DataElement> addProtocolPropertiesToDatiRegistry(List<DataElement> dati, ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
-			ProtocolProperties protocolProperties) throws Exception{
+			ProtocolProperties protocolProperties) throws DriverControlStationException{
 		return addProtocolPropertiesToDatiRegistry(dati, consoleConfiguration, consoleOperationType, protocolProperties, null, null);
 	}
 	public List<DataElement> addProtocolPropertiesToDatiRegistry(List<DataElement> dati, ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
-			ProtocolProperties protocolProperties, List<ProtocolProperty> listaProtocolPropertiesDaDB ,Properties binaryPropertyChangeInfoProprietario) throws Exception{
+			ProtocolProperties protocolProperties, List<ProtocolProperty> listaProtocolPropertiesDaDB ,Properties binaryPropertyChangeInfoProprietario) throws DriverControlStationException{
 		
 		String titleId = null;
 		String endTitleId = null;
@@ -4112,11 +4158,15 @@ public class ConsoleHelper implements IConsoleHelper {
 				AbstractConsoleItem<?> itemConsole = (AbstractConsoleItem<?>) item;
 				defaultItemValue = itemConsole.getDefaultValue();
 			}
-			ProtocolPropertiesUtils.setDefaultValue(item, property); 
-
-			ProtocolProperty protocolProperty = ProtocolPropertiesUtils.getProtocolPropertyRegistry(item.getId(), listaProtocolPropertiesDaDB); 
-			dati = ProtocolPropertiesUtilities.itemToDataElement(dati,this,item, defaultItemValue,
-					consoleOperationType, binaryPropertyChangeInfoProprietario, protocolProperty, this.getSize());
+			try {
+				ProtocolPropertiesUtils.setDefaultValue(item, property); 
+	
+				ProtocolProperty protocolProperty = ProtocolPropertiesUtils.getProtocolPropertyRegistry(item.getId(), listaProtocolPropertiesDaDB); 
+				dati = ProtocolPropertiesUtilities.itemToDataElement(dati,this,item, defaultItemValue,
+						consoleOperationType, binaryPropertyChangeInfoProprietario, protocolProperty, this.getSize());
+			}catch(Exception e) {
+				throw new DriverControlStationException(e.getMessage(),e);
+			}
 			
 			if(ConsoleItemType.TITLE.equals(item.getType()) && item instanceof TitleConsoleItem) {
 				TitleConsoleItem titleItem = (TitleConsoleItem) item;
@@ -4153,11 +4203,11 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public List<DataElement> addProtocolPropertiesToDatiConfig(List<DataElement> dati, ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
-			ProtocolProperties protocolProperties) throws Exception{
+			ProtocolProperties protocolProperties) throws DriverControlStationException{
 		return addProtocolPropertiesToDatiRegistry(dati, consoleConfiguration, consoleOperationType, protocolProperties, null, null);
 	}
 	public List<DataElement> addProtocolPropertiesToDatiConfig(List<DataElement> dati, ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
-			ProtocolProperties protocolProperties, List<org.openspcoop2.core.config.ProtocolProperty> listaProtocolPropertiesDaDB ,Properties binaryPropertyChangeInfoProprietario) throws Exception{
+			ProtocolProperties protocolProperties, List<org.openspcoop2.core.config.ProtocolProperty> listaProtocolPropertiesDaDB ,Properties binaryPropertyChangeInfoProprietario) throws DriverControlStationException{
 	
 		String titleId = null;
 		String endTitleId = null;
@@ -4174,11 +4224,15 @@ public class ConsoleHelper implements IConsoleHelper {
 				AbstractConsoleItem<?> itemConsole = (AbstractConsoleItem<?>) item;
 				defaultItemValue = itemConsole.getDefaultValue();
 			}
-			ProtocolPropertiesUtils.setDefaultValue(item, property); 
-			
-			org.openspcoop2.core.config.ProtocolProperty protocolProperty = ProtocolPropertiesUtils.getProtocolPropertyConfig(item.getId(), listaProtocolPropertiesDaDB); 
-			dati = ProtocolPropertiesUtilities.itemToDataElement(dati,this,item, defaultItemValue,
-					consoleOperationType, binaryPropertyChangeInfoProprietario, protocolProperty, this.getSize());
+			try {
+				ProtocolPropertiesUtils.setDefaultValue(item, property); 
+				
+				org.openspcoop2.core.config.ProtocolProperty protocolProperty = ProtocolPropertiesUtils.getProtocolPropertyConfig(item.getId(), listaProtocolPropertiesDaDB); 
+				dati = ProtocolPropertiesUtilities.itemToDataElement(dati,this,item, defaultItemValue,
+						consoleOperationType, binaryPropertyChangeInfoProprietario, protocolProperty, this.getSize());
+			}catch(Exception e) {
+				throw new DriverControlStationException(e.getMessage(),e);
+			}
 			
 			if(ConsoleItemType.TITLE.equals(item.getType()) && item instanceof TitleConsoleItem) {
 				TitleConsoleItem titleItem = (TitleConsoleItem) item;
@@ -4216,12 +4270,12 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	
 	public List<DataElement> addProtocolPropertiesToDatiAsHidden(List<DataElement> dati, ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
-			ProtocolProperties protocolProperties) throws Exception{
+			ProtocolProperties protocolProperties) throws DriverControlStationException{
 		return addProtocolPropertiesToDatiAsHidden(dati, consoleConfiguration, consoleOperationType, protocolProperties, null, null);
 	}
 
 	public List<DataElement> addProtocolPropertiesToDatiAsHidden(List<DataElement> dati, ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
-			ProtocolProperties protocolProperties, List<ProtocolProperty> listaProtocolPropertiesDaDB ,Properties binaryPropertyChangeInfoProprietario) throws Exception{
+			ProtocolProperties protocolProperties, List<ProtocolProperty> listaProtocolPropertiesDaDB ,Properties binaryPropertyChangeInfoProprietario) throws DriverControlStationException{
 		for (BaseConsoleItem item : consoleConfiguration.getConsoleItem()) {
 			AbstractProperty<?> property = ProtocolPropertiesUtils.getAbstractPropertyById(protocolProperties, item.getId());
 			// imposto nel default value il valore attuale.
@@ -4231,11 +4285,15 @@ public class ConsoleHelper implements IConsoleHelper {
 				AbstractConsoleItem<?> itemConsole = (AbstractConsoleItem<?>) item;
 				defaultItemValue = itemConsole.getDefaultValue();
 			}
-			ProtocolPropertiesUtils.setDefaultValue(item, property); 
-
-			ProtocolProperty protocolProperty = ProtocolPropertiesUtils.getProtocolPropertyRegistry(item.getId(), listaProtocolPropertiesDaDB); 
-			dati = ProtocolPropertiesUtilities.itemToDataElementAsHidden(dati,item, defaultItemValue,
-					consoleOperationType, binaryPropertyChangeInfoProprietario, protocolProperty, this.getSize());
+			try {
+				ProtocolPropertiesUtils.setDefaultValue(item, property); 
+	
+				ProtocolProperty protocolProperty = ProtocolPropertiesUtils.getProtocolPropertyRegistry(item.getId(), listaProtocolPropertiesDaDB); 
+				dati = ProtocolPropertiesUtilities.itemToDataElementAsHidden(dati,item, defaultItemValue,
+						consoleOperationType, binaryPropertyChangeInfoProprietario, protocolProperty, this.getSize());
+			}catch(Exception e) {
+				throw new DriverControlStationException(e.getMessage(),e);
+			}
 		}
 
 		// Imposto il flag per indicare che ho caricato la configurazione
@@ -4247,16 +4305,6 @@ public class ConsoleHelper implements IConsoleHelper {
 
 		return dati;
 	}
-
-	//	public void impostaDefaultValuesConsoleItems(ConsoleConfiguration consoleConfiguration,
-	//			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
-	//			ProtocolProperties properties) throws ProtocolException {
-	//
-	//		for (int i = 0; i < properties.sizeProperties(); i++) {
-	//			AbstractProperty<?> property = properties.getProperty(i);
-	//			ProtocolPropertiesUtils.setDefaultValue(consoleConfiguration.getConsoleItem(), property);
-	//		}
-	//	}
 
 	public void validaProtocolProperties(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, ProtocolProperties properties) throws ProtocolException{
 		try {
@@ -4535,7 +4583,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return dati;
 	}
 	
-	public boolean ruoloCheckData(TipoOperazione tipoOp, String nome, List<String> ruoli) throws Exception {
+	public boolean ruoloCheckData(TipoOperazione tipoOp, String nome, List<String> ruoli) throws DriverControlStationException {
 		try {
 			
 			if(ruoli!=null && ruoli.contains(nome)){
@@ -4547,11 +4595,11 @@ public class ConsoleHelper implements IConsoleHelper {
 
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public boolean scopeCheckData(TipoOperazione tipoOp, String nome, List<String> scopes) throws Exception {
+	public boolean scopeCheckData(TipoOperazione tipoOp, String nome, List<String> scopes) throws DriverControlStationException {
 		try {
 			
 			if(scopes!=null && scopes.contains(nome)){
@@ -4563,18 +4611,18 @@ public class ConsoleHelper implements IConsoleHelper {
 
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void controlloAccessi(List<DataElement> dati) throws Exception{
+	public void controlloAccessi(List<DataElement> dati) throws DriverControlStationException{
 		DataElement de = new DataElement();
 		de.setType(DataElementType.TITLE);
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI);
 		dati.add(de);
 	}
 	
-	public List<String> convertFromDataElementValue_parametroAutenticazioneList(String autenticazione, TipoAutenticazionePrincipal autenticazionePrincipal) throws Exception{
+	public List<String> convertFromDataElementValue_parametroAutenticazioneList(String autenticazione, TipoAutenticazionePrincipal autenticazionePrincipal) throws DriverControlStationException{
 		List<String> l = null;
 		
 		if(TipoAutenticazione.BASIC.equals(autenticazione)) {
@@ -4781,7 +4829,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			boolean confPers, boolean isSupportatoAutenticazioneSoggetti,boolean isPortaDelegata,
 			String gestioneToken,String gestioneTokenPolicy,String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail,
 			boolean oldAutenticazioneCustom, String urlAutenticazioneCustomProperties, int numAutenticazioneCustomPropertiesList,
-			boolean forceHttps, boolean forceDisableOptional) throws Exception{
+			boolean forceHttps, boolean forceDisableOptional) throws DriverControlStationException{
 		
 		boolean tokenAbilitato = StatoFunzionalita.ABILITATO.getValue().equalsIgnoreCase(gestioneToken) &&
 				gestioneTokenPolicy != null && !gestioneTokenPolicy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO);
@@ -4799,13 +4847,21 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(isPortaDelegata){
 				PortaDelegata pd = (PortaDelegata) oggetto;
 				if(pd!=null && pd.getServizio()!=null && pd.getServizio().getTipo()!=null) {
-					protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(pd.getServizio().getTipo());
+					try {
+						protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(pd.getServizio().getTipo());
+					}catch(Exception e) {
+						throw new DriverControlStationException(e.getMessage(),e);
+					}
 				}
 			}
 			else {
 				PortaApplicativa pa = (PortaApplicativa) oggetto;
 				if(pa!=null && pa.getServizio()!=null && pa.getServizio().getTipo()!=null) {
-					protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(pa.getServizio().getTipo());
+					try {
+						protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(pa.getServizio().getTipo());
+					}catch(Exception e) {
+						throw new DriverControlStationException(e.getMessage(),e);
+					}
 				}
 			}
 		}
@@ -5517,14 +5573,14 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	public void controlloAccessiGestioneToken(List<DataElement> dati, TipoOperazione tipoOperazione, String gestioneToken, String[] gestioneTokenPolicyLabels, String[] gestioneTokenPolicyValues,
 			String gestioneTokenPolicy, String gestioneTokenOpzionale, String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
-			Object oggetto, String protocolloParam ,boolean isPortaDelegata, boolean forceGestioneToken) throws Exception {
+			Object oggetto, String protocolloParam ,boolean isPortaDelegata, boolean forceGestioneToken) throws DriverControlStationException {
 		this.controlloAccessiGestioneToken(dati, tipoOperazione, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues,
 				gestioneTokenPolicy, gestioneTokenOpzionale, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward,
 				oggetto, protocolloParam ,isPortaDelegata, forceGestioneToken, false);
 	}
 	public void controlloAccessiGestioneToken(List<DataElement> dati, TipoOperazione tipoOperazione, String gestioneToken, String[] gestioneTokenPolicyLabels, String[] gestioneTokenPolicyValues,
 			String gestioneTokenPolicy, String gestioneTokenOpzionale, String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
-			Object oggetto, String protocolloParam ,boolean isPortaDelegata, boolean forceGestioneToken, boolean forceMostraSezione) throws Exception {
+			Object oggetto, String protocolloParam ,boolean isPortaDelegata, boolean forceGestioneToken, boolean forceMostraSezione) throws DriverControlStationException {
 		
 		if(oggetto!=null) {
 			// nop
@@ -5579,9 +5635,14 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				if(gestioneTokenPolicy != null && !gestioneTokenPolicy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
 					
-					GenericProperties policySelezionata = this.confCore.getGenericProperties(gestioneTokenPolicy, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN,true);
-					Map<String, Properties> mappaDB = this.confCore.readGestorePolicyTokenPropertiesConfiguration(policySelezionata.getId()); 
-					
+					Map<String, Properties> mappaDB = null;
+					try {
+						GenericProperties policySelezionata = this.confCore.getGenericProperties(gestioneTokenPolicy, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN,true);
+						mappaDB = this.confCore.readGestorePolicyTokenPropertiesConfiguration(policySelezionata.getId()); 
+					}catch(Exception e) {
+						throw new DriverControlStationException(e.getMessage(),e);
+					}
+						
 					de = new DataElement();
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_OPZIONALE);
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_OPZIONALE);
@@ -5607,14 +5668,18 @@ public class ConsoleHelper implements IConsoleHelper {
 					de = new DataElement();
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
-					if(TokenUtilities.isValidazioneEnabled(mappaDB)) {
-						de.setType(DataElementType.SELECT);
-						de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA_CON_WARNING);
-						de.setSelected(gestioneTokenValidazioneInput);
-						de.setPostBack(true);
-					}else {
-						de.setType(DataElementType.HIDDEN);
-						de.setValue(StatoFunzionalita.DISABILITATO.getValue());
+					try {
+						if(TokenUtilities.isValidazioneEnabled(mappaDB)) {
+							de.setType(DataElementType.SELECT);
+							de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA_CON_WARNING);
+							de.setSelected(gestioneTokenValidazioneInput);
+							de.setPostBack(true);
+						}else {
+							de.setType(DataElementType.HIDDEN);
+							de.setValue(StatoFunzionalita.DISABILITATO.getValue());
+						}
+					}catch(Exception e) {
+						throw new DriverControlStationException(e.getMessage(),e);
 					}
 					dati.add(de);
 					
@@ -5622,14 +5687,18 @@ public class ConsoleHelper implements IConsoleHelper {
 					de = new DataElement();
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
-					if(TokenUtilities.isIntrospectionEnabled(mappaDB)) {
-						de.setType(DataElementType.SELECT);
-						de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA_CON_WARNING);
-						de.setSelected(gestioneTokenIntrospection);
-						de.setPostBack(true);
-					}else {
-						de.setType(DataElementType.HIDDEN);
-						de.setValue(StatoFunzionalita.DISABILITATO.getValue());
+					try {
+						if(TokenUtilities.isIntrospectionEnabled(mappaDB)) {
+							de.setType(DataElementType.SELECT);
+							de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA_CON_WARNING);
+							de.setSelected(gestioneTokenIntrospection);
+							de.setPostBack(true);
+						}else {
+							de.setType(DataElementType.HIDDEN);
+							de.setValue(StatoFunzionalita.DISABILITATO.getValue());
+						}
+					}catch(Exception e) {
+						throw new DriverControlStationException(e.getMessage(),e);
 					}
 					dati.add(de);
 					
@@ -5637,14 +5706,18 @@ public class ConsoleHelper implements IConsoleHelper {
 					de = new DataElement();
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
-					if(TokenUtilities.isUserInfoEnabled(mappaDB)) {
-						de.setType(DataElementType.SELECT);
-						de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA_CON_WARNING);
-						de.setSelected(gestioneTokenUserInfo);
-						de.setPostBack(true);
-					}else {
-						de.setType(DataElementType.HIDDEN);
-						de.setValue(StatoFunzionalita.DISABILITATO.getValue());
+					try {
+						if(TokenUtilities.isUserInfoEnabled(mappaDB)) {
+							de.setType(DataElementType.SELECT);
+							de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA_CON_WARNING);
+							de.setSelected(gestioneTokenUserInfo);
+							de.setPostBack(true);
+						}else {
+							de.setType(DataElementType.HIDDEN);
+							de.setValue(StatoFunzionalita.DISABILITATO.getValue());
+						}
+					}catch(Exception e) {
+						throw new DriverControlStationException(e.getMessage(),e);
 					}
 					dati.add(de);
 					
@@ -5652,14 +5725,18 @@ public class ConsoleHelper implements IConsoleHelper {
 					de = new DataElement();
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
-					if(TokenUtilities.isTokenForwardEnabled(mappaDB)) {
-						de.setType(DataElementType.SELECT);
-						de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA);
-						de.setSelected(gestioneTokenForward);
-						de.setPostBack(true);
-					}else {
-						de.setType(DataElementType.HIDDEN);
-						de.setValue(StatoFunzionalita.DISABILITATO.getValue());
+					try {
+						if(TokenUtilities.isTokenForwardEnabled(mappaDB)) {
+							de.setType(DataElementType.SELECT);
+							de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA);
+							de.setSelected(gestioneTokenForward);
+							de.setPostBack(true);
+						}else {
+							de.setType(DataElementType.HIDDEN);
+							de.setValue(StatoFunzionalita.DISABILITATO.getValue());
+						}
+					}catch(Exception e) {
+						throw new DriverControlStationException(e.getMessage(),e);
 					}
 					dati.add(de);
 				}
@@ -5688,8 +5765,13 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				if(gestioneTokenPolicy != null && !gestioneTokenPolicy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
 					
-					GenericProperties policySelezionata = this.confCore.getGenericProperties(gestioneTokenPolicy, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN,true);
-					Map<String, Properties> mappaDB = this.confCore.readGestorePolicyTokenPropertiesConfiguration(policySelezionata.getId()); 
+					Map<String, Properties> mappaDB = null;
+					try {
+						GenericProperties policySelezionata = this.confCore.getGenericProperties(gestioneTokenPolicy, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN,true);
+						mappaDB = this.confCore.readGestorePolicyTokenPropertiesConfiguration(policySelezionata.getId()); 
+					}catch(Exception e) {
+						throw new DriverControlStationException(e.getMessage(),e);
+					}
 					
 					de = new DataElement();
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_OPZIONALE);
@@ -5710,10 +5792,14 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
 					de.setType(DataElementType.HIDDEN);
-					if(TokenUtilities.isValidazioneEnabled(mappaDB)) {
-						de.setValue(gestioneTokenValidazioneInput);
-					}else {
-						de.setValue(StatoFunzionalita.DISABILITATO.getValue());
+					try {
+						if(TokenUtilities.isValidazioneEnabled(mappaDB)) {
+							de.setValue(gestioneTokenValidazioneInput);
+						}else {
+							de.setValue(StatoFunzionalita.DISABILITATO.getValue());
+						}
+					}catch(Exception e) {
+						throw new DriverControlStationException(e.getMessage(),e);
 					}
 					dati.add(de);
 					
@@ -5722,10 +5808,14 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
 					de.setType(DataElementType.HIDDEN);
-					if(TokenUtilities.isIntrospectionEnabled(mappaDB)) {
-						de.setValue(gestioneTokenIntrospection);
-					}else {
-						de.setValue(StatoFunzionalita.DISABILITATO.getValue());
+					try {
+						if(TokenUtilities.isIntrospectionEnabled(mappaDB)) {
+							de.setValue(gestioneTokenIntrospection);
+						}else {
+							de.setValue(StatoFunzionalita.DISABILITATO.getValue());
+						}
+					}catch(Exception e) {
+						throw new DriverControlStationException(e.getMessage(),e);
 					}
 					dati.add(de);
 					
@@ -5734,10 +5824,14 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
 					de.setType(DataElementType.HIDDEN);
-					if(TokenUtilities.isUserInfoEnabled(mappaDB)) {
-						de.setValue(gestioneTokenUserInfo);
-					}else {
-						de.setValue(StatoFunzionalita.DISABILITATO.getValue());
+					try {
+						if(TokenUtilities.isUserInfoEnabled(mappaDB)) {
+							de.setValue(gestioneTokenUserInfo);
+						}else {
+							de.setValue(StatoFunzionalita.DISABILITATO.getValue());
+						}
+					}catch(Exception e) {
+						throw new DriverControlStationException(e.getMessage(),e);
 					}
 					dati.add(de);
 					
@@ -5746,10 +5840,14 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
 					de.setType(DataElementType.HIDDEN);
-					if(TokenUtilities.isTokenForwardEnabled(mappaDB)) {
-						de.setValue(gestioneTokenForward);
-					}else {
-						de.setValue(StatoFunzionalita.DISABILITATO.getValue());
+					try {
+						if(TokenUtilities.isTokenForwardEnabled(mappaDB)) {
+							de.setValue(gestioneTokenForward);
+						}else {
+							de.setValue(StatoFunzionalita.DISABILITATO.getValue());
+						}
+					}catch(Exception e) {
+						throw new DriverControlStationException(e.getMessage(),e);
 					}
 					dati.add(de);
 				}
@@ -5769,7 +5867,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String urlAutorizzazioneCustomPropertiesList, int numAutorizzazioneCustomPropertiesList,
 			String identificazioneAttributiStato, String[] attributeAuthorityLabels, String[] attributeAuthorityValues, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi,
 			String autorizzazioneAutenticatiToken, String urlAutorizzazioneAutenticatiToken, int numAutenticatiToken,
-			String autorizzazioneRuoliToken,  String urlAutorizzazioneRuoliToken, int numRuoliToken, String autorizzazioneRuoliTipologiaToken, String autorizzazioneRuoliMatchToken) throws Exception{
+			String autorizzazioneRuoliToken,  String urlAutorizzazioneRuoliToken, int numRuoliToken, String autorizzazioneRuoliTipologiaToken, String autorizzazioneRuoliMatchToken) throws DriverControlStationException{
 		this.controlloAccessiAutorizzazione(dati, tipoOperazione, servletChiamante, oggetto, protocolloParam,
 				autenticazione, autenticazioneCustom,
 				autorizzazione, autorizzazioneCustom, 
@@ -5798,7 +5896,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String identificazioneAttributiStato, String[] attributeAuthorityLabels, String[] attributeAuthorityValues, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi,
 			String autorizzazioneAutenticatiToken, String urlAutorizzazioneAutenticatiToken, int numAutenticatiToken, 
 			String autorizzazioneRuoliToken,  String urlAutorizzazioneRuoliToken, int numRuoliToken, String autorizzazioneRuoliTipologiaToken, String autorizzazioneRuoliMatchToken
-			) throws Exception{
+			) throws DriverControlStationException{
 		
 		boolean allHidden = false;
 		if(!this.isModalitaCompleta() && TipoOperazione.ADD.equals(tipoOperazione)) {
@@ -5810,13 +5908,21 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(isPortaDelegata){
 				PortaDelegata pd = (PortaDelegata) oggetto;
 				if(pd!=null && pd.getServizio()!=null && pd.getServizio().getTipo()!=null) {
-					protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(pd.getServizio().getTipo());
+					try {
+						protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(pd.getServizio().getTipo());
+					}catch(Exception e) {
+						throw new DriverControlStationException(e.getMessage(),e);
+					}
 				}
 			}
 			else {
 				PortaApplicativa pa = (PortaApplicativa) oggetto;
 				if(pa!=null && pa.getServizio()!=null && pa.getServizio().getTipo()!=null) {
-					protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(pa.getServizio().getTipo());
+					try {
+						protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(pa.getServizio().getTipo());
+					}catch(Exception e) {
+						throw new DriverControlStationException(e.getMessage(),e);
+					}
 				}
 			}
 		}
@@ -5836,18 +5942,27 @@ public class ConsoleHelper implements IConsoleHelper {
 					oldAutenticazione = pa.getAutenticazione();
 					if(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI.equals(servletChiamante)) {
 						// Altrimenti arriva una porta applicativa con il solo tipo impostato
-						idAps = IDServizioFactory.getInstance().getIDServizioFromValues(pa.getServizio().getTipo(), pa.getServizio().getNome(),
-								pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(),
-								pa.getServizio().getVersione());
+						try {
+							idAps = IDServizioFactory.getInstance().getIDServizioFromValues(pa.getServizio().getTipo(), pa.getServizio().getNome(),
+									pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(),
+									pa.getServizio().getVersione());
+						}catch(Exception e) {
+							throw new DriverControlStationException(e.getMessage(),e);
+						}
 					}
 				}
 			}
 		}
 				
 		
-		boolean mostraSezione = !tipoOperazione.equals(TipoOperazione.ADD) || 
-				(isPortaDelegata ? this.core.isEnabledAutorizzazione_generazioneAutomaticaPorteDelegate() : 
-					this.core.isEnabledAutorizzazione_generazioneAutomaticaPorteApplicative(protocollo==null ? true : this.soggettiCore.isSupportatoAutenticazioneSoggetti(protocollo)));
+		boolean mostraSezione = false;
+		try {
+			mostraSezione = !tipoOperazione.equals(TipoOperazione.ADD) || 
+					(isPortaDelegata ? this.core.isEnabledAutorizzazione_generazioneAutomaticaPorteDelegate() : 
+						this.core.isEnabledAutorizzazione_generazioneAutomaticaPorteApplicative(protocollo==null ? true : this.soggettiCore.isSupportatoAutenticazioneSoggetti(protocollo)));
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 		
 		boolean tokenAbilitato = StatoFunzionalita.ABILITATO.getValue().equalsIgnoreCase(gestioneToken) &&
 				gestioneTokenPolicy != null && !gestioneTokenPolicy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO);
@@ -5855,22 +5970,31 @@ public class ConsoleHelper implements IConsoleHelper {
 		boolean profiloModi = this.isProfiloModIPA(protocollo);
 		
 		@SuppressWarnings("unused")
-		boolean isSupportatoAutenticazioneApplicativiEsterni = this.saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocollo);
+		boolean isSupportatoAutenticazioneApplicativiEsterni = false;
+		try{
+			isSupportatoAutenticazioneApplicativiEsterni = this.saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocollo);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 		
 		boolean modiSicurezzaMessaggio = false;
 		if(!isPortaDelegata && profiloModi && !allHidden && PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI.equals(servletChiamante) && idAps!=null) {
-			AccordoServizioParteSpecifica asps = this.apsCore.getServizio(idAps);
-			idAps.setPortType(asps.getPortType());
-			idAps.setUriAccordoServizioParteComune(asps.getAccordoServizioParteComune());
-			
-			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
-			IConsoleDynamicConfiguration consoleDynamicConfiguration = protocolFactory.createDynamicConfigurationConsole();
-			IRegistryReader registryReader = this.apcCore.getRegistryReader(protocolFactory); 
-			IConfigIntegrationReader configRegistryReader = this.apcCore.getConfigIntegrationReader(protocolFactory);
-			ConsoleConfiguration consoleConfiguration = consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteSpecifica(ConsoleOperationType.CHANGE, this, 
-					registryReader, configRegistryReader, idAps );
-			if(consoleConfiguration!=null && consoleConfiguration.getConsoleItem()!=null && !consoleConfiguration.getConsoleItem().isEmpty()) {
-				modiSicurezzaMessaggio = true;
+			try {
+				AccordoServizioParteSpecifica asps = this.apsCore.getServizio(idAps);
+				idAps.setPortType(asps.getPortType());
+				idAps.setUriAccordoServizioParteComune(asps.getAccordoServizioParteComune());
+				
+				IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+				IConsoleDynamicConfiguration consoleDynamicConfiguration = protocolFactory.createDynamicConfigurationConsole();
+				IRegistryReader registryReader = this.apcCore.getRegistryReader(protocolFactory); 
+				IConfigIntegrationReader configRegistryReader = this.apcCore.getConfigIntegrationReader(protocolFactory);
+				ConsoleConfiguration consoleConfiguration = consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteSpecifica(ConsoleOperationType.CHANGE, this, 
+						registryReader, configRegistryReader, idAps );
+				if(consoleConfiguration!=null && consoleConfiguration.getConsoleItem()!=null && !consoleConfiguration.getConsoleItem().isEmpty()) {
+					modiSicurezzaMessaggio = true;
+				}
+			}catch(Exception e) {
+				throw new DriverControlStationException(e.getMessage(),e);
 			}
 		}
 		
@@ -5896,7 +6020,6 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setType(DataElementType.SELECT);
 					String [] valoriAbilitazione = {StatoFunzionalita.DISABILITATO.getValue(), StatoFunzionalita.ABILITATO.getValue()};
 					de.setValues(valoriAbilitazione);
-					//de.setLabels(valoriAbilitazione);
 					de.setPostBack(true);
 					de.setSelected(identificazioneAttributiStato);
 					de.setValoreDefaultSelect(StatoFunzionalita.DISABILITATO.getValue());
@@ -5950,14 +6073,9 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(!allHidden) {
 				addTitle = true;
 				DataElement de = new DataElement();
-				de.setType(DataElementType.TITLE); //SUBTITLE);
+				de.setType(DataElementType.TITLE); 
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TITLE);
-//				if(profiloModi && !isPortaDelegata) {
-//					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CANALE);
-//				}
-//				else {
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_DIFFERENTE_DA_TRASPORTO_E_TOKEN);
-				//}
 				de.setStatoAperturaSezioni(STATO_APERTURA_SEZIONI.APERTO);
 				dati.add(de);
 			}
@@ -6011,23 +6129,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM, 
 					autorizzazioneCustom, autorizzazioneCustomHidden, dati,
 					false); 
-			
-//			de = new DataElement();
-//			de.setLabel("");
-//			if(allHidden) {
-//				de.setType(DataElementType.HIDDEN);
-//			}
-//			else if (autorizzazione == null ||
-//					!autorizzazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM)) {
-//				de.setType(DataElementType.HIDDEN);
-//			} else {
-//				de.setType(DataElementType.TEXT_EDIT);
-//				de.setRequired(true); 
-//			}
-//			de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM);
-//			de.setValue(autorizzazioneCustom);
-//			dati.add(de);
-			
+						
 			boolean old_autorizzazione_autenticazione = false;
 			boolean old_autorizzazione_ruoli = false;
 			boolean old_autorizzazione_token_autenticazione = false;
@@ -6060,9 +6162,13 @@ public class ConsoleHelper implements IConsoleHelper {
 					old_autorizzazione_scope = pd.getScope() != null && pd.getScope().getStato().equals(StatoFunzionalita.ABILITATO);
 					old_xacmlPolicy = StringUtils.isNotEmpty(pd.getXacmlPolicy());
 					idPorta = pd.getId();
-					idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pd.getServizio().getTipo(), pd.getServizio().getNome(), 
-							pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome(), 
-							pd.getServizio().getVersione());
+					try {
+						idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pd.getServizio().getTipo(), pd.getServizio().getNome(), 
+								pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome(), 
+								pd.getServizio().getVersione());
+					}catch(Exception e) {
+						throw new DriverControlStationException(e.getMessage(),e);
+					}
 					old_autorizzazione_custom = pd.getAutorizzazione() != null && !TipoAutorizzazione.getAllValues().contains(pd.getAutorizzazione());
 				}
 				else {
@@ -6075,9 +6181,13 @@ public class ConsoleHelper implements IConsoleHelper {
 					old_autorizzazione_scope = pa.getScope() != null && pa.getScope().getStato().equals(StatoFunzionalita.ABILITATO);
 					old_xacmlPolicy = StringUtils.isNotEmpty(pa.getXacmlPolicy());
 					idPorta = pa.getId();
-					idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pa.getServizio().getTipo(), pa.getServizio().getNome(), 
-							pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(), 
-							pa.getServizio().getVersione());
+					try {
+						idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pa.getServizio().getTipo(), pa.getServizio().getNome(), 
+								pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(), 
+								pa.getServizio().getVersione());
+					}catch(Exception e) {
+						throw new DriverControlStationException(e.getMessage(),e);
+					}
 					old_autorizzazione_custom = pa.getAutorizzazione() != null && !TipoAutorizzazione.getAllValues().contains(pa.getAutorizzazione());
 				}
 			}
@@ -6103,7 +6213,12 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione)==false){
 			
 				boolean autorizzazione_autenticazione =  false;
-				boolean isSupportatoAutorizzazioneRichiedentiSenzaAutenticazione = this.soggettiCore.isSupportatoAutorizzazioneRichiedenteSenzaAutenticazioneErogazione(protocollo);
+				boolean isSupportatoAutorizzazioneRichiedentiSenzaAutenticazione = false;
+				try {
+					isSupportatoAutorizzazioneRichiedentiSenzaAutenticazione = this.soggettiCore.isSupportatoAutorizzazioneRichiedenteSenzaAutenticazioneErogazione(protocollo);
+				}catch(Exception e) {
+					throw new DriverControlStationException(e.getMessage(),e);
+				}
 				
 							
 				if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione)){
@@ -6210,7 +6325,13 @@ public class ConsoleHelper implements IConsoleHelper {
 							dati.add(de);
 						}
 						
-						if(!isPortaDelegata && this.saCore.isSupportatoAutenticazioneApplicativiErogazione(protocollo) 
+						boolean supportatoAutenticazioneApplicativiErogazione = false;
+						try {
+							supportatoAutenticazioneApplicativiErogazione = this.saCore.isSupportatoAutenticazioneApplicativiErogazione(protocollo);
+						}catch(Exception e) {
+							throw new DriverControlStationException(e.getMessage(),e);
+						}
+						if(!isPortaDelegata &&  supportatoAutenticazioneApplicativiErogazione
 								&& isSupportatoAutenticazione // il link degli applicativi sulla pa deve essere visualizzato SOLO se è abilitata l'autenticazione
 								&& !profiloModi // e non siamo nel profilo ModI
 								&&
@@ -6411,8 +6532,12 @@ public class ConsoleHelper implements IConsoleHelper {
 							else if(RuoloTipologia.ESTERNO.equals(autorizzazioneRuoliTipologia) ){
 								filtroRuoli.setTipologia(RuoloTipologia.ESTERNO);
 							}
-							this.addRuoliToDati(tipoOperazione, dati, false, filtroRuoli, ruolo, null, true, false,
-									AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_RUOLO, addTitoloSezione, null, false);
+							try {
+								this.addRuoliToDati(tipoOperazione, dati, false, filtroRuoli, ruolo, null, true, false,
+										AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_RUOLO, addTitoloSezione, null, false);
+							}catch(Exception e) {
+								throw new DriverControlStationException(e.getMessage(),e);
+							}
 						}
 					}
 				}
@@ -6651,9 +6776,13 @@ public class ConsoleHelper implements IConsoleHelper {
 						
 						org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding = org.openspcoop2.core.registry.constants.ServiceBinding.REST;
 						if(idServizio!=null) {
-							AccordoServizioParteSpecifica asps = this.apsCore.getServizio(idServizio,false);
-							AccordoServizioParteComuneSintetico aspc = this.apcCore.getAccordoServizioSintetico(this.idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
-							serviceBinding = aspc.getServiceBinding();
+							try {
+								AccordoServizioParteSpecifica asps = this.apsCore.getServizio(idServizio,false);
+								AccordoServizioParteComuneSintetico aspc = this.apcCore.getAccordoServizioSintetico(this.idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
+								serviceBinding = aspc.getServiceBinding();
+							}catch(Exception e) {
+								throw new DriverControlStationException(e.getMessage(),e);
+							}
 						}
 						int sizeAA = 0;
 						if(attributeAuthoritySelezionate!=null) {
@@ -6757,16 +6886,13 @@ public class ConsoleHelper implements IConsoleHelper {
 								else{
 									filtroScope.setContesto(ScopeContesto.PORTA_APPLICATIVA);
 								}
-								// tipologia non impostata
-							//	filtroScope.setTipologia(RuoloTipologia.QUALSIASI);
-		//						if(RuoloTipologia.INTERNO.equals(autorizzazioneRuoliTipologia) ){
-		//							filtroScope.setTipologia(RuoloTipologia.INTERNO);
-		//						}
-		//						else if(RuoloTipologia.ESTERNO.equals(autorizzazioneRuoliTipologia) ){
-		//							filtroScope.setTipologia(RuoloTipologia.ESTERNO);
-		//						}
-								this.addScopeToDati(tipoOperazione, dati, false, filtroScope, scope, null, true, false,
+
+								try {
+									this.addScopeToDati(tipoOperazione, dati, false, filtroScope, scope, null, true, false,
 										AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_SCOPE, addTitoloSezione);
+								}catch(Exception e) {
+									throw new DriverControlStationException(e.getMessage(),e);
+								}
 							}
 						}
 					}
@@ -6793,20 +6919,28 @@ public class ConsoleHelper implements IConsoleHelper {
 	public void controlloAccessiAutorizzazioneContenuti(List<DataElement> dati, TipoOperazione tipoOperazione, boolean isPortaDelegata, Object oggetto, String protocolloParam,
 			String autorizzazioneContenutiStato, String autorizzazioneContenuti, String autorizzazioneContenutiProperties, ServiceBinding serviceBinding,
 			boolean old_autorizzazione_contenuti_custom, String urlAutorizzazioneContenutiCustomPropertiesList, int numAutorizzazioneContenutiCustomPropertiesList,
-			boolean confPers) throws Exception{
+			boolean confPers) throws DriverControlStationException{
 		
 		String protocollo = protocolloParam;
 		if((protocollo==null || "".equals(protocollo)) && oggetto!=null){
 			if(isPortaDelegata){
 				PortaDelegata pd = (PortaDelegata) oggetto;
 				if(pd!=null && pd.getServizio()!=null && pd.getServizio().getTipo()!=null) {
-					protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(pd.getServizio().getTipo());
+					try {
+						protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(pd.getServizio().getTipo());
+					}catch(Exception e) {
+						throw new DriverControlStationException(e.getMessage(),e);
+					}
 				}
 			}
 			else {
 				PortaApplicativa pa = (PortaApplicativa) oggetto;
 				if(pa!=null && pa.getServizio()!=null && pa.getServizio().getTipo()!=null) {
-					protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(pa.getServizio().getTipo());
+					try {
+						protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(pa.getServizio().getTipo());
+					}catch(Exception e) {
+						throw new DriverControlStationException(e.getMessage(),e);
+					}
 				}
 			}
 		}
@@ -6924,7 +7058,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String autorizzazioneScope, String autorizzazioneScopeMatch, BinaryParameter allegatoXacmlPolicy,
 			String autorizzazioneContenutiStato, String autorizzazioneContenuto, String autorizzazioneContenutiProperties,
 			String protocollo,
-			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws Exception{
+			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws DriverControlStationException{
 		try {
 			
 			if(TipoAutenticazione.PRINCIPAL.equals(autenticazione) &&  autenticazionePrincipal!=null) {
@@ -8201,7 +8335,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -8547,26 +8681,31 @@ public class ConsoleHelper implements IConsoleHelper {
 		return stato;
 	}
 	
-	public String getStatoOpzioniAvanzatePortaDelegataDefault(PortaDelegata pdAssociata) throws Exception {
+	public String getStatoOpzioniAvanzatePortaDelegataDefault(PortaDelegata pdAssociata) throws DriverControlStationException {
 		
 		if(pdAssociata==null) {
-			throw new DriverConfigurazioneException("Param pdAssociata is null");
+			throw new DriverControlStationException("Param pdAssociata is null");
 		}
 		
 		return _getStatoOpzioniAvanzatePortaApplicativaDefault(pdAssociata.getOptions());
 	}
-	public String getStatoOpzioniAvanzatePortaApplicativaDefault(PortaApplicativa paAssociata) throws Exception {
+	public String getStatoOpzioniAvanzatePortaApplicativaDefault(PortaApplicativa paAssociata) throws DriverControlStationException {
 		
 		if(paAssociata==null) {
-			throw new DriverConfigurazioneException("Param paAssociata is null");
+			throw new DriverControlStationException("Param paAssociata is null");
 		}
 		
 		return _getStatoOpzioniAvanzatePortaApplicativaDefault(paAssociata.getOptions());
 	}
-	private String _getStatoOpzioniAvanzatePortaApplicativaDefault(String options) throws Exception {
+	private String _getStatoOpzioniAvanzatePortaApplicativaDefault(String options) throws DriverControlStationException {
 		String stato = null;
 		
-		Map<String, List<String>> props = PropertiesSerializator.convertoFromDBColumnValue(options);
+		Map<String, List<String>> props = null;
+		try {
+			props = PropertiesSerializator.convertoFromDBColumnValue(options);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 		if(props==null || props.size()<=0) {
 			stato = StatoFunzionalita.DISABILITATO.getValue();
 		}
@@ -10194,17 +10333,22 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	
-	public void setStatoOpzioniAvanzatePortaDelegataDefault(DataElement de, String options) throws Exception {
+	public void setStatoOpzioniAvanzatePortaDelegataDefault(DataElement de, String options) throws DriverControlStationException {
 		this._setStatoOpzioniAvanzatePortaDefault(de, options);
 	}
-	public void setStatoOpzioniAvanzatePortaApplicativaDefault(DataElement de, String options) throws Exception {
+	public void setStatoOpzioniAvanzatePortaApplicativaDefault(DataElement de, String options) throws DriverControlStationException {
 		this._setStatoOpzioniAvanzatePortaDefault(de, options);
 	}
-	private void _setStatoOpzioniAvanzatePortaDefault(DataElement de, String options) throws Exception {
+	private void _setStatoOpzioniAvanzatePortaDefault(DataElement de, String options) throws DriverControlStationException {
 		
 		de.setType(DataElementType.CHECKBOX);
 		
-		Map<String, List<String>> props = PropertiesSerializator.convertoFromDBColumnValue(options);
+		Map<String, List<String>> props = null;
+		try {
+			props = PropertiesSerializator.convertoFromDBColumnValue(options);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 		StringBuilder bf = new StringBuilder();
 		StringBuilder bfTooltip = new StringBuilder();
 		if(props!=null && props.size()>0) {
@@ -10546,7 +10690,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	public void setStatoTracciamento(DataElement de, 
 			CorrelazioneApplicativa correlazioneApplicativa,
 			CorrelazioneApplicativaRisposta correlazioneApplicativaRisposta,
-			PortaTracciamento tracciamentoConfig, Configurazione configurazioneGenerale) throws Exception {
+			PortaTracciamento tracciamentoConfig, Configurazione configurazioneGenerale) throws DriverControlStationException {
 		
 		de.setType(DataElementType.MULTI_SELECT);
 				
@@ -11276,15 +11420,15 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	
-	public DataElement getServiceBindingDataElement(ServiceBinding serviceBinding) throws Exception{
+	public DataElement getServiceBindingDataElement(ServiceBinding serviceBinding) throws DriverControlStationException{
 		return getServiceBindingDataElement(null, false, serviceBinding, true);
 	}
 	
-	public DataElement getServiceBindingDataElement(IProtocolFactory<?> protocolFactory, boolean used, ServiceBinding serviceBinding) throws Exception{
+	public DataElement getServiceBindingDataElement(IProtocolFactory<?> protocolFactory, boolean used, ServiceBinding serviceBinding) throws DriverControlStationException{
 		return getServiceBindingDataElement(protocolFactory, used, serviceBinding, false);
 	}
 	
-	public DataElement getServiceBindingDataElement(IProtocolFactory<?> protocolFactory, boolean used, ServiceBinding serviceBinding, boolean forceHidden) throws Exception{
+	public DataElement getServiceBindingDataElement(IProtocolFactory<?> protocolFactory, boolean used, ServiceBinding serviceBinding, boolean forceHidden) throws DriverControlStationException{
 		DataElement de = null;
 		if(!forceHidden) {
 			try {
@@ -11330,7 +11474,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setSize(this.getSize());
 			} catch (Exception e) {
 				this.logError("Exception: " + e.getMessage(), e);
-				throw new Exception(e);
+				throw new DriverControlStationException(e);
 			}
 		} else {
 			de = new DataElement();
@@ -11341,11 +11485,11 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		return de;
 	}
-	public DataElement getMessageTypeDataElement(String parametroMessageType, IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding,MessageType value) throws Exception{
+	public DataElement getMessageTypeDataElement(String parametroMessageType, IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding,MessageType value) throws DriverControlStationException{
 		return this.getMessageTypeDataElement(parametroMessageType, protocolFactory, serviceBinding, value, this.isModalitaStandard()); // per defaut viene visualizzato solo se siamo in interfaccia avanzata
 	}
 	
-	public DataElement getMessageTypeDataElement(String parametroMessageType, IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding,MessageType value, boolean hidden) throws Exception{
+	public DataElement getMessageTypeDataElement(String parametroMessageType, IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding,MessageType value, boolean hidden) throws DriverControlStationException{
 		DataElement de = null;
 		try {
 			List<MessageType> messageTypeList = this.core.getMessageTypeList(protocolFactory, serviceBinding);
@@ -11403,12 +11547,12 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setSize(this.getSize());
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 		return de;
 	}
 	
-	public DataElement getInterfaceTypeDataElement(TipoOperazione tipoOperazione, IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding,org.openspcoop2.protocol.manifest.constants.InterfaceType value) throws Exception{
+	public DataElement getInterfaceTypeDataElement(TipoOperazione tipoOperazione, IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding,org.openspcoop2.protocol.manifest.constants.InterfaceType value) throws DriverControlStationException{
 		DataElement de = null;
 		try {
 			List<org.openspcoop2.protocol.manifest.constants.InterfaceType> interfaceTypeList = this.core.getInterfaceTypeList(protocolFactory, serviceBinding);
@@ -11471,12 +11615,12 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setSize(this.getSize());
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 		return de;
 	}
 	
-	public boolean porteAppAzioneCheckData(TipoOperazione add, List<String> azioniOccupate, List<MappingErogazionePortaApplicativa> list) throws Exception {
+	public boolean porteAppAzioneCheckData(TipoOperazione add, List<String> azioniOccupate, List<MappingErogazionePortaApplicativa> list) throws DriverControlStationException {
 		String[] azionis = this.getParameterValues(CostantiControlStation.PARAMETRO_AZIONI);
 		
 		if(azionis == null || azionis.length == 0) {
@@ -11498,7 +11642,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 	
-	public boolean porteDelAzioneCheckData(TipoOperazione add, List<String> azioniOccupate, List<MappingFruizionePortaDelegata> list) throws Exception {
+	public boolean porteDelAzioneCheckData(TipoOperazione add, List<String> azioniOccupate, List<MappingFruizionePortaDelegata> list) throws DriverControlStationException {
 		String[] azionis = this.getParameterValues(CostantiControlStation.PARAMETRO_AZIONI);
 		
 		if(azionis == null || azionis.length == 0) {
@@ -11578,7 +11722,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	public void preparePorteAzioneList(ISearch ricerca,
 			List<String> listaAzioniParamDaPaginare, String idPorta, Integer parentConfigurazione, List<Parameter> lstParametriBreadcrumbs, 
 			String nomePorta, String objectName, List<Parameter> listaParametriSessione,
-			String labelPerPorta, ServiceBinding serviceBinding, AccordoServizioParteComuneSintetico aspc) throws Exception {
+			String labelPerPorta, ServiceBinding serviceBinding, AccordoServizioParteComuneSintetico aspc) throws DriverControlStationException {
 		try {
 			ServletUtils.addListElementIntoSession(this.request, this.session, objectName,listaParametriSessione);
 
@@ -11640,7 +11784,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						}
 						
 						if(risorsa==null) {
-							throw new Exception("Risorsa con id '"+idRisorsa+"' non esistente ?");
+							throw new DriverControlStationException("Risorsa con id '"+idRisorsa+"' non esistente ?");
 						}
 						
 						// verifico path
@@ -11778,7 +11922,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -11850,7 +11994,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	
-	public void addFilterServiceBinding(String serviceBinding, boolean postBack, boolean showAPISuffix) throws Exception{
+	public void addFilterServiceBinding(String serviceBinding, boolean postBack, boolean showAPISuffix) throws DriverControlStationException{
 		try {
 			ServiceBinding[] serviceBindings = ServiceBinding.values();
 			
@@ -11887,11 +12031,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterStatoAccordo(String statoAccordo, boolean postBack) throws Exception{
+	public void addFilterStatoAccordo(String statoAccordo, boolean postBack) throws DriverControlStationException{
 		try {
 			String [] stati = StatiAccordo.toArray();
 			String [] statiLabel = StatiAccordo.toLabel();
@@ -11912,11 +12056,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterHttpMethod(String httpMethod, boolean postBack) throws Exception{
+	public void addFilterHttpMethod(String httpMethod, boolean postBack) throws DriverControlStationException{
 		try {
 			String [] metodi = org.openspcoop2.core.registry.constants.HttpMethod.toArray();
 			String [] metodiLabel = metodi;
@@ -11937,11 +12081,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterRuoloTipologia(String ruoloTipologia, boolean postBack) throws Exception{
+	public void addFilterRuoloTipologia(String ruoloTipologia, boolean postBack) throws DriverControlStationException{
 		try {
 			String [] metodi = new String[2];
 			metodi[0] = RuoloTipologia.INTERNO.getValue();
@@ -11966,11 +12110,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterRuoloContesto(String ruoloContesto, boolean postBack) throws Exception{
+	public void addFilterRuoloContesto(String ruoloContesto, boolean postBack) throws DriverControlStationException{
 		try {
 			String [] metodi = new String[2];
 			metodi[0] = RuoloContesto.PORTA_APPLICATIVA.getValue();
@@ -11995,11 +12139,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterScopeTipologia(String scopeTipologia, boolean postBack) throws Exception{
+	public void addFilterScopeTipologia(String scopeTipologia, boolean postBack) throws DriverControlStationException{
 		try {
 			String [] metodi = new String[2];
 			metodi[0] = "interno"; //RuoloTipologia.INTERNO.getValue();
@@ -12024,11 +12168,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterScopeContesto(String scopeContesto, boolean postBack) throws Exception{
+	public void addFilterScopeContesto(String scopeContesto, boolean postBack) throws DriverControlStationException{
 		try {
 			String [] metodi = new String[2];
 			metodi[0] = ScopeContesto.PORTA_APPLICATIVA.getValue();
@@ -12053,11 +12197,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterDominio(String dominio, boolean postBack) throws Exception{
+	public void addFilterDominio(String dominio, boolean postBack) throws DriverControlStationException{
 		try {
 			
 			String [] sdValues = SoggettiCostanti.getSoggettiDominiValue();
@@ -12077,12 +12221,12 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 
 	}
 	
-	public void addFilterRuolo(String ruolo, boolean postBack) throws Exception{
+	public void addFilterRuolo(String ruolo, boolean postBack) throws DriverControlStationException{
 		try {
 			
 			FiltroRicercaRuoli filtroRuoli = new FiltroRicercaRuoli();
@@ -12108,11 +12252,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 		
-	public void addFilterTipoPolicy(String tipoPolicy, boolean postBack) throws Exception{
+	public void addFilterTipoPolicy(String tipoPolicy, boolean postBack) throws DriverControlStationException{
 		try {
 
 			String selectedValue = tipoPolicy != null ? tipoPolicy : CostantiControlStation.DEFAULT_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO;
@@ -12125,11 +12269,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterGruppo(String filterProtocollo, String gruppo, boolean postBack) throws Exception{
+	public void addFilterGruppo(String filterProtocollo, String gruppo, boolean postBack) throws DriverControlStationException{
 		try {
 			
 			boolean isFilterProtocollo = filterProtocollo!=null && 
@@ -12164,11 +12308,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterApi(String filterProtocollo, String filterTipoAccordo, String gruppo, String api, boolean postBack) throws Exception{
+	public void addFilterApi(String filterProtocollo, String filterTipoAccordo, String gruppo, String api, boolean postBack) throws DriverControlStationException{
 		try {
 			
 			boolean isFilterProtocollo = filterProtocollo!=null && 
@@ -12221,11 +12365,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterCanale(CanaliConfigurazione canali, String canale, boolean postBack) throws Exception{
+	public void addFilterCanale(CanaliConfigurazione canali, String canale, boolean postBack) throws DriverControlStationException{
 		try {
 			
 			int length = 1;
@@ -12252,17 +12396,17 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterApiContesto(String apiContesto, boolean postBack) throws Exception{
+	public void addFilterApiContesto(String apiContesto, boolean postBack) throws DriverControlStationException{
 		this._addFilterApiContesto(false, false, false, apiContesto, postBack);
 	}
-	public void addFilterApiContestoRuoli(String apiContesto, boolean postBack) throws Exception{
+	public void addFilterApiContestoRuoli(String apiContesto, boolean postBack) throws DriverControlStationException{
 		this._addFilterApiContesto(true, true, false, apiContesto, postBack);
 	}
-	private void _addFilterApiContesto(boolean soggetti, boolean applicativi, boolean erogazioneFruizione, String apiContesto, boolean postBack) throws Exception{
+	private void _addFilterApiContesto(boolean soggetti, boolean applicativi, boolean erogazioneFruizione, String apiContesto, boolean postBack) throws DriverControlStationException{
 		try {
 			int size = 2;
 			if(soggetti) {
@@ -12318,11 +12462,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterApiImplementazione(String filterProtocollo, String filterSoggetto, String filterGruppo, String filterApiContesto, String apiImplementazione, boolean postBack) throws Exception{
+	public void addFilterApiImplementazione(String filterProtocollo, String filterSoggetto, String filterGruppo, String filterApiContesto, String apiImplementazione, boolean postBack) throws DriverControlStationException{
 		try {
 			boolean isFruizione = TipoPdD.DELEGATA.getTipo().equals(filterApiContesto);
 			boolean isErogazione = TipoPdD.APPLICATIVA.getTipo().equals(filterApiContesto);
@@ -12412,11 +12556,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterApplicativo(String filterProtocollo, String filterSoggetto, String applicativo, boolean postBack) throws Exception{
+	public void addFilterApplicativo(String filterProtocollo, String filterSoggetto, String applicativo, boolean postBack) throws DriverControlStationException{
 		try {
 			
 			boolean isFilterProtocollo = filterProtocollo!=null && 
@@ -12476,11 +12620,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterTipoCredenziali(String tipo, boolean postBack, boolean autenticazioneToken) throws Exception{
+	public void addFilterTipoCredenziali(String tipo, boolean postBack, boolean autenticazioneToken) throws DriverControlStationException{
 		try {
 			String [] tmp_labels = autenticazioneToken ? ConnettoriCostanti.CREDENZIALI_CON_TOKEN_LABELS : ConnettoriCostanti.CREDENZIALI_LABELS;
 			String [] tmp_values = autenticazioneToken ? ConnettoriCostanti.CREDENZIALI_CON_TOKEN_VALUES : ConnettoriCostanti.CREDENZIALI_VALUES;
@@ -12502,11 +12646,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterCredenziale(String tipoCredenziale, String credenziale) throws Exception{
+	public void addFilterCredenziale(String tipoCredenziale, String credenziale) throws DriverControlStationException{
 		try {
 			String label = null;
 			if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(tipoCredenziale)) {
@@ -12528,11 +12672,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterCredenzialeIssuer(String tipoCredenziale, String credenziale) throws Exception{
+	public void addFilterCredenzialeIssuer(String tipoCredenziale, String credenziale) throws DriverControlStationException{
 		try {
 			if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(tipoCredenziale)) {
 				String label = ServiziApplicativiCostanti.LABEL_CREDENZIALE_ACCESSO_HTTPS_ISSUER;
@@ -12541,7 +12685,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -12630,7 +12774,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	public void addFilterCredenzialeTokenPolicy(String tokenPolicy, boolean postBack) throws Exception{
+	public void addFilterCredenzialeTokenPolicy(String tokenPolicy, boolean postBack) throws DriverControlStationException{
 		try {
 			List<GenericProperties> gestorePolicyTokenList = this.confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, null);
 			String [] policyLabels = new String[gestorePolicyTokenList.size() + 1];
@@ -12653,11 +12797,11 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterStato(String stato, boolean addStatiAllarme, boolean postBack) throws Exception{
+	public void addFilterStato(String stato, boolean addStatiAllarme, boolean postBack) throws DriverControlStationException{
 		try {
 			String [] statiValues = new String[addStatiAllarme?5:2];
 			statiValues[0] = Filtri.FILTRO_STATO_VALORE_ABILITATO;
@@ -12692,7 +12836,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -12710,7 +12854,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return labelRisorsaPolicyAttiva;
 	}
 	
-	public void addFilterTipoRisorsaPolicy(List<TipoRisorsaPolicyAttiva> listaTipoRisorsa, String tipoRisorsaPolicy, boolean postBack) throws Exception{
+	public void addFilterTipoRisorsaPolicy(List<TipoRisorsaPolicyAttiva> listaTipoRisorsa, String tipoRisorsaPolicy, boolean postBack) throws DriverControlStationException{
 		try {
 			if(listaTipoRisorsa!=null && listaTipoRisorsa.size()>1) {
 				String selectedValue = null;
@@ -12740,20 +12884,20 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
-	public void removeFilterTipoRisorsaPolicy() throws Exception{
+	public void removeFilterTipoRisorsaPolicy() throws DriverControlStationException{
 		try {
 			this.pd.removeFilter(Filtri.FILTRO_TIPO_RISORSA_POLICY);
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
 	public void addFilterTipoTokenPolicy(String tipo, boolean postBack,
-			List<String> nomiConfigurazioniPolicyGestioneToken, List<String> labelConfigurazioniPolicyGestioneToken) throws Exception{
+			List<String> nomiConfigurazioniPolicyGestioneToken, List<String> labelConfigurazioniPolicyGestioneToken) throws DriverControlStationException{
 		try {
 			if(nomiConfigurazioniPolicyGestioneToken!=null) {
 				int length = nomiConfigurazioniPolicyGestioneToken.size() +1;
@@ -12772,13 +12916,13 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
 	
 	
-	public void setFilterRuoloServizioApplicativo(ISearch ricerca, int idLista) throws Exception{
+	public void setFilterRuoloServizioApplicativo(ISearch ricerca, int idLista) throws DriverControlStationException{
 		if(this.core.isApplicativiServerEnabled(this)) {
 			if(Liste.SERVIZIO_APPLICATIVO==idLista || Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO==idLista) {
 				ricerca.addFilter(idLista, Filtri.FILTRO_TIPO_SERVIZIO_APPLICATIVO, CostantiConfigurazione.CLIENT_OR_SERVER);
@@ -12791,12 +12935,16 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	public void setFilterSelectedProtocol(ISearch ricerca, int idLista) throws Exception{
+	public void setFilterSelectedProtocol(ISearch ricerca, int idLista) throws DriverControlStationException{
 		List<String> protocolli = null;
-		if(this.core.isUsedByApi()) {
-			protocolli = ProtocolFactoryManager.getInstance().getProtocolNamesAsList();
-		}else {
-			protocolli = this.core.getProtocolli(this.request, this.session);
+		try {
+			if(this.core.isUsedByApi()) {
+				protocolli = ProtocolFactoryManager.getInstance().getProtocolNamesAsList();
+			}else {
+				protocolli = this.core.getProtocolli(this.request, this.session);
+			}
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
 		}
 		if(protocolli!=null && protocolli.size()>0) {
 			if(protocolli.size()==1) {
@@ -12807,22 +12955,27 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 		}		
 	}
-	public String addFilterProtocol(ISearch ricerca, int idLista) throws Exception{
+	public String addFilterProtocol(ISearch ricerca, int idLista) throws DriverControlStationException{
 		return this.addFilterProtocol(ricerca, idLista, false);
 	}
-	public String addFilterProtocol(ISearch ricerca, int idLista, boolean postBack) throws Exception{
-		List<String> protocolli = this.core.getProtocolli(this.request, this.session);
+	public String addFilterProtocol(ISearch ricerca, int idLista, boolean postBack) throws DriverControlStationException{
+		List<String> protocolli = null;
+		try {
+			protocolli = this.core.getProtocolli(this.request, this.session);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 		return _addFilterProtocol(ricerca, idLista, protocolli, postBack);
 	}
 	
-	public String addFilterProtocol(ISearch ricerca, int idLista,List<String> protocolli) throws Exception{
+	public String addFilterProtocol(ISearch ricerca, int idLista,List<String> protocolli) throws DriverControlStationException{
 		return addFilterProtocol(ricerca, idLista, protocolli, false);
 	}
-	public String addFilterProtocol(ISearch ricerca, int idLista,List<String> protocolli, boolean postBack) throws Exception{
+	public String addFilterProtocol(ISearch ricerca, int idLista,List<String> protocolli, boolean postBack) throws DriverControlStationException{
 		return _addFilterProtocol(ricerca, idLista, protocolli, postBack);
 	}
 
-	private String _addFilterProtocol(ISearch ricerca, int idLista, List<String> protocolli, boolean postBack) throws Exception {
+	private String _addFilterProtocol(ISearch ricerca, int idLista, List<String> protocolli, boolean postBack) throws DriverControlStationException {
 		if(protocolli!=null && protocolli.size()>1) {
 			String filterProtocol = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROTOCOLLO);
 			this.addFilterProtocollo(protocolli, filterProtocol, postBack);
@@ -12830,7 +12983,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		return null;
 	}
-	private void addFilterProtocollo(List<String> protocolli, String protocolloSelected,boolean postBack) throws Exception{
+	private void addFilterProtocollo(List<String> protocolli, String protocolloSelected,boolean postBack) throws DriverControlStationException{
 		try {
 			
 			if(protocolli!=null && protocolli.size()>1) {
@@ -12853,11 +13006,11 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterSoggetto(String soggetto, String protocollo, boolean soloSoggettiOperativi, boolean postBack) throws Exception{
+	public void addFilterSoggetto(String soggetto, String protocollo, boolean soloSoggettiOperativi, boolean postBack) throws DriverControlStationException{
 		try {
 			String userLogin = ServletUtils.getUserLoginFromSession(this.session);
 			
@@ -12893,11 +13046,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterSoggettoErogatoreStringaLiberaContains(ISearch ricerca, int idLista) throws Exception{
+	public void addFilterSoggettoErogatoreStringaLiberaContains(ISearch ricerca, int idLista) throws DriverControlStationException{
 		try {
 			String soggettoErogatoreValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SOGGETTO_EROGATORE_CONTAINS);
 				
@@ -12907,29 +13060,45 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterSubtitle(String subtitleName, String subtitleLabel, boolean visualizzaSottosezioneAperta) throws Exception{
-		this.pd.addSubtitleFilter(subtitleName, subtitleLabel, visualizzaSottosezioneAperta);
+	public void addFilterSubtitle(String subtitleName, String subtitleLabel, boolean visualizzaSottosezioneAperta) throws DriverControlStationException{
+		try {
+			this.pd.addSubtitleFilter(subtitleName, subtitleLabel, visualizzaSottosezioneAperta);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
 	
-	public void impostaAperturaSubtitle(String subtitleName) throws Exception{
-		this.pd.impostaAperturaSubtitle(subtitleName, null, this.getPostBackElementName());
+	public void impostaAperturaSubtitle(String subtitleName) throws DriverControlStationException{
+		try {
+			this.pd.impostaAperturaSubtitle(subtitleName, null, this.getPostBackElementName());
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
 	
-	public void impostaAperturaSubtitle(String subtitleName, boolean visualizzaSottosezioneAperta) throws Exception{
-		this.pd.impostaAperturaSubtitle(subtitleName, visualizzaSottosezioneAperta, this.getPostBackElementName());
+	public void impostaAperturaSubtitle(String subtitleName, boolean visualizzaSottosezioneAperta) throws DriverControlStationException{
+		try {
+			this.pd.impostaAperturaSubtitle(subtitleName, visualizzaSottosezioneAperta, this.getPostBackElementName());
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
 	
-	public void addFilterHidden(String name, String value) throws Exception{
-		this.pd.addHiddenFilter(name, value, this.getSize());
+	public void addFilterHidden(String name, String value) throws DriverControlStationException{
+		try {
+			this.pd.addHiddenFilter(name, value, this.getSize());
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
 	
 	
 	
-	public void addFilterStatoImplementazioneAPI(ISearch ricerca, int idLista) throws Exception{
+	public void addFilterStatoImplementazioneAPI(ISearch ricerca, int idLista) throws DriverControlStationException{
 		try {
 			
 			List<String> statoList = new ArrayList<>();
@@ -12953,12 +13122,12 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
 	
-	public void addFilterTipoAutenticazioneToken(ISearch ricerca, int idLista) throws Exception{
+	public void addFilterTipoAutenticazioneToken(ISearch ricerca, int idLista) throws DriverControlStationException{
 		try {
 			
 			// controllo esistenza token policy
@@ -12985,11 +13154,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public String addFilterTipoAutenticazioneTrasporto(ISearch ricerca, int idLista, boolean postBack, boolean modiErogazione, Boolean confPers) throws Exception{
+	public String addFilterTipoAutenticazioneTrasporto(ISearch ricerca, int idLista, boolean postBack, boolean modiErogazione, Boolean confPers) throws DriverControlStationException{
 		String tipoAutenticazioneValue = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_AUTENTICAZIONE_TRASPORTO_QUALSIASI;
 		try {
 			
@@ -13023,13 +13192,13 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 		
 		return tipoAutenticazioneValue;
 	}
 	
-	public void addFilterTipoAutenticazioneTrasportoPlugin(ISearch ricerca, int idLista, String tipoAutenticazione, boolean fruizioni) throws Exception{
+	public void addFilterTipoAutenticazioneTrasportoPlugin(ISearch ricerca, int idLista, String tipoAutenticazione, boolean fruizioni) throws DriverControlStationException{
 		try {
 			if(tipoAutenticazione != null && tipoAutenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM)) {
 				
@@ -13057,11 +13226,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterConfigurazioneRateLimiting(ISearch ricerca, int idLista) throws Exception{
+	public void addFilterConfigurazioneRateLimiting(ISearch ricerca, int idLista) throws DriverControlStationException{
 		try {
 			
 			List<String> statoList = new ArrayList<>();
@@ -13085,11 +13254,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterConfigurazioneValidazione(ISearch ricerca, int idLista) throws Exception{
+	public void addFilterConfigurazioneValidazione(ISearch ricerca, int idLista) throws DriverControlStationException{
 		try {
 			
 			List<String> statoList = new ArrayList<>();
@@ -13113,11 +13282,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterConfigurazioneCacheRisposta(ISearch ricerca, int idLista) throws Exception{
+	public void addFilterConfigurazioneCacheRisposta(ISearch ricerca, int idLista) throws DriverControlStationException{
 		try {
 			
 			List<String> statoList = new ArrayList<>();
@@ -13141,11 +13310,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterConfigurazioneMessageSecurity(ISearch ricerca, int idLista) throws Exception{
+	public void addFilterConfigurazioneMessageSecurity(ISearch ricerca, int idLista) throws DriverControlStationException{
 		try {
 			
 			List<String> statoList = new ArrayList<>();
@@ -13171,11 +13340,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterConfigurazioneMTOM(ISearch ricerca, int idLista, String filterTipoAccordo) throws Exception{
+	public void addFilterConfigurazioneMTOM(ISearch ricerca, int idLista, String filterTipoAccordo) throws DriverControlStationException{
 		try {
 			
 			if(filterTipoAccordo==null || 
@@ -13206,11 +13375,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterConfigurazioneTrasformazione(ISearch ricerca, int idLista) throws Exception{
+	public void addFilterConfigurazioneTrasformazione(ISearch ricerca, int idLista) throws DriverControlStationException{
 		try {
 			
 			List<String> statoList = new ArrayList<>();
@@ -13234,11 +13403,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterConfigurazioneCorrelazioneApplicativa(ISearch ricerca, int idLista) throws Exception{
+	public void addFilterConfigurazioneCorrelazioneApplicativa(ISearch ricerca, int idLista) throws DriverControlStationException{
 		try {
 			
 			List<String> statoList = new ArrayList<>();
@@ -13264,11 +13433,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public String addFilterConfigurazioneTipoDump(ISearch ricerca, int idLista, boolean postBack) throws Exception{
+	public String addFilterConfigurazioneTipoDump(ISearch ricerca, int idLista, boolean postBack) throws DriverControlStationException{
 		String configurazioneDumpTipoValue = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_DUMP_QUALSIASI;
 		try {
 			List<String> tipoList = new ArrayList<>();
@@ -13316,13 +13485,13 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 		
 		return configurazioneDumpTipoValue;
 	}
 	
-	public String addFilterConfigurazioneCORS(ISearch ricerca, int idLista) throws Exception{
+	public String addFilterConfigurazioneCORS(ISearch ricerca, int idLista) throws DriverControlStationException{
 		try {
 			
 			List<String> statoList = new ArrayList<>();
@@ -13349,11 +13518,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterConfigurazioneCORSOrigin(ISearch ricerca, int idLista, String gestioneCORS) throws Exception{
+	public void addFilterConfigurazioneCORSOrigin(ISearch ricerca, int idLista, String gestioneCORS) throws DriverControlStationException{
 		try {
 			if(gestioneCORS != null && Filtri.FILTRO_CONFIGURAZIONE_CORS_TIPO_VALORE_RIDEFINITO_ABILITATO.equals(gestioneCORS)) {
 			
@@ -13363,14 +13532,14 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public String addFilterTipoConnettore(ISearch ricerca, int idLista, boolean visualizzaVoceIM) throws Exception{
+	public String addFilterTipoConnettore(ISearch ricerca, int idLista, boolean visualizzaVoceIM) throws DriverControlStationException{
 		return this.addFilterTipoConnettore(ricerca, idLista, visualizzaVoceIM, true);
 	}
-	public String addFilterTipoConnettore(ISearch ricerca, int idLista, boolean visualizzaVoceIM, boolean postBack) throws Exception{
+	public String addFilterTipoConnettore(ISearch ricerca, int idLista, boolean visualizzaVoceIM, boolean postBack) throws DriverControlStationException{
 		String tipoConnettoreValue = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI;
 		try {
 			
@@ -13444,13 +13613,13 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 		
 		return tipoConnettoreValue;
 	}
 	
-	public void addFilterConnettorePlugin(ISearch ricerca, int idLista, String tipoConnettore) throws Exception{
+	public void addFilterConnettorePlugin(ISearch ricerca, int idLista, String tipoConnettore) throws DriverControlStationException{
 		try {
 			if(tipoConnettore != null && tipoConnettore.equals(TipiConnettore.CUSTOM.toString())) {
 				
@@ -13477,11 +13646,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterConnettoreTokenPolicy(ISearch ricerca, int idLista, String tipoConnettore) throws Exception{
+	public void addFilterConnettoreTokenPolicy(ISearch ricerca, int idLista, String tipoConnettore) throws DriverControlStationException{
 		try {
 			if(tipoConnettore != null &&
 				(tipoConnettore.equals("") || 
@@ -13512,11 +13681,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterConnettoreEndpoint(ISearch ricerca, int idLista, String tipoConnettore) throws Exception{
+	public void addFilterConnettoreEndpoint(ISearch ricerca, int idLista, String tipoConnettore) throws DriverControlStationException{
 		try {
 			if(tipoConnettore != null &&
 				(tipoConnettore.equals("") || 
@@ -13541,11 +13710,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterConnettoreKeystore(ISearch ricerca, int idLista, String tipoConnettore) throws Exception{
+	public void addFilterConnettoreKeystore(ISearch ricerca, int idLista, String tipoConnettore) throws DriverControlStationException{
 		try {
 			if(tipoConnettore != null &&
 				(tipoConnettore.equals(TipiConnettore.HTTPS.toString()))) {
@@ -13558,11 +13727,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterConnettoreDebug(ISearch ricerca, int idLista, String tipoConnettore) throws Exception{
+	public void addFilterConnettoreDebug(ISearch ricerca, int idLista, String tipoConnettore) throws DriverControlStationException{
 		try {
 			
 			List<String> connettoriList = new ArrayList<>();
@@ -13586,11 +13755,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public String addFilterNomeConnettoreMultiplo(ISearch ricerca, int idLista) throws Exception{
+	public String addFilterNomeConnettoreMultiplo(ISearch ricerca, int idLista) throws DriverControlStationException{
 		try {
 			String nomeValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_MULTIPLO_NOME);
 			
@@ -13601,11 +13770,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			return nomeValue;
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterFiltroConnettoreMultiplo(ISearch ricerca, int idLista, boolean behaviourConFiltri) throws Exception{
+	public void addFilterFiltroConnettoreMultiplo(ISearch ricerca, int idLista, boolean behaviourConFiltri) throws DriverControlStationException{
 		try {
 			if(behaviourConFiltri) {
 			
@@ -13617,11 +13786,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterModIKeystorePath(ISearch ricerca, int idLista) throws Exception{
+	public void addFilterModIKeystorePath(ISearch ricerca, int idLista) throws DriverControlStationException{
 		try {
 			
 			String keystorePathValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_KEYSTORE_PATH);
@@ -13630,11 +13799,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterModIKeystoreSubject(ISearch ricerca, int idLista) throws Exception{
+	public void addFilterModIKeystoreSubject(ISearch ricerca, int idLista) throws DriverControlStationException{
 		try {
 			
 			String keystoreSubjectValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_KEYSTORE_SUBJECT);
@@ -13643,11 +13812,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterModIKeystoreIssuer(ISearch ricerca, int idLista) throws Exception{
+	public void addFilterModIKeystoreIssuer(ISearch ricerca, int idLista) throws DriverControlStationException{
 		try {
 			
 			String keystoreIssuerValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_KEYSTORE_ISSUER);
@@ -13656,11 +13825,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterModITokenPolicy(ISearch ricerca, int idLista, boolean postBack) throws Exception{
+	public void addFilterModITokenPolicy(ISearch ricerca, int idLista, boolean postBack) throws DriverControlStationException{
 		try {
 			List<GenericProperties> gestorePolicyTokenList = this.confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, null);
 			String [] policyLabels = new String[gestorePolicyTokenList.size() + 1];
@@ -13684,11 +13853,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterModITokenClientId(ISearch ricerca, int idLista) throws Exception{
+	public void addFilterModITokenClientId(ISearch ricerca, int idLista) throws DriverControlStationException{
 		try {
 			
 			String tokenClientIdValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_TOKEN_CLIENT_ID);
@@ -13697,11 +13866,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterModIAudience(ISearch ricerca, int idLista, boolean applicativi, String filterTipoAccordo, String filterDominio) throws Exception{
+	public void addFilterModIAudience(ISearch ricerca, int idLista, boolean applicativi, String filterTipoAccordo, String filterDominio) throws DriverControlStationException{
 		try {
 			String audienceValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_AUDIENCE);
 			
@@ -13729,11 +13898,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addTextFilter(Filtri.FILTRO_MODI_AUDIENCE, filterLabel, audienceValue, this.getSize());
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterModISicurezzaCanale(ISearch ricerca, int idLista) throws Exception{
+	public void addFilterModISicurezzaCanale(ISearch ricerca, int idLista) throws DriverControlStationException{
 		try {
 			// controllo esistenza token policy
 			List<String> labelsList = this.getProfiloModIPAFiltroSicurezzaCanaleLabels();
@@ -13755,11 +13924,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_MODI_SICUREZZA_CANALE, CostantiLabel.MODIPA_API_PROFILO_CANALE_LABEL, sicurezzaCanaleValue, values, labels, false, this.getSize());
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterModISicurezzaMessaggio(ISearch ricerca, int idLista, String serviceBindingValue) throws Exception{
+	public void addFilterModISicurezzaMessaggio(ISearch ricerca, int idLista, String serviceBindingValue) throws DriverControlStationException{
 		try {
 			// controllo esistenza token policy
 			List<String> labelsList = this.getProfiloModIPAFiltroSicurezzaMessaggioLabels(serviceBindingValue);
@@ -13781,13 +13950,46 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_MODI_SICUREZZA_MESSAGGIO, CostantiLabel.MODIPA_API_PROFILO_SICUREZZA_MESSAGGIO_LABEL, sicurezzaCanaleValue, values, labels, false, this.getSize());
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public String addFilterModISicurezzaMessaggioSA(ISearch ricerca, int idLista, boolean postback) throws Exception{
+	public void addFilterModIGenerazioneToken(ISearch ricerca, int idLista) throws DriverControlStationException{
 		try {
-			//List<String> valuesList = Arrays.asList(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA);
+			String [] v = {CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_LOCALE, 
+					CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND,
+					CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH};
+			List<String> valuesList = Arrays.asList(v);
+			
+			String [] l = {CostantiLabel.MODIPA_SICUREZZA_CHOICE_MESSAGE_LABEL, 
+					CostantiLabel.MODIPA_SICUREZZA_CHOICE_TOKEN_PDND_LABEL,
+					CostantiLabel.MODIPA_SICUREZZA_CHOICE_TOKEN_OAUTH_LABEL};
+			List<String> labelsList = Arrays.asList(l);
+			
+			int length = valuesList.size() + 1;
+				
+			String [] values = new String[length];
+			String [] labels = new String[length];
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_SOGGETTO_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI;
+			
+			for (int i = 0; i < valuesList.size(); i++) {
+				labels[(i+1)] = labelsList.get(i);
+				values[(i+1)] = valuesList.get(i);
+			}
+			
+			String generazioneTokenValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SORGENTE_TOKEN);
+			
+			this.pd.addFilter(Filtri.FILTRO_MODI_SORGENTE_TOKEN, CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH, generazioneTokenValue, values, labels, false, this.getSize());
+		} catch (Exception e) {
+			this.logError("Exception: " + e.getMessage(), e);
+			throw new DriverControlStationException(e);
+		}
+	}
+	
+	public String addFilterModISicurezzaMessaggioSA(ISearch ricerca, int idLista, boolean postback) throws DriverControlStationException{
+		try {
+			/**List<String> valuesList = Arrays.asList(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA);*/
 			// non ha senso in modi controllare quelli disabilitati
 			String [] valueAbilitatoOnly = {StatoFunzionalita.ABILITATO.getValue()};
 			List<String> valuesList = Arrays.asList(valueAbilitatoOnly);
@@ -13811,13 +14013,13 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public String addFilterModISicurezzaTokenSA(ISearch ricerca, int idLista, boolean postback) throws Exception{
+	public String addFilterModISicurezzaTokenSA(ISearch ricerca, int idLista, boolean postback) throws DriverControlStationException{
 		try {
-			//List<String> valuesList = Arrays.asList(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA);
+			/**List<String> valuesList = Arrays.asList(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA);*/
 			// non ha senso in modi controllare quelli disabilitati
 			String [] valueAbilitatoOnly = {StatoFunzionalita.ABILITATO.getValue()};
 			List<String> valuesList = Arrays.asList(valueAbilitatoOnly);
@@ -13841,13 +14043,13 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterModIDigestRichiesta(ISearch ricerca, int idLista) throws Exception{
+	public void addFilterModIDigestRichiesta(ISearch ricerca, int idLista) throws DriverControlStationException{
 		try {
-			//List<String> valuesList = Arrays.asList(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA);
+			/**List<String> valuesList = Arrays.asList(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA);*/
 			// non ha senso in modi controllare quelli disabilitati
 			String [] valueAbilitatoOnly = {StatoFunzionalita.ABILITATO.getValue()};
 			List<String> valuesList = Arrays.asList(valueAbilitatoOnly);
@@ -13869,16 +14071,22 @@ public class ConsoleHelper implements IConsoleHelper {
 					digestRichiestaValue, values, labels, false, this.getSize());
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterModIInfoUtente(ISearch ricerca, int idLista) throws Exception{
+	public void addFilterModIInfoUtente(ISearch ricerca, int idLista) throws DriverControlStationException{
 		try {
-			//List<String> valuesList = Arrays.asList(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA);
-			// non ha senso in modi controllare quelli disabilitati
-			String [] valueAbilitatoOnly = {StatoFunzionalita.ABILITATO.getValue()};
-			List<String> valuesList = Arrays.asList(valueAbilitatoOnly);
+			String [] v = {CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_01, 
+					CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_02,
+					CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD};
+			List<String> valuesList = Arrays.asList(v);
+			
+			String [] l = {CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_01, 
+					CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_02,
+					CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD};
+			List<String> labelsList = Arrays.asList(l);
+			
 			int length = valuesList.size() + 1;
 				
 			String [] values = new String[length];
@@ -13887,7 +14095,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI;
 			
 			for (int i = 0; i < valuesList.size(); i++) {
-				labels[(i+1)] = valuesList.get(i);
+				labels[(i+1)] = labelsList.get(i);
 				values[(i+1)] = valuesList.get(i);
 			}
 			
@@ -13896,7 +14104,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_MODI_INFORMAZIONI_UTENTE, CostantiControlStation.LABEL_FILTRO_MODIPA_INFO_UTENTE, infoUtenteValue, values, labels, false, this.getSize());
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -13978,7 +14186,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	
-	public void addFilterProprietaNome(ISearch ricerca, int idLista, List<String> nomiProprieta) throws Exception{
+	public void addFilterProprietaNome(ISearch ricerca, int idLista, List<String> nomiProprieta) throws DriverControlStationException{
 		try {
 			// controllo esistenza token policy
 			int length = nomiProprieta.size() + 1;
@@ -13998,11 +14206,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addFilter(Filtri.FILTRO_PROPRIETA_NOME, CostantiControlStation.LABEL_FILTRO_PROPRIETA_NOME, nomeProprietaValue, values, labels, false, this.getSize());
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public void addFilterProprietaValore(ISearch ricerca, int idLista, List<String> nomiProprieta) throws Exception{
+	public void addFilterProprietaValore(ISearch ricerca, int idLista, List<String> nomiProprieta) throws DriverControlStationException{
 		try {
 			String valoreProprietaValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_VALORE);
 			
@@ -14011,110 +14219,209 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.pd.addTextFilter(Filtri.FILTRO_PROPRIETA_VALORE, filterLabel, valoreProprietaValue, this.getSize());
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
 	// LABEL PROTOCOLLI
 	
-	public List<String> getLabelsProtocolli(List<String> protocolli) throws Exception{
-		return NamingUtils.getLabelsProtocolli(protocolli);
+	public List<String> getLabelsProtocolli(List<String> protocolli) throws DriverControlStationException{
+		try {
+			return NamingUtils.getLabelsProtocolli(protocolli);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
 	
-	public String getLabelProtocollo(String protocollo) throws Exception{
-		return NamingUtils.getLabelProtocollo(protocollo);
+	public String getLabelProtocollo(String protocollo) throws DriverControlStationException{
+		try {
+			return NamingUtils.getLabelProtocollo(protocollo);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
 		
-	public static String _getLabelProtocollo(String protocollo) throws Exception{
-		return NamingUtils.getLabelProtocollo(protocollo);
+	public static String _getLabelProtocollo(String protocollo) throws DriverControlStationException{
+		try {
+			return NamingUtils.getLabelProtocollo(protocollo);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
 	
-	public String getDescrizioneProtocollo(String protocollo) throws Exception{
-		return NamingUtils.getDescrizioneProtocollo(protocollo);
+	public String getDescrizioneProtocollo(String protocollo) throws DriverControlStationException{
+		try {
+			return NamingUtils.getDescrizioneProtocollo(protocollo);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
 	
-	public String getWebSiteProtocollo(String protocollo) throws Exception{
-		return NamingUtils.getWebSiteProtocollo(protocollo);
+	public String getWebSiteProtocollo(String protocollo) throws DriverControlStationException{
+		try {
+			return NamingUtils.getWebSiteProtocollo(protocollo);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
 	
 	
 	// LABEL SOGGETTI
 	
-	public String getLabelNomeSoggetto(IDSoggetto idSoggetto) throws Exception{
-		return NamingUtils.getLabelSoggetto(idSoggetto);
+	public String getLabelNomeSoggetto(IDSoggetto idSoggetto) throws DriverControlStationException{
+		try {
+			return NamingUtils.getLabelSoggetto(idSoggetto);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
 	
-	public static String _getLabelNomeSoggetto(IDSoggetto idSoggetto) throws Exception{
-		return NamingUtils.getLabelSoggetto(idSoggetto);
+	public static String _getLabelNomeSoggetto(IDSoggetto idSoggetto) throws DriverControlStationException{
+		try {
+			return NamingUtils.getLabelSoggetto(idSoggetto);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
-	public String getLabelNomeSoggetto(String protocollo, IDSoggetto idSoggetto) throws Exception{
-		return NamingUtils.getLabelSoggetto(protocollo, idSoggetto);
+	public String getLabelNomeSoggetto(String protocollo, IDSoggetto idSoggetto) throws DriverControlStationException{
+		try {
+			return NamingUtils.getLabelSoggetto(protocollo, idSoggetto);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
-	public String getLabelNomeSoggetto(String protocollo, String tipoSoggetto, String nomeSoggetto) throws Exception{
-		return NamingUtils.getLabelSoggetto(protocollo, tipoSoggetto, nomeSoggetto);
+	public String getLabelNomeSoggetto(String protocollo, String tipoSoggetto, String nomeSoggetto) throws DriverControlStationException{
+		try {
+			return NamingUtils.getLabelSoggetto(protocollo, tipoSoggetto, nomeSoggetto);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
 	
 	
 	// APPLICATIVI
 	
-	public String getLabelServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws Exception{
-		return NamingUtils.getLabelServizioApplicativo(idServizioApplicativo);
+	public String getLabelServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws DriverControlStationException{
+		try {
+			return NamingUtils.getLabelServizioApplicativo(idServizioApplicativo);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
-	public String getLabelServizioApplicativo(String protocollo, IDServizioApplicativo idServizioApplicativo) throws Exception{
-		return NamingUtils.getLabelServizioApplicativo(protocollo, idServizioApplicativo);
+	public String getLabelServizioApplicativo(String protocollo, IDServizioApplicativo idServizioApplicativo) throws DriverControlStationException{
+		try {
+			return NamingUtils.getLabelServizioApplicativo(protocollo, idServizioApplicativo);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
-	public String getLabelServizioApplicativoConDominioSoggetto(IDServizioApplicativo idServizioApplicativo) throws Exception{
-		return NamingUtils.getLabelServizioConDominioErogatore(idServizioApplicativo.getNome(),NamingUtils.getLabelSoggetto(idServizioApplicativo.getIdSoggettoProprietario()));
+	public String getLabelServizioApplicativoConDominioSoggetto(IDServizioApplicativo idServizioApplicativo) throws DriverControlStationException{
+		try {
+			return NamingUtils.getLabelServizioConDominioErogatore(idServizioApplicativo.getNome(),NamingUtils.getLabelSoggetto(idServizioApplicativo.getIdSoggettoProprietario()));
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
-	public String getLabelServizioApplicativoConDominioSoggetto(String protocollo, IDServizioApplicativo idServizioApplicativo) throws Exception{
-		return NamingUtils.getLabelServizioConDominioErogatore(idServizioApplicativo.getNome(),NamingUtils.getLabelSoggetto(protocollo, idServizioApplicativo.getIdSoggettoProprietario()));
+	public String getLabelServizioApplicativoConDominioSoggetto(String protocollo, IDServizioApplicativo idServizioApplicativo) throws DriverControlStationException{
+		try {
+			return NamingUtils.getLabelServizioConDominioErogatore(idServizioApplicativo.getNome(),NamingUtils.getLabelSoggetto(protocollo, idServizioApplicativo.getIdSoggettoProprietario()));
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
 	
 	
 	// LABEL API
 	
-	public String getLabelIdAccordo(AccordoServizioParteComune as) throws Exception{
-		return NamingUtils.getLabelAccordoServizioParteComune(as);
+	public String getLabelIdAccordo(AccordoServizioParteComune as) throws DriverControlStationException{
+		try {
+			return NamingUtils.getLabelAccordoServizioParteComune(as);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
-	public String getLabelIdAccordo(AccordoServizioParteComuneSintetico as) throws Exception{
-		return NamingUtils.getLabelAccordoServizioParteComune(as);
+	public String getLabelIdAccordo(AccordoServizioParteComuneSintetico as) throws DriverControlStationException{
+		try {
+			return NamingUtils.getLabelAccordoServizioParteComune(as);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
-	public String getLabelIdAccordo(IDAccordo idAccordo) throws Exception{
-		return NamingUtils.getLabelAccordoServizioParteComune(idAccordo);
+	public String getLabelIdAccordo(IDAccordo idAccordo) throws DriverControlStationException{
+		try {
+			return NamingUtils.getLabelAccordoServizioParteComune(idAccordo);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
-	public String getLabelIdAccordo(String protocollo, IDAccordo idAccordo) throws Exception{
-		return NamingUtils.getLabelAccordoServizioParteComune(protocollo, idAccordo);
+	public String getLabelIdAccordo(String protocollo, IDAccordo idAccordo) throws DriverControlStationException{
+		try {
+			return NamingUtils.getLabelAccordoServizioParteComune(protocollo, idAccordo);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
-	public String getLabelIdAccordoSenzaReferente(String protocollo, IDAccordo idAccordo) throws Exception{
-		return NamingUtils.getLabelAccordoServizioParteComune(protocollo, idAccordo,false);
+	public String getLabelIdAccordoSenzaReferente(String protocollo, IDAccordo idAccordo) throws DriverControlStationException{
+		try {
+			return NamingUtils.getLabelAccordoServizioParteComune(protocollo, idAccordo,false);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
 	
 	
 	// LABEL SERVIZI
 	
-	public String getLabelNomeServizio(String protocollo, String tipoServizio, String nomeServizio, Integer versioneInt) throws Exception{
-		return NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(protocollo, tipoServizio, nomeServizio, versioneInt);
+	public String getLabelNomeServizio(String protocollo, String tipoServizio, String nomeServizio, Integer versioneInt) throws DriverControlStationException{
+		try {
+			return NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(protocollo, tipoServizio, nomeServizio, versioneInt);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
-	public String getLabelIdServizio(AccordoServizioParteSpecifica as) throws Exception{
-		return NamingUtils.getLabelAccordoServizioParteSpecifica(as);
+	public String getLabelIdServizio(AccordoServizioParteSpecifica as) throws DriverControlStationException{
+		try {
+			return NamingUtils.getLabelAccordoServizioParteSpecifica(as);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
-	public String getLabelIdServizio(IDServizio idServizio) throws Exception{
-		return NamingUtils.getLabelAccordoServizioParteSpecifica(idServizio);
+	public String getLabelIdServizio(IDServizio idServizio) throws DriverControlStationException{
+		try {
+			return NamingUtils.getLabelAccordoServizioParteSpecifica(idServizio);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
-	public String getLabelIdServizio(String protocollo, IDServizio idServizio) throws Exception{
-		return NamingUtils.getLabelAccordoServizioParteSpecifica(protocollo, idServizio);
+	public String getLabelIdServizio(String protocollo, IDServizio idServizio) throws DriverControlStationException{
+		try {
+			return NamingUtils.getLabelAccordoServizioParteSpecifica(protocollo, idServizio);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
-	public String getLabelIdServizioSenzaErogatore(String protocollo, IDServizio idServizio) throws Exception{
-		return NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(protocollo, idServizio);
+	public String getLabelIdServizioSenzaErogatore(String protocollo, IDServizio idServizio) throws DriverControlStationException{
+		try {
+			return NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(protocollo, idServizio);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
-	public String getLabelIdServizioSenzaErogatore(IDServizio idServizio) throws Exception{
-		return NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(idServizio);
+	public String getLabelIdServizioSenzaErogatore(IDServizio idServizio) throws DriverControlStationException{
+		try {
+			return NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(idServizio);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
-	public String getLabelServizioFruizione(String protocollo, IDSoggetto idSoggettoFruitore, AccordoServizioParteSpecifica asps) throws Exception{
-		return this.getLabelServizioFruizione(protocollo, idSoggettoFruitore, this.idServizioFactory.getIDServizioFromAccordo(asps));
+	public String getLabelServizioFruizione(String protocollo, IDSoggetto idSoggettoFruitore, AccordoServizioParteSpecifica asps) throws DriverControlStationException{
+		try {
+			return this.getLabelServizioFruizione(protocollo, idSoggettoFruitore, this.idServizioFactory.getIDServizioFromAccordo(asps));
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
-	public String getLabelServizioFruizione(String protocollo, IDSoggetto idSoggettoFruitore, IDServizio idServizio) throws Exception{
-		//String labelServizio = this.getLabelIdServizio(protocollo, idServizio);
+	public String getLabelServizioFruizione(String protocollo, IDSoggetto idSoggettoFruitore, IDServizio idServizio) throws DriverControlStationException{
 		String servizio = this.getLabelIdServizioSenzaErogatore(protocollo, idServizio);
 		String soggetto = this.getLabelNomeSoggetto(protocollo, idServizio.getSoggettoErogatore());
 		String labelServizio = NamingUtils.getLabelServizioConDominioErogatore(servizio, soggetto);
@@ -14128,14 +14435,17 @@ public class ConsoleHelper implements IConsoleHelper {
 			return labelServizio;
 		}
 	}
-	public String getLabelServizioErogazione(String protocollo, AccordoServizioParteSpecifica asps) throws Exception{
-		return this.getLabelServizioErogazione(protocollo, this.idServizioFactory.getIDServizioFromAccordo(asps));
+	public String getLabelServizioErogazione(String protocollo, AccordoServizioParteSpecifica asps) throws DriverControlStationException{
+		try {
+			return this.getLabelServizioErogazione(protocollo, this.idServizioFactory.getIDServizioFromAccordo(asps));
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
-	public String getLabelServizioErogazione(String protocollo, IDServizio idServizio) throws Exception{
+	public String getLabelServizioErogazione(String protocollo, IDServizio idServizio) throws DriverControlStationException{
 		boolean showSoggettoErogatoreInErogazioni = this.core.isMultitenant() && 
 				!this.isSoggettoMultitenantSelezionato();
 		if(showSoggettoErogatoreInErogazioni) {
-			//return this.getLabelIdServizio(protocollo, idServizio);
 			String servizio = this.getLabelIdServizioSenzaErogatore(protocollo, idServizio);
 			String soggetto = this.getLabelNomeSoggetto(protocollo, idServizio.getSoggettoErogatore());
 			return NamingUtils.getLabelServizioConDominioErogatore(servizio, soggetto);
@@ -14148,14 +14458,26 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	// LABEL ACCORDI COOPERAZIONE
 	
-	public String getLabelIdAccordoCooperazione(AccordoCooperazione ac) throws Exception{
-		return NamingUtils.getLabelAccordoCooperazione(ac);
+	public String getLabelIdAccordoCooperazione(AccordoCooperazione ac) throws DriverControlStationException{
+		try {
+			return NamingUtils.getLabelAccordoCooperazione(ac);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
-	public String getLabelIdAccordoCooperazione(IDAccordoCooperazione idAccordo) throws Exception{
-		return NamingUtils.getLabelAccordoCooperazione(idAccordo);
+	public String getLabelIdAccordoCooperazione(IDAccordoCooperazione idAccordo) throws DriverControlStationException{
+		try {
+			return NamingUtils.getLabelAccordoCooperazione(idAccordo);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
-	public String getLabelIdAccordoCooperazione(String protocollo, IDAccordoCooperazione idAccordo) throws Exception{
-		return NamingUtils.getLabelAccordoCooperazione(protocollo, idAccordo);
+	public String getLabelIdAccordoCooperazione(String protocollo, IDAccordoCooperazione idAccordo) throws DriverControlStationException{
+		try {
+			return NamingUtils.getLabelAccordoCooperazione(protocollo, idAccordo);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
 	
 	
@@ -14163,7 +14485,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	// Validazione contenuti
 	
 	public void validazioneContenuti(TipoOperazione tipoOperazione,List<DataElement> dati, boolean isPortaDelegata, String xsd, String tipoValidazione, String applicaMTOM,
-			ServiceBinding serviceBinding, FormatoSpecifica formatoSpecifica) throws Exception{
+			ServiceBinding serviceBinding, FormatoSpecifica formatoSpecifica) throws DriverControlStationException{
 		validazioneContenuti(tipoOperazione, dati, true,isPortaDelegata,xsd,tipoValidazione,applicaMTOM, serviceBinding, formatoSpecifica);
 	}
 	
@@ -14266,7 +14588,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	public boolean validazioneContenutiCheck(TipoOperazione tipoOperazione,boolean isPortaDelegata) throws Exception {
+	public boolean validazioneContenutiCheck(TipoOperazione tipoOperazione,boolean isPortaDelegata) throws DriverControlStationException {
 		String xsd = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_XSD);
 		
 		// Controllo che i campi "select" abbiano uno dei valori ammessi
@@ -14278,7 +14600,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 	
-	public void addFilterAzione(Map<String,String> azioni, String azione, ServiceBinding serviceBinding) throws Exception{
+	public void addFilterAzione(Map<String,String> azioni, String azione, ServiceBinding serviceBinding) throws DriverControlStationException{
 		String[] azioniDisponibiliList = new String [0];
 		String[] azioniDisponibiliLabelList = new String [0];
 		if(azioni!=null && azioni.size()>0) {
@@ -14298,7 +14620,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		this.addFilterAzione(azioniDisponibiliList,azioniDisponibiliLabelList, azione, serviceBinding);		  
 	}
 	
-	public void addFilterAzione(String []azioni, String []azioniLabels, String azione, ServiceBinding serviceBinding) throws Exception{
+	public void addFilterAzione(String []azioni, String []azioniLabels, String azione, ServiceBinding serviceBinding) throws DriverControlStationException{
 		try {
 			String [] values = new String[azioni.length + 1];
 			String [] labels = new String[azioni.length + 1];
@@ -14317,7 +14639,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -14327,7 +14649,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String dumpRichiestaUscitaHeader, String dumpRichiestaUscitaPayload, String dumpRichiestaUscitaPayloadParsing, String dumpRichiestaUscitaBody, String dumpRichiestaUscitaAttachments, 
 			String dumpRispostaIngressoHeader, String dumpRispostaIngressoPayload, String dumpRispostaIngressoPayloadParsing, String dumpRispostaIngressoBody , String dumpRispostaIngressoAttachments,
 			String dumpRispostaUscitaHeader, String dumpRispostaUscitaPayload, String dumpRispostaUscitaPayloadParsing, String dumpRispostaUscitaBody, String dumpRispostaUscitaAttachments,
-			boolean portaApplicativa) throws Exception{
+			boolean portaApplicativa) throws DriverControlStationException{
 		
 		// TipoPdD
 		DataElement de = new DataElement();
@@ -14351,14 +14673,17 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_DUMP_STATO); 
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO);
 		if(showStato) {
-			
-			de.setType(DataElementType.SELECT);
-			String valuesStato [] = {CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT, CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO};
-			String labelsStato [] = {this.getDumpLabelDefault(true, portaApplicativa), CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_RIDEFINITO};
-			de.setSelected(statoDump);
-			de.setLabels(labelsStato);
-			de.setValues(valuesStato); 
-			de.setPostBack(true);
+			try {
+				de.setType(DataElementType.SELECT);
+				String valuesStato [] = {CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT, CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO};
+				String labelsStato [] = {this.getDumpLabelDefault(true, portaApplicativa), CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_RIDEFINITO};
+				de.setSelected(statoDump);
+				de.setLabels(labelsStato);
+				de.setValues(valuesStato); 
+				de.setPostBack(true);
+			}catch(Exception e) {
+				throw new DriverControlStationException(e.getMessage(),e);
+			}
 		} else {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(statoDump);
@@ -14401,28 +14726,34 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			if(statoDumpRichiesta.equals(StatoFunzionalita.ABILITATO.getValue())) {
 				
-				// sotto sezione ingresso
-				addSottoSezioneDump(dati, 
-						valuesProp, labelsProp, 
-						CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO,
-						CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS, CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS,dumpRichiestaIngressoHeader,
-						CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_PAYLOAD, CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_PAYLOAD, dumpRichiestaIngressoPayload,
-						CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_PAYLOAD_PARSING, CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_PAYLOAD_PARSING, dumpRichiestaIngressoPayloadParsing,
-						CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY, CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY, dumpRichiestaIngressoBody,
-						CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS, CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS, dumpRichiestaIngressoAttachments
-						);
-
-								
-				// sotto sezione uscita
-				addSottoSezioneDump(dati, 
-						valuesProp, labelsProp, 
-						CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA,
-						CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_HEADERS, CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_HEADERS,dumpRichiestaUscitaHeader,
-						CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_PAYLOAD, CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_PAYLOAD, dumpRichiestaUscitaPayload,
-						CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_PAYLOAD_PARSING, CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_PAYLOAD_PARSING, dumpRichiestaUscitaPayloadParsing,
-						CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_BODY, CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_BODY, dumpRichiestaUscitaBody,
-						CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_ATTACHMENTS, CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_ATTACHMENTS, dumpRichiestaUscitaAttachments
-						);
+				try {
+					
+					// sotto sezione ingresso
+					addSottoSezioneDump(dati, 
+							valuesProp, labelsProp, 
+							CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO,
+							CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS, CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS,dumpRichiestaIngressoHeader,
+							CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_PAYLOAD, CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_PAYLOAD, dumpRichiestaIngressoPayload,
+							CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_PAYLOAD_PARSING, CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_PAYLOAD_PARSING, dumpRichiestaIngressoPayloadParsing,
+							CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY, CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY, dumpRichiestaIngressoBody,
+							CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS, CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS, dumpRichiestaIngressoAttachments
+							);
+	
+									
+					// sotto sezione uscita
+					addSottoSezioneDump(dati, 
+							valuesProp, labelsProp, 
+							CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA,
+							CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_HEADERS, CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_HEADERS,dumpRichiestaUscitaHeader,
+							CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_PAYLOAD, CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_PAYLOAD, dumpRichiestaUscitaPayload,
+							CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_PAYLOAD_PARSING, CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_PAYLOAD_PARSING, dumpRichiestaUscitaPayloadParsing,
+							CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_BODY, CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_BODY, dumpRichiestaUscitaBody,
+							CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_ATTACHMENTS, CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_ATTACHMENTS, dumpRichiestaUscitaAttachments
+							);
+					
+				}catch(Exception e) {
+					throw new DriverControlStationException(e.getMessage(),e);
+				}
 
 			}
 			
@@ -14446,29 +14777,34 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			if(statoDumpRisposta.equals(StatoFunzionalita.ABILITATO.getValue())) {
 				
-				// sotto sezione ingresso
-				addSottoSezioneDump(dati, 
-						valuesProp, labelsProp, 
-						CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO,
-						CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_HEADERS, CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_HEADERS,dumpRispostaIngressoHeader,
-						CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_PAYLOAD, CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_PAYLOAD, dumpRispostaIngressoPayload,
-						CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_PAYLOAD_PARSING, CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_PAYLOAD_PARSING, dumpRispostaIngressoPayloadParsing,
-						CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_BODY, CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_BODY, dumpRispostaIngressoBody,
-						CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_ATTACHMENTS, CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_ATTACHMENTS, dumpRispostaIngressoAttachments
-						);
+				try {
+				
+					// sotto sezione ingresso
+					addSottoSezioneDump(dati, 
+							valuesProp, labelsProp, 
+							CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO,
+							CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_HEADERS, CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_HEADERS,dumpRispostaIngressoHeader,
+							CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_PAYLOAD, CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_PAYLOAD, dumpRispostaIngressoPayload,
+							CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_PAYLOAD_PARSING, CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_PAYLOAD_PARSING, dumpRispostaIngressoPayloadParsing,
+							CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_BODY, CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_BODY, dumpRispostaIngressoBody,
+							CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_ATTACHMENTS, CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_ATTACHMENTS, dumpRispostaIngressoAttachments
+							);
+	
+									
+					// sotto sezione uscita
+					addSottoSezioneDump(dati, 
+							valuesProp, labelsProp, 
+							CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA,
+							CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_HEADERS, CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_HEADERS,dumpRispostaUscitaHeader,
+							CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_PAYLOAD, CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_PAYLOAD, dumpRispostaUscitaPayload,
+							CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_PAYLOAD_PARSING, CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_PAYLOAD_PARSING, dumpRispostaUscitaPayloadParsing,
+							CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_BODY, CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_BODY, dumpRispostaUscitaBody,
+							CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_ATTACHMENTS, CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_ATTACHMENTS, dumpRispostaUscitaAttachments
+							);
 
-								
-				// sotto sezione uscita
-				addSottoSezioneDump(dati, 
-						valuesProp, labelsProp, 
-						CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA,
-						CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_HEADERS, CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_HEADERS,dumpRispostaUscitaHeader,
-						CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_PAYLOAD, CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_PAYLOAD, dumpRispostaUscitaPayload,
-						CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_PAYLOAD_PARSING, CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_PAYLOAD_PARSING, dumpRispostaUscitaPayloadParsing,
-						CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_BODY, CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_BODY, dumpRispostaUscitaBody,
-						CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_ATTACHMENTS, CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_ATTACHMENTS, dumpRispostaUscitaAttachments
-						);
-
+				}catch(Exception e) {
+					throw new DriverControlStationException(e.getMessage(),e);
+				}
 			}
 		}
 	}
@@ -14758,7 +15094,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String dumpRichiestaUscitaHeader, String dumpRichiestaUscitaPayload, String dumpRichiestaUscitaPayloadParsing, String dumpRichiestaUscitaBody, String dumpRichiestaUscitaAttachments, 
 			String dumpRispostaIngressoHeader, String dumpRispostaIngressoPayload, String dumpRispostaIngressoPayloadParsing, String dumpRispostaIngressoBody , String dumpRispostaIngressoAttachments,
 			String dumpRispostaUscitaHeader, String dumpRispostaUscitaPayload, String dumpRispostaUscitaPayloadParsing, String dumpRispostaUscitaBody, String dumpRispostaUscitaAttachments,
-			boolean portaApplicativa) throws Exception{
+			boolean portaApplicativa) throws DriverControlStationException{
 		
 		// stato generale dump
 		DataElement de = new DataElement();
@@ -14902,7 +15238,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String dumpRichiestaIngressoHeader, String dumpRichiestaIngressoPayload, String dumpRichiestaIngressoPayloadParsing, String dumpRichiestaIngressoBody, String dumpRichiestaIngressoAttachments, 
 			String dumpRichiestaUscitaHeader, String dumpRichiestaUscitaPayload, String dumpRichiestaUscitaPayloadParsing, String dumpRichiestaUscitaBody, String dumpRichiestaUscitaAttachments, 
 			String dumpRispostaIngressoHeader, String dumpRispostaIngressoPayload, String dumpRispostaIngressoPayloadParsing, String dumpRispostaIngressoBody , String dumpRispostaIngressoAttachments,
-			String dumpRispostaUscitaHeader, String dumpRispostaUscitaPayload, String dumpRispostaUscitaPayloadParsing, String dumpRispostaUscitaBody, String dumpRispostaUscitaAttachments) throws Exception{
+			String dumpRispostaUscitaHeader, String dumpRispostaUscitaPayload, String dumpRispostaUscitaPayloadParsing, String dumpRispostaUscitaBody, String dumpRispostaUscitaAttachments) throws DriverControlStationException{
 		
 		if(showStato) {
 			if(StringUtils.isEmpty(statoDump) || !(statoDump.equals(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT) || statoDump.equals(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO))) {
@@ -15135,7 +15471,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String dumpRichiestaIngressoHeader, String dumpRichiestaIngressoPayload, String dumpRichiestaIngressoPayloadParsing, String dumpRichiestaIngressoBody, String dumpRichiestaIngressoAttachments, 
 			String dumpRichiestaUscitaHeader, String dumpRichiestaUscitaPayload, String dumpRichiestaUscitaPayloadParsing, String dumpRichiestaUscitaBody, String dumpRichiestaUscitaAttachments, 
 			String dumpRispostaIngressoHeader, String dumpRispostaIngressoPayload, String dumpRispostaIngressoPayloadParsing, String dumpRispostaIngressoBody , String dumpRispostaIngressoAttachments,
-			String dumpRispostaUscitaHeader, String dumpRispostaUscitaPayload, String dumpRispostaUscitaPayloadParsing, String dumpRispostaUscitaBody, String dumpRispostaUscitaAttachments) throws Exception{
+			String dumpRispostaUscitaHeader, String dumpRispostaUscitaPayload, String dumpRispostaUscitaPayloadParsing, String dumpRispostaUscitaBody, String dumpRispostaUscitaAttachments) throws DriverControlStationException{
 		
 		DumpConfigurazione newConfigurazione = null;
 		
@@ -15360,7 +15696,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 	/** Gestione Properties MVC */
 	
-	public void aggiornaConfigurazioneProperties(ConfigBean configurazione) throws Exception {
+	public void aggiornaConfigurazioneProperties(ConfigBean configurazione) throws DriverControlStationException {
 		ConfigBean oldConfigurazione = ServletUtils.readConfigurazioneBeanFromSession(this.request, this.session, configurazione.getId());
 		
 		ExternalResources externalResources = new ExternalResources();
@@ -15373,18 +15709,22 @@ public class ConsoleHelper implements IConsoleHelper {
 			for (String key : configurazione.getListakeys()) {
 				Boolean oldItemVisible = oldConfigurazione != null ? oldConfigurazione.getItem(key).getVisible() : null;
 				configurazione.getItem(key).setOldVisible(oldItemVisible); 
-				configurazione.getItem(key).setValueFromRequest(this.getParameter(key), externalResources); 
+				try {
+					configurazione.getItem(key).setValueFromRequest(this.getParameter(key), externalResources);
+				}catch(Exception e) {
+					throw new DriverControlStationException(e.getMessage(),e);
+				}
 			}
 			
 		}finally {
 			DBManager.getInstance().releaseConnection(con);
 		}
 	}
-	public List<DataElement> addPropertiesConfigToDati(TipoOperazione tipoOperazione, List<DataElement> dati, String configName, ConfigBean configurazioneBean) throws Exception {
+	public List<DataElement> addPropertiesConfigToDati(TipoOperazione tipoOperazione, List<DataElement> dati, String configName, ConfigBean configurazioneBean) throws DriverControlStationException {
 		return addPropertiesConfigToDati(tipoOperazione, dati, configName, configurazioneBean, true);
 	}
 	
-	public List<DataElement> addPropertiesConfigToDati(TipoOperazione tipoOperazione, List<DataElement> dati, String configName, ConfigBean configurazioneBean, boolean addHiddenConfigName) throws Exception {
+	public List<DataElement> addPropertiesConfigToDati(TipoOperazione tipoOperazione, List<DataElement> dati, String configName, ConfigBean configurazioneBean, boolean addHiddenConfigName) throws DriverControlStationException {
 		if(addHiddenConfigName) {
 			DataElement de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PROPERTIES_CONFIG_NAME);
@@ -15402,8 +15742,13 @@ public class ConsoleHelper implements IConsoleHelper {
 				externalResources.setConnection(con);
 				Map<String, String> mapNameValue = new HashMap<>();
 				for (BaseItemBean<?> item : configurazioneBean.getListaItem()) {
-					if(item.isVisible())
-						dati.add(item.toDataElement(configurazioneBean, mapNameValue, externalResources));
+					if(item.isVisible()) {
+						try {
+							dati.add(item.toDataElement(configurazioneBean, mapNameValue, externalResources));
+						}catch(Exception e) {
+							throw new DriverControlStationException(e.getMessage(),e);
+						}
+					}
 				}
 			}finally {
 				DBManager.getInstance().releaseConnection(con);
@@ -15413,7 +15758,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return dati;
 	}
 	
-	public boolean checkPropertiesConfigurationData(TipoOperazione tipoOperazione,ConfigBean configurazioneBean, String nome, String descrizione, Config config) throws Exception{
+	public boolean checkPropertiesConfigurationData(TipoOperazione tipoOperazione,ConfigBean configurazioneBean, String nome, String descrizione, Config config) throws DriverControlStationException{
 		// Controlli sui campi immessi
 		try {
 			ExternalResources externalResources = new ExternalResources();
@@ -15442,7 +15787,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	public boolean isFirstTimeFromHttpParameters(String firstTimeParameter) throws Exception{
+	public boolean isFirstTimeFromHttpParameters(String firstTimeParameter) throws DriverControlStationException{
 		
 		String tmp = this.getParameter(firstTimeParameter);
 		if(tmp!=null && !"".equals(tmp.trim())){
@@ -15460,7 +15805,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		dati.add(de);
 	}
 	
-	public boolean hasOnlyPermessiDiagnosticaReportistica(User user) throws Exception {
+	public boolean hasOnlyPermessiDiagnosticaReportistica(User user) throws DriverControlStationException {
 		PermessiUtente pu = user.getPermessi();
 		Boolean singlePdD = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 		if(singlePdD==null) {
@@ -15507,12 +15852,17 @@ public class ConsoleHelper implements IConsoleHelper {
 		);
 	}
 	
-	public String readConfigurazioneRegistrazioneEsitiFromHttpParameters(String configurazioneEsiti, boolean first) throws Exception {
+	public String readConfigurazioneRegistrazioneEsitiFromHttpParameters(String configurazioneEsiti, boolean first) throws DriverControlStationException {
 		
 		
 		StringBuilder bf = new StringBuilder();
-		EsitiProperties esiti = EsitiConfigUtils.getEsitiPropertiesForConfiguration(ControlStationCore.getLog());
-		List<Integer> esitiCodes = esiti.getEsitiCode();
+		List<Integer> esitiCodes = null;
+		try {
+			EsitiProperties esiti = EsitiConfigUtils.getEsitiPropertiesForConfiguration(ControlStationCore.getLog());
+			esitiCodes = esiti.getEsitiCode();
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 		if(esitiCodes!=null){
 			for (Integer esito : esitiCodes) {
 				String esitoParam = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
@@ -15548,10 +15898,14 @@ public class ConsoleHelper implements IConsoleHelper {
 		return configurazioneEsiti;
 	}
 	
-	public List<String> getRegistrazioneEsiti(String configurazioneEsiti, StringBuilder bf) throws Exception{
+	public List<String> getRegistrazioneEsiti(String configurazioneEsiti, StringBuilder bf) throws DriverControlStationException{
 		
-		EsitiProperties esiti = EsitiConfigUtils.getEsitiPropertiesForConfiguration(ControlStationCore.getLog());
-		return EsitiConfigUtils.getRegistrazioneEsiti(configurazioneEsiti, ControlStationCore.getLog(), bf, esiti);
+		try {
+			EsitiProperties esiti = EsitiConfigUtils.getEsitiPropertiesForConfiguration(ControlStationCore.getLog());
+			return EsitiConfigUtils.getRegistrazioneEsiti(configurazioneEsiti, ControlStationCore.getLog(), bf, esiti);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 		
 	}
 	
@@ -15647,11 +16001,10 @@ public class ConsoleHelper implements IConsoleHelper {
 			boolean selectAll,
 			String tracciamentoEsitiSelezionePersonalizzataOk, String tracciamentoEsitiSelezionePersonalizzataFault, 
 			String tracciamentoEsitiSelezionePersonalizzataFallite, String tracciamentoEsitiSelezionePersonalizzataScartate, 
-			String tracciamentoEsitiSelezionePersonalizzataRateLimiting, String tracciamentoEsitiSelezionePersonalizzataMax, String tracciamentoEsitiSelezionePersonalizzataCors) throws Exception {
+			String tracciamentoEsitiSelezionePersonalizzataRateLimiting, String tracciamentoEsitiSelezionePersonalizzataMax, String tracciamentoEsitiSelezionePersonalizzataCors) throws DriverControlStationException {
 		
 	
 		DataElement de = new DataElement();
-		//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI);
 		de.setType(DataElementType.TITLE);
 		dati.add(de);
@@ -15672,7 +16025,6 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		if(tracciamentoEsitiStato==null || CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO.equals(tracciamentoEsitiStato) ) {
 			de = new DataElement();
-			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 			de.setValue(ConfigurazioneCostanti.LABEL_NOTE_CONFIGURAZIONE_REGISTRAZIONE_ESITI);
 			de.setType(DataElementType.NOTE);
 			dati.add(de);
@@ -15689,7 +16041,12 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 			
-			EsitiProperties esiti = EsitiConfigUtils.getEsitiPropertiesForConfiguration(ControlStationCore.getLog());
+			EsitiProperties esiti = null;
+			try {
+				esiti = EsitiConfigUtils.getEsitiPropertiesForConfiguration(ControlStationCore.getLog());
+			}catch(Exception e) {
+				throw new DriverControlStationException(e.getMessage(),e);
+			}
 			
 			List<String> values = new ArrayList<>();
 			values.add(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO);
@@ -15714,19 +16071,22 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			// ok
 			
-			List<Integer> listOk = getListaEsitiOkSenzaCors(esiti);
+			List<Integer> listOk = null;
+			try {
+				listOk = getListaEsitiOkSenzaCors(esiti);
+			}catch(Exception e) {
+				throw new DriverControlStationException(e.getMessage(),e);
+			}
 			
 			if(!selectAll) {
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK);
-				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 				de.setType(DataElementType.SUBTITLE);
 				dati.add(de);
 			}
 					
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
-			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK);
 			if(!selectAll) {
 				de.setType(DataElementType.SELECT);
@@ -15746,45 +16106,47 @@ public class ConsoleHelper implements IConsoleHelper {
 					selectAll) {
 				for (Integer esito : listOk) {
 					
-					EsitoTransazioneName esitoTransactionName = esiti.getEsitoTransazioneName(esito);
-					
-					boolean statiConsegnaMultipla = EsitoTransazioneName.isStatiConsegnaMultipla(esitoTransactionName);
-					if(statiConsegnaMultipla) {
-						continue; // non vengono gestiti in questa configurazione
-					}
-					
-					boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
-					boolean integrationManagerSavedInMessageBox = EsitoTransazioneName.isSavedInMessageBox(esitoTransactionName);		
-										
-					de = new DataElement();
-					if(EsitoTransazioneName.CONSEGNA_MULTIPLA.equals(esitoTransactionName)) {
-						de.setLabelRight(EsitoUtils.LABEL_ESITO_CONSEGNA_MULTIPLA_SENZA_STATI);
-					}
-					else {
-						de.setLabelRight(esiti.getEsitoLabel(esito));
-					}
-					//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
-	//				de.setNote(esiti.getEsitoLabel(esito));
-					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
-					if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataOk)) {
-						if(integrationManagerSpecific && (this.isModalitaStandard() || !this.core.isIntegrationManagerTraceMessageBoxOperationEnabled())) {
-							de.setType(DataElementType.HIDDEN);
-							de.setValue(attivi.contains((esito+""))+"");
+					try {
+						EsitoTransazioneName esitoTransactionName = esiti.getEsitoTransazioneName(esito);
+						
+						boolean statiConsegnaMultipla = EsitoTransazioneName.isStatiConsegnaMultipla(esitoTransactionName);
+						if(statiConsegnaMultipla) {
+							continue; // non vengono gestiti in questa configurazione
 						}
-						else if(integrationManagerSavedInMessageBox && (!this.core.isIntegrationManagerEnabled())) {
-							de.setType(DataElementType.HIDDEN);
-							de.setValue(attivi.contains((esito+""))+"");
+						
+						boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
+						boolean integrationManagerSavedInMessageBox = EsitoTransazioneName.isSavedInMessageBox(esitoTransactionName);		
+											
+						de = new DataElement();
+						if(EsitoTransazioneName.CONSEGNA_MULTIPLA.equals(esitoTransactionName)) {
+							de.setLabelRight(EsitoUtils.LABEL_ESITO_CONSEGNA_MULTIPLA_SENZA_STATI);
 						}
 						else {
-							de.setType(DataElementType.CHECKBOX);
-							de.setSelected(attivi.contains((esito+"")));
+							de.setLabelRight(esiti.getEsitoLabel(esito));
 						}
+						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
+						if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataOk)) {
+							if(integrationManagerSpecific && (this.isModalitaStandard() || !this.core.isIntegrationManagerTraceMessageBoxOperationEnabled())) {
+								de.setType(DataElementType.HIDDEN);
+								de.setValue(attivi.contains((esito+""))+"");
+							}
+							else if(integrationManagerSavedInMessageBox && (!this.core.isIntegrationManagerEnabled())) {
+								de.setType(DataElementType.HIDDEN);
+								de.setValue(attivi.contains((esito+""))+"");
+							}
+							else {
+								de.setType(DataElementType.CHECKBOX);
+								de.setSelected(attivi.contains((esito+"")));
+							}
+						}
+						else {
+							de.setType(DataElementType.HIDDEN);
+							de.setValue("true");
+						}
+						dati.add(de);
+					}catch(Exception e) {
+						throw new DriverControlStationException(e.getMessage(),e);
 					}
-					else {
-						de.setType(DataElementType.HIDDEN);
-						de.setValue("true");
-					}
-					dati.add(de);
 				}
 			}
 			
@@ -15792,19 +16154,22 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			// fault
 			
-			List<Integer> listFault = esiti.getEsitiCodeFaultApplicativo();
+			List<Integer> listFault = null;
+			try {
+				listFault = esiti.getEsitiCodeFaultApplicativo();
+			}catch(Exception e) {
+				throw new DriverControlStationException(e.getMessage(),e);
+			}
 			
 			if(!selectAll) {
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT);
-				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 				de.setType(DataElementType.SUBTITLE);
 				dati.add(de);
 			}
 					
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
-			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT);
 			if(!selectAll) {
 				de.setType(DataElementType.SELECT);
@@ -15829,20 +16194,22 @@ public class ConsoleHelper implements IConsoleHelper {
 					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataFault) ||
 					selectAll) {
 				for (Integer esito : listFault) {
-					de = new DataElement();
-					de.setLabelRight(esiti.getEsitoLabel(esito));
-					//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
-	//						de.setNote(esiti.getEsitoLabel(esito));
-					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
-					if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFault)) {
-						de.setType(DataElementType.CHECKBOX);
-						de.setSelected(attivi.contains((esito+"")));
+					try {
+						de = new DataElement();
+						de.setLabelRight(esiti.getEsitoLabel(esito));
+						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
+						if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFault)) {
+							de.setType(DataElementType.CHECKBOX);
+							de.setSelected(attivi.contains((esito+"")));
+						}
+						else {
+							de.setType(DataElementType.HIDDEN);
+							de.setValue("true");
+						}
+						dati.add(de);
+					}catch(Exception e) {
+						throw new DriverControlStationException(e.getMessage(),e);
 					}
-					else {
-						de.setType(DataElementType.HIDDEN);
-						de.setValue("true");
-					}
-					dati.add(de);
 				}
 			}
 			
@@ -15850,19 +16217,22 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			// fallite
 			
-			List<Integer> listFalliteSenza_MaxThreads_Scartate = getListaEsitiFalliteSenza_RateLimiting_MaxThreads_Scartate(esiti);
+			List<Integer> listFalliteSenza_MaxThreads_Scartate = null;
+			try {
+				listFalliteSenza_MaxThreads_Scartate = getListaEsitiFalliteSenza_RateLimiting_MaxThreads_Scartate(esiti);
+			}catch(Exception e) {
+				throw new DriverControlStationException(e.getMessage(),e);
+			}
 			
 			if(!selectAll) {
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE);
-				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 				de.setType(DataElementType.SUBTITLE);
 				dati.add(de);
 			}
 					
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
-			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE);
 			if(!selectAll) {
 				de.setType(DataElementType.SELECT);
@@ -15882,35 +16252,38 @@ public class ConsoleHelper implements IConsoleHelper {
 					selectAll) {
 				for (Integer esito : listFalliteSenza_MaxThreads_Scartate) {
 					
-					EsitoTransazioneName esitoTransactionName = esiti.getEsitoTransazioneName(esito);
-					
-					boolean statiConsegnaMultipla = EsitoTransazioneName.isStatiConsegnaMultipla(esitoTransactionName);
-					if(statiConsegnaMultipla) {
-						continue; // non vengono gestiti in questa configurazione
-					}
-					
-					boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
-					
-					de = new DataElement();
-					de.setLabelRight(esiti.getEsitoLabel(esito));
-					//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
-	//						de.setNote(esiti.getEsitoLabel(esito));
-					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
-					if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFallite)) {
-						if(integrationManagerSpecific && (this.isModalitaStandard() || !this.core.isIntegrationManagerTraceMessageBoxOperationEnabled())) {
-							de.setType(DataElementType.HIDDEN);
-							de.setValue(attivi.contains((esito+""))+"");
+					try {
+						EsitoTransazioneName esitoTransactionName = esiti.getEsitoTransazioneName(esito);
+						
+						boolean statiConsegnaMultipla = EsitoTransazioneName.isStatiConsegnaMultipla(esitoTransactionName);
+						if(statiConsegnaMultipla) {
+							continue; // non vengono gestiti in questa configurazione
+						}
+						
+						boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
+						
+						de = new DataElement();
+						de.setLabelRight(esiti.getEsitoLabel(esito));
+						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
+						if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFallite)) {
+							if(integrationManagerSpecific && (this.isModalitaStandard() || !this.core.isIntegrationManagerTraceMessageBoxOperationEnabled())) {
+								de.setType(DataElementType.HIDDEN);
+								de.setValue(attivi.contains((esito+""))+"");
+							}
+							else {
+								de.setType(DataElementType.CHECKBOX);
+								de.setSelected(attivi.contains((esito+"")));
+							}
 						}
 						else {
-							de.setType(DataElementType.CHECKBOX);
-							de.setSelected(attivi.contains((esito+"")));
+							de.setType(DataElementType.HIDDEN);
+							de.setValue("true");
 						}
+						dati.add(de);
+					}catch(Exception e) {
+						throw new DriverControlStationException(e.getMessage(),e);
 					}
-					else {
-						de.setType(DataElementType.HIDDEN);
-						de.setValue("true");
-					}
-					dati.add(de);
+					
 				}
 			}
 			
@@ -15918,19 +16291,22 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			// Scartate
 			
-			List<Integer> listScartate = esiti.getEsitiCodeRichiestaScartate();
+			List<Integer> listScartate = null;
+			try {
+				listScartate = esiti.getEsitiCodeRichiestaScartate();
+			}catch(Exception e) {
+				throw new DriverControlStationException(e.getMessage(),e);
+			}
 			
 			if(!selectAll) {
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_SCARTATE);
-				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 				de.setType(DataElementType.SUBTITLE);
 				dati.add(de);
 			}
 					
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
-			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_SCARTATE);
 			if(!selectAll) {
 				de.setType(DataElementType.SELECT);
@@ -15950,35 +16326,39 @@ public class ConsoleHelper implements IConsoleHelper {
 					selectAll) {
 				for (Integer esito : listScartate) {
 					
-					EsitoTransazioneName esitoTransactionName = esiti.getEsitoTransazioneName(esito);
+					try {
 					
-					boolean statiConsegnaMultipla = EsitoTransazioneName.isStatiConsegnaMultipla(esitoTransactionName);
-					if(statiConsegnaMultipla) {
-						continue; // non vengono gestiti in questa configurazione
-					}
-					
-					boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
-					
-					de = new DataElement();
-					de.setLabelRight(esiti.getEsitoLabel(esito));
-					//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
-	//						de.setNote(esiti.getEsitoLabel(esito));
-					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
-					if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataScartate)) {
-						if(integrationManagerSpecific && (this.isModalitaStandard() || !this.core.isIntegrationManagerTraceMessageBoxOperationEnabled())) {
-							de.setType(DataElementType.HIDDEN);
-							de.setValue(attivi.contains((esito+""))+"");
+						EsitoTransazioneName esitoTransactionName = esiti.getEsitoTransazioneName(esito);
+						
+						boolean statiConsegnaMultipla = EsitoTransazioneName.isStatiConsegnaMultipla(esitoTransactionName);
+						if(statiConsegnaMultipla) {
+							continue; // non vengono gestiti in questa configurazione
+						}
+						
+						boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
+						
+						de = new DataElement();
+						de.setLabelRight(esiti.getEsitoLabel(esito));
+						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
+						if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataScartate)) {
+							if(integrationManagerSpecific && (this.isModalitaStandard() || !this.core.isIntegrationManagerTraceMessageBoxOperationEnabled())) {
+								de.setType(DataElementType.HIDDEN);
+								de.setValue(attivi.contains((esito+""))+"");
+							}
+							else {
+								de.setType(DataElementType.CHECKBOX);
+								de.setSelected(attivi.contains((esito+"")));
+							}
 						}
 						else {
-							de.setType(DataElementType.CHECKBOX);
-							de.setSelected(attivi.contains((esito+"")));
+							de.setType(DataElementType.HIDDEN);
+							de.setValue("true");
 						}
+						dati.add(de);
+						
+					}catch(Exception e) {
+						throw new DriverControlStationException(e.getMessage(),e);
 					}
-					else {
-						de.setType(DataElementType.HIDDEN);
-						de.setValue("true");
-					}
-					dati.add(de);
 				}
 			}
 					
@@ -15990,16 +16370,19 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(!selectAll) {
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_RATE_LIMITING);
-				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 				de.setType(DataElementType.SUBTITLE);
 				dati.add(de);
 			}
 			
-			String esitoViolazioneRateLimitingAsString = esiti.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA) + "";
+			String esitoViolazioneRateLimitingAsString = null;
+			try {
+				esitoViolazioneRateLimitingAsString = esiti.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA) + "";
+			}catch(Exception e) {
+				throw new DriverControlStationException(e.getMessage(),e);
+			}
 			
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
-			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_RATE_LIMITING);
 			if(!selectAll) {
 				de.setType(DataElementType.SELECT);
@@ -16032,16 +16415,19 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(!selectAll) {
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUESTS);
-				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 				de.setType(DataElementType.SUBTITLE);
 				dati.add(de);
 			}
 			
-			String esitoViolazioneAsString = esiti.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_MAX_THREADS) + "";
+			String esitoViolazioneAsString = null;
+			try{
+				esitoViolazioneAsString = esiti.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_MAX_THREADS) + "";
+			}catch(Exception e) {
+				throw new DriverControlStationException(e.getMessage(),e);
+			}
 			
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
-			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUEST);
 			if(!selectAll) {
 				de.setType(DataElementType.SELECT);
@@ -16073,14 +16459,12 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(!selectAll) {
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS);
-				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 				de.setType(DataElementType.SUBTITLE);
 				dati.add(de);
 			}
 			
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
-			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS);
 			if(!selectAll) {
 				de.setType(DataElementType.SELECT);
@@ -16099,33 +16483,37 @@ public class ConsoleHelper implements IConsoleHelper {
 					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataCors) ||
 					selectAll) {
 				
-				List<Integer> listCors = this.getListaEsitiCors(esiti);
+				try {
 				
-				for (Integer esito : listCors) {
+					List<Integer> listCors = this.getListaEsitiCors(esiti);
 					
-					EsitoTransazioneName esitoTransactionName = esiti.getEsitoTransazioneName(esito);
-					boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
-					
-					de = new DataElement();
-					de.setLabelRight(esiti.getEsitoLabel(esito));
-					//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
-	//				de.setNote(esiti.getEsitoLabel(esito));
-					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
-					if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataCors)) {
-						if(integrationManagerSpecific && (this.isModalitaStandard() || !this.core.isIntegrationManagerTraceMessageBoxOperationEnabled())) {
-							de.setType(DataElementType.HIDDEN);
-							de.setValue(attivi.contains((esito+""))+"");
+					for (Integer esito : listCors) {
+						
+						EsitoTransazioneName esitoTransactionName = esiti.getEsitoTransazioneName(esito);
+						boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
+						
+						de = new DataElement();
+						de.setLabelRight(esiti.getEsitoLabel(esito));
+						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
+						if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataCors)) {
+							if(integrationManagerSpecific && (this.isModalitaStandard() || !this.core.isIntegrationManagerTraceMessageBoxOperationEnabled())) {
+								de.setType(DataElementType.HIDDEN);
+								de.setValue(attivi.contains((esito+""))+"");
+							}
+							else {
+								de.setType(DataElementType.CHECKBOX);
+								de.setSelected(attivi.contains((esito+"")));
+							}
 						}
 						else {
-							de.setType(DataElementType.CHECKBOX);
-							de.setSelected(attivi.contains((esito+"")));
+							de.setType(DataElementType.HIDDEN);
+							de.setValue("true");
 						}
+						dati.add(de);
 					}
-					else {
-						de.setType(DataElementType.HIDDEN);
-						de.setValue("true");
-					}
-					dati.add(de);
+					
+				}catch(Exception e) {
+					throw new DriverControlStationException(e.getMessage(),e);
 				}
 			}
 			
@@ -16134,7 +16522,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public void addToDatiRegistrazioneTransazione(List<DataElement> dati, TipoOperazione tipoOperazione, 
-			String transazioniTempiElaborazione, String transazioniToken) throws Exception {
+			String transazioniTempiElaborazione, String transazioniToken) throws DriverControlStationException {
 		
 		if(!this.isModalitaStandard()) {
 			
@@ -16260,7 +16648,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 	}
 
-	public List<DataElement> configurazioneCambiaNome(List<DataElement> dati, TipoOperazione other, String nomeGruppo,boolean isPortaDelegata) throws Exception{
+	public List<DataElement> configurazioneCambiaNome(List<DataElement> dati, TipoOperazione other, String nomeGruppo,boolean isPortaDelegata) throws DriverControlStationException{
 		 
 		DataElement de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_NOME_GRUPPO);
@@ -16279,7 +16667,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return dati;
 	}
 	
-	public boolean configurazioneCambiaNomeCheck(TipoOperazione other, String nomeGruppo, List<String> listaNomiGruppiOccupati,boolean isPortaDelegata) throws Exception{
+	public boolean configurazioneCambiaNomeCheck(TipoOperazione other, String nomeGruppo, List<String> listaNomiGruppiOccupati,boolean isPortaDelegata) throws DriverControlStationException{
 		if(StringUtils.isEmpty(nomeGruppo)) {
 			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NOME_GRUPPO_NON_PUO_ESSERE_VUOTA);
 			return false;
@@ -16315,7 +16703,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	public void addConfigurazioneCorsPorteToDati(TipoOperazione tipoOperazione,List<DataElement> dati, boolean showStato, String statoCorsPorta, boolean corsStato, TipoGestioneCORS corsTipo,
 			boolean corsAllAllowOrigins, boolean corsAllAllowHeaders, boolean corsAllAllowMethods,
 			String corsAllowHeaders, String corsAllowOrigins, String corsAllowMethods,
-			boolean corsAllowCredential, String corsExposeHeaders, boolean corsMaxAge, int corsMaxAgeSeconds) throws Exception {
+			boolean corsAllowCredential, String corsExposeHeaders, boolean corsMaxAge, int corsMaxAgeSeconds) throws DriverControlStationException {
 		
 		if(showStato) {
 			DataElement de = new DataElement();
@@ -16329,14 +16717,17 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_STATO_PORTA); 
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CORS_STATO_PORTA);
 		if(showStato) {
-			
-			de.setType(DataElementType.SELECT);
-			String valuesStato [] = {CostantiControlStation.VALUE_PARAMETRO_CORS_STATO_DEFAULT, CostantiControlStation.VALUE_PARAMETRO_CORS_STATO_RIDEFINITO};
-			String labelsStato [] = { this.getGestioneCorsLabelDefault(true), CostantiControlStation.LABEL_PARAMETRO_CORS_STATO_PORTA_RIDEFINITO};
-			de.setSelected(statoCorsPorta);
-			de.setLabels(labelsStato);
-			de.setValues(valuesStato); 
-			de.setPostBack(true);
+			try {
+				de.setType(DataElementType.SELECT);
+				String valuesStato [] = {CostantiControlStation.VALUE_PARAMETRO_CORS_STATO_DEFAULT, CostantiControlStation.VALUE_PARAMETRO_CORS_STATO_RIDEFINITO};
+				String labelsStato [] = { this.getGestioneCorsLabelDefault(true), CostantiControlStation.LABEL_PARAMETRO_CORS_STATO_PORTA_RIDEFINITO};
+				de.setSelected(statoCorsPorta);
+				de.setLabels(labelsStato);
+				de.setValues(valuesStato); 
+				de.setPostBack(true);
+			}catch(Exception e) {
+				throw new DriverControlStationException(e.getMessage(),e);
+			}
 		} else {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(statoCorsPorta);
@@ -16619,7 +17010,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return gestioneCors;
 	}
 	
-	public boolean checkDataConfigurazioneCorsPorta(TipoOperazione tipoOperazione,boolean showStato, String statoCorsPorta) throws Exception{
+	public boolean checkDataConfigurazioneCorsPorta(TipoOperazione tipoOperazione,boolean showStato, String statoCorsPorta) throws DriverControlStationException{
 		
 		if(showStato) {
 			if(StringUtils.isEmpty(statoCorsPorta) || !(statoCorsPorta.equals(CostantiControlStation.VALUE_PARAMETRO_CORS_STATO_DEFAULT) || statoCorsPorta.equals(CostantiControlStation.VALUE_PARAMETRO_CORS_STATO_RIDEFINITO))) {
@@ -16635,7 +17026,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 	
-	public boolean checkDataURLInvocazione() throws Exception {
+	public boolean checkDataURLInvocazione() throws DriverControlStationException {
 		
 		String urlInvocazionePA = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA);
 		
@@ -16689,7 +17080,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 	
-	public boolean checkDataCors() throws Exception {
+	public boolean checkDataCors() throws DriverControlStationException {
 		String corsStatoTmp = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_STATO);
 		boolean corsStato = ServletUtils.isCheckBoxEnabled(corsStatoTmp);
 		if(corsStato) {
@@ -16802,7 +17193,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public void addDescrizioneVerificaConnettoreToDati(List<DataElement> dati, String server, String labelConnettore, 
-			Connettore connettore, boolean registro, String aliasConnettore) throws Exception {
+			Connettore connettore, boolean registro, String aliasConnettore) throws DriverControlStationException {
 		
 		List<Parameter> downloadCertServerParameters = new ArrayList<Parameter>();
 		
@@ -16815,7 +17206,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 	}
 	
-	public void addVerificaConnettoreSceltaAlias(List<String> aliases,List<DataElement> dati) throws Exception {
+	public void addVerificaConnettoreSceltaAlias(List<String> aliases,List<DataElement> dati) throws DriverControlStationException {
 		
 		DataElement de = new DataElement();
 		de.setType(DataElementType.SELECT);
@@ -16825,7 +17216,11 @@ public class ConsoleHelper implements IConsoleHelper {
 		labels.add(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI);
 		values.addAll(this.confCore.getJmxPdD_aliases());
 		for (String alias : this.confCore.getJmxPdD_aliases()) {
-			labels.add(this.confCore.getJmxPdD_descrizione(alias));
+			try {
+				labels.add(this.confCore.getJmxPdD_descrizione(alias));
+			}catch(Exception e) {
+				throw new DriverControlStationException(e.getMessage(),e);
+			}
 		}
 		de.setValues(values);
 		de.setLabels(labels);
@@ -16839,7 +17234,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	public void addVerificaConnettoreHidden(List<DataElement> dati,
 			String id, String idsogg,  String idAsps, String idFruizione,
-			long idConnettore, boolean accessoDaGruppi, boolean connettoreRegistro) throws Exception {
+			long idConnettore, boolean accessoDaGruppi, boolean connettoreRegistro) throws DriverControlStationException {
 
 		DataElement de = new DataElement();
 		de.setType(DataElementType.HIDDEN);
@@ -16887,13 +17282,13 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	public boolean isConnettoreRidefinito(PortaApplicativa paDefault,	PortaApplicativaServizioApplicativo paSADefault,
 			PortaApplicativa paCurrent, PortaApplicativaServizioApplicativo paSACurrent,
-			List<PortaApplicativaServizioApplicativo> list_paSACurrent) throws Exception {
+			List<PortaApplicativaServizioApplicativo> list_paSACurrent) throws DriverControlStationException {
 		
 		if(paDefault==null) {
-			throw new Exception("Param paDefault is null");
+			throw new DriverControlStationException("Param paDefault is null");
 		}
 		if(paCurrent==null) {
-			throw new Exception("Param paCurrent is null");
+			throw new DriverControlStationException("Param paCurrent is null");
 		}
 		
 		boolean connettoreRidefinito = (
@@ -16929,10 +17324,10 @@ public class ConsoleHelper implements IConsoleHelper {
 		return connettoreRidefinito;
 	}
 	
-	public String getTooltipConnettore(ServizioApplicativo sa, org.openspcoop2.core.config.InvocazioneServizio is, boolean addExtInfo) throws Exception {
+	public String getTooltipConnettore(ServizioApplicativo sa, org.openspcoop2.core.config.InvocazioneServizio is, boolean addExtInfo) throws DriverControlStationException {
 		
 		if(sa==null) {
-			throw new Exception("Param sa is null");
+			throw new DriverControlStationException("Param sa is null");
 		}
 		
 		StringBuilder sbCon = new StringBuilder();
@@ -16946,10 +17341,10 @@ public class ConsoleHelper implements IConsoleHelper {
 		return sbCon.toString();
 	}
 	
-	public String getLabelConnettore(ServizioApplicativo sa, org.openspcoop2.core.config.InvocazioneServizio is, boolean addExtInfo) throws Exception {
+	public String getLabelConnettore(ServizioApplicativo sa, org.openspcoop2.core.config.InvocazioneServizio is, boolean addExtInfo) throws DriverControlStationException {
 		
 		if(sa==null) {
-			throw new Exception("Param sa is null");
+			throw new DriverControlStationException("Param sa is null");
 		}
 		
 		StringBuilder sbCon = new StringBuilder();
@@ -16961,10 +17356,10 @@ public class ConsoleHelper implements IConsoleHelper {
 		return sbCon.toString();
 	}
 	
-	public String getLabelConnettore(org.openspcoop2.core.config.InvocazioneServizio is, boolean addExtInfo, boolean tooltip) throws Exception {
+	public String getLabelConnettore(org.openspcoop2.core.config.InvocazioneServizio is, boolean addExtInfo, boolean tooltip) throws DriverControlStationException {
 		
 		if(is==null) {
-			throw new Exception("Param is is null");
+			throw new DriverControlStationException("Param is is null");
 		}
 		
 		String urlConnettore = this.getLabelConnettore(is.getConnettore(), addExtInfo, tooltip);
@@ -16975,18 +17370,18 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		return urlConnettore;
 	}
-	public String getLabelConnettore(org.openspcoop2.core.registry.Connettore connettore, boolean addExtInfo, boolean tooltip) throws Exception {
+	public String getLabelConnettore(org.openspcoop2.core.registry.Connettore connettore, boolean addExtInfo, boolean tooltip) throws DriverControlStationException {
 		
 		if(connettore==null) {
-			throw new Exception("Param connettore is null");
+			throw new DriverControlStationException("Param connettore is null");
 		}
 		
 		return this.getLabelConnettore(connettore.mappingIntoConnettoreConfigurazione(), addExtInfo, tooltip);
 	}
-	public String getLabelConnettore(org.openspcoop2.core.config.Connettore connettore, boolean addExtInfo, boolean tooltip) throws Exception {
+	public String getLabelConnettore(org.openspcoop2.core.config.Connettore connettore, boolean addExtInfo, boolean tooltip) throws DriverControlStationException {
 		
 		if(connettore==null) {
-			throw new Exception("Param connettore is null");
+			throw new DriverControlStationException("Param connettore is null");
 		}
 		
 		String urlConnettore = "";
@@ -17085,7 +17480,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			boolean responseCachingDigestUrlInvocazione, boolean responseCachingDigestHeaders,
 			boolean responseCachingDigestPayload, String responseCachingDigestHeadersNomiHeaders, StatoFunzionalitaCacheDigestQueryParameter responseCachingDigestQueryParameter, String responseCachingDigestNomiParametriQuery, 
 			boolean responseCachingCacheControlNoCache, boolean responseCachingCacheControlMaxAge, boolean responseCachingCacheControlNoStore, boolean visualizzaLinkConfigurazioneRegola, 
-			String servletResponseCachingConfigurazioneRegolaList, List<Parameter> paramsResponseCachingConfigurazioneRegolaList, int numeroResponseCachingConfigurazioneRegola) throws Exception {
+			String servletResponseCachingConfigurazioneRegolaList, List<Parameter> paramsResponseCachingConfigurazioneRegolaList, int numeroResponseCachingConfigurazioneRegola) throws DriverControlStationException {
 		
 		if(showStato) {
 			DataElement de = new DataElement();
@@ -17099,14 +17494,17 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_STATO_PORTA); 
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RESPONSE_CACHING_STATO_PORTA);
 		if(showStato) {
-			
-			de.setType(DataElementType.SELECT);
-			String valuesStato [] = {CostantiControlStation.VALUE_PARAMETRO_RESPONSE_CACHING_STATO_DEFAULT, CostantiControlStation.VALUE_PARAMETRO_RESPONSE_CACHING_STATO_RIDEFINITO};
-			String labelsStato [] = { this.getResponseCachingLabelDefault(true), CostantiControlStation.LABEL_PARAMETRO_RESPONSE_CACHING_STATO_PORTA_RIDEFINITO};
-			de.setSelected(statoResponseCachingPorta);
-			de.setLabels(labelsStato);
-			de.setValues(valuesStato); 
-			de.setPostBack(true);
+			try {
+				de.setType(DataElementType.SELECT);
+				String valuesStato [] = {CostantiControlStation.VALUE_PARAMETRO_RESPONSE_CACHING_STATO_DEFAULT, CostantiControlStation.VALUE_PARAMETRO_RESPONSE_CACHING_STATO_RIDEFINITO};
+				String labelsStato [] = { this.getResponseCachingLabelDefault(true), CostantiControlStation.LABEL_PARAMETRO_RESPONSE_CACHING_STATO_PORTA_RIDEFINITO};
+				de.setSelected(statoResponseCachingPorta);
+				de.setLabels(labelsStato);
+				de.setValues(valuesStato); 
+				de.setPostBack(true);
+			}catch(Exception e) {
+				throw new DriverControlStationException(e.getMessage(),e);
+			}
 		} else {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(statoResponseCachingPorta);
@@ -17448,12 +17846,20 @@ public class ConsoleHelper implements IConsoleHelper {
 		return configurazione.sizeRegolaList();
 	}
 	
-	public int numeroPluginsRegistroArchivi()  throws Exception {
-		return this.confCore.numeroPluginsArchiviList();
+	public int numeroPluginsRegistroArchivi()  throws DriverControlStationException {
+		try {
+			return this.confCore.numeroPluginsArchiviList();
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
 	
-	public int numeroPluginsRegistroClassi() throws Exception {
-		return this.confCore.numeroPluginsClassiList();
+	public int numeroPluginsRegistroClassi() throws DriverControlStationException {
+		try {
+			return this.confCore.numeroPluginsClassiList();
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 	}
 	
 	public boolean isCorsAbilitato(CorsConfigurazione configurazione) {
@@ -17489,7 +17895,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return 0;
 	}
 	
-	public boolean checkDataConfigurazioneResponseCachingPorta(TipoOperazione tipoOperazione,boolean showStato, String statoResponseCachingPorta) throws Exception{
+	public boolean checkDataConfigurazioneResponseCachingPorta(TipoOperazione tipoOperazione,boolean showStato, String statoResponseCachingPorta) throws DriverControlStationException{
 		
 		if(showStato) {
 			if(StringUtils.isEmpty(statoResponseCachingPorta) || 
@@ -17506,12 +17912,16 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 	
-	public boolean checkDataResponseCaching() throws Exception {
+	public boolean checkDataResponseCaching() throws DriverControlStationException {
 		
 		String responseCachingDigestQueryTmp = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_QUERY_PARAMETERS);
 		StatoFunzionalitaCacheDigestQueryParameter stato = null; 
 		if(responseCachingDigestQueryTmp!=null) {
-			stato = StatoFunzionalitaCacheDigestQueryParameter.toEnumConstant(responseCachingDigestQueryTmp, true);
+			try {
+				stato = StatoFunzionalitaCacheDigestQueryParameter.toEnumConstant(responseCachingDigestQueryTmp, true);
+			}catch(Exception e) {
+				throw new DriverControlStationException(e.getMessage(),e);
+			}
 		}
 		if(StatoFunzionalitaCacheDigestQueryParameter.SELEZIONE_PUNTUALE.equals(stato)) {
 			// se e' abilitato il salvataggio dei parametri della query bisogna indicare quali si vuole salvare
@@ -17552,7 +17962,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 	
-	public boolean checkRegolaResponseCaching() throws Exception {
+	public boolean checkRegolaResponseCaching() throws DriverControlStationException {
 		
 		String returnCode = getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE);
 		String statusMinS = getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN);
@@ -17587,7 +17997,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public boolean _checkReturnCode(String returnCode, String statusMinS, String statusMaxS,
-			String labelReturnCode, String labelReturnCodeMin, String labelReturnCodeMax) throws Exception {
+			String labelReturnCode, String labelReturnCodeMin, String labelReturnCodeMax) throws DriverControlStationException {
 		
 		Integer statusMin = null;
 		Integer statusMax = null;
@@ -17718,7 +18128,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	public List<DataElement> addTrasformazioneRispostaToDatiOpAdd(String protocollo, List<DataElement> dati, String idTrasformazione, 
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding,
-			String nome, String returnCode, String statusMin, String statusMax, String pattern, String contentType) throws Exception {
+			String nome, String returnCode, String statusMin, String statusMax, String pattern, String contentType) throws DriverControlStationException {
 		return addTrasformazioneRispostaToDati(TipoOperazione.ADD, protocollo, dati, 0, null, false, idTrasformazione, null, 
 				serviceBinding,
 				nome, returnCode, statusMin, statusMax, pattern, contentType, 
@@ -17742,7 +18152,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			boolean trasformazioneRispostaSoapAbilitatoParam, String trasformazioneRispostaSoapEnvelope,  
 			org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione trasformazioneRispostaSoapEnvelopeTipo, BinaryParameter trasformazioneRispostaSoapEnvelopeTemplate, String trasformazioneRispostaSoapEnvelopeTipoCheck
 			
-			) throws Exception {
+			) throws DriverControlStationException {
 		
 		
 		org.openspcoop2.core.registry.constants.ServiceBinding infoServiceBinding = serviceBindingParam;
@@ -18171,7 +18581,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public boolean trasformazioniCheckData(TipoOperazione tipoOp, long idPorta, String nome, TrasformazioneRegola regolaDBCheck_criteri, TrasformazioneRegola trasformazioneDBCheck_nome,  TrasformazioneRegola oldRegola,
-			ServiceBinding serviceBinding) throws Exception {
+			ServiceBinding serviceBinding) throws DriverControlStationException {
 		try{
 //			String [] azioni = this.getParameterValues(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_AZIONI);
 //			String pattern = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_PATTERN);
@@ -18226,11 +18636,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			return true;
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public boolean trasformazioniRichiestaCheckData(TipoOperazione tipoOp, TrasformazioneRegola oldRegola , ServiceBinding serviceBindingMessage) throws Exception {
+	public boolean trasformazioniRichiestaCheckData(TipoOperazione tipoOp, TrasformazioneRegola oldRegola , ServiceBinding serviceBindingMessage) throws DriverControlStationException {
 		try{
 		
 			String trasformazioneContenutoAbilitatoS  = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_ENABLED);
@@ -18396,12 +18806,12 @@ public class ConsoleHelper implements IConsoleHelper {
 			return true;
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
 	public boolean trasformazioniRispostaCheckData(TipoOperazione tipoOp, TrasformazioneRegola regolaRichiesta, TrasformazioneRegolaRisposta oldRegolaRisposta,
-			ServiceBinding serviceBinding) throws Exception {
+			ServiceBinding serviceBinding) throws DriverControlStationException {
 		try{
 
 			String nome = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_NOME);
@@ -18556,14 +18966,14 @@ public class ConsoleHelper implements IConsoleHelper {
 			return true;
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
 	public List<DataElement> addTrasformazioneToDatiOpAdd(List<DataElement> dati, Object oggetto, String nome, 
 			String stato, boolean azioniAll, String[] azioniDisponibiliList, String[] azioniDisponibiliLabelList, String[] azioni, String pattern, String contentType,
 			String [] connettoriDisponibiliList, String [] connettoriDisponibiliLabelList, String [] connettori,
-			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding, boolean isPortaDelegata) throws Exception {
+			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding, boolean isPortaDelegata) throws DriverControlStationException {
 		return addTrasformazioneToDati(TipoOperazione.ADD, dati, oggetto, null, nome, 
 				stato, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType, 
 				connettoriDisponibiliList, connettoriDisponibiliLabelList, connettori,
@@ -18577,7 +18987,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding,
 			String servletTrasformazioniRichiesta, List<Parameter> parametriInvocazioneServletTrasformazioniRichiesta, String servletTrasformazioniRispostaList, List<Parameter> parametriInvocazioneServletTrasformazioniRisposta,
 			int numeroTrasformazioniRisposte, boolean isPortaDelegata, String servletTrasformazioniAutorizzazioneAutenticati,  List<Parameter> parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati , int numAutenticati,
-			String servletTrasformazioniApplicativiAutenticati,  List<Parameter> parametriInvocazioneServletTrasformazioniApplicativiAutenticati , int numApplicativiAutenticati) throws Exception {
+			String servletTrasformazioniApplicativiAutenticati,  List<Parameter> parametriInvocazioneServletTrasformazioniApplicativiAutenticati , int numApplicativiAutenticati) throws DriverControlStationException {
 		
 		// Id hidden
 		DataElement de = new DataElement();
@@ -18730,7 +19140,11 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 				isSupportatoAutenticazione = true;
 				if(pd!=null && pd.getServizio()!=null && pd.getServizio().getTipo()!=null) {
-					protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(pd.getServizio().getTipo());
+					try {
+						protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(pd.getServizio().getTipo());
+					}catch(Exception e) {
+						throw new DriverControlStationException(e.getMessage(),e);
+					}
 				}
 				if(pd!=null && pd.getTrasformazioni()!=null && pd.getTrasformazioni().sizeRegolaList()>0) {
 					for (TrasformazioneRegola trCheck : pd.getTrasformazioni().getRegolaList()){
@@ -18749,9 +19163,17 @@ public class ConsoleHelper implements IConsoleHelper {
 					autenticazione = !TipoAutenticazione.DISABILITATO.equals(pa.getAutenticazione());
 				}
 				if(pa!=null && pa.getServizio()!=null && pa.getServizio().getTipo()!=null) {
-					protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(pa.getServizio().getTipo());
+					try {
+						protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(pa.getServizio().getTipo());
+					}catch(Exception e) {
+						throw new DriverControlStationException(e.getMessage(),e);
+					}
 				}
-				isSupportatoAutenticazione = this.soggettiCore.isSupportatoAutenticazioneApplicativiErogazione(protocollo);
+				try {
+					isSupportatoAutenticazione = this.soggettiCore.isSupportatoAutenticazioneApplicativiErogazione(protocollo);
+				}catch(Exception e) {
+					throw new DriverControlStationException(e.getMessage(),e);
+				}
 				if(pa!=null && pa.getTrasformazioni()!=null && pa.getTrasformazioni().sizeRegolaList()>0) {
 					for (TrasformazioneRegola trCheck : pa.getTrasformazioni().getRegolaList()){
 						if(trCheck.getNome().equals(nome)) {
@@ -19223,7 +19645,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione trasformazioneSoapEnvelopeTipo, BinaryParameter trasformazioneSoapEnvelopeTemplate, String trasformazioneSoapEnvelopeTipoCheck,
 			String servletTrasformazioniRichiestaHeadersList, List<Parameter> parametriInvocazioneServletTrasformazioniRichiestaHeaders, int numeroTrasformazioniRichiestaHeaders,
 			String servletTrasformazioniRichiestaParametriList, List<Parameter> parametriInvocazioneServletTrasformazioniRichiestaParametri, int numeroTrasformazioniRichiestaParametri,
-			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) throws Exception {
+			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) throws DriverControlStationException {
 		
 		DataElementInfo dInfoPatternTrasporto = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE);
 		dInfoPatternTrasporto.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
@@ -19660,10 +20082,10 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	private void setTemplateInfo(DataElement de, String label, org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione trasformazioneContenutoTipo, 
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding, boolean risposta,
-			String protocollo, boolean isPortaDelegata) throws Exception {
+			String protocollo, boolean isPortaDelegata) throws DriverControlStationException {
 		
 		if(trasformazioneContenutoTipo==null) {
-			throw new Exception("Param trasformazioneContenutoTipo is null");
+			throw new DriverControlStationException("Param trasformazioneContenutoTipo is null");
 		}
 		
 		switch (trasformazioneContenutoTipo) {
@@ -19775,7 +20197,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	public boolean trasformazioniRispostaHeaderCheckData(TipoOperazione tipoOp) throws Exception {
+	public boolean trasformazioniRispostaHeaderCheckData(TipoOperazione tipoOp) throws DriverControlStationException {
 		try{
 			String tipo = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_TIPO);
 			String nome = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_NOME);
@@ -19818,11 +20240,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			return true;
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public boolean trasformazioniRichiestaHeaderCheckData(TipoOperazione tipoOp) throws Exception {
+	public boolean trasformazioniRichiestaHeaderCheckData(TipoOperazione tipoOp) throws DriverControlStationException {
 		try{
 			String tipo = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_TIPO);
 			String nome = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_NOME);
@@ -19865,11 +20287,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			return true;
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
-	public boolean trasformazioniRichiestaUrlParameterCheckData(TipoOperazione tipoOp) throws Exception {
+	public boolean trasformazioniRichiestaUrlParameterCheckData(TipoOperazione tipoOp) throws DriverControlStationException {
 		try{
 			String tipo = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_TIPO);
 			String nome = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_NOME);
@@ -19912,7 +20334,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			return true;
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -20146,11 +20568,11 @@ public class ConsoleHelper implements IConsoleHelper {
 		return de;
 	}
 	
-	public boolean checkAzioniUtilizzateErogazione(AccordiServizioParteSpecificaPorteApplicativeMappingInfo mappingInfo, String [] azioni) throws Exception {
+	public boolean checkAzioniUtilizzateErogazione(AccordiServizioParteSpecificaPorteApplicativeMappingInfo mappingInfo, String [] azioni) throws DriverControlStationException {
 		List<MappingErogazionePortaApplicativa> list = mappingInfo.getListaMappingErogazione();
 		return checkAzioniUtilizzateErogazione(list, azioni);
 	}
-	public boolean checkAzioniUtilizzateErogazione(List<MappingErogazionePortaApplicativa> list, String [] azioni) throws Exception {
+	public boolean checkAzioniUtilizzateErogazione(List<MappingErogazionePortaApplicativa> list, String [] azioni) throws DriverControlStationException {
 		if(azioni==null || azioni.length<=0) {
 			return true;
 		}
@@ -20162,10 +20584,14 @@ public class ConsoleHelper implements IConsoleHelper {
 				if(this.confCore.isConfigurazioneAllarmiEnabled()) {
 					listAllarmi = this.confCore.allarmiList(new ConsoleSearch(true), RuoloPorta.APPLICATIVA, idPA.getNome());
 				}
-				PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(idPA);
-				if(this._checkAzioniUtilizzate(listPolicies, listAllarmi, pa.getTrasformazioni(), azioni, 
-						mappingErogazionePortaApplicativa.getDescrizione(), list.size())==false) {
-					return false;
+				try {
+					PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(idPA);
+					if(this._checkAzioniUtilizzate(listPolicies, listAllarmi, pa.getTrasformazioni(), azioni, 
+							mappingErogazionePortaApplicativa.getDescrizione(), list.size())==false) {
+						return false;
+					}
+				}catch(Exception e) {
+					throw new DriverControlStationException(e.getMessage(),e);
 				}
 			}
 		}
@@ -20173,11 +20599,11 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 	
-	public boolean checkAzioniUtilizzateFruizione(AccordiServizioParteSpecificaFruitoriPorteDelegateMappingInfo mappingInfo, String [] azioni) throws Exception {
+	public boolean checkAzioniUtilizzateFruizione(AccordiServizioParteSpecificaFruitoriPorteDelegateMappingInfo mappingInfo, String [] azioni) throws DriverControlStationException {
 		List<MappingFruizionePortaDelegata> list = mappingInfo.getListaMappingFruizione();
 		return this.checkAzioniUtilizzateFruizione(list, azioni);
 	}
-	public boolean checkAzioniUtilizzateFruizione(List<MappingFruizionePortaDelegata> list, String [] azioni) throws Exception {
+	public boolean checkAzioniUtilizzateFruizione(List<MappingFruizionePortaDelegata> list, String [] azioni) throws DriverControlStationException {
 		if(azioni==null || azioni.length<=0) {
 			return true;
 		}
@@ -20189,10 +20615,14 @@ public class ConsoleHelper implements IConsoleHelper {
 				if(this.confCore.isConfigurazioneAllarmiEnabled()) {
 					listAllarmi = this.confCore.allarmiList(new ConsoleSearch(true), RuoloPorta.DELEGATA, idPD.getNome());
 				}
-				PortaDelegata pd = this.porteDelegateCore.getPortaDelegata(idPD);
-				if(this._checkAzioniUtilizzate(listPolicies, listAllarmi, pd.getTrasformazioni(), azioni, 
-						mappingFruizionePortaDelegata.getDescrizione(), list.size())==false) {
-					return false;
+				try {
+					PortaDelegata pd = this.porteDelegateCore.getPortaDelegata(idPD);
+					if(this._checkAzioniUtilizzate(listPolicies, listAllarmi, pd.getTrasformazioni(), azioni, 
+							mappingFruizionePortaDelegata.getDescrizione(), list.size())==false) {
+						return false;
+					}
+				}catch(Exception e) {
+					throw new DriverControlStationException(e.getMessage(),e);
 				}
 			}
 		}
@@ -20610,7 +21040,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	public List<DataElement> addProxyPassConfigurazioneRegola(TipoOperazione tipoOp, List<DataElement> dati,
 			String idRegolaS, String nome, String descrizione, String stato, boolean regExpr, String regolaText,
 			String contestoEsterno, String baseUrl, String protocollo, List<String> protocolli, String soggetto,
-			List<IDSoggetto> soggetti, String ruolo, String serviceBinding, boolean multiTenant) throws Exception {
+			List<IDSoggetto> soggetti, String ruolo, String serviceBinding, boolean multiTenant) throws DriverControlStationException {
 		
 		DataElement dataElement = new DataElement();
 		dataElement.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA);
@@ -20776,7 +21206,12 @@ public class ConsoleHelper implements IConsoleHelper {
 		if(regExpr) {
 			sb.append(CostantiControlStation.MESSAGGIO_INFO_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_EXPR_DATI_DINAMICI_REGXP);
 		}
-		CanaliConfigurazione canali = this.confCore.getCanaliConfigurazione(false);
+		CanaliConfigurazione canali = null;
+		try {
+			canali = this.confCore.getCanaliConfigurazione(false);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 		if(canali!=null && StatoFunzionalita.ABILITATO.equals(canali.getStato())) {
 			sb.append(CostantiControlStation.MESSAGGIO_INFO_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_EXPR_DATI_DINAMICI_CANALE);
 		}
@@ -21032,14 +21467,19 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	public boolean isSoapOneWay(PortaApplicativa portaApplicativa, MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa, 
 			AccordoServizioParteSpecifica asps, AccordoServizioParteComuneSintetico as, ServiceBinding serviceBinding) 
-					throws Exception, DriverRegistroServiziException, DriverConfigurazioneException, DriverConfigurazioneNotFound {
+					throws DriverControlStationException, DriverRegistroServiziException, DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		boolean isSoapOneWay = false;
 		
 		if(serviceBinding.equals(ServiceBinding.SOAP)) {
 			// controllo che tutte le azioni del gruppo siano oneway
 			// se c'e' almeno un'azione non oneway visualizzo la sezione notifiche
 			if(mappingErogazionePortaApplicativa.isDefault()) {
-				Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, as, false, true, new ArrayList<>());
+				Map<String,String> azioni = null;
+				try{
+					azioni =this.porteApplicativeCore.getAzioniConLabel(asps, as, false, true, new ArrayList<>());
+				}catch(Exception e) {
+					throw new DriverControlStationException(e.getMessage(),e);
+				}
 				IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
 				List<MappingErogazionePortaApplicativa> lista = this.apsCore.mappingServiziPorteAppList(idServizio2,asps.getId(), null);
 		
@@ -21378,7 +21818,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	public boolean canaleCheckData(String canaleStato, String canale, boolean gestioneCanaliEnabled) throws Exception {
+	public boolean canaleCheckData(String canaleStato, String canale, boolean gestioneCanaliEnabled) throws DriverControlStationException {
 		// validazione canale
 		if(gestioneCanaliEnabled) {
 			if(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CANALE_STATO_RIDEFINITO.equals(canaleStato)) {
@@ -21396,7 +21836,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String fase,
 			String nomeParametroSelezioneTipo,
 			String nomeParametro, String label, String value, boolean hidden, List<DataElement> dati,
-			boolean postBack_viaPOST) throws Exception {
+			boolean postBack_viaPOST) throws DriverControlStationException {
 		addCustomField(tipoPlugin,
 				ruolo,
 				fase,
@@ -21412,7 +21852,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String fase,
 			String nomeParametroSelezioneTipo,
 			String nomeParametro, String label, String value, boolean hidden, List<DataElement> dati,
-			boolean postBack_viaPOST) throws Exception {
+			boolean postBack_viaPOST) throws DriverControlStationException {
 		this.addCustomFieldConValoreDefault(tipoPlugin,
 				ruolo,
 				fase,
@@ -21428,7 +21868,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String fase,
 			String nomeParametroSelezioneTipo,
 			String nomeParametro, String label, String value, boolean hidden, List<DataElement> dati,
-			boolean postBack_viaPOST, String valoreDefault) throws Exception {
+			boolean postBack_viaPOST, String valoreDefault) throws DriverControlStationException {
 		addCustomField(tipoPlugin,
 				ruolo,
 				fase,
@@ -21443,7 +21883,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String fase,
 			String nomeParametroSelezioneTipo,
 			String nomeParametro, String label, String value, boolean hidden, List<DataElement> dati,
-			boolean postBack_viaPOST, List<String> listaValuesDaEscludere, String messaggioErroreValoriDisponibiliTerminati) throws Exception {
+			boolean postBack_viaPOST, List<String> listaValuesDaEscludere, String messaggioErroreValoriDisponibiliTerminati) throws DriverControlStationException {
 		this.addCustomFieldConValoriDaEscludereConValoreDefault(tipoPlugin,ruolo,fase,nomeParametroSelezioneTipo,nomeParametro, label,
 				value, hidden, dati,postBack_viaPOST, listaValuesDaEscludere, messaggioErroreValoriDisponibiliTerminati, null);
 	}
@@ -21452,7 +21892,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String fase,
 			String nomeParametroSelezioneTipo,
 			String nomeParametro, String label, String value, boolean hidden, List<DataElement> dati,
-			boolean postBack_viaPOST, List<String> listaValuesDaEscludere, String messaggioErroreValoriDisponibiliTerminati, String valoreDefault) throws Exception {
+			boolean postBack_viaPOST, List<String> listaValuesDaEscludere, String messaggioErroreValoriDisponibiliTerminati, String valoreDefault) throws DriverControlStationException {
 		addCustomField(tipoPlugin,
 				ruolo,
 				fase,
@@ -21468,7 +21908,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String fase,
 			String nomeParametroSelezioneTipo,
 			String nomeParametro, String label, String [] value, boolean hidden, List<DataElement> dati,
-			boolean postBack_viaPOST) throws Exception {
+			boolean postBack_viaPOST) throws DriverControlStationException {
 		addMultiSelectCustomFieldConValoreDefault(tipoPlugin,
 				ruolo,
 				fase,
@@ -21484,7 +21924,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String fase,
 			String nomeParametroSelezioneTipo,
 			String nomeParametro, String label, String [] value, boolean hidden, List<DataElement> dati,
-			boolean postBack_viaPOST, String [] valoriDefault) throws Exception {
+			boolean postBack_viaPOST, String [] valoriDefault) throws DriverControlStationException {
 		addCustomField(tipoPlugin,
 				ruolo,
 				fase,
@@ -21502,7 +21942,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String value, String [] multiValue, boolean multiSelect,
 			boolean hidden, List<DataElement> dati,
 			boolean postBack_viaPOST, boolean mostraSempreLabel, List<String> listaValuesDaEscludere, 
-			String messaggioErroreValoriDisponibiliTerminati, boolean isSearch, String valoreDefault, String[] valoriDefault) throws Exception {
+			String messaggioErroreValoriDisponibiliTerminati, boolean isSearch, String valoreDefault, String[] valoriDefault) throws DriverControlStationException {
 		
 		List<String> values = new ArrayList<>();
 		List<String> labels = new ArrayList<>();
@@ -21554,7 +21994,12 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 			
-			List<Plugin> listaTmp = this.confCore.pluginsClassiList(ricerca);
+			List<Plugin> listaTmp = null;
+			try{
+				listaTmp = this.confCore.pluginsClassiList(ricerca);
+			}catch(Exception e) {
+				throw new DriverControlStationException(e.getMessage(),e);
+			}
 			boolean nessunValueDisponibile = false;
 			if(listaTmp!=null && !listaTmp.isEmpty()) {
 				if(listaValuesDaEscludere != null && !listaValuesDaEscludere.isEmpty()) {
@@ -21690,7 +22135,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			boolean nascondiSezioneOpzioniAvanzate, 
 			String ctModalitaSincronizzazione, String ctImplementazione, String ctContatori, String ctTipologia,
 			String ctHeaderHttp, String ctHeaderHttp_limit, String ctHeaderHttp_remaining, String ctHeaderHttp_reset,
-			String ctHeaderHttp_retryAfter, String ctHeaderHttp_retryAfterBackoff) throws Exception {
+			String ctHeaderHttp_retryAfter, String ctHeaderHttp_retryAfterBackoff) throws DriverControlStationException {
 		
 		if(addTitle) {
 			DataElement de = new DataElement();
@@ -21945,7 +22390,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	
-	public boolean validaOpzioniAvanzateRateLimiting(RuoloPolicy ruoloPolicy, String nome) throws Exception {
+	public boolean validaOpzioniAvanzateRateLimiting(RuoloPolicy ruoloPolicy, String nome) throws DriverControlStationException {
 	
 		String ctModalitaSincronizzazione = this.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_SINCRONIZZAZIONE);
 		String ctImplementazione = this.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_IMPLEMENTAZIONE);
@@ -21966,7 +22411,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	public boolean validaOpzioniAvanzateRateLimiting(RuoloPolicy ruoloPolicy, String nome,
 			String ctModalitaSincronizzazione, String ctImplementazione, String ctContatori, String ctTipologia,
 			String ctHeaderHttp, String ctHeaderHttp_limit, String ctHeaderHttp_remaining, String ctHeaderHttp_reset,
-			String ctHeaderHttp_retryAfter, String ctHeaderHttp_retryAfterBackoff) throws Exception {
+			String ctHeaderHttp_retryAfter, String ctHeaderHttp_retryAfterBackoff) throws DriverControlStationException {
 		
 		if(org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_HTTP_HEADER_RIDEFINITO.equals(ctHeaderHttp) &&
 				org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_HTTP_HEADER_ABILITATO_BACKOFF.equals(ctHeaderHttp_retryAfter) ){
@@ -21995,7 +22440,11 @@ public class ConsoleHelper implements IConsoleHelper {
 		policyConfig.setHttpMode_reset(ctHeaderHttp_reset);
 		policyConfig.setHttpMode_retry_after(ctHeaderHttp_retryAfter);
 		policyConfig.setHttpMode_retry_after_backoff(ctHeaderHttp_retryAfterBackoff);
-		policyConfig.saveIn(new ArrayList<Proprieta>()); // inizializza il tipo
+		try {
+			policyConfig.saveIn(new ArrayList<>()); // inizializza il tipo
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
 		PolicyGroupByActiveThreadsType type = policyConfig.getType();
 		
 		
@@ -22033,7 +22482,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String[] integrazioneGruppi, List<GruppoIntegrazione> integrazioneGruppiDaVisualizzare,
 			Map<String, List<String>> integrazioneGruppiValoriDeiGruppi, List<DataElement> deIntegrazione,
 			boolean nascondiSezioneOpzioniAvanzate, boolean isPortaDelegata,
-			ServiceBinding serviceBinding) throws Exception {
+			ServiceBinding serviceBinding) throws DriverControlStationException {
 		String ruoloConfigurazione = isPortaDelegata ? Filtri.FILTRO_RUOLO_VALORE_FRUIZIONE : 	Filtri.FILTRO_RUOLO_VALORE_EROGAZIONE;
 		
 		DataElement de;
@@ -22228,7 +22677,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	
-	public boolean validaIntegrazioneMetadati() throws Exception {
+	public boolean validaIntegrazioneMetadati() throws DriverControlStationException {
 		String integrazioneStato = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE_STATO);
 				
 		if(integrazioneStato!=null && !"".equals(integrazioneStato)){
@@ -22526,19 +22975,19 @@ public class ConsoleHelper implements IConsoleHelper {
 		return false;
 	}
 	
-	public void impostaAperturaTitle(List<DataElement> dati, String titleName) throws Exception{
+	public void impostaAperturaTitle(List<DataElement> dati, String titleName) throws DriverControlStationException{
 		this.impostaAperturaTitle(dati, titleName, DataElementType.TITLE, null, this.getPostBackElementName());
 	}
 	
-	public void impostaAperturaTitle(List<DataElement> dati, String titleName, boolean visualizzaSottosezioneAperta) throws Exception{
+	public void impostaAperturaTitle(List<DataElement> dati, String titleName, boolean visualizzaSottosezioneAperta) throws DriverControlStationException{
 		this.impostaAperturaTitle(dati, titleName, DataElementType.TITLE, visualizzaSottosezioneAperta, this.getPostBackElementName());
 	}
 	
-	public void impostaAperturaSubTitle(List<DataElement> dati, String titleName) throws Exception{
+	public void impostaAperturaSubTitle(List<DataElement> dati, String titleName) throws DriverControlStationException{
 		this.impostaAperturaTitle(dati, titleName, DataElementType.SUBTITLE, null, this.getPostBackElementName());
 	}
 	
-	public void impostaAperturaSubTitle(List<DataElement> dati, String titleName, boolean visualizzaSottosezioneAperta) throws Exception{
+	public void impostaAperturaSubTitle(List<DataElement> dati, String titleName, boolean visualizzaSottosezioneAperta) throws DriverControlStationException{
 		this.impostaAperturaTitle(dati, titleName, DataElementType.SUBTITLE, visualizzaSottosezioneAperta, this.getPostBackElementName());
 	}
 	
@@ -22597,7 +23046,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	public void addVerificaCertificatoSceltaAlias(List<String> aliases,List<DataElement> dati) throws Exception {
+	public void addVerificaCertificatoSceltaAlias(List<String> aliases,List<DataElement> dati) throws DriverControlStationException {
 		
 		DataElement de = new DataElement();
 		de.setType(DataElementType.SELECT);
@@ -22607,14 +23056,17 @@ public class ConsoleHelper implements IConsoleHelper {
 		labels.add(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI);
 		values.addAll(this.confCore.getJmxPdD_aliases());
 		for (String alias : this.confCore.getJmxPdD_aliases()) {
-			labels.add(this.confCore.getJmxPdD_descrizione(alias));
+			try {
+				labels.add(this.confCore.getJmxPdD_descrizione(alias));
+			}catch(Exception e) {
+				throw new DriverControlStationException(e.getMessage(),e);
+			}
 		}
 		de.setValues(values);
 		de.setLabels(labels);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
 		de.setSize(this.getSize());
-		//de.setPostBack(true);
 		dati.add(de);
 		
 	}
@@ -22622,7 +23074,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	public void addDescrizioneVerificaConnettivitaToDati(List<DataElement> dati, Connettore connettore,
 			String server, boolean registro, String aliasConnettore,
 			List<Parameter> downloadCertServerParameters,
-			boolean setTitle, boolean useLabelEndpoint) throws Exception {
+			boolean setTitle, boolean useLabelEndpoint) throws DriverControlStationException {
 		
 		String tipo = ConnettoreCheck.getPropertyValue(connettore, ConnettoreCheck.POLICY_TIPO_ENDPOINT);
 			
@@ -22667,7 +23119,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					URL url = new URL( location );
 					String host = url.getHost();
 					if(host==null || "".equals(host)) {
-						throw new Exception("L'endpoint '"+host+"' non contiene un host");
+						throw new DriverControlStationException("L'endpoint '"+host+"' non contiene un host");
 					}
 					nomeConnettore = host;
 					int port = url.getPort();

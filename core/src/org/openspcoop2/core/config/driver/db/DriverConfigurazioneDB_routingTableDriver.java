@@ -81,7 +81,7 @@ public class DriverConfigurazioneDB_routingTableDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 			boolean routingEnabled = false;
@@ -89,19 +89,19 @@ public class DriverConfigurazioneDB_routingTableDriver {
 			sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE);
 			sqlQueryObject.addSelectField("*");
 			sqlQuery = sqlQueryObject.createSQLQuery();
-			this.driver.log.debug("eseguo query per routing enabled : " + DBUtils.formatSQLString(sqlQuery));
+			this.driver.logDebug("eseguo query per routing enabled : " + DBUtils.formatSQLString(sqlQuery));
 			stm = con.prepareStatement(sqlQuery);
 
 			rs = stm.executeQuery();
 
 			if (rs.next()) {
-				this.driver.log.debug("ConfigurazionePresente");
-				this.driver.log.debug("Risultato query per routing enabled ["+rs.getString("routing_enabled")+"]");
+				this.driver.logDebug("ConfigurazionePresente");
+				this.driver.logDebug("Risultato query per routing enabled ["+rs.getString("routing_enabled")+"]");
 				routingEnabled = CostantiConfigurazione.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("routing_enabled")));
 			}
 			rs.close();
 			stm.close();
-			this.driver.log.debug("RoutingEnabled: "+routingEnabled);
+			this.driver.logDebug("RoutingEnabled: "+routingEnabled);
 
 			RoutingTable rt = new RoutingTable();
 			rt.setAbilitata(routingEnabled);
@@ -113,7 +113,7 @@ public class DriverConfigurazioneDB_routingTableDriver {
 			sqlQueryObject.addFromTable(CostantiDB.ROUTING);
 			sqlQueryObject.addSelectField("*");
 			sqlQuery = sqlQueryObject.createSQLQuery();
-			this.driver.log.debug("eseguo query per routing table : " + DBUtils.formatSQLString(sqlQuery));
+			this.driver.logDebug("eseguo query per routing table : " + DBUtils.formatSQLString(sqlQuery));
 			stm = con.prepareStatement(sqlQuery);
 
 			rs = stm.executeQuery();
@@ -134,10 +134,10 @@ public class DriverConfigurazioneDB_routingTableDriver {
 			RoutingTableDestinazione rtd = null;
 
 			int nroute = 0;
-			this.driver.log.debug("Check esistenza rotte....");
+			this.driver.logDebug("Check esistenza rotte....");
 			while (rs.next()) {
 
-				this.driver.log.debug("Nuova rotta....["+rs.getInt("is_default")+"]");
+				this.driver.logDebug("Nuova rotta....["+rs.getInt("is_default")+"]");
 
 				nroute++;
 				// nuova route
@@ -170,7 +170,7 @@ public class DriverConfigurazioneDB_routingTableDriver {
 						stmSearch = con.prepareStatement(sqlQuery);
 						stmSearch.setLong(1, id_registrorotta);
 
-						this.driver.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, id_registrorotta));
+						this.driver.logDebug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, id_registrorotta));
 
 						rsSearch = stmSearch.executeQuery();
 						if (rsSearch.next()) {
@@ -212,7 +212,7 @@ public class DriverConfigurazioneDB_routingTableDriver {
 				}
 			}
 
-			this.driver.log.debug("Ci sono " + nroute + " rotte configurate.");
+			this.driver.logDebug("Ci sono " + nroute + " rotte configurate.");
 			rs.close();
 			stm.close();
 			//if (nroute == 0)
@@ -265,10 +265,10 @@ public class DriverConfigurazioneDB_routingTableDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDRoutingTable type = 1");
+			this.driver.logDebug("CRUDRoutingTable type = 1");
 			// creo soggetto
 			DriverConfigurazioneDB_routingTableLIB.CRUDRoutingTable(1, routingTable, con);
 
@@ -300,10 +300,10 @@ public class DriverConfigurazioneDB_routingTableDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDRoutingTable type = 2");
+			this.driver.logDebug("CRUDRoutingTable type = 2");
 			// creo soggetto
 			DriverConfigurazioneDB_routingTableLIB.CRUDRoutingTable(2, routingTable, con);
 
@@ -335,10 +335,10 @@ public class DriverConfigurazioneDB_routingTableDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
-			this.driver.log.debug("CRUDRoutingTable type = 3");
+			this.driver.logDebug("CRUDRoutingTable type = 3");
 			// creo soggetto
 			DriverConfigurazioneDB_routingTableLIB.CRUDRoutingTable(3, routingTable, con);
 
@@ -382,7 +382,7 @@ public class DriverConfigurazioneDB_routingTableDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 

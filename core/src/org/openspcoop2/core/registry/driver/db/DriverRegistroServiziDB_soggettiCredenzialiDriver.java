@@ -96,7 +96,7 @@ public class DriverRegistroServiziDB_soggettiCredenzialiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -162,7 +162,7 @@ public class DriverRegistroServiziDB_soggettiCredenzialiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -322,7 +322,7 @@ public class DriverRegistroServiziDB_soggettiCredenzialiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		IDSoggetto idSoggetto = null;
 		try {
@@ -416,17 +416,17 @@ public class DriverRegistroServiziDB_soggettiCredenzialiDriver {
 			case BASIC:
 				stm.setString(index++, user);
 				//stm.setString(index++, password);
-				this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, tipoCredenziale.toString(), user));
+				this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, tipoCredenziale.toString(), user));
 				break;
 			case APIKEY:
 				stm.setString(index++, user);
 				//stm.setString(index++, password);
 				stm.setString(index++, CostantiDB.getIssuerApiKey(appId));
-				this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, tipoCredenziale.toString(), user, CostantiDB.getIssuerApiKey(appId)));
+				this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, tipoCredenziale.toString(), user, CostantiDB.getIssuerApiKey(appId)));
 				break;
 			case SSL:
 				if(aSubject!=null && !"".equals(aSubject)) {
-					this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, tipoCredenziale.toString()));
+					this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, tipoCredenziale.toString()));
 				}
 				else {
 					String cnSubject = aCertificate.getSubject().getCN();
@@ -440,13 +440,13 @@ public class DriverRegistroServiziDB_soggettiCredenzialiDriver {
 					else {
 						stm.setInt(index++, CostantiDB.FALSE);
 					}
-					this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, tipoCredenziale.toString(), cnSubject, cnIssuer,
+					this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, tipoCredenziale.toString(), cnSubject, cnIssuer,
 							(aStrictVerifier? CostantiDB.TRUE : CostantiDB.FALSE)));
 				}
 				break;
 			case PRINCIPAL:
 				stm.setString(index++, principal);
-				this.driver.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, tipoCredenziale.toString(), principal));
+				this.driver.logDebug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, tipoCredenziale.toString(), principal));
 				break;
 			}
 
@@ -594,7 +594,7 @@ public class DriverRegistroServiziDB_soggettiCredenzialiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.log.debug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -692,12 +692,12 @@ public class DriverRegistroServiziDB_soggettiCredenzialiDriver {
 		int offset = 0;
 		int limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
 		
-		this.driver.log.debug("getSoggettiFromTipoAutenticazione...");
+		this.driver.logDebug("getSoggettiFromTipoAutenticazione...");
 		
 		List<IDSoggettoDB> soggetti= null;
 		
 		try {
-			this.driver.log.debug("operazione atomica = " + this.driver.atomica);
+			this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 			// prendo la connessione dal pool
 			if (this.driver.atomica)
 				con = this.driver.getConnectionFromDatasource("getSoggettiFromTipoAutenticazione");
