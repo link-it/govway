@@ -29,6 +29,7 @@ import java.util.Properties;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.pdd.core.keystore.KeystoreException;
 import org.openspcoop2.pdd.core.keystore.RemoteStoreConfigPropertiesUtils;
+import org.openspcoop2.pdd.core.token.Costanti;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.protocol.basic.BasicStaticInstanceConfig;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
@@ -158,6 +159,9 @@ public class ModIProperties {
 	private String getMessaggioErroreProprietaNonImpostata(String propertyName, Boolean defaultValue) {
 		return getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue.toString());
 	}
+	private String getMessaggioErroreProprietaNonImpostata(String propertyName, Integer defaultValue) {
+		return getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue.toString());
+	}
 	private String getMessaggioErroreProprietaNonImpostata(String propertyName, String defaultValue) {
 		return getPrefixProprieta(propertyName)+" non impostata, viene utilizzato il default="+defaultValue;
 	}
@@ -243,6 +247,8 @@ public class ModIProperties {
 			isSecurityTokenAuditApiSoapX509RiferimentoX5u();
 			isSecurityTokenAuditApiSoapX509RiferimentoX5t();
 			isSecurityTokenAuditAddPurposeId();
+			getSecurityTokenAuditDnonceSize();
+			getSecurityTokenAuditDigestAlgorithm();
 					
 			
 			/* **** TRACCE **** */ 
@@ -1369,6 +1375,60 @@ public class ModIProperties {
 		}
 
 		return this.isSecurityTokenAuditAddPurposeId;
+	}
+	
+    private Integer getSecurityTokenAuditDnonceSize = null;
+	public int getSecurityTokenAuditDnonceSize(){
+		if(this.getSecurityTokenAuditDnonceSize==null){
+			
+			int defaultValue = 13;
+			String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.dnonce.size";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					this.getSecurityTokenAuditDnonceSize = Integer.valueOf(value);
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.getSecurityTokenAuditDnonceSize = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.getSecurityTokenAuditDnonceSize = defaultValue;
+			}
+		}
+
+		return this.getSecurityTokenAuditDnonceSize;
+	}
+	
+    private String getSecurityTokenAuditDigestAlgorithm = null;
+	public String getSecurityTokenAuditDigestAlgorithm(){
+		if(this.getSecurityTokenAuditDigestAlgorithm==null){
+			
+			String defaultValue = Costanti.PDND_DIGEST_ALG_DEFAULT_VALUE;
+			String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.digest.algo";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					this.getSecurityTokenAuditDigestAlgorithm = value;
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.getSecurityTokenAuditDigestAlgorithm = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.getSecurityTokenAuditDigestAlgorithm = defaultValue;
+			}
+		}
+
+		return this.getSecurityTokenAuditDigestAlgorithm;
 	}
 	
 	

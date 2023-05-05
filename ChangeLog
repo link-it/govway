@@ -1,3 +1,9 @@
+2023-05-05  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Aggiunta funzionalità OP-1580
+	Aggiunto supporto per il nuovo pattern 'AUDIT_REST_02'.
+
 2023-05-04  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]

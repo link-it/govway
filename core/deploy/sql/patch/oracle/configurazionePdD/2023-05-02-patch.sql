@@ -3,6 +3,7 @@ CREATE SEQUENCE seq_remote_store MINVALUE 1 MAXVALUE 9223372036854775807 START W
 CREATE TABLE remote_store
 (
 	nome VARCHAR2(255) NOT NULL,
+	data_aggiornamento TIMESTAMP NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints

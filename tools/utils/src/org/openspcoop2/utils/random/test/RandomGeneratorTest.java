@@ -90,6 +90,25 @@ public class RandomGeneratorTest {
 			throw new Exception("Lunghezza stringa "+s.length()+" differente da quella attesa (test nextRandom(8))");
 		}
 		
+		s = generator.nextRandomInt(16);
+		if(s.length()!=16) {
+			throw new Exception("Lunghezza stringa "+s.length()+" differente da quella attesa (test nextRandomInt(16))");
+		}
+		for (char c : s.toCharArray()) {
+			if(!Character.isDigit(c)) {
+				throw new Exception("Stringa "+s+" contiene un carattere che non è una cifra '"+c+"' (test nextRandomInt(16))");
+			}
+		}
+		s = generator.nextRandomInt(8);
+		if(s.length()!=8) {
+			throw new Exception("Lunghezza stringa "+s.length()+" differente da quella attesa (test nextRandomInt(8))");
+		}
+		for (char c : s.toCharArray()) {
+			if(!Character.isDigit(c)) {
+				throw new Exception("Stringa "+s+" contiene un carattere che non è una cifra '"+c+"' (test nextRandomInt(8))");
+			}
+		}
+		
 		@SuppressWarnings("unused")
 		int intNumber = generator.nextInt();
 		intNumber = generator.nextInt(1872);

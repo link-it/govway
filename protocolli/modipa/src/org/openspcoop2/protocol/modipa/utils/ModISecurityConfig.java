@@ -22,18 +22,18 @@ package org.openspcoop2.protocol.modipa.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -44,6 +44,7 @@ import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autorizzazione.canali.CanaliUtils;
@@ -56,6 +57,7 @@ import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
@@ -112,7 +114,6 @@ public class ModISecurityConfig {
 	private List<String> corniceSicurezzaIpUserRule = null;
 	
 	private ModIAuditConfig corniceSicurezzaSchemaConfig = null;
-	private Map<String,List<String>> corniceSicurezzaRules = null;
 	private String corniceSicurezzaAudience;
 	
 	private boolean fruizione;
@@ -121,7 +122,8 @@ public class ModISecurityConfig {
 	private String tokenKid;
 	private String tokenClientId;
 	
-	public ModISecurityConfig(OpenSPCoop2Message msg, IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica aspsParam, ServizioApplicativo sa, 
+	public ModISecurityConfig(OpenSPCoop2Message msg, Context context, IProtocolFactory<?> protocolFactory, IState state, RequestInfo requestInfo,
+			IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica aspsParam, ServizioApplicativo sa, 
 			boolean rest, boolean fruizione,  boolean request, 
 			String patternCorniceSicurezza, String schemaCorniceSicurezza, 
 			Busta busta, Busta bustaRichiesta,
@@ -424,7 +426,28 @@ public class ModISecurityConfig {
 					readCorniceSicurezzaIpUserLegacy(modiProperties);
 				}
 				else {
-					readCorniceSicurezzaSchema(modiProperties, schemaCorniceSicurezza);
+					
+					IConfigIntegrationReader configReader = protocolFactory.getCachedConfigIntegrationReader(state, requestInfo);
+					
+					PortaDelegata pd = null;
+					if(msg!=null) {
+						Object nomePortaInvocataObject = msg.getContextProperty(CostantiPdD.NOME_PORTA_INVOCATA);
+						String nomePorta = null;
+						if(nomePortaInvocataObject instanceof String) {
+							nomePorta = (String) nomePortaInvocataObject;
+						}
+						if(nomePorta==null && context!=null && context.containsKey(CostantiPdD.NOME_PORTA_INVOCATA)) {
+							nomePorta = (String) context.getObject(CostantiPdD.NOME_PORTA_INVOCATA);
+						}
+						if(nomePorta==null && requestInfo!=null && requestInfo.getProtocolContext()!=null) {
+							nomePorta = requestInfo.getProtocolContext().getInterfaceName();
+						}
+						if(nomePorta!=null) {
+							pd = getPortaDelegata(nomePorta, configReader);
+						}
+					}
+					
+					readCorniceSicurezzaSchema(modiProperties, schemaCorniceSicurezza, pd);
 				}
 			}
 			
@@ -608,7 +631,7 @@ public class ModISecurityConfig {
 			}
 		}
 	}
-	private void readCorniceSicurezzaSchema(ModIProperties modiProperties, String schemaCorniceSicurezza) throws ProtocolException {
+	private void readCorniceSicurezzaSchema(ModIProperties modiProperties, String schemaCorniceSicurezza, PortaDelegata pd) throws ProtocolException {
 		try {
 			if(schemaCorniceSicurezza!=null && StringUtils.isNotEmpty(schemaCorniceSicurezza)) {
 				
@@ -616,28 +639,77 @@ public class ModISecurityConfig {
 				readCorniceSicurezzaSchemaAudience(schemaCorniceSicurezza);
 
 				/* Claims */
-				readCorniceSicurezzaSchemaClaims(modiProperties, schemaCorniceSicurezza);
+				readCorniceSicurezzaSchemaClaims(modiProperties, schemaCorniceSicurezza, pd);
 			}
 		}catch(Exception e) {
 			throw new ProtocolException(e.getMessage(),e);
 		}
 	}
-	private void readCorniceSicurezzaSchemaClaims(ModIProperties modiProperties, String schemaCorniceSicurezza) throws ProtocolException {
+	private void readCorniceSicurezzaSchemaClaimsReadPAProperties(ModIProperties modiProperties, String schemaCorniceSicurezza, PortaApplicativa pa) throws ProtocolException {
 		if(modiProperties.getAuditConfig()!=null && !modiProperties.getAuditConfig().isEmpty()) {
 			for (ModIAuditConfig modIAuditConfig : modiProperties.getAuditConfig()) {
 				if(modIAuditConfig.getNome().equals(schemaCorniceSicurezza)) {
-					this.corniceSicurezzaSchemaConfig = modIAuditConfig;
-					this.corniceSicurezzaRules = new HashMap<>();
-					readCorniceSicurezzaSchemaClaimsRule(this.corniceSicurezzaSchemaConfig.getClaims());
+					this.corniceSicurezzaSchemaConfig = modIAuditConfig.copyNewInstance();
+					readCorniceSicurezzaSchemaClaimsRuleReadPAProperties(this.corniceSicurezzaSchemaConfig.getClaims(), pa);
 					break;
 				}
 			}
 		}
 	}
-	private void readCorniceSicurezzaSchemaClaimsRule(List<ModIAuditClaimConfig> list) throws ProtocolException {
+	private void readCorniceSicurezzaSchemaClaimsRuleReadPAProperties(List<ModIAuditClaimConfig> list, PortaApplicativa pa) {
 		if(list!=null && !list.isEmpty()) {
 			for (ModIAuditClaimConfig modIAuditClaimConfig : list) {
+				readCorniceSicurezzaSchemaClaimRuleReadPAProperties(modIAuditClaimConfig, pa);
+			}
+		}
+	}
+	private void readCorniceSicurezzaSchemaClaimRuleReadPAProperties(ModIAuditClaimConfig claimConfig, PortaApplicativa pa) {
+		
+		boolean traceEnabled = claimConfig.isTrace();
+		if(pa!=null) {
+			traceEnabled = CostantiProprieta.isModIAuditTraceEnabled(pa.getProprietaList(), claimConfig.getNome(), traceEnabled);
+		}
+		claimConfig.setTrace(traceEnabled);
+		
+		boolean forwardEnabled = claimConfig.getForwardBackend()!=null && StringUtils.isNotEmpty(claimConfig.getForwardBackend());
+		if(pa!=null) {
+			forwardEnabled = CostantiProprieta.isModIAuditForwardBackendEnabled(pa.getProprietaList(), claimConfig.getNome(), forwardEnabled);
+		}
+		if(forwardEnabled) {
+			String header = claimConfig.getForwardBackend();
+			if(pa!=null) {
+				header = CostantiProprieta.getModIAuditForwardBackend(pa.getProprietaList(), claimConfig.getNome(), header);
+			}
+			claimConfig.setForwardBackend(header);
+		}
+		else {
+			claimConfig.setForwardBackend(null);
+		}
+	}
+	
+	private void readCorniceSicurezzaSchemaClaims(ModIProperties modiProperties, String schemaCorniceSicurezza, PortaDelegata pd) throws ProtocolException {
+		if(modiProperties.getAuditConfig()!=null && !modiProperties.getAuditConfig().isEmpty()) {
+			for (ModIAuditConfig modIAuditConfig : modiProperties.getAuditConfig()) {
+				if(modIAuditConfig.getNome().equals(schemaCorniceSicurezza)) {
+					this.corniceSicurezzaSchemaConfig = modIAuditConfig.copyNewInstance();
+					readCorniceSicurezzaSchemaClaimsRule(this.corniceSicurezzaSchemaConfig.getClaims(), pd);
+					break;
+				}
+			}
+		}
+	}
+	private void readCorniceSicurezzaSchemaClaimsRule(List<ModIAuditClaimConfig> list, PortaDelegata pd) throws ProtocolException {
+		if(list!=null && !list.isEmpty()) {
+			for (ModIAuditClaimConfig modIAuditClaimConfig : list) {
+				
+				boolean traceEnabled = modIAuditClaimConfig.isTrace();
+				if(pd!=null) {
+					traceEnabled = CostantiProprieta.isModIAuditTraceEnabled(pd.getProprietaList(), modIAuditClaimConfig.getNome(), traceEnabled);
+				}
+				modIAuditClaimConfig.setTrace(traceEnabled);
+				
 				readCorniceSicurezzaSchemaClaimRule(modIAuditClaimConfig);
+				
 			}
 		}
 	}
@@ -654,9 +726,9 @@ public class ModISecurityConfig {
 				ModIUtilities.remove(this.claims, claimName);
 			}
 			else {
-				rules = claimConfig.getDefaultRule();
+				rules = claimConfig.getRules();
 			}
-			this.corniceSicurezzaRules.put(claimName, rules);
+			claimConfig.setRules(rules);
 		}catch(Exception e) {
 			throw new ProtocolException(e.getMessage(),e);
 		}
@@ -743,7 +815,7 @@ public class ModISecurityConfig {
 		}
 	}
 	
-	public ModISecurityConfig(OpenSPCoop2Message msg, IProtocolFactory<?> protocolFactory, IState state, RequestInfo requestInfo, IDSoggetto soggettoFruitore, 
+	public ModISecurityConfig(OpenSPCoop2Message msg, Context context, IProtocolFactory<?> protocolFactory, IState state, RequestInfo requestInfo, IDSoggetto soggettoFruitore, 
 			AccordoServizioParteComune aspc, AccordoServizioParteSpecifica aspsParam, ServizioApplicativo sa, boolean rest, boolean fruizione, boolean request,
 			Boolean multipleHeaderAuthorizationConfig, boolean kidMode,
 			String patternCorniceSicurezza, String schemaCorniceSicurezza) throws ProtocolException {
@@ -824,6 +896,27 @@ public class ModISecurityConfig {
 			}
 			
 			if(!fruizione && request) {
+				
+				IConfigIntegrationReader configReader = protocolFactory.getCachedConfigIntegrationReader(state, requestInfo);
+				
+				PortaApplicativa pa = null;
+				if(msg!=null) {
+					Object nomePortaInvocataObject = msg.getContextProperty(CostantiPdD.NOME_PORTA_INVOCATA);
+					String nomePorta = null;
+					if(nomePortaInvocataObject instanceof String) {
+						nomePorta = (String) nomePortaInvocataObject;
+					}
+					if(nomePorta==null && context!=null && context.containsKey(CostantiPdD.NOME_PORTA_INVOCATA)) {
+						nomePorta = (String) context.getObject(CostantiPdD.NOME_PORTA_INVOCATA);
+					}
+					if(nomePorta==null && requestInfo!=null && requestInfo.getProtocolContext()!=null) {
+						nomePorta = requestInfo.getProtocolContext().getInterfaceName();
+					}
+					if(nomePorta!=null) {
+						pa = getPortaApplicativa(nomePorta, configReader);
+					}
+				}
+						
 				this.checkAudience = true;
 				
 				if(this.multipleHeaderAuthorizationConfig!=null && !this.multipleHeaderAuthorizationConfig) {
@@ -844,20 +937,12 @@ public class ModISecurityConfig {
 						}
 					}
 					
-					IConfigIntegrationReader configReader = protocolFactory.getCachedConfigIntegrationReader(state, requestInfo);
 					CanaliConfigurazione canaliConfigurazione = configReader.getCanaliConfigurazione();
 					String canaleApi = null;
 					if(aspc!=null) {
 						canaleApi = aspc.getCanale();
 					}
-					String canalePorta = null;
-					if(msg!=null) {
-						Object nomePortaInvocataObject = msg.getContextProperty(CostantiPdD.NOME_PORTA_INVOCATA);
-						if(nomePortaInvocataObject instanceof String) {
-							String nomePorta = (String) nomePortaInvocataObject;
-							canalePorta = readCanalePortaApplicativa(nomePorta, configReader);
-						}
-					}
+					String canalePorta = pa!=null ? pa.getCanale() : null;
 					String canale = CanaliUtils.getCanale(canaliConfigurazione, canaleApi, canalePorta);
 					
 					UrlInvocazioneAPI urlInvocazioneApi = ConfigurazionePdDManager.getInstance().getConfigurazioneUrlInvocazione(protocolFactory, 
@@ -879,6 +964,8 @@ public class ModISecurityConfig {
 				/* Cornice Sicurezza */
 				if(patternCorniceSicurezza!=null && !CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD.equals(patternCorniceSicurezza) && schemaCorniceSicurezza!=null) {
 					readCorniceSicurezzaSchemaAudience(schemaCorniceSicurezza);
+					
+					readCorniceSicurezzaSchemaClaimsReadPAProperties(modiProperties, schemaCorniceSicurezza, pa);
 				}
 			}
 			else if(fruizione && !request) {
@@ -924,17 +1011,27 @@ public class ModISecurityConfig {
 		
 	}
 	
-	private static String readCanalePortaApplicativa(String nomePorta, IConfigIntegrationReader configReader) {
+	private static PortaApplicativa getPortaApplicativa(String nomePorta, IConfigIntegrationReader configReader) {
 		try {
 			IDPortaApplicativa idPA = new IDPortaApplicativa();
 			idPA.setNome(nomePorta);
-			PortaApplicativa pa = configReader.getPortaApplicativa(idPA);
-			return pa.getNome();
+			return configReader.getPortaApplicativa(idPA);
 		}catch(Exception t) {
 			// ignore
 			return null;
 		}
 	}
+	private static PortaDelegata getPortaDelegata(String nomePorta, IConfigIntegrationReader configReader) {
+		try {
+			IDPortaDelegata idPD = new IDPortaDelegata();
+			idPD.setNome(nomePorta);
+			return configReader.getPortaDelegata(idPD);
+		}catch(Exception t) {
+			// ignore
+			return null;
+		}
+	}
+	
 	
 	private void initSharedRest(ModIProperties modiProperties, List<ProtocolProperty> listProtocolProperties, ServizioApplicativo sa, boolean fruizione, boolean request, boolean keystoreDefinitoInFruizione) throws ProtocolException {
 		
@@ -1284,10 +1381,6 @@ public class ModISecurityConfig {
 	
 	public ModIAuditConfig getCorniceSicurezzaSchemaConfig() {
 		return this.corniceSicurezzaSchemaConfig;
-	}
-
-	public Map<String, List<String>> getCorniceSicurezzaRules() {
-		return this.corniceSicurezzaRules;
 	}
 	
 	public String getCorniceSicurezzaAudience() {

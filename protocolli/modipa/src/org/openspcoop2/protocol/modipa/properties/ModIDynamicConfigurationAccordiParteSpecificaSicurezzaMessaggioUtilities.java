@@ -2091,7 +2091,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 			modeItem.getInfo().setHeaderBody(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA_MODE_DEFAULT_INFO_INTESTAZIONE.
 					replace(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA_MODE_DEFAULT_INFO_INTESTAZIONE_CLAIM, claimConfig.getNome()));
 			modeItem.getInfo().setListBody(new ArrayList<>());
-			modeItem.getInfo().getListBody().addAll(claimConfig.getDefaultInfo());
+			modeItem.getInfo().getListBody().addAll(claimConfig.getRulesInfo());
 		}
 		
 		String id = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA_ID_PREFIX+claimConfig.getNome();

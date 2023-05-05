@@ -717,6 +717,7 @@ CREATE SEQUENCE seq_remote_store start 1 increment 1 maxvalue 922337203685477580
 CREATE TABLE remote_store
 (
 	nome VARCHAR(255) NOT NULL,
+	data_aggiornamento TIMESTAMP NOT NULL,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_remote_store') NOT NULL,
 	-- unique constraints

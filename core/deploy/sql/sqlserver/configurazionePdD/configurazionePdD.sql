@@ -672,6 +672,7 @@ CREATE UNIQUE INDEX index_nodi_runtime_2 ON nodi_runtime (gruppo,id_numerico);
 CREATE TABLE remote_store
 (
 	nome VARCHAR(255) NOT NULL,
+	data_aggiornamento DATETIME2 NOT NULL,
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- unique constraints

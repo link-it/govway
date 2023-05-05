@@ -86,6 +86,8 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 	private String signedJwtPurposeId;
 	private String signedJwtSessionInfo;
 	private String signedJwtClaims;
+	private String signedJwtAuditDigest;
+	private String signedJwtAuditDigestAlgo;
 	
 	private String signedJwtCustomId; 
 	private String signedJwtX509Url;
@@ -122,6 +124,7 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 	private static boolean signedJwtPurposeIdCacheKey;
 	private static boolean signedJwtSessionInfoCacheKey;
 	private static boolean signedJwtClaimsCacheKey;
+	private static boolean signedJwtAuditDigestCacheKey;
 	
 	private static boolean signedJwtCustomIdCacheKey; 
 	private static boolean signedJwtX509UrlCacheKey;
@@ -155,6 +158,7 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 			signedJwtPurposeIdCacheKey = op2Properties.isGestioneRetrieveTokenCacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PURPOSE_ID);
 			signedJwtSessionInfoCacheKey = op2Properties.isGestioneRetrieveTokenCacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_SESSION_INFO);
 			signedJwtClaimsCacheKey = op2Properties.isGestioneRetrieveTokenCacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_CLAIMS);
+			signedJwtAuditDigestCacheKey = op2Properties.isGestioneRetrieveTokenCacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_AUDIT_DIGEST);
 			
 			signedJwtCustomIdCacheKey = op2Properties.isGestioneRetrieveTokenCacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_HEADER_KID); 
 			signedJwtX509UrlCacheKey = op2Properties.isGestioneRetrieveTokenCacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_HEADER_X509_URL);
@@ -184,12 +188,19 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 		}
 	}
 	
+	private static final String ERRORE_RICHIEDE_IDENTIFICAZIONE_DATI_FRUIZIONE = "richiede l'identificazione dei dati di una fruizione";
+	private static final String ERRORE_NON_UTILIZZABILE_APPLICATIVO_IDENTIFICATO = "non è utilizzabile con l'applicativo identificato";
+	private static final String ERRORE_CONFIGURAZIONE_APPLICATIVO_NON_COMPLETA = "nella configurazione dell'applicativo non è stato definito un";
+	private static final String ERRORE_SEZIONE = "nella sezione";
+	private static final String ERRORE_NON_UTILIZZABILE_FRUIZIONE = "non è utilizzabile con la fruizione";
+	private static final String ERRORE_CONFIGURAZIONE_MODI_NON_COMPLETA = "nella configurazione 'ModI' non è stato definito un";
+	private static final String ERRORE_RICHIEDE_AUTENTICAZIONE_IDENTIFICAZIONE_APPLICATIVO = "richiede l'autenticazione e l'identificazione di un applicativo fruitore";
 
 	public NegoziazioneTokenDynamicParameters(Map<String, Object> dynamicMap, 
 			PdDContext pddContext, RequestInfo requestInfo, Busta busta, IState state, IProtocolFactory<?> protocolFactory,
 			PolicyNegoziazioneToken policyNegoziazioneToken) throws TokenException, DynamicException, ProviderException, ProviderValidationException, ProtocolException {
 		super(dynamicMap, pddContext, requestInfo);
-		
+						
 		this.policyNegoziazioneToken = policyNegoziazioneToken;
 		
 		this.endpoint = policyNegoziazioneToken.getEndpoint();
@@ -243,10 +254,10 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 				if(policyNegoziazioneToken.isJwtSignKeystoreApplicativoModI()) {
 					String prefixError = "Il tipo di keystore indicato nella token policy '"+policyNegoziazioneToken.getName()+"' "; 
 					if(busta.getServizioApplicativoFruitore()==null) {
-						throw new TokenException(prefixError+"richiede l'autenticazione e l'identificazione di un applicativo fruitore");
+						throw new TokenException(prefixError+ERRORE_RICHIEDE_AUTENTICAZIONE_IDENTIFICAZIONE_APPLICATIVO);
 					}
 					if(busta.getTipoMittente()==null || busta.getMittente()==null) {
-						throw new TokenException(prefixError+"richiede l'autenticazione e l'identificazione di un applicativo fruitore: dominio non identificato");
+						throw new TokenException(prefixError+ERRORE_RICHIEDE_AUTENTICAZIONE_IDENTIFICAZIONE_APPLICATIVO+": dominio non identificato");
 					}
 					
 					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
@@ -257,7 +268,7 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 					try {
 						this.applicativoRichiedente = configurazionePdDManager.getServizioApplicativo(this.idApplicativoRichiedente, this.getRequestInfo());
 					}catch(Exception t) {
-						throw new TokenException(prefixError+"richiede l'autenticazione e l'identificazione di un applicativo fruitore: "+t.getMessage(),t);
+						throw new TokenException(prefixError+ERRORE_RICHIEDE_AUTENTICAZIONE_IDENTIFICAZIONE_APPLICATIVO+": "+t.getMessage(),t);
 					}
 					
 					if(!org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROTOCOL_NAME.equals(protocolFactory.getProtocol())) {
@@ -331,13 +342,13 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 			if(policyNegoziazioneToken.isJwtSignIncludeKeyIdApplicativoModI()) {
 				String prefixError = "La modalità di generazione del Key Id (kid), indicata nella token policy '"+policyNegoziazioneToken.getName()+"', "; 
 				if(this.applicativoRichiedente==null) {
-					throw new TokenException(prefixError+"richiede l'autenticazione e l'identificazione di un applicativo fruitore");
+					throw new TokenException(prefixError+ERRORE_RICHIEDE_AUTENTICAZIONE_IDENTIFICAZIONE_APPLICATIVO);
 				}
 				String kidApplicativoModIConfig = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(this.applicativoRichiedente.getProtocolPropertyList(), CostantiDB.MODIPA_SICUREZZA_TOKEN_KID_ID);
 				if(kidApplicativoModIConfig==null || StringUtils.isEmpty(kidApplicativoModIConfig)) {
-					throw new TokenException(prefixError+"non è utilizzabile con l'applicativo identificato '"+idApp+
-							"': nella configurazione dell'applicativo non è stato definito un '"+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_KID+
-							"' nella sezione '"+CostantiLabel.MODIPA_SICUREZZA_TOKEN_SUBTITLE_LABEL+"'");
+					throw new TokenException(prefixError+ERRORE_NON_UTILIZZABILE_APPLICATIVO_IDENTIFICATO+" '"+idApp+
+							"': "+ERRORE_CONFIGURAZIONE_APPLICATIVO_NON_COMPLETA+" '"+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_KID+
+							"' "+ERRORE_SEZIONE+" '"+CostantiLabel.MODIPA_SICUREZZA_TOKEN_SUBTITLE_LABEL+"'");
 				}
 				this.kidApplicativoModI = kidApplicativoModIConfig;
 				if(this.kidApplicativoModI!=null && !"".equals(this.kidApplicativoModI) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(this.kidApplicativoModI)) {
@@ -347,12 +358,12 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 			else if(policyNegoziazioneToken.isJwtSignIncludeKeyIdFruizioneModI()) {
 				String prefixError = "La modalità di generazione del Key Id (kid), indicata nella token policy '"+policyNegoziazioneToken.getName()+"', "; 
 				if(this.idFruizione==null) {
-					throw new TokenException(prefixError+"richiede l'identificazione dei dati di una fruizione");
+					throw new TokenException(prefixError+ERRORE_RICHIEDE_IDENTIFICAZIONE_DATI_FRUIZIONE);
 				}
 				String kidFruizioneModIConfig = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolPropertiesFruizione, CostantiDB.MODIPA_PROFILO_SICUREZZA_OAUTH_KID);
 				if(kidFruizioneModIConfig==null || StringUtils.isEmpty(kidFruizioneModIConfig)) {
-					throw new TokenException(prefixError+"non è utilizzabile con la fruizione '"+idFruizioneLabel+
-							"': nella configurazione 'ModI' non è stato definito un '"+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_KID+"'");
+					throw new TokenException(prefixError+ERRORE_NON_UTILIZZABILE_FRUIZIONE+" '"+idFruizioneLabel+
+							"': "+ERRORE_CONFIGURAZIONE_MODI_NON_COMPLETA+" '"+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_KID+"'");
 				}
 				this.kidFruizioneModI = kidFruizioneModIConfig;
 				if(this.kidFruizioneModI!=null && !"".equals(this.kidFruizioneModI) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(this.kidFruizioneModI)) {
@@ -363,25 +374,25 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 			if(policyNegoziazioneToken.isJwtIssuerApplicativoModI()) {
 				String prefixError = "La modalità di generazione dell'Issuer, indicata nella token policy '"+policyNegoziazioneToken.getName()+"', "; 
 				if(this.applicativoRichiedente==null) {
-					throw new TokenException(prefixError+"richiede l'autenticazione e l'identificazione di un applicativo fruitore");
+					throw new TokenException(prefixError+ERRORE_RICHIEDE_AUTENTICAZIONE_IDENTIFICAZIONE_APPLICATIVO);
 				}
 				clientIdApplicativoModI = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(this.applicativoRichiedente.getProtocolPropertyList(), CostantiDB.MODIPA_SICUREZZA_TOKEN_CLIENT_ID);
 				if(clientIdApplicativoModI==null || StringUtils.isEmpty(clientIdApplicativoModI)) {
-					throw new TokenException(prefixError+"non è utilizzabile con l'applicativo identificato '"+idApp+
-							"': nella configurazione dell'applicativo non è stato definito un '"+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID+
-							"' nella sezione '"+CostantiLabel.MODIPA_SICUREZZA_TOKEN_SUBTITLE_LABEL+"'");
+					throw new TokenException(prefixError+ERRORE_NON_UTILIZZABILE_APPLICATIVO_IDENTIFICATO+" '"+idApp+
+							"': "+ERRORE_CONFIGURAZIONE_APPLICATIVO_NON_COMPLETA+" '"+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID+
+							"' "+ERRORE_SEZIONE+" '"+CostantiLabel.MODIPA_SICUREZZA_TOKEN_SUBTITLE_LABEL+"'");
 				}
 				this.signedJwtIssuer = clientIdApplicativoModI;
 			}
 			else if(policyNegoziazioneToken.isJwtIssuerFruizioneModI()) {
 				String prefixError = "La modalità di generazione dell'Issuer, indicata nella token policy '"+policyNegoziazioneToken.getName()+"', "; 
 				if(this.idFruizione==null) {
-					throw new TokenException(prefixError+"richiede l'identificazione dei dati di una fruizione");
+					throw new TokenException(prefixError+ERRORE_RICHIEDE_IDENTIFICAZIONE_DATI_FRUIZIONE);
 				}
 				clientIdFruizioneModI = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolPropertiesFruizione, CostantiDB.MODIPA_PROFILO_SICUREZZA_OAUTH_IDENTIFICATIVO);
 				if(clientIdFruizioneModI==null || StringUtils.isEmpty(clientIdFruizioneModI)) {
-					throw new TokenException(prefixError+"non è utilizzabile con la fruizione '"+idFruizioneLabel+
-							"': nella configurazione 'ModI' non è stato definito un '"+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID+
+					throw new TokenException(prefixError+ERRORE_NON_UTILIZZABILE_FRUIZIONE+" '"+idFruizioneLabel+
+							"': "+ERRORE_CONFIGURAZIONE_MODI_NON_COMPLETA+" '"+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID+
 							" "+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID_SEARCH+"'");
 				}
 				this.signedJwtIssuer = clientIdFruizioneModI;
@@ -398,13 +409,13 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 				if(clientIdApplicativoModI==null) {
 					String prefixError = "La modalità di generazione del Client ID, indicata nella token policy '"+policyNegoziazioneToken.getName()+"', "; 
 					if(this.applicativoRichiedente==null) {
-						throw new TokenException(prefixError+"richiede l'autenticazione e l'identificazione di un applicativo fruitore");
+						throw new TokenException(prefixError+ERRORE_RICHIEDE_AUTENTICAZIONE_IDENTIFICAZIONE_APPLICATIVO);
 					}
 					String clientId = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(this.applicativoRichiedente.getProtocolPropertyList(), CostantiDB.MODIPA_SICUREZZA_TOKEN_CLIENT_ID);
 					if(clientId==null || StringUtils.isEmpty(clientId)) {
-						throw new TokenException(prefixError+"non è utilizzabile con l'applicativo identificato '"+idApp+
-								"': nella configurazione dell'applicativo non è stato definito un '"+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID+
-								"' nella sezione '"+CostantiLabel.MODIPA_SICUREZZA_TOKEN_SUBTITLE_LABEL+"'");
+						throw new TokenException(prefixError+ERRORE_NON_UTILIZZABILE_APPLICATIVO_IDENTIFICATO+" '"+idApp+
+								"': "+ERRORE_CONFIGURAZIONE_APPLICATIVO_NON_COMPLETA+" '"+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID+
+								"' "+ERRORE_SEZIONE+" '"+CostantiLabel.MODIPA_SICUREZZA_TOKEN_SUBTITLE_LABEL+"'");
 					}
 					clientIdApplicativoModI = clientId;
 				}
@@ -414,12 +425,12 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 				if(clientIdFruizioneModI==null) {
 					String prefixError = "La modalità di generazione del Client ID, indicata nella token policy '"+policyNegoziazioneToken.getName()+"', "; 
 					if(this.idFruizione==null) {
-						throw new TokenException(prefixError+"richiede l'identificazione dei dati di una fruizione");
+						throw new TokenException(prefixError+ERRORE_RICHIEDE_IDENTIFICAZIONE_DATI_FRUIZIONE);
 					}
 					String clientId = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolPropertiesFruizione, CostantiDB.MODIPA_PROFILO_SICUREZZA_OAUTH_IDENTIFICATIVO);
 					if(clientId==null || StringUtils.isEmpty(clientId)) {
-						throw new TokenException(prefixError+"non è utilizzabile con la fruizione '"+idFruizioneLabel+
-								"': nella configurazione 'ModI' non è stato definito un '"+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID+
+						throw new TokenException(prefixError+ERRORE_NON_UTILIZZABILE_FRUIZIONE+" '"+idFruizioneLabel+
+								"': "+ERRORE_CONFIGURAZIONE_MODI_NON_COMPLETA+" '"+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID+
 								" "+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID_SEARCH+"'");
 					}
 					clientIdFruizioneModI = clientId;
@@ -438,13 +449,13 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 				if(clientIdApplicativoModI==null) {
 					String prefixError = "La modalità di generazione del Subject, indicata nella token policy '"+policyNegoziazioneToken.getName()+"', "; 
 					if(this.applicativoRichiedente==null) {
-						throw new TokenException(prefixError+"richiede l'autenticazione e l'identificazione di un applicativo fruitore");
+						throw new TokenException(prefixError+ERRORE_RICHIEDE_AUTENTICAZIONE_IDENTIFICAZIONE_APPLICATIVO);
 					}
 					String clientId = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(this.applicativoRichiedente.getProtocolPropertyList(), CostantiDB.MODIPA_SICUREZZA_TOKEN_CLIENT_ID);
 					if(clientId==null || StringUtils.isEmpty(clientId)) {
-						throw new TokenException(prefixError+"non è utilizzabile con l'applicativo identificato '"+idApp+
-								"': nella configurazione dell'applicativo non è stato definito un '"+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID+
-								"' nella sezione '"+CostantiLabel.MODIPA_SICUREZZA_TOKEN_SUBTITLE_LABEL+"'");
+						throw new TokenException(prefixError+ERRORE_NON_UTILIZZABILE_APPLICATIVO_IDENTIFICATO+" '"+idApp+
+								"': "+ERRORE_CONFIGURAZIONE_APPLICATIVO_NON_COMPLETA+" '"+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID+
+								"' "+ERRORE_SEZIONE+" '"+CostantiLabel.MODIPA_SICUREZZA_TOKEN_SUBTITLE_LABEL+"'");
 					}
 					clientIdApplicativoModI = clientId;
 				}
@@ -454,12 +465,12 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 				if(clientIdFruizioneModI==null) {
 					String prefixError = "La modalità di generazione del Subject, indicata nella token policy '"+policyNegoziazioneToken.getName()+"', "; 
 					if(this.idFruizione==null) {
-						throw new TokenException(prefixError+"richiede l'identificazione dei dati di una fruizione");
+						throw new TokenException(prefixError+ERRORE_RICHIEDE_IDENTIFICAZIONE_DATI_FRUIZIONE);
 					}
 					String clientId = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolPropertiesFruizione, CostantiDB.MODIPA_PROFILO_SICUREZZA_OAUTH_IDENTIFICATIVO);
 					if(clientId==null || StringUtils.isEmpty(clientId)) {
-						throw new TokenException(prefixError+"non è utilizzabile con la fruizione '"+idFruizioneLabel+
-								"': nella configurazione 'ModI' non è stato definito un '"+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID+
+						throw new TokenException(prefixError+ERRORE_NON_UTILIZZABILE_FRUIZIONE+" '"+idFruizioneLabel+
+								"': "+ERRORE_CONFIGURAZIONE_MODI_NON_COMPLETA+" '"+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID+
 								" "+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID_SEARCH+"'");
 					}
 					clientIdFruizioneModI = clientId;
@@ -502,6 +513,13 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 				this.signedJwtClaims = DynamicUtils.convertDynamicPropertyValue("claims.gwt", this.signedJwtClaims, dynamicMap, pddContext);	
 			}
 			
+			if(this.getPddContext()!=null && this.getPddContext().containsKey(Costanti.MODIPA_CONTEXT_AUDIT_DIGEST)) {
+				this.signedJwtAuditDigest = (String) this.getPddContext().get(Costanti.MODIPA_CONTEXT_AUDIT_DIGEST);
+			}
+			if(this.getPddContext()!=null && this.getPddContext().containsKey(Costanti.MODIPA_CONTEXT_AUDIT_DIGEST_ALGO)) {
+				this.signedJwtAuditDigestAlgo = (String) this.getPddContext().get(Costanti.MODIPA_CONTEXT_AUDIT_DIGEST_ALGO);
+			}
+			
 			this.signedJwtCustomId = policyNegoziazioneToken.getJwtSignIncludeKeyIdCustom();
 			if(this.signedJwtCustomId!=null && !"".equals(this.signedJwtCustomId)) {
 				this.signedJwtCustomId = DynamicUtils.convertDynamicPropertyValue("kid.customId.gwt", this.signedJwtCustomId, dynamicMap, pddContext);	
@@ -529,13 +547,13 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 				if(clientIdApplicativoModI==null) {
 					String prefixError = "La modalità di generazione del Client ID nei dati della richiesta, indicata nella token policy '"+policyNegoziazioneToken.getName()+"', "; 
 					if(this.applicativoRichiedente==null) {
-						throw new TokenException(prefixError+"richiede l'autenticazione e l'identificazione di un applicativo fruitore");
+						throw new TokenException(prefixError+ERRORE_RICHIEDE_AUTENTICAZIONE_IDENTIFICAZIONE_APPLICATIVO);
 					}
 					String clientId = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(this.applicativoRichiedente.getProtocolPropertyList(), CostantiDB.MODIPA_SICUREZZA_TOKEN_CLIENT_ID);
 					if(clientId==null || StringUtils.isEmpty(clientId)) {
-						throw new TokenException(prefixError+"non è utilizzabile con l'applicativo identificato '"+idApp+
-								"': nella configurazione dell'applicativo non è stato definito un '"+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID+
-								"' nella sezione '"+CostantiLabel.MODIPA_SICUREZZA_TOKEN_SUBTITLE_LABEL+"'");
+						throw new TokenException(prefixError+ERRORE_NON_UTILIZZABILE_APPLICATIVO_IDENTIFICATO+" '"+idApp+
+								"': "+ERRORE_CONFIGURAZIONE_APPLICATIVO_NON_COMPLETA+" '"+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID+
+								"' "+ERRORE_SEZIONE+" '"+CostantiLabel.MODIPA_SICUREZZA_TOKEN_SUBTITLE_LABEL+"'");
 					}
 					clientIdApplicativoModI = clientId;
 				}
@@ -545,12 +563,12 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 				if(clientIdFruizioneModI==null) {
 					String prefixError = "La modalità di generazione del Client ID nei dati della richiesta, indicata nella token policy '"+policyNegoziazioneToken.getName()+"', "; 
 					if(this.idFruizione==null) {
-						throw new TokenException(prefixError+"richiede l'identificazione dei dati di una fruizione");
+						throw new TokenException(prefixError+ERRORE_RICHIEDE_IDENTIFICAZIONE_DATI_FRUIZIONE);
 					}
 					String clientId = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolPropertiesFruizione, CostantiDB.MODIPA_PROFILO_SICUREZZA_OAUTH_IDENTIFICATIVO);
 					if(clientId==null || StringUtils.isEmpty(clientId)) {
-						throw new TokenException(prefixError+"non è utilizzabile con la fruizione '"+idFruizioneLabel+
-								"': nella configurazione 'ModI' non è stato definito un '"+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID+
+						throw new TokenException(prefixError+ERRORE_NON_UTILIZZABILE_FRUIZIONE+" '"+idFruizioneLabel+
+								"': "+ERRORE_CONFIGURAZIONE_MODI_NON_COMPLETA+" '"+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID+
 								" "+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID_SEARCH+"'");
 					}
 					clientIdFruizioneModI = clientId;
@@ -741,6 +759,18 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 			}
 			sb.append("claims:").append(this.signedJwtClaims);
 		}
+		if(StringUtils.isNotEmpty(this.signedJwtAuditDigest) && (!cacheKey || signedJwtAuditDigestCacheKey)) {
+			if(sb.length()>0) {
+				sb.append(separator);
+			}
+			sb.append("auditDigest:").append(this.signedJwtAuditDigest);
+		}
+		if(StringUtils.isNotEmpty(this.signedJwtAuditDigestAlgo) && (!cacheKey || signedJwtAuditDigestCacheKey)) {
+			if(sb.length()>0) {
+				sb.append(separator);
+			}
+			sb.append("auditDigestAlgo:").append(this.signedJwtAuditDigestAlgo);
+		}
 		
 		if(StringUtils.isNotEmpty(this.signedJwtCustomId) && (!cacheKey || signedJwtCustomIdCacheKey)) {
 			if(sb.length()>0) {
@@ -886,6 +916,14 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 
 	public String getSignedJwtClaims() {
 		return this.signedJwtClaims;
+	}
+	
+	public String getSignedJwtAuditDigest() {
+		return this.signedJwtAuditDigest;
+	}
+	
+	public String getSignedJwtAuditDigestAlgo() {
+		return this.signedJwtAuditDigestAlgo;
 	}
 	
 	public String getSignedJwtCustomId() {

@@ -23,6 +23,7 @@ package org.openspcoop2.protocol.modipa.tracciamento;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.tracciamento.Proprieta;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.basic.tracciamento.TracciaSerializer;
@@ -157,6 +158,15 @@ public class ModITracciaSerializer extends TracciaSerializer {
 									p.setValore(terminologiaBozza ? ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0302_SOAP_OLD : ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0302_SOAP_NEW);
 								}
 							}
+						}
+						else if(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN.equals(p.getNome())) {
+							p.setNome(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH);
+						}
+						else if(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PATTERN.equals(p.getNome())) {
+							p.setNome(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL);
+						}
+						else if(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_SCHEMA.equals(p.getNome())) {
+							p.setNome(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA_AUDIT_LABEL);
 						}
 						else if(ModIConsoleCostanti.MODIPA_API_TRACCIA_EXT_INFO_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_HEADERS_LABEL.equals(tracciaExtInfo.getLabel()) && 
 								p.getNome()!=null && p.getNome().contains(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_HEADER_MULTIPLE_VALUE_SUFFIX) &&

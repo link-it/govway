@@ -258,6 +258,7 @@ public class CostantiPdD {
     public static final String HEADER_INTEGRAZIONE_TOKEN_PURPOSE_ID = "purposeId";
     public static final String HEADER_INTEGRAZIONE_TOKEN_SESSION_INFO = "sessionInfo";
     public static final String HEADER_INTEGRAZIONE_TOKEN_CLAIMS = "claims";
+    public static final String HEADER_INTEGRAZIONE_TOKEN_AUDIT_DIGEST = "auditDigest";
     // Header
     public static final String HEADER_INTEGRAZIONE_TOKEN_HEADER_KID = "kid";
     public static final String HEADER_INTEGRAZIONE_TOKEN_HEADER_X509_URL = "x509Url";

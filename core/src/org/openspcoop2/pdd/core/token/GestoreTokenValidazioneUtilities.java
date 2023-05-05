@@ -142,9 +142,15 @@ public class GestoreTokenValidazioneUtilities {
     				
     				if(jsonCompactVerify.verify(token)) {
     					informazioniToken = new InformazioniToken(SorgenteInformazioniToken.JWT,jsonCompactVerify.getDecodedPayload(),tokenParser);
-    					if(jsonCompactVerify.getX509Certificate()!=null && pddContext!=null) {
+    					if( pddContext!=null &&
+    							(jsonCompactVerify.getX509Certificate()!=null || jsonCompactVerify.getRsaPublicKey()!=null || jsonCompactVerify.getKid()!=null)) {
     						restSecurityToken = new RestMessageSecurityToken();
-    						restSecurityToken.setCertificate(new CertificateInfo(jsonCompactVerify.getX509Certificate(), "access_token"));
+    						if(jsonCompactVerify.getX509Certificate()!=null) {
+    							restSecurityToken.setCertificate(new CertificateInfo(jsonCompactVerify.getX509Certificate(), "access_token"));
+    						}
+    						if(jsonCompactVerify.getKid()!=null) {
+    							restSecurityToken.setKid(jsonCompactVerify.getKid());
+    						}
     						restSecurityToken.setToken(token);
     						if(esitoPresenzaToken!=null) {
     							restSecurityToken.setHttpHeaderName(esitoPresenzaToken.getHeaderHttp());
@@ -1068,6 +1074,10 @@ public class GestoreTokenValidazioneUtilities {
 		
 		Date now = DateManager.getDate();
 		
+		if(esitoGestioneToken.isValido()) {
+			esitoGestioneToken.setDateValide(true); // tanto le ricontrollo adesso
+		}
+			
 		if(esitoGestioneToken.isValido()) {
 			
 			boolean enabled = OpenSPCoop2Properties.getInstance().isGestioneToken_expTimeCheck();

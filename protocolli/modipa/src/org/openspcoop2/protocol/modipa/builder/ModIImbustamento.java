@@ -277,9 +277,31 @@ public class ModIImbustamento {
 			
 			
 			/* *** SICUREZZA MESSAGGIO *** */
+			
+			boolean isRichiesta = MessageRole.REQUEST.equals(messageRole);
+			
 			boolean filterPDND = true;
 			String securityMessageProfileNonFiltratoPDND = ModIPropertiesUtils.readPropertySecurityMessageProfile(aspc, nomePortType, azione, !filterPDND);
+			
+			boolean existsSecurityFlusso =  false;
 			if(securityMessageProfileNonFiltratoPDND!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED.equals(securityMessageProfileNonFiltratoPDND)) {
+				existsSecurityFlusso = ModIPropertiesUtils.processSecurity(aspc, nomePortType, azione, isRichiesta, 
+						msg, rest, this.modiProperties);
+			}
+			
+			if(existsSecurityFlusso) {
+				
+				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO,
+						ModIPropertiesUtils.convertProfiloSicurezzaToSDKValue(securityMessageProfileNonFiltratoPDND, rest));
+				
+				String sorgenteToken = ModIPropertiesUtils.readPropertySecurityMessageSorgenteToken(aspc, nomePortType, azione, true);
+				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN,
+						ModIPropertiesUtils.convertProfiloSicurezzaSorgenteTokenToSDKValue(sorgenteToken));
+				boolean sorgenteLocale = true;
+				if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND.equals(sorgenteToken) ||
+						ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH.equals(sorgenteToken)) {
+					sorgenteLocale = false;
+				}
 				
 				String securityMessageProfile = ModIPropertiesUtils.readPropertySecurityMessageProfile(aspc, nomePortType, azione, filterPDND);
 								
@@ -307,13 +329,11 @@ public class ModIImbustamento {
 				String tipoDiagnostico = RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio) ? ".richiesta." : ".risposta.";
 				
 				// check config
-				boolean isRichiesta = MessageRole.REQUEST.equals(messageRole);
 				
 				boolean addSecurity = false;
 				boolean securityMessageProfilePrevedeTokenLocale = securityMessageProfile!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED.equals(securityMessageProfile);
 				if(securityMessageProfilePrevedeTokenLocale) {
-					addSecurity = ModIPropertiesUtils.processSecurity(aspc, nomePortType, azione, isRichiesta, 
-						msg, rest, this.modiProperties);
+					addSecurity = existsSecurityFlusso;
 				}
 				
 				boolean corniceSicurezza = ModIPropertiesUtils.isPropertySecurityMessageConCorniceSicurezza(aspc, nomePortType, azione);
@@ -334,14 +354,7 @@ public class ModIImbustamento {
 				
 				boolean addAudit = fruizione && corniceSicurezza && 
 						patternCorniceSicurezza!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_VALUE_OLD.equals(patternCorniceSicurezza);
-				
-				String sorgenteToken = ModIPropertiesUtils.readPropertySecurityMessageSorgenteToken(aspc, nomePortType, azione, true);
-				boolean sorgenteLocale = true;
-				if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND.equals(sorgenteToken) ||
-						ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH.equals(sorgenteToken)) {
-					sorgenteLocale = false;
-				}
-				
+								
 				boolean keystoreKidMode = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile)
 						||
 						ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile)
@@ -409,7 +422,8 @@ public class ModIImbustamento {
 					}
 					
 					// keystore
-					securityConfig = new ModISecurityConfig(msg, idSoggettoMittente, asps, sa, 
+					securityConfig = new ModISecurityConfig(msg, context, protocolFactory, state, requestInfo, 
+							idSoggettoMittente, asps, sa, 
 							rest, fruizione, isRichiesta, 
 							patternCorniceSicurezza, schemaCorniceSicurezza,
 							busta, bustaRichiesta, 
@@ -444,10 +458,7 @@ public class ModIImbustamento {
 				
 				// security (ID_AUTH e INTEGRITY)
 				if(addSecurity) {
-				
-					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO,
-							ModIPropertiesUtils.convertProfiloSicurezzaToSDKValue(securityMessageProfile, rest));
-														
+																		
 					boolean includiRequestDigest = ModIPropertiesUtils.isPropertySecurityMessageIncludiRequestDigest(aspc, nomePortType, azione);
 					
 					boolean signAttachments = false;
@@ -564,7 +575,8 @@ public class ModIImbustamento {
 								try {
 									msgDiag.logPersonalizzato(DIAGNOSTIC_ADD_TOKEN_INTEGRITY+tipoDiagnostico+DIAGNOSTIC_IN_CORSO);
 									
-									ModISecurityConfig securityConfigIntegrity = new ModISecurityConfig(msg, idSoggettoMittente, asps, sa, 
+									ModISecurityConfig securityConfigIntegrity = new ModISecurityConfig(msg, context, protocolFactory, state, requestInfo,  
+											idSoggettoMittente, asps, sa, 
 											rest, fruizione, isRichiesta, 
 											patternCorniceSicurezza, schemaCorniceSicurezza,
 											busta, bustaRichiesta, 
@@ -636,6 +648,11 @@ public class ModIImbustamento {
 				
 				// audit (ID_AUDIT)
 				if(addAudit) {
+					
+					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PATTERN, 
+							ModIPropertiesUtils.convertProfiloAuditToSDKValue(patternCorniceSicurezza));
+					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_SCHEMA, 
+							ModIPropertiesUtils.convertSchemaAuditToSDKValue(schemaCorniceSicurezza, this.modiProperties));
 					
 					if(imbustamentoRest==null) {
 						// audit su api soap

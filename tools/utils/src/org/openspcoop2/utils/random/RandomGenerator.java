@@ -20,8 +20,10 @@
 
 package org.openspcoop2.utils.random;
 
-import java.security.SecureRandom;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.io.Base64Utilities;
 
 /**
@@ -51,19 +53,23 @@ public class RandomGenerator {
 		this.algorithmSecureRandom = algorithmSecureRandom;
 	}
 	
+	public static RandomGenerator getDefaultInstance() {
+		return new RandomGenerator(true);
+	} 
+	
 	public RandomGenerator() {
-		_init(false, null);
+		initEngine(false, null);
 	}
 	public RandomGenerator(boolean useSecureRandom) {
-		_init(useSecureRandom, null);
+		initEngine(useSecureRandom, null);
 	}
 	public RandomGenerator(boolean useSecureRandom, SecureRandomAlgorithm algo) {
-		_init(useSecureRandom, algo.getValue());
+		initEngine(useSecureRandom, algo.getValue());
 	}
 	public RandomGenerator(boolean useSecureRandom, String algorithm) {
-		_init(useSecureRandom, algorithm);
+		initEngine(useSecureRandom, algorithm);
 	}
-	private void _init(boolean useSecureRandom, String algorithm) {
+	private void initEngine(boolean useSecureRandom, String algorithm) {
 		this.useSecureRandom = useSecureRandom;
 		this.algorithmSecureRandom = algorithm;
 	}
@@ -72,6 +78,14 @@ public class RandomGenerator {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < length; i++) {
 			sb.append(Base64Utilities.B64_STRING.charAt(this.nextInt(Base64Utilities.B64_STRING.length())));
+		}
+		return sb.toString();
+	}
+	
+	public String nextRandomInt(int length) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < length; i++) {
+			sb.append(this.nextInt(10));
 		}
 		return sb.toString();
 	}
@@ -176,24 +190,53 @@ public class RandomGenerator {
 		}
 	}
 	
+	
 	public Object getRandomEngine() {
 		if(this.useSecureRandom) {
 			java.security.SecureRandom sr = null;
 			if(this.algorithmSecureRandom!=null) {
-				try {
-					sr = java.security.SecureRandom.getInstance(this.algorithmSecureRandom);
-				}catch(Exception e) {
-					throw new RuntimeException(e.getMessage(),e);
-				}
+				sr = getSecureRandom(this.algorithmSecureRandom);
 			}
 			else {
-				sr = new java.security.SecureRandom();
+				sr = getSecureRandomDefault();
 			}
-			//System.out.println("algorithmSecureRandom: "+sr.getAlgorithm());
+			/**System.out.println("algorithmSecureRandom: "+sr.getAlgorithm());*/
 		    return sr;
 		}
 		else {
-			return new SecureRandom();
+			return getSecureRandomDefault();
 		}
-	} 
+	}
+	
+	
+	private static Map<String, java.security.SecureRandom> mapAlgoSecureRandom = new HashMap<>();
+	private static synchronized void initSecureRandom(String algorithmSecureRandom){
+		if(!mapAlgoSecureRandom.containsKey(algorithmSecureRandom)) {
+			try {
+				java.security.SecureRandom sr = java.security.SecureRandom.getInstance(algorithmSecureRandom);
+				mapAlgoSecureRandom.put(algorithmSecureRandom, sr);
+			}catch(Exception e) {
+				throw new UtilsRuntimeException(e.getMessage(),e);
+			}
+		}
+	}
+	private static java.security.SecureRandom getSecureRandom(String algorithmSecureRandom){
+		if(!mapAlgoSecureRandom.containsKey(algorithmSecureRandom)) {
+			initSecureRandom(algorithmSecureRandom);
+		}
+		return mapAlgoSecureRandom.get(algorithmSecureRandom);
+	}
+	
+	private static java.security.SecureRandom secureRandomDefault = null;
+	private static synchronized void initSecureRandomDefault(){
+		if(secureRandomDefault==null) {
+			secureRandomDefault = new java.security.SecureRandom();
+		}
+	}
+	private static java.security.SecureRandom getSecureRandomDefault(){
+		if(secureRandomDefault==null) {
+			initSecureRandomDefault();
+		}
+		return secureRandomDefault;
+	}
 }

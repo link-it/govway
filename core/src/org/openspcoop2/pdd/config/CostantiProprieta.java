@@ -760,6 +760,39 @@ public class CostantiProprieta {
 	
 	
 	
+	
+	
+	// ****  MODI *****
+	
+	public static final String MODI_VALUE_ENABLED = VALUE_ENABLED;
+	public static final String MODI_VALUE_DISABLED = VALUE_DISABLED;
+	
+	private static final String MODI_AUDIT_CLAIM_PREFIX = "modi.audit.";
+	private static final String MODI_AUDIT_SUFFIX_TRACE_ENABLED = ".trace.enabled";
+	private static final String MODI_AUDIT_SUFFIX_FORWARD_BACKEND_ENABLED = ".forwardBackend.enabled";
+	private static final String MODI_AUDIT_SUFFIX_FORWARD_BACKEND = ".forwardBackend";
+
+	public static boolean isModIAuditTraceEnabled(List<Proprieta> proprieta, String claim, boolean defaultValue) {
+		String p = MODI_AUDIT_CLAIM_PREFIX+claim+MODI_AUDIT_SUFFIX_TRACE_ENABLED;
+		return readBooleanValueWithDefault(proprieta, p, defaultValue, MODI_VALUE_ENABLED, MODI_VALUE_DISABLED);
+	}
+	public static boolean isModIAuditForwardBackendEnabled(List<Proprieta> proprieta, String claim, boolean defaultValue) {
+		String p = MODI_AUDIT_CLAIM_PREFIX+claim+MODI_AUDIT_SUFFIX_FORWARD_BACKEND_ENABLED;
+		return readBooleanValueWithDefault(proprieta, p, defaultValue, MODI_VALUE_ENABLED, MODI_VALUE_DISABLED);
+	}
+	public static String getModIAuditForwardBackend(List<Proprieta> proprieta, String claim, String defaultValue) {
+		String p = MODI_AUDIT_CLAIM_PREFIX+claim+MODI_AUDIT_SUFFIX_FORWARD_BACKEND;
+		String valueS = readValue(proprieta, p);
+		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
+			return valueS;
+		}
+		return defaultValue;
+	}
+	
+	
+	
+	
+	
 	// METODI DI UTILITA GENERICI
 	
 	private static CoreException newCoreException(String valueS, String property, String supportedValues) {

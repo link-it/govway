@@ -70,6 +70,7 @@ public class ModICostanti {
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_CANALE = "ProfiloSicurezzaCanale";
     
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO = "ProfiloSicurezzaMessaggio";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN = "GenerazioneTokenIDAuth";
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_PREFIX = "ProfiloSicurezzaMessaggio-";
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CUSTOM_HEADER = "ProfiloSicurezzaMessaggio-Custom-JWT-Signature";
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_X509_SUBJECT = "ProfiloSicurezzaMessaggio-X509-Subject";
@@ -101,6 +102,8 @@ public class ModICostanti {
     
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_SOAP_PREFIX = "ProfiloSicurezzaMessaggioSignedSoap-";
     
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PATTERN = "ProfiloSicurezzaAudit";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_SCHEMA = "ProfiloSicurezzaAudit-SchemaDati";
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PREFIX = "ProfiloSicurezzaMessaggioAudit-";
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_AUDIENCE = "ProfiloSicurezzaMessaggioAudit-Audience";
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_ID = "ProfiloSicurezzaMessaggioAudit-MessageId";
@@ -130,6 +133,9 @@ public class ModICostanti {
     public static final MapKey<String> MODIPA_CONTEXT_REQUEST_DIGEST = Map.newMapKey("MODIPA_REQUEST_DIGEST");
     public static final MapKey<String> MODIPA_CONTEXT_X509_AUTHORIZATION = Map.newMapKey("MODIPA_X509_AUTHORIZATION");
     public static final MapKey<String> MODIPA_CONTEXT_KID_AUTHORIZATION = Map.newMapKey("MODIPA_KID_AUTHORIZATION");
+    
+    public static final MapKey<String> MODIPA_CONTEXT_AUDIT_DIGEST = org.openspcoop2.pdd.core.token.Costanti.MODIPA_CONTEXT_AUDIT_DIGEST;
+    public static final MapKey<String> MODIPA_CONTEXT_AUDIT_DIGEST_ALGO = org.openspcoop2.pdd.core.token.Costanti.MODIPA_CONTEXT_AUDIT_DIGEST_ALGO;
     
     public static final String MODIPA_VALUE_UNDEFINED = Costanti.MODIPA_VALUE_UNDEFINED;
         

@@ -35,7 +35,13 @@ import org.openspcoop2.utils.io.HexBinaryUtilities;
  * @version $Rev$, $Date$
  */
 public class DigestUtils {
+	
+	private DigestUtils() {}
 
+	private static UtilsException newUtilsExceptionDigestEncodingUndefined() {
+		return new UtilsException("Digest encoding undefined");
+	}
+	
 	public static byte[] getDigestValue(byte[] content, String algorithm) throws UtilsException{
 		if(content==null) {
 			throw new UtilsException("Digest content undefined");
@@ -47,12 +53,11 @@ public class DigestUtils {
 		MessageDigest digest = null;
 		try {
 			digest = MessageDigestFactory.getMessageDigest(algorithm);
-		}catch(Throwable e) {
+		}catch(Exception e) {
 			throw new UtilsException("Message digest (algorithm: '"+algorithm+"') initialization failed: "+e.getMessage(),e);
 		}
 		try {
-			byte[]md5Data = digest.digest(content);
-			return md5Data;
+			return digest.digest(content); // md5Data
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -64,7 +69,7 @@ public class DigestUtils {
 	public static String getDigestValue(byte[] content, String algorithm, DigestEncoding digestEncoding, boolean rfc3230) throws UtilsException{
 		byte[]md5Data = getDigestValue(content, algorithm);
 		if(digestEncoding==null) {
-			throw new UtilsException("Digest encoding undefined");
+			throw newUtilsExceptionDigestEncodingUndefined();
 		}
 		return encode(md5Data, digestEncoding, rfc3230, algorithm);
 	}
@@ -76,10 +81,10 @@ public class DigestUtils {
 
 		byte[]md5Data = getDigestValue(content, algorithm);
 		if(digestEncoding==null || digestEncoding.length<=0) {
-			throw new UtilsException("Digest encoding undefined");
+			throw newUtilsExceptionDigestEncodingUndefined();
 		}
 		
-		Map<DigestEncoding, String> map = new HashMap<DigestEncoding, String>();
+		Map<DigestEncoding, String> map = new HashMap<>();
 		for (DigestEncoding de : digestEncoding) {
 			try {
 				String digestValue = encode(md5Data, de, rfc3230, algorithm);
@@ -94,18 +99,19 @@ public class DigestUtils {
 	private static String encode(byte[] md5Data, DigestEncoding digestEncoding, boolean rfc3230, String algorithm) throws UtilsException{
 
 		if(digestEncoding==null) {
-			throw new UtilsException("Digest encoding undefined");
+			throw newUtilsExceptionDigestEncodingUndefined();
 		}
 		
 		try {
 			String digestValue = null;
-			switch (digestEncoding) {
-			case HEX:
+			if(DigestEncoding.HEX.equals(digestEncoding)) {
 				digestValue = HexBinaryUtilities.encodeAsString(md5Data);
-				break;
-			case BASE64:
+			}
+			else if(DigestEncoding.BASE64.equals(digestEncoding)) {
 				digestValue = Base64Utilities.encodeAsString(md5Data);
-				break;
+			}
+			else {
+				throw new UtilsException("DigestEncoding '"+digestEncoding+"' unsupported");
 			}
 			if(rfc3230) {
 				return algorithm+"="+digestValue;

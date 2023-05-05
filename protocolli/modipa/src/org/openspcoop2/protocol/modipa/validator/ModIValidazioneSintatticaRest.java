@@ -528,7 +528,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 		
 		
 		boolean tokenAudit = corniceSicurezza && !CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD.equals(patternCorniceSicurezza) && schemaCorniceSicurezza!=null;
-		
+				
 		boolean apiSoap = ServiceBinding.SOAP.equals(msg.getServiceBinding());
 		
 
@@ -1112,7 +1112,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 				else {
 					readCorniceSicurezzaSchema(objectNode, msg, busta,
 							erroriValidazione, prefix,
-							schemaCorniceSicurezza);
+							schemaCorniceSicurezza, securityConfig.getCorniceSicurezzaSchemaConfig());
 				}
 				
 			}
@@ -1463,18 +1463,11 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 	
 	private void readCorniceSicurezzaSchema(ObjectNode objectNode, OpenSPCoop2Message msg, Busta busta,
 			List<Eccezione> erroriValidazione, String prefix,
-			String schemaCorniceSicurezza) throws ProtocolException {
+			String schemaCorniceSicurezza, ModIAuditConfig auditConfig) throws ProtocolException {
 		
-		if(schemaCorniceSicurezza!=null && StringUtils.isNotEmpty(schemaCorniceSicurezza)) {
-			if(this.modiProperties.getAuditConfig()!=null && !this.modiProperties.getAuditConfig().isEmpty()) {
-				for (ModIAuditConfig modIAuditConfig : this.modiProperties.getAuditConfig()) {
-					if(modIAuditConfig.getNome().equals(schemaCorniceSicurezza)) {
-						readCorniceSicurezzaSchema(objectNode, msg, busta,
-								erroriValidazione, prefix, modIAuditConfig.getClaims());
-						break;
-					}
-				}
-			}
+		if(schemaCorniceSicurezza!=null && StringUtils.isNotEmpty(schemaCorniceSicurezza) && auditConfig!=null) {
+			readCorniceSicurezzaSchema(objectNode, msg, busta,
+					erroriValidazione, prefix, auditConfig.getClaims());
 		}
 		
 	}
@@ -1488,14 +1481,8 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 				if(objectNode.has(claimName)) {
 					Object o = objectNode.get(claimName);
 					if(o!=null) {
-						String v = toString(o);
-						
-						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PREFIX+claimName, v);
-						
-						String header = modIAuditClaimConfig.getForwardBackend();
-						if(header!=null && StringUtils.isNotEmpty(header)) {
-							msg.forceTransportHeader(header, v);
-						}
+						processCorniceSicurezzaSchemaClaimValue(msg, modIAuditClaimConfig, busta,
+								claimName, o);
 					}
 				}
 				else if(modIAuditClaimConfig.isRequired()){
@@ -1505,6 +1492,19 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			}
 		}
 		
+	}
+	private void processCorniceSicurezzaSchemaClaimValue(OpenSPCoop2Message msg, ModIAuditClaimConfig modIAuditClaimConfig, Busta busta,
+			String claimName, Object o) {
+		String v = toString(o);
+		
+		if(modIAuditClaimConfig.isTrace()) {
+			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PREFIX+claimName, v);
+		}
+		
+		String header = modIAuditClaimConfig.getForwardBackend();
+		if(header!=null && StringUtils.isNotEmpty(header)) {
+			msg.forceTransportHeader(header, v);
+		}
 	}
 	
 	private boolean readCorniceSicurezzaCodiceEnteLegacy(ObjectNode objectNode, Busta busta,

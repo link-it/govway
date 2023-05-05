@@ -40,10 +40,12 @@ public class ModIAuditClaimConfig {
 	public static final String PROPERTY_REQUIRED = "required";
 	public static final String PROPERTY_STRING_TYPE = "stringType";
 	public static final String PROPERTY_INFO = "info";
-	public static final String PROPERTY_DEFAULT_RULE = "default.rule";
-	public static final String PROPERTY_DEFAULT_INFO = "default.info";
+	public static final String PROPERTY_DEFAULT_RULE = "rule";
+	public static final String PROPERTY_DEFAULT_RULE_INFO = "rule.info";
 	public static final String PROPERTY_FORWARD_BACKEND = "forwardBackend";
+	public static final String PROPERTY_TRACE = "trace";
 	
+	private ModIAuditClaimConfig() {}
 	ModIAuditClaimConfig(String prefix, String propertyId, Properties p) throws ProtocolException {
 		
 		this.propertyId = propertyId;
@@ -55,14 +57,16 @@ public class ModIAuditClaimConfig {
 		this.info = ModIAuditConfig.getProperty(prefix, p, ModIAuditConfig.PROPERTY_CLAIMS+"."+propertyId+"."+PROPERTY_INFO, true);
 		
 		String tmp = ModIAuditConfig.getProperty(prefix, p, ModIAuditConfig.PROPERTY_CLAIMS+"."+propertyId+"."+PROPERTY_DEFAULT_RULE, true);
-		this.defaultRule = new ArrayList<>();
-		setList(tmp, this.defaultRule);
+		this.rules = new ArrayList<>();
+		setList(tmp, this.rules);
 			
-		tmp = ModIAuditConfig.getProperty(prefix, p, ModIAuditConfig.PROPERTY_CLAIMS+"."+propertyId+"."+PROPERTY_DEFAULT_INFO, true);
-		this.defaultInfo = new ArrayList<>();
-		setList(tmp, this.defaultInfo);
+		tmp = ModIAuditConfig.getProperty(prefix, p, ModIAuditConfig.PROPERTY_CLAIMS+"."+propertyId+"."+PROPERTY_DEFAULT_RULE_INFO, true);
+		this.rulesInfo = new ArrayList<>();
+		setList(tmp, this.rulesInfo);
 		
 		this.forwardBackend = ModIAuditConfig.getProperty(prefix, p, ModIAuditConfig.PROPERTY_CLAIMS+"."+propertyId+"."+PROPERTY_FORWARD_BACKEND, false);
+		
+		this.trace = ModIAuditConfig.getBooleanProperty(prefix, p, ModIAuditConfig.PROPERTY_CLAIMS+"."+propertyId+"."+PROPERTY_TRACE, true, true);
 	}
 	
 	private static void setList(String v, List<String> list) {
@@ -86,9 +90,34 @@ public class ModIAuditClaimConfig {
 	private boolean required;
 	private boolean stringType;
 	private String info;
-	private List<String> defaultRule;
-	private List<String> defaultInfo;
+	private List<String> rules;
+	private List<String> rulesInfo;
 	private String forwardBackend;
+	private boolean trace;
+	
+	public ModIAuditClaimConfig copyNewInstance() {
+		ModIAuditClaimConfig newInstance = new ModIAuditClaimConfig();
+		newInstance.propertyId = this.propertyId;
+		newInstance.nome = this.nome;
+		newInstance.label = this.label;
+		newInstance.required = this.required;
+		newInstance.stringType = this.stringType;
+		newInstance.info = this.info;
+		
+		newInstance.rules = new ArrayList<>();
+		if(this.rules!=null && !this.rules.isEmpty()) {
+			newInstance.rules.addAll(this.rules);
+		}
+		
+		newInstance.rulesInfo = new ArrayList<>();
+		if(this.rulesInfo!=null && !this.rulesInfo.isEmpty()) {
+			newInstance.rulesInfo.addAll(this.rulesInfo);
+		}
+		
+		newInstance.forwardBackend = this.forwardBackend;
+		newInstance.trace = this.trace;
+		return newInstance;
+	}
 	
 	public String getPropertyId() {
 		return this.propertyId;
@@ -114,15 +143,31 @@ public class ModIAuditClaimConfig {
 		return this.info;
 	}
 
-	public List<String> getDefaultRule() {
-		return this.defaultRule;
+	public List<String> getRules() {
+		return this.rules;
 	}
-
-	public List<String> getDefaultInfo() {
-		return this.defaultInfo;
+	public void setRules(List<String> rules) {
+		this.rules = rules;
+	}
+	
+	public List<String> getRulesInfo() {
+		return this.rulesInfo;
+	}
+	public void setRulesInfo(List<String> rulesInfo) {
+		this.rulesInfo = rulesInfo;
 	}
 
 	public String getForwardBackend() {
 		return this.forwardBackend;
+	}
+	public void setForwardBackend(String forwardBackend) {
+		this.forwardBackend = forwardBackend;
+	}
+	
+	public boolean isTrace() {
+		return this.trace;
+	}
+	public void setTrace(boolean trace) {
+		this.trace = trace;
 	}
 }

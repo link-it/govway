@@ -54,6 +54,8 @@ public class RemoteStoreProviderDriverUtils {
 	
 	private RemoteStoreProviderDriverUtils() {}
 
+	private static final String COLUMN_DATA_AGGIORNAMENTO = "data_aggiornamento";
+	
 	public static long registerIfNotExistsRemoteStore(DriverConfigurazioneDB driverConfigurazioneDB, RemoteStoreConfig remoteStoreConfig) throws KeystoreException {
 		long idRemoteStore = getIdRemoteStore(driverConfigurazioneDB, remoteStoreConfig);
 		if(idRemoteStore<=0) {
@@ -70,8 +72,11 @@ public class RemoteStoreProviderDriverUtils {
 			
 			String remoteStoreName = RemoteStoreProviderDriver.getRemoteStoreConfigName(remoteStoreConfig);
 			
+			Timestamp now = DateManager.getTimestamp();
+			
 			List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<>();
 			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome", remoteStoreName, InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(COLUMN_DATA_AGGIORNAMENTO, now, InsertAndGeneratedKeyJDBCType.TIMESTAMP) );
 			
 			long idRemoteStore = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(driverConfigurazioneDB.getTipoDB()), 
 					new CustomKeyGeneratorObject(CostantiDB.REMOTE_STORE, CostantiDB.REMOTE_STORE_COLUMN_ID, 
@@ -145,7 +150,7 @@ public class RemoteStoreProviderDriverUtils {
 			sqlQueryObject.addInsertField("kid", "?");
 			sqlQueryObject.addInsertField("key", "?");
 			sqlQueryObject.addInsertField("data_registrazione", "?");
-			sqlQueryObject.addInsertField("data_aggiornamento", "?");
+			sqlQueryObject.addInsertField(COLUMN_DATA_AGGIORNAMENTO, "?");
 			String updateQuery = sqlQueryObject.createSQLInsert();
 			updateStmt = con.prepareStatement(updateQuery);
 			int index = 1;
@@ -183,7 +188,7 @@ public class RemoteStoreProviderDriverUtils {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(driverConfigurazioneDB.getTipoDB());
 			sqlQueryObject.addUpdateTable(CostantiDB.REMOTE_STORE_KEY);
 			sqlQueryObject.addUpdateField("key", "?");
-			sqlQueryObject.addInsertField("data_aggiornamento", "?");
+			sqlQueryObject.addInsertField(COLUMN_DATA_AGGIORNAMENTO, "?");
 			addWhereKidConditions(sqlQueryObject);
 			sqlQueryObject.setANDLogicOperator(true);
 			String updateQuery = sqlQueryObject.createSQLUpdate();

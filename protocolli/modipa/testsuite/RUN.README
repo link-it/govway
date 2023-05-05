@@ -80,7 +80,7 @@ Prerequisiti:
   Qui sono presenti i keystore e truststore per i test sulla sicurezza messaggio
 
 	- Modificare quindi il file </etc/govway/modipa_local.properties> configurando i valori per il keystore e truststore di default,
-          oltre alle impostazioni relative al tipo di codifica del digest
+          oltre alle impostazioni relative al tipo di codifica del digest e alla generazione del kid nei token X509
 
 		# ================================================
 		# -------- TrustStore --------
@@ -104,6 +104,9 @@ Prerequisiti:
 		# ================================================
 		# --------- Codifica Digest -----
 		org.openspcoop2.protocol.modipa.rest.securityToken.digest.encoding.accepted=base64,hex
+
+		# Nel token di integrity viene aggiunto il kid del certificato anche se si usa la modalità 'X509' (x5c/x5u/x5t)
+		org.openspcoop2.protocol.modipa.rest.securityToken.x509.kid=true
 
 + Copiare nella cartella dell'application server che serve il contenuto statico, i ExampleClient1.crt, ExampleClient2.crt ed ExampleServer.crt, utilizzati
 	nei test per verificare il riferimento x509 x5u. Ad esempio per wildfly:

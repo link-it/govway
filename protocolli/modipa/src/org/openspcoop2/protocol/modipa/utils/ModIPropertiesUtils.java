@@ -26,6 +26,8 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -40,6 +42,7 @@ import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.engine.constants.Costanti;
+import org.openspcoop2.protocol.modipa.config.ModIAuditConfig;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
@@ -561,6 +564,85 @@ public class ModIPropertiesUtils {
 		securityMessageProfile = securityMessageProfile.replace("r", "m");
 		securityMessageProfile = securityMessageProfile.replace("s", "m");
 		return securityMessageProfile;
+	}
+	
+	private static ProtocolException newProtocolExceptionUnknown(String prefix, String value) {
+		return new ProtocolException(prefix+" '"+value+"' unknown");
+	}
+	
+	public static String convertProfiloSicurezzaSorgenteTokenToSDKValue(String sorgenteToken) throws ProtocolException {
+		if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_LOCALE.equals(sorgenteToken)) {
+			return CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_LOCALE;
+		}
+		else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND.equals(sorgenteToken)) {
+			return CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_PDND;
+		}
+		else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH.equals(sorgenteToken)) {
+			return CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_OAUTH;
+		}
+		else {
+			// backward compatibility
+			return CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_LOCALE;
+		}
+	}
+	public static String convertProfiloSicurezzaSorgenteTokenToConfigurationValue(String sortenteTokenSDKValue) throws ProtocolException {
+		if(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_LOCALE.equals(sortenteTokenSDKValue)) {
+			return CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_LOCALE;
+		}
+		else if(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_PDND.equals(sortenteTokenSDKValue)) {
+			return CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND;
+		}
+		else if(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_OAUTH.equals(sortenteTokenSDKValue)) {
+			return CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH;
+		}
+		throw newProtocolExceptionUnknown("Source label",sortenteTokenSDKValue);
+	}
+	
+	
+	public static String convertProfiloAuditToSDKValue(String patternCorniceSicurezza) throws ProtocolException {
+		if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD.equals(patternCorniceSicurezza)) {
+			return CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD;
+		}
+		else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_01.equals(patternCorniceSicurezza)) {
+			return CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_01;
+		}
+		else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_02.equals(patternCorniceSicurezza)) {
+			return CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_02;
+		}
+		throw newProtocolExceptionUnknown("Pattern value",patternCorniceSicurezza);
+	}
+	public static String convertProfiloAuditToConfigurationValue(String patternCorniceSicurezzaSDKValue) throws ProtocolException {
+		if(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD.equals(patternCorniceSicurezzaSDKValue)) {
+			return CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD;
+		}
+		else if(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_01.equals(patternCorniceSicurezzaSDKValue)) {
+			return CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_01;
+		}
+		else if(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_02.equals(patternCorniceSicurezzaSDKValue)) {
+			return CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_02;
+		}
+		throw newProtocolExceptionUnknown("Pattern label",patternCorniceSicurezzaSDKValue);
+	}
+	
+	public static String convertSchemaAuditToSDKValue(String schemaCorniceSicurezza, ModIProperties modiProperties) throws ProtocolException {
+		if(modiProperties.getAuditConfig()!=null && !modiProperties.getAuditConfig().isEmpty()) {
+			for (ModIAuditConfig c : modiProperties.getAuditConfig()) {
+				if(c.getNome().equals(schemaCorniceSicurezza)) {
+					return c.getLabel();
+				}
+			}
+		}
+		throw newProtocolExceptionUnknown("Schema value",schemaCorniceSicurezza);
+	}
+	public static String convertSchemaAuditToConfigurationValue(String schemaCorniceSicurezzaSDKValue, ModIProperties modiProperties) throws ProtocolException {
+		if(modiProperties.getAuditConfig()!=null && !modiProperties.getAuditConfig().isEmpty()) {
+			for (ModIAuditConfig c : modiProperties.getAuditConfig()) {
+				if(c.getLabel().equals(schemaCorniceSicurezzaSDKValue)) {
+					return c.getNome();
+				}
+			}
+		}
+		throw newProtocolExceptionUnknown("Schema label",schemaCorniceSicurezzaSDKValue);
 	}
 
 	public static boolean isAttachmentsSignature(AccordoServizioParteComune aspc, String nomePortType, String azione, boolean isRichiesta, 

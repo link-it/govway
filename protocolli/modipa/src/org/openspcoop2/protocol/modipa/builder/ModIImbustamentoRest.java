@@ -69,7 +69,9 @@ import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.digest.DigestEncoding;
 import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.random.RandomGenerator;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -447,6 +449,8 @@ public class ModIImbustamentoRest {
 		
 		boolean tokenAudit = corniceSicurezza && !CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD.equals(corniceSicurezzaPattern) && corniceSicurezzaSchema!=null;
 		
+		boolean audit02 = tokenAudit && CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_02.equals(corniceSicurezzaPattern);
+		
 		boolean apiSoap = ServiceBinding.SOAP.equals(msg.getServiceBinding());
 		
 		/*
@@ -778,6 +782,13 @@ public class ModIImbustamentoRest {
 							purposeValue);
 				}
 			}
+		}
+		
+		if(audit02) {
+			
+			String dNonce = RandomGenerator.getDefaultInstance().nextRandomInt(this.modiProperties.getSecurityTokenAuditDnonceSize());
+			payloadToken.put(Costanti.PDND_DNONCE, dNonce);
+				
 		}
 		
 		Map<String, String> claimsCustom = new HashMap<>();
@@ -1127,6 +1138,24 @@ public class ModIImbustamentoRest {
 		
 		
 		
+		if(audit02) {
+			
+			// inserisco digest per la negoziazione del token
+			try {
+			
+				String algorithm = this.modiProperties.getSecurityTokenAuditDigestAlgorithm();
+				String digestAuditValue = org.openspcoop2.utils.digest.DigestUtils.getDigestValue(token.getBytes(), algorithm, DigestEncoding.HEX, 
+						false); // se rfc3230 true aggiunge prefisso algoritmo=
+				
+				context.put(ModICostanti.MODIPA_CONTEXT_AUDIT_DIGEST, digestAuditValue);
+				context.put(ModICostanti.MODIPA_CONTEXT_AUDIT_DIGEST_ALGO, algorithm);
+				
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
+			
+		}
+		
 		
 		
 		if(request && context!=null) {
@@ -1200,44 +1229,49 @@ public class ModIImbustamentoRest {
 			addCorniceSicurezzaSchema(
 					dynamicMap, context,
 					payloadToken, busta,
-					securityConfig.getCorniceSicurezzaSchemaConfig()!=null ? securityConfig.getCorniceSicurezzaSchemaConfig().getClaims() : null,
-					securityConfig.getCorniceSicurezzaRules());
+					securityConfig.getCorniceSicurezzaSchemaConfig()!=null ? securityConfig.getCorniceSicurezzaSchemaConfig().getClaims() : null);
 		}
 	}
 	private void addCorniceSicurezzaSchema(
 			Map<String, Object> dynamicMap, Context context,
 			ObjectNode payloadToken, Busta busta,
-			List<ModIAuditClaimConfig> schemas, Map<String, List<String>> rules) throws ProtocolException {
+			List<ModIAuditClaimConfig> schemas) throws ProtocolException {
 		if(schemas!=null && !schemas.isEmpty()) {
 			for (ModIAuditClaimConfig modIAuditClaimConfig : schemas) {
-				
-				String claimName = modIAuditClaimConfig.getNome();
-				String valore = null;
-				try {
-					if(rules==null) {
-						throw new ProtocolException("Rules not available");
-					}
-					List<String> claimRules = rules.get(claimName);
-					if(claimRules==null || claimRules.isEmpty()) {
-						throw new ProtocolException("Rules not available for claim '"+claimName+"'");
-					}
-					
-					valore = addCorniceSicurezzaSchemaPayload(dynamicMap, context,
-							payloadToken, 
-							modIAuditClaimConfig, claimName, claimRules);
-					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PREFIX+claimName, valore);
-				}catch(Exception e) {
-					if(modIAuditClaimConfig.isRequired()) {
-						this.log.error(e.getMessage(),e);
-						ProtocolException pe = new ProtocolException(e.getMessage());
-						pe.setInteroperabilityError(true);
-						throw pe;
-					}
-					else {
-						this.log.debug(e.getMessage(),e);
-					}
-				}
-				
+				addCorniceSicurezzaSchemaRule(dynamicMap, context,
+						payloadToken, busta,
+						modIAuditClaimConfig);
+			}
+		}
+	}
+	private void addCorniceSicurezzaSchemaRule(Map<String, Object> dynamicMap, Context context,
+			ObjectNode payloadToken, Busta busta,
+			ModIAuditClaimConfig modIAuditClaimConfig) throws ProtocolException {
+		String claimName = modIAuditClaimConfig.getNome();
+		String valore = null;
+		try {
+			List<String> claimRules = modIAuditClaimConfig.getRules();
+			if(claimRules==null || claimRules.isEmpty()) {
+				throw new ProtocolException("Rules not available for claim '"+claimName+"'");
+			}
+			
+			valore = addCorniceSicurezzaSchemaPayload(dynamicMap, context,
+					payloadToken, 
+					modIAuditClaimConfig, claimName, claimRules);
+			
+			if(modIAuditClaimConfig.isTrace()) {
+				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PREFIX+claimName, valore);
+			}
+			
+		}catch(Exception e) {
+			if(modIAuditClaimConfig.isRequired()) {
+				this.log.error(e.getMessage(),e);
+				ProtocolException pe = new ProtocolException(e.getMessage());
+				pe.setInteroperabilityError(true);
+				throw pe;
+			}
+			else {
+				this.log.debug(e.getMessage(),e);
 			}
 		}
 	}

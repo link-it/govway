@@ -1,6 +1,8 @@
 CREATE TABLE remote_store
 (
 	nome VARCHAR(255) NOT NULL,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_aggiornamento TIMESTAMP(3) NOT NULL DEFAULT 0,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- unique constraints

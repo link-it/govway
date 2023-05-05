@@ -315,7 +315,25 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 				
 				boolean filterPDND = true;
 				String securityMessageProfileNonFiltratoPDND = ModIPropertiesUtils.readPropertySecurityMessageProfile(aspc, nomePortType, azione, !filterPDND);
+				
+				boolean existsSecurityFlusso =  false;
 				if(securityMessageProfileNonFiltratoPDND!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED.equals(securityMessageProfileNonFiltratoPDND)) {
+					existsSecurityFlusso = ModIPropertiesUtils.processSecurity(aspc, nomePortType, azione, request, 
+								msg, rest, this.modiProperties);
+				}
+					
+				if(existsSecurityFlusso) {
+					bustaRitornata.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO, 
+							ModIPropertiesUtils.convertProfiloSicurezzaToSDKValue(securityMessageProfileNonFiltratoPDND, rest));
+					
+					String sorgenteToken = ModIPropertiesUtils.readPropertySecurityMessageSorgenteToken(aspc, nomePortType, azione, true);
+					bustaRitornata.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN,
+							ModIPropertiesUtils.convertProfiloSicurezzaSorgenteTokenToSDKValue(sorgenteToken));
+					boolean sorgenteLocale = true;
+					if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND.equals(sorgenteToken) ||
+							ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH.equals(sorgenteToken)) {
+						sorgenteLocale = false;
+					}
 					
 					String securityMessageProfile = ModIPropertiesUtils.readPropertySecurityMessageProfile(aspc, nomePortType, azione, filterPDND);
 										
@@ -345,8 +363,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 					boolean processSecurity = false;
 					boolean securityMessageProfilePrevedeTokenLocale = securityMessageProfile!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED.equals(securityMessageProfile);
 					if(securityMessageProfilePrevedeTokenLocale) {
-						processSecurity = ModIPropertiesUtils.processSecurity(aspc, nomePortType, azione, request, 
-								msg, rest, this.modiProperties);
+						processSecurity = existsSecurityFlusso;
 					}
 					
 					boolean corniceSicurezza = ModIPropertiesUtils.isPropertySecurityMessageConCorniceSicurezza(aspc, nomePortType, azione);
@@ -367,14 +384,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 					
 					boolean processAudit = !fruizione && corniceSicurezza && 
 							patternCorniceSicurezza!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_VALUE_OLD.equals(patternCorniceSicurezza);
-							
-					String sorgenteToken = ModIPropertiesUtils.readPropertySecurityMessageSorgenteToken(aspc, nomePortType, azione, true);
-					boolean sorgenteLocale = true;
-					if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND.equals(sorgenteToken) ||
-							ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH.equals(sorgenteToken)) {
-						sorgenteLocale = false;
-					}
-					
+												
 					boolean keystoreKidMode = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile)
 							||
 							ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile)
@@ -435,7 +445,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 						}
 						
 						// truststore
-						securityConfig = new ModISecurityConfig(msg, this.protocolFactory, this.state, requestInfo, idSoggettoMittente, 
+						securityConfig = new ModISecurityConfig(msg, this.context, this.protocolFactory, this.state, requestInfo, idSoggettoMittente, 
 								aspc, asps, sa, rest, fruizione, request,
 								multipleHeaderAuthorizationConfig,
 								keystoreKidMode,
@@ -465,10 +475,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 					
 					// security (ID_AUTH e INTEGRITY)
 					if(processSecurity) {
-					
-						bustaRitornata.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO, 
-								ModIPropertiesUtils.convertProfiloSicurezzaToSDKValue(securityMessageProfile, rest));
-																	
+																						
 						boolean includiRequestDigest = ModIPropertiesUtils.isPropertySecurityMessageIncludiRequestDigest(aspc, nomePortType, azione);
 						
 						boolean signAttachments = false;
@@ -608,7 +615,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 									
 									// !! Nel caso di 2 header, quello integrity è obbligatorio solo se c'è un payload, altrimenti se presente viene validato, altrimenti non da errore.
 									boolean securityHeaderIntegrityObbligatorio = msg.castAsRest().hasContent();
-									securityConfigIntegrity = new ModISecurityConfig(msg, this.protocolFactory, this.state, requestInfo, idSoggettoMittente, 
+									securityConfigIntegrity = new ModISecurityConfig(msg, this.context, this.protocolFactory, this.state, requestInfo, idSoggettoMittente, 
 											aspc, asps, sa, rest, fruizione, request,
 											false,
 											keystoreKidMode,
@@ -738,6 +745,11 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 					// audit (ID_AUDIT)
 					if(processAudit) {
 						
+						bustaRitornata.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PATTERN, 
+								ModIPropertiesUtils.convertProfiloAuditToSDKValue(patternCorniceSicurezza));
+						bustaRitornata.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_SCHEMA, 
+								ModIPropertiesUtils.convertSchemaAuditToSDKValue(schemaCorniceSicurezza, this.modiProperties));
+						
 						if(validatoreSintatticoRest==null) {
 							// audit su api soap
 							validatoreSintatticoRest = new ModIValidazioneSintatticaRest(this.log, this.state, this.context, this.protocolFactory, requestInfo, this.modiProperties, this.validazioneUtils);
@@ -854,9 +866,15 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 	}
 
 	static String buildErrore(List<Eccezione> list, IProtocolFactory<?> protocolFactory) throws ProtocolException {
+		return buildErrore(list, 0, protocolFactory);
+	}
+	static String buildErrore(List<Eccezione> list, int offset, IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		StringBuilder sb = new StringBuilder();
 		if(list!=null && !list.isEmpty()) {
 			if(list.size()==1) {
+				if(offset>0) {
+					throw new ProtocolException("Offset > 0 con lista di dimensione '"+list.size()+"'");
+				}
 				Eccezione eccezione = list.get(0);
 				sb.append("[");
 				sb.append(eccezione.getCodiceEccezioneValue(protocolFactory));
@@ -864,12 +882,20 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 				sb.append(eccezione.getDescrizione(protocolFactory));
 			}
 			else {
-				sb.append("Riscontrate "+list.size()+" eccezioni.");
+				if(offset>list.size()) {
+					throw new ProtocolException("Offset maggiore della dimensione della lista di errori '"+list.size()+"'");
+				}
+				int size = list.size() - offset;
+				sb.append("Riscontrate "+size+" eccezioni.");
+				int index = 0;
 				for (Eccezione eccezione : list) {
-					sb.append("\n[");
-					sb.append(eccezione.getCodiceEccezioneValue(protocolFactory));
-					sb.append("] ");
-					sb.append(eccezione.getDescrizione(protocolFactory));
+					if(index>=offset) {
+						sb.append("\n[");
+						sb.append(eccezione.getCodiceEccezioneValue(protocolFactory));
+						sb.append("] ");
+						sb.append(eccezione.getDescrizione(protocolFactory));
+					}
+					index++;
 				}
 			}
 		}

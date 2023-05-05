@@ -613,6 +613,10 @@ public class GestoreTokenAttributeAuthorityUtilities {
 		
 		Date now = DateManager.getDate();
 		
+		if(esitoRecuperoAttributi.isValido()) {
+			esitoRecuperoAttributi.setDateValide(true); // tanto le ricontrollo adesso
+		}
+		
 		if(esitoRecuperoAttributi.isValido() &&		
 			esitoRecuperoAttributi.getInformazioniAttributi().getExp()!=null &&				
 			!now.before(esitoRecuperoAttributi.getInformazioniAttributi().getExp())){

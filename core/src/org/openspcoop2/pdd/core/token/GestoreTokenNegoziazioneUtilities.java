@@ -355,6 +355,10 @@ public class GestoreTokenNegoziazioneUtilities {
 		
 		Date now = DateManager.getDate();
 		
+		if(esitoNegoziazioneToken.isValido()) {
+			esitoNegoziazioneToken.setDateValide(true); // tanto le ricontrollo adesso
+		}
+		
 		if(esitoNegoziazioneToken.isValido() &&		
 			esitoNegoziazioneToken.getInformazioniNegoziazioneToken().getExpiresIn()!=null) {			
 				
@@ -950,6 +954,20 @@ public class GestoreTokenNegoziazioneUtilities {
 					jwtPayload.set(Costanti.PDND_SESSION_INFO, sessionInfoPayload);
 				}
 			}
+		}
+		
+		// digest Audit
+		String digestAudit = dynamicParameters.getSignedJwtAuditDigest();
+		if(digestAudit!=null && StringUtils.isNotEmpty(digestAudit)) {
+			String algorithm = dynamicParameters.getSignedJwtAuditDigestAlgo();
+			if(algorithm==null || StringUtils.isEmpty(algorithm)) {
+				algorithm = Costanti.PDND_DIGEST_ALG_DEFAULT_VALUE;
+			}
+			
+			ObjectNode digest = jsonUtils.newObjectNode();
+			digest.put(Costanti.PDND_DIGEST_ALG, algorithm);
+			digest.put(Costanti.PDND_DIGEST_VALUE, digestAudit);
+			jwtPayload.set(Costanti.PDND_DIGEST, digest);
 		}
 		
 		// claims

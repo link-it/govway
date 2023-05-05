@@ -3244,6 +3244,17 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="data-aggiornamento" type="xsd:dateTime">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="data_aggiornamento" />
+                                <linkit:sql-ddl-column-comment>Data di ultima modifica delle chiavi</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>

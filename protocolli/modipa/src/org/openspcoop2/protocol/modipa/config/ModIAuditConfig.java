@@ -63,6 +63,34 @@ public class ModIAuditConfig {
 	private boolean clientIdLocale = false;
 	private boolean clientIdOAuth = false;
 	
+	public ModIAuditConfig copyNewInstance() {
+		ModIAuditConfig config = new ModIAuditConfig();
+		
+		config.propertyId = this.propertyId;
+		
+		config.nome = this.nome;
+		config.label = this.label;
+		
+		config.claims = new ArrayList<>();
+		if(this.claims!=null && !this.claims.isEmpty()) {
+			for (ModIAuditClaimConfig modIAuditClaimConfig : this.claims) {
+				config.claims.add(modIAuditClaimConfig.copyNewInstance());
+			}
+		}
+		
+		config.issLocale = this.issLocale;
+		config.issOAuth = this.issOAuth;
+		
+		config.subLocale = this.subLocale;
+		config.subOAuth = this.subOAuth;
+		
+		config.clientIdLocale = this.clientIdLocale;
+		config.clientIdOAuth = this.clientIdOAuth;
+		
+		return config;
+	}
+	
+	private ModIAuditConfig() {}
 	ModIAuditConfig(String prefix, String propertyId, Properties p) throws ProtocolException {
 		
 		this.propertyId = propertyId;
@@ -90,6 +118,7 @@ public class ModIAuditConfig {
 		this.clientIdLocale = getBooleanProperty(prefix, p, PROPERTY_CLIENT_ID_LOCALE, false, false);
 		this.clientIdOAuth = getBooleanProperty(prefix, p, PROPERTY_CLIENT_ID_OAUTH, false, false);
 	}
+	
 	
 	
 	static String getProperty(String prefixProperty, Properties p, String name, boolean required) throws ProtocolException {
@@ -131,7 +160,10 @@ public class ModIAuditConfig {
 	public List<ModIAuditClaimConfig> getClaims() {
 		return this.claims;
 	}
-	
+	public void setClaims(List<ModIAuditClaimConfig> claims) {
+		this.claims = claims;
+	}
+
 	public boolean isIssLocale() {
 		return this.issLocale;
 	}

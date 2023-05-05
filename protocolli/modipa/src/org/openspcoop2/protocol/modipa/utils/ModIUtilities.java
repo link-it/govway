@@ -776,4 +776,7 @@ public class ModIUtilities {
 	public static SecurityToken newSecurityToken(Context context) {
 		return SecurityTokenUtilities.newSecurityToken(context);
 	}
+	public static SecurityToken readSecurityToken(Context context) {
+		return SecurityTokenUtilities.readSecurityToken(context);
+	}
 }

@@ -61,6 +61,9 @@ public class Costanti {
 	public static final MapKey<String> PDD_CONTEXT_ATTRIBUTI_INFORMAZIONI_NORMALIZZATE = Map.newMapKey("ATTRIBUTI_INFORMAZIONI_NORMALIZZATE");
 	public static final MapKey<String> MSG_CONTEXT_TOKEN_FORWARD = Map.newMapKey("TOKEN_FORWARD"); // per salvarlo con il messaggio
 	
+    public static final MapKey<String> MODIPA_CONTEXT_AUDIT_DIGEST = Map.newMapKey("MODIPA_AUDIT_DIGEST");
+    public static final MapKey<String> MODIPA_CONTEXT_AUDIT_DIGEST_ALGO = Map.newMapKey("MODIPA_AUDIT_DIGEST_ALGO");
+	
 	
 	// Token Retrieve id
 	
@@ -358,6 +361,13 @@ public class Costanti {
 	
 	public static final String PDND_PURPOSE_ID = "purposeId";
 	public static final String PDND_SESSION_INFO = "sessionInfo";
+	
+	public static final String PDND_DNONCE = "dnonce";
+	
+	public static final String PDND_DIGEST = "digest";
+	public static final String PDND_DIGEST_ALG = "alg";
+	public static final String PDND_DIGEST_ALG_DEFAULT_VALUE = "SHA256";
+	public static final String PDND_DIGEST_VALUE = "value";
 	
 	public static final String PDND_OAUTH2_RFC_6749_REQUEST_CLIENT_ID = "client_id";
 	public static final String PDND_OAUTH2_RFC_6749_REQUEST_RESOURCE = "resource";
