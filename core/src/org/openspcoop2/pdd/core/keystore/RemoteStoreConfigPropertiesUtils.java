@@ -114,7 +114,7 @@ public class RemoteStoreConfigPropertiesUtils {
 			
 			String basicPassword = getProperty(p, PROPERTY_HTTP_BASIC_PASSWORD, false);
 			if(basicPassword!=null && StringUtils.isNotEmpty(basicPassword)) {
-				config.setBasicUsername(basicPassword);
+				config.setBasicPassword(basicPassword);
 			}
 		}
 		

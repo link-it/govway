@@ -2,6 +2,7 @@ CREATE TABLE remote_store
 (
 	nome VARCHAR(255) NOT NULL,
 	data_aggiornamento DATETIME2 NOT NULL,
+	last_event VARCHAR(4000),
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- unique constraints

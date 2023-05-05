@@ -1049,6 +1049,7 @@ CREATE TABLE remote_store
 (
 	nome VARCHAR2(255) NOT NULL,
 	data_aggiornamento TIMESTAMP NOT NULL,
+	last_event VARCHAR2(4000),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints

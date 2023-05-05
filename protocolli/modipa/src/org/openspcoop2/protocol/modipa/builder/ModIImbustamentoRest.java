@@ -1017,6 +1017,7 @@ public class ModIImbustamentoRest {
 		SignatureBean signatureBean = new SignatureBean();
 		org.openspcoop2.utils.certificate.KeyStore ks = null;
 		JWKSet jwkSet = null;
+		String keyAlias = keystoreConfig.getSecurityMessageKeyAlias();
 		if(keystoreConfig.getSecurityMessageKeystorePath()!=null || keystoreConfig.isSecurityMessageKeystoreHSM()) {
 			if(CostantiDB.KEYSTORE_TYPE_JWK.equalsIgnoreCase(keystoreConfig.getSecurityMessageKeystoreType())) {
 				try {
@@ -1037,6 +1038,7 @@ public class ModIImbustamentoRest {
 						throw newProtocolExceptionAccessoKeystoreNonRiuscito(keystoreConfig.getSecurityMessageKeystoreType(),keystoreConfig.getSecurityMessageKeystorePath());
 					}
 					jwkSet = keyPairStore.getJwkSet();
+					keyAlias = keyPairStore.getJwkSetKid();
 				}catch(Exception e) {
 					throw new ProtocolException(e.getMessage(),e);
 				}
@@ -1070,7 +1072,7 @@ public class ModIImbustamentoRest {
 		}
 		signatureBean.setKeystore(ks);
 		signatureBean.setJwkSet(jwkSet);
-		signatureBean.setUser(keystoreConfig.getSecurityMessageKeyAlias());
+		signatureBean.setUser(keyAlias);
 		signatureBean.setPassword(keystoreConfig.getSecurityMessageKeyPassword());
 		messageSecurityContext.setSignatureBean(signatureBean);
 				

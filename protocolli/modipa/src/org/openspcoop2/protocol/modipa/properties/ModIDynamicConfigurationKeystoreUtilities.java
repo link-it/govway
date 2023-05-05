@@ -593,6 +593,12 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 				keyPasswordItem.setRequired(requiredValue);
 			}
 		}
+		
+		StringProperty keyPairAlgorithmItemItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_KEY_ALGORITHM_ID);
+		if(keystoreKeyPair &&
+			keyPairAlgorithmItemItemValue!=null && keyPairAlgorithmItemItemValue.getValue()==null) {
+			keyPairAlgorithmItemItemValue.setValue(ModIConsoleCostanti.MODIPA_KEYSTORE_KEY_ALGORITHM_DEFAULT_VALUE);
+		}
 	}
 	
 	public static CertificateInfo readKeystoreConfig(ProtocolProperties properties, boolean onlyCert) throws Exception {

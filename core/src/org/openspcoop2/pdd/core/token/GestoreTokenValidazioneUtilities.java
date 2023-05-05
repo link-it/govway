@@ -142,8 +142,7 @@ public class GestoreTokenValidazioneUtilities {
     				
     				if(jsonCompactVerify.verify(token)) {
     					informazioniToken = new InformazioniToken(SorgenteInformazioniToken.JWT,jsonCompactVerify.getDecodedPayload(),tokenParser);
-    					if( pddContext!=null &&
-    							(jsonCompactVerify.getX509Certificate()!=null || jsonCompactVerify.getRsaPublicKey()!=null || jsonCompactVerify.getKid()!=null)) {
+    					if( pddContext!=null ) {
     						restSecurityToken = new RestMessageSecurityToken();
     						if(jsonCompactVerify.getX509Certificate()!=null) {
     							restSecurityToken.setCertificate(new CertificateInfo(jsonCompactVerify.getX509Certificate(), "access_token"));

@@ -474,6 +474,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 					}
 					
 					// security (ID_AUTH e INTEGRITY)
+					boolean errorOccurs = false;
 					if(processSecurity) {
 																						
 						boolean includiRequestDigest = ModIPropertiesUtils.isPropertySecurityMessageIncludiRequestDigest(aspc, nomePortType, azione);
@@ -514,6 +515,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 										String errore = buildErrore(erroriValidazione, this.protocolFactory);
 										msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, errore);
 										msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_FALLITA);
+										errorOccurs = true;
 									}
 								}
 								catch(ProtocolException pe) {
@@ -599,6 +601,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 										String errore = buildErrore(erroriValidazione, this.protocolFactory);
 										msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, errore);
 										msgDiag.logPersonalizzato(DIAGNOSTIC_VALIDATE_TOKEN_ID_AUTH+tipoDiagnostico+DIAGNOSTIC_FALLITA);
+										errorOccurs = true;
 									}
 								}
 								catch(ProtocolException pe) {
@@ -635,6 +638,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 										String errore = buildErrore(erroriValidazione, this.protocolFactory);
 										msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, errore);
 										msgDiag.logPersonalizzato(DIAGNOSTIC_VALIDATE_TOKEN_INTEGRITY+tipoDiagnostico+DIAGNOSTIC_FALLITA);
+										errorOccurs = true;
 									}
 								}
 								catch(ProtocolException pe) {
@@ -730,6 +734,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 									String errore = buildErrore(erroriValidazione, this.protocolFactory);
 									msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, errore);
 									msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_FALLITA);
+									errorOccurs = true;
 								}
 							}
 							catch(ProtocolException pe) {
@@ -743,7 +748,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 					}
 					
 					// audit (ID_AUDIT)
-					if(processAudit) {
+					if(!errorOccurs && processAudit) {
 						
 						bustaRitornata.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PATTERN, 
 								ModIPropertiesUtils.convertProfiloAuditToSDKValue(patternCorniceSicurezza));

@@ -718,6 +718,7 @@ CREATE TABLE remote_store
 (
 	nome VARCHAR(255) NOT NULL,
 	data_aggiornamento TIMESTAMP NOT NULL,
+	last_event VARCHAR(4000),
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_remote_store') NOT NULL,
 	-- unique constraints
