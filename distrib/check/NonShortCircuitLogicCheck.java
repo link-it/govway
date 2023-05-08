@@ -29,8 +29,10 @@ import java.io.*;
  */
 public class NonShortCircuitLogicCheck {
 
-	public static final String OR_CHECK = " | ";
-	public static final String AND_CHECK = " & ";
+	private static final String OR_CHECK = " | ";
+	private static final String CATCH_EXCEPTION = "catch(";
+	private static final String CATCH_EXCEPTION_2 = "catch (";
+	private static final String AND_CHECK = " & ";
 
 	public static java.util.List<String> fileNonValidi = new java.util.ArrayList<>();
 
@@ -153,7 +155,9 @@ public class NonShortCircuitLogicCheck {
 
 
 					// check 
-					if(orCheck && byteInputBuffer.toString().indexOf(OR_CHECK)>0){
+					if(orCheck && byteInputBuffer.toString().indexOf(OR_CHECK)>0 && 
+						!byteInputBuffer.toString().contains(CATCH_EXCEPTION) &&
+						!byteInputBuffer.toString().contains(CATCH_EXCEPTION_2)){
 						fileNonValidi.add(f.getAbsolutePath());
 					}
 					else if(andCheck && byteInputBuffer.toString().indexOf(AND_CHECK)>0){
