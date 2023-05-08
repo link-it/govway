@@ -47,7 +47,7 @@ public class RiepilogoApiItem  {
   **/
   @JsonProperty("fruitore")
   @Valid
- @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255)  public String getFruitore() {
+ @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255)  public String getFruitore() {
     return this.fruitore;
   }
 
@@ -67,7 +67,7 @@ public class RiepilogoApiItem  {
   @JsonProperty("erogatore")
   @NotNull
   @Valid
- @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255)  public String getErogatore() {
+ @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255)  public String getErogatore() {
     return this.erogatore;
   }
 

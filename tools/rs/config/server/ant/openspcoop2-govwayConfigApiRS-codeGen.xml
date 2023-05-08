@@ -91,6 +91,7 @@
 				<include name="HttpStatusCode.java"/>
 				<include name="NCName.java"/>
 				<include name="SimpleName.java"/>
+				<include name="SimpleNameStrict.java"/>
 				<include name="Tipo.java"/>
 				<include name="UriApi.java"/>
 				<include name="Versione.java"/>
@@ -148,6 +149,8 @@
 			token="^[^\s]+$" value="^[^\\s]+$" includes="*.java"/>
 		<replace dir="${src_govwayConfigApiRS}/org/openspcoop2/core/config/rs/server/model"
 			token="^[_A-Za-z][\-_A-Za-z0-9]*$" value="^[_A-Za-z][\\-_A-Za-z0-9]*$" includes="*.java"/>
+		<replace dir="${src_govwayConfigApiRS}/org/openspcoop2/core/config/rs/server/model"
+			token="^[0-9A-Za-z][\-A-Za-z0-9]*$" value="^[0-9A-Za-z][\\-A-Za-z0-9]*$" includes="*.java"/>
 
 		<replace file="${src_govwayConfigApiRS}/org/openspcoop2/core/config/rs/server/api/StatusApi.java"
 			token="ProblemTeamDigitale" value="Problem"/>

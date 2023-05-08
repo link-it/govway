@@ -37,7 +37,7 @@ public class ApiReferenteView extends BaseItem {
   @JsonProperty("referente")
   @NotNull
   @Valid
- @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255)  public String getReferente() {
+ @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255)  public String getReferente() {
     return this.referente;
   }
 

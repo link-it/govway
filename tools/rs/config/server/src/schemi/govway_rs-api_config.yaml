@@ -14,7 +14,7 @@ info:
   x-summary: Servizi per la configurazione di GovWay
   description: Servizi per la configurazione di GovWay
   termsOfService: https://govway.org/documentazione/api/index.html
-  version: "3.3.12"
+  version: "3.3.13"
   contact:
     email: info@link.it
   license:

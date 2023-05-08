@@ -755,6 +755,18 @@ public class SoggettiCore extends ControlStationCore {
 		}
 	}
 	
+	public boolean isSupportatoTrattinoNomeSoggetto(String protocollo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+		String nomeMetodo = "isSupportatoTrattinoNomeSoggetto";
+		try{
+			
+			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportoSoggettoUtilizzoTrattino();
+			
+		}catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}
+	}
+	
 	public boolean isSupportatoAutenticazioneSoggetti(String protocollo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		String nomeMetodo = "isSupportatoAutenticazioneSoggetti";
 		try{

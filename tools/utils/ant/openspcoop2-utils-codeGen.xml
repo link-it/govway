@@ -110,6 +110,7 @@ public class Problem]]></replacevalue>
 				<include name="HttpStatusCode.java"/>
 				<include name="NCName.java"/>
 				<include name="SimpleName.java"/>
+				<include name="SimpleNameStrict.java"/>
 				<include name="Tipo.java"/>
 				<include name="Versione.java"/>
 
@@ -121,6 +122,8 @@ public class Problem]]></replacevalue>
 
 		<replace dir="${src_utils}/org/openspcoop2/utils/service/beans"
 			token="^[_A-Za-z][\-\._A-Za-z0-9]*$" value="^[_A-Za-z][\\-\\._A-Za-z0-9]*$" includes="*.java"/>
+		<replace dir="${src_utils}/org/openspcoop2/utils/service/beans"
+			token="^[0-9A-Za-z][\-A-Za-z0-9]*$" value="^[0-9A-Za-z][\\-A-Za-z0-9]*$" includes="*.java"/>
 
 	</target>
 

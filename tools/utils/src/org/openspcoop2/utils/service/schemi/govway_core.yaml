@@ -192,11 +192,16 @@ components:
  
     # Base: Tipo di identificativi
     
-    SimpleName:
+    SimpleNameStrict:
       type: string
       pattern: ^[0-9A-Za-z]+$
       maxLength: 255
       description: Formato solo da caratteri e cifre
+    SimpleName:
+      type: string
+      pattern: ^[0-9A-Za-z][\-A-Za-z0-9]*$
+      maxLength: 255
+      description: Può iniziare solo con un carattere o cifra [0-9A-Za-z] e dev'essere formato solo da caratteri, cifre e '-'
     NCName:
       type: string
       pattern: ^[_A-Za-z][\-\._A-Za-z0-9]*$

@@ -35,7 +35,7 @@ public class FiltroMittenteTokenClaimSoggetto extends FiltroMittenteTokenClaim i
   **/
   @JsonProperty("soggetto")
   @Valid
- @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255)  public String getSoggetto() {
+ @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255)  public String getSoggetto() {
     return this.soggetto;
   }
 

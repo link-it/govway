@@ -745,19 +745,15 @@ public class SoggettiHelper extends ConnettoriHelper {
 		return dati;
 	}
 
-	public boolean soggettiCheckData(TipoOperazione tipoOp, String id, String tipoprov, String nomeprov, String codiceIpa, String pd_url_prefix_rewriter, String pa_url_prefix_rewriter,
+	public boolean soggettiCheckData(TipoOperazione tipoOp, String id, String tipoprov, String nomeprov, String codiceIpa, String pdUrlPrefixRewriter, String paUrlPrefixRewriter,
 			Soggetto soggettoOld, boolean isSupportatoAutenticazioneSoggetti, String descrizione) throws Exception {
 		try {
-//			String id = this.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
+
 			int idInt = 0;
 			if (tipoOp.equals(TipoOperazione.CHANGE)) {
 				idInt = Integer.parseInt(id);
 			}
-//			String nomeprov = this.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
-//			String tipoprov = this.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
-//			String codiceIpa = this.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_IPA);
-//			String pd_url_prefix_rewriter = this.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PD_URL_PREFIX_REWRITER);
-//			String pa_url_prefix_rewriter = this.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PA_URL_PREFIX_REWRITER);
+
 
 			// Campi obbligatori
 			if (nomeprov.equals("") || tipoprov.equals("") ) {
@@ -782,16 +778,25 @@ public class SoggettiHelper extends ConnettoriHelper {
 				return false;
 			}
 
-			// Il nome deve contenere solo lettere e numeri
-			if(this.checkSimpleName(nomeprov, SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_NOME)==false){
+			// Il tipo deve contenere solo lettere e numeri
+			if(!this.checkSimpleName(tipoprov, SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_TIPO)){
 				return false;
 			}
 			
-			// Il tipo deve contenere solo lettere e numeri
-			if(this.checkSimpleName(tipoprov, SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_TIPO)==false){
-				return false;
+			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoprov);
+			
+			// Il nome deve contenere solo lettere e numeri e -
+			if(this.soggettiCore.isSupportatoTrattinoNomeSoggetto(protocollo)) {
+				if(!this.checkSimpleNamePath(nomeprov, SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_NOME)){
+					return false;
+				}
 			}
-
+			else {
+				if(!this.checkSimpleName(nomeprov, SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_NOME)){
+					return false;
+				}
+			}
+			
 			// check lunghezza NOTA: Si usa una lunghezza inferiore di 20 al limite massimo della colonna 
 			// per poter salvaguardare poi il 255 delle colonne per codice ipa e identificativo porta calcolate in base al nome del soggetto
 			int maxLength = 255 - 20;
@@ -809,8 +814,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 			
 			// check Codice IPA
-			// TODO CODICE IPA
-			/*try{
+			/**try{
 				if(codiceIpa!=null && !"".equals(codiceIpa)){
 					SICAtoOpenSPCoopUtilities.validateIDSoggettoSICA(codiceIpa);
 				}
@@ -818,22 +822,19 @@ public class SoggettiHelper extends ConnettoriHelper {
 				this.pd.setMessage("Codice IPA non corretto: " + e.getMessage());
 				return false;
 			}*/
-			// TODO CODICE IPA
 
 			// Controllo che eventuali PdUrlPrefixRewriter o PaUrlPrefixRewriter rispettino l'espressione regolare: [A-Za-z]+:\/\/(.*)
-			if(pd_url_prefix_rewriter!=null && !"".equals(pd_url_prefix_rewriter)){
-				if(RegularExpressionEngine.isMatch(pd_url_prefix_rewriter, "[A-Za-z]+:\\/\\/(.*)")==false){
-					this.pd.setMessage("Il campo UrlPrefix rewriter del profilo client contiene un valore errato. Il valore atteso deve seguire la sintassi: "+
-							StringEscapeUtils.escapeHtml("protocol://hostname[:port][/*]"));
-					return false;
-				}
+			if(pdUrlPrefixRewriter!=null && !"".equals(pdUrlPrefixRewriter) &&
+				!RegularExpressionEngine.isMatch(pdUrlPrefixRewriter, "[A-Za-z]+:\\/\\/(.*)")){
+				this.pd.setMessage("Il campo UrlPrefix rewriter del profilo client contiene un valore errato. Il valore atteso deve seguire la sintassi: "+
+						StringEscapeUtils.escapeHtml("protocol://hostname[:port][/*]"));
+				return false;
 			}
-			if(pa_url_prefix_rewriter!=null && !"".equals(pa_url_prefix_rewriter)){
-				if(RegularExpressionEngine.isMatch(pa_url_prefix_rewriter, "[A-Za-z]+:\\/\\/(.*)")==false){
-					this.pd.setMessage("Il campo UrlPrefix rewriter del profilo server contiene un valore errato. Il valore atteso deve seguire la sintassi: "+
-							StringEscapeUtils.escapeHtml("protocol://hostname[:port][/*]"));
-					return false;
-				}
+			if(paUrlPrefixRewriter!=null && !"".equals(paUrlPrefixRewriter) &&
+				!RegularExpressionEngine.isMatch(paUrlPrefixRewriter, "[A-Za-z]+:\\/\\/(.*)")){
+				this.pd.setMessage("Il campo UrlPrefix rewriter del profilo server contiene un valore errato. Il valore atteso deve seguire la sintassi: "+
+						StringEscapeUtils.escapeHtml("protocol://hostname[:port][/*]"));
+				return false;
 			}
 
 			IDSoggetto ids = new IDSoggetto(tipoprov, nomeprov);
@@ -856,31 +857,30 @@ public class SoggettiHelper extends ConnettoriHelper {
 					}
 				}
 				if ((idSogg != 0) && (tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && (idInt != idSogg)))) {
-					//this.pd.setMessage("Esiste gi&agrave; un soggetto con nome " + nomeprov + " e tipo " + tipoprov);
 					this.pd.setMessage("Esiste gi&agrave; un soggetto "+labelSoggetto);
 					return false;
 				}
 
 				// Controllo che il codiceIPA non sia gia utilizzato. Il fatto che non esista in base al nome, e' gia garantito rispetto all'univocita' del nome.
-				if(this.core.isRegistroServiziLocale()){
-					if(codiceIpa!=null && !"".equals(codiceIpa)){
-						if(tipoOp.equals(TipoOperazione.ADD)){
-							if(this.soggettiCore.existsSoggetto(codiceIpa)){
-								this.pd.setMessage("Esiste gi&agrave; un soggetto con Codice IPA: " + codiceIpa);
-								return false;
-							}
+				if(this.core.isRegistroServiziLocale() &&
+					codiceIpa!=null && !"".equals(codiceIpa)){
+					if(tipoOp.equals(TipoOperazione.ADD)){
+						if(this.soggettiCore.existsSoggetto(codiceIpa)){
+							this.pd.setMessage("Esiste gi&agrave; un soggetto con Codice IPA: " + codiceIpa);
+							return false;
 						}
-						else{
-							Soggetto mySogg = null;
-							try{
-								mySogg = this.soggettiCore.getSoggettoByCodiceIPA(codiceIpa);
-							}catch(DriverRegistroServiziNotFound dnot){}
-							if(mySogg!=null){
-								if(mySogg.getId()!=idInt){
-									this.pd.setMessage("Esiste gi&agrave; un soggetto con Codice IPA: " + codiceIpa);
-									return false;
-								}
-							}
+					}
+					else{
+						Soggetto mySogg = null;
+						try{
+							mySogg = this.soggettiCore.getSoggettoByCodiceIPA(codiceIpa);
+						}catch(DriverRegistroServiziNotFound dnot){
+							// ignore
+						}
+						if(mySogg!=null &&
+							mySogg.getId()!=idInt){
+							this.pd.setMessage("Esiste gi&agrave; un soggetto con Codice IPA: " + codiceIpa);
+							return false;
 						}
 					}
 				}
@@ -913,14 +913,13 @@ public class SoggettiHelper extends ConnettoriHelper {
 					filtro.setIdSoggettoAutorizzato(ids);
 					List<IDPortaApplicativa> list = this.porteApplicativeCore.getAllIdPorteApplicative(filtro);
 					
-					String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoprov);
 					if(org.openspcoop2.protocol.engine.constants.Costanti.SPCOOP_PROTOCOL_NAME.equals(protocollo)) {
 						// verifico che non sia utilizzato in porte applicative dove è abilitata l'autenticazione
 						int count = 0;
-						if(list!=null && list.size()>0) {
+						if(list!=null && !list.isEmpty()) {
 							for (IDPortaApplicativa idPortaApplicativa : list) {
 								PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(idPortaApplicativa);
-								if(!CostantiConfigurazione.AUTENTICAZIONE_NONE.toString().equalsIgnoreCase(pa.getAutenticazione()) &&
+								if(!CostantiConfigurazione.AUTENTICAZIONE_NONE.equalsIgnoreCase(pa.getAutenticazione()) &&
 										!CostantiConfigurazione.DISABILITATO.toString().equalsIgnoreCase(pa.getAutenticazione())) {
 									count++; // default ssl se non impostata
 								}
@@ -933,7 +932,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 						}
 					}
 					else {
-						if(list!=null && list.size()>0) {
+						if(list!=null && !list.isEmpty()) {
 							this.pd.setMessage("Non &egrave; possibile modificare il tipo di credenziali poich&egrave; il soggetto viene utilizzato all'interno del controllo degli accessi di "+
 									list.size()+" configurazioni di erogazione di servizio");
 							return false;
@@ -959,7 +958,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			}
 			String utente = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 			String password = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
-			// String confpw = this.getParameter("confpw");
+
 			String subject = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
 			String issuer = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_ISSUER);
 			if("".equals(issuer)) {
@@ -971,7 +970,6 @@ public class SoggettiHelper extends ConnettoriHelper {
 			// utilizzate da altri soggetti
 			if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC)) {
 				// recupero soggetto con stesse credenziali
-				//Soggetto soggettoAutenticato = this.soggettiCore.getSoggettoRegistroAutenticatoBasic(utente, password);
 				boolean checkPassword = this.soggettiCore.isSoggettiCredenzialiBasicCheckUniqueUsePassword(); // la password non viene utilizzata per riconoscere se l'username e' già utilizzato.
 				Soggetto soggettoAutenticato = this.soggettiCore.soggettoWithCredenzialiBasic(utente, password, checkPassword);
 				

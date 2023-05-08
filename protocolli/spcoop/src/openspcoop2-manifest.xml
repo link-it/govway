@@ -195,7 +195,7 @@
 
     <registry>
 
-        <organization authentication="true" inboundApplicativeAuthentication="false" inboundOrganizationAuthorizationWithoutAuthentication="true" codeDomain="true" codeIPA="true">
+        <organization authentication="true" inboundApplicativeAuthentication="false" inboundOrganizationAuthorizationWithoutAuthentication="true" codeDomain="true" codeIPA="true" dash="false">
             <types>
             	<type name="spc" protocol="SPC"/>
             	<type name="test" protocol="TEST"/>

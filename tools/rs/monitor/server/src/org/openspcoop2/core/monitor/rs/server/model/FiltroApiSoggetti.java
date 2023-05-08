@@ -41,7 +41,7 @@ public class FiltroApiSoggetti extends FiltroApiBase {
   **/
   @JsonProperty("erogatore")
   @Valid
- @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255)  public String getErogatore() {
+ @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255)  public String getErogatore() {
     return this.erogatore;
   }
 
@@ -60,7 +60,7 @@ public class FiltroApiSoggetti extends FiltroApiBase {
   **/
   @JsonProperty("soggetto_remoto")
   @Valid
- @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255)  public String getSoggettoRemoto() {
+ @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255)  public String getSoggettoRemoto() {
     return this.soggettoRemoto;
   }
 

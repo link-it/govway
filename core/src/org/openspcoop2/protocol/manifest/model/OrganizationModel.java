@@ -49,6 +49,7 @@ public class OrganizationModel extends AbstractModel<Organization> {
 		this.CODE_DOMAIN = new Field("codeDomain",boolean.class,"Organization",Organization.class);
 		this.CODE_IPA = new Field("codeIPA",boolean.class,"Organization",Organization.class);
 		this.REPLY_TO_ADDRESS = new Field("replyToAddress",boolean.class,"Organization",Organization.class);
+		this.DASH = new Field("dash",boolean.class,"Organization",Organization.class);
 	
 	}
 	
@@ -65,6 +66,7 @@ public class OrganizationModel extends AbstractModel<Organization> {
 		this.CODE_DOMAIN = new ComplexField(father,"codeDomain",boolean.class,"Organization",Organization.class);
 		this.CODE_IPA = new ComplexField(father,"codeIPA",boolean.class,"Organization",Organization.class);
 		this.REPLY_TO_ADDRESS = new ComplexField(father,"replyToAddress",boolean.class,"Organization",Organization.class);
+		this.DASH = new ComplexField(father,"dash",boolean.class,"Organization",Organization.class);
 	
 	}
 	
@@ -87,6 +89,8 @@ public class OrganizationModel extends AbstractModel<Organization> {
 	public IField CODE_IPA = null;
 	 
 	public IField REPLY_TO_ADDRESS = null;
+	 
+	public IField DASH = null;
 	 
 
 	@Override

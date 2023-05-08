@@ -45,6 +45,7 @@ import java.io.Serializable;
  * 		&lt;attribute name="codeDomain" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
  * 		&lt;attribute name="codeIPA" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
  * 		&lt;attribute name="replyToAddress" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * 		&lt;attribute name="dash" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/&gt;
  * &lt;/complexType&gt;
  * </pre>
  * 
@@ -172,6 +173,18 @@ public class Organization extends org.openspcoop2.utils.beans.BaseBean implement
     this.replyToAddress = replyToAddress;
   }
 
+  public boolean isDash() {
+    return this.dash;
+  }
+
+  public boolean getDash() {
+    return this.dash;
+  }
+
+  public void setDash(boolean dash) {
+    this.dash = dash;
+  }
+
   private static final long serialVersionUID = 1L;
 
 
@@ -210,5 +223,9 @@ public class Organization extends org.openspcoop2.utils.beans.BaseBean implement
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="replyToAddress",required=false)
   protected boolean replyToAddress = false;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="dash",required=false)
+  protected boolean dash = true;
 
 }

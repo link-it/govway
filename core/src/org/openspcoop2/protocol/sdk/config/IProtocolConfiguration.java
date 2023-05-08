@@ -245,6 +245,13 @@ public interface IProtocolConfiguration extends IComponentFactory {
 	 * @return True se la gestione dell'indirizzo di risposta viene supportata dal protocollo
 	 */
 	public boolean isSupportoIndirizzoRisposta();
+	
+	/**
+	 * Ritorna l'indicazione se nel nome di un soggetto è utilizzabile il trattino
+	 * 
+	 * @return True se nel nome di un soggetto è utilizzabile il trattino
+	 */
+	public boolean isSupportoSoggettoUtilizzoTrattino();
 			
 	/**
 	 * Ritorna l'indicazione se il soggetto referente degli accordi di servizio parte comune viene supportata dal protocollo

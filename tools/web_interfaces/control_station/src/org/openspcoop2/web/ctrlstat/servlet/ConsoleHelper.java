@@ -2866,6 +2866,19 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 	
+	public boolean checkSimpleNamePath(String name, String object) throws DriverControlStationException{
+		// Il nome può iniziare solo con un carattere o cifra [0-9A-Za-z] e dev'essere formato solo da caratteri, cifre e '-'
+		try {
+			if (!RegularExpressionEngine.isMatch(name,"^[0-9A-Za-z][\\-A-Za-z0-9]*$")) {
+				this.pd.setMessage("Il campo '"+object+"' può iniziare solo con un carattere o cifra [0-9A-Za-z] e dev'essere formato solo da caratteri, cifre e '-'");
+				return false;
+			}
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
+		return true;
+	}
+	
 	public boolean checkSimpleName(String name, String object) throws DriverControlStationException{
 		try {
 			if (!RegularExpressionEngine.isMatch(name,"^[0-9A-Za-z]+$")) {

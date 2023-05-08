@@ -86,7 +86,7 @@ public interface SoggettiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void deleteSoggetto(@PathParam("nome") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String nome, @QueryParam("profilo") ProfiloEnum profilo);
+    public void deleteSoggetto(@PathParam("nome") @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255) String nome, @QueryParam("profilo") ProfiloEnum profilo);
 
     /**
      * Ricerca soggetti
@@ -128,7 +128,7 @@ public interface SoggettiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public Soggetto getSoggetto(@PathParam("nome") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String nome, @QueryParam("profilo") ProfiloEnum profilo);
+    public Soggetto getSoggetto(@PathParam("nome") @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255) String nome, @QueryParam("profilo") ProfiloEnum profilo);
 
     /**
      * Modifica le credenziali associate ad un soggetto
@@ -150,7 +150,7 @@ public interface SoggettiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void updateCredenzialiSoggetto(@Valid BaseCredenziali body, @PathParam("nome") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String nome, @QueryParam("profilo") ProfiloEnum profilo);
+    public void updateCredenzialiSoggetto(@Valid BaseCredenziali body, @PathParam("nome") @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255) String nome, @QueryParam("profilo") ProfiloEnum profilo);
 
     /**
      * Modifica i dati di un soggetto
@@ -172,5 +172,5 @@ public interface SoggettiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void updateSoggetto(@Valid Soggetto body, @PathParam("nome") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String nome, @QueryParam("profilo") ProfiloEnum profilo);
+    public void updateSoggetto(@Valid Soggetto body, @PathParam("nome") @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255) String nome, @QueryParam("profilo") ProfiloEnum profilo);
 }

@@ -1,5 +1,10 @@
 2023-05-08  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore, GovWayConsole, ApiRsConfigurazione, ApiRsMonitoraggio]
+	Un soggetto, escluso che per il profilo SPCoop, può adesso essere definito anche tramite il carattere '-'
+
+2023-05-08  Andrea Poli <apoli@link.it>
+
 	* [ProtocolloModIPA]
 	Aggiunta funzionalità OP-1580
 	I token 'AUDIT' e 'AUTH' vengono aggiunti in cache e utilizzati fino alla fine della loro validità.

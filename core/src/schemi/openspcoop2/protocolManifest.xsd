@@ -454,6 +454,7 @@
               <xsd:attribute name="codeDomain" type="xsd:boolean" use="optional" default="false"/>
               <xsd:attribute name="codeIPA" type="xsd:boolean" use="optional" default="false"/>
               <xsd:attribute name="replyToAddress" type="xsd:boolean" use="optional" default="false"/> <!-- replyToAddress -->
+	      <xsd:attribute name="dash" type="xsd:boolean" use="optional" default="true"/>
        </xsd:complexType>
 
        <xsd:complexType name="OrganizationTypes">

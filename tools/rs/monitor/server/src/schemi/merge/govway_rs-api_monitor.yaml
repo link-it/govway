@@ -8,7 +8,7 @@ info:
   license:
     name: "GPL v3.0"
     url: "https://www.gnu.org/licenses/gpl-3.0.txt"
-  version: "3.3.12"
+  version: "3.3.13"
   x-api-id: "https://govway.org/apiMonitor"
   x-summary: "Servizi per il monitoraggio di GovWay"
 servers:
@@ -2681,11 +2681,17 @@ components:
       - "info"
       - "debug"
       - "trace"
-    SimpleName:
+    SimpleNameStrict:
       maxLength: 255
       pattern: "^[0-9A-Za-z]+$"
       type: "string"
       description: "Formato solo da caratteri e cifre"
+    SimpleName:
+      maxLength: 255
+      pattern: "^[0-9A-Za-z][\\-A-Za-z0-9]*$"
+      type: "string"
+      description: "Può iniziare solo con un carattere o cifra [0-9A-Za-z] e dev'essere\
+        \ formato solo da caratteri, cifre e '-'"
     NCName:
       maxLength: 255
       pattern: "^[_A-Za-z][\\-\\._A-Za-z0-9]*$"

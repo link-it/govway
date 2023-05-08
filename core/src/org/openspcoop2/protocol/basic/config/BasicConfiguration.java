@@ -248,6 +248,11 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 	}
 	
 	@Override
+	public boolean isSupportoSoggettoUtilizzoTrattino() {
+		return this.registroManifest.getOrganization().isDash();
+	}
+	
+	@Override
 	public boolean isSupportoSoggettoReferenteAccordiParteComune() {
 		return this.registroManifest.getService().isApiReferent();
 	}

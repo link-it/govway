@@ -96,7 +96,7 @@ public class ApiImplVersioneApiView extends BaseSoggettoItem {
   **/
   @JsonProperty("api_referente")
   @Valid
- @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255)  public String getApiReferente() {
+ @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255)  public String getApiReferente() {
     return this.apiReferente;
   }
 
