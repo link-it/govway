@@ -10,6 +10,8 @@ Per creare una tag version:
            usare anche i suffissi 'rc' o 'beta' nel caso di rilasci di versioni non finali.
 	   NON usarlo invece per la proprietà 'antinstaller_versione_attuale' la quale NON DEVE possedere il patch level.
    - Sistemare versioni precedenti nella maschera 'aggiornamentoSceltaVersione' (NOTA: in questo caso utilizzare solamente versioni stabili)
+     ATTENZIONE:  non inserire più di 18 elementi, altrimenti la modalità './install.sh text' non esce da questa selezione.
+                  Provare la modalità install.sh text
    - Se sono state introdotte nuove variabili nel setup, gestirle all'interno del file ant/setup/ant/sqlInstallerProps-build.xml nel task '_sql_settings_installer_properties'
    - Aggiungere le nuove proprietà nei template all'interno degli script di distribuzione (-dev) e nel progetto govway-docker
 

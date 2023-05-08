@@ -20,12 +20,15 @@
 package org.openspcoop2.utils;
 
 /**
- *
+ * Costanti
+ * 
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
 public class Costanti {
+	
+	private Costanti() {}
 
 	public static final String OPENSPCOOP2 = "GovWay";
 	
@@ -35,7 +38,7 @@ public class Costanti {
 	public static final String OPENSPCOOP2_LOOKUP = "GOVWAY_LOOKUP";
 	 
     /** Versione beta, es: "b1" */
-    public static final String OPENSPCOOP2_BETA = ".12"; //".0.rc1";
+    public static final String OPENSPCOOP2_BETA = ".13"; /**".0.rc1";*/
     /** Versione di OpenSPCoop */
     public static final String OPENSPCOOP2_VERSION = "3.3"+Costanti.OPENSPCOOP2_BETA;
     /** Versione di OpenSPCoop */
