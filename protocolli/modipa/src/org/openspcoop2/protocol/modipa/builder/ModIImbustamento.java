@@ -63,6 +63,7 @@ import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -304,6 +305,8 @@ public class ModIImbustamento {
 				}
 				
 				String securityMessageProfile = ModIPropertiesUtils.readPropertySecurityMessageProfile(aspc, nomePortType, azione, filterPDND);
+				
+				boolean sicurezzaRidefinitaOperazione = ModIPropertiesUtils.readSicurezzaMessaggioRidefinitaOperazioneEngine(aspc, nomePortType, azione);
 								
 				MsgDiagnostico msgDiag = null;
 				TipoPdD tipoPdD = RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio) ? TipoPdD.DELEGATA : TipoPdD.APPLICATIVA;
@@ -453,7 +456,7 @@ public class ModIImbustamento {
 					purposeId =  ModIPropertiesUtils.readPurposeId(configIntegrationReader, asps, idSoggettoMittente, azione);
 				}
 				
-				
+				long now = DateManager.getTimeMillis();
 				
 				
 				// security (ID_AUTH e INTEGRITY)
@@ -478,17 +481,17 @@ public class ModIImbustamento {
 							try {
 								msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_IN_CORSO);
 							
-								String token = imbustamentoRest.addToken(msg, isRichiesta, context, keystoreConfig, securityConfig, busta, 
+								ModIJWTToken modiToken = imbustamentoRest.addToken(msg, isRichiesta, context, keystoreConfig, securityConfig, busta, 
 										securityMessageProfile, false, headerTokenRest, 
 										corniceSicurezza, patternCorniceSicurezza, 
 										null, // devo fornirlo solo durante la generazione dell'Audit Token 
 										ruoloMessaggio, includiRequestDigest,
-										null, busta.getID(), ModIHeaderType.SINGLE, integritaCustom,
+										now, busta.getID(), ModIHeaderType.SINGLE, integritaCustom,
 										dynamicMap, requestInfo,
-										purposeId);
-								protocolMessage.setBustaRawContent(new ModIBustaRawContent(headerTokenRest, token));
+										purposeId, sicurezzaRidefinitaOperazione);
+								protocolMessage.setBustaRawContent(new ModIBustaRawContent(headerTokenRest, modiToken.getToken()));
 								
-								CostantiPdD.addKeywordInCache(msgDiag, false, context, null); // aggiungere gestione dell'informazione quando si aggiunge la cache
+								CostantiPdD.addKeywordInCache(msgDiag, modiToken.isInCache(), context, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_MODI_TOKEN_AUTHORIZATION); 
 								msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_COMPLETATA);
 							}
 							catch(ProtocolException pe) {
@@ -499,7 +502,6 @@ public class ModIImbustamento {
 							
 						}
 						else {
-							long now = DateManager.getTimeMillis();
 							
 							String jtiAuthorization = busta.getID();
 							String jtiIntegrity = busta.getID();
@@ -529,20 +531,20 @@ public class ModIImbustamento {
 								useKIDforIdAUTH = true;
 							}
 
-							String tokenAuthorization = null;
+							ModIJWTToken modiTokenAuthorization = null;
 							try {
 								msgDiag.logPersonalizzato(DIAGNOSTIC_ADD_TOKEN_ID_AUTH+tipoDiagnostico+DIAGNOSTIC_IN_CORSO);
 							
-								tokenAuthorization = imbustamentoRest.addToken(msg, isRichiesta, context, keystoreConfig, securityConfig, busta, 
+								modiTokenAuthorization = imbustamentoRest.addToken(msg, isRichiesta, context, keystoreConfig, securityConfig, busta, 
 										securityMessageProfileAuthorization, useKIDforIdAUTH, headerTokenRest, 
 										corniceSicurezza, patternCorniceSicurezza, 
 										null, // devo fornirlo solo durante la generazione dell'Audit Token 
 										ruoloMessaggio, includiRequestDigest,
 										now, jtiAuthorization, ModIHeaderType.BOTH_AUTH, integritaCustom,
 										dynamicMap, requestInfo,
-										purposeId);
+										purposeId, sicurezzaRidefinitaOperazione);
 								
-								CostantiPdD.addKeywordInCache(msgDiag, false, context, null); // aggiungere gestione dell'informazione quando si aggiunge la cache
+								CostantiPdD.addKeywordInCache(msgDiag, modiTokenAuthorization.isInCache(), context, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_MODI_TOKEN_AUTHORIZATION); 
 								msgDiag.logPersonalizzato(DIAGNOSTIC_ADD_TOKEN_ID_AUTH+tipoDiagnostico+DIAGNOSTIC_COMPLETATA);
 							}
 							catch(ProtocolException pe) {
@@ -570,7 +572,7 @@ public class ModIImbustamento {
 							if(msg.castAsRest().hasContent() || signedHeaders) {
 								addIntegrity = true;
 							}
-							String tokenIntegrity = null;
+							ModIJWTToken modiTokenIntegrity = null;
 							if(addIntegrity) {
 								try {
 									msgDiag.logPersonalizzato(DIAGNOSTIC_ADD_TOKEN_INTEGRITY+tipoDiagnostico+DIAGNOSTIC_IN_CORSO);
@@ -582,16 +584,17 @@ public class ModIImbustamento {
 											busta, bustaRichiesta, 
 											false,
 											keystoreDefinitoInFruizione, keystoreKidMode);
-									tokenIntegrity = imbustamentoRest.addToken(msg, isRichiesta, context, keystoreConfig, securityConfigIntegrity, busta, 
+									modiTokenIntegrity = imbustamentoRest.addToken(msg, isRichiesta, context, keystoreConfig, securityConfigIntegrity, busta, 
 											securityMessageProfile, false, headerTokenRestIntegrity, 
 											corniceSicurezza, patternCorniceSicurezza, 
 											null, // devo fornirlo solo durante la generazione dell'Audit Token 
 											ruoloMessaggio, includiRequestDigest,
 											now, jtiIntegrity, ModIHeaderType.BOTH_INTEGRITY, integritaCustom,
 											dynamicMap, requestInfo,
-											purposeId);
+											purposeId, sicurezzaRidefinitaOperazione);
 									
-									CostantiPdD.addKeywordInCache(msgDiag, false, context, null); // aggiungere gestione dell'informazione quando si aggiunge la cache
+									// l'integrity non sarà mai in cache, ma il diagnostico e' condiviso
+									CostantiPdD.addKeywordInCache(msgDiag, modiTokenIntegrity.isInCache(), context, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_MODI_TOKEN_INTEGRITY); 
 									msgDiag.logPersonalizzato(DIAGNOSTIC_ADD_TOKEN_INTEGRITY+tipoDiagnostico+DIAGNOSTIC_COMPLETATA);
 								}
 								catch(ProtocolException pe) {
@@ -601,11 +604,11 @@ public class ModIImbustamento {
 								}
 							}
 							
-							if(tokenIntegrity!=null) {
-								protocolMessage.setBustaRawContent(new ModIBustaRawContent(tokenAuthorization, headerTokenRestIntegrity, tokenIntegrity));
+							if(modiTokenIntegrity!=null) {
+								protocolMessage.setBustaRawContent(new ModIBustaRawContent(modiTokenAuthorization.getToken(), headerTokenRestIntegrity, modiTokenIntegrity.getToken()));
 							}
 							else {
-								protocolMessage.setBustaRawContent(new ModIBustaRawContent(headerTokenRest, tokenAuthorization));
+								protocolMessage.setBustaRawContent(new ModIBustaRawContent(headerTokenRest, modiTokenAuthorization.getToken()));
 							}
 														
 						}
@@ -619,11 +622,14 @@ public class ModIImbustamento {
 						boolean integrita = integritaX509 || integritaKid;
 						
 						String prefixMsgDiag = null;
+						MapKey<String> mapKey = null;
 						if(integrita) {
 							prefixMsgDiag = DIAGNOSTIC_ADD_TOKEN_INTEGRITY;
+							mapKey = CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_MODI_TOKEN_INTEGRITY;
 						}
 						else {
 							prefixMsgDiag = DIAGNOSTIC_ADD_TOKEN_ID_AUTH;
+							mapKey = CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_MODI_TOKEN_AUTHORIZATION;
 						}
 						try {
 							msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_IN_CORSO);
@@ -634,7 +640,9 @@ public class ModIImbustamento {
 									securityMessageProfile, corniceSicurezzaLegacySoap, ruoloMessaggio, includiRequestDigest, signAttachments,
 									dynamicMap, requestInfo);
 							protocolMessage.setBustaRawContent(new ModIBustaRawContent(env));
-							CostantiPdD.addKeywordInCache(msgDiag, false, context, null); // aggiungere gestione dell'informazione quando si aggiunge la cache
+							
+							// il token SOAP non è mai in cache
+							CostantiPdD.addKeywordInCache(msgDiag, false, context, mapKey);
 							msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_COMPLETATA);
 						}
 						catch(ProtocolException pe) {
@@ -685,19 +693,19 @@ public class ModIImbustamento {
 					try {
 						msgDiag.logPersonalizzato("addTokenAudit.richiesta.inCorso");
 					
-						String tokenAudit = imbustamentoRest.addToken(msg, isRichiesta, context, keystoreConfig, securityConfig, busta, 
+						ModIJWTToken modiTokenAudit = imbustamentoRest.addToken(msg, isRichiesta, context, keystoreConfig, securityConfig, busta, 
 								securityMessageProfileAudit, useKIDforAudit, headerTokenAudit, 
 								corniceSicurezza, patternCorniceSicurezza, schemaCorniceSicurezza,
 								ruoloMessaggio, false,
-								null, jtiAudit, ModIHeaderType.SINGLE, false,
+								now, jtiAudit, ModIHeaderType.SINGLE, false,
 								dynamicMap, requestInfo,
-								purposeId);
+								purposeId, sicurezzaRidefinitaOperazione);
 						if(protocolMessage.getBustaRawContent() instanceof ModIBustaRawContent) {
 							ModIBustaRawContent raw = (ModIBustaRawContent) protocolMessage.getBustaRawContent();
-							raw.getElement().setTokenAudit(headerTokenAudit, tokenAudit);
+							raw.getElement().setTokenAudit(headerTokenAudit, modiTokenAudit.getToken());
 						}
 						
-						CostantiPdD.addKeywordInCache(msgDiag, false, context, null); // aggiungere gestione dell'informazione quando si aggiunge la cache
+						CostantiPdD.addKeywordInCache(msgDiag, modiTokenAudit.isInCache(), context, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_MODI_TOKEN_AUDIT); 
 						msgDiag.logPersonalizzato("addTokenAudit.richiesta.completata");
 					}
 					catch(ProtocolException pe) {

@@ -22,6 +22,7 @@
 package org.openspcoop2.pdd.core.token;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -75,6 +76,7 @@ import org.openspcoop2.utils.cache.CacheAlgorithm;
 import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.cache.Constants;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpResponse;
@@ -213,6 +215,29 @@ public class GestoreToken {
 		}
 		return s;
 	} 
+	
+	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockTokenCache = new HashMap<>();
+	private static synchronized org.openspcoop2.utils.Semaphore initLockTokenCache(String funzione){
+		org.openspcoop2.utils.Semaphore s = _lockTokenCache.get(funzione);
+		if(s==null) {
+			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneRetrieveToken_lock_permits();
+			if(permits!=null && permits.intValue()>1) {
+				s = new org.openspcoop2.utils.Semaphore("GestoreTokenCache_"+funzione, permits);
+			}
+			else {
+				s = new org.openspcoop2.utils.Semaphore("GestoreTokenCache_"+funzione);
+			}
+			_lockTokenCache.put(funzione, s);
+		}
+		return s;
+	}
+	private static org.openspcoop2.utils.Semaphore getLockTokenCache(String nomePolicy){
+		org.openspcoop2.utils.Semaphore s = _lockTokenCache.get(nomePolicy);
+		if(s==null) {
+			s = initLockTokenCache(nomePolicy);
+		}
+		return s;
+	} 
 
 	static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
 
@@ -228,6 +253,9 @@ public class GestoreToken {
 	}
 	private static void loggerError(String msg) {
 		GestoreToken.logger.error(msg);
+	}
+	private static void loggerError(String msg, Exception e) {
+		GestoreToken.logger.error(msg,e);
 	}
 	private static String getMessageObjectInCache(org.openspcoop2.utils.cache.CacheResponse response, String keyCache, String funzione) {
 		return "Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.";
@@ -1950,5 +1978,123 @@ public class GestoreToken {
 		}
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// ********* [GENERIC-TOKEN] ****************** */
+	
+	public static TokenCacheItem getTokenCacheItem(String keyCache, String funzione, Date now) throws TokenException {
+		TokenCacheItem item = null;
+		
+		if(GestoreToken.cacheToken!=null){
+			
+			org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+			if(response != null){
+				if(response.getObject()!=null){
+					GestoreToken.loggerDebug(GestoreToken.getMessageObjectInCache(response, keyCache, funzione));
+					item = (TokenCacheItem) response.getObject();
+					item.setInCache(true);
+				}else if(response.getException()!=null){
+					Exception e = (Exception) response.getException();
+					throw new TokenException("Trovata eccezione '"+response.getException().getClass().getName()+"' in cache non prevista: "+e.getMessage(),e);
+				}else{
+					GestoreToken.loggerError(MESSAGE_ELEMENT_CACHE_NE_OGGETTO_NE_ECCEZIONE);
+				}
+			}
+			
+			if(item!=null) {
+				item = checkTokenCacheItem(item, keyCache, now, true);
+			}
+		}
+		
+		return item;
+	}
+	private static TokenCacheItem checkTokenCacheItem(TokenCacheItem item, String keyCache, Date now, boolean debug) {
+		boolean tokenExpired = false;
+		if(item.getExp()!=null) {
+			try{
+				tokenExpired = GestoreTokenValidazioneUtilities.isExpired(now, item.getExp());
+			}catch(Exception e) {
+				GestoreToken.loggerError("Token presente in cache con chiave '"+keyCache+"', verifica scadenza '"+DateUtils.getSimpleDateFormatMs().format(item.getExp())+"' fallita: "+e.getMessage(),e);
+			}
+		}
+		if(tokenExpired) {
+			if(debug) {
+				GestoreToken.loggerDebug("Token presente in cache con chiave '"+keyCache+"' risulta scaduto in data '"+DateUtils.getSimpleDateFormatMs().format(item.getExp())+"'");
+			}
+			return null;
+		}
+		return item;
+	}
+	
+	public static void putTokenCacheItem(TokenCacheItem item, String keyCache, String funzione, Date now) {
+		
+		if(GestoreToken.cacheToken!=null){
+			
+    		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
+			// Qua non va fatto come per gli altri casi, è nell'utilizzo del metodo getTokenCacheItem che lo si fa
+    		
+    		
+			org.openspcoop2.utils.Semaphore lockNegoziazione = getLockTokenCache(funzione);
+			lockNegoziazione.acquireThrowRuntime("putTokenCacheItem", item.getIdTransazione());
+			try {
+				
+				// per gestire concorrenza
+				org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+				TokenCacheItem itemInCache = null;
+				if(response != null &&
+					response.getObject()!=null){
+					GestoreToken.loggerDebug(GestoreToken.getMessageObjectInCache(response, keyCache, funzione));
+					itemInCache = (TokenCacheItem) response.getObject();
+					itemInCache.setInCache(true);
+				}
+				if(itemInCache!=null) {
+					itemInCache = checkTokenCacheItem(itemInCache, keyCache, now, false);
+				}
+
+				if(itemInCache==null) {
+						
+					// Aggiungo la risposta in cache (se esiste una cache)	
+					// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
+					// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
+					// - impostare il noCache a true
+					item.setInCache(false); // la prima volta che lo recupero sicuramente non era in cache
+					GestoreToken.loggerInfo(getMessaggioAggiuntaOggettoInCache(keyCache));
+					try{	
+						org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+						responseCache.setObject(item);
+						GestoreToken.cacheToken.put(keyCache,responseCache);
+					}catch(UtilsException e){
+						GestoreToken.loggerError(getMessaggioErroreInserimentoInCache(keyCache, e));
+					}
+					
+				}
+				
+			}finally {
+				// fine synchronized
+				lockNegoziazione.release("putTokenCacheItem", item.getIdTransazione());
+			}
+
+		}
+	}
 }
 

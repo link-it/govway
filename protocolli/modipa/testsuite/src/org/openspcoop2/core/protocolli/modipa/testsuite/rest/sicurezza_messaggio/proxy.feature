@@ -1062,7 +1062,7 @@ Scenario: isTest('connettivita-base-idar02')
 
 Scenario: isTest('riutilizzo-token')
 
-    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR02/v1')    
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR02RiutilizzoToken/v1')    
     
     * def newHeaders = 
     """

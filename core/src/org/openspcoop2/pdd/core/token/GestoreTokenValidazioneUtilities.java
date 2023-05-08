@@ -1069,6 +1069,22 @@ public class GestoreTokenValidazioneUtilities {
 	
 	// ********* [VALIDAZIONE-TOKEN] UTILITIES INTERNE ****************** */
 	
+	public static boolean isExpired(Date now, Date exp) throws TokenException {
+		
+		Date checkNow = now;
+		Long tolerance = null;
+		try {
+			tolerance = OpenSPCoop2Properties.getInstance().getGestioneToken_expTimeCheck_tolerance_milliseconds();
+		}catch(Exception e) {
+			throw new TokenException(e.getMessage(),e);
+		}
+		if(tolerance!=null && tolerance.longValue()>0) {
+			checkNow = new Date(now.getTime() - tolerance.longValue());
+		}
+		
+		return !checkNow.before(exp);
+	}
+	
 	static void validazioneInformazioniToken(EsitoGestioneToken esitoGestioneToken, PolicyGestioneToken policyGestioneToken, boolean saveErrorInCache) throws Exception {
 		
 		Date now = DateManager.getDate();
@@ -1083,11 +1099,7 @@ public class GestoreTokenValidazioneUtilities {
 			
 			if(enabled && esitoGestioneToken.getInformazioniToken().getExp()!=null) {	
 				
-				Date checkNow = now;
-				Long tolerance = OpenSPCoop2Properties.getInstance().getGestioneToken_expTimeCheck_tolerance_milliseconds();
-				if(tolerance!=null && tolerance.longValue()>0) {
-					checkNow = new Date(now.getTime() - tolerance.longValue());
-				}
+				boolean expired = isExpired(now, esitoGestioneToken.getInformazioniToken().getExp());
 
 				/*
 				 *   The "exp" (expiration time) claim identifies the expiration time on
@@ -1095,7 +1107,7 @@ public class GestoreTokenValidazioneUtilities {
    				 *   processing of the "exp" claim requires that the current date/time
    				 *   MUST be before the expiration date/time listed in the "exp" claim.
 				 **/
-				if(!checkNow.before(esitoGestioneToken.getInformazioniToken().getExp())){
+				if(expired){
 					esitoGestioneToken.setTokenScaduto();
 					esitoGestioneToken.setDateValide(false);
 					esitoGestioneToken.setDetails("Token expired");

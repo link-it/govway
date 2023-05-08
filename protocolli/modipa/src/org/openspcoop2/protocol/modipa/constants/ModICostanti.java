@@ -82,6 +82,7 @@ public class ModICostanti {
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_NBF = "ProfiloSicurezzaMessaggio-IntegrityNotBefore";
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_IAT = "ProfiloSicurezzaMessaggio-IntegrityIssuedAt";
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_EXP = "ProfiloSicurezzaMessaggio-IntegrityExpiration";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ORIGIN_TRANSACTION_ID = "ProfiloSicurezzaMessaggio-OriginTransactionId";
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID = "ProfiloSicurezzaMessaggio-MessageId";
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_RELATES_TO = "ProfiloSicurezzaMessaggio-RelatesTo";
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_DIGEST = "ProfiloSicurezzaMessaggio-Digest";
@@ -106,6 +107,7 @@ public class ModICostanti {
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_SCHEMA = "ProfiloSicurezzaAudit-SchemaDati";
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PREFIX = "ProfiloSicurezzaMessaggioAudit-";
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_AUDIENCE = "ProfiloSicurezzaMessaggioAudit-Audience";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_ORIGIN_TRANSACTION_ID = "ProfiloSicurezzaMessaggioAudit-OriginTransactionId";
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_ID = "ProfiloSicurezzaMessaggioAudit-MessageId";
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_X509_SUBJECT = "ProfiloSicurezzaMessaggioAudit-X509-Subject";
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_X509_ISSUER = "ProfiloSicurezzaMessaggioAudit-X509-Issuer";

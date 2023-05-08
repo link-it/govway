@@ -400,7 +400,7 @@ And match response == read('error-bodies/iat-scaduto-in-request.json')
 Scenario: L'elemento iat del token dell'erogazione (risposta) è troppo vecchio per la fruizione la quale si arrabbia
 
 Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01LowIAT/v1'
-And path 'resources', 1, 'M'
+And path 'resources', 1, 'M2CacheTest'
 And request read('request.json')
 And header GovWay-TestSuite-Test-ID = 'low-iat-ttl-erogazione'
 And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
@@ -428,7 +428,7 @@ And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest
 Scenario: L'elemento iat del token dell'erogazione (risposta) contiene una data futura e la fruizione si arrabbia. Il token utilizzato dal proxy server viene generato tramite il tool jwt_generator
 
 Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01LowIAT/v1'
-And path 'resources', 1, 'M'
+And path 'resources', 1, 'M3CacheTest'
 And request read('request.json')
 And header GovWay-TestSuite-Test-ID = 'iat-future-response'
 And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })

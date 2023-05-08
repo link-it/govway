@@ -254,6 +254,9 @@ public class ModIProperties {
 			/* **** TRACCE **** */ 
 			
 			this.isGenerazioneTracce();
+			this.isGenerazioneTracceRegistraToken();
+			this.isGenerazioneTracceRegistraCustomClaims();
+			this.getGenerazioneTracceRegistraCustomClaimsBlackList();
 			
 			/* **** Versionamento **** */ 
 			
@@ -1490,6 +1493,52 @@ public class ModIProperties {
 		}
 
 		return this.isGenerazioneTracceRegistraToken;
+	}
+	
+    private Boolean isGenerazioneTracceRegistraCustomClaims = null;
+	public boolean isGenerazioneTracceRegistraCustomClaims(){
+		if(this.isGenerazioneTracceRegistraCustomClaims==null){
+			
+			Boolean defaultValue = false;
+			String propertyName = "org.openspcoop2.protocol.modipa.generazioneTracce.registrazioneCustomClaims.enabled";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isGenerazioneTracceRegistraCustomClaims = Boolean.parseBoolean(value);
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.isGenerazioneTracceRegistraCustomClaims = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.isGenerazioneTracceRegistraCustomClaims = defaultValue;
+			}
+		}
+
+		return this.isGenerazioneTracceRegistraCustomClaims;
+	}
+	
+	private List<String> getGenerazioneTracceRegistraCustomClaimsBlackList= null;
+	public List<String> getGenerazioneTracceRegistraCustomClaimsBlackList() throws ProtocolException{
+    	if(this.getGenerazioneTracceRegistraCustomClaimsBlackList==null){
+	    	
+    		String propertyName = "org.openspcoop2.protocol.modipa.generazioneTracce.registrazioneCustomClaims.blackList";
+    		try{  
+    			String value = this.reader.getValue_convertEnvProperties(propertyName); 
+    			if(value!=null && StringUtils.isNotEmpty(value)) {
+    				this.getGenerazioneTracceRegistraCustomClaimsBlackList = ModISecurityConfig.convertToList(value);
+    			}
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioErroreProprietaNonImpostata(propertyName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}
+    	}
+    	
+    	return this.getGenerazioneTracceRegistraCustomClaimsBlackList;
 	}
 	
 	

@@ -39,7 +39,7 @@ And match header Authorization == '#notpresent'
 Scenario: Riutilizzo dello stesso token, che deve far arrabiare erogazione e fruizione
 
 # Prima facciamo un giro ok per far generare il token alla fruizione e alla erogazione
-Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR02/v1"
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR02RiutilizzoToken/v1"
 And path 'resources', 1, 'M'
 And request read('request.json')
 And header GovWay-TestSuite-Test-ID = 'riutilizzo-token'

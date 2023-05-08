@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.IExtendedInfo;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
@@ -174,7 +175,17 @@ public class OpenSPCoop2Properties {
 
 	/** Logger utilizzato per errori eventuali. */
 	private Logger log = null;
-
+	private void logError(String msg) {
+		if(this.log!=null) {
+			this.log.error(msg);
+		}
+	}
+	private void logError(String msg, Exception e) {
+		if(this.log!=null) {
+			this.log.error(msg,e);
+		}
+	}
+	
 
 	/** Copia Statica */
 	private static OpenSPCoop2Properties openspcoopProperties = null;
@@ -220,13 +231,13 @@ public class OpenSPCoop2Properties {
 					properties = new FileInputStream(f);
 				}
 				else {
-					throw new Exception("File '"+path+"' not found");
+					throw new CoreException("File '"+path+"' not found");
 				}
 			}
 			propertiesReader.load(properties);
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura del file '"+path+"': \n\n"+e.getMessage(),e);
-			throw new Exception("OpenSPCoopProperties initialize error: "+e.getMessage(),e);
+			this.logError("Riscontrato errore durante la lettura del file '"+path+"': \n\n"+e.getMessage(),e);
+			throw new CoreException("OpenSPCoopProperties initialize error: "+e.getMessage(),e);
 		}finally{
 		    try{
 		    	if(properties!=null)
@@ -305,13 +316,13 @@ public class OpenSPCoop2Properties {
 			if (getRootDirectory() == null)		
 				return false;
 			if( (new File(getRootDirectory())).exists() == false ){
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.confDirectory'. \n La directory indicata non esiste ["+getRootDirectory()+"].");
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.confDirectory'. \n La directory indicata non esiste ["+getRootDirectory()+"].");
 				return false;
 			}
 			
 			// Tipo server
-			Boolean serverJ2EE = isServerJ2EE();
-			if(serverJ2EE==null){
+			Boolean serverJ2EEtest = isServerJ2EE();
+			if(serverJ2EEtest==null){
 				return false;
 			}
 			
@@ -345,7 +356,7 @@ public class OpenSPCoop2Properties {
 						test.toString();
 						loaderOpenSPCoop = new Loader(loader);
 					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura del class loader indicato nella proprieta' di openspcoop 'org.openspcoop2.pdd.classLoader': "+e.getMessage(),e);
+						this.logError("Riscontrato errore durante la lettura del class loader indicato nella proprieta' di openspcoop 'org.openspcoop2.pdd.classLoader': "+e.getMessage(),e);
 						return false;
 					}
 				}else{
@@ -355,7 +366,7 @@ public class OpenSPCoop2Properties {
 			
 			// Non posso inizializzarli durante la validazione poich' il ProtocolFactoryManager non e' ancora stato inizializzato
 //			// EsitiProperties
-//			EsitiProperties.initialize(getRootDirectory(), this.log, loaderOpenSPCoop);
+/**			EsitiProperties.initialize(getRootDirectory(), this.log, loaderOpenSPCoop); */
 			
 			// Repository
 			String tipoRepository = getRepositoryType();
@@ -364,10 +375,10 @@ public class OpenSPCoop2Properties {
 					return false;
 				}
 				// Verra' creata se non esiste in openspcoop startup
-//				if( (new File(getRepositoryDirectory())).exists() == false ){
-//					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.directory'. \n La directory indicata non esiste ["+getRepositoryDirectory()+"].");
+/**				if( (new File(getRepositoryDirectory())).exists() == false ){
+//					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.directory'. \n La directory indicata non esiste ["+getRepositoryDirectory()+"].");
 //					return false;
-//				}
+//				}*/
 			}else if(CostantiConfigurazione.REPOSITORY_DB.equals(tipoRepository)){
 				if (getRepositoryJDBCAdapter() == null)	{						
 					return false;
@@ -376,11 +387,9 @@ public class OpenSPCoop2Properties {
 				if(this.getDatabaseType()!=null && TipiDatabase.DEFAULT.equals(jdbcAdapter)){
 					try{
 						IJDBCAdapter adapter = JDBCAdapterFactory.createJDBCAdapter(OpenSPCoop2Properties.openspcoopProperties.getDatabaseType());
-						adapter.toString();
-						//System.out.println("PASSO DA FACTORY ");
-						
+						adapter.toString();					
 					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.jdbcAdapter'. \n L'adapter indicato non esiste ["+getRepositoryJDBCAdapter()+"]: "+e.getMessage(),e);
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.jdbcAdapter'. \n L'adapter indicato non esiste ["+getRepositoryJDBCAdapter()+"]: "+e.getMessage(),e);
 						return false;
 					}
 				}
@@ -388,19 +397,19 @@ public class OpenSPCoop2Properties {
 					//	Ricerco connettore
 					String adapterClass = className.getJDBCAdapter(jdbcAdapter);
 					if(adapterClass == null){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.jdbcAdapter'. \n L'adapter indicato non esiste ["+getRepositoryJDBCAdapter()+"] nelle classi registrate in OpenSPCoop");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.jdbcAdapter'. \n L'adapter indicato non esiste ["+getRepositoryJDBCAdapter()+"] nelle classi registrate in OpenSPCoop");
 						return false;
 					}
 					try{
 						IJDBCAdapter adapter = (IJDBCAdapter) loaderOpenSPCoop.newInstance(adapterClass);
 						adapter.toString();
 					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.jdbcAdapter'. \n L'adapter indicato non esiste ["+getRepositoryJDBCAdapter()+"]: "+e.getMessage(),e);
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.jdbcAdapter'. \n L'adapter indicato non esiste ["+getRepositoryJDBCAdapter()+"]: "+e.getMessage(),e);
 						return false;
 					}
 				}
 			}else{
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.tipo'. \n Il tipo indicato non e' un tipo valido ["+getRepositoryType()+"].");
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.tipo'. \n Il tipo indicato non e' un tipo valido ["+getRepositoryType()+"].");
 				return false;
 			}
 			// warning
@@ -426,14 +435,14 @@ public class OpenSPCoop2Properties {
 			long intervalloEliminazione = getRepositoryIntervalloEliminazioneMessaggi();
 			if(intervalloEliminazione<=0){
 				if(intervalloEliminazione!=-1){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.timer'. \n Valore non valido ["+intervalloEliminazione+"].");			
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.timer'. \n Valore non valido ["+intervalloEliminazione+"].");			
 				}
 				return false;
 			}
 			long intervalloScadenza = getRepositoryIntervalloScadenzaMessaggi();
 			if(intervalloScadenza<=0){
 				if(intervalloScadenza!=-1){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.scadenzaMessaggio'. \n Valore non valido ["+intervalloScadenza+"].");			
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.scadenzaMessaggio'. \n Valore non valido ["+intervalloScadenza+"].");			
 				}
 				return false;
 			}
@@ -443,7 +452,7 @@ public class OpenSPCoop2Properties {
 			long intervalloScadenzaCorrelazioneApplicativa = getRepositoryIntervalloScadenzaCorrelazioneApplicativa();
 			if(intervalloScadenzaCorrelazioneApplicativa<=0){
 				if(intervalloScadenzaCorrelazioneApplicativa!=-1){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa'. \n Valore non valido ["+intervalloScadenzaCorrelazioneApplicativa+"].");			
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa'. \n Valore non valido ["+intervalloScadenzaCorrelazioneApplicativa+"].");			
 				}
 				return false;
 			}
@@ -466,7 +475,7 @@ public class OpenSPCoop2Properties {
 				// CheckInterval in Repository
 				long intervalloCheck = this.getRepositoryThresholdCheckInterval();
 				if(intervalloCheck<=0){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.threshold.checkInterval', valore non impostato/valido.");			
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.threshold.checkInterval', valore non impostato/valido.");			
 					return false;
 				}
 				for(int i=0; i<tipiThreshold.size();i++){
@@ -475,14 +484,14 @@ public class OpenSPCoop2Properties {
 					//	Ricerco connettore
 					String tipoClass = className.getThreshold(tipiThreshold.get(i));
 					if(tipoClass == null){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.threshold.tipo'. \n La classe di Threshold indicata non esiste ["+tipiThreshold.get(i)+"] nelle classi registrate in OpenSPCoop");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.threshold.tipo'. \n La classe di Threshold indicata non esiste ["+tipiThreshold.get(i)+"] nelle classi registrate in OpenSPCoop");
 						return false;
 					}
 					try{
 						IThreshold t = (IThreshold) loaderOpenSPCoop.newInstance(tipoClass);
 						t.toString();
 					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.threshold.tipo'. \n La classe di Threshold indicata non esiste ["+tipiThreshold.get(i)+"]: "+e.getMessage(),e);
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.threshold.tipo'. \n La classe di Threshold indicata non esiste ["+tipiThreshold.get(i)+"]: "+e.getMessage(),e);
 						return false;
 					}
 				}
@@ -507,7 +516,7 @@ public class OpenSPCoop2Properties {
 				// CheckInterval 
 				long intervalloCheck = this.getControlloRisorseCheckInterval();
 				if(intervalloCheck<=0){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.risorse.checkInterval', valore non impostato/valido.");			
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.risorse.checkInterval', valore non impostato/valido.");			
 					return false;
 				}
 				// Warning
@@ -545,12 +554,12 @@ public class OpenSPCoop2Properties {
 			this.getConfigPreLoadingLocale();
 			
 			if (getTipoConfigurazionePDD() == null){		
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.tipo'. Proprieta' non impostata");
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.tipo'. Proprieta' non impostata");
 				return false;
 			}
 			if( (CostantiConfigurazione.CONFIGURAZIONE_XML.equalsIgnoreCase(getTipoConfigurazionePDD()) == false) &&
 					(CostantiConfigurazione.CONFIGURAZIONE_DB.equalsIgnoreCase(getTipoConfigurazionePDD()) == false) ){
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.tipo'. Tipo non Supportato");
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.tipo'. Tipo non Supportato");
 				return false;
 			}
 			if( CostantiConfigurazione.CONFIGURAZIONE_DB.equalsIgnoreCase(getTipoConfigurazionePDD()) ){
@@ -563,12 +572,12 @@ public class OpenSPCoop2Properties {
 					try{
 						DBUtils.estraiTipoDatabaseFromLocation(this.getPathConfigurazionePDD());
 					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.location', mentre veniva analizzato il prefisso tipoDatabase@datasource: "+e.getMessage(),e);
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.location', mentre veniva analizzato il prefisso tipoDatabase@datasource: "+e.getMessage(),e);
 						return false;
 					}
 				}else{
 					if(this.getDatabaseType()==null){
-						this.log.error("La configurazione della porta di dominio di tipo ["+getTipoConfigurazionePDD()
+						this.logError("La configurazione della porta di dominio di tipo ["+getTipoConfigurazionePDD()
 								+"] richiede la definizione del tipo di database indicato o come prefisso della location (tipoDB@datasource) o attraverso la proprieta' 'org.openspcoop2.pdd.repository.tipoDatabase'");
 					}
 				}
@@ -577,15 +586,15 @@ public class OpenSPCoop2Properties {
 
 			// Location della configurazione
 			if (getPathConfigurazionePDD() == null){		
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.location'. Proprieta' non impostata");
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.location'. Proprieta' non impostata");
 				return false;
 			}
 			if( CostantiConfigurazione.CONFIGURAZIONE_XML.equalsIgnoreCase(getTipoConfigurazionePDD()) == true){
 
 				String path = getPathConfigurazionePDD();
-				if( (path.startsWith("http://")==false) && (path.startsWith("file://")==false) ){
-					if( (new File(path)).exists() == false ){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.location'. \n Il file indicato non esiste ["+path+"].");
+				if( (!path.startsWith("http://")) && (path.startsWith("file://")==false) ){
+					if( !(new File(path)).exists() ){
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.location'. \n Il file indicato non esiste ["+path+"].");
 						return false;
 					}
 				}else{
@@ -594,13 +603,13 @@ public class OpenSPCoop2Properties {
 						URL v  = new URL(path);
 						v.toString();
 					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.location'. \n La url indicata non e' corretta ["+path+"].");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.location'. \n La url indicata non e' corretta ["+path+"].");
 						return false;
 					}
 				}
 			}
 			else if( CostantiConfigurazione.CONFIGURAZIONE_DB.equalsIgnoreCase(getTipoConfigurazionePDD()) == false){		
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.tipo'. \n Tipo non supportato ["+getTipoConfigurazionePDD()+"].");
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.tipo'. \n Tipo non supportato ["+getTipoConfigurazionePDD()+"].");
 				return false;
 			}
 
@@ -634,11 +643,11 @@ public class OpenSPCoop2Properties {
 
 			// DataSource
 			if (getJNDIName_DataSource() == null){		
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.dataSource'. Proprieta' non impostata");
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.dataSource'. Proprieta' non impostata");
 				return false;
 			}
 			if (getJNDIContext_DataSource() == null){		
-				this.log.error("Riscontrato errore durante la lettura della proprieta' del contesto JNDI per il datasource: 'org.openspcoop2.pdd.dataSource.property.*'. Proprieta' definite in maniera errata?");
+				this.logError("Riscontrato errore durante la lettura della proprieta' del contesto JNDI per il datasource: 'org.openspcoop2.pdd.dataSource.property.*'. Proprieta' definite in maniera errata?");
 				return false;
 			}
 
@@ -649,14 +658,14 @@ public class OpenSPCoop2Properties {
 				//	Ricerco connettore
 				String tipoClass = className.getNodeReceiver(this.getNodeReceiver());
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.nodeReceiver'. \n Il node receiver indicato non esiste ["+this.getNodeReceiver()+"] nelle classi registrate in OpenSPCoop");
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.nodeReceiver'. \n Il node receiver indicato non esiste ["+this.getNodeReceiver()+"] nelle classi registrate in OpenSPCoop");
 					return false;
 				}
 				try{
 					INodeReceiver nodeReceiver = (INodeReceiver) loaderOpenSPCoop.newInstance(tipoClass);
 					nodeReceiver.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.nodeReceiver'. \n Il node receiver indicato non esiste ["+this.getNodeReceiver()+"]: "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.nodeReceiver'. \n Il node receiver indicato non esiste ["+this.getNodeReceiver()+"]: "+e.getMessage(),e);
 					return false;
 				}
 			}
@@ -674,21 +683,21 @@ public class OpenSPCoop2Properties {
 				//	Ricerco connettore
 				String tipoClass = className.getNodeSender(this.getNodeSender());
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.nodeSender'. \n Il node sender indicato non esiste ["+this.getNodeSender()+"] nelle classi registrate in OpenSPCoop");
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.nodeSender'. \n Il node sender indicato non esiste ["+this.getNodeSender()+"] nelle classi registrate in OpenSPCoop");
 					return false;
 				}
 				try{
 					INodeSender nodeSender = (INodeSender) loaderOpenSPCoop.newInstance(tipoClass);
 					nodeSender.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.nodeSender'. \n Il node sender indicato non esiste ["+this.getNodeSender()+"]: "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.nodeSender'. \n Il node sender indicato non esiste ["+this.getNodeSender()+"]: "+e.getMessage(),e);
 					return false;
 				}
 
 
 				if(CostantiConfigurazione.COMUNICAZIONE_INFRASTRUTTURALE_DB.equals(this.getNodeSender())){
 					if (getRepositoryJDBCAdapter() == null)	{	
-						this.log.error("Un JDBCAdapter deve essere definito in caso di NodeSender=db");
+						this.logError("Un JDBCAdapter deve essere definito in caso di NodeSender=db");
 						return false;
 					}
 					//	Ricerco connettore
@@ -698,21 +707,21 @@ public class OpenSPCoop2Properties {
 							IJDBCAdapter adapter = JDBCAdapterFactory.createJDBCAdapter(OpenSPCoop2Properties.openspcoopProperties.getDatabaseType());
 							adapter.toString();
 						}catch(Exception e){
-							this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.jdbcAdapter'. \n L'adapter indicato non esiste ["+getRepositoryJDBCAdapter()+"]: "+e.getMessage(),e);
+							this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.jdbcAdapter'. \n L'adapter indicato non esiste ["+getRepositoryJDBCAdapter()+"]: "+e.getMessage(),e);
 							return false;
 						}
 					}
 					else{
 						String adapterClass = className.getJDBCAdapter(jdbcAdapter);
 						if(adapterClass == null){
-							this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.jdbcAdapter'. \n L'adapter indicato non esiste ["+getRepositoryJDBCAdapter()+"] nelle classi registrate in OpenSPCoop");
+							this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.jdbcAdapter'. \n L'adapter indicato non esiste ["+getRepositoryJDBCAdapter()+"] nelle classi registrate in OpenSPCoop");
 							return false;
 						}
 						try{
 							IJDBCAdapter adapter = (IJDBCAdapter) loaderOpenSPCoop.newInstance(tipoClass);
 							adapter.toString();
 						}catch(Exception e){
-							this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.jdbcAdapter'. \n L'adapter indicato non esiste ["+getRepositoryJDBCAdapter()+"]: "+e.getMessage(),e);
+							this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.jdbcAdapter'. \n L'adapter indicato non esiste ["+getRepositoryJDBCAdapter()+"]: "+e.getMessage(),e);
 							return false;
 						}
 					}
@@ -812,11 +821,11 @@ public class OpenSPCoop2Properties {
 			if( CostantiConfigurazione.COMUNICAZIONE_INFRASTRUTTURALE_JMS.equals(this.getNodeReceiver()) 
 					|| CostantiConfigurazione.COMUNICAZIONE_INFRASTRUTTURALE_JMS.equals(this.getNodeSender()) ){
 				if (getJNDIName_ConnectionFactory() == null){		
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.queueConnectionFactory'. Proprieta' non impostata");
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.queueConnectionFactory'. Proprieta' non impostata");
 					return false;
 				}
 				if (getJNDIContext_ConnectionFactory() == null){		
-					this.log.error("Riscontrato errore durante la lettura della proprieta' del contesto JNDI del ConnectionFactory: 'org.openspcoop2.pdd.connectionFactory.property.*'. Proprieta' definite in maniera errata?");
+					this.logError("Riscontrato errore durante la lettura della proprieta' del contesto JNDI del ConnectionFactory: 'org.openspcoop2.pdd.connectionFactory.property.*'. Proprieta' definite in maniera errata?");
 					return false;
 				}
 
@@ -828,7 +837,7 @@ public class OpenSPCoop2Properties {
 					return false;
 				}
 				if (getJNDIContext_CodeInterne() == null){		
-					this.log.error("Riscontrato errore durante la lettura della proprieta' del contesto JNDI delle code interne: 'org.openspcoop2.pdd.queue.property.*'. Proprieta' definite in maniera errata?");
+					this.logError("Riscontrato errore durante la lettura della proprieta' del contesto JNDI delle code interne: 'org.openspcoop2.pdd.queue.property.*'. Proprieta' definite in maniera errata?");
 					return false;
 				}
 				// warning
@@ -847,7 +856,7 @@ public class OpenSPCoop2Properties {
 				return false;
 			}
 			if (getJNDIContext_TimerEJB() == null){		
-				this.log.error("Riscontrato errore durante la lettura della proprieta' del contesto JNDI delle code interne: 'org.openspcoop2.pdd.queue.property.*'. Proprieta' definite in maniera errata?");
+				this.logError("Riscontrato errore durante la lettura della proprieta' del contesto JNDI delle code interne: 'org.openspcoop2.pdd.queue.property.*'. Proprieta' definite in maniera errata?");
 				return false;
 			}
 			// warning
@@ -933,13 +942,13 @@ public class OpenSPCoop2Properties {
 				}
 				if(i==(priorita.size()-1)) {
 					if(!conf.isNessunaPriorita()) {
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.priorita.*': l'ultima priorità deve rappresentare 'nessuna priorita' e deve quindi avere un valore <=0 (trovato: "+conf.getPercentuale()+")");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.priorita.*': l'ultima priorità deve rappresentare 'nessuna priorita' e deve quindi avere un valore <=0 (trovato: "+conf.getPercentuale()+")");
 						return false;
 					}
 				}
 			}
 			if(sommaPercentuale>100) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.priorita.*': la somma delle percentuali fornite non deve essere superiore a 100 (trovato: "+sommaPercentuale+")");
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.priorita.*': la somma delle percentuali fornite non deve essere superiore a 100 (trovato: "+sommaPercentuale+")");
 				return false;
 			}
 			this.isLoadBalancerDebug();
@@ -975,7 +984,7 @@ public class OpenSPCoop2Properties {
 			// GestioneErrore
 			ProprietaErroreApplicativo paError = getProprietaGestioneErrorePD_engine(null,true);
 			if( paError == null  ){
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.erroreApplicativo'.");
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.erroreApplicativo'.");
 				return false;
 			}
 			getLocaleSOAPFaultString();
@@ -1005,7 +1014,7 @@ public class OpenSPCoop2Properties {
 
 			// IdentitaPdD
 			if( this.getIdentitaPortaDefault() == null  ){
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.identificativoPorta'.");
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.identificativoPorta'.");
 				return false;
 			}
 			/*
@@ -1022,12 +1031,12 @@ public class OpenSPCoop2Properties {
 			headerDefault.add(CostantiConfigurazione.HEADER_INTEGRAZIONE_URL_BASED);
 			headerDefault.add(CostantiConfigurazione.HEADER_INTEGRAZIONE_TRASPORTO);
 			headerDefault.add(CostantiConfigurazione.HEADER_INTEGRAZIONE_SOAP);	
-			if(checkTipiIntegrazione(headerDefault.toArray(new String[1]))==false)
+			if(!checkTipiIntegrazione(headerDefault.toArray(new String[1])))
 				return false;
 			
 			// Integrazione tra Servizi Applicativi e GovWay
 			if ( this.getTipoIntegrazionePD() == null ){
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pd'. Almeno un tipo di integrazione e' obbligatorio.");
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pd'. Almeno un tipo di integrazione e' obbligatorio.");
 				return false;
 			}else{
 				String[] tipiIntegrazionePD = this.getTipoIntegrazionePD();
@@ -1036,18 +1045,18 @@ public class OpenSPCoop2Properties {
 				for(int i=0; i<tipiIntegrazionePD.length;i++){
 					String tipoClass = className.getIntegrazionePortaDelegata(tipiIntegrazionePD[i]);
 					if(tipoClass == null){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pd="+tipiIntegrazionePD[i]+
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pd="+tipiIntegrazionePD[i]+
 								"'. \n L'header di integrazione indicato non esiste nelle classi registrate in OpenSPCoop");
 						return false;
 					}
 					try{
 						IGestoreIntegrazionePD gestore = (IGestoreIntegrazionePD) loaderOpenSPCoop.newInstance(tipoClass);
 						if(gestore==null){
-							throw new Exception("Oggetto non creato dopo aver chiamato la newInstance");
+							throw new CoreException("Oggetto non creato dopo aver chiamato la newInstance");
 						}
 						gestore.toString();
 					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pd="+tipiIntegrazionePD[i]+"' (classe:"+tipoClass+"). \n Errore avvenuto: "+e.getMessage(),e);
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pd="+tipiIntegrazionePD[i]+"' (classe:"+tipoClass+"). \n Errore avvenuto: "+e.getMessage(),e);
 						return false;
 					}
 				}
@@ -1069,23 +1078,23 @@ public class OpenSPCoop2Properties {
 					for(int i=0; i<tipiIntegrazionePD_protocollo.length;i++){
 						String tipoClass = className.getIntegrazionePortaDelegata(tipiIntegrazionePD_protocollo[i]);
 						if(tipoClass == null){
-							this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pd."+protocollo+"="+tipiIntegrazionePD_protocollo[i]+
+							this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pd."+protocollo+"="+tipiIntegrazionePD_protocollo[i]+
 									"'. \n L'header di integrazione indicato non esiste nelle classi registrate in OpenSPCoop");
 							return false;
 						}
 						try{
 							IGestoreIntegrazionePD gestore = (IGestoreIntegrazionePD) loaderOpenSPCoop.newInstance(tipoClass);
 							if(gestore==null){
-								throw new Exception("Oggetto non creato dopo aver chiamato la newInstance");
+								throw new CoreException("Oggetto non creato dopo aver chiamato la newInstance");
 							}
 							gestore.toString();
 						}catch(Exception e){
-							this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pd."+protocollo+"="+tipiIntegrazionePD_protocollo[i]+"' (classe:"+tipoClass+"). \n Errore avvenuto: "+e.getMessage(),e);
+							this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pd."+protocollo+"="+tipiIntegrazionePD_protocollo[i]+"' (classe:"+tipoClass+"). \n Errore avvenuto: "+e.getMessage(),e);
 							return false;
 						}
 					}
 
-					if(checkTipiIntegrazione(tipiIntegrazionePD_protocollo)==false)
+					if(!checkTipiIntegrazione(tipiIntegrazionePD_protocollo))
 						return false;
 				}
 			}
@@ -1098,18 +1107,18 @@ public class OpenSPCoop2Properties {
 				for(int i=0; i<tipiIntegrazionePA.length;i++){
 					String tipoClass = className.getIntegrazionePortaApplicativa(tipiIntegrazionePA[i]);
 					if(tipoClass == null){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pa="+tipiIntegrazionePA[i]+
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pa="+tipiIntegrazionePA[i]+
 								"'. \n L'header di integrazione indicato non esiste nelle classi registrate in OpenSPCoop");
 						return false;
 					}
 					try{
 						IGestoreIntegrazionePA gestore = (IGestoreIntegrazionePA) loaderOpenSPCoop.newInstance(tipoClass);
 						if(gestore==null){
-							throw new Exception("Oggetto non creato dopo aver chiamato la newInstance");
+							throw new CoreException("Oggetto non creato dopo aver chiamato la newInstance");
 						}
 						gestore.toString();
 					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pa="+tipiIntegrazionePA[i]+"' (classe:"+tipoClass+"). \n Errore avvenuto: "+e.getMessage(),e);
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pa="+tipiIntegrazionePA[i]+"' (classe:"+tipoClass+"). \n Errore avvenuto: "+e.getMessage(),e);
 						return false;
 					}
 				}
@@ -1131,23 +1140,23 @@ public class OpenSPCoop2Properties {
 					for(int i=0; i<tipiIntegrazionePA_protocollo.length;i++){
 						String tipoClass = className.getIntegrazionePortaApplicativa(tipiIntegrazionePA_protocollo[i]);
 						if(tipoClass == null){
-							this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pa."+protocollo+"="+tipiIntegrazionePA_protocollo[i]+
+							this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pa."+protocollo+"="+tipiIntegrazionePA_protocollo[i]+
 									"'. \n L'header di integrazione indicato non esiste nelle classi registrate in OpenSPCoop");
 							return false;
 						}
 						try{
 							IGestoreIntegrazionePA gestore = (IGestoreIntegrazionePA) loaderOpenSPCoop.newInstance(tipoClass);
 							if(gestore==null){
-								throw new Exception("Oggetto non creato dopo aver chiamato la newInstance");
+								throw new CoreException("Oggetto non creato dopo aver chiamato la newInstance");
 							}
 							gestore.toString();
 						}catch(Exception e){
-							this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pa."+protocollo+"="+tipiIntegrazionePA_protocollo[i]+"' (classe:"+tipoClass+"). \n Errore avvenuto: "+e.getMessage(),e);
+							this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pa."+protocollo+"="+tipiIntegrazionePA_protocollo[i]+"' (classe:"+tipoClass+"). \n Errore avvenuto: "+e.getMessage(),e);
 							return false;
 						}
 					}
 
-					if(checkTipiIntegrazione(tipiIntegrazionePA_protocollo)==false)
+					if(!checkTipiIntegrazione(tipiIntegrazionePA_protocollo))
 						return false;
 				}
 			}
@@ -1231,18 +1240,18 @@ public class OpenSPCoop2Properties {
 			if( this.getTipoAutorizzazioneBuste()==null ){
 				return false;
 			}else{
-				if(CostantiConfigurazione.AUTORIZZAZIONE_NONE.equals(this.getTipoAutorizzazioneBuste())==false){
+				if(!CostantiConfigurazione.AUTORIZZAZIONE_NONE.equals(this.getTipoAutorizzazioneBuste())){
 					//	Ricerco connettore
 					String tipoClass = className.getAutorizzazionePortaApplicativa(this.getTipoAutorizzazioneBuste());
 					if(tipoClass == null){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.autorizzazioneBuste'. \n L'autorizzazione delle buste indicata non esiste ["+this.getTipoAutorizzazioneBuste()+"] nelle classi registrate in OpenSPCoop");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.autorizzazioneBuste'. \n L'autorizzazione delle buste indicata non esiste ["+this.getTipoAutorizzazioneBuste()+"] nelle classi registrate in OpenSPCoop");
 						return false;
 					}
 					try{
 						IAutorizzazionePortaApplicativa auth = (IAutorizzazionePortaApplicativa) loaderOpenSPCoop.newInstance(tipoClass);
 						auth.toString();
 					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.autorizzazioneBuste'. \n L'autorizzazione delle buste indicata non esiste ["+this.getTipoAutorizzazioneBuste()+"]: "+e.getMessage(),e);
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.autorizzazioneBuste'. \n L'autorizzazione delle buste indicata non esiste ["+this.getTipoAutorizzazioneBuste()+"]: "+e.getMessage(),e);
 						return false;
 					}
 				}
@@ -1270,21 +1279,21 @@ public class OpenSPCoop2Properties {
 						IGestoreRepository repository = GestoreRepositoryFactory.createRepositoryBuste(this.getDatabaseType());
 						repository.toString();
 					}catch(Exception e){
-						this.log.error("Riscontrato errore durante l'inizializzazione del gestore del repository buste associato dalla factory al tipo di database ["+this.getDatabaseType()+"]: "+e.getMessage(),e);
+						this.logError("Riscontrato errore durante l'inizializzazione del gestore del repository buste associato dalla factory al tipo di database ["+this.getDatabaseType()+"]: "+e.getMessage(),e);
 						return false;
 					}
 				}
 				else{
 					String tipoClass = className.getRepositoryBuste(this.getGestoreRepositoryBuste());
 					if(tipoClass == null){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.repositoryBuste'. \n Il gestore del repository buste indicato non esiste ["+this.getGestoreRepositoryBuste()+"] nelle classi registrate in OpenSPCoop");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.repositoryBuste'. \n Il gestore del repository buste indicato non esiste ["+this.getGestoreRepositoryBuste()+"] nelle classi registrate in OpenSPCoop");
 						return false;
 					}
 					try{
 						IGestoreRepository repository = (IGestoreRepository) loaderOpenSPCoop.newInstance(tipoClass);
 						repository.toString();
 					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.repositoryBuste'. \n Il gestore del repository buste indicato non esiste ["+this.getGestoreRepositoryBuste()+"]: "+e.getMessage(),e);
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.repositoryBuste'. \n Il gestore del repository buste indicato non esiste ["+this.getGestoreRepositoryBuste()+"]: "+e.getMessage(),e);
 						return false;
 					}
 				}
@@ -1294,34 +1303,34 @@ public class OpenSPCoop2Properties {
 			// Ricerco
 			String tipoClassFiltroDuplicati = className.getFiltroDuplicati(this.getGestoreFiltroDuplicatiRepositoryBuste());
 			if(tipoClassFiltroDuplicati == null){
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.protocol.filtroDuplicati'. \n Il gestore filtro duplicati del repository buste indicato non esiste ["+this.getGestoreFiltroDuplicatiRepositoryBuste()+"] nelle classi registrate in OpenSPCoop");
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.protocol.filtroDuplicati'. \n Il gestore filtro duplicati del repository buste indicato non esiste ["+this.getGestoreFiltroDuplicatiRepositoryBuste()+"] nelle classi registrate in OpenSPCoop");
 				return false;
 			}
 			try{
 				IFiltroDuplicati duplicati = (IFiltroDuplicati) loaderOpenSPCoop.newInstance(tipoClassFiltroDuplicati);
 				duplicati.toString();
 			}catch(Exception e){
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.protocol.filtroDuplicati'. \n Il gestore filtro duplicati del repository buste indicato non esiste ["+this.getGestoreFiltroDuplicatiRepositoryBuste()+"]: "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.protocol.filtroDuplicati'. \n Il gestore filtro duplicati del repository buste indicato non esiste ["+this.getGestoreFiltroDuplicatiRepositoryBuste()+"]: "+e.getMessage(),e);
 				return false;
 			}
 			
 			// SQLQueryObject
 			if(this.getDatabaseType()!=null){
 				if ( ! TipiDatabase.isAMember(this.getDatabaseType())){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.tipoDatabase', tipo di database non gestito");
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.tipoDatabase', tipo di database non gestito");
 					return false;
 				}
 				// Ricerco
 				String tipoClass = className.getSQLQueryObject(this.getDatabaseType());
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.tipoDatabase'. \n L'oggetto SQLQuery indicato non esiste ["+this.getDatabaseType()+"] nelle classi registrate in OpenSPCoop");
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.tipoDatabase'. \n L'oggetto SQLQuery indicato non esiste ["+this.getDatabaseType()+"] nelle classi registrate in OpenSPCoop");
 					return false;
 				}
 				try{
 					ISQLQueryObject sqlQuery = (ISQLQueryObject) loaderOpenSPCoop.newInstance(tipoClass,TipiDatabase.DEFAULT);
 					sqlQuery.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.tipoDatabase'. \n L'oggetto SQLQuery indicato non esiste ["+this.getDatabaseType()+"]: "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.tipoDatabase'. \n L'oggetto SQLQuery indicato non esiste ["+this.getDatabaseType()+"]: "+e.getMessage(),e);
 					return false;
 				}
 			}
@@ -1385,10 +1394,10 @@ public class OpenSPCoop2Properties {
 				if(this.isAbilitataCacheGestoreMessaggi()){
 					String algoritmo = this.getAlgoritmoCacheGestoreMessaggi();
 					if(algoritmo!=null &&
-							CostantiConfigurazione.CACHE_LRU.equals(algoritmo)==false && 
-							CostantiConfigurazione.CACHE_MRU.equals(algoritmo)==false){
-						this.log.error("Algoritmo utilizzato con la cache (Gestore Messaggi) non conosciuto: "+algoritmo);
-						throw new Exception("Algoritmo Cache (Gestore Messaggi) non conosciuto");
+							!CostantiConfigurazione.CACHE_LRU.equals(algoritmo) && 
+							!CostantiConfigurazione.CACHE_MRU.equals(algoritmo)){
+						this.logError("Algoritmo utilizzato con la cache (Gestore Messaggi) non conosciuto: "+algoritmo);
+						throw new CoreException("Algoritmo Cache (Gestore Messaggi) non conosciuto");
 					}
 					this.getDimensioneCacheGestoreMessaggi();
 					this.getItemIdleTimeCacheGestoreMessaggi();
@@ -1412,18 +1421,18 @@ public class OpenSPCoop2Properties {
 			}
 			String tipoDateManger = className.getDateManager(this.getTipoDateManager());
 			if(tipoDateManger == null){
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.date.tipo'. \n Il DateManager indicato non esiste ["+this.getTipoDateManager()+"] nelle classi registrate in OpenSPCoop");
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.date.tipo'. \n Il DateManager indicato non esiste ["+this.getTipoDateManager()+"] nelle classi registrate in OpenSPCoop");
 				return false;
 			}
 			try{
 				IDate date = (IDate) loaderOpenSPCoop.newInstance(tipoDateManger);
 				date.toString();
 			}catch(Exception e){
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.date.tipo'. \n Il DateManager indicato non esiste ["+this.getTipoDateManager()+"]: "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.date.tipo'. \n Il DateManager indicato non esiste ["+this.getTipoDateManager()+"]: "+e.getMessage(),e);
 				return false;
 			}
 			if (this.getDateManagerProperties() == null){		
-				this.log.error("Riscontrato errore durante la lettura della proprieta' del DataManager: 'org.openspcoop2.pdd.date.property.*'. Proprieta' definite in maniera errata?");
+				this.logError("Riscontrato errore durante la lettura della proprieta' del DataManager: 'org.openspcoop2.pdd.date.property.*'. Proprieta' definite in maniera errata?");
 				return false;
 			}
 			// Warning
@@ -1508,14 +1517,14 @@ public class OpenSPCoop2Properties {
 					//	Ricerco
 					String tipoClass = className.getGestoreCredenziali(gestoriCredenzialiPD[i]);
 					if(tipoClass == null){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.pd.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiPD[i]+"] nelle classi registrate in OpenSPCoop");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.pd.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiPD[i]+"] nelle classi registrate in OpenSPCoop");
 						return false;
 					}
 					try{
 						IGestoreCredenziali g = (IGestoreCredenziali) loaderOpenSPCoop.newInstance(tipoClass);
 						g.toString();
 					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.pd.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiPD[i]+"]: "+e.getMessage(),e);
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.pd.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiPD[i]+"]: "+e.getMessage(),e);
 						return false;
 					}
 				}
@@ -1528,14 +1537,14 @@ public class OpenSPCoop2Properties {
 					//	Ricerco
 					String tipoClass = className.getGestoreCredenziali(gestoriCredenzialiPA[i]);
 					if(tipoClass == null){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.pa.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiPA[i]+"] nelle classi registrate in OpenSPCoop");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.pa.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiPA[i]+"] nelle classi registrate in OpenSPCoop");
 						return false;
 					}
 					try{
 						IGestoreCredenziali g = (IGestoreCredenziali) loaderOpenSPCoop.newInstance(tipoClass);
 						g.toString();
 					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.pa.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiPA[i]+"]: "+e.getMessage(),e);
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.pa.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiPA[i]+"]: "+e.getMessage(),e);
 						return false;
 					}
 				}
@@ -1548,14 +1557,14 @@ public class OpenSPCoop2Properties {
 					//	Ricerco
 					String tipoClass = className.getGestoreCredenzialiIM(gestoriCredenzialiIM[i]);
 					if(tipoClass == null){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.integrationManager.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiIM[i]+"] nelle classi registrate in OpenSPCoop");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.integrationManager.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiIM[i]+"] nelle classi registrate in OpenSPCoop");
 						return false;
 					}
 					try{
 						IGestoreCredenzialiIM g = (IGestoreCredenzialiIM) loaderOpenSPCoop.newInstance(tipoClass);
 						g.toString();
 					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.integrationManager.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiIM[i]+"]: "+e.getMessage(),e);
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.integrationManager.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiIM[i]+"]: "+e.getMessage(),e);
 						return false;
 					}
 				}
@@ -1687,7 +1696,7 @@ public class OpenSPCoop2Properties {
 			if(CostantiConfigurazione.NONE.equals(tipoIDGenerator)==false){
 				String tipoIdManger = className.getUniqueIdentifier(tipoIDGenerator);
 				if(tipoIdManger == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.idGenerator'. \n Il generatore di unique identifier indicato non esiste ["+this.getTipoIDManager()+"] nelle classi registrate in OpenSPCoop");
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.idGenerator'. \n Il generatore di unique identifier indicato non esiste ["+this.getTipoIDManager()+"] nelle classi registrate in OpenSPCoop");
 					return false;
 				}
 				useIDManagerWithThreadLocal();
@@ -1697,7 +1706,7 @@ public class OpenSPCoop2Properties {
 					IUniqueIdentifierGenerator uniqueIdentifier = (IUniqueIdentifierGenerator) loaderOpenSPCoop.newInstance(tipoIdManger);
 					uniqueIdentifier.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.idGenerator'. \n Il generatore di unique identifier non esiste ["+this.getTipoIDManager()+"]: "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.idGenerator'. \n Il generatore di unique identifier non esiste ["+this.getTipoIDManager()+"]: "+e.getMessage(),e);
 					return false;
 				}
 			}
@@ -1708,7 +1717,7 @@ public class OpenSPCoop2Properties {
 				// Check tipi registrati
 				String tipoClass = className.getOpenSPCoop2MessageFactory(tipo);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.messagefactory'=...,"+tipo+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.messagefactory'=...,"+tipo+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -1716,7 +1725,7 @@ public class OpenSPCoop2Properties {
 					OpenSPCoop2MessageFactory test = (OpenSPCoop2MessageFactory) loaderOpenSPCoop.newInstance(tipoClass);
 					test.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.messagefactory'=...,"+tipoClass+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.messagefactory'=...,"+tipoClass+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				} 
@@ -1728,7 +1737,7 @@ public class OpenSPCoop2Properties {
 				// Check tipi registrati
 				String tipoClass = className.getMessageSecurityContext(tipo);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.messageSecurity.context'=...,"+tipo+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.messageSecurity.context'=...,"+tipo+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -1736,7 +1745,7 @@ public class OpenSPCoop2Properties {
 					MessageSecurityContext test = (MessageSecurityContext) loaderOpenSPCoop.newInstance(tipoClass);
 					test.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.messageSecurity.context'=...,"+tipoClass+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.messageSecurity.context'=...,"+tipoClass+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				} 
@@ -1746,7 +1755,7 @@ public class OpenSPCoop2Properties {
 				// Check tipi registrati
 				String tipoClass = className.getMessageSecurityDigestReader(tipo);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.messageSecurity.digestReader'=...,"+tipo+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.messageSecurity.digestReader'=...,"+tipo+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -1754,7 +1763,7 @@ public class OpenSPCoop2Properties {
 					IDigestReader test = (IDigestReader) loaderOpenSPCoop.newInstance(tipoClass);
 					test.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.messageSecurity.digestReader'=...,"+tipoClass+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.messageSecurity.digestReader'=...,"+tipoClass+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				} 
@@ -1846,7 +1855,7 @@ public class OpenSPCoop2Properties {
 				if(notifierClass!=null){
 					String tipoClass = className.getNotifierCallback(notifierClass);
 					if(tipoClass == null){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.notifierCallback'=...,"+notifierClass+
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.notifierCallback'=...,"+notifierClass+
 						"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 						return false;
 					}
@@ -1854,7 +1863,7 @@ public class OpenSPCoop2Properties {
 						INotifierCallback test = (INotifierCallback) loaderOpenSPCoop.newInstance(tipoClass);
 						test.toString();
 					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.notifierCallback'=...,"+tipoClass+
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.notifierCallback'=...,"+tipoClass+
 								"'. \n La classe non esiste: "+e.getMessage(),e);
 						return false;
 					} 
@@ -1892,7 +1901,7 @@ public class OpenSPCoop2Properties {
 				// Check tipi registrati
 				String tipoClass = className.getRealmContainerCustom(tipo);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.realmContainer.custom'="+tipo+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.realmContainer.custom'="+tipo+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -1900,7 +1909,7 @@ public class OpenSPCoop2Properties {
 					IAutorizzazioneSecurityContainer test = (IAutorizzazioneSecurityContainer) loaderOpenSPCoop.newInstance(tipoClass);
 					test.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.realmContainer.custom'="+tipoClass+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.realmContainer.custom'="+tipoClass+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				} 
@@ -1927,7 +1936,7 @@ public class OpenSPCoop2Properties {
 					IExtendedInfo test = (IExtendedInfo) loaderOpenSPCoop.newInstance(extendedInfoConfigurazione);
 					test.toString();
 				}catch(Exception e){
-					this.log.error("La classe ["+extendedInfoConfigurazione+"], indicata nella proprieta' 'org.openspcoop2.pdd.config.extendedInfo.configurazione', non esiste: "+e.getMessage(),e);
+					this.logError("La classe ["+extendedInfoConfigurazione+"], indicata nella proprieta' 'org.openspcoop2.pdd.config.extendedInfo.configurazione', non esiste: "+e.getMessage(),e);
 					return false;
 				} 
 			}
@@ -1944,7 +1953,7 @@ public class OpenSPCoop2Properties {
 					IExtendedInfo test = (IExtendedInfo) loaderOpenSPCoop.newInstance(extendedInfoPortaDelegata);
 					test.toString();
 				}catch(Exception e){
-					this.log.error("La classe ["+extendedInfoPortaDelegata+"], indicata nella proprieta' 'org.openspcoop2.pdd.config.extendedInfo.portaDelegata', non esiste: "+e.getMessage(),e);
+					this.logError("La classe ["+extendedInfoPortaDelegata+"], indicata nella proprieta' 'org.openspcoop2.pdd.config.extendedInfo.portaDelegata', non esiste: "+e.getMessage(),e);
 					return false;
 				} 
 			}
@@ -1961,7 +1970,7 @@ public class OpenSPCoop2Properties {
 					IExtendedInfo test = (IExtendedInfo) loaderOpenSPCoop.newInstance(extendedInfoPortaApplicativa);
 					test.toString();
 				}catch(Exception e){
-					this.log.error("La classe ["+extendedInfoPortaApplicativa+"], indicata nella proprieta' 'org.openspcoop2.pdd.config.extendedInfo.portaApplicativa', non esiste: "+e.getMessage(),e);
+					this.logError("La classe ["+extendedInfoPortaApplicativa+"], indicata nella proprieta' 'org.openspcoop2.pdd.config.extendedInfo.portaApplicativa', non esiste: "+e.getMessage(),e);
 					return false;
 				} 
 			}
@@ -2402,7 +2411,7 @@ public class OpenSPCoop2Properties {
 			return true;
 
 		}catch(java.lang.Exception e) {
-			this.log.error("Riscontrato errore durante la validazione lettura della proprieta' di openspcoop: "+e.getMessage(),e);
+			this.logError("Riscontrato errore durante la validazione lettura della proprieta' di openspcoop: "+e.getMessage(),e);
 			return false;
 		}
 	}
@@ -2427,7 +2436,7 @@ public class OpenSPCoop2Properties {
 			return true;
 			
 		}catch(java.lang.Exception e) {
-			this.log.error("Riscontrato errore durante la validazione lettura della proprieta' di openspcoop: "+e.getMessage(),e);
+			this.logError("Riscontrato errore durante la validazione lettura della proprieta' di openspcoop: "+e.getMessage(),e);
 			return false;
 		}
 	}
@@ -2440,7 +2449,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
 				String tipoClass = className.getInitHandlerBuiltIn(tipiHandlerBuiltIn[i]);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.init'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.init'=...,"+tipiHandlerBuiltIn[i]+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -2448,7 +2457,7 @@ public class OpenSPCoop2Properties {
 					InitHandler handler = (InitHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.init'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.init'=...,"+tipiHandlerBuiltIn[i]+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				}
@@ -2462,7 +2471,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
 				String tipoClass = className.getExitHandlerBuiltIn(tipiHandlerBuiltIn[i]);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.exit'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.exit'=...,"+tipiHandlerBuiltIn[i]+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -2470,7 +2479,7 @@ public class OpenSPCoop2Properties {
 					ExitHandler handler = (ExitHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.exit'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.exit'=...,"+tipiHandlerBuiltIn[i]+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				}
@@ -2484,7 +2493,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
 				String tipoClass = className.getPreInRequestHandlerBuiltIn(tipiHandlerBuiltIn[i]);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.pre-in-request'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.pre-in-request'=...,"+tipiHandlerBuiltIn[i]+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -2492,7 +2501,7 @@ public class OpenSPCoop2Properties {
 					PreInRequestHandler handler = (PreInRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.pre-in-request'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.pre-in-request'=...,"+tipiHandlerBuiltIn[i]+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				}
@@ -2505,7 +2514,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
 				String tipoClass = className.getInRequestHandlerBuiltIn(tipiHandlerBuiltIn[i]);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.in-request'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.in-request'=...,"+tipiHandlerBuiltIn[i]+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -2513,7 +2522,7 @@ public class OpenSPCoop2Properties {
 					InRequestHandler handler = (InRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.in-request'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.in-request'=...,"+tipiHandlerBuiltIn[i]+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				}
@@ -2526,7 +2535,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
 				String tipoClass = className.getInRequestProtocolHandlerBuiltIn(tipiHandlerBuiltIn[i]);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.in-protocol-request'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.in-protocol-request'=...,"+tipiHandlerBuiltIn[i]+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -2534,7 +2543,7 @@ public class OpenSPCoop2Properties {
 					InRequestProtocolHandler handler = (InRequestProtocolHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.in-protocol-request'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.in-protocol-request'=...,"+tipiHandlerBuiltIn[i]+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				}
@@ -2547,7 +2556,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
 				String tipoClass = className.getOutRequestHandlerBuiltIn(tipiHandlerBuiltIn[i]);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.out-request'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.out-request'=...,"+tipiHandlerBuiltIn[i]+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -2555,7 +2564,7 @@ public class OpenSPCoop2Properties {
 					OutRequestHandler handler = (OutRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.out-request'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.out-request'=...,"+tipiHandlerBuiltIn[i]+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				}
@@ -2568,7 +2577,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
 				String tipoClass = className.getPostOutRequestHandlerBuiltIn(tipiHandlerBuiltIn[i]);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.post-out-request'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.post-out-request'=...,"+tipiHandlerBuiltIn[i]+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -2576,7 +2585,7 @@ public class OpenSPCoop2Properties {
 					PostOutRequestHandler handler = (PostOutRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.post-out-request'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.post-out-request'=...,"+tipiHandlerBuiltIn[i]+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				}
@@ -2589,7 +2598,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
 				String tipoClass = className.getPreInResponseHandlerBuiltIn(tipiHandlerBuiltIn[i]);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.pre-in-response'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.pre-in-response'=...,"+tipiHandlerBuiltIn[i]+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -2597,7 +2606,7 @@ public class OpenSPCoop2Properties {
 					PreInResponseHandler handler = (PreInResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.pre-in-response'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.pre-in-response'=...,"+tipiHandlerBuiltIn[i]+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				}
@@ -2610,7 +2619,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
 				String tipoClass = className.getInResponseHandlerBuiltIn(tipiHandlerBuiltIn[i]);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.in-response'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.in-response'=...,"+tipiHandlerBuiltIn[i]+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -2618,7 +2627,7 @@ public class OpenSPCoop2Properties {
 					InResponseHandler handler = (InResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.in-response'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.in-response'=...,"+tipiHandlerBuiltIn[i]+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				}
@@ -2631,7 +2640,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
 				String tipoClass = className.getOutResponseHandlerBuiltIn(tipiHandlerBuiltIn[i]);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.out-response'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.out-response'=...,"+tipiHandlerBuiltIn[i]+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -2639,7 +2648,7 @@ public class OpenSPCoop2Properties {
 					OutResponseHandler handler = (OutResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.out-response'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.out-response'=...,"+tipiHandlerBuiltIn[i]+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				}
@@ -2652,7 +2661,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
 				String tipoClass = className.getPostOutResponseHandlerBuiltIn(tipiHandlerBuiltIn[i]);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.post-out-response'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.post-out-response'=...,"+tipiHandlerBuiltIn[i]+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -2660,7 +2669,7 @@ public class OpenSPCoop2Properties {
 					PostOutResponseHandler handler = (PostOutResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.post-out-response'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.post-out-response'=...,"+tipiHandlerBuiltIn[i]+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				}
@@ -2673,7 +2682,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
 				String tipoClass = className.getIntegrationManagerRequestHandlerBuiltIn(tipiHandlerBuiltIn[i]);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.built-in.request'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.built-in.request'=...,"+tipiHandlerBuiltIn[i]+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -2681,7 +2690,7 @@ public class OpenSPCoop2Properties {
 					IntegrationManagerRequestHandler handler = (IntegrationManagerRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.built-in.request'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.built-in.request'=...,"+tipiHandlerBuiltIn[i]+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				}
@@ -2694,7 +2703,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
 				String tipoClass = className.getIntegrationManagerResponseHandlerBuiltIn(tipiHandlerBuiltIn[i]);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.built-in.response'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.built-in.response'=...,"+tipiHandlerBuiltIn[i]+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -2702,7 +2711,7 @@ public class OpenSPCoop2Properties {
 					IntegrationManagerResponseHandler handler = (IntegrationManagerResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.built-in.response'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.built-in.response'=...,"+tipiHandlerBuiltIn[i]+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				}
@@ -2720,7 +2729,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandler.length;i++){
 				String tipoClass = className.getInitHandler(tipiHandler[i]);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.init'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.init'=...,"+tipiHandler[i]+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -2728,7 +2737,7 @@ public class OpenSPCoop2Properties {
 					InitHandler handler = (InitHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.init'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.init'=...,"+tipiHandler[i]+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				}
@@ -2742,7 +2751,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandler.length;i++){
 				String tipoClass = className.getExitHandler(tipiHandler[i]);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.exit'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.exit'=...,"+tipiHandler[i]+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -2750,7 +2759,7 @@ public class OpenSPCoop2Properties {
 					ExitHandler handler = (ExitHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.exit'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.exit'=...,"+tipiHandler[i]+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				}
@@ -2764,7 +2773,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandler.length;i++){
 				String tipoClass = className.getPreInRequestHandler(tipiHandler[i]);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.pre-in-request'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.pre-in-request'=...,"+tipiHandler[i]+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -2772,7 +2781,7 @@ public class OpenSPCoop2Properties {
 					PreInRequestHandler handler = (PreInRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.pre-in-request'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.pre-in-request'=...,"+tipiHandler[i]+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				}
@@ -2785,7 +2794,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandler.length;i++){
 				String tipoClass = className.getInRequestHandler(tipiHandler[i]);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-request'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-request'=...,"+tipiHandler[i]+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -2793,7 +2802,7 @@ public class OpenSPCoop2Properties {
 					InRequestHandler handler = (InRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-request'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-request'=...,"+tipiHandler[i]+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				}
@@ -2806,7 +2815,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandler.length;i++){
 				String tipoClass = className.getInRequestProtocolHandler(tipiHandler[i]);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-protocol-request'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-protocol-request'=...,"+tipiHandler[i]+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -2814,7 +2823,7 @@ public class OpenSPCoop2Properties {
 					InRequestProtocolHandler handler = (InRequestProtocolHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-protocol-request'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-protocol-request'=...,"+tipiHandler[i]+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				}
@@ -2827,7 +2836,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandler.length;i++){
 				String tipoClass = className.getOutRequestHandler(tipiHandler[i]);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.out-request'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.out-request'=...,"+tipiHandler[i]+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -2835,7 +2844,7 @@ public class OpenSPCoop2Properties {
 					OutRequestHandler handler = (OutRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.out-request'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.out-request'=...,"+tipiHandler[i]+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				}
@@ -2848,7 +2857,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandler.length;i++){
 				String tipoClass = className.getPostOutRequestHandler(tipiHandler[i]);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.post-out-request'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.post-out-request'=...,"+tipiHandler[i]+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -2856,7 +2865,7 @@ public class OpenSPCoop2Properties {
 					PostOutRequestHandler handler = (PostOutRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.post-out-request'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.post-out-request'=...,"+tipiHandler[i]+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				}
@@ -2869,7 +2878,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandler.length;i++){
 				String tipoClass = className.getPreInResponseHandler(tipiHandler[i]);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.pre-in-response'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.pre-in-response'=...,"+tipiHandler[i]+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -2877,7 +2886,7 @@ public class OpenSPCoop2Properties {
 					PreInResponseHandler handler = (PreInResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.pre-in-response'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.pre-in-response'=...,"+tipiHandler[i]+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				}
@@ -2890,7 +2899,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandler.length;i++){
 				String tipoClass = className.getInResponseHandler(tipiHandler[i]);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-response'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-response'=...,"+tipiHandler[i]+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -2898,7 +2907,7 @@ public class OpenSPCoop2Properties {
 					InResponseHandler handler = (InResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-response'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-response'=...,"+tipiHandler[i]+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				}
@@ -2911,7 +2920,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandler.length;i++){
 				String tipoClass = className.getOutResponseHandler(tipiHandler[i]);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.out-response'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.out-response'=...,"+tipiHandler[i]+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -2919,7 +2928,7 @@ public class OpenSPCoop2Properties {
 					OutResponseHandler handler = (OutResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.out-response'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.out-response'=...,"+tipiHandler[i]+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				}
@@ -2932,7 +2941,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandler.length;i++){
 				String tipoClass = className.getPostOutResponseHandler(tipiHandler[i]);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.post-out-response'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.post-out-response'=...,"+tipiHandler[i]+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -2940,7 +2949,7 @@ public class OpenSPCoop2Properties {
 					PostOutResponseHandler handler = (PostOutResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.post-out-response'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.post-out-response'=...,"+tipiHandler[i]+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				}
@@ -2953,7 +2962,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandler.length;i++){
 				String tipoClass = className.getIntegrationManagerRequestHandler(tipiHandler[i]);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.request'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.request'=...,"+tipiHandler[i]+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -2961,7 +2970,7 @@ public class OpenSPCoop2Properties {
 					IntegrationManagerRequestHandler handler = (IntegrationManagerRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.request'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.request'=...,"+tipiHandler[i]+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				}
@@ -2974,7 +2983,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandler.length;i++){
 				String tipoClass = className.getIntegrationManagerResponseHandler(tipiHandler[i]);
 				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.response'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.response'=...,"+tipiHandler[i]+
 					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
 					return false;
 				}
@@ -2982,7 +2991,7 @@ public class OpenSPCoop2Properties {
 					IntegrationManagerResponseHandler handler = (IntegrationManagerResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.response'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.response'=...,"+tipiHandler[i]+
 							"'. \n La classe non esiste: "+e.getMessage(),e);
 					return false;
 				}
@@ -3017,7 +3026,7 @@ public class OpenSPCoop2Properties {
 		
 		Map<?,?> prop = this.getKeyValue_gestioneTokenHeaderIntegrazioneTrasporto();
 		if ( prop == null ){
-			this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.keyword.*'.");
+			this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.keyword.*'.");
 			return false;
 		}
 		
@@ -3025,7 +3034,7 @@ public class OpenSPCoop2Properties {
 		try {
 			propSetPD_trasporto = this.getKeyPDSetEnabled_gestioneTokenHeaderIntegrazioneTrasporto();
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pd.set.enabled.*'.");
+			this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pd.set.enabled.*'.");
 			return false;
 		}
 		
@@ -3033,7 +3042,7 @@ public class OpenSPCoop2Properties {
 		try {
 			propSetPD_json = this.getKeyPDSetEnabled_gestioneTokenHeaderIntegrazioneJson();
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.json.pd.set.enabled.*'.");
+			this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.json.pd.set.enabled.*'.");
 			return false;
 		}
 		
@@ -3041,7 +3050,7 @@ public class OpenSPCoop2Properties {
 		try {
 			propSetPA_trasporto = this.getKeyPASetEnabled_gestioneTokenHeaderIntegrazioneTrasporto();
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pa.set.enabled.*'.");
+			this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pa.set.enabled.*'.");
 			return false;
 		}
 		
@@ -3049,34 +3058,34 @@ public class OpenSPCoop2Properties {
 		try {
 			propSetPA_json = this.getKeyPASetEnabled_gestioneTokenHeaderIntegrazioneJson();
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.json.pa.set.enabled.*'.");
+			this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.json.pa.set.enabled.*'.");
 			return false;
 		}
 		
 		List<String> keywords = this.getKeywordsIntegrazioneGestioneToken();
 		for (String keyword : keywords) {
 			if( prop.get(keyword) == null){
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.keyword."+
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.keyword."+
 						keyword+"'.");
 				return false;
 			}
 			if( propSetPD_trasporto.containsKey(keyword) == false){
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pd.set.enabled."+
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pd.set.enabled."+
 						keyword+"'.");
 				return false;
 			}
 			if( propSetPD_json.containsKey(keyword) == false){
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.json.pd.set.enabled."+
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.json.pd.set.enabled."+
 						keyword+"'.");
 				return false;
 			}
 			if( propSetPA_trasporto.containsKey(keyword) == false){
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pa.set.enabled."+
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pa.set.enabled."+
 						keyword+"'.");
 				return false;
 			}
 			if( propSetPA_json.containsKey(keyword) == false){
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.json.pa.set.enabled."+
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.json.pa.set.enabled."+
 						keyword+"'.");
 				return false;
 			}
@@ -3135,7 +3144,7 @@ public class OpenSPCoop2Properties {
 				String tipo = "";
 				if(CostantiConfigurazione.HEADER_INTEGRAZIONE_TRASPORTO.equals(tipiIntegrazione[i])){
 					if ( this.getKeyValue_HeaderIntegrazioneTrasporto() == null ){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.trasporto.keyword.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.trasporto.keyword.*'.");
 						return false;
 					}
 					propGovWay = this.getKeyValue_HeaderIntegrazioneTrasporto();
@@ -3144,43 +3153,43 @@ public class OpenSPCoop2Properties {
 					try {
 						propSetRequestPD = this.getKeyPDSetEnabled_HeaderIntegrazioneTrasporto(true);
 					}catch(Exception e) {
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.trasporto.pd.set.request.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.trasporto.pd.set.request.enabled.*'.");
 						return false;
 					}
 					try {
 						propSetResponsePD = this.getKeyPDSetEnabled_HeaderIntegrazioneTrasporto(false);
 					}catch(Exception e) {
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.trasporto.pd.set.response.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.trasporto.pd.set.response.enabled.*'.");
 						return false;
 					}
 					try {
 						propReadPD = this.getKeyPDReadEnabled_HeaderIntegrazioneTrasporto();
 					}catch(Exception e) {
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.trasporto.pd.read.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.trasporto.pd.read.enabled.*'.");
 						return false;
 					}
 					try {
 						propSetRequestPA = this.getKeyPASetEnabled_HeaderIntegrazioneTrasporto(true);
 					}catch(Exception e) {
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.trasporto.pa.set.request.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.trasporto.pa.set.request.enabled.*'.");
 						return false;
 					}
 					try {
 						propSetResponsePA = this.getKeyPASetEnabled_HeaderIntegrazioneTrasporto(false);
 					}catch(Exception e) {
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.trasporto.pa.set.response.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.trasporto.pa.set.response.enabled.*'.");
 						return false;
 					}
 					try {
 						propReadPA = this.getKeyPAReadEnabled_HeaderIntegrazioneTrasporto();
 					}catch(Exception e) {
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.trasporto.pa.read.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.trasporto.pa.read.enabled.*'.");
 						return false;
 					}
 					tipo=CostantiConfigurazione.HEADER_INTEGRAZIONE_TRASPORTO;
 				}else if(CostantiConfigurazione.HEADER_INTEGRAZIONE_URL_BASED.equals(tipiIntegrazione[i])){
 					if ( this.getKeyValue_HeaderIntegrazioneUrlBased() == null ){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.urlBased.keyword.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.urlBased.keyword.*'.");
 						return false;
 					}
 					propGovWay = this.getKeyValue_HeaderIntegrazioneUrlBased();
@@ -3189,31 +3198,31 @@ public class OpenSPCoop2Properties {
 					try {
 						propSetRequestPD = this.getKeyPDSetEnabled_HeaderIntegrazioneUrlBased();
 					}catch(Exception e) {
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.urlBased.pd.set.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.urlBased.pd.set.enabled.*'.");
 						return false;
 					}
 					try {
 						propReadPD = this.getKeyPDReadEnabled_HeaderIntegrazioneUrlBased();
 					}catch(Exception e) {
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.urlBased.pd.read.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.urlBased.pd.read.enabled.*'.");
 						return false;
 					}
 					try {
 						propSetRequestPA = this.getKeyPASetEnabled_HeaderIntegrazioneUrlBased();
 					}catch(Exception e) {
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.urlBased.pa.set.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.urlBased.pa.set.enabled.*'.");
 						return false;
 					}
 					try {
 						propReadPA = this.getKeyPAReadEnabled_HeaderIntegrazioneUrlBased();
 					}catch(Exception e) {
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.urlBased.pa.read.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.urlBased.pa.read.enabled.*'.");
 						return false;
 					}
 					tipo=CostantiConfigurazione.HEADER_INTEGRAZIONE_URL_BASED;
 				}else if(CostantiConfigurazione.HEADER_INTEGRAZIONE_SOAP.equals(tipiIntegrazione[i])){
 					if ( this.getKeyValue_HeaderIntegrazioneSoap() == null ){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.keyword.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.keyword.*'.");
 						return false;
 					}
 					propGovWay = this.getKeyValue_HeaderIntegrazioneSoap();
@@ -3222,44 +3231,44 @@ public class OpenSPCoop2Properties {
 					try {
 						propSetRequestPD = this.getKeyPDSetEnabled_HeaderIntegrazioneSoap(true);
 					}catch(Exception e) {
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pd.set.request.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pd.set.request.enabled.*'.");
 						return false;
 					}
 					try {
 						propSetResponsePD = this.getKeyPDSetEnabled_HeaderIntegrazioneSoap(false);
 					}catch(Exception e) {
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pd.set.response.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pd.set.response.enabled.*'.");
 						return false;
 					}
 					try {
 						propReadPD = this.getKeyPDReadEnabled_HeaderIntegrazioneSoap();
 					}catch(Exception e) {
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pd.read.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pd.read.enabled.*'.");
 						return false;
 					}
 					try {
 						propSetRequestPA = this.getKeyPASetEnabled_HeaderIntegrazioneSoap(true);
 					}catch(Exception e) {
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pa.set.request.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pa.set.request.enabled.*'.");
 						return false;
 					}
 					try {
 						propSetResponsePA = this.getKeyPASetEnabled_HeaderIntegrazioneSoap(false);
 					}catch(Exception e) {
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pa.set.response.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pa.set.response.enabled.*'.");
 						return false;
 					}
 					try {
 						propReadPA = this.getKeyPAReadEnabled_HeaderIntegrazioneSoap();
 					}catch(Exception e) {
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pa.read.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pa.read.enabled.*'.");
 						return false;
 					}
 					tipo=CostantiConfigurazione.HEADER_INTEGRAZIONE_SOAP;
 				}
 				
 				if(propSetRequestPD==null) {
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pd.set.request.enabled.*'. Set is null");
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pd.set.request.enabled.*'. Set is null");
 					return false;
 				}
 				
@@ -3271,65 +3280,65 @@ public class OpenSPCoop2Properties {
 					}
 					
 					if( propGovWay.get(mapkey) == null){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".keyword."+
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".keyword."+
 								mapkey+"'.");
 						return false;
 					}
 					if( propOpenSPCoop2.get(mapkey) == null){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2."+tipo+".keyword."+
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2."+tipo+".keyword."+
 								mapkey+"'.");
 						return false;
 					}
 					if( propOpenSPCoop1.get(mapkey) == null){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1."+tipo+".keyword."+
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1."+tipo+".keyword."+
 								mapkey.toString()+"'.");
 						return false;
 					}
 					if(CostantiConfigurazione.HEADER_INTEGRAZIONE_URL_BASED.equals(tipiIntegrazione[i])){
 						if( propSetRequestPD.containsKey(mapkey) == false){
-							this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.enabled."+
+							this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.enabled."+
 									mapkey+"'.");
 							return false;
 						}
 					}
 					else {
 						if( propSetRequestPD.containsKey(mapkey) == false){
-							this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.request.enabled."+
+							this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.request.enabled."+
 									mapkey+"'.");
 							return false;
 						}
 						if( propSetResponsePD==null || propSetResponsePD.containsKey(mapkey) == false){
-							this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.response.enabled."+
+							this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.response.enabled."+
 									mapkey+"'.");
 							return false;
 						}
 					}
 					if( propReadPD.containsKey(mapkey) == false){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.read.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.read.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 					if(CostantiConfigurazione.HEADER_INTEGRAZIONE_URL_BASED.equals(tipiIntegrazione[i])){
 						if( propSetRequestPA.containsKey(mapkey) == false){
-							this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.enabled."+
+							this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.enabled."+
 									mapkey+"'.");
 							return false;
 						}
 					}
 					else {
 						if( propSetRequestPA.containsKey(mapkey) == false){
-							this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.request.enabled."+
+							this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.request.enabled."+
 									mapkey+"'.");
 							return false;
 						}
 						if( propSetResponsePA.containsKey(mapkey) == false){
-							this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.response.enabled."+
+							this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.response.enabled."+
 									mapkey+"'.");
 							return false;
 						}
 					}
 					if( propReadPA.containsKey(mapkey) == false){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.read.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.read.enabled."+
 								mapkey+"'.");
 						return false;
 					}
@@ -3338,34 +3347,34 @@ public class OpenSPCoop2Properties {
 				MapKey<String> mapkey = CostantiPdD.HEADER_INTEGRAZIONE_INFO;
 				if(CostantiConfigurazione.HEADER_INTEGRAZIONE_URL_BASED.equals(tipiIntegrazione[i])){
 					if( propSetRequestPD.containsKey(mapkey) == false){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 					if( propSetRequestPA.containsKey(mapkey) == false){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 				}
 				else {
 					if( propSetRequestPD.containsKey(mapkey) == false){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.request.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.request.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 					if( propSetResponsePD==null || propSetResponsePD.containsKey(mapkey) == false){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.response.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.response.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 					if( propSetRequestPA.containsKey(mapkey) == false){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.request.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.request.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 					if( propSetResponsePA.containsKey(mapkey) == false){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.response.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.response.enabled."+
 								mapkey+"'.");
 						return false;
 					}
@@ -3374,22 +3383,22 @@ public class OpenSPCoop2Properties {
 				if(CostantiConfigurazione.HEADER_INTEGRAZIONE_TRASPORTO.equals(tipo)) {
 					mapkey = CostantiPdD.HEADER_INTEGRAZIONE_USER_AGENT;
 					if( propSetRequestPD.containsKey(mapkey) == false){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.request.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.request.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 					if( propSetResponsePD==null || propSetResponsePD.containsKey(mapkey) == false){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.response.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.response.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 					if( propSetRequestPA.containsKey(mapkey) == false){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.request.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.request.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 					if( propSetResponsePA.containsKey(mapkey) == false){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.response.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.response.enabled."+
 								mapkey+"'.");
 						return false;
 					}
@@ -3398,34 +3407,34 @@ public class OpenSPCoop2Properties {
 				mapkey = CostantiPdD.HEADER_INTEGRAZIONE_PROTOCOL_INFO;
 				if(CostantiConfigurazione.HEADER_INTEGRAZIONE_URL_BASED.equals(tipiIntegrazione[i])){
 					if( propSetRequestPD.containsKey(mapkey) == false){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 					if( propSetRequestPA.containsKey(mapkey) == false){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 				}
 				else {
 					if( propSetRequestPD.containsKey(mapkey) == false){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.request.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.request.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 					if( propSetResponsePD==null || propSetResponsePD.containsKey(mapkey) == false){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.response.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.response.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 					if( propSetRequestPA.containsKey(mapkey) == false){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.request.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.request.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 					if( propSetResponsePA.containsKey(mapkey) == false){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.response.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.response.enabled."+
 								mapkey+"'.");
 						return false;
 					}
@@ -3520,7 +3529,7 @@ public class OpenSPCoop2Properties {
 				root = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.confDirectory");
 
 				if(root==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 
 				root = root.trim();
 
@@ -3529,7 +3538,7 @@ public class OpenSPCoop2Properties {
 
 				this.rootDirectory = root;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop, 'org.openspcoop2.pdd.confDirectory': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop, 'org.openspcoop2.pdd.confDirectory': "+e.getMessage(),e);
 				this.rootDirectory = null;
 			}    
 		}
@@ -3551,7 +3560,7 @@ public class OpenSPCoop2Properties {
 				server = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.server");
 
 				if(server==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 
 				server = server.trim();
 
@@ -3560,11 +3569,11 @@ public class OpenSPCoop2Properties {
 				}else if(CostantiConfigurazione.SERVER_WEB.equalsIgnoreCase(server)){
 					this.serverJ2EE = false;
 				}else{
-					throw new Exception("Valore ["+server+"] non conosciuto");
+					throw new CoreException("Valore ["+server+"] non conosciuto");
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop, 'org.openspcoop2.pdd.server': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop, 'org.openspcoop2.pdd.server': "+e.getMessage(),e);
 				this.serverJ2EE = null;
 			}    
 		}
@@ -3586,7 +3595,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.classLoader' non impostata, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.classLoader' non impostata, errore:"+e.getMessage(),e);
 			}
 			this.getClassLoaderRead = true;
 		}
@@ -3733,7 +3742,7 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getCheckOpenSPCoopHome = (StatoFunzionalitaConWarning) StatoFunzionalitaConWarning.toEnumConstantFromString(v);
 					if(this.getCheckOpenSPCoopHome==null){
-						throw new Exception("Valore inatteso: "+v);
+						throw new CoreException("Valore inatteso: "+v);
 					}
 				}else{
 					this.getCheckOpenSPCoopHome = StatoFunzionalitaConWarning.DISABILITATO;
@@ -3753,18 +3762,18 @@ public class OpenSPCoop2Properties {
 			try{
 				String dir = System.getProperty(CostantiPdD.OPENSPCOOP2_LOCAL_HOME);
 				if(dir==null || "".equals(dir)){
-					throw new Exception("Variabile java ["+CostantiPdD.OPENSPCOOP2_LOCAL_HOME+"] non trovata");
+					throw new CoreException("Variabile java ["+CostantiPdD.OPENSPCOOP2_LOCAL_HOME+"] non trovata");
 				}
 				foundSystem = true;
 				File fDir = new File(dir);
 				if(fDir.exists()==false){
-					throw new Exception("File ["+fDir.getAbsolutePath()+"] indicato nella variabile java ["+CostantiPdD.OPENSPCOOP2_LOCAL_HOME+"] non esiste");
+					throw new CoreException("File ["+fDir.getAbsolutePath()+"] indicato nella variabile java ["+CostantiPdD.OPENSPCOOP2_LOCAL_HOME+"] non esiste");
 				}
 				if(fDir.isDirectory()==false){
-					throw new Exception("File ["+fDir.getAbsolutePath()+"] indicato nella variabile java ["+CostantiPdD.OPENSPCOOP2_LOCAL_HOME+"] non è una directory");
+					throw new CoreException("File ["+fDir.getAbsolutePath()+"] indicato nella variabile java ["+CostantiPdD.OPENSPCOOP2_LOCAL_HOME+"] non è una directory");
 				}
 				if(fDir.canRead()==false){
-					throw new Exception("File ["+fDir.getAbsolutePath()+"] indicato nella variabile java ["+CostantiPdD.OPENSPCOOP2_LOCAL_HOME+"] non è accessibile in lettura");
+					throw new CoreException("File ["+fDir.getAbsolutePath()+"] indicato nella variabile java ["+CostantiPdD.OPENSPCOOP2_LOCAL_HOME+"] non è accessibile in lettura");
 				}
 			}catch(Exception eTh){
 				e = eTh;
@@ -3774,19 +3783,19 @@ public class OpenSPCoop2Properties {
 				String dir = System.getenv(CostantiPdD.OPENSPCOOP2_LOCAL_HOME);
 				if(dir==null || "".equals(dir)){
 					if(!foundSystem){
-						throw new Exception("Ne variabile java ne variabile di sistema ["+CostantiPdD.OPENSPCOOP2_LOCAL_HOME+"] trovata");
+						throw new CoreException("Ne variabile java ne variabile di sistema ["+CostantiPdD.OPENSPCOOP2_LOCAL_HOME+"] trovata");
 					}
 				}
 				else{
 					File fDir = new File(dir);
 					if(fDir.exists()==false){
-						throw new Exception("File ["+fDir.getAbsolutePath()+"] indicato nella variabile di sistema ["+CostantiPdD.OPENSPCOOP2_LOCAL_HOME+"] non esiste");
+						throw new CoreException("File ["+fDir.getAbsolutePath()+"] indicato nella variabile di sistema ["+CostantiPdD.OPENSPCOOP2_LOCAL_HOME+"] non esiste");
 					}
 					if(fDir.isDirectory()==false){
-						throw new Exception("File ["+fDir.getAbsolutePath()+"] indicato nella variabile di sistema ["+CostantiPdD.OPENSPCOOP2_LOCAL_HOME+"] non è una directory");
+						throw new CoreException("File ["+fDir.getAbsolutePath()+"] indicato nella variabile di sistema ["+CostantiPdD.OPENSPCOOP2_LOCAL_HOME+"] non è una directory");
 					}
 					if(fDir.canRead()==false){
-						throw new Exception("File ["+fDir.getAbsolutePath()+"] indicato nella variabile di sistema ["+CostantiPdD.OPENSPCOOP2_LOCAL_HOME+"] non è accessibile in lettura");
+						throw new CoreException("File ["+fDir.getAbsolutePath()+"] indicato nella variabile di sistema ["+CostantiPdD.OPENSPCOOP2_LOCAL_HOME+"] non è accessibile in lettura");
 					}
 					// trovata.
 					// annullo una eventuale eccezione di sistema
@@ -3824,7 +3833,7 @@ public class OpenSPCoop2Properties {
 			try{  
 				String indirizzo = this.reader.getValue("org.openspcoop2.pdd.config.location"); 
 				if(indirizzo==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 
 				indirizzo = indirizzo.trim();
 
@@ -3839,12 +3848,12 @@ public class OpenSPCoop2Properties {
 							int indexStart = indirizzo.indexOf("${");
 							int indexEnd = indirizzo.indexOf("}");
 							if(indexEnd==-1){
-								throw new Exception("errore durante l'interpretazione del path ["+indirizzo+"]: ${ utilizzato senza la rispettiva chiusura }");
+								throw new CoreException("errore durante l'interpretazione del path ["+indirizzo+"]: ${ utilizzato senza la rispettiva chiusura }");
 							}
 							String nameSystemProperty = indirizzo.substring(indexStart+"${".length(),indexEnd);
 							String valueSystemProperty = System.getProperty(nameSystemProperty);
 							if(valueSystemProperty==null){
-								throw new Exception("errore durante l'interpretazione del path ["+indirizzo+"]: variabile di sistema ${"+nameSystemProperty+"} non esistente");
+								throw new CoreException("errore durante l'interpretazione del path ["+indirizzo+"]: variabile di sistema ${"+nameSystemProperty+"} non esistente");
 							}
 							indirizzo = indirizzo.replace("${"+nameSystemProperty+"}", valueSystemProperty);
 						}
@@ -3854,7 +3863,7 @@ public class OpenSPCoop2Properties {
 
 				this.pathConfigurazionePDD = indirizzo;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.config.location': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.config.location': "+e.getMessage(),e);
 				this.pathConfigurazionePDD = null;
 			}
 		}
@@ -3917,7 +3926,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.config.preLoading.locale': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.config.preLoading.locale': "+e.getMessage(),e);
 				this.tipoConfigurazionePDD = null;
 			}  
 			
@@ -3939,12 +3948,12 @@ public class OpenSPCoop2Properties {
 			try{ 
 				String tipo = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.config.tipo");
 				if(tipo==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				tipo = tipo.trim();
 
 				this.tipoConfigurazionePDD = tipo;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.config.tipo': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.config.tipo': "+e.getMessage(),e);
 				this.tipoConfigurazionePDD = null;
 			}    
 		}
@@ -3969,7 +3978,7 @@ public class OpenSPCoop2Properties {
 					this.isCondivisioneConfigurazioneRegistroDB = Boolean.parseBoolean(value);
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.config.db.condivisioneDBRegserv' (Viene utilizzato il default:false): "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.config.db.condivisioneDBRegserv' (Viene utilizzato il default:false): "+e.getMessage(),e);
 				this.isCondivisioneConfigurazioneRegistroDB = false;
 			}    
 		}
@@ -3993,7 +4002,7 @@ public class OpenSPCoop2Properties {
 				this.jndiContext_Configurazione = prop;
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle propriete' JNDI per la configurazione di openspcoop 'org.openspcoop2.pdd.config.property.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle propriete' JNDI per la configurazione di openspcoop 'org.openspcoop2.pdd.config.property.*': "+e.getMessage(),e);
 				this.jndiContext_Configurazione = null;
 			}    
 		}
@@ -4413,12 +4422,12 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.dataSource");
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 
 				this.jndiNameDatasource = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.dataSource': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.dataSource': "+e.getMessage(),e);
 				this.jndiNameDatasource = null;
 			}    
 		}
@@ -4442,7 +4451,7 @@ public class OpenSPCoop2Properties {
 				this.jndiContextDatasource = prop;
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle propriete' JNDI per il datasource di openspcoop 'org.openspcoop2.pdd.dataSource.property.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle propriete' JNDI per il datasource di openspcoop 'org.openspcoop2.pdd.dataSource.property.*': "+e.getMessage(),e);
 				this.jndiContextDatasource = null;
 			}   
 		}
@@ -4475,12 +4484,12 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.queueConnectionFactory");
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 
 				this.jndiNameConnectionFactory = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.queueConnectionFactory': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.queueConnectionFactory': "+e.getMessage(),e);
 				this.jndiNameConnectionFactory = null;
 			}    
 		}
@@ -4504,7 +4513,7 @@ public class OpenSPCoop2Properties {
 				this.jndiContextConnectionFactory = prop;
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle propriete' JNDI del ConnectionFactory di openspcoop 'org.openspcoop2.pdd.connectionFactory.property.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle propriete' JNDI del ConnectionFactory di openspcoop 'org.openspcoop2.pdd.connectionFactory.property.*': "+e.getMessage(),e);
 				this.jndiContextConnectionFactory = null;
 			}    
 		}
@@ -4534,7 +4543,7 @@ public class OpenSPCoop2Properties {
 					else if(CostantiConfigurazione.DUPS_OK_ACKNOWLEDGE.equals(name))
 						this.acknowledgeModeSessioneConnectionFactory = javax.jms.Session.DUPS_OK_ACKNOWLEDGE;
 					else
-						throw new Exception("Tipo di acknowledgeModeSessione non conosciuto (viene utilizzato il default:AUTO_ACKNOWLEDGE)");
+						throw new CoreException("Tipo di acknowledgeModeSessione non conosciuto (viene utilizzato il default:AUTO_ACKNOWLEDGE)");
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.queueConnectionFactory.session.AcknowledgeMode' non impostata, viene utilizzato il default=AUTO_ACKNOWLEDGE");
 					this.acknowledgeModeSessioneConnectionFactory = javax.jms.Session.AUTO_ACKNOWLEDGE; // Default
@@ -4618,43 +4627,43 @@ public class OpenSPCoop2Properties {
 
 
 			if(ricezioneContenutiApplicativi==false){
-				this.log.error("Riscontrato errore durante la lettura dei nomi JNDI delle code di openspcoop: coda org.openspcoop2.pdd.queue.ricezioneContenutiApplicativi non definita");
+				this.logError("Riscontrato errore durante la lettura dei nomi JNDI delle code di openspcoop: coda org.openspcoop2.pdd.queue.ricezioneContenutiApplicativi non definita");
 				return null;
 			}
 			if(ricezioneBuste==false){
-				this.log.error("Riscontrato errore durante la lettura dei nomi JNDI delle code di openspcoop: coda org.openspcoop2.pdd.queue.ricezioneBuste non definita");
+				this.logError("Riscontrato errore durante la lettura dei nomi JNDI delle code di openspcoop: coda org.openspcoop2.pdd.queue.ricezioneBuste non definita");
 				return null;
 			}
 			if(consegnaContenutiApplicativi==false){
-				this.log.error("Riscontrato errore durante la lettura dei nomi JNDI delle code di openspcoop: coda org.openspcoop2.pdd.queue.consegnaContenutiApplicativi non definita");
+				this.logError("Riscontrato errore durante la lettura dei nomi JNDI delle code di openspcoop: coda org.openspcoop2.pdd.queue.consegnaContenutiApplicativi non definita");
 				return null;
 			}
 			if(inoltroBuste==false){
-				this.log.error("Riscontrato errore durante la lettura dei nomi JNDI delle code di openspcoop: coda org.openspcoop2.pdd.queue.inoltroBuste non definita");
+				this.logError("Riscontrato errore durante la lettura dei nomi JNDI delle code di openspcoop: coda org.openspcoop2.pdd.queue.inoltroBuste non definita");
 				return null;
 			}
 			if(inoltroRisposte==false){
-				this.log.error("Riscontrato errore durante la lettura dei nomi JNDI delle code di openspcoop: coda org.openspcoop2.pdd.queue.inoltroRisposte non definita");
+				this.logError("Riscontrato errore durante la lettura dei nomi JNDI delle code di openspcoop: coda org.openspcoop2.pdd.queue.inoltroRisposte non definita");
 				return null;
 			}
 			if(imbustamento==false){
-				this.log.error("Riscontrato errore durante la lettura dei nomi JNDI delle code di openspcoop: coda org.openspcoop2.pdd.queue.imbustamento non definita");
+				this.logError("Riscontrato errore durante la lettura dei nomi JNDI delle code di openspcoop: coda org.openspcoop2.pdd.queue.imbustamento non definita");
 				return null;
 			}if(imbustamentoRisposte==false){
-				this.log.error("Riscontrato errore durante la lettura dei nomi JNDI delle code di openspcoop: coda org.openspcoop2.pdd.queue.imbustamentoRisposte non definita");
+				this.logError("Riscontrato errore durante la lettura dei nomi JNDI delle code di openspcoop: coda org.openspcoop2.pdd.queue.imbustamentoRisposte non definita");
 				return null;
 			}else if(sbustamentoRisposte==false){
-				this.log.error("Riscontrato errore durante la lettura dei nomi JNDI delle code di openspcoop: coda org.openspcoop2.pdd.queue.sbustamentoRisposte non definita");
+				this.logError("Riscontrato errore durante la lettura dei nomi JNDI delle code di openspcoop: coda org.openspcoop2.pdd.queue.sbustamentoRisposte non definita");
 				return null;
 			}
 			if(sbustamento==false){
-				this.log.error("Riscontrato errore durante la lettura dei nomi JNDI delle code di openspcoop: coda org.openspcoop2.pdd.queue.sbustamento non definita");
+				this.logError("Riscontrato errore durante la lettura dei nomi JNDI delle code di openspcoop: coda org.openspcoop2.pdd.queue.sbustamento non definita");
 				return null;
 			}
 			return table;
 
 		}catch(java.lang.Exception e) {
-			this.log.error("Riscontrato errore durante la lettura dei nomi JNDI delle code di openspcoop 'org.openspcoop2.pdd.queue.property.*': "+e.getMessage(),e);
+			this.logError("Riscontrato errore durante la lettura dei nomi JNDI delle code di openspcoop 'org.openspcoop2.pdd.queue.property.*': "+e.getMessage(),e);
 			return null;
 		}    
 	}
@@ -4675,7 +4684,7 @@ public class OpenSPCoop2Properties {
 				this.jndiContext_CodeInterne = prop;
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle propriete' JNDI delle code di openspcoop 'org.openspcoop2.pdd.queue.property.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle propriete' JNDI delle code di openspcoop 'org.openspcoop2.pdd.queue.property.*': "+e.getMessage(),e);
 				this.jndiContext_CodeInterne = null;
 			}    
 		}
@@ -4733,25 +4742,25 @@ public class OpenSPCoop2Properties {
 
 
 			if(gestoreBusteNonRiscontrate==false && this.isTimerGestoreRiscontriRicevuteAbilitato()){
-				this.log.error("Riscontrato errore durante la lettura dei nomi JNDI dei timer openspcoop: timer org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate non definito");
+				this.logError("Riscontrato errore durante la lettura dei nomi JNDI dei timer openspcoop: timer org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate non definito");
 				return null;
 			}
 			if(gestoreMessaggi==false && this.isTimerGestoreMessaggiAbilitato()){
-				this.log.error("Riscontrato errore durante la lettura dei nomi JNDI dei timer openspcoop: timer org.openspcoop2.pdd.timer.gestoreMessaggi non definito");
+				this.logError("Riscontrato errore durante la lettura dei nomi JNDI dei timer openspcoop: timer org.openspcoop2.pdd.timer.gestoreMessaggi non definito");
 				return null;
 			}
 			if(gestorePuliziaMessaggiAnomali==false && this.isTimerGestorePuliziaMessaggiAnomaliAbilitato()){
-				this.log.error("Riscontrato errore durante la lettura dei nomi JNDI dei timer openspcoop: timer org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali non definito");
+				this.logError("Riscontrato errore durante la lettura dei nomi JNDI dei timer openspcoop: timer org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali non definito");
 				return null;
 			}
 			if(gestoreRepositoryBuste==false && this.isTimerGestoreRepositoryBusteAbilitato()){
-				this.log.error("Riscontrato errore durante la lettura dei nomi JNDI dei timer openspcoop: timer org.openspcoop2.pdd.timer.gestoreRepositoryBuste  non definito");
+				this.logError("Riscontrato errore durante la lettura dei nomi JNDI dei timer openspcoop: timer org.openspcoop2.pdd.timer.gestoreRepositoryBuste  non definito");
 				return null;
 			}
 			return table;
 
 		}catch(java.lang.Exception e) {
-			this.log.error("Riscontrato errore durante la lettura dei nomi JNDI delle code di openspcoop 'org.openspcoop2.pdd.queue.property.*': "+e.getMessage(),e);
+			this.logError("Riscontrato errore durante la lettura dei nomi JNDI delle code di openspcoop 'org.openspcoop2.pdd.queue.property.*': "+e.getMessage(),e);
 			return null;
 		}    
 	}
@@ -4772,7 +4781,7 @@ public class OpenSPCoop2Properties {
 				this.jndiContext_TimerEJB = prop;
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle propriete' JNDI dei timer di openspcoop 'org.openspcoop2.pdd.timer.property.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle propriete' JNDI dei timer di openspcoop 'org.openspcoop2.pdd.timer.property.*': "+e.getMessage(),e);
 				this.jndiContext_TimerEJB = null;
 			}    
 		}
@@ -5946,7 +5955,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.code': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.code': "+e.getMessage(),e);
 				this.getTimerConsegnaContenutiApplicativiCode = null;
 			}  
 			this.getTimerConsegnaContenutiApplicativiCodeRead = true;
@@ -5967,7 +5976,7 @@ public class OpenSPCoop2Properties {
 		try{ 
 			Properties p = this.reader.readProperties_convertEnvProperties(prefix);
 			if(p==null || p.isEmpty()) {
-				throw new Exception("Configurazione non presente");
+				throw new CoreException("Configurazione non presente");
 			}
 			
 			ConfigurazioneCoda confCoda = new ConfigurazioneCoda(nome, p);
@@ -5975,7 +5984,7 @@ public class OpenSPCoop2Properties {
 			return confCoda;
 			
 		}catch(java.lang.Exception e) {
-			this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+prefix+"*': "+e.getMessage(),e);
+			this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+prefix+"*': "+e.getMessage(),e);
 			return null;
 		}  
 
@@ -6005,7 +6014,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.priorita': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.priorita': "+e.getMessage(),e);
 				this.getTimerConsegnaContenutiApplicativiPriorita = null;
 			}  
 			this.getTimerConsegnaContenutiApplicativiPrioritaRead = true;
@@ -6026,7 +6035,7 @@ public class OpenSPCoop2Properties {
 		try{ 
 			Properties p = this.reader.readProperties_convertEnvProperties(prefix);
 			if(p==null || p.isEmpty()) {
-				throw new Exception("Configurazione non presente");
+				throw new CoreException("Configurazione non presente");
 			}
 			
 			ConfigurazionePriorita confPriorita = new ConfigurazionePriorita(nome, p);
@@ -6034,7 +6043,7 @@ public class OpenSPCoop2Properties {
 			return confPriorita;
 			
 		}catch(java.lang.Exception e) {
-			this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+prefix+"*': "+e.getMessage(),e);
+			this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+prefix+"*': "+e.getMessage(),e);
 			return null;
 		}  
 
@@ -6211,7 +6220,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTimerConsegnaContenutiApplicativi_smistatore_runtime_useRuntimeManager = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTimerConsegnaContenutiApplicativi_smistatore_runtime_useRuntimeManager = true;
 			}    
 		}
@@ -6227,12 +6236,12 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null){
-					throw new Exception("Proprieta' non impostata");
+					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
 				this.getTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSource = name;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -6247,7 +6256,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSourceJndiContext = this.reader.readProperties_convertEnvProperties(pName);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -6269,7 +6278,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSource_useDBUtils = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSource_useDBUtils = true;
 			}    
 		}
@@ -6295,7 +6304,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTimerConsegnaContenutiApplicativi_runtime_useRuntimeManager = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTimerConsegnaContenutiApplicativi_runtime_useRuntimeManager = true;
 			}    
 		}
@@ -6311,12 +6320,12 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null){
-					throw new Exception("Proprieta' non impostata");
+					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
 				this.getTimerConsegnaContenutiApplicativi_runtime_dataSource = name;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -6331,7 +6340,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getTimerConsegnaContenutiApplicativi_runtime_dataSourceJndiContext = this.reader.readProperties_convertEnvProperties(pName);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -6353,7 +6362,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTimerConsegnaContenutiApplicativi_runtime_dataSource_useDBUtils = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTimerConsegnaContenutiApplicativi_runtime_dataSource_useDBUtils = true;
 			}    
 		}
@@ -6378,7 +6387,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTimerConsegnaContenutiApplicativi_transazioni_useTransactionManager = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTimerConsegnaContenutiApplicativi_transazioni_useTransactionManager = true;
 			}    
 		}
@@ -6394,12 +6403,12 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null){
-					throw new Exception("Proprieta' non impostata");
+					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
 				this.getTimerConsegnaContenutiApplicativi_transazioni_dataSource = name;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -6414,7 +6423,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getTimerConsegnaContenutiApplicativi_transazioni_dataSourceJndiContext = this.reader.readProperties_convertEnvProperties(pName);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -6436,7 +6445,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTimerConsegnaContenutiApplicativi_transazioni_dataSource_useDBUtils = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTimerConsegnaContenutiApplicativi_transazioni_dataSource_useDBUtils = true;
 			}    
 		}
@@ -6460,11 +6469,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.tipo");
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.repositoryType = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.tipo': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.tipo': "+e.getMessage(),e);
 				this.repositoryType = null;
 			}    
 		}
@@ -6488,7 +6497,7 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 				this.databaseType = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.tipoDatabase': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.tipoDatabase': "+e.getMessage(),e);
 				this.databaseType = null;
 			}    
 		}
@@ -6546,11 +6555,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.directory");
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.repositoryDirectory = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.directory': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.directory': "+e.getMessage(),e);
 				this.repositoryDirectory = null;
 			}  
 		}
@@ -6571,11 +6580,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.jdbcAdapter");
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.repositoryJDBCAdapter = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.jdbcAdapter': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.jdbcAdapter': "+e.getMessage(),e);
 				this.repositoryJDBCAdapter = null;
 			}    
 		}
@@ -6620,7 +6629,7 @@ public class OpenSPCoop2Properties {
 				try{ 
 					this.attachmentsProcessingMode=AttachmentsProcessingMode.getFileCacheProcessingMode(getAttachmentRepoDir(), getFileThreshold());
 				} catch(java.lang.Exception e) {
-					this.log.error("Riscontrato errore durante l'identificazione della modalità di processing degli attachments: "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante l'identificazione della modalità di processing degli attachments: "+e.getMessage(),e);
 					this.attachmentsProcessingMode=AttachmentsProcessingMode.getMemoryCacheProcessingMode();
 				} 
 			}else{
@@ -6644,7 +6653,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isFileCacheEnable = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.attachment.fileCacheEnable': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.attachment.fileCacheEnable': "+e.getMessage(),e);
 				this.isFileCacheEnable = false;
 			}    
 		}
@@ -6668,11 +6677,11 @@ public class OpenSPCoop2Properties {
 					// Se fileCacheEnable == false allora puo' essere null; 
 					if(!isFileCacheEnable())
 						return null;
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.attachment.repositoryDir': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.attachment.repositoryDir': "+e.getMessage(),e);
 				this.attachmentRepoDir = null;
 			}    
 		}
@@ -6697,7 +6706,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.attachment.fileThreshold': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.attachment.fileThreshold': "+e.getMessage(),e);
 				this.fileThreshold = "1024";
 			}    
 		}
@@ -6722,7 +6731,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.attachment.filePrefix': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.attachment.filePrefix': "+e.getMessage(),e);
 				this.filePrefix = CostantiPdD.OPENSPCOOP2;
 			}    
 		}
@@ -6747,7 +6756,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.attachment.fileSuffix': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.attachment.fileSuffix': "+e.getMessage(),e);
 				this.fileSuffix = ".att";
 			}    
 		}
@@ -6772,7 +6781,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.attachment.deleteInterval': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.attachment.deleteInterval': "+e.getMessage(),e);
 				this.deleteInterval = 300;
 			}    
 		}
@@ -6793,11 +6802,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.timer");
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.repositoryIntervalloEliminazioneMessaggi = java.lang.Long.parseLong(name);
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.timer': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.timer': "+e.getMessage(),e);
 				this.repositoryIntervalloEliminazioneMessaggi = -1L;
 			}   
 		}
@@ -6818,11 +6827,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.scadenzaMessaggio");
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.repositoryIntervalloScadenzaMessaggi = java.lang.Long.parseLong(name);
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.scadenzaMessaggio': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.scadenzaMessaggio': "+e.getMessage(),e);
 				this.repositoryIntervalloScadenzaMessaggi = -1L;
 			}    
 		}
@@ -6844,7 +6853,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.useSoapMessageReader = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.useSoapMessageReader = true;
 			}    
 		}
@@ -6869,7 +6878,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soapMessage.reader.bufferThreshold': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soapMessage.reader.bufferThreshold': "+e.getMessage(),e);
 				this.soapMessageReaderBufferThresholdKb = 10;
 			}    
 		}
@@ -6891,7 +6900,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.useSoapMessageReaderHeaderOptimization = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.useSoapMessageReaderHeaderOptimization = true;
 			}    
 		}
@@ -6913,7 +6922,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.useSoapMessagePassthrough = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.useSoapMessagePassthrough = true;
 			}    
 		}
@@ -6938,7 +6947,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soapMessage.saaj.saxParserPoolSize': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soapMessage.saaj.saxParserPoolSize': "+e.getMessage(),e);
 				this.soapMessageSaajSaxParserPoolSize = 200;
 			}    
 		}
@@ -6970,7 +6979,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+": "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+": "+e.getMessage(),e);
 				this.alternativeContentTypeSoap12 = null;
 			}  
 			this.alternativeContentTypeSoap12Read = true;
@@ -6994,7 +7003,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.useRestMultipartLazy = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.useRestMultipartLazy = true;
 			}    
 		}
@@ -7022,7 +7031,7 @@ public class OpenSPCoop2Properties {
 					this.repositoryBusteFiltraBusteScaduteRispettoOraRegistrazione = Boolean.parseBoolean(value);
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.scadenzaMessaggio.filtraBusteScaduteRispettoOraRegistrazione' (Viene utilizzato il default:true): "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.scadenzaMessaggio.filtraBusteScaduteRispettoOraRegistrazione' (Viene utilizzato il default:true): "+e.getMessage(),e);
 				this.repositoryBusteFiltraBusteScaduteRispettoOraRegistrazione = true;
 			}    
 		}
@@ -7043,7 +7052,7 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa");
 				if(name==null){
-					//throw new Exception("non definita");
+					//throw new CoreException("non definita");
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa' non definita, viene usato il valore impostato nella proprieta 'org.openspcoop2.pdd.repository.scadenzaMessaggio'");
 					this.repositoryIntervalloScadenzaCorrelazioneApplicativa = getRepositoryIntervalloScadenzaMessaggi();
 				}
@@ -7052,7 +7061,7 @@ public class OpenSPCoop2Properties {
 					this.repositoryIntervalloScadenzaCorrelazioneApplicativa = java.lang.Long.parseLong(name);
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa': "+e.getMessage(),e);
 				this.repositoryIntervalloScadenzaCorrelazioneApplicativa = -1L;
 			}    
 		}
@@ -7067,7 +7076,7 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLength");
 				if(name==null){
-					//throw new Exception("non definita");
+					//throw new CoreException("non definita");
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLength' non definita, viene usato il valore di default: 255");
 					this.maxLengthCorrelazioneApplicativa = 255;
 				}
@@ -7076,7 +7085,7 @@ public class OpenSPCoop2Properties {
 					this.maxLengthCorrelazioneApplicativa = java.lang.Integer.parseInt(name);
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLength': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLength': "+e.getMessage(),e);
 				this.maxLengthCorrelazioneApplicativa = 255;
 			}    
 		}
@@ -7092,7 +7101,7 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null){
-					//throw new Exception("non definita");
+					//throw new CoreException("non definita");
 					this.log.warn("Proprieta' di openspcoop '"+pName+"' non definita, viene usato il valore di default: false");
 					this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_active = false;
 				}
@@ -7101,7 +7110,7 @@ public class OpenSPCoop2Properties {
 					this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_active = java.lang.Boolean.parseBoolean(name);
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage()+". Viene usato il valore di default: false",e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage()+". Viene usato il valore di default: false",e);
 				this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_active = false;
 			}    
 		}
@@ -7120,10 +7129,10 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate = java.lang.Integer.parseInt(name);
 					if(this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate<=0) {
-						throw new Exception("Deve essere fornito un valore maggiore di 0");
+						throw new CoreException("Deve essere fornito un valore maggiore di 0");
 					}
 					if(this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate>=getMaxLengthCorrelazioneApplicativa()) {
-						throw new Exception("Deve essere fornito un valore minore di "+getMaxLengthCorrelazioneApplicativa());
+						throw new CoreException("Deve essere fornito un valore minore di "+getMaxLengthCorrelazioneApplicativa());
 					}
 				}
 				else {
@@ -7131,7 +7140,7 @@ public class OpenSPCoop2Properties {
 					this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate = 245;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate = null;
 			}  
 			
@@ -7149,7 +7158,7 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null){
-					//throw new Exception("non definita");
+					//throw new CoreException("non definita");
 					this.log.warn("Proprieta' di openspcoop '"+pName+"' non definita, viene usato il valore di default: false");
 					this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_active = false;
 				}
@@ -7158,7 +7167,7 @@ public class OpenSPCoop2Properties {
 					this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_active = java.lang.Boolean.parseBoolean(name);
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage()+". Viene usato il valore di default: false",e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage()+". Viene usato il valore di default: false",e);
 				this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_active = false;
 			}    
 		}
@@ -7177,10 +7186,10 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate = java.lang.Integer.parseInt(name);
 					if(this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate<=0) {
-						throw new Exception("Deve essere fornito un valore maggiore di 0");
+						throw new CoreException("Deve essere fornito un valore maggiore di 0");
 					}
 					if(this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate>=getMaxLengthCorrelazioneApplicativa()) {
-						throw new Exception("Deve essere fornito un valore minore di "+getMaxLengthCorrelazioneApplicativa());
+						throw new CoreException("Deve essere fornito un valore minore di "+getMaxLengthCorrelazioneApplicativa());
 					}
 				}
 				else {
@@ -7188,7 +7197,7 @@ public class OpenSPCoop2Properties {
 					this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate = 245;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate = null;
 			}  
 			
@@ -7364,7 +7373,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.threshold.tipi': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.threshold.tipi': "+e.getMessage(),e);
 				this.repositoryThresholdTypes = null;
 			}  
 			this.repositoryThresholdTypesRead = true;
@@ -7385,7 +7394,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.repositoryThresholdParameters = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.repository.threshold."+tipoThreshould+".");
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.threshold."+tipoThreshould+".*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.threshold."+tipoThreshould+".*': "+e.getMessage(),e);
 				this.repositoryThresholdParameters = null;
 			}  
 			this.repositoryThresholdParametersRead = true; 
@@ -7413,7 +7422,7 @@ public class OpenSPCoop2Properties {
 					this.repositoryThresholdCheckInterval = 0L;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.threshold.checkInterval': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.threshold.checkInterval': "+e.getMessage(),e);
 				this.repositoryThresholdCheckInterval = -1L;
 			}    
 		}
@@ -7442,7 +7451,7 @@ public class OpenSPCoop2Properties {
 						this.isValidazioneSemanticaConfigurazioneStartupXML = false;
 					}
 					else{
-						throw new Exception("Valore non corretto (abilitato/disabilitato): "+value);
+						throw new CoreException("Valore non corretto (abilitato/disabilitato): "+value);
 					}
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.config.xml.validazioneSemantica' non impostata, viene utilizzato il default=true");
@@ -7478,7 +7487,7 @@ public class OpenSPCoop2Properties {
 						this.isValidazioneSemanticaConfigurazioneStartup = false;
 					}
 					else{
-						throw new Exception("Valore non corretto (abilitato/disabilitato): "+value);
+						throw new CoreException("Valore non corretto (abilitato/disabilitato): "+value);
 					}
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.config.validazioneSemantica' non impostata, viene utilizzato il default=false");
@@ -7514,7 +7523,7 @@ public class OpenSPCoop2Properties {
 						this.isValidazioneSemanticaRegistroServiziStartupXML = false;
 					}
 					else{
-						throw new Exception("Valore non corretto (abilitato/disabilitato): "+value);
+						throw new CoreException("Valore non corretto (abilitato/disabilitato): "+value);
 					}
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.registri.xml.validazioneSemantica' non impostata, viene utilizzato il default=true");
@@ -7550,7 +7559,7 @@ public class OpenSPCoop2Properties {
 						this.isValidazioneSemanticaRegistroServiziStartup = false;
 					}
 					else{
-						throw new Exception("Valore non corretto (abilitato/disabilitato): "+value);
+						throw new CoreException("Valore non corretto (abilitato/disabilitato): "+value);
 					}
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.registri.validazioneSemantica' non impostata, viene utilizzato il default=false");
@@ -7586,7 +7595,7 @@ public class OpenSPCoop2Properties {
 						this.isValidazioneSemanticaRegistroServiziCheckURI = false;
 					}
 					else{
-						throw new Exception("Valore non corretto (abilitato/disabilitato): "+value);
+						throw new CoreException("Valore non corretto (abilitato/disabilitato): "+value);
 					}
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.registri.validazioneSemantica.checkURI' non impostata, viene utilizzato il default=false");
@@ -7825,7 +7834,7 @@ public class OpenSPCoop2Properties {
 					this.controlloRisorseCheckInterval = 0L;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.risorse.checkInterval': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.risorse.checkInterval': "+e.getMessage(),e);
 				this.controlloRisorseCheckInterval = -1L;
 			}    
 		}
@@ -7846,7 +7855,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isControlloRisorseRegistrazioneEvento = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.risorse.registraEvento', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.risorse.registraEvento', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isControlloRisorseRegistrazioneEvento = true;
 			}    
 		}
@@ -7877,10 +7886,10 @@ public class OpenSPCoop2Properties {
 			try{  
 				fault = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.fault"); 
 				if(fault==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				fault = fault.trim();		
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.fault': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.fault': "+e.getMessage(),e);
 				return null;
 			}
 
@@ -7891,7 +7900,7 @@ public class OpenSPCoop2Properties {
 					faultCodeIntegrationNamespace = faultCodeIntegrationNamespace.trim();
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.faultCode.integrationNamespace': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.faultCode.integrationNamespace': "+e.getMessage(),e);
 			}
 			
 			String faultCodeProtocolNamespace = null;
@@ -7901,17 +7910,17 @@ public class OpenSPCoop2Properties {
 					faultCodeProtocolNamespace = faultCodeProtocolNamespace.trim();
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.faultCode.protocolNamespace': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.faultCode.protocolNamespace': "+e.getMessage(),e);
 			}
 			
 			String faultActor = null;
 			try{  
 				faultActor = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.faultActor"); 
 				if(faultActor==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				faultActor = faultActor.trim();		
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.faultActor': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.faultActor': "+e.getMessage(),e);
 				return null;
 			}
 
@@ -7919,10 +7928,10 @@ public class OpenSPCoop2Properties {
 			try{  
 				faultGeneric = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.genericFaultCode"); 
 				if(faultGeneric==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				faultGeneric = faultGeneric.trim();		
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.genericFaultCode': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.genericFaultCode': "+e.getMessage(),e);
 				return null;
 			}
 
@@ -8131,7 +8140,7 @@ public class OpenSPCoop2Properties {
 			try{  
 				String name = this.reader.getValue_convertEnvProperties(pName); 
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.getErroriHttpHeaderGovWayStatus = name;
 
@@ -8152,7 +8161,7 @@ public class OpenSPCoop2Properties {
 			try{  
 				String name = this.reader.getValue_convertEnvProperties(pName); 
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.getErroriHttpHeaderGovWayType = name;
 
@@ -8173,7 +8182,7 @@ public class OpenSPCoop2Properties {
 			try{  
 				String name = this.reader.getValue_convertEnvProperties(pName); 
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.getErroriHttpHeaderGovWayCode = name;
 
@@ -8418,7 +8427,7 @@ public class OpenSPCoop2Properties {
 			try{  
 				String fault = this.reader.getValue_convertEnvProperties(pName); 
 				if(fault==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				fault = fault.trim();
 				this.getProblemRFC7807_transactionId_claim = fault;
 
@@ -8439,7 +8448,7 @@ public class OpenSPCoop2Properties {
 			try{  
 				String fault = this.reader.getValue_convertEnvProperties(pName); 
 				if(fault==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				fault = fault.trim();
 				this.getProblemRFC7807_code_claim = fault;
 
@@ -8460,7 +8469,7 @@ public class OpenSPCoop2Properties {
 			try{  
 				String fault = this.reader.getValue_convertEnvProperties(pName); 
 				if(fault==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				fault = fault.trim();
 				this.getProblemRFC7807_type_claim = fault;
 
@@ -8491,12 +8500,12 @@ public class OpenSPCoop2Properties {
 			try{  
 				String fault = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.identificativoPorta.dominio"); 
 				if(fault==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				fault = fault.trim();
 				this.identificativoPortaDefault = fault;
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.identificativoPorta.dominio': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.identificativoPorta.dominio': "+e.getMessage(),e);
 				this.identificativoPortaDefault = null;
 			}
 		}
@@ -8515,12 +8524,12 @@ public class OpenSPCoop2Properties {
 			try{  
 				String fault = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.identificativoPorta.nome"); 
 				if(fault==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				fault = fault.trim();
 				this.nomePortaDefault = fault;
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.identificativoPorta.nome': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.identificativoPorta.nome': "+e.getMessage(),e);
 				this.nomePortaDefault = null;
 			}
 		}
@@ -8541,12 +8550,12 @@ public class OpenSPCoop2Properties {
 			try{  
 				String fault = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.identificativoPorta.tipo"); 
 				if(fault==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				fault = fault.trim();
 				this.tipoPortaDefault = fault;
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.identificativoPorta.tipo': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.identificativoPorta.tipo': "+e.getMessage(),e);
 				this.tipoPortaDefault = null;
 			}
 		}
@@ -8606,7 +8615,7 @@ public class OpenSPCoop2Properties {
 				this.identificativoPortaDefault_mappingProtocol.put(protocol, fault);
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd."+protocol+".identificativoPorta.dominio': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd."+protocol+".identificativoPorta.dominio': "+e.getMessage(),e);
 				return this.getIdentificativoPortaDefault();
 			}
 		}
@@ -8634,7 +8643,7 @@ public class OpenSPCoop2Properties {
 				this.nomePortaDefault_mappingProtocol.put(protocol, nome);
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd."+protocol+".identificativoPorta.nome': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd."+protocol+".identificativoPorta.nome': "+e.getMessage(),e);
 				return this.getNomePortaDefault();
 			}
 		}
@@ -8662,7 +8671,7 @@ public class OpenSPCoop2Properties {
 				this.tipoPortaDefault_mappingProtocol.put(protocol, tipo);
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd."+protocol+".identificativoPorta.tipo': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd."+protocol+".identificativoPorta.tipo': "+e.getMessage(),e);
 				return this.getTipoPortaDefault();
 			}
 		}
@@ -8754,7 +8763,7 @@ public class OpenSPCoop2Properties {
 				
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 			
 			this.getAutorizzazione_lock_permits_read = true;
@@ -8790,7 +8799,7 @@ public class OpenSPCoop2Properties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 			
 		}
@@ -8810,12 +8819,12 @@ public class OpenSPCoop2Properties {
 			try{  
 				String autorizzazione = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.autorizzazioneBuste.tipo");
 				if(autorizzazione==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				autorizzazione = autorizzazione.trim();
 				this.tipoAutorizzazioneBuste = autorizzazione;
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.autorizzazioneBuste.tipo': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.autorizzazioneBuste.tipo': "+e.getMessage(),e);
 				this.tipoAutorizzazioneBuste = null;
 			}
 		}
@@ -8850,7 +8859,7 @@ public class OpenSPCoop2Properties {
 				
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 			
 			this.getAutorizzazioneContenuti_lock_permits_read = true;
@@ -8886,7 +8895,7 @@ public class OpenSPCoop2Properties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 			
 		}
@@ -8981,7 +8990,7 @@ public class OpenSPCoop2Properties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle propriete' 'org.openspcoop2.pdd.services.BypassMustUnderstandHandler.header.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle propriete' 'org.openspcoop2.pdd.services.BypassMustUnderstandHandler.header.*': "+e.getMessage(),e);
 				this.mapGetBypassFilterMustUnderstandProperties = null;
 			}    
 			
@@ -9041,7 +9050,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.contentType.checkEnabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.contentType.checkEnabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isControlloContentTypeAbilitatoRicezioneContenutiApplicativi = true;
 			}
 		}
@@ -9063,7 +9072,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.contentType.checkEnabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.contentType.checkEnabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isControlloContentTypeAbilitatoRicezioneBuste = true;
 			}
 		}
@@ -9112,7 +9121,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap = false;
 			}
 		}
@@ -9167,7 +9176,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest = false;
 			}
 		}
@@ -9222,7 +9231,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isControlloCharsetContentTypeAbilitatoRicezioneBusteSoap = false;
 			}
 		}
@@ -9277,7 +9286,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isControlloCharsetContentTypeAbilitatoRicezioneBusteRest = false;
 			}
 		}
@@ -9305,7 +9314,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.certificate.printInfo' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.certificate.printInfo' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isPrintInfoCertificate = false;
 			}
 		}
@@ -9333,7 +9342,7 @@ public class OpenSPCoop2Properties {
                         }
 
                 }catch(java.lang.Exception e) {
-                        this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+                        this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
                         this.isGestoreCredenzialiPortaDelegataEnabled = false;
                 }
         }
@@ -9350,7 +9359,7 @@ public class OpenSPCoop2Properties {
 					this.getGestoreCredenzialiPortaDelegataProperties=new Properties();
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+prefixGestoreCredenzialiPortaDelegataProperties+"*' non impostate correttamente, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+prefixGestoreCredenzialiPortaDelegataProperties+"*' non impostate correttamente, errore:"+e.getMessage(),e);
 				this.getGestoreCredenzialiPortaDelegataProperties = null;
 			}
 		}
@@ -9379,7 +9388,7 @@ public class OpenSPCoop2Properties {
                         }
 
                 }catch(java.lang.Exception e) {
-                        this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+                        this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
                         this.isGestoreCredenzialiPortaApplicativaEnabled = false;
                 }
         }
@@ -9396,7 +9405,7 @@ public class OpenSPCoop2Properties {
 					this.getGestoreCredenzialiPortaApplicativaProperties=new Properties();
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+prefixGestoreCredenzialiPortaApplicativaProperties+"*' non impostate correttamente, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+prefixGestoreCredenzialiPortaApplicativaProperties+"*' non impostate correttamente, errore:"+e.getMessage(),e);
 				this.getGestoreCredenzialiPortaApplicativaProperties = null;
 			}
 		}
@@ -9421,7 +9430,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, non verrà abilitato l'engine HSM errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, non verrà abilitato l'engine HSM errore:"+e.getMessage(),e);
 				this.getHSMConfig = null;
 			}
 		}
@@ -9444,7 +9453,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isHSMConfigRequired = false;
 			}
 		}
@@ -9467,7 +9476,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isHSMConfig_uniqueProviderInstance = true;
 			}
 		}
@@ -9493,7 +9502,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, non verrà abilitato l'engine OCSP errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, non verrà abilitato l'engine OCSP errore:"+e.getMessage(),e);
 				this.getOCSPConfig = null;
 			}
 		}
@@ -9516,7 +9525,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isOCSPConfigRequired = false;
 			}
 		}
@@ -9539,7 +9548,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isOCSPConfigLoadDefault = true;
 			}
 		}
@@ -9702,11 +9711,11 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.nodeReceiver = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.nodeReceiver");
 				if(this.nodeReceiver==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				this.nodeReceiver = this.nodeReceiver.trim();
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.nodeReceiver': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.nodeReceiver': "+e.getMessage(),e);
 				this.nodeReceiver = null;
 			}    
 		}
@@ -9761,11 +9770,11 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.nodeSender = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.nodeSender");
 				if(this.nodeSender==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				this.nodeSender = this.nodeSender.trim();
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.nodeSender': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.nodeSender': "+e.getMessage(),e);
 				this.nodeSender = null;
 			}    
 		}
@@ -10055,7 +10064,7 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.repository.gestore");
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				
 				if(CostantiConfigurazione.REPOSITORY_BUSTE_AUTO_BYTEWISE.equals(name)){
@@ -10063,7 +10072,7 @@ public class OpenSPCoop2Properties {
 						name = GestoreRepositoryFactory.getTipoRepositoryBuste(this.getDatabaseType());
 					}
 					else{
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.protocol.repository.gestore': il valore '"+
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.protocol.repository.gestore': il valore '"+
 								CostantiConfigurazione.REPOSITORY_BUSTE_AUTO_BYTEWISE+"' deve essere utilizzato in combinazione con la definizione del tipo di database del repository. Viene impostato come gestore il tipo di default: "+
 								CostantiConfigurazione.REPOSITORY_BUSTE_DEFAULT);
 						name = CostantiConfigurazione.REPOSITORY_BUSTE_DEFAULT;
@@ -10073,7 +10082,7 @@ public class OpenSPCoop2Properties {
 				this.gestoreRepositoryBuste = name;
 			
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.protocol.repository.gestore': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.protocol.repository.gestore': "+e.getMessage(),e);
 				this.gestoreRepositoryBuste = null;
 			}    
 		}
@@ -10729,7 +10738,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.filePddPropertiesLetto= true;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.protocol.pddProperties': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.protocol.pddProperties': "+e.getMessage(),e);
 				this.filePddProperties = null;
 			}    			
 		}
@@ -10756,13 +10765,13 @@ public class OpenSPCoop2Properties {
 			try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.tipo.pd"); 
 				if(value==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				value = value.trim();
 				String [] r = value.split(",");
 				this.tipoIntegrazionePD = r;
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.tipo.pd': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.tipo.pd': "+e.getMessage(),e);
 				this.tipoIntegrazionePD = null;
 			}
 			this.tipoIntegrazionePDRead = true;
@@ -10782,12 +10791,12 @@ public class OpenSPCoop2Properties {
 			try{ 
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.tipo.pa");
 				if(value==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				value = value.trim();
 				String [] r = value.split(",");
 				this.tipoIntegrazionePA = r;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei tipi di integrazione tra porta di dominio e servizio applicativo 'org.openspcoop2.pdd.integrazione.tipo.pa': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei tipi di integrazione tra porta di dominio e servizio applicativo 'org.openspcoop2.pdd.integrazione.tipo.pa': "+e.getMessage(),e);
 				this.tipoIntegrazionePA = null;
 			}   
 			this.tipoIntegrazionePARead = true;
@@ -10822,7 +10831,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.tipo.pd."+protocollo+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.tipo.pd."+protocollo+"': "+e.getMessage(),e);
 			}
 		}
 
@@ -10859,7 +10868,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.tipo.pa."+protocollo+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.tipo.pa."+protocollo+"': "+e.getMessage(),e);
 			}
 		}
 
@@ -10922,7 +10931,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' '"+pName+"*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' '"+pName+"*': "+e.getMessage(),e);
 				this.newOldMapping_backward_compatibility_trasparente_soggetto = null;
 			}    
 		}
@@ -10946,7 +10955,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' '"+pName+"*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' '"+pName+"*': "+e.getMessage(),e);
 				this.newOldMapping_backward_compatibility_trasparente_servizio = null;
 			}    
 		}
@@ -10971,7 +10980,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' '"+pName+"*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' '"+pName+"*': "+e.getMessage(),e);
 				this.newOldMapping_backward_compatibility_spcoop_soggetto = null;
 			}    
 		}
@@ -10995,7 +11004,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' '"+pName+"*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' '"+pName+"*': "+e.getMessage(),e);
 				this.newOldMapping_backward_compatibility_spcoop_servizio = null;
 			}    
 		}
@@ -11020,7 +11029,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' '"+pName+"*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' '"+pName+"*': "+e.getMessage(),e);
 				this.newOldMapping_backward_compatibility_sdi_soggetto = null;
 			}    
 		}
@@ -11044,7 +11053,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' '"+pName+"*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' '"+pName+"*': "+e.getMessage(),e);
 				this.newOldMapping_backward_compatibility_sdi_servizio = null;
 			}    
 		}
@@ -11067,7 +11076,7 @@ public class OpenSPCoop2Properties {
 				}
 			}
 			if(!find) {
-				throw new Exception("Chiave '"+key+"' sconosciuta, non risulta essere una keyword di integrazione");
+				throw new CoreException("Chiave '"+key+"' sconosciuta, non risulta essere una keyword di integrazione");
 			}
 		}
 		return newMap;
@@ -11088,7 +11097,7 @@ public class OpenSPCoop2Properties {
 				this.keyValue_HeaderIntegrazioneTrasporto = _convertMapToCostantiIntegrazione(this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.trasporto.keyword."));
 			
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.trasporto.keyword.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.trasporto.keyword.*': "+e.getMessage(),e);
 				this.keyValue_HeaderIntegrazioneTrasporto = null;
 			}    
 		}
@@ -11107,7 +11116,7 @@ public class OpenSPCoop2Properties {
 								this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2.trasporto.keyword."));
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2.trasporto.keyword.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2.trasporto.keyword.*': "+e.getMessage(),e);
 				this.keyValue_HeaderIntegrazioneTrasporto_backwardCompatibility_openspcoop2 = null;
 			}    
 		}
@@ -11126,7 +11135,7 @@ public class OpenSPCoop2Properties {
 								this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1.trasporto.keyword."));
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1.trasporto.keyword.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1.trasporto.keyword.*': "+e.getMessage(),e);
 				this.keyValue_HeaderIntegrazioneTrasporto_backwardCompatibility_openspcoop1 = null;
 			}    
 		}
@@ -11163,7 +11172,7 @@ public class OpenSPCoop2Properties {
 							boolean b = Boolean.parseBoolean(value);
 							_tmp.put(key, b);
 						}catch(Exception e) {
-							throw new Exception("Rilevato errore durante il parsing della property '"+pName+"."+key+"' (atteso: true/false): "+e.getMessage(),e);
+							throw new CoreException("Rilevato errore durante il parsing della property '"+pName+"."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
 				}
@@ -11175,7 +11184,7 @@ public class OpenSPCoop2Properties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' '"+pName+".*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' '"+pName+".*': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -11207,14 +11216,14 @@ public class OpenSPCoop2Properties {
 							boolean b = Boolean.parseBoolean(value);
 							_tmp.put(key, b);
 						}catch(Exception e) {
-							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.trasporto.pd.read.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+							throw new CoreException("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.trasporto.pd.read.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
 				}
 				this.keyValue_HeaderIntegrazioneTrasporto_readPD = _convertMapToCostantiIntegrazione(_tmp);
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.trasporto.pd.read.enabled.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.trasporto.pd.read.enabled.*': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -11256,7 +11265,7 @@ public class OpenSPCoop2Properties {
 							_tmp.put(key, b);
 							//}
 						}catch(Exception e) {
-							throw new Exception("Rilevato errore durante il parsing della property '"+pName+"."+key+"' (atteso: true/false): "+e.getMessage(),e);
+							throw new CoreException("Rilevato errore durante il parsing della property '"+pName+"."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
 				}
@@ -11268,7 +11277,7 @@ public class OpenSPCoop2Properties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' '"+pName+".*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' '"+pName+".*': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -11300,14 +11309,14 @@ public class OpenSPCoop2Properties {
 							boolean b = Boolean.parseBoolean(value);
 							_tmp.put(key, b);
 						}catch(Exception e) {
-							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.trasporto.pa.read.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+							throw new CoreException("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.trasporto.pa.read.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
 				}
 				this.keyValue_HeaderIntegrazioneTrasporto_readPA = _convertMapToCostantiIntegrazione(_tmp);
 								
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.trasporto.pa.read.enabled.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.trasporto.pa.read.enabled.*': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -11332,7 +11341,7 @@ public class OpenSPCoop2Properties {
 								this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.urlBased.keyword."));
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.urlBased.keyword.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.urlBased.keyword.*': "+e.getMessage(),e);
 				this.keyValue_HeaderIntegrazioneUrlBased = null;
 			}    
 		}
@@ -11351,7 +11360,7 @@ public class OpenSPCoop2Properties {
 								this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2.urlBased.keyword."));
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2.urlBased.keyword.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2.urlBased.keyword.*': "+e.getMessage(),e);
 				this.keyValue_HeaderIntegrazioneUrlBased_backwardCompatibility_openspcoop2 = null;
 			}    
 		}
@@ -11370,7 +11379,7 @@ public class OpenSPCoop2Properties {
 								this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1.urlBased.keyword."));
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1.urlBased.keyword.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1.urlBased.keyword.*': "+e.getMessage(),e);
 				this.keyValue_HeaderIntegrazioneUrlBased_backwardCompatibility_openspcoop1 = null;
 			}    
 		}
@@ -11397,14 +11406,14 @@ public class OpenSPCoop2Properties {
 							boolean b = Boolean.parseBoolean(value);
 							_tmp.put(key, b);
 						}catch(Exception e) {
-							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.urlBased.pd.set.request.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+							throw new CoreException("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.urlBased.pd.set.request.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
 				}
 				this.keyValue_HeaderIntegrazioneUrlBased_setPD = _convertMapToCostantiIntegrazione(_tmp);
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.urlBased.pd.set.request.enabled*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.urlBased.pd.set.request.enabled*': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -11431,14 +11440,14 @@ public class OpenSPCoop2Properties {
 							boolean b = Boolean.parseBoolean(value);
 							_tmp.put(key, b);
 						}catch(Exception e) {
-							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.urlBased.pd.read.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+							throw new CoreException("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.urlBased.pd.read.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
 				}
 				this.keyValue_HeaderIntegrazioneUrlBased_readPD = _convertMapToCostantiIntegrazione(_tmp);
 								
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.urlBased.pd.read.enabled.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.urlBased.pd.read.enabled.*': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -11465,14 +11474,14 @@ public class OpenSPCoop2Properties {
 							boolean b = Boolean.parseBoolean(value);
 							_tmp.put(key, b);
 						}catch(Exception e) {
-							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.urlBased.pa.set.request.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+							throw new CoreException("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.urlBased.pa.set.request.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
 				}
 				this.keyValue_HeaderIntegrazioneUrlBased_setPA = _convertMapToCostantiIntegrazione(_tmp);
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.urlBased.pa.set.request.enabled*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.urlBased.pa.set.request.enabled*': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -11499,14 +11508,14 @@ public class OpenSPCoop2Properties {
 							boolean b = Boolean.parseBoolean(value);
 							_tmp.put(key, b);
 						}catch(Exception e) {
-							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.urlBased.pa.read.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+							throw new CoreException("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.urlBased.pa.read.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
 				}
 				this.keyValue_HeaderIntegrazioneUrlBased_readPA = _convertMapToCostantiIntegrazione(_tmp);
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.urlBased.pa.read.enabled.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.urlBased.pa.read.enabled.*': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -11531,7 +11540,7 @@ public class OpenSPCoop2Properties {
 								this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.keyword."));
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.soap.keyword.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.soap.keyword.*': "+e.getMessage(),e);
 				this.keyValue_HeaderIntegrazioneSoap = null;
 			}    
 		}
@@ -11550,7 +11559,7 @@ public class OpenSPCoop2Properties {
 								this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2.soap.keyword."));
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2.soap.keyword.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2.soap.keyword.*': "+e.getMessage(),e);
 				this.keyValue_HeaderIntegrazioneSoap_backwardCompatibility_openspcoop2 = null;
 			}    
 		}
@@ -11569,7 +11578,7 @@ public class OpenSPCoop2Properties {
 								this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1.soap.keyword."));
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1.soap.keyword.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1.soap.keyword.*': "+e.getMessage(),e);
 				this.keyValue_HeaderIntegrazioneSoap_backwardCompatibility_openspcoop1 = null;
 			}    
 		}
@@ -11606,7 +11615,7 @@ public class OpenSPCoop2Properties {
 							boolean b = Boolean.parseBoolean(value);
 							_tmp.put(key, b);
 						}catch(Exception e) {
-							throw new Exception("Rilevato errore durante il parsing della property '"+pName+"."+key+"' (atteso: true/false): "+e.getMessage(),e);
+							throw new CoreException("Rilevato errore durante il parsing della property '"+pName+"."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
 				}
@@ -11618,7 +11627,7 @@ public class OpenSPCoop2Properties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' '"+pName+".*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' '"+pName+".*': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -11650,14 +11659,14 @@ public class OpenSPCoop2Properties {
 							boolean b = Boolean.parseBoolean(value);
 							_tmp.put(key, b);
 						}catch(Exception e) {
-							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.soap.pd.read.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+							throw new CoreException("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.soap.pd.read.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
 				}
 				this.keyValue_HeaderIntegrazioneSoap_readPD = _convertMapToCostantiIntegrazione(_tmp);
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.soap.pd.read.enabled.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.soap.pd.read.enabled.*': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -11698,7 +11707,7 @@ public class OpenSPCoop2Properties {
 							_tmp.put(key, b);
 							//}
 						}catch(Exception e) {
-							throw new Exception("Rilevato errore durante il parsing della property '"+pName+"."+key+"' (atteso: true/false): "+e.getMessage(),e);
+							throw new CoreException("Rilevato errore durante il parsing della property '"+pName+"."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
 				}
@@ -11710,7 +11719,7 @@ public class OpenSPCoop2Properties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' '"+pName+".*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' '"+pName+".*': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -11742,14 +11751,14 @@ public class OpenSPCoop2Properties {
 							boolean b = Boolean.parseBoolean(value);
 							_tmp.put(key, b);
 						}catch(Exception e) {
-							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.soap.pa.read.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+							throw new CoreException("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.soap.pa.read.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
 				}
 				this.keyValue_HeaderIntegrazioneSoap_readPA = _convertMapToCostantiIntegrazione(_tmp);
 								
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.soap.pa.read.enabled.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.soap.pa.read.enabled.*': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -12011,11 +12020,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.headerName");
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.headerSoapNameIntegrazione = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.headerName': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.headerName': "+e.getMessage(),e);
 				this.headerSoapNameIntegrazione = null;
 			}    
 		}
@@ -12030,11 +12039,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.headerName");
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.headerSoapNameIntegrazione_backwardCompatibility_openspcoop2 = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.headerName': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.headerName': "+e.getMessage(),e);
 				this.headerSoapNameIntegrazione_backwardCompatibility_openspcoop2 = null;
 			}    
 		}
@@ -12049,11 +12058,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.headerName");
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.headerSoapNameIntegrazione_backwardCompatibility_openspcoop1 = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.headerName': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.headerName': "+e.getMessage(),e);
 				this.headerSoapNameIntegrazione_backwardCompatibility_openspcoop1 = null;
 			}    
 		}
@@ -12073,11 +12082,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.headerActor");
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.headerSoapActorIntegrazione = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.headerActor': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.headerActor': "+e.getMessage(),e);
 				this.headerSoapActorIntegrazione = null;
 			}    
 		}
@@ -12092,11 +12101,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.headerActor");
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.headerSoapActorIntegrazione_backwardCompatibility_openspcoop2 = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.headerActor': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.headerActor': "+e.getMessage(),e);
 				this.headerSoapActorIntegrazione_backwardCompatibility_openspcoop2 = null;
 			}    
 		}
@@ -12111,11 +12120,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.headerActor");
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.headerSoapActorIntegrazione_backwardCompatibility_openspcoop1 = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.headerActor': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.headerActor': "+e.getMessage(),e);
 				this.headerSoapActorIntegrazione_backwardCompatibility_openspcoop1 = null;
 			}    
 		}
@@ -12135,11 +12144,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.headerPrefix");
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.headerSoapPrefixIntegrazione = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.headerPrefix': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.headerPrefix': "+e.getMessage(),e);
 				this.headerSoapPrefixIntegrazione = null;
 			}    
 		}
@@ -12154,11 +12163,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.headerPrefix");
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.headerSoapPrefixIntegrazione_backwardCompatibility_openspcoop2 = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.headerPrefix': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.headerPrefix': "+e.getMessage(),e);
 				this.headerSoapPrefixIntegrazione_backwardCompatibility_openspcoop2 = null;
 			}    
 		}
@@ -12173,11 +12182,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.headerPrefix");
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.headerSoapPrefixIntegrazione_backwardCompatibility_openspcoop1 = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.headerPrefix': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.headerPrefix': "+e.getMessage(),e);
 				this.headerSoapPrefixIntegrazione_backwardCompatibility_openspcoop1 = null;
 			}    
 		}
@@ -12197,11 +12206,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.extProtocolInfo.elemento.nome");
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.headerSoapExtProtocolInfoNomeElementoIntegrazione = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.extProtocolInfo.elemento.nome': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.extProtocolInfo.elemento.nome': "+e.getMessage(),e);
 				this.headerSoapExtProtocolInfoNomeElementoIntegrazione = null;
 			}    
 		}
@@ -12215,11 +12224,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.extProtocolInfo.elemento.nome");
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.headerSoapExtProtocolInfoNomeElementoIntegrazione_backwardCompatibility_openspcoop2 = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.extProtocolInfo.elemento.nome': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.extProtocolInfo.elemento.nome': "+e.getMessage(),e);
 				this.headerSoapExtProtocolInfoNomeElementoIntegrazione_backwardCompatibility_openspcoop2 = null;
 			}    
 		}
@@ -12233,11 +12242,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.extProtocolInfo.elemento.nome");
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.headerSoapExtProtocolInfoNomeElementoIntegrazione_backwardCompatibility_openspcoop1 = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.extProtocolInfo.elemento.nome': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.extProtocolInfo.elemento.nome': "+e.getMessage(),e);
 				this.headerSoapExtProtocolInfoNomeElementoIntegrazione_backwardCompatibility_openspcoop1 = null;
 			}    
 		}
@@ -12256,11 +12265,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.extProtocolInfo.attributo.nome");
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.headerSoapExtProtocolInfoNomeAttributoIntegrazione = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.extProtocolInfo.attributo.nome': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.extProtocolInfo.attributo.nome': "+e.getMessage(),e);
 				this.headerSoapExtProtocolInfoNomeAttributoIntegrazione = null;
 			}    
 		}
@@ -12275,11 +12284,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.extProtocolInfo.attributo.nome");
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.headerSoapExtProtocolInfoNomeAttributoIntegrazione_backwardCompatibility_openspcoop2 = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.extProtocolInfo.attributo.nome': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.extProtocolInfo.attributo.nome': "+e.getMessage(),e);
 				this.headerSoapExtProtocolInfoNomeAttributoIntegrazione_backwardCompatibility_openspcoop2 = null;
 			}    
 		}
@@ -12294,11 +12303,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.extProtocolInfo.attributo.nome");
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.headerSoapExtProtocolInfoNomeAttributoIntegrazione_backwardCompatibility_openspcoop1 = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.extProtocolInfo.attributo.nome': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.extProtocolInfo.attributo.nome': "+e.getMessage(),e);
 				this.headerSoapExtProtocolInfoNomeAttributoIntegrazione_backwardCompatibility_openspcoop1 = null;
 			}    
 		}
@@ -12318,11 +12327,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.isIntegrazioneDynamicInfoEnabled = Boolean.parseBoolean(name);
-			}catch(java.lang.Throwable e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isIntegrazioneDynamicInfoEnabled = false;
 			}    
 		}
@@ -12341,11 +12350,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.getIntegrazioneDynamicInfoType = InformazioniIntegrazioneSorgente.valueOf(name);
-			}catch(java.lang.Throwable e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 			}    
 		}
 
@@ -12360,11 +12369,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.getIntegrazioneDynamicInfoName = name;
-			}catch(java.lang.Throwable e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 			}    
 		}
 
@@ -12379,11 +12388,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.getIntegrazioneDynamicInfoEncodeType = InformazioniIntegrazioneCodifica.valueOf(name);
-			}catch(java.lang.Throwable e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 			}    
 		}
 
@@ -12398,11 +12407,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.isIntegrazioneDynamicInfoRequired = Boolean.parseBoolean(name);
-			}catch(java.lang.Throwable e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isIntegrazioneDynamicInfoRequired = false;
 			}    
 		}
@@ -12423,11 +12432,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.isIntegrazioneResponseDynamicInfoEnabled = Boolean.parseBoolean(name);
-			}catch(java.lang.Throwable e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isIntegrazioneResponseDynamicInfoEnabled = false;
 			}    
 		}
@@ -12446,11 +12455,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.getIntegrazioneResponseDynamicInfoName = name;
-			}catch(java.lang.Throwable e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 			}    
 		}
 
@@ -12465,11 +12474,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.getIntegrazioneResponseDynamicInfoEncodeType = InformazioniIntegrazioneCodifica.valueOf(name);
-			}catch(java.lang.Throwable e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 			}    
 		}
 
@@ -12484,11 +12493,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.isIntegrazioneResponseDynamicInfoRequired = Boolean.parseBoolean(name);
-			}catch(java.lang.Throwable e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isIntegrazioneResponseDynamicInfoRequired = false;
 			}    
 		}
@@ -12511,11 +12520,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.getIntegrazioneTemplateRequestPropertyTipo = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.getIntegrazioneTemplateRequestPropertyTipo = null;
 			}    
 		}
@@ -12531,11 +12540,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.getIntegrazioneTemplateRequestPropertyFile = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.getIntegrazioneTemplateRequestPropertyFile = null;
 			}    
 		}
@@ -12551,11 +12560,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.getIntegrazioneTemplateResponsePropertyTipo = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.getIntegrazioneTemplateResponsePropertyTipo = null;
 			}    
 		}
@@ -12571,11 +12580,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.getIntegrazioneTemplateResponsePropertyFile = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.getIntegrazioneTemplateResponsePropertyFile = null;
 			}    
 		}
@@ -12600,8 +12609,8 @@ public class OpenSPCoop2Properties {
 					this.getIntegrazioneTemplatePortaDelegataRequestTipo_read = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
-				throw new Exception (e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException (e);
 			}    
 		}
 
@@ -12623,8 +12632,8 @@ public class OpenSPCoop2Properties {
 					this.getIntegrazioneTemplatePortaDelegataRequestFile_read = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
-				throw new Exception (e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException (e);
 			}    
 		}
 
@@ -12646,8 +12655,8 @@ public class OpenSPCoop2Properties {
 					this.getIntegrazioneTemplatePortaDelegataResponseTipo_read = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
-				throw new Exception (e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException (e);
 			}    
 		}
 
@@ -12669,8 +12678,8 @@ public class OpenSPCoop2Properties {
 					this.getIntegrazioneTemplatePortaDelegataResponseFile_read = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
-				throw new Exception (e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException (e);
 			}    
 		}
 
@@ -12693,8 +12702,8 @@ public class OpenSPCoop2Properties {
 					this.getIntegrazioneTemplatePortaApplicativaRequestTipo_read = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
-				throw new Exception (e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException (e);
 			}    
 		}
 
@@ -12716,8 +12725,8 @@ public class OpenSPCoop2Properties {
 					this.getIntegrazioneTemplatePortaApplicativaRequestFile_read = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
-				throw new Exception (e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException (e);
 			}    
 		}
 
@@ -12739,8 +12748,8 @@ public class OpenSPCoop2Properties {
 					this.getIntegrazioneTemplatePortaApplicativaResponseTipo_read = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
-				throw new Exception (e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException (e);
 			}    
 		}
 
@@ -12762,8 +12771,8 @@ public class OpenSPCoop2Properties {
 					this.getIntegrazioneTemplatePortaApplicativaResponseFile_read = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
-				throw new Exception (e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException (e);
 			}    
 		}
 
@@ -12799,8 +12808,8 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
-				throw new Exception (e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException (e);
 			}    
 		}
 
@@ -12821,18 +12830,18 @@ public class OpenSPCoop2Properties {
 						try {
 							String hdrValue = this.reader.getValue_convertEnvProperties(pName);
 							if(hdrValue==null) {
-								throw new Exception("non definita");
+								throw new CoreException("non definita");
 							}
 							hdrValue = hdrValue.trim();
 							this.getIntegrazioneAutenticazionePortaDelegataRequestHeadersMap.put(hdrName, hdrValue);
 						}catch(java.lang.Exception e) {
-							throw new Exception ("Proprietà '"+pName+"' "+e.getMessage(),e);
+							throw new CoreException ("Proprietà '"+pName+"' "+e.getMessage(),e);
 						}   
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNamePrefix+".*': "+e.getMessage(),e);
-				throw new Exception (e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNamePrefix+".*': "+e.getMessage(),e);
+				throw new CoreException (e);
 			}    
 		}
 
@@ -12865,8 +12874,8 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
-				throw new Exception (e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException (e);
 			}    
 		}
 
@@ -12887,18 +12896,18 @@ public class OpenSPCoop2Properties {
 						try {
 							String hdrValue = this.reader.getValue_convertEnvProperties(pName);
 							if(hdrValue==null) {
-								throw new Exception("non definita");
+								throw new CoreException("non definita");
 							}
 							hdrValue = hdrValue.trim();
 							this.getIntegrazioneAutenticazionePortaApplicativaRequestHeadersMap.put(hdrName, hdrValue);
 						}catch(java.lang.Exception e) {
-							throw new Exception ("Proprietà '"+pName+"' "+e.getMessage(),e);
+							throw new CoreException ("Proprietà '"+pName+"' "+e.getMessage(),e);
 						}   
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNamePrefix+".*': "+e.getMessage(),e);
-				throw new Exception (e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNamePrefix+".*': "+e.getMessage(),e);
+				throw new CoreException (e);
 			}    
 		}
 
@@ -12913,11 +12922,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.getIntegrazioneAutenticazionePropertyHeaders = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.getIntegrazioneAutenticazionePropertyHeaders = null;
 			}    
 		}
@@ -12933,11 +12942,11 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.getIntegrazioneAutenticazionePropertyHeaderPrefix = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.getIntegrazioneAutenticazionePropertyHeaderPrefix = null;
 			}    
 		}
@@ -12955,13 +12964,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettore.ritardo.stato");
 				if(name==null)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				name = name.trim();
 				this.isRitardoConsegnaAbilitato = CostantiConfigurazione.ABILITATO.equals(name);
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.connettore.ritardo.stato': "+e.getMessage(),e);
-				throw new Exception (e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.connettore.ritardo.stato': "+e.getMessage(),e);
+				throw new CoreException (e);
 			}    
 		}
 
@@ -12980,10 +12989,10 @@ public class OpenSPCoop2Properties {
 					r = java.lang.Long.parseLong(name);
 				}
 				if(r<0)
-					throw new Exception("Il ritardo deve essere > 0");
+					throw new CoreException("Il ritardo deve essere > 0");
 				this.ritardoConsegnaEsponenziale = r;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.connettore.ritardo.fattore': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.connettore.ritardo.fattore': "+e.getMessage(),e);
 				this.ritardoConsegnaEsponenziale = -1L;
 			}    
 		}
@@ -13004,14 +13013,14 @@ public class OpenSPCoop2Properties {
 					}else if(name.equals("*")){
 						this.isRitardoConsegnaEsponenzialeConMoltiplicazione = true;
 					}else{
-						throw new Exception("Tipo di operazione non conosciuta: "+name);
+						throw new CoreException("Tipo di operazione non conosciuta: "+name);
 					}
 				}else{
-					throw new Exception("Tipo di operazione non definita");
+					throw new CoreException("Tipo di operazione non definita");
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.connettore.ritardo.operazione': "+e.getMessage(),e);
-				throw new Exception (e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.connettore.ritardo.operazione': "+e.getMessage(),e);
+				throw new CoreException (e);
 			}    
 		}
 
@@ -13030,10 +13039,10 @@ public class OpenSPCoop2Properties {
 					r = java.lang.Long.parseLong(name);
 				}
 				if(r<=0)
-					throw new Exception("Il limite deve essere > 0");
+					throw new CoreException("Il limite deve essere > 0");
 				this.ritardoConsegnaEsponenzialeLimite = r;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.connettore.ritardo.limite': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.connettore.ritardo.limite': "+e.getMessage(),e);
 				this.ritardoConsegnaEsponenzialeLimite = -1L;
 			}    
 		}
@@ -13100,7 +13109,7 @@ public class OpenSPCoop2Properties {
 					this.dimensioneCacheGestoreMessaggi_value = -1;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.dimensione': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.dimensione': "+e.getMessage(),e);
 				throw new OpenSPCoop2ConfigurationException("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.dimensione'",e);
 			}
 		}
@@ -13125,7 +13134,7 @@ public class OpenSPCoop2Properties {
 					this.algoritmoCacheGestoreMessaggi_value = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.algoritmo': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.algoritmo': "+e.getMessage(),e);
 				throw new OpenSPCoop2ConfigurationException("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.algoritmo'",e);
 			}
 		}
@@ -13150,7 +13159,7 @@ public class OpenSPCoop2Properties {
 					this.itemIdleTimeCacheGestoreMessaggi_value = -1;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.itemIdleTime': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.itemIdleTime': "+e.getMessage(),e);
 				throw new OpenSPCoop2ConfigurationException("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.itemIdleTime'",e);
 			}
 		}
@@ -13175,7 +13184,7 @@ public class OpenSPCoop2Properties {
 					this.itemLifeSecondCacheGestoreMessaggi_value = -1;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.itemLifeSecond': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.itemLifeSecond': "+e.getMessage(),e);
 				throw new OpenSPCoop2ConfigurationException("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.itemLifeSecond'",e);
 			}
 		}
@@ -13233,7 +13242,7 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 				this.jndiNameMBeanServer = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.core.jmx.jndi.mbeanServer': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.core.jmx.jndi.mbeanServer': "+e.getMessage(),e);
 				this.jndiNameMBeanServer = null;
 			}    
 		}
@@ -13257,7 +13266,7 @@ public class OpenSPCoop2Properties {
 				this.jndiContextMBeanServer = prop;
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle propriete' JNDI 'org.openspcoop2.pdd.core.jmx.jndi.property.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle propriete' JNDI 'org.openspcoop2.pdd.core.jmx.jndi.property.*': "+e.getMessage(),e);
 				this.jndiContextMBeanServer = null;
 			}    
 		}
@@ -13786,26 +13795,26 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.http.urlHttps.repository");
 				if(name==null){
-					throw new Exception("Proprieta' non impostata");
+					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
 				this.getConnettoreHttp_urlHttps_repository_inoltroBuste = new File(name);
 				if(this.getConnettoreHttp_urlHttps_repository_inoltroBuste.exists()) {
 					if(this.getConnettoreHttp_urlHttps_repository_inoltroBuste.isDirectory()==false) {
-						throw new Exception("Dir ["+this.getConnettoreHttp_urlHttps_repository_inoltroBuste.getAbsolutePath()+"] not dir");
+						throw new CoreException("Dir ["+this.getConnettoreHttp_urlHttps_repository_inoltroBuste.getAbsolutePath()+"] not dir");
 					}
 					if(this.getConnettoreHttp_urlHttps_repository_inoltroBuste.canRead()==false) {
-						throw new Exception("Dir ["+this.getConnettoreHttp_urlHttps_repository_inoltroBuste.getAbsolutePath()+"] cannot read");
+						throw new CoreException("Dir ["+this.getConnettoreHttp_urlHttps_repository_inoltroBuste.getAbsolutePath()+"] cannot read");
 					}
 					if(this.getConnettoreHttp_urlHttps_repository_inoltroBuste.canWrite()==false) {
-						throw new Exception("Dir ["+this.getConnettoreHttp_urlHttps_repository_inoltroBuste.getAbsolutePath()+"] cannot write");
+						throw new CoreException("Dir ["+this.getConnettoreHttp_urlHttps_repository_inoltroBuste.getAbsolutePath()+"] cannot write");
 					}
 				}
 				else {
 					// viene creata automaticamente
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.http.urlHttps.repository': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.http.urlHttps.repository': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -13820,26 +13829,26 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.http.urlHttps.repository");
 				if(name==null){
-					throw new Exception("Proprieta' non impostata");
+					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
 				this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi = new File(name);
 				if(this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi.exists()) {
 					if(this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi.isDirectory()==false) {
-						throw new Exception("Dir ["+this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi.getAbsolutePath()+"] not dir");
+						throw new CoreException("Dir ["+this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi.getAbsolutePath()+"] not dir");
 					}
 					if(this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi.canRead()==false) {
-						throw new Exception("Dir ["+this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi.getAbsolutePath()+"] cannot read");
+						throw new CoreException("Dir ["+this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi.getAbsolutePath()+"] cannot read");
 					}
 					if(this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi.canWrite()==false) {
-						throw new Exception("Dir ["+this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi.getAbsolutePath()+"] cannot write");
+						throw new CoreException("Dir ["+this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi.getAbsolutePath()+"] cannot write");
 					}
 				}
 				else {
 					// viene creata automaticamente
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.http.urlHttps.repository': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.http.urlHttps.repository': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -14066,7 +14075,7 @@ public class OpenSPCoop2Properties {
 					this.getChunkLength_inoltroBuste = DEFAULT_CHUNKLEN;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.httpTransferLength.chunkLength' posside un valore non corretto:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.httpTransferLength.chunkLength' posside un valore non corretto:"+e.getMessage(),e);
 				this.getChunkLength_inoltroBuste = -1;
 			}  
 		}
@@ -14110,7 +14119,7 @@ public class OpenSPCoop2Properties {
 					this.getChunkLength_consegnaContenutiApplicativi = DEFAULT_CHUNKLEN;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.httpTransferLength.chunkLength' posside un valore non corretto:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.httpTransferLength.chunkLength' posside un valore non corretto:"+e.getMessage(),e);
 				this.getChunkLength_consegnaContenutiApplicativi = -1;
 			}  
 		}
@@ -14443,7 +14452,7 @@ public class OpenSPCoop2Properties {
 					this.httpXPdDDetails = this.getDetails();
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.http.xDetails' non impostata correttamente:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.http.xDetails' non impostata correttamente:"+e.getMessage(),e);
 				this.httpXPdDDetails = this.getDetails();
 			}  
 		}
@@ -14485,7 +14494,7 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getCharsetEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi = Charset.toEnumConstant(name);
 					if(this.getCharsetEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi==null){
-						throw new Exception("Valore fornito non valido: "+name);
+						throw new CoreException("Valore fornito non valido: "+name);
 					}
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name());
@@ -14510,7 +14519,7 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi = RFC2047Encoding.valueOf(name);
 					if(this.getEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi==null){
-						throw new Exception("Valore fornito non valido: "+name);
+						throw new CoreException("Valore fornito non valido: "+name);
 					}
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name());
@@ -14557,7 +14566,7 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getCharsetEncodingRFC2047HeaderValue_ricezioneBuste = Charset.toEnumConstant(name);
 					if(this.getCharsetEncodingRFC2047HeaderValue_ricezioneBuste==null){
-						throw new Exception("Valore fornito non valido: "+name);
+						throw new CoreException("Valore fornito non valido: "+name);
 					}
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name());
@@ -14582,7 +14591,7 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getEncodingRFC2047HeaderValue_ricezioneBuste = RFC2047Encoding.valueOf(name);
 					if(this.getEncodingRFC2047HeaderValue_ricezioneBuste==null){
-						throw new Exception("Valore fornito non valido: "+name);
+						throw new CoreException("Valore fornito non valido: "+name);
 					}
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name());
@@ -14629,7 +14638,7 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getCharsetEncodingRFC2047HeaderValue_inoltroBuste = Charset.toEnumConstant(name);
 					if(this.getCharsetEncodingRFC2047HeaderValue_inoltroBuste==null){
-						throw new Exception("Valore fornito non valido: "+name);
+						throw new CoreException("Valore fornito non valido: "+name);
 					}
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name());
@@ -14654,7 +14663,7 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getEncodingRFC2047HeaderValue_inoltroBuste = RFC2047Encoding.valueOf(name);
 					if(this.getEncodingRFC2047HeaderValue_inoltroBuste==null){
-						throw new Exception("Valore fornito non valido: "+name);
+						throw new CoreException("Valore fornito non valido: "+name);
 					}
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name());
@@ -14701,7 +14710,7 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getCharsetEncodingRFC2047HeaderValue_consegnaContenutiApplicativi = Charset.toEnumConstant(name);
 					if(this.getCharsetEncodingRFC2047HeaderValue_consegnaContenutiApplicativi==null){
-						throw new Exception("Valore fornito non valido: "+name);
+						throw new CoreException("Valore fornito non valido: "+name);
 					}
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name());
@@ -14726,7 +14735,7 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getEncodingRFC2047HeaderValue_consegnaContenutiApplicativi = RFC2047Encoding.valueOf(name);
 					if(this.getEncodingRFC2047HeaderValue_consegnaContenutiApplicativi==null){
-						throw new Exception("Valore fornito non valido: "+name);
+						throw new CoreException("Valore fornito non valido: "+name);
 					}
 				}else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name());
@@ -14981,7 +14990,7 @@ public class OpenSPCoop2Properties {
 					else if(CostantiConfigurazione.TEMPO_TIPO_SINCRONIZZATO.equals(name))
 						this.tipoTempo = TipoOraRegistrazione.SINCRONIZZATO;
 					else
-						throw new Exception("Tipo "+name+" non conosciuto");
+						throw new CoreException("Tipo "+name+" non conosciuto");
 				}
 				else{
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.tempo.tipo' non impostata, viene utilizzato il default="+CostantiConfigurazione.TEMPO_TIPO_LOCALE);
@@ -15012,10 +15021,10 @@ public class OpenSPCoop2Properties {
 				if(name!=null)
 					name = name.trim();
 				else
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				this.tipoDateManager = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.date.tipo': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.date.tipo': "+e.getMessage(),e);
 				this.tipoDateManager = null;
 			}    
 		}
@@ -15032,10 +15041,10 @@ public class OpenSPCoop2Properties {
 				if(name!=null)
 					name = name.trim();
 				else
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				this.tipoDateTimeFormat = DateEngineType.valueOf(name);
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.dateTimeFormat': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.dateTimeFormat': "+e.getMessage(),e);
 				this.tipoDateTimeFormat = null;
 			}    
 		}
@@ -15059,7 +15068,7 @@ public class OpenSPCoop2Properties {
 				this.dateManagerProperties = prop;
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle propriete' 'org.openspcoop2.pdd.date.property.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle propriete' 'org.openspcoop2.pdd.date.property.*': "+e.getMessage(),e);
 				this.dateManagerProperties = null;
 			}    
 		}
@@ -15089,7 +15098,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isIntegrationManagerEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrationManager.enabled': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrationManager.enabled': "+e.getMessage(),e);
 				this.isIntegrationManagerEnabled = false;
 			}    
 		}
@@ -15110,7 +15119,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isIntegrationManagerIdWithDate = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrationManager.idWithDate': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrationManager.idWithDate': "+e.getMessage(),e);
 				this.isIntegrationManagerIdWithDate = false;
 			}    
 		}
@@ -15133,7 +15142,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getIntegrationManagerIdsLimit = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.getIntegrationManagerIdsLimit = null;
 			}   
 			this.getIntegrationManagerIdsLimit_read = true;
@@ -15204,7 +15213,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isIntegrationManager_runtime_useRuntimeManager = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isIntegrationManager_runtime_useRuntimeManager = true;
 			}    
 		}
@@ -15226,7 +15235,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isIntegrationManager_runtime_useConsegnePreseInCaricoManager = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isIntegrationManager_runtime_useConsegnePreseInCaricoManager = true;
 			}    
 		}
@@ -15242,12 +15251,12 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null){
-					throw new Exception("Proprieta' non impostata");
+					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
 				this.getIntegrationManager_runtime_dataSource = name;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -15262,7 +15271,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getIntegrationManager_runtime_dataSourceJndiContext = this.reader.readProperties_convertEnvProperties(pName);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -15284,7 +15293,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isIntegrationManager_runtime_dataSource_useDBUtils = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isIntegrationManager_runtime_dataSource_useDBUtils = true;
 			}    
 		}
@@ -15309,7 +15318,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isIntegrationManager_transazioni_useTransactionManager = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isIntegrationManager_transazioni_useTransactionManager = true;
 			}    
 		}
@@ -15331,7 +15340,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isIntegrationManager_transazioni_useConsegnePreseInCaricoManager = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isIntegrationManager_transazioni_useConsegnePreseInCaricoManager = true;
 			}    
 		}
@@ -15347,12 +15356,12 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null){
-					throw new Exception("Proprieta' non impostata");
+					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
 				this.getIntegrationManager_transazioni_dataSource = name;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -15367,7 +15376,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getIntegrationManager_transazioni_dataSourceJndiContext = this.reader.readProperties_convertEnvProperties(pName);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -15389,7 +15398,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isIntegrationManager_transazioni_dataSource_useDBUtils = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isIntegrationManager_transazioni_dataSource_useDBUtils = true;
 			}    
 		}
@@ -15693,7 +15702,7 @@ public class OpenSPCoop2Properties {
 					this.cluster_hostname = name;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.cluster_id.hostname': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.cluster_id.hostname': "+e.getMessage(),e);
 				this.cluster_hostname = null;
 			}  
 		}
@@ -15715,11 +15724,11 @@ public class OpenSPCoop2Properties {
 							this.group_id = org.openspcoop2.utils.Costanti.OPENSPCOOP2;
 						}
 						else {
-							throw new Exception("non definita");
+							throw new CoreException("non definita");
 						}
 					}
 					else {
-						throw new Exception("non definita");
+						throw new CoreException("non definita");
 					}
 				}
 				else if(name!=null){
@@ -15727,7 +15736,7 @@ public class OpenSPCoop2Properties {
 					this.group_id = name;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.group_id = null;
 			}  
 		}
@@ -15748,13 +15757,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.cluster_id");
 				if(name==null && required)
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				if(name!=null){
 					name = name.trim();
 					this.cluster_id = name;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.cluster_id': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.cluster_id': "+e.getMessage(),e);
 				this.cluster_id = null;
 			}  
 		}
@@ -15805,7 +15814,7 @@ public class OpenSPCoop2Properties {
 					int numero = Integer.parseInt(name.trim());
 					if(numero<0 || numero>99){
 						String msg = "Riscontrato errore durante la lettura della proprietà 'org.openspcoop2.pdd.cluster_id.numeric': il valore indicato ("+numero+") deve essere compreso tra 0 e 99";
-						this.log.error(msg);
+						this.logError(msg);
 						throw new ProtocolException(msg);
 					}
 					this.cluster_id_numerico = name.trim();
@@ -15815,7 +15824,7 @@ public class OpenSPCoop2Properties {
 				
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.cluster_id.numeric': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}   
 		}
@@ -15833,7 +15842,7 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getClusterDinamicoIdNumericoCifre = java.lang.Integer.parseInt(name);
 					if(this.getClusterDinamicoIdNumericoCifre<=0) {
-						throw new Exception("Il valore indicato deve essere maggiore di 0");
+						throw new CoreException("Il valore indicato deve essere maggiore di 0");
 					}
 				}
 				else{
@@ -15843,15 +15852,15 @@ public class OpenSPCoop2Properties {
 							this.getClusterDinamicoIdNumericoCifre = 2; // per default si registra staticamente fino a 99 nodi
 						}
 						else {
-							throw new Exception("Non Impostato");
+							throw new CoreException("Non Impostato");
 						}
 					}
 					else {
-						throw new Exception("Non Impostato");
+						throw new CoreException("Non Impostato");
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 				this.getClusterDinamicoIdNumericoCifre = -1;
 			}  
 		}
@@ -15929,7 +15938,7 @@ public class OpenSPCoop2Properties {
 					this.pddContextSerializer = CostantiConfigurazione.NONE;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.contextSerializer': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.contextSerializer': "+e.getMessage(),e);
 				this.pddContextSerializer = CostantiConfigurazione.NONE;
 			}  
 		}
@@ -15957,15 +15966,15 @@ public class OpenSPCoop2Properties {
 				if(name!=null){
 					name = name.trim();
 					if( (CostantiConfigurazione.ABILITATO.equals(name)==false) && (CostantiConfigurazione.DISABILITATO.equals(name)==false) ){
-						throw new Exception("Valori ammessi sono abilitato/disabilito");
+						throw new CoreException("Valori ammessi sono abilitato/disabilito");
 					}
 				}
 				else{
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				}
 				this.statelessOneWay = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.stateless.default.oneway': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.stateless.default.oneway': "+e.getMessage(),e);
 				this.statelessOneWay = null;
 			}    
 		}
@@ -15988,15 +15997,15 @@ public class OpenSPCoop2Properties {
 				if(name!=null){
 					name = name.trim();
 					if( (CostantiConfigurazione.ABILITATO.equals(name)==false) && (CostantiConfigurazione.DISABILITATO.equals(name)==false) ){
-						throw new Exception("Valori ammessi sono abilitato/disabilito");
+						throw new CoreException("Valori ammessi sono abilitato/disabilito");
 					}
 				}
 				else{
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				}
 				this.statelessSincrono = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.stateless.default.sincrono': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.stateless.default.sincrono': "+e.getMessage(),e);
 				this.statelessSincrono = null;
 			}    
 		}
@@ -16019,15 +16028,15 @@ public class OpenSPCoop2Properties {
 				if(name!=null){
 					name = name.trim();
 					if( (CostantiConfigurazione.ABILITATO.equals(name)==false) && (CostantiConfigurazione.DISABILITATO.equals(name)==false) ){
-						throw new Exception("Valori ammessi sono abilitato/disabilito");
+						throw new CoreException("Valori ammessi sono abilitato/disabilito");
 					}
 				}
 				else{
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				}
 				this.statelessAsincrono = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.stateless.default.asincroni': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.stateless.default.asincroni': "+e.getMessage(),e);
 				this.statelessAsincrono = null;
 			}    
 		}
@@ -16050,7 +16059,7 @@ public class OpenSPCoop2Properties {
 				if(value!=null){
 					value = value.trim();
 					if( (CostantiConfigurazione.ONEWAY_STATEFUL_1_0.equals(value)==false) && (CostantiConfigurazione.ONEWAY_STATEFUL_1_1.equals(value)==false) ){
-						throw new Exception("Valori ammessi sono 1.0/1.1");
+						throw new CoreException("Valori ammessi sono 1.0/1.1");
 					}
 					this.isGestioneOnewayStateful_1_1 = CostantiConfigurazione.ONEWAY_STATEFUL_1_1.equals(value);
 				}else{
@@ -16082,15 +16091,15 @@ public class OpenSPCoop2Properties {
 				if(name!=null){
 					name = name.trim();
 					if( (CostantiConfigurazione.ABILITATO.equals(name)==false) && (CostantiConfigurazione.DISABILITATO.equals(name)==false) ){
-						throw new Exception("Valori ammessi sono abilitato/disabilito");
+						throw new CoreException("Valori ammessi sono abilitato/disabilito");
 					}
 				}
 				else{
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				}
 				this.statelessRouting = name;
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.stateless.router': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.stateless.router': "+e.getMessage(),e);
 				this.statelessRouting = null;
 			}    
 		}
@@ -16114,7 +16123,7 @@ public class OpenSPCoop2Properties {
 				if(value!=null){
 					value = value.trim();
 					if( (CostantiConfigurazione.ABILITATO.equals(value)==false) && (CostantiConfigurazione.DISABILITATO.equals(value)==false) ){
-						throw new Exception("Valori ammessi sono abilitato/disabilitato");
+						throw new CoreException("Valori ammessi sono abilitato/disabilitato");
 					}
 					if( CostantiConfigurazione.DISABILITATO.equals(value) ){
 						this.isGestioneStateful_RinegoziamentoConnessione = false;
@@ -16159,7 +16168,7 @@ public class OpenSPCoop2Properties {
 					this.mergeHandlerBuiltInAndHandlerUser = false;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.handler.merge' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.handler.merge' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		return this.mergeHandlerBuiltInAndHandlerUser;
@@ -16182,7 +16191,7 @@ public class OpenSPCoop2Properties {
 					this.printInfoHandlerBuiltIn = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.handler.built-in.printInfo' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.handler.built-in.printInfo' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		return this.printInfoHandlerBuiltIn;
@@ -16208,7 +16217,7 @@ public class OpenSPCoop2Properties {
 					this.tipiInitHandlerBuiltIn = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.init': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.init': "+e.getMessage(),e);
 				this.tipiInitHandlerBuiltIn = null;
 			}   
 			this.tipiInitHandlerBuiltInRead = true;
@@ -16236,7 +16245,7 @@ public class OpenSPCoop2Properties {
 					this.tipiExitHandlerBuiltIn = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.exit': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.exit': "+e.getMessage(),e);
 				this.tipiExitHandlerBuiltIn = null;
 			}   
 			this.tipiExitHandlerBuiltInRead = true;
@@ -16264,7 +16273,7 @@ public class OpenSPCoop2Properties {
 					this.tipiPreInRequestHandlerBuiltIn = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.pre-in-request': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.pre-in-request': "+e.getMessage(),e);
 				this.tipiPreInRequestHandlerBuiltIn = null;
 			}   
 			this.tipiPreInRequestHandlerBuiltInRead = true;
@@ -16293,7 +16302,7 @@ public class OpenSPCoop2Properties {
 					this.tipiInRequestHandlerBuiltIn = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.in-request': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.in-request': "+e.getMessage(),e);
 				this.tipiInRequestHandlerBuiltIn = null;
 			}   
 			this.tipiInRequestHandlerBuiltInRead = true;
@@ -16321,7 +16330,7 @@ public class OpenSPCoop2Properties {
 					this.tipiInRequestProtocolHandlerBuiltIn = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.in-protocol-request': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.in-protocol-request': "+e.getMessage(),e);
 				this.tipiInRequestProtocolHandlerBuiltIn = null;
 			}   
 			this.tipiInRequestProtocolHandlerBuiltInRead = true;
@@ -16349,7 +16358,7 @@ public class OpenSPCoop2Properties {
 					this.tipiOutRequestHandlerBuiltIn = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.out-request': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.out-request': "+e.getMessage(),e);
 				this.tipiOutRequestHandlerBuiltIn = null;
 			}   
 			this.tipiOutRequestHandlerBuiltInRead = true;
@@ -16377,7 +16386,7 @@ public class OpenSPCoop2Properties {
 					this.tipiPostOutRequestHandlerBuiltIn = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.post-out-request': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.post-out-request': "+e.getMessage(),e);
 				this.tipiPostOutRequestHandlerBuiltIn = null;
 			}   
 			this.tipiPostOutRequestHandlerBuiltInRead = true;
@@ -16405,7 +16414,7 @@ public class OpenSPCoop2Properties {
 					this.tipiPreInResponseHandlerBuiltIn = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.pre-in-response': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.pre-in-response': "+e.getMessage(),e);
 				this.tipiPreInResponseHandlerBuiltIn = null;
 			}   
 			this.tipiPreInResponseHandlerBuiltInRead = true;
@@ -16433,7 +16442,7 @@ public class OpenSPCoop2Properties {
 					this.tipiInResponseHandlerBuiltIn = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.in-response': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.in-response': "+e.getMessage(),e);
 				this.tipiInResponseHandlerBuiltIn = null;
 			}   
 			this.tipiInResponseHandlerBuiltInRead = true;
@@ -16461,7 +16470,7 @@ public class OpenSPCoop2Properties {
 					this.tipiOutResponseHandlerBuiltIn = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.out-response': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.out-response': "+e.getMessage(),e);
 				this.tipiOutResponseHandlerBuiltIn = null;
 			}   
 			this.tipiOutResponseHandlerBuiltInRead = true;
@@ -16489,7 +16498,7 @@ public class OpenSPCoop2Properties {
 					this.tipiPostOutResponseHandlerBuiltIn = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.post-out-response': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.post-out-response': "+e.getMessage(),e);
 				this.tipiPostOutResponseHandlerBuiltIn = null;
 			}   
 			this.tipiPostOutResponseHandlerBuiltInRead = true;
@@ -16517,7 +16526,7 @@ public class OpenSPCoop2Properties {
 					this.tipiIntegrationManagerRequestHandlerBuiltIn = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.integrationManager.handler.built-in.request': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.integrationManager.handler.built-in.request': "+e.getMessage(),e);
 				this.tipiIntegrationManagerRequestHandlerBuiltIn = null;
 			}   
 			this.tipiIntegrationManagerRequestHandlerBuiltInRead = true;
@@ -16545,7 +16554,7 @@ public class OpenSPCoop2Properties {
 					this.tipiIntegrationManagerResponseHandlerBuiltIn = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.integrationManager.handler.built-in.response': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.integrationManager.handler.built-in.response': "+e.getMessage(),e);
 				this.tipiIntegrationManagerResponseHandlerBuiltIn = null;
 			}   
 			this.tipiIntegrationManagerResponseHandlerBuiltInRead = true;
@@ -16576,7 +16585,7 @@ public class OpenSPCoop2Properties {
 					this.printInfoHandler = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.handler.printInfo' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.handler.printInfo' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		return this.printInfoHandler;
@@ -16601,7 +16610,7 @@ public class OpenSPCoop2Properties {
 					this.tipiInitHandler = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.init': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.init': "+e.getMessage(),e);
 				this.tipiInitHandler = null;
 			}   
 			this.tipiInitHandlerRead = true;
@@ -16629,7 +16638,7 @@ public class OpenSPCoop2Properties {
 					this.tipiExitHandler = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.exit': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.exit': "+e.getMessage(),e);
 				this.tipiExitHandler = null;
 			}   
 			this.tipiExitHandlerRead = true;
@@ -16657,7 +16666,7 @@ public class OpenSPCoop2Properties {
 					this.tipiPreInRequestHandler = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.pre-in-request': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.pre-in-request': "+e.getMessage(),e);
 				this.tipiPreInRequestHandler = null;
 			}   
 			this.tipiPreInRequestHandlerRead = true;
@@ -16686,7 +16695,7 @@ public class OpenSPCoop2Properties {
 					this.tipiInRequestHandler = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.in-request': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.in-request': "+e.getMessage(),e);
 				this.tipiInRequestHandler = null;
 			}   
 			this.tipiInRequestHandlerRead = true;
@@ -16714,7 +16723,7 @@ public class OpenSPCoop2Properties {
 					this.tipiInRequestProtocolHandler = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.in-protocol-request': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.in-protocol-request': "+e.getMessage(),e);
 				this.tipiInRequestProtocolHandler = null;
 			}   
 			this.tipiInRequestProtocolHandlerRead = true;
@@ -16742,7 +16751,7 @@ public class OpenSPCoop2Properties {
 					this.tipiOutRequestHandler = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.out-request': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.out-request': "+e.getMessage(),e);
 				this.tipiOutRequestHandler = null;
 			}   
 			this.tipiOutRequestHandlerRead = true;
@@ -16770,7 +16779,7 @@ public class OpenSPCoop2Properties {
 					this.tipiPostOutRequestHandler = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.post-out-request': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.post-out-request': "+e.getMessage(),e);
 				this.tipiPostOutRequestHandler = null;
 			}   
 			this.tipiPostOutRequestHandlerRead = true;
@@ -16798,7 +16807,7 @@ public class OpenSPCoop2Properties {
 					this.tipiPreInResponseHandler = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.pre-in-response': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.pre-in-response': "+e.getMessage(),e);
 				this.tipiPreInResponseHandler = null;
 			}   
 			this.tipiPreInResponseHandlerRead = true;
@@ -16826,7 +16835,7 @@ public class OpenSPCoop2Properties {
 					this.tipiInResponseHandler = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.in-response': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.in-response': "+e.getMessage(),e);
 				this.tipiInResponseHandler = null;
 			}   
 			this.tipiInResponseHandlerRead = true;
@@ -16854,7 +16863,7 @@ public class OpenSPCoop2Properties {
 					this.tipiOutResponseHandler = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.out-response': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.out-response': "+e.getMessage(),e);
 				this.tipiOutResponseHandler = null;
 			}   
 			this.tipiOutResponseHandlerRead = true;
@@ -16882,7 +16891,7 @@ public class OpenSPCoop2Properties {
 					this.tipiPostOutResponseHandler = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.post-out-response': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.post-out-response': "+e.getMessage(),e);
 				this.tipiPostOutResponseHandler = null;
 			}   
 			this.tipiPostOutResponseHandlerRead = true;
@@ -16910,7 +16919,7 @@ public class OpenSPCoop2Properties {
 					this.tipiIntegrationManagerRequestHandler = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.integrationManager.handler.request': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.integrationManager.handler.request': "+e.getMessage(),e);
 				this.tipiIntegrationManagerRequestHandler = null;
 			}   
 			this.tipiIntegrationManagerRequestHandlerRead = true;
@@ -16938,7 +16947,7 @@ public class OpenSPCoop2Properties {
 					this.tipiIntegrationManagerResponseHandler = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.integrationManager.handler.response': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.integrationManager.handler.response': "+e.getMessage(),e);
 				this.tipiIntegrationManagerResponseHandler = null;
 			}   
 			this.tipiIntegrationManagerResponseHandlerRead = true;
@@ -17021,7 +17030,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 				this.bouncyCastleSecureRandomAlgo = null;
 			}
 			
@@ -17121,7 +17130,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 				this.securityEgd = null;
 			}
 			
@@ -17259,7 +17268,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 				this.wsuIdSecureRandomAlgo = null;
 			}
 			
@@ -17311,7 +17320,7 @@ public class OpenSPCoop2Properties {
 				this.externalPWCallbackReaded = true;
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.externalPWCallback.propertiesFile' non impostata, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.externalPWCallback.propertiesFile' non impostata, errore:"+e.getMessage(),e);
 				this.externalPWCallback = null;
 				this.externalPWCallbackReaded = true;
 			}
@@ -17364,7 +17373,7 @@ public class OpenSPCoop2Properties {
 					this.dimensioneCacheMessageSecurityKeystore_value = -1;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.keystore.cache.dimensione': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.keystore.cache.dimensione': "+e.getMessage(),e);
 				throw new OpenSPCoop2ConfigurationException("Riscontrato errore durante la lettura della proprieta' di openspcoop  'org.openspcoop2.pdd.messageSecurity.keystore.cache.dimensione'",e);
 			}
 		}
@@ -17389,7 +17398,7 @@ public class OpenSPCoop2Properties {
 					this.itemLifeSecondCacheMessageSecurityKeystore_value = -1;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.keystore.cache.itemLifeSecond': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.keystore.cache.itemLifeSecond': "+e.getMessage(),e);
 				throw new OpenSPCoop2ConfigurationException("Riscontrato errore durante la lettura della proprieta' di openspcoop  'org.openspcoop2.pdd.messageSecurity.keystore.cache.itemLifeSecond'",e);
 			}
 		}
@@ -17424,7 +17433,7 @@ public class OpenSPCoop2Properties {
 				
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 			
 			this.getAutenticazione_lock_permits_read = true;
@@ -17460,7 +17469,7 @@ public class OpenSPCoop2Properties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 			
 		}
@@ -17478,7 +17487,7 @@ public class OpenSPCoop2Properties {
 					this.getCryptConfigAutenticazioneApplicativi = new CryptConfig(value);
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.core.autenticazione.applicativi.password': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.core.autenticazione.applicativi.password': "+e.getMessage(),e);
 				return null;
 			}
 		}
@@ -17496,7 +17505,7 @@ public class OpenSPCoop2Properties {
 					this.getCryptConfigAutenticazioneSoggetti = new CryptConfig(value);
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.core.autenticazione.soggetti.password': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.core.autenticazione.soggetti.password': "+e.getMessage(),e);
 				return null;
 			}
 		}
@@ -17515,11 +17524,11 @@ public class OpenSPCoop2Properties {
 					this.isAutenticazioneBasicLogPassword = Boolean.valueOf(value);
 				}
 				else {
-					this.log.error("Proprieta' di openspcoop '"+pName+"' non definita; viene usato il default=false");
+					this.logError("Proprieta' di openspcoop '"+pName+"' non definita; viene usato il default=false");
 					this.isAutenticazioneBasicLogPassword = false;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"'; viene usato il default=false. Errore: "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"'; viene usato il default=false. Errore: "+e.getMessage(),e);
 				this.isAutenticazioneBasicLogPassword = false;
 			}
 		}
@@ -17540,7 +17549,7 @@ public class OpenSPCoop2Properties {
 //					authType = authType.trim();
 //				}
 //			}catch(java.lang.Exception e) {
-//				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameAuth+"': "+e.getMessage(),e);
+//				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameAuth+"': "+e.getMessage(),e);
 //			}
 			String authType = HttpConstants.AUTHENTICATION_BASIC;
 			
@@ -17552,7 +17561,7 @@ public class OpenSPCoop2Properties {
 					realm = realm.trim();
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameRealm+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameRealm+"': "+e.getMessage(),e);
 			}
 			
 			if(authType!=null && !"".equals(authType) && realm!=null && !"".equals(realm)) {
@@ -17572,7 +17581,7 @@ public class OpenSPCoop2Properties {
 						}
 					}
 				}catch(java.lang.Exception e) {
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
 				}
 				
 				pNameErrorDescription = "org.openspcoop2.pdd.core.autenticazione.basic.error_description.invalid";
@@ -17587,7 +17596,7 @@ public class OpenSPCoop2Properties {
 						}
 					}
 				}catch(java.lang.Exception e) {
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
 				}
 			}
 			
@@ -17610,7 +17619,7 @@ public class OpenSPCoop2Properties {
 					authType = authType.trim();
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameAuth+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameAuth+"': "+e.getMessage(),e);
 			}
 			
 			String pNameRealm = "org.openspcoop2.pdd.core.autenticazione.apiKey.realm";
@@ -17621,7 +17630,7 @@ public class OpenSPCoop2Properties {
 					realm = realm.trim();
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameRealm+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameRealm+"': "+e.getMessage(),e);
 			}
 			
 			if(authType!=null && !"".equals(authType) && realm!=null && !"".equals(realm)) {
@@ -17641,7 +17650,7 @@ public class OpenSPCoop2Properties {
 						}
 					}
 				}catch(java.lang.Exception e) {
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
 				}
 				
 				pNameErrorDescription = "org.openspcoop2.pdd.core.autenticazione.apiKey.error_description.invalid";
@@ -17656,7 +17665,7 @@ public class OpenSPCoop2Properties {
 						}
 					}
 				}catch(java.lang.Exception e) {
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
 				}
 			}
 			
@@ -17677,11 +17686,11 @@ public class OpenSPCoop2Properties {
 					this.isAutenticazioneHttpsPortaDelegataValidityCheck = Boolean.valueOf(value);
 				}
 				else {
-					this.log.error("Proprieta' di openspcoop '"+pName+"' non definita; viene usato il default=true");
+					this.logError("Proprieta' di openspcoop '"+pName+"' non definita; viene usato il default=true");
 					this.isAutenticazioneHttpsPortaDelegataValidityCheck = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"'; viene usato il default=true. Errore: "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"'; viene usato il default=true. Errore: "+e.getMessage(),e);
 				this.isAutenticazioneHttpsPortaDelegataValidityCheck = true;
 			}
 		}
@@ -17701,10 +17710,10 @@ public class OpenSPCoop2Properties {
 					this.getAutenticazioneHttpsPortaDelegataTruststorePath = new File(value);
 					if(this.getAutenticazioneHttpsPortaDelegataTruststorePath.exists()) {
 						if(!this.getAutenticazioneHttpsPortaDelegataTruststorePath.isFile()) {
-							throw new Exception(this.getAutenticazioneHttpsPortaDelegataTruststorePath.getAbsolutePath()+" is not file");
+							throw new CoreException(this.getAutenticazioneHttpsPortaDelegataTruststorePath.getAbsolutePath()+" is not file");
 						}
 						if(!this.getAutenticazioneHttpsPortaDelegataTruststorePath.canRead()) {
-							throw new Exception(this.getAutenticazioneHttpsPortaDelegataTruststorePath.getAbsolutePath()+" cannot read");
+							throw new CoreException(this.getAutenticazioneHttpsPortaDelegataTruststorePath.getAbsolutePath()+" cannot read");
 						}
 					}
 					else {
@@ -17712,7 +17721,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				throw new Exception("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 			}
 			this.getAutenticazioneHttpsPortaDelegataTruststorePath_read = true;
 		}
@@ -17732,7 +17741,7 @@ public class OpenSPCoop2Properties {
 					this.getAutenticazioneHttpsPortaDelegataTruststorePassword = value;
 				}
 			}catch(java.lang.Exception e) {
-				throw new Exception("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 			}
 			this.getAutenticazioneHttpsPortaDelegataTruststorePassword_read = true;
 		}
@@ -17754,7 +17763,7 @@ public class OpenSPCoop2Properties {
 					this.getAutenticazioneHttpsPortaDelegataTruststoreType = KeystoreType.JKS.getNome();
 				}
 			}catch(java.lang.Exception e) {
-				throw new Exception("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 			}
 		}
 
@@ -17773,7 +17782,7 @@ public class OpenSPCoop2Properties {
 					this.getAutenticazioneHttpsPortaDelegataTruststoreCRLs = value;
 				}
 			}catch(java.lang.Exception e) {
-				throw new Exception("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 			}
 			this.getAutenticazioneHttpsPortaDelegataTruststoreCRLs_read = true;
 		}
@@ -17793,7 +17802,7 @@ public class OpenSPCoop2Properties {
 					this.getAutenticazioneHttpsPortaDelegataTruststoreOCSPPolicy = value;
 				}
 			}catch(java.lang.Exception e) {
-				throw new Exception("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 			}
 			this.getAutenticazioneHttpsPortaDelegataTruststoreOCSPPolicy_read = true;
 		}
@@ -17812,11 +17821,11 @@ public class OpenSPCoop2Properties {
 					this.isAutenticazioneHttpsPortaApplicativaValidityCheck = Boolean.valueOf(value);
 				}
 				else {
-					this.log.error("Proprieta' di openspcoop '"+pName+"' non definita; viene usato il default=true");
+					this.logError("Proprieta' di openspcoop '"+pName+"' non definita; viene usato il default=true");
 					this.isAutenticazioneHttpsPortaApplicativaValidityCheck = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"'; viene usato il default=true. Errore: "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"'; viene usato il default=true. Errore: "+e.getMessage(),e);
 				this.isAutenticazioneHttpsPortaApplicativaValidityCheck = true;
 			}
 		}
@@ -17836,10 +17845,10 @@ public class OpenSPCoop2Properties {
 					this.getAutenticazioneHttpsPortaApplicativaTruststorePath = new File(value);
 					if(this.getAutenticazioneHttpsPortaApplicativaTruststorePath.exists()) {
 						if(!this.getAutenticazioneHttpsPortaApplicativaTruststorePath.isFile()) {
-							throw new Exception(this.getAutenticazioneHttpsPortaApplicativaTruststorePath.getAbsolutePath()+" is not file");
+							throw new CoreException(this.getAutenticazioneHttpsPortaApplicativaTruststorePath.getAbsolutePath()+" is not file");
 						}
 						if(!this.getAutenticazioneHttpsPortaApplicativaTruststorePath.canRead()) {
-							throw new Exception(this.getAutenticazioneHttpsPortaApplicativaTruststorePath.getAbsolutePath()+" cannot read");
+							throw new CoreException(this.getAutenticazioneHttpsPortaApplicativaTruststorePath.getAbsolutePath()+" cannot read");
 						}
 					}
 					else {
@@ -17847,7 +17856,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				throw new Exception("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 			}
 			this.getAutenticazioneHttpsPortaApplicativaTruststorePath_read = true;
 		}
@@ -17867,7 +17876,7 @@ public class OpenSPCoop2Properties {
 					this.getAutenticazioneHttpsPortaApplicativaTruststorePassword = value;
 				}
 			}catch(java.lang.Exception e) {
-				throw new Exception("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 			}
 			this.getAutenticazioneHttpsPortaApplicativaTruststorePassword_read = true;
 		}
@@ -17889,7 +17898,7 @@ public class OpenSPCoop2Properties {
 					this.getAutenticazioneHttpsPortaApplicativaTruststoreType = KeystoreType.JKS.getNome();
 				}
 			}catch(java.lang.Exception e) {
-				throw new Exception("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 			}
 		}
 
@@ -17908,7 +17917,7 @@ public class OpenSPCoop2Properties {
 					this.getAutenticazioneHttpsPortaApplicativaTruststoreCRLs = value;
 				}
 			}catch(java.lang.Exception e) {
-				throw new Exception("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 			}
 			this.getAutenticazioneHttpsPortaApplicativaTruststoreCRLs_read = true;
 		}
@@ -17928,7 +17937,7 @@ public class OpenSPCoop2Properties {
 					this.getAutenticazioneHttpsPortaApplicativaTruststoreOCSPPolicy = value;
 				}
 			}catch(java.lang.Exception e) {
-				throw new Exception("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 			}
 			this.getAutenticazioneHttpsPortaApplicativaTruststoreOCSPPolicy_read = true;
 		}
@@ -17948,11 +17957,11 @@ public class OpenSPCoop2Properties {
 					this.isAutenticazioneHttpsPortaDelegataCheckSoggettiProprietari = Boolean.valueOf(value);
 				}
 				else {
-					this.log.error("Proprieta' di openspcoop '"+pName+"' non definita; viene usato il default=true");
+					this.logError("Proprieta' di openspcoop '"+pName+"' non definita; viene usato il default=true");
 					this.isAutenticazioneHttpsPortaDelegataCheckSoggettiProprietari = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"'; viene usato il default=true. Errore: "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"'; viene usato il default=true. Errore: "+e.getMessage(),e);
 				this.isAutenticazioneHttpsPortaDelegataCheckSoggettiProprietari = true;
 			}
 		}
@@ -17973,7 +17982,7 @@ public class OpenSPCoop2Properties {
 					authType = authType.trim();
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameAuth+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameAuth+"': "+e.getMessage(),e);
 			}
 			
 			String pNameRealm = "org.openspcoop2.pdd.core.autenticazione.https.realm";
@@ -17984,7 +17993,7 @@ public class OpenSPCoop2Properties {
 					realm = realm.trim();
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameRealm+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameRealm+"': "+e.getMessage(),e);
 			}
 			
 			if(authType!=null && !"".equals(authType) && realm!=null && !"".equals(realm)) {
@@ -18004,7 +18013,7 @@ public class OpenSPCoop2Properties {
 						}
 					}
 				}catch(java.lang.Exception e) {
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
 				}
 				
 				pNameErrorDescription = "org.openspcoop2.pdd.core.autenticazione.https.error_description.invalid";
@@ -18019,7 +18028,7 @@ public class OpenSPCoop2Properties {
 						}
 					}
 				}catch(java.lang.Exception e) {
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
 				}
 			}
 			
@@ -18040,11 +18049,11 @@ public class OpenSPCoop2Properties {
 					this.isAutenticazionePrincipalPortaDelegataCheckSoggettiProprietari = Boolean.valueOf(value);
 				}
 				else {
-					this.log.error("Proprieta' di openspcoop '"+pName+"' non definita; viene usato il default=true");
+					this.logError("Proprieta' di openspcoop '"+pName+"' non definita; viene usato il default=true");
 					this.isAutenticazionePrincipalPortaDelegataCheckSoggettiProprietari = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"'; viene usato il default=true. Errore: "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"'; viene usato il default=true. Errore: "+e.getMessage(),e);
 				this.isAutenticazionePrincipalPortaDelegataCheckSoggettiProprietari = true;
 			}
 		}
@@ -18064,7 +18073,7 @@ public class OpenSPCoop2Properties {
 					authType = authType.trim();
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameAuth+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameAuth+"': "+e.getMessage(),e);
 			}
 			
 			String pNameRealm = "org.openspcoop2.pdd.core.autenticazione.principal."+principal.getValue()+".realm";
@@ -18075,7 +18084,7 @@ public class OpenSPCoop2Properties {
 					realm = realm.trim();
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameRealm+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameRealm+"': "+e.getMessage(),e);
 			}
 			
 			WWWAuthenticateConfig wwwConfig = null;
@@ -18097,7 +18106,7 @@ public class OpenSPCoop2Properties {
 						}
 					}
 				}catch(java.lang.Exception e) {
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
 				}
 				
 				pNameErrorDescription = "org.openspcoop2.pdd.core.autenticazione.principal."+principal.getValue()+".error_description.invalid";
@@ -18112,7 +18121,7 @@ public class OpenSPCoop2Properties {
 						}
 					}
 				}catch(java.lang.Exception e) {
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
 				}
 				
 			}
@@ -18134,11 +18143,11 @@ public class OpenSPCoop2Properties {
 					this.isAutenticazioneTokenPortaDelegataCheckSoggettiProprietari = Boolean.valueOf(value);
 				}
 				else {
-					this.log.error("Proprieta' di openspcoop '"+pName+"' non definita; viene usato il default=true");
+					this.logError("Proprieta' di openspcoop '"+pName+"' non definita; viene usato il default=true");
 					this.isAutenticazioneTokenPortaDelegataCheckSoggettiProprietari = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"'; viene usato il default=true. Errore: "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"'; viene usato il default=true. Errore: "+e.getMessage(),e);
 				this.isAutenticazioneTokenPortaDelegataCheckSoggettiProprietari = true;
 			}
 		}
@@ -18163,7 +18172,7 @@ public class OpenSPCoop2Properties {
 					this.tipoGestoreCredenzialiPD = r;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.services.pd.gestoriCredenziali': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.services.pd.gestoriCredenziali': "+e.getMessage(),e);
 				this.tipoGestoreCredenzialiPD = null;
 			}
 			this.tipoGestoreCredenzialiPDRead = true;
@@ -18189,7 +18198,7 @@ public class OpenSPCoop2Properties {
 					this.tipoGestoreCredenzialiPA = r;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.services.pa.gestoriCredenziali': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.services.pa.gestoriCredenziali': "+e.getMessage(),e);
 				this.tipoGestoreCredenzialiPA = null;
 			}
 			this.tipoGestoreCredenzialiPARead = true;
@@ -18215,7 +18224,7 @@ public class OpenSPCoop2Properties {
 					this.tipoGestoreCredenzialiIM = r;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.services.integrationManager.gestoriCredenziali': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.services.integrationManager.gestoriCredenziali': "+e.getMessage(),e);
 				this.tipoGestoreCredenzialiIM = null;
 			}
 			this.tipoGestoreCredenzialiIMRead = true;
@@ -18445,7 +18454,7 @@ public class OpenSPCoop2Properties {
 				this.getDumpBufferImpl_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 			}    
 		}
 
@@ -18571,7 +18580,7 @@ public class OpenSPCoop2Properties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 		}
 
@@ -18608,7 +18617,7 @@ public class OpenSPCoop2Properties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 		}
 
@@ -18699,26 +18708,26 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null){
-					throw new Exception("Proprieta' non impostata");
+					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
 				this.getDumpBinario_repository = new File(name);
 				if(this.getDumpBinario_repository.exists()) {
 					if(this.getDumpBinario_repository.isDirectory()==false) {
-						throw new Exception("Dir ["+this.getDumpBinario_repository.getAbsolutePath()+"] not dir");
+						throw new CoreException("Dir ["+this.getDumpBinario_repository.getAbsolutePath()+"] not dir");
 					}
 					if(this.getDumpBinario_repository.canRead()==false) {
-						throw new Exception("Dir ["+this.getDumpBinario_repository.getAbsolutePath()+"] cannot read");
+						throw new CoreException("Dir ["+this.getDumpBinario_repository.getAbsolutePath()+"] cannot read");
 					}
 					if(this.getDumpBinario_repository.canWrite()==false) {
-						throw new Exception("Dir ["+this.getDumpBinario_repository.getAbsolutePath()+"] cannot write");
+						throw new CoreException("Dir ["+this.getDumpBinario_repository.getAbsolutePath()+"] cannot write");
 					}
 				}
 				else {
 					// viene creata automaticamente
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -18765,7 +18774,7 @@ public class OpenSPCoop2Properties {
 					if(!CostantiPdD.DUMP_NON_REALTIME_MODE_DB.equalsIgnoreCase(name) && 
 							!CostantiPdD.DUMP_NON_REALTIME_MODE_FILE_SYSTEM.equalsIgnoreCase(name) && 
 							!CostantiPdD.DUMP_NON_REALTIME_MODE_AUTO.equalsIgnoreCase(name) ) {
-						throw new Exception("Modalità non supportata (attesi: "+CostantiPdD.DUMP_NON_REALTIME_MODE_DB+","+CostantiPdD.DUMP_NON_REALTIME_MODE_FILE_SYSTEM+","+CostantiPdD.DUMP_NON_REALTIME_MODE_AUTO+")");
+						throw new CoreException("Modalità non supportata (attesi: "+CostantiPdD.DUMP_NON_REALTIME_MODE_DB+","+CostantiPdD.DUMP_NON_REALTIME_MODE_FILE_SYSTEM+","+CostantiPdD.DUMP_NON_REALTIME_MODE_AUTO+")");
 					}
 					this.getDumpNonRealtime_mode = name;
 				}else{
@@ -18773,14 +18782,14 @@ public class OpenSPCoop2Properties {
 					this.getDumpNonRealtime_mode = CostantiPdD.DUMP_NON_REALTIME_MODE_AUTO;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop ''org.openspcoop2.pdd.dump.nonRealTime.mode' non impostata, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop ''org.openspcoop2.pdd.dump.nonRealTime.mode' non impostata, errore:"+e.getMessage(),e);
 				throw e;
 			}  
 			
 			if(CostantiPdD.DUMP_NON_REALTIME_MODE_AUTO.equalsIgnoreCase(this.getDumpNonRealtime_mode)) {
 				String databaseType = this.getDatabaseType();
 				if(databaseType==null) {
-					throw new Exception("Proprieta' 'org.openspcoop2.pdd.dump.nonRealTime.mode=auto' richiede che sia indicato un tipo di database nella proprieta' 'org.openspcoop2.pdd.repository.tipoDatabase'");
+					throw new CoreException("Proprieta' 'org.openspcoop2.pdd.dump.nonRealTime.mode=auto' richiede che sia indicato un tipo di database nella proprieta' 'org.openspcoop2.pdd.repository.tipoDatabase'");
 				}
 				if(TipiDatabase.POSTGRESQL.getNome().equalsIgnoreCase(databaseType) || TipiDatabase.HSQL.getNome().equalsIgnoreCase(databaseType)) {
 					// Allo stato attuale (13/02/2014) i sequenti sql server (postgresql e hsql) non supportano la funzionalita' jdbc per fare setStream senza fornire la lenght
@@ -18809,26 +18818,26 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.dump.nonRealTime.msgRepository");
 				if(name==null){
-					throw new Exception("Proprieta' non impostata");
+					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
 				this.getDumpNonRealtime_repository = new File(name);
 				if(this.getDumpNonRealtime_repository.exists()) {
 					if(this.getDumpNonRealtime_repository.isDirectory()==false) {
-						throw new Exception("Dir ["+this.getDumpNonRealtime_repository.getAbsolutePath()+"] not dir");
+						throw new CoreException("Dir ["+this.getDumpNonRealtime_repository.getAbsolutePath()+"] not dir");
 					}
 					if(this.getDumpNonRealtime_repository.canRead()==false) {
-						throw new Exception("Dir ["+this.getDumpNonRealtime_repository.getAbsolutePath()+"] cannot read");
+						throw new CoreException("Dir ["+this.getDumpNonRealtime_repository.getAbsolutePath()+"] cannot read");
 					}
 					if(this.getDumpNonRealtime_repository.canWrite()==false) {
-						throw new Exception("Dir ["+this.getDumpNonRealtime_repository.getAbsolutePath()+"] cannot write");
+						throw new CoreException("Dir ["+this.getDumpNonRealtime_repository.getAbsolutePath()+"] cannot write");
 					}
 				}
 				else {
 					// viene creata automaticamente
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.dump.nonRealTime.msgRepository': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.dump.nonRealTime.msgRepository': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -18884,7 +18893,7 @@ public class OpenSPCoop2Properties {
 					this.tipoIDManager = CostantiConfigurazione.NONE;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.idGenerator': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.idGenerator': "+e.getMessage(),e);
 				this.tipoIDManager = CostantiConfigurazione.NONE;
 			}    
 		}
@@ -19004,25 +19013,25 @@ public class OpenSPCoop2Properties {
 					if(this.generazioneDateCasualiLogAbilitato){
 						
 						if(getTipoIDManager()==null || CostantiConfigurazione.NONE.equals(getTipoIDManager())){
-							throw new Exception("Non e' possibile utilizzare la modalita' di generazione casuale delle date, se non si abilita la generazione di un ID");
+							throw new CoreException("Non e' possibile utilizzare la modalita' di generazione casuale delle date, se non si abilita la generazione di un ID");
 						}
 						
 						String inizioIntervallo = this.reader.getValue_convertEnvProperties("org.openspcoop2.generazioneDateCasuali.inizioIntervallo");
 						String fineIntervallo = this.reader.getValue_convertEnvProperties("org.openspcoop2.generazioneDateCasuali.fineIntervallo");
 						SimpleDateFormat sdf = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd hh:mm");
 						if(inizioIntervallo==null){
-							throw new Exception("Non e' stato definito l'intervallo di inizio per la modalita' di generazione casuale delle date");
+							throw new CoreException("Non e' stato definito l'intervallo di inizio per la modalita' di generazione casuale delle date");
 						}
 						else{inizioIntervallo=inizioIntervallo.trim();}
 						this.generazioneDateCasualiLog_dataInizioIntervallo = sdf.parse(inizioIntervallo);
 						if(fineIntervallo==null){
-							throw new Exception("Non e' stato definito l'intervallo di fine per la modalita' di generazione casuale delle date");
+							throw new CoreException("Non e' stato definito l'intervallo di fine per la modalita' di generazione casuale delle date");
 						}
 						else{fineIntervallo=fineIntervallo.trim();}
 						this.generazioneDateCasualiLog_dataFineIntervallo = sdf.parse(fineIntervallo);
 						
 						if(this.generazioneDateCasualiLog_dataInizioIntervallo.after(this.generazioneDateCasualiLog_dataFineIntervallo)){
-							throw new Exception("Non e' stato definito un intervallo di generazione casuale delle date corretto (inizioIntervallo>fineIntervallo)");
+							throw new CoreException("Non e' stato definito un intervallo di generazione casuale delle date corretto (inizioIntervallo>fineIntervallo)");
 						}
 					}
 					
@@ -19058,7 +19067,7 @@ public class OpenSPCoop2Properties {
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.messagefactory' non impostata, viene utilizzato il default="+OpenSPCoop2MessageFactory.messageFactoryImpl);
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.messagefactory' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.messagefactory' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		this.openspcoop2MessageFactoryRead = true;
@@ -19079,7 +19088,7 @@ public class OpenSPCoop2Properties {
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.context' non impostata, viene utilizzato il default="+MessageSecurityFactory.messageSecurityContextImplClass);
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.context' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.context' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		this.messageSecurityContextRead = true;
@@ -19100,7 +19109,7 @@ public class OpenSPCoop2Properties {
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.digestReader' non impostata, viene utilizzato il default="+MessageSecurityFactory.messageSecurityDigestReaderImplClass);
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.digestReader' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.digestReader' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		this.messageSecurityDigestReaderRead = true;
@@ -19122,7 +19131,7 @@ public class OpenSPCoop2Properties {
 					this.printInfoFactory = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.messagefactory.printInfo' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.messagefactory.printInfo' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		return this.printInfoFactory;
@@ -19143,7 +19152,7 @@ public class OpenSPCoop2Properties {
 					this.printInfoMessageSecurity = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.printInfo' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.printInfo' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		return this.printInfoMessageSecurity;
@@ -19190,7 +19199,7 @@ public class OpenSPCoop2Properties {
 					this.defaultProtocolName = this.defaultProtocolName.trim();
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.defaultProtocol' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.defaultProtocol' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		return this.defaultProtocolName;
@@ -19215,7 +19224,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isSoggettiVirtualiEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isSoggettiVirtualiEnabled = false;
 			}    
 		}
@@ -19239,7 +19248,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isGenerazioneErroreProtocolloNonSupportato = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.protocolNotSupported.generateErrorMessage': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.protocolNotSupported.generateErrorMessage': "+e.getMessage(),e);
 				this.isGenerazioneErroreProtocolloNonSupportato = false;
 			}    
 		}
@@ -19265,7 +19274,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isGenerazioneErroreHttpMethodUnsupportedPortaDelegataEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.pd.httpMethodUnsupported.generateErrorMessage': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.pd.httpMethodUnsupported.generateErrorMessage': "+e.getMessage(),e);
 				this.isGenerazioneErroreHttpMethodUnsupportedPortaDelegataEnabled = true;
 			}    
 		}
@@ -19286,7 +19295,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isGenerazioneErroreHttpMethodUnsupportedPortaDelegataImbustamentoSOAPEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.pdToSoap.httpMethodUnsupported.generateErrorMessage': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.pdToSoap.httpMethodUnsupported.generateErrorMessage': "+e.getMessage(),e);
 				this.isGenerazioneErroreHttpMethodUnsupportedPortaDelegataImbustamentoSOAPEnabled = true;
 			}    
 		}
@@ -19307,7 +19316,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isGenerazioneErroreHttpMethodUnsupportedPortaApplicativaEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.pa.httpMethodUnsupported.generateErrorMessage': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.pa.httpMethodUnsupported.generateErrorMessage': "+e.getMessage(),e);
 				this.isGenerazioneErroreHttpMethodUnsupportedPortaApplicativaEnabled = true;
 			}    
 		}
@@ -19328,7 +19337,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isGenerazioneErroreHttpMethodUnsupportedIntegrationManagerEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.im.httpMethodUnsupported.generateErrorMessage': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.im.httpMethodUnsupported.generateErrorMessage': "+e.getMessage(),e);
 				this.isGenerazioneErroreHttpMethodUnsupportedIntegrationManagerEnabled = true;
 			}    
 		}
@@ -19349,7 +19358,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isGenerazioneErroreHttpMethodUnsupportedCheckEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.check.httpMethodUnsupported.generateErrorMessage': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.check.httpMethodUnsupported.generateErrorMessage': "+e.getMessage(),e);
 				this.isGenerazioneErroreHttpMethodUnsupportedCheckEnabled = true;
 			}    
 		}
@@ -19370,7 +19379,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isGenerazioneErroreHttpMethodUnsupportedProxyEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxy.httpMethodUnsupported.generateErrorMessage': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxy.httpMethodUnsupported.generateErrorMessage': "+e.getMessage(),e);
 				this.isGenerazioneErroreHttpMethodUnsupportedProxyEnabled = true;
 			}    
 		}
@@ -19396,7 +19405,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isGenerazioneWsdlPortaDelegataEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.pd.generateWsdl': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.pd.generateWsdl': "+e.getMessage(),e);
 				this.isGenerazioneWsdlPortaDelegataEnabled = false;
 			}    
 		}
@@ -19417,7 +19426,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isGenerazioneWsdlPortaApplicativaEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.pa.generateWsdl': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.pa.generateWsdl': "+e.getMessage(),e);
 				this.isGenerazioneWsdlPortaApplicativaEnabled = false;
 			}    
 		}
@@ -19438,7 +19447,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isGenerazioneWsdlIntegrationManagerEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.im.generateWsdl': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.im.generateWsdl': "+e.getMessage(),e);
 				this.isGenerazioneWsdlIntegrationManagerEnabled = true;
 			}    
 		}
@@ -19464,7 +19473,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isCheckEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.check.enabled': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.check.enabled': "+e.getMessage(),e);
 				this.isCheckEnabled = true;
 			}    
 		}
@@ -19486,7 +19495,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isCheckHealthCheckApiRestEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isCheckHealthCheckApiRestEnabled = false;
 			}    
 		}
@@ -19502,12 +19511,12 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null){
-					throw new Exception("Non definita");
+					throw new CoreException("Non definita");
 				}
 				name = name.trim();
 				this.getCheckHealthCheckApiRestEndpoint = name;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.getCheckHealthCheckApiRestEndpoint = null;
 			}    
 		}
@@ -19529,7 +19538,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isCheckHealthCheckApiSoapEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isCheckHealthCheckApiSoapEnabled = false;
 			}    
 		}
@@ -19545,12 +19554,12 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null){
-					throw new Exception("Non definita");
+					throw new CoreException("Non definita");
 				}
 				name = name.trim();
 				this.getCheckHealthCheckApiSoapEndpoint = name;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.getCheckHealthCheckApiSoapEndpoint = null;
 			}    
 		}
@@ -19571,7 +19580,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isCheckReadJMXResourcesEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.check.readJMXResources.enabled': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.check.readJMXResources.enabled': "+e.getMessage(),e);
 				this.isCheckReadJMXResourcesEnabled = false;
 			}    
 		}
@@ -19592,7 +19601,7 @@ public class OpenSPCoop2Properties {
 				this.getCheckReadJMXResourcesUsername_read = true;
 				this.getCheckReadJMXResourcesUsername = name;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.check.readJMXResources.username': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.check.readJMXResources.username': "+e.getMessage(),e);
 			}    
 		}
 		return this.getCheckReadJMXResourcesUsername;
@@ -19611,7 +19620,7 @@ public class OpenSPCoop2Properties {
 				this.getCheckReadJMXResourcesPassword_read = true;
 				this.getCheckReadJMXResourcesPassword = name;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.check.readJMXResources.password': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.check.readJMXResources.password': "+e.getMessage(),e);
 			}    
 		}
 		return this.getCheckReadJMXResourcesPassword;
@@ -19631,7 +19640,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isProxyReadJMXResourcesEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.enabled': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.enabled': "+e.getMessage(),e);
 				this.isProxyReadJMXResourcesEnabled = false;
 			}    
 		}
@@ -19652,7 +19661,7 @@ public class OpenSPCoop2Properties {
 				this.getProxyReadJMXResourcesSchema_read = true;
 				this.getProxyReadJMXResourcesSchema = name;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.schema': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.schema': "+e.getMessage(),e);
 			}    
 		}
 		return this.getProxyReadJMXResourcesSchema;
@@ -19671,7 +19680,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getProxyReadJMXResourcesPort_read = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.port': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.port': "+e.getMessage(),e);
 			}    
 		}
 		return this.getProxyReadJMXResourcesPort;
@@ -19690,7 +19699,7 @@ public class OpenSPCoop2Properties {
 				this.getProxyReadJMXResourcesUsername_read = true;
 				this.getProxyReadJMXResourcesUsername = name;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.username': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.username': "+e.getMessage(),e);
 			}    
 		}
 		return this.getProxyReadJMXResourcesUsername;
@@ -19709,7 +19718,7 @@ public class OpenSPCoop2Properties {
 				this.getProxyReadJMXResourcesPassword_read = true;
 				this.getProxyReadJMXResourcesPassword = name;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.password': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.password': "+e.getMessage(),e);
 			}    
 		}
 		return this.getProxyReadJMXResourcesPassword;
@@ -19729,7 +19738,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isProxyReadJMXResourcesHttpsEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isProxyReadJMXResourcesHttpsEnabled = false;
 			}    
 		}
@@ -19751,7 +19760,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isProxyReadJMXResourcesHttpsEnabled_verificaHostName = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isProxyReadJMXResourcesHttpsEnabled_verificaHostName = true;
 			}    
 		}
@@ -19773,7 +19782,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isProxyReadJMXResourcesHttpsEnabled_autenticazioneServer = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isProxyReadJMXResourcesHttpsEnabled_autenticazioneServer = true;
 			}    
 		}
@@ -19793,12 +19802,12 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 				}
 				else {
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				}
 				this.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePath_read = true;
 				this.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePath = name;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 			}    
 		}
 		return this.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePath;
@@ -19816,12 +19825,12 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 				}
 				else {
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				}
 				this.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststoreType_read = true;
 				this.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststoreType = name;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 			}    
 		}
 		return this.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststoreType;
@@ -19839,12 +19848,12 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 				}
 				else {
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				}
 				this.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePassword_read = true;
 				this.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePassword = name;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 			}    
 		}
 		return this.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePassword;
@@ -19860,11 +19869,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 				}
 				else {
-					throw new Exception("non esistente");
+					throw new CoreException("non esistente");
 				}
 				this.getProxyReadJMXResourcesConnectionTimeout = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.connection.timeout': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.connection.timeout': "+e.getMessage(),e);
 			}    
 		}
 		return this.getProxyReadJMXResourcesConnectionTimeout;
@@ -19880,11 +19889,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 				}
 				else {
-					throw new Exception("non esistente");
+					throw new CoreException("non esistente");
 				}
 				this.getProxyReadJMXResourcesReadTimeout = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.readConnection.timeout': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.readConnection.timeout': "+e.getMessage(),e);
 			}    
 		}
 		return this.getProxyReadJMXResourcesReadTimeout;
@@ -19908,7 +19917,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isDSOp2UtilsEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.datasource.useDSUtils': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.datasource.useDSUtils': "+e.getMessage(),e);
 				this.isDSOp2UtilsEnabled = false;
 			}    
 		}
@@ -19934,7 +19943,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isDataSourceGetConnectionCheckAutoCommitDisabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isDataSourceGetConnectionCheckAutoCommitDisabled = true;
 			}    
 		}
@@ -19956,7 +19965,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isDataSourceGetConnectionCheckTransactionIsolationLevel = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isDataSourceGetConnectionCheckTransactionIsolationLevel = true;
 			}    
 		}
@@ -19978,7 +19987,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getDataSourceGetConnectionCheckTransactionIsolationLevelExpected = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.getDataSourceGetConnectionCheckTransactionIsolationLevelExpected = Connection.TRANSACTION_READ_COMMITTED;
 			}    
 		}
@@ -20026,8 +20035,8 @@ public class OpenSPCoop2Properties {
 				}
 				this.notifierInputStreamCallbackRead = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.notifierInputStream.tipo' non impostata correttamente,  errore:"+e.getMessage(),e);
-				throw new Exception("Proprieta' di openspcoop 'org.openspcoop2.pdd.notifierInputStream.tipo' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.notifierInputStream.tipo' non impostata correttamente,  errore:"+e.getMessage(),e);
+				throw new CoreException("Proprieta' di openspcoop 'org.openspcoop2.pdd.notifierInputStream.tipo' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		return this.notifierInputStreamCallback;
@@ -20048,8 +20057,8 @@ public class OpenSPCoop2Properties {
 				}
 				this.pipedUnblockedStreamClassNameRead = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
-				throw new Exception("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
+				throw new CoreException("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		return this.pipedUnblockedStreamClassName;
@@ -20237,7 +20246,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.portJminixConsoleReaded = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.jminix.port': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.jminix.port': "+e.getMessage(),e);
 				this.portJminixConsoleReaded = true;
 			}    
 		}
@@ -20264,7 +20273,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isEnabledFunctionPD = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.function.pd.enabled': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.function.pd.enabled': "+e.getMessage(),e);
 				this.isEnabledFunctionPD = false;
 			}    
 		}
@@ -20285,7 +20294,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isEnabledFunctionPDtoSOAP = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.function.pdToSoap.enabled': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.function.pdToSoap.enabled': "+e.getMessage(),e);
 				this.isEnabledFunctionPDtoSOAP = false;
 			}    
 		}
@@ -20306,7 +20315,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isEnabledFunctionPA = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.function.pa.enabled': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.function.pa.enabled': "+e.getMessage(),e);
 				this.isEnabledFunctionPA = false;
 			}    
 		}
@@ -20331,7 +20340,7 @@ public class OpenSPCoop2Properties {
 								
 								String context = p.getProperty(s);
 								if(context==null || "".equals(context.trim())) {
-									throw new Exception("Context not defined for alias '"+alias+"'");
+									throw new CoreException("Context not defined for alias '"+alias+"'");
 								}
 								context = context.trim();
 								
@@ -20342,7 +20351,7 @@ public class OpenSPCoop2Properties {
 								if(service!=null && !"".equals(service.trim())) {
 									idServiceCustomWithoutSubContext = IDService.toEnumConstant(service);
 									if(idServiceCustomWithoutSubContext==null) {
-										throw new Exception("Value '"+service+"' unsupported for service in alias '"+alias+"'");
+										throw new CoreException("Value '"+service+"' unsupported for service in alias '"+alias+"'");
 									}
 									customWithoutSubContext = new FunctionContextCustom(context, idServiceCustomWithoutSubContext);
 									serviceFound = true;
@@ -20352,7 +20361,7 @@ public class OpenSPCoop2Properties {
 								Properties pSubContext = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.function.custom."+alias+".subcontext.");
 								if(pSubContext==null || pSubContext.size()<=0) {
 									if(!serviceFound) {
-										throw new Exception("Service and SubContext undefined for alias '"+alias+"'");
+										throw new CoreException("Service and SubContext undefined for alias '"+alias+"'");
 									}
 								}
 								else {
@@ -20367,7 +20376,7 @@ public class OpenSPCoop2Properties {
 												
 												String subContext = pSubContext.getProperty(subContextKey);
 												if(subContext==null || "".equals(subContext.trim())) {
-													throw new Exception("Url not defined for alias '"+alias+"', subcontext '"+aliasSubContext+"'");
+													throw new CoreException("Url not defined for alias '"+alias+"', subcontext '"+aliasSubContext+"'");
 												}
 												subContext = subContext.trim();
 												
@@ -20375,19 +20384,19 @@ public class OpenSPCoop2Properties {
 												if(serviceSubContext!=null && !"".equals(serviceSubContext.trim())) {
 													IDService idService = IDService.toEnumConstant(serviceSubContext);
 													if(idService==null) {
-														throw new Exception("Value '"+serviceSubContext+"' unsupported for service in alias '"+alias+"', subcontext '"+aliasSubContext+"'");
+														throw new CoreException("Value '"+serviceSubContext+"' unsupported for service in alias '"+alias+"', subcontext '"+aliasSubContext+"'");
 													}
 													subcontextMap.put(subContext, idService);	
 												}
 												else {
-													throw new Exception("Service not defined for alias '"+alias+"', subcontext '"+aliasSubContext+"'");
+													throw new CoreException("Service not defined for alias '"+alias+"', subcontext '"+aliasSubContext+"'");
 												}
 											}
 										}
 									}
 									if(subcontextMap.size()<=0) {
 										if(!serviceFound) {
-											throw new Exception("SubContext undefined (wrong configuration) for alias '"+alias+"'");
+											throw new CoreException("SubContext undefined (wrong configuration) for alias '"+alias+"'");
 										}
 									}
 									else {
@@ -20417,7 +20426,7 @@ public class OpenSPCoop2Properties {
 				}
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura dei custom contexts: "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dei custom contexts: "+e.getMessage(),e);
 				throw new UtilsException("Riscontrato errore durante la lettura dei custom contexts: "+e.getMessage(),e);
 			}    
 		}
@@ -20442,7 +20451,7 @@ public class OpenSPCoop2Properties {
 					this.realContainerCustom = v;
 				} 
 			} catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.realmContainer.custom' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.realmContainer.custom' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		this.realContainerCustomRead = true;
@@ -20647,8 +20656,8 @@ public class OpenSPCoop2Properties {
 					this.extendedInfoConfigurazioneRead = true;
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
-				throw new Exception("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
+				throw new CoreException("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		return this.extendedInfoConfigurazione;
@@ -20666,8 +20675,8 @@ public class OpenSPCoop2Properties {
 					this.extendedInfoPortaDelegataRead = true;
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
-				throw new Exception("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
+				throw new CoreException("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		return this.extendedInfoPortaDelegata;
@@ -20685,8 +20694,8 @@ public class OpenSPCoop2Properties {
 					this.extendedInfoPortaApplicativaRead = true;
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
-				throw new Exception("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
+				throw new CoreException("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		return this.extendedInfoPortaApplicativa;
@@ -21410,10 +21419,10 @@ public class OpenSPCoop2Properties {
 					File f = new File(file);
 					if(f.exists()) {
 						if(!f.isFile()) {
-							throw new Exception("Il file indicato '"+f.getAbsolutePath()+"' non è un file");
+							throw new CoreException("Il file indicato '"+f.getAbsolutePath()+"' non è un file");
 						}
 						if(!f.canRead()) {
-							throw new Exception("Il file indicato '"+f.getAbsolutePath()+"' non è accessibile in lettura");
+							throw new CoreException("Il file indicato '"+f.getAbsolutePath()+"' non è accessibile in lettura");
 						}
 						try(InputStream is = new FileInputStream(f)){
 							Properties p = new Properties();
@@ -21534,7 +21543,7 @@ public class OpenSPCoop2Properties {
 				this.getCachingResponseHeaderCacheKey_read = true;
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.cachingResponse.header.cacheKey', errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.cachingResponse.header.cacheKey', errore:"+e.getMessage(),e);
 				
 			}
 		}
@@ -21616,7 +21625,7 @@ public class OpenSPCoop2Properties {
 				
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 			
 			this.getGestioneToken_validazioneJWT_lock_permits_read = true;
@@ -21645,7 +21654,7 @@ public class OpenSPCoop2Properties {
 				
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 			
 			this.getGestioneToken_introspection_lock_permits_read = true;
@@ -21674,7 +21683,7 @@ public class OpenSPCoop2Properties {
 				
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 			
 			this.getGestioneToken_userInfo_lock_permits_read = true;
@@ -21698,7 +21707,7 @@ public class OpenSPCoop2Properties {
 					this.getGestioneToken_iatTimeCheck_milliseconds = minuti * 60l * 1000l;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 				throw e;
 			}
 			
@@ -21726,7 +21735,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 				throw e;
 			}
 			
@@ -21779,7 +21788,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 				throw e;
 			}
 			
@@ -21878,8 +21887,8 @@ public class OpenSPCoop2Properties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Proprieta' di openspcoop 'org.openspcoop2.pdd.gestioneToken.forward.date.format' non impostata, errore:"+e.getMessage();
-				this.log.error(msg,e);
-				throw new Exception(msg);
+				this.logError(msg,e);
+				throw new CoreException(msg);
 			}
 			
 			this.getGestioneTokenFormatDate_read = true;
@@ -21899,13 +21908,13 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.getGestioneTokenHeaderTrasportoJSON = value;
 				}else{
-					throw new Exception("Non impostata");
+					throw new CoreException("Non impostata");
 				}
 
 			}catch(java.lang.Exception e) {
 				String msg = "Proprieta' di openspcoop 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.jsonHeader' non impostata, errore:"+e.getMessage();
-				this.log.error(msg,e);
-				throw new Exception(msg);
+				this.logError(msg,e);
+				throw new CoreException(msg);
 			}
 		}
 
@@ -21923,13 +21932,13 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.getGestioneTokenHeaderTrasportoJWT = value;
 				}else{
-					throw new Exception("Non impostata");
+					throw new CoreException("Non impostata");
 				}
 
 			}catch(java.lang.Exception e) {
 				String msg = "Proprieta' di openspcoop 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.jwsHeader' non impostata, errore:"+e.getMessage();
-				this.log.error(msg,e);
-				throw new Exception(msg);
+				this.logError(msg,e);
+				throw new CoreException(msg);
 			}
 		}
 
@@ -21951,7 +21960,7 @@ public class OpenSPCoop2Properties {
 				this.keyValue_gestioneTokenHeaderIntegrazioneTrasporto = this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.trasporto.keyword.");
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.keyword.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.keyword.*': "+e.getMessage(),e);
 				this.keyValue_gestioneTokenHeaderIntegrazioneTrasporto = null;
 			}    
 		}
@@ -21978,13 +21987,13 @@ public class OpenSPCoop2Properties {
 							boolean b = Boolean.parseBoolean(value);
 							this.keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPD.put(key, b);
 						}catch(Exception e) {
-							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pd.set.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+							throw new CoreException("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pd.set.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pd.set.enabled.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pd.set.enabled.*': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -22012,13 +22021,13 @@ public class OpenSPCoop2Properties {
 							boolean b = Boolean.parseBoolean(value);
 							this.keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPA.put(key, b);
 						}catch(Exception e) {
-							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pa.set.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+							throw new CoreException("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pa.set.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pa.set.enabled.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pa.set.enabled.*': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -22045,13 +22054,13 @@ public class OpenSPCoop2Properties {
 							boolean b = Boolean.parseBoolean(value);
 							this.keyValue_gestioneTokenHeaderIntegrazioneJson_setPD.put(key, b);
 						}catch(Exception e) {
-							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.gestioneToken.forward.json.pd.set.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+							throw new CoreException("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.gestioneToken.forward.json.pd.set.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.json.pd.set.enabled.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.json.pd.set.enabled.*': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -22079,13 +22088,13 @@ public class OpenSPCoop2Properties {
 							boolean b = Boolean.parseBoolean(value);
 							this.keyValue_gestioneTokenHeaderIntegrazioneJson_setPA.put(key, b);
 						}catch(Exception e) {
-							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.gestioneToken.forward.json.pa.set.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+							throw new CoreException("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.gestioneToken.forward.json.pa.set.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.json.pa.set.enabled.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.json.pa.set.enabled.*': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -22119,7 +22128,7 @@ public class OpenSPCoop2Properties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.custom.CLAIM_NAME.name': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.custom.CLAIM_NAME.name': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -22137,7 +22146,7 @@ public class OpenSPCoop2Properties {
 				if (value != null){
 					value = value.trim();
 					if(value.length()<1 || value.length()>1) {
-						throw new Exception("Atteso un carattere, trovati "+value.length());
+						throw new CoreException("Atteso un carattere, trovati "+value.length());
 					}
 					this.gestioneTokenHeaderIntegrazioneTrasporto_audienceSeparator = value.charAt(0);
 				}else{
@@ -22164,7 +22173,7 @@ public class OpenSPCoop2Properties {
 				if (value != null){
 					value = value.trim();
 					if(value.length()<1 || value.length()>1) {
-						throw new Exception("Atteso un carattere, trovati "+value.length());
+						throw new CoreException("Atteso un carattere, trovati "+value.length());
 					}
 					this.gestioneTokenHeaderIntegrazioneTrasporto_scopeSeparator = value.charAt(0);
 				}else{
@@ -22191,7 +22200,7 @@ public class OpenSPCoop2Properties {
 				if (value != null){
 					value = value.trim();
 					if(value.length()<1 || value.length()>1) {
-						throw new Exception("Atteso un carattere, trovati "+value.length());
+						throw new CoreException("Atteso un carattere, trovati "+value.length());
 					}
 					this.gestioneTokenHeaderIntegrazioneTrasporto_roleSeparator = value.charAt(0);
 				}else{
@@ -22230,7 +22239,7 @@ public class OpenSPCoop2Properties {
 									this.getCustomClaims_name_gestioneTokenHeaderIntegrazione.put(claimNameTmp, tmp.trim());
 								}
 								else {
-									throw new Exception("Proprietà non definita");
+									throw new CoreException("Proprietà non definita");
 								}
 							}
 						}
@@ -22238,7 +22247,7 @@ public class OpenSPCoop2Properties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.custom."+claimName+".trasporto.name': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.custom."+claimName+".trasporto.name': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -22268,7 +22277,7 @@ public class OpenSPCoop2Properties {
 									this.getCustomClaims_headerName_gestioneTokenHeaderIntegrazioneTrasporto.put(claimNameTmp, tmp.trim());
 								}
 								else {
-									throw new Exception("Proprietà non definita");
+									throw new CoreException("Proprietà non definita");
 								}
 							}
 						}
@@ -22276,7 +22285,7 @@ public class OpenSPCoop2Properties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.custom."+claimName+".trasporto.name': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.custom."+claimName+".trasporto.name': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -22307,11 +22316,11 @@ public class OpenSPCoop2Properties {
 										String claimNameTmp = key.substring(0, key.indexOf("."));
 										this.getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPD.put(claimNameTmp, b);
 									}catch(Exception e) {
-										throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.gestioneToken.forward.custom."+key+"' (atteso: true/false): "+e.getMessage(),e);
+										throw new CoreException("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.gestioneToken.forward.custom."+key+"' (atteso: true/false): "+e.getMessage(),e);
 									}
 								}
 								else {
-									throw new Exception("Proprietà non definita");
+									throw new CoreException("Proprietà non definita");
 								}
 							}
 						}
@@ -22319,7 +22328,7 @@ public class OpenSPCoop2Properties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.custom."+claimName+".trasporto.pd.set.enabled': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.custom."+claimName+".trasporto.pd.set.enabled': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -22351,11 +22360,11 @@ public class OpenSPCoop2Properties {
 										String claimNameTmp = key.substring(0, key.indexOf("."));
 										this.getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPA.put(claimNameTmp, b);
 									}catch(Exception e) {
-										throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.gestioneToken.forward.custom."+key+"' (atteso: true/false): "+e.getMessage(),e);
+										throw new CoreException("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.gestioneToken.forward.custom."+key+"' (atteso: true/false): "+e.getMessage(),e);
 									}
 								}
 								else {
-									throw new Exception("Proprietà non definita");
+									throw new CoreException("Proprietà non definita");
 								}
 							}
 						}
@@ -22363,7 +22372,7 @@ public class OpenSPCoop2Properties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.custom."+claimName+".trasporto.pa.set.enabled': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.custom."+claimName+".trasporto.pa.set.enabled': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -22393,7 +22402,7 @@ public class OpenSPCoop2Properties {
 									this.getCustomClaims_jsonPropertyName_gestioneTokenHeaderIntegrazioneJson.put(claimNameTmp, tmp.trim());
 								}
 								else {
-									throw new Exception("Proprietà non definita");
+									throw new CoreException("Proprietà non definita");
 								}
 							}
 						}
@@ -22401,7 +22410,7 @@ public class OpenSPCoop2Properties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.custom."+claimName+".json.name': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.custom."+claimName+".json.name': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -22432,11 +22441,11 @@ public class OpenSPCoop2Properties {
 										String claimNameTmp = key.substring(0, key.indexOf("."));
 										this.getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneJson_setPD.put(claimNameTmp, b);
 									}catch(Exception e) {
-										throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.gestioneToken.forward.custom."+key+"' (atteso: true/false): "+e.getMessage(),e);
+										throw new CoreException("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.gestioneToken.forward.custom."+key+"' (atteso: true/false): "+e.getMessage(),e);
 									}
 								}
 								else {
-									throw new Exception("Proprietà non definita");
+									throw new CoreException("Proprietà non definita");
 								}
 							}
 						}
@@ -22444,7 +22453,7 @@ public class OpenSPCoop2Properties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.custom."+claimName+".json.pd.set.enabled': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.custom."+claimName+".json.pd.set.enabled': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -22476,11 +22485,11 @@ public class OpenSPCoop2Properties {
 										String claimNameTmp = key.substring(0, key.indexOf("."));
 										this.getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneJson_setPA.put(claimNameTmp, b);
 									}catch(Exception e) {
-										throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.gestioneToken.forward.custom."+key+"' (atteso: true/false): "+e.getMessage(),e);
+										throw new CoreException("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.gestioneToken.forward.custom."+key+"' (atteso: true/false): "+e.getMessage(),e);
 									}
 								}
 								else {
-									throw new Exception("Proprietà non definita");
+									throw new CoreException("Proprietà non definita");
 								}
 							}
 						}
@@ -22488,7 +22497,7 @@ public class OpenSPCoop2Properties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.custom."+claimName+".json.pa.set.enabled': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.custom."+claimName+".json.pa.set.enabled': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -22545,7 +22554,7 @@ public class OpenSPCoop2Properties {
 				
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 			
 			this.getGestioneRetrieveToken_lock_permits_read = true;
@@ -22571,7 +22580,7 @@ public class OpenSPCoop2Properties {
 				this.isGestioneRetrieveToken_refreshTokenBeforeExpire_percent_read=true;
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+this.isGestioneRetrieveToken_refreshTokenBeforeExpire_percent_pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+this.isGestioneRetrieveToken_refreshTokenBeforeExpire_percent_pName+"' non impostata, errore:"+e.getMessage(),e);
 				this.isGestioneRetrieveToken_refreshTokenBeforeExpire_percent = null;
 			}
 		}
@@ -22596,7 +22605,7 @@ public class OpenSPCoop2Properties {
 				this.isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds_read=true;
 
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+this.isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds_pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+this.isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds_pName+"' non impostata, errore:"+e.getMessage(),e);
 				this.isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds = null;
 			}
 		}
@@ -22612,11 +22621,11 @@ public class OpenSPCoop2Properties {
 		/*
 		 *Fix: lascio la possibilità di usare il token fino alla scadenza prossima se non vengono definite nessuna delle due proprietà
 		if(!percentDefined && !secondsDefined) {
-			this.log.error("Almeno una proprietà tra le seguenti deve essere definita: '"+isGestioneRetrieveToken_refreshTokenBeforeExpire_percent_pName+"' o '"+isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds_pName+"'");
+			this.logError("Almeno una proprietà tra le seguenti deve essere definita: '"+isGestioneRetrieveToken_refreshTokenBeforeExpire_percent_pName+"' o '"+isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds_pName+"'");
 			return false;
 		}*/
 		if(percentDefined && secondsDefined) {
-			this.log.error("Non è possibile definire contemporaneamente entrambe le seguenti proprietà: '"+this.isGestioneRetrieveToken_refreshTokenBeforeExpire_percent_pName+"' o '"+this.isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds_pName+"'");
+			this.logError("Non è possibile definire contemporaneamente entrambe le seguenti proprietà: '"+this.isGestioneRetrieveToken_refreshTokenBeforeExpire_percent_pName+"' o '"+this.isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds_pName+"'");
 			return false;
 		}
 		return true;
@@ -23003,7 +23012,7 @@ public class OpenSPCoop2Properties {
 				
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 			
 			this.getGestioneAttributeAuthority_lock_permits_read = true;
@@ -23534,7 +23543,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getSOAPServicesBlackListInternalUrlParametersRead = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.urlParameters.blackList.internal': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.urlParameters.blackList.internal': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -23560,7 +23569,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getSOAPServicesBlackListUrlParametersRead = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.urlParameters.blackList': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.urlParameters.blackList': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -23586,7 +23595,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getSOAPServicesWhiteListUrlParametersRead = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.urlParameters.whiteList': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.urlParameters.whiteList': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -23679,7 +23688,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getSOAPServicesBlackListBothInternalHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.blackList.internal.both': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.blackList.internal.both': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -23705,7 +23714,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getSOAPServicesBlackListRequestInternalHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.blackList.internal.request': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.blackList.internal.request': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -23731,7 +23740,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getSOAPServicesBlackListResponseInternalHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.blackList.internal.response': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.blackList.internal.response': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -23757,7 +23766,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getSOAPServicesBlackListBothHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.blackList.both': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.blackList.both': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -23783,7 +23792,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getSOAPServicesBlackListRequestHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.blackList.request': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.blackList.request': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -23809,7 +23818,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getSOAPServicesBlackListResponseHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.blackList.response': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.blackList.response': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -23835,7 +23844,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getSOAPServicesWhiteListBothHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.whiteList.both': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.whiteList.both': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -23861,7 +23870,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getSOAPServicesWhiteListRequestHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.whiteList.request': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.whiteList.request': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -23887,7 +23896,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getSOAPServicesWhiteListResponseHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.whiteList.response': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.whiteList.response': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -23971,7 +23980,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isSOAPServices_inoltroBuste_proxyPassReverse = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse': "+e.getMessage(),e);
 				this.isSOAPServices_inoltroBuste_proxyPassReverse = false;
 			}    
 		}
@@ -23992,7 +24001,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse': "+e.getMessage(),e);
 				this.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse = false;
 			}    
 		}
@@ -24024,8 +24033,8 @@ public class OpenSPCoop2Properties {
 				}
 			} catch(java.lang.Exception e) {
 				String error = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.headers': "+e.getMessage();
-				this.log.error(error,e);
-				throw new Exception(error);
+				this.logError(error,e);
+				throw new CoreException(error);
 			}    
 		}
 
@@ -24056,8 +24065,8 @@ public class OpenSPCoop2Properties {
 				}
 			} catch(java.lang.Exception e) {
 				String error = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.headers': "+e.getMessage();
-				this.log.error(error,e);
-				throw new Exception(error);
+				this.logError(error,e);
+				throw new CoreException(error);
 			}    
 		}
 
@@ -24080,7 +24089,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isSOAPServices_inoltroBuste_proxyPassReverse_setCookie = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isSOAPServices_inoltroBuste_proxyPassReverse_setCookie = false;
 			}    
 		}
@@ -24102,7 +24111,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie = false;
 			}    
 		}
@@ -24124,7 +24133,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isSOAPServices_inoltroBuste_proxyPassReverse_setCookie_path = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isSOAPServices_inoltroBuste_proxyPassReverse_setCookie_path = isSOAPServices_inoltroBuste_proxyPassReverse_setCookie();
 			}    
 		}
@@ -24146,7 +24155,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_path = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_path = isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie();
 			}    
 		}
@@ -24168,7 +24177,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isSOAPServices_inoltroBuste_proxyPassReverse_setCookie_domain = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isSOAPServices_inoltroBuste_proxyPassReverse_setCookie_domain = isSOAPServices_inoltroBuste_proxyPassReverse_setCookie();
 			}    
 		}
@@ -24190,7 +24199,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_domain = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_domain = isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie();
 			}    
 		}
@@ -24222,8 +24231,8 @@ public class OpenSPCoop2Properties {
 				}
 			} catch(java.lang.Exception e) {
 				String error = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.setCookie.headers': "+e.getMessage();
-				this.log.error(error,e);
-				throw new Exception(error);
+				this.logError(error,e);
+				throw new CoreException(error);
 			}    
 		}
 
@@ -24254,8 +24263,8 @@ public class OpenSPCoop2Properties {
 				}
 			} catch(java.lang.Exception e) {
 				String error = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.setCookie.headers': "+e.getMessage();
-				this.log.error(error,e);
-				throw new Exception(error);
+				this.logError(error,e);
+				throw new CoreException(error);
 			}    
 		}
 
@@ -24277,7 +24286,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isSOAPServices_inoltroBuste_proxyPassReverse_useProtocolPrefix = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.useProtocolPrefix': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.useProtocolPrefix': "+e.getMessage(),e);
 				this.isSOAPServices_inoltroBuste_proxyPassReverse_useProtocolPrefix = false;
 			}    
 		}
@@ -24298,7 +24307,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_useProtocolPrefix = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.useProtocolPrefix': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.useProtocolPrefix': "+e.getMessage(),e);
 				this.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_useProtocolPrefix = false;
 			}    
 		}
@@ -24320,7 +24329,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isSOAPServices_inoltroBuste_response_securityHeaders = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isSOAPServices_inoltroBuste_response_securityHeaders = true;
 			}    
 		}
@@ -24335,7 +24344,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getSOAPServices_inoltroBuste_response_securityHeaders = this.reader.readProperties_convertEnvProperties(pName);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -24357,7 +24366,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isSOAPServices_consegnaContenutiApplicativi_response_securityHeaders = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isSOAPServices_consegnaContenutiApplicativi_response_securityHeaders = true;
 			}    
 		}
@@ -24372,7 +24381,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getSOAPServices_consegnaContenutiApplicativi_response_securityHeaders = this.reader.readProperties_convertEnvProperties(pName);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -24427,7 +24436,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getRESTServicesBlackListInternalUrlParametersRead = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.urlParameters.blackList.internal': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.urlParameters.blackList.internal': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -24453,7 +24462,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getRESTServicesBlackListUrlParametersRead = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.urlParameters.blackList': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.urlParameters.blackList': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -24479,7 +24488,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getRESTServicesWhiteListUrlParametersRead = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.urlParameters.whiteList': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.urlParameters.whiteList': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -24572,7 +24581,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getRESTServicesBlackListBothInternalHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.blackList.internal.both': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.blackList.internal.both': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -24598,7 +24607,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getRESTServicesBlackListRequestInternalHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.blackList.internal.request': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.blackList.internal.request': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -24624,7 +24633,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getRESTServicesBlackListResponseInternalHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.blackList.internal.response': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.blackList.internal.response': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -24650,7 +24659,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getRESTServicesBlackListBothHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.blackList.both': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.blackList.both': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -24676,7 +24685,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getRESTServicesBlackListRequestHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.blackList.request': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.blackList.request': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -24702,7 +24711,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getRESTServicesBlackListResponseHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.blackList.response': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.blackList.response': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -24728,7 +24737,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getRESTServicesWhiteListBothHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.whiteList.both': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.whiteList.both': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -24754,7 +24763,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getRESTServicesWhiteListRequestHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.whiteList.request': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.whiteList.request': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -24780,7 +24789,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getRESTServicesWhiteListResponseHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.whiteList.response': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.whiteList.response': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -24864,7 +24873,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isRESTServices_inoltroBuste_proxyPassReverse = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse': "+e.getMessage(),e);
 				this.isRESTServices_inoltroBuste_proxyPassReverse = false;
 			}    
 		}
@@ -24885,7 +24894,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse': "+e.getMessage(),e);
 				this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse = false;
 			}    
 		}
@@ -24917,8 +24926,8 @@ public class OpenSPCoop2Properties {
 				}
 			} catch(java.lang.Exception e) {
 				String error = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.headers': "+e.getMessage();
-				this.log.error(error,e);
-				throw new Exception(error);
+				this.logError(error,e);
+				throw new CoreException(error);
 			}    
 		}
 
@@ -24949,8 +24958,8 @@ public class OpenSPCoop2Properties {
 				}
 			} catch(java.lang.Exception e) {
 				String error = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.headers': "+e.getMessage();
-				this.log.error(error,e);
-				throw new Exception(error);
+				this.logError(error,e);
+				throw new CoreException(error);
 			}    
 		}
 
@@ -24973,7 +24982,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isRESTServices_inoltroBuste_proxyPassReverse_setCookie = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isRESTServices_inoltroBuste_proxyPassReverse_setCookie = false;
 			}    
 		}
@@ -24995,7 +25004,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie = false;
 			}    
 		}
@@ -25017,7 +25026,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isRESTServices_inoltroBuste_proxyPassReverse_setCookie_path = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isRESTServices_inoltroBuste_proxyPassReverse_setCookie_path = isRESTServices_inoltroBuste_proxyPassReverse_setCookie();
 			}    
 		}
@@ -25039,7 +25048,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_path = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_path = isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie();
 			}    
 		}
@@ -25061,7 +25070,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isRESTServices_inoltroBuste_proxyPassReverse_setCookie_domain = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isRESTServices_inoltroBuste_proxyPassReverse_setCookie_domain = isRESTServices_inoltroBuste_proxyPassReverse_setCookie();
 			}    
 		}
@@ -25083,7 +25092,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_domain = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_domain = isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie();
 			}    
 		}
@@ -25115,8 +25124,8 @@ public class OpenSPCoop2Properties {
 				}
 			} catch(java.lang.Exception e) {
 				String error = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.setCookie.headers': "+e.getMessage();
-				this.log.error(error,e);
-				throw new Exception(error);
+				this.logError(error,e);
+				throw new CoreException(error);
 			}    
 		}
 
@@ -25147,8 +25156,8 @@ public class OpenSPCoop2Properties {
 				}
 			} catch(java.lang.Exception e) {
 				String error = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.setCookie.headers': "+e.getMessage();
-				this.log.error(error,e);
-				throw new Exception(error);
+				this.logError(error,e);
+				throw new CoreException(error);
 			}    
 		}
 
@@ -25170,7 +25179,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isRESTServices_inoltroBuste_proxyPassReverse_useProtocolPrefix = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.useProtocolPrefix': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.useProtocolPrefix': "+e.getMessage(),e);
 				this.isRESTServices_inoltroBuste_proxyPassReverse_useProtocolPrefix = false;
 			}    
 		}
@@ -25191,7 +25200,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_useProtocolPrefix = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.useProtocolPrefix': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.useProtocolPrefix': "+e.getMessage(),e);
 				this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_useProtocolPrefix = false;
 			}    
 		}
@@ -25214,7 +25223,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isRESTServices_inoltroBuste_response_securityHeaders = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isRESTServices_inoltroBuste_response_securityHeaders = true;
 			}    
 		}
@@ -25229,7 +25238,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getRESTServices_inoltroBuste_response_securityHeaders = this.reader.readProperties_convertEnvProperties(pName);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -25251,7 +25260,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isRESTServices_consegnaContenutiApplicativi_response_securityHeaders = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.isRESTServices_consegnaContenutiApplicativi_response_securityHeaders = true;
 			}    
 		}
@@ -25266,7 +25275,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getRESTServices_consegnaContenutiApplicativi_response_securityHeaders = this.reader.readProperties_convertEnvProperties(pName);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -25291,7 +25300,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniEnabled = true;
 			}    
 		}
@@ -25312,7 +25321,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniDebug = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.debug', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.debug', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniDebug = true;
 			}    
 		}
@@ -25333,7 +25342,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniUsePddRuntimeDatasource = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dataSource.usePddRuntime', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dataSource.usePddRuntime', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniUsePddRuntimeDatasource = true;
 			}    
 		}
@@ -25348,12 +25357,12 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.dataSource");
 				if(name==null){
-					throw new Exception("Proprieta' non impostata");
+					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
 				this.getTransazioniDatasource = name;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dataSource': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dataSource': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -25367,7 +25376,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getTransazioniDatasourceJndiContext = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.transazioni.dataSource.property.");
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dataSource.property.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dataSource.property.*': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -25388,7 +25397,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniDatasourceUseDBUtils = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.datasource.useDSUtils', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.datasource.useDSUtils', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniDatasourceUseDBUtils = true;
 			}    
 		}
@@ -25409,7 +25418,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniSaveTracceInUniqueTransaction = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniSaveTracceInUniqueTransaction = true;
 			}    
 		}
@@ -25430,7 +25439,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniSaveDiagnosticiInUniqueTransaction = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.diagnostici.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.diagnostici.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniSaveDiagnosticiInUniqueTransaction = true;
 			}    
 		}
@@ -25451,7 +25460,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniSaveDumpInUniqueTransaction = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dump.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dump.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniSaveDumpInUniqueTransaction = true;
 			}    
 		}
@@ -25473,7 +25482,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniValorizzaDataIngressoConDataAccettazione = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniValorizzaDataIngressoConDataAccettazione = true;
 			}    
 		}
@@ -25495,7 +25504,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniValorizzaDataUscitaRispostaUseDateAfterResponseSent = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniValorizzaDataUscitaRispostaUseDateAfterResponseSent = true;
 			}    
 		}
@@ -25516,7 +25525,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFaultPrettyPrint = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.fault.prettyPrint', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.fault.prettyPrint', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniFaultPrettyPrint = false;
 			}    
 		}
@@ -25538,7 +25547,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniHttpStatusAsEvent_inResponseCode = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniHttpStatusAsEvent_inResponseCode = false;
 			}    
 		}
@@ -25559,7 +25568,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniHttpStatusAsEvent_outResponseCode = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniHttpStatusAsEvent_outResponseCode = false;
 			}    
 		}
@@ -25581,7 +25590,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniTipoApiAsEvent = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniTipoApiAsEvent = false;
 			}    
 		}
@@ -25603,7 +25612,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniConnettoriMultipliAsEvent = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniConnettoriMultipliAsEvent = false;
 			}    
 		}
@@ -25625,7 +25634,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniRegistrazioneSlowLog = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniRegistrazioneSlowLog = false;
 			}    
 		}
@@ -25648,7 +25657,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getTransazioniRegistrazioneSlowLogThresholdMs = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+this.getTransazioniRegistrazioneSlowLogThresholdMs_default+" : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+this.getTransazioniRegistrazioneSlowLogThresholdMs_default+" : "+e.getMessage(),e);
 				this.getTransazioniRegistrazioneSlowLogThresholdMs = this.getTransazioniRegistrazioneSlowLogThresholdMs_default;
 			}    
 		}
@@ -25670,7 +25679,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniRegistrazioneSlowLogBuildTransactionDetails = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniRegistrazioneSlowLogBuildTransactionDetails = false;
 			}    
 		}
@@ -25692,7 +25701,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniRegistrazioneSlowLogRateLimitingDetails = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniRegistrazioneSlowLogRateLimitingDetails = false;
 			}    
 		}
@@ -25714,7 +25723,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniRegistrazioneSlowLogConnettoriMultipliProcessTransactionSADetails = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniRegistrazioneSlowLogConnettoriMultipliProcessTransactionSADetails = false;
 			}    
 		}
@@ -25736,7 +25745,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniRegistrazioneSlowLogConnettoriMultipliUpdateTransactionDetails = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniRegistrazioneSlowLogConnettoriMultipliUpdateTransactionDetails = false;
 			}    
 		}
@@ -25760,7 +25769,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFiltroDuplicatiSaveDateEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.duplicati.dateIdentificativiProtocolloInCampiSeparati', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.duplicati.dateIdentificativiProtocolloInCampiSeparati', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniFiltroDuplicatiSaveDateEnabled = true;
 			}    
 		}
@@ -25784,7 +25793,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFiltroDuplicatiTramiteTransazioniEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniFiltroDuplicatiTramiteTransazioniEnabled = true;
 			}    
 		}
@@ -25805,7 +25814,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFiltroDuplicatiTramiteTransazioniUsePdDConnection = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.usePdDConnection', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.usePdDConnection', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniFiltroDuplicatiTramiteTransazioniUsePdDConnection = true;
 			}    
 		}
@@ -25826,7 +25835,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFiltroDuplicatiTramiteTransazioniForceIndex = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.forceIndex', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.forceIndex', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniFiltroDuplicatiTramiteTransazioniForceIndex = false;
 			}    
 		}
@@ -25850,7 +25859,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniStatefulEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.stateful.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.stateful.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniStatefulEnabled = true;
 			}    
 		}
@@ -25871,7 +25880,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniStatefulDebug = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.stateful.debug', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.stateful.debug', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniStatefulDebug = true;
 			}    
 		}
@@ -25886,12 +25895,12 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.stateful.seconds");
 				if(name==null){
-					throw new Exception("Proprieta' non impostata");
+					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
 				this.getTransazioniStatefulTimerIntervalSeconds = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.stateful.seconds': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.stateful.seconds': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -25909,12 +25918,12 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.credenzialiMittente.maxLength");
 				if(name==null){
-					throw new Exception("Proprieta' non impostata");
+					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
 				this.getTransazioniCredenzialiMittenteMaxLength = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.credenzialiMittente.maxLength': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.credenzialiMittente.maxLength': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -25930,12 +25939,12 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.credenzialiMittente.updateAfterSeconds");
 				if(name==null){
-					throw new Exception("Proprieta' non impostata");
+					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
 				this.getTransazioniCredenzialiMittenteLifeSeconds = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.credenzialiMittente.updateAfterSeconds': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.credenzialiMittente.updateAfterSeconds': "+e.getMessage(),e);
 				throw e;
 			}    
 			
@@ -25958,7 +25967,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniRegistrazioneTracceProtocolPropertiesEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.protocolProperties.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.protocolProperties.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniRegistrazioneTracceProtocolPropertiesEnabled = false;
 			}    
 		}
@@ -25979,7 +25988,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniRegistrazioneTracceHeaderRawEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.headerRaw.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.headerRaw.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniRegistrazioneTracceHeaderRawEnabled = false;
 			}    
 		}
@@ -26000,7 +26009,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniRegistrazioneTracceDigestEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.digest.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.digest.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniRegistrazioneTracceDigestEnabled = false;
 			}    
 		}
@@ -26023,7 +26032,7 @@ public class OpenSPCoop2Properties {
 					
 					String classe = className.getSalvataggioTracceManager(name);
 					if(classe == null) {
-						throw new Exception("Classe non trovata per il salvataggio delle tracce con tipo '"+name+"'");
+						throw new CoreException("Classe non trovata per il salvataggio delle tracce con tipo '"+name+"'");
 					}
 					
 					this.getTransazioniRegistrazioneTracceManager = (ISalvataggioTracceManager) loader.newInstance(classe);
@@ -26032,7 +26041,7 @@ public class OpenSPCoop2Properties {
 				this.getTransazioniRegistrazioneTracceManager_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.salvataggio': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.salvataggio': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -26055,7 +26064,7 @@ public class OpenSPCoop2Properties {
 					
 					String classe = className.getSalvataggioDiagnosticiManager(name);
 					if(classe == null) {
-						throw new Exception("Classe non trovata per il salvataggio dei diagnostici con tipo '"+name+"'");
+						throw new CoreException("Classe non trovata per il salvataggio dei diagnostici con tipo '"+name+"'");
 					}
 					
 					this.getTransazioniRegistrazioneDiagnosticiManager = (ISalvataggioDiagnosticiManager) loader.newInstance(classe);
@@ -26064,7 +26073,7 @@ public class OpenSPCoop2Properties {
 				this.getTransazioniRegistrazioneDiagnosticiManager_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.diagnostici.salvataggio': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.diagnostici.salvataggio': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -26085,7 +26094,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniRegistrazioneDumpHeadersCompactEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dump.headers.compact.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dump.headers.compact.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniRegistrazioneDumpHeadersCompactEnabled = false;
 			}    
 		}
@@ -26109,7 +26118,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFileTraceEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniFileTraceEnabled = false;
 			}    
 		}
@@ -26131,7 +26140,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFileTraceDumpBinarioPDEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniFileTraceDumpBinarioPDEnabled = false;
 			}    
 		}
@@ -26152,7 +26161,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFileTraceDumpBinarioPDPayloadEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPDEnabled()+" : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPDEnabled()+" : "+e.getMessage(),e);
 				this.isTransazioniFileTraceDumpBinarioPDPayloadEnabled = isTransazioniFileTraceDumpBinarioPDEnabled();
 			}    
 		}
@@ -26173,7 +26182,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFileTraceDumpBinarioPDHeadersEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPDEnabled()+" : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPDEnabled()+" : "+e.getMessage(),e);
 				this.isTransazioniFileTraceDumpBinarioPDHeadersEnabled = isTransazioniFileTraceDumpBinarioPDEnabled();
 			}    
 		}
@@ -26195,7 +26204,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFileTraceDumpBinarioPDConnettoreEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniFileTraceDumpBinarioPDConnettoreEnabled = false;
 			}    
 		}
@@ -26216,7 +26225,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFileTraceDumpBinarioPDConnettorePayloadEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPDConnettoreEnabled()+" : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPDConnettoreEnabled()+" : "+e.getMessage(),e);
 				this.isTransazioniFileTraceDumpBinarioPDConnettorePayloadEnabled = isTransazioniFileTraceDumpBinarioPDConnettoreEnabled();
 			}    
 		}
@@ -26237,7 +26246,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFileTraceDumpBinarioPDConnettoreHeadersEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPDConnettoreEnabled()+" : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPDConnettoreEnabled()+" : "+e.getMessage(),e);
 				this.isTransazioniFileTraceDumpBinarioPDConnettoreHeadersEnabled = isTransazioniFileTraceDumpBinarioPDConnettoreEnabled();
 			}    
 		}
@@ -26259,7 +26268,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFileTraceDumpBinarioPAEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniFileTraceDumpBinarioPAEnabled = false;
 			}    
 		}
@@ -26280,7 +26289,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFileTraceDumpBinarioPAPayloadEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPAEnabled()+" : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPAEnabled()+" : "+e.getMessage(),e);
 				this.isTransazioniFileTraceDumpBinarioPAPayloadEnabled = isTransazioniFileTraceDumpBinarioPAEnabled();
 			}    
 		}
@@ -26301,7 +26310,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFileTraceDumpBinarioPAHeadersEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPAEnabled()+" : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPAEnabled()+" : "+e.getMessage(),e);
 				this.isTransazioniFileTraceDumpBinarioPAHeadersEnabled = isTransazioniFileTraceDumpBinarioPAEnabled();
 			}    
 		}
@@ -26324,7 +26333,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFileTraceDumpBinarioPAConnettoreEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniFileTraceDumpBinarioPAConnettoreEnabled = false;
 			}    
 		}
@@ -26345,7 +26354,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFileTraceDumpBinarioPAConnettorePayloadEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPAConnettoreEnabled()+" : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPAConnettoreEnabled()+" : "+e.getMessage(),e);
 				this.isTransazioniFileTraceDumpBinarioPAConnettorePayloadEnabled = isTransazioniFileTraceDumpBinarioPAConnettoreEnabled();
 			}    
 		}
@@ -26366,7 +26375,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFileTraceDumpBinarioPAConnettoreHeadersEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPAConnettoreEnabled()+" : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPAConnettoreEnabled()+" : "+e.getMessage(),e);
 				this.isTransazioniFileTraceDumpBinarioPAConnettoreHeadersEnabled = isTransazioniFileTraceDumpBinarioPAConnettoreEnabled();
 			}    
 		}
@@ -26382,7 +26391,7 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null){
-					throw new Exception("Proprieta' non impostata");
+					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
 				
@@ -26395,16 +26404,16 @@ public class OpenSPCoop2Properties {
 				}
 				
 				if(!this.getTransazioniFileTraceConfig.exists()) {
-					throw new Exception("Config file ["+this.getTransazioniFileTraceConfig.getAbsolutePath()+"] not exists");
+					throw new CoreException("Config file ["+this.getTransazioniFileTraceConfig.getAbsolutePath()+"] not exists");
 				}
 				if(this.getTransazioniFileTraceConfig.isDirectory()) {
-					throw new Exception("Config file ["+this.getTransazioniFileTraceConfig.getAbsolutePath()+"] is directory");
+					throw new CoreException("Config file ["+this.getTransazioniFileTraceConfig.getAbsolutePath()+"] is directory");
 				}
 				if(this.getTransazioniFileTraceConfig.canRead()==false) {
-					throw new Exception("Config file ["+this.getTransazioniFileTraceConfig.getAbsolutePath()+"] cannot read");
+					throw new CoreException("Config file ["+this.getTransazioniFileTraceConfig.getAbsolutePath()+"] cannot read");
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -26464,7 +26473,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isEventiEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.eventi.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.eventi.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isEventiEnabled = true;
 			}    
 		}
@@ -26485,7 +26494,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isEventiDebug = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.eventi.debug', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.eventi.debug', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isEventiDebug = true;
 			}    
 		}
@@ -26506,7 +26515,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isEventiRegistrazioneStatoPorta = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.eventi.registraStatoPorta', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.eventi.registraStatoPorta', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isEventiRegistrazioneStatoPorta = true;
 			}    
 		}
@@ -26527,7 +26536,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isEventiTimerEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.eventi.timer.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.eventi.timer.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isEventiTimerEnabled = true;
 			}    
 		}
@@ -26542,12 +26551,12 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.eventi.timer.seconds");
 				if(name==null){
-					throw new Exception("Proprieta' non impostata");
+					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
 				this.getEventiTimerIntervalSeconds = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.eventi.timer.seconds': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.eventi.timer.seconds': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -26567,26 +26576,26 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.resources.fileSystemRecovery.repository");
 				if(name==null){
-					throw new Exception("Proprieta' non impostata");
+					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
 				this.getFileSystemRecovery_repository = new File(name);
 				if(this.getFileSystemRecovery_repository.exists()) {
 					if(this.getFileSystemRecovery_repository.isDirectory()==false) {
-						throw new Exception("Dir ["+this.getFileSystemRecovery_repository.getAbsolutePath()+"] not dir");
+						throw new CoreException("Dir ["+this.getFileSystemRecovery_repository.getAbsolutePath()+"] not dir");
 					}
 					if(this.getFileSystemRecovery_repository.canRead()==false) {
-						throw new Exception("Dir ["+this.getFileSystemRecovery_repository.getAbsolutePath()+"] cannot read");
+						throw new CoreException("Dir ["+this.getFileSystemRecovery_repository.getAbsolutePath()+"] cannot read");
 					}
 					if(this.getFileSystemRecovery_repository.canWrite()==false) {
-						throw new Exception("Dir ["+this.getFileSystemRecovery_repository.getAbsolutePath()+"] cannot write");
+						throw new CoreException("Dir ["+this.getFileSystemRecovery_repository.getAbsolutePath()+"] cannot write");
 					}
 				}
 				else {
 					// viene creata automaticamente
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.repository': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.repository': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -26607,7 +26616,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isFileSystemRecoveryDebug = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.debug', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.debug', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isFileSystemRecoveryDebug = true;
 			}    
 		}
@@ -26628,7 +26637,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isFileSystemRecoveryTimerEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isFileSystemRecoveryTimerEnabled = true;
 			}    
 		}
@@ -26643,12 +26652,12 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.resources.fileSystemRecovery.timeout");
 				if(name==null){
-					throw new Exception("Proprieta' non impostata");
+					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
 				this.getFileSystemRecoveryTimerIntervalSeconds = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.timeout': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.timeout': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -26663,12 +26672,12 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.resources.fileSystemRecovery.maxAttempts");
 				if(name==null){
-					throw new Exception("Proprieta' non impostata");
+					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
 				this.getFileSystemRecoveryTimerMaxAttempts = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.maxAttempts': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.maxAttempts': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -26689,7 +26698,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isFileSystemRecoveryTimerEventEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.events.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.events.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isFileSystemRecoveryTimerEventEnabled = true;
 			}    
 		}
@@ -26710,7 +26719,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isFileSystemRecoveryTimerTransactionEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.transaction.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.transaction.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isFileSystemRecoveryTimerTransactionEnabled = true;
 			}    
 		}
@@ -26743,7 +26752,7 @@ public class OpenSPCoop2Properties {
 					this.isControlloTrafficoEnabled = Boolean.parseBoolean(name);
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isControlloTrafficoEnabled = true;
 			}    
 		}
@@ -26764,7 +26773,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isControlloTrafficoDebug = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.debug', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.debug', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isControlloTrafficoDebug = true;
 			}    
 		}
@@ -26785,7 +26794,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isControlloTrafficoViolazioneGenerazioneErroreGenerico = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.erroreGenerico', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.erroreGenerico', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isControlloTrafficoViolazioneGenerazioneErroreGenerico = true;
 			}    
 		}
@@ -26806,7 +26815,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isControlloTrafficoPolicyLetturaDaCacheDinamica = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.policy.readWithDynamicCache', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.policy.readWithDynamicCache', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isControlloTrafficoPolicyLetturaDaCacheDinamica = true;
 			}    
 		}
@@ -26830,7 +26839,7 @@ public class OpenSPCoop2Properties {
 						try{
 							e = Integer.parseInt(s);
 						}catch(Exception eParse){
-							throw new Exception("Valore ["+s+"] non riconosciuto come esito valido: "+eParse.getMessage(),eParse);
+							throw new CoreException("Valore ["+s+"] non riconosciuto come esito valido: "+eParse.getMessage(),eParse);
 						}
 						if(esitiProperties.existsEsitoCode(e)==false){
 							continue; // non supportato dal protocollo
@@ -26838,7 +26847,7 @@ public class OpenSPCoop2Properties {
 						lInt.add(e);
 					}
 					if(lInt.isEmpty()) {
-						throw new Exception("Nessun valore è utilizzabile per il protocollo '"+protocollo+"'");
+						throw new CoreException("Nessun valore è utilizzabile per il protocollo '"+protocollo+"'");
 					}
 					int [] tmp = new int[lInt.size()];
 					for (int i = 0; i < lInt.size(); i++) {
@@ -26858,7 +26867,7 @@ public class OpenSPCoop2Properties {
 			}catch(Exception e){
 				// default
 				int defaultEsito = esitiProperties.convertoToCode(EsitoTransazioneName.OK);
-				this.log.error("Errore durante la lettura della proprieta' [org.openspcoop2.pdd.controlloTraffico.calcoloLatenza.portaDelegata.esitiConsideratii] (Uso il default '"+EsitoTransazioneName.OK+"="+defaultEsito+"'): "+e.getMessage(),e);
+				this.logError("Errore durante la lettura della proprieta' [org.openspcoop2.pdd.controlloTraffico.calcoloLatenza.portaDelegata.esitiConsideratii] (Uso il default '"+EsitoTransazioneName.OK+"="+defaultEsito+"'): "+e.getMessage(),e);
 				int [] tmp = new int[1];
 				tmp[0] = defaultEsito;
 				this.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaDelegata.put(protocollo, tmp);
@@ -26883,7 +26892,7 @@ public class OpenSPCoop2Properties {
 						try{
 							e = Integer.parseInt(s);
 						}catch(Exception eParse){
-							throw new Exception("Valore ["+s+"] non riconosciuto come esito valido: "+eParse.getMessage(),eParse);
+							throw new CoreException("Valore ["+s+"] non riconosciuto come esito valido: "+eParse.getMessage(),eParse);
 						}
 						if(esitiProperties.existsEsitoCode(e)==false){
 							continue; // non supportato dal protocollo
@@ -26891,7 +26900,7 @@ public class OpenSPCoop2Properties {
 						lInt.add(e);
 					}
 					if(lInt.isEmpty()) {
-						throw new Exception("Nessun valore è utilizzabile per il protocollo '"+protocollo+"'");
+						throw new CoreException("Nessun valore è utilizzabile per il protocollo '"+protocollo+"'");
 					}
 					int [] tmp = new int[lInt.size()];
 					for (int i = 0; i < lInt.size(); i++) {
@@ -26911,7 +26920,7 @@ public class OpenSPCoop2Properties {
 			}catch(Exception e){
 				// default
 				int defaultEsito = esitiProperties.convertoToCode(EsitoTransazioneName.OK);
-				this.log.error("Errore durante la lettura della proprieta' [org.openspcoop2.pdd.controlloTraffico.calcoloLatenza.portaApplicativa.esitiConsideratii] (Uso il default '"+EsitoTransazioneName.OK+"="+defaultEsito+"'): "+e.getMessage(),e);
+				this.logError("Errore durante la lettura della proprieta' [org.openspcoop2.pdd.controlloTraffico.calcoloLatenza.portaApplicativa.esitiConsideratii] (Uso il default '"+EsitoTransazioneName.OK+"="+defaultEsito+"'): "+e.getMessage(),e);
 				int [] tmp = new int[1];
 				tmp[0] = defaultEsito;
 				this.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaApplicativa.put(protocollo, tmp);
@@ -26933,7 +26942,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isControlloTrafficoStatisticheFinestraScorrevoleGestioneUltimoIntervallo = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.statistiche.finestraScorrevole.gestioneUltimoIntervallo', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.statistiche.finestraScorrevole.gestioneUltimoIntervallo', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isControlloTrafficoStatisticheFinestraScorrevoleGestioneUltimoIntervallo = true;
 			}    
 		}
@@ -26955,7 +26964,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isControlloTrafficoStatisticheDistribuzioneSettimanaleUsaStatisticheGiornaliere = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isControlloTrafficoStatisticheDistribuzioneSettimanaleUsaStatisticheGiornaliere = true;
 			}    
 		}
@@ -26977,7 +26986,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isControlloTrafficoStatisticheDistribuzioneMensileUsaStatisticheGiornaliere = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isControlloTrafficoStatisticheDistribuzioneMensileUsaStatisticheGiornaliere = true;
 			}    
 		}
@@ -26999,7 +27008,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isControlloTrafficoStatisticheDistribuzioneSettimanaleMensileUsaStatisticheGiornaliereLatenzaMediaPesata = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isControlloTrafficoStatisticheDistribuzioneSettimanaleMensileUsaStatisticheGiornaliereLatenzaMediaPesata = true;
 			}    
 		}
@@ -27023,10 +27032,10 @@ public class OpenSPCoop2Properties {
 						try{
 							e = Integer.parseInt(s);
 						}catch(Exception eParse){
-							throw new Exception("Valore ["+s+"] non riconosciuto come esito valido: "+eParse.getMessage(),eParse);
+							throw new CoreException("Valore ["+s+"] non riconosciuto come esito valido: "+eParse.getMessage(),eParse);
 						}
 						if(esitiProperties.existsEsitoCode(e)==false){
-							throw new Exception("Valore ["+s+"] non riconosciuto come esito valido");
+							throw new CoreException("Valore ["+s+"] non riconosciuto come esito valido");
 						}
 						tmp[i] = e;
 					}
@@ -27044,7 +27053,7 @@ public class OpenSPCoop2Properties {
 			}catch(Exception e){
 				// default
 				int defaultEsito =  esitiProperties.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA);
-				this.log.error("Errore durante la lettura della proprieta' [org.openspcoop2.pdd.controlloTraffico.violazionePolicy.esitiConsiderati] (Uso il default '"+defaultEsito+"'): "+e.getMessage(),e);
+				this.logError("Errore durante la lettura della proprieta' [org.openspcoop2.pdd.controlloTraffico.violazionePolicy.esitiConsiderati] (Uso il default '"+defaultEsito+"'): "+e.getMessage(),e);
 				int [] tmp = new int[1];
 				tmp[0] = defaultEsito;
 				this.getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy.put(protocollo, tmp);
@@ -27066,7 +27075,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isControlloTrafficoRealtimeIncrementaSoloPolicyApplicabile = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.realtime.incrementaSoloPolicyApplicabile', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.realtime.incrementaSoloPolicyApplicabile', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isControlloTrafficoRealtimeIncrementaSoloPolicyApplicabile = false;
 			}    
 		}
@@ -27136,7 +27145,7 @@ public class OpenSPCoop2Properties {
 				}
 			} catch(java.lang.Exception e) {
 				TipoGestorePolicy gestoreDefault = TipoGestorePolicy.IN_MEMORY;
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.tipo', viene utilizzato il default="+gestoreDefault+" : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.tipo', viene utilizzato il default="+gestoreDefault+" : "+e.getMessage(),e);
 				this.isControlloTrafficoGestorePolicyTipo = gestoreDefault;
 			}    
 		}
@@ -27159,7 +27168,7 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoGestorePolicyInMemoryType = PolicyGroupByActiveThreadsType.valueOf(name);
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.tipo': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.tipo': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -27185,7 +27194,7 @@ public class OpenSPCoop2Properties {
 						this.getControlloTrafficoGestorePolicyInMemoryTypeLazyInitialization.put(initType, v);
 					}
 				} catch(java.lang.Exception e) {
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"'; viene usato il default: "+true+". Errore: "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"'; viene usato il default: "+true+". Errore: "+e.getMessage(),e);
 					this.getControlloTrafficoGestorePolicyInMemoryTypeLazyInitialization.put(initType, true);
 				}    		
 			}
@@ -27371,7 +27380,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isHazelcastEngineEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isHazelcastEngineEnabled = true;
 			}    
 		}
@@ -27399,8 +27408,8 @@ public class OpenSPCoop2Properties {
 				
 			}catch(java.lang.Exception e) {
 				String msgError = "Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage();
-				this.log.error(msgError,e);
-				throw new Exception(msgError,e);
+				this.logError(msgError,e);
+				throw new CoreException(msgError,e);
 			}
 		}
 
@@ -27427,8 +27436,8 @@ public class OpenSPCoop2Properties {
 				
 			}catch(java.lang.Exception e) {
 				String msgError = "Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage();
-				this.log.error(msgError,e);
-				throw new Exception(msgError,e);
+				this.logError(msgError,e);
+				throw new CoreException(msgError,e);
 			}
 		}
 
@@ -27455,8 +27464,8 @@ public class OpenSPCoop2Properties {
 				
 			}catch(java.lang.Exception e) {
 				String msgError = "Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage();
-				this.log.error(msgError,e);
-				throw new Exception(msgError,e);
+				this.logError(msgError,e);
+				throw new CoreException(msgError,e);
 			}
 		}
 
@@ -27484,8 +27493,8 @@ public class OpenSPCoop2Properties {
 				
 			}catch(java.lang.Exception e) {
 				String msgError = "Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage();
-				this.log.error(msgError,e);
-				throw new Exception(msgError,e);
+				this.logError(msgError,e);
+				throw new CoreException(msgError,e);
 			}
 		}
 
@@ -27513,8 +27522,8 @@ public class OpenSPCoop2Properties {
 				
 			}catch(java.lang.Exception e) {
 				String msgError = "Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage();
-				this.log.error(msgError,e);
-				throw new Exception(msgError,e);
+				this.logError(msgError,e);
+				throw new CoreException(msgError,e);
 			}
 		}
 
@@ -27540,8 +27549,8 @@ public class OpenSPCoop2Properties {
 				
 			}catch(java.lang.Exception e) {
 				String msgError = "Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage();
-				this.log.error(msgError,e);
-				throw new Exception(msgError,e);
+				this.logError(msgError,e);
+				throw new CoreException(msgError,e);
 			}
 		}
 
@@ -27567,8 +27576,8 @@ public class OpenSPCoop2Properties {
 				
 			}catch(java.lang.Exception e) {
 				String msgError = "Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage();
-				this.log.error(msgError,e);
-				throw new Exception(msgError,e);
+				this.logError(msgError,e);
+				throw new CoreException(msgError,e);
 			}
 		}
 
@@ -27594,8 +27603,8 @@ public class OpenSPCoop2Properties {
 				
 			}catch(java.lang.Exception e) {
 				String msgError = "Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage();
-				this.log.error(msgError,e);
-				throw new Exception(msgError,e);
+				this.logError(msgError,e);
+				throw new CoreException(msgError,e);
 			}
 		}
 
@@ -27622,8 +27631,8 @@ public class OpenSPCoop2Properties {
 				
 			}catch(java.lang.Exception e) {
 				String msgError = "Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage();
-				this.log.error(msgError,e);
-				throw new Exception(msgError,e);
+				this.logError(msgError,e);
+				throw new CoreException(msgError,e);
 			}
 		}
 
@@ -27663,14 +27672,14 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null) {
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				}
 				else if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId = name;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				this.getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId = null;
 			}  
 		}
@@ -27691,10 +27700,10 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig = new File(name);
 					if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig.exists()) {
 						if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig.isFile()==false) {
-							throw new Exception("Configuration ["+this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig.getAbsolutePath()+"] isn't file");
+							throw new CoreException("Configuration ["+this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig.getAbsolutePath()+"] isn't file");
 						}
 						if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig.canRead()==false) {
-							throw new Exception("Configuration ["+this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig.getAbsolutePath()+"] cannot read");
+							throw new CoreException("Configuration ["+this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig.getAbsolutePath()+"] cannot read");
 						}
 					}
 					else {
@@ -27702,7 +27711,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				throw e;
 			}
 			this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig_read = true;
@@ -27750,7 +27759,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isRedisEngineEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isRedisEngineEnabled = true;
 			}    
 		}
@@ -27768,7 +27777,7 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null){
-					throw new Exception("non definita");
+					throw new CoreException("non definita");
 				}else{
 					String [] r = name.trim().split(",");
 					List<String> l = new ArrayList<>();
@@ -27782,12 +27791,12 @@ public class OpenSPCoop2Properties {
 						this.getControlloTrafficoGestorePolicyInMemoryRedisConnectionUrl.addAll(l);
 					}
 					else {
-						throw new Exception("non definita");
+						throw new CoreException("non definita");
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
-				throw new Exception("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 			}  
 			this.getControlloTrafficoGestorePolicyInMemoryRedisConnectionUrlRead = true;
 		}
@@ -27853,7 +27862,7 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.gestorePolicy.ws.url");
 				if(name==null){
-					throw new Exception("Proprieta' non impostata");
+					throw new CoreException("Proprieta' non impostata");
 				}
 				else {
 					name = name.trim();
@@ -27862,7 +27871,7 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoGestorePolicyWSUrl = name;
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.ws.url': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.ws.url': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -27882,7 +27891,7 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoNotifyImpl = (INotify) loaderOpenSPCoop.newInstance(name);
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.notifier.implementation': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.notifier.implementation': "+e.getMessage(),e);
 				throw e;
 			}  
 			this.getControlloTrafficoNotifyImpl_read = true;
@@ -27902,13 +27911,13 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository = new File(name);
 					if(this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.exists()) {
 						if(this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.isDirectory()==false) {
-							throw new Exception("Dir ["+this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.getAbsolutePath()+"] not dir");
+							throw new CoreException("Dir ["+this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.getAbsolutePath()+"] not dir");
 						}
 						if(this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.canRead()==false) {
-							throw new Exception("Dir ["+this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.getAbsolutePath()+"] cannot read");
+							throw new CoreException("Dir ["+this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.getAbsolutePath()+"] cannot read");
 						}
 						if(this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.canWrite()==false) {
-							throw new Exception("Dir ["+this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.getAbsolutePath()+"] cannot write");
+							throw new CoreException("Dir ["+this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.getAbsolutePath()+"] cannot write");
 						}
 					}
 					else {
@@ -27916,7 +27925,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.fileSystemRecovery.repository': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.fileSystemRecovery.repository': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -27948,7 +27957,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteSimultaneeHeaderLimit_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteSimultanee.header.limit': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteSimultanee.header.limit': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -27974,7 +27983,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteHeaderLimit_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.limit': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.limit': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28000,7 +28009,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoOccupazioneBandaHeaderLimit_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.limit': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.limit': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28026,7 +28035,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoTempoComplessivoRispostaHeaderLimit_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.limit': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.limit': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28052,7 +28061,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoTempoMedioRispostaHeaderLimit_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.tempoMedioRisposta.header.limit': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.tempoMedioRisposta.header.limit': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28078,7 +28087,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimit_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.limit': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.limit': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28104,7 +28113,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteFalliteHeaderLimit_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.limit': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.limit': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28130,7 +28139,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroFaultApplicativiHeaderLimit_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.limit': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.limit': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28156,7 +28165,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimit_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.limit': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.limit': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28183,7 +28192,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteHeaderLimitWindows_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.limit.windows': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.limit.windows': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28206,7 +28215,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoOccupazioneBandaHeaderLimitWindows_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.limit.windows': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.limit.windows': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28229,7 +28238,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoTempoComplessivoRispostaHeaderLimitWindows_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.limit.windows': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.limit.windows': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28252,7 +28261,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoTempoMedioRispostaHeaderLimitWindows_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.tempoMedioRisposta.header.limit.windows': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.tempoMedioRisposta.header.limit.windows': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28275,7 +28284,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimitWindows_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.limit.windows': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.limit.windows': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28298,7 +28307,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteFalliteHeaderLimitWindows_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.limit.windows': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.limit.windows': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28321,7 +28330,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroFaultApplicativiHeaderLimitWindows_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.limit.windows': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.limit.windows': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28344,7 +28353,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimitWindows_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.limit.windows': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.limit.windows': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28374,7 +28383,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteSimultaneeHeaderRemaining_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteSimultanee.header.remaining': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteSimultanee.header.remaining': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28400,7 +28409,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteHeaderRemaining_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.remaining': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.remaining': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28426,7 +28435,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoOccupazioneBandaHeaderRemaining_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.remaining': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.remaining': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28452,7 +28461,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoTempoComplessivoRispostaHeaderRemaining_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.remaining': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.remaining': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28478,7 +28487,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderRemaining_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.remaining': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.remaining': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28504,7 +28513,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteFalliteHeaderRemaining_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.remaining': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.remaining': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28530,7 +28539,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroFaultApplicativiHeaderRemaining_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.remaining': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.remaining': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28556,7 +28565,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemaining_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteNonCompletateConSuccesso.header.remaining': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteNonCompletateConSuccesso.header.remaining': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28588,7 +28597,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteHeaderReset_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.reset': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.reset': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28614,7 +28623,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoOccupazioneBandaHeaderReset_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.reset': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.reset': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28640,7 +28649,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoTempoComplessivoRispostaHeaderReset_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.reset': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.reset': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28666,7 +28675,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoTempoMedioRispostaHeaderReset_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.tempoMedioRisposta.header.reset': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.tempoMedioRisposta.header.reset': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28692,7 +28701,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderReset_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.reset': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.reset': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28718,7 +28727,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteFalliteHeaderReset_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.reset': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.reset': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28744,7 +28753,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroFaultApplicativiHeaderReset_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.reset': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.reset': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28770,7 +28779,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderReset_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.reset': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.reset': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28800,7 +28809,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoRetryAfterHeader_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.limit': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.limit': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -28822,7 +28831,7 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoRetryAfterHeader_randomBackoff = 0;
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.policyViolate.retryAfter.randomBackoff.seconds': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.policyViolate.retryAfter.randomBackoff.seconds': "+e.getMessage(),e);
 				this.getControlloTrafficoRetryAfterHeader_randomBackoff = 0;
 			}    
 		}
@@ -28853,7 +28862,7 @@ public class OpenSPCoop2Properties {
 					this.isAllarmiEnabled = Boolean.parseBoolean(name);
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.allarmi.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.allarmi.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isAllarmiEnabled = true;
 			}    
 		}
@@ -28874,7 +28883,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isAllarmiDebug = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.allarmi.debug', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.allarmi.debug', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isAllarmiDebug = true;
 			}    
 		}
@@ -28898,10 +28907,10 @@ public class OpenSPCoop2Properties {
 					this.getServiceUnavailableRetryAfterSeconds_pd = Integer.parseInt(name);
 				}
 				else {
-					throw new Exception("Proprietà non definita");
+					throw new CoreException("Proprietà non definita");
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.seconds', default:60 : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.seconds', default:60 : "+e.getMessage(),e);
 				this.getServiceUnavailableRetryAfterSeconds_pd = 60;
 			}    
 		}
@@ -28923,7 +28932,7 @@ public class OpenSPCoop2Properties {
 					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd = 0;
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.randomBackoff.seconds': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.randomBackoff.seconds': "+e.getMessage(),e);
 				this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd = 0;
 			}    
 		}
@@ -28942,10 +28951,10 @@ public class OpenSPCoop2Properties {
 					this.getServiceUnavailableRetryAfterSeconds_pa = Integer.parseInt(name);
 				}
 				else {
-					throw new Exception("Proprietà non definita");
+					throw new CoreException("Proprietà non definita");
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.seconds', default:60 : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.seconds', default:60 : "+e.getMessage(),e);
 				this.getServiceUnavailableRetryAfterSeconds_pa = 60;
 			}    
 		}
@@ -28967,7 +28976,7 @@ public class OpenSPCoop2Properties {
 					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa = 0;
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.randomBackoff.seconds': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.randomBackoff.seconds': "+e.getMessage(),e);
 				this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa = 0;
 			}    
 		}
@@ -28990,7 +28999,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isEnabledServiceUnavailableRetryAfter_pd_suspend = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isEnabledServiceUnavailableRetryAfter_pd_suspend = true;
 			}    
 		}
@@ -29009,10 +29018,10 @@ public class OpenSPCoop2Properties {
 					this.getServiceUnavailableRetryAfterSeconds_pd_suspend = Integer.parseInt(name);
 				}
 				else {
-					throw new Exception("Proprietà non definita");
+					throw new CoreException("Proprietà non definita");
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.seconds', default:60 : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.seconds', default:60 : "+e.getMessage(),e);
 				this.getServiceUnavailableRetryAfterSeconds_pd_suspend = 60;
 			}    
 		}
@@ -29034,7 +29043,7 @@ public class OpenSPCoop2Properties {
 					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_suspend = 0;
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.randomBackoff.seconds': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.randomBackoff.seconds': "+e.getMessage(),e);
 				this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_suspend = 0;
 			}    
 		}
@@ -29055,7 +29064,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isEnabledServiceUnavailableRetryAfter_pa_suspend = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isEnabledServiceUnavailableRetryAfter_pa_suspend = true;
 			}    
 		}
@@ -29074,10 +29083,10 @@ public class OpenSPCoop2Properties {
 					this.getServiceUnavailableRetryAfterSeconds_pa_suspend = Integer.parseInt(name);
 				}
 				else {
-					throw new Exception("Proprietà non definita");
+					throw new CoreException("Proprietà non definita");
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.seconds', default:60 : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.seconds', default:60 : "+e.getMessage(),e);
 				this.getServiceUnavailableRetryAfterSeconds_pa_suspend = 60;
 			}    
 		}
@@ -29099,7 +29108,7 @@ public class OpenSPCoop2Properties {
 					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_suspend = 0;
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.randomBackoff.seconds': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.randomBackoff.seconds': "+e.getMessage(),e);
 				this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_suspend = 0;
 			}    
 		}
@@ -29120,7 +29129,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isEnabledServiceUnavailableRetryAfter_pd_connectionFailed = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isEnabledServiceUnavailableRetryAfter_pd_connectionFailed = true;
 			}    
 		}
@@ -29139,10 +29148,10 @@ public class OpenSPCoop2Properties {
 					this.getServiceUnavailableRetryAfterSeconds_pd_connectionFailed = Integer.parseInt(name);
 				}
 				else {
-					throw new Exception("Proprietà non definita");
+					throw new CoreException("Proprietà non definita");
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.seconds', default:60 : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.seconds', default:60 : "+e.getMessage(),e);
 				this.getServiceUnavailableRetryAfterSeconds_pd_connectionFailed = 60;
 			}    
 		}
@@ -29164,7 +29173,7 @@ public class OpenSPCoop2Properties {
 					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_connectionFailed = 0;
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.randomBackoff.seconds': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.randomBackoff.seconds': "+e.getMessage(),e);
 				this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_connectionFailed = 0;
 			}    
 		}
@@ -29185,7 +29194,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isEnabledServiceUnavailableRetryAfter_pa_connectionFailed = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isEnabledServiceUnavailableRetryAfter_pa_connectionFailed = true;
 			}    
 		}
@@ -29204,10 +29213,10 @@ public class OpenSPCoop2Properties {
 					this.getServiceUnavailableRetryAfterSeconds_pa_connectionFailed = Integer.parseInt(name);
 				}
 				else {
-					throw new Exception("Proprietà non definita");
+					throw new CoreException("Proprietà non definita");
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.seconds', default:60 : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.seconds', default:60 : "+e.getMessage(),e);
 				this.getServiceUnavailableRetryAfterSeconds_pa_connectionFailed = 60;
 			}    
 		}
@@ -29229,7 +29238,7 @@ public class OpenSPCoop2Properties {
 					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_connectionFailed = 0;
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.randomBackoff.seconds': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.randomBackoff.seconds': "+e.getMessage(),e);
 				this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_connectionFailed = 0;
 			}    
 		}
@@ -29255,7 +29264,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.error.': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.error.': "+e.getMessage(),e);
 				this.isReadTimedOut = new ArrayList<>();
 			}    
 		}
@@ -29287,7 +29296,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isStatisticheGenerazioneEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isStatisticheGenerazioneEnabled = true;
 			}    
 		}
@@ -29309,7 +29318,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isStatisticheUsePddRuntimeDatasource = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.dataSource.usePddRuntime', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.dataSource.usePddRuntime', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isStatisticheUsePddRuntimeDatasource = false;
 			}    
 		}
@@ -29330,7 +29339,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isStatisticheUseTransazioniDatasource = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.dataSource.useTransazioni', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.dataSource.useTransazioni', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isStatisticheUseTransazioniDatasource = true;
 			}    
 		}
@@ -29345,12 +29354,12 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.dataSource");
 				if(name==null){
-					throw new Exception("Proprieta' non impostata");
+					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
 				this.getStatisticheDatasource = name;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.dataSource': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.dataSource': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -29364,7 +29373,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getStatisticheDatasourceJndiContext = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.statistiche.dataSource.property.");
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.dataSource.property.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.dataSource.property.*': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -29385,7 +29394,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isStatisticheDatasourceUseDBUtils = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.datasource.useDSUtils', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.datasource.useDSUtils', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isStatisticheDatasourceUseDBUtils = true;
 			}    
 		}
@@ -29406,7 +29415,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isStatisticheGenerazioneUseUnionForLatency = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.useUnionForLatency', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.useUnionForLatency', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isStatisticheGenerazioneUseUnionForLatency = true;
 			}    
 		}
@@ -29427,7 +29436,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isStatisticheGenerazioneCustomEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.custom.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.custom.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isStatisticheGenerazioneCustomEnabled = false;
 			}    
 		}
@@ -29448,7 +29457,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isStatisticheGenerazioneCustomSdkEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.custom.transazioniSdk.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.custom.transazioniSdk.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isStatisticheGenerazioneCustomSdkEnabled = false;
 			}    
 		}
@@ -29469,7 +29478,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isStatisticheGenerazioneDebug = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.debug', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.debug', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isStatisticheGenerazioneDebug = true;
 			}    
 		}
@@ -29484,12 +29493,12 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseOraria.timer.intervalloSecondi");
 				if(name==null){
-					throw new Exception("Proprieta' non impostata");
+					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
 				this.getStatisticheOrarieGenerazioneTimerIntervalSeconds = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseOraria.timer.intervalloSecondi': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseOraria.timer.intervalloSecondi': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -29504,12 +29513,12 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.timer.intervalloSecondi");
 				if(name==null){
-					throw new Exception("Proprieta' non impostata");
+					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
 				this.getStatisticheGiornaliereGenerazioneTimerIntervalSeconds = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.timer.intervalloSecondi': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.timer.intervalloSecondi': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -29524,12 +29533,12 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.timer.intervalloSecondi");
 				if(name==null){
-					throw new Exception("Proprieta' non impostata");
+					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
 				this.getStatisticheSettimanaliGenerazioneTimerIntervalSeconds = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.timer.intervalloSecondi': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.timer.intervalloSecondi': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -29544,12 +29553,12 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseMensile.timer.intervalloSecondi");
 				if(name==null){
-					throw new Exception("Proprieta' non impostata");
+					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
 				this.getStatisticheMensiliGenerazioneTimerIntervalSeconds = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseMensile.timer.intervalloSecondi': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseMensile.timer.intervalloSecondi': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -29675,7 +29684,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isStatisticheGenerazioneBaseOrariaEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseOraria.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseOraria.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isStatisticheGenerazioneBaseOrariaEnabled = true;
 			}    
 		}
@@ -29696,7 +29705,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isStatisticheGenerazioneBaseGiornalieraEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isStatisticheGenerazioneBaseGiornalieraEnabled = true;
 			}    
 		}
@@ -29717,7 +29726,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isStatisticheGenerazioneBaseSettimanaleEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isStatisticheGenerazioneBaseSettimanaleEnabled = true;
 			}    
 		}
@@ -29738,7 +29747,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isStatisticheGenerazioneBaseMensileEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseMensile.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseMensile.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isStatisticheGenerazioneBaseMensileEnabled = true;
 			}    
 		}
@@ -29760,7 +29769,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isStatisticheGenerazioneBaseOrariaEnabledUltimaOra = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseOraria.gestioneUltimaOra', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseOraria.gestioneUltimaOra', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isStatisticheGenerazioneBaseOrariaEnabledUltimaOra = true;
 			}    
 		}
@@ -29781,7 +29790,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isStatisticheGenerazioneBaseGiornalieraEnabledUltimoGiorno = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.gestioneUltimoGiorno', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.gestioneUltimoGiorno', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isStatisticheGenerazioneBaseGiornalieraEnabledUltimoGiorno = true;
 			}    
 		}
@@ -29802,7 +29811,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isStatisticheGenerazioneBaseSettimanaleEnabledUltimaSettimana = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.gestioneUltimaSettimana', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.gestioneUltimaSettimana', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isStatisticheGenerazioneBaseSettimanaleEnabledUltimaSettimana = true;
 			}    
 		}
@@ -29823,7 +29832,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isStatisticheGenerazioneBaseMensileEnabledUltimoMese = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseMensile.gestioneUltimoMese', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseMensile.gestioneUltimoMese', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isStatisticheGenerazioneBaseMensileEnabledUltimoMese = true;
 			}    
 		}
@@ -29843,10 +29852,10 @@ public class OpenSPCoop2Properties {
 					File f = new File(name);
 					if(f.exists()) {
 						if(f.isDirectory()) {
-							throw new Exception("File ["+f+"] is directory");
+							throw new CoreException("File ["+f+"] is directory");
 						}
-						if(f.canRead()==false) {
-							throw new Exception("File ["+f+"] cannot read");
+						if(!f.canRead()) {
+							throw new CoreException("File ["+f+"] cannot read");
 						}
 						is = new FileInputStream(f);
 					}
@@ -29873,7 +29882,7 @@ public class OpenSPCoop2Properties {
 			return null;
 			
 		} catch(java.lang.Exception e) {
-			this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.forceIndex.repository': "+e.getMessage(),e);
+			this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.forceIndex.repository': "+e.getMessage(),e);
 			throw e;
 		}    
 		

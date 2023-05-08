@@ -830,7 +830,7 @@ And match header Authorization == '#notpresent'
 Scenario: Test con presenza sia dell'header Authorization che Agid-JWT-Signature
 
 Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicati/v1"
-And path 'resources', 1, 'M'
+And path 'resources', 1, 'M2CacheTest'
 And request read('request.json')
 And header GovWay-TestSuite-Test-ID = 'doppi-header-idar03'
 And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })

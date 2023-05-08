@@ -164,6 +164,7 @@ public class ModIPropertiesUtils {
 	}
 	private static String readPropertyEngine(AccordoServizioParteComune aspc, String nomePortType, String azione,
 			String propertyName, Boolean request) throws ProtocolException {
+		
 		String interactionProfile = null;
 		String asyncInteractionProfile = null;
 		String asyncInteractionRole = null;
@@ -539,6 +540,68 @@ public class ModIPropertiesUtils {
 			return securityMessageApplicabilitaRispostaReturnCode;
 		}
 		return null;
+	}
+	
+	
+	
+	public static boolean readSicurezzaMessaggioRidefinitaOperazioneEngine(AccordoServizioParteComune aspc, String nomePortType, String azione) throws ProtocolException {
+			
+		if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(aspc.getServiceBinding())) {
+			for (Resource resource : aspc.getResourceList()) {
+				if(resource.getNome().equals(azione)) {
+					
+					String securityMessageProfileMode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(resource.getProtocolPropertyList(), 
+							ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE);
+					if(securityMessageProfileMode==null) {
+						securityMessageProfileMode = ModICostanti.MODIPA_PROFILO_DEFAULT; // default
+					}
+					if(ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(securityMessageProfileMode)) {
+						return true;
+					}
+					break;
+				}
+			}
+		}
+		else {
+			if(nomePortType!=null) {
+				for (PortType pt : aspc.getPortTypeList()) {
+					if(pt.getNome().equals(nomePortType)) {
+						for (Operation op : pt.getAzioneList()) {
+							if(op.getNome().equals(azione)) {
+								
+								String securityMessageProfileMode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(op.getProtocolPropertyList(), 
+										ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE);
+								if(securityMessageProfileMode==null) {
+									securityMessageProfileMode = ModICostanti.MODIPA_PROFILO_DEFAULT; // default
+								}
+								if(ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(securityMessageProfileMode)) {
+									return true;
+								}
+								break;
+							}
+						}
+						break;
+					}
+				}
+			}
+			else {
+				for (Azione azioneAccordo : aspc.getAzioneList()) {
+					if(azioneAccordo.getNome().equals(azione)) {
+						
+						String securityMessageProfileMode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(azioneAccordo.getProtocolPropertyList(), 
+								ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE);
+						if(securityMessageProfileMode==null) {
+							securityMessageProfileMode = ModICostanti.MODIPA_PROFILO_DEFAULT; // default
+						}
+						if(ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(securityMessageProfileMode)) {
+							return true;
+						}
+						break;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	public static List<ProtocolProperty> getProtocolProperties(boolean fruizione, IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica asps) throws ProtocolException {

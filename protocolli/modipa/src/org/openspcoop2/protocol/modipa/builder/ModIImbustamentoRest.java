@@ -40,6 +40,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.pdd.core.token.Costanti;
+import org.openspcoop2.pdd.core.token.GestoreToken;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.protocol.modipa.config.ModIAuditClaimConfig;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
@@ -66,6 +67,7 @@ import org.openspcoop2.security.message.engine.MessageSecurityContext_impl;
 import org.openspcoop2.security.message.jose.MessageSecuritySender_jose;
 import org.openspcoop2.security.message.utils.SignatureBean;
 import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
@@ -426,14 +428,14 @@ public class ModIImbustamentoRest {
 		
 	}
 	
-	public String addToken(OpenSPCoop2Message msg, boolean request, Context context, ModIKeystoreConfig keystoreConfig, ModISecurityConfig securityConfig,
+	public ModIJWTToken addToken(OpenSPCoop2Message msg, boolean request, Context context, ModIKeystoreConfig keystoreConfig, ModISecurityConfig securityConfig,
 			Busta busta, String securityMessageProfile, boolean useKIDtokenHeader, String headerTokenRest, 
 			boolean corniceSicurezza, String corniceSicurezzaPattern, String corniceSicurezzaSchema,
 			RuoloMessaggio ruoloMessaggio, boolean includiRequestDigest,
-			Long now, String jti, ModIHeaderType headerType, boolean integritaCustom,
+			Long nowParam, String jti, ModIHeaderType headerType, boolean integritaCustom,
 			Map<String, Object> dynamicMap, RequestInfo requestInfo,
-			String purposeId) throws ProtocolException {
-		
+			String purposeId, boolean sicurezzaRidefinitaOperazione) throws ProtocolException {
+				
 		if(busta==null) {
 			throw new ProtocolException("Param busta is null");
 		}
@@ -453,6 +455,23 @@ public class ModIImbustamentoRest {
 		
 		boolean apiSoap = ServiceBinding.SOAP.equals(msg.getServiceBinding());
 		
+		boolean cacheble = !integrita;
+		
+		String idTransazione = msg.getTransactionId();
+		if(idTransazione==null &&
+			context!=null && context.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) {
+			idTransazione = Context.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, context);
+		}
+		
+		ModIJWTToken modiToken = new ModIJWTToken(idTransazione);
+		String nomePorta = null;
+		if(requestInfo!=null && requestInfo.getProtocolContext()!=null) {
+			nomePorta = requestInfo.getProtocolContext().getInterfaceName();
+		}
+		
+		ModIJWTTokenClaims modiTokenClaims = new ModIJWTTokenClaims(tokenAudit, idTransazione, request, nomePorta, busta.getAzione(), sicurezzaRidefinitaOperazione);
+		modiToken.setClaims(modiTokenClaims);
+		
 		/*
 		 * == realizzo token ==
 		 */
@@ -467,10 +486,11 @@ public class ModIImbustamentoRest {
 		}
 		
 		// add iat, nbf, exp
-		long nowMs = now!=null ? now.longValue() : DateManager.getTimeMillis();
+		long nowMs = nowParam!=null ? nowParam.longValue() : DateManager.getTimeMillis();
 		long nowSeconds = nowMs/1000;
 		Date nowDateUsatoPerProprietaTraccia = new Date((nowSeconds*1000)); // e' inutile che traccio i millisecondi, tanto poi nel token non viaggiano
 		
+		// iat
 		payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT, nowSeconds);
 		String iatValue = DateUtils.getSimpleDateFormatMs().format(nowDateUsatoPerProprietaTraccia);
 		if(!headerDuplicati || HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
@@ -483,7 +503,10 @@ public class ModIImbustamentoRest {
 				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_IAT, iatValue);
 			}
 		}
+		modiTokenClaims.setIat(nowDateUsatoPerProprietaTraccia);
+		modiTokenClaims.setIatValue(iatValue);
 		
+		// nbf
 		payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_NOT_TO_BE_USED_BEFORE, nowSeconds);
 		String nbfValue = DateUtils.getSimpleDateFormatMs().format(nowDateUsatoPerProprietaTraccia);
 		if(!headerDuplicati || HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
@@ -496,7 +519,10 @@ public class ModIImbustamentoRest {
 				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_NBF, nbfValue);
 			}
 		}
+		modiTokenClaims.setNbf(nowDateUsatoPerProprietaTraccia);
+		modiTokenClaims.setNbfValue(nbfValue);
 		
+		// exp
 		long expired = nowSeconds+securityConfig.getTtlSeconds();
 		Date expiredDateUsatoPerProprietaTraccia = new Date(expired*1000);
 		payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED, expired);
@@ -511,7 +537,11 @@ public class ModIImbustamentoRest {
 				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_EXP, nbfValue);
 			}
 		}
+		modiToken.setExp(expiredDateUsatoPerProprietaTraccia);
+		modiTokenClaims.setExp(expiredDateUsatoPerProprietaTraccia);
+		modiTokenClaims.setExpValue(expValue);
 		
+		// jti
 		if(jti!=null) {
 			payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID, jti);
 			if(tokenAudit) {
@@ -530,10 +560,13 @@ public class ModIImbustamentoRest {
 					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID, jti);
 				}
 			}
+			modiTokenClaims.setJti(jti);
 		}
 		
+		// audit
+		String audience = null;
 		if(tokenAudit) {
-			String audience = securityConfig.getCorniceSicurezzaAudience();
+			audience = securityConfig.getCorniceSicurezzaAudience();
 			// sulla richiesta direttamente come valore dinamico, sulla risposta come claims
 			try {
 				audience = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_AUDIENCE, 
@@ -552,7 +585,7 @@ public class ModIImbustamentoRest {
 			}
 		}
 		else if(securityConfig.getAudience()!=null) {
-			String audience = securityConfig.getAudience();
+			audience = securityConfig.getAudience();
 			/**if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio)) {*/
 			// sulla richiesta direttamente come valore dinamico, sulla risposta come claims
 			try {
@@ -576,7 +609,9 @@ public class ModIImbustamentoRest {
 				}
 			}
 		}
+		modiTokenClaims.setAudience(audience);
 		
+		// clientId
 		boolean addClientId = false;
 		if(tokenAudit) {
 			if(useKIDtokenHeader) {
@@ -629,8 +664,10 @@ public class ModIImbustamentoRest {
 			String claimName = this.modiProperties.getRestSecurityTokenClaimsClientIdHeader(); 
 			payloadToken.put(claimName, clientId);
 			busta.addProperty(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_CLIENT_ID : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_CLIENT_ID, clientId);
+			modiTokenClaims.setClientId(clientId);
 		}
 		
+		// kid
 		String kid = null;
 		if(integritaKid || useKIDtokenHeader) {
 			kid = securityConfig.getTokenKid();
@@ -644,6 +681,7 @@ public class ModIImbustamentoRest {
 					pe.setInteroperabilityError(true);
 					throw pe;
 				}
+				modiTokenClaims.setKid(kid);
 			}
 		}
 		
@@ -653,36 +691,43 @@ public class ModIImbustamentoRest {
 		boolean addIss = true;
 		boolean addSub = true;
 		
+		// requestDigest (integrita)
 		if(integrita && RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio) && includiRequestDigest &&
 			context.containsKey(ModICostanti.MODIPA_CONTEXT_REQUEST_DIGEST)) {
 			Object o = context.getObject(ModICostanti.MODIPA_CONTEXT_REQUEST_DIGEST);
 			String value = (String) o;
 			String claimNameRequestDigest = this.modiProperties.getRestSecurityTokenClaimRequestDigest();
 			payloadToken.put(claimNameRequestDigest, value);
+			modiTokenClaims.setRequestDigest(value);
 		}
 		
+		// coriniceSicurezza/auditInfo
 		if(corniceSicurezza) {
 			
 			if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD.equals(corniceSicurezzaPattern)) {
 				
 				addIss = addCorniceSicurezzaLegacyCodiceEnte(securityConfig,
 						dynamicMap, context,
-						payloadToken, busta);
+						payloadToken, busta,
+						modiTokenClaims);
 				
 				addSub = addCorniceSicurezzaLegacyUser(securityConfig,
 						dynamicMap, context,
-						payloadToken, busta);
+						payloadToken, busta,
+						modiTokenClaims);
 				
 				addCorniceSicurezzaLegacyIpUser(securityConfig,
 						dynamicMap, context,
-						payloadToken, busta);
+						payloadToken, busta,
+						modiTokenClaims);
 			}
 			else {
 				
 				addCorniceSicurezzaSchema(securityConfig,
 						dynamicMap, context,
 						payloadToken, busta,
-						corniceSicurezzaSchema);
+						corniceSicurezzaSchema,
+						modiTokenClaims);
 				
 				if(useKIDtokenHeader) {
 					addIss = securityConfig.getCorniceSicurezzaSchemaConfig().isIssOAuth();
@@ -697,6 +742,7 @@ public class ModIImbustamentoRest {
 						
 		}
 		
+		// iss
 		if(addIss) {
 			String issuer = null;
 			if(tokenAudit) {
@@ -723,8 +769,11 @@ public class ModIImbustamentoRest {
 				payloadToken.put(Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER, issuer);
 				busta.addProperty(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_ISSUER : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_ISSUER, 
 						issuer);
+				modiTokenClaims.setIss(issuer);
 			}
 		}
+		
+		// sub
 		if(addSub) {
 			String subject = null;
 			if(tokenAudit) {
@@ -751,9 +800,11 @@ public class ModIImbustamentoRest {
 				payloadToken.put(Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT, subject);
 				busta.addProperty(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_SUBJECT : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_SUBJECT, 
 						subject);
+				modiTokenClaims.setSub(subject);
 			}
 		}
 		
+		// purposeId
 		if(purposeId!=null) {
 			boolean addPurposeId = false;
 			if(tokenAudit) {
@@ -780,6 +831,7 @@ public class ModIImbustamentoRest {
 					payloadToken.put(Costanti.PDND_PURPOSE_ID, purposeValue);
 					busta.addProperty(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PURPOSE_ID : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_PURPOSE_ID, 
 							purposeValue);
+					modiTokenClaims.setPurposeId(purposeValue);
 				}
 			}
 		}
@@ -788,9 +840,11 @@ public class ModIImbustamentoRest {
 			
 			String dNonce = RandomGenerator.getDefaultInstance().nextRandomInt(this.modiProperties.getSecurityTokenAuditDnonceSize());
 			payloadToken.put(Costanti.PDND_DNONCE, dNonce);
+			modiTokenClaims.setdNonce(dNonce);
 				
 		}
 		
+		// custom claims
 		Map<String, String> claimsCustom = new HashMap<>();
 		if(securityConfig.getMultipleHeaderClaims()!=null && !securityConfig.getMultipleHeaderClaims().isEmpty()) {
 			for (Object oKeyP : securityConfig.getMultipleHeaderClaims().keySet()) {
@@ -813,6 +867,13 @@ public class ModIImbustamentoRest {
 			}
 		}
 		if(!claimsCustom.isEmpty()) {
+			
+			List<String> blackListRegistrazioneCustomClaims = null;
+			boolean tracciaCustomClaims = this.modiProperties.isGenerazioneTracceRegistraCustomClaims();
+			if(tracciaCustomClaims) {
+				blackListRegistrazioneCustomClaims = this.modiProperties.getGenerazioneTracceRegistraCustomClaimsBlackList();
+			}
+			
 			for (Map.Entry<String,String> entry : claimsCustom.entrySet()) {
 				String key = entry.getKey();
 				String value =  claimsCustom.get(key);
@@ -831,14 +892,19 @@ public class ModIImbustamentoRest {
 					}catch(Exception e) {
 						throw new ProtocolException(e.getMessage(),e);
 					}
-					// Non lo aggiungo alla traccia per adesso
-					/**busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_CLAIM_PREFIX+key, value);*/
+					
+					if(tracciaCustomClaims &&
+							(blackListRegistrazioneCustomClaims==null || blackListRegistrazioneCustomClaims.isEmpty() || !blackListRegistrazioneCustomClaims.contains(key))) {
+						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_CLAIM_PREFIX+key, value);
+					}
+					
+					modiTokenClaims.addCustomClaim(key, value);
 				}
 			}
 		}
 		
 				
-		
+		// integrita
 		if(integrita && !integritaCustom) {
 			
 			String digestValue = null;
@@ -946,14 +1012,11 @@ public class ModIImbustamentoRest {
 			}
 		}
 		
-		OpenSPCoop2Message payload = null;
-		try {
-			String jsonPayload = jsonUtils.toString(payloadToken);
-			payload = msg.getFactory().createMessage(MessageType.JSON, MessageRole.NONE, 
-				HttpConstants.CONTENT_TYPE_JSON, jsonPayload.getBytes(), null, null).getMessage_throwParseException();
-		}catch(Exception e) {
-			throw new ProtocolException(e.getMessage(),e);
-		}
+
+		
+		
+		
+
 		
 		
 		/*
@@ -972,13 +1035,18 @@ public class ModIImbustamentoRest {
 		secProperties.put(SecurityConstants.JOSE_CONTENT_TYPE, SecurityConstants.JOSE_CONTENT_TYPE_FALSE);
 		secProperties.put(SecurityConstants.JOSE_TYPE, org.apache.cxf.rs.security.jose.common.JoseConstants.TYPE_JWT);
 		
-		// algoritmi
+		
+		// algoritmo
+		String algorithm = null;
 		if(tokenAudit && apiSoap) {
-			secProperties.put(SecurityConstants.SIGNATURE_ALGORITHM, securityConfig.getAlgorithmConvertForREST());
+			algorithm = securityConfig.getAlgorithmConvertForREST();
 		}
 		else {
-			secProperties.put(SecurityConstants.SIGNATURE_ALGORITHM, securityConfig.getAlgorithm());
+			algorithm = securityConfig.getAlgorithm();
 		}
+		secProperties.put(SecurityConstants.SIGNATURE_ALGORITHM, algorithm);
+		modiTokenClaims.setAlgorithm(algorithm);
+		
 		
 		// spedizione certificato
 		if(integritaKid || useKIDtokenHeader) {
@@ -990,12 +1058,15 @@ public class ModIImbustamentoRest {
 				}
 			}
 			secProperties.put(SecurityConstants.JOSE_KID_CUSTOM, kid); // kid
+			modiTokenClaims.setKid(kid);
 		}
 		else {
 			boolean addKid = tokenAudit ? this.modiProperties.isSecurityTokenAuditX509AddKid() : this.modiProperties.isSecurityTokenX509AddKid();
 			if(addKid) {
 				secProperties.put(SecurityConstants.JOSE_KID, SecurityConstants.JOSE_KID_TRUE); // kid
 			}
+			modiTokenClaims.setAddKid(addKid);
+			
 			boolean x5c = tokenAudit && apiSoap ? this.modiProperties.isSecurityTokenAuditApiSoapX509RiferimentoX5c() : securityConfig.isX5c();
 			if(x5c) {
 				secProperties.put(SecurityConstants.JOSE_INCLUDE_CERT, SecurityConstants.JOSE_INCLUDE_CERT_TRUE);
@@ -1003,15 +1074,23 @@ public class ModIImbustamentoRest {
 				if(!x5cUseSingleCertificate) {
 					secProperties.put(SecurityConstants.JOSE_INCLUDE_CERT_CHAIN, SecurityConstants.JOSE_INCLUDE_CERT_CHAIN_TRUE);
 				}
+				modiTokenClaims.setAddX5cChain(!x5cUseSingleCertificate);
 			}
+			modiTokenClaims.setAddX5c(x5c);
+			
 			boolean x5t = tokenAudit && apiSoap ? this.modiProperties.isSecurityTokenAuditApiSoapX509RiferimentoX5t() : securityConfig.isX5t();
 			if(x5t) {
 				secProperties.put(SecurityConstants.JOSE_INCLUDE_CERT_SHA, SecurityConstants.JOSE_INCLUDE_CERT_SHA_256);
 			}
+			modiTokenClaims.setAddX5t(x5t);
+			
 			boolean x5u = tokenAudit && apiSoap ? this.modiProperties.isSecurityTokenAuditApiSoapX509RiferimentoX5u() : securityConfig.isX5u();
 			if(x5u) {
-				secProperties.put(SecurityConstants.JOSE_X509_URL, securityConfig.getX5url());
+				String url = securityConfig.getX5url();
+				secProperties.put(SecurityConstants.JOSE_X509_URL, url);
+				modiTokenClaims.setX5uUrl(url);
 			}
+			modiTokenClaims.setAddX5u(x5u);
 		}
 		
 		SignatureBean signatureBean = new SignatureBean();
@@ -1075,20 +1154,9 @@ public class ModIImbustamentoRest {
 		signatureBean.setUser(keyAlias);
 		signatureBean.setPassword(keystoreConfig.getSecurityMessageKeyPassword());
 		messageSecurityContext.setSignatureBean(signatureBean);
-				
-		// setProperties
-		try {
-			messageSecurityContext.setOutgoingProperties(secProperties, false);
-		}catch(Exception e) {
-			throw new ProtocolException(e.getMessage(),e);
-		}
-
-		// firma
-		try {
-			joseSignature.process(messageSecurityContext, payload, context);
-		}catch(Exception e) {
-			throw new ProtocolException(e.getMessage(),e);
-		}
+		
+		
+		
 		
 		// Aggiungo a traccia informazioni sul certificato utilizzato
 		X509Certificate x509 = null;
@@ -1107,50 +1175,149 @@ public class ModIImbustamentoRest {
 					busta.addProperty(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_X509_ISSUER : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_X509_ISSUER, 
 							x509.getIssuerX500Principal().toString());
 				}
+				if(cacheble) {
+					try {
+						String pem = CertificateUtils.toPEM(x509);
+						modiTokenClaims.setPem(pem);
+					}catch(Exception e) {
+						throw new ProtocolException("X509 to PEM serialization failed: "+e.getMessage(),e);
+					}
+				}
 			}
 		}
 		if(jwkSet!=null) {
 			busta.addProperty(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_KID : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_KID,
 					kid);
+			if(cacheble) {
+				try {
+					modiTokenClaims.setJwk(jwkSet.getJson());
+				}catch(Exception e) {
+					throw new ProtocolException("JWK to Json serialization failed: "+e.getMessage(),e);
+				}
+			}
 		}
 		
 		
-		/*
-		 * == return token ==
-		 */
 		
-		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		try {
-			payload.writeTo(bout, true);
-			bout.flush();
-			bout.close();
-		}catch(Exception e) {
-			throw new ProtocolException(e.getMessage(),e);
+		
+		
+		
+		// Se cachable verifico che non esiste già in cache
+		boolean prelevatoDallaCache = false;
+		String funzioneCache = "ModI-"+(tokenAudit?"Audit":"Authorization");
+		String keyCache = null;
+		Date nowCacheDate = null;
+		if(cacheble) {
+			
+			keyCache = modiTokenClaims.toCacheKey();
+			
+			ModIJWTToken moditokenFromCache = null;
+			try {
+				nowCacheDate = new Date(nowMs);
+				moditokenFromCache = (ModIJWTToken) GestoreToken.getTokenCacheItem(keyCache, funzioneCache, nowCacheDate);
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
+			if(moditokenFromCache!=null) {
+				
+				moditokenFromCache.getClaims().setInfoNonCachableInBusta(busta);
+				
+				modiToken = moditokenFromCache;
+				
+				prelevatoDallaCache = true;
+			}
+			
 		}
+		
+		
+		if(!prelevatoDallaCache) {
+
+			// Produco payload da firmare
+			OpenSPCoop2Message payload = null;
+			try {
+				String jsonPayload = jsonUtils.toString(payloadToken);
+				payload = msg.getFactory().createMessage(MessageType.JSON, MessageRole.NONE, 
+					HttpConstants.CONTENT_TYPE_JSON, jsonPayload.getBytes(), null, null).getMessage_throwParseException();
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
+		
+		
+			// firma
+			try {
+				messageSecurityContext.setOutgoingProperties(secProperties, false);
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
+			try {
+				joseSignature.process(messageSecurityContext, payload, context);
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
+		
+			/*
+			 * == return token ==
+			 */
+			
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			try {
+				payload.writeTo(bout, true);
+				bout.flush();
+				bout.close();
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
+			
+			String token = bout.toString();
+			
+			modiToken.setToken(token);
+			
+			
+			
+			
+			if(audit02) {
+				
+				// digest per la negoziazione del token
+				try {
+				
+					String digestAlgorithm = this.modiProperties.getSecurityTokenAuditDigestAlgorithm();
+					String digestAuditValue = org.openspcoop2.utils.digest.DigestUtils.getDigestValue(token.getBytes(), digestAlgorithm, DigestEncoding.HEX, 
+							false); // se rfc3230 true aggiunge prefisso algoritmo=
+					modiToken.setDigestAlgorithm(digestAlgorithm);
+					modiToken.setDigest(digestAuditValue);
+										
+				}catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
+				}
+				
+			}
+			
+			
+			
+			
+			if(cacheble) {
+				GestoreToken.putTokenCacheItem(modiToken, keyCache, funzioneCache, nowCacheDate); 
+			}
+		}
+		
+		
 		
 		String securityTokenHeader = headerTokenRest;
 		if(HttpConstants.AUTHORIZATION.equalsIgnoreCase(securityTokenHeader)) {
-			msg.forceTransportHeader(securityTokenHeader, HttpConstants.AUTHORIZATION_PREFIX_BEARER+bout.toString());
+			msg.forceTransportHeader(securityTokenHeader, HttpConstants.AUTHORIZATION_PREFIX_BEARER+modiToken.getToken());
 		}
 		else {
-			msg.forceTransportHeader(securityTokenHeader, bout.toString());
+			msg.forceTransportHeader(securityTokenHeader, modiToken.getToken());
 		}
 		
-		String token = bout.toString();
-		
-		
-		
+
 		if(audit02) {
 			
 			// inserisco digest per la negoziazione del token
 			try {
 			
-				String algorithm = this.modiProperties.getSecurityTokenAuditDigestAlgorithm();
-				String digestAuditValue = org.openspcoop2.utils.digest.DigestUtils.getDigestValue(token.getBytes(), algorithm, DigestEncoding.HEX, 
-						false); // se rfc3230 true aggiunge prefisso algoritmo=
-				
-				context.put(ModICostanti.MODIPA_CONTEXT_AUDIT_DIGEST, digestAuditValue);
-				context.put(ModICostanti.MODIPA_CONTEXT_AUDIT_DIGEST_ALGO, algorithm);
+				context.put(ModICostanti.MODIPA_CONTEXT_AUDIT_DIGEST, modiToken.getDigest());
+				context.put(ModICostanti.MODIPA_CONTEXT_AUDIT_DIGEST_ALGO, modiToken.getDigestAlgorithm());
 				
 			}catch(Exception e) {
 				throw new ProtocolException(e.getMessage(),e);
@@ -1172,7 +1339,7 @@ public class ModIImbustamentoRest {
 			if(kid!=null) {
 				restSecurityToken.setKid(kid);
 			}
-			restSecurityToken.setToken(token);
+			restSecurityToken.setToken(modiToken.getToken());
 			restSecurityToken.setHttpHeaderName(securityTokenHeader);
 			if(tokenAudit) {
 				securityTokenForContext.setAudit(restSecurityToken);
@@ -1199,7 +1366,7 @@ public class ModIImbustamentoRest {
 		
 		
 		
-		return token;
+		return modiToken;
 	}
 	
 	public static List<String> getHeaderValues(RuoloMessaggio ruoloMessaggio, OpenSPCoop2Message msg, Map<String, List<String>> mapForceTransportHeaders, String httpHeader){
@@ -1226,29 +1393,34 @@ public class ModIImbustamentoRest {
 	private void addCorniceSicurezzaSchema(ModISecurityConfig securityConfig,
 			Map<String, Object> dynamicMap, Context context,
 			ObjectNode payloadToken, Busta busta,
-			String corniceSicurezzaSchema) throws ProtocolException {
+			String corniceSicurezzaSchema,
+			ModIJWTTokenClaims modiTokenClaims) throws ProtocolException {
 		if(corniceSicurezzaSchema!=null && StringUtils.isNotEmpty(corniceSicurezzaSchema)) {
 			addCorniceSicurezzaSchema(
 					dynamicMap, context,
 					payloadToken, busta,
-					securityConfig.getCorniceSicurezzaSchemaConfig()!=null ? securityConfig.getCorniceSicurezzaSchemaConfig().getClaims() : null);
+					securityConfig.getCorniceSicurezzaSchemaConfig()!=null ? securityConfig.getCorniceSicurezzaSchemaConfig().getClaims() : null,
+					modiTokenClaims);
 		}
 	}
 	private void addCorniceSicurezzaSchema(
 			Map<String, Object> dynamicMap, Context context,
 			ObjectNode payloadToken, Busta busta,
-			List<ModIAuditClaimConfig> schemas) throws ProtocolException {
+			List<ModIAuditClaimConfig> schemas,
+			ModIJWTTokenClaims modiTokenClaims) throws ProtocolException {
 		if(schemas!=null && !schemas.isEmpty()) {
 			for (ModIAuditClaimConfig modIAuditClaimConfig : schemas) {
 				addCorniceSicurezzaSchemaRule(dynamicMap, context,
 						payloadToken, busta,
-						modIAuditClaimConfig);
+						modIAuditClaimConfig,
+						modiTokenClaims);
 			}
 		}
 	}
 	private void addCorniceSicurezzaSchemaRule(Map<String, Object> dynamicMap, Context context,
 			ObjectNode payloadToken, Busta busta,
-			ModIAuditClaimConfig modIAuditClaimConfig) throws ProtocolException {
+			ModIAuditClaimConfig modIAuditClaimConfig,
+			ModIJWTTokenClaims modiTokenClaims) throws ProtocolException {
 		String claimName = modIAuditClaimConfig.getNome();
 		String valore = null;
 		try {
@@ -1259,7 +1431,8 @@ public class ModIImbustamentoRest {
 			
 			valore = addCorniceSicurezzaSchemaPayload(dynamicMap, context,
 					payloadToken, 
-					modIAuditClaimConfig, claimName, claimRules);
+					modIAuditClaimConfig, claimName, claimRules,
+					modiTokenClaims);
 			
 			if(modIAuditClaimConfig.isTrace()) {
 				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PREFIX+claimName, valore);
@@ -1279,7 +1452,8 @@ public class ModIImbustamentoRest {
 	}
 	private String addCorniceSicurezzaSchemaPayload(Map<String, Object> dynamicMap, Context context,
 			ObjectNode payloadToken, 
-			ModIAuditClaimConfig modIAuditClaimConfig, String claimName, List<String> rules) throws ProtocolException {
+			ModIAuditClaimConfig modIAuditClaimConfig, String claimName, List<String> rules,
+			ModIJWTTokenClaims modiTokenClaims) throws ProtocolException {
 		String valore = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL+" - "+modIAuditClaimConfig.getLabel(), 
 				rules, dynamicMap, context);
 		if(modIAuditClaimConfig.isStringType()) {
@@ -1297,12 +1471,14 @@ public class ModIImbustamentoRest {
 				payloadToken.put(claimName, l);
 			}
 		}
+		modiTokenClaims.addCorniceSicurezzaAudit(claimName, valore);
 		return valore;
 	}
 	
 	private boolean addCorniceSicurezzaLegacyCodiceEnte(ModISecurityConfig securityConfig,
 			Map<String, Object> dynamicMap, Context context,
-			ObjectNode payloadToken, Busta busta) throws ProtocolException {
+			ObjectNode payloadToken, Busta busta,
+			ModIJWTTokenClaims modiTokenClaims) throws ProtocolException {
 		
 		boolean addIss = true;
 		
@@ -1322,6 +1498,7 @@ public class ModIImbustamentoRest {
 		}
 		payloadToken.put(claimNameCodiceEnte, codiceEnte);
 		busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_ENTE, codiceEnte);
+		modiTokenClaims.addCorniceSicurezzaAudit(claimNameCodiceEnte, codiceEnte);
 		
 		return addIss;
 		
@@ -1329,7 +1506,8 @@ public class ModIImbustamentoRest {
 	
 	private boolean addCorniceSicurezzaLegacyUser(ModISecurityConfig securityConfig,
 			Map<String, Object> dynamicMap, Context context,
-			ObjectNode payloadToken, Busta busta) throws ProtocolException {
+			ObjectNode payloadToken, Busta busta,
+			ModIJWTTokenClaims modiTokenClaims) throws ProtocolException {
 		
 		boolean addSub = true;
 		
@@ -1349,6 +1527,7 @@ public class ModIImbustamentoRest {
 		}
 		payloadToken.put(claimNameUser, utente);
 		busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER, utente);
+		modiTokenClaims.addCorniceSicurezzaAudit(claimNameUser, utente);
 		
 		return addSub;
 		
@@ -1356,7 +1535,8 @@ public class ModIImbustamentoRest {
 		
 	private void addCorniceSicurezzaLegacyIpUser(ModISecurityConfig securityConfig,
 			Map<String, Object> dynamicMap, Context context,
-			ObjectNode payloadToken, Busta busta) throws ProtocolException {
+			ObjectNode payloadToken, Busta busta,
+			ModIJWTTokenClaims modiTokenClaims) throws ProtocolException {
 	
 		String claimNameIpUser = this.modiProperties.getSicurezzaMessaggioCorniceSicurezzaRestIpuser();
 		String indirizzoIpPostazione = null;
@@ -1371,5 +1551,6 @@ public class ModIImbustamentoRest {
 		}
 		payloadToken.put(claimNameIpUser, indirizzoIpPostazione);
 		busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER_IP, indirizzoIpPostazione);
+		modiTokenClaims.addCorniceSicurezzaAudit(claimNameIpUser, indirizzoIpPostazione);
 	}
 }

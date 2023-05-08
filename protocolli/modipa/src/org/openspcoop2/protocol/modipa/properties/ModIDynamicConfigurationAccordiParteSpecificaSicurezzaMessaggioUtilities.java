@@ -1095,7 +1095,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 			
 		}
 		
-		if(!request) {
+		if(!request && riferimentoX509) {
 			StringConsoleItem profiloSicurezzaMessaggioRifX509AsRequestItem = (StringConsoleItem) 
 					ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
 					ConsoleItemType.SELECT,

@@ -68,6 +68,18 @@ public class ConfigLoader {
             System.setProperty("jmx_username", prop.getProperty("jmx_cache_username"));
             System.setProperty("jmx_password", prop.getProperty("jmx_cache_password")); 
 
+            // Resetto le cache
+            String jmx_user = prop.getProperty("jmx_cache_username");
+            String jmx_pass = prop.getProperty("jmx_cache_password"); 
+            
+            org.slf4j.Logger logger = LoggerWrapperFactory.getLogger("com.intuit.karate");
+            String[] govwayCaches = prop.getProperty("jmx_cache_resources").split(",");
+            for (String resource : govwayCaches) {
+                logger.debug("Resetto cache: " + resource);
+                String url = prop.getProperty("govway_base_path") + "/check?methodName=resetCache&resourceName=" + resource;
+                org.openspcoop2.utils.transport.http.HttpUtilities.check(url, jmx_user, jmx_pass);
+            }
+            
         }catch(Throwable t) {
             throw new RuntimeException(t.getMessage(),t);
         }

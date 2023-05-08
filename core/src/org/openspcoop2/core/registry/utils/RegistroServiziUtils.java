@@ -119,77 +119,158 @@ public class RegistroServiziUtils {
 		return pp.getBooleanValue()!=null ? pp.getBooleanValue().toString() : "false";
 	}
 	public static List<String> fillPropertyProtocollo(String propertyName, AccordoServizioParteComune api, String portType, boolean booleanValue) {
+		return fillPropertyProtocollo(propertyName, null, api, portType, booleanValue);
+	}
+	public static final String PROPERTY_SEPARATOR = " -- ";
+	public static List<String> splitPropertyProtocolloResult(String value){
+		List<String> l = new ArrayList<>();
+		if(value.contains(PROPERTY_SEPARATOR)) {
+			String [] tmp = value.split(PROPERTY_SEPARATOR);
+			if(tmp!=null && tmp.length>0) {
+				for (String s : tmp) {
+					l.add(s.trim());
+				}
+			}
+		}
+		else {
+			l.add(value);
+		}
+		return l;
+	}
+	private static void addPropertyProtocolloResult(String propertyName, String propertyName2,
+			String apiValue, String apiValue2, List<String> apiValues) {
+		
+		// backward compatibility
+		if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH.equals(propertyName) &&
+			apiValue==null) {
+			apiValue = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_LOCALE;
+		}
+		if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH.equals(propertyName2) &&
+			apiValue2==null) {
+			apiValue2 = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_LOCALE;
+		}
+		
+		String insertValue = apiValue2!=null ? apiValue+PROPERTY_SEPARATOR+apiValue2 : apiValue;
+		
+		if(insertValue!=null && !apiValues.contains(insertValue)) {
+			apiValues.add(insertValue);
+		}
+	}
+	public static List<String> fillPropertyProtocollo(String propertyName, String propertyName2, AccordoServizioParteComune api, String portType, boolean booleanValue) {
 		
 		List<String> apiValues = new ArrayList<>();
 		
 		for (ProtocolProperty pp : api.getProtocolPropertyList()) {
 			if(propertyName.equals(pp.getName())) {
 				String apiValue = booleanValue ? getBooleanValueAsString(pp) : pp.getValue();
-				if(apiValue!=null && !apiValues.contains(apiValue)) {
-					apiValues.add(apiValue);
-				}
+				
+				String apiValue2 = getPropertyProtocolloValue(propertyName2, booleanValue, api.getProtocolPropertyList());
+				
+				addPropertyProtocolloResult(propertyName, propertyName2,
+						apiValue, apiValue2, apiValues);
+				
 				break;
 			}
 		} 
 		
-		if(ServiceBinding.REST.equals(api.getServiceBinding())) {
-			for (Resource resource : api.getResourceList()) {
-				if(resource.sizeProtocolPropertyList()>0) {
-					boolean ridefinito = false;					
-					for (ProtocolProperty pp : resource.getProtocolPropertyList()) {
-						if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE.equals(pp.getName())) {
-							String v = pp.getValue(); 
-							ridefinito = CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(v);
-							break;
-						}
-					}
-					if(ridefinito) {
-						for (ProtocolProperty pp : resource.getProtocolPropertyList()) {
-							if(propertyName.equals(pp.getName())) {
-								String apiValue = booleanValue ? getBooleanValueAsString(pp) : pp.getValue();
-								if(apiValue!=null && !apiValues.contains(apiValue)) {
-									apiValues.add(apiValue);
-								}
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
-		else {
-			for (PortType pt : api.getPortTypeList()) {
-				if(pt.getNome().equals(portType)) {
-					
-					for (Operation op : pt.getAzioneList()) {
-						if(op.sizeProtocolPropertyList()>0) {
-							boolean ridefinito = false;					
-							for (ProtocolProperty pp : op.getProtocolPropertyList()) {
-								if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE.equals(pp.getName())) {
-									String v = pp.getValue(); 
-									ridefinito = CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(v);
-									break;
-								}
-							}
-							if(ridefinito) {
-								for (ProtocolProperty pp : op.getProtocolPropertyList()) {
-									if(propertyName.equals(pp.getName())) {
-										String apiValue = booleanValue ? getBooleanValueAsString(pp) : pp.getValue();
-										if(apiValue!=null && !apiValues.contains(apiValue)) {
-											apiValues.add(apiValue);
-										}
-										break;
-									}
-								}
-							}
-						}
-					}
-					
+		fillPropertyProtocollo(propertyName, propertyName2, api, portType, booleanValue,
+				apiValues);
+		
+		return apiValues;
+	}
+	private static String getPropertyProtocolloValue(String propertyName2, boolean booleanValue, List<ProtocolProperty> properties) {
+		String apiValue2 = null;
+		if(propertyName2!=null) {
+			for (ProtocolProperty pp2 : properties) {
+				if(propertyName2.equals(pp2.getName())) {
+					apiValue2 = booleanValue ? getBooleanValueAsString(pp2) : pp2.getValue();
 					break;
 				}
 			}
 		}
-		
-		return apiValues;
+		return apiValue2;
+	}
+	private static void fillPropertyProtocollo(String propertyName, String propertyName2, AccordoServizioParteComune api, String portType, boolean booleanValue,
+			List<String> apiValues) {
+		if(ServiceBinding.REST.equals(api.getServiceBinding())) {
+			fillPropertyProtocolloREST(propertyName, propertyName2, api, booleanValue,
+					apiValues);
+		}
+		else {
+			fillPropertyProtocolloSOAP(propertyName, propertyName2, api, portType, booleanValue,
+					apiValues);
+		}
+	}
+	private static boolean isRidefinito(List<ProtocolProperty> properties) {
+		boolean ridefinito = false;					
+		for (ProtocolProperty pp : properties) {
+			if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE.equals(pp.getName())) {
+				String v = pp.getValue(); 
+				ridefinito = CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(v);
+				break;
+			}
+		}
+		return ridefinito;
+	}
+	private static void fillPropertyProtocolloREST(String propertyName, String propertyName2, AccordoServizioParteComune api, boolean booleanValue,
+			List<String> apiValues) {
+		for (Resource resource : api.getResourceList()) {
+			if(resource.sizeProtocolPropertyList()>0) {
+				boolean ridefinito = isRidefinito(resource.getProtocolPropertyList());
+				if(ridefinito) {
+					fillPropertyProtocolloREST(propertyName, propertyName2, booleanValue,
+							apiValues, resource);
+				}
+			}
+		}
+	}
+	private static void fillPropertyProtocolloREST(String propertyName, String propertyName2, boolean booleanValue,
+			List<String> apiValues, Resource resource) {
+		for (ProtocolProperty pp : resource.getProtocolPropertyList()) {
+			if(propertyName.equals(pp.getName())) {
+				String apiValue = booleanValue ? getBooleanValueAsString(pp) : pp.getValue();
+				
+				String apiValue2 = getPropertyProtocolloValue(propertyName2, booleanValue, resource.getProtocolPropertyList());
+				
+				addPropertyProtocolloResult(propertyName, propertyName2,
+						apiValue, apiValue2, apiValues);
+				
+				break;
+			}
+		}
+	}
+	private static void fillPropertyProtocolloSOAP(String propertyName, String propertyName2, AccordoServizioParteComune api, String portType, boolean booleanValue,
+			List<String> apiValues) {
+		for (PortType pt : api.getPortTypeList()) {
+			if(pt.getNome().equals(portType)) {
+				
+				for (Operation op : pt.getAzioneList()) {
+					if(op.sizeProtocolPropertyList()>0) {
+						boolean ridefinito = isRidefinito(op.getProtocolPropertyList());
+						if(ridefinito) {
+							fillPropertyProtocolloSOAP(propertyName, propertyName2, booleanValue,
+									apiValues, op);
+						}
+					}
+				}
+				
+				break;
+			}
+		}
+	}
+	private static void fillPropertyProtocolloSOAP(String propertyName, String propertyName2, boolean booleanValue,
+			List<String> apiValues, Operation op) {
+		for (ProtocolProperty pp : op.getProtocolPropertyList()) {
+			if(propertyName.equals(pp.getName())) {
+				String apiValue = booleanValue ? getBooleanValueAsString(pp) : pp.getValue();
+				
+				String apiValue2 = getPropertyProtocolloValue(propertyName2, booleanValue, op.getProtocolPropertyList());
+
+				addPropertyProtocolloResult(propertyName, propertyName2,
+						apiValue, apiValue2, apiValues);
+
+				break;
+			}
+		}
 	}
 }

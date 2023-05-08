@@ -1243,6 +1243,11 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 	static List<String> getProfiloSicurezzaMessaggio(AccordoServizioParteComune api, String portType) {
 		return getPropertySicurezzaMessaggioEngine(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ID, api, portType, false);
 	}
+	static List<String> getProfiloSicurezzaMessaggioConSorgenteToken(AccordoServizioParteComune api, String portType) {
+		return getPropertySicurezzaMessaggioEngine(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ID, 
+				ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_ID, 
+				api, portType, false);
+	}
 	static boolean isProfiloSicurezzaMessaggioConIntegrita(AccordoServizioParteComune api, String portType) {
 		List<String> tmp = getProfiloSicurezzaMessaggio(api, portType);
 		if(tmp!=null && !tmp.isEmpty()) {
@@ -1283,14 +1288,21 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 		return null;
 	}
 	static boolean isProfiloSicurezzaMessaggioConHeaderDuplicati(AccordoServizioParteComune api, String portType) {
-		List<String> tmp = getPropertySicurezzaMessaggioEngine(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_ID, api, portType, false);
+		List<String> tmp = getPropertySicurezzaMessaggioEngine(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_ID, 
+				ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_ID, 
+				api, portType, false);
 		if(tmp!=null && !tmp.isEmpty()) {
-			for (String profiloSicurezzaMessaggio : tmp) {
-				if(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA.equals(profiloSicurezzaMessaggio) ||
-						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA_AUTH_IN_RESPONSE.equals(profiloSicurezzaMessaggio) ||
-						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM.equals(profiloSicurezzaMessaggio) ||
-						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM_AUTH_IN_RESPONSE.equals(profiloSicurezzaMessaggio)) {
-					return isProfiloSicurezzaMessaggioGenerazioneTokenIdAuthLocale(api, portType);
+			for (String headerSorgenteToken : tmp) {
+				
+				List<String> splitValues = RegistroServiziUtils.splitPropertyProtocolloResult(headerSorgenteToken);
+				String header = splitValues.get(0);
+				String sorgenteToken = splitValues.get(1);
+				
+				if(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA.equals(header) ||
+						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA_AUTH_IN_RESPONSE.equals(header) ||
+						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM.equals(header) ||
+						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM_AUTH_IN_RESPONSE.equals(header)) {
+					return isSicurezzaMessaggioGenerazioneTokenIdAuthLocale(sorgenteToken);
 				}		
 			}
 		}
@@ -1299,20 +1311,28 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 	static List<String> getPropertySicurezzaMessaggioEngine(String propertyName, AccordoServizioParteComune api, String portType, boolean booleanValue) {
 		return RegistroServiziUtils.fillPropertyProtocollo(propertyName, api, portType, booleanValue);
 	}
+	static List<String> getPropertySicurezzaMessaggioEngine(String propertyName, String propertyName2, AccordoServizioParteComune api, String portType, boolean booleanValue) {
+		return RegistroServiziUtils.fillPropertyProtocollo(propertyName, propertyName2, api, portType, booleanValue);
+	}
 	
 	static boolean isSicurezzaMessaggioRequired(AccordoServizioParteComune api, String portType) {
 		
-		List<String> apiValues = getProfiloSicurezzaMessaggio(api, portType);
+		List<String> apiValues = getProfiloSicurezzaMessaggioConSorgenteToken(api, portType);
 		if(apiValues!=null && !apiValues.isEmpty()) {
-			for (String apiValue : apiValues) {
-				if(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01.equals(apiValue) ||
-						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02.equals(apiValue)) {
-					return isProfiloSicurezzaMessaggioGenerazioneTokenIdAuthLocale(api, portType);
+			for (String sicurezzaMessaggioSorgenteToken : apiValues) {
+				
+				List<String> splitValues = RegistroServiziUtils.splitPropertyProtocolloResult(sicurezzaMessaggioSorgenteToken);
+				String sicurezzaMessaggio = splitValues.get(0);
+				String sorgenteToken = splitValues.get(1);
+				
+				if(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01.equals(sicurezzaMessaggio) ||
+						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02.equals(sicurezzaMessaggio)) {
+					return isSicurezzaMessaggioGenerazioneTokenIdAuthLocale(sorgenteToken);
 				}
-				else if(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(apiValue) ||
-						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(apiValue) ||
-						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(apiValue) ||
-						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(apiValue)) {
+				else if(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(sicurezzaMessaggio) ||
+						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(sicurezzaMessaggio) ||
+						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(sicurezzaMessaggio) ||
+						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(sicurezzaMessaggio)) {
 					return true;
 				}
 			}
@@ -1323,20 +1343,32 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 	
 	static boolean isSicurezzaMessaggioRiferimentoX509Required(AccordoServizioParteComune api, String portType) {
 		
-		List<String> apiValues = getProfiloSicurezzaMessaggio(api, portType);
+		// ne basta uno presente
+		
+		List<String> apiValues = getProfiloSicurezzaMessaggioConSorgenteToken(api, portType);
 		if(apiValues!=null && !apiValues.isEmpty()) {
-			for (String apiValue : apiValues) {
-				if(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01.equals(apiValue) ||
-						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02.equals(apiValue)) {
-					return isProfiloSicurezzaMessaggioGenerazioneTokenIdAuthLocale(api, portType);
+			for (String sicurezzaMessaggioSorgenteToken : apiValues) {
+				
+				List<String> splitValues = RegistroServiziUtils.splitPropertyProtocolloResult(sicurezzaMessaggioSorgenteToken);
+				String sicurezzaMessaggio = splitValues.get(0);
+				String sorgenteToken = splitValues.get(1);
+				
+				boolean x509 = false;
+				if(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01.equals(sicurezzaMessaggio) ||
+						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02.equals(sicurezzaMessaggio)) {
+					x509 = isSicurezzaMessaggioGenerazioneTokenIdAuthLocale(sorgenteToken);
 				}
-				else if(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(apiValue) ||
-						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(apiValue)) {
+				else if(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(sicurezzaMessaggio) ||
+						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(sicurezzaMessaggio)) {
+					x509 = true;
+				}
+				else if(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(sicurezzaMessaggio) ||
+						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(sicurezzaMessaggio)) {
+					// (per token id-auth)
+					x509 =isSicurezzaMessaggioGenerazioneTokenIdAuthLocale(sorgenteToken);
+				}
+				if(x509) {
 					return true;
-				}
-				else if(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(apiValue) ||
-						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(apiValue)) {
-					return isProfiloSicurezzaMessaggioGenerazioneTokenIdAuthLocale(api, portType); // (per token id-uath)
 				}
 			}
 		}
@@ -1359,17 +1391,33 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 		return false;
 	}
 	
-	static boolean isProfiloSicurezzaMessaggioGenerazioneTokenIdAuthLocale(AccordoServizioParteComune api, String portType) {
+	static boolean existsAlmostOneProfiloSicurezzaMessaggioGenerazioneTokenIdAuthRemoto(AccordoServizioParteComune api, String portType) {
 		List<String> tmp = getPropertySicurezzaMessaggioEngine(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_ID, api, portType, false);
 		if(tmp!=null && !tmp.isEmpty()) {
 			for (String sorgenteToken : tmp) {
 				if(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND.equals(sorgenteToken) ||
 						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH.equals(sorgenteToken)) {
-					return false;
+					return true;
 				}
 			}
 		}
-		return true; // default
+		return false; // default
+	}
+	static boolean existsAlmostOneProfiloSicurezzaMessaggioGenerazioneTokenIdAuthLocale(AccordoServizioParteComune api, String portType) {
+		List<String> tmp = getPropertySicurezzaMessaggioEngine(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_ID, api, portType, false);
+		if(tmp!=null && !tmp.isEmpty()) {
+			for (String sorgenteToken : tmp) {
+				if(! (ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND.equals(sorgenteToken) ||
+						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH.equals(sorgenteToken)) ) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	private static boolean isSicurezzaMessaggioGenerazioneTokenIdAuthLocale(String sorgenteToken) {
+		return !(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND.equals(sorgenteToken) ||
+				 ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH.equals(sorgenteToken));
 	}
 	
 	static boolean isProfiloSicurezzaMessaggioApplicabileRichiesta(AccordoServizioParteComune api, String portType, boolean sicurezzaRequired) {
