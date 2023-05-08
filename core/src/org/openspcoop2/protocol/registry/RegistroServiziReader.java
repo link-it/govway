@@ -36,6 +36,7 @@ import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.StatoCheck;
 import org.openspcoop2.core.constants.TipiConnettore;
@@ -106,7 +107,6 @@ import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.utils.ModIUtils;
-import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.certificate.CertificateInfo;
@@ -3702,7 +3702,7 @@ public class RegistroServiziReader {
 		
 		if(keystoreParams!=null) {
 			try {
-				if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+				if(CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(keystoreParams.getType())) {
 					check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyPair(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyPairPublicKeyPath(), keystoreParams.getKeyPassword(), keystoreParams.getKeyPairAlgorithm(),
 							false, //addCertificateDetails,  
 							separator);
@@ -3711,10 +3711,10 @@ public class RegistroServiziReader {
 								separator);
 					}
 				}
-				else if(SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
-					throw new DriverConfigurazioneException("Nella configurazione ModI viene utilizzato un keystore "+SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_LABEL+" non compatibile la firma dei messaggi");
+				else if(CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(keystoreParams.getType())) {
+					throw new DriverConfigurazioneException("Nella configurazione ModI viene utilizzato un keystore "+CostantiLabel.KEYSTORE_TYPE_PUBLIC_KEY+" non compatibile la firma dei messaggi");
 				}
-				else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+				else if(CostantiDB.KEYSTORE_TYPE_JWK.equalsIgnoreCase(keystoreParams.getType())) {
 					check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeystoreJWKs(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyAlias(), 
 							false, //addCertificateDetails,  
 							separator, newLine);
@@ -3765,10 +3765,10 @@ public class RegistroServiziReader {
 						check = new CertificateCheck();
 						check.setStatoCheck(StatoCheck.OK);
 					}
-					else if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(truststoreParams.getType())) {
-						throw new DriverConfigurazioneException("Nella configurazione ModI viene utilizzato un keystore "+SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_LABEL+" non compatibile la validazione della firma dei messaggi");
+					else if(CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(truststoreParams.getType())) {
+						throw new DriverConfigurazioneException("Nella configurazione ModI viene utilizzato un keystore "+CostantiLabel.KEYSTORE_TYPE_KEY_PAIR+" non compatibile la validazione della firma dei messaggi");
 					}
-					else if(SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(truststoreParams.getType())) {
+					else if(CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(truststoreParams.getType())) {
 						check = org.openspcoop2.protocol.registry.CertificateUtils.checkPublicKey(classpathSupported, truststoreParams.getPath(), truststoreParams.getKeyPairAlgorithm(),
 								false, //addCertificateDetails,  
 								separator);
@@ -3777,7 +3777,7 @@ public class RegistroServiziReader {
 									separator);
 						}
 					}
-					else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(truststoreParams.getType())) {
+					else if(CostantiDB.KEYSTORE_TYPE_JWK.equalsIgnoreCase(truststoreParams.getType())) {
 						check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeystoreJWKs(classpathSupported, truststoreParams.getPath(), truststoreParams.getKeyAlias(), 
 								false, //addCertificateDetails,  
 								separator, newLine);
