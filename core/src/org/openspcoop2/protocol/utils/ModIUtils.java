@@ -40,7 +40,9 @@ import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.utils.RegistroServiziUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.certificate.KeystoreParams;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
+import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.digest.DigestEncoding;
 
 /**
@@ -1100,6 +1102,55 @@ public class ModIUtils {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static List<RemoteStoreConfig> getRemoteStoreConfig() throws ProtocolException {
+		try {
+			Class<?> modiPropertiesClass = Class.forName("org.openspcoop2.protocol.modipa.config.ModIProperties");
+			Method mGetInstance = modiPropertiesClass.getMethod("getInstance");
+			Object instance = mGetInstance.invoke(null);
+			Method mGetRemoteStoreConfig = instance.getClass().getMethod("getRemoteStoreConfig");
+			return (List<RemoteStoreConfig>) mGetRemoteStoreConfig.invoke(instance);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	
+	private static KeystoreParams getSicurezzaMessaggioCertificatiTrustStore() throws ProtocolException {
+		try {
+			Class<?> modiPropertiesClass = Class.forName("org.openspcoop2.protocol.modipa.config.ModIProperties");
+			Method mGetInstance = modiPropertiesClass.getMethod("getInstance");
+			Object instance = mGetInstance.invoke(null);
+			Method mGet = instance.getClass().getMethod("getSicurezzaMessaggioCertificatiTrustStore");
+			return (KeystoreParams) mGet.invoke(instance);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	
+	private static KeystoreParams getSicurezzaMessaggioSslTrustStore() throws ProtocolException {
+		try {
+			Class<?> modiPropertiesClass = Class.forName("org.openspcoop2.protocol.modipa.config.ModIProperties");
+			Method mGetInstance = modiPropertiesClass.getMethod("getInstance");
+			Object instance = mGetInstance.invoke(null);
+			Method mGet = instance.getClass().getMethod("getSicurezzaMessaggioSslTrustStore");
+			return (KeystoreParams) mGet.invoke(instance);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	
+	private static KeystoreParams getSicurezzaMessaggioCertificatiKeyStore() throws ProtocolException {
+		try {
+			Class<?> modiPropertiesClass = Class.forName("org.openspcoop2.protocol.modipa.config.ModIProperties");
+			Method mGetInstance = modiPropertiesClass.getMethod("getInstance");
+			Object instance = mGetInstance.invoke(null);
+			Method mGet = instance.getClass().getMethod("getSicurezzaMessaggioCertificatiKeyStore");
+			return (KeystoreParams) mGet.invoke(instance);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	
 	public static KeystoreParams getApplicativoKeystoreParams(List<org.openspcoop2.core.config.ProtocolProperty> protocolPropertyList) {
 		
 		if(protocolPropertyList==null || protocolPropertyList.isEmpty()) {
@@ -1156,12 +1207,28 @@ public class ModIUtils {
 			String aliasKey = CostantiDB.MODIPA_KEY_ALIAS;
 			String vAliasKey = getStringValueConfig(protocolPropertyList, aliasKey);
 			
+			String passwordKey = CostantiDB.MODIPA_KEY_PASSWORD;
+			String vPassordKey = getStringValueConfig(protocolPropertyList, passwordKey);
+			
+			String vPathPublicKey = null;
+			if(KeystoreType.KEY_PAIR.getNome().equals(vType)) {
+				vPathPublicKey = getStringValueConfig(protocolPropertyList, CostantiDB.MODIPA_KEYSTORE_PATH_PUBLIC_KEY);
+			}
+			
+			String vKeyPairAlgorithm = null;
+			if(KeystoreType.KEY_PAIR.getNome().equals(vType) || KeystoreType.PUBLIC_KEY.getNome().equals(vType)) {
+				vKeyPairAlgorithm = getStringValueConfig(protocolPropertyList, CostantiDB.MODIPA_KEYSTORE_KEY_ALGORITHM);
+			}
+			
 			keystoreParams = new KeystoreParams();
 			keystoreParams.setType(vType);
 			keystoreParams.setPath(vPath);
 			keystoreParams.setStore(vStore);
 			keystoreParams.setPassword(vPassword);
 			keystoreParams.setKeyAlias(vAliasKey);
+			keystoreParams.setKeyPassword(vPassordKey);
+			keystoreParams.setKeyPairPublicKeyPath(vPathPublicKey);
+			keystoreParams.setKeyPairAlgorithm(vKeyPairAlgorithm);
 			
 		}
 	
@@ -1186,17 +1253,17 @@ public class ModIUtils {
 		return b;
 	}
 	
-	public static KeystoreParams getKeyStoreParams(List<org.openspcoop2.core.registry.ProtocolProperty> protocolPropertyList) {
+	public static KeystoreParams getKeyStoreParams(List<org.openspcoop2.core.registry.ProtocolProperty> protocolPropertyList) throws ProtocolException {
 		return getKeystoreParamsEngine(protocolPropertyList, false, false);
 	}
-	public static KeystoreParams getTrustStoreParams(List<org.openspcoop2.core.registry.ProtocolProperty> protocolPropertyList) {
+	public static KeystoreParams getTrustStoreParams(List<org.openspcoop2.core.registry.ProtocolProperty> protocolPropertyList) throws ProtocolException {
 		return getKeystoreParamsEngine(protocolPropertyList, false, true);
 	}
-	public static KeystoreParams getTrustStoreSSLParams(List<org.openspcoop2.core.registry.ProtocolProperty> protocolPropertyList) {
+	public static KeystoreParams getTrustStoreSSLParams(List<org.openspcoop2.core.registry.ProtocolProperty> protocolPropertyList) throws ProtocolException {
 		return getKeystoreParamsEngine(protocolPropertyList, true, false);
 	}
 	private static KeystoreParams getKeystoreParamsEngine(List<org.openspcoop2.core.registry.ProtocolProperty> protocolPropertyList,
-			boolean ssl, boolean truststore) {
+			boolean ssl, boolean truststore) throws ProtocolException {
 		
 		if(protocolPropertyList==null || protocolPropertyList.isEmpty()) {
 			return null;
@@ -1216,110 +1283,143 @@ public class ModIUtils {
 		}
 		
 		String v = getStringValue(protocolPropertyList, id);
-		if(v!=null && !StringUtils.isEmpty(v) && !CostantiDB.MODIPA_PROFILO_DEFAULT.equals(v)) {
-			
-			String type = null;
-			String path = null;
-			String archive = null;
-			String pw = null;
-			String crl = null;
-			String ocsp = null;
-			String aliasKey = null;
-			boolean keystoreModePath = false;
-			boolean keystoreModeArchive = false;
-			boolean keystoreModeHsm = false;
-			if(ssl) {
-				type = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE;
-				path = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PATH;
-				pw = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PASSWORD;
-				crl = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_CRLS;
-				ocsp = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_OCSP_POLICY;
-			}
-			else if(truststore) {
-				type = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE;
-				path = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH;
-				pw = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD;
-				crl = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS;
-				ocsp = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_OCSP_POLICY;
-			}
-			else {
-				type = CostantiDB.MODIPA_KEYSTORE_TYPE;
-				pw = CostantiDB.MODIPA_KEYSTORE_PASSWORD;
-				aliasKey = CostantiDB.MODIPA_KEY_ALIAS;
-				String mode = getStringValue(protocolPropertyList, CostantiDB.MODIPA_KEYSTORE_MODE);
-				if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(mode)) {
-					keystoreModeArchive = true;
-					archive = CostantiDB.MODIPA_KEYSTORE_ARCHIVE;
+		if(v!=null && !StringUtils.isEmpty(v)) {
+			if(CostantiDB.MODIPA_PROFILO_DEFAULT.equals(v)) {
+				if(ssl) {
+					keystoreParams = ModIUtils.getSicurezzaMessaggioSslTrustStore();
 				}
-				else if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_PATH.equals(mode)) {
-					keystoreModePath = true;
-					path = CostantiDB.MODIPA_KEYSTORE_PATH;
+				else if(truststore) {
+					keystoreParams = ModIUtils.getSicurezzaMessaggioCertificatiTrustStore();
 				}
-				else if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_HSM.equals(mode)) {
-					keystoreModeHsm = true;
+				else {
+					keystoreParams = ModIUtils.getSicurezzaMessaggioCertificatiKeyStore();
 				}
 			}
-			
-			String vType = null;
-			if(type!=null) {
-				vType = getStringValue(protocolPropertyList, type);
-			}
-			
-			if(keystoreModePath) {
-				// nop
-			}
-			
-			String vPassword = null;
-			if(pw!=null) {
-				vPassword = getStringValue(protocolPropertyList, pw);
-			}
-			
-			boolean hsm = false;
-			if(ssl || truststore) {
-				if(vType!=null) {
-					hsm = HSMUtils.isKeystoreHSM(vType);
+			else if(CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(v)) {
+				
+				String type = null;
+				String path = null;
+				String archive = null;
+				String pw = null;
+				String crl = null;
+				String ocsp = null;
+				String aliasKey = null;
+				String passwordKey = null;
+				boolean keystoreModePath = false;
+				boolean keystoreModeArchive = false;
+				boolean keystoreModeHsm = false;
+				if(ssl) {
+					type = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE;
+					path = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PATH;
+					pw = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PASSWORD;
+					crl = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_CRLS;
+					ocsp = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_OCSP_POLICY;
 				}
+				else if(truststore) {
+					type = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE;
+					path = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH;
+					pw = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD;
+					crl = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS;
+					ocsp = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_OCSP_POLICY;
+				}
+				else {
+					type = CostantiDB.MODIPA_KEYSTORE_TYPE;
+					pw = CostantiDB.MODIPA_KEYSTORE_PASSWORD;
+					aliasKey = CostantiDB.MODIPA_KEY_ALIAS;
+					passwordKey = CostantiDB.MODIPA_KEY_PASSWORD;
+					String mode = getStringValue(protocolPropertyList, CostantiDB.MODIPA_KEYSTORE_MODE);
+					if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(mode)) {
+						keystoreModeArchive = true;
+						archive = CostantiDB.MODIPA_KEYSTORE_ARCHIVE;
+					}
+					else if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_PATH.equals(mode)) {
+						keystoreModePath = true;
+						path = CostantiDB.MODIPA_KEYSTORE_PATH;
+					}
+					else if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_HSM.equals(mode)) {
+						keystoreModeHsm = true;
+					}
+				}
+				
+				String vType = null;
+				if(type!=null) {
+					vType = getStringValue(protocolPropertyList, type);
+				}
+				
+				if(keystoreModePath) {
+					// nop
+				}
+				
+				String vPassword = null;
+				if(pw!=null) {
+					vPassword = getStringValue(protocolPropertyList, pw);
+				}
+				
+				boolean hsm = false;
+				if(ssl || truststore) {
+					if(vType!=null) {
+						hsm = HSMUtils.isKeystoreHSM(vType);
+					}
+				}
+				else {
+					hsm = keystoreModeHsm;
+				}
+				
+				String vPath = null;
+				byte[] vStore = null;
+				if(hsm) {
+					vPath = CostantiLabel.STORE_HSM;
+				}
+				else if(path!=null) {
+					vPath = getStringValue(protocolPropertyList, path);
+				}
+				else if(keystoreModeArchive) {
+					vPath = CostantiLabel.STORE_CARICATO_BASEDATI;
+					vStore = getBinaryValue(protocolPropertyList, archive);
+				}
+				
+				String vCrl = null;
+				if(crl!=null) {
+					vCrl = getStringValue(protocolPropertyList, crl);
+				}
+				
+				String vOcsp = null;
+				if(ocsp!=null) {
+					vOcsp = getStringValue(protocolPropertyList, ocsp);
+				}
+				
+				String vAliasKey = null;
+				if(aliasKey!=null) {
+					vAliasKey = getStringValue(protocolPropertyList, aliasKey);
+				}
+				
+				String vPasswordKey = null;
+				if(passwordKey!=null) {
+					vPasswordKey = getStringValue(protocolPropertyList, passwordKey);
+				}
+				
+				String vPathPublicKey = null;
+				if(KeystoreType.KEY_PAIR.getNome().equals(vType)) {
+					vPathPublicKey = getStringValue(protocolPropertyList, CostantiDB.MODIPA_KEYSTORE_PATH_PUBLIC_KEY);
+				}
+				
+				String vKeyPairAlgorithm = null;
+				if(KeystoreType.KEY_PAIR.getNome().equals(vType) || KeystoreType.PUBLIC_KEY.getNome().equals(vType)) {
+					vKeyPairAlgorithm = getStringValue(protocolPropertyList, CostantiDB.MODIPA_KEYSTORE_KEY_ALGORITHM);
+				}
+				
+				keystoreParams = new KeystoreParams();
+				keystoreParams.setType(vType);
+				keystoreParams.setPath(vPath);
+				keystoreParams.setStore(vStore);
+				keystoreParams.setPassword(vPassword);
+				keystoreParams.setCrls(vCrl);
+				keystoreParams.setOcspPolicy(vOcsp);
+				keystoreParams.setKeyAlias(vAliasKey);
+				keystoreParams.setKeyPassword(vPasswordKey);
+				keystoreParams.setKeyPairPublicKeyPath(vPathPublicKey);
+				keystoreParams.setKeyPairAlgorithm(vKeyPairAlgorithm);
 			}
-			else {
-				hsm = keystoreModeHsm;
-			}
-			
-			String vPath = null;
-			byte[] vStore = null;
-			if(hsm) {
-				vPath = CostantiLabel.STORE_HSM;
-			}
-			else if(path!=null) {
-				vPath = getStringValue(protocolPropertyList, path);
-			}
-			else if(keystoreModeArchive) {
-				vPath = CostantiLabel.STORE_CARICATO_BASEDATI;
-				vStore = getBinaryValue(protocolPropertyList, archive);
-			}
-			
-			String vCrl = null;
-			if(crl!=null) {
-				vCrl = getStringValue(protocolPropertyList, crl);
-			}
-			
-			String vOcsp = null;
-			if(ocsp!=null) {
-				vOcsp = getStringValue(protocolPropertyList, ocsp);
-			}
-			
-			String vAliasKey = null;
-			if(aliasKey!=null) {
-				vAliasKey = getStringValue(protocolPropertyList, aliasKey);
-			}
-			
-			keystoreParams = new KeystoreParams();
-			keystoreParams.setType(vType);
-			keystoreParams.setPath(vPath);
-			keystoreParams.setStore(vStore);
-			keystoreParams.setPassword(vPassword);
-			keystoreParams.setCrls(vCrl);
-			keystoreParams.setOcspPolicy(vOcsp);
-			keystoreParams.setKeyAlias(vAliasKey);
 		}
 	
 		return keystoreParams;

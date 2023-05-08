@@ -364,7 +364,7 @@ public class FruizioneConverter extends AbstractConverter {
 						"fruizione", "servizio", soggettoErogatore.getTipo(), soggettoErogatore.getNome(), 
 						idAccordoServizioParteSpecifica.getTipo(), idAccordoServizioParteSpecifica.getNome(), idAccordoServizioParteSpecifica.getVersione()+"", 
 						validationDocuments, idCorrelazione,
-						ArchiveVersion.V_1,null);
+						ArchiveVersion.V_1,null, null);
 			}catch(Exception e){
 				throw new Exception("XmlTemplate["+new String(xml)+"]\n"+e.getMessage(),e);
 			}

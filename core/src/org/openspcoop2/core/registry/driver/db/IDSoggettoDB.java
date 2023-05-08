@@ -79,7 +79,7 @@ public class IDSoggettoDB extends IDSoggetto implements Serializable {
 	
 	@Override 
 	public boolean equals(Object object){
-		return super._equals(object, false);
+		return super.equalsEngine(object, false);
 	}
 	
 	// Utile per usare l'oggetto in hashtable come chiave

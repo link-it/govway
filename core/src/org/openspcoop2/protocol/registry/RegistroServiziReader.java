@@ -35,6 +35,7 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.StatoCheck;
 import org.openspcoop2.core.constants.TipiConnettore;
@@ -105,12 +106,14 @@ import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.utils.ModIUtils;
+import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.certificate.PrincipalType;
+import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.transport.http.SSLConfig;
@@ -3573,16 +3576,39 @@ public class RegistroServiziReader {
 			throw new DriverRegistroServiziException("Il profilo di interoperabilità non è "+CostantiLabel.MODIPA_PROTOCOL_LABEL);
 		}
 		
-		KeystoreParams keystoreParams = ModIUtils.getKeyStoreParams(asps.getProtocolPropertyList());
-		KeystoreParams truststoreParams = ModIUtils.getTrustStoreParams(asps.getProtocolPropertyList());
-		KeystoreParams truststoreSslParams = ModIUtils.getTrustStoreSSLParams(asps.getProtocolPropertyList());
+		KeystoreParams keystoreParams = null;
+		try { 
+			keystoreParams = ModIUtils.getKeyStoreParams(asps.getProtocolPropertyList());
+		}catch(Exception e) {
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		KeystoreParams truststoreParams = null;
+		try { 
+			truststoreParams = ModIUtils.getTrustStoreParams(asps.getProtocolPropertyList());
+		}catch(Exception e) {
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		KeystoreParams truststoreSslParams = null;
+		try { 
+			truststoreSslParams = ModIUtils.getTrustStoreSSLParams(asps.getProtocolPropertyList());
+		}catch(Exception e) {
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
 
+		List<RemoteStoreConfig> trustStoreRemoteConfig = null;
+		try {
+			trustStoreRemoteConfig = ModIUtils.getRemoteStoreConfig();
+		}catch(Exception e) {
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		
 		return _checkStore(keystoreParams, 
 				truststoreParams,
 				truststoreSslParams, 
 				sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
-				log);
+				log,
+				trustStoreRemoteConfig);
 	}
 	
 	protected CertificateCheck checkCertificatiModIFruizioneById(Connection connectionPdD,boolean useCache,
@@ -3621,16 +3647,39 @@ public class RegistroServiziReader {
 			throw new DriverRegistroServiziException("Il profilo di interoperabilità non è "+CostantiLabel.MODIPA_PROTOCOL_LABEL);
 		}
 		
-		KeystoreParams keystoreParams = ModIUtils.getKeyStoreParams(fruitore.getProtocolPropertyList());
-		KeystoreParams truststoreParams = ModIUtils.getTrustStoreParams(fruitore.getProtocolPropertyList());
-		KeystoreParams truststoreSslParams = ModIUtils.getTrustStoreSSLParams(fruitore.getProtocolPropertyList());
+		KeystoreParams keystoreParams = null;
+		try { 
+			keystoreParams = ModIUtils.getKeyStoreParams(fruitore.getProtocolPropertyList());
+		}catch(Exception e) {
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		KeystoreParams truststoreParams = null;
+		try { 
+			truststoreParams = ModIUtils.getTrustStoreParams(fruitore.getProtocolPropertyList());
+		}catch(Exception e) {
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		KeystoreParams truststoreSslParams = null;
+		try { 
+			truststoreSslParams = ModIUtils.getTrustStoreSSLParams(fruitore.getProtocolPropertyList());
+		}catch(Exception e) {
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		
+		List<RemoteStoreConfig> trustStoreRemoteConfig = null;
+		try {
+			trustStoreRemoteConfig = ModIUtils.getRemoteStoreConfig();
+		}catch(Exception e) {
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
 		
 		return _checkStore(keystoreParams, 
 				truststoreParams,
 				truststoreSslParams, 
 				sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
-				log);
+				log,
+				trustStoreRemoteConfig);
 	}
 	
 	public static final String ID_CONFIGURAZIONE_FIRMA_MODI = "Configurazione della firma "+CostantiLabel.MODIPA_PROTOCOL_LABEL;
@@ -3639,7 +3688,8 @@ public class RegistroServiziReader {
 			KeystoreParams truststoreSslParams, 
 			int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
-			Logger log) throws DriverRegistroServiziException {
+			Logger log,
+			List<RemoteStoreConfig> trustStoreRemoteConfig) throws DriverRegistroServiziException {
 		
 		if(keystoreParams==null && truststoreParams==null && truststoreSslParams==null) {
 			throw new DriverRegistroServiziException("Non risulta alcun keystore ridefinito, da utilizzare per la gestione della firma "+CostantiLabel.MODIPA_PROTOCOL_LABEL);
@@ -3652,23 +3702,45 @@ public class RegistroServiziReader {
 		
 		if(keystoreParams!=null) {
 			try {
-				if(keystoreParams.getStore()!=null) {
-					check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(keystoreParams.getStore(), keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
-							sogliaWarningGiorni, 
-							false, //addCertificateDetails, 
-							separator, newLine,
-							log);
+				if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+					check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyPair(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyPairPublicKeyPath(), keystoreParams.getKeyPassword(), keystoreParams.getKeyPairAlgorithm(),
+							false, //addCertificateDetails,  
+							separator);
+					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+						storeDetails = org.openspcoop2.protocol.registry.CertificateUtils.toStringKeyPair(keystoreParams, 
+								separator);
+					}
+				}
+				else if(SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+					throw new DriverConfigurazioneException("Nella configurazione ModI viene utilizzato un keystore "+SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_LABEL+" non compatibile la firma dei messaggi");
+				}
+				else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+					check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeystoreJWKs(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyAlias(), 
+							false, //addCertificateDetails,  
+							separator, newLine);
+					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+						storeDetails = org.openspcoop2.protocol.registry.CertificateUtils.toStringKeystoreJWKs(keystoreParams, 
+								separator, newLine);
+					}
 				}
 				else {
-					check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
-							sogliaWarningGiorni, 
-							false, //addCertificateDetails, 
-							separator, newLine,
-							log);
-				}
-				
-				if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
-					storeDetails = org.openspcoop2.protocol.registry.CertificateUtils.toStringKeyStore(keystoreParams, separator, newLine);
+					if(keystoreParams.getStore()!=null) {
+						check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(keystoreParams.getStore(), keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
+								sogliaWarningGiorni, 
+								false, //addCertificateDetails, 
+								separator, newLine,
+								log);
+					}
+					else {
+						check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
+								sogliaWarningGiorni, 
+								false, //addCertificateDetails, 
+								separator, newLine,
+								log);
+					}
+					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+						storeDetails = org.openspcoop2.protocol.registry.CertificateUtils.toStringKeyStore(keystoreParams, separator, newLine);
+					}
 				}
 			}catch(Throwable t) {
 				throw new DriverRegistroServiziException(t.getMessage(),t);
@@ -3678,15 +3750,52 @@ public class RegistroServiziReader {
 		if(check==null || StatoCheck.OK.equals(check.getStatoCheck())) {
 			if(truststoreParams!=null) {
 				try {
-					check = org.openspcoop2.protocol.registry.CertificateUtils.checkTrustStore(truststoreParams.getPath(), classpathSupported, truststoreParams.getType(), 
-							truststoreParams.getPassword(), truststoreParams.getCrls(), truststoreParams.getOcspPolicy(),
-							sogliaWarningGiorni, 
-							false, //addCertificateDetails, 
-							separator, newLine,
-							log);
+					boolean isRemoteStore = false;
+					if(trustStoreRemoteConfig!=null && !trustStoreRemoteConfig.isEmpty()) {
+						for (RemoteStoreConfig remoteStoreConfig : trustStoreRemoteConfig) {
+							if(remoteStoreConfig!=null && remoteStoreConfig.getStoreName()!=null && remoteStoreConfig.getStoreName().equals(truststoreParams.getType())) {
+								isRemoteStore = true;
+								break;
+							}
+						}
+					}
 					
-					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
-						storeDetails = org.openspcoop2.protocol.registry.CertificateUtils.toStringTrustStore(truststoreParams, separator, newLine);
+					if(isRemoteStore) {
+						// nop; non posso effettuare verifiche
+						check = new CertificateCheck();
+						check.setStatoCheck(StatoCheck.OK);
+					}
+					else if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(truststoreParams.getType())) {
+						throw new DriverConfigurazioneException("Nella configurazione ModI viene utilizzato un keystore "+SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_LABEL+" non compatibile la validazione della firma dei messaggi");
+					}
+					else if(SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(truststoreParams.getType())) {
+						check = org.openspcoop2.protocol.registry.CertificateUtils.checkPublicKey(classpathSupported, truststoreParams.getPath(), truststoreParams.getKeyPairAlgorithm(),
+								false, //addCertificateDetails,  
+								separator);
+						if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+							storeDetails = org.openspcoop2.protocol.registry.CertificateUtils.toStringPublicKey(truststoreParams, 
+									separator);
+						}
+					}
+					else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(truststoreParams.getType())) {
+						check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeystoreJWKs(classpathSupported, truststoreParams.getPath(), truststoreParams.getKeyAlias(), 
+								false, //addCertificateDetails,  
+								separator, newLine);
+						if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+							storeDetails = org.openspcoop2.protocol.registry.CertificateUtils.toStringKeystoreJWKs(truststoreParams, 
+									separator, newLine);
+						}
+					}
+					else {
+						check = org.openspcoop2.protocol.registry.CertificateUtils.checkTrustStore(truststoreParams.getPath(), classpathSupported, truststoreParams.getType(), 
+								truststoreParams.getPassword(), truststoreParams.getCrls(), truststoreParams.getOcspPolicy(),
+								sogliaWarningGiorni, 
+								false, //addCertificateDetails, 
+								separator, newLine,
+								log);
+						if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+							storeDetails = org.openspcoop2.protocol.registry.CertificateUtils.toStringTrustStore(truststoreParams, separator, newLine);
+						}
 					}
 				}catch(Throwable t) {
 					throw new DriverRegistroServiziException(t.getMessage(),t);

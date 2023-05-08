@@ -134,7 +134,7 @@ public class JDBCAllarmeServiceSearchImpl implements IJDBCServiceSearchWithId<Al
 	@Override
 	public List<IdAllarme> findAllIds(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, JDBCPaginatedExpression expression, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException, ServiceException,Exception {
 
-		List<IdAllarme> list = new ArrayList<IdAllarme>();
+		List<IdAllarme> list = new ArrayList<>();
 
 		// TODO: implementazione non efficiente. 
 		// Per ottenere una implementazione efficiente:
@@ -568,16 +568,16 @@ public class JDBCAllarmeServiceSearchImpl implements IJDBCServiceSearchWithId<Al
 
 
 		// Object allarme_allarmeParametro
-		ISQLQueryObject sqlQueryObjectGet_allarmeParametro = sqlQueryObjectGet.newSQLQueryObject();
-		sqlQueryObjectGet_allarmeParametro.setANDLogicOperator(true);
-		sqlQueryObjectGet_allarmeParametro.addFromTable(this.getAllarmeFieldConverter().toTable(Allarme.model().ALLARME_PARAMETRO));
-		sqlQueryObjectGet_allarmeParametro.addSelectField("chk_param_id");
-		sqlQueryObjectGet_allarmeParametro.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().ALLARME_PARAMETRO.ID_PARAMETRO,true));
-		sqlQueryObjectGet_allarmeParametro.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().ALLARME_PARAMETRO.VALORE,true));
-		sqlQueryObjectGet_allarmeParametro.addWhereCondition("idAllarme=?");
+		ISQLQueryObject sqlQueryObjectGetAllarmeParametro = sqlQueryObjectGet.newSQLQueryObject();
+		sqlQueryObjectGetAllarmeParametro.setANDLogicOperator(true);
+		sqlQueryObjectGetAllarmeParametro.addFromTable(this.getAllarmeFieldConverter().toTable(Allarme.model().ALLARME_PARAMETRO));
+		sqlQueryObjectGetAllarmeParametro.addSelectField("chk_param_id");
+		sqlQueryObjectGetAllarmeParametro.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().ALLARME_PARAMETRO.ID_PARAMETRO,true));
+		sqlQueryObjectGetAllarmeParametro.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().ALLARME_PARAMETRO.VALORE,true));
+		sqlQueryObjectGetAllarmeParametro.addWhereCondition("id_allarme=?");
 
 		// Get allarme_allarmeParametro
-		java.util.List<Object> allarme_allarmeParametro_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_allarmeParametro.createSQLQuery(), jdbcProperties.isShowSql(), Allarme.model().ALLARME_PARAMETRO, this.getAllarmeFetch(),
+		java.util.List<Object> allarme_allarmeParametro_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGetAllarmeParametro.createSQLQuery(), jdbcProperties.isShowSql(), Allarme.model().ALLARME_PARAMETRO, this.getAllarmeFetch(),
 			new JDBCObject(allarme.getId(),Long.class));
 
 		if(allarme_allarmeParametro_list != null) {
@@ -628,7 +628,7 @@ public class JDBCAllarmeServiceSearchImpl implements IJDBCServiceSearchWithId<Al
 		if(expression.inUseModel(Allarme.model().ALLARME_PARAMETRO,false)){
 			String tableName1 = this.getAllarmeFieldConverter().toTable(Allarme.model().ALLARME_PARAMETRO);
 			String tableName2 = this.getAllarmeFieldConverter().toTable(Allarme.model());
-			sqlQueryObject.addWhereCondition(tableName1+".idAllarme="+tableName2+".id");
+			sqlQueryObject.addWhereCondition(tableName1+".id_allarme="+tableName2+".id");
 		}
         
 	}

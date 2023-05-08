@@ -327,7 +327,7 @@ public class ErogazioneConverter extends AbstractConverter {
 					this.filler.readAccordoServizioParteSpecifica(archive, new ByteArrayInputStream(xml), xml,
 						"asps_"+i, soggettoErogatore.getTipo(), soggettoErogatore.getNome(), "asps_"+i, 
 						tipo, nome, ZIPReadUtils.USE_VERSION_XML_BEAN, validationDocuments, idCorrelazione,
-						ArchiveVersion.V_1,null,null);
+						ArchiveVersion.V_1,null,null,null);
 				}catch(Exception e){
 					throw new Exception("XmlTemplate["+new String(xml)+"]\n"+e.getMessage(),e);
 				}
@@ -350,7 +350,7 @@ public class ErogazioneConverter extends AbstractConverter {
 						this.filler.readAccordoServizioParteSpecifica_Fruitore(archive, new ByteArrayInputStream(xml), xml, 
 								"fruitore_"+i, "asps_"+i, soggettoErogatore.getTipo(), soggettoErogatore.getNome(), 
 								tipoServizio,nomeServizio, ZIPReadUtils.USE_VERSION_XML_BEAN, validationDocuments, idCorrelazione,
-								ArchiveVersion.V_1,null);
+								ArchiveVersion.V_1,null,null);
 					}catch(Exception e){
 						throw new Exception("XmlTemplate["+new String(xml)+"]\n"+e.getMessage(),e);
 					}

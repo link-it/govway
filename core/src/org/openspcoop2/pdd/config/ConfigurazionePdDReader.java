@@ -5099,17 +5099,32 @@ public class ConfigurazionePdDReader {
 		CertificateCheck check = null;
 		boolean classpathSupported = false;
 		try {
-			if(keystoreParams.getStore()!=null) {
-				check = CertificateUtils.checkKeyStore(keystoreParams.getStore(), keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
-						sogliaWarningGiorni, 
-						addCertificateDetails, separator, newLine,
-						log);
+			if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+				check = CertificateUtils.checkKeyPair(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyPairPublicKeyPath(), keystoreParams.getKeyPassword(), keystoreParams.getKeyPairAlgorithm(),
+						false, //addCertificateDetails,  
+						separator);
+			}
+			else if(SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+				throw new DriverConfigurazioneException("Nell'Applicativo "+sa.getNome()+" la configurazione ModI utilizza un keystore "+SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_LABEL+" non compatibile la firma dei messaggi");
+			}
+			else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+				check = CertificateUtils.checkKeystoreJWKs(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyAlias(), 
+						false, //addCertificateDetails,  
+						separator, newLine);
 			}
 			else {
-				check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
-						sogliaWarningGiorni, 
-						addCertificateDetails, separator, newLine,
-						log);
+				if(keystoreParams.getStore()!=null) {
+					check = CertificateUtils.checkKeyStore(keystoreParams.getStore(), keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
+							sogliaWarningGiorni, 
+							addCertificateDetails, separator, newLine,
+							log);
+				}
+				else {
+					check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
+							sogliaWarningGiorni, 
+							addCertificateDetails, separator, newLine,
+							log);
+				}
 			}
 		}catch(Exception t) {
 			throw new DriverConfigurazioneException(t.getMessage(),t);

@@ -38,6 +38,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.remote.RemoteKeyType;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
@@ -447,6 +448,22 @@ public class ModIProperties {
 	
 	/* **** TRUST STORE **** */
 		
+	// riferito in org.openspcoop2.protocol.utils.ModIUtils
+	// non modificare il nome
+	public KeystoreParams getSicurezzaMessaggioCertificatiTrustStore() throws ProtocolException {
+		KeystoreParams params = null;
+		String trustStoreType = getSicurezzaMessaggioCertificatiTrustStoreTipo();
+		if(trustStoreType!=null) {
+			params = new KeystoreParams();
+			params.setType(trustStoreType);
+			params.setPath(getSicurezzaMessaggioCertificatiTrustStorePath());
+			params.setPassword(getSicurezzaMessaggioCertificatiTrustStorePassword());
+			params.setCrls(getSicurezzaMessaggioCertificatiTrustStoreCrls());
+			params.setOcspPolicy(getSicurezzaMessaggioCertificatiTrustStoreOcspPolicy());
+		}
+		return params;
+	}
+	
 	private String sicurezzaMessaggioCertificatiTrustStoreTipo= null;
 	private Boolean sicurezzaMessaggioCertificatiTrustStoreTipoReaded= null;
 	public String getSicurezzaMessaggioCertificatiTrustStoreTipo() {
@@ -565,6 +582,22 @@ public class ModIProperties {
 	}	
 	
 	
+	
+	// riferito in org.openspcoop2.protocol.utils.ModIUtils
+	// non modificare il nome
+	public KeystoreParams getSicurezzaMessaggioSslTrustStore() throws ProtocolException {
+		KeystoreParams params = null;
+		String sslTrustStoreType = getSicurezzaMessaggioSslTrustStoreTipo();
+		if(sslTrustStoreType!=null) {
+			params = new KeystoreParams();
+			params.setType(sslTrustStoreType);
+			params.setPath(getSicurezzaMessaggioSslTrustStorePath());
+			params.setPassword(getSicurezzaMessaggioSslTrustStorePassword());
+			params.setCrls(getSicurezzaMessaggioSslTrustStoreCrls());
+			params.setOcspPolicy(getSicurezzaMessaggioSslTrustStoreOcspPolicy());
+		}
+		return params;
+	}
 		
 	private String sicurezzaMessaggioSslTrustStoreTipo= null;
 	private Boolean sicurezzaMessaggioSslTrustStoreTipoReaded= null;
@@ -701,6 +734,8 @@ public class ModIProperties {
 		}
 		return this.remoteStoreKeyTypeMap;
 	}
+	// riferito in org.openspcoop2.protocol.utils.ModIUtils
+	// non modificare il nome
 	public List<RemoteStoreConfig> getRemoteStoreConfig() throws ProtocolException{
     	if(this.remoteStoreConfig==null){
     		String pName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStores";
@@ -791,6 +826,22 @@ public class ModIProperties {
 	
 	/* **** KEY STORE **** */
 		
+	// riferito in org.openspcoop2.protocol.utils.ModIUtils
+	// non modificare il nome
+	public KeystoreParams getSicurezzaMessaggioCertificatiKeyStore() throws ProtocolException {
+		KeystoreParams params = null;
+		String keystoreType = getSicurezzaMessaggioCertificatiKeyStoreTipo();
+		if(keystoreType!=null) {
+			params = new KeystoreParams();
+			params.setType(keystoreType);
+			params.setPath(getSicurezzaMessaggioCertificatiKeyStorePath());
+			params.setPassword(getSicurezzaMessaggioCertificatiKeyPassword());
+			params.setKeyAlias(getSicurezzaMessaggioCertificatiKeyAlias());
+			params.setKeyPassword(getSicurezzaMessaggioCertificatiKeyPassword());
+		}
+		return params;
+	}
+	
 	private String sicurezzaMessaggioCertificatiKeyStoreTipo= null;
 	private Boolean sicurezzaMessaggioCertificatiKeyStoreTipoReaded= null;
 	public String getSicurezzaMessaggioCertificatiKeyStoreTipo() {
@@ -1579,6 +1630,8 @@ public class ModIProperties {
 	/* **** REST **** */ 
 	
 	private String getRestSecurityTokenHeader= null;
+	// riferito in org.openspcoop2.protocol.utils.ModIUtils
+	// non modificare il nome
 	public String getRestSecurityTokenHeaderModI() throws ProtocolException{
     	if(this.getRestSecurityTokenHeader==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.securityToken.header";

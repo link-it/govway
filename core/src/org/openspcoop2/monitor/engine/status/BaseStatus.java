@@ -42,8 +42,6 @@ public class BaseStatus implements IStatus {
 
 	private SondaStatus stato;
 	
-	protected String _value_stato;
-
 	private String descrizione;
 
 	public BaseStatus() {

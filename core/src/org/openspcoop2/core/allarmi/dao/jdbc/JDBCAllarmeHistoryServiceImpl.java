@@ -91,7 +91,7 @@ public class JDBCAllarmeHistoryServiceImpl extends JDBCAllarmeHistoryServiceSear
 		sqlQueryObjectInsert.addInsertField(this.getAllarmeHistoryFieldConverter().toColumn(AllarmeHistory.model().ACKNOWLEDGED,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAllarmeHistoryFieldConverter().toColumn(AllarmeHistory.model().TIMESTAMP_UPDATE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAllarmeHistoryFieldConverter().toColumn(AllarmeHistory.model().UTENTE,false),"?");
-		sqlQueryObjectInsert.addInsertField("idAllarme","?");
+		sqlQueryObjectInsert.addInsertField("id_allarme","?");
 
 		// Insert allarmeHistory
 		org.openspcoop2.utils.jdbc.IKeyGeneratorObject keyGenerator = this.getAllarmeHistoryFetch().getKeyGeneratorObject(AllarmeHistory.model());
@@ -174,7 +174,7 @@ public class JDBCAllarmeHistoryServiceImpl extends JDBCAllarmeHistoryServiceSear
 		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeHistoryFieldConverter().toColumn(AllarmeHistory.model().UTENTE,false), "?");
 		lstObjects.add(new JDBCObject(allarmeHistory.getUtente(), AllarmeHistory.model().UTENTE.getFieldType()));
 		if(setIdMappingResolutionBehaviour){
-			sqlQueryObjectUpdate.addUpdateField("idAllarme","?");
+			sqlQueryObjectUpdate.addUpdateField("id_allarme","?");
 		}
 		if(setIdMappingResolutionBehaviour){
 			lstObjects.add(new JDBCObject(idAllarme, Long.class));

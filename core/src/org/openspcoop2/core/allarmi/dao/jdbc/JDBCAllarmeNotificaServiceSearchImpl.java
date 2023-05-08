@@ -412,7 +412,7 @@ public class JDBCAllarmeNotificaServiceSearchImpl implements IJDBCServiceSearchW
 			// Object _allarme (recupero id)
 			ISQLQueryObject sqlQueryObjectGet_allarme_readFkId = sqlQueryObjectGet.newSQLQueryObject();
 			sqlQueryObjectGet_allarme_readFkId.addFromTable(this.getAllarmeNotificaFieldConverter().toTable(org.openspcoop2.core.allarmi.AllarmeNotifica.model()));
-			sqlQueryObjectGet_allarme_readFkId.addSelectField("idAllarme");
+			sqlQueryObjectGet_allarme_readFkId.addSelectField("id_allarme");
 			sqlQueryObjectGet_allarme_readFkId.addWhereCondition("id=?");
 			sqlQueryObjectGet_allarme_readFkId.setANDLogicOperator(true);
 			Long idFK_allarme = (Long) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_allarme_readFkId.createSQLQuery(), jdbcProperties.isShowSql(),Long.class,
@@ -466,7 +466,7 @@ public class JDBCAllarmeNotificaServiceSearchImpl implements IJDBCServiceSearchW
 		if(expression.inUseModel(AllarmeHistory.model().ID_ALLARME,false)){
 			String tableName1 = this.getAllarmeNotificaFieldConverter().toAliasTable(AllarmeNotifica.model());
 			String tableName2 = this.getAllarmeNotificaFieldConverter().toAliasTable(AllarmeNotifica.model().ID_ALLARME);
-			sqlQueryObject.addWhereCondition(tableName1+".idAllarme="+tableName2+".id");
+			sqlQueryObject.addWhereCondition(tableName1+".id_allarme="+tableName2+".id");
 		}
         
 	}

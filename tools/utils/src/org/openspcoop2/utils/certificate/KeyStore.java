@@ -119,7 +119,13 @@ public class KeyStore {
 		if(!this.keys.containsKey(alias)) {
 			try{
 				/** System.out.println("******** AGGIUNGO CHIAVE '"+alias+"' IN CACHE!!!!!!!!"); */
-				Key key = this.keystoreArchive.getKey(alias, password.toCharArray());
+				Key key = null;
+				if(password!=null) {
+					key = this.keystoreArchive.getKey(alias, password.toCharArray());
+				}
+				else {
+					key = this.keystoreArchive.getKey(alias, null);
+				}
 				if(key==null) {
 					throw new UtilsException("Not found");
 				}

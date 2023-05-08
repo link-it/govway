@@ -54,6 +54,7 @@ import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -355,32 +356,38 @@ public class ZIPReadUtils  {
 						
 			// ExtendedInfoManager
 			ExtendedInfoManager extendedInfoManager = ExtendedInfoManager.getInstance();
-			Map<String, PortaDelegata> mapKeyForExtendedInfo_portaDelegata = new HashMap<String, PortaDelegata>();
+			Map<String, PortaDelegata> mapKeyForExtendedInfoPortaDelegata = new HashMap<>();
 			boolean existsExtendsConfigForPortaDelegata = extendedInfoManager.newInstanceExtendedInfoPortaDelegata()!=null;
-			Map<String, PortaApplicativa> mapKeyForExtendedInfo_portaApplicativa = new HashMap<String, PortaApplicativa>();
+			Map<String, PortaApplicativa> mapKeyForExtendedInfoPortaApplicativa = new HashMap<>();
 			boolean existsExtendsConfigForPortaApplicativa = extendedInfoManager.newInstanceExtendedInfoPortaApplicativa()!=null;
 			
+			// Map per identificativi soggetti
+			Map<String, IDSoggetto> mapKeySoggetti = new HashMap<>();
+			
+			// Map per identificativi fruitori
+			Map<String, IDSoggetto> mapKeyFruitori = new HashMap<>();
+			
 			// Map per identificativi accordi
-			Map<String, IdentificativoAccordo> mapKeyAccordi = new HashMap<String, IdentificativoAccordo>();
+			Map<String, IdentificativoAccordo> mapKeyAccordi = new HashMap<>();
 			
 			// Map per identificativi documenti
-			Map<String, IdentificativoDocumento> mapKeyDocumenti = new HashMap<String, IdentificativoDocumento>();
+			Map<String, IdentificativoDocumento> mapKeyDocumenti = new HashMap<>();
 			
 			// Map per identificativi protocol properties
-			Map<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties = new HashMap<String, IdentificativoProprietaProtocollo>();
+			Map<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties = new HashMap<>();
 			
 			// Map per nomi-file e nomi servizi applicativi
-			Map<String, IdentificativoServizioApplicativo> mapKeyServiziApplicativi = new HashMap<String, IdentificativoServizioApplicativo>();
+			Map<String, IdentificativoServizioApplicativo> mapKeyServiziApplicativi = new HashMap<>();
 			
 			String rootDir = null;
 			
 			Iterator<ZipEntry> it = ZipUtilities.entries(zip, true);
 			while (it.hasNext()) {
-				ZipEntry zipEntry = (ZipEntry) it.next();
+				ZipEntry zipEntry = it.next();
 				String entryName = ZipUtilities.operativeSystemConversion(zipEntry.getName());
 				
-				//System.out.println("FILE NAME:  "+entryName);
-				//System.out.println("SIZE:  "+entry.getSize());
+				/**System.out.println("FILE NAME:  "+entryName);
+				System.out.println("SIZE:  "+entry.getSize());*/
 
 				// Il codice dopo fissa il problema di inserire una directory nel package.
 				// Commentare la riga sotto per ripristinare il vecchio comportamento.
@@ -599,6 +606,16 @@ public class ZIPReadUtils  {
 									}
 								}
 								
+								// provo a vedere se ho già gestito l'entry come chiave identificativo del soggetto
+								if(mapKeySoggetti.containsKey(tipoNomeSoggetto)) {
+									IDSoggetto id = mapKeySoggetti.get(tipoNomeSoggetto);
+									if(id!=null) {
+										// converto dati identificativi del soggetto
+										tipoSoggetto = id.getTipo();
+										nomeSoggetto = id.getNome();
+									}
+								}
+								
 								// comprendo parte restante
 								String nomeFile = name.substring((tipoNomeSoggetto.length()+1),name.length());
 								if(nomeFile==null){
@@ -606,10 +623,23 @@ public class ZIPReadUtils  {
 											"] deve essere presenta una ulteriore directory contenente la struttura <tipo>_<nome> che descrive il soggetto e ulteriori file e/o directory che definiscono gli elementi del soggetto: non sono stati trovati ulteriori file");
 								}
 								
-								if(nomeFile.contains((File.separatorChar+""))==false){
+								if(!nomeFile.contains((File.separatorChar+""))){
 									
 									// ------------ soggetto --------------------
-									this.readSoggetto(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, validationDocuments, idCorrelazione);
+									if(Costanti.OPENSPCOOP2_ARCHIVE_SOGGETTI_FILE_NAME_ID.equals(nomeFile)) {
+										String s = null;
+										try {
+											s = new String(xml);
+											IDSoggetto idSoggetto = IDSoggetto.toIDSoggetto(s);
+											mapKeySoggetti.put(tipoNomeSoggetto, idSoggetto);
+										}catch(Exception e) {
+											throw new ProtocolException("Elemento ["+entryName+"] contiene degli identificativi del soggetto ("+s+") non validi rispetto al pattern atteso (tipo/nome): "
+													+e.getMessage(),e);
+										}
+									}
+									else {
+										this.readSoggetto(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, validationDocuments, idCorrelazione);
+									}
 									
 								}
 								else{
@@ -683,14 +713,14 @@ public class ZIPReadUtils  {
 									else if(nomeFile.startsWith((Costanti.OPENSPCOOP2_ARCHIVE_PORTE_DELEGATE_DIR+File.separatorChar)) ){
 										if(nomeFile.contains(File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_EXTENDED_DIR+File.separatorChar)){
 											String key = this.getKeyPortaForExtendedInfo(tipoNomeSoggetto, nomeFile);
-											PortaDelegata pd = mapKeyForExtendedInfo_portaDelegata.get(key);
+											PortaDelegata pd = mapKeyForExtendedInfoPortaDelegata.get(key);
 											this.readPortaDelegataExtended(pd, bin, xml, entryName, validationDocuments, extendedInfoManager);
 										}
 										else{
 											PortaDelegata pd = this.readPortaDelegata(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, validationDocuments, idCorrelazione);
 											if(existsExtendsConfigForPortaDelegata){
 												String key = this.getKeyPortaForExtendedInfo(tipoNomeSoggetto, nomeFile);
-												mapKeyForExtendedInfo_portaDelegata.put(key, pd);
+												mapKeyForExtendedInfoPortaDelegata.put(key, pd);
 											}
 										}
 									}
@@ -699,14 +729,14 @@ public class ZIPReadUtils  {
 									else if(nomeFile.startsWith((Costanti.OPENSPCOOP2_ARCHIVE_PORTE_APPLICATIVE_DIR+File.separatorChar)) ){
 										if(nomeFile.contains(File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_EXTENDED_DIR+File.separatorChar)){
 											String key = this.getKeyPortaForExtendedInfo(tipoNomeSoggetto, nomeFile);
-											PortaApplicativa pa = mapKeyForExtendedInfo_portaApplicativa.get(key);
+											PortaApplicativa pa = mapKeyForExtendedInfoPortaApplicativa.get(key);
 											this.readPortaApplicativaExtended(pa, bin, xml, entryName, validationDocuments, extendedInfoManager);
 										}
 										else{
 											PortaApplicativa pa = this.readPortaApplicativa(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, validationDocuments, idCorrelazione);
 											if(existsExtendsConfigForPortaApplicativa){
 												String key = this.getKeyPortaForExtendedInfo(tipoNomeSoggetto, nomeFile);
-												mapKeyForExtendedInfo_portaApplicativa.put(key, pa);
+												mapKeyForExtendedInfoPortaApplicativa.put(key, pa);
 											}
 										}
 									}
@@ -825,7 +855,7 @@ public class ZIPReadUtils  {
 													}
 												}	
 												
-												if(findIdAccordo==false){
+												if(!findIdAccordo){
 												
 													// ------------ accordo servizio parte comune -------------------
 													if( nomeFile.startsWith((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_COMUNE_DIR+File.separatorChar)) ){
@@ -955,7 +985,8 @@ public class ZIPReadUtils  {
 													// ------------ accordo servizio parte specifica -------------------
 													this.readAccordoServizioParteSpecifica(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, 
 																nomeFileSenzaAccordo,tipoServizio,nomeServizio,versioneServizio, validationDocuments, idCorrelazione,
-																archiveVersion, mapKeyDocumenti, mapKeyProtocolProperties);
+																archiveVersion, mapKeyDocumenti, mapKeyProtocolProperties,
+																mapKeyFruitori);
 												}
 												
 											}
@@ -1260,7 +1291,7 @@ public class ZIPReadUtils  {
 	public void readConfigurazioneExtended(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments,ExtendedInfoManager extendedInfoManager) throws ProtocolException{
 		try{
 			if(archivio.getConfigurazionePdD()==null){
-				//throw new Exception("Non è possibile indicare una configurazione estesa senza indicare anche la configurazione generale");
+				//throw new ProtocolException("Non è possibile indicare una configurazione estesa senza indicare anche la configurazione generale");
 				// Caso speciale dove è presente solo l'extended info
 				archivio.setConfigurazionePdD(new Configurazione());
 			}
@@ -1321,7 +1352,7 @@ public class ZIPReadUtils  {
 				nomePorta = policy.getFiltro().getNomePorta();
 			}
 			if(policy==null) {
-				throw new Exception("Policy is null");
+				throw new ProtocolException("Policy is null");
 			}
 			String key = ArchiveActivePolicy.buildKey(ruoloPorta, nomePorta, policy.getAlias());
 			if(archivio.getControlloTraffico_activePolicies().containsKey(key)){
@@ -1348,7 +1379,7 @@ public class ZIPReadUtils  {
 				nomePorta = allarme.getFiltro().getNomePorta();
 			}
 			if(allarme==null) {
-				throw new Exception("Allarme is null");
+				throw new ProtocolException("Allarme is null");
 			}
 			String key = ArchiveAllarme.buildKey(ruoloPorta, nomePorta, allarme.getAlias());
 			if(archivio.getAllarmi().containsKey(key)){
@@ -1608,7 +1639,7 @@ public class ZIPReadUtils  {
 			
 			// verifica
 			if(tipoSoggetto==null || nomeSoggetto==null){
-				throw new ProtocolException("Elemento ["+entryName+"] errato. Non e' possibile fornire una definizione di soggetto all'interna di una directory che non definisce il tipo o il nome del soggetto");
+				throw new ProtocolException("Elemento ["+entryName+"] errato. Non è possibile fornire una definizione di soggetto all'interna di una directory che non definisce il tipo o il nome del soggetto");
 			}
 			org.openspcoop2.core.registry.Soggetto soggettoRegistroServizi = null;
 			org.openspcoop2.core.config.Soggetto soggettoConfigurazione = null;
@@ -1629,12 +1660,12 @@ public class ZIPReadUtils  {
 					org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
 				}
 				soggettoRegistroServizi = this.jaxbRegistryDeserializer.readSoggetto(xml);
-				if(tipoSoggetto.equals(soggettoRegistroServizi.getTipo())==false){
+				if(!tipoSoggetto.equals(soggettoRegistroServizi.getTipo())){
 					throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml del soggetto ("+schema+") contiene un tipo ["+
 							soggettoRegistroServizi.getTipo()+"] differente da quello indicato ["+tipoSoggetto+"] nella directory che contiene la definizione");
 				}
-				if(nomeSoggetto.equals(soggettoRegistroServizi.getNome())==false){
-					throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml del soggetto ("+schema+") contiene un tipo ["+
+				if(!nomeSoggetto.equals(soggettoRegistroServizi.getNome())){
+					throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml del soggetto ("+schema+") contiene un nome ["+
 							soggettoRegistroServizi.getNome()+"] differente da quello indicato ["+nomeSoggetto+"] nella directory che contiene la definizione");
 				}
 			}
@@ -1646,12 +1677,12 @@ public class ZIPReadUtils  {
 					org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
 				}
 				soggettoConfigurazione = this.jaxbConfigDeserializer.readSoggetto(xml);
-				if(tipoSoggetto.equals(soggettoConfigurazione.getTipo())==false){
+				if(!tipoSoggetto.equals(soggettoConfigurazione.getTipo())){
 					throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml del soggetto ("+schema+") contiene un tipo ["+
 							soggettoConfigurazione.getTipo()+"] differente da quello indicato ["+tipoSoggetto+"] nella directory che contiene la definizione");
 				}
-				if(nomeSoggetto.equals(soggettoConfigurazione.getNome())==false){
-					throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml del soggetto ("+schema+") contiene un tipo ["+
+				if(!nomeSoggetto.equals(soggettoConfigurazione.getNome())){
+					throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml del soggetto ("+schema+") contiene un nome ["+
 							soggettoConfigurazione.getNome()+"] differente da quello indicato ["+nomeSoggetto+"] nella directory che contiene la definizione");
 				}
 			}
@@ -1759,7 +1790,7 @@ public class ZIPReadUtils  {
 	public void readPortaDelegataExtended(PortaDelegata pd,InputStream bin,byte[]xml,String entryName,boolean validationDocuments,ExtendedInfoManager extendedInfoManager) throws ProtocolException{
 		try{
 			if(pd==null){
-				throw new Exception("Non è possibile indicare una configurazione estesa senza indicare anche la definizione della porta delegata");
+				throw new ProtocolException("Non è possibile indicare una configurazione estesa senza indicare anche la definizione della porta delegata");
 			}
 			Object o = extendedInfoManager.newInstanceExtendedInfoPortaDelegata().deserialize(this.log, pd, xml);
 			pd.addExtendedInfo(o);
@@ -1796,7 +1827,7 @@ public class ZIPReadUtils  {
 	public void readPortaApplicativaExtended(PortaApplicativa pa,InputStream bin,byte[]xml,String entryName,boolean validationDocuments,ExtendedInfoManager extendedInfoManager) throws ProtocolException{
 		try{
 			if(pa==null){
-				throw new Exception("Non è possibile indicare una configurazione estesa senza indicare anche la definizione della porta applicativa");
+				throw new ProtocolException("Non è possibile indicare una configurazione estesa senza indicare anche la definizione della porta applicativa");
 			}
 			Object o = extendedInfoManager.newInstanceExtendedInfoPortaApplicativa().deserialize(this.log, pa, xml);
 			pa.addExtendedInfo(o);
@@ -1932,12 +1963,12 @@ public class ZIPReadUtils  {
 			AccordoServizioParteComune as = null;
 			if(servizioComposto){
 				if(archivio.getAccordiServizioComposto().containsKey(key)==false){
-					throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non e' possibile fornire dei documenti di un accordo senza fornire la definizione xml dell'accordo");
+					throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non è possibile fornire dei documenti di un accordo senza fornire la definizione xml dell'accordo");
 				}
 				as = archivio.getAccordiServizioComposto().get(key).getAccordoServizioParteComune();
 			}else{
 				if(archivio.getAccordiServizioParteComune().containsKey(key)==false){
-					throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non e' possibile fornire dei documenti di un accordo senza fornire la definizione xml dell'accordo");
+					throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non è possibile fornire dei documenti di un accordo senza fornire la definizione xml dell'accordo");
 				}
 				as = archivio.getAccordiServizioParteComune().get(key).getAccordoServizioParteComune();
 			}
@@ -1995,7 +2026,7 @@ public class ZIPReadUtils  {
 			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_COORDINAMENTO+File.separatorChar)){
 				
 				if(servizioComposto==false){
-					throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non e' possibile fornire dei documenti di specifica di coordinamento per un accordo non registrato come servizio composto");
+					throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non è possibile fornire dei documenti di specifica di coordinamento per un accordo non registrato come servizio composto");
 				}
 				
 				processDocument(nomeFileSenzaAccordo, Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_COORDINAMENTO, archiveVersion, entryName, xml, 
@@ -2102,7 +2133,8 @@ public class ZIPReadUtils  {
 			String nomeFileSenzaAccordo,String tipoServizio,String nomeServizio,String versioneServizio,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione,
 			ArchiveVersion archiveVersion,
 			Map<String, IdentificativoDocumento> mapKeyDocumenti,
-			Map<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties) throws ProtocolException{
+			Map<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties,
+			Map<String, IDSoggetto> mapKeyFruitori) throws ProtocolException{
 		
 		Integer versioneServizioInt = null;
 		try{
@@ -2118,7 +2150,7 @@ public class ZIPReadUtils  {
 		Integer versioneKey = (versioneServizioInt!=null ? versioneServizioInt : -1 );
 		String key = ArchiveAccordoServizioParteSpecifica.buildKey(tipoSoggettoKey, nomeSoggettoKey, tipoServizio, nomeServizio, versioneKey);
 		
-		if(nomeFileSenzaAccordo.contains((File.separatorChar+""))==false){
+		if(!nomeFileSenzaAccordo.contains((File.separatorChar+""))){
 			
 			// definizione dell'accordo
 			try{
@@ -2202,7 +2234,7 @@ public class ZIPReadUtils  {
 			AccordoServizioParteSpecifica as = null;
 			if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+File.separatorChar)==false){
 				if(archivio.getAccordiServizioParteSpecifica().containsKey(key)==false){
-					throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non e' possibile fornire dei documenti di un accordo senza fornire la definizione xml dell'accordo");
+					throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non è possibile fornire dei documenti di un accordo senza fornire la definizione xml dell'accordo");
 				}
 				archiveASPS = archivio.getAccordiServizioParteSpecifica().get(key);
 				as = archiveASPS.getAccordoServizioParteSpecifica();
@@ -2302,17 +2334,40 @@ public class ZIPReadUtils  {
 				this.readAccordoServizioParteSpecifica_Fruitore_PortaDelegataAssociata(archivio, bin, xml, entryName, 
 						nomeFileSenzaAccordo,
 						tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, versioneServizio, 
-						validationDocuments, idCorrelazione);
+						validationDocuments, idCorrelazione,
+						mapKeyFruitori);
 			}
 			
 			// fruitori
 			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+File.separatorChar)){
-				this.readAccordoServizioParteSpecifica_Fruitore(archivio, bin, xml, entryName, 
-						nomeFileSenzaAccordo.substring((Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+File.separatorChar).length()),
-						tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, versioneServizio, 
-						validationDocuments, idCorrelazione,
-						archiveVersion,
-						mapKeyProtocolProperties);
+				
+				if(entryName.endsWith(".id")) {
+					String s = null;
+					try {
+						// comprendo tipo e nome soggetto
+						String tipoNomeSoggettoFruitore = nomeFileSenzaAccordo.substring(nomeFileSenzaAccordo.indexOf(File.separatorChar)+1,(nomeFileSenzaAccordo.length()-".id".length()));
+						if(tipoNomeSoggettoFruitore==null || "".equals(tipoNomeSoggettoFruitore) || !tipoNomeSoggettoFruitore.contains("_")){
+							throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+
+									"] deve essere presenta una ulteriore directory contenente la struttura <tipo>_<nome> che descrive il soggetto. Il nome utilizzato per la directory non e' conforme alla struttura attesa <tipo>_<nome>");
+						}
+						
+						s = new String(xml);
+						IDSoggetto idSoggetto = IDSoggetto.toIDSoggetto(s);
+						mapKeyFruitori.put(tipoNomeSoggettoFruitore, idSoggetto);
+					}catch(Exception e) {
+						throw new ProtocolException("Elemento ["+entryName+"] contiene degli identificativi del frutore ("+s+") non validi rispetto al pattern atteso (tipo/nome): "
+								+e.getMessage(),e);
+					}
+				}
+				else {		
+					this.readAccordoServizioParteSpecifica_Fruitore(archivio, bin, xml, entryName, 
+							nomeFileSenzaAccordo.substring((Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+File.separatorChar).length()),
+							tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, versioneServizio, 
+							validationDocuments, idCorrelazione,
+							archiveVersion,
+							mapKeyProtocolProperties,
+							mapKeyFruitori);
+				}
 			}
 			
 		}
@@ -2325,19 +2380,19 @@ public class ZIPReadUtils  {
 		
 		try{
 			if(archiveASPS==null){
-				throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non e' possibile fornire il mapping con la PA senza fornire la definizione xml dell'accordo di servizio parte specifica");
+				throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non è possibile fornire il mapping con la PA senza fornire la definizione xml dell'accordo di servizio parte specifica");
 			}
 			
 			String idLine = this.readLineId(xml);
 			if(idLine==null || "".equals(idLine)){
-				throw new Exception("id non contiene valori");
+				throw new ProtocolException("id non contiene valori");
 			}
 			if(idLine.endsWith("\n")) {
 				idLine = idLine.substring(0, idLine.length()-1);
 			}
 			String [] tmp = idLine.split(" ");
 			if(tmp.length<3) {
-				throw new Exception("Attesi almeno tre valori separati da spazio (nomeRegola nomePorta isDefault [descrizione])");
+				throw new ProtocolException("Attesi almeno tre valori separati da spazio (nomeRegola nomePorta isDefault [descrizione])");
 			}
 			String nomeRegola = tmp[0];
 			String nomePorta = tmp[1];
@@ -2345,7 +2400,7 @@ public class ZIPReadUtils  {
 			try {
 				isDefault = Boolean.parseBoolean(tmp[2]);
 			}catch(Exception e) {
-				throw new Exception("Attesi tre valori separati da spazio (nomeRegola nomePorta isDefault) in cui l'ultimo valore di tipo booleano: "+e.getMessage(),e);
+				throw new ProtocolException("Attesi tre valori separati da spazio (nomeRegola nomePorta isDefault) in cui l'ultimo valore di tipo booleano: "+e.getMessage(),e);
 			}
 			String descrizione = null;
 			if(tmp.length>3) {
@@ -2378,11 +2433,12 @@ public class ZIPReadUtils  {
 			String tipoSoggetto, String nomeSoggetto, String tipoServizio, String nomeServizio, String versioneServizio,
 			boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione,
 			ArchiveVersion archiveVersion,
-			Map<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties) throws ProtocolException{
+			Map<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties,
+			Map<String, IDSoggetto> mapKeyFruitori) throws ProtocolException{
 		
 		Integer versioneServizioInt = null;
 		try{
-			if(versioneServizio!=null && USE_VERSION_XML_BEAN.equals(versioneServizio)==false){
+			if(versioneServizio!=null && !USE_VERSION_XML_BEAN.equals(versioneServizio)){
 				versioneServizioInt = Integer.parseInt(versioneServizio);
 			}
 		}catch(Exception e){
@@ -2393,7 +2449,7 @@ public class ZIPReadUtils  {
 		String nomeSoggettoKey = (nomeSoggetto!=null ? nomeSoggetto : "" );
 		Integer versioneKey = (versioneServizioInt!=null ? versioneServizioInt : -1 );
 
-		if(nomeFileSenzaAccordo.contains((File.separatorChar+""))==false){
+		if(!nomeFileSenzaAccordo.contains((File.separatorChar+""))){
 			
 			// definizione dell'accordo
 			try{
@@ -2460,12 +2516,22 @@ public class ZIPReadUtils  {
 				}
 			}
 			
+			// provo a vedere se ho già gestito l'entry come chiave identificativo del soggetto
+			if(mapKeyFruitori!=null && mapKeyFruitori.containsKey(tipoNomeSoggettoFruitore)) {
+				IDSoggetto id = mapKeyFruitori.get(tipoNomeSoggettoFruitore);
+				if(id!=null) {
+					// converto dati identificativi del soggetto
+					tipoSoggettoFruitore = id.getTipo();
+					nomeSoggettoFruitore = id.getNome();
+				}
+			}
+			
 			// recupero archivio precedentemente letto
 			String keyFruitore = ArchiveFruitore.buildKey(tipoSoggettoFruitore, nomeSoggettoFruitore, tipoSoggettoKey, nomeSoggettoKey, tipoServizio, nomeServizio, versioneServizioInt);
 			ArchiveFruitore archiveFruitore = null;
 			Fruitore fruitore = null;
-			if(archivio.getAccordiFruitori().containsKey(keyFruitore)==false){
-				throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non e' possibile fornire delle proprietà di protocollo di un fruitore senza fornire la definizione xml del fruitore");
+			if(!archivio.getAccordiFruitori().containsKey(keyFruitore)){
+				throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non è possibile fornire delle proprietà di protocollo di un fruitore senza fornire la definizione xml del fruitore");
 			}
 			archiveFruitore = archivio.getAccordiFruitori().get(keyFruitore);
 			fruitore = archiveFruitore.getFruitore();
@@ -2497,7 +2563,8 @@ public class ZIPReadUtils  {
 	public void readAccordoServizioParteSpecifica_Fruitore_PortaDelegataAssociata(Archive archivio,InputStream bin,byte[]xml,String entryName,
 			String nomeFileSenzaAccordo,
 			String tipoSoggetto, String nomeSoggetto, String tipoServizio, String nomeServizio, String versioneServizio,
-			boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+			boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione,
+			Map<String, IDSoggetto> mapKeyFruitori) throws ProtocolException{
 		
 		// *** comprendo tipo e nome fruitore ****
 		
@@ -2509,7 +2576,7 @@ public class ZIPReadUtils  {
 		String nomeServizioMappingPD = nomeFileSenzaAccordo.substring(nomeFileSenzaAccordo.lastIndexOf(File.separatorChar),nomeFileSenzaAccordo.length());
 		String tipoNomeSoggettoFruitore = nomeFileSenzaAccordo.substring((Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+File.separatorChar).length(), 
 				nomeFileSenzaAccordo.length()-
-				//(File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_MAPPING_PD).length());
+				/**(File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_MAPPING_PD).length());*/
 				nomeServizioMappingPD.length());
 		if(tipoNomeSoggettoFruitore==null || "".equals(tipoNomeSoggettoFruitore) || !tipoNomeSoggettoFruitore.contains("_")){
 			throw new ProtocolException(prefixError+" Il nome utilizzato per la directory non e' conforme alla struttura attesa <tipo>_<nome>");
@@ -2540,6 +2607,15 @@ public class ZIPReadUtils  {
 			}
 		}
 		
+		// provo a vedere se ho già gestito l'entry come chiave identificativo del soggetto
+		if(mapKeyFruitori!=null && mapKeyFruitori.containsKey(tipoNomeSoggettoFruitore)) {
+			IDSoggetto id = mapKeyFruitori.get(tipoNomeSoggettoFruitore);
+			if(id!=null) {
+				// converto dati identificativi del soggetto
+				tipoSoggettoFruitore = id.getTipo();
+				nomeSoggettoFruitore = id.getNome();
+			}
+		}
 		
 		// *** leggo porta delegata associata ****
 		
@@ -2561,14 +2637,14 @@ public class ZIPReadUtils  {
 		try{
 			String idLine = this.readLineId(xml);
 			if(idLine==null || "".equals(idLine)){
-				throw new Exception("id non contiene valori");
+				throw new ProtocolException("id non contiene valori");
 			}
 			if(idLine.endsWith("\n")) {
 				idLine = idLine.substring(0, idLine.length()-1);
 			}
 			String [] tmp = idLine.split(" ");
 			if(tmp.length<3) {
-				throw new Exception("Attesi almeno tre valori separati da spazio (nomeRegola nomePorta isDefault [descrizione])");
+				throw new ProtocolException("Attesi almeno tre valori separati da spazio (nomeRegola nomePorta isDefault [descrizione])");
 			}
 			String nomeRegola = tmp[0];
 			String nomePorta = tmp[1];
@@ -2576,7 +2652,7 @@ public class ZIPReadUtils  {
 			try {
 				isDefault = Boolean.parseBoolean(tmp[2]);
 			}catch(Exception e) {
-				throw new Exception("Attesi tre valori separati da spazio (nomeRegola nomePorta isDefault) in cui l'ultimo valore di tipo booleano: "+e.getMessage(),e);
+				throw new ProtocolException("Attesi tre valori separati da spazio (nomeRegola nomePorta isDefault) in cui l'ultimo valore di tipo booleano: "+e.getMessage(),e);
 			}
 			String descrizione = null;
 			if(tmp.length>3) {
@@ -2585,8 +2661,8 @@ public class ZIPReadUtils  {
 			}
 			
 			String keyFruitore = ArchiveFruitore.buildKey(tipoSoggettoFruitoreKey, nomeSoggettoFruitoreKey, tipoSoggettoKey, nomeSoggettoKey, tipoServizio, nomeServizio, versioneKey);
-			if(archivio.getAccordiFruitori().containsKey(keyFruitore)==false){
-				throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non e' possibile fornire un mapping con la porta delegata senza fornire la definizione xml della fruizione");
+			if(!archivio.getAccordiFruitori().containsKey(keyFruitore)){
+				throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non è possibile fornire un mapping con la porta delegata senza fornire la definizione xml della fruizione");
 			}
 			
 			ArchiveFruitore archiveFruitore = archivio.getAccordiFruitori().get(keyFruitore);
@@ -2716,7 +2792,7 @@ public class ZIPReadUtils  {
 			// recupero archivio precedentemente letto
 			AccordoCooperazione ac = null;
 			if(archivio.getAccordiCooperazione().containsKey(key)==false){
-				throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non e' possibile fornire dei documenti di un accordo senza fornire la definizione xml dell'accordo");
+				throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non è possibile fornire dei documenti di un accordo senza fornire la definizione xml dell'accordo");
 			}
 			ac = archivio.getAccordiCooperazione().get(key).getAccordoCooperazione();
 			
@@ -2831,7 +2907,7 @@ public class ZIPReadUtils  {
 				}
 			}
 		}
-		throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non e' possibile fornire un documento di un accordo senza definirlo anche all'interno della definizione xml dell'accordo");
+		throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non è possibile fornire un documento di un accordo senza definirlo anche all'interno della definizione xml dell'accordo");
 	}
 	
 	
@@ -2905,7 +2981,7 @@ public class ZIPReadUtils  {
 				}
 			}
 		}
-		throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non e' possibile fornire una proprietà di protocollo senza definirlo anche all'interno della definizione xml ("+proprietario.name()+")");
+		throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non è possibile fornire una proprietà di protocollo senza definirlo anche all'interno della definizione xml ("+proprietario.name()+")");
 	}
 	
 	
@@ -2958,7 +3034,7 @@ public class ZIPReadUtils  {
 				return pp;
 			}
 		}
-		throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non e' possibile fornire una proprietà di protocollo senza definirlo anche all'interno della definizione xml ("+proprietario.name()+")");
+		throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non è possibile fornire una proprietà di protocollo senza definirlo anche all'interno della definizione xml ("+proprietario.name()+")");
 	}
 	
 	

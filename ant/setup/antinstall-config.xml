@@ -581,7 +581,7 @@
 	<hidden property="antinstaller_tiposoggetto_modipa" value="modipa"/>
         <hidden property="antinstaller_tiposoggetto_spcoop" value="spc"/>
         <hidden property="antinstaller_tiposoggetto_sdi" value="sdi"/>
-        <validated defaultValue="" property="antinstaller_nomesoggetto" displayText="Soggetto" regex="^[0-9A-Za-z]+$"/>
+        <validated defaultValue="" property="antinstaller_nomesoggetto" displayText="Soggetto" regex="^[0-9A-Za-z][\-A-Za-z0-9]*$"/>
         
     </page>
 

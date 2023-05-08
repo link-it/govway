@@ -149,30 +149,32 @@ public class IDSoggetto implements java.io.Serializable, Cloneable {
 	
 	@Override 
 	public String toString(){
-		String print = this.tipo + "/" + this.nome;
-		return print;
+		return this.tipo + "/" + this.nome;
 	}
 	
 	@Override 
 	public boolean equals(Object soggetto){
-		return _equals(soggetto, true);
+		return equalsEngine(soggetto, true);
 	}
-	protected boolean _equals(Object soggetto, boolean verifyClass){
+	protected boolean equalsEngine(Object soggetto, boolean verifyClass){
 		if(soggetto == null)
 			return false;
 		if(verifyClass) {
 			String objectClassName = soggetto.getClass().getName() + "";
-			if(objectClassName.equals(this.getClass().getName()) == false) {
+			if(!objectClassName.equals(this.getClass().getName())) {
 				return false;
 			}
 		}
 		IDSoggetto id = (IDSoggetto) soggetto;
+		return equasEngine(id);
+	}
+	private boolean equasEngine(IDSoggetto id) {
 		// TIPO
 		if(this.getTipo()==null){
 			if(id.getTipo()!=null)
 				return false;
 		}else{
-			if(this.getTipo().equals(id.getTipo())==false)
+			if(!this.getTipo().equals(id.getTipo()))
 				return false;
 		}
 		// NOME
@@ -180,7 +182,7 @@ public class IDSoggetto implements java.io.Serializable, Cloneable {
 			if(id.getNome()!=null)
 				return false;
 		}else{
-			if(this.getNome().equals(id.getNome())==false)
+			if(!this.getNome().equals(id.getNome()))
 				return false;
 		}
 		
@@ -198,13 +200,13 @@ public class IDSoggetto implements java.io.Serializable, Cloneable {
 		IDSoggetto clone = null;
 		try {
 			clone = (IDSoggetto) super.clone();
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			clone = new IDSoggetto();
 		}
 		
-		clone.setCodicePorta(this.codicePorta!=null ? new String(this.codicePorta) : null);
-		clone.setTipo(this.tipo!=null ? new String(this.tipo) : null);
-		clone.setNome(this.nome!=null ? new String(this.nome) : null);
+		clone.setCodicePorta(this.codicePorta!=null ? this.codicePorta+"" : null);
+		clone.setTipo(this.tipo!=null ? this.tipo+"" : null);
+		clone.setNome(this.nome!=null ? this.nome+"" : null);
 		
 		return clone;
 	}
@@ -218,10 +220,10 @@ public class IDSoggetto implements java.io.Serializable, Cloneable {
 		return sb.toString();
 	}
 	
-	public static IDSoggetto toIDSoggetto(String formatString) throws Exception {
+	public static IDSoggetto toIDSoggetto(String formatString) throws IDException {
 		String [] tmp = formatString.split("/");
 		if(tmp.length!=2) {
-			throw new Exception("Formato non supportato, attesi 2 valori, trovati "+tmp.length);
+			throw new IDException("Formato non supportato, attesi 2 valori, trovati "+tmp.length);
 		}
 		String tipo = tmp[0];
 		String nome = tmp[1];

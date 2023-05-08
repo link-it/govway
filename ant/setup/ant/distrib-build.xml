@@ -2127,31 +2127,31 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
  ]]></replacevalue>
 		</replace>
 
-		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="xalan-2.7.3.jar" value="xalan-2.7.3-rc5.gw.jar"/>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="xalan-2.7.3.jar" value="xalan-2.7.3.gw.jar"/>
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
-			<replacetoken><![CDATA[xalan-2.7.3-rc5.ja
+			<replacetoken><![CDATA[xalan-2.7.3.ja
  r]]></replacetoken>
-			<replacevalue><![CDATA[xalan-2.7.3-rc5.gw.jar
+			<replacevalue><![CDATA[xalan-2.7.3.gw.jar
  ]]></replacevalue>
 		</replace>
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
-			<replacetoken><![CDATA[xalan-2.7.3-rc5.j
+			<replacetoken><![CDATA[xalan-2.7.3.j
  ar]]></replacetoken>
-			<replacevalue><![CDATA[xalan-2.7.3-rc5.gw.jar
+			<replacevalue><![CDATA[xalan-2.7.3.gw.jar
  ]]></replacevalue>
 		</replace>		
 
-		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="serializer-2.7.3.jar" value="serializer-2.7.3-rc5.gw.jar"/>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="serializer-2.7.3.jar" value="serializer-2.7.3.gw.jar"/>
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
-			<replacetoken><![CDATA[serializer-2.7.3-rc5.ja
+			<replacetoken><![CDATA[serializer-2.7.3.ja
  r]]></replacetoken>
-			<replacevalue><![CDATA[serializer-2.7.3-rc5.gw.jar
+			<replacevalue><![CDATA[serializer-2.7.3.gw.jar
  ]]></replacevalue>
 		</replace>
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
-			<replacetoken><![CDATA[serializer-2.7.3-rc5.j
+			<replacetoken><![CDATA[serializer-2.7.3.j
  ar]]></replacetoken>
-			<replacevalue><![CDATA[serializer-2.7.3-rc5.gw.jar
+			<replacevalue><![CDATA[serializer-2.7.3.gw.jar
  ]]></replacevalue>
 		</replace>		
 

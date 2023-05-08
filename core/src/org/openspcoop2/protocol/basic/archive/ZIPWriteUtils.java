@@ -502,17 +502,23 @@ public class ZIPWriteUtils {
 					
 					// puo' esistere al massimo una definizione del soggetto, avendo fatto una group by logica.
 					ArchiveSoggetto archiveSoggetto = archiveListaOggettiSoggetto.getSoggetti().get(0);
+										
+					// Dati Identificativi
+					String datiIdentificativiSoggetto = idSoggetto.toFormatString();
+					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_SOGGETTI_FILE_NAME_ID;
+					zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
+					zipOut.write(datiIdentificativiSoggetto.getBytes());
 					
 					if(archiveSoggetto.getSoggettoRegistro()!=null){
 						
 						// protocolProperties
-						Map<String, byte[]> protocolPropertiesList = new HashMap<String, byte[]>();
+						Map<String, byte[]> protocolPropertiesList = new HashMap<>();
 						for (ProtocolProperty pp : archiveSoggetto.getSoggettoRegistro().getProtocolPropertyList()) {
 							if(pp.getByteFile()==null) {
 								continue;
 							}
 							if(pp.getFile()==null){
-								throw new Exception("ProtocolProperties ["+pp.getName()+"] senza nome file");
+								throw new ProtocolException("ProtocolProperties ["+pp.getName()+"] senza nome file");
 							}
 							ProprietariProtocolProperty tipologiaProprietarioProtocolProperty = ProprietariProtocolProperty.SOGGETTO;
 							String id = tipologiaProprietarioProtocolProperty.name()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+pp.getName(); // uso la property name che è univoca
@@ -563,13 +569,13 @@ public class ZIPWriteUtils {
 						ArchiveServizioApplicativo archiveServizioApplicativo = archiveListaOggettiSoggetto.getServiziApplicativi().get(i);
 						
 						// protocolProperties
-						Map<String, byte[]> protocolPropertiesList = new HashMap<String, byte[]>();
+						Map<String, byte[]> protocolPropertiesList = new HashMap<>();
 						for (org.openspcoop2.core.config.ProtocolProperty pp : archiveServizioApplicativo.getServizioApplicativo().getProtocolPropertyList()) {
 							if(pp.getByteFile()==null) {
 								continue;
 							}
 							if(pp.getFile()==null){
-								throw new Exception("ProtocolProperties ["+pp.getName()+"] senza nome file");
+								throw new ProtocolException("ProtocolProperties ["+pp.getName()+"] senza nome file");
 							}
 							ProprietariProtocolProperty tipologiaProprietarioProtocolProperty = ProprietariProtocolProperty.SERVIZIO_APPLICATIVO;
 							String id = tipologiaProprietarioProtocolProperty.name()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+pp.getName(); // uso la property name che è univoca
@@ -751,14 +757,14 @@ public class ZIPWriteUtils {
 						Fruitore fruitore = archiveFruitore.getFruitore();			
 						
 						// protocolProperties (devo rimuovere campo bytes)
-						Map<String, byte[]> protocolPropertiesList = new HashMap<String, byte[]>();
+						Map<String, byte[]> protocolPropertiesList = new HashMap<>();
 						if(fruitore.sizeProtocolPropertyList()>0) {
 							for (ProtocolProperty pp : fruitore.getProtocolPropertyList()) {
 								if(pp.getByteFile()==null) {
 									continue;
 								}
 								if(pp.getFile()==null){
-									throw new Exception("ProtocolProperties ["+pp.getName()+"] senza nome file");
+									throw new ProtocolException("ProtocolProperties ["+pp.getName()+"] senza nome file");
 								}
 								ProprietariProtocolProperty tipologiaProprietarioProtocolProperty = ProprietariProtocolProperty.FRUITORE;
 								String id = tipologiaProprietarioProtocolProperty.name()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+pp.getName(); // uso la property name che è univoca
@@ -773,6 +779,14 @@ public class ZIPWriteUtils {
 								Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+File.separatorChar+
 								ZIPUtils.convertNameToSistemaOperativoCompatible(archiveFruitore.getIdSoggettoFruitore().getTipo())+"_"+
 								ZIPUtils.convertNameToSistemaOperativoCompatible(archiveFruitore.getIdSoggettoFruitore().getNome());
+						
+						// Dati Identificativi fruitore
+						String datiIdentificativiFruitore = archiveFruitore.getIdSoggettoFruitore().toFormatString();
+						nomeFile = nomeFruitore+".id";
+						zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
+						zipOut.write(datiIdentificativiFruitore.getBytes());
+						
+						// fruitore.xml
 						nomeFile = nomeFruitore+".xml";
 						zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
 						this.cleanerOpenSPCoop2ExtensionsRegistry.clean(fruitore);
@@ -1030,49 +1044,49 @@ public class ZIPWriteUtils {
 			byte[]specificaConversazioneLogicaFruitore = accordo.getByteSpecificaConversazioneFruitore();
 			accordo.setSpecificaConversazioneFruitore(null);
 			
-			Map<String, byte[]> allegatiList = new HashMap<String, byte[]>();
+			Map<String, byte[]> allegatiList = new HashMap<>();
 			for (Documento documento : accordo.getAllegatoList()) {
 				if(documento.getFile()==null){
-					throw new Exception("Allegato senza nome file");
+					throw new ProtocolException("Allegato senza nome file");
 				}
 				if(documento.getByteContenuto()==null){
-					throw new Exception("Allegato["+documento.getFile()+"] senza contenuto");
+					throw new ProtocolException("Allegato["+documento.getFile()+"] senza contenuto");
 				}
 				if(documento.getTipo()==null){
-					throw new Exception("Allegato["+documento.getFile()+"] senza tipo");
+					throw new ProtocolException("Allegato["+documento.getFile()+"] senza tipo");
 				}
 				String id = documento.getTipo()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+documento.getFile();
 				allegatiList.put(id, documento.getByteContenuto());
 				documento.setByteContenuto(null);
 			}
 			
-			Map<String, byte[]> specificaSemiformaleList = new HashMap<String, byte[]>();
+			Map<String, byte[]> specificaSemiformaleList = new HashMap<>();
 			for (Documento documento : accordo.getSpecificaSemiformaleList()) {
 				if(documento.getFile()==null){
-					throw new Exception("SpecificaSemiformale senza nome file");
+					throw new ProtocolException("SpecificaSemiformale senza nome file");
 				}
 				if(documento.getByteContenuto()==null){
-					throw new Exception("SpecificaSemiformale["+documento.getFile()+"] senza contenuto");
+					throw new ProtocolException("SpecificaSemiformale["+documento.getFile()+"] senza contenuto");
 				}
 				if(documento.getTipo()==null){
-					throw new Exception("SpecificaSemiformale["+documento.getFile()+"] senza tipo");
+					throw new ProtocolException("SpecificaSemiformale["+documento.getFile()+"] senza tipo");
 				}
 				String id = documento.getTipo()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+documento.getFile();
 				specificaSemiformaleList.put(id, documento.getByteContenuto());
 				documento.setByteContenuto(null);
 			}
 			
-			Map<String, byte[]> specificaCoordinamentoList = new HashMap<String, byte[]>();
+			Map<String, byte[]> specificaCoordinamentoList = new HashMap<>();
 			if(servizioComposto){
 				for (Documento documento : accordo.getServizioComposto().getSpecificaCoordinamentoList()) {
 					if(documento.getFile()==null){
-						throw new Exception("SpecificaCoordinamento senza nome file");
+						throw new ProtocolException("SpecificaCoordinamento senza nome file");
 					}
 					if(documento.getByteContenuto()==null){
-						throw new Exception("SpecificaCoordinamento["+documento.getFile()+"] senza contenuto");
+						throw new ProtocolException("SpecificaCoordinamento["+documento.getFile()+"] senza contenuto");
 					}
 					if(documento.getTipo()==null){
-						throw new Exception("SpecificaCoordinamento["+documento.getFile()+"] senza tipo");
+						throw new ProtocolException("SpecificaCoordinamento["+documento.getFile()+"] senza tipo");
 					}
 					String id = documento.getTipo()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+documento.getFile();
 					specificaCoordinamentoList.put(id, documento.getByteContenuto());
@@ -1080,13 +1094,13 @@ public class ZIPWriteUtils {
 				}
 			}
 			
-			Map<String, byte[]> protocolPropertiesList = new HashMap<String, byte[]>();
+			Map<String, byte[]> protocolPropertiesList = new HashMap<>();
 			for (ProtocolProperty pp : accordo.getProtocolPropertyList()) {
 				if(pp.getByteFile()==null) {
 					continue;
 				}
 				if(pp.getFile()==null){
-					throw new Exception("ProtocolProperties ["+pp.getName()+"] senza nome file");
+					throw new ProtocolException("ProtocolProperties ["+pp.getName()+"] senza nome file");
 				}
 				ProprietariProtocolProperty tipologiaProprietarioProtocolProperty = ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE;
 				String id = tipologiaProprietarioProtocolProperty.name()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+pp.getName(); // uso la property name che è univoca
@@ -1100,7 +1114,7 @@ public class ZIPWriteUtils {
 							continue;
 						}
 						if(pp.getFile()==null){
-							throw new Exception("ProtocolProperties (azione:"+az.getNome()+") ["+pp.getName()+"] senza nome file");
+							throw new ProtocolException("ProtocolProperties (azione:"+az.getNome()+") ["+pp.getName()+"] senza nome file");
 						}
 						ProprietariProtocolProperty tipologiaProprietarioProtocolProperty = ProprietariProtocolProperty.AZIONE_ACCORDO;
 						String id = tipologiaProprietarioProtocolProperty.name()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+
@@ -1118,7 +1132,7 @@ public class ZIPWriteUtils {
 							continue;
 						}
 						if(pp.getFile()==null){
-							throw new Exception("ProtocolProperties (pt:"+pt.getNome()+") ["+pp.getName()+"] senza nome file");
+							throw new ProtocolException("ProtocolProperties (pt:"+pt.getNome()+") ["+pp.getName()+"] senza nome file");
 						}
 						ProprietariProtocolProperty tipologiaProprietarioProtocolProperty = ProprietariProtocolProperty.PORT_TYPE;
 						String id = tipologiaProprietarioProtocolProperty.name()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+
@@ -1134,7 +1148,7 @@ public class ZIPWriteUtils {
 									continue;
 								}
 								if(pp.getFile()==null){
-									throw new Exception("ProtocolProperties (op:"+op.getNome()+") ["+pp.getName()+"] senza nome file");
+									throw new ProtocolException("ProtocolProperties (op:"+op.getNome()+") ["+pp.getName()+"] senza nome file");
 								}
 								ProprietariProtocolProperty tipologiaProprietarioProtocolProperty = ProprietariProtocolProperty.OPERATION;
 								String id = tipologiaProprietarioProtocolProperty.name()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+
@@ -1154,7 +1168,7 @@ public class ZIPWriteUtils {
 							continue;
 						}
 						if(pp.getFile()==null){
-							throw new Exception("ProtocolProperties (resource:"+resource.getNome()+") ["+pp.getName()+"] senza nome file");
+							throw new ProtocolException("ProtocolProperties (resource:"+resource.getNome()+") ["+pp.getName()+"] senza nome file");
 						}
 						ProprietariProtocolProperty tipologiaProprietarioProtocolProperty = ProprietariProtocolProperty.RESOURCE;
 						String id = tipologiaProprietarioProtocolProperty.name()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+
@@ -1348,77 +1362,77 @@ public class ZIPWriteUtils {
 			byte[]wsdlInterfacciaImplementativaFruitore = accordo.getByteWsdlImplementativoFruitore();
 			accordo.setByteWsdlImplementativoFruitore(null);
 			
-			Map<String, byte[]> allegatiList = new HashMap<String, byte[]>();
+			Map<String, byte[]> allegatiList = new HashMap<>();
 			for (Documento documento : accordo.getAllegatoList()) {
 				if(documento.getFile()==null){
-					throw new Exception("Allegato senza nome file");
+					throw new ProtocolException("Allegato senza nome file");
 				}
 				if(documento.getByteContenuto()==null){
-					throw new Exception("Allegato["+documento.getFile()+"] senza contenuto");
+					throw new ProtocolException("Allegato["+documento.getFile()+"] senza contenuto");
 				}
 				if(documento.getTipo()==null){
-					throw new Exception("Allegato["+documento.getFile()+"] senza tipo");
+					throw new ProtocolException("Allegato["+documento.getFile()+"] senza tipo");
 				}
 				String id = documento.getTipo()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+documento.getFile();
 				allegatiList.put(id, documento.getByteContenuto());
 				documento.setByteContenuto(null);
 			}
 			
-			Map<String, byte[]> specificaSemiformaleList = new HashMap<String, byte[]>();
+			Map<String, byte[]> specificaSemiformaleList = new HashMap<>();
 			for (Documento documento : accordo.getSpecificaSemiformaleList()) {
 				if(documento.getFile()==null){
-					throw new Exception("SpecificaSemiformale senza nome file");
+					throw new ProtocolException("SpecificaSemiformale senza nome file");
 				}
 				if(documento.getByteContenuto()==null){
-					throw new Exception("SpecificaSemiformale["+documento.getFile()+"] senza contenuto");
+					throw new ProtocolException("SpecificaSemiformale["+documento.getFile()+"] senza contenuto");
 				}
 				if(documento.getTipo()==null){
-					throw new Exception("SpecificaSemiformale["+documento.getFile()+"] senza tipo");
+					throw new ProtocolException("SpecificaSemiformale["+documento.getFile()+"] senza tipo");
 				}
 				String id = documento.getTipo()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+documento.getFile();
 				specificaSemiformaleList.put(id, documento.getByteContenuto());
 				documento.setByteContenuto(null);
 			}
 			
-			Map<String, byte[]> specificaLivelloServizioList = new HashMap<String, byte[]>();
+			Map<String, byte[]> specificaLivelloServizioList = new HashMap<>();
 			for (Documento documento : accordo.getSpecificaLivelloServizioList()) {
 				if(documento.getFile()==null){
-					throw new Exception("SpecificaLivelloServizio senza nome file");
+					throw new ProtocolException("SpecificaLivelloServizio senza nome file");
 				}
 				if(documento.getByteContenuto()==null){
-					throw new Exception("SpecificaLivelloServizio["+documento.getFile()+"] senza contenuto");
+					throw new ProtocolException("SpecificaLivelloServizio["+documento.getFile()+"] senza contenuto");
 				}
 				if(documento.getTipo()==null){
-					throw new Exception("SpecificaLivelloServizio["+documento.getFile()+"] senza tipo");
+					throw new ProtocolException("SpecificaLivelloServizio["+documento.getFile()+"] senza tipo");
 				}
 				String id = documento.getTipo()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+documento.getFile();
 				specificaLivelloServizioList.put(id, documento.getByteContenuto());
 				documento.setByteContenuto(null);
 			}
 			
-			Map<String, byte[]> specificaSicurezzaList = new HashMap<String, byte[]>();
+			Map<String, byte[]> specificaSicurezzaList = new HashMap<>();
 			for (Documento documento : accordo.getSpecificaSicurezzaList()) {
 				if(documento.getFile()==null){
-					throw new Exception("SpecificaSicurezza senza nome file");
+					throw new ProtocolException("SpecificaSicurezza senza nome file");
 				}
 				if(documento.getByteContenuto()==null){
-					throw new Exception("SpecificaSicurezza["+documento.getFile()+"] senza contenuto");
+					throw new ProtocolException("SpecificaSicurezza["+documento.getFile()+"] senza contenuto");
 				}
 				if(documento.getTipo()==null){
-					throw new Exception("SpecificaSicurezza["+documento.getFile()+"] senza tipo");
+					throw new ProtocolException("SpecificaSicurezza["+documento.getFile()+"] senza tipo");
 				}
 				String id = documento.getTipo()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+documento.getFile();
 				specificaSicurezzaList.put(id, documento.getByteContenuto());
 				documento.setByteContenuto(null);
 			}
 			
-			Map<String, byte[]> protocolPropertiesList = new HashMap<String, byte[]>();
+			Map<String, byte[]> protocolPropertiesList = new HashMap<>();
 			for (ProtocolProperty pp : accordo.getProtocolPropertyList()) {
 				if(pp.getByteFile()==null) {
 					continue;
 				}
 				if(pp.getFile()==null){
-					throw new Exception("ProtocolProperties ["+pp.getName()+"] senza nome file");
+					throw new ProtocolException("ProtocolProperties ["+pp.getName()+"] senza nome file");
 				}
 				ProprietariProtocolProperty tipologiaProprietarioProtocolProperty = ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA;
 				String id = tipologiaProprietarioProtocolProperty.name()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+pp.getName(); // uso la property name che è univoca
@@ -1620,45 +1634,45 @@ public class ZIPWriteUtils {
 			
 			// raccolta elementi
 			
-			Map<String, byte[]> allegatiList = new HashMap<String, byte[]>();
+			Map<String, byte[]> allegatiList = new HashMap<>();
 			for (Documento documento : accordo.getAllegatoList()) {
 				if(documento.getFile()==null){
-					throw new Exception("Allegato senza nome file");
+					throw new ProtocolException("Allegato senza nome file");
 				}
 				if(documento.getByteContenuto()==null){
-					throw new Exception("Allegato["+documento.getFile()+"] senza contenuto");
+					throw new ProtocolException("Allegato["+documento.getFile()+"] senza contenuto");
 				}
 				if(documento.getTipo()==null){
-					throw new Exception("Allegato["+documento.getFile()+"] senza tipo");
+					throw new ProtocolException("Allegato["+documento.getFile()+"] senza tipo");
 				}
 				String id = documento.getTipo()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+documento.getFile();
 				allegatiList.put(id, documento.getByteContenuto());
 				documento.setByteContenuto(null);
 			}
 			
-			Map<String, byte[]> specificaSemiformaleList = new HashMap<String, byte[]>();
+			Map<String, byte[]> specificaSemiformaleList = new HashMap<>();
 			for (Documento documento : accordo.getSpecificaSemiformaleList()) {
 				if(documento.getFile()==null){
-					throw new Exception("SpecificaSemiformale senza nome file");
+					throw new ProtocolException("SpecificaSemiformale senza nome file");
 				}
 				if(documento.getByteContenuto()==null){
-					throw new Exception("SpecificaSemiformale["+documento.getFile()+"] senza contenuto");
+					throw new ProtocolException("SpecificaSemiformale["+documento.getFile()+"] senza contenuto");
 				}
 				if(documento.getTipo()==null){
-					throw new Exception("SpecificaSemiformale["+documento.getFile()+"] senza tipo");
+					throw new ProtocolException("SpecificaSemiformale["+documento.getFile()+"] senza tipo");
 				}
 				String id = documento.getTipo()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+documento.getFile();
 				specificaSemiformaleList.put(id, documento.getByteContenuto());
 				documento.setByteContenuto(null);
 			}
 			
-			Map<String, byte[]> protocolPropertiesList = new HashMap<String, byte[]>();
+			Map<String, byte[]> protocolPropertiesList = new HashMap<>();
 			for (ProtocolProperty pp : accordo.getProtocolPropertyList()) {
 				if(pp.getByteFile()==null) {
 					continue;
 				}
 				if(pp.getFile()==null){
-					throw new Exception("ProtocolProperties ["+pp.getName()+"] senza nome file");
+					throw new ProtocolException("ProtocolProperties ["+pp.getName()+"] senza nome file");
 				}
 				ProprietariProtocolProperty tipologiaProprietarioProtocolProperty = ProprietariProtocolProperty.ACCORDO_COOPERAZIONE;
 				String id = tipologiaProprietarioProtocolProperty.name()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+pp.getName(); // uso la property name che è univoca

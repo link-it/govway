@@ -422,7 +422,7 @@ public class AllarmiDriverUtils {
 			IExpression expr = allarmiServiceSearch.newExpression();
 			
 			AllarmeHistoryFieldConverter converter = new AllarmeHistoryFieldConverter(tipoDB);
-			CustomField cf = new CustomField("idAllarme", Long.class, "idAllarme", converter.toTable(AllarmeHistory.model()));
+			CustomField cf = new CustomField("id_allarme", Long.class, "id_allarme", converter.toTable(AllarmeHistory.model()));
 			expr.equals(cf, idAllarme);
 			
 //			boolean addAnd = false;
