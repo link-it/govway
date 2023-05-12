@@ -187,16 +187,16 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 		}
 	}
 	
-	static void updateKeystoreConfig(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties, boolean checkRidefinisci, 
+	static boolean updateKeystoreConfig(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties, boolean checkRidefinisci, 
 			boolean hideSceltaArchivioFilePath, boolean addHiddenSubjectIssuer,
 			boolean requiredValue, ConfigurazioneMultitenant configurazioneMultitenant,
 			boolean rest) throws ProtocolException {
-		updateKeystoreConfig(consoleConfiguration, properties, checkRidefinisci, false, 
+		return updateKeystoreConfig(consoleConfiguration, properties, checkRidefinisci, false, 
 				hideSceltaArchivioFilePath, addHiddenSubjectIssuer,
 				requiredValue, configurazioneMultitenant,
 				rest);
 	}
-	static void updateKeystoreConfig(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties, boolean checkRidefinisci, boolean checkRidefinisciOauth, 
+	static boolean updateKeystoreConfig(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties, boolean checkRidefinisci, boolean checkRidefinisciOauth, 
 			boolean hideSceltaArchivioFilePath, boolean addHiddenSubjectIssuer,
 			boolean requiredValue, ConfigurazioneMultitenant configurazioneMultitenant,
 			boolean rest) throws ProtocolException {
@@ -599,6 +599,8 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 			keyPairAlgorithmItemItemValue!=null && keyPairAlgorithmItemItemValue.getValue()==null) {
 			keyPairAlgorithmItemItemValue.setValue(ModIConsoleCostanti.MODIPA_KEYSTORE_KEY_ALGORITHM_DEFAULT_VALUE);
 		}
+		
+		return ridefinisci;
 	}
 	
 	public static CertificateInfo readKeystoreConfig(ProtocolProperties properties, boolean onlyCert) throws Exception {
@@ -752,11 +754,20 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 				ConsoleItemType.SELECT,
 				id, 
 				label);
+		if(keystoreFruizioneOauthNoSicurezzaMessaggio) {
+			modeItem.addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_STORE_MODE_LABEL_UNDEFINED,
+					ModIConsoleCostanti.MODIPA_PROFILO_MODE_VALUE_UNDEFINED);
+		}
 		modeItem.addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_STORE_MODE_LABEL_DEFAULT,
 				ModIConsoleCostanti.MODIPA_PROFILO_MODE_VALUE_DEFAULT);
 		modeItem.addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_STORE_MODE_LABEL_RIDEFINISCI,
 				ModIConsoleCostanti.MODIPA_PROFILO_MODE_VALUE_RIDEFINISCI);
-		modeItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE_DEFAULT_VALUE);
+		if(keystoreFruizioneOauthNoSicurezzaMessaggio) {
+			modeItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_OAUTH_MODE_DEFAULT_VALUE);
+		}
+		else {
+			modeItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE_DEFAULT_VALUE);
+		}
 		modeItem.setReloadOnChange(true);
 		if( (ssl && !x5u) || keystoreFruizione) {
 			modeItem.setType(ConsoleItemType.HIDDEN);
@@ -916,6 +927,7 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 							ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_ID);
 		typeItem.setType(ridefinisci ? ConsoleItemType.SELECT : ConsoleItemType.HIDDEN);
 		if(ridefinisci) {
+			boolean reloadOnChange = false;
 			if(ssl) {
 				((StringConsoleItem)typeItem).addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE_LABEL_JKS,
 						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE_VALUE_JKS);
@@ -927,12 +939,13 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 				if(addTrustStoreTypesChiaviPubbliche) {
 					((StringConsoleItem)typeItem).addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_LABEL_JWK,
 							ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_VALUE_JWK);
-					
+					reloadOnChange=true;
 				}
 				if(remoteStoreConfig!=null && !remoteStoreConfig.isEmpty()) {
 					for (RemoteStoreConfig rsc : remoteStoreConfig) {
 						((StringConsoleItem)typeItem).addLabelValue(rsc.getStoreLabel(),
 								rsc.getStoreName());
+						reloadOnChange=true;
 					}
 				}
 			}
@@ -947,7 +960,7 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 				}
 			}
 			else {
-				typeItem.setReloadOnChange(false);
+				typeItem.setReloadOnChange(reloadOnChange);
 			}
 			
 			StringProperty typeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, 

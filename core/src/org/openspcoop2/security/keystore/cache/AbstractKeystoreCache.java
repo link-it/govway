@@ -127,21 +127,7 @@ public abstract class AbstractKeystoreCache<T extends Serializable> {
 		}
 		return o;
 	}
-	
-	public void removeObjectFromCache(String keyParam) throws SecurityException {
-		String keyCache = this.getPrefixKey() + keyParam;
-		if(this.cacheJCS!=null) {
-			try {
-				this.cacheJCS.remove(keyCache);
-			}catch(Exception e) {
-				throw new SecurityException(e.getMessage(),e);
-			}
-		}
-		else {
-			this.cacheMap.remove(keyCache);
-		}
-	}
-	
+		
 	private T initKeystore(String keyParam,Object ... params) throws SecurityException{
 		
 		this.lockCache.acquireThrowRuntime("initKeystore");
@@ -194,6 +180,35 @@ public abstract class AbstractKeystoreCache<T extends Serializable> {
 			this.lockCache.release("removeKeystore");
 		}
 		
+	}
+	public void removeObjectFromCache(String keyParam) throws SecurityException {
+		String keyCache = this.getPrefixKey() + keyParam;
+		removeKeystore(keyCache);
+	}
+	
+	public List<String> keys() throws SecurityException{
+		List<String> keys = new ArrayList<>();
+		this.lockCache.acquireThrowRuntime("keys");
+		try {
+			if(this.cacheJCS!=null) {
+				try {
+					List<String> l = this.cacheJCS.keys();
+					if(l!=null && !l.isEmpty()) {
+						keys.addAll(l);
+					}
+				}catch(Exception e) {
+					throw new SecurityException(e.getMessage(),e);
+				}
+			}
+			else {
+				if(!this.cacheMap.isEmpty()) {
+					keys.addAll(this.cacheMap.keySet());
+				}
+			}
+		}finally {
+			this.lockCache.release("keys");
+		}
+		return keys;
 	}
 	
 	private T estraiKeystore(KeystoreCacheEntry<T> entry) throws SecurityException{

@@ -1,0 +1,22 @@
+diff --git ant/setup/deploy/resources/core/govway_local.properties ant/setup/deploy/resources/core/govway_local.properties
+index c6e8b32503..231f1a9f20 100644
+--- ant/setup/deploy/resources/core/govway_local.properties
++++ ant/setup/deploy/resources/core/govway_local.properties
+@@ -127,6 +127,8 @@ org.openspcoop2.pdd.services.pd.gestoreCredenziali.modalita=atLeastOne
+ #org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.certificate.truststore.crls=PATH1.crl,PATH2.crl...
+ # Policy OCSP utilizzata per verificare i certificati ricevuti
+ #org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.certificate.truststore.ocspPolicy=INDICARE_TIPO_POLICY
++# Se la proprietà seguente viene valorizzata, il valore indicato specifica una keyword utilizzata dal web server di frontend per indicare che non è presente alcun certificato client
++#org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.certificate.none=
+ #
+ # L'identità del chiamante può essere fornita dal WebServer anche come informazione 'principal' tramite il seguente header:
+ #org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.principal=X-Principal
+@@ -176,6 +178,8 @@ org.openspcoop2.pdd.services.pa.gestoreCredenziali.modalita=atLeastOne
+ #org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.truststore.crls=PATH1.crl,PATH2.crl...
+ # Policy OCSP utilizzata per verificare i certificati ricevuti
+ #org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.truststore.ocspPolicy=INDICARE_TIPO_POLICY
++# Se la proprietà seguente viene valorizzata, il valore indicato specifica una keyword utilizzata dal web server di frontend per indicare che non è presente alcun certificato client
++#org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.none=
+ #
+ # L'identità del chiamante può essere fornita dal WebServer anche come informazione 'principal' tramite il seguente header:
+ #org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.principal=X-Principal

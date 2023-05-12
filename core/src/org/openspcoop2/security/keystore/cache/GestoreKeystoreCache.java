@@ -21,6 +21,7 @@
 package org.openspcoop2.security.keystore.cache;
 
 import java.security.cert.X509Certificate;
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
@@ -485,6 +486,12 @@ public class GestoreKeystoreCache {
 		if(GestoreKeystoreCache.cacheEnabled) {
 			GestoreKeystoreCache.remoteStoreCache.removeObjectFromCache(keyCache);
 		}
+	}
+	public static List<String> keysRemoteStore() throws SecurityException{
+		if(GestoreKeystoreCache.cacheEnabled) {
+			return GestoreKeystoreCache.remoteStoreCache.keys();
+		}
+		return null;
 	}
 	
 	

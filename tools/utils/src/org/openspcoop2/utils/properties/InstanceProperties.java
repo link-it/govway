@@ -49,24 +49,24 @@ public abstract class InstanceProperties {
 	private CollectionProperties propertiesRidefinitoFile;
 	private PropertiesReader propertiesRidefinitoObject;
 	protected Logger log;
-	private String OPENSPCOOP2_LOCAL_HOME;
+	private String openspcoop2LocalHome;
 	private boolean readCallsNotSynchronized;
 	
-	public InstanceProperties(String OPENSPCOOP2_LOCAL_HOME,Properties propertiesOriginale,Logger log) throws Exception{
-		this(OPENSPCOOP2_LOCAL_HOME, propertiesOriginale, log, true);
+	protected InstanceProperties(String openspcoop2LocalHome,Properties propertiesOriginale,Logger log) throws UtilsException{
+		this(openspcoop2LocalHome, propertiesOriginale, log, true);
 	}
-	public InstanceProperties(String OPENSPCOOP2_LOCAL_HOME,Properties propertiesOriginale,Logger log, boolean readCallsNotSynchronized) throws Exception{
+	protected InstanceProperties(String openspcoop2LocalHome,Properties propertiesOriginale,Logger log, boolean readCallsNotSynchronized) throws UtilsException{
 		this.propertiesOriginale = new PropertiesReader(propertiesOriginale,readCallsNotSynchronized);
 		this.log = log;
 		if(this.log==null){
 			this.log = LoggerWrapperFactory.getLogger(InstanceProperties.class);
 		}
-		this.OPENSPCOOP2_LOCAL_HOME = OPENSPCOOP2_LOCAL_HOME;
+		this.openspcoop2LocalHome = openspcoop2LocalHome;
 		this.readCallsNotSynchronized = readCallsNotSynchronized;
 	}
 	
 	public void setLocalFileImplementation(String variable,String path,String confDirectory){
-		CollectionProperties prop = PropertiesUtilities.searchLocalImplementation(this.OPENSPCOOP2_LOCAL_HOME,this.log, variable, path, confDirectory, this.readCallsNotSynchronized);
+		CollectionProperties prop = PropertiesUtilities.searchLocalImplementation(this.openspcoop2LocalHome,this.log, variable, path, confDirectory, this.readCallsNotSynchronized);
 		if(prop!=null)
 			this.propertiesRidefinitoFile = prop;
 	}

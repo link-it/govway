@@ -46,7 +46,12 @@ import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.utils.ControlloTrafficoDriverUtils;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.DBMappingUtils;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPorteApplicative;
@@ -365,6 +370,37 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			throw new RegistryException(NOT_IMPLEMENTED);
 		}
 	}
+	
+	@Override
+	public List<MappingFruizionePortaDelegata> getMappingFruizionePortaDelegataList(IDSoggetto idFruitore, IDServizio idServizio) throws RegistryException{
+		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
+			
+			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
+			Connection con = null;
+			try {
+				con = driver.getConnection("getMappingFruizionePortaDelegataList");
+				
+				return DBMappingUtils.mappingFruizionePortaDelegataList(con, driver.getTipoDB(), idFruitore, idServizio, false);
+				
+			}
+			catch(Exception e) {
+				throw new RegistryException(e.getMessage(),e);
+			}
+			finally {
+				try {
+					if(con!=null) {
+						driver.releaseConnection(con);
+					}
+				}catch(Exception eClose) {
+					// close
+				}
+			}
+			
+		}
+		else {
+			throw new RegistryException(NOT_IMPLEMENTED);
+		}
+	}
 		
 	
 	
@@ -471,6 +507,37 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 				org.openspcoop2.core.commons.Search search = new Search(true);
 				return AllarmiDriverUtils.allarmiList(search, RuoloPorta.APPLICATIVA, idPortaApplicativa.getNome(),
 						con, this.log, driver.getTipoDB());
+				
+			}
+			catch(Exception e) {
+				throw new RegistryException(e.getMessage(),e);
+			}
+			finally {
+				try {
+					if(con!=null) {
+						driver.releaseConnection(con);
+					}
+				}catch(Exception eClose) {
+					// close
+				}
+			}
+			
+		}
+		else {
+			throw new RegistryException(NOT_IMPLEMENTED);
+		}
+	}
+	
+	@Override
+	public List<MappingErogazionePortaApplicativa> getMappingErogazionePortaApplicativaList(IDServizio idServizio) throws RegistryException{
+		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
+			
+			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
+			Connection con = null;
+			try {
+				con = driver.getConnection("getMappingErogazionePortaApplicativaList");
+				
+				return DBMappingUtils.mappingErogazionePortaApplicativaList(con, driver.getTipoDB(), idServizio, false);
 				
 			}
 			catch(Exception e) {

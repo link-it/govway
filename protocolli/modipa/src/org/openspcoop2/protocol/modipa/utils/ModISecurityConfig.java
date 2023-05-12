@@ -32,6 +32,7 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -41,6 +42,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
@@ -62,6 +64,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.message.constants.SignatureDigestAlgorithm;
@@ -121,6 +124,8 @@ public class ModISecurityConfig {
 	
 	private String tokenKid;
 	private String tokenClientId;
+
+	
 	
 	public ModISecurityConfig(OpenSPCoop2Message msg, Context context, IProtocolFactory<?> protocolFactory, IState state, RequestInfo requestInfo,
 			IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica aspsParam, ServizioApplicativo sa, 
@@ -593,6 +598,32 @@ public class ModISecurityConfig {
 					this.multipleHeaderUseJtiAuthorizationAsIdMessaggio = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_FILTRO_DUPLICATI_VALUE_AUTHORIZATION.equals(multipleHeaderUseJtiAuthorizationAsIdMessaggioPropRegistry);
 				}
 				
+				String keystoreMode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this.listProtocolPropertiesInternal, 
+						CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE);
+				boolean keystoreRidefinito = CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(keystoreMode);
+				
+				/* OAuth - ClientId */
+				
+				if(this.tokenClientId==null) {
+					if(keystoreRidefinito) {
+						this.tokenClientId = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this.listProtocolPropertiesInternal, ModICostanti.MODIPA_PROFILO_SICUREZZA_OAUTH_IDENTIFICATIVO);
+					}
+					else {
+						this.tokenClientId = modiProperties.getSicurezzaMessaggioCertificatiKeyClientId();
+					}
+				}
+				
+				/* OAuth - KID */
+				
+				if(this.tokenKid==null) {
+					if(keystoreRidefinito) {
+						this.tokenKid = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this.listProtocolPropertiesInternal, ModICostanti.MODIPA_PROFILO_SICUREZZA_OAUTH_KID);
+					}
+					else {
+						this.tokenKid = modiProperties.getSicurezzaMessaggioCertificatiKeyKid();
+					}
+				}
+				
 			}
 		}
 		else {
@@ -815,12 +846,107 @@ public class ModISecurityConfig {
 		}
 	}
 	
+	
+	public ModISecurityConfig(OpenSPCoop2Message msg, IProtocolFactory<?> protocolFactory, IState state, RequestInfo requestInfo, 
+			boolean fruizione, boolean request,
+			PortaApplicativa paDefault) throws ProtocolException {
+
+		// METODO USATO IN VALIDAZIONE SEMANTICA
+		
+		try {
+			
+			if(!fruizione && request) {
+					
+				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(paDefault.getServizio().getTipo(), paDefault.getServizio().getNome(),
+						paDefault.getTipoSoggettoProprietario(), paDefault.getNomeSoggettoProprietario(), 
+						paDefault.getServizio().getVersione());
+				
+				IRegistryReader registryReader = protocolFactory.getCachedRegistryReader(state, requestInfo);
+				
+				AccordoServizioParteSpecifica asps = registryReader.getAccordoServizioParteSpecifica(idServizio);
+				
+				this.listProtocolPropertiesInternal = ModIPropertiesUtils.getProtocolProperties(false, null, asps);
+				
+				if(this.listProtocolPropertiesInternal==null || this.listProtocolPropertiesInternal.isEmpty()) {
+					throw new ProtocolException("Configurazione della sicurezza incompleta");
+				}
+				
+				this.audience = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this.listProtocolPropertiesInternal, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE);
+
+				if(this.audience==null) {
+					
+					IConfigIntegrationReader configReader = protocolFactory.getCachedConfigIntegrationReader(state, requestInfo);
+					
+					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+					AccordoServizioParteComune aspc = registryReader.getAccordoServizioParteComune(idAccordo);
+					boolean rest = org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(aspc.getServiceBinding());
+
+					this.audience =  buildDefaultAudience(msg, protocolFactory, aspc, asps,
+							configReader, rest,
+							requestInfo, paDefault);
+				}
+				if(this.audience==null) {
+					throw new ProtocolException("Audience undefined");
+				}
+				
+			}
+			
+		}catch(Exception e) {
+			throw new ProtocolException(e);
+		}
+		
+	}
+	private String buildDefaultAudience(OpenSPCoop2Message msg, IProtocolFactory<?> protocolFactory, AccordoServizioParteComune aspc, AccordoServizioParteSpecifica asps,
+			IConfigIntegrationReader configReader, boolean rest,
+			RequestInfo requestInfo, PortaApplicativa paDefault) throws ProtocolException {
+		
+		try {
+		
+			List<String> tags = new ArrayList<>();
+			if(aspc!=null && aspc.getGruppi()!=null && aspc.getGruppi().sizeGruppoList()>0) {
+				for (int i = 0; i < aspc.getGruppi().sizeGruppoList(); i++) {
+					tags.add(aspc.getGruppi().getGruppo(i).getNome());
+				}
+			}
+			
+			CanaliConfigurazione canaliConfigurazione = configReader.getCanaliConfigurazione();
+			String canaleApi = null;
+			if(aspc!=null) {
+				canaleApi = aspc.getCanale();
+			}
+			String canalePorta = paDefault!=null ? paDefault.getCanale() : null;
+			String canale = CanaliUtils.getCanale(canaliConfigurazione, canaleApi, canalePorta);
+			
+			String nomePorta = null;
+			if(paDefault!=null) {
+				nomePorta = paDefault.getNome();
+			}
+			else {
+				nomePorta = msg!=null ? msg.getTransportRequestContext().getInterfaceName() : null;
+			}
+			
+			UrlInvocazioneAPI urlInvocazioneApi = ConfigurazionePdDManager.getInstance().getConfigurazioneUrlInvocazione(protocolFactory, 
+					RuoloContesto.PORTA_APPLICATIVA,
+					rest ? org.openspcoop2.message.constants.ServiceBinding.REST : org.openspcoop2.message.constants.ServiceBinding.SOAP,
+							nomePorta,
+							new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()),
+							tags, canale, 
+							requestInfo);		 
+			String prefixGatewayUrl = urlInvocazioneApi.getBaseUrl();
+			String contesto = urlInvocazioneApi.getContext();
+			return Utilities.buildUrl(prefixGatewayUrl, contesto);
+			
+		}catch(Exception e) {
+			throw new ProtocolException(e);
+		}
+	}
+	
 	public ModISecurityConfig(OpenSPCoop2Message msg, Context context, IProtocolFactory<?> protocolFactory, IState state, RequestInfo requestInfo, IDSoggetto soggettoFruitore, 
 			AccordoServizioParteComune aspc, AccordoServizioParteSpecifica aspsParam, ServizioApplicativo sa, boolean rest, boolean fruizione, boolean request,
 			Boolean multipleHeaderAuthorizationConfig, boolean kidMode,
 			String patternCorniceSicurezza, String schemaCorniceSicurezza) throws ProtocolException {
 		
-		// METODO USATO IN VALIDAZIONE
+		// METODO USATO IN VALIDAZIONE SINTATTICA
 		
 		ModIProperties modiProperties = ModIProperties.getInstance();
 		
@@ -899,7 +1025,7 @@ public class ModISecurityConfig {
 				
 				IConfigIntegrationReader configReader = protocolFactory.getCachedConfigIntegrationReader(state, requestInfo);
 				
-				PortaApplicativa pa = null;
+				PortaApplicativa paDefault = null;
 				if(msg!=null) {
 					Object nomePortaInvocataObject = msg.getContextProperty(CostantiPdD.NOME_PORTA_INVOCATA);
 					String nomePorta = null;
@@ -909,11 +1035,11 @@ public class ModISecurityConfig {
 					if(nomePorta==null && context!=null && context.containsKey(CostantiPdD.NOME_PORTA_INVOCATA)) {
 						nomePorta = (String) context.getObject(CostantiPdD.NOME_PORTA_INVOCATA);
 					}
-					if(nomePorta==null && requestInfo!=null && requestInfo.getProtocolContext()!=null) {
-						nomePorta = requestInfo.getProtocolContext().getInterfaceName();
+					if(nomePorta==null && requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
+						nomePorta = requestInfo.getProtocolContext().getInterfaceName(); // se non e' presente 'NOME_PORTA_INVOCATA' significa che non e' stato invocato un gruppo specifico
 					}
 					if(nomePorta!=null) {
-						pa = getPortaApplicativa(nomePorta, configReader);
+						paDefault = getPortaApplicativa(nomePorta, configReader);
 					}
 				}
 						
@@ -930,31 +1056,10 @@ public class ModISecurityConfig {
 				}
 				if(this.audience==null) {
 					
-					List<String> tags = new ArrayList<>();
-					if(aspc!=null && aspc.getGruppi()!=null && aspc.getGruppi().sizeGruppoList()>0) {
-						for (int i = 0; i < aspc.getGruppi().sizeGruppoList(); i++) {
-							tags.add(aspc.getGruppi().getGruppo(i).getNome());
-						}
-					}
+					this.audience =  buildDefaultAudience(msg, protocolFactory, aspc, aspsParam,
+							configReader, rest,
+							requestInfo, paDefault);
 					
-					CanaliConfigurazione canaliConfigurazione = configReader.getCanaliConfigurazione();
-					String canaleApi = null;
-					if(aspc!=null) {
-						canaleApi = aspc.getCanale();
-					}
-					String canalePorta = pa!=null ? pa.getCanale() : null;
-					String canale = CanaliUtils.getCanale(canaliConfigurazione, canaleApi, canalePorta);
-					
-					UrlInvocazioneAPI urlInvocazioneApi = ConfigurazionePdDManager.getInstance().getConfigurazioneUrlInvocazione(protocolFactory, 
-							RuoloContesto.PORTA_APPLICATIVA,
-							rest ? org.openspcoop2.message.constants.ServiceBinding.REST : org.openspcoop2.message.constants.ServiceBinding.SOAP,
-									msg!=null ? msg.getTransportRequestContext().getInterfaceName() : null,
-									new IDSoggetto(aspsParam.getTipoSoggettoErogatore(), aspsParam.getNomeSoggettoErogatore()),
-									tags, canale, 
-									requestInfo);		 
-					String prefixGatewayUrl = urlInvocazioneApi.getBaseUrl();
-					String contesto = urlInvocazioneApi.getContext();
-					this.audience = Utilities.buildUrl(prefixGatewayUrl, contesto);
 				}
 				if(this.audience==null) {
 					throw new ProtocolException("Audience undefined");
@@ -962,10 +1067,19 @@ public class ModISecurityConfig {
 				
 				
 				/* Cornice Sicurezza */
+				
+				PortaApplicativa paInvocata = null;
+				if(requestInfo!=null && requestInfo.getProtocolContext()!=null) {
+					String nomePorta = requestInfo.getProtocolContext().getInterfaceName();
+					if(nomePorta!=null) {
+						paInvocata = getPortaApplicativa(nomePorta, configReader);
+					}
+				}
+				
 				if(patternCorniceSicurezza!=null && !CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD.equals(patternCorniceSicurezza) && schemaCorniceSicurezza!=null) {
 					readCorniceSicurezzaSchemaAudience(schemaCorniceSicurezza);
 					
-					readCorniceSicurezzaSchemaClaimsReadPAProperties(modiProperties, schemaCorniceSicurezza, pa);
+					readCorniceSicurezzaSchemaClaimsReadPAProperties(modiProperties, schemaCorniceSicurezza, paInvocata);
 				}
 			}
 			else if(fruizione && !request) {

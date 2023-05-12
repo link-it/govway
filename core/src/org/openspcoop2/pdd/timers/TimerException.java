@@ -46,11 +46,9 @@ public class TimerException extends Exception {
 	public TimerException(String message, Throwable cause)
 	{
 		super(message, cause);
-		// TODO Auto-generated constructor stub
 	}
 	public TimerException(Throwable cause)
 	{
 		super(cause);
-		// TODO Auto-generated constructor stub
 	}
 }

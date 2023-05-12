@@ -446,6 +446,10 @@ public class ModIImbustamentoRest {
 				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile);
 		boolean integrita = integritaX509 || integritaKid;
 		
+		boolean filtroDuplicati = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02.equals(securityMessageProfile) || 
+				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile) || 
+				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile);
+		
 		boolean headerDuplicati = headerType.isHeaderDuplicati();
 		boolean headerAuthentication = headerType.isUsabledForAuthentication();
 		
@@ -455,7 +459,7 @@ public class ModIImbustamentoRest {
 		
 		boolean apiSoap = ServiceBinding.SOAP.equals(msg.getServiceBinding());
 		
-		boolean cacheble = !integrita;
+		boolean cacheble = !integrita && !filtroDuplicati;
 		
 		String idTransazione = msg.getTransactionId();
 		if(idTransazione==null &&
@@ -729,13 +733,15 @@ public class ModIImbustamentoRest {
 						corniceSicurezzaSchema,
 						modiTokenClaims);
 				
-				if(useKIDtokenHeader) {
-					addIss = securityConfig.getCorniceSicurezzaSchemaConfig().isIssOAuth();
-					addSub = securityConfig.getCorniceSicurezzaSchemaConfig().isSubOAuth();
-				}
-				else {
-					addIss = securityConfig.getCorniceSicurezzaSchemaConfig().isIssLocale();
-					addSub = securityConfig.getCorniceSicurezzaSchemaConfig().isSubLocale();
+				if(corniceSicurezzaSchema!=null && StringUtils.isNotEmpty(corniceSicurezzaSchema)) {
+					if(useKIDtokenHeader) {
+						addIss = securityConfig.getCorniceSicurezzaSchemaConfig().isIssOAuth();
+						addSub = securityConfig.getCorniceSicurezzaSchemaConfig().isSubOAuth();
+					}
+					else {
+						addIss = securityConfig.getCorniceSicurezzaSchemaConfig().isIssLocale();
+						addSub = securityConfig.getCorniceSicurezzaSchemaConfig().isSubLocale();
+					}
 				}
 				
 			}

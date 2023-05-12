@@ -2340,34 +2340,15 @@ public class ZIPReadUtils  {
 			
 			// fruitori
 			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+File.separatorChar)){
+					
+				this.readAccordoServizioParteSpecifica_Fruitore(archivio, bin, xml, entryName, 
+						nomeFileSenzaAccordo.substring((Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+File.separatorChar).length()),
+						tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, versioneServizio, 
+						validationDocuments, idCorrelazione,
+						archiveVersion,
+						mapKeyProtocolProperties,
+						mapKeyFruitori);
 				
-				if(entryName.endsWith(".id")) {
-					String s = null;
-					try {
-						// comprendo tipo e nome soggetto
-						String tipoNomeSoggettoFruitore = nomeFileSenzaAccordo.substring(nomeFileSenzaAccordo.indexOf(File.separatorChar)+1,(nomeFileSenzaAccordo.length()-".id".length()));
-						if(tipoNomeSoggettoFruitore==null || "".equals(tipoNomeSoggettoFruitore) || !tipoNomeSoggettoFruitore.contains("_")){
-							throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+
-									"] deve essere presenta una ulteriore directory contenente la struttura <tipo>_<nome> che descrive il soggetto. Il nome utilizzato per la directory non e' conforme alla struttura attesa <tipo>_<nome>");
-						}
-						
-						s = new String(xml);
-						IDSoggetto idSoggetto = IDSoggetto.toIDSoggetto(s);
-						mapKeyFruitori.put(tipoNomeSoggettoFruitore, idSoggetto);
-					}catch(Exception e) {
-						throw new ProtocolException("Elemento ["+entryName+"] contiene degli identificativi del frutore ("+s+") non validi rispetto al pattern atteso (tipo/nome): "
-								+e.getMessage(),e);
-					}
-				}
-				else {		
-					this.readAccordoServizioParteSpecifica_Fruitore(archivio, bin, xml, entryName, 
-							nomeFileSenzaAccordo.substring((Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+File.separatorChar).length()),
-							tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, versioneServizio, 
-							validationDocuments, idCorrelazione,
-							archiveVersion,
-							mapKeyProtocolProperties,
-							mapKeyFruitori);
-				}
 			}
 			
 		}
@@ -2451,31 +2432,52 @@ public class ZIPReadUtils  {
 
 		if(!nomeFileSenzaAccordo.contains((File.separatorChar+""))){
 			
-			// definizione dell'accordo
-			try{
-				if(validationDocuments){
-					org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			if(entryName.endsWith(".id")) {
+				// dati identificativi del fruitore
+				String s = null;
+				try {
+					// comprendo tipo e nome soggetto
+					String tipoNomeSoggettoFruitore = nomeFileSenzaAccordo.substring(nomeFileSenzaAccordo.indexOf(File.separatorChar)+1,(nomeFileSenzaAccordo.length()-".id".length()));
+					if(tipoNomeSoggettoFruitore==null || "".equals(tipoNomeSoggettoFruitore) || !tipoNomeSoggettoFruitore.contains("_")){
+						throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+
+								"] deve essere presenta una ulteriore directory contenente la struttura <tipo>_<nome> che descrive il soggetto. Il nome utilizzato per la directory non e' conforme alla struttura attesa <tipo>_<nome>");
+					}
+					
+					s = new String(xml);
+					IDSoggetto idSoggetto = IDSoggetto.toIDSoggetto(s);
+					mapKeyFruitori.put(tipoNomeSoggettoFruitore, idSoggetto);
+				}catch(Exception e) {
+					throw new ProtocolException("Elemento ["+entryName+"] contiene degli identificativi del frutore ("+s+") non validi rispetto al pattern atteso (tipo/nome): "
+							+e.getMessage(),e);
 				}
-				
-				if(USE_VERSION_XML_BEAN.equals(versioneServizio)){
-					// devo recuperare la versione dell'accordo
-					String keyAccordo = ArchiveAccordoServizioParteSpecifica.buildKey(tipoSoggettoKey, nomeSoggettoKey, nomeServizio, tipoServizio, versioneKey);
-					versioneKey = archivio.getAccordiServizioParteSpecifica().get(keyAccordo).getAccordoServizioParteSpecifica().getVersione();
-					versioneServizioInt = versioneKey;
+			}
+			else {
+				// definizione del fruitore
+				try{
+					if(validationDocuments){
+						org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+					}
+					
+					if(USE_VERSION_XML_BEAN.equals(versioneServizio)){
+						// devo recuperare la versione dell'accordo
+						String keyAccordo = ArchiveAccordoServizioParteSpecifica.buildKey(tipoSoggettoKey, nomeSoggettoKey, nomeServizio, tipoServizio, versioneKey);
+						versioneKey = archivio.getAccordiServizioParteSpecifica().get(keyAccordo).getAccordoServizioParteSpecifica().getVersione();
+						versioneServizioInt = versioneKey;
+					}
+					
+					Fruitore fruitore = this.jaxbRegistryDeserializer.readFruitore(xml);
+					String keyFruitore = ArchiveFruitore.buildKey(fruitore.getTipo(), fruitore.getNome(), tipoSoggettoKey, nomeSoggettoKey, tipoServizio, nomeServizio, versioneServizioInt);
+					if(archivio.getAccordiFruitori().containsKey(keyFruitore)){
+						throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di un fruitore con key ["+keyFruitore+"]");
+					}
+					
+					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tipoServizio, nomeServizio, tipoSoggetto, nomeSoggetto, versioneServizioInt);
+					archivio.getAccordiFruitori().add(keyFruitore,new ArchiveFruitore(idServizio,fruitore,idCorrelazione,true));
+				}catch(Exception eDeserializer){
+					String xmlString = this.toStringXmlElementForErrorMessage(xml);
+					throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (fruitore) non valida rispetto allo schema (RegistroServizi): "
+							+eDeserializer.getMessage(),eDeserializer);
 				}
-				
-				Fruitore fruitore = this.jaxbRegistryDeserializer.readFruitore(xml);
-				String keyFruitore = ArchiveFruitore.buildKey(fruitore.getTipo(), fruitore.getNome(), tipoSoggettoKey, nomeSoggettoKey, tipoServizio, nomeServizio, versioneServizioInt);
-				if(archivio.getAccordiFruitori().containsKey(keyFruitore)){
-					throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di un fruitore con key ["+keyFruitore+"]");
-				}
-				
-				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tipoServizio, nomeServizio, tipoSoggetto, nomeSoggetto, versioneServizioInt);
-				archivio.getAccordiFruitori().add(keyFruitore,new ArchiveFruitore(idServizio,fruitore,idCorrelazione,true));
-			}catch(Exception eDeserializer){
-				String xmlString = this.toStringXmlElementForErrorMessage(xml);
-				throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (fruitore) non valida rispetto allo schema (RegistroServizi): "
-						+eDeserializer.getMessage(),eDeserializer);
 			}
 			
 		}
@@ -2621,7 +2623,7 @@ public class ZIPReadUtils  {
 		
 		Integer versioneServizioInt = null;
 		try{
-			if(versioneServizio!=null && USE_VERSION_XML_BEAN.equals(versioneServizio)==false){
+			if(versioneServizio!=null && !USE_VERSION_XML_BEAN.equals(versioneServizio)){
 				versioneServizioInt = Integer.parseInt(versioneServizio);
 			}
 		}catch(Exception e){

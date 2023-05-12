@@ -123,9 +123,11 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 			
 			boolean headerDuplicati = false;
 			boolean riferimentoX509 = false;
+			boolean kidMode = false;
 			if(rest) {
 				headerDuplicati = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioConHeaderDuplicati(api, portType);
 				riferimentoX509 = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isSicurezzaMessaggioRiferimentoX509Required(api, portType);
+				kidMode =  ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isSicurezzaMessaggioKidModeSupported(api, portType);
 			}
 			
 			if(ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioApplicabileRichiesta(api, portType, true)) {
@@ -134,7 +136,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 					patternDatiCorniceSicurezza, schemaDatiCorniceSicurezza,
 					headerDuplicati,
 					consoleOperationType, consoleHelper, registryReader, configIntegrationReader, id, idFruitore,
-					riferimentoX509,
+					riferimentoX509, kidMode,
 					false);
 			}
 			if(ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioApplicabileRisposta(api, portType, true)) {
@@ -143,7 +145,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 					patternDatiCorniceSicurezza, schemaDatiCorniceSicurezza,
 					headerDuplicati,
 					consoleOperationType, consoleHelper, registryReader, configIntegrationReader, id, idFruitore,
-					riferimentoX509,
+					riferimentoX509, kidMode,
 					false);
 			}
 			
@@ -166,6 +168,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 						false, // headerDuplicati
 						consoleOperationType, consoleHelper, registryReader, configIntegrationReader, id, idFruitore,
 						false, // riferimentoX509
+						false, // kidMode
 						true // audit
 						); 
 				

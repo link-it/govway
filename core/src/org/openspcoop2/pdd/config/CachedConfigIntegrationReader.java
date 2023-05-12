@@ -35,7 +35,11 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.protocol.engine.mapping.IdentificazioneDinamicaException;
@@ -298,6 +302,16 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 		throw new RegistryException("Not Implemented");
 	}
 	
+	@Override
+	public List<MappingFruizionePortaDelegata> getMappingFruizionePortaDelegataList(IDSoggetto idFruitore, IDServizio idServizio) throws RegistryException{
+		try{
+			return this.configurazionePdDManager.getMappingFruizionePortaDelegataList(idFruitore, idServizio, this.requestInfo);
+		} catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
+	
+	
 	
 	// PORTA APPLICATIVA
 	
@@ -356,6 +370,16 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	public List<Allarme> getAllarmi(IDPortaApplicativa idPortaDelegata) throws RegistryNotFound,RegistryException{
 		throw new RegistryException("Not Implemented");
 	}
+	
+	@Override
+	public List<MappingErogazionePortaApplicativa> getMappingErogazionePortaApplicativaList(IDServizio idServizio) throws RegistryException{
+		try{
+			return this.configurazionePdDManager.getMappingErogazionePortaApplicativaList(idServizio, this.requestInfo);
+		} catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
+	
 	
 	
 	// CONFIGURAZIONE

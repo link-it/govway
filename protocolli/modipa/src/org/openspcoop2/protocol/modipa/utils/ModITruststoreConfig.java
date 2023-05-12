@@ -65,6 +65,7 @@ public class ModITruststoreConfig {
 			String mode = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, 
 					ssl ? ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_MODE : ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE);
 			boolean ridefinisci =  ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(mode);
+			boolean undefined =  ModICostanti.MODIPA_PROFILO_UNDEFINED.equals(mode);
 			
 			ModIProperties modIproperties = ModIProperties.getInstance();
 			
@@ -113,6 +114,11 @@ public class ModITruststoreConfig {
 							ssl ? ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_OCSP_POLICY : ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_OCSP_POLICY);
 				}
 				
+			}
+			else if(undefined) {
+				if(!ssl) {
+					throw new ProtocolException(prefix+" non definito");
+				}
 			}
 			else {
 				

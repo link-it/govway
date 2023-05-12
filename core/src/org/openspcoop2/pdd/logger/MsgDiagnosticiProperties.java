@@ -29,6 +29,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.pdd.config.MsgDiagnosticiInstanceProperties;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -70,7 +71,28 @@ public class MsgDiagnosticiProperties {
 	
 	/** Logger utilizzato per errori eventuali. */
 	private Logger log = null;
+	private void logError(String msgErrore, Exception e) {
+		if(this.log!=null) {
+			this.log.error(msgErrore,e);
+		}
+	}
+	private void logError(String msgErrore) {
+		if(this.log!=null) {
+			this.log.error(msgErrore);
+		}
+	}
 
+	/** Logger passati come argomento */
+	private static void logError(Logger log, String msg) {
+		if(log!=null) {
+			log.error(msg);
+		}
+	}
+	private static void logInfo(Logger log, String msg) {
+		if(log!=null) {
+			log.info(msg);
+		}
+	}
 
 
 	/* ********  F I E L D S  P R I V A T I  ******** */
@@ -89,7 +111,7 @@ public class MsgDiagnosticiProperties {
 	 *
 	 * 
 	 */
-	public MsgDiagnosticiProperties(String location,String confDir) throws Exception {
+	public MsgDiagnosticiProperties(String location,String confDir) throws CoreException {
 
 		if(OpenSPCoop2Startup.initialize)
 			this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
@@ -106,12 +128,12 @@ public class MsgDiagnosticiProperties {
 				properties = MsgDiagnosticiProperties.class.getResourceAsStream("/govway.msgDiagnostici.properties");
 			}
 			if(properties==null){
-				throw new Exception("File '/govway.msgDiagnostici.properties' not found");
+				throw new CoreException("File '/govway.msgDiagnostici.properties' not found");
 			}
 			propertiesReader.load(properties);		    
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura del file 'govway.msgDiagnostici.properties': \n\n"+e.getMessage());
-			throw new Exception("MsgDiagnosticiProperties initialize error: "+e.getMessage());
+			logError("Riscontrato errore durante la lettura del file 'govway.msgDiagnostici.properties': \n\n"+e.getMessage());
+			throw new CoreException("MsgDiagnosticiProperties initialize error: "+e.getMessage());
 		}finally{
 			try{
 				if(properties!=null)
@@ -121,7 +143,11 @@ public class MsgDiagnosticiProperties {
 			}
 		}
 
-		this.reader = new MsgDiagnosticiInstanceProperties(propertiesReader, this.log, confDir);
+		try {
+			this.reader = new MsgDiagnosticiInstanceProperties(propertiesReader, this.log, confDir);
+		}catch(Exception e) {
+			throw new CoreException(e.getMessage(),e);
+		}
 	}
 
 
@@ -134,7 +160,7 @@ public class MsgDiagnosticiProperties {
 
 		try {
 			if(MsgDiagnosticiProperties.msgDiagnosticiProperties == null){
-				_initialize(location,confDir);
+				initializeEngine(location,confDir);
 			}
 		    return true;
 		}
@@ -142,7 +168,7 @@ public class MsgDiagnosticiProperties {
 		    return false;
 		}
 	}
-	private static synchronized void _initialize(String location,String confDir) throws Exception{
+	private static synchronized void initializeEngine(String location,String confDir) throws CoreException{
 		if(MsgDiagnosticiProperties.msgDiagnosticiProperties == null){
 			MsgDiagnosticiProperties.msgDiagnosticiProperties = new MsgDiagnosticiProperties(location,confDir);
 		}
@@ -164,248 +190,229 @@ public class MsgDiagnosticiProperties {
 
 
 
-	
-	
-
-
-
-	/*---------- Inizializzazione (Usata da PddInterceptor) -------------*/
-//	public static boolean initialize(){
-//
-//		try {
-//			if(MsgDiagnosticiProperties.msgDiagnosticiProperties == null){
-//				_initialize(null,null);
-//			}
-//			return true;
-//		}
-//		catch(Exception e) {
-//			return false;
-//		}
-//	}
-
-	
+		
 
 
 
 
 	/*---------- Gestione livello di filtro -------------*/
-	
-	private static Integer filtroMsgDiagnostico_OpenSPCoop2_0 = null;
-	public int getFiltroMsgDiagnostico_OpenSPCoop2_0() {	
-		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_0==null){
-			_initFiltroMsgDiagnostico_OpenSPCoop2_0(this.reader, this.log);
+		
+	private static Integer filtroMsgDiagnosticoOpenSPCoop2level0 = null;
+	int getFiltroMsgDiagnosticoOpenSPCoop2level0() {	
+		if(MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level0==null){
+			initFiltroMsgDiagnosticoOpenSPCoop2level0(this.reader, this.log);
 		}
-		return MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_0;
+		return MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level0;
 	}
-	private static synchronized void _initFiltroMsgDiagnostico_OpenSPCoop2_0(MsgDiagnosticiInstanceProperties reader, Logger log) {	
-		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_0==null){
+	private static synchronized void initFiltroMsgDiagnosticoOpenSPCoop2level0(MsgDiagnosticiInstanceProperties reader, Logger log) {	
+		if(MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level0==null){
 			try{ 
 				String value = null;
 				value = reader.getValue("filtroMsgDiagnostici.livelloOpenSPCoop2.0");
 				if(value==null){
-					MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_0=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_FATAL);
+					MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level0=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_FATAL);
 				}else{
-					MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_0=Integer.parseInt(value.trim());
-					if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_0 < 0 || MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_0 > 9999 ){
-						throw new Exception("Il valore della proprieta' deve essere compreso nell'intervallo [0,9999]");
+					MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level0=Integer.parseInt(value.trim());
+					if(MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level0 < 0 || MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level0 > 9999 ){
+						throw new CoreException("Il valore della proprieta' deve essere compreso nell'intervallo [0,9999]");
 					}
 				}
 			}catch(java.lang.Exception e) {
-				log.error("Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.0': "+e.getMessage());
-				MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_0=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_FATAL);
+				logError(log, "Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.0': "+e.getMessage());
+				MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level0=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_FATAL);
 			}  
 		}
 	}
 	
-	private static Integer filtroMsgDiagnostico_OpenSPCoop2_1 = null;
-	public int getFiltroMsgDiagnostico_OpenSPCoop2_1() {	
-		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_1==null){
-			_initFiltroMsgDiagnostico_OpenSPCoop2_1(this.reader, this.log);
+	private static Integer filtroMsgDiagnosticoOpenSPCoop2level1 = null;
+	int getFiltroMsgDiagnosticoOpenSPCoop2level1() {	
+		if(MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level1==null){
+			initFiltroMsgDiagnosticoOpenSPCoop2level1(this.reader, this.log);
 		}
-		return MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_1;
+		return MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level1;
 	}
-	private static synchronized void _initFiltroMsgDiagnostico_OpenSPCoop2_1(MsgDiagnosticiInstanceProperties reader, Logger log) {	
-		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_1==null){
+	private static synchronized void initFiltroMsgDiagnosticoOpenSPCoop2level1(MsgDiagnosticiInstanceProperties reader, Logger log) {	
+		if(MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level1==null){
 			try{ 
 				String value = null;
 				value = reader.getValue("filtroMsgDiagnostici.livelloOpenSPCoop2.1");
 				if(value==null){
-					MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_1=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_ERROR_PROTOCOL);
+					MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level1=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_ERROR_PROTOCOL);
 				}else{
-					MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_1=Integer.parseInt(value.trim());
-					if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_1 < 1 || MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_1 > 19999 ){
-						throw new Exception("Il valore della proprieta' deve essere compreso nell'intervallo [1,19999]");
+					MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level1=Integer.parseInt(value.trim());
+					if(MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level1 < 1 || MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level1 > 19999 ){
+						throw new CoreException("Il valore della proprieta' deve essere compreso nell'intervallo [1,19999]");
 					}
 				}
 			}catch(java.lang.Exception e) {
-				log.error("Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.1': "+e.getMessage());
-				MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_1=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_ERROR_PROTOCOL);
+				logError(log, "Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.1': "+e.getMessage());
+				MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level1=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_ERROR_PROTOCOL);
 			}  
 		}
 	}
 	
-	private static Integer filtroMsgDiagnostico_OpenSPCoop2_2 = null;
-	public int getFiltroMsgDiagnostico_OpenSPCoop2_2() {	
-		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_2==null){
-			_initFiltroMsgDiagnostico_OpenSPCoop2_2(this.reader, this.log);
+	private static Integer filtroMsgDiagnosticoOpenSPCoop2level2 = null;
+	int getFiltroMsgDiagnosticoOpenSPCoop2level2() {	
+		if(MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level2==null){
+			initFiltroMsgDiagnosticoOpenSPCoop2level2(this.reader, this.log);
 		}
-		return MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_2;
+		return MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level2;
 	}
-	private static synchronized void _initFiltroMsgDiagnostico_OpenSPCoop2_2(MsgDiagnosticiInstanceProperties reader, Logger log) {	
-		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_2==null){
+	private static synchronized void initFiltroMsgDiagnosticoOpenSPCoop2level2(MsgDiagnosticiInstanceProperties reader, Logger log) {	
+		if(MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level2==null){
 			try{ 
 				String value = null;
 				value = reader.getValue("filtroMsgDiagnostici.livelloOpenSPCoop2.2");
 				if(value==null){
-					MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_2=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_ERROR_INTEGRATION);
+					MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level2=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_ERROR_INTEGRATION);
 				}else{
-					MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_2=Integer.parseInt(value.trim());
-					if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_2 < 10001 || MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_2 > 29999 ){
-						throw new Exception("Il valore della proprieta' deve essere compreso nell'intervallo [10001,29999]");
+					MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level2=Integer.parseInt(value.trim());
+					if(MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level2 < 10001 || MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level2 > 29999 ){
+						throw new CoreException("Il valore della proprieta' deve essere compreso nell'intervallo [10001,29999]");
 					}
 				}
 			}catch(java.lang.Exception e) {
-				log.error("Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.2': "+e.getMessage());
-				MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_2=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_ERROR_INTEGRATION);
+				logError(log, "Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.2': "+e.getMessage());
+				MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level2=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_ERROR_INTEGRATION);
 			}  
 		}
 	}
 	
 	
-	private static Integer filtroMsgDiagnostico_OpenSPCoop2_3 = null;
-	public int getFiltroMsgDiagnostico_OpenSPCoop2_3() {	
-		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_3==null){
-			_initFiltroMsgDiagnostico_OpenSPCoop2_3(this.reader, this.log);
+	private static Integer filtroMsgDiagnosticoOpenSPCoop2level3 = null;
+	int getFiltroMsgDiagnosticoOpenSPCoop2level3() {	
+		if(MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level3==null){
+			initFiltroMsgDiagnosticoOpenSPCoop2level3(this.reader, this.log);
 		}
-		return MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_3;
+		return MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level3;
 	}
-	private static synchronized void _initFiltroMsgDiagnostico_OpenSPCoop2_3(MsgDiagnosticiInstanceProperties reader, Logger log) {	
-		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_3==null){
+	private static synchronized void initFiltroMsgDiagnosticoOpenSPCoop2level3(MsgDiagnosticiInstanceProperties reader, Logger log) {	
+		if(MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level3==null){
 			try{ 
 				String value = null;
 				value = reader.getValue("filtroMsgDiagnostici.livelloOpenSPCoop2.3");
 				if(value==null){
-					MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_3=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_INFO_PROTOCOL);
+					MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level3=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_INFO_PROTOCOL);
 				}else{
-					MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_3=Integer.parseInt(value.trim());
-					if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_3 < 20001 || MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_3 > 39999 ){
-						throw new Exception("Il valore della proprieta' deve essere compreso nell'intervallo [20001,39999]");
+					MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level3=Integer.parseInt(value.trim());
+					if(MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level3 < 20001 || MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level3 > 39999 ){
+						throw new CoreException("Il valore della proprieta' deve essere compreso nell'intervallo [20001,39999]");
 					}
 				}
 			}catch(java.lang.Exception e) {
-				log.error("Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.3': "+e.getMessage());
-				MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_3=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_INFO_PROTOCOL);
+				logError(log, "Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.3': "+e.getMessage());
+				MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level3=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_INFO_PROTOCOL);
 			}  
 		}
 	}
 	
 	
-	private static Integer filtroMsgDiagnostico_OpenSPCoop2_4 = null;
-	public int getFiltroMsgDiagnostico_OpenSPCoop2_4() {	
-		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_4==null){
-			_initFiltroMsgDiagnostico_OpenSPCoop2_4(this.reader, this.log);
+	private static Integer filtroMsgDiagnosticoOpenSPCoop2level4 = null;
+	int getFiltroMsgDiagnosticoOpenSPCoop2level4() {	
+		if(MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level4==null){
+			initFiltroMsgDiagnosticoOpenSPCoop2level4(this.reader, this.log);
 		}
-		return MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_4;
+		return MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level4;
 	}
-	private static synchronized void _initFiltroMsgDiagnostico_OpenSPCoop2_4(MsgDiagnosticiInstanceProperties reader, Logger log) {	
-		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_4==null){
+	private static synchronized void initFiltroMsgDiagnosticoOpenSPCoop2level4(MsgDiagnosticiInstanceProperties reader, Logger log) {	
+		if(MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level4==null){
 			try{ 
 				String value = null;
 				value = reader.getValue("filtroMsgDiagnostici.livelloOpenSPCoop2.4");
 				if(value==null){
-					MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_4=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_INFO_INTEGRATION);
+					MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level4=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_INFO_INTEGRATION);
 				}else{
-					MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_4=Integer.parseInt(value.trim());
-					if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_4 < 30001 || MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_4 > 49999 ){
-						throw new Exception("Il valore della proprieta' deve essere compreso nell'intervallo [30001,49999]");
+					MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level4=Integer.parseInt(value.trim());
+					if(MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level4 < 30001 || MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level4 > 49999 ){
+						throw new CoreException("Il valore della proprieta' deve essere compreso nell'intervallo [30001,49999]");
 					}
 				}
 			}catch(java.lang.Exception e) {
-				log.error("Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.4': "+e.getMessage());
-				MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_4=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_INFO_INTEGRATION);
+				logError(log, "Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.4': "+e.getMessage());
+				MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level4=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_INFO_INTEGRATION);
 			}  
 		}
 	}
 	
-	private static Integer filtroMsgDiagnostico_OpenSPCoop2_5 = null;
-	public int getFiltroMsgDiagnostico_OpenSPCoop2_5() {	
-		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_5==null){
-			_initFiltroMsgDiagnostico_OpenSPCoop2_5(this.reader, this.log);
+	private static Integer filtroMsgDiagnosticoOpenSPCoop2level5 = null;
+	int getFiltroMsgDiagnosticoOpenSPCoop2level5() {	
+		if(MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level5==null){
+			initFiltroMsgDiagnosticoOpenSPCoop2level5(this.reader, this.log);
 		}
-		return MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_5;
+		return MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level5;
 	}
-	private static synchronized void _initFiltroMsgDiagnostico_OpenSPCoop2_5(MsgDiagnosticiInstanceProperties reader, Logger log) {	
-		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_5==null){
+	private static synchronized void initFiltroMsgDiagnosticoOpenSPCoop2level5(MsgDiagnosticiInstanceProperties reader, Logger log) {	
+		if(MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level5==null){
 			try{ 
 				String value = null;
 				value = reader.getValue("filtroMsgDiagnostici.livelloOpenSPCoop2.5");
 				if(value==null){
-					MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_5=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_DEBUG_LOW);
+					MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level5=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_DEBUG_LOW);
 				}else{
-					MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_5=Integer.parseInt(value.trim());
-					if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_5 < 40001 || MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_5 > 59999 ){
-						throw new Exception("Il valore della proprieta' deve essere compreso nell'intervallo [40001,59999]");
+					MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level5=Integer.parseInt(value.trim());
+					if(MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level5 < 40001 || MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level5 > 59999 ){
+						throw new CoreException("Il valore della proprieta' deve essere compreso nell'intervallo [40001,59999]");
 					}
 				}
 			}catch(java.lang.Exception e) {
-				log.error("Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.5': "+e.getMessage());
-				MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_5=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_DEBUG_LOW);
+				logError(log, "Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.5': "+e.getMessage());
+				MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level5=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_DEBUG_LOW);
 			}  
 		}
 	}
 	
 	
-	private static Integer filtroMsgDiagnostico_OpenSPCoop2_6 = null;
-	public int getFiltroMsgDiagnostico_OpenSPCoop2_6() {	
-		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_6==null){
-			_initFiltroMsgDiagnostico_OpenSPCoop2_6(this.reader, this.log);
+	private static Integer filtroMsgDiagnosticoOpenSPCoop2level6 = null;
+	int getFiltroMsgDiagnosticoOpenSPCoop2level6() {	
+		if(MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level6==null){
+			initFiltroMsgDiagnosticoOpenSPCoop2level6(this.reader, this.log);
 		}
-		return MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_6;
+		return MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level6;
 	}
-	private static synchronized void _initFiltroMsgDiagnostico_OpenSPCoop2_6(MsgDiagnosticiInstanceProperties reader, Logger log) {	
-		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_6==null){
+	private static synchronized void initFiltroMsgDiagnosticoOpenSPCoop2level6(MsgDiagnosticiInstanceProperties reader, Logger log) {	
+		if(MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level6==null){
 			try{ 
 				String value = null;
 				value = reader.getValue("filtroMsgDiagnostici.livelloOpenSPCoop2.6");
 				if(value==null){
-					MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_6=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_DEBUG_MEDIUM);
+					MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level6=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_DEBUG_MEDIUM);
 				}else{
-					MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_6=Integer.parseInt(value.trim());
-					if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_6 < 50001 || MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_6 > 69999 ){
-						throw new Exception("Il valore della proprieta' deve essere compreso nell'intervallo [50001,69999]");
+					MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level6=Integer.parseInt(value.trim());
+					if(MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level6 < 50001 || MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level6 > 69999 ){
+						throw new CoreException("Il valore della proprieta' deve essere compreso nell'intervallo [50001,69999]");
 					}
 				}
 			}catch(java.lang.Exception e) {
-				log.error("Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.6': "+e.getMessage());
-				MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_6=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_DEBUG_MEDIUM);
+				logError(log, "Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.6': "+e.getMessage());
+				MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level6=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_DEBUG_MEDIUM);
 			}  
 		}
 	}
 	
 	
-	private static Integer filtroMsgDiagnostico_OpenSPCoop2_7 = null;
-	public int getFiltroMsgDiagnostico_OpenSPCoop2_7() {	
-		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_7==null){
-			_initFiltroMsgDiagnostico_OpenSPCoop2_7(this.reader, this.log);
+	private static Integer filtroMsgDiagnosticoOpenSPCoop2level7 = null;
+	int getFiltroMsgDiagnosticoOpenSPCoop2level7() {	
+		if(MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level7==null){
+			initFiltroMsgDiagnosticoOpenSPCoop2level7(this.reader, this.log);
 		}
-		return MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_7;
+		return MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level7;
 	}
-	private static synchronized void _initFiltroMsgDiagnostico_OpenSPCoop2_7(MsgDiagnosticiInstanceProperties reader, Logger log) {	
-		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_7==null){
+	private static synchronized void initFiltroMsgDiagnosticoOpenSPCoop2level7(MsgDiagnosticiInstanceProperties reader, Logger log) {	
+		if(MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level7==null){
 			try{ 
 				String value = null;
 				value = reader.getValue("filtroMsgDiagnostici.livelloOpenSPCoop2.7");
 				if(value==null){
-					MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_7=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_DEBUG_HIGH);
+					MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level7=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_DEBUG_HIGH);
 				}else{
-					MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_7=Integer.parseInt(value.trim());
-					if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_7 < 60001 || MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_7 > 70000 ){
-						throw new Exception("Il valore della proprieta' deve essere compreso nell'intervallo [60001,70000]");
+					MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level7=Integer.parseInt(value.trim());
+					if(MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level7 < 60001 || MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level7 > 70000 ){
+						throw new CoreException("Il valore della proprieta' deve essere compreso nell'intervallo [60001,70000]");
 					}
 				}
 			}catch(java.lang.Exception e) {
-				log.error("Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.7': "+e.getMessage());
-				MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_7=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_DEBUG_HIGH);
+				logError(log, "Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.7': "+e.getMessage());
+				MsgDiagnosticiProperties.filtroMsgDiagnosticoOpenSPCoop2level7=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_DEBUG_HIGH);
 			}  
 		}
 	}
@@ -413,21 +420,21 @@ public class MsgDiagnosticiProperties {
 	
 	public int getValoreFiltroFromValoreOpenSPCoop2(int livello){
 		if(livello == LogLevels.SEVERITA_FATAL){
-			return this.getFiltroMsgDiagnostico_OpenSPCoop2_0();
+			return this.getFiltroMsgDiagnosticoOpenSPCoop2level0();
 		}else if(livello == LogLevels.SEVERITA_ERROR_PROTOCOL){
-			return this.getFiltroMsgDiagnostico_OpenSPCoop2_1();
+			return this.getFiltroMsgDiagnosticoOpenSPCoop2level1();
 		}else if(livello == LogLevels.SEVERITA_ERROR_INTEGRATION){
-			return this.getFiltroMsgDiagnostico_OpenSPCoop2_2();
+			return this.getFiltroMsgDiagnosticoOpenSPCoop2level2();
 		}else if(livello == LogLevels.SEVERITA_INFO_PROTOCOL){
-			return this.getFiltroMsgDiagnostico_OpenSPCoop2_3();
+			return this.getFiltroMsgDiagnosticoOpenSPCoop2level3();
 		}else if(livello == LogLevels.SEVERITA_INFO_INTEGRATION){
-			return this.getFiltroMsgDiagnostico_OpenSPCoop2_4();
+			return this.getFiltroMsgDiagnosticoOpenSPCoop2level4();
 		}else if(livello == LogLevels.SEVERITA_DEBUG_LOW){
-			return this.getFiltroMsgDiagnostico_OpenSPCoop2_5();
+			return this.getFiltroMsgDiagnosticoOpenSPCoop2level5();
 		}else if(livello == LogLevels.SEVERITA_DEBUG_MEDIUM){
-			return this.getFiltroMsgDiagnostico_OpenSPCoop2_6();
+			return this.getFiltroMsgDiagnosticoOpenSPCoop2level6();
 		}else if(livello == LogLevels.SEVERITA_DEBUG_HIGH){
-			return this.getFiltroMsgDiagnostico_OpenSPCoop2_7();
+			return this.getFiltroMsgDiagnosticoOpenSPCoop2level7();
 		}else{
 			return livello;
 		}
@@ -436,85 +443,85 @@ public class MsgDiagnosticiProperties {
 	
 	
 	public boolean checkValoriFiltriMsgDiagnostici(Logger log){
-		int openspcoop2_0 = this.getFiltroMsgDiagnostico_OpenSPCoop2_0(); 
-		if(openspcoop2_0!=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_FATAL)){
-			log.info("Personalizzazione del livello di filtro dei messaggi diagnostici (OpenSPCoop2 0) al valore openspcoop: "+openspcoop2_0);
+		int openspcoop2level0 = this.getFiltroMsgDiagnosticoOpenSPCoop2level0(); 
+		if(openspcoop2level0!=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_FATAL)){
+			logInfo(log, "Personalizzazione del livello di filtro dei messaggi diagnostici (OpenSPCoop2 0) al valore openspcoop: "+openspcoop2level0);
 		}
 		
-		int openspcoop2_1 = this.getFiltroMsgDiagnostico_OpenSPCoop2_1(); 
-		if(openspcoop2_1<=openspcoop2_0){
-			log.error("Personalizzazione del livello di filtro dei messaggi diagnostici OpenSPCoop2 1 (valore: "+openspcoop2_1
-					+") deve essere maggiore del valore impostato per il livello OpenSPCoop2 0 (valore: "+openspcoop2_0+").");
+		int openspcoop2level1 = this.getFiltroMsgDiagnosticoOpenSPCoop2level1(); 
+		if(openspcoop2level1<=openspcoop2level0){
+			this.logError("Personalizzazione del livello di filtro dei messaggi diagnostici OpenSPCoop2 1 (valore: "+openspcoop2level1
+					+") deve essere maggiore del valore impostato per il livello OpenSPCoop2 0 (valore: "+openspcoop2level0+").");
 			return false;
 		}else{
-			if(openspcoop2_1!=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_ERROR_PROTOCOL)){
-				log.info("Personalizzazione del livello di filtro dei messaggi diagnostici (OpenSPCoop2 1) al valore openspcoop: "+openspcoop2_1);
+			if(openspcoop2level1!=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_ERROR_PROTOCOL)){
+				logInfo(log, "Personalizzazione del livello di filtro dei messaggi diagnostici (OpenSPCoop2 1) al valore openspcoop: "+openspcoop2level1);
 			}
 		}
 		
-		int openspcoop2_2 = this.getFiltroMsgDiagnostico_OpenSPCoop2_2(); 
-		if(openspcoop2_2<=openspcoop2_1){
-			log.error("Personalizzazione del livello di filtro dei messaggi diagnostici OpenSPCoop2 2 (valore: "+openspcoop2_2
-					+") deve essere maggiore del valore impostato per il livello OpenSPCoop2 1 (valore: "+openspcoop2_1+").");
+		int openspcoop2level2 = this.getFiltroMsgDiagnosticoOpenSPCoop2level2(); 
+		if(openspcoop2level2<=openspcoop2level1){
+			this.logError("Personalizzazione del livello di filtro dei messaggi diagnostici OpenSPCoop2 2 (valore: "+openspcoop2level2
+					+") deve essere maggiore del valore impostato per il livello OpenSPCoop2 1 (valore: "+openspcoop2level1+").");
 			return false;
 		}else{
-			if(openspcoop2_2!=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_ERROR_INTEGRATION)){
-				log.info("Personalizzazione del livello di filtro dei messaggi diagnostici (OpenSPCoop2 2) al valore openspcoop: "+openspcoop2_2);
+			if(openspcoop2level2!=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_ERROR_INTEGRATION)){
+				logInfo(log, "Personalizzazione del livello di filtro dei messaggi diagnostici (OpenSPCoop2 2) al valore openspcoop: "+openspcoop2level2);
 			}
 		}
 		
-		int openspcoop2_3 = this.getFiltroMsgDiagnostico_OpenSPCoop2_3(); 
-		if(openspcoop2_3<=openspcoop2_2){
-			log.error("Personalizzazione del livello di filtro dei messaggi diagnostici OpenSPCoop2 3 (valore: "+openspcoop2_3
-					+") deve essere maggiore del valore impostato per il livello OpenSPCoop2 2 (valore: "+openspcoop2_2+").");
+		int openspcoop2level3 = this.getFiltroMsgDiagnosticoOpenSPCoop2level3(); 
+		if(openspcoop2level3<=openspcoop2level2){
+			this.logError("Personalizzazione del livello di filtro dei messaggi diagnostici OpenSPCoop2 3 (valore: "+openspcoop2level3
+					+") deve essere maggiore del valore impostato per il livello OpenSPCoop2 2 (valore: "+openspcoop2level2+").");
 			return false;
 		}else{
-			if(openspcoop2_3!=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_INFO_PROTOCOL)){
-				log.info("Personalizzazione del livello di filtro dei messaggi diagnostici (OpenSPCoop2 3) al valore openspcoop: "+openspcoop2_3);
+			if(openspcoop2level3!=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_INFO_PROTOCOL)){
+				logInfo(log, "Personalizzazione del livello di filtro dei messaggi diagnostici (OpenSPCoop2 3) al valore openspcoop: "+openspcoop2level3);
 			}
 		}
 		
-		int openspcoop2_4 = this.getFiltroMsgDiagnostico_OpenSPCoop2_4(); 
-		if(openspcoop2_4<=openspcoop2_3){
-			log.error("Personalizzazione del livello di filtro dei messaggi diagnostici OpenSPCoop2 4 (valore: "+openspcoop2_4
-					+") deve essere maggiore del valore impostato per il livello OpenSPCoop2 3 (valore: "+openspcoop2_3+").");
+		int openspcoop2level4 = this.getFiltroMsgDiagnosticoOpenSPCoop2level4(); 
+		if(openspcoop2level4<=openspcoop2level3){
+			this.logError("Personalizzazione del livello di filtro dei messaggi diagnostici OpenSPCoop2 4 (valore: "+openspcoop2level4
+					+") deve essere maggiore del valore impostato per il livello OpenSPCoop2 3 (valore: "+openspcoop2level3+").");
 			return false;
 		}else{
-			if(openspcoop2_4!=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_INFO_INTEGRATION)){
-				log.info("Personalizzazione del livello di filtro dei messaggi diagnostici (OpenSPCoop2 4) al valore openspcoop: "+openspcoop2_4);
+			if(openspcoop2level4!=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_INFO_INTEGRATION)){
+				logInfo(log, "Personalizzazione del livello di filtro dei messaggi diagnostici (OpenSPCoop2 4) al valore openspcoop: "+openspcoop2level4);
 			}
 		}
 	
-		int openspcoop2_5 = this.getFiltroMsgDiagnostico_OpenSPCoop2_5(); 
-		if(openspcoop2_5<=openspcoop2_4){
-			log.error("Personalizzazione del livello di filtro dei messaggi diagnostici OpenSPCoop2 5 (valore: "+openspcoop2_5
-					+") deve essere maggiore del valore impostato per il livello OpenSPCoop2 4 (valore: "+openspcoop2_4+").");
+		int openspcoop2level5 = this.getFiltroMsgDiagnosticoOpenSPCoop2level5(); 
+		if(openspcoop2level5<=openspcoop2level4){
+			this.logError("Personalizzazione del livello di filtro dei messaggi diagnostici OpenSPCoop2 5 (valore: "+openspcoop2level5
+					+") deve essere maggiore del valore impostato per il livello OpenSPCoop2 4 (valore: "+openspcoop2level4+").");
 			return false;
 		}else{
-			if(openspcoop2_5!=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_DEBUG_LOW)){
-				log.info("Personalizzazione del livello di filtro dei messaggi diagnostici (OpenSPCoop2 5) al valore openspcoop: "+openspcoop2_5);
+			if(openspcoop2level5!=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_DEBUG_LOW)){
+				logInfo(log, "Personalizzazione del livello di filtro dei messaggi diagnostici (OpenSPCoop2 5) al valore openspcoop: "+openspcoop2level5);
 			}
 		}
 		
-		int openspcoop2_6 = this.getFiltroMsgDiagnostico_OpenSPCoop2_6(); 
-		if(openspcoop2_6<=openspcoop2_5){
-			log.error("Personalizzazione del livello di filtro dei messaggi diagnostici OpenSPCoop2 6 (valore: "+openspcoop2_6
-					+") deve essere maggiore del valore impostato per il livello OpenSPCoop2 5 (valore: "+openspcoop2_5+").");
+		int openspcoop2level6 = this.getFiltroMsgDiagnosticoOpenSPCoop2level6(); 
+		if(openspcoop2level6<=openspcoop2level5){
+			this.logError("Personalizzazione del livello di filtro dei messaggi diagnostici OpenSPCoop2 6 (valore: "+openspcoop2level6
+					+") deve essere maggiore del valore impostato per il livello OpenSPCoop2 5 (valore: "+openspcoop2level5+").");
 			return false;
 		}else{
-			if(openspcoop2_6!=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_DEBUG_MEDIUM)){
-				log.info("Personalizzazione del livello di filtro dei messaggi diagnostici (OpenSPCoop2 6) al valore openspcoop: "+openspcoop2_6);
+			if(openspcoop2level6!=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_DEBUG_MEDIUM)){
+				logInfo(log, "Personalizzazione del livello di filtro dei messaggi diagnostici (OpenSPCoop2 6) al valore openspcoop: "+openspcoop2level6);
 			}
 		}
 		
-		int openspcoop2_7 = this.getFiltroMsgDiagnostico_OpenSPCoop2_7(); 
-		if(openspcoop2_7<=openspcoop2_6){
-			log.error("Personalizzazione del livello di filtro dei messaggi diagnostici OpenSPCoop2 7 (valore: "+openspcoop2_7
-					+") deve essere maggiore del valore impostato per il livello OpenSPCoop2 6 (valore: "+openspcoop2_6+").");
+		int openspcoop2level7 = this.getFiltroMsgDiagnosticoOpenSPCoop2level7(); 
+		if(openspcoop2level7<=openspcoop2level6){
+			this.logError("Personalizzazione del livello di filtro dei messaggi diagnostici OpenSPCoop2 7 (valore: "+openspcoop2level7
+					+") deve essere maggiore del valore impostato per il livello OpenSPCoop2 6 (valore: "+openspcoop2level6+").");
 			return false;
 		}else{
-			if(openspcoop2_7!=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_DEBUG_HIGH)){
-				log.info("Personalizzazione del livello di filtro dei messaggi diagnostici (OpenSPCoop2 7) al valore openspcoop: "+openspcoop2_7);
+			if(openspcoop2level7!=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_DEBUG_HIGH)){
+				logInfo(log, "Personalizzazione del livello di filtro dei messaggi diagnostici (OpenSPCoop2 7) al valore openspcoop: "+openspcoop2level7);
 			}
 		}
 		
@@ -555,19 +562,19 @@ public class MsgDiagnosticiProperties {
 	
 	public boolean initializeMsgDiagnosticiPersonalizzati(){
 		if(MsgDiagnosticiProperties.initMsgDiagnosticiPersonalizzati == null){
-			return _initializeMsgDiagnosticiPersonalizzati(this.reader, this.log);
+			return initializeMsgDiagnosticiPersonalizzatiEngine(this.reader, this.log);
 		}
 		return MsgDiagnosticiProperties.initMsgDiagnosticiPersonalizzati!=null ? MsgDiagnosticiProperties.initMsgDiagnosticiPersonalizzati : null;
 	}
-	private static synchronized boolean _initializeMsgDiagnosticiPersonalizzati(MsgDiagnosticiInstanceProperties reader, Logger log){
+	private static synchronized boolean initializeMsgDiagnosticiPersonalizzatiEngine(MsgDiagnosticiInstanceProperties reader, Logger log){
 		try{
 			if(MsgDiagnosticiProperties.initMsgDiagnosticiPersonalizzati == null){
 				
-				Properties tmp_livelliMsgDiagnosticiPersonalizzati = new Properties();
-				Properties tmp_codiciMsgDiagnosticiPersonalizzati = new Properties();
-				Properties tmp_codiciIdentificativiFunzione = new Properties();
-				Properties tmp_messaggiMsgDiagnosticiPersonalizzati = new Properties();
-				Properties tmp_mappingCodiceToKeywordMsgDiagnosticiPersonalizzati = new Properties();
+				Properties tmpLivelliMsgDiagnosticiPersonalizzati = new Properties();
+				Properties tmpCodiciMsgDiagnosticiPersonalizzati = new Properties();
+				Properties tmpCodiciIdentificativiFunzione = new Properties();
+				Properties tmpMessaggiMsgDiagnosticiPersonalizzati = new Properties();
+				Properties tmpMappingCodiceToKeywordMsgDiagnosticiPersonalizzati = new Properties();
 				
 				
 				// Search codiceIdentificativoFunzione
@@ -581,18 +588,18 @@ public class MsgDiagnosticiProperties {
 						String modulo = tmpSplit[0].trim();
 						
 						// Controllo che il modulo non sia gia' definito
-						if(tmp_codiciIdentificativiFunzione.containsKey(modulo)){
-							throw new Exception("Per Il modulo funzionale ["+modulo+"] sono stati definiti piu' codici??");
+						if(tmpCodiciIdentificativiFunzione.containsKey(modulo)){
+							throw new CoreException("Per Il modulo funzionale ["+modulo+"] sono stati definiti piu' codici??");
 						}
 						
 						// Controllo che gia non esista il valore associato
-						if(tmp_codiciIdentificativiFunzione.containsValue(value)){
-							throw new Exception("Il codice fornito ("+modulo+"="+value+") e' gia' utilizzato da un altro modulo funzionale");
+						if(tmpCodiciIdentificativiFunzione.containsValue(value)){
+							throw new CoreException("Il codice fornito ("+modulo+"="+value+") e' gia' utilizzato da un altro modulo funzionale");
 						}
 						
 						// Add
-						//System.out.println("AGGIUNTI CODICI ["+modulo+"]=["+value+"]");
-						tmp_codiciIdentificativiFunzione.put(modulo, value);
+						/**System.out.println("AGGIUNTI CODICI ["+modulo+"]=["+value+"]");*/
+						tmpCodiciIdentificativiFunzione.put(modulo, value);
 					}
 				}
 
@@ -609,11 +616,10 @@ public class MsgDiagnosticiProperties {
 							if(v.toString()!=null) {
 								// ignore
 							}
-							//tmp_livelliMsgDiagnosticiPersonalizzati.put(chiave, v);
-							tmp_livelliMsgDiagnosticiPersonalizzati.put(chiave, valore);
-							//System.out.println("ADD LIVELLO ["+chiave+"] ["+v+"]");
+							tmpLivelliMsgDiagnosticiPersonalizzati.put(chiave, valore);
+							/**System.out.println("ADD LIVELLO ["+chiave+"] ["+v+"]");*/
 						}catch(Exception e){
-							throw new Exception("Valore della proprieta' ["+key+"] non valido ["+valore+"]: "+e.getMessage());
+							throw new CoreException("Valore della proprieta' ["+key+"] non valido ["+valore+"]: "+e.getMessage());
 						}
 					}else if(key.endsWith(MsgDiagnosticiProperties.SUFFIX_CODICE_MSG_DIAGNOSTICO)){
 						String chiave = key.substring(0,(key.length()-(MsgDiagnosticiProperties.SUFFIX_CODICE_MSG_DIAGNOSTICO.length()))); 
@@ -622,29 +628,29 @@ public class MsgDiagnosticiProperties {
 						String moduloFunzionale = tmp[0].trim();
 						
 						// getCodice Modulo Funzionale
-						Object codiceModuloFunzionaleObject = tmp_codiciIdentificativiFunzione.get(moduloFunzionale);
+						Object codiceModuloFunzionaleObject = tmpCodiciIdentificativiFunzione.get(moduloFunzionale);
 						if(codiceModuloFunzionaleObject==null){
-							throw new Exception("Per il modulo funzionale ["+moduloFunzionale+"] non e' stato definito il codice");
+							throw new CoreException("Per il modulo funzionale ["+moduloFunzionale+"] non e' stato definito il codice");
 						}
 						String codiceModuloFunzionale = (String) codiceModuloFunzionaleObject;
 						
 						// Codice definitivo
 						String codiceDefinitivo = codiceModuloFunzionale+valore;
-						if(tmp_codiciMsgDiagnosticiPersonalizzati.containsValue(codiceDefinitivo)){
-							throw new Exception("Proprieta' "+chiave+" contiene un codice ["+valore+"] gia' definito per un altro messaggio diagnostico del modulo funzionale "+moduloFunzionale+" ("+codiceModuloFunzionale+")");
+						if(tmpCodiciMsgDiagnosticiPersonalizzati.containsValue(codiceDefinitivo)){
+							throw new CoreException("Proprietà "+chiave+" contiene un codice ["+valore+"] gia' definito per un altro messaggio diagnostico del modulo funzionale "+moduloFunzionale+" ("+codiceModuloFunzionale+")");
 						}
-						tmp_codiciMsgDiagnosticiPersonalizzati.put(chiave, codiceDefinitivo);
-						tmp_mappingCodiceToKeywordMsgDiagnosticiPersonalizzati.put(codiceDefinitivo,chiave);
-						//System.out.println("ADD CODICE ["+chiave+"] ["+codiceDefinitivo+"]");
+						tmpCodiciMsgDiagnosticiPersonalizzati.put(chiave, codiceDefinitivo);
+						tmpMappingCodiceToKeywordMsgDiagnosticiPersonalizzati.put(codiceDefinitivo,chiave);
+						/**System.out.println("ADD CODICE ["+chiave+"] ["+codiceDefinitivo+"]");*/
 						
 					}else if(key.endsWith(MsgDiagnosticiProperties.SUFFIX_MESSAGGIO_MSG_DIAGNOSTICO)){
 						String chiave = key.substring(0,(key.length()-(MsgDiagnosticiProperties.SUFFIX_MESSAGGIO_MSG_DIAGNOSTICO.length()))); 
 						String valore = msgDiagnostici.getProperty(key);
-						tmp_messaggiMsgDiagnosticiPersonalizzati.put(chiave, valore);
-						//System.out.println("ADD MESSAGGIO ["+chiave+"] ["+valore+"]");
+						tmpMessaggiMsgDiagnosticiPersonalizzati.put(chiave, valore);
+						/**System.out.println("ADD MESSAGGIO ["+chiave+"] ["+valore+"]");*/
 					}else{
 						if(!key.endsWith(MsgDiagnosticiProperties.SUFFIX_CODICE_MODULO_MSG_DIAGNOSTICO)){
-							throw new Exception("Proprieta' malformata ["+key+"]");
+							throw new CoreException("Proprieta' malformata ["+key+"]");
 						}
 					}
 				}
@@ -656,32 +662,32 @@ public class MsgDiagnosticiProperties {
 					String livello = prefix + MsgDiagnosticiProperties.SUFFIX_LIVELLO_MSG_DIAGNOSTICO;
 					String codice = prefix + MsgDiagnosticiProperties.SUFFIX_CODICE_MSG_DIAGNOSTICO;
 					String messaggio = prefix + MsgDiagnosticiProperties.SUFFIX_MESSAGGIO_MSG_DIAGNOSTICO;
-					if(tmp_livelliMsgDiagnosticiPersonalizzati.containsKey(MsgDiagnosticiProperties.MSG_DIAGNOSTICI_PERSONALIZZATI[i])==false){
-						throw new Exception("Proprieta' "+livello+" non definita");
+					if(tmpLivelliMsgDiagnosticiPersonalizzati.containsKey(MsgDiagnosticiProperties.MSG_DIAGNOSTICI_PERSONALIZZATI[i])==false){
+						throw new CoreException("Proprieta' "+livello+" non definita");
 					}
-					if(tmp_codiciMsgDiagnosticiPersonalizzati.containsKey(MsgDiagnosticiProperties.MSG_DIAGNOSTICI_PERSONALIZZATI[i])==false){
-						throw new Exception("Proprieta' "+codice+" non definita");
+					if(tmpCodiciMsgDiagnosticiPersonalizzati.containsKey(MsgDiagnosticiProperties.MSG_DIAGNOSTICI_PERSONALIZZATI[i])==false){
+						throw new CoreException("Proprieta' "+codice+" non definita");
 					}
-					if(tmp_messaggiMsgDiagnosticiPersonalizzati.containsKey(MsgDiagnosticiProperties.MSG_DIAGNOSTICI_PERSONALIZZATI[i])==false){
-						throw new Exception("Proprieta' "+messaggio+" non definita");
+					if(tmpMessaggiMsgDiagnosticiPersonalizzati.containsKey(MsgDiagnosticiProperties.MSG_DIAGNOSTICI_PERSONALIZZATI[i])==false){
+						throw new CoreException("Proprieta' "+messaggio+" non definita");
 					}
 				}
 				
 				
 				// inizializzo strutture
 				
-				MsgDiagnosticiProperties.livelliMsgDiagnosticiPersonalizzati = new PropertiesReader(tmp_livelliMsgDiagnosticiPersonalizzati,true);				
-				MsgDiagnosticiProperties.codiciMsgDiagnosticiPersonalizzati = new PropertiesReader(tmp_codiciMsgDiagnosticiPersonalizzati,true);			
-				MsgDiagnosticiProperties.messaggiMsgDiagnosticiPersonalizzati = new PropertiesReader(tmp_messaggiMsgDiagnosticiPersonalizzati,true);			
-				MsgDiagnosticiProperties.mappingCodiceToKeywordMsgDiagnosticiPersonalizzati = new PropertiesReader(tmp_mappingCodiceToKeywordMsgDiagnosticiPersonalizzati,true);	
-				MsgDiagnosticiProperties.codiciIdentificativiFunzione = new PropertiesReader(tmp_codiciIdentificativiFunzione,true);
+				MsgDiagnosticiProperties.livelliMsgDiagnosticiPersonalizzati = new PropertiesReader(tmpLivelliMsgDiagnosticiPersonalizzati,true);				
+				MsgDiagnosticiProperties.codiciMsgDiagnosticiPersonalizzati = new PropertiesReader(tmpCodiciMsgDiagnosticiPersonalizzati,true);			
+				MsgDiagnosticiProperties.messaggiMsgDiagnosticiPersonalizzati = new PropertiesReader(tmpMessaggiMsgDiagnosticiPersonalizzati,true);			
+				MsgDiagnosticiProperties.mappingCodiceToKeywordMsgDiagnosticiPersonalizzati = new PropertiesReader(tmpMappingCodiceToKeywordMsgDiagnosticiPersonalizzati,true);	
+				MsgDiagnosticiProperties.codiciIdentificativiFunzione = new PropertiesReader(tmpCodiciIdentificativiFunzione,true);
 
 				MsgDiagnosticiProperties.initMsgDiagnosticiPersonalizzati = true;
 				
 			}
 			return true;
 		}catch(java.lang.Exception e) {
-			log.error("Riscontrato errore durante la lettura dei messaggi diagnostici personalizzati: "+e.getMessage());
+			logError(log, "Riscontrato errore durante la lettura dei messaggi diagnostici personalizzati: "+e.getMessage());
 			if(OpenSPCoop2Logger.getLoggerOpenSPCoopCore()!=null){
 				OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Riscontrato errore durante la lettura dei messaggi diagnostici personalizzati: "+e.getMessage(),e);
 			}
@@ -721,6 +727,7 @@ public class MsgDiagnosticiProperties {
 		MSG_DIAGNOSTICI_WARNING.add("004131"); // ricezioneBuste.validazioneContenutiApplicativiRichiestaNonRiuscita.warningOnly
 		MSG_DIAGNOSTICI_WARNING.add("004145"); // ricezioneBuste.richiesta.warningCharsetDifferenteDefault
 		MSG_DIAGNOSTICI_WARNING.add("004146"); // ricezioneBuste.risposta.warningCharsetDifferenteDefault
+		MSG_DIAGNOSTICI_WARNING.add("004176"); // ricezioneBuste.protocolli.tipoSoggetto.fruitore.unsupported.warning
 		
 		MSG_DIAGNOSTICI_WARNING.add("007059"); // consegnaContenutiApplicativi.validazioneContenutiApplicativiRispostaNonRiuscita.warningOnly
 	}
@@ -765,6 +772,7 @@ public class MsgDiagnosticiProperties {
 	public static final String MSG_DIAG_TIMER_THRESHOLD="timerThreshold.";
 	public static final String MSG_DIAG_TIMER_CONSEGNA_CONTENUTI_APPLICATIVI="timerConsegnaContenutiApplicativi.";
 	public static final String MSG_DIAG_TIMER_STATISTICHE="timerStatistiche.";
+	public static final String MSG_DIAG_TIMER_GESTORE_CHIAVI_PDND="timerGestoreChiaviPDND.";
 	public static final String MSG_DIAG_OPENSPCOOP_STARTUP="openspcoopStartup.";
 	public static final String MSG_DIAG_ALL="all.";
 	private static final String[] MSG_DIAGNOSTICI_PERSONALIZZATI = {
@@ -1178,6 +1186,7 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"validazioneSemantica.autorizzazione.inCorso",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"validazioneSemantica.autorizzazione.completata",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"validazioneSemantica.autorizzazione.fallita",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"protocolli.tipoSoggetto.fruitore.unsupported.warning",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"ricezioneBustaErrore",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"ricezioneBusta.eccezioniNonGravi",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"validazioneNonRiuscita",
@@ -1406,6 +1415,22 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_TIMER_STATISTICHE+"generazioneStatistiche",
 		MsgDiagnosticiProperties.MSG_DIAG_TIMER_STATISTICHE+"generazioneStatistiche.inCorso",
 		MsgDiagnosticiProperties.MSG_DIAG_TIMER_STATISTICHE+"generazioneStatistiche.effettuata",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_CHIAVI_PDND+"avvioInCorso",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_CHIAVI_PDND+"avvioEffettuato",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_CHIAVI_PDND+"disabilitato",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_CHIAVI_PDND+"letturaEventi",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_CHIAVI_PDND+"letturaEventi.nonNecessaria",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_CHIAVI_PDND+"gestioneEventi.inCorso",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_CHIAVI_PDND+"gestioneEventi.analisi",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_CHIAVI_PDND+"gestioneEventi.effettuata",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_CHIAVI_PDND+"gestioneEventi.fallita",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_CHIAVI_PDND+"gestioneEventi.evento",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_CHIAVI_PDND+"inizializzazione.inCorso",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_CHIAVI_PDND+"inizializzazione.effettuata",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_CHIAVI_PDND+"inizializzazione.fallita",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_CHIAVI_PDND+"letturaCacheKeys",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_CHIAVI_PDND+"letturaCacheKeys.effettuata",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_CHIAVI_PDND+"letturaCacheKeys.nonNecessaria",
 		MsgDiagnosticiProperties.MSG_DIAG_OPENSPCOOP_STARTUP+"pdd",
 		MsgDiagnosticiProperties.MSG_DIAG_OPENSPCOOP_STARTUP+"IntegrationManager",
 		MsgDiagnosticiProperties.MSG_DIAG_OPENSPCOOP_STARTUP+"erroreGenerico",
@@ -1466,7 +1491,7 @@ public class MsgDiagnosticiProperties {
 				return -1;
 			}
 		}catch(Exception e){
-			this.log.error("Errore durante l'esecuzione del metodo getLivello("+modulo+","+keyLivelloPersonalizzato+")",e);
+			logError("Errore durante l'esecuzione del metodo getLivello("+modulo+","+keyLivelloPersonalizzato+")",e);
 			return -1;
 		}
 	}
@@ -1474,7 +1499,7 @@ public class MsgDiagnosticiProperties {
 		try{
 			return MsgDiagnosticiProperties.codiciMsgDiagnosticiPersonalizzati.getValue(modulo+keyCodicePersonalizzato);
 		}catch(Exception e){
-			this.log.error("Errore durante l'esecuzione del metodo getCodice("+modulo+","+keyCodicePersonalizzato+")",e);
+			logError("Errore durante l'esecuzione del metodo getCodice("+modulo+","+keyCodicePersonalizzato+")",e);
 			return null;
 		}
 	}
@@ -1482,36 +1507,46 @@ public class MsgDiagnosticiProperties {
 		try{
 			return MsgDiagnosticiProperties.messaggiMsgDiagnosticiPersonalizzati.getValue(modulo+keyMsgPersonalizzato);
 		}catch(Exception e){
-			this.log.error("Errore durante l'esecuzione del metodo getMessaggio("+modulo+","+keyMsgPersonalizzato+")",e);
+			logError("Errore durante l'esecuzione del metodo getMessaggio("+modulo+","+keyMsgPersonalizzato+")",e);
 			return null;
 		}
 	}
-	public String getKeyMessaggio(String codice) throws Exception{
+	public String getKeyMessaggio(String codice) throws CoreException{
 		if(MsgDiagnosticiProperties.mappingCodiceToKeywordMsgDiagnosticiPersonalizzati.containsKey(codice)){
-			Object keyword = MsgDiagnosticiProperties.mappingCodiceToKeywordMsgDiagnosticiPersonalizzati.getValue(codice);
+			Object keyword = null;
+			try {
+				keyword = MsgDiagnosticiProperties.mappingCodiceToKeywordMsgDiagnosticiPersonalizzati.getValue(codice);
+			}catch(Exception e) {
+				throw new CoreException(e.getMessage(),e);
+			}
 			if(keyword == null){
-				throw new Exception("MsgDiagnostico con codice ["+codice+"] non registrato?");
+				throw new CoreException("MsgDiagnostico con codice ["+codice+"] non registrato?");
 			}
 			return (String) keyword;
 		}else{
-			throw new Exception("MsgDiagnostico con codice ["+codice+"] non registrato");
+			throw new CoreException("MsgDiagnostico con codice ["+codice+"] non registrato");
 		}
 	}
-	public String getModulo(String codice) throws Exception{
+	public String getModulo(String codice) throws CoreException{
 		
 		Enumeration<?> moduli = MsgDiagnosticiProperties.codiciIdentificativiFunzione.propertyNames();
 		while(moduli.hasMoreElements()){
 			String modulo = (String) moduli.nextElement();
-			Object codiceModulo = MsgDiagnosticiProperties.codiciIdentificativiFunzione.getValue(modulo);
+			Object codiceModulo = null;
+			try {
+				codiceModulo = MsgDiagnosticiProperties.codiciIdentificativiFunzione.getValue(modulo);
+			}catch(Exception e) {
+				throw new CoreException(e.getMessage(),e);
+			}
 			if(codiceModulo==null){
-				throw new Exception("Modulo ["+modulo+"] senza un codice registrato");
+				throw new CoreException("Modulo ["+modulo+"] senza un codice registrato");
 			}
 			if(((String)codiceModulo).equals(codice)){
 				return modulo;
 			}
 			
 		}
-		throw new Exception("Modulo con codice ["+codice+"] non registrato");
+		throw new CoreException("Modulo con codice ["+codice+"] non registrato");
 	}
 	
 	
@@ -1552,50 +1587,50 @@ public class MsgDiagnosticiProperties {
 	
 	
 	public String getCodiceDiagnosticoFatal() throws UtilsException{
-		if(codiceDiagnosticoInitialized==false){
+		if(!codiceDiagnosticoInitialized){
 			initCodiceDiagnostico(this.reader);
 		}
 		return codiceDiagnosticoFatal;
 	}
 	
 	public String getCodiceDiagnosticoErrorProtocol() throws UtilsException{
-		if(codiceDiagnosticoInitialized==false){
+		if(!codiceDiagnosticoInitialized){
 			initCodiceDiagnostico(this.reader);
 		}
 		return codiceDiagnosticoErrorProtocol;
 	}
 	public String getCodiceDiagnosticoErrorIntegration() throws UtilsException{
-		if(codiceDiagnosticoInitialized==false){
+		if(!codiceDiagnosticoInitialized){
 			initCodiceDiagnostico(this.reader);
 		}
 		return codiceDiagnosticoErrorIntegration;
 	}
 	public String getCodiceDiagnosticoInfoProtocol() throws UtilsException{
-		if(codiceDiagnosticoInitialized==false){
+		if(!codiceDiagnosticoInitialized){
 			initCodiceDiagnostico(this.reader);
 		}
 		return codiceDiagnosticoInfoProtocol;
 	}
 	public String getCodiceDiagnosticoInfoIntegration() throws UtilsException{
-		if(codiceDiagnosticoInitialized==false){
+		if(!codiceDiagnosticoInitialized){
 			initCodiceDiagnostico(this.reader);
 		}
 		return codiceDiagnosticoInfoIntegration;
 	}
 	public String getCodiceDiagnosticoDebugLow() throws UtilsException{
-		if(codiceDiagnosticoInitialized==false){
+		if(!codiceDiagnosticoInitialized){
 			initCodiceDiagnostico(this.reader);
 		}
 		return codiceDiagnosticoDebugLow;
 	}
 	public String getCodiceDiagnosticoDebugMedium() throws UtilsException{
-		if(codiceDiagnosticoInitialized==false){
+		if(!codiceDiagnosticoInitialized){
 			initCodiceDiagnostico(this.reader);
 		}
 		return codiceDiagnosticoDebugMedium;
 	}
 	public String getCodiceDiagnosticoDebugHigh() throws UtilsException{
-		if(codiceDiagnosticoInitialized==false){
+		if(!codiceDiagnosticoInitialized){
 			initCodiceDiagnostico(this.reader);
 		}
 		return codiceDiagnosticoDebugHigh;

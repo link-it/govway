@@ -1413,7 +1413,7 @@ public class GestoreAutorizzazione {
 								
 								// verifica presenza claim nel token
 								log.debug("Verifico presenza '"+key+"' nel token ...");
-								if(informazioniTokenNormalizzate.getClaims().containsKey(key)==false) {
+								if(!informazioniTokenNormalizzate.getClaims().containsKey(key)) {
 									
 									if(key.startsWith(ATTRIBUTE_AUTHORITY_PREFIX) && key.length()>ATTRIBUTE_AUTHORITY_PREFIX.length()) {
 										String tmp = key.substring(ATTRIBUTE_AUTHORITY_PREFIX.length());
@@ -1445,7 +1445,7 @@ public class GestoreAutorizzazione {
 										if(informazioniTokenNormalizzate.getAa()!=null && 
 												informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities()!=null &&
 												informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities().getValue()!=null &&
-												informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities().getValue() &&
+												informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities().getValue().booleanValue() &&
 												informazioniTokenNormalizzate.getAa().getAttributes()!=null && 
 												informazioniTokenNormalizzate.getAa().getAttributes().containsKey(attributeAuthorityName)) {
 											Object o = informazioniTokenNormalizzate.getAa().getAttributes().get(attributeAuthorityName);

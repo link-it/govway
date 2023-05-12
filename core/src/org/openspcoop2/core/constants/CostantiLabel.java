@@ -195,7 +195,8 @@ public final class CostantiLabel {
      * PROPRIETA MODI
      */
 	
-	public static final String MODIPA_LABEL_DEFAULT = "Default";
+	public static final String MODIPA_LABEL_UNDEFINED = "-";
+    public static final String MODIPA_LABEL_DEFAULT = "Default";
     public static final String MODIPA_LABEL_RIDEFINISCI = "Ridefinito";
     
 	public static final String MODIPA_API_PROFILO_CANALE_LABEL = "Sicurezza Canale";
@@ -357,7 +358,8 @@ public final class CostantiLabel {
 	
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE_LABEL = "TrustStore Certificati";
 	
-	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_STORE_MODE_LABEL_DEFAULT = MODIPA_LABEL_DEFAULT;
+	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_STORE_MODE_LABEL_UNDEFINED = MODIPA_LABEL_UNDEFINED;
+    public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_STORE_MODE_LABEL_DEFAULT = MODIPA_LABEL_DEFAULT;
     public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_STORE_MODE_LABEL_RIDEFINISCI = MODIPA_LABEL_RIDEFINISCI;
     
 	public static final String MODIPA_STORE_PATH_LABEL = "Path";

@@ -2715,9 +2715,11 @@ public class RicezioneBuste {
 						if(credenzialiRitornate==null){
 							throw new Exception("Credenziali non ritornate");
 						}
-						if(inRequestContext.getConnettore().getCredenziali().equals(credenzialiRitornate) == false){
+						if(!inRequestContext.getConnettore().getCredenziali().equals(credenzialiRitornate)){
 							String nuoveCredenziali = credenzialiRitornate.toString();
-							nuoveCredenziali = nuoveCredenziali.substring(0,(nuoveCredenziali.length()-1));
+							if(nuoveCredenziali.length()>0) {
+								nuoveCredenziali = nuoveCredenziali.substring(0,(nuoveCredenziali.length()-1));
+							}
 							msgDiag.addKeyword(CostantiPdD.KEY_NUOVE_CREDENZIALI,nuoveCredenziali);
 							String identita = gestore.getIdentitaGestoreCredenziali();
 							if(identita==null){
@@ -2859,6 +2861,7 @@ public class RicezioneBuste {
 		supportatoAutenticazioneSoggetti = gestioneAutenticazione.isSupportatoAutenticazioneSoggetti();
 		idApplicativoToken = gestioneAutenticazione.getIdApplicativoToken();
 		soggettoFruitore = gestioneAutenticazione.getSoggettoFruitore();
+		boolean autenticazioneOpzionale = gestioneAutenticazione.isAutenticazioneOpzionale();
 		servizioApplicativoFruitore = gestioneAutenticazione.getServizioApplicativoFruitore();
 		
 		
@@ -5102,26 +5105,31 @@ public class RicezioneBuste {
 		ErroreCooperazione erroreVerificaTipoByProtocol = null;
 		// Nota: se qualche informazione e' null verranno segnalati altri errori
 		if(soggettoFruitore!=null && soggettoFruitore.getTipo()!=null && 
-				tipiSoggettiSupportatiCanale.contains(soggettoFruitore.getTipo())==false){
-			parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL);
-			msgDiag.logPersonalizzato("protocolli.tipoSoggetto.fruitore.unsupported");
-			erroreVerificaTipoByProtocol = ErroriCooperazione.TIPO_MITTENTE_NON_VALIDO.getErroreCooperazione();
+				!tipiSoggettiSupportatiCanale.contains(soggettoFruitore.getTipo())){
+			if(autenticazioneOpzionale && !propertiesReader.isAutorizzazioneBustaAutenticazioneOpzionaleSoggettoFruitoreProfiloInteroperabilitaDifferenteServizioBloccaRichiesta()) {
+				msgDiag.logPersonalizzato("protocolli.tipoSoggetto.fruitore.unsupported.warning");
+			}
+			else {
+				parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL);
+				msgDiag.logPersonalizzato("protocolli.tipoSoggetto.fruitore.unsupported");
+				erroreVerificaTipoByProtocol = ErroriCooperazione.TIPO_MITTENTE_NON_VALIDO.getErroreCooperazione();
+			}
 		}
 		else if(idServizio!=null && idServizio.getSoggettoErogatore()!=null && idServizio.getSoggettoErogatore().getTipo()!=null &&
-				tipiSoggettiSupportatiCanale.contains(idServizio.getSoggettoErogatore().getTipo())==false){
+				!tipiSoggettiSupportatiCanale.contains(idServizio.getSoggettoErogatore().getTipo())){
 			parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL);
 			msgDiag.logPersonalizzato("protocolli.tipoSoggetto.erogatore.unsupported");
 			erroreVerificaTipoByProtocol = ErroriCooperazione.TIPO_DESTINATARIO_NON_VALIDO.getErroreCooperazione();
 		}
 		else if(idServizio!=null && idServizio.getTipo()!=null && 
-				tipiServiziSupportatiCanale.contains(idServizio.getTipo())==false){
+				!tipiServiziSupportatiCanale.contains(idServizio.getTipo())){
 			parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL);
 			msgDiag.logPersonalizzato("protocolli.tipoServizio.unsupported");
 			erroreVerificaTipoByProtocol = ErroriCooperazione.TIPO_SERVIZIO_NON_VALIDO.getErroreCooperazione();
 		}
 		else if(idApplicativoToken!=null && idApplicativoToken.getIdSoggettoProprietario()!=null &&
 				idApplicativoToken.getIdSoggettoProprietario().getTipo()!=null && 
-				tipiSoggettiSupportatiCanale.contains(idApplicativoToken.getIdSoggettoProprietario().getTipo())==false){
+				!tipiSoggettiSupportatiCanale.contains(idApplicativoToken.getIdSoggettoProprietario().getTipo())){
 			parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL);
 			msgDiag.logPersonalizzato("protocolli.tipoSoggetto.applicativoToken.unsupported");
 			erroreVerificaTipoByProtocol = ErroriCooperazione.TIPO_MITTENTE_NON_VALIDO.getErroreCooperazione();

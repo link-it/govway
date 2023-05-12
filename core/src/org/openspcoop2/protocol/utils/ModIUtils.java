@@ -42,6 +42,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
+import org.openspcoop2.utils.certificate.remote.RemoteKeyType;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.digest.DigestEncoding;
 
@@ -1115,6 +1116,18 @@ public class ModIUtils {
 		}
 	}
 	
+	public static RemoteKeyType getRemoteKeyType(String name) throws ProtocolException {
+		try {
+			Class<?> modiPropertiesClass = Class.forName("org.openspcoop2.protocol.modipa.config.ModIProperties");
+			Method mGetInstance = modiPropertiesClass.getMethod("getInstance");
+			Object instance = mGetInstance.invoke(null);
+			Method mGetRemoteKey = instance.getClass().getMethod("getRemoteKeyType",String.class);
+			return (RemoteKeyType) mGetRemoteKey.invoke(instance,name);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	
 	private static KeystoreParams getSicurezzaMessaggioCertificatiTrustStore() throws ProtocolException {
 		try {
 			Class<?> modiPropertiesClass = Class.forName("org.openspcoop2.protocol.modipa.config.ModIProperties");
@@ -1253,20 +1266,69 @@ public class ModIUtils {
 		return b;
 	}
 	
-	public static KeystoreParams getKeyStoreParams(List<org.openspcoop2.core.registry.ProtocolProperty> protocolPropertyList) throws ProtocolException {
-		return getKeystoreParamsEngine(protocolPropertyList, false, false);
+	public static boolean existsStoreConfig(List<org.openspcoop2.core.registry.ProtocolProperty> protocolPropertyList, boolean includeRemoteStore,
+			boolean checkModeFruizioneKeystoreId) throws ProtocolException {
+		KeystoreParams keystoreParams = null;
+		try { 
+			keystoreParams = ModIUtils.getKeyStoreParams(protocolPropertyList,
+					checkModeFruizioneKeystoreId);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+		KeystoreParams truststoreParams = null;
+		try { 
+			truststoreParams = ModIUtils.getTrustStoreParams(protocolPropertyList);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+		KeystoreParams truststoreSslParams = null;
+		try { 
+			truststoreSslParams = ModIUtils.getTrustStoreSSLParams(protocolPropertyList);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+		
+		boolean existsStore = keystoreParams!=null || truststoreParams!=null || truststoreSslParams!=null;
+		if(!includeRemoteStore) {
+			return existsStore;
+		}
+		
+		List<RemoteStoreConfig> trustStoreRemoteConfig = null;
+		try {
+			trustStoreRemoteConfig = ModIUtils.getRemoteStoreConfig();
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+		
+		return existsStore || (trustStoreRemoteConfig!=null && !trustStoreRemoteConfig.isEmpty());
+	}
+	
+	public static KeystoreParams getKeyStoreParams(List<org.openspcoop2.core.registry.ProtocolProperty> protocolPropertyList,
+			boolean checkModeFruizioneKeystoreId) throws ProtocolException {
+		return getKeystoreParamsEngine(protocolPropertyList, false, false,
+				checkModeFruizioneKeystoreId);
 	}
 	public static KeystoreParams getTrustStoreParams(List<org.openspcoop2.core.registry.ProtocolProperty> protocolPropertyList) throws ProtocolException {
-		return getKeystoreParamsEngine(protocolPropertyList, false, true);
+		return getKeystoreParamsEngine(protocolPropertyList, false, true,
+				false);
 	}
 	public static KeystoreParams getTrustStoreSSLParams(List<org.openspcoop2.core.registry.ProtocolProperty> protocolPropertyList) throws ProtocolException {
-		return getKeystoreParamsEngine(protocolPropertyList, true, false);
+		return getKeystoreParamsEngine(protocolPropertyList, true, false,
+				false);
 	}
 	private static KeystoreParams getKeystoreParamsEngine(List<org.openspcoop2.core.registry.ProtocolProperty> protocolPropertyList,
-			boolean ssl, boolean truststore) throws ProtocolException {
-		
+			boolean ssl, boolean truststore,
+			boolean checkModeFruizioneKeystoreId) throws ProtocolException {
+				
 		if(protocolPropertyList==null || protocolPropertyList.isEmpty()) {
 			return null;
+		}
+		
+		if(checkModeFruizioneKeystoreId) {
+			String v = getStringValue(protocolPropertyList, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE);
+			if(!CostantiDB.MODIPA_KEYSTORE_FRUIZIONE.equals(v)) {
+				return null;
+			}
 		}
 		
 		KeystoreParams keystoreParams = null;
@@ -1283,7 +1345,7 @@ public class ModIUtils {
 		}
 		
 		String v = getStringValue(protocolPropertyList, id);
-		if(v!=null && !StringUtils.isEmpty(v)) {
+		if(v!=null && !StringUtils.isEmpty(v) && !CostantiDB.MODIPA_PROFILO_UNDEFINED.equals(v)) {
 			if(CostantiDB.MODIPA_PROFILO_DEFAULT.equals(v)) {
 				if(ssl) {
 					keystoreParams = ModIUtils.getSicurezzaMessaggioSslTrustStore();

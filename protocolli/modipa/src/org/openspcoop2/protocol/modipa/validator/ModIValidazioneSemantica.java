@@ -24,6 +24,7 @@ package org.openspcoop2.protocol.modipa.validator;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -43,6 +44,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -51,6 +53,7 @@ import org.openspcoop2.protocol.engine.SecurityTokenUtilities;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.utils.ModIPropertiesUtils;
+import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
 import org.openspcoop2.protocol.modipa.utils.ModIUtilities;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -67,9 +70,11 @@ import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazione;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneSemanticaResult;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneUtils;
+import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.digest.DigestEncoding;
+import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
 
@@ -120,6 +125,8 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 	private void addErroreMittenteNonAutorizzato(Busta busta, String msgErrore) throws ProtocolException {
 		this.erroriValidazione.add(getErroreMittenteNonAutorizzato(busta, msgErrore));
 	}
+	
+	private static final String MSG_ERRORE_NON_PRESENTE = "non presente";
 	
 	private String getPrefixHeader(String hdr) {
 		return "[Header '"+hdr+"'] ";
@@ -229,6 +236,10 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				securityMessageProfile = null;
 			}
 						
+			boolean sicurezzaTokenOauth = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND.equals(securityMessageProfileSorgenteTokenIdAuth) 
+					||
+				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH.equals(securityMessageProfileSorgenteTokenIdAuth);
+			
 			boolean sicurezzaMessaggio = securityMessageProfile!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED.equals(securityMessageProfile);
 			
 			String securityAuditPattern = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PATTERN);
@@ -246,7 +257,28 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				verifica=true;
 			}
 			
+			PortaApplicativa pa = null;
 			
+			
+			if(isRichiesta && sicurezzaTokenOauth) {
+				
+				String prefixAuthorization = getPrefixHeader(HttpConstants.AUTHORIZATION);
+				
+				boolean sicurezzaToken = this.context.containsKey(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+				if(!sicurezzaToken) {
+				
+					this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+							CodiceErroreCooperazione.SICUREZZA_TOKEN_NON_PRESENTE, 
+								prefixAuthorization+MSG_ERRORE_NON_PRESENTE));
+				}
+				else {
+				
+					pa = validateTokenAuthorizationAudience(msg, factory, state, requestInfo,
+							isRichiesta, prefixAuthorization);
+					
+				}
+				
+			}
 			
 			
 			if(sicurezzaMessaggio) {
@@ -406,12 +438,21 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				// durante l'identificazione viene identificato 1 solo applicativo (non possono essere differenti tra token e trasporto)
 				// viene quindi inserito dentro busta e usato per i controlli sottostanti
 				
-				if(msg.getTransportRequestContext()==null || msg.getTransportRequestContext().getInterfaceName()==null) {
-					throw new ProtocolException("ID Porta non presente");
+				if(pa==null) {
+					String interfaceName = null;
+					if(msg!=null && msg.getTransportRequestContext()!=null && msg.getTransportRequestContext().getInterfaceName()!=null) {
+						interfaceName = msg.getTransportRequestContext().getInterfaceName();
+					}
+					else if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
+						interfaceName = requestInfo.getProtocolContext().getInterfaceName();
+					}
+					if(interfaceName==null) {
+						throw new ProtocolException("ID Porta non presente");
+					}
+					IDPortaApplicativa idPA = new IDPortaApplicativa();
+					idPA.setNome(interfaceName);
+					pa = factory.getCachedConfigIntegrationReader(state, requestInfo).getPortaApplicativa(idPA); // pa invocata
 				}
-				IDPortaApplicativa idPA = new IDPortaApplicativa();
-				idPA.setNome(msg.getTransportRequestContext().getInterfaceName());
-				PortaApplicativa pa = factory.getCachedConfigIntegrationReader(state, requestInfo).getPortaApplicativa(idPA);
 				
 				
 				/** Identificazione Mittente by LineeGuida e Token */
@@ -820,7 +861,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		if(restSecurityToken==null) {
 			this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
 					CodiceErroreCooperazione.SICUREZZA_NON_PRESENTE, 
-					prefixAuthorization+"non presente"+suffixAudit02));
+					prefixAuthorization+MSG_ERRORE_NON_PRESENTE+suffixAudit02));
 			return;
 		}
 		
@@ -837,7 +878,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		if(auditSecurityToken==null || auditSecurityToken.getToken()==null || StringUtils.isEmpty(auditSecurityToken.getToken())) {
 			this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
 					CodiceErroreCooperazione.SICUREZZA_TOKEN_NON_PRESENTE, 
-					prefixAudit+"non presente"));
+					prefixAudit+MSG_ERRORE_NON_PRESENTE));
 			return;
 		}
 		
@@ -897,6 +938,116 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 					prefixAuthorization+getErroreClaimNonValido(digestValueClaim)));
 		}
 		return digestValue;
+	}
+	
+	private PortaApplicativa validateTokenAuthorizationAudience(OpenSPCoop2Message msg, IProtocolFactory<?> factory, IState state, RequestInfo requestInfo,
+			boolean isRichiesta, String prefixAuthorization) throws ProtocolException {
+		boolean checkAudienceDefinedModIConfig = true;
+				
+		PortaApplicativa pa = null;
+		String interfaceName = null;
+		if(msg!=null && msg.getTransportRequestContext()!=null && msg.getTransportRequestContext().getInterfaceName()!=null) {
+			interfaceName = msg.getTransportRequestContext().getInterfaceName();
+		}
+		else if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
+			interfaceName = requestInfo.getProtocolContext().getInterfaceName();
+		}
+		if(interfaceName==null) {
+			throw new ProtocolException("ID Porta non presente");
+		}
+		IDPortaApplicativa idPA = new IDPortaApplicativa();
+		idPA.setNome(interfaceName);
+		try {
+			pa = factory.getCachedConfigIntegrationReader(state, requestInfo).getPortaApplicativa(idPA); // pa invocata
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+		
+		if(pa.getGestioneToken()!=null && pa.getGestioneToken().getOptions()!=null) {
+			SortedMap<List<String>> properties = null;
+			try {
+				properties = PropertiesUtilities.convertTextToSortedListMap(pa.getGestioneToken().getOptions());
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
+			if(properties!=null && properties.size()>0 && properties.containsKey(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE)) {
+				checkAudienceDefinedModIConfig = false; // la verifica viene fatta nell'autorizzazione per token claims					
+			}
+		}
+		
+		if(checkAudienceDefinedModIConfig) {
+			
+			PortaApplicativa paDefault = null;
+			if(msg!=null) {
+				Object nomePortaInvocataObject = msg.getContextProperty(CostantiPdD.NOME_PORTA_INVOCATA);
+				String nomePorta = null;
+				if(nomePortaInvocataObject instanceof String) {
+					nomePorta = (String) nomePortaInvocataObject;
+				}
+				if(nomePorta==null && this.context!=null && this.context.containsKey(CostantiPdD.NOME_PORTA_INVOCATA)) {
+					nomePorta = (String) this.context.getObject(CostantiPdD.NOME_PORTA_INVOCATA);
+				}
+				if(nomePorta==null && requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
+					nomePorta = requestInfo.getProtocolContext().getInterfaceName(); // se non e' presente 'NOME_PORTA_INVOCATA' significa che non e' stato invocato un gruppo specifico
+				}
+				if(nomePorta!=null) {
+					idPA = new IDPortaApplicativa();
+					idPA.setNome(nomePorta);
+					try {
+						paDefault = factory.getCachedConfigIntegrationReader(state, requestInfo).getPortaApplicativa(idPA);
+					}catch(Exception e) {
+						throw new ProtocolException(e.getMessage(),e);
+					}
+				}
+				else {
+					throw new ProtocolException("ID Porta 'default' non presente");
+				}
+			}
+			
+			ModISecurityConfig modISecurityConfig = new ModISecurityConfig(msg, this.protocolFactory, state,requestInfo, 
+					!isRichiesta, // fruizione, 
+					isRichiesta, // request,
+					paDefault);
+			
+			/**System.out.println("VERIFICO RISPETTO AL VALORE ATTESO '"+modISecurityConfig.getAudience()+"'");*/
+			
+			Object oInformazioniTokenNormalizzate = this.context.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+			InformazioniToken informazioniTokenNormalizzate = null;
+			List<String> audienceClaimReceived = null;
+			if(oInformazioniTokenNormalizzate!=null) {
+				informazioniTokenNormalizzate = (InformazioniToken) oInformazioniTokenNormalizzate;
+				audienceClaimReceived = informazioniTokenNormalizzate.getAud();
+			}
+			
+			if(audienceClaimReceived==null || audienceClaimReceived.isEmpty()) {
+				
+				this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+						isRichiesta ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_PRESENTE :
+							CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_PRESENTE, 
+							prefixAuthorization+getErroreClaimNonPresente(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE)));
+				
+			}
+			else {
+			
+				boolean find = false;
+				for (String claim : audienceClaimReceived) {
+					if(claim.equalsIgnoreCase(modISecurityConfig.getAudience())) {
+						find = true;
+						break;
+					}	
+				}
+				if(!find) {
+					this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+							isRichiesta ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_VALIDO :
+								CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_VALIDO, 
+								prefixAuthorization+getErroreClaimNonValido(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE)));
+				}
+				
+			}
+			
+		}
+		
+		return pa;
 	}
 	
 	private void logError(String msg) {

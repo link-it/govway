@@ -968,7 +968,7 @@ public class CostantiControlStation {
 	public static final String PARAMETRO_CONTROLLO_FIRST_TIME = "paramFirstTime";
 	public static final String PARAMETRO_PORTE_GESTIONE_TOKEN_TITLE = "gestioneTokenTitle";
 	public static final String PARAMETRO_PORTE_GESTIONE_TOKEN = "gestioneToken";
-	public static final String PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY = "gtPolicy";
+	public static final String PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_EROGAZIONE_TOKEN_POLICY;
 	public static final String PARAMETRO_PORTE_GESTIONE_TOKEN_OPZIONALE = "gtOpzionale";
 	public static final String PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT = "gtValidazione";
 	public static final String PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION = "gtIntrospection";

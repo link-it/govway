@@ -59,11 +59,11 @@ public class ModIKeystoreConfig extends ModIKeystoreUtils {
 	
 	public ModIKeystoreConfig(boolean fruizione, IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica asps, String securityMessageProfile) throws ProtocolException, UtilsException {
 		super(fruizione, soggettoFruitore, asps, securityMessageProfile,
-				getSicurezzaMessaggio_certificati_keyStore_tipo(),
-				getSicurezzaMessaggio_certificati_keyStore_path(),
-				getSicurezzaMessaggio_certificati_keyStore_password(),
-				getSicurezzaMessaggio_certificati_key_alias(),
-				getSicurezzaMessaggio_certificati_key_password());
+				getSicurezzaMessaggioCertificatiKeyStoreTipo(),
+				getSicurezzaMessaggioCertificatiKeyStorePath(),
+				getSicurezzaMessaggioCertificatiKeyStorePassword(),
+				getSicurezzaMessaggioCertificatiKeyAlias(),
+				getSicurezzaMessaggioCertificatiKeyPassword());
 	}
 	
 	private static ModIProperties modIProperties = null;
@@ -78,16 +78,16 @@ public class ModIKeystoreConfig extends ModIKeystoreUtils {
 		}
 		return modIProperties;
 	}
-	private static String getSicurezzaMessaggio_certificati_keyStore_tipo() throws ProtocolException {
+	private static String getSicurezzaMessaggioCertificatiKeyStoreTipo() throws ProtocolException {
 		try {
 			return getModiProperties().getSicurezzaMessaggioCertificatiKeyStoreTipo();
 		}catch(Exception e) {
 			throw new ProtocolException(e.getMessage(),e);
 		}
 	}
-	private static String getSicurezzaMessaggio_certificati_keyStore_path() throws ProtocolException {
+	private static String getSicurezzaMessaggioCertificatiKeyStorePath() throws ProtocolException {
 		try {
-			if(getSicurezzaMessaggio_certificati_keyStore_tipo()!=null) {
+			if(getSicurezzaMessaggioCertificatiKeyStoreTipo()!=null) {
 				return getModiProperties().getSicurezzaMessaggioCertificatiKeyStorePath();
 			}
 			return null;
@@ -95,9 +95,9 @@ public class ModIKeystoreConfig extends ModIKeystoreUtils {
 			throw new ProtocolException(e.getMessage(),e);
 		}
 	}
-	private static String getSicurezzaMessaggio_certificati_keyStore_password() throws ProtocolException {
+	private static String getSicurezzaMessaggioCertificatiKeyStorePassword() throws ProtocolException {
 		try {
-			if(getSicurezzaMessaggio_certificati_keyStore_tipo()!=null) {
+			if(getSicurezzaMessaggioCertificatiKeyStoreTipo()!=null) {
 				return getModiProperties().getSicurezzaMessaggioCertificatiKeyStorePassword();
 			}
 			return null;
@@ -105,9 +105,9 @@ public class ModIKeystoreConfig extends ModIKeystoreUtils {
 			throw new ProtocolException(e.getMessage(),e);
 		}
 	}
-	private static String getSicurezzaMessaggio_certificati_key_alias() throws ProtocolException {
+	private static String getSicurezzaMessaggioCertificatiKeyAlias() throws ProtocolException {
 		try {
-			if(getSicurezzaMessaggio_certificati_keyStore_tipo()!=null) {
+			if(getSicurezzaMessaggioCertificatiKeyStoreTipo()!=null) {
 				return getModiProperties().getSicurezzaMessaggioCertificatiKeyAlias();
 			}
 			return null;
@@ -115,9 +115,9 @@ public class ModIKeystoreConfig extends ModIKeystoreUtils {
 			throw new ProtocolException(e.getMessage(),e);
 		}
 	}
-	private static String getSicurezzaMessaggio_certificati_key_password() throws ProtocolException {
+	private static String getSicurezzaMessaggioCertificatiKeyPassword() throws ProtocolException {
 		try {
-			if(getSicurezzaMessaggio_certificati_keyStore_tipo()!=null) {
+			if(getSicurezzaMessaggioCertificatiKeyStoreTipo()!=null) {
 				return getModiProperties().getSicurezzaMessaggioCertificatiKeyPassword();
 			}
 			return null;

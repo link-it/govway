@@ -1,0 +1,26 @@
+diff --git ant/setup/deploy/resources/core/govway_local.properties ant/setup/deploy/resources/core/govway_local.properties
+index c6e8b32503..4aa08465a9 100644
+--- ant/setup/deploy/resources/core/govway_local.properties
++++ ant/setup/deploy/resources/core/govway_local.properties
+@@ -231,3 +235,21 @@ org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.group_id=
+ # usare rediss:// per TLS (con due s)
+ org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.REDIS.connectionUrl=redis://127.0.0.1:7000
+ # ================================================
++
++# ================================================
++# Gestione Chiavi PDND
++#
++# Indica se è abilitato il timer di gestione delle chiavi PDND
++# L'abilitazione richiede inoltre che sia definito nel modi.properties il remoteStore per la PDND
++org.openspcoop2.pdd.gestoreChiaviPDND.enabled=false
++#
++# Numero di eventi massimi recuperati dalla PDND
++org.openspcoop2.pdd.gestoreChiaviPDND.events.keys.limit=100
++#
++# Intervallo, in secondi, ogni quanto vengono controllati eventuali nuovi eventi sulla PDND
++# Ogni ora (senza ultimo intervallo)
++org.openspcoop2.pdd.gestoreChiaviPDND.events.keys.timer.intervalloSecondi=3600
++# Intervallo, in secondi, ogni quanto vengono verificate le chiavi in cache
++org.openspcoop2.pdd.gestoreChiaviPDND.cache.keys.timer.intervalloSecondi=300
++# ================================================
++

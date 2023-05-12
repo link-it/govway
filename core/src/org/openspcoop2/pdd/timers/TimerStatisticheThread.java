@@ -50,6 +50,11 @@ public class TimerStatisticheThread extends BaseThread{
 	
 	/** Logger utilizzato per debug. */
 	private Logger logTimer = null;
+	private void logError(String msgErrore, Exception e) {
+		if(this.logTimer!=null) {
+			this.logTimer.error(msgErrore,e);
+		}
+	}
 	private MsgDiagnostico msgDiag = null;
 
 	/** OpenSPCoop2Properties */
@@ -59,12 +64,12 @@ public class TimerStatisticheThread extends BaseThread{
 	
 	
 	/** Costruttore */
-	public TimerStatisticheThread(long timeout, TipoIntervalloStatistico tipo) throws Exception{
+	public TimerStatisticheThread(long timeout, TipoIntervalloStatistico tipo) throws TimerException{
 	
 		// Aspetto inizializzazione di OpenSPCoop (aspetto mezzo minuto e poi segnalo errore)
 		int attesa = 90;
 		int secondi = 0;
-		while( (OpenSPCoop2Startup.initialize==false) && (secondi<attesa) ){
+		while( (!OpenSPCoop2Startup.initialize) && (secondi<attesa) ){
 			Utilities.sleep(1000);
 			secondi++;
 		}
@@ -80,7 +85,7 @@ public class TimerStatisticheThread extends BaseThread{
 			this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER, "Timer"+tipo.getValue());
 		} catch (Exception e) {
 			String msgErrore = "Riscontrato Errore durante l'inizializzazione del MsgDiagnostico";
-			this.logTimer.error(msgErrore,e);
+			this.logError(msgErrore,e);
 			throw new TimerException(msgErrore,e);
 		}
 
@@ -92,7 +97,7 @@ public class TimerStatisticheThread extends BaseThread{
 		} catch (Exception e) {
 			this.msgDiag.logErroreGenerico(e,"InizializzazioneTimer");
 			String msgErrore = "Riscontrato errore durante l'inizializzazione del Reader delle Properties di OpenSPCoop: "+e.getMessage();
-			this.logTimer.error(msgErrore,e);
+			this.logError(msgErrore,e);
 			throw new TimerException(msgErrore,e);
 		}
 
@@ -121,8 +126,7 @@ public class TimerStatisticheThread extends BaseThread{
 			
 		}catch(Exception e){
 			this.msgDiag.logErroreGenerico(e,"TimerStatisticheLib.check()");
-			this.logTimer.error("Errore generale: "+e.getMessage(),e);
-		}finally{
+			this.logError("Errore generale: "+e.getMessage(),e);
 		}
 		
 	}

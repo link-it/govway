@@ -1,3 +1,10 @@
+2023-05-12  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Aggiunta funzionalità OP-1580
+	Risolto bug di verifica audience, per le invocazioni di erogazioni su operazioni definite in gruppi specifici.
+	Se l'audience non veniva indicato nella configurazione 'ModI', il valore di default per queste operazioni venivano calcolato erroneamente e il controllo falliva.
+
 2023-05-08  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, ApiRsConfigurazione, ApiRsMonitoraggio]

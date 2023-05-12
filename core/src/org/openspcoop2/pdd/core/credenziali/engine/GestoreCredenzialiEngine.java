@@ -237,7 +237,7 @@ public class GestoreCredenzialiEngine {
 		ModalitaAutenticazioneGestoreCredenziali modalita = configurazione.getModalitaAutenticazioneCanale();
 		String modalitaAtLeastOne_errorDescription = null;
 		if(ModalitaAutenticazioneGestoreCredenziali.AT_LEAST_ONE.equals(modalita)) {
-			modalitaAtLeastOne_errorDescription = configurazione.getModalitaAutenticazioneCanaleAtLeastOne_error_description();
+			modalitaAtLeastOne_errorDescription = configurazione.getModalitaAutenticazioneCanaleAtLeastOneErrorDescription();
 		}
 		
 		
@@ -304,16 +304,18 @@ public class GestoreCredenzialiEngine {
 		boolean sslCertificate_replace = false;
 		String sslCertificate_replaceSource = null;
 		String sslCertificate_replaceDest = null;
+		String sslCertificateNoneOption = null;
 		if(headerNameSSLCertificate!=null) {
 			sslCertificate_urlDecode = configurazione.isHeaderSslCertificateUrlDecode();
 			sslCertificate_base64Decode = configurazione.isHeaderSslCertificateBase64Decode();
 			sslCertificate_urlDecode_or_base64Decode = configurazione.isHeaderSslCertificateUrlDecodeOrBase64Decode();
-			sslCertificate_enrich_BEGIN_END = configurazione.isHeaderSslCertificateEnrich_BEGIN_END();
+			sslCertificate_enrich_BEGIN_END = configurazione.isHeaderSslCertificateEnrichBeginEnd();
 			sslCertificate_replace = configurazione.isHeaderSslCertificateReplaceCharacters();
 			if(sslCertificate_replace) {
-				sslCertificate_replaceSource = configurazione.getHeaderSslCertificateReplaceCharacters_source();
-				sslCertificate_replaceDest = configurazione.getHeaderSslCertificateReplaceCharacters_dest();
+				sslCertificate_replaceSource = configurazione.getHeaderSslCertificateReplaceCharactersSource();
+				sslCertificate_replaceDest = configurazione.getHeaderSslCertificateReplaceCharactersDest();
 			}
+			sslCertificateNoneOption = configurazione.getHeaderSslCertificateNoneOption();
 		}
 		boolean verificaIdentitaSSL = headerNameSSLSubject!=null || headerNameSSLCertificate!=null;
 		
@@ -508,88 +510,102 @@ public class GestoreCredenzialiEngine {
 			if(existsHeader_sslCertificate ){
 				
 				String certificate = getProperty(headerTrasporto, 	headerNameSSLCertificate );
-				if(certificate==null || "".equals(certificate)){
-					throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
-							buildWWWAuthSSL(),
-							"Certificate non fornito nell'header del trasporto "+headerNameSSLCertificate);
-				}
 				
-				CertificateDecodeConfig config = new CertificateDecodeConfig();
-				config.setUrlDecode(sslCertificate_urlDecode);
-				config.setBase64Decode(sslCertificate_base64Decode);
-				config.setUrlDecodeOrBase64Decode(sslCertificate_urlDecode_or_base64Decode);
-				config.setEnrichPEMBeginEnd(sslCertificate_enrich_BEGIN_END);
-				config.setReplace(sslCertificate_replace);
-				if(sslCertificate_replace) {
-					if(sslCertificate_replaceSource!=null && !StringUtils.isEmpty(sslCertificate_replaceSource)) {
-						config.setReplaceSource(sslCertificate_replaceSource);
-					}
-					if(sslCertificate_replaceDest!=null && !StringUtils.isEmpty(sslCertificate_replaceDest)) {
-						config.setReplaceDest(sslCertificate_replaceDest);
+				if(certificate!=null && sslCertificateNoneOption!=null && sslCertificateNoneOption.equals(certificate)) {
+					c.setCertificate(null);
+					c.setSubject(null);
+					c.setIssuer(null);
+					SecurityToken securityToken = SecurityTokenUtilities.readSecurityToken(this.context);
+					if(securityToken!=null) {
+						securityToken.setChannel(null); // sovrascrivo eventuali esistente
 					}
 				}
-
-				Certificate cer = null;
-				try{
-					cer = CertificateUtils.readCertificate(config, certificate);					
-					c.setCertificate(cer);
-					
-					String subject = c.getCertificate().getCertificate().getSubject().toString();
-					String issuer = c.getCertificate().getCertificate().getIssuer().toString();
-					c.setSubject(subject);
-					c.setIssuer(issuer);
-					
-				}catch(Exception e){
-					throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
-							buildWWWAuthSSL(),
-							"Certificate fornito nell'header del trasporto "+headerNameSSLCertificate+" non valido: "+e.getMessage(), e);
-				}
+				else {
 				
-				if(cer!=null && trustStoreCertificatiX509!=null) {
-					if(cer.getCertificate().isVerified(trustStoreCertificatiX509, true)==false) {
+					if(certificate==null || "".equals(certificate)){
 						throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
 								buildWWWAuthSSL(),
-								"Certificato presente nell'header '"+headerNameSSLCertificate+"' non è verificabile rispetto alle CA conosciute");
+								"Certificate non fornito nell'header del trasporto "+headerNameSSLCertificate);
 					}
-					if(trustStoreCertificatiX509_crls!=null) {
-						try {
-							cer.getCertificate().checkValid(trustStoreCertificatiX509_crls, trustStoreCertificatiX509);
-						}catch(Throwable t) {
-							throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
-									buildWWWAuthSSL(),
-									"Certificato presente nell'header '"+headerNameSSLCertificate+"' non valido: "+t.getMessage());
+					
+									
+					CertificateDecodeConfig config = new CertificateDecodeConfig();
+					config.setUrlDecode(sslCertificate_urlDecode);
+					config.setBase64Decode(sslCertificate_base64Decode);
+					config.setUrlDecodeOrBase64Decode(sslCertificate_urlDecode_or_base64Decode);
+					config.setEnrichPEMBeginEnd(sslCertificate_enrich_BEGIN_END);
+					config.setReplace(sslCertificate_replace);
+					if(sslCertificate_replace) {
+						if(sslCertificate_replaceSource!=null && !StringUtils.isEmpty(sslCertificate_replaceSource)) {
+							config.setReplaceSource(sslCertificate_replaceSource);
+						}
+						if(sslCertificate_replaceDest!=null && !StringUtils.isEmpty(sslCertificate_replaceDest)) {
+							config.setReplaceDest(sslCertificate_replaceDest);
 						}
 					}
-					else if(trustStoreCertificatiX509_checkValid){
-						try {
-							cer.getCertificate().checkValid();
-						}catch(Throwable t) {
+	
+					Certificate cer = null;
+					try{
+						cer = CertificateUtils.readCertificate(config, certificate);					
+						c.setCertificate(cer);
+						
+						String subject = c.getCertificate().getCertificate().getSubject().toString();
+						String issuer = c.getCertificate().getCertificate().getIssuer().toString();
+						c.setSubject(subject);
+						c.setIssuer(issuer);
+						
+					}catch(Exception e){
+						throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
+								buildWWWAuthSSL(),
+								"Certificate fornito nell'header del trasporto "+headerNameSSLCertificate+" non valido: "+e.getMessage(), e);
+					}
+					
+					if(cer!=null && trustStoreCertificatiX509!=null) {
+						if(cer.getCertificate().isVerified(trustStoreCertificatiX509, true)==false) {
 							throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
 									buildWWWAuthSSL(),
-									"Certificato presente nell'header '"+headerNameSSLCertificate+"' non valido: "+t.getMessage());
+									"Certificato presente nell'header '"+headerNameSSLCertificate+"' non è verificabile rispetto alle CA conosciute");
+						}
+						if(trustStoreCertificatiX509_crls!=null) {
+							try {
+								cer.getCertificate().checkValid(trustStoreCertificatiX509_crls, trustStoreCertificatiX509);
+							}catch(Throwable t) {
+								throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
+										buildWWWAuthSSL(),
+										"Certificato presente nell'header '"+headerNameSSLCertificate+"' non valido: "+t.getMessage());
+							}
+						}
+						else if(trustStoreCertificatiX509_checkValid){
+							try {
+								cer.getCertificate().checkValid();
+							}catch(Throwable t) {
+								throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
+										buildWWWAuthSSL(),
+										"Certificato presente nell'header '"+headerNameSSLCertificate+"' non valido: "+t.getMessage());
+							}
+						}
+						if(ocspValidator!=null) {
+							try {
+								ocspValidator.valid(cer.getCertificate().getCertificate());
+							}catch(Throwable t) {
+								throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
+										buildWWWAuthSSL(),
+										"Certificato presente nell'header '"+headerNameSSLCertificate+"' non valido: "+t.getMessage());
+							}
 						}
 					}
-					if(ocspValidator!=null) {
-						try {
-							ocspValidator.valid(cer.getCertificate().getCertificate());
-						}catch(Throwable t) {
-							throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
-									buildWWWAuthSSL(),
-									"Certificato presente nell'header '"+headerNameSSLCertificate+"' non valido: "+t.getMessage());
+					
+					/* --------------- SecurityToken --------------- */
+					try {
+						if(cer!=null && this.context!=null) {
+							SecurityToken securityToken = SecurityTokenUtilities.newSecurityToken(this.context);
+							ChannelSecurityToken channelSecurityToken = new ChannelSecurityToken();
+							channelSecurityToken.setCertificate(cer.getCertificate());
+							securityToken.setChannel(channelSecurityToken); // sovrascrivo eventuali esistente
 						}
+					}catch(Exception e){
+						throw new GestoreCredenzialiException("Costruzione SecurityToken non riuscita: "+e.getMessage(),e);
 					}
-				}
-				
-				/* --------------- SecurityToken --------------- */
-				try {
-					if(cer!=null && this.context!=null) {
-						SecurityToken securityToken = SecurityTokenUtilities.newSecurityToken(this.context);
-						ChannelSecurityToken channelSecurityToken = new ChannelSecurityToken();
-						channelSecurityToken.setCertificate(cer.getCertificate());
-						securityToken.setChannel(channelSecurityToken); // sovrascrivo eventuali esistente
-					}
-				}catch(Exception e){
-					throw new GestoreCredenzialiException("Costruzione SecurityToken non riuscita: "+e.getMessage(),e);
 				}
 			}
 		}

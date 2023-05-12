@@ -70,6 +70,7 @@ import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.web.ctrlstat.core.CertificateChecker;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
@@ -282,6 +283,16 @@ public class ErogazioniVerificaCertificati  extends Action {
 				}
 				if(consoleConfiguration!=null && consoleConfiguration.getConsoleItem()!=null && !consoleConfiguration.getConsoleItem().isEmpty()) {
 					sicurezzaModi = true;
+				}
+				if(sicurezzaModi) {
+					boolean includeRemoteStore = false;
+					boolean checkModeFruizioneKeystoreId = gestioneFruitori;
+					if(gestioneFruitori && fruitore.sizeProtocolPropertyList()>0) {
+						sicurezzaModi = ModIUtils.existsStoreConfig(fruitore.getProtocolPropertyList(), includeRemoteStore, checkModeFruizioneKeystoreId);
+					}
+					else if(gestioneErogatori && asps.sizeProtocolPropertyList()>0) {
+						sicurezzaModi = ModIUtils.existsStoreConfig(asps.getProtocolPropertyList(), includeRemoteStore, checkModeFruizioneKeystoreId);
+					}
 				}
 			}
 			

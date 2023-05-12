@@ -100,6 +100,7 @@ public class RicezioneBusteGestioneAutenticazione {
 	private IDSoggetto soggettoFruitore;
 	private Credenziali credenziali;
 	private String servizioApplicativoFruitore;
+	private boolean autenticazioneOpzionale;
 	private GestioneTokenAutenticazione gestioneTokenAutenticazione;
 	
 	private OpenSPCoop2Message requestMessage;
@@ -207,6 +208,9 @@ public class RicezioneBusteGestioneAutenticazione {
 	public String getServizioApplicativoFruitore() {
 		return this.servizioApplicativoFruitore;
 	}
+	public boolean isAutenticazioneOpzionale() {
+		return this.autenticazioneOpzionale;
+	}
 	
 	public boolean process() throws TracciamentoException, ProtocolException {
 		
@@ -290,23 +294,22 @@ public class RicezioneBusteGestioneAutenticazione {
 			if(this.supportatoAutenticazioneSoggetti && !this.asincronoSimmetricoRisposta && (this.pa!=null || this.pd!=null)){
 			
 				this.msgDiag.mediumDebug("Autenticazione del soggetto...");
-				boolean autenticazioneOpzionale = false;
 				try{
 					if(this.pa!=null){
 						tipoAutenticazione = this.configurazionePdDReader.getAutenticazione(this.pa);
-						autenticazioneOpzionale = this.configurazionePdDReader.isAutenticazioneOpzionale(this.pa);
+						this.autenticazioneOpzionale = this.configurazionePdDReader.isAutenticazioneOpzionale(this.pa);
 						parametriAutenticazione = new ParametriAutenticazione(this.pa.getProprietaAutenticazioneList());
 					}
 					else{
 						tipoAutenticazione = this.configurazionePdDReader.getAutenticazione(this.pd);
-						autenticazioneOpzionale = this.configurazionePdDReader.isAutenticazioneOpzionale(this.pd);
+						this.autenticazioneOpzionale = this.configurazionePdDReader.isAutenticazioneOpzionale(this.pd);
 						parametriAutenticazione = new ParametriAutenticazione(this.pd.getProprietaAutenticazioneList());
 					}
 				}catch(Exception exception){
 					// ignore
 				}
 				this.msgContext.getIntegrazione().setTipoAutenticazione(tipoAutenticazione);
-				this.msgContext.getIntegrazione().setAutenticazioneOpzionale(autenticazioneOpzionale);
+				this.msgContext.getIntegrazione().setAutenticazioneOpzionale(this.autenticazioneOpzionale);
 				if(tipoAutenticazione!=null){
 					this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_AUTENTICAZIONE, tipoAutenticazione);
 				}
@@ -491,7 +494,7 @@ public class RicezioneBusteGestioneAutenticazione {
 							}
 							
 							if (erroreIntegrazione != null || erroreCooperazione!=null) {
-								if(autenticazioneOpzionale==false){
+								if(!this.autenticazioneOpzionale){
 									this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, "true");
 								}
 							}
@@ -533,7 +536,7 @@ public class RicezioneBusteGestioneAutenticazione {
 								this.logCore.error(DESCRIZIONE_ERROR+e.getMessage(),e);
 							}
 							String errorMsg =  "Riscontrato errore durante il processo di Autenticazione per il messaggio con identificativo di transazione ["+this.idTransazione+"]: "+descrizioneErrore;
-							if(autenticazioneOpzionale && !erroreMissmatchSoggettoProtocolloConCredenziali){
+							if(this.autenticazioneOpzionale && !erroreMissmatchSoggettoProtocolloConCredenziali){
 								this.msgDiag.logPersonalizzato("autenticazioneFallita.opzionale");
 								if(eAutenticazione!=null){
 									this.logCore.debug(errorMsg,eAutenticazione);
@@ -552,7 +555,7 @@ public class RicezioneBusteGestioneAutenticazione {
 								}
 							}
 							
-							if(!autenticazioneOpzionale || erroreMissmatchSoggettoProtocolloConCredenziali){
+							if(!this.autenticazioneOpzionale || erroreMissmatchSoggettoProtocolloConCredenziali){
 							
 								// Tracciamento richiesta: non ancora registrata
 								if(this.msgContext.isTracciamentoAbilitato()){

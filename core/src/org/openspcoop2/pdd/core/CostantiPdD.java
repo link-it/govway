@@ -613,8 +613,20 @@ public class CostantiPdD {
     public static final String KEY_TIPOLOGIA_RISPOSTA_APPLICATIVA = "@TIPOLOGIA_RISPOSTA_APPLICATIVA@";
     /** Costante che identifica una keyword per rappresentare un timeout */
     public static final String KEY_TIMEOUT = "@TIMEOUT@";
+    /** Costante che identifica una keyword per rappresentare un offset */
+    public static final String KEY_OFFSET = "@OFFSET@";
     /** Costante che identifica una keyword per rappresentare un limit */
     public static final String KEY_LIMIT = "@LIMIT@";
+    /** Costante che identifica una keyword per rappresentare il numero di eventi */
+    public static final String KEY_NUMERO_EVENTI = "@NUMERO_EVENTI@";
+    /** Costante che identifica una keyword per rappresentare l'identificativo dell'evento */
+    public static final String KEY_ID_EVENTO = "@ID_EVENTO@";
+    /** Costante che identifica una keyword per rappresentare il tipo dell'evento */
+    public static final String KEY_TIPO_EVENTO = "@TIPO_EVENTO@";
+    /** Costante che identifica una keyword per rappresentare il dettaglio dell'evento */
+    public static final String KEY_DETTAGLI_EVENTO = "@DETTAGLI_EVENTO@";
+    /** Costante che identifica una keyword per rappresentare un intervallo temporale */
+    public static final String KEY_TEMPO_GESTIONE = "@TEMPO_GESTIONE@";
     /** Costante che identifica una keyword per rappresentare un tipo di statistica */
     public static final String KEY_TIPO_STATISTICA = "@TIPO_STATISTICA@";
     /** Costante che identifica una keyword per rappresentare un intervallo temporale */

@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.id.IDServizio;
@@ -183,14 +184,17 @@ public class OpenSPCoop2Logger {
 	/**  Logger log4j utilizzato per i Plugins (sql) */
 	protected static Logger loggerOpenSPCoopPluginsSql = null;
 	protected static Logger loggerOpenSPCoopPluginsSqlError = null;
+	/**  Logger log4j utilizzato per il gestore delle chiavi PDND */
+	protected static Logger loggerOpenSPCoopGestoreChiaviPDND = null;
+	protected static Logger loggerOpenSPCoopGestoreChiaviPDNDError = null;
 	/** Appender personalizzati per i messaggi diagnostici di OpenSPCoop */
-	public static List<IDiagnosticProducer> loggerMsgDiagnosticoOpenSPCoopAppender = new ArrayList<IDiagnosticProducer>(); 
+	public static List<IDiagnosticProducer> loggerMsgDiagnosticoOpenSPCoopAppender = new ArrayList<>(); 
 	public static List<String> tipoMsgDiagnosticoOpenSPCoopAppender = new ArrayList<>();
 	/** Appender personalizzati per i tracciamenti di OpenSPCoop */
-	public static List<ITracciaProducer> loggerTracciamentoOpenSPCoopAppender = new ArrayList<ITracciaProducer>(); 
+	public static List<ITracciaProducer> loggerTracciamentoOpenSPCoopAppender = new ArrayList<>(); 
 	public static List<String> tipoTracciamentoOpenSPCoopAppender = new ArrayList<>();
 	/** Appender personalizzati per i dump applicativi di OpenSPCoop */
-	public static List<IDumpProducer> loggerDumpOpenSPCoopAppender = new ArrayList<IDumpProducer>(); 
+	public static List<IDumpProducer> loggerDumpOpenSPCoopAppender = new ArrayList<>(); 
 	public static List<String> tipoDumpOpenSPCoopAppender = new ArrayList<>();
 	/** PdDContextSerializer */
 	private static IPdDContextSerializer pddContextSerializer = null;
@@ -289,7 +293,9 @@ public class OpenSPCoop2Logger {
 				if(isOp2!=null){
 					isOp2.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 			try{
 				if(isLogger!=null){
 					isLogger.close();
@@ -313,7 +319,7 @@ public class OpenSPCoop2Logger {
 			// Originale
 			java.util.Properties loggerProperties = new java.util.Properties();
 			java.io.File loggerFile = new java.io.File(rootDirectory+"govway.log4j2.properties");
-			if(loggerFile .exists() == false ){
+			if(!loggerFile .exists() ){
 				loggerProperties.load(OpenSPCoop2Logger.class.getResourceAsStream("/govway.log4j2.properties"));
 			}else{
 				FileInputStream fin = null;
@@ -352,7 +358,7 @@ public class OpenSPCoop2Logger {
 			// TRACCIAMENTO
 			OpenSPCoop2Logger.loggerTracciamento = LoggerWrapperFactory.getLogger("govway.tracciamento");
 			if(OpenSPCoop2Logger.loggerTracciamento==null)
-				throw new Exception("Logger govway.tracciamento non trovato");
+				throw new CoreException("Logger govway.tracciamento non trovato");
 			// Abilitazione log da Log4j
 			tmp = loggerProperties.getProperty("logger.govway_tracciamento.level");
 			if(tmp!=null){
@@ -368,7 +374,7 @@ public class OpenSPCoop2Logger {
 			// MESSAGGI DIAGNOSTICI
 			OpenSPCoop2Logger.loggerMsgDiagnostico = LoggerWrapperFactory.getLoggerImpl("govway.msgDiagnostico");
 			if(OpenSPCoop2Logger.loggerMsgDiagnostico==null)
-				throw new Exception("Logger govway.msgDiagnostico non trovato");
+				throw new CoreException("Logger govway.msgDiagnostico non trovato");
 			// Abilitazione log da Log4j
 			tmp = loggerProperties.getProperty("logger.govway_diagnostici.level");
 			if(tmp!=null){
@@ -383,7 +389,7 @@ public class OpenSPCoop2Logger {
 			// MESSAGGI DIAGNOSTICI LEGGIBILI
 			OpenSPCoop2Logger.loggerOpenSPCoop2 = LoggerWrapperFactory.getLoggerImpl("govway.portaDiDominio");
 			if(OpenSPCoop2Logger.loggerOpenSPCoop2==null)
-				throw new Exception("Logger govway.portaDiDominio non trovato");
+				throw new CoreException("Logger govway.portaDiDominio non trovato");
 			// Abilitazione log da Log4j
 			tmp = loggerProperties.getProperty("logger.govway_portaDiDominio.level");
 			if(tmp!=null){
@@ -398,7 +404,7 @@ public class OpenSPCoop2Logger {
 			// MESSAGGI DIAGNOSTICI DELL'INTEGRATION MANAGER
 			OpenSPCoop2Logger.loggerIntegrationManager = LoggerWrapperFactory.getLoggerImpl("govway.integrationManager");
 			if(OpenSPCoop2Logger.loggerIntegrationManager==null)
-				throw new Exception("Logger govway.integrationManager non trovato");
+				throw new CoreException("Logger govway.integrationManager non trovato");
 			// Abilitazione log da Log4j
 			tmp = loggerProperties.getProperty("logger.govway_integrationManager.level");
 			if(tmp!=null){
@@ -413,7 +419,7 @@ public class OpenSPCoop2Logger {
 			// DUMP APPLICATIVO
 			OpenSPCoop2Logger.loggerDump = LoggerWrapperFactory.getLogger("govway.dump");
 			if(OpenSPCoop2Logger.loggerDump==null)
-				throw new Exception("Logger govway.dump non trovato");
+				throw new CoreException("Logger govway.dump non trovato");
 			// Abilitazione log da Log4j
 			tmp = loggerProperties.getProperty("logger.govway_dump.level");
 			if(tmp!=null){
@@ -429,289 +435,299 @@ public class OpenSPCoop2Logger {
 			// OPENSPCOOP CORE
 			OpenSPCoop2Logger.loggerOpenSPCoopCore = LoggerWrapperFactory.getLogger("govway.core");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopCore==null)
-				throw new Exception("Logger govway.core non trovato");
+				throw new CoreException("Logger govway.core non trovato");
 			
 			// TIMERS LOG
 			OpenSPCoop2Logger.loggerOpenSPCoopTimers = LoggerWrapperFactory.getLogger("govway.timers");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopTimers==null)
-				throw new Exception("Logger govway.timers non trovato");
+				throw new CoreException("Logger govway.timers non trovato");
 			
 			// RESOURCES LOG
 			OpenSPCoop2Logger.loggerOpenSPCoopResources = LoggerWrapperFactory.getLogger("govway.resources");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopResources==null)
-				throw new Exception("Logger govway.resources non trovato");
+				throw new CoreException("Logger govway.resources non trovato");
 			OpenSPCoop2Logger.loggerOpenSPCoopResourcesAsLoggerImpl = LoggerWrapperFactory.getLoggerImpl("govway.resources");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopResourcesAsLoggerImpl==null)
-				throw new Exception("Logger(Impl) govway.resources non trovato");
+				throw new CoreException("Logger(Impl) govway.resources non trovato");
 			
 			// CONFIGURAZIONE SISTEMA LOG
 			OpenSPCoop2Logger.loggerOpenSPCoopConfigurazioneSistema = LoggerWrapperFactory.getLogger("govway.configurazioneSistema");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopConfigurazioneSistema==null)
-				throw new Exception("Logger govway.configurazioneSistema non trovato");
+				throw new CoreException("Logger govway.configurazioneSistema non trovato");
 			
 			// PROXY LOG
 			OpenSPCoop2Logger.loggerOpenSPCoopProxy = LoggerWrapperFactory.getLogger("govway.proxy");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopProxy==null)
-				throw new Exception("Logger govway.proxy non trovato");
+				throw new CoreException("Logger govway.proxy non trovato");
 			
 			// CONNETTORI LOG
 			OpenSPCoop2Logger.loggerOpenSPCoopConnettori = LoggerWrapperFactory.getLogger("govway.connettori");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopConnettori==null)
-				throw new Exception("Logger govway.connettori non trovato");
+				throw new CoreException("Logger govway.connettori non trovato");
 						
 			// RAW DATA SERVIZIO PD LOG
 			OpenSPCoop2Logger.loggerOpenSPCoopDumpBinarioPD = LoggerWrapperFactory.getLogger("govway.dumpBinarioPD");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopDumpBinarioPD==null)
-				throw new Exception("Logger govway.dumpBinarioPD non trovato");
+				throw new CoreException("Logger govway.dumpBinarioPD non trovato");
 			
 			// RAW DATA SERVIZIO PD LOG
 			OpenSPCoop2Logger.loggerOpenSPCoopDumpBinarioPA = LoggerWrapperFactory.getLogger("govway.dumpBinarioPA");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopDumpBinarioPA==null)
-				throw new Exception("Logger govway.dumpBinarioPA non trovato");
+				throw new CoreException("Logger govway.dumpBinarioPA non trovato");
 			
 			// EVENTI LOG
 			OpenSPCoop2Logger.loggerOpenSPCoopEventi = LoggerWrapperFactory.getLogger("govway.eventi");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopEventi==null)
-				throw new Exception("Logger govway.eventi non trovato");
+				throw new CoreException("Logger govway.eventi non trovato");
 			
 			// TRANSAZIONI LOG
 			OpenSPCoop2Logger.loggerOpenSPCoopTransazioni = LoggerWrapperFactory.getLogger("govway.transazioni");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopTransazioni==null)
-				throw new Exception("Logger govway.transazioni non trovato");
+				throw new CoreException("Logger govway.transazioni non trovato");
 			
 			// TRANSAZIONI LOG (ERROR)
 			OpenSPCoop2Logger.loggerOpenSPCoopTransazioniError = LoggerWrapperFactory.getLogger("govway.transazioni.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopTransazioniError==null)
-				throw new Exception("Logger govway.transazioni.error non trovato");
+				throw new CoreException("Logger govway.transazioni.error non trovato");
 			
 			// TRANSAZIONI LOG (DEVNULL)
 			OpenSPCoop2Logger.loggerOpenSPCoopTransazioniDevNull = LoggerWrapperFactory.getLogger("govway.transazioni.devnull");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopTransazioniDevNull==null)
-				throw new Exception("Logger govway.transazioni.devnull non trovato");
+				throw new CoreException("Logger govway.transazioni.devnull non trovato");
 			
 			// TRANSAZIONI SQL LOG
 			OpenSPCoop2Logger.loggerOpenSPCoopTransazioniSql = LoggerWrapperFactory.getLogger("govway.transazioni.sql");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopTransazioniSql==null)
-				throw new Exception("Logger govway.transazioni.sql non trovato");
+				throw new CoreException("Logger govway.transazioni.sql non trovato");
 			
 			// TRANSAZIONI SQL LOG (ERROR)
 			OpenSPCoop2Logger.loggerOpenSPCoopTransazioniSqlError = LoggerWrapperFactory.getLogger("govway.transazioni.sql.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopTransazioniSqlError==null)
-				throw new Exception("Logger govway.transazioni.sql.error non trovato");
+				throw new CoreException("Logger govway.transazioni.sql.error non trovato");
 			
 			// TRANSAZIONI STATEFUL LOG
 			OpenSPCoop2Logger.loggerOpenSPCoopTransazioniStateful = LoggerWrapperFactory.getLogger("govway.transazioni.stateful");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopTransazioniStateful==null)
-				throw new Exception("Logger govway.transazioni.stateful non trovato");
+				throw new CoreException("Logger govway.transazioni.stateful non trovato");
 			
 			// TRANSAZIONI STATEFUL LOG (ERROR)
 			OpenSPCoop2Logger.loggerOpenSPCoopTransazioniStatefulError = LoggerWrapperFactory.getLogger("govway.transazioni.stateful.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopTransazioniStatefulError==null)
-				throw new Exception("Logger govway.transazioni.stateful.error non trovato");
+				throw new CoreException("Logger govway.transazioni.stateful.error non trovato");
 			
 			// TRANSAZIONI STATEFUL SQL LOG
 			OpenSPCoop2Logger.loggerOpenSPCoopTransazioniStatefulSql = LoggerWrapperFactory.getLogger("govway.transazioni.stateful.sql");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopTransazioniStatefulSql==null)
-				throw new Exception("Logger govway.transazioni.stateful.sql non trovato");
+				throw new CoreException("Logger govway.transazioni.stateful.sql non trovato");
 			
 			// TRANSAZIONI STATEFUL SQL LOG (ERROR)
 			OpenSPCoop2Logger.loggerOpenSPCoopTransazioniStatefulSqlError = LoggerWrapperFactory.getLogger("govway.transazioni.stateful.sql.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopTransazioniStatefulSqlError==null)
-				throw new Exception("Logger govway.transazioni.stateful.sql.error non trovato");
+				throw new CoreException("Logger govway.transazioni.stateful.sql.error non trovato");
 			
 			// TRANSAZIONI SLOW LOG
 			OpenSPCoop2Logger.loggerOpenSPCoopTransazioniSlowLog = LoggerWrapperFactory.getLogger("govway.transazioni.slowLog");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopTransazioniSlowLog==null)
-				throw new Exception("Logger govway.transazioni.slowLog non trovato");
+				throw new CoreException("Logger govway.transazioni.slowLog non trovato");
 			
 			// EVENTI LOG (ERROR)
 			OpenSPCoop2Logger.loggerOpenSPCoopEventiError = LoggerWrapperFactory.getLogger("govway.eventi.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopEventiError==null)
-				throw new Exception("Logger govway.eventi.error non trovato");
+				throw new CoreException("Logger govway.eventi.error non trovato");
 			
 			// FILE SYSTEM RECOVERY LOG
 			OpenSPCoop2Logger.loggerOpenSPCoopFileSystemRecovery = LoggerWrapperFactory.getLogger("govway.recoveryFileSystem");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopFileSystemRecovery==null)
-				throw new Exception("Logger govway.recoveryFileSystem non trovato");
+				throw new CoreException("Logger govway.recoveryFileSystem non trovato");
 			
 			// FILE SYSTEM RECOVERY LOG (ERROR)
 			OpenSPCoop2Logger.loggerOpenSPCoopFileSystemRecoveryError = LoggerWrapperFactory.getLogger("govway.recoveryFileSystem.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopFileSystemRecoveryError==null)
-				throw new Exception("Logger govway.recoveryFileSystem.error non trovato");
+				throw new CoreException("Logger govway.recoveryFileSystem.error non trovato");
 			
 			// FILE SYSTEM RECOVERY SQL LOG
 			OpenSPCoop2Logger.loggerOpenSPCoopFileSystemRecoverySql = LoggerWrapperFactory.getLogger("govway.recoveryFileSystem.sql");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopFileSystemRecoverySql==null)
-				throw new Exception("Logger govway.recoveryFileSystem.sql non trovato");
+				throw new CoreException("Logger govway.recoveryFileSystem.sql non trovato");
 			
 			// FILE SYSTEM RECOVERY SQL LOG (ERROR)
 			OpenSPCoop2Logger.loggerOpenSPCoopFileSystemRecoverySqlError = LoggerWrapperFactory.getLogger("govway.recoveryFileSystem.sql.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopFileSystemRecoverySqlError==null)
-				throw new Exception("Logger govway.recoveryFileSystem.sql.error non trovato");
+				throw new CoreException("Logger govway.recoveryFileSystem.sql.error non trovato");
 			
 			// CONTROLLO TRAFFICO LOG
 			OpenSPCoop2Logger.loggerOpenSPCoopControlloTraffico = LoggerWrapperFactory.getLogger("govway.controlloTraffico");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopControlloTraffico==null)
-				throw new Exception("Logger govway.controlloTraffico non trovato");
+				throw new CoreException("Logger govway.controlloTraffico non trovato");
 			
 			// CONTROLLO TRAFFICO LOG (ERROR)
 			OpenSPCoop2Logger.loggerOpenSPCoopControlloTrafficoError = LoggerWrapperFactory.getLogger("govway.controlloTraffico.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopControlloTrafficoError==null)
-				throw new Exception("Logger govway.controlloTraffico.error non trovato");
+				throw new CoreException("Logger govway.controlloTraffico.error non trovato");
 			
 			// CONTROLLO TRAFFICO SQL LOG
 			OpenSPCoop2Logger.loggerOpenSPCoopControlloTrafficoSql = LoggerWrapperFactory.getLogger("govway.controlloTraffico.sql");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopControlloTrafficoSql==null)
-				throw new Exception("Logger govway.controlloTraffico.sql non trovato");
+				throw new CoreException("Logger govway.controlloTraffico.sql non trovato");
 			
 			// CONTROLLO TRAFFICO SQL LOG (ERROR)
 			OpenSPCoop2Logger.loggerOpenSPCoopControlloTrafficoSqlError = LoggerWrapperFactory.getLogger("govway.controlloTraffico.sql.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopControlloTrafficoSqlError==null)
-				throw new Exception("Logger govway.controlloTraffico.sql.error non trovato");
+				throw new CoreException("Logger govway.controlloTraffico.sql.error non trovato");
 			
 			if(allarmiEnabled) {
 			
 				// ALLARMI LOG
 				OpenSPCoop2Logger.loggerOpenSPCoopAllarmi = LoggerWrapperFactory.getLogger("govway.controlloAllarmi");
 				if(OpenSPCoop2Logger.loggerOpenSPCoopAllarmi==null)
-					throw new Exception("Logger govway.controlloAllarmi non trovato");
+					throw new CoreException("Logger govway.controlloAllarmi non trovato");
 				
 				// ALLARMI LOG (ERROR)
 				OpenSPCoop2Logger.loggerOpenSPCoopAllarmiError = LoggerWrapperFactory.getLogger("govway.controlloAllarmi.error");
 				if(OpenSPCoop2Logger.loggerOpenSPCoopAllarmiError==null)
-					throw new Exception("Logger govway.controlloAllarmi.error non trovato");
+					throw new CoreException("Logger govway.controlloAllarmi.error non trovato");
 				
 				// ALLARMI SQL LOG
 				OpenSPCoop2Logger.loggerOpenSPCoopAllarmiSql = LoggerWrapperFactory.getLogger("govway.controlloAllarmi.sql");
 				if(OpenSPCoop2Logger.loggerOpenSPCoopAllarmiSql==null)
-					throw new Exception("Logger govway.controlloAllarmi.sql non trovato");
+					throw new CoreException("Logger govway.controlloAllarmi.sql non trovato");
 				
 				// ALLARMI SQL LOG (ERROR)
 				OpenSPCoop2Logger.loggerOpenSPCoopAllarmiSqlError = LoggerWrapperFactory.getLogger("govway.controlloAllarmi.sql.error");
 				if(OpenSPCoop2Logger.loggerOpenSPCoopAllarmiSqlError==null)
-					throw new Exception("Logger govway.controlloAllarmi.sql.error non trovato");
+					throw new CoreException("Logger govway.controlloAllarmi.sql.error non trovato");
 				
 			}
 			
 			// STATISTICHE LOG 'Orarie'
 			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheOrarie = LoggerWrapperFactory.getLogger("govway.statistiche_orarie.generazione");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheOrarie==null)
-				throw new Exception("Logger govway.statistiche.generazione non trovato");
+				throw new CoreException("Logger govway.statistiche.generazione non trovato");
 			
 			// STATISTICHE LOG (ERROR) 'Orarie'
 			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheOrarieError = LoggerWrapperFactory.getLogger("govway.statistiche_orarie.generazione.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheOrarieError==null)
-				throw new Exception("Logger govway.statistiche.generazione.error non trovato");
+				throw new CoreException("Logger govway.statistiche.generazione.error non trovato");
 			
 			// STATISTICHE SQL LOG 'Orarie'
 			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheOrarieSql = LoggerWrapperFactory.getLogger("govway.statistiche_orarie.generazione.sql");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheOrarieSql==null)
-				throw new Exception("Logger govway.statistiche.generazione.sql non trovato");
+				throw new CoreException("Logger govway.statistiche.generazione.sql non trovato");
 			
 			// STATISTICHE SQL LOG (ERROR) 'Orarie'
 			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheOrarieSqlError = LoggerWrapperFactory.getLogger("govway.statistiche_orarie.generazione.sql.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheOrarieSqlError==null)
-				throw new Exception("Logger govway.statistiche.generazione.sql.error non trovato");
+				throw new CoreException("Logger govway.statistiche.generazione.sql.error non trovato");
 						
 			// STATISTICHE LOG 'Giornaliere'
 			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheGiornaliere = LoggerWrapperFactory.getLogger("govway.statistiche_giornaliere.generazione");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheGiornaliere==null)
-				throw new Exception("Logger govway.statistiche.generazione non trovato");
+				throw new CoreException("Logger govway.statistiche.generazione non trovato");
 			
 			// STATISTICHE LOG (ERROR) 'Giornaliere'
 			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheGiornaliereError = LoggerWrapperFactory.getLogger("govway.statistiche_giornaliere.generazione.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheGiornaliereError==null)
-				throw new Exception("Logger govway.statistiche.generazione.error non trovato");
+				throw new CoreException("Logger govway.statistiche.generazione.error non trovato");
 			
 			// STATISTICHE SQL LOG 'Giornaliere'
 			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheGiornaliereSql = LoggerWrapperFactory.getLogger("govway.statistiche_giornaliere.generazione.sql");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheGiornaliereSql==null)
-				throw new Exception("Logger govway.statistiche.generazione.sql non trovato");
+				throw new CoreException("Logger govway.statistiche.generazione.sql non trovato");
 			
 			// STATISTICHE SQL LOG (ERROR) 'Giornaliere'
 			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheGiornaliereSqlError = LoggerWrapperFactory.getLogger("govway.statistiche_giornaliere.generazione.sql.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheGiornaliereSqlError==null)
-				throw new Exception("Logger govway.statistiche.generazione.sql.error non trovato");
+				throw new CoreException("Logger govway.statistiche.generazione.sql.error non trovato");
 			
 			// STATISTICHE LOG 'Settimanali'
 			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSettimanali = LoggerWrapperFactory.getLogger("govway.statistiche_settimanali.generazione");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSettimanali==null)
-				throw new Exception("Logger govway.statistiche.generazione non trovato");
+				throw new CoreException("Logger govway.statistiche.generazione non trovato");
 			
 			// STATISTICHE LOG (ERROR) 'Settimanali'
 			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSettimanaliError = LoggerWrapperFactory.getLogger("govway.statistiche_settimanali.generazione.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSettimanaliError==null)
-				throw new Exception("Logger govway.statistiche.generazione.error non trovato");
+				throw new CoreException("Logger govway.statistiche.generazione.error non trovato");
 			
 			// STATISTICHE SQL LOG 'Settimanali'
 			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSettimanaliSql = LoggerWrapperFactory.getLogger("govway.statistiche_settimanali.generazione.sql");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSettimanaliSql==null)
-				throw new Exception("Logger govway.statistiche.generazione.sql non trovato");
+				throw new CoreException("Logger govway.statistiche.generazione.sql non trovato");
 			
 			// STATISTICHE SQL LOG (ERROR) 'Settimanali'
 			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSettimanaliSqlError = LoggerWrapperFactory.getLogger("govway.statistiche_settimanali.generazione.sql.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSettimanaliSqlError==null)
-				throw new Exception("Logger govway.statistiche.generazione.sql.error non trovato");
+				throw new CoreException("Logger govway.statistiche.generazione.sql.error non trovato");
 				
 			// STATISTICHE LOG 'Mensili'
 			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheMensili = LoggerWrapperFactory.getLogger("govway.statistiche_mensili.generazione");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheMensili==null)
-				throw new Exception("Logger govway.statistiche.generazione non trovato");
+				throw new CoreException("Logger govway.statistiche.generazione non trovato");
 			
 			// STATISTICHE LOG (ERROR) 'Mensili'
 			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheMensiliError = LoggerWrapperFactory.getLogger("govway.statistiche_mensili.generazione.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheMensiliError==null)
-				throw new Exception("Logger govway.statistiche.generazione.error non trovato");
+				throw new CoreException("Logger govway.statistiche.generazione.error non trovato");
 			
 			// STATISTICHE SQL LOG 'Mensili'
 			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheMensiliSql = LoggerWrapperFactory.getLogger("govway.statistiche_mensili.generazione.sql");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheMensiliSql==null)
-				throw new Exception("Logger govway.statistiche.generazione.sql non trovato");
+				throw new CoreException("Logger govway.statistiche.generazione.sql non trovato");
 			
 			// STATISTICHE SQL LOG (ERROR) 'Mensili'
 			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheMensiliSqlError = LoggerWrapperFactory.getLogger("govway.statistiche_mensili.generazione.sql.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheMensiliSqlError==null)
-				throw new Exception("Logger govway.statistiche.generazione.sql.error non trovato");
+				throw new CoreException("Logger govway.statistiche.generazione.sql.error non trovato");
 				
 			// CONSEGNA_CONTENUTI LOG
 			OpenSPCoop2Logger.loggerOpenSPCoopConsegnaContenuti = LoggerWrapperFactory.getLogger("govway.consegna_messaggi");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopConsegnaContenuti==null)
-				throw new Exception("Logger govway.consegna_messaggi non trovato");
+				throw new CoreException("Logger govway.consegna_messaggi non trovato");
 			
 			// CONSEGNA_CONTENUTI LOG (ERROR)
 			OpenSPCoop2Logger.loggerOpenSPCoopConsegnaContenutiError = LoggerWrapperFactory.getLogger("govway.consegna_messaggi.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopConsegnaContenutiError==null)
-				throw new Exception("Logger govway.consegna_messaggi.error non trovato");
+				throw new CoreException("Logger govway.consegna_messaggi.error non trovato");
 			
 			// CONSEGNA_CONTENUTI SQL LOG
 			OpenSPCoop2Logger.loggerOpenSPCoopConsegnaContenutiSql = LoggerWrapperFactory.getLogger("govway.consegna_messaggi.sql");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopConsegnaContenutiSql==null)
-				throw new Exception("Logger govway.consegna_messaggi.sql non trovato");
+				throw new CoreException("Logger govway.consegna_messaggi.sql non trovato");
 			
 			// CONSEGNA_CONTENUTI SQL LOG (ERROR)
 			OpenSPCoop2Logger.loggerOpenSPCoopConsegnaContenutiSqlError = LoggerWrapperFactory.getLogger("govway.consegna_messaggi.sql.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopConsegnaContenutiSqlError==null)
-				throw new Exception("Logger govway.consegna_messaggi.sql.error non trovato");
+				throw new CoreException("Logger govway.consegna_messaggi.sql.error non trovato");
 
 			// PLUGINS LOG
 			OpenSPCoop2Logger.loggerOpenSPCoopPlugins = LoggerWrapperFactory.getLogger("govway.plugins");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopPlugins==null)
-				throw new Exception("Logger govway.plugins non trovato");
+				throw new CoreException("Logger govway.plugins non trovato");
 			
 			// PLUGINS LOG (ERROR)
 			OpenSPCoop2Logger.loggerOpenSPCoopPluginsError = LoggerWrapperFactory.getLogger("govway.plugins.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopPluginsError==null)
-				throw new Exception("Logger govway.plugins.error non trovato");
+				throw new CoreException("Logger govway.plugins.error non trovato");
 			
 			// PLUGINS SQL LOG
 			OpenSPCoop2Logger.loggerOpenSPCoopPluginsSql = LoggerWrapperFactory.getLogger("govway.plugins.sql");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopPluginsSql==null)
-				throw new Exception("Logger govway.plugins.sql non trovato");
+				throw new CoreException("Logger govway.plugins.sql non trovato");
 			
 			// PLUGINS SQL LOG (ERROR)
 			OpenSPCoop2Logger.loggerOpenSPCoopPluginsSqlError = LoggerWrapperFactory.getLogger("govway.plugins.sql.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopPluginsSqlError==null)
-				throw new Exception("Logger govway.plugins.sql.error non trovato");
+				throw new CoreException("Logger govway.plugins.sql.error non trovato");
+			
+			// GESTORE CHIAVI PDND LOG
+			OpenSPCoop2Logger.loggerOpenSPCoopGestoreChiaviPDND = LoggerWrapperFactory.getLogger("govway.gestoreChiaviPDND");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopGestoreChiaviPDND==null)
+				throw new CoreException("Logger govway.gestoreChiaviPDND non trovato");
+			
+			// GESTORE CHIAVI PDND LOG (ERROR)
+			OpenSPCoop2Logger.loggerOpenSPCoopGestoreChiaviPDNDError = LoggerWrapperFactory.getLogger("govway.gestoreChiaviPDND.error");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopGestoreChiaviPDNDError==null)
+				throw new CoreException("Logger govway.gestoreChiaviPDND.error non trovato");
 			
 			// CONSOLE
 			OpenSPCoop2Logger.loggerOpenSPCoopConsole.info("Sistema di logging correttamente inizializzato.");
@@ -723,7 +739,7 @@ public class OpenSPCoop2Logger {
 				try{
 					OpenSPCoop2Logger.pddContextSerializer = (IPdDContextSerializer) Loader.getInstance().newInstance(pddContextSerializerClass);
 				}catch(Exception e){
-					throw new Exception("Inizializzione IPdDContextSerializer non riuscita ["+pddContextSerializerClass+"]:"+e.getMessage(),e);
+					throw new CoreException("Inizializzione IPdDContextSerializer non riuscita ["+pddContextSerializerClass+"]:"+e.getMessage(),e);
 				}
 			}
 			
@@ -839,7 +855,7 @@ public class OpenSPCoop2Logger {
 					// MsgDiagAppenderClass
 					String msgDiagAppenderClass = prop.getMsgDiagnosticoOpenSPCoopAppender(msgDiagConfig.getOpenspcoopAppender(i).getTipo());
 					if(msgDiagAppenderClass == null){
-						throw new Exception("Riscontrato errore durante il caricamento del msg diagnostico appender ["+msgDiagConfig.getOpenspcoopAppender(i).getTipo()+"]: appender non registrato.");
+						throw new CoreException("Riscontrato errore durante il caricamento del msg diagnostico appender ["+msgDiagConfig.getOpenspcoopAppender(i).getTipo()+"]: appender non registrato.");
 					}
 
 					// Carico appender richiesto
@@ -848,9 +864,9 @@ public class OpenSPCoop2Logger {
 						appender = (IDiagnosticProducer) Loader.getInstance().newInstance(msgDiagAppenderClass);
 						appender.initializeAppender(msgDiagConfig.getOpenspcoopAppender(i));
 					}catch(ClassNotFoundException e){
-						throw new Exception("Riscontrato errore durante il caricamento del msg diagnostico appender specificato ["+msgDiagConfig.getOpenspcoopAppender(i).getTipo()+"]: "+e.getMessage());
+						throw new CoreException("Riscontrato errore durante il caricamento del msg diagnostico appender specificato ["+msgDiagConfig.getOpenspcoopAppender(i).getTipo()+"]: "+e.getMessage());
 					}catch(Exception e){
-						throw new Exception("Riscontrato errore durante l'inizializzazione del msg diagnostico appender specificato ["+msgDiagConfig.getOpenspcoopAppender(i).getTipo()+"]: "+e.getMessage());
+						throw new CoreException("Riscontrato errore durante l'inizializzazione del msg diagnostico appender specificato ["+msgDiagConfig.getOpenspcoopAppender(i).getTipo()+"]: "+e.getMessage());
 					}
 					
 					// Aggiungo agli appender registrati
@@ -887,7 +903,7 @@ public class OpenSPCoop2Logger {
 					// Tracciamento appender class
 					String tracciamentoAppenderClass = prop.getTracciamentoOpenSPCoopAppender(tracciamentoConfig.getOpenspcoopAppender(i).getTipo());
 					if(tracciamentoAppenderClass == null){
-						throw new Exception("Riscontrato errore durante il caricamento del tracciamento appender ["+tracciamentoConfig.getOpenspcoopAppender(i).getTipo()+"]: appender non registrato.");
+						throw new CoreException("Riscontrato errore durante il caricamento del tracciamento appender ["+tracciamentoConfig.getOpenspcoopAppender(i).getTipo()+"]: appender non registrato.");
 					}
 
 					// Carico appender richiesto
@@ -896,9 +912,9 @@ public class OpenSPCoop2Logger {
 						appender = (ITracciaProducer) Loader.getInstance().newInstance(tracciamentoAppenderClass);
 						appender.initializeAppender(tracciamentoConfig.getOpenspcoopAppender(i));
 					}catch(ClassNotFoundException e){
-						throw new Exception("Riscontrato errore durante il caricamento del tracciamento appender specificato ["+tracciamentoConfig.getOpenspcoopAppender(i).getTipo()+"]: "+e.getMessage());
+						throw new CoreException("Riscontrato errore durante il caricamento del tracciamento appender specificato ["+tracciamentoConfig.getOpenspcoopAppender(i).getTipo()+"]: "+e.getMessage());
 					}catch(Exception e){
-						throw new Exception("Riscontrato errore durante l'inizializzazione del tracciamento appender specificato ["+tracciamentoConfig.getOpenspcoopAppender(i).getTipo()+"]: "+e.getMessage());
+						throw new CoreException("Riscontrato errore durante l'inizializzazione del tracciamento appender specificato ["+tracciamentoConfig.getOpenspcoopAppender(i).getTipo()+"]: "+e.getMessage());
 					}
 					
 					// Aggiungo agli appender registrati
@@ -934,7 +950,7 @@ public class OpenSPCoop2Logger {
 					// Dump Appender class
 					String dumpAppenderClass = prop.getDumpOpenSPCoopAppender(dumpConfig.getOpenspcoopAppender(i).getTipo());
 					if(dumpAppenderClass == null){
-						throw new Exception("Riscontrato errore durante il caricamento del dump appender ["+dumpConfig.getOpenspcoopAppender(i).getTipo()+"]: appender non registrato.");
+						throw new CoreException("Riscontrato errore durante il caricamento del dump appender ["+dumpConfig.getOpenspcoopAppender(i).getTipo()+"]: appender non registrato.");
 					}
 
 					// Carico appender richiesto
@@ -943,9 +959,9 @@ public class OpenSPCoop2Logger {
 						appender = (IDumpProducer) Loader.getInstance().newInstance(dumpAppenderClass);
 						appender.initializeAppender(dumpConfig.getOpenspcoopAppender(i));
 					}catch(ClassNotFoundException e){
-						throw new Exception("Riscontrato errore durante il caricamento del dump appender specificato ["+dumpConfig.getOpenspcoopAppender(i).getTipo()+"]: "+e.getMessage());
+						throw new CoreException("Riscontrato errore durante il caricamento del dump appender specificato ["+dumpConfig.getOpenspcoopAppender(i).getTipo()+"]: "+e.getMessage());
 					}catch(Exception e){
-						throw new Exception("Riscontrato errore durante l'inizializzazione del dump appender specificato ["+dumpConfig.getOpenspcoopAppender(i).getTipo()+"]: "+e.getMessage());
+						throw new CoreException("Riscontrato errore durante l'inizializzazione del dump appender specificato ["+dumpConfig.getOpenspcoopAppender(i).getTipo()+"]: "+e.getMessage());
 					}
 					
 					// Aggiungo agli appender registrati
@@ -1389,6 +1405,15 @@ public class OpenSPCoop2Logger {
 		}
 		else {
 			return OpenSPCoop2Logger.loggerOpenSPCoopPluginsSqlError;
+		}
+	}
+	
+	public static Logger getLoggerOpenSPCoopGestoreChiaviPDND(boolean debug) {
+		if(debug) {
+			return OpenSPCoop2Logger.loggerOpenSPCoopGestoreChiaviPDND;
+		}
+		else {
+			return OpenSPCoop2Logger.loggerOpenSPCoopGestoreChiaviPDNDError;
 		}
 	}
 	

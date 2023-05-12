@@ -562,6 +562,7 @@
 			<param name="SQLDirectory" value="${sql}"/>
 			<param name="SQLDestFile" value="${dist}/ConfigurazionePdD_delete.sql"/>
 			<param name="SQLSourceFiles" value="configurazionePdD/configurazionePdD_PorteApplicative_delete.sql configurazionePdD/configurazionePdD_PorteDelegate_delete.sql configurazionePdD/configurazionePdD_ServiziApplicativi_delete.sql configurazionePdD/configurazionePdD_Soggetti_delete.sql configurazionePdD/configurazionePdD_Connettori_delete.sql configurazionePdD/configurazionePdD_delete.sql configurazionePdD/configurazionePdD_ConnettoriGestioneErrore_delete.sql configurazionePdD/configurazionePdD_ControlloTraffico_delete.sql"/> <!-- Non devo svuotare: DBInfo_delete.sql -->
+			<param name="SQLDataFiles" value="init/configurazionePdD/Semaphore_configurazionePdD_data.sql"/>
 		</antcall>
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql}"/>

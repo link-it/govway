@@ -119,12 +119,12 @@ public class ProtocolFactoryManager {
 	}
 	
 	public void initializeAllProtocols() throws ProtocolException{
-		//System.out.println("Init All Factories ["+this.factories.size()+"] ...");
+		/**System.out.println("Init All Factories ["+this.factories.size()+"] ...");*/
 		if(this.factories!=null){
 			Enumeration<IProtocolFactory<?>> factories = this.factories.elements();
 			while (factories.hasMoreElements()) {
 				IProtocolFactory<?> iProtocolFactory = (IProtocolFactory<?>) factories.nextElement();
-				//System.out.println("Init ["+iProtocolFactory.getProtocol()+"] ...");
+				/**System.out.println("Init ["+iProtocolFactory.getProtocol()+"] ...");*/
 				
 				// INFO SERVIZIO
 				iProtocolFactory.getProtocol();
@@ -205,9 +205,9 @@ public class ProtocolFactoryManager {
 	ProtocolFactoryManager(Logger log,ConfigurazionePdD configPdD,String protocolDefault, boolean searchSingleManifest) throws ProtocolException {
 		try {
 
-			Map<String, Openspcoop2> tmp_manifests = new HashMap<String, Openspcoop2>();
-			Map<String, URL> tmp_manifestURLs = new HashMap<String, URL>();
-			Map<String, IProtocolFactory<?>> tmp_factories = new HashMap<String, IProtocolFactory<?>>();
+			Map<String, Openspcoop2> tmp_manifests = new HashMap<>();
+			Map<String, URL> tmp_manifestURLs = new HashMap<>();
+			Map<String, IProtocolFactory<?>> tmp_factories = new HashMap<>();
 			
 			Map<String, List<String>> tmp_tipiSoggettiValidi = new HashMap<>();
 			Map<String, String> tmp_tipiSoggettiDefault = new HashMap<>();
@@ -303,21 +303,21 @@ public class ProtocolFactoryManager {
 			}
 			
 			// init
-			this.manifests = new MapReader<String, Openspcoop2>(tmp_manifests,true);
-			this.manifestURLs = new MapReader<String, URL>(tmp_manifestURLs,true);
-			this.factories = new MapReader<String, IProtocolFactory<?>>(tmp_factories,true);
+			this.manifests = new MapReader<>(tmp_manifests,true);
+			this.manifestURLs = new MapReader<>(tmp_manifestURLs,true);
+			this.factories = new MapReader<>(tmp_factories,true);
 			
-			this.tipiSoggettiValidi = new MapReader<String, List<String>>(tmp_tipiSoggettiValidi,true);
-			this.tipiSoggettiDefault = new MapReader<String, String>(tmp_tipiSoggettiDefault,true);
+			this.tipiSoggettiValidi = new MapReader<>(tmp_tipiSoggettiValidi,true);
+			this.tipiSoggettiDefault = new MapReader<>(tmp_tipiSoggettiDefault,true);
 			
-			this.tipiServiziValidi_soap = new MapReader<String, List<String>>(tmp_tipiServiziValidi_soap,true);
-			this.tipiServiziDefault_soap = new MapReader<String, String>(tmp_tipiServiziDefault_soap,true);
+			this.tipiServiziValidi_soap = new MapReader<>(tmp_tipiServiziValidi_soap,true);
+			this.tipiServiziDefault_soap = new MapReader<>(tmp_tipiServiziDefault_soap,true);
 			
-			this.tipiServiziValidi_rest = new MapReader<String, List<String>>(tmp_tipiServiziValidi_rest,true);
-			this.tipiServiziDefault_rest = new MapReader<String, String>(tmp_tipiServiziDefault_rest,true);
+			this.tipiServiziValidi_rest = new MapReader<>(tmp_tipiServiziValidi_rest,true);
+			this.tipiServiziDefault_rest = new MapReader<>(tmp_tipiServiziDefault_rest,true);
 			
-			this.versioniValide = new MapReader<String, List<String>>(tmp_versioniValide,true);
-			this.versioniDefault = new MapReader<String, String>(tmp_versioniDefault,true);
+			this.versioniValide = new MapReader<>(tmp_versioniValide,true);
+			this.versioniDefault = new MapReader<>(tmp_versioniDefault,true);
 			
 		} catch (Exception e) {
 			configPdD.getLog().error("Init ProtocolFactoryManager failed: "+e.getMessage(),e);
@@ -1173,6 +1173,10 @@ public class ProtocolFactoryManager {
 		else{
 			throw new ProtocolException("ProtocolPlugin with name ["+protocol+"] not found");
 		}
+	}
+	
+	public boolean existsProtocolFactory(String protocol) {
+		return this.factories.containsKey(protocol);
 	}
 	
 	public IProtocolFactory<?> getProtocolFactoryByOrganizationType(String organizationType) throws ProtocolException {

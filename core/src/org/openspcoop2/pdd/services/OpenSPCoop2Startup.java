@@ -67,6 +67,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.constants.CacheAlgorithm;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
@@ -184,6 +185,10 @@ import org.openspcoop2.pdd.timers.TimerStatisticheThread;
 import org.openspcoop2.pdd.timers.TimerThresholdThread;
 import org.openspcoop2.pdd.timers.TimerUtils;
 import org.openspcoop2.pdd.timers.TipoLock;
+import org.openspcoop2.pdd.timers.pdnd.TimerGestoreCacheChiaviPDND;
+import org.openspcoop2.pdd.timers.pdnd.TimerGestoreCacheChiaviPDNDLib;
+import org.openspcoop2.pdd.timers.pdnd.TimerGestoreChiaviPDND;
+import org.openspcoop2.pdd.timers.pdnd.TimerGestoreChiaviPDNDLib;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.driver.repository.IGestoreRepository;
@@ -191,9 +196,11 @@ import org.openspcoop2.protocol.manifest.constants.ServiceBinding;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
+import org.openspcoop2.protocol.sdk.state.RequestConfig;
 import org.openspcoop2.protocol.sdk.state.RequestThreadContext;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.utils.ErroriProperties;
+import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.message.WsuIdAllocator;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
@@ -206,6 +213,7 @@ import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.certificate.CertificateFactory;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
+import org.openspcoop2.utils.certificate.remote.RemoteKeyType;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
@@ -314,6 +322,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	private TimerStatisticheThread threadGenerazioneStatisticheGiornaliere;
 	private TimerStatisticheThread threadGenerazioneStatisticheSettimanali;
 	private TimerStatisticheThread threadGenerazioneStatisticheMensili;
+	
+	/** Timer per la gestione delle chiavi da PDND */
+	private TimerGestoreChiaviPDND threadGestoreChiaviPDND;
+	private TimerGestoreCacheChiaviPDND threadGestoreCacheChiaviPDND;
+	private boolean threadGestoreChiaviPDNDEnabled = false;
 	
 	/** DynamicCluster */
 	private static TimerClusterDinamicoThread threadClusterDinamico;
@@ -822,9 +835,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					Cache.disableSyncronizedGetAsDefault();
 				}
 				OpenSPCoop2Startup.logStartupInfo("Cache.disableSyncronizedGetAsDefault: "+Cache.isDisableSyncronizedGetAsDefault());
-				Cache.DEBUG_CACHE=propertiesReader.isConfigurazioneCache_debug();
+				Cache.DEBUG_CACHE=propertiesReader.isConfigurazioneCacheDebug();
 				OpenSPCoop2Startup.logStartupInfo("Cache.DEBUG: "+Cache.DEBUG_CACHE);
-				GestoreRichieste.setUseCache(propertiesReader.isConfigurazioneCache_requestManager_useCache());
+				GestoreRichieste.setUseCache(propertiesReader.isConfigurazioneCacheRequestManagerUseCache());
 				OpenSPCoop2Startup.logStartupInfo("Cache.requestManager.useCache: "+GestoreRichieste.isUseCache());
 				
 				
@@ -1252,7 +1265,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					else if(propertiesReader.isIntegrationManager_runtime_useConsegnePreseInCaricoManager()) {
 						DBConsegnePreseInCaricoManager instance = DBConsegnePreseInCaricoManager.getInstanceRuntime();
 						if(instance==null) {
-							throw new Exception("DBConsegnePreseInCaricoManager-runtime richiesto dalla configurazione del servizio MessageBox non risulta attivo");
+							throw new CoreException("DBConsegnePreseInCaricoManager-runtime richiesto dalla configurazione del servizio MessageBox non risulta attivo");
 						}
 						DBConsegneMessageBoxManager.initRuntime(instance, logCore, propertiesReader.getDatabaseType());
 					}
@@ -1274,7 +1287,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					else if(propertiesReader.isIntegrationManager_transazioni_useConsegnePreseInCaricoManager()) {
 						DBConsegnePreseInCaricoManager instance = DBConsegnePreseInCaricoManager.getInstanceTransazioni();
 						if(instance==null) {
-							throw new Exception("DBConsegnePreseInCaricoManager-transazioni richiesto dalla configurazione del servizio MessageBox non risulta attivo");
+							throw new CoreException("DBConsegnePreseInCaricoManager-transazioni richiesto dalla configurazione del servizio MessageBox non risulta attivo");
 						}
 						DBConsegneMessageBoxManager.initTransazioni(instance, logCore, propertiesReader.getDatabaseType());
 					}
@@ -1376,7 +1389,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					propertiesReader.getJNDIName_DataSource(), false,
 					propertiesReader.isDSOp2UtilsEnabled(), propertiesReader.isRisorseJMXAbilitate(),
 					propertiesReader.isConfigurazioneCache_ConfigPrefill(), propertiesReader.getCryptConfigAutenticazioneApplicativi(),
-					propertiesReader.getCacheType_config());
+					propertiesReader.getCacheTypeConfig());
 			if(isInitializeConfig == false){
 				this.logError("Riscontrato errore durante l'inizializzazione della configurazione di OpenSPCoop.");
 				return;
@@ -1508,7 +1521,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							dimensioneCache = Integer.parseInt(datiAutorizzazione.getCache().getDimensione());
 						}catch(Exception e){
-							throw new Exception("Parametro 'dimensioneCache' errato per la cache di accesso ai dati di autorizzazione");
+							throw new CoreException("Parametro 'dimensioneCache' errato per la cache di accesso ai dati di autorizzazione");
 						}
 					}
 					
@@ -1522,7 +1535,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							idleTime = Integer.parseInt(datiAutorizzazione.getCache().getItemIdleTime());
 						}catch(Exception e){
-							throw new Exception("Parametro 'idleTime' errato per la cache di accesso ai dati di autorizzazione");
+							throw new CoreException("Parametro 'idleTime' errato per la cache di accesso ai dati di autorizzazione");
 						}
 					}
 					
@@ -1531,11 +1544,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							itemLifeSecond = Integer.parseInt(datiAutorizzazione.getCache().getItemLifeSecond());
 						}catch(Exception e){
-							throw new Exception("Parametro 'itemLifeSecond' errato per la cache di accesso ai dati di autorizzazione");
+							throw new CoreException("Parametro 'itemLifeSecond' errato per la cache di accesso ai dati di autorizzazione");
 						}
 					}
 
-					GestoreAutorizzazione.initialize(propertiesReader.getCacheType_authorization(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+					GestoreAutorizzazione.initialize(propertiesReader.getCacheTypeAuthorization(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
 				}
 				else{
 					GestoreAutorizzazione.initialize(logCore);
@@ -1559,7 +1572,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							dimensioneCache = Integer.parseInt(datiAutenticazione.getCache().getDimensione());
 						}catch(Exception e){
-							throw new Exception("Parametro 'dimensioneCache' errato per la cache di accesso ai dati di autenticazione");
+							throw new CoreException("Parametro 'dimensioneCache' errato per la cache di accesso ai dati di autenticazione");
 						}
 					}
 					
@@ -1573,7 +1586,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							idleTime = Integer.parseInt(datiAutenticazione.getCache().getItemIdleTime());
 						}catch(Exception e){
-							throw new Exception("Parametro 'idleTime' errato per la cache di accesso ai dati di autenticazione");
+							throw new CoreException("Parametro 'idleTime' errato per la cache di accesso ai dati di autenticazione");
 						}
 					}
 					
@@ -1582,11 +1595,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							itemLifeSecond = Integer.parseInt(datiAutenticazione.getCache().getItemLifeSecond());
 						}catch(Exception e){
-							throw new Exception("Parametro 'itemLifeSecond' errato per la cache di accesso ai dati di autenticazione");
+							throw new CoreException("Parametro 'itemLifeSecond' errato per la cache di accesso ai dati di autenticazione");
 						}
 					}
 
-					GestoreAutenticazione.initialize(propertiesReader.getCacheType_authentication(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+					GestoreAutenticazione.initialize(propertiesReader.getCacheTypeAuthentication(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
 				}
 				else{
 					GestoreAutenticazione.initialize(logCore);
@@ -1611,7 +1624,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							dimensioneCache = Integer.parseInt(datiGestioneToken.getCache().getDimensione());
 						}catch(Exception e){
-							throw new Exception("Parametro 'dimensioneCache' errato per la cache di accesso ai dati dei token");
+							throw new CoreException("Parametro 'dimensioneCache' errato per la cache di accesso ai dati dei token");
 						}
 					}
 					
@@ -1625,7 +1638,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							idleTime = Integer.parseInt(datiGestioneToken.getCache().getItemIdleTime());
 						}catch(Exception e){
-							throw new Exception("Parametro 'idleTime' errato per la cache di accesso ai dati dei token");
+							throw new CoreException("Parametro 'idleTime' errato per la cache di accesso ai dati dei token");
 						}
 					}
 					
@@ -1634,11 +1647,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							itemLifeSecond = Integer.parseInt(datiGestioneToken.getCache().getItemLifeSecond());
 						}catch(Exception e){
-							throw new Exception("Parametro 'itemLifeSecond' errato per la cache di accesso ai dati dei token");
+							throw new CoreException("Parametro 'itemLifeSecond' errato per la cache di accesso ai dati dei token");
 						}
 					}
 
-					GestoreToken.initialize(propertiesReader.getCacheType_token(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+					GestoreToken.initialize(propertiesReader.getCacheTypeToken(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
 				}
 				else{
 					GestoreToken.initialize(logCore);
@@ -1667,7 +1680,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							dimensioneCache = Integer.parseInt(responseCachingCacheConfig.getDimensione());
 						}catch(Exception e){
-							throw new Exception("Parametro 'dimensioneCache' errato per la cache di response caching");
+							throw new CoreException("Parametro 'dimensioneCache' errato per la cache di response caching");
 						}
 					}
 					
@@ -1681,7 +1694,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							idleTime = Integer.parseInt(responseCachingCacheConfig.getItemIdleTime());
 						}catch(Exception e){
-							throw new Exception("Parametro 'idleTime' errato per la cache di response caching");
+							throw new CoreException("Parametro 'idleTime' errato per la cache di response caching");
 						}
 					}
 					
@@ -1690,11 +1703,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							itemLifeSecond = Integer.parseInt(responseCachingCacheConfig.getItemLifeSecond());
 						}catch(Exception e){
-							throw new Exception("Parametro 'itemLifeSecond' errato per la cache di response caching");
+							throw new CoreException("Parametro 'itemLifeSecond' errato per la cache di response caching");
 						}
 					}
 
-					GestoreCacheResponseCaching.initialize(propertiesReader.getCacheType_responseCaching(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+					GestoreCacheResponseCaching.initialize(propertiesReader.getCacheTypeResponseCaching(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
 				}
 				else{
 					GestoreCacheResponseCaching.initialize(logCore);
@@ -1726,7 +1739,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							dimensioneCache = Integer.parseInt(keystoreCacheConfig.getCache().getDimensione());
 						}catch(Exception e){
-							throw new Exception("Parametro 'dimensioneCache' errato per la cache di accesso ai keystore");
+							throw new CoreException("Parametro 'dimensioneCache' errato per la cache di accesso ai keystore");
 						}
 					}
 					
@@ -1740,7 +1753,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							idleTime = Integer.parseInt(keystoreCacheConfig.getCache().getItemIdleTime());
 						}catch(Exception e){
-							throw new Exception("Parametro 'idleTime' errato per la cache di accesso ai keystore");
+							throw new CoreException("Parametro 'idleTime' errato per la cache di accesso ai keystore");
 						}
 					}
 					
@@ -1749,7 +1762,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							itemLifeSecond = Integer.parseInt(keystoreCacheConfig.getCache().getItemLifeSecond());
 						}catch(Exception e){
-							throw new Exception("Parametro 'itemLifeSecond' errato per la cache di accesso ai keystore");
+							throw new CoreException("Parametro 'itemLifeSecond' errato per la cache di accesso ai keystore");
 						}
 					}
 					
@@ -1758,11 +1771,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							itemCrlLifeSecond = Integer.parseInt(keystoreCacheConfig.getCrlItemLifeSecond());
 						}catch(Exception e){
-							throw new Exception("Parametro 'itemCrlLifeSecond' errato per la cache di accesso ai keystore");
+							throw new CoreException("Parametro 'itemCrlLifeSecond' errato per la cache di accesso ai keystore");
 						}
 					}
 
-					GestoreKeystoreCaching.initialize(propertiesReader.getCacheType_keystore(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+					GestoreKeystoreCaching.initialize(propertiesReader.getCacheTypeKeystore(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
 					
 					if(itemCrlLifeSecond>0) {
 						GestoreKeystoreCaching.setCacheCrlLifeSeconds(itemCrlLifeSecond);
@@ -1804,7 +1817,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							dimensioneCache = Integer.parseInt(consegnaApplicativiCacheConfig.getDimensione());
 						}catch(Exception e){
-							throw new Exception("Parametro 'dimensioneCache' errato per la cache di response caching");
+							throw new CoreException("Parametro 'dimensioneCache' errato per la cache di response caching");
 						}
 					}
 					
@@ -1818,7 +1831,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							idleTime = Integer.parseInt(consegnaApplicativiCacheConfig.getItemIdleTime());
 						}catch(Exception e){
-							throw new Exception("Parametro 'idleTime' errato per la cache di response caching");
+							throw new CoreException("Parametro 'idleTime' errato per la cache di response caching");
 						}
 					}
 					
@@ -1827,11 +1840,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							itemLifeSecond = Integer.parseInt(consegnaApplicativiCacheConfig.getItemLifeSecond());
 						}catch(Exception e){
-							throw new Exception("Parametro 'itemLifeSecond' errato per la cache di response caching");
+							throw new CoreException("Parametro 'itemLifeSecond' errato per la cache di response caching");
 						}
 					}
 
-					GestoreLoadBalancerCaching.initialize(propertiesReader.getCacheType_loadBalancer(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+					GestoreLoadBalancerCaching.initialize(propertiesReader.getCacheTypeLoadBalancer(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
 				}
 				else{
 					GestoreLoadBalancerCaching.initialize(logCore);
@@ -1860,7 +1873,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							dimensioneCache = Integer.parseInt(gestoreRichiesteCacheConfig.getCache().getDimensione());
 						}catch(Exception e){
-							throw new Exception("Parametro 'dimensioneCache' errato per la cache di accesso ai dati delle richieste");
+							throw new CoreException("Parametro 'dimensioneCache' errato per la cache di accesso ai dati delle richieste");
 						}
 					}
 					
@@ -1874,7 +1887,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							idleTime = Integer.parseInt(gestoreRichiesteCacheConfig.getCache().getItemIdleTime());
 						}catch(Exception e){
-							throw new Exception("Parametro 'idleTime' errato per la cache di accesso ai dati delle richieste");
+							throw new CoreException("Parametro 'idleTime' errato per la cache di accesso ai dati delle richieste");
 						}
 					}
 					
@@ -1883,17 +1896,29 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							itemLifeSecond = Integer.parseInt(gestoreRichiesteCacheConfig.getCache().getItemLifeSecond());
 						}catch(Exception e){
-							throw new Exception("Parametro 'itemLifeSecond' errato per la cache di accesso ai dati delle richieste");
+							throw new CoreException("Parametro 'itemLifeSecond' errato per la cache di accesso ai dati delle richieste");
 						}
 					}
 					
-					GestoreRichieste.initCacheGestoreRichieste(propertiesReader.getCacheType_requestManager(), dimensioneCache, algoritmo,
+					GestoreRichieste.initCacheGestoreRichieste(propertiesReader.getCacheTypeRequestManager(), dimensioneCache, algoritmo,
 							idleTime, itemLifeSecond, logCore);
 					
 				}
 				else{
 					GestoreRichieste.initialize(logCore);					
 				}
+				
+				
+				RequestConfig.setUseCacheForExternalResource(propertiesReader.isConfigurazioneCacheRequestManagerExternalResourceSaveInCache());
+				OpenSPCoop2Startup.logStartupInfo("RequestConfig, useCacheForExternalResource: "+RequestConfig.isUseCacheForExternalResource());
+				
+				RequestConfig.setUseCacheForOCSPResponse(propertiesReader.isConfigurazioneCacheRequestManagerOCSPResponseSaveInCache());
+				OpenSPCoop2Startup.logStartupInfo("RequestConfig, useCacheForOCSPResponse: "+RequestConfig.isUseCacheForOCSPResponse());
+				
+				RequestConfig.setUseCacheForRemoteStore(propertiesReader.isConfigurazioneCacheRequestManagerRemoteStoreSaveInCache());
+				OpenSPCoop2Startup.logStartupInfo("RequestConfig, useCacheForRemoteStore: "+RequestConfig.isUseCacheForRemoteStore());
+				
+				
 			}catch(Exception e){
 				msgDiag.logStartupError(e,"Gestore DatiRichieste Caching");
 				return;
@@ -2157,7 +2182,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						propertiesReader.isReadObjectStatoBozza(),propertiesReader.getJNDIName_DataSource(),
 						propertiesReader.isDSOp2UtilsEnabled(), propertiesReader.isRisorseJMXAbilitate(),
 						propertiesReader.isConfigurazioneCache_RegistryPrefill(), propertiesReader.getCryptConfigAutenticazioneSoggetti(),
-						propertiesReader.getCacheType_registry());
+						propertiesReader.getCacheTypeRegistry());
 			if(isInitializeRegistro == false){
 				msgDiag.logStartupError("Inizializzazione fallita","Accesso registro/i dei servizi");
 				return;
@@ -2563,7 +2588,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				try{
 					ConfigurazioneGenerale configurazioneControlloTraffico = configurazionePdDManager.getConfigurazioneControlloTraffico(null);
 					if(configurazioneControlloTraffico.getCache()!=null && configurazioneControlloTraffico.getCache().isCache()){
-						GestoreCacheControlloTraffico.initializeCache(propertiesReader.getCacheType_trafficControl(),configurazioneControlloTraffico.getCache().getSize(),
+						GestoreCacheControlloTraffico.initializeCache(propertiesReader.getCacheTypeTrafficControl(),configurazioneControlloTraffico.getCache().getSize(),
 								CacheAlgorithm.LRU.equals(configurazioneControlloTraffico.getCache().getAlgorithm()),
 								configurazioneControlloTraffico.getCache().getIdleTime(), 
 								configurazioneControlloTraffico.getCache().getLifeTime(), 
@@ -2664,17 +2689,17 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							File fRepository = propertiesReader.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository();
 							if(fRepository!=null){
-								if(fRepository.exists()==false){
-									throw new Exception("Directory ["+fRepository.getAbsolutePath()+"] not exists");
+								if(!fRepository.exists()){
+									throw new CoreException("Directory ["+fRepository.getAbsolutePath()+"] not exists");
 								}
-								if(fRepository.isDirectory()==false){
-									throw new Exception("File ["+fRepository.getAbsolutePath()+"] is not directory");
+								if(!fRepository.isDirectory()){
+									throw new CoreException("File ["+fRepository.getAbsolutePath()+"] is not directory");
 								}
-								if(fRepository.canRead()==false){
-									throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot read");
+								if(!fRepository.canRead()){
+									throw new CoreException("File ["+fRepository.getAbsolutePath()+"] cannot read");
 								}
-								if(fRepository.canWrite()==false){
-									throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot write");
+								if(!fRepository.canWrite()){
+									throw new CoreException("File ["+fRepository.getAbsolutePath()+"] cannot write");
 								}
 								fDati = new File(fRepository, GestorePolicyAttive.getControlloTrafficoImage(type));
 								if(fDati.exists() && fDati.canRead() && fDati.length()>0){
@@ -3485,6 +3510,71 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
+		
+			
+			/* ------------ Avvia il thread per la gestione delle chiavi PDND ------------ */
+			if(protocolFactoryManager.existsProtocolFactory(CostantiLabel.MODIPA_PROTOCOL_NAME)) { // verifico che esista su PDND
+				
+				RemoteStoreConfig remoteStoreConfig = null;
+				RemoteKeyType remoteKeyType = RemoteKeyType.JWK;
+				try {
+					List<RemoteStoreConfig> listRSC = ModIUtils.getRemoteStoreConfig();
+					if(listRSC!=null && !listRSC.isEmpty()) {
+						String pdndName = propertiesReader.getGestoreChiaviPDNDRemoteStoreName();
+						for (RemoteStoreConfig r : listRSC) {
+							if(pdndName.equals(r.getStoreName())) {
+								remoteStoreConfig = r;
+								remoteKeyType = ModIUtils.getRemoteKeyType(pdndName);
+								break;
+							}
+						}
+					}
+				}catch(Exception e){
+					String msgError = "Inizializzazione thread per la gestione delle chiavi PDND non riuscita: "+e.getMessage();
+					msgDiag.logStartupError(e,msgError);
+					return;
+				}
+				
+				if(remoteStoreConfig!=null && propertiesReader.isGestoreChiaviPDNDEnabled()) {
+					
+					OpenSPCoop2Startup.this.threadGestoreChiaviPDNDEnabled = true;
+					
+					try{
+						OpenSPCoop2Startup.this.threadGestoreChiaviPDND = 
+								new TimerGestoreChiaviPDND(propertiesReader.getGestoreChiaviPDNDeventsKeysTimerIntervalloSecondi(), remoteStoreConfig);
+						OpenSPCoop2Startup.this.threadGestoreChiaviPDND.start();
+						TimerGestoreChiaviPDNDLib.setState( TimerState.ENABLED );
+					}catch(Exception e){
+						msgDiag.logStartupError(e,"Avvio timer (thread) '"+TimerGestoreChiaviPDND.ID_MODULO+"'");
+					}
+					
+					try{
+						OpenSPCoop2Startup.this.threadGestoreCacheChiaviPDND = 
+								new TimerGestoreCacheChiaviPDND(propertiesReader.getGestoreChiaviPDNDcacheKeysTimerIntervalloSecondi(), remoteStoreConfig, remoteKeyType);
+						OpenSPCoop2Startup.this.threadGestoreCacheChiaviPDND.start();
+						TimerGestoreCacheChiaviPDNDLib.setState( TimerState.ENABLED );
+					}catch(Exception e){
+						msgDiag.logStartupError(e,"Avvio timer (thread) '"+TimerGestoreCacheChiaviPDND.ID_MODULO+"'");
+					}
+				}
+				else {
+					msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_CHIAVI_PDND);
+					
+					msgDiag.addKeyword(CostantiPdD.KEY_TIMER, TimerGestoreChiaviPDND.ID_MODULO);
+					msgDiag.logPersonalizzato("disabilitato");
+					
+					msgDiag.addKeyword(CostantiPdD.KEY_TIMER, TimerGestoreCacheChiaviPDND.ID_MODULO);
+					msgDiag.logPersonalizzato("disabilitato");
+					
+					msgDiag.setPrefixMsgPersonalizzati(null);
+				}
+				
+			}
+			
+			
+			
+			
+			
 			
 			/* ------------ Avvia il thread per la gestione Stateful delle transazioni ------------ */
 			Logger forceLogTransazioniStateful = OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniStateful(true);
@@ -3820,7 +3910,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 							if(debugEventi)
 								logEventi.debug("Richiesto stop al thread per gli Eventi");
 						}else{
-							throw new Exception("Thread per gli Eventi non trovato");
+							throw new CoreException("Thread per gli Eventi non trovato");
 						}
 					}catch(Exception e){
 						if(logEventi!=null){
@@ -3846,7 +3936,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					if(debugRecoveryFileSystem)
 						logRecoveryFileSystem.debug("Richiesto stop al thread per il recovery da file system");
 				}else{
-					throw new Exception("Thread per il recovery da file system non trovato");
+					throw new CoreException("Thread per il recovery da file system non trovato");
 				}	
 			}
 		}catch(Throwable e){
@@ -3865,7 +3955,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					if(debugTransazioniStateful)
 						logTransazioniStateful.debug("Richiesto stop al thread per la gestione delle transazioni stateful");
 				}else{
-					throw new Exception("Thread per la gestione delle transazioni stateful non trovato");
+					throw new CoreException("Thread per la gestione delle transazioni stateful non trovato");
 				}	
 			}
 		}catch(Throwable e){
@@ -3886,7 +3976,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						logStatisticheOrarie.debug("Richiesto stop al thread per la generazione delle statistiche orarie");
 				}else{
 					if(properties.isStatisticheGenerazioneBaseOrariaEnabled()) {
-						throw new Exception("Thread per la generazione delle statistiche orarie non trovato");
+						throw new CoreException("Thread per la generazione delle statistiche orarie non trovato");
 					}
 				}	
 				
@@ -3899,7 +3989,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						logStatisticheGiornaliere.debug("Richiesto stop al thread per la generazione delle statistiche giornaliere");
 				}else{
 					if(properties.isStatisticheGenerazioneBaseGiornalieraEnabled()) {
-						throw new Exception("Thread per la generazione delle statistiche giornaliere non trovato");
+						throw new CoreException("Thread per la generazione delle statistiche giornaliere non trovato");
 					}
 				}
 				
@@ -3912,7 +4002,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						logStatisticheSettimanali.debug("Richiesto stop al thread per la generazione delle statistiche settimanali");
 				}else{
 					if(properties.isStatisticheGenerazioneBaseSettimanaleEnabled()) {
-						throw new Exception("Thread per la generazione delle statistiche settimanali non trovato");
+						throw new CoreException("Thread per la generazione delle statistiche settimanali non trovato");
 					}
 				}
 				
@@ -3925,7 +4015,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						logStatisticheMensili.debug("Richiesto stop al thread per la generazione delle statistiche mensili");
 				}else{
 					if(properties.isStatisticheGenerazioneBaseMensileEnabled()) {
-						throw new Exception("Thread per la generazione delle statistiche mensili non trovato");
+						throw new CoreException("Thread per la generazione delle statistiche mensili non trovato");
 					}
 				}	
 				
@@ -3933,6 +4023,46 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		}catch (Throwable e) {
 			// ignore
 		}
+		
+		// Timer per la gestione delle chiavi da PDND 
+		
+		try{
+			if(properties!=null && OpenSPCoop2Startup.this.threadGestoreChiaviPDNDEnabled){
+				boolean debug = properties.isGestoreChiaviPDNDDebug();
+			
+				Logger logGestorePDND = OpenSPCoop2Logger.getLoggerOpenSPCoopGestoreChiaviPDND(debug);
+				if(debug)
+					logGestorePDND.debug("Recupero thread per la gestione delle chiavi PDND ...");
+				if(OpenSPCoop2Startup.this.threadGestoreChiaviPDND!=null){
+					OpenSPCoop2Startup.this.threadGestoreChiaviPDND.setStop(true);
+					if(debug)
+						logGestorePDND.debug("Richiesto stop al thread per la gestione delle chiavi PDND");
+				}else{
+					throw new CoreException("Thread per la gestione delle chiavi PDND non trovato");
+				}	
+			}
+		}catch (Throwable e) {
+			// ignore
+		}
+		try{
+			if(properties!=null && OpenSPCoop2Startup.this.threadGestoreChiaviPDNDEnabled){
+				boolean debug = properties.isGestoreChiaviPDNDDebug();
+			
+				Logger logGestorePDND = OpenSPCoop2Logger.getLoggerOpenSPCoopGestoreChiaviPDND(debug);
+				if(debug)
+					logGestorePDND.debug("Recupero thread per la gestione della cache delle chiavi PDND ...");
+				if(OpenSPCoop2Startup.this.threadGestoreCacheChiaviPDND!=null){
+					OpenSPCoop2Startup.this.threadGestoreCacheChiaviPDND.setStop(true);
+					if(debug)
+						logGestorePDND.debug("Richiesto stop al thread per la gestione della cache delle chiavi PDND");
+				}else{
+					throw new CoreException("Thread per gestione della cache delle chiavi PDND non trovato");
+				}	
+			}
+		}catch (Throwable e) {
+			// ignore
+		}
+		
 		
 		// ExitHandler
 		try{
@@ -3964,16 +4094,16 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						File fRepository = properties.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository();
 						if(fRepository!=null){
 							if(fRepository.exists()==false){
-								throw new Exception("Directory ["+fRepository.getAbsolutePath()+"] not exists");
+								throw new CoreException("Directory ["+fRepository.getAbsolutePath()+"] not exists");
 							}
 							if(fRepository.isDirectory()==false){
-								throw new Exception("File ["+fRepository.getAbsolutePath()+"] is not directory");
+								throw new CoreException("File ["+fRepository.getAbsolutePath()+"] is not directory");
 							}
 							if(fRepository.canRead()==false){
-								throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot read");
+								throw new CoreException("File ["+fRepository.getAbsolutePath()+"] cannot read");
 							}
 							if(fRepository.canWrite()==false){
-								throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot write");
+								throw new CoreException("File ["+fRepository.getAbsolutePath()+"] cannot write");
 							}		
 							
 							File fDati = new File(fRepository, GestorePolicyAttive.getControlloTrafficoImage(type));

@@ -97,7 +97,7 @@ public class GestoreCredenzialiConfigurazione {
 	private String autenticazioneCanalePrincipal=null;
 	
 	private ModalitaAutenticazioneGestoreCredenziali modalitaAutenticazioneCanale = null;
-	private String modalitaAutenticazioneCanaleAtLeastOne_error_description = null;
+	private String modalitaAutenticazioneCanaleAtLeastOneErrorDescription = null;
 	
 	private String headerBasicUsername;
 	private String headerBasicPassword;
@@ -109,16 +109,18 @@ public class GestoreCredenzialiConfigurazione {
 	private boolean headerSslCertificateUrlDecode;
 	private boolean headerSslCertificateBase64Decode;
 	private boolean headerSslCertificateUrlDecodeOrBase64Decode;
-	private boolean headerSslCertificateEnrich_BEGIN_END;
+	private boolean headerSslCertificateEnrichBeginEnd;
 	private boolean headerSslCertificateReplaceCharacters;
-	private String headerSslCertificateReplaceCharacters_source;
-	private String headerSslCertificateReplaceCharacters_dest;
+	private String headerSslCertificateReplaceCharactersSource;
+	private String headerSslCertificateReplaceCharactersDest;
 	private String headerSslCertificateTrustStorePath;
 	private String headerSslCertificateTrustStorePassword;
 	private String headerSslCertificateTrustStoreType;
 	private boolean headerSslCertificateTrustStoreCheckValid = true;
 	private String headerSslCertificateCrlX509;
 	private String headerSslCertificateOcspPolicy;
+	private String headerSslCertificateNoneOption;
+
 
 	private String headerPrincipal;
 	
@@ -246,9 +248,9 @@ public class GestoreCredenzialiConfigurazione {
 			pValue = getProperty(p, "header.ssl.certificate.enrich_BEGIN_END", protocollo, idSoggetto);
 			if(pValue!=null){
 				pValue = pValue.trim();
-				this.headerSslCertificateEnrich_BEGIN_END = Boolean.parseBoolean(pValue);
+				this.headerSslCertificateEnrichBeginEnd = Boolean.parseBoolean(pValue);
 			}else{
-				this.headerSslCertificateEnrich_BEGIN_END = false;// default a false
+				this.headerSslCertificateEnrichBeginEnd = false;// default a false
 			}
 			
 			pValue = getProperty(p, "header.ssl.certificate.replaceCharacters", protocollo, idSoggetto);
@@ -260,33 +262,33 @@ public class GestoreCredenzialiConfigurazione {
 			}
 			
 			if(this.headerSslCertificateReplaceCharacters) {
-				this.headerSslCertificateReplaceCharacters_source = getProperty(p, "header.ssl.certificate.replaceCharacters.source", protocollo, idSoggetto);
-				if(this.headerSslCertificateReplaceCharacters_source!=null){
-					if(StringUtils.isNotEmpty(this.headerSslCertificateReplaceCharacters_source)) {
-						if("\\t".equals(this.headerSslCertificateReplaceCharacters_source)) {
-							this.headerSslCertificateReplaceCharacters_source = "\t";
+				this.headerSslCertificateReplaceCharactersSource = getProperty(p, "header.ssl.certificate.replaceCharacters.source", protocollo, idSoggetto);
+				if(this.headerSslCertificateReplaceCharactersSource!=null){
+					if(StringUtils.isNotEmpty(this.headerSslCertificateReplaceCharactersSource)) {
+						if("\\t".equals(this.headerSslCertificateReplaceCharactersSource)) {
+							this.headerSslCertificateReplaceCharactersSource = "\t";
 						}
-						else if("\\n".equals(this.headerSslCertificateReplaceCharacters_source)) {
-							this.headerSslCertificateReplaceCharacters_source = "\n";
+						else if("\\n".equals(this.headerSslCertificateReplaceCharactersSource)) {
+							this.headerSslCertificateReplaceCharactersSource = "\n";
 						}
 					}
 					else {
-						this.headerSslCertificateReplaceCharacters_source = null;
+						this.headerSslCertificateReplaceCharactersSource = null;
 					}
 				}
 				
-				this.headerSslCertificateReplaceCharacters_dest = getProperty(p, "header.ssl.certificate.replaceCharacters.dest", protocollo, idSoggetto);
-				if(this.headerSslCertificateReplaceCharacters_dest!=null){
-					if(StringUtils.isNotEmpty(this.headerSslCertificateReplaceCharacters_dest)) {
-						if("\\t".equals(this.headerSslCertificateReplaceCharacters_dest)) {
-							this.headerSslCertificateReplaceCharacters_dest = "\t";
+				this.headerSslCertificateReplaceCharactersDest = getProperty(p, "header.ssl.certificate.replaceCharacters.dest", protocollo, idSoggetto);
+				if(this.headerSslCertificateReplaceCharactersDest!=null){
+					if(StringUtils.isNotEmpty(this.headerSslCertificateReplaceCharactersDest)) {
+						if("\\t".equals(this.headerSslCertificateReplaceCharactersDest)) {
+							this.headerSslCertificateReplaceCharactersDest = "\t";
 						}
-						else if("\\n".equals(this.headerSslCertificateReplaceCharacters_dest)) {
-							this.headerSslCertificateReplaceCharacters_dest = "\n";
+						else if("\\n".equals(this.headerSslCertificateReplaceCharactersDest)) {
+							this.headerSslCertificateReplaceCharactersDest = "\n";
 						}
 					}
 					else {
-						this.headerSslCertificateReplaceCharacters_dest = null;
+						this.headerSslCertificateReplaceCharactersDest = null;
 					}
 				}
 			}
@@ -336,6 +338,12 @@ public class GestoreCredenzialiConfigurazione {
 					this.headerSslCertificateOcspPolicy = ocspPolicy;
 				}
 			}
+			
+			pValue = getProperty(p, "header.ssl.certificate.none", protocollo, idSoggetto);
+			if(pValue!=null){
+				pValue = pValue.trim();
+				this.headerSslCertificateNoneOption = pValue;
+			}
 		}
 		
 		this.headerPrincipal = getProperty(p, "header.principal", protocollo, idSoggetto);
@@ -363,7 +371,7 @@ public class GestoreCredenzialiConfigurazione {
 		case NONE:
 			break;
 		case AT_LEAST_ONE:
-			this.modalitaAutenticazioneCanaleAtLeastOne_error_description = getProperty(p, "modalita.atLeastOne.error_description.notFound", protocollo, idSoggetto);
+			this.modalitaAutenticazioneCanaleAtLeastOneErrorDescription = getProperty(p, "modalita.atLeastOne.error_description.notFound", protocollo, idSoggetto);
 			// Il controllo è gia stato fatto sopra che sia definito almeno una modalità per passare la credenziale
 			break;
 		case BASIC:
@@ -511,8 +519,8 @@ public class GestoreCredenzialiConfigurazione {
 	public ModalitaAutenticazioneGestoreCredenziali getModalitaAutenticazioneCanale() {
 		return this.modalitaAutenticazioneCanale;
 	}
-	public String getModalitaAutenticazioneCanaleAtLeastOne_error_description() {
-		return this.modalitaAutenticazioneCanaleAtLeastOne_error_description;
+	public String getModalitaAutenticazioneCanaleAtLeastOneErrorDescription() {
+		return this.modalitaAutenticazioneCanaleAtLeastOneErrorDescription;
 	}
 	
 	public String getHeaderBasicUsername() {
@@ -541,17 +549,17 @@ public class GestoreCredenzialiConfigurazione {
 	public boolean isHeaderSslCertificateUrlDecodeOrBase64Decode() {
 		return this.headerSslCertificateUrlDecodeOrBase64Decode;
 	}
-	public boolean isHeaderSslCertificateEnrich_BEGIN_END() {
-		return this.headerSslCertificateEnrich_BEGIN_END;
+	public boolean isHeaderSslCertificateEnrichBeginEnd() {
+		return this.headerSslCertificateEnrichBeginEnd;
 	}
 	public boolean isHeaderSslCertificateReplaceCharacters() {
 		return this.headerSslCertificateReplaceCharacters;
 	}
-	public String getHeaderSslCertificateReplaceCharacters_source() {
-		return this.headerSslCertificateReplaceCharacters_source;
+	public String getHeaderSslCertificateReplaceCharactersSource() {
+		return this.headerSslCertificateReplaceCharactersSource;
 	}
-	public String getHeaderSslCertificateReplaceCharacters_dest() {
-		return this.headerSslCertificateReplaceCharacters_dest;
+	public String getHeaderSslCertificateReplaceCharactersDest() {
+		return this.headerSslCertificateReplaceCharactersDest;
 	}
 	public String getHeaderSslCertificateTrustStorePath() {
 		return this.headerSslCertificateTrustStorePath;
@@ -570,6 +578,9 @@ public class GestoreCredenzialiConfigurazione {
 	}
 	public String getHeaderSslCertificateOcspPolicy() {
 		return this.headerSslCertificateOcspPolicy;
+	}
+	public String getHeaderSslCertificateNoneOption() {
+		return this.headerSslCertificateNoneOption;
 	}
 	
 	public String getHeaderPrincipal() {

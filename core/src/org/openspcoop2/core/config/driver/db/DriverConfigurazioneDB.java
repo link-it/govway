@@ -441,12 +441,17 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	
 	
 	public Connection getConnection(String methodName) throws DriverConfigurazioneException{
+		return getConnection(methodName, true);
+	}
+	public Connection getConnection(String methodName, boolean disableAutoCommit) throws DriverConfigurazioneException{
 		Connection con = null;
 		
 		if (this.atomica) {
 			try {
 				con = getConnectionFromDatasource(methodName);
-				con.setAutoCommit(false);
+				if(disableAutoCommit) {
+					con.setAutoCommit(false);
+				}
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getConnection] Exception accedendo al datasource :" + e.getMessage(),e);
 

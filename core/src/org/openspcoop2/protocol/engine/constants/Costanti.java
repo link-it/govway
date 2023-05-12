@@ -202,6 +202,8 @@ public class Costanti {
 	public static final String CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY = "connettore_token_policy";
 	public static final String CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY_VIA_API = "connettore_token_policy_via_api";
 	
+	public static final String CONSOLE_PARAMETRO_EROGAZIONE_TOKEN_POLICY = "gtPolicy";
+	
 	public static final String CONSOLE_DEFAULT_VALUE_NON_SELEZIONATO = "-";
 }
 

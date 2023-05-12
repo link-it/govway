@@ -211,6 +211,7 @@ public class CertificateUtils {
 			params.setPath(keyStoreLocation);
 			params.setType(keyStoreType);
 			params.setPassword(keyStorePassword);
+			params.setKeyPassword(keyStorePassword); // uguale in java
 		}
 	
 		return params;

@@ -21,7 +21,6 @@
 package org.openspcoop2.utils.resources;
 
 import org.openspcoop2.utils.Utilities;
-import org.openspcoop2.utils.UtilsException;
 
 /**
  * BaseThread
@@ -68,10 +67,10 @@ public abstract class AbstractBaseThread extends Thread {
 	public boolean isFinished() {
 		return this.finished;
 	}
-	public void waitShutdown() throws UtilsException {
+	public void waitShutdown() {
 		this.waitShutdown(200, 60000);
 	}
-	public void waitShutdown(int checkMs, int maxMs) throws UtilsException {
+	public void waitShutdown(int checkMs, int maxMs) {
 		int msWait = 0;
 		while(!this.finished && msWait<maxMs) {
 			Utilities.sleep(checkMs);
@@ -83,11 +82,11 @@ public abstract class AbstractBaseThread extends Thread {
 	
 	public void sleepForNextCheck(int maxLimitSleepCount, int sleepMs) {
 		// CheckInterval
-		if(this.stop==false){
+		if(!this.stop){
 			int i=0;
 			while(i<maxLimitSleepCount){
 				Utilities.sleep(sleepMs);
-				if(this.stop){
+				if(this.isStop()){
 					break; // thread terminato, non lo devo far piu' dormire
 				}
 				i++;
@@ -109,11 +108,11 @@ public abstract class AbstractBaseThread extends Thread {
 		
 		try {
 			
-			if(this.initialize()==false) {
+			if(!this.initialize()) {
 				return;
 			}
 			
-			while(this.isStop() == false){
+			while(!this.isStop()){
 				
 				this.process();
 				
@@ -127,7 +126,9 @@ public abstract class AbstractBaseThread extends Thread {
 		
 		try {
 			this.close();
-		}catch(Throwable t) {}
+		}catch(Exception t) {
+			// ignore
+		}
 	}
 
 }

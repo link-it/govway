@@ -567,8 +567,8 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 		boolean isSicurezza03or04 = isSicurezza03 || isSicurezza04;
 		
 		
-		AbstractConsoleItem<?> profiloSicurezzaMessaggioSorgenteTokenIdAuthItem = 	
-				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_ID);
+		StringConsoleItem profiloSicurezzaMessaggioSorgenteTokenIdAuthItem = 	
+				(StringConsoleItem) ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_ID);
 		boolean sorgenteTokenLocale = true;
 		if(profiloSicurezzaMessaggioSorgenteTokenIdAuthItem!=null) {
 			
@@ -588,6 +588,16 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 					/** profiloSicurezzaMessaggioSorgenteTokenIdAuthItemValue.setValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_LOCALE); */
 				}
 			}
+			
+			profiloSicurezzaMessaggioSorgenteTokenIdAuthItem.clearMapLabelValues();
+			if(!isSicurezza04) {
+				profiloSicurezzaMessaggioSorgenteTokenIdAuthItem.addLabelValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_LABEL_LOCALE,
+						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_LOCALE);
+			}
+			profiloSicurezzaMessaggioSorgenteTokenIdAuthItem.addLabelValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_LABEL_PDND,
+					ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND);
+			profiloSicurezzaMessaggioSorgenteTokenIdAuthItem.addLabelValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_LABEL_OAUTH,
+					ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH);
 			
 			String sorgenteTokenIdAuthValue = profiloSicurezzaMessaggioSorgenteTokenIdAuthItemValue!=null ? profiloSicurezzaMessaggioSorgenteTokenIdAuthItemValue.getValue() : null;
 			if(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_LOCALE.equals(sorgenteTokenIdAuthValue)) {
@@ -1378,13 +1388,29 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 	
 	static boolean isSicurezzaMessaggioKidModeSupported(AccordoServizioParteComune api, String portType) {
 		
-		List<String> apiValues = getProfiloSicurezzaMessaggio(api, portType);
+		List<String> apiValues = getProfiloSicurezzaMessaggioConSorgenteToken(api, portType);
 		if(apiValues!=null && !apiValues.isEmpty()) {
-			for (String apiValue : apiValues) {
-				if(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(apiValue) ||
-						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(apiValue)) {
+			for (String sicurezzaMessaggioSorgenteToken : apiValues) {
+				
+				List<String> splitValues = RegistroServiziUtils.splitPropertyProtocolloResult(sicurezzaMessaggioSorgenteToken);
+				String sicurezzaMessaggio = splitValues.get(0);
+				String sorgenteToken = splitValues.get(1);
+				
+				if(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01.equals(sicurezzaMessaggio) ||
+						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02.equals(sicurezzaMessaggio)) {
+					if(!isSicurezzaMessaggioGenerazioneTokenIdAuthLocale(sorgenteToken)) {
+						return true;
+					}
+				}
+				/**else if(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(sicurezzaMessaggio) ||
+						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(sicurezzaMessaggio)) {
+					// kidMode non permesso
+				}*/
+				else if(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(sicurezzaMessaggio) ||
+						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(sicurezzaMessaggio)) {
 					return true;
 				}
+				
 			}
 		}
 		

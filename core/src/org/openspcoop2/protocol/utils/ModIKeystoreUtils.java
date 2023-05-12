@@ -154,6 +154,7 @@ public class ModIKeystoreUtils {
 			String mode = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, 
 					CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE);
 			boolean ridefinisci = CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(mode);
+			boolean undefined = CostantiDB.MODIPA_PROFILO_UNDEFINED.equals(mode);
 			
 			if(ridefinisci) {
 			
@@ -227,6 +228,9 @@ public class ModIKeystoreUtils {
 					this.securityMessageKeyPassword = HSMUtils.KEYSTORE_HSM_PRIVATE_KEY_PASSWORD_UNDEFINED;
 				}
 				
+			}
+			else if(undefined) {
+				throw new ProtocolException(prefix+" non definito");
 			}
 			else {
 				

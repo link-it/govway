@@ -56,6 +56,8 @@ public enum TipoLock implements Serializable {
 	
 	CONSEGNA_NOTIFICHE ("ConsegnaNotifiche"),
 	
+	GESTORE_CHIAVI_PDND ("GestoreChaviPDND"),
+	
 	STARTUP ("StartupGateway"), 
 	
 	CUSTOM ("Custom");

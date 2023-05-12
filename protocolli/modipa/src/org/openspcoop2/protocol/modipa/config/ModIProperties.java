@@ -222,6 +222,8 @@ public class ModIProperties {
 				if(!HSMUtils.isKeystoreHSM(keystoreType) || HSMUtils.isHsmConfigurableKeyPassword()) {
 					getSicurezzaMessaggioCertificatiKeyPassword();
 				}
+				getSicurezzaMessaggioCertificatiKeyClientId();
+				getSicurezzaMessaggioCertificatiKeyKid();
 			}
 			
 			/* **** CORNICE SICUREZZA **** */
@@ -816,6 +818,8 @@ public class ModIProperties {
 		}
 		return null;
 	}
+	// riferito in org.openspcoop2.protocol.utils.ModIUtils
+	// non modificare il nome
 	public RemoteKeyType getRemoteKeyType(String name) throws ProtocolException {
 		return getRemoteStoreKeyTypeMap().get(name);
 	}
@@ -956,6 +960,58 @@ public class ModIProperties {
     	
     	return this.sicurezzaMessaggioCertificatiKeyPassword;
 	}	
+	
+	private Boolean sicurezzaMessaggioCertificatiKeyClientIdRead = null;
+	private String sicurezzaMessaggioCertificatiKeyClientId= null;
+	public String getSicurezzaMessaggioCertificatiKeyClientId() throws ProtocolException{
+    	if(this.sicurezzaMessaggioCertificatiKeyClientIdRead==null){
+	    	String pName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.key.clientId";
+    		try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+				
+				if (value != null){
+					value = value.trim();
+					if(StringUtils.isNotEmpty(value)) {
+						this.sicurezzaMessaggioCertificatiKeyClientId = value;
+					}
+				}
+
+				this.sicurezzaMessaggioCertificatiKeyClientIdRead = true;
+				
+			}catch(java.lang.Exception e) {
+				this.logError("Proprietà '"+pName+"' non impostata, errore:"+e.getMessage());
+				throw new ProtocolException(e.getMessage(),e);
+			}
+    	}
+    	
+    	return this.sicurezzaMessaggioCertificatiKeyClientId;
+	}
+	
+	private Boolean sicurezzaMessaggioCertificatiKeyKidRead = null;
+	private String sicurezzaMessaggioCertificatiKeyKid= null;
+	public String getSicurezzaMessaggioCertificatiKeyKid() throws ProtocolException{
+    	if(this.sicurezzaMessaggioCertificatiKeyKidRead==null){
+	    	String pName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.key.kid";
+    		try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+				
+				if (value != null){
+					value = value.trim();
+					if(StringUtils.isNotEmpty(value)) {
+						this.sicurezzaMessaggioCertificatiKeyKid = value;
+					}
+				}
+
+				this.sicurezzaMessaggioCertificatiKeyKidRead = true;
+				
+			}catch(java.lang.Exception e) {
+				this.logError("Proprietà '"+pName+"' non impostata, errore:"+e.getMessage());
+				throw new ProtocolException(e.getMessage(),e);
+			}
+    	}
+    	
+    	return this.sicurezzaMessaggioCertificatiKeyKid;
+	}
 	
 	
 	

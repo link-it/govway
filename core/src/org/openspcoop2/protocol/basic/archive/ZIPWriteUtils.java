@@ -497,18 +497,18 @@ public class ZIPWriteUtils {
 						ZIPUtils.convertNameToSistemaOperativoCompatible(idSoggetto.getTipo())+"_"+
 						ZIPUtils.convertNameToSistemaOperativoCompatible(idSoggetto.getNome())+File.separatorChar;
 				
+				// Dati Identificativi
+				String datiIdentificativiSoggetto = idSoggetto.toFormatString();
+				nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_SOGGETTI_FILE_NAME_ID;
+				zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
+				zipOut.write(datiIdentificativiSoggetto.getBytes());
+				
 				// definizione soggetto
 				if(archiveListaOggettiSoggetto.getSoggetti()!=null && archiveListaOggettiSoggetto.getSoggetti().size()>0){
 					
 					// puo' esistere al massimo una definizione del soggetto, avendo fatto una group by logica.
 					ArchiveSoggetto archiveSoggetto = archiveListaOggettiSoggetto.getSoggetti().get(0);
-										
-					// Dati Identificativi
-					String datiIdentificativiSoggetto = idSoggetto.toFormatString();
-					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_SOGGETTI_FILE_NAME_ID;
-					zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
-					zipOut.write(datiIdentificativiSoggetto.getBytes());
-					
+															
 					if(archiveSoggetto.getSoggettoRegistro()!=null){
 						
 						// protocolProperties

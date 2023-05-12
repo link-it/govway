@@ -362,7 +362,7 @@ public class GestoreMessaggi  {
 			String algoritmoCache = properties.getAlgoritmoCacheGestoreMessaggi();
 			long itemIdleTime = properties.getItemIdleTimeCacheGestoreMessaggi();
 			long itemLifeSecond = properties.getItemLifeSecondCacheGestoreMessaggi();
-			CacheType cacheType = properties.getCacheType_message();
+			CacheType cacheType = properties.getCacheTypeMessage();
 			GestoreMessaggi.initCacheGestoreMessaggi(cacheType, dimensioneCache,algoritmoCache,itemIdleTime,itemLifeSecond,log,logConsole);
 		}
 	}
@@ -8596,6 +8596,21 @@ public class GestoreMessaggi  {
 		}
 		msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "updateLock.ok");
 		
+	}
+	
+	public static void releaseSafeLock(GestoreMessaggi gestoreMessaggi, TimerLock timerLock,
+			MsgDiagnostico msgDiag,String causa) throws UtilsException{
+		releaseSafeLock(gestoreMessaggi.getSemaphoreByInstance(timerLock.getIdLock()), gestoreMessaggi.getConnectionByInstance(), timerLock, msgDiag, causa);
+	}
+	public static void releaseSafeLock(Semaphore semaphoreDB,  Connection connectionDB, TimerLock timerLock,
+			MsgDiagnostico msgDiag,String causa) throws UtilsException{
+		try{
+			releaseLock(
+					semaphoreDB, connectionDB, timerLock,
+					msgDiag, causa);
+		}catch(Exception e){
+			// ignore
+		}
 	}
 	
 	public static void releaseLock(GestoreMessaggi gestoreMessaggi, TimerLock timerLock,

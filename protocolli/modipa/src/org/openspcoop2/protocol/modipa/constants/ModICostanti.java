@@ -172,6 +172,7 @@ public class ModICostanti {
     public static final String MODIPA_KEY_CN_SUBJECT = CostantiDB.MODIPA_KEY_CN_SUBJECT;
     public static final String MODIPA_KEY_CN_ISSUER = CostantiDB.MODIPA_KEY_CN_ISSUER;
         
+    public static final String MODIPA_PROFILO_UNDEFINED = CostantiDB.MODIPA_PROFILO_UNDEFINED;
     public static final String MODIPA_PROFILO_DEFAULT = CostantiDB.MODIPA_PROFILO_DEFAULT;
     public static final String MODIPA_PROFILO_RIDEFINISCI = CostantiDB.MODIPA_PROFILO_RIDEFINISCI;
     

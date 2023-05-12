@@ -3565,7 +3565,7 @@ public class RegistroServiziReader {
 	}
 	public static CertificateCheck checkCertificatiModIErogazioneById(AccordoServizioParteSpecifica asps, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
-			Logger log) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+			Logger log) throws DriverRegistroServiziException {
 		
 		if(asps==null) {
 			throw new DriverRegistroServiziException("Param asps is null");
@@ -3578,7 +3578,7 @@ public class RegistroServiziReader {
 		
 		KeystoreParams keystoreParams = null;
 		try { 
-			keystoreParams = ModIUtils.getKeyStoreParams(asps.getProtocolPropertyList());
+			keystoreParams = ModIUtils.getKeyStoreParams(asps.getProtocolPropertyList(), false);
 		}catch(Exception e) {
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
@@ -3640,7 +3640,7 @@ public class RegistroServiziReader {
 	}
 	public static CertificateCheck checkCertificatiModIFruizioneById(Fruitore fruitore, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
-			Logger log) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+			Logger log) throws DriverRegistroServiziException {
 		
 		boolean modi = fruitore.getTipo().equals(CostantiLabel.MODIPA_PROTOCOL_NAME);
 		if(!modi) {
@@ -3649,7 +3649,7 @@ public class RegistroServiziReader {
 		
 		KeystoreParams keystoreParams = null;
 		try { 
-			keystoreParams = ModIUtils.getKeyStoreParams(fruitore.getProtocolPropertyList());
+			keystoreParams = ModIUtils.getKeyStoreParams(fruitore.getProtocolPropertyList(), true);
 		}catch(Exception e) {
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}

@@ -70,9 +70,7 @@ public class RemoteStoreCache extends AbstractKeystoreCache<RemoteStore> {
 		return "RemoteStore ";
 	}
 	
-	public static String getKeyCache(RemoteStoreConfig remoteStoreConfig, String keyId, RemoteKeyType keyType) throws SecurityException {
-		// key e' formata dalla tripla remoteStoreConfigName, keyId e RemoteKeyType
-		
+	public static String getPrefixKeyCache(RemoteStoreConfig remoteStoreConfig, RemoteKeyType keyType) throws SecurityException {
 		if(remoteStoreConfig==null) {
 			throw new SecurityException("RemoteStoreConfig undefined");
 		}
@@ -80,12 +78,20 @@ public class RemoteStoreCache extends AbstractKeystoreCache<RemoteStore> {
 		if(remoteStoreName==null) {
 			throw new SecurityException("RemoteStoreConfig name undefined");
 		}
-		if(keyId==null) {
-			throw new SecurityException("KeyId undefined");
-		}
+		
 		if(keyType==null) {
 			throw new SecurityException("KeyType undefined");
 		}
-		return remoteStoreName+"_"+keyType.name()+"_"+keyId;
+		
+		return remoteStoreName+"_"+keyType.name()+"_";
+	}
+	public static String getKeyCache(RemoteStoreConfig remoteStoreConfig, String keyId, RemoteKeyType keyType) throws SecurityException {
+		// key e' formata dalla tripla remoteStoreConfigName, keyId e RemoteKeyType
+		
+		if(keyId==null) {
+			throw new SecurityException("KeyId undefined");
+		}
+		
+		return getPrefixKeyCache(remoteStoreConfig, keyType)+keyId;
 	}
 }

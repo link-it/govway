@@ -67,6 +67,30 @@ public class RequestConfig implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private static boolean useCacheForExternalResource = false;
+	private static boolean useCacheForOCSPResponse = false;
+	private static boolean useCacheForRemoteStore = false;
+	
+	public static boolean isUseCacheForExternalResource() {
+		return useCacheForExternalResource;
+	}
+	public static void setUseCacheForExternalResource(boolean useCacheForExternalResource) {
+		RequestConfig.useCacheForExternalResource = useCacheForExternalResource;
+	}
+	public static boolean isUseCacheForOCSPResponse() {
+		return useCacheForOCSPResponse;
+	}
+	public static void setUseCacheForOCSPResponse(boolean useCacheForOCSPResponse) {
+		RequestConfig.useCacheForOCSPResponse = useCacheForOCSPResponse;
+	}
+	public static boolean isUseCacheForRemoteStore() {
+		return useCacheForRemoteStore;
+	}
+	public static void setUseCacheForRemoteStore(boolean useCacheForRemoteStore) {
+		RequestConfig.useCacheForRemoteStore = useCacheForRemoteStore;
+	}
+	
+	
 	private String key = null;
 	
 	private boolean cached = false;
@@ -1340,6 +1364,9 @@ public class RequestConfig implements java.io.Serializable {
 	
 	public void addRemoteStore(String key, Serializable remoteStore, String idTransazione) {
 		 
+		if(!useCacheForRemoteStore) {
+			return;
+		}
 		
 		if(this.semaphoreStore==null) {
 			// serializzazione da transient
@@ -1469,7 +1496,10 @@ public class RequestConfig implements java.io.Serializable {
 	}
 	
 	public void addExternalResource(String key, Serializable resource, String idTransazione) {
-		 
+		
+		if(!useCacheForExternalResource) {
+			return;
+		}
 		
 		if(this.semaphoreStore==null) {
 			// serializzazione da transient
@@ -1495,6 +1525,9 @@ public class RequestConfig implements java.io.Serializable {
 	
 	public void addOCSPResponse(String key, Serializable resource, String idTransazione) {
 		 
+		if(!useCacheForOCSPResponse) {
+			return;
+		}
 		
 		if(this.semaphoreStore==null) {
 			// serializzazione da transient

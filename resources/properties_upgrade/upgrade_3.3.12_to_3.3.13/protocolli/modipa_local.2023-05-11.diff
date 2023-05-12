@@ -1,0 +1,16 @@
+diff --git ant/setup/deploy/resources/protocolli/modipa/modipa_local.properties ant/setup/deploy/resources/protocolli/modipa/modipa_local.properties
+index f05fba95e7..1fc6c13185 100755
+--- ant/setup/deploy/resources/protocolli/modipa/modipa_local.properties
++++ ant/setup/deploy/resources/protocolli/modipa/modipa_local.properties
+@@ -54,6 +54,11 @@ org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.keyStore.path=WOR
+ org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.keyStore.password=changeit
+ org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.key.alias=ALIAS
+ org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.key.password=changeit
++
++# ClientID di default utilizzato per firmare i token di sicurezza
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.key.clientId=
++# KID di default utilizzato per firmare i token di sicurezza
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.key.kid=
+ # ================================================
+ 
+ 

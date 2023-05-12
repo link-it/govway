@@ -1,3 +1,8 @@
+2023-05-09  Andrea Poli <apoli@link.it>
+
+	Aggiunto semaforo per il gestore delle chiavi PDND
+	INSERT INTO OP2_SEMAPHORE (applicative_id) VALUES ('GestoreChaviPDND');
+
 2023-05-02  Andrea Poli <apoli@link.it>
 
 	Aggiunte colonne per memorizzare chiavi ottenute tramite remote store

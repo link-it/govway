@@ -1825,7 +1825,9 @@ public class RicezioneContenutiApplicativi {
 						}
 						if(inRequestContext.getConnettore().getCredenziali().equals(credenzialiRitornate) == false){
 							String nuoveCredenziali = credenzialiRitornate.toString();
-							nuoveCredenziali = nuoveCredenziali.substring(0,(nuoveCredenziali.length()-1));
+							if(nuoveCredenziali.length()>0) {
+								nuoveCredenziali = nuoveCredenziali.substring(0,(nuoveCredenziali.length()-1));
+							}
 							msgDiag.addKeyword(CostantiPdD.KEY_NUOVE_CREDENZIALI,nuoveCredenziali);
 							String identita = gestore.getIdentitaGestoreCredenziali();
 							if(identita==null){
