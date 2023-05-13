@@ -1366,7 +1366,7 @@ public class ModIUtils {
 				String crl = null;
 				String ocsp = null;
 				String aliasKey = null;
-				String passwordKey = null;
+				String pwKey = null;
 				boolean keystoreModePath = false;
 				boolean keystoreModeArchive = false;
 				boolean keystoreModeHsm = false;
@@ -1388,7 +1388,7 @@ public class ModIUtils {
 					type = CostantiDB.MODIPA_KEYSTORE_TYPE;
 					pw = CostantiDB.MODIPA_KEYSTORE_PASSWORD;
 					aliasKey = CostantiDB.MODIPA_KEY_ALIAS;
-					passwordKey = CostantiDB.MODIPA_KEY_PASSWORD;
+					pwKey = CostantiDB.MODIPA_KEY_PASSWORD;
 					String mode = getStringValue(protocolPropertyList, CostantiDB.MODIPA_KEYSTORE_MODE);
 					if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(mode)) {
 						keystoreModeArchive = true;
@@ -1456,8 +1456,8 @@ public class ModIUtils {
 				}
 				
 				String vPasswordKey = null;
-				if(passwordKey!=null) {
-					vPasswordKey = getStringValue(protocolPropertyList, passwordKey);
+				if(pwKey!=null) {
+					vPasswordKey = getStringValue(protocolPropertyList, pwKey);
 				}
 				
 				String vPathPublicKey = null;

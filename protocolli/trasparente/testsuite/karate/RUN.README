@@ -162,6 +162,11 @@
 
 - Per i test OCSP aggiungere in govway_local.properties la configurazione che si trova in 'src/org/openspcoop2/core/protocolli/trasparente/testsuite/other/ocsp/govway_local.properties.adjunct'.
 
+- Sempre per i test OCSP aggiungere in govway_local.properties le seguenti proprietà abilitate:
+
+   # Indicazione se in ogni entry di una API deve essere salvata anche il risultato di una validazione ocsp
+   org.openspcoop2.pdd.cache.impl.requestManager.ocspResponse.saveInCache=true
+
 - Configurare nuove utenze nel container per poter gestire l'autenticazione tramite principal.
   Seguire le indicazioni presenti in Esempio in ./protocolli/trasparente/testsuite/deploy/principal/README.txt
 

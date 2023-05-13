@@ -173,7 +173,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 			
 			boolean isRichiesta = RuoloBusta.RICHIESTA.equals(tipoBusta);
 			
-			boolean rest = ServiceBinding.REST.equals(msg.getServiceBinding());
+			boolean rest = msg!=null && ServiceBinding.REST.equals(msg.getServiceBinding());
 			
 			if(busta==null) {
 				throw new ProtocolException("Busta undefined");
@@ -316,7 +316,10 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				String audience = busta.getProperty(rest ? 
 						ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE :
 						ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SOAP_WSA_TO	);
-				Object audienceAttesoObject = msg.getContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK);
+				Object audienceAttesoObject = null;
+				if(msg!=null) {
+					audienceAttesoObject = msg.getContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK);
+				}
 				if(audienceAttesoObject!=null) {
 					String audienceAtteso = (String) audienceAttesoObject;
 					if(!audienceAtteso.equals(audience)) {
@@ -338,7 +341,10 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 					}
 				}
 				if(rest) { 
-					Object audienceIntegrityAttesoObject = msg.getContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_INTEGRITY_CHECK);
+					Object audienceIntegrityAttesoObject = null;
+					if(msg!=null) {
+						audienceIntegrityAttesoObject = msg.getContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_INTEGRITY_CHECK);
+					}
 					if(audienceIntegrityAttesoObject!=null) {
 						String audienceIntegrityAtteso = (String) audienceIntegrityAttesoObject;
 						String audienceIntegrity = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_AUDIENCE);
@@ -380,7 +386,10 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 					checkIat(iat, msg, rest, prefixAudit);
 				}
 				
-				Object audienceAuditAttesoObject = msg.getContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_AUDIT_CHECK);
+				Object audienceAuditAttesoObject = null;
+				if(msg!=null) {
+					audienceAuditAttesoObject = msg.getContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_AUDIT_CHECK);
+				}
 				if(audienceAuditAttesoObject!=null) {
 					String audienceAuditAtteso = (String) audienceAuditAttesoObject;
 					String audienceAudit = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_AUDIENCE);
@@ -1011,7 +1020,10 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 			
 			/**System.out.println("VERIFICO RISPETTO AL VALORE ATTESO '"+modISecurityConfig.getAudience()+"'");*/
 			
-			Object oInformazioniTokenNormalizzate = this.context.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+			Object oInformazioniTokenNormalizzate = null;
+			if(this.context!=null) {
+				oInformazioniTokenNormalizzate = this.context.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+			}
 			InformazioniToken informazioniTokenNormalizzate = null;
 			List<String> audienceClaimReceived = null;
 			if(oInformazioniTokenNormalizzate!=null) {
