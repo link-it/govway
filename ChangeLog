@@ -1,3 +1,9 @@
+2023-05-15  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Aggiunta funzionalità OP-1580
+	Aggiunto timer che effettua il polling sulla PDND per ottenere eventi di aggiornamento/eliminazione delle chiavi presenti nel repository locale.
+
 2023-05-12  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]

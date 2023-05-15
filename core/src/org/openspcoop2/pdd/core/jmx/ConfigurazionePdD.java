@@ -81,6 +81,10 @@ import org.openspcoop2.pdd.timers.TimerState;
 import org.openspcoop2.pdd.timers.TimerStatisticheLib;
 import org.openspcoop2.pdd.timers.TimerStatisticheThread;
 import org.openspcoop2.pdd.timers.TimerThresholdThread;
+import org.openspcoop2.pdd.timers.pdnd.TimerGestoreCacheChiaviPDND;
+import org.openspcoop2.pdd.timers.pdnd.TimerGestoreCacheChiaviPDNDLib;
+import org.openspcoop2.pdd.timers.pdnd.TimerGestoreChiaviPDND;
+import org.openspcoop2.pdd.timers.pdnd.TimerGestoreChiaviPDNDLib;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.registry.CertificateCheck;
 import org.openspcoop2.protocol.utils.ErroriProperties;
@@ -138,6 +142,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public static final String TIMER_STATISTICHE_GIORNALIERE = "timerStatisticheGiornaliere";
 	public static final String TIMER_STATISTICHE_SETTIMANALI = "timerStatisticheSettimanali";
 	public static final String TIMER_STATISTICHE_MENSILI = "timerStatisticheMensili";
+	public static final String TIMER_GESTORE_CHIAVI_PDND = "timerGestoreChiaviPDND";
+	public static final String TIMER_GESTORE_CACHE_CHIAVI_PDND = "timerGestoreCacheChiaviPDND";
 	public static final String TIMER_THRESHOLD_THREAD = "timerThresholdThread";
 	public static final String TIMER_CLUSTER_DINAMICO = "timerClusterDinamico";
 		
@@ -333,6 +339,12 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		if(attributeName.equals(ConfigurazionePdD.TIMER_STATISTICHE_MENSILI))
 			return TimerStatisticheLib.getSTATE_STATISTICHE_MENSILI().name();
 		
+		if(attributeName.equals(ConfigurazionePdD.TIMER_GESTORE_CHIAVI_PDND))
+			return TimerGestoreChiaviPDNDLib.getState().name();
+		
+		if(attributeName.equals(ConfigurazionePdD.TIMER_GESTORE_CACHE_CHIAVI_PDND))
+			return TimerGestoreCacheChiaviPDNDLib.getState().name();
+		
 		if(attributeName.equals(ConfigurazionePdD.TIMER_THRESHOLD_THREAD))
 			return TimerThresholdThread.getSTATE().name();
 		
@@ -486,6 +498,12 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_STATISTICHE_MENSILI))
 				TimerStatisticheLib.setSTATE_STATISTICHE_MENSILI( getTimerState(attribute.getValue()) );
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_GESTORE_CHIAVI_PDND))
+				TimerGestoreChiaviPDNDLib.setState( getTimerState(attribute.getValue()) );
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_GESTORE_CACHE_CHIAVI_PDND))
+				TimerGestoreCacheChiaviPDNDLib.setState( getTimerState(attribute.getValue()) );
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_THRESHOLD_THREAD))
 				TimerThresholdThread.setSTATE( getTimerState(attribute.getValue()) );
@@ -1763,6 +1781,18 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			= new MBeanAttributeInfo(ConfigurazionePdD.TIMER_STATISTICHE_MENSILI,String.class.getName(),
 						"Indicazione se è abilitato il timer '"+TimerStatisticheThread.ID_MODULO+"' (mensili) ("+TimerState.ENABLED.name()+"/"+TimerState.DISABLED.name()+")",
 							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+		
+		// MetaData per l'attributo timerGestoreChiaviVAR
+		MBeanAttributeInfo timerGestoreChiaviVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.TIMER_GESTORE_CHIAVI_PDND,String.class.getName(),
+						"Indicazione se è abilitato il timer '"+TimerGestoreChiaviPDND.ID_MODULO+"' ("+TimerState.ENABLED.name()+"/"+TimerState.DISABLED.name()+")",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+		
+		// MetaData per l'attributo timerGestoreCacheChiaviVAR
+		MBeanAttributeInfo timerGestoreCacheChiaviVAR 
+			= new MBeanAttributeInfo(ConfigurazionePdD.TIMER_GESTORE_CACHE_CHIAVI_PDND,String.class.getName(),
+						"Indicazione se è abilitato il timer '"+TimerGestoreCacheChiaviPDND.ID_MODULO+"' ("+TimerState.ENABLED.name()+"/"+TimerState.DISABLED.name()+")",
+							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
 
 		// MetaData per l'attributo timerThresholdThreadVAR
 		MBeanAttributeInfo timerThresholdThreadVAR 
@@ -2284,7 +2314,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				timerGestorePuliziaMessaggiAnomaliVAR, timerGestoreRepositoryBusteVAR,
 				timerMonitoraggioRisorseThreadVAR, timerThresholdThreadVAR,
 				timerClusterDinamicoVAR,
-				timerRepositoryStatefulThreadVAR};
+				timerRepositoryStatefulThreadVAR,
+				timerGestoreChiaviVAR, timerGestoreCacheChiaviVAR};
 		
 		// Lista Costruttori
 		MBeanConstructorInfo[] constructors = new MBeanConstructorInfo[]{defaultConstructor};

@@ -94,6 +94,7 @@ import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB_LIB;
 import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
@@ -6951,6 +6952,22 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_MENSILI, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_MENSILI);
 		
+		if(ProtocolFactoryManager.getInstance().existsProtocolFactory(CostantiLabel.MODIPA_PROTOCOL_NAME)) {
+			
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_PDND);
+			de.setType(DataElementType.SUBTITLE);
+			dati.add(de);
+			
+			addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreChiaviPDND(alias), 
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CHIAVI_PDND, 
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CHIAVI_PDND);
+			
+			addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreCacheChiaviPDND(alias), 
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CACHE_CHIAVI_PDND, 
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CACHE_CHIAVI_PDND);
+		}
+
 		
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_RUNTIME);
@@ -7132,7 +7149,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sul '"+nomeAttributo+"' (jmxResourcePdD): "+e.getMessage(),e);
-			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
+			addInformazioneNonDisponibile(dati, labelParametro);
 			return false;
 		}
 	}

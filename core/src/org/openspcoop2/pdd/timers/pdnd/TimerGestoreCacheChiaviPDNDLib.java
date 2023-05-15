@@ -201,18 +201,19 @@ public class TimerGestoreCacheChiaviPDNDLib {
 		// - se vengono salvati, il tempo di vita di questi elementi deve essere più basso rispetto alle normali cache (per default è 30 secondi)
 		
 		List<String> keys = GestoreKeystoreCache.keysRemoteStore();
-		int size = keys!=null ? keys.size() : 0;
-
-		if(size>0) {
+		int sizeCacheKeys = keys!=null ? keys.size() : 0;
+		int size = 0;
+		if(sizeCacheKeys>0) {
 			for (String key : keys) {
 				
-				String keyCachePrefix = RemoteStoreCache.getPrefixKeyCache(this.remoteStore, this.remoteKeyType);
-				if(key!=null && key.startsWith(keyCachePrefix) && key.length()>keyCachePrefix.length()) {						
+				String keyCachePrefix = RemoteStoreCache.RESTORE_STORE_PREFIX+ RemoteStoreCache.getPrefixKeyCache(this.remoteStore, this.remoteKeyType);
+				if(key!=null && key.startsWith(keyCachePrefix) && key.length()>keyCachePrefix.length()) {
+					size++;
 					String kid = key.substring(keyCachePrefix.length());
-					if(!RemoteStoreProviderDriverUtils.existsRemoteStoreKey(conConfigurazione, this.tipoDatabase, idStore, kid)) {
+					if(!RemoteStoreProviderDriverUtils.existsRemoteStoreKey(conConfigurazione, this.tipoDatabase, idStore, kid, true)) {
 						this.logTimerDebug("Elimino chiave '"+key+"' dalla cache");
 						
-						GestoreKeystoreCache.removeRemoteStore(null, key, this.remoteKeyType, this.remoteStore);
+						GestoreKeystoreCache.removeRemoteStore(null, kid, this.remoteKeyType, this.remoteStore);
 					}
 					
 				}

@@ -248,7 +248,7 @@ public class TimerGestoreChiaviPDNDLib {
 			// end
 			long endControlloTimer = DateManager.getTimeMillis();
 			long diff = (endControlloTimer-startControlloTimer);
-			this.logTimerInfo("Gestione eventi per le chavi della PDND terminata in "+Utilities.convertSystemTimeIntoString_millisecondi(diff, true));
+			this.logTimerInfo("Gestione eventi per le chiavi della PDND terminata in "+Utilities.convertSystemTimeIntoString_millisecondi(diff, true));
 			
 			
 		}
@@ -258,7 +258,7 @@ public class TimerGestoreChiaviPDNDLib {
 		}
 		catch (Exception e) {
 			this.msgDiag.logErroreGenerico(e,"TimerGestoreChiaviPDNDLib");
-			this.logTimerError("Riscontrato errore durante la gestione eventi per le chavi della PDND: "+ e.getMessage(),e);
+			this.logTimerError("Riscontrato errore durante la gestione eventi per le chiavi della PDND: "+ e.getMessage(),e);
 		}finally{
 			try{
 				if(conConfigurazione!=null)
@@ -274,12 +274,6 @@ public class TimerGestoreChiaviPDNDLib {
 		
 	private void process(Connection conConfigurazione) throws KeystoreException {
 		
-		// NON HO AGGIUNTO I NUOVI DIAGNOSTICI IN MSGDIAGPROPERTIES
-		
-				
-		// TIPO OPERAZIONE: '-','GET','DELETE','UPDATE
-		// L'UPDATE prevede di caricare il json direttamente, e da li si capisce il kid da aggionare!
-		
 		// Recupero id del Remote Store
 		boolean created = readRemoteStoreDbImage(conConfigurazione);
 		
@@ -287,23 +281,11 @@ public class TimerGestoreChiaviPDNDLib {
 		
 		this.msgDiag.addKeyword(CostantiPdD.KEY_LIMIT, this.limit+"");
 		
-		if(created) {
+		boolean updateLasteEventId = false;
+		
+		if(created || this.remoteStoreDbImage.getLastEvent()==null) {
 			// Initialize
-			
-			emitDiagnosticLog("inizializzazione.inCorso");
-			try {
-				int letti = 1;
-				while(letti > 0) {
-					letti = gestione(conConfigurazione, pdndUtilities, false);
-				}
-								
-				this.msgDiag.addKeyword(CostantiPdD.KEY_OFFSET, this.lastEventId+"");
-				emitDiagnosticLog("inizializzazione.effettuata");
-			}catch(Exception e) {
-				this.msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
-				emitDiagnosticLog("inizializzazione.fallita");
-			}
-
+			updateLasteEventId = initialize(conConfigurazione, pdndUtilities);
 		}
 		else {
 			// Verifico ultima data di aggiornamento
@@ -311,20 +293,66 @@ public class TimerGestoreChiaviPDNDLib {
 			long now = DateManager.getTimeMillis();
 			int msTimeout = this.timeoutSeconds * 1000;
 			Date check = new Date(now-msTimeout);
-			if(check.after(this.remoteStoreDbImage.getDataAggiornamento())) {
+			if(check.before(this.remoteStoreDbImage.getDataAggiornamento())) {
 				emitDiagnosticLog("letturaEventi.nonNecessaria");
 				return;
 			}
 			
+			// leggo lastEventId
+			long lastEventIdDbImage = Long.parseLong(this.remoteStoreDbImage.getLastEvent());
+			this.lastEventId = lastEventIdDbImage;
+			
 			int letti = 1;
+			long prec = 0; 
 			while(letti > 0) {
+				prec = this.lastEventId; 
 				letti = gestione(conConfigurazione, pdndUtilities, true);
+				if(this.lastEventId<=prec) {
+					// l'ultima gestione non ha aggiornato lastEventId
+					break;
+				}
 			}
+			
+			if(this.lastEventId>lastEventIdDbImage) {
+				updateLasteEventId = true;
+			}
+
+		}
+				
+		// aggiorno lastEventId sul database
+		if(updateLasteEventId) {
+			RemoteStoreProviderDriverUtils.updateRemoteStore(conConfigurazione, this.tipoDatabase, this.remoteStoreDbImage.getId(), this.lastEventId+"");
 		}
 		
-		// aggiorno lastEventId sul database
-		RemoteStoreProviderDriverUtils.updateRemoteStore(conConfigurazione, this.tipoDatabase, this.remoteStoreDbImage.getId(), this.lastEventId+"");
+	}
+	private boolean initialize(Connection conConfigurazione, TimerGestoreChiaviPDNDUtilities pdndUtilities) {
 		
+		boolean updateLasteEventId = false;
+		
+		emitDiagnosticLog("inizializzazione.inCorso");
+		try {
+			int letti = 1;
+			long prec = 0; 
+			while(letti > 0) {
+				prec = this.lastEventId; 
+				letti = gestione(conConfigurazione, pdndUtilities, false);
+				if(this.lastEventId<=prec) {
+					// l'ultima gestione non ha aggiornato lastEventId
+					break;
+				}
+			}
+							
+			this.msgDiag.addKeyword(CostantiPdD.KEY_OFFSET, this.lastEventId+"");
+			emitDiagnosticLog("inizializzazione.effettuata");
+			
+			updateLasteEventId = true;
+			
+		}catch(Exception e) {
+			this.msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
+			emitDiagnosticLog("inizializzazione.fallita");
+		}
+		
+		return updateLasteEventId;
 	}
 	
 	private RemoteStore remoteStoreDbImage = null;
@@ -352,6 +380,10 @@ public class TimerGestoreChiaviPDNDLib {
 		return created;
 	}
 	
+	private String getEventPrefix(TimerGestoreChiaviPDNDEvent event) {
+		return "Evento '"+event.getEventId()+"' ";
+	}
+	
 	private int gestione(Connection conConfigurazione, TimerGestoreChiaviPDNDUtilities pdndUtilities, boolean gestioneEvento) {
 		try {
 			long startGenerazione = DateManager.getTimeMillis();
@@ -361,7 +393,7 @@ public class TimerGestoreChiaviPDNDLib {
 			this.msgDiag.addKeyword(CostantiPdD.KEY_OFFSET, this.lastEventId+"");
 			emitDiagnosticLog("gestioneEventi.inCorso");
 			
-			TimerGestoreChiaviPDNDEvents events = pdndUtilities.readNextEvents(letti);
+			TimerGestoreChiaviPDNDEvents events = pdndUtilities.readNextEvents(this.lastEventId);
 			if(events==null || events.getEvents()==null || events.getEvents().isEmpty()) {
 				letti = 0;
 			}
@@ -372,13 +404,15 @@ public class TimerGestoreChiaviPDNDLib {
 			emitDiagnosticLog("gestioneEventi.analisi");
 			
 			if(letti>0) {
-				for (TimerGestoreChiaviPDNDEvent event : events.getEvents()) {
+				for (TimerGestoreChiaviPDNDEvent event : events.getEvents()) {					
 					if(event.getEventId()>this.lastEventId) {
 						this.lastEventId = event.getEventId();
+						if(gestioneEvento) {
+							gestioneEvento(conConfigurazione, event);
+						}
 					}
-					
-					if(gestioneEvento) {
-						gestioneEvento(conConfigurazione, event);
+					else {
+						emitLog(getEventPrefix(event)+"con un identificativo precedente o uguale all'ultimo evento gestito '"+this.lastEventId+"' (tipo di operazione: '"+event.getObjectType()+"'; tipo di evento: '"+event.getEventType()+"')");
 					}
 				}
 			}
@@ -398,7 +432,7 @@ public class TimerGestoreChiaviPDNDLib {
 	}
 	
 	private void gestioneEvento(Connection conConfigurazione, TimerGestoreChiaviPDNDEvent event) throws KeystoreException, TimerException {
-		if(TimerGestoreChiaviPDNDEvent.OBJECT_TYPE_KEY.equals(event.getEventType()) &&
+		if(TimerGestoreChiaviPDNDEvent.OBJECT_TYPE_KEY.equals(event.getObjectType()) &&
 			(
 					TimerGestoreChiaviPDNDEvent.EVENT_TYPE_DELETED.equals(event.getEventType())
 					||
@@ -420,39 +454,74 @@ public class TimerGestoreChiaviPDNDLib {
 				String details = "object id undefined";
 				this.msgDiag.addKeyword(CostantiPdD.KEY_DETTAGLI_EVENTO, details);
 			}
-			
-			emitDiagnosticLog("gestioneEventi.evento");
-			
+						
 			if(kid!=null) {
-				int deleted = RemoteStoreProviderDriverUtils.deleteRemoteStoreKey(conConfigurazione, this.tipoDatabase, this.remoteStoreDbImage.getId(), kid);
-				if(deleted>0) {
-					// significa che la chiave era stata registrata sulla base dati
-					
-					Evento evento = buildEvento(event.getEventType(), kid, "La chiave è stata eliminata dal repository locale");
-					try {
-						GestoreEventi.getInstance().log(evento);
-					}catch(Exception e) {
-						String msgError = "Registrazione evento per kid '"+kid+"' (eventType:"+event.getEventType()+") non riuscita: "+e.getMessage();
-						this.logCoreError(msgError,e);
-						this.logTimerError(msgError,e);
-					}
-				}
+				gestioneEvento(conConfigurazione, event, kid);
 			}
 			
+			emitDiagnosticLog("gestioneEventi.evento");
+		}
+		else {
+			if(TimerGestoreChiaviPDNDEvent.OBJECT_TYPE_KEY.equals(event.getObjectType())){
+				emitLog(getEventPrefix(event)+"relativo ad una chiave; tipo di evento '"+event.getEventType()+"' ignorato");
+			}
+			else {
+				emitLog(getEventPrefix(event)+"relativo ad un tipo di operazione '"+event.getObjectType()+"' non gestita; (tipo di evento '"+event.getEventType()+"')");
+			}
+		}
+	}
+	private void gestioneEvento(Connection conConfigurazione, TimerGestoreChiaviPDNDEvent event, String kid) throws KeystoreException, TimerException {
+		Evento evento = null;
+		if(TimerGestoreChiaviPDNDEvent.EVENT_TYPE_DELETED.equals(event.getEventType())) {
+			int deleted = RemoteStoreProviderDriverUtils.deleteRemoteStoreKey(conConfigurazione, this.tipoDatabase, this.remoteStoreDbImage.getId(), kid);
+			if(deleted>0 && this.op2Properties.isGestoreChiaviPDNDEventiDelete()) {
+				// significa che la chiave era stata registrata sulla base dati
+				evento = buildEvento(event.getEventType(), kid, "La chiave è stata eliminata dal repository locale");
+			}
+		}
+		else {
+			int updated = RemoteStoreProviderDriverUtils.invalidRemoteStoreKey(conConfigurazione, this.tipoDatabase, this.remoteStoreDbImage.getId(), kid);
+			if(updated>0 && this.op2Properties.isGestoreChiaviPDNDEventiUpdate()) {
+				// significa che la chiave era stata registrata sulla base dati
+				evento = buildEvento(event.getEventType(), kid, "La chiave è stata invalidata sul repository locale");
+			}
+		}
+		if(evento!=null) {
+			try {
+				GestoreEventi.getInstance().log(evento);
+			}catch(Exception e) {
+				String msgError = "Registrazione evento per kid '"+kid+"' (eventType:"+event.getEventType()+") non riuscita: "+e.getMessage();
+				this.logCoreError(msgError,e);
+				this.logTimerError(msgError,e);
+			}
 		}
 	}
 	
 	private void emitDiagnosticLog(String code) {
 		this.msgDiag.logPersonalizzato(code);
 		String msg = this.msgDiag.getMessaggio_replaceKeywords(code);
+		emitLog(msg);
+	}
+	private void emitLog(String msg) {
 		this.logCoreInfo(msg);
 		this.logTimerInfo(msg);
 	}
 	
-	private static Evento buildEvento(String eventType, String objectDetail, String descrizione) throws TimerException{
+	public static Evento buildEvento(String eventType, String objectDetail, String descrizione) throws TimerException{
 		Evento evento = new Evento();
 		evento.setTipo("GestioneChiaviPDND");
-		evento.setCodice(eventType);
+		if(TimerGestoreChiaviPDNDEvent.EVENT_TYPE_ADDED.equals(eventType)) {
+			evento.setCodice(TIPO_EVENTO_ADD);
+		}
+		else if(TimerGestoreChiaviPDNDEvent.EVENT_TYPE_UPDATED.equals(eventType)) {
+			evento.setCodice(TIPO_EVENTO_UPDATED);
+		}
+		else if(TimerGestoreChiaviPDNDEvent.EVENT_TYPE_DELETED.equals(eventType)) {
+			evento.setCodice(TIPO_EVENTO_DELETED);
+		}
+		else {
+			evento.setCodice(eventType);
+		}
 		if(objectDetail!=null){
 			evento.setIdConfigurazione(objectDetail);
 		}		
@@ -466,4 +535,8 @@ public class TimerGestoreChiaviPDNDLib {
 		evento.setClusterId(OpenSPCoop2Properties.getInstance().getClusterId(false));
 		return evento;
 	}
+	
+	private static final String TIPO_EVENTO_ADD = "Add";
+	private static final String TIPO_EVENTO_DELETED = "Delete";
+	private static final String TIPO_EVENTO_UPDATED = "Update";
 }

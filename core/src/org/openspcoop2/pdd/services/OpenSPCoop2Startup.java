@@ -3515,6 +3515,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			/* ------------ Avvia il thread per la gestione delle chiavi PDND ------------ */
 			if(protocolFactoryManager.existsProtocolFactory(CostantiLabel.MODIPA_PROTOCOL_NAME)) { // verifico che esista su PDND
 				
+				RemoteStoreProviderDriver.setKeyMaxLifeMinutes(propertiesReader.getGestoreChiaviPDNDkeysMaxLifeMinutes());
+				OpenSPCoop2Startup.logStartupInfo("PDND Key max file minutes: "+RemoteStoreProviderDriver.getKeyMaxLifeMinutes());
+				
+				
 				RemoteStoreConfig remoteStoreConfig = null;
 				RemoteKeyType remoteKeyType = RemoteKeyType.JWK;
 				try {

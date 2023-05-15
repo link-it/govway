@@ -609,7 +609,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 								ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_PREFIX+
 								ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_MENSILI;
 					}
-					
+	
 					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_ELIMINATI.equals(nomeParametroPostBack)){
 						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiEliminati(alias);
 						nuovoStato = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_ELIMINATI);
@@ -733,6 +733,21 @@ public final class ConfigurazioneSistemaAdd extends Action {
 						restartAllarmi = true;
 						tipo = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_RESTART;
 						labelDialog = "Riavvio "+ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI;
+					}
+					
+					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CHIAVI_PDND.equals(nomeParametroPostBack)){
+						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreChiaviPDND(alias);
+						nuovoStato = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CHIAVI_PDND);
+						tipo ="stato del timer '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CHIAVI_PDND+"'";
+						labelDialog = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TIMER_PREFIX+
+								ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CHIAVI_PDND+ " "+ ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_PDND;
+					}
+					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CACHE_CHIAVI_PDND.equals(nomeParametroPostBack)){
+						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreCacheChiaviPDND(alias);
+						nuovoStato = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CACHE_CHIAVI_PDND);
+						tipo ="stato del timer '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CACHE_CHIAVI_PDND+"'";
+						labelDialog = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TIMER_PREFIX+
+								ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CACHE_CHIAVI_PDND+ " "+ ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_PDND;
 					}
 					
 					if(nomeAttributo!=null){

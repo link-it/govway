@@ -65,9 +65,11 @@ public class RemoteStoreCache extends AbstractKeystoreCache<RemoteStore> {
 		}
 	}
 
+	public static final String RESTORE_STORE_PREFIX = "RemoteStore ";
+	
 	@Override
 	public String getPrefixKey() {
-		return "RemoteStore ";
+		return RESTORE_STORE_PREFIX;
 	}
 	
 	public static String getPrefixKeyCache(RemoteStoreConfig remoteStoreConfig, RemoteKeyType keyType) throws SecurityException {

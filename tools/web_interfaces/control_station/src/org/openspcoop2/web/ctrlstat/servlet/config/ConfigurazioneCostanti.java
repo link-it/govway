@@ -723,6 +723,7 @@ public class ConfigurazioneCostanti {
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_RUNTIME = "Pulizia Repository di Runtime";
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_MONITORAGGIO = "Monitoraggio Risorse";
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_SISTEMA = "Attività di Sistema";
+	public static final String LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_PDND = "Repository Chiavi PDND";
 	
 	public static final String LABEL_CONFIGURAZIONE_REGISTRAZIONE_TRANSAZIONI = "Transazioni";
 	public static final String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI = "Transazioni Registrate";
@@ -1032,6 +1033,8 @@ public class ConfigurazioneCostanti {
 	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_START = "allarmiAttiviStart";
 	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_STOP = "allarmiAttiviStop";
 	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_RESTART = "allarmiAttiviRestart";
+	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CHIAVI_PDND = "timerChiaviPDND";
+	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CACHE_CHIAVI_PDND = "timerCacheChiaviPDND";
 	
 	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT = "Download";
 	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES = "ResetAllCaches";
@@ -1600,6 +1603,8 @@ public class ConfigurazioneCostanti {
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_GIORNALIERE = "Giornaliere";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_SETTIMANALI = "Settimanali";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_MENSILI = "Mensili";
+	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CHIAVI_PDND = "Gestione Eventi";
+	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CACHE_CHIAVI_PDND = "Gestione Cache";
 	
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ISTANZIATA = "Utilizzo";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ISTANZIATA_TEMPLATE = "ISTANZA";

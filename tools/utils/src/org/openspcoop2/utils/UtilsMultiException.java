@@ -74,6 +74,20 @@ public class UtilsMultiException extends Exception {
 		}
 	}
 	
+	public String getMultiMessage() {
+		StringBuilder sb = new StringBuilder();
+		if(!this.exceptions.isEmpty()) {
+			for (int i = (this.exceptions.size()-1); i >= 0; i--) {
+				if(sb.length()>0) {
+					sb.append("\n");
+				}
+				sb.append("- error "+(i+1)+": ");
+				sb.append(this.exceptions.get(i).getMessage());
+			}
+		}
+		return sb.toString();
+	}
+	
 	@Override
 	public void printStackTrace(PrintStream s) {
 		if(!this.exceptions.isEmpty()) {

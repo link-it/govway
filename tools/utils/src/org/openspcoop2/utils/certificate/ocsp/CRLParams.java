@@ -183,7 +183,14 @@ public class CRLParams {
 				}
 				if(reject) {
 					if(!listExceptions.isEmpty()) {
-						throw new UtilsMultiException("Crl retrieve failed", listExceptions.toArray(new Throwable[1]));
+						if(listExceptions.size()==1) {
+							Throwable t = listExceptions.get(0);
+							if(t!=null) {
+								throw new UtilsException("Crl retrieve failed; "+t.getMessage(),t);
+							}
+						}
+						UtilsMultiException multi = new UtilsMultiException("Crl retrieve failed", listExceptions.toArray(new Throwable[1]));
+						throw new UtilsException("Crl retrieve failed;\n"+multi.getMultiMessage(),multi);
 					}
 					else {
 						throw new UtilsException("Crl retrieve failed");

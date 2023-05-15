@@ -52,13 +52,14 @@ public class TimerGestoreChiaviPDNDUtilities {
 		this.limit = limit;
 	}
 	
-	public TimerGestoreChiaviPDNDEvents readNextEvents(int lastEventId) throws TimerException {
+	public TimerGestoreChiaviPDNDEvents readNextEvents(long lastEventId) throws TimerException {
 		
 		String responseJson = null;
 		try {
 		
 			StringBuilder sb = new StringBuilder(this.urlCheckEventi).append("?");
 			sb.append(this.parameterLastEventId).append("=").append(lastEventId);
+			sb.append("&");
 			sb.append(this.parameterLimit).append("=").append(this.limit);
 			
 			String url = sb.toString();

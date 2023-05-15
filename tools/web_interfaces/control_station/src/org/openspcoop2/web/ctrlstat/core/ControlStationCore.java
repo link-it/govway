@@ -1627,6 +1627,8 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheGiornaliere = new HashMap<>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheSettimanali = new HashMap<>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheMensili = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreChiaviPDND = new HashMap<>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreCacheChiaviPDND = new HashMap<>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread = new HashMap<>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById = new HashMap<>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById = new HashMap<>();
@@ -1946,6 +1948,12 @@ public class ControlStationCore {
 	}
 	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheMensili(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheMensili.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreChiaviPDND(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreChiaviPDND.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreCacheChiaviPDND(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreCacheChiaviPDND.get(alias);
 	}
 	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread.get(alias);
@@ -2733,6 +2741,8 @@ public class ControlStationCore {
 		this.jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheGiornaliere = core.jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheGiornaliere;
 		this.jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheSettimanali = core.jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheSettimanali;
 		this.jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheMensili = core.jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheMensili;
+		this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreChiaviPDND = core.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreChiaviPDND;
+		this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreCacheChiaviPDND = core.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreCacheChiaviPDND;
 		this.jmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread = core.jmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById = core.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById = core.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById;
@@ -3277,6 +3287,8 @@ public class ControlStationCore {
 					this.jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheGiornaliere.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheGiornaliere(alias));
 					this.jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheSettimanali.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheSettimanali(alias));
 					this.jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheMensili.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheMensili(alias));
+					this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreChiaviPDND.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreChiaviPDND(alias));
+					this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreCacheChiaviPDND.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreCacheChiaviPDND(alias));
 					this.jmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread(alias));	
 					this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById(alias));

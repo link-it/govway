@@ -1108,6 +1108,12 @@ public class ConsoleProperties {
 	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheMensili(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerStatisticheMensili");
 	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreChiaviPDND(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreChiaviPDND");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreCacheChiaviPDND(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreCacheChiaviPDND");
+	}
 	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerThresholdThread");
 	}

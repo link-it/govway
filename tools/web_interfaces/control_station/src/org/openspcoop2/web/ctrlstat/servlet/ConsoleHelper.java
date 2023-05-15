@@ -23188,7 +23188,8 @@ public class ConsoleHelper implements IConsoleHelper {
 				de = new DataElement();
 				de.setType(DataElementType.TEXT);
 				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP_PASSWORD);
-				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_PASSWORD));
+				String pw = connettore.getProperties().get(CostantiConnettori.CONNETTORE_PASSWORD);
+				de.setValue(pw!=null ? StringEscapeUtils.escapeHtml(pw) : pw);
 				dati.add(de);
 				
 			}

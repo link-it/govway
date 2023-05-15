@@ -2465,7 +2465,11 @@ public class OpenSPCoop2Properties {
 			
 			if(this.isGestoreChiaviPDNDEnabled()) {
 				isGestoreChiaviPDNDDebug();
+				isGestoreChiaviPDNDEventiAdd();
+				isGestoreChiaviPDNDEventiUpdate();
+				isGestoreChiaviPDNDEventiDelete();
 				getGestoreChiaviPDNDRemoteStoreName();
+				getGestoreChiaviPDNDkeysMaxLifeMinutes();
 				getGestoreChiaviPDNDkeysPath();
 				getGestoreChiaviPDNDeventsKeysPath();
 				getGestoreChiaviPDNDeventsKeysParameterLastEventId();
@@ -2493,14 +2497,14 @@ public class OpenSPCoop2Properties {
 			// IdentitaPdD
 			Enumeration<String> protocolli = ProtocolFactoryManager.getInstance().getProtocolFactories().keys();
 			while (protocolli.hasMoreElements()) {
-				String protocollo = (String) protocolli.nextElement();
+				String protocollo = protocolli.nextElement();
 				getIdentitaPortaDefault(protocollo, null);
 			}	
 			
 			// ByPass
 			protocolli = ProtocolFactoryManager.getInstance().getProtocolFactories().keys();
 			while (protocolli.hasMoreElements()) {
-				String protocollo = (String) protocolli.nextElement();
+				String protocollo = protocolli.nextElement();
 				getBypassFilterMustUnderstandProperties(protocollo);
 			}
 			
@@ -30139,6 +30143,72 @@ public class OpenSPCoop2Properties {
 		return this.isGestoreChiaviPDNDDebug;
 	}
 	
+	private Boolean isGestoreChiaviPDNDEventiAdd = null;
+	public boolean isGestoreChiaviPDNDEventiAdd() {	
+		if(this.isGestoreChiaviPDNDEventiAdd==null){
+			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.eventi.add";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					name="true";
+				}
+				name = name.trim();
+				this.isGestoreChiaviPDNDEventiAdd = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.isGestoreChiaviPDNDEventiAdd = true;
+			}    
+		}
+
+		return this.isGestoreChiaviPDNDEventiAdd;
+	}
+	
+	private Boolean isGestoreChiaviPDNDEventiUpdate = null;
+	public boolean isGestoreChiaviPDNDEventiUpdate() {	
+		if(this.isGestoreChiaviPDNDEventiUpdate==null){
+			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.eventi.update";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					name="true";
+				}
+				name = name.trim();
+				this.isGestoreChiaviPDNDEventiUpdate = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.isGestoreChiaviPDNDEventiUpdate = true;
+			}    
+		}
+
+		return this.isGestoreChiaviPDNDEventiUpdate;
+	}
+	
+	private Boolean isGestoreChiaviPDNDEventiDelete = null;
+	public boolean isGestoreChiaviPDNDEventiDelete() {	
+		if(this.isGestoreChiaviPDNDEventiDelete==null){
+			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.eventi.delete";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					name="true";
+				}
+				name = name.trim();
+				this.isGestoreChiaviPDNDEventiDelete = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.isGestoreChiaviPDNDEventiDelete = true;
+			}    
+		}
+
+		return this.isGestoreChiaviPDNDEventiDelete;
+	}
+	
 	private String getGestoreChiaviPDNDRemoteStoreName = null;
 	public String getGestoreChiaviPDNDRemoteStoreName() throws CoreException {	
 		if(this.getGestoreChiaviPDNDRemoteStoreName==null){
@@ -30158,6 +30228,32 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.getGestoreChiaviPDNDRemoteStoreName;
+	}
+	
+	private Integer getGestoreChiaviPDNDkeysMaxLifeMinutes = null;
+	public int getGestoreChiaviPDNDkeysMaxLifeMinutes() {	
+		if(this.getGestoreChiaviPDNDkeysMaxLifeMinutes==null){
+			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.keys.maxLifeMinutes";
+			int defaultValue = 43200;
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName,defaultValue));
+					name=defaultValue+"";
+				}
+				name = name.trim();
+				this.getGestoreChiaviPDNDkeysMaxLifeMinutes = Integer.valueOf(name);
+				if(this.getGestoreChiaviPDNDkeysMaxLifeMinutes<=0) {
+					throw new CoreException("Atteso un limite maggiore di zero");
+				}
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+defaultValue+" : "+e.getMessage(),e);
+				this.getGestoreChiaviPDNDkeysMaxLifeMinutes = defaultValue;
+			}    
+		}
+
+		return this.getGestoreChiaviPDNDkeysMaxLifeMinutes;
 	}
 	
 	private String getGestoreChiaviPDNDkeysPath = null;
@@ -30254,7 +30350,7 @@ public class OpenSPCoop2Properties {
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName,defaultValue));
-					name="true";
+					name=defaultValue+"";
 				}
 				name = name.trim();
 				this.getGestoreChiaviPDNDeventsKeysLimit = Integer.valueOf(name);
@@ -30280,7 +30376,7 @@ public class OpenSPCoop2Properties {
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName,defaultValue));
-					name="true";
+					name=defaultValue+"";
 				}
 				name = name.trim();
 				this.getGestoreChiaviPDNDeventsKeysTimerIntervalloSecondi = Long.valueOf(name);
@@ -30306,7 +30402,7 @@ public class OpenSPCoop2Properties {
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName,defaultValue));
-					name="true";
+					name=defaultValue+"";
 				}
 				name = name.trim();
 				this.getGestoreChiaviPDNDcacheKeysTimerIntervalloSecondi = Long.valueOf(name);

@@ -164,6 +164,8 @@
 
 - Sempre per i test OCSP aggiungere in govway_local.properties le seguenti proprietà abilitate:
 
+   # Indicazione se in ogni entry di una API deve essere salvata anche la mappa delle risorse accedute esternamente
+   org.openspcoop2.pdd.cache.impl.requestManager.externalResource.saveInCache=true
    # Indicazione se in ogni entry di una API deve essere salvata anche il risultato di una validazione ocsp
    org.openspcoop2.pdd.cache.impl.requestManager.ocspResponse.saveInCache=true
 

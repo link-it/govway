@@ -22,12 +22,17 @@ package org.openspcoop2.pdd.core.keystore;
 
 import java.io.ByteArrayOutputStream;
 import java.security.PublicKey;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
+import org.openspcoop2.core.eventi.Evento;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.eventi.GestoreEventi;
+import org.openspcoop2.pdd.timers.pdnd.TimerGestoreChiaviPDNDEvent;
+import org.openspcoop2.pdd.timers.pdnd.TimerGestoreChiaviPDNDLib;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.Certificate;
@@ -37,6 +42,8 @@ import org.openspcoop2.utils.certificate.remote.IRemoteStoreProvider;
 import org.openspcoop2.utils.certificate.remote.RemoteKeyType;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreUtils;
+import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 import org.slf4j.Logger;
 
 /**
@@ -48,7 +55,15 @@ import org.slf4j.Logger;
  */
 public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 
-	
+	private static int keyMaxLifeMinutes = -1; // infinito
+	public static int getKeyMaxLifeMinutes() {
+		return keyMaxLifeMinutes;
+	}
+	public static void setKeyMaxLifeMinutes(int keyMaxLifeMinutes) {
+		RemoteStoreProviderDriver.keyMaxLifeMinutes = keyMaxLifeMinutes;
+	}
+
+
 	private static final Map<String, RemoteStoreProviderDriver> _providerStore = new HashMap<>();
 	public static synchronized void initialize(Logger log, RemoteStoreConfig remoteStoreConfig) throws KeystoreException {
 		String storeConfigName = getRemoteStoreConfigName(remoteStoreConfig);
@@ -139,7 +154,7 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 	
 	public Object readKey(RemoteKeyType remoteStoreKeyType, String keyId, ByteArrayOutputStream bout) throws KeystoreException {
 		
-		byte [] key = null;
+		RemoteStoreKey key = null;
 		try {
 			key = RemoteStoreProviderDriverUtils.getRemoteStoreKey(this.driverConfigurazioneDB, this.remoteStoreId, keyId);
 		}catch(KeystoreNotFoundException notFound) {
@@ -147,15 +162,16 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 			this.log.debug(msg);
 			// ignore
 		}
-		if(key!=null) {
+		boolean updateRequired = isUpdateRequired(key, keyId);
+		if(!updateRequired && key!=null && key.getKey()!=null) {
 			try {
 				switch (remoteStoreKeyType) {
 					case JWK:
-						return new JWK(new String(key));
+						return new JWK(new String(key.getKey()));
 					case PUBLIC_KEY:
-						return KeyUtils.getInstance(this.keyAlgorithm).getPublicKey(key);
+						return KeyUtils.getInstance(this.keyAlgorithm).getPublicKey(key.getKey());
 					case X509:
-						return ArchiveLoader.load(key);
+						return ArchiveLoader.load(key.getKey());
 				}
 			}catch(Exception e) {
 				throw new KeystoreException(e.getMessage(),e);
@@ -185,11 +201,25 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 				break;
 			}
 			
-			String msg = getPrefixKid(keyId)+" ottenuta da remote store config, aggiunto come entry sul db ...";
-			this.log.debug(msg);
-			int rows = RemoteStoreProviderDriverUtils.addRemoteStoreKey(this.driverConfigurazioneDB, this.remoteStoreId, keyId, b.toByteArray());
-			msg = getPrefixKid(keyId)+" ottenuta da remote store config aggiunta come entry sul db (updateRows:"+rows+")";
-			this.log.debug(msg);
+			if(updateRequired) {
+				String msg = getPrefixKid(keyId)+" ottenuta da remote store config, aggiornamento entry sul db ...";
+				this.log.debug(msg);
+				int rows = RemoteStoreProviderDriverUtils.updateRemoteStoreKey(this.driverConfigurazioneDB, this.remoteStoreId, keyId, b.toByteArray());
+				msg = getPrefixKid(keyId)+" ottenuta da remote store config, aggiornata entry sul db (updateRows:"+rows+")";
+				this.log.debug(msg);
+			}
+			else {
+				String msg = getPrefixKid(keyId)+" ottenuta da remote store config, registrazione sul db ...";
+				this.log.debug(msg);
+				int rows = RemoteStoreProviderDriverUtils.addRemoteStoreKey(this.driverConfigurazioneDB, this.remoteStoreId, keyId, b.toByteArray());
+				msg = getPrefixKid(keyId)+" ottenuta da remote store config, registrata entry sul db (updateRows:"+rows+")";
+				this.log.debug(msg);
+				
+				if(OpenSPCoop2Properties.getInstance().isGestoreChiaviPDNDEventiAdd()) {
+					Evento evento = TimerGestoreChiaviPDNDLib.buildEvento(TimerGestoreChiaviPDNDEvent.EVENT_TYPE_ADDED, keyId, "La chiave è stata aggiunta al repository locale");
+					registerEvent(evento, keyId);
+				}
+			}
 			
 			return objectKey;
 			
@@ -199,6 +229,32 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 			semaphore.release("readKey");
 		}
 		
+	}
+	private void registerEvent(Evento evento, String keyId) {
+		try {
+			GestoreEventi.getInstance().log(evento);
+		}catch(Exception e) {
+			String msgError = "Registrazione evento per kid '"+keyId+"' (eventType:"+TimerGestoreChiaviPDNDEvent.EVENT_TYPE_ADDED+") non riuscita: "+e.getMessage();
+			this.log.error(msgError,e);
+		}
+	}
+	private boolean isUpdateRequired(RemoteStoreKey key, String keyId) {
+		if(key!=null && key.isInvalid()) {
+			String msg = getPrefixKid(keyId)+" non è valida";
+			this.log.debug(msg);
+			return true;
+		}
+		if(key!=null && keyMaxLifeMinutes>0 && key.getDataAggiornamento()!=null) {
+			long maxLifeSeconds = keyMaxLifeMinutes * 60l;
+			long maxLifeMs = maxLifeSeconds * 1000l;
+			Date tooOld = new Date(DateManager.getTimeMillis()-maxLifeMs);
+			if(key.getDataAggiornamento().before(tooOld)) {
+				String msg = getPrefixKid(keyId)+" è più vecchia di "+keyMaxLifeMinutes+" minuti (data aggiornamento: "+DateUtils.getSimpleDateFormatMs().format(key.getDataAggiornamento())+")";
+				this.log.debug(msg);
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	@Override
