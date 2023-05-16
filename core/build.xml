@@ -556,13 +556,13 @@
 			<param name="SQLDirectory" value="${sql}"/>
 			<param name="SQLDestFile" value="${dist}/ConfigurazionePdD.sql"/>
 			<param name="SQLSourceFiles" value="configurazionePdD/configurazionePdD_Connettori.sql configurazionePdD/configurazionePdD_ConnettoriGestioneErrore.sql configurazionePdD/configurazionePdD_Soggetti.sql configurazionePdD/configurazionePdD_ServiziApplicativi.sql configurazionePdD/configurazionePdD_PorteDelegate.sql configurazionePdD/configurazionePdD_PorteApplicative.sql configurazionePdD/configurazionePdD.sql configurazionePdD/configurazionePdD_ControlloTraffico.sql DBInfo.sql"/>
+			<param name="SQLDataFiles" value="init/configurazionePdD/Semaphore_configurazionePdD_data.sql"/>
 			<param name="SQLInsertDBInfo" value="INSERT INTO db_info (major_version,minor_version,notes) VALUES (@MAJOR_VERSION@,@MINOR_VERSION@,'[v@FULL_VERSION@] Configurazione di GovWay');" />
 		</antcall>
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql}"/>
 			<param name="SQLDestFile" value="${dist}/ConfigurazionePdD_delete.sql"/>
 			<param name="SQLSourceFiles" value="configurazionePdD/configurazionePdD_PorteApplicative_delete.sql configurazionePdD/configurazionePdD_PorteDelegate_delete.sql configurazionePdD/configurazionePdD_ServiziApplicativi_delete.sql configurazionePdD/configurazionePdD_Soggetti_delete.sql configurazionePdD/configurazionePdD_Connettori_delete.sql configurazionePdD/configurazionePdD_delete.sql configurazionePdD/configurazionePdD_ConnettoriGestioneErrore_delete.sql configurazionePdD/configurazionePdD_ControlloTraffico_delete.sql"/> <!-- Non devo svuotare: DBInfo_delete.sql -->
-			<param name="SQLDataFiles" value="init/configurazionePdD/Semaphore_configurazionePdD_data.sql"/>
 		</antcall>
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql}"/>

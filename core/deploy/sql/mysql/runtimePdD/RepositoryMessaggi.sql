@@ -137,7 +137,7 @@ CREATE TABLE CORRELAZIONE_APPLICATIVA
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	SCADENZA TIMESTAMP(3) DEFAULT 0,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
-	ora_registrazione TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+	ORA_REGISTRAZIONE TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- fk/pk keys constraints
@@ -146,7 +146,7 @@ CREATE TABLE CORRELAZIONE_APPLICATIVA
 
 -- index
 CREATE INDEX CORR_APPL_SCADUTE ON CORRELAZIONE_APPLICATIVA (SCADENZA);
-CREATE INDEX CORR_APPL_OLD ON CORRELAZIONE_APPLICATIVA (ora_registrazione);
+CREATE INDEX CORR_APPL_OLD ON CORRELAZIONE_APPLICATIVA (ORA_REGISTRAZIONE);
 
 
 

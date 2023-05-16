@@ -924,7 +924,7 @@
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="ora_registrazione" default-current-time="true"/>
+                                <linkit:sql-column-mapping name="ORA_REGISTRAZIONE" default-current-time="true"/>
                                 <linkit:sql-ddl-column-comment>Data di registrazione della regola di correlazione</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>

@@ -33,7 +33,7 @@ CREATE TABLE remote_store_key
 (
 	id_remote_store NUMBER NOT NULL,
 	kid VARCHAR2(255) NOT NULL,
-	key BLOB NOT NULL,
+	content_key BLOB NOT NULL,
 	data_registrazione TIMESTAMP NOT NULL,
 	data_aggiornamento TIMESTAMP NOT NULL,
 	-- fk/pk columns

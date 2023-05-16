@@ -3321,12 +3321,12 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="key" type="xsd:hexBinary">
+                <xsd:element name="content-key" type="xsd:hexBinary">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="key" long-binary="true" />
+                                <linkit:sql-column-mapping name="content_key" long-binary="true" />
                                 <linkit:sql-ddl-column-comment>Chiave</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>

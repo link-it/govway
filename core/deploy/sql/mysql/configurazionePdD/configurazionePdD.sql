@@ -696,7 +696,7 @@ CREATE TABLE remote_store_key
 (
 	id_remote_store BIGINT NOT NULL,
 	kid VARCHAR(255) NOT NULL,
-	key LONGBLOB NOT NULL,
+	content_key LONGBLOB NOT NULL,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	data_registrazione TIMESTAMP(3) NOT NULL DEFAULT 0,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'

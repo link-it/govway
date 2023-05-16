@@ -28,7 +28,7 @@ CREATE TABLE remote_store_key
 	id_remote_store BIGINT NOT NULL,
 	kid VARCHAR(255) NOT NULL,
 	-- In hsql 2.x usare il tipo BLOB al posto di VARBINARY
-	key VARBINARY(1073741823) NOT NULL,
+	content_key VARBINARY(1073741823) NOT NULL,
 	data_registrazione TIMESTAMP NOT NULL,
 	data_aggiornamento TIMESTAMP NOT NULL,
 	-- fk/pk columns

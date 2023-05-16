@@ -1,0 +1,1 @@
+EXEC sp_rename 'CORRELAZIONE_APPLICATIVA.ora_registrazione' , 'ORA_REGISTRAZIONE' , 'COLUMN'

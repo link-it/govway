@@ -1,5 +1,12 @@
 2023-05-16  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Risolto Bug OP-1588
+	Su database SQLServer veniva segnalato il seguente errore dovuto ad una colonna definita in minuscolo e riferita nella query in maiuscolo:
+	"ERROR .... [GestoreCorrelazioneApplicativa.getCorrelazioniStoriche] errore, queryString[SELECT TOP 50 id,SCADENZA FROM CORRELAZIONE_APPLICATIVA WHERE ( ORA_REGISTRAZIONE < ? )]: Invalid column name 'ORA_REGISTRAZIONE'."
+
+2023-05-16  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore, Utils]
 	Risolto Bug OP-1586
 	(https://github.com/link-it/govway/issues/128)

@@ -691,7 +691,7 @@ CREATE TABLE remote_store_key
 (
 	id_remote_store BIGINT NOT NULL,
 	kid VARCHAR(255) NOT NULL,
-	key VARBINARY(MAX) NOT NULL,
+	content_key VARBINARY(MAX) NOT NULL,
 	data_registrazione DATETIME2 NOT NULL,
 	data_aggiornamento DATETIME2 NOT NULL,
 	-- fk/pk columns

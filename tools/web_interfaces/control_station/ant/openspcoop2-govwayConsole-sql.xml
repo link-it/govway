@@ -204,8 +204,9 @@
 		<var name="sqlSourceFiles" value="${sqlSourceFiles} Operations.sql"/>
 		<var name="sqlSourceFiles" value="${sqlSourceFiles} Users.sql"/>
 		<var name="sqlSourceFiles" value="${sqlSourceFiles} DBInfo.sql"/>
-		
-		<var name="sqlDataFiles" value="audit_appender_db_data.sql"/>
+
+		<var name="sqlDataFiles" value="init/configurazionePdD/Semaphore_configurazionePdD_data.sql"/>
+		<var name="sqlDataFiles" value="${sqlDataFiles} audit_appender_db_data.sql"/>
 		<var name="sqlDataFiles" value="${sqlDataFiles} audit_appender_log4j_data.sql"/>
 		<var name="sqlDataFiles" value="${sqlDataFiles} audit_data.sql"/>
 		<var name="sqlDataFiles" value="${sqlDataFiles} users_data.sql"/>

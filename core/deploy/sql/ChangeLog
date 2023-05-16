@@ -1,3 +1,8 @@
+2023-05-16  Andrea Poli <apoli@link.it>
+
+	Rinominata colonna della tabella 'CORRELAZIONE_APPLICATIVA':
+	ALTER TABLE CORRELAZIONE_APPLICATIVA RENAME ora_registrazione TO ORA_REGISTRAZIONE;
+
 2023-05-09  Andrea Poli <apoli@link.it>
 
 	Aggiunto semaforo per il gestore delle chiavi PDND

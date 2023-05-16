@@ -63,7 +63,7 @@ public class RemoteStoreProviderDriverUtils {
 	
 	private static final String COLUMN_ID_REMOTE_STORE = "id_remote_store";
 	private static final String COLUMN_KID = "kid";
-	private static final String COLUMN_KEY = "key";
+	private static final String COLUMN_KEY = "content_key";
 	
 	public static long registerIfNotExistsRemoteStore(DriverConfigurazioneDB driverConfigurazioneDB, RemoteStoreConfig remoteStoreConfig) throws KeystoreException {
 		long idRemoteStore = getIdRemoteStore(driverConfigurazioneDB, remoteStoreConfig);
