@@ -1,3 +1,10 @@
+2023-05-16  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, Utils]
+	Risolto Bug OP-1586
+	(https://github.com/link-it/govway/issues/128)
+	L'accesso ad un keystore pkcs12 creato importando un archivio pkcs12 al suo interno falliva con il seguente errore: "keystore password was incorrect".
+
 2023-05-15  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]

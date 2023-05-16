@@ -28,6 +28,7 @@ import java.util.Properties;
 
 import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.utils.certificate.KeystoreType;
+import org.openspcoop2.utils.certificate.KeystoreUtils;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWSOptions;
 import org.openspcoop2.utils.security.JsonSignature;
@@ -144,8 +145,7 @@ public class Signature {
 					isKeystore = new FileInputStream(f);
 				}
 				
-				java.security.KeyStore keystore = java.security.KeyStore.getInstance(this.keystore_type);
-				keystore.load(isKeystore, this.keystore_password.toCharArray());
+				java.security.KeyStore keystore = KeystoreUtils.readKeystore(isKeystore, this.keystore_type, this.keystore_password);
 				
 				JWSOptions jwsOptions = new JWSOptions(this.json_signatureSerialization);
 				jwsOptions.setDetached(this.json_signatureDetached);

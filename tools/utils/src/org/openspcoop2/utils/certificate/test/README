@@ -25,6 +25,15 @@ Per entrambi usare come password 123456 e lasciare i default proposti
 
 
 
+
+Per creare un keystore a partire da un p12
+
+keytool -importkeystore -srcstorepass 123456 -srckeystore govway_test.p12 -alias "govway_test" -srcstoretype PKCS12 -destkeystore govway_test_fromp12.p12 -deststorepass 123456 -deststoretype PKCS12
+keytool -importkeystore -srcstorepass 123456 -srckeystore govway_test_2.p12 -alias "govway_test_2" -srcstoretype PKCS12 -destkeystore govway_test_2_fromp12.p12 -deststorepass 123456 -deststoretype PKCS12
+keytool -importkeystore -srcstorepass 123456 -srckeystore govway_test_3.p12 -alias "govway_test_3" -srcstoretype PKCS12 -destkeystore govway_test_3_fromp12.p12 -deststorepass 123456 -deststoretype PKCS12
+
+
+
 Per creare chiavi private e pubbliche:
 
 # formato PKCS1 private key (unencrypted) nel formato PEM: -----BEGIN RSA PRIVATE KEY-----

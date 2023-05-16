@@ -21,10 +21,7 @@
 
 package org.openspcoop2.utils.certificate;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.security.Key;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -40,6 +37,7 @@ import javax.security.auth.x500.X500Principal;
 import org.apache.cxf.common.util.Base64UrlUtility;
 import org.apache.cxf.rt.security.crypto.MessageDigestUtils;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 
 /**	
  * Keystore
@@ -71,12 +69,14 @@ public class KeyStore {
 			throw new UtilsException("Keystore ["+keystorePath+"] cannot read");
 		}
 		
-		try (InputStream fin = new FileInputStream(keystorePath);){
-			initEngine(fin, tipoKeystore, passwordKeystore);
+		byte [] keystore = null;
+		try {
+			keystore = FileSystemUtilities.readBytesFromFile(keystorePath);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
 		
+		this.keystoreArchive = KeystoreUtils.readKeystore(keystore, tipoKeystore, passwordKeystore);
 	}
 	
 	public KeyStore(byte[] keystore,String passwordKeystore) throws UtilsException{
@@ -88,23 +88,10 @@ public class KeyStore {
 			throw new UtilsException("Keystore undefined");
 		}
 		
-		try (InputStream fin = new ByteArrayInputStream(keystore);){
-			initEngine(fin, tipoKeystore, passwordKeystore);
-		}catch(Exception e){
-			throw new UtilsException(e.getMessage(),e);
-		}
+		this.keystoreArchive = KeystoreUtils.readKeystore(keystore, tipoKeystore, passwordKeystore);
 		
 	}
 	
-	private void initEngine(InputStream is, String tipoKeystore, String passwordKeystore) throws UtilsException{
-		try{
-			java.security.KeyStore keystore = java.security.KeyStore.getInstance(tipoKeystore);
-			keystore.load(is, passwordKeystore.toCharArray());
-			this.keystoreArchive = keystore;
-		}catch(Exception e){
-			throw new UtilsException(e.getMessage(),e);
-		}
-	}
 	
 	public KeyStore(java.security.KeyStore keystore) {
 		this(keystore, false);

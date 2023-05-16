@@ -53,6 +53,15 @@ public class TestCertificate {
 		
 	}
 	
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".pkcs12CreatedFromP12"})
+	public void testPKCS12CreatedFromPKCS12() throws Exception{
+		
+		TestLogger.info("Run test '"+ID_TEST+".pkcs12CreatedFromP12' ...");
+		org.openspcoop2.utils.certificate.test.CertificateTest.testPKCS12CreatedFromPKCS12();
+		TestLogger.info("Run test '"+ID_TEST+".pkcs12CreatedFromP12' ok");
+		
+	}
+	
 	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".der"})
 	public void testDER() throws Exception{
 		

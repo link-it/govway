@@ -59,6 +59,7 @@ import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.KeystoreType;
+import org.openspcoop2.utils.certificate.KeystoreUtils;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.random.RandomGenerator;
@@ -73,6 +74,8 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class SSLUtilities {
+	
+	private SSLUtilities() {}
 	
 	
 	private static String jvmHttpsClientCertificateConfigurated = null;
@@ -265,7 +268,7 @@ public class SSLUtilities {
 	
 	public static List<Provider> getSSLProviders() throws UtilsException{
 		try{
-			List<Provider> p = new ArrayList<Provider>();
+			List<Provider> p = new ArrayList<>();
 			for (Provider provider : Security.getProviders()){
 				p.add(provider);
 			}
@@ -289,7 +292,7 @@ public class SSLUtilities {
 		try{
 			List<String> p = new ArrayList<>();
 			for (Service service : provider.getServices()){
-				if(p.contains(service.getType())==false){
+				if(!p.contains(service.getType())){
 					p.add(service.getType());
 				}
 			}
@@ -384,13 +387,12 @@ public class SSLUtilities {
 						if(hsmKeystore) {
 							org.openspcoop2.utils.certificate.KeyStore ks = hsmManager.getKeystore(sslConfig.getKeyStoreType());
 							if(ks==null) {
-								throw new Exception("Keystore not found");
+								throw new UtilsException("Keystore not found");
 							}
 							keystoreParam = ks.getKeystore();
 							keystoreProvider = keystoreParam.getProvider();
 						}
 						else {
-							keystoreParam = KeyStore.getInstance(sslConfig.getKeyStoreType()); // JKS,PKCS12,jceks,bks,uber,gkr
 							File file = new File(location);
 							if(file.exists()) {
 								finKeyStore = new FileInputStream(file);
@@ -399,9 +401,9 @@ public class SSLUtilities {
 								finKeyStore = SSLUtilities.class.getResourceAsStream(location);
 							}
 							if(finKeyStore == null) {
-								throw new Exception("Keystore not found");
+								throw new UtilsException("Keystore not found");
 							}
-							keystoreParam.load(finKeyStore, sslConfig.getKeyStorePassword().toCharArray());
+							keystoreParam = KeystoreUtils.readKeystore(finKeyStore, sslConfig.getKeyStoreType(), sslConfig.getKeyStorePassword());
 						}
 					}
 					
@@ -409,7 +411,7 @@ public class SSLUtilities {
 					if(oldMethodKeyAlias && sslConfig.getKeyAlias()!=null) {
 						Key key = keystoreParam.getKey(sslConfig.getKeyAlias(), sslConfig.getKeyPassword().toCharArray());
 						if(key==null) {
-							throw new Exception("Key with alias '"+sslConfig.getKeyAlias()+"' not found");
+							throw new UtilsException("Key with alias '"+sslConfig.getKeyAlias()+"' not found");
 						}
 						if(hsmKeystore) {
 							// uso un JKS come tmp
@@ -428,12 +430,11 @@ public class SSLUtilities {
 					
 					KeyManagerFactory keyManagerFactory = null;
 					// NO: no such algorithm: SunX509 for provider SunPKCS11-xxx
-					//if(keystoreProvider!=null) {
+					/**if(keystoreProvider!=null) {
 					//	keyManagerFactory = KeyManagerFactory.getInstance(sslConfig.getKeyManagementAlgorithm(), keystoreProvider);
 					//}
-					//else {
+					//else {*/
 					keyManagerFactory = KeyManagerFactory.getInstance(sslConfig.getKeyManagementAlgorithm());
-					//}
 					
 					keyManagerFactory.init(keystore, sslConfig.getKeyPassword().toCharArray());
 					km = keyManagerFactory.getKeyManagers();
@@ -513,13 +514,12 @@ public class SSLUtilities {
 						if(hsmTruststore) {
 							org.openspcoop2.utils.certificate.KeyStore ks = hsmManager.getKeystore(sslConfig.getTrustStoreType());
 							if(ks==null) {
-								throw new Exception("Keystore not found");
+								throw new UtilsException("Keystore not found");
 							}
 							truststoreParam = ks.getKeystore();
 							truststoreProvider = truststoreParam.getProvider();
 						}
 						else {
-							truststoreParam = KeyStore.getInstance(sslConfig.getTrustStoreType()); // JKS,PKCS12,jceks,bks,uber,gkr
 							File file = new File(location);
 							if(file.exists()) {
 								finTrustStore = new FileInputStream(file);
@@ -528,20 +528,20 @@ public class SSLUtilities {
 								finTrustStore = SSLUtilities.class.getResourceAsStream(location);
 							}
 							if(finTrustStore == null) {
-								throw new Exception("Keystore not found");
+								throw new UtilsException("Keystore not found");
 							}		
-							truststoreParam.load(finTrustStore, sslConfig.getTrustStorePassword().toCharArray());
+							truststoreParam = KeystoreUtils.readKeystore(finTrustStore, sslConfig.getKeyStoreType(), sslConfig.getKeyStorePassword());
 						}
 					}
 					
 					TrustManagerFactory trustManagerFactory = null;
 					// NO: no such algorithm: PKIX for provider SunPKCS11-xxx
-					//if(truststoreProvider!=null) {
+					/**if(truststoreProvider!=null) {
 					//	trustManagerFactory = TrustManagerFactory.getInstance(sslConfig.getTrustManagementAlgorithm(), truststoreProvider);
 					//}
-					//else {
+					//else {*/
 					trustManagerFactory = TrustManagerFactory.getInstance(sslConfig.getTrustManagementAlgorithm());
-					//}
+					
 					String trustManagementAlgo = sslConfig.getTrustManagementAlgorithm();
 					if(trustManagementAlgo!=null) {
 						trustManagementAlgo = trustManagementAlgo.trim();
@@ -635,7 +635,9 @@ public class SSLUtilities {
 				if(finKeyStore!=null){
 					finKeyStore.close();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 				if(finTrustStore!=null){
 					finTrustStore.close();
@@ -656,8 +658,8 @@ public class SSLUtilities {
 		truststore.load(null); // inizializza il truststore
 		Enumeration<String> aliases = truststoreParam.aliases();
 		while (aliases.hasMoreElements()) {
-			String alias = (String) aliases.nextElement();
-			//System.out.println("ALIAS: '"+alias+"'");
+			String alias = aliases.nextElement();
+			/** System.out.println("ALIAS: '"+alias+"'"); */
 			truststore.setCertificateEntry(alias, truststoreParam.getCertificate(alias));
 		}
 		
@@ -665,7 +667,7 @@ public class SSLUtilities {
 		pkixParams.setRevocationEnabled(false);
 		pkixParams.setDate(DateManager.getDate());
 		
-		/*
+		/**
 		java.security.cert.PKIXRevocationChecker revocationChecker =
 	            (java.security.cert.PKIXRevocationChecker) java.security.cert.CertPathBuilder.getInstance(trustManagementAlgo).getRevocationChecker();
 	    pkixParams.addCertPathChecker(revocationChecker);
@@ -677,7 +679,7 @@ public class SSLUtilities {
 	        if(crlStore!=null) {
 	        	crlsCertstore = crlStore;
 	        }else {
-	        	crlsCertstore = _buildCRLCertStore(crlLocation);
+	        	crlsCertstore = buildCRLCertStoreEngine(crlLocation);
 	        }
 	        pkixParams.addCertStore(crlsCertstore);
 	        pkixParams.setRevocationEnabled(true);
@@ -691,7 +693,7 @@ public class SSLUtilities {
 		
 	}
 	
-	private static CertStore _buildCRLCertStore(String crlsPath) throws Exception {
+	private static CertStore buildCRLCertStoreEngine(String crlsPath) throws Exception {
     	List<byte[]> crlBytes = new ArrayList<>();
     	List<String> crlPathsList = new ArrayList<>();
 		if(crlsPath.contains(",")) {
@@ -713,7 +715,7 @@ public class SSLUtilities {
 					isStore = SSLUtilities.class.getResourceAsStream(crlPath);
 				}
 				if(isStore==null){
-					throw new Exception("CRL ["+crlPath+"] not found");
+					throw new UtilsException("CRL ["+crlPath+"] not found");
 				}
 				crlBytes.add(Utilities.getAsByteArray(isStore));
 			}finally{
@@ -753,8 +755,7 @@ public class SSLUtilities {
 			if(sslConfig.isHostnameVerifier()){
 				if(sslConfig.getClassNameHostnameVerifier()!=null){
 					bfLog.append("HostNamve verifier enabled ["+sslConfig.getClassNameHostnameVerifier()+"]\n");
-					HostnameVerifier verifica = (HostnameVerifier) loader.newInstance(sslConfig.getClassNameHostnameVerifier());
-					return verifica;
+					return (HostnameVerifier) loader.newInstance(sslConfig.getClassNameHostnameVerifier());
 				}else{
 					bfLog.append("HostName verifier enabled\n");
 					return null;
@@ -855,10 +856,9 @@ public class SSLUtilities {
 					// ignore
 				}
 			}
-    		//Certificate [] certs = sslSocket.getSession().getPeerCertificates();
     		Certificate [] certs = tm.getPeerCertificates();
     		if(certs == null || certs.length<=0) {
-    			throw new Exception("Peer Certificates not found");
+    			throw new UtilsException("Peer Certificates not found");
     		}
     		StringBuilder sb = new StringBuilder();
     		for (Certificate certificate : certs) {
@@ -900,28 +900,27 @@ public class SSLUtilities {
 				if(mExchange!=null) {
 					Object exchange = mExchange.invoke(req);
 					if(exchange!=null) {
-						//System.out.println("Exchange ["+exchange.getClass().getName()+"]");
+						/**System.out.println("Exchange ["+exchange.getClass().getName()+"]");*/
 						
 						// io/undertow/server/ServerConnection.java
 						Method mConnection = exchange.getClass().getMethod("getConnection");
 						if(mConnection!=null) {
 							Object connection = mConnection.invoke(exchange);
 							if(connection!=null) {
-								//System.out.println("Connection ["+connection.getClass().getName()+"]");
+								/**System.out.println("Connection ["+connection.getClass().getName()+"]");*/
 								
 								// io/undertow/server/SSLSessionInfo.java
 								Method mSSLSessionInfo = connection.getClass().getMethod("getSslSessionInfo");
 								if(mSSLSessionInfo!=null) {
 									Object sslSessionInfo = mSSLSessionInfo.invoke(connection);
 									if(sslSessionInfo!=null) {
-										//System.out.println("sslSessionInfo ["+sslSessionInfo.getClass().getName()+"]");
+										/**System.out.println("sslSessionInfo ["+sslSessionInfo.getClass().getName()+"]");*/
 										
 										Method mPeerCertificates = sslSessionInfo.getClass().getMethod("getPeerCertificates");
 										if(mPeerCertificates!=null) {
 											try {
 												Object peerCertificates = mPeerCertificates.invoke(sslSessionInfo);
 												if(peerCertificates instanceof java.security.cert.X509Certificate[]) {
-													//System.out.println("FOUND!");
 													return (java.security.cert.X509Certificate[]) peerCertificates;
 												}
 											}catch(Throwable t) {

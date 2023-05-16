@@ -94,12 +94,7 @@ public class ArchiveLoader {
 	}
 	private static Certificate buildCertificateFromKeyStore(ArchiveType type, byte[] content, int position, String alias, String password) throws UtilsException {
 		try {
-			KeyStore ks = KeyStore.getInstance(type.name());
-			char[] pwd = null;
-			if(password!=null) {
-				pwd = password.toCharArray();
-			}
-			ks.load(new ByteArrayInputStream(content), pwd);
+			KeyStore ks = KeystoreUtils.readKeystore(content, type.name(), password);
 			
 			Enumeration<String> en = ks.aliases();
 			int index = -1;
@@ -245,12 +240,7 @@ public class ArchiveLoader {
 			case JKS:
 			case PKCS12:
 			
-				KeyStore ks = KeyStore.getInstance(type.name());
-				char[] pwd = null;
-				if(password!=null) {
-					pwd = password.toCharArray();
-				}
-				ks.load(new ByteArrayInputStream(content), pwd);
+				KeyStore ks = KeystoreUtils.readKeystore(content, type.name(), password);
 				
 				Enumeration<String> en = ks.aliases();
 				List<String> list = new ArrayList<>();

@@ -57,6 +57,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.KeystoreType;
+import org.openspcoop2.utils.certificate.KeystoreUtils;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.digest.DigestEncoding;
 import org.openspcoop2.utils.io.Base64Utilities;
@@ -75,6 +76,8 @@ import org.openspcoop2.utils.transport.TransportUtils;
  * @version $Rev$, $Date$
  */
 public class HttpUtilities {
+	
+	private HttpUtilities() {}
 
 	/**
 	 * Si occupa di effettuare la connessione verso l'indirizzo specificato dal<var>path</var>.
@@ -90,7 +93,7 @@ public class HttpUtilities {
 	public static final int HTTP_READ_CONNECTION_TIMEOUT = 120000; 
 
 	
-	public static List<String> getClientAddressHeaders() throws UtilsException{
+	public static List<String> getClientAddressHeaders() {
 		// X-Forwarded-For: A de facto standard for identifying the originating IP address of a client connecting to a web server through an HTTP proxy or load balancer
 		// Forwarded: Disclose original information of a client connecting to a web server through an HTTP proxy.'
 		List<String> possibiliHeaders = new ArrayList<>();
@@ -107,7 +110,7 @@ public class HttpUtilities {
 	public static String getClientAddress(HttpServletRequest request) throws UtilsException{
 		try{
 			return getClientAddress(getClientAddressHeaders(), request);
-		}catch(Throwable e){
+		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
@@ -115,7 +118,7 @@ public class HttpUtilities {
 		return getClientAddress(request);
 	}
 	private static String getClientAddress(List<String> headers, HttpServletRequest request) throws UtilsException{
-		if(headers.size()>0){
+		if(!headers.isEmpty()){
 			for (String header : headers) {
 				List<String> l = TransportUtils.getHeaderValues(request,header);
 				if(l!=null && !l.isEmpty()) {
@@ -128,21 +131,13 @@ public class HttpUtilities {
 	
 	@Deprecated
 	public static String getClientAddress(Map<String, String> transportProperties) throws UtilsException{
-		try{
-			return getClientAddress(getClientAddressHeaders(), TransportUtils.convertToMapListValues(transportProperties));
-		}catch(Throwable e){
-			throw new UtilsException(e.getMessage(),e);
-		}
+		return getClientAddress(getClientAddressHeaders(), TransportUtils.convertToMapListValues(transportProperties));
 	}
 	public static String getClientAddressFirstValue(Map<String, List<String>> headers) throws UtilsException{
-		try{
-			return getClientAddress(getClientAddressHeaders(), headers);
-		}catch(Throwable e){
-			throw new UtilsException(e.getMessage(),e);
-		}
+		return getClientAddress(getClientAddressHeaders(), headers);
 	}
-	private static String getClientAddress(List<String> headers, Map<String, List<String>> transportProperties) throws UtilsException{
-		if(headers.size()>0){
+	private static String getClientAddress(List<String> headers, Map<String, List<String>> transportProperties) {
+		if(!headers.isEmpty()){
 			for (String header : headers) {
 				List<String> l = TransportUtils.getRawObject(transportProperties,header);
 				if(l!=null && !l.isEmpty()) {
@@ -391,7 +386,7 @@ public class HttpUtilities {
 			MimeTypes mimeTypes = MimeTypes.getInstance();
 			if(ext!=null && mimeTypes.existsExtension(ext)){
 				mimeType = mimeTypes.getMimeType(ext);
-				//System.out.println("CUSTOM ["+mimeType+"]");		
+				/**System.out.println("CUSTOM ["+mimeType+"]");*/		
 			}
 			else{
 				mimeType = HttpConstants.CONTENT_TYPE_X_DOWNLOAD;
@@ -425,7 +420,7 @@ public class HttpUtilities {
 	
 	
 	
-	public static void setNoCache(HttpServletResponse response) throws UtilsException{
+	public static void setNoCache(HttpServletResponse response) {
 		response.setHeader(HttpConstants.CACHE_STATUS_HTTP_1_1, HttpConstants.CACHE_STATUS_HTTP_1_1_DISABLE_CACHE); // HTTP 1.1.
 		response.setHeader(HttpConstants.CACHE_STATUS_HTTP_1_0, HttpConstants.CACHE_STATUS_HTTP_1_0_DISABLE_CACHE); // HTTP 1.0.
 		response.setDateHeader(HttpConstants.CACHE_STATUS_PROXY_EXPIRES, HttpConstants.CACHE_STATUS_PROXY_EXPIRES_DISABLE_CACHE); // Proxies.
@@ -439,10 +434,10 @@ public class HttpUtilities {
 	}
 	public static boolean isDirectiveNoCache(Map<String, List<String>> headers) throws UtilsException{
 		List<String> l = getCacheControlDirectives(headers);
-		if(l==null || l.isEmpty()) {
+		if(l.isEmpty()) {
 			l = getPragmaDirectives(headers);
 		}
-		if(l==null || l.isEmpty()) {
+		if(l.isEmpty()) {
 			return false;
 		}
 		else {
@@ -456,9 +451,9 @@ public class HttpUtilities {
 	}
 	public static boolean isDirectiveNoStore(Map<String, List<String>> headers) throws UtilsException{
 		List<String> l = getCacheControlDirectives(headers);
-		if(l==null || l.isEmpty()) {
+		if(l.isEmpty()) {
 			l = getPragmaDirectives(headers);
-			if(l==null || l.isEmpty()) {
+			if(l.isEmpty()) {
 				return false;
 			}else{
 				return l.contains(HttpConstants.CACHE_STATUS_DIRECTIVE_NO_CACHE); // no cache in pragma vale anche per nostore.
@@ -470,12 +465,12 @@ public class HttpUtilities {
 	}
 	
 	@Deprecated
-	public static Integer getCacheMaxAge(Map<String, String> headers) throws UtilsException{
+	public static Integer getCacheMaxAge(Map<String, String> headers) {
 		return getDirectiveCacheMaxAge(TransportUtils.convertToMapListValues(headers));
 	}
-	public static Integer getDirectiveCacheMaxAge(Map<String, List<String>> headers) throws UtilsException{
+	public static Integer getDirectiveCacheMaxAge(Map<String, List<String>> headers) {
 		List<String> l = getCacheControlDirectives(headers);
-		if(l==null || l.isEmpty()) {
+		if(l.isEmpty()) {
 			return null;
 		}
 		else {
@@ -484,7 +479,9 @@ public class HttpUtilities {
 					try {
 						String age = direttiva.substring((HttpConstants.CACHE_STATUS_DIRECTIVE_MAX_AGE+"=").length(), direttiva.length());
 						return Integer.valueOf(age);
-					}catch(Throwable t) {}
+					}catch(Exception t) {
+						// ignore
+					}
 				}
 			}
 			return null;
@@ -1223,17 +1220,18 @@ public class HttpUtilities {
 		
 	}
 	
+	private static final String TEST_FILE_ORIGIN = "file://";
 	
 	public static HttpResponse httpInvoke(HttpRequest request) throws UtilsException{
 		
 		String path = request.getUrl();
-		if(path!=null && path.startsWith("file://")){
-			String filePath = path.substring("file://".length());
+		if(path!=null && path.startsWith(TEST_FILE_ORIGIN)){
+			String filePath = path.substring(TEST_FILE_ORIGIN.length());
 			File f = new File(filePath);
-			if(f.exists()==false){
+			if(!f.exists()){
 				throw new UtilsException("404");
 			}
-			if(f.canRead()==false){
+			if(!f.canRead()){
 				throw new UtilsException("404");
 			}
 			HttpResponse response = new HttpResponse();
@@ -1299,13 +1297,12 @@ public class HttpUtilities {
 							if(hsmKeystore) {
 								org.openspcoop2.utils.certificate.KeyStore ks = hsmManager.getKeystore(hsmType);
 								if(ks==null) {
-									throw new Exception("Keystore not found");
+									throw new UtilsException("Keystore not found");
 								}
 								keystoreParam = ks.getKeystore();
 								keystoreProvider = keystoreParam.getProvider();
 							}
 							else {
-								keystoreParam = KeyStore.getInstance(request.getKeyStoreType()!=null ? request.getKeyStoreType() : KeystoreType.JKS.getNome()); 
 								File file = new File(location);
 								if(file.exists()) {
 									finKeyStore = new FileInputStream(file);
@@ -1314,9 +1311,10 @@ public class HttpUtilities {
 									finKeyStore = SSLUtilities.class.getResourceAsStream(location);
 								}
 								if(finKeyStore == null) {
-									throw new Exception("Keystore not found");
+									throw new UtilsException("Keystore not found");
 								}
-								keystoreParam.load(finKeyStore, request.getKeyStorePassword().toCharArray());
+								String tipo = request.getKeyStoreType()!=null ? request.getKeyStoreType() : KeystoreType.JKS.getNome();
+								keystoreParam = KeystoreUtils.readKeystore(finKeyStore, tipo, request.getKeyStorePassword());
 							}
 						}
 						
@@ -1324,7 +1322,7 @@ public class HttpUtilities {
 						if(oldMethodKeyAlias && request.getKeyAlias()!=null) {
 							Key key = keystoreParam.getKey(request.getKeyAlias(), request.getKeyPassword().toCharArray());
 							if(key==null) {
-								throw new Exception("Key with alias '"+request.getKeyAlias()+"' not found");
+								throw new UtilsException("Key with alias '"+request.getKeyAlias()+"' not found");
 							}
 							if(hsmKeystore) {
 								// uso un JKS come tmp
@@ -1343,12 +1341,11 @@ public class HttpUtilities {
 						
 						KeyManagerFactory keyManagerFactory = null;
 						// NO: no such algorithm: SunX509 for provider SunPKCS11-xxx
-						//if(keystoreProvider!=null) {
+						/**if(keystoreProvider!=null) {
 						//	keyManagerFactory = KeyManagerFactory.getInstance(sslConfig.getKeyManagementAlgorithm(), keystoreProvider);
 						//}
-						//else {
+						//else {*/
 						keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
-						//}
 						
 						keyManagerFactory.init(keystore, request.getKeyPassword().toCharArray());
 						km = keyManagerFactory.getKeyManagers();
@@ -1361,7 +1358,7 @@ public class HttpUtilities {
 								Enumeration<String> enAliases = keystore.aliases();
 								if(enAliases!=null) {
 									while (enAliases.hasMoreElements()) {
-										String a = (String) enAliases.nextElement();
+										String a = enAliases.nextElement();
 										if(a.equalsIgnoreCase(alias)) {
 											alias = a; // uso quello presente nel keystore
 											break;
@@ -1421,7 +1418,7 @@ public class HttpUtilities {
 						if(hsmTruststore) {
 							org.openspcoop2.utils.certificate.KeyStore ks = hsmManager.getKeystore(request.getTrustStoreType());
 							if(ks==null) {
-								throw new Exception("Keystore not found");
+								throw new UtilsException("Keystore not found");
 							}
 							truststore = ks.getKeystore();
 							truststoreProvider = truststore.getProvider();
@@ -1435,26 +1432,23 @@ public class HttpUtilities {
 								finTrustStore = SSLUtilities.class.getResourceAsStream(request.getTrustStorePath());
 							}
 							if(finTrustStore == null) {
-								throw new Exception("Keystore ["+request.getTrustStorePath()+"] not found");
+								throw new UtilsException("Keystore ["+request.getTrustStorePath()+"] not found");
 							}
-							truststore = KeyStore.getInstance(request.getTrustStoreType()); // JKS,PKCS12,jceks,bks,uber,gkr
-							truststore.load(finTrustStore, request.getTrustStorePassword().toCharArray());
+							truststore = KeystoreUtils.readKeystore(finTrustStore, request.getTrustStoreType(), request.getTrustStorePassword());
 						}
 					}
 										
 					TrustManagerFactory trustManagerFactory = null;
 					// NO: no such algorithm: PKIX for provider SunPKCS11-xxx
-					//if(truststoreProvider!=null) {
+					/**if(truststoreProvider!=null) {
 					//	trustManagerFactory = TrustManagerFactory.getInstance("PKIX", truststoreProvider);
 					//}
-					//else {
+					//else {*/
 					trustManagerFactory = TrustManagerFactory.getInstance("PKIX");
-					//}
 					
 					Provider sigProvider = null;					
 					CertPathTrustManagerParameters params = SSLUtilities.buildCertPathTrustManagerParameters(truststore, request.getCrlStore(), request.getCrlPath(), sigProvider);
 					trustManagerFactory.init(params);
-					//trustManagerFactory.init(truststore);
 					tm = trustManagerFactory.getTrustManagers();
 				}
 				
@@ -1525,7 +1519,7 @@ public class HttpUtilities {
 			if(requestHeaders!=null && requestHeaders.size()>0){
 				Iterator<String> itReq = requestHeaders.keySet().iterator();
 				while (itReq.hasNext()) {
-					String key = (String) itReq.next();
+					String key = itReq.next();
 					List<String> values = requestHeaders.get(key);
 					if(values!=null && !values.isEmpty()) {
 						for (String value : values) {
@@ -1553,7 +1547,7 @@ public class HttpUtilities {
 			// Spedizione byte
 			if(httpContent.isDoOutput() && request.getContent() != null){
 				OutputStream out = httpConn.getOutputStream();
-				//System.out.println("Classe '"+out.getClass().getName()+"'");
+				/**System.out.println("Classe '"+out.getClass().getName()+"'");*/
 				if(sendThrottling) {
 					int lengthSendContent = request.getContent().length;
 					for (int i = 0; i < lengthSendContent; ) {
@@ -1565,7 +1559,7 @@ public class HttpUtilities {
 						out.write(request.getContent(),i,length);
 						i = i+length;
 						out.flush();
-						//System.out.println("Spediti "+length+" bytes");
+						/**System.out.println("Spediti "+length+" bytes");*/
 						Utilities.sleep(request.getThrottlingSendMs());
 					}
 				}
@@ -1620,11 +1614,6 @@ public class HttpUtilities {
 						is = httpConn.getErrorStream();
 					}
 				}
-//				byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
-//				int readByte = 0;
-//				while((readByte = is.read(readB))!= -1){
-//					outResponse.write(readB,0,readByte);
-//				}
 				CopyStream.copy(is, outResponse);
 				is.close();
 				outResponse.flush();
@@ -1885,7 +1874,7 @@ public class HttpUtilities {
 	public static void validateUri(String uri,boolean checkEsistenzaFile) throws UtilsException,java.net.MalformedURLException{
 		
 		if (uri.startsWith("http://")
-				|| uri.startsWith("file://")) {
+				|| uri.startsWith(TEST_FILE_ORIGIN)) {
 
 			if(checkEsistenzaFile)
 				HttpUtilities.requestHTTPFile(uri);

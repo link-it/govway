@@ -3,3 +3,9 @@ Tutti i keystore jks in questa directory sono arricchiti del certificato 'Erogat
 NOTA: i keystore multipleOU*.jks sono differenti da quelli presenti all'interno della directory omonimo per il motivo di cui sopra
 
 Nel truststore erogatore.jks sono stati inseriti anche i certificati delle chiavi presenti in protocolli/modipa/example/keys/xca/ExampleOrganization* per poter essere utilizzate nei canali TLS.
+
+
+Per creare i keystore a partire da p12:
+keytool -importkeystore -srcstorepass openspcoopjks -srckeypass openspcoop  -alias "soggetto1" -srckeystore soggetto1.jks -srcstoretype JKS -destkeystore soggetto1.p12 -deststorepass openspcoop -deststoretype PKCS12
+keytool -importkeystore -srcstorepass openspcoop -srckeystore soggetto1.p12 -alias "soggetto1" -srcstoretype PKCS12 -destkeystore soggetto1ContainsP12.p12 -deststorepass openspcoop -deststoretype PKCS12
+keytool -importkeystore -srcstorepass openspcoop -srckeystore soggetto1.p12 -alias "soggetto1" -srcstoretype PKCS12 -destkeystore soggetto1ContainsP12.jks -deststorepass openspcoopjks -destkeypass openspcoop -deststoretype JKS

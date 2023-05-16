@@ -21,7 +21,6 @@
 
 package org.openspcoop2.security.message.jose;
 
-import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -51,6 +50,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.certificate.KeyStore;
+import org.openspcoop2.utils.certificate.KeystoreUtils;
 import org.openspcoop2.utils.certificate.remote.IRemoteStoreProvider;
 import org.openspcoop2.utils.certificate.remote.RemoteKeyType;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
@@ -862,10 +862,7 @@ public class JOSEUtils {
 							else {
 								java.security.KeyStore keystore = null;
 								try {
-									keystore = java.security.KeyStore.getInstance(type);
-									try(ByteArrayInputStream bin = new ByteArrayInputStream(content)){
-										keystore.load(bin, password!=null ? password.toCharArray() : null);
-									}
+									keystore = KeystoreUtils.readKeystore(content, type, password);
 								}catch(Exception e) {
 									log.error("Errore durante istanziazione del keystore ottenuto via http '"+file+"': "+e.getMessage(),e);
 									keystore = null;

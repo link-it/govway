@@ -20,6 +20,7 @@
 
 package org.openspcoop2.utils.certificate.test;
 
+import java.security.Security;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -70,6 +71,8 @@ public class CertificateTest {
 		testJKS();
 
 		testPKCS12();
+		
+		testPKCS12CreatedFromPKCS12();
 
 		testDER();
 
@@ -93,6 +96,13 @@ public class CertificateTest {
 				
 	}
 
+	private static void initBC() {
+		Security.insertProviderAt(new org.bouncycastle.jce.provider.BouncyCastleProvider(), 2); // lasciare alla posizione 1 il provider 'SUN'
+	}
+	private static void releaseBC() {
+		Security.removeProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
+	}
+	
 	public static void testJKS() throws Exception {
 
 		System.out.println("========================= JKS ==============================");
@@ -104,6 +114,17 @@ public class CertificateTest {
 		Certificate c3 =		
 				ArchiveLoader.load(ArchiveType.JKS, Utilities.getAsByteArray(CertificateTest.class.getResourceAsStream(PREFIX+"govway_test_3.jks")), ALIAS_3, PASSWORD);
 		_test(c1_loadByPosition, c2_loadByAlias, c3);
+		
+		List<String> aliases = ArchiveLoader.readAliasesInKeystoreJKS(Utilities.getAsByteArray(CertificateTest.class.getResourceAsStream(PREFIX+"govway_test.jks")), PASSWORD);
+		System.out.println("\n");
+		for (String alias : aliases) {
+			if(ALIAS_1.equals(alias)){
+				System.out.println("alias ["+alias+"]");
+			}
+			else {
+				throw new Exception("Alias ["+alias+"] non atteso");
+			}
+		}
 
 	}
 	
@@ -169,6 +190,48 @@ public class CertificateTest {
 				ArchiveLoader.load(ArchiveType.PKCS12, Utilities.getAsByteArray(CertificateTest.class.getResourceAsStream(PREFIX+"govway_test_3.p12")), ALIAS_3, PASSWORD);
 		_test(c1_loadByPosition, c2_loadByAlias, c3);
 
+		List<String> aliases = ArchiveLoader.readAliasesInKeystorePKCS12(Utilities.getAsByteArray(CertificateTest.class.getResourceAsStream(PREFIX+"govway_test.p12")), PASSWORD);
+		System.out.println("\n");
+		for (String alias : aliases) {
+			if(ALIAS_1.equals(alias)){
+				System.out.println("alias ["+alias+"]");
+			}
+			else {
+				throw new Exception("Alias ["+alias+"] non atteso");
+			}
+		}
+	}
+	
+	public static void testPKCS12CreatedFromPKCS12() throws Exception {
+
+		initBC();
+		try {
+	
+			System.out.println("========================= PKCS12 (createdFromPkcs12) ==============================");
+	
+			Certificate c1_loadByPosition = 
+					ArchiveLoader.load(ArchiveType.PKCS12, Utilities.getAsByteArray(CertificateTest.class.getResourceAsStream(PREFIX+"govway_test_fromp12.p12")), 0, PASSWORD);
+			Certificate c2_loadByAlias = 
+					ArchiveLoader.load(ArchiveType.PKCS12, Utilities.getAsByteArray(CertificateTest.class.getResourceAsStream(PREFIX+"govway_test_2_fromp12.p12")), ALIAS_2, PASSWORD);
+			Certificate c3 =		
+					ArchiveLoader.load(ArchiveType.PKCS12, Utilities.getAsByteArray(CertificateTest.class.getResourceAsStream(PREFIX+"govway_test_3_fromp12.p12")), ALIAS_3, PASSWORD);
+			_test(c1_loadByPosition, c2_loadByAlias, c3);
+
+			List<String> aliases = ArchiveLoader.readAliasesInKeystorePKCS12(Utilities.getAsByteArray(CertificateTest.class.getResourceAsStream(PREFIX+"govway_test_fromp12.p12")), PASSWORD);
+			System.out.println("\n");
+			for (String alias : aliases) {
+				if(ALIAS_1.equals(alias)){
+					System.out.println("alias ["+alias+"]");
+				}
+				else {
+					throw new Exception("Alias ["+alias+"] non atteso");
+				}
+			}
+			
+		}finally {
+			releaseBC();
+		}
+			
 	}
 
 	public static void testDER() throws Exception {

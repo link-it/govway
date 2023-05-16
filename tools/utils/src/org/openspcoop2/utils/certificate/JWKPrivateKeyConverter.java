@@ -39,7 +39,7 @@ public class JWKPrivateKeyConverter {
 	public static void main(String [] args) throws UtilsException {
 		
 		if(args==null || args.length<3) {
-			throw new UtilsException("ERROR: argomenti non forniti (USAGE: JWKPrivateKeyConverter pathPublicKey pathPrivateKey pathJWK [kid] [jwkset(true/false)] [pretty(true/false)])");
+			throw new UtilsException("ERROR: argomenti non forniti (USAGE: JWKPrivateKeyConverter pathPublicKey pathPrivateKey[:::password] pathJWK [kid] [jwkset(true/false)] [pretty(true/false)])");
 		}
 		
 		try {
@@ -52,13 +52,28 @@ public class JWKPrivateKeyConverter {
 			byte[] publicKey = FileSystemUtilities.readBytesFromFile(pathPublicKey);
 			
 			String pathPrivateKey = args[1];
+			String passwordPrivateKey = null;
+			if(pathPrivateKey.contains(":::")) {
+				String [] tmp = pathPrivateKey.split(":::");
+				if(tmp.length!=2) {
+					throw new UtilsException("Path private key with wrong format");
+				}
+				pathPrivateKey = tmp[0];
+				passwordPrivateKey = tmp[1];
+			}
 			byte[] privateKey = FileSystemUtilities.readBytesFromFile(pathPrivateKey);
 			
 			KeyUtils keyUtils = new KeyUtils(KeyUtils.ALGO_RSA);
 			
 			PublicKey pKey = keyUtils.getPublicKey(publicKey);
 			
-			PrivateKey privKey = keyUtils.getPrivateKey(privateKey);
+			PrivateKey privKey = null;
+			if(passwordPrivateKey!=null) {
+				privKey = keyUtils.getPrivateKey(privateKey, passwordPrivateKey);
+			}
+			else {
+				privKey = keyUtils.getPrivateKey(privateKey);
+			}
 			
 			String pathJWK = args[2];
 						

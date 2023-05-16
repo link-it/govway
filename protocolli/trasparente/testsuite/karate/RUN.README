@@ -408,6 +408,9 @@ Di seguito vengono descritti i test del package 'connettori':
 - 'override_jvm', verifica la funzionalità di overriding delle configurazioni jvm per gli endpoint https
    ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.override_jvm
 
+- 'tls', verifica la funzionalità tls
+   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.tls
+
 Di seguito vengono descritti i test del package 'token':
 
 - 'attribute_authority', verifica l'interazione con le AttributeAuthority
