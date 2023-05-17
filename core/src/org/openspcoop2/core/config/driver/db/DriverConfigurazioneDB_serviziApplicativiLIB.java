@@ -102,9 +102,9 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 			String tipoSA = aSA.getTipo();
 			int useAsClient = aSA.getUseAsClient() ? CostantiDB.TRUE : CostantiDB.FALSE;
 			String descrizione = aSA.getDescrizione();
-			DriverConfigurazioneDB_LIB.log.debug("get ID Soggetto con tipo["+tipoProprietario+"] e nome["+nomeProprietario+"]");
-			long idProprietario = DBUtils.getIdSoggetto(nomeProprietario, tipoProprietario, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
-			DriverConfigurazioneDB_LIB.log.debug("get ID Soggetto con tipo["+tipoProprietario+"] e nome["+nomeProprietario+"] : "+idProprietario);
+			DriverConfigurazioneDBLib.log.debug("get ID Soggetto con tipo["+tipoProprietario+"] e nome["+nomeProprietario+"]");
+			long idProprietario = DBUtils.getIdSoggetto(nomeProprietario, tipoProprietario, con, DriverConfigurazioneDBLib.tipoDB,DriverConfigurazioneDBLib.tabellaSoggetti);
+			DriverConfigurazioneDBLib.log.debug("get ID Soggetto con tipo["+tipoProprietario+"] e nome["+nomeProprietario+"] : "+idProprietario);
 			InvocazionePorta invPorta = aSA.getInvocazionePorta();
 			InvocazioneServizio invServizio = aSA.getInvocazioneServizio();
 			RispostaAsincrona ricezione = aSA.getRispostaAsincrona();
@@ -123,7 +123,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 			switch (type) {
 			case CREATE:
 				// create
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addInsertTable(CostantiDB.SERVIZI_APPLICATIVI);
 				sqlQueryObject.addInsertField("nome", "?");
 				sqlQueryObject.addInsertField("tipo", "?");
@@ -212,10 +212,10 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				// RicezioneRisposta
 				stm.setInt(index++, (ricezione != null && (CostantiConfigurazione.ABILITATO.equals(ricezione.getSbustamentoSoap())) ? CostantiDB.TRUE : CostantiDB.FALSE));
 				stm.setInt(index++, (ricezione != null && (!CostantiConfigurazione.DISABILITATO.equals(ricezione.getSbustamentoInformazioniProtocollo())) ? CostantiDB.TRUE : CostantiDB.FALSE));
-				stm.setString(index++, ricezione != null ? DriverConfigurazioneDB_LIB.getValue(ricezione.getGetMessage()) : null);
+				stm.setString(index++, ricezione != null ? DriverConfigurazioneDBLib.getValue(ricezione.getGetMessage()) : null);
 				// setto credenziali risp
 				credenzialiInvocazione = ricezione != null ? ricezione.getCredenziali() : null;
-				stm.setString(index++, (ricezione != null ? DriverConfigurazioneDB_LIB.getValue(ricezione.getAutenticazione()) : null)); //l'autenticazione e' quella della risposta asincrona
+				stm.setString(index++, (ricezione != null ? DriverConfigurazioneDBLib.getValue(ricezione.getAutenticazione()) : null)); //l'autenticazione e' quella della risposta asincrona
 				stm.setString(index++, (credenzialiInvocazione != null ? credenzialiInvocazione.getUser() : null));
 				stm.setString(index++, (credenzialiInvocazione != null ? credenzialiInvocazione.getPassword() : null));
 				// setto idconnettore risp
@@ -224,10 +224,10 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				// InvocazioneServizio
 				stm.setInt(index++, (invServizio != null && (CostantiConfigurazione.ABILITATO.equals(invServizio.getSbustamentoSoap())) ? CostantiDB.TRUE : CostantiDB.FALSE));
 				stm.setInt(index++, (invServizio != null && (!CostantiConfigurazione.DISABILITATO.equals(invServizio.getSbustamentoInformazioniProtocollo())) ? CostantiDB.TRUE : CostantiDB.FALSE));
-				stm.setString(index++, invServizio != null ? DriverConfigurazioneDB_LIB.getValue(invServizio.getGetMessage()) : null);
+				stm.setString(index++, invServizio != null ? DriverConfigurazioneDBLib.getValue(invServizio.getGetMessage()) : null);
 				// setto credenziali inv
 				credenzialiInvocazione = invServizio != null ? invServizio.getCredenziali() : null;
-				stm.setString(index++, (invServizio != null ? DriverConfigurazioneDB_LIB.getValue(invServizio.getAutenticazione()) : null));//l'autenticazione e' quella dell invocazione servizio
+				stm.setString(index++, (invServizio != null ? DriverConfigurazioneDBLib.getValue(invServizio.getAutenticazione()) : null));//l'autenticazione e' quella dell invocazione servizio
 				stm.setString(index++, (credenzialiInvocazione != null ? credenzialiInvocazione.getUser() : null));
 				stm.setString(index++, (credenzialiInvocazione != null ? credenzialiInvocazione.getPassword() : null));
 				// setto idconnettore inv
@@ -238,13 +238,13 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 
 				// InvocazionePorta
 				gestErr = invPorta != null ? invPorta.getGestioneErrore() : null;
-				fault = (gestErr != null ? DriverConfigurazioneDB_LIB.getValue(gestErr.getFault()) : null);
+				fault = (gestErr != null ? DriverConfigurazioneDBLib.getValue(gestErr.getFault()) : null);
 				stm.setString(index++, fault);
 				// setto credenziali invocaizone porta
 				// per il momento c'e' soltato una credenziale,quindi un solo
 				// oggetto nella lista
 				credenzialiInvocazionePorta = (invPorta != null && invPorta.sizeCredenzialiList() > 0 ? invPorta.getCredenziali(0) : null);
-				stm.setString(index++, (credenzialiInvocazionePorta != null ? DriverConfigurazioneDB_LIB.getValue(credenzialiInvocazionePorta.getTipo()) : null));
+				stm.setString(index++, (credenzialiInvocazionePorta != null ? DriverConfigurazioneDBLib.getValue(credenzialiInvocazionePorta.getTipo()) : null));
 				stm.setString(index++, (credenzialiInvocazionePorta != null ? credenzialiInvocazionePorta.getUser() : null));
 				stm.setString(index++, (credenzialiInvocazionePorta != null ? credenzialiInvocazionePorta.getPassword() : null));
 				
@@ -275,7 +275,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getCertificate()!=null) {
 					certificate = credenzialiInvocazionePorta.getCertificate();
 				}
-				IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(DriverConfigurazioneDB_LIB.tipoDB);
+				IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(DriverConfigurazioneDBLib.tipoDB);
 				jdbcAdapter.setBinaryData(stm, index++, certificate);
 				if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.isCertificateStrictVerification()) {
 					stm.setInt(index++, CostantiDB.TRUE);
@@ -288,18 +288,18 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 
 				// aggiungo gestione invio/risposta per riferimento
 				// invocazione servizio
-				stm.setString(index++, invServizio != null ? DriverConfigurazioneDB_LIB.getValue(invServizio.getInvioPerRiferimento()) : null);
-				stm.setString(index++, invServizio != null ? DriverConfigurazioneDB_LIB.getValue(invServizio.getRispostaPerRiferimento()) : null);
+				stm.setString(index++, invServizio != null ? DriverConfigurazioneDBLib.getValue(invServizio.getInvioPerRiferimento()) : null);
+				stm.setString(index++, invServizio != null ? DriverConfigurazioneDBLib.getValue(invServizio.getRispostaPerRiferimento()) : null);
 				// invocazione porta
-				stm.setString(index++, invPorta != null ? DriverConfigurazioneDB_LIB.getValue(invPorta.getInvioPerRiferimento()) : null);
+				stm.setString(index++, invPorta != null ? DriverConfigurazioneDBLib.getValue(invPorta.getInvioPerRiferimento()) : null);
 				// ricezione risposta
-				stm.setString(index++, ricezione != null ? DriverConfigurazioneDB_LIB.getValue(ricezione.getInvioPerRiferimento()) : null);
-				stm.setString(index++, ricezione != null ? DriverConfigurazioneDB_LIB.getValue(ricezione.getRispostaPerRiferimento()) : null);
+				stm.setString(index++, ricezione != null ? DriverConfigurazioneDBLib.getValue(ricezione.getInvioPerRiferimento()) : null);
+				stm.setString(index++, ricezione != null ? DriverConfigurazioneDBLib.getValue(ricezione.getRispostaPerRiferimento()) : null);
 				// sbustamento info protocolo
 				stm.setInt(index++, (invPorta != null && (!CostantiConfigurazione.DISABILITATO.equals(invPorta.getSbustamentoInformazioniProtocollo())) ? CostantiDB.TRUE : CostantiDB.FALSE));
 				//Invocazione Porta : fault_actor, generic_fault_code, prefix_fault_code
 				stm.setString(index++, gestErr!=null ? gestErr.getFaultActor() : null);
-				stm.setString(index++, gestErr!=null ? DriverConfigurazioneDB_LIB.getValue(gestErr.getGenericFaultCode()) : null);
+				stm.setString(index++, gestErr!=null ? DriverConfigurazioneDBLib.getValue(gestErr.getGenericFaultCode()) : null);
 				stm.setString(index++, gestErr!=null ? gestErr.getPrefixFaultCode() : null);
 								
 				//tipologia erogazione/fruizione
@@ -308,10 +308,10 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				
 				n = stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Inserted " + n + " row(s)");
+				DriverConfigurazioneDBLib.log.debug("Inserted " + n + " row(s)");
 
 				try {
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
 					sqlQueryObject.addSelectField("id");
 					sqlQueryObject.addWhereCondition("id_soggetto = ?");
@@ -348,7 +348,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 							aSA.getRispostaAsincrona().getGestioneErrore(), idProprietario, idServizioApplicativo, false, con);
 					
 					try {
-						ISQLQueryObject sqlQueryObjectUpdate = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						ISQLQueryObject sqlQueryObjectUpdate = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObjectUpdate.addUpdateTable(CostantiDB.SERVIZI_APPLICATIVI);
 						sqlQueryObjectUpdate.addUpdateField("id_gestione_errore_risp", "?");
 						sqlQueryObjectUpdate.addWhereCondition("id = ?");
@@ -372,7 +372,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 							aSA.getInvocazioneServizio().getGestioneErrore(), idProprietario, idServizioApplicativo, true, con);
 					
 					try {
-						ISQLQueryObject sqlQueryObjectUpdate = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						ISQLQueryObject sqlQueryObjectUpdate = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObjectUpdate.addUpdateTable(CostantiDB.SERVIZI_APPLICATIVI);
 						sqlQueryObjectUpdate.addUpdateField("id_gestione_errore_inv", "?");
 						sqlQueryObjectUpdate.addWhereCondition("id = ?");
@@ -393,7 +393,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				if(invPorta!=null && invPorta.getRuoli()!=null && invPorta.getRuoli().sizeRuoloList()>0){
 					for (int i = 0; i < invPorta.getRuoli().sizeRuoloList(); i++) {
 						Ruolo ruolo = invPorta.getRuoli().getRuolo(i);
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.SERVIZI_APPLICATIVI_RUOLI);
 						sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
 						sqlQueryObject.addInsertField("ruolo", "?");
@@ -404,11 +404,11 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDB_LIB.log.debug("Aggiunto ruolo[" + ruolo.getNome() + "] al servizioApplicativo "+idServizioApplicativo);
+						DriverConfigurazioneDBLib.log.debug("Aggiunto ruolo[" + ruolo.getNome() + "] al servizioApplicativo "+idServizioApplicativo);
 					}
 				}
 				
-				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " ruoli al servizioApplicativo "+idServizioApplicativo);
+				DriverConfigurazioneDBLib.log.debug("Aggiunti " + n + " ruoli al servizioApplicativo "+idServizioApplicativo);
 				
 				
 				// Credenziali (le credenziali in questa tabella partono dal numero maggiore di 1)
@@ -416,7 +416,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				if(invPorta!=null && invPorta.sizeCredenzialiList()>1){
 					for (int i = 1; i < invPorta.sizeCredenzialiList(); i++) {
 						Credenziali credenziale = invPorta.getCredenziali(i);
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI);
 						sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
 						sqlQueryObject.addInsertField("subject", "?");
@@ -458,7 +458,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 						if(credenziale!=null && credenziale.getCertificate()!=null) {
 							certificateCredenziale = credenziale.getCertificate();
 						}
-						jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(DriverConfigurazioneDB_LIB.tipoDB);
+						jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(DriverConfigurazioneDBLib.tipoDB);
 						jdbcAdapter.setBinaryData(stm, index++, certificateCredenziale);
 						if(credenziale!=null && credenziale.isCertificateStrictVerification()) {
 							stm.setInt(index++, CostantiDB.TRUE);
@@ -470,11 +470,11 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDB_LIB.log.debug("Aggiunta credenziale al servizioApplicativo "+idServizioApplicativo);
+						DriverConfigurazioneDBLib.log.debug("Aggiunta credenziale al servizioApplicativo "+idServizioApplicativo);
 					}
 				}
 				
-				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " credenziali al servizioApplicativo "+idServizioApplicativo);
+				DriverConfigurazioneDBLib.log.debug("Aggiunte " + n + " credenziali al servizioApplicativo "+idServizioApplicativo);
 				
 				
 				// Proprieta
@@ -483,7 +483,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 					for (int i = 0; i < proprieta.size(); i++) {
 						Proprieta prop = proprieta.get(i);
 						
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.SERVIZI_APPLICATIVI_PROPS);
 						sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
 						sqlQueryObject.addInsertField("nome", "?");
@@ -496,16 +496,16 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDB_LIB.log.debug("Aggiunta proprieta' [" + prop.getNome() + "] al servizioApplicativo "+idServizioApplicativo);
+						DriverConfigurazioneDBLib.log.debug("Aggiunta proprieta' [" + prop.getNome() + "] al servizioApplicativo "+idServizioApplicativo);
 					}
 				}
 				
-				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " proprieta' al servizioApplicativo "+idServizioApplicativo);
+				DriverConfigurazioneDBLib.log.debug("Aggiunte " + n + " proprieta' al servizioApplicativo "+idServizioApplicativo);
 				
 				
 				// ProtocolProperties
-				DriverConfigurazioneDB_LIB.CRUDProtocolProperty(CostantiDB.CREATE, aSA.getProtocolPropertyList(), 
-						idServizioApplicativo, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, DriverConfigurazioneDB_LIB.tipoDB);
+				DriverConfigurazioneDBLib.crudProtocolProperty(CostantiDB.CREATE, aSA.getProtocolPropertyList(), 
+						idServizioApplicativo, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, DriverConfigurazioneDBLib.tipoDB);
 				
 				
 				break;
@@ -529,17 +529,17 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				if (oldTipoProprietario == null || oldTipoProprietario.equals(""))
 					oldTipoProprietario = tipoProprietario;
 
-				long oldIdProprietario = DBUtils.getIdSoggetto(oldNomeProprietario, oldTipoProprietario, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+				long oldIdProprietario = DBUtils.getIdSoggetto(oldNomeProprietario, oldTipoProprietario, con, DriverConfigurazioneDBLib.tipoDB,DriverConfigurazioneDBLib.tabellaSoggetti);
 				// Puo' darsi che l'old soggetto e il nuovo soggetto siano la stesso soggetto della tabella. E' stato cambiato il nome.
 				if(oldIdProprietario <=0) {
-					oldIdProprietario = DBUtils.getIdSoggetto(nomeProprietario, tipoProprietario, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+					oldIdProprietario = DBUtils.getIdSoggetto(nomeProprietario, tipoProprietario, con, DriverConfigurazioneDBLib.tipoDB,DriverConfigurazioneDBLib.tabellaSoggetti);
 				}
 				if(oldIdProprietario <=0) 
 					throw new DriverConfigurazioneException("Impossibile recuperare l'id del Soggetto Proprietario del Servizio Applicativo");
 				
 				
 				// update
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addUpdateTable(CostantiDB.SERVIZI_APPLICATIVI);
 				sqlQueryObject.addUpdateField("tipo", "?");
 				sqlQueryObject.addUpdateField("as_client", "?");
@@ -595,10 +595,10 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				sqlQuery = sqlQueryObject.createSQLUpdate();
 				stm = con.prepareStatement(sqlQuery);
 
-				idServizioApplicativo = getIdServizioApplicativo(oldNomeSA, oldTipoProprietario, oldNomeProprietario, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+				idServizioApplicativo = getIdServizioApplicativo(oldNomeSA, oldTipoProprietario, oldNomeProprietario, con, DriverConfigurazioneDBLib.tipoDB,DriverConfigurazioneDBLib.tabellaSoggetti);
 				// Puo' darsi che l'old soggetto e il nuovo soggetto siano la stesso soggetto della tabella. E' stato cambiato il nome.
 				if(idServizioApplicativo<=0) {
-					idServizioApplicativo = getIdServizioApplicativo(oldNomeSA, tipoProprietario, nomeProprietario, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+					idServizioApplicativo = getIdServizioApplicativo(oldNomeSA, tipoProprietario, nomeProprietario, con, DriverConfigurazioneDBLib.tipoDB,DriverConfigurazioneDBLib.tabellaSoggetti);
 				}
 				if (idServizioApplicativo <= 0)
 					throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDServizioApplicativo(UPDATE)] ID del ServizioApplicativo necessario per l'aggiornamento.");
@@ -636,14 +636,14 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 
 				String pattern = "Aggiorno Connettore [{0}] : id [{1}] oldNome [{2}] newNome [{2}]";
 
-				DriverConfigurazioneDB_LIB.log.debug(MessageFormat.format(pattern, "Risposta Asincrona",idConnettoreRisp, nomeConnettoreRisp, newNomeConnettoreRisp));
+				DriverConfigurazioneDBLib.log.debug(MessageFormat.format(pattern, "Risposta Asincrona",idConnettoreRisp, nomeConnettoreRisp, newNomeConnettoreRisp));
 				//aggiorno connettore risp
 				connettoreRisp.setNome(newNomeConnettoreRisp);
 				connettoreRisp.setId(idConnettoreRisp);
 				DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(CostantiDB.UPDATE, connettoreRisp, con);
 
 				//aggiorno connettore inv
-				DriverConfigurazioneDB_LIB.log.debug(MessageFormat.format(pattern, "Invocazione Servizio",idConnettoreInv, nomeConnettoreInv, newNomeConnettoreInv));
+				DriverConfigurazioneDBLib.log.debug(MessageFormat.format(pattern, "Invocazione Servizio",idConnettoreInv, nomeConnettoreInv, newNomeConnettoreInv));
 				connettoreInv.setNome(newNomeConnettoreInv);
 				connettoreInv.setId(idConnettoreInv);
 				DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(CostantiDB.UPDATE, connettoreInv, con);
@@ -660,10 +660,10 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				// RicezioneRisposta
 				stm.setInt(index++, (ricezione != null && (CostantiConfigurazione.ABILITATO.equals(ricezione.getSbustamentoSoap())) ? CostantiDB.TRUE : CostantiDB.FALSE));
 				stm.setInt(index++, (ricezione != null && (!CostantiConfigurazione.DISABILITATO.equals(ricezione.getSbustamentoInformazioniProtocollo())) ? CostantiDB.TRUE : CostantiDB.FALSE));
-				stm.setString(index++, ricezione != null ? DriverConfigurazioneDB_LIB.getValue(ricezione.getGetMessage()) : null);
+				stm.setString(index++, ricezione != null ? DriverConfigurazioneDBLib.getValue(ricezione.getGetMessage()) : null);
 				// setto credenziali risp
 				credenzialiInvocazione = ricezione != null ? ricezione.getCredenziali() : null;
-				stm.setString(index++, (ricezione != null ? DriverConfigurazioneDB_LIB.getValue(ricezione.getAutenticazione()) : null));
+				stm.setString(index++, (ricezione != null ? DriverConfigurazioneDBLib.getValue(ricezione.getAutenticazione()) : null));
 				stm.setString(index++, (credenzialiInvocazione != null ? credenzialiInvocazione.getUser() : null));
 				stm.setString(index++, (credenzialiInvocazione != null ? credenzialiInvocazione.getPassword() : null));
 				// setto idconnettore risp
@@ -672,10 +672,10 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				// InvocazioneServizio
 				stm.setInt(index++, (invServizio != null && (CostantiConfigurazione.ABILITATO.equals(invServizio.getSbustamentoSoap())) ? CostantiDB.TRUE : CostantiDB.FALSE));
 				stm.setInt(index++, (invServizio != null && (!CostantiConfigurazione.DISABILITATO.equals(invServizio.getSbustamentoInformazioniProtocollo())) ? CostantiDB.TRUE : CostantiDB.FALSE));
-				stm.setString(index++, invServizio != null ? DriverConfigurazioneDB_LIB.getValue(invServizio.getGetMessage()) : null);
+				stm.setString(index++, invServizio != null ? DriverConfigurazioneDBLib.getValue(invServizio.getGetMessage()) : null);
 				// setto credenziali inv
 				credenzialiInvocazione = invServizio != null ? invServizio.getCredenziali() : null;
-				stm.setString(index++, (invServizio != null ? DriverConfigurazioneDB_LIB.getValue(invServizio.getAutenticazione()) : null));
+				stm.setString(index++, (invServizio != null ? DriverConfigurazioneDBLib.getValue(invServizio.getAutenticazione()) : null));
 				stm.setString(index++, (credenzialiInvocazione != null ? credenzialiInvocazione.getUser() : null));
 				stm.setString(index++, (credenzialiInvocazione != null ? credenzialiInvocazione.getPassword() : null));
 				// setto idconnettore inv
@@ -683,13 +683,13 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 
 				// InvocazionePorta
 				gestErr = invPorta != null ? invPorta.getGestioneErrore() : null;
-				fault = (gestErr != null ? DriverConfigurazioneDB_LIB.getValue(gestErr.getFault()) : null);
+				fault = (gestErr != null ? DriverConfigurazioneDBLib.getValue(gestErr.getFault()) : null);
 				stm.setString(index++, fault);
 				// setto credenziali invocaizone porta
 				// per il momento c'e' soltato una credenziale,quindi un solo
 				// oggetto nella lista
 				credenzialiInvocazionePorta = (invPorta != null && invPorta.sizeCredenzialiList() > 0 ? invPorta.getCredenziali(0) : null);
-				stm.setString(index++, (credenzialiInvocazionePorta != null ? DriverConfigurazioneDB_LIB.getValue(credenzialiInvocazionePorta.getTipo()) : null));
+				stm.setString(index++, (credenzialiInvocazionePorta != null ? DriverConfigurazioneDBLib.getValue(credenzialiInvocazionePorta.getTipo()) : null));
 				stm.setString(index++, (credenzialiInvocazionePorta != null ? credenzialiInvocazionePorta.getUser() : null));
 				stm.setString(index++, (credenzialiInvocazionePorta != null ? credenzialiInvocazionePorta.getPassword() : null));
 				
@@ -720,7 +720,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getCertificate()!=null) {
 					certificate = credenzialiInvocazionePorta.getCertificate();
 				}
-				jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(DriverConfigurazioneDB_LIB.tipoDB);
+				jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(DriverConfigurazioneDBLib.tipoDB);
 				jdbcAdapter.setBinaryData(stm, index++, certificate);
 				if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.isCertificateStrictVerification()) {
 					stm.setInt(index++, CostantiDB.TRUE);
@@ -733,18 +733,18 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 
 				// aggiungo gestione invio/risposta per riferimento
 				// invocazione servizio
-				stm.setString(index++, invServizio != null ? DriverConfigurazioneDB_LIB.getValue(invServizio.getInvioPerRiferimento()) : null);
-				stm.setString(index++, invServizio != null ? DriverConfigurazioneDB_LIB.getValue(invServizio.getRispostaPerRiferimento()) : null);
+				stm.setString(index++, invServizio != null ? DriverConfigurazioneDBLib.getValue(invServizio.getInvioPerRiferimento()) : null);
+				stm.setString(index++, invServizio != null ? DriverConfigurazioneDBLib.getValue(invServizio.getRispostaPerRiferimento()) : null);
 				// invocazione porta
-				stm.setString(index++, invPorta != null ? DriverConfigurazioneDB_LIB.getValue(invPorta.getInvioPerRiferimento()) : null);
+				stm.setString(index++, invPorta != null ? DriverConfigurazioneDBLib.getValue(invPorta.getInvioPerRiferimento()) : null);
 				// ricezione risposta
-				stm.setString(index++, ricezione != null ? DriverConfigurazioneDB_LIB.getValue(ricezione.getInvioPerRiferimento()) : null);
-				stm.setString(index++, ricezione != null ? DriverConfigurazioneDB_LIB.getValue(ricezione.getRispostaPerRiferimento()) : null);
+				stm.setString(index++, ricezione != null ? DriverConfigurazioneDBLib.getValue(ricezione.getInvioPerRiferimento()) : null);
+				stm.setString(index++, ricezione != null ? DriverConfigurazioneDBLib.getValue(ricezione.getRispostaPerRiferimento()) : null);
 				// protocol info
 				stm.setInt(index++, (invPorta != null && (!CostantiConfigurazione.DISABILITATO.equals(invPorta.getSbustamentoInformazioniProtocollo())) ? CostantiDB.TRUE : CostantiDB.FALSE));
 				//Invocazione Porta : fault_actor, generic_fault_code, prefix_fault_code
 				stm.setString(index++, gestErr!=null ? gestErr.getFaultActor() : null);
-				stm.setString(index++, gestErr!=null ? DriverConfigurazioneDB_LIB.getValue(gestErr.getGenericFaultCode()) : null);
+				stm.setString(index++, gestErr!=null ? DriverConfigurazioneDBLib.getValue(gestErr.getGenericFaultCode()) : null);
 				stm.setString(index++, gestErr!=null ? gestErr.getPrefixFaultCode() : null);
 				//Aggiorno nome servizio applicativo
 				stm.setString(index++, nomeSA);
@@ -775,13 +775,13 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 
 				n = stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Updated " + n + " row(s)");
+				DriverConfigurazioneDBLib.log.debug("Updated " + n + " row(s)");
 
 				
 				
 				// Ruoli
 				
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_APPLICATIVI_RUOLI);
 				sqlQueryObject.addWhereCondition("id_servizio_applicativo=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -789,13 +789,13 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				stm.setLong(1, aSA.getId());
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" ruoli associati al servizioApplicativo "+idServizioApplicativo);
+				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" ruoli associati al servizioApplicativo "+idServizioApplicativo);
 				
 				n=0;
 				if(invPorta!=null && invPorta.getRuoli()!=null && invPorta.getRuoli().sizeRuoloList()>0){
 					for (int i = 0; i < invPorta.getRuoli().sizeRuoloList(); i++) {
 						Ruolo ruolo = invPorta.getRuoli().getRuolo(i);
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.SERVIZI_APPLICATIVI_RUOLI);
 						sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
 						sqlQueryObject.addInsertField("ruolo", "?");
@@ -806,11 +806,11 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDB_LIB.log.debug("Aggiunto ruolo[" + ruolo.getNome() + "] al servizioApplicativo "+idServizioApplicativo);
+						DriverConfigurazioneDBLib.log.debug("Aggiunto ruolo[" + ruolo.getNome() + "] al servizioApplicativo "+idServizioApplicativo);
 					}
 				}
 				
-				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " ruoli al servizioApplicativo "+idServizioApplicativo);
+				DriverConfigurazioneDBLib.log.debug("Aggiunti " + n + " ruoli al servizioApplicativo "+idServizioApplicativo);
 				
 				
 				
@@ -820,7 +820,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				
 				// Credenziali  (le credenziali in questa tabella partono dal numero maggiore di 1)
 				
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI);
 				sqlQueryObject.addWhereCondition("id_servizio_applicativo=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -828,13 +828,13 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				stm.setLong(1, aSA.getId());
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Cancellate "+n+" credenziali associate al servizioApplicativo "+idServizioApplicativo);
+				DriverConfigurazioneDBLib.log.debug("Cancellate "+n+" credenziali associate al servizioApplicativo "+idServizioApplicativo);
 				
 				n=0;
 				if(invPorta!=null && invPorta.sizeCredenzialiList()>1){
 					for (int i = 1; i < invPorta.sizeCredenzialiList(); i++) {
 						Credenziali credenziale = invPorta.getCredenziali(i);
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI);
 						sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
 						sqlQueryObject.addInsertField("subject", "?");
@@ -876,7 +876,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 						if(credenziale!=null && credenziale.getCertificate()!=null) {
 							certificateCredenziale = credenziale.getCertificate();
 						}
-						jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(DriverConfigurazioneDB_LIB.tipoDB);
+						jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(DriverConfigurazioneDBLib.tipoDB);
 						jdbcAdapter.setBinaryData(stm, index++, certificateCredenziale);
 						if(credenziale!=null && credenziale.isCertificateStrictVerification()) {
 							stm.setInt(index++, CostantiDB.TRUE);
@@ -888,17 +888,17 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDB_LIB.log.debug("Aggiunta credenziale al servizioApplicativo "+idServizioApplicativo);
+						DriverConfigurazioneDBLib.log.debug("Aggiunta credenziale al servizioApplicativo "+idServizioApplicativo);
 					}
 				}
 				
-				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " credenziali al servizioApplicativo "+idServizioApplicativo);
+				DriverConfigurazioneDBLib.log.debug("Aggiunte " + n + " credenziali al servizioApplicativo "+idServizioApplicativo);
 				
 				
 				
 				// Proprieta
 				
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_APPLICATIVI_PROPS);
 				sqlQueryObject.addWhereCondition("id_servizio_applicativo=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -906,14 +906,14 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				stm.setLong(1, aSA.getId());
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Cancellate "+n+" proprieta' associate al servizioApplicativo "+idServizioApplicativo);
+				DriverConfigurazioneDBLib.log.debug("Cancellate "+n+" proprieta' associate al servizioApplicativo "+idServizioApplicativo);
 				
 				n=0;
 				if(proprieta!=null && proprieta.size()>0){
 					for (int i = 0; i < proprieta.size(); i++) {
 						Proprieta prop = proprieta.get(i);
 						
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.SERVIZI_APPLICATIVI_PROPS);
 						sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
 						sqlQueryObject.addInsertField("nome", "?");
@@ -926,18 +926,18 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDB_LIB.log.debug("Aggiunta proprieta' [" + prop.getNome() + "] al servizioApplicativo "+idServizioApplicativo);
+						DriverConfigurazioneDBLib.log.debug("Aggiunta proprieta' [" + prop.getNome() + "] al servizioApplicativo "+idServizioApplicativo);
 					}
 				}
 				
-				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " proprieta' al servizioApplicativo "+idServizioApplicativo);
+				DriverConfigurazioneDBLib.log.debug("Aggiunte " + n + " proprieta' al servizioApplicativo "+idServizioApplicativo);
 				
 				
 				
 				
 				// ProtocolProperties
-				DriverConfigurazioneDB_LIB.CRUDProtocolProperty(CostantiDB.UPDATE, aSA.getProtocolPropertyList(), 
-						idServizioApplicativo, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, DriverConfigurazioneDB_LIB.tipoDB);
+				DriverConfigurazioneDBLib.crudProtocolProperty(CostantiDB.UPDATE, aSA.getProtocolPropertyList(), 
+						idServizioApplicativo, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, DriverConfigurazioneDBLib.tipoDB);
 				
 				break;
 
@@ -947,16 +947,16 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				// DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDServizioApplicativo(DELETE)]
 				// id del ServizioApplicativo non valida.");
 
-				DriverConfigurazioneDB_LIB.log.debug("get ID Servizio Applicativo con nome["+nomeSA+"] tipoProprietario["+tipoProprietario+"] nomeProprietario["+nomeProprietario+"]");
-				idServizioApplicativo = getIdServizioApplicativo(nomeSA, tipoProprietario, nomeProprietario, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
-				DriverConfigurazioneDB_LIB.log.debug("get ID Servizio Applicativo: "+idServizioApplicativo); 
+				DriverConfigurazioneDBLib.log.debug("get ID Servizio Applicativo con nome["+nomeSA+"] tipoProprietario["+tipoProprietario+"] nomeProprietario["+nomeProprietario+"]");
+				idServizioApplicativo = getIdServizioApplicativo(nomeSA, tipoProprietario, nomeProprietario, con, DriverConfigurazioneDBLib.tipoDB,DriverConfigurazioneDBLib.tabellaSoggetti);
+				DriverConfigurazioneDBLib.log.debug("get ID Servizio Applicativo: "+idServizioApplicativo); 
 
 				// ProtocolProperties
-				DriverConfigurazioneDB_LIB.CRUDProtocolProperty(CostantiDB.DELETE, null, 
-						idServizioApplicativo, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, DriverConfigurazioneDB_LIB.tipoDB);
+				DriverConfigurazioneDBLib.crudProtocolProperty(CostantiDB.DELETE, null, 
+						idServizioApplicativo, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, DriverConfigurazioneDBLib.tipoDB);
 				
 				// proprieta'
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_APPLICATIVI_PROPS);
 				sqlQueryObject.addWhereCondition("id_servizio_applicativo=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -965,10 +965,10 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				n=stm.executeUpdate();
 				stm.close();
 				if (n > 0)
-					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " proprieta' associate al ServizioApplicativo[" + idServizioApplicativo + "]");
+					DriverConfigurazioneDBLib.log.debug("Deleted " + n + " proprieta' associate al ServizioApplicativo[" + idServizioApplicativo + "]");
 				
 				// credenziali
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI);
 				sqlQueryObject.addWhereCondition("id_servizio_applicativo=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -977,10 +977,10 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				n=stm.executeUpdate();
 				stm.close();
 				if (n > 0)
-					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " credenziali associate al ServizioApplicativo[" + idServizioApplicativo + "]");
+					DriverConfigurazioneDBLib.log.debug("Deleted " + n + " credenziali associate al ServizioApplicativo[" + idServizioApplicativo + "]");
 				
 				// ruoli
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_APPLICATIVI_RUOLI);
 				sqlQueryObject.addWhereCondition("id_servizio_applicativo=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -989,7 +989,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				n=stm.executeUpdate();
 				stm.close();
 				if (n > 0)
-					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " ruoli associati al ServizioApplicativo[" + idServizioApplicativo + "]");
+					DriverConfigurazioneDBLib.log.debug("Deleted " + n + " ruoli associati al ServizioApplicativo[" + idServizioApplicativo + "]");
 				
 				/*
 				 * BUG?? Devo prima eliminare l'associazione
@@ -1057,8 +1057,8 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				 */
 
 
-				DriverConfigurazioneDB_LIB.log.debug("Deleted ...");
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				DriverConfigurazioneDBLib.log.debug("Deleted ...");
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_APPLICATIVI);
 				sqlQueryObject.addWhereCondition("id=?");
 				sqlQueryObject.addWhereCondition("nome=?");
@@ -1069,16 +1069,16 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				stm.setLong(1, idServizioApplicativo);
 				stm.setString(2, nomeSA);
 				stm.setLong(3, idProprietario);
-				DriverConfigurazioneDB_LIB.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idServizioApplicativo,nomeSA,idProprietario));
+				DriverConfigurazioneDBLib.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idServizioApplicativo,nomeSA,idProprietario));
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " row(s)");
+				DriverConfigurazioneDBLib.log.debug("Deleted " + n + " row(s)");
 
 
 				//cancello i connettori
 
 				// Connettore asincrono
-				DriverConfigurazioneDB_LIB.log.debug("Recupero connettore asincrono ...");
+				DriverConfigurazioneDBLib.log.debug("Recupero connettore asincrono ...");
 				if(aSA.getRispostaAsincrona()!=null && aSA.getRispostaAsincrona().getConnettore()!=null){
 					connettoreRisp=aSA.getRispostaAsincrona().getConnettore();
 				}else{
@@ -1087,13 +1087,13 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				}
 				nomeConnettoreRisp = "ConnettoreRISP_" + aSA.getNome()+"_"+aSA.getTipoSoggettoProprietario()+aSA.getNomeSoggettoProprietario();
 				connettoreRisp.setNome(nomeConnettoreRisp);
-				idConnettoreRisp = DBUtils.getIdConnettore(nomeConnettoreRisp, con, DriverConfigurazioneDB_LIB.tipoDB);
-				DriverConfigurazioneDB_LIB.log.debug("Recupero connettore asincrono id["+idConnettoreRisp+"]");
+				idConnettoreRisp = DBUtils.getIdConnettore(nomeConnettoreRisp, con, DriverConfigurazioneDBLib.tipoDB);
+				DriverConfigurazioneDBLib.log.debug("Recupero connettore asincrono id["+idConnettoreRisp+"]");
 				connettoreRisp.setId(idConnettoreRisp);
 
 
 				// Connettore inv servizio
-				DriverConfigurazioneDB_LIB.log.debug("Recupero connettore invocazione servizio ...");
+				DriverConfigurazioneDBLib.log.debug("Recupero connettore invocazione servizio ...");
 				if(aSA.getInvocazioneServizio()!=null && aSA.getInvocazioneServizio().getConnettore()!=null){
 					connettoreInv=aSA.getInvocazioneServizio().getConnettore();
 				}else{
@@ -1102,8 +1102,8 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				}
 				nomeConnettoreInv = "ConnettoreINV_" + aSA.getNome()+"_"+aSA.getTipoSoggettoProprietario()+aSA.getNomeSoggettoProprietario();
 				connettoreInv.setNome(nomeConnettoreInv);
-				idConnettoreInv = DBUtils.getIdConnettore(nomeConnettoreInv, con, DriverConfigurazioneDB_LIB.tipoDB);
-				DriverConfigurazioneDB_LIB.log.debug("Recupero connettore invocazione servizio id["+idConnettoreInv+"]");
+				idConnettoreInv = DBUtils.getIdConnettore(nomeConnettoreInv, con, DriverConfigurazioneDBLib.tipoDB);
+				DriverConfigurazioneDBLib.log.debug("Recupero connettore invocazione servizio id["+idConnettoreInv+"]");
 				connettoreInv.setId(idConnettoreInv);
 
 
@@ -1113,9 +1113,9 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 
 				// se il connettore e' abilitato allora propago le modifiche al
 				// connettore
-				DriverConfigurazioneDB_LIB.log.debug("Delete connettore asincrono ...");
+				DriverConfigurazioneDBLib.log.debug("Delete connettore asincrono ...");
 				DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(CostantiDB.DELETE, connettoreRisp, con);
-				DriverConfigurazioneDB_LIB.log.debug("Delete connettore invocazione servizio ...");
+				DriverConfigurazioneDBLib.log.debug("Delete connettore invocazione servizio ...");
 				DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(CostantiDB.DELETE, connettoreInv, con);
 
 				

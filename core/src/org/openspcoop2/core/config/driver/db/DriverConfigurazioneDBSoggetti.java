@@ -51,11 +51,14 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class DriverConfigurazioneDB_soggettiDriver {
+public class DriverConfigurazioneDBSoggetti {
 
 	private DriverConfigurazioneDB driver = null;
+
+	private static final String ESEGUO_QUERY_PREFIX = "eseguo query : ";
+	private static final String OPERAZIONE_ATOMICA_PREFIX = "operazione this.driver.atomica = ";
 	
-	protected DriverConfigurazioneDB_soggettiDriver(DriverConfigurazioneDB driver) {
+	protected DriverConfigurazioneDBSoggetti(DriverConfigurazioneDB driver) {
 		this.driver = driver;
 	}
 	
@@ -94,8 +97,8 @@ public class DriverConfigurazioneDB_soggettiDriver {
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(this.driver.tabellaSoggetti);
-			sqlQueryObject.addSelectField("tipo_soggetto");
-			sqlQueryObject.addSelectField("nome_soggetto");
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_COLUMN_TIPO_SOGGETTO);
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_COLUMN_NOME_SOGGETTO);
 			sqlQueryObject.addWhereCondition("id = ?");
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 
@@ -103,23 +106,17 @@ public class DriverConfigurazioneDB_soggettiDriver {
 
 			stm.setLong(1, idSoggetto);
 
-			this.driver.logDebug("eseguo query : " + DriverConfigurazioneDB_LIB.formatSQLString(sqlQuery, idSoggetto));
+			this.driver.logDebug(ESEGUO_QUERY_PREFIX + DriverConfigurazioneDBLib.formatSQLString(sqlQuery, idSoggetto));
 			rs = stm.executeQuery();
 
 			if (rs.next()) {
 				idSoggettoObject = new IDSoggetto();
 
-				// String tmp = rs.getString("nomeprov");
-				// soggetto.setNome(( (tmp==null || tmp.equals("") ) ?
-				// null : tmp));
-				idSoggettoObject.setNome(rs.getString("nome_soggetto"));
-				// tmp = rs.getString("tipoprov");
-				// soggetto.setTipo(( (tmp==null || tmp.equals("") ) ?
-				// null : tmp));
-				idSoggettoObject.setTipo(rs.getString("tipo_soggetto"));
+				idSoggettoObject.setNome(rs.getString(CostantiDB.SOGGETTI_COLUMN_NOME_SOGGETTO));
+				idSoggettoObject.setTipo(rs.getString(CostantiDB.SOGGETTI_COLUMN_TIPO_SOGGETTO));
 
 			}else{
-				throw new DriverConfigurazioneNotFound("Nessun risultato trovat eseguendo: "+DriverConfigurazioneDB_LIB.formatSQLString(sqlQuery, idSoggetto));
+				throw new DriverConfigurazioneNotFound("Nessun risultato trovat eseguendo: "+DriverConfigurazioneDBLib.formatSQLString(sqlQuery, idSoggetto));
 			}
 
 			return idSoggettoObject;
@@ -148,20 +145,7 @@ public class DriverConfigurazioneDB_soggettiDriver {
 			throw new DriverConfigurazioneException("[getSoggetto] Parametri Non Validi");
 		}
 
-		// Devi cercare un soggetto con quel tipo e nome (la chiave univoca e'
-		// formata da tipo+nome)
-		//
-		// 1. deve ritornare il soggetto con tipo, nome e dominio
-		// registrato e descrizione.
-		// 3. deve essere impostato anche l'eventuale abilita' di router.
-		/*
-		 * Soggetto sog = new Soggetto();
-		 * sog.setDescrizione(descrizione);
-		 * sog.setIdentificativoPorta(identificativoPorta); sog.setNome(nome);
-		 * sog.setTipo(tipo); sog.setRouter(boolean);
-		 * 
-		 */
-		Soggetto Soggetto = null;
+		Soggetto soggetto = null;
 
 		Connection con = null;
 
@@ -180,7 +164,7 @@ public class DriverConfigurazioneDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug(OPERAZIONE_ATOMICA_PREFIX + this.driver.atomica);
 
 		try {
 			idSoggetto=DBUtils.getIdSoggetto(nomeSogg, tipoSogg, con, this.driver.tipoDB,this.driver.tabellaSoggetti);
@@ -199,13 +183,13 @@ public class DriverConfigurazioneDB_soggettiDriver {
 		}
 
 
-		Soggetto=this.getSoggetto(idSoggetto);
+		soggetto=this.getSoggetto(idSoggetto);
 
-		if(Soggetto==null){
+		if(soggetto==null){
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getSoggetto] Soggetto non Esistente.");
 		}
 
-		return Soggetto;
+		return soggetto;
 	}
 
 	protected void createSoggetto(org.openspcoop2.core.config.Soggetto soggetto) throws DriverConfigurazioneException {
@@ -227,16 +211,13 @@ public class DriverConfigurazioneDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug(OPERAZIONE_ATOMICA_PREFIX + this.driver.atomica);
 
 		try {
 			this.driver.logDebug("CRUDSoggetto type = 1");
 			// creo soggetto
-			DriverConfigurazioneDB_soggettiLIB.CRUDSoggetto(1, soggetto, con);
+			DriverConfigurazioneDBSoggettiLib.CRUDSoggetto(1, soggetto, con);
 
-		} catch (DriverConfigurazioneException qe) {
-			error = true;
-			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createSoggetto] Errore durante la creazione del soggetto : " + qe.getMessage(),qe);
 		} catch (Exception qe) {
 			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createSoggetto] Errore durante la creazione del soggetto : " + qe.getMessage(),qe);
@@ -265,16 +246,13 @@ public class DriverConfigurazioneDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug(OPERAZIONE_ATOMICA_PREFIX + this.driver.atomica);
 
 		try {
 			this.driver.logDebug("CRUDSoggetto type = 2");
 			// UPDATE soggetto
-			DriverConfigurazioneDB_soggettiLIB.CRUDSoggetto(2, soggetto, con);
+			DriverConfigurazioneDBSoggettiLib.CRUDSoggetto(2, soggetto, con);
 
-		} catch (DriverConfigurazioneException qe) {
-			error = true;
-			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateSoggetto] Errore durante la creazione del soggetto : " + qe.getMessage(),qe);
 		} catch (Exception qe) {
 			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateSoggetto] Errore durante la creazione del soggetto : " + qe.getMessage(),qe);
@@ -304,17 +282,14 @@ public class DriverConfigurazioneDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug(OPERAZIONE_ATOMICA_PREFIX + this.driver.atomica);
 
 		try {
 			this.driver.logDebug("CRUDSoggetto type = 3");
 			// DELETE soggetto
-			DriverConfigurazioneDB_soggettiLIB.CRUDSoggetto(3, soggetto, con);
+			DriverConfigurazioneDBSoggettiLib.CRUDSoggetto(3, soggetto, con);
 
-		} catch (DriverConfigurazioneException qe) {
-			error = true;
-			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteSoggetto] Errore durante la creazione del soggetto : " + qe.getMessage(),qe);
-		}  catch (Exception qe) {
+		} catch (Exception qe) {
 			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteSoggetto] Errore durante la creazione del soggetto : " + qe.getMessage(),qe);
 		}finally {
@@ -325,7 +300,7 @@ public class DriverConfigurazioneDB_soggettiDriver {
 	
 	protected Soggetto getRouter() throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 
-		Soggetto Soggetto = null;
+		Soggetto soggetto = null;
 
 		Connection con = null;
 		PreparedStatement stm = null;
@@ -344,7 +319,7 @@ public class DriverConfigurazioneDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug(OPERAZIONE_ATOMICA_PREFIX + this.driver.atomica);
 		long idRouter = -1;
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -357,7 +332,7 @@ public class DriverConfigurazioneDB_soggettiDriver {
 
 			stm.setInt(1, CostantiDB.TRUE);
 
-			this.driver.logDebug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.ABILITATO));
+			this.driver.logDebug(ESEGUO_QUERY_PREFIX + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.ABILITATO));
 			rs = stm.executeQuery();
 
 			// prendo il primo router se c'e' altrimenti lancio eccezione.
@@ -379,13 +354,13 @@ public class DriverConfigurazioneDB_soggettiDriver {
 			this.driver.closeConnection(con);
 		}
 
-		Soggetto=this.getSoggetto(idRouter);
+		soggetto=this.getSoggetto(idRouter);
 		// e' sicuramente un router
-		Soggetto.setRouter(true);
-		return Soggetto;
+		soggetto.setRouter(true);
+		return soggetto;
 	}
 
-	protected List<IDSoggetto> getSoggettiWithSuperuser(String user) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+	protected List<IDSoggetto> getSoggettiWithSuperuser(String user) throws DriverConfigurazioneException {
 
 		List<IDSoggetto> idSoggetti = null;
 
@@ -406,14 +381,14 @@ public class DriverConfigurazioneDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug(OPERAZIONE_ATOMICA_PREFIX + this.driver.atomica);
 
 		try {
-			List<IDSoggetto> idTrovati = new ArrayList<IDSoggetto>();
+			List<IDSoggetto> idTrovati = new ArrayList<>();
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(this.driver.tabellaSoggetti);
-			sqlQueryObject.addSelectField("tipo_soggetto");
-			sqlQueryObject.addSelectField("nome_soggetto");
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_COLUMN_TIPO_SOGGETTO);
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_COLUMN_NOME_SOGGETTO);
 			sqlQueryObject.addWhereCondition("superuser = ?");
 			sqlQuery = sqlQueryObject.createSQLQuery();
 
@@ -421,19 +396,19 @@ public class DriverConfigurazioneDB_soggettiDriver {
 
 			stm.setString(1, user);
 
-			this.driver.logDebug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.ABILITATO));
+			this.driver.logDebug(ESEGUO_QUERY_PREFIX + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.ABILITATO));
 			rs = stm.executeQuery();
 
 			// prendo il primo router se c'e' altrimenti lancio eccezione.
 			while (rs.next()) {
 				IDSoggetto id = new IDSoggetto();
-				id.setTipo(rs.getString("tipo_soggetto"));
-				id.setNome(rs.getString("nome_soggetto"));
+				id.setTipo(rs.getString(CostantiDB.SOGGETTI_COLUMN_TIPO_SOGGETTO));
+				id.setNome(rs.getString(CostantiDB.SOGGETTI_COLUMN_NOME_SOGGETTO));
 				idTrovati.add(id);
 			}
 
-			if(idTrovati.size()>0){
-				idSoggetti =  new ArrayList<IDSoggetto>();
+			if(!idTrovati.isEmpty()){
+				idSoggetti =  new ArrayList<>();
 				idSoggetti.addAll(idTrovati);
 			}
 
@@ -451,7 +426,7 @@ public class DriverConfigurazioneDB_soggettiDriver {
 
 	protected List<IDSoggetto> getSoggettiVirtuali() throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 
-		List<IDSoggetto> soggettiVirtuali = new ArrayList<IDSoggetto>();
+		List<IDSoggetto> soggettiVirtuali = new ArrayList<>();
 		Connection con = null;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
@@ -468,14 +443,14 @@ public class DriverConfigurazioneDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug(OPERAZIONE_ATOMICA_PREFIX + this.driver.atomica);
 
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
 			sqlQueryObject.setSelectDistinct(true);
-			sqlQueryObject.addSelectField("tipo_soggetto_virtuale");
-			sqlQueryObject.addSelectField("nome_soggetto_virtuale");
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_COLUMN_TIPO_SOGGETTO_VIRTUALE);
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_COLUMN_NOME_SOGGETTO_VIRTUALE);
 			sqlQueryObject.addWhereCondition("tipo_soggetto_virtuale IS NOT NULL");
 			sqlQueryObject.addWhereCondition("nome_soggetto_virtuale IS NOT NULL");
 			sqlQueryObject.addWhereCondition("tipo_soggetto_virtuale<>'\"\"'");
@@ -483,26 +458,24 @@ public class DriverConfigurazioneDB_soggettiDriver {
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQuery = sqlQueryObject.createSQLQuery();
 
-			this.driver.logDebug("eseguo query : " + DBUtils.formatSQLString(sqlQuery));
+			this.driver.logDebug(ESEGUO_QUERY_PREFIX + DBUtils.formatSQLString(sqlQuery));
 
 			stm = con.prepareStatement(sqlQuery);
-			//stm.setString(1, "");
-			//stm.setString(2, "");
 			rs = stm.executeQuery();
 
 			while (rs.next()) {
-				IDSoggetto soggettoVirtuale = new IDSoggetto(rs.getString("tipo_soggetto_virtuale") , rs.getString("nome_soggetto_virtuale"));
-				this.driver.log.info("aggiunto Soggetto " + soggettoVirtuale + " alla lista dei Soggetti Virtuali");
+				IDSoggetto soggettoVirtuale = new IDSoggetto(rs.getString(CostantiDB.SOGGETTI_COLUMN_TIPO_SOGGETTO_VIRTUALE) , rs.getString(CostantiDB.SOGGETTI_COLUMN_NOME_SOGGETTO_VIRTUALE));
+				this.driver.logInfo("aggiunto Soggetto " + soggettoVirtuale + " alla lista dei Soggetti Virtuali");
 				soggettiVirtuali.add(soggettoVirtuale);
 			}
 			rs.close();
 			stm.close();
 
-			if(soggettiVirtuali.size()==0){
+			if(soggettiVirtuali.isEmpty()){
 				throw new DriverConfigurazioneNotFound("[getSoggettiVirtuali] Soggetti virtuali non esistenti");
 			}
 
-			this.driver.log.info("aggiunti " + soggettiVirtuali.size() + " soggetti alla lista dei Soggetti Virtuali");
+			this.driver.logInfo("aggiunti " + soggettiVirtuali.size() + " soggetti alla lista dei Soggetti Virtuali");
 			return soggettiVirtuali;
 		} catch (SQLException se) {
 			throw new DriverConfigurazioneException("SqlException: " + se.getMessage(), se);
@@ -529,7 +502,7 @@ public class DriverConfigurazioneDB_soggettiDriver {
 		if (idSoggetto <= 0)
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getSoggetto] L'id del soggetto deve essere > 0.");
 
-		Soggetto Soggetto = null;
+		Soggetto soggetto = null;
 
 		Connection con = null;
 		PreparedStatement stm = null;
@@ -551,7 +524,7 @@ public class DriverConfigurazioneDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug(OPERAZIONE_ATOMICA_PREFIX + this.driver.atomica);
 
 		try {
 
@@ -561,52 +534,52 @@ public class DriverConfigurazioneDB_soggettiDriver {
 			sqlQueryObject.addWhereCondition("id=?");
 			sqlQuery = sqlQueryObject.createSQLQuery();
 
-			this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
+			this.driver.logDebug(OPERAZIONE_ATOMICA_PREFIX + this.driver.atomica);
 
 			stm = con.prepareStatement(sqlQuery);
 
 			stm.setLong(1, idSoggetto);
 
-			this.driver.logDebug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idSoggetto));
+			this.driver.logDebug(ESEGUO_QUERY_PREFIX + DBUtils.formatSQLString(sqlQuery, idSoggetto));
 			rs = stm.executeQuery();
 
 			if (rs.next()) {
-				Soggetto = new Soggetto();
+				soggetto = new Soggetto();
 
-				Soggetto.setId(rs.getLong("id"));
+				soggetto.setId(rs.getLong("id"));
 
-				Soggetto.setNome(rs.getString("nome_soggetto"));
+				soggetto.setNome(rs.getString(CostantiDB.SOGGETTI_COLUMN_NOME_SOGGETTO));
 
-				Soggetto.setTipo(rs.getString("tipo_soggetto"));
+				soggetto.setTipo(rs.getString(CostantiDB.SOGGETTI_COLUMN_TIPO_SOGGETTO));
 
-				Soggetto.setSuperUser(rs.getString("superuser"));
+				soggetto.setSuperUser(rs.getString("superuser"));
 
 				String tmp = rs.getString("descrizione");
-				Soggetto.setDescrizione(((tmp == null || tmp.equals("")) ? null : tmp));
+				soggetto.setDescrizione(((tmp == null || tmp.equals("")) ? null : tmp));
 
 				tmp = rs.getString("identificativo_porta");
-				Soggetto.setIdentificativoPorta(((tmp == null || tmp.equals("")) ? null : tmp));
+				soggetto.setIdentificativoPorta(((tmp == null || tmp.equals("")) ? null : tmp));
 
 				int defaultR = rs.getInt("is_default");
-				boolean is_default = false;
+				boolean isDefault = false;
 				if (defaultR == CostantiDB.TRUE)
-					is_default = true;
-				Soggetto.setDominioDefault(is_default);
+					isDefault = true;
+				soggetto.setDominioDefault(isDefault);
 				
 				int router = rs.getInt("is_router");
 				boolean isrouter = false;
 				if (router == CostantiDB.TRUE)
 					isrouter = true;
-				Soggetto.setRouter(isrouter);
+				soggetto.setRouter(isrouter);
 
 				tmp = rs.getString("pd_url_prefix_rewriter");
-				Soggetto.setPdUrlPrefixRewriter(((tmp == null || tmp.equals("")) ? null : tmp));
+				soggetto.setPdUrlPrefixRewriter(((tmp == null || tmp.equals("")) ? null : tmp));
 
 				tmp = rs.getString("pa_url_prefix_rewriter");
-				Soggetto.setPaUrlPrefixRewriter(((tmp == null || tmp.equals("")) ? null : tmp));
+				soggetto.setPaUrlPrefixRewriter(((tmp == null || tmp.equals("")) ? null : tmp));
 
 				// Creava OutOfMemory, non dovrebbe servire
-//				// Aggiungo i servizi applicativi
+/**				// Aggiungo i servizi applicativi
 //				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 //				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
 //				sqlQueryObject.addSelectField("id");
@@ -626,13 +599,13 @@ public class DriverConfigurazioneDB_soggettiDriver {
 //					Soggetto.addServizioApplicativo(servizioApplicativo);
 //				}
 //				rs1.close();
-//				stm1.close();
+//				stm1.close();*/
 
 			} else {
 				throw new DriverConfigurazioneNotFound("[DriverConfigurazioneDB::getSoggetto] Soggetto non Esistente.");
 			}
 
-			return Soggetto;
+			return soggetto;
 
 		} catch (SQLException se) {
 
@@ -651,9 +624,9 @@ public class DriverConfigurazioneDB_soggettiDriver {
 	}
 
 	
-	protected List<IDServizio> getServizi_SoggettiVirtuali() throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+	protected List<IDServizio> getServiziSoggettiVirtuali() throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 
-		List<IDServizio> servizi = new ArrayList<IDServizio>();
+		List<IDServizio> servizi = new ArrayList<>();
 		Connection con = null;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
@@ -670,14 +643,14 @@ public class DriverConfigurazioneDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug(OPERAZIONE_ATOMICA_PREFIX + this.driver.atomica);
 
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
 			sqlQueryObject.setSelectDistinct(true);
-			sqlQueryObject.addSelectField("tipo_soggetto_virtuale");
-			sqlQueryObject.addSelectField("nome_soggetto_virtuale");
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_COLUMN_TIPO_SOGGETTO_VIRTUALE);
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_COLUMN_NOME_SOGGETTO_VIRTUALE);
 			sqlQueryObject.addSelectField("tipo_servizio");
 			sqlQueryObject.addSelectField("servizio");
 			sqlQueryObject.addSelectField("versione_servizio");
@@ -687,24 +660,24 @@ public class DriverConfigurazioneDB_soggettiDriver {
 			sqlQueryObject.setANDLogicOperator(false);
 			sqlQuery = sqlQueryObject.createSQLQuery();
 
-			this.driver.logDebug("eseguo query : " + DBUtils.formatSQLString(sqlQuery));
+			this.driver.logDebug(ESEGUO_QUERY_PREFIX + DBUtils.formatSQLString(sqlQuery));
 
 			stm = con.prepareStatement(sqlQuery);
 			rs = stm.executeQuery();
 
 			while (rs.next()) {
 				IDServizio servizio = IDServizioUtils.buildIDServizio(rs.getString("tipo_servizio"), rs.getString("servizio"), 
-						new IDSoggetto(rs.getString("tipo_soggetto_virtuale"), rs.getString("nome_soggetto_virtuale")), 
+						new IDSoggetto(rs.getString(CostantiDB.SOGGETTI_COLUMN_TIPO_SOGGETTO_VIRTUALE), rs.getString(CostantiDB.SOGGETTI_COLUMN_NOME_SOGGETTO_VIRTUALE)), 
 						rs.getInt("versione_servizio"));
 				servizi.add(servizio);
-				this.driver.log.info("aggiunto Servizio " + servizio.toString() + " alla lista dei servizi erogati da Soggetti Virtuali");
+				this.driver.logInfo("aggiunto Servizio " + servizio.toString() + " alla lista dei servizi erogati da Soggetti Virtuali");
 			}
 
-			if(servizi.size()==0){
+			if(servizi.isEmpty()){
 				throw new DriverConfigurazioneNotFound("[getServizi_SoggettiVirtuali] Servizi erogati da Soggetti virtuali non esistenti");
 			}
 
-			this.driver.log.info("aggiunti " + servizi.size() + " servizi alla lista dei servizi erogati da Soggetti Virtuali");
+			this.driver.logInfo("aggiunti " + servizi.size() + " servizi alla lista dei servizi erogati da Soggetti Virtuali");
 			return servizi;
 		} catch (SQLException se) {
 			throw new DriverConfigurazioneException("SqlException: " + se.getMessage(), se);
@@ -758,7 +731,7 @@ public class DriverConfigurazioneDB_soggettiDriver {
 		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<Soggetto> lista = new ArrayList<Soggetto>();
+		ArrayList<Soggetto> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
@@ -772,7 +745,7 @@ public class DriverConfigurazioneDB_soggettiDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
+		this.driver.logDebug(OPERAZIONE_ATOMICA_PREFIX + this.driver.atomica);
 
 		try {
 
@@ -821,8 +794,8 @@ public class DriverConfigurazioneDB_soggettiDriver {
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-			sqlQueryObject.addSelectField("tipo_soggetto");
-			sqlQueryObject.addSelectField("nome_soggetto");
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_COLUMN_TIPO_SOGGETTO);
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_COLUMN_NOME_SOGGETTO);
 			if(filtroRicerca!=null){
 				// Filtro By Data
 				if(filtroRicerca.getMinDate()!=null)
@@ -837,7 +810,7 @@ public class DriverConfigurazioneDB_soggettiDriver {
 
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
-			this.driver.logDebug("eseguo query : " + sqlQuery );
+			this.driver.logDebug(ESEGUO_QUERY_PREFIX + sqlQuery );
 			stm = con.prepareStatement(sqlQuery);
 			int indexStmt = 1;
 			if(filtroRicerca!=null){
@@ -863,12 +836,12 @@ public class DriverConfigurazioneDB_soggettiDriver {
 				}	
 			}
 			rs = stm.executeQuery();
-			List<IDSoggetto> idSoggetti = new ArrayList<IDSoggetto>();
+			List<IDSoggetto> idSoggetti = new ArrayList<>();
 			while (rs.next()) {
-				IDSoggetto idS = new IDSoggetto(rs.getString("tipo_soggetto"),rs.getString("nome_soggetto"));
+				IDSoggetto idS = new IDSoggetto(rs.getString(CostantiDB.SOGGETTI_COLUMN_TIPO_SOGGETTO),rs.getString(CostantiDB.SOGGETTI_COLUMN_NOME_SOGGETTO));
 				idSoggetti.add(idS);
 			}
-			if(idSoggetti.size()==0){
+			if(idSoggetti.isEmpty()){
 				if(filtroRicerca!=null)
 					throw new DriverConfigurazioneNotFound("Soggetti non trovati che rispettano il filtro di ricerca selezionato: "+filtroRicerca.toString());
 				else

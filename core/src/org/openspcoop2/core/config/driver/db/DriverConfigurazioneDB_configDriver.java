@@ -1702,7 +1702,7 @@ public class DriverConfigurazioneDB_configDriver {
 		regola.setId(rs.getLong("id"));
 		regola.setNome(rs.getString("nome"));
 		regola.setPosizione(rs.getInt("posizione"));
-		regola.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("stato")));
+		regola.setStato(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(rs.getString("stato")));
 		regola.setDescrizione(rs.getString("descrizione"));
 		if(rs.getInt("regexpr") == CostantiDB.TRUE) {
 			regola.setRegexpr(true);
@@ -1718,8 +1718,8 @@ public class DriverConfigurazioneDB_configDriver {
 		regola.setContestoEsterno(s);
 		regola.setBaseUrl(rs.getString("base_url"));
 		regola.setProtocollo(rs.getString("protocollo"));
-		regola.setRuolo(DriverConfigurazioneDB_LIB.getEnumRuoloContesto(rs.getString("ruolo")));
-		regola.setServiceBinding(DriverConfigurazioneDB_LIB.getEnumServiceBinding(rs.getString("service_binding")));
+		regola.setRuolo(DriverConfigurazioneDBLib.getEnumRuoloContesto(rs.getString("ruolo")));
+		regola.setServiceBinding(DriverConfigurazioneDBLib.getEnumServiceBinding(rs.getString("service_binding")));
 		String tipoSoggetto = rs.getString("tipo_soggetto");
 		String nomeSoggetto = rs.getString("nome_soggetto");
 		if(tipoSoggetto!=null && !"".equals(tipoSoggetto) && nomeSoggetto!=null && !"".equals(nomeSoggetto)) {
@@ -1872,13 +1872,13 @@ public class DriverConfigurazioneDB_configDriver {
 			if (rs.next()) {
 
 				Attachments attachments = new Attachments();
-				attachments.setGestioneManifest(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("gestione_manifest")));
+				attachments.setGestioneManifest(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(rs.getString("gestione_manifest")));
 				config.setAttachments(attachments);
 
 				//config.setId(rs.getLong("id"));
 
 				IndirizzoRisposta indirizzoRisposta = new IndirizzoRisposta();
-				indirizzoRisposta.setUtilizzo(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("indirizzo_telematico")));
+				indirizzoRisposta.setUtilizzo(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(rs.getString("indirizzo_telematico")));
 				config.setIndirizzoRisposta(indirizzoRisposta);
 
 				String cadenza_inoltro = rs.getString("cadenza_inoltro");
@@ -1899,7 +1899,7 @@ public class DriverConfigurazioneDB_configDriver {
 
 
 				boolean routingEnabled =  false;
-				if(CostantiConfigurazione.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("routing_enabled"))))
+				if(CostantiConfigurazione.ABILITATO.equals(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(rs.getString("routing_enabled"))))
 					routingEnabled = true;
 				RoutingTable rt = new RoutingTable();
 				rt.setAbilitata(routingEnabled);
@@ -1917,11 +1917,11 @@ public class DriverConfigurazioneDB_configDriver {
 				{
 					ValidazioneContenutiApplicativi val = new ValidazioneContenutiApplicativi();
 					if((validazioneContenuti_stato!=null && !validazioneContenuti_stato.equals(""))  )
-						val.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalitaConWarning(validazioneContenuti_stato));
+						val.setStato(DriverConfigurazioneDBLib.getEnumStatoFunzionalitaConWarning(validazioneContenuti_stato));
 					if((validazioneContenuti_tipo!=null && !validazioneContenuti_tipo.equals(""))  )
-						val.setTipo(DriverConfigurazioneDB_LIB.getEnumValidazioneContenutiApplicativiTipo(validazioneContenuti_tipo));
+						val.setTipo(DriverConfigurazioneDBLib.getEnumValidazioneContenutiApplicativiTipo(validazioneContenuti_tipo));
 					if((validazioneContenuti_acceptMtomMessage!=null && !validazioneContenuti_acceptMtomMessage.equals(""))  )
-						val.setAcceptMtomMessage(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(validazioneContenuti_acceptMtomMessage));
+						val.setAcceptMtomMessage(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(validazioneContenuti_acceptMtomMessage));
 					config.setValidazioneContenutiApplicativi(val);
 				}
 
@@ -1968,15 +1968,15 @@ public class DriverConfigurazioneDB_configDriver {
 				String multitenantStatoSoggettiFruitori = rs.getString("multitenant_fruizioni");
 				String multitenantStatoSoggettiErogatori = rs.getString("multitenant_erogazioni");
 				config.setMultitenant(new ConfigurazioneMultitenant());
-				config.getMultitenant().setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(multitenantStato));
-				config.getMultitenant().setFruizioneSceltaSoggettiErogatori(DriverConfigurazioneDB_LIB.getEnumPortaDelegataSoggettiErogatori(multitenantStatoSoggettiFruitori));
-				config.getMultitenant().setErogazioneSceltaSoggettiFruitori(DriverConfigurazioneDB_LIB.getEnumPortaApplicativaSoggettiFruitori(multitenantStatoSoggettiErogatori));
+				config.getMultitenant().setStato(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(multitenantStato));
+				config.getMultitenant().setFruizioneSceltaSoggettiErogatori(DriverConfigurazioneDBLib.getEnumPortaDelegataSoggettiErogatori(multitenantStatoSoggettiFruitori));
+				config.getMultitenant().setErogazioneSceltaSoggettiFruitori(DriverConfigurazioneDBLib.getEnumPortaApplicativaSoggettiFruitori(multitenantStatoSoggettiErogatori));
 
 				String msg_diag_severita = rs.getString("msg_diag_severita");
 				String msg_diag_severita_log4j = rs.getString("msg_diag_severita_log4j");
 				MessaggiDiagnostici messaggiDiagnostici = new MessaggiDiagnostici();
-				messaggiDiagnostici.setSeveritaLog4j(DriverConfigurazioneDB_LIB.getEnumSeverita(msg_diag_severita_log4j));
-				messaggiDiagnostici.setSeverita(DriverConfigurazioneDB_LIB.getEnumSeverita(msg_diag_severita));
+				messaggiDiagnostici.setSeveritaLog4j(DriverConfigurazioneDBLib.getEnumSeverita(msg_diag_severita_log4j));
+				messaggiDiagnostici.setSeverita(DriverConfigurazioneDBLib.getEnumSeverita(msg_diag_severita));
 				//messaggi diagnostici appender
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.MSG_DIAGN_APPENDER);
@@ -2064,7 +2064,7 @@ public class DriverConfigurazioneDB_configDriver {
 				String tracc_buste = rs.getString("tracciamento_buste");
 				String tracc_esiti = rs.getString("tracciamento_esiti");
 				Tracciamento tracciamento = new Tracciamento();
-				tracciamento.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(tracc_buste));
+				tracciamento.setStato(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(tracc_buste));
 				tracciamento.setEsiti(tracc_esiti);
 				
 				//appender tracciamento
@@ -2162,13 +2162,13 @@ public class DriverConfigurazioneDB_configDriver {
 				String transazioniToken = rs.getString("transazioni_token");
 				config.setTransazioni(new Transazioni());
 				
-				StatoFunzionalita statoTransazioniTempiElaborazione = DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(transazioniTempiElaborazione);
+				StatoFunzionalita statoTransazioniTempiElaborazione = DriverConfigurazioneDBLib.getEnumStatoFunzionalita(transazioniTempiElaborazione);
 				if(statoTransazioniTempiElaborazione!=null) {
 					config.getTransazioni().setTempiElaborazione(statoTransazioniTempiElaborazione);
 				}
 				// else lascio il default
 				
-				StatoFunzionalita statoTransazioniToken = DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(transazioniToken);
+				StatoFunzionalita statoTransazioniToken = DriverConfigurazioneDBLib.getEnumStatoFunzionalita(transazioniToken);
 				if(statoTransazioniToken!=null) {
 					config.getTransazioni().setToken(statoTransazioniToken);
 				}
@@ -2181,12 +2181,12 @@ public class DriverConfigurazioneDB_configDriver {
 				String dump_pd = rs.getString("dump_bin_pd");
 				String dump_pa = rs.getString("dump_bin_pa");
 				Dump dump = new Dump();
-				dump.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(dump_stato));
-				dump.setDumpBinarioPortaDelegata(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(dump_pd));
+				dump.setStato(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(dump_stato));
+				dump.setDumpBinarioPortaDelegata(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(dump_pd));
 				if(dump.getDumpBinarioPortaDelegata()==null){
 					dump.setDumpBinarioPortaDelegata(StatoFunzionalita.DISABILITATO); // default
 				}
-				dump.setDumpBinarioPortaApplicativa(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(dump_pa));
+				dump.setDumpBinarioPortaApplicativa(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(dump_pa));
 				if(dump.getDumpBinarioPortaApplicativa()==null){
 					dump.setDumpBinarioPortaApplicativa(StatoFunzionalita.DISABILITATO); // default
 				}
@@ -2253,7 +2253,7 @@ public class DriverConfigurazioneDB_configDriver {
 				
 				
 				Risposte risposte = new Risposte();
-				risposte.setConnessione(DriverConfigurazioneDB_LIB.getEnumTipoConnessioneRisposte(rs.getString("mod_risposta")));
+				risposte.setConnessione(DriverConfigurazioneDBLib.getEnumTipoConnessioneRisposte(rs.getString("mod_risposta")));
 				config.setRisposte(risposte);
 
 				String val_controllo = rs.getString("validazione_controllo");
@@ -2261,10 +2261,10 @@ public class DriverConfigurazioneDB_configDriver {
 				String val_manifest = rs.getString("validazione_manifest");
 				String val_profilo = rs.getString("validazione_profilo");
 				ValidazioneBuste validazioneBuste = new ValidazioneBuste();
-				validazioneBuste.setControllo(DriverConfigurazioneDB_LIB.getEnumValidazioneBusteTipoControllo(val_controllo));
-				validazioneBuste.setManifestAttachments(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(val_manifest));
-				validazioneBuste.setProfiloCollaborazione(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(val_profilo));
-				validazioneBuste.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalitaConWarning(val_stato));
+				validazioneBuste.setControllo(DriverConfigurazioneDBLib.getEnumValidazioneBusteTipoControllo(val_controllo));
+				validazioneBuste.setManifestAttachments(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(val_manifest));
+				validazioneBuste.setProfiloCollaborazione(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(val_profilo));
+				validazioneBuste.setStato(DriverConfigurazioneDBLib.getEnumStatoFunzionalitaConWarning(val_stato));
 				config.setValidazioneBuste(validazioneBuste);
 
 				// Gestione CORS
@@ -2306,7 +2306,7 @@ public class DriverConfigurazioneDB_configDriver {
 				// Canali
 				String canali_stato = rs.getString("canali_stato");
 				config.setGestioneCanali(new CanaliConfigurazione());
-				config.getGestioneCanali().setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(canali_stato));
+				config.getGestioneCanali().setStato(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(canali_stato));
 				if(StatoFunzionalita.ABILITATO.equals(config.getGestioneCanali().getStato())) {
 					DriverConfigurazioneDB_canaliLIB.readCanaliConfigurazione(con, config.getGestioneCanali(), true);
 				}
@@ -3005,7 +3005,7 @@ public class DriverConfigurazioneDB_configDriver {
 
 				// Canali
 				String canali_stato = rs.getString("canali_stato");
-				config.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(canali_stato));
+				config.setStato(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(canali_stato));
 				if(config.getStato()==null) {
 					config.setStato(StatoFunzionalita.DISABILITATO);
 				}

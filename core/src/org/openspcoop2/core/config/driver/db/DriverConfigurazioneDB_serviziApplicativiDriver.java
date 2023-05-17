@@ -92,12 +92,12 @@ import org.openspcoop2.utils.sql.SQLQueryObjectException;
 public class DriverConfigurazioneDB_serviziApplicativiDriver {
 
 	private DriverConfigurazioneDB driver = null;
-	private DriverConfigurazioneDB_soggettiDriver soggettiDriver = null;
+	private DriverConfigurazioneDBSoggetti soggettiDriver = null;
 	private DriverConfigurazioneDB_protocolPropertiesDriver protocolPropertiesDriver = null;
 	
 	protected DriverConfigurazioneDB_serviziApplicativiDriver(DriverConfigurazioneDB driver) {
 		this.driver = driver;
-		this.soggettiDriver = new DriverConfigurazioneDB_soggettiDriver(driver);
+		this.soggettiDriver = new DriverConfigurazioneDBSoggetti(driver);
 		this.protocolPropertiesDriver = new DriverConfigurazioneDB_protocolPropertiesDriver(driver);
 	}
 	
@@ -809,7 +809,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 					invPorta = new InvocazionePorta();
 					Credenziali credenziali = new Credenziali();
 					
-					credenziali.setTipo(DriverConfigurazioneDB_LIB.getEnumCredenzialeTipo(tipoAuth));
+					credenziali.setTipo(DriverConfigurazioneDBLib.getEnumCredenzialeTipo(tipoAuth));
 					
 					credenziali.setUser(rs.getString("utente"));
 					credenziali.setPassword(rs.getString("password"));
@@ -841,14 +841,14 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 					}
 
 					InvocazionePortaGestioneErrore gestioneErrore = new InvocazionePortaGestioneErrore();
-					gestioneErrore.setFault(DriverConfigurazioneDB_LIB.getEnumFaultIntegrazioneTipo(fault));
+					gestioneErrore.setFault(DriverConfigurazioneDBLib.getEnumFaultIntegrazioneTipo(fault));
 					gestioneErrore.setFaultActor(faultActor);
-					gestioneErrore.setGenericFaultCode(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(genericFault));
+					gestioneErrore.setGenericFaultCode(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(genericFault));
 					gestioneErrore.setPrefixFaultCode(prefixFault);
 					//setto gestione errore solo se i valori sono diversi da null
 					invPorta.setGestioneErrore((fault != null || faultActor!=null || genericFault!=null || prefixFault!=null ) ? gestioneErrore : null);
 
-					invPorta.setInvioPerRiferimento(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("invio_x_rif")));
+					invPorta.setInvioPerRiferimento(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(rs.getString("invio_x_rif")));
 
 					int sbustamentoInfoProtocollo = rs.getInt("sbustamento_protocol_info");
 					if(CostantiDB.TRUE == sbustamentoInfoProtocollo)
@@ -868,9 +868,9 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				if (idConnettore > 0 || (getMsgRisp != null && !getMsgRisp.equals("")) ) {
 					rispAsinc = new RispostaAsincrona();
 
-					rispAsinc.setAutenticazione(DriverConfigurazioneDB_LIB.getEnumInvocazioneServizioTipoAutenticazione(rs.getString("tipoauthrisp")));
-					rispAsinc.setInvioPerRiferimento(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("invio_x_rif_risp")));
-					rispAsinc.setRispostaPerRiferimento(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("risposta_x_rif_risp")));
+					rispAsinc.setAutenticazione(DriverConfigurazioneDBLib.getEnumInvocazioneServizioTipoAutenticazione(rs.getString("tipoauthrisp")));
+					rispAsinc.setInvioPerRiferimento(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(rs.getString("invio_x_rif_risp")));
+					rispAsinc.setRispostaPerRiferimento(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(rs.getString("risposta_x_rif_risp")));
 
 					if(rispAsinc.getAutenticazione()!=null && InvocazioneServizioTipoAutenticazione.BASIC.equals(rispAsinc.getAutenticazione())){
 						InvocazioneCredenziali credenzialiRispA = new InvocazioneCredenziali();
@@ -881,7 +881,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 					
 					Connettore connettore = DriverConfigurazioneDB_connettoriLIB.getConnettore(idConnettore, con);
 					rispAsinc.setConnettore(connettore);
-					rispAsinc.setGetMessage(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(getMsgRisp));
+					rispAsinc.setGetMessage(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(getMsgRisp));
 
 					int sbustamentoInfoProtocollo = rs.getInt("sbustamento_protocol_info_risp");
 					if(CostantiDB.TRUE == sbustamentoInfoProtocollo)
@@ -914,7 +914,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 					invServizio = new InvocazioneServizio();
 					Connettore connserv = DriverConfigurazioneDB_connettoriLIB.getConnettore(idConnettore, con);
 					invServizio.setConnettore(connserv);
-					invServizio.setGetMessage(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(getMsgInv));
+					invServizio.setGetMessage(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(getMsgInv));
 
 					int sbustamentoInfoProtocollo = rs.getInt("sbustamento_protocol_info_inv");
 					if(CostantiDB.TRUE == sbustamentoInfoProtocollo)
@@ -929,9 +929,9 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 					else
 						invServizio.setSbustamentoSoap(CostantiConfigurazione.DISABILITATO);
 
-					invServizio.setAutenticazione(DriverConfigurazioneDB_LIB.getEnumInvocazioneServizioTipoAutenticazione(rs.getString("tipoauthinv")));
-					invServizio.setInvioPerRiferimento(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("invio_x_rif_inv")));
-					invServizio.setRispostaPerRiferimento(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("risposta_x_rif_inv")));
+					invServizio.setAutenticazione(DriverConfigurazioneDBLib.getEnumInvocazioneServizioTipoAutenticazione(rs.getString("tipoauthinv")));
+					invServizio.setInvioPerRiferimento(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(rs.getString("invio_x_rif_inv")));
+					invServizio.setRispostaPerRiferimento(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(rs.getString("risposta_x_rif_inv")));
 					
 					if(invServizio.getAutenticazione()!=null && InvocazioneServizioTipoAutenticazione.BASIC.equals(invServizio.getAutenticazione())){
 						InvocazioneCredenziali credInvServ = new InvocazioneCredenziali();
@@ -1033,7 +1033,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 					
 					Credenziali credenziali = new Credenziali();
 					
-					credenziali.setTipo(DriverConfigurazioneDB_LIB.getEnumCredenzialeTipo(tipoAuth));
+					credenziali.setTipo(DriverConfigurazioneDBLib.getEnumCredenzialeTipo(tipoAuth));
 										
 					credenziali.setIssuer(rs.getString("issuer"));
 					credenziali.setSubject(rs.getString("subject"));
@@ -1079,7 +1079,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				
 				// Protocol Properties
 				try{
-					List<ProtocolProperty> listPP = DriverConfigurazioneDB_LIB.getListaProtocolProperty(sa.getId(), ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, this.driver.tipoDB);
+					List<ProtocolProperty> listPP = DriverConfigurazioneDBLib.getListaProtocolProperty(sa.getId(), ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, this.driver.tipoDB);
 					if(listPP!=null && listPP.size()>0){
 						for (ProtocolProperty protocolProperty : listPP) {
 							sa.addProtocolProperty(protocolProperty);
@@ -2212,7 +2212,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 			}
 			if(checkConnettoreAbilitato) {
 				if(checkIM) {
-					stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.ABILITATO));
+					stm.setString(index++, DriverConfigurazioneDBLib.getValue(StatoFunzionalita.ABILITATO));
 					stm.setString(index++, TipiConnettore.DISABILITATO.getNome());
 				}
 				else {
@@ -2220,7 +2220,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				}
 			}
 			else if(checkIM) {
-				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.ABILITATO));
+				stm.setString(index++, DriverConfigurazioneDBLib.getValue(StatoFunzionalita.ABILITATO));
 			}
 
 			String debugQuery = DBUtils.formatSQLString(sqlQuery, idErogatore);
@@ -2229,7 +2229,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 			}
 			if(checkConnettoreAbilitato) {
 				if(checkIM) {
-					debugQuery = DBUtils.formatSQLString(debugQuery,  DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.ABILITATO));
+					debugQuery = DBUtils.formatSQLString(debugQuery,  DriverConfigurazioneDBLib.getValue(StatoFunzionalita.ABILITATO));
 					debugQuery = DBUtils.formatSQLString(debugQuery,  TipiConnettore.DISABILITATO.getNome());
 				}
 				else {
@@ -2237,7 +2237,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				}
 			}
 			else if(checkIM) {
-				debugQuery = DBUtils.formatSQLString(debugQuery, DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.ABILITATO));
+				debugQuery = DBUtils.formatSQLString(debugQuery, DriverConfigurazioneDBLib.getValue(StatoFunzionalita.ABILITATO));
 			}
 			this.driver.logDebug("eseguo query : " + debugQuery);
 			

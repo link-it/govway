@@ -40,7 +40,7 @@ import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta;
 import org.openspcoop2.core.config.TrasformazioneRegolaRichiesta;
 import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
-import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB_LIB;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDBLib;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
@@ -300,7 +300,7 @@ public class PorteDelegateTrasformazioniAdd extends Action {
 			TrasformazioneRegola regola = new TrasformazioneRegola();
 			regola.setPosizione(posizione);
 			regola.setNome(nome);
-			regola.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(stato));
+			regola.setStato(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(stato));
 			
 			TrasformazioneRegolaApplicabilitaRichiesta applicabilita = new TrasformazioneRegolaApplicabilitaRichiesta();
 			

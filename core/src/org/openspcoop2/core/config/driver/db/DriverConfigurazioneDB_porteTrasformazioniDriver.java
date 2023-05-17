@@ -190,7 +190,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 						int posizione = rs.getInt("posizione");
 						regola.setPosizione(posizione);
 						
-						StatoFunzionalita stato = DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("stato"));
+						StatoFunzionalita stato = DriverConfigurazioneDBLib.getEnumStatoFunzionalita(rs.getString("stato"));
 						regola.setStato(stato);
 						
 						String applicabilita_azioni = rs.getString("applicabilita_azioni");
@@ -273,7 +273,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 						if(CostantiDB.TRUE == trasformazione_soap) {
 							TrasformazioneSoap trasformazioneSoap = new TrasformazioneSoap();
 							
-							trasformazioneSoap.setVersione(DriverConfigurazioneDB_LIB.getEnumVersioneSOAP(rs.getString("soap_version")));
+							trasformazioneSoap.setVersione(DriverConfigurazioneDBLib.getEnumVersioneSOAP(rs.getString("soap_version")));
 							trasformazioneSoap.setSoapAction(rs.getString("soap_action"));
 							
 							int envelope = rs.getInt("soap_envelope");
@@ -767,7 +767,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 	private TrasformazioneRegola getEngineTrasformazione(ResultSet risultato) throws Exception {
 		TrasformazioneRegola regola  = new TrasformazioneRegola();
 				
-		StatoFunzionalita stato = DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(risultato.getString("stato"));
+		StatoFunzionalita stato = DriverConfigurazioneDBLib.getEnumStatoFunzionalita(risultato.getString("stato"));
 		regola.setStato(stato);
 		
 		String applicabilita_azioni = risultato.getString("applicabilita_azioni");
@@ -850,7 +850,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		if(CostantiDB.TRUE == trasformazione_soap) {
 			TrasformazioneSoap trasformazioneSoap = new TrasformazioneSoap();
 			
-			trasformazioneSoap.setVersione(DriverConfigurazioneDB_LIB.getEnumVersioneSOAP(risultato.getString("soap_version")));
+			trasformazioneSoap.setVersione(DriverConfigurazioneDBLib.getEnumVersioneSOAP(risultato.getString("soap_version")));
 			trasformazioneSoap.setSoapAction(risultato.getString("soap_action"));
 			
 			int envelope = risultato.getInt("soap_envelope");
@@ -2156,10 +2156,10 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 					if(rs.next()) {
 						
 						TrasformazioneRegolaParametro parametro = new TrasformazioneRegolaParametro();
-						parametro.setConversioneTipo(DriverConfigurazioneDB_LIB.getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
+						parametro.setConversioneTipo(DriverConfigurazioneDBLib.getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
 						parametro.setNome(rs.getString("nome"));
 						parametro.setValore(rs.getString("valore"));
-						parametro.setIdentificazioneFallita(DriverConfigurazioneDB_LIB.getEnumTrasformazioneIdentificazioneRisorsaFallita(rs.getString("identificazione_fallita")));
+						parametro.setIdentificazioneFallita(DriverConfigurazioneDBLib.getEnumTrasformazioneIdentificazioneRisorsaFallita(rs.getString("identificazione_fallita")));
 						parametro.setId(rs.getLong("id"));
 						lista.add(parametro);
 						
@@ -2344,10 +2344,10 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			rs = stmt.executeQuery();
 			if (rs.next()) {
 				parametro = new TrasformazioneRegolaParametro();
-				parametro.setConversioneTipo(DriverConfigurazioneDB_LIB.getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
+				parametro.setConversioneTipo(DriverConfigurazioneDBLib.getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
 				parametro.setNome(rs.getString("nome"));
 				parametro.setValore(rs.getString("valore"));
-				parametro.setIdentificazioneFallita(DriverConfigurazioneDB_LIB.getEnumTrasformazioneIdentificazioneRisorsaFallita(rs.getString("identificazione_fallita")));
+				parametro.setIdentificazioneFallita(DriverConfigurazioneDBLib.getEnumTrasformazioneIdentificazioneRisorsaFallita(rs.getString("identificazione_fallita")));
 				parametro.setId(rs.getLong("id"));
 			}
 			
@@ -2495,10 +2495,10 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 					if(rs.next()) {
 						
 						TrasformazioneRegolaParametro parametro = new TrasformazioneRegolaParametro();
-						parametro.setConversioneTipo(DriverConfigurazioneDB_LIB.getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
+						parametro.setConversioneTipo(DriverConfigurazioneDBLib.getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
 						parametro.setNome(rs.getString("nome"));
 						parametro.setValore(rs.getString("valore"));
-						parametro.setIdentificazioneFallita(DriverConfigurazioneDB_LIB.getEnumTrasformazioneIdentificazioneRisorsaFallita(rs.getString("identificazione_fallita")));
+						parametro.setIdentificazioneFallita(DriverConfigurazioneDBLib.getEnumTrasformazioneIdentificazioneRisorsaFallita(rs.getString("identificazione_fallita")));
 						parametro.setId(rs.getLong("id"));
 						lista.add(parametro);
 						
@@ -2674,10 +2674,10 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			rs = stmt.executeQuery();
 			if (rs.next()) {
 				parametro = new TrasformazioneRegolaParametro();
-				parametro.setConversioneTipo(DriverConfigurazioneDB_LIB.getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
+				parametro.setConversioneTipo(DriverConfigurazioneDBLib.getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
 				parametro.setNome(rs.getString("nome"));
 				parametro.setValore(rs.getString("valore"));
-				parametro.setIdentificazioneFallita(DriverConfigurazioneDB_LIB.getEnumTrasformazioneIdentificazioneRisorsaFallita(rs.getString("identificazione_fallita")));
+				parametro.setIdentificazioneFallita(DriverConfigurazioneDBLib.getEnumTrasformazioneIdentificazioneRisorsaFallita(rs.getString("identificazione_fallita")));
 				parametro.setId(rs.getLong("id"));
 			}
 			
@@ -2823,10 +2823,10 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 					
 					if(rs.next()) {
 						TrasformazioneRegolaParametro parametro = new TrasformazioneRegolaParametro();
-						parametro.setConversioneTipo(DriverConfigurazioneDB_LIB.getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
+						parametro.setConversioneTipo(DriverConfigurazioneDBLib.getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
 						parametro.setNome(rs.getString("nome"));
 						parametro.setValore(rs.getString("valore"));
-						parametro.setIdentificazioneFallita(DriverConfigurazioneDB_LIB.getEnumTrasformazioneIdentificazioneRisorsaFallita(rs.getString("identificazione_fallita")));
+						parametro.setIdentificazioneFallita(DriverConfigurazioneDBLib.getEnumTrasformazioneIdentificazioneRisorsaFallita(rs.getString("identificazione_fallita")));
 						parametro.setId(rs.getLong("id"));
 						lista.add(parametro);
 					}
@@ -2999,10 +2999,10 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			rs = stmt.executeQuery();
 			if (rs.next()) {
 				parametro = new TrasformazioneRegolaParametro();
-				parametro.setConversioneTipo(DriverConfigurazioneDB_LIB.getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
+				parametro.setConversioneTipo(DriverConfigurazioneDBLib.getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
 				parametro.setNome(rs.getString("nome"));
 				parametro.setValore(rs.getString("valore"));
-				parametro.setIdentificazioneFallita(DriverConfigurazioneDB_LIB.getEnumTrasformazioneIdentificazioneRisorsaFallita(rs.getString("identificazione_fallita")));
+				parametro.setIdentificazioneFallita(DriverConfigurazioneDBLib.getEnumTrasformazioneIdentificazioneRisorsaFallita(rs.getString("identificazione_fallita")));
 				parametro.setId(rs.getLong("id"));
 			}
 			

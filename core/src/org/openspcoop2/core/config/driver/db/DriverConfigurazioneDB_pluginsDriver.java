@@ -195,7 +195,7 @@ public class DriverConfigurazioneDB_pluginsDriver {
 				plugin.setId(rs.getLong("id"));
 				plugin.setNome(rs.getString("nome"));
 				plugin.setPosizione(rs.getInt("posizione"));
-				StatoFunzionalita stato = DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("stato"));
+				StatoFunzionalita stato = DriverConfigurazioneDBLib.getEnumStatoFunzionalita(rs.getString("stato"));
 				plugin.setStato(stato);
 				plugin.setDescrizione(rs.getString("descrizione"));
 				plugin.setData(rs.getTimestamp("data"));
@@ -237,7 +237,7 @@ public class DriverConfigurazioneDB_pluginsDriver {
 					archivio.setNome(rs.getString("nome"));
 					archivio.setData(rs.getTimestamp("data"));
 					IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.driver.tipoDB);
-					archivio.setSorgente( DriverConfigurazioneDB_LIB.getEnumPluginSorgenteArchivio(rs.getString("sorgente")));
+					archivio.setSorgente( DriverConfigurazioneDBLib.getEnumPluginSorgenteArchivio(rs.getString("sorgente")));
 					switch (archivio.getSorgente()) {
 					case JAR:
 						archivio.setContenuto(jdbcAdapter.getBinaryData(rs, "contenuto"));
@@ -318,7 +318,7 @@ public class DriverConfigurazioneDB_pluginsDriver {
 				plugin.setId(rs.getLong("id"));
 				plugin.setNome(rs.getString("nome"));
 				plugin.setPosizione(rs.getInt("posizione"));
-				StatoFunzionalita stato = DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("stato"));
+				StatoFunzionalita stato = DriverConfigurazioneDBLib.getEnumStatoFunzionalita(rs.getString("stato"));
 				plugin.setStato(stato);
 				plugin.setDescrizione(rs.getString("descrizione"));
 				plugin.setData(rs.getTimestamp("data"));
@@ -360,7 +360,7 @@ public class DriverConfigurazioneDB_pluginsDriver {
 					archivio.setNome(rs.getString("nome"));
 					archivio.setData(rs.getTimestamp("data"));
 					IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.driver.tipoDB);
-					archivio.setSorgente( DriverConfigurazioneDB_LIB.getEnumPluginSorgenteArchivio(rs.getString("sorgente")));
+					archivio.setSorgente( DriverConfigurazioneDBLib.getEnumPluginSorgenteArchivio(rs.getString("sorgente")));
 					switch (archivio.getSorgente()) {
 					case JAR:
 						archivio.setContenuto(jdbcAdapter.getBinaryData(rs, "contenuto"));
@@ -719,7 +719,7 @@ public class DriverConfigurazioneDB_pluginsDriver {
 				archivio.setNome(rs.getString("nome"));
 				archivio.setData(rs.getTimestamp("data"));
 				IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.driver.tipoDB);
-				archivio.setSorgente( DriverConfigurazioneDB_LIB.getEnumPluginSorgenteArchivio(rs.getString("sorgente")));
+				archivio.setSorgente( DriverConfigurazioneDBLib.getEnumPluginSorgenteArchivio(rs.getString("sorgente")));
 				switch (archivio.getSorgente()) {
 				case JAR:
 					archivio.setContenuto(jdbcAdapter.getBinaryData(rs, "contenuto"));
@@ -1081,7 +1081,7 @@ public class DriverConfigurazioneDB_pluginsDriver {
 				regola.setId(risultato.getLong("id"));
 				regola.setNome(risultato.getString("nome"));
 				regola.setPosizione(risultato.getInt("posizione"));
-				regola.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(risultato.getString("stato")));
+				regola.setStato(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(risultato.getString("stato")));
 				regola.setDescrizione(risultato.getString("descrizione"));
 				Timestamp timestamp = risultato.getTimestamp("data");
 				regola.setData(new Date(timestamp.getTime()));
@@ -1189,9 +1189,9 @@ public class DriverConfigurazioneDB_pluginsDriver {
 			int parameterIndex = 1;
 			stmt.setString(parameterIndex ++, nome);
 			if (sqlQueryObjectOr!=null) {
-				stmt.setString(parameterIndex ++, DriverConfigurazioneDB_LIB.getValue(PluginSorgenteArchivio.JAR));
-				stmt.setString(parameterIndex ++, DriverConfigurazioneDB_LIB.getValue(PluginSorgenteArchivio.URL));
-				stmt.setString(parameterIndex ++, DriverConfigurazioneDB_LIB.getValue(PluginSorgenteArchivio.DIR));
+				stmt.setString(parameterIndex ++, DriverConfigurazioneDBLib.getValue(PluginSorgenteArchivio.JAR));
+				stmt.setString(parameterIndex ++, DriverConfigurazioneDBLib.getValue(PluginSorgenteArchivio.URL));
+				stmt.setString(parameterIndex ++, DriverConfigurazioneDBLib.getValue(PluginSorgenteArchivio.DIR));
 			}
 			risultato = stmt.executeQuery();
 			if (risultato.next())
@@ -1234,9 +1234,9 @@ public class DriverConfigurazioneDB_pluginsDriver {
 			parameterIndex = 1;
 			stmt.setString(parameterIndex ++, nome);
 			if (sqlQueryObjectOr!=null) {
-				stmt.setString(parameterIndex ++, DriverConfigurazioneDB_LIB.getValue(PluginSorgenteArchivio.JAR));
-				stmt.setString(parameterIndex ++, DriverConfigurazioneDB_LIB.getValue(PluginSorgenteArchivio.URL));
-				stmt.setString(parameterIndex ++, DriverConfigurazioneDB_LIB.getValue(PluginSorgenteArchivio.DIR));
+				stmt.setString(parameterIndex ++, DriverConfigurazioneDBLib.getValue(PluginSorgenteArchivio.JAR));
+				stmt.setString(parameterIndex ++, DriverConfigurazioneDBLib.getValue(PluginSorgenteArchivio.URL));
+				stmt.setString(parameterIndex ++, DriverConfigurazioneDBLib.getValue(PluginSorgenteArchivio.DIR));
 			}
 			risultato = stmt.executeQuery();
 
@@ -1248,7 +1248,7 @@ public class DriverConfigurazioneDB_pluginsDriver {
 				Timestamp timestamp = risultato.getTimestamp("data");
 				archivio.setData(new Date(timestamp.getTime()));
 				IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.driver.tipoDB);
-				archivio.setSorgente( DriverConfigurazioneDB_LIB.getEnumPluginSorgenteArchivio(risultato.getString("sorgente")));
+				archivio.setSorgente( DriverConfigurazioneDBLib.getEnumPluginSorgenteArchivio(risultato.getString("sorgente")));
 				switch (archivio.getSorgente()) {
 				case JAR:
 					if(!escludiContenuto) {

@@ -24,6 +24,7 @@ import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.ConfigurazioneMultitenant;
 import org.openspcoop2.core.config.constants.PortaApplicativaSoggettiFruitori;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -338,8 +339,16 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 				modeItem.setNote(null);
 			}
 			else {
-				
+			
 				permitCertificate = true;
+				StringProperty typeItemItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_ID);
+				if(typeItemItemValue!=null && typeItemItemValue.getValue()!=null &&
+					( ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_VALUE_JWK.equals(typeItemItemValue.getValue()) 
+							||
+							ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_VALUE_KEY_PAIR.equals(typeItemItemValue.getValue()))
+					){
+					permitCertificate = false;
+				}
 				
 				archiveItem.setType(ConsoleItemType.HIDDEN);
 				archiveItem.setRequired(false);
@@ -596,7 +605,8 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 		
 		StringProperty keyPairAlgorithmItemItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_KEY_ALGORITHM_ID);
 		if(keystoreKeyPair &&
-			keyPairAlgorithmItemItemValue!=null && keyPairAlgorithmItemItemValue.getValue()==null) {
+			keyPairAlgorithmItemItemValue!=null && 
+			(keyPairAlgorithmItemItemValue.getValue()==null || StringUtils.isEmpty(keyPairAlgorithmItemItemValue.getValue()))) {
 			keyPairAlgorithmItemItemValue.setValue(ModIConsoleCostanti.MODIPA_KEYSTORE_KEY_ALGORITHM_DEFAULT_VALUE);
 		}
 		

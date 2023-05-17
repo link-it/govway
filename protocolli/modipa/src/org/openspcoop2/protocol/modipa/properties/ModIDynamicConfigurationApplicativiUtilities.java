@@ -411,6 +411,16 @@ public class ModIDynamicConfigurationApplicativiUtilities {
 					keystorePathMODIItemValue.setValue(null);
 				}
 				
+				StringProperty keystorePathPublicKeyMODIItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_PATH_PUBLIC_KEY_ID);
+				if(keystorePathPublicKeyMODIItemValue!=null) {
+					keystorePathPublicKeyMODIItemValue.setValue(null);
+				}
+				
+				StringProperty keystoreKeyAlgoMODIItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_KEY_ALGORITHM_ID);
+				if(keystoreKeyAlgoMODIItemValue!=null) {
+					keystoreKeyAlgoMODIItemValue.setValue(null);
+				}
+				
 				StringProperty keystoreTypeMODIItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_ID);
 				if(keystoreTypeMODIItemValue!=null) {
 					keystoreTypeMODIItemValue.setValue(null);

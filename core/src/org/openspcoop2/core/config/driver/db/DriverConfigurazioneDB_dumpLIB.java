@@ -86,7 +86,7 @@ public class DriverConfigurazioneDB_dumpLIB {
 					idResponseOut = createDumpConfigurazioneRegola(dumpConfig.getRispostaUscita(), con);
 				}
 				
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addInsertTable(CostantiDB.DUMP_CONFIGURAZIONE);
 				sqlQueryObject.addInsertField("proprietario", "?");
 				sqlQueryObject.addInsertField("id_proprietario", "?");
@@ -100,7 +100,7 @@ public class DriverConfigurazioneDB_dumpLIB {
 				int index = 1;
 				updateStmt.setString(index++, tipoProprietario);
 				updateStmt.setLong(index++, idProprietario!=null ? idProprietario : -1);
-				updateStmt.setString(index++, DriverConfigurazioneDB_LIB.getValue(dumpConfig.getRealtime()));
+				updateStmt.setString(index++, DriverConfigurazioneDBLib.getValue(dumpConfig.getRealtime()));
 				updateStmt.setLong(index++, idRequestIn);
 				updateStmt.setLong(index++, idRequestOut);
 				updateStmt.setLong(index++, idResponseIn);
@@ -130,7 +130,7 @@ public class DriverConfigurazioneDB_dumpLIB {
 					break;
 				}
 				
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.DUMP_CONFIGURAZIONE_REGOLA);
 				sqlQueryObject.addWhereCondition("id=?");
 				sqlQueryObject.setANDLogicOperator(true);
@@ -161,7 +161,7 @@ public class DriverConfigurazioneDB_dumpLIB {
 					updateStmt.close();
 				}
 				
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.DUMP_CONFIGURAZIONE);
 				if(!CostantiDB.OLD_BACKWARD_COMPATIBILITY_DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG.equals(tipoProprietario) &&
 						!CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD.equals(tipoProprietario) &&
@@ -197,13 +197,13 @@ public class DriverConfigurazioneDB_dumpLIB {
 	
 	private static long createDumpConfigurazioneRegola(DumpConfigurazioneRegola dumpRegola, Connection con) throws Exception {
 		List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<>();
-		listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("body", DriverConfigurazioneDB_LIB.getValue(dumpRegola.getBody()) , InsertAndGeneratedKeyJDBCType.STRING) );
-		listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("payload", DriverConfigurazioneDB_LIB.getValue(dumpRegola.getPayload()) , InsertAndGeneratedKeyJDBCType.STRING) );
-		listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("payload_parsing", DriverConfigurazioneDB_LIB.getValue(dumpRegola.getPayloadParsing()) , InsertAndGeneratedKeyJDBCType.STRING) );
-		listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("attachments", DriverConfigurazioneDB_LIB.getValue(dumpRegola.getAttachments()) , InsertAndGeneratedKeyJDBCType.STRING) );
-		listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("headers", DriverConfigurazioneDB_LIB.getValue(dumpRegola.getHeaders()) , InsertAndGeneratedKeyJDBCType.STRING) );
+		listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("body", DriverConfigurazioneDBLib.getValue(dumpRegola.getBody()) , InsertAndGeneratedKeyJDBCType.STRING) );
+		listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("payload", DriverConfigurazioneDBLib.getValue(dumpRegola.getPayload()) , InsertAndGeneratedKeyJDBCType.STRING) );
+		listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("payload_parsing", DriverConfigurazioneDBLib.getValue(dumpRegola.getPayloadParsing()) , InsertAndGeneratedKeyJDBCType.STRING) );
+		listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("attachments", DriverConfigurazioneDBLib.getValue(dumpRegola.getAttachments()) , InsertAndGeneratedKeyJDBCType.STRING) );
+		listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("headers", DriverConfigurazioneDBLib.getValue(dumpRegola.getHeaders()) , InsertAndGeneratedKeyJDBCType.STRING) );
 		
-		long idDumpconfigurazioneRegola = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(DriverConfigurazioneDB_LIB.tipoDB), 
+		long idDumpconfigurazioneRegola = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(DriverConfigurazioneDBLib.tipoDB), 
 				new CustomKeyGeneratorObject(CostantiDB.DUMP_CONFIGURAZIONE_REGOLA, CostantiDB.DUMP_CONFIGURAZIONE_REGOLA_COLUMN_ID, 
 						CostantiDB.DUMP_CONFIGURAZIONE_REGOLA_SEQUENCE, CostantiDB.DUMP_CONFIGURAZIONE_REGOLA_TABLE_FOR_ID),
 				listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
@@ -217,7 +217,7 @@ public class DriverConfigurazioneDB_dumpLIB {
 		PreparedStatement stm1=null;
 		ResultSet rs1= null;
 		try {
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.DUMP_CONFIGURAZIONE);
 			sqlQueryObject.addSelectField("*");
 			if(!CostantiDB.OLD_BACKWARD_COMPATIBILITY_DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG.equals(tipoProprietario) &&
@@ -248,7 +248,7 @@ public class DriverConfigurazioneDB_dumpLIB {
 				
 				dumpConfig.setId(rs1.getLong("id"));
 				
-				dumpConfig.setRealtime(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs1.getString("dump_realtime")));
+				dumpConfig.setRealtime(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(rs1.getString("dump_realtime")));
 				
 				long idRequestIn = rs1.getLong("id_richiesta_ingresso");
 				if(idRequestIn>0) {
@@ -282,7 +282,7 @@ public class DriverConfigurazioneDB_dumpLIB {
 		PreparedStatement stm1=null;
 		ResultSet rs1= null;
 		try {
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.DUMP_CONFIGURAZIONE_REGOLA);
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.addWhereCondition("id=?");
@@ -299,11 +299,11 @@ public class DriverConfigurazioneDB_dumpLIB {
 			if(rs1.next()){
 				
 				dumpConfig.setId(rs1.getLong("id"));
-				dumpConfig.setBody(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs1.getString("body")));
-				dumpConfig.setPayload(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs1.getString("payload")));
-				dumpConfig.setPayloadParsing(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs1.getString("payload_parsing")));
-				dumpConfig.setAttachments(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs1.getString("attachments")));
-				dumpConfig.setHeaders(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs1.getString("headers")));
+				dumpConfig.setBody(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(rs1.getString("body")));
+				dumpConfig.setPayload(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(rs1.getString("payload")));
+				dumpConfig.setPayloadParsing(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(rs1.getString("payload_parsing")));
+				dumpConfig.setAttachments(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(rs1.getString("attachments")));
+				dumpConfig.setHeaders(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(rs1.getString("headers")));
 				
 			}
 

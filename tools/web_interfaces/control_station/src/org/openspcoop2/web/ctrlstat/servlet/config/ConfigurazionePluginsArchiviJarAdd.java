@@ -36,7 +36,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.RegistroPlugin;
 import org.openspcoop2.core.config.RegistroPluginArchivio;
-import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB_LIB;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDBLib;
 import org.openspcoop2.utils.id.UUIDUtilsGenerator;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
@@ -154,7 +154,7 @@ public final class ConfigurazionePluginsArchiviJarAdd extends Action {
 			registroPluginArchivio.setNomePlugin(nome);
 			registroPluginArchivio.setData(registro.getData());
 			
-			registroPluginArchivio.setSorgente( DriverConfigurazioneDB_LIB.getEnumPluginSorgenteArchivio(sorgente));
+			registroPluginArchivio.setSorgente( DriverConfigurazioneDBLib.getEnumPluginSorgenteArchivio(sorgente));
 			
 			switch (registroPluginArchivio.getSorgente()) {
 			case JAR:

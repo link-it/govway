@@ -30,6 +30,44 @@ Examples:
 | Test2 | ApplicativoBlockingIDA01ExampleClient3 | ApplicativoBlockingIDA01ExampleClient3 |
 
 
+@negoziazioneJwkOk
+Scenario Outline: Test negoziazione ok tramite una fruizione tramite l'applicativo <tipo-test> configurato per generare solo un kid tramite keystore jwk
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/DemoNegoziazioneToken/v1"
+And path '/tokenJwtKidOnly/test'
+And request read('request.json')
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header govway-testsuite-role = 'undefined'
+When method post
+Then status 200
+And match response == read('request.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+Examples:
+| tipo-test |  username | password |
+| TestJWK | ApplicativoBlockingJWK | ApplicativoBlockingJWK |
+
+
+@negoziazioneKeyPairOk
+Scenario Outline: Test negoziazione ok tramite una fruizione tramite l'applicativo <tipo-test> configurato per generare solo un kid tramite keystore keypair
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/DemoNegoziazioneToken/v1"
+And path '/tokenJwtKidOnlyKeyPair/test'
+And request read('request.json')
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header govway-testsuite-role = 'undefined'
+When method post
+Then status 200
+And match response == read('request.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+Examples:
+| tipo-test |  username | password |
+| TestKeyPair | ApplicativoBlockingKeyPair | ApplicativoBlockingKeyPair |
+
+
 @negoziazioneKoKidNonDefinito
 Scenario Outline: Test negoziazione ko poiche' viene usato un applicativo su cui non è stato definito il kid
 
@@ -158,6 +196,96 @@ Examples:
 | KeystoreRidefinito |
 | KeystoreDefaultSicurezzaMessaggio |
 | KeystoreRidefinitoSicurezzaMessaggio |
+
+
+
+@negoziazioneFruizioneJWKOk
+Scenario Outline: Test negoziazione ok tramite una fruizione che utilizza l'impostazione '<tipo-test>' con keystore JWK
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/DemoNegoziazioneTokenFruizione<tipo-test>JWK/v1"
+And path 'test'
+And request read('request.json')
+And header govway-testsuite-role = 'undefined'
+And header tiponegoziazionetest = 'Fruizione<tipo-test>'
+When method post
+Then status 200
+And match response == read('request.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+Examples:
+| tipo-test |
+| KeystoreRidefinito |
+| KeystoreRidefinitoSicurezzaMessaggio |
+
+
+
+@negoziazioneFruizioneKeyPairOk
+Scenario Outline: Test negoziazione ok tramite una fruizione che utilizza l'impostazione '<tipo-test>' con keystore KeyPair
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/DemoNegoziazioneTokenFruizione<tipo-test>KeyPair/v1"
+And path 'test'
+And request read('request.json')
+And header govway-testsuite-role = 'undefined'
+And header tiponegoziazionetest = 'Fruizione<tipo-test>'
+When method post
+Then status 200
+And match response == read('request.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+Examples:
+| tipo-test |
+| KeystoreRidefinito |
+| KeystoreRidefinitoSicurezzaMessaggio |
+
+
+
+
+@negoziazioneFruizioneJWKKoPatternIntegrityRichiedeX5c
+Scenario Outline: Test negoziazione ko poiche' viene usato una fruizione che utilizza l'impostazione '<tipo-test>', su cui non viene riferita una azione che richiede un pattern integrity REST_01 mentre il keystore non possiede un x509
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/DemoNegoziazioneTokenFruizione<tipo-test>JWK/v1"
+And path 'testX5c'
+And request read('request.json')
+And header govway-testsuite-role = 'undefined'
+And header tiponegoziazionetest = 'Fruizione<tipo-test>'
+When method post
+Then status 400
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici(tid) 
+
+* match result[0].MESSAGGIO contains 'Configuration error; pattern \'idam0301\' require x509 certificate, found \'JWK Set\' key'
+
+Examples:
+| tipo-test |
+| KeystoreRidefinitoSicurezzaMessaggio |
+
+
+
+
+@negoziazioneFruizioneKeyPairKoPatternIntegrityRichiedeX5c
+Scenario Outline: Test negoziazione ko poiche' viene usato una fruizione che utilizza l'impostazione '<tipo-test>', su cui non viene riferita una azione che richiede un pattern integrity REST_01 mentre il keystore non possiede un x509
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/DemoNegoziazioneTokenFruizione<tipo-test>KeyPair/v1"
+And path 'testX5c'
+And request read('request.json')
+And header govway-testsuite-role = 'undefined'
+And header tiponegoziazionetest = 'Fruizione<tipo-test>'
+When method post
+Then status 400
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici(tid) 
+
+* match result[0].MESSAGGIO contains 'Configuration error; pattern \'idam0301\' require x509 certificate, found \'Key Pair\' key'
+
+Examples:
+| tipo-test |
+| KeystoreRidefinitoSicurezzaMessaggio |
+
+
 
 
 

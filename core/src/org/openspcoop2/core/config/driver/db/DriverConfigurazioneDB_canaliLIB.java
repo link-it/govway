@@ -54,7 +54,7 @@ public class DriverConfigurazioneDB_canaliLIB {
 		ResultSet rs1= null;
 		try {
 			
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE_CANALI);
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.setANDLogicOperator(true);
@@ -81,7 +81,7 @@ public class DriverConfigurazioneDB_canaliLIB {
 			stm1.close();
 
 			if(readNodi) {
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE_CANALI_NODI);
 				sqlQueryObject.addSelectField("*");
 				sqlQueryObject.setANDLogicOperator(true);
@@ -119,7 +119,7 @@ public class DriverConfigurazioneDB_canaliLIB {
 				
 				if(canaliConfigurazione.sizeCanaleList()>0) {
 					for (CanaleConfigurazione canale : canaliConfigurazione.getCanaleList()) {
-						ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.CONFIGURAZIONE_CANALI);
 						sqlQueryObject.addInsertField("nome", "?");
 						sqlQueryObject.addInsertField("descrizione", "?");
@@ -137,7 +137,7 @@ public class DriverConfigurazioneDB_canaliLIB {
 				
 				if(canaliConfigurazione.sizeNodoList()>0) {
 					for (CanaleConfigurazioneNodo nodo : canaliConfigurazione.getNodoList()) {
-						ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.CONFIGURAZIONE_CANALI_NODI);
 						sqlQueryObject.addInsertField("nome", "?");
 						sqlQueryObject.addInsertField("descrizione", "?");
@@ -176,7 +176,7 @@ public class DriverConfigurazioneDB_canaliLIB {
 				
 			case DELETE:
 				
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.CONFIGURAZIONE_CANALI);
 				sqlQueryObject.setANDLogicOperator(true);
 				String updateQuery = sqlQueryObject.createSQLDelete();
@@ -184,7 +184,7 @@ public class DriverConfigurazioneDB_canaliLIB {
 				updateStmt.executeUpdate();
 				updateStmt.close();
 				
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.CONFIGURAZIONE_CANALI_NODI);
 				sqlQueryObject.setANDLogicOperator(true);
 				updateQuery = sqlQueryObject.createSQLDelete();

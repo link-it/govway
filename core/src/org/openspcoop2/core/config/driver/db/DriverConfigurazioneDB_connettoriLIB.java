@@ -250,7 +250,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 			case CREATE:
 
 				// create
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addInsertTable(CostantiDB.CONNETTORI);
 				sqlQueryObject.addInsertField("endpointtype", "?");
 				sqlQueryObject.addInsertField("url", "?");
@@ -350,7 +350,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 				}
 				stm.setString(index++, token_policy);
 
-				DriverConfigurazioneDB_LIB.log.debug("CRUDConnettore CREATE : \n" + DBUtils.formatSQLString(sqlQuery, endpointtype, url, 
+				DriverConfigurazioneDBLib.log.debug("CRUDConnettore CREATE : \n" + DBUtils.formatSQLString(sqlQuery, endpointtype, url, 
 						transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 						nome, tipo, utente, password, initcont, urlpkg, provurl, connectionfactory, sendas, nomeConnettore,debug,
 						proxy, proxy_type, proxy_hostname, proxy_port, proxy_username, proxy_password,
@@ -360,10 +360,10 @@ public class DriverConfigurazioneDB_connettoriLIB {
 
 				n = stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Inserted " + n + " row(s)");
+				DriverConfigurazioneDBLib.log.debug("Inserted " + n + " row(s)");
 
 
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.CONNETTORI);
 				sqlQueryObject.addSelectField("*");
 				sqlQueryObject.addWhereCondition("endpointtype = ?");
@@ -375,7 +375,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 				stm.setString(1, endpointtype);
 				stm.setString(2, nomeConnettore);
 
-				DriverConfigurazioneDB_LIB.log.debug("Recupero idConnettore inserito : \n" + DBUtils.formatSQLString(sqlQuery, endpointtype, nomeConnettore));
+				DriverConfigurazioneDBLib.log.debug("Recupero idConnettore inserito : \n" + DBUtils.formatSQLString(sqlQuery, endpointtype, nomeConnettore));
 
 				rs = stm.executeQuery();
 
@@ -391,7 +391,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 				
 				// Custom properties
 				if(connettore.getCustom()!=null && connettore.getCustom()){					
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.CONNETTORI_CUSTOM);
 					sqlQueryObject.addInsertField("name", "?");
 					sqlQueryObject.addInsertField("value", "?");
@@ -420,7 +420,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 					}				
 				}
 				else if(extendedProperties.size()>0){
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.CONNETTORI_CUSTOM);
 					sqlQueryObject.addInsertField("name", "?");
 					sqlQueryObject.addInsertField("value", "?");
@@ -454,7 +454,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 				if (idConnettore < 0)
 					throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDConnettore] L'id del connettore non puo essere 0 tentando di fare una operazione di update.");
 
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addUpdateTable(CostantiDB.CONNETTORI);
 				sqlQueryObject.addUpdateField("endpointtype", "?");
 				sqlQueryObject.addUpdateField("url", "?");
@@ -558,7 +558,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 
 				stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("CRUDConnettore UPDATE : \n" + DBUtils.formatSQLString(sqlQuery, endpointtype, url, 
+				DriverConfigurazioneDBLib.log.debug("CRUDConnettore UPDATE : \n" + DBUtils.formatSQLString(sqlQuery, endpointtype, url, 
 						transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 						nome, tipo, utente, password, initcont, urlpkg, provurl, connectionfactory, sendas,nomeConnettore, debug,
 						proxy, proxy_type, proxy_hostname, proxy_port, proxy_username, proxy_password,
@@ -569,7 +569,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 
 				// Custom properties
 				// Delete eventuali vecchie properties
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.CONNETTORI_CUSTOM);
 				sqlQueryObject.addWhereCondition("id_connettore=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -579,7 +579,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 				stm.close();
 				// Aggiungo attuali
 				if(connettore.getCustom()!=null && connettore.getCustom()){					
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.CONNETTORI_CUSTOM);
 					sqlQueryObject.addInsertField("name", "?");
 					sqlQueryObject.addInsertField("value", "?");
@@ -608,7 +608,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 					}				
 				}
 				else if(extendedProperties.size()>0){
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.CONNETTORI_CUSTOM);
 					sqlQueryObject.addInsertField("name", "?");
 					sqlQueryObject.addInsertField("value", "?");
@@ -643,7 +643,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 					throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDConnettore] L'id del connettore non puo essere 0 tentando di fare una operazione di delete.");
 
 				// Delete eventuali vecchie properties
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.CONNETTORI_CUSTOM);
 				sqlQueryObject.addWhereCondition("id_connettore=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -653,7 +653,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 				stm.close();
 				
 				// Delete connettori
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.CONNETTORI);
 				sqlQueryObject.addWhereCondition("id=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -661,7 +661,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 				stm.setLong(1, idConnettore);
 				stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("CRUDConnettore DELETE : \n" + DBUtils.formatSQLString(sqlQuery, idConnettore));
+				DriverConfigurazioneDBLib.log.debug("CRUDConnettore DELETE : \n" + DBUtils.formatSQLString(sqlQuery, idConnettore));
 
 				break;
 			}
@@ -689,7 +689,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 		ResultSet rs = null;
 
 		try {
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.CONNETTORI);
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.addWhereCondition("id = ?");
@@ -698,7 +698,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 			stm = connection.prepareStatement(sqlQuery);
 			stm.setLong(1, idConnettore);
 
-			DriverConfigurazioneDB_LIB.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idConnettore));
+			DriverConfigurazioneDBLib.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idConnettore));
 
 			rs = stm.executeQuery();
 
@@ -963,7 +963,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 						}
 						else{
 							// legge da file properties
-							connettore.setPropertyList(ConnettorePropertiesUtilities.getPropertiesConnettore(endpoint,connection,DriverConfigurazioneDB_LIB.tipoDB));
+							connettore.setPropertyList(ConnettorePropertiesUtilities.getPropertiesConnettore(endpoint,connection,DriverConfigurazioneDBLib.tipoDB));
 						}
 					}
 
@@ -994,7 +994,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 		ResultSet rs = null;
 
 		try {
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.CONNETTORI_CUSTOM);
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.addWhereCondition("id_connettore = ?");
@@ -1003,7 +1003,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 			stm = connection.prepareStatement(sqlQuery);
 			stm.setLong(1, idConnettore);
 
-			DriverConfigurazioneDB_LIB.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idConnettore));
+			DriverConfigurazioneDBLib.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idConnettore));
 
 			rs = stm.executeQuery();
 			
@@ -1052,7 +1052,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 		ResultSet rs = null;
 
 		try {
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.CONNETTORI_CUSTOM);
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.addWhereCondition("id_connettore = ?");
@@ -1062,7 +1062,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 			stm = connection.prepareStatement(sqlQuery);
 			stm.setLong(1, idConnettore);
 
-			DriverConfigurazioneDB_LIB.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idConnettore));
+			DriverConfigurazioneDBLib.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idConnettore));
 
 			rs = stm.executeQuery();
 
@@ -1128,7 +1128,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 		long idConnettore=-1;
 		try
 		{
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.addWhereCondition("id = ?");
@@ -1162,7 +1162,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 		long idConnettore=-1;
 		try
 		{
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.addWhereCondition("id = ?");

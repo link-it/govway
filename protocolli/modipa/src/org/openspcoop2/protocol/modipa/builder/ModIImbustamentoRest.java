@@ -69,6 +69,7 @@ import org.openspcoop2.security.message.utils.SignatureBean;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.JWKSet;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.digest.DigestEncoding;
@@ -1055,6 +1056,7 @@ public class ModIImbustamentoRest {
 		
 		
 		// spedizione certificato
+		boolean richiestaConfigurazioneX509 = false;
 		if(integritaKid || useKIDtokenHeader) {
 			if(kid==null) {
 				// utilizzo l'alias
@@ -1067,6 +1069,9 @@ public class ModIImbustamentoRest {
 			modiTokenClaims.setKid(kid);
 		}
 		else {
+			
+			richiestaConfigurazioneX509 = true;
+			
 			boolean addKid = tokenAudit ? this.modiProperties.isSecurityTokenAuditX509AddKid() : this.modiProperties.isSecurityTokenX509AddKid();
 			if(addKid) {
 				secProperties.put(SecurityConstants.JOSE_KID, SecurityConstants.JOSE_KID_TRUE); // kid
@@ -1104,6 +1109,14 @@ public class ModIImbustamentoRest {
 		JWKSet jwkSet = null;
 		String keyAlias = keystoreConfig.getSecurityMessageKeyAlias();
 		if(keystoreConfig.getSecurityMessageKeystorePath()!=null || keystoreConfig.isSecurityMessageKeystoreHSM()) {
+			
+			if(richiestaConfigurazioneX509 &&
+					(CostantiDB.KEYSTORE_TYPE_JWK.equalsIgnoreCase(keystoreConfig.getSecurityMessageKeystoreType()) || CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(keystoreConfig.getSecurityMessageKeystoreType()))) {
+				String type = CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(keystoreConfig.getSecurityMessageKeystoreType()) ? KeystoreType.KEY_PAIR.getLabel() : KeystoreType.JWK_SET.getLabel();
+				String pattern = tokenAudit ? "audit" : securityMessageProfile;
+				throw new ProtocolException("Configuration error; pattern '"+pattern+"' require x509 certificate, found '"+type+"' key");
+			}
+			
 			if(CostantiDB.KEYSTORE_TYPE_JWK.equalsIgnoreCase(keystoreConfig.getSecurityMessageKeystoreType())) {
 				try {
 					JWKSetStore jwtStore = GestoreKeystoreCache.getJwkSetStore(requestInfo, keystoreConfig.getSecurityMessageKeystorePath());

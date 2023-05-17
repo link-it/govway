@@ -77,7 +77,7 @@ public class DriverConfigurazioneDB_handlerLIB {
 			
 			for (String tipologia : tipologie) {
 				
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addFromTable(tabella);
 				sqlQueryObject.addSelectField("*");
 				if(idPortaDelegata!=null || idPortaApplicatva!=null) {
@@ -107,7 +107,7 @@ public class DriverConfigurazioneDB_handlerLIB {
 					handler.setPosizione(rs1.getInt("posizione"));
 					String stato = rs1.getString("stato");
 					if(stato!=null && !"".equals(stato)) {
-						handler.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(stato));
+						handler.setStato(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(stato));
 					}
 					list.add(handler);
 					
@@ -167,7 +167,7 @@ public class DriverConfigurazioneDB_handlerLIB {
 			
 			for (String tipologia : tipologie) {
 				
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addFromTable(tabella);
 				sqlQueryObject.addSelectField("*");
 				if(idPortaDelegata!=null || idPortaApplicatva!=null) {
@@ -197,7 +197,7 @@ public class DriverConfigurazioneDB_handlerLIB {
 					handler.setPosizione(rs1.getInt("posizione"));
 					String stato = rs1.getString("stato");
 					if(stato!=null && !"".equals(stato)) {
-						handler.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(stato));
+						handler.setStato(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(stato));
 					}
 					list.add(handler);
 					
@@ -287,7 +287,7 @@ public class DriverConfigurazioneDB_handlerLIB {
 				tipologie.add(CostantiDB.HANDLER_OUT+suffix);
 				tipologie.add(CostantiDB.HANDLER_POST_OUT+suffix);
 				
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(tabella);
 				sqlQueryObject.setANDLogicOperator(true);
 				if(idPorta!=null) {
@@ -368,7 +368,7 @@ public class DriverConfigurazioneDB_handlerLIB {
 				tipologie.add(CostantiDB.HANDLER_INTEGRATION_MANAGER_REQUEST);
 				tipologie.add(CostantiDB.HANDLER_INTEGRATION_MANAGER_RESPONSE);
 				
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(tabella);
 				sqlQueryObject.setANDLogicOperator(true);
 				if(idPorta!=null) {
@@ -403,7 +403,7 @@ public class DriverConfigurazioneDB_handlerLIB {
 			for (ConfigurazioneHandler handler : list) {
 				PreparedStatement updateStmt = null;
 				try {
-					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(tabella);
 					if(idPorta!=null) {
 						sqlQueryObject.addInsertField("id_porta", "?");
@@ -421,7 +421,7 @@ public class DriverConfigurazioneDB_handlerLIB {
 					updateStmt.setString(index++, tipologia);
 					updateStmt.setString(index++, handler.getTipo());
 					updateStmt.setInt(index++, handler.getPosizione());
-					updateStmt.setString(index++, DriverConfigurazioneDB_LIB.getValue(handler.getStato()));
+					updateStmt.setString(index++, DriverConfigurazioneDBLib.getValue(handler.getStato()));
 					updateStmt.executeUpdate();
 					updateStmt.close();
 					updateStmt = null;

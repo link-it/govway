@@ -1907,8 +1907,8 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 				cae = new CorrelazioneApplicativaElemento();
 				cae.setId(risultato.getLong("id"));
 				cae.setNome(risultato.getString("nome_elemento"));
-				cae.setIdentificazione(DriverConfigurazioneDB_LIB.getEnumCorrelazioneApplicativaRichiestaIdentificazione(risultato.getString("mode_correlazione")));
-				cae.setIdentificazioneFallita(DriverConfigurazioneDB_LIB.getEnumCorrelazioneApplicativaGestioneIdentificazioneFallita(risultato.getString("identificazione_fallita")));
+				cae.setIdentificazione(DriverConfigurazioneDBLib.getEnumCorrelazioneApplicativaRichiestaIdentificazione(risultato.getString("mode_correlazione")));
+				cae.setIdentificazioneFallita(DriverConfigurazioneDBLib.getEnumCorrelazioneApplicativaGestioneIdentificazioneFallita(risultato.getString("identificazione_fallita")));
 				lista.add(cae);
 			}
 
@@ -2033,8 +2033,8 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 				cae = new CorrelazioneApplicativaRispostaElemento();
 				cae.setId(risultato.getLong("id"));
 				cae.setNome(risultato.getString("nome_elemento"));
-				cae.setIdentificazione(DriverConfigurazioneDB_LIB.getEnumCorrelazioneApplicativaRispostaIdentificazione(risultato.getString("mode_correlazione")));
-				cae.setIdentificazioneFallita(DriverConfigurazioneDB_LIB.getEnumCorrelazioneApplicativaGestioneIdentificazioneFallita(risultato.getString("identificazione_fallita")));
+				cae.setIdentificazione(DriverConfigurazioneDBLib.getEnumCorrelazioneApplicativaRispostaIdentificazione(risultato.getString("mode_correlazione")));
+				cae.setIdentificazioneFallita(DriverConfigurazioneDBLib.getEnumCorrelazioneApplicativaGestioneIdentificazioneFallita(risultato.getString("identificazione_fallita")));
 				lista.add(cae);
 			}
 

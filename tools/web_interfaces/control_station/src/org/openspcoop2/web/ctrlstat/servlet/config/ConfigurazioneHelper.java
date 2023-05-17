@@ -92,7 +92,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryPa
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
-import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB_LIB;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDBLib;
 import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TipoPdD;
@@ -18436,7 +18436,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					return false;
 				}
 				
-				PluginSorgenteArchivio pluginSorgenteArchivio = DriverConfigurazioneDB_LIB.getEnumPluginSorgenteArchivio(sorgente);
+				PluginSorgenteArchivio pluginSorgenteArchivio = DriverConfigurazioneDBLib.getEnumPluginSorgenteArchivio(sorgente);
 				
 				if(pluginSorgenteArchivio == null) {
 					this.pd.setMessage("Il valore indicato nel campo '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_SORGENTE+"' non &egrave; valido.");

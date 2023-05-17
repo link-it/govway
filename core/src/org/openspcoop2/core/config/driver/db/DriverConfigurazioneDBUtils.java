@@ -21,7 +21,6 @@ package org.openspcoop2.core.config.driver.db;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.openspcoop2.core.commons.CoreException;
@@ -41,11 +40,11 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class DriverConfigurazioneDB_utilsDriver {
-
+public class DriverConfigurazioneDBUtils {
+	
 	private DriverConfigurazioneDB driver = null;
 	
-	protected DriverConfigurazioneDB_utilsDriver(DriverConfigurazioneDB driver) {
+	protected DriverConfigurazioneDBUtils(DriverConfigurazioneDB driver) {
 		this.driver = driver;
 	}
 	
@@ -69,8 +68,6 @@ public class DriverConfigurazioneDB_utilsDriver {
 
 		} else
 			con = this.driver.globalConnection;
-
-		//this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
 		try {
 
@@ -547,7 +544,7 @@ public class DriverConfigurazioneDB_utilsDriver {
 				stmt.executeUpdate();
 				stmt.close();
 
-				/* NON DEVE ESSERE CANCELLATA!
+				/** NON DEVE ESSERE CANCELLATA!
 				updateString = "DELETE FROM " + CostantiDB.CONFIGURAZIONE;
 				stmt = con.prepareStatement(updateString);
 				stmt.executeUpdate();
@@ -556,10 +553,7 @@ public class DriverConfigurazioneDB_utilsDriver {
 			}
 
 
-		} catch (SQLException qe) {
-			error = true;
-			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateSoggetto] Errore durante la reset : " + qe.getMessage(),qe);
-		}catch (Exception qe) {
+		} catch (Exception qe) {
 			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateSoggetto] Errore durante la reset : " + qe.getMessage(),qe);
 		}finally {
@@ -592,8 +586,6 @@ public class DriverConfigurazioneDB_utilsDriver {
 		} else
 			con = this.driver.globalConnection;
 
-		//this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
-
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.MAPPING_EROGAZIONE_PA);
@@ -622,10 +614,7 @@ public class DriverConfigurazioneDB_utilsDriver {
 			stmt = con.prepareStatement(updateString);
 			stmt.executeUpdate();
 			stmt.close();
-		} catch (SQLException qe) {
-			error = true;
-			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::resetCtrlstat] Errore durante la reset : " + qe.getMessage(),qe);
-		}catch (Exception qe) {
+		} catch (Exception qe) {
 			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::resetCtrlstat] Errore durante la reset : " + qe.getMessage(),qe);
 		}finally {
@@ -638,7 +627,7 @@ public class DriverConfigurazioneDB_utilsDriver {
 	}
 	
 	protected void isAlive() throws CoreException{
-		if(this.driver.create==false)
+		if(!this.driver.create)
 			throw new CoreException("Driver non inizializzato");
 
 		if(this.driver.atomica){
@@ -648,7 +637,7 @@ public class DriverConfigurazioneDB_utilsDriver {
 			try {
 				con = this.driver.getConnectionFromDatasource("isAlive");
 				if(con == null)
-					throw new Exception("Connessione is null");
+					throw new CoreException("Connessione is null");
 				// test:
 				try {
 					stmtTest = con.createStatement();
@@ -686,7 +675,7 @@ public class DriverConfigurazioneDB_utilsDriver {
 			Statement stmtTest = null;
 			try {
 				if(this.driver.globalConnection == null)
-					throw new Exception("Connessione is null");
+					throw new CoreException("Connessione is null");
 				// test:
 				try {
 					stmtTest = this.driver.globalConnection.createStatement();

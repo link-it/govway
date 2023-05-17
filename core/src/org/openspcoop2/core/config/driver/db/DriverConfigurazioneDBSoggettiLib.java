@@ -42,8 +42,14 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class DriverConfigurazioneDB_soggettiLIB {
+public class DriverConfigurazioneDBSoggettiLib {
+	
+	private DriverConfigurazioneDBSoggettiLib() {}
 
+	private static String buildCrudSoggettoMessage(int type, int n) {
+		return "CRUDSoggetto type = " + type + " row affected =" + n;
+	}
+	
 	/**
 	 * CRUD oggetto Soggetto Non si occupa di chiudere la connessione con
 	 * il db in caso di errore in quanto verra' gestita dal metodo chiamante
@@ -89,8 +95,8 @@ public class DriverConfigurazioneDB_soggettiLIB {
 			switch (type) {
 			case CREATE:
 				// CREATE
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-				sqlQueryObject.addInsertTable(DriverConfigurazioneDB_LIB.tabellaSoggetti);
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
+				sqlQueryObject.addInsertTable(DriverConfigurazioneDBLib.tabellaSoggetti);
 				sqlQueryObject.addInsertField("nome_soggetto", "?");
 				sqlQueryObject.addInsertField("descrizione", "?");
 				sqlQueryObject.addInsertField("identificativo_porta", "?");
@@ -116,11 +122,11 @@ public class DriverConfigurazioneDB_soggettiLIB {
 				// eseguo lo statement
 				n = updateStmt.executeUpdate();
 
-				DriverConfigurazioneDB_LIB.log.debug("CRUDSoggetto CREATE : \n" + DBUtils.formatSQLString(updateQuery, nome, descrizione, identificativoPorta, tipo, router, superuser));
-				DriverConfigurazioneDB_LIB.log.debug("CRUDSoggetto type = " + type + " row affected =" + n);
+				DriverConfigurazioneDBLib.logDebug("CRUDSoggetto CREATE : \n" + DBUtils.formatSQLString(updateQuery, nome, descrizione, identificativoPorta, tipo, router, superuser));
+				DriverConfigurazioneDBLib.logDebug(buildCrudSoggettoMessage(type, n));
 
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-				sqlQueryObject.addFromTable(DriverConfigurazioneDB_LIB.tabellaSoggetti);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
+				sqlQueryObject.addFromTable(DriverConfigurazioneDBLib.tabellaSoggetti);
 				sqlQueryObject.addSelectField("id");
 				sqlQueryObject.addWhereCondition("tipo_soggetto = ?");
 				sqlQueryObject.addWhereCondition("nome_soggetto = ?");
@@ -147,8 +153,8 @@ public class DriverConfigurazioneDB_soggettiLIB {
 				if (oldTipoSoggetto == null || oldTipoSoggetto.equals(""))
 					oldTipoSoggetto = tipo;
 
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-				sqlQueryObject.addUpdateTable(DriverConfigurazioneDB_LIB.tabellaSoggetti);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
+				sqlQueryObject.addUpdateTable(DriverConfigurazioneDBLib.tabellaSoggetti);
 				sqlQueryObject.addUpdateField("nome_soggetto", "?");
 				sqlQueryObject.addUpdateField("descrizione", "?");
 				sqlQueryObject.addUpdateField("identificativo_porta", "?");
@@ -180,14 +186,14 @@ public class DriverConfigurazioneDB_soggettiLIB {
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
 
-				DriverConfigurazioneDB_LIB.log.debug("CRUDSoggetto UPDATE : \n" + DBUtils.formatSQLString(updateQuery, nome, descrizione, identificativoPorta, tipo, router, soggetto.getId()));
-				DriverConfigurazioneDB_LIB.log.debug("CRUDSoggetto type = " + type + " row affected =" + n);
+				DriverConfigurazioneDBLib.logDebug("CRUDSoggetto UPDATE : \n" + DBUtils.formatSQLString(updateQuery, nome, descrizione, identificativoPorta, tipo, router, soggetto.getId()));
+				DriverConfigurazioneDBLib.logDebug(buildCrudSoggettoMessage(type, n));
 				break;
 
 			case DELETE:
 				// DELETE
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-				sqlQueryObject.addDeleteTable(DriverConfigurazioneDB_LIB.tabellaSoggetti);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
+				sqlQueryObject.addDeleteTable(DriverConfigurazioneDBLib.tabellaSoggetti);
 				sqlQueryObject.addWhereCondition("nome_soggetto=?");
 				sqlQueryObject.addWhereCondition("tipo_soggetto=?");
 				sqlQueryObject.setANDLogicOperator(true);
@@ -198,21 +204,22 @@ public class DriverConfigurazioneDB_soggettiLIB {
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
 
-				DriverConfigurazioneDB_LIB.log.debug("CRUDSoggetto type = " + type + " row affected =" + n);
-				DriverConfigurazioneDB_LIB.log.debug("CRUDSoggetto DELETE : \n" + DBUtils.formatSQLString(updateQuery, soggetto.getNome(), soggetto.getTipo()));
+				DriverConfigurazioneDBLib.logDebug(buildCrudSoggettoMessage(type, n));
+				DriverConfigurazioneDBLib.logDebug("CRUDSoggetto DELETE : \n" + DBUtils.formatSQLString(updateQuery, soggetto.getNome(), soggetto.getTipo()));
 
+				break;
+			default:
 				break;
 			}
 
 			// in caso di create eseguo la select e ritorno l'id dell'oggetto
 			// creato
-			if (type == CostantiDB.CREATE) {
-				if(selectStmt!=null) {
-					selectRS = selectStmt.executeQuery();
-					if (selectRS.next()) {
-						soggetto.setId(selectRS.getLong("id"));
-						return soggetto.getId();
-					}
+			if (type == CostantiDB.CREATE &&
+				selectStmt!=null) {
+				selectRS = selectStmt.executeQuery();
+				if (selectRS.next()) {
+					soggetto.setId(selectRS.getLong("id"));
+					return soggetto.getId();
 				}
 			}
 

@@ -115,10 +115,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 		if(
 				servizio!=null && servizio.getTipo()!=null && servizio.getNome()!=null && servizio.getVersione()!=null && servizio.getVersione()>0) {
 			try {
-				idServizio = DBUtils.getIdServizio(servizio.getNome(), servizio.getTipo(), servizio.getVersione(), nomeProprietario, tipoProprietario, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+				idServizio = DBUtils.getIdServizio(servizio.getNome(), servizio.getTipo(), servizio.getVersione(), nomeProprietario, tipoProprietario, con, DriverConfigurazioneDBLib.tipoDB,DriverConfigurazioneDBLib.tabellaSoggetti);
 				//System.out.println("DOPO PA: "+idServizio);
 			} catch (Throwable e1) {
-				DriverConfigurazioneDB_LIB.log.debug(e1.getMessage(),e1); // potrebbe non esistere la tabella
+				DriverConfigurazioneDBLib.log.debug(e1.getMessage(),e1); // potrebbe non esistere la tabella
 			}
 		}
 		// long idServizio = (servizio !=null ?
@@ -132,9 +132,9 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 		//long idSoggVirt = ((soggVirt != null && soggVirt.getId() != null) ? soggVirt.getId() : -1);
 		long idSoggVirt=-1;
 		try {
-			idSoggVirt = DBUtils.getIdSoggetto(nomeSoggVirt, tipoSoggVirt, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+			idSoggVirt = DBUtils.getIdSoggetto(nomeSoggVirt, tipoSoggVirt, con, DriverConfigurazioneDBLib.tipoDB,DriverConfigurazioneDBLib.tabellaSoggetti);
 		} catch (CoreException e1) {
-			DriverConfigurazioneDB_LIB.log.error(e1.getMessage(),e1);
+			DriverConfigurazioneDBLib.log.error(e1.getMessage(),e1);
 		}
 
 		Proprieta propProtocollo = null;
@@ -174,7 +174,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 		String msg_diag_severita = null;
 		String tracciamento_esiti = null;
 		if(aPA.getTracciamento()!=null){
-			msg_diag_severita = DriverConfigurazioneDB_LIB.getValue(aPA.getTracciamento().getSeverita());
+			msg_diag_severita = DriverConfigurazioneDBLib.getValue(aPA.getTracciamento().getSeverita());
 			tracciamento_esiti = aPA.getTracciamento().getEsiti();
 		}
 		
@@ -192,12 +192,12 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 		String cors_allow_methods = null; 
 		String cors_allow_expose_headers = null; 
 		if(corsConfigurazione!=null) {
-			cors_stato = DriverConfigurazioneDB_LIB.getValue(corsConfigurazione.getStato());
-			cors_tipo = DriverConfigurazioneDB_LIB.getValue(corsConfigurazione.getTipo());
-			cors_all_allow_origins = DriverConfigurazioneDB_LIB.getValue(corsConfigurazione.getAccessControlAllAllowOrigins());
-			cors_all_allow_methods = DriverConfigurazioneDB_LIB.getValue(corsConfigurazione.getAccessControlAllAllowMethods());
-			cors_all_allow_headers = DriverConfigurazioneDB_LIB.getValue(corsConfigurazione.getAccessControlAllAllowHeaders());
-			cors_allow_credentials = DriverConfigurazioneDB_LIB.getValue(corsConfigurazione.getAccessControlAllowCredentials());
+			cors_stato = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getStato());
+			cors_tipo = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getTipo());
+			cors_all_allow_origins = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getAccessControlAllAllowOrigins());
+			cors_all_allow_methods = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getAccessControlAllAllowMethods());
+			cors_all_allow_headers = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getAccessControlAllAllowHeaders());
+			cors_allow_credentials = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getAccessControlAllowCredentials());
 			if(corsConfigurazione.getAccessControlMaxAge()!=null) {
 				cors_allow_max_age = CostantiDB.TRUE;
 				cors_allow_max_age_seconds = corsConfigurazione.getAccessControlMaxAge();	
@@ -259,7 +259,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 		boolean response_cache_noStore = true;
 		List<ResponseCachingConfigurazioneRegola> response_cache_regole = null;
 		if(responseCachingConfigurazone!=null) {
-			response_cache_stato = DriverConfigurazioneDB_LIB.getValue(responseCachingConfigurazone.getStato());
+			response_cache_stato = DriverConfigurazioneDBLib.getValue(responseCachingConfigurazone.getStato());
 			response_cache_seconds = responseCachingConfigurazone.getCacheTimeoutSeconds();
 			response_cache_max_msg_size = responseCachingConfigurazone.getMaxMessageSize();
 			if(responseCachingConfigurazone.getControl()!=null) {
@@ -268,9 +268,9 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				response_cache_noStore = responseCachingConfigurazone.getControl().getNoStore();
 			}
 			if(responseCachingConfigurazone.getHashGenerator()!=null) {
-				response_cache_hash_url = DriverConfigurazioneDB_LIB.getValue(responseCachingConfigurazone.getHashGenerator().getRequestUri());
+				response_cache_hash_url = DriverConfigurazioneDBLib.getValue(responseCachingConfigurazone.getHashGenerator().getRequestUri());
 				
-				response_cache_hash_query = DriverConfigurazioneDB_LIB.getValue(responseCachingConfigurazone.getHashGenerator().getQueryParameters());
+				response_cache_hash_query = DriverConfigurazioneDBLib.getValue(responseCachingConfigurazone.getHashGenerator().getQueryParameters());
 				if(StatoFunzionalitaCacheDigestQueryParameter.SELEZIONE_PUNTUALE.equals(responseCachingConfigurazone.getHashGenerator().getQueryParameters())) {
 					if(responseCachingConfigurazone.getHashGenerator().getQueryParameterList()!=null && responseCachingConfigurazone.getHashGenerator().sizeQueryParameterList()>0) {
 						StringBuilder bf = new StringBuilder();
@@ -284,7 +284,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 					}
 				}
 				
-				response_cache_hash_headers = DriverConfigurazioneDB_LIB.getValue(responseCachingConfigurazone.getHashGenerator().getHeaders());
+				response_cache_hash_headers = DriverConfigurazioneDBLib.getValue(responseCachingConfigurazone.getHashGenerator().getHeaders());
 				if(StatoFunzionalita.ABILITATO.equals(responseCachingConfigurazone.getHashGenerator().getHeaders())) {
 					if(responseCachingConfigurazone.getHashGenerator().getHeaderList()!=null && responseCachingConfigurazone.getHashGenerator().sizeHeaderList()>0) {
 						StringBuilder bf = new StringBuilder();
@@ -298,7 +298,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 					}
 				}
 				
-				response_cache_hash_payload = DriverConfigurazioneDB_LIB.getValue(responseCachingConfigurazone.getHashGenerator().getPayload());
+				response_cache_hash_payload = DriverConfigurazioneDBLib.getValue(responseCachingConfigurazone.getHashGenerator().getPayload());
 			}
 			response_cache_regole = responseCachingConfigurazone.getRegolaList();
 		}
@@ -317,7 +317,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 			int n = 0;
 			int i = 0;
 			long idPortaApplicativa = 0;
-			long idProprietario = DBUtils.getIdSoggetto(nomeProprietario, tipoProprietario, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+			long idProprietario = DBUtils.getIdSoggetto(nomeProprietario, tipoProprietario, con, DriverConfigurazioneDBLib.tipoDB,DriverConfigurazioneDBLib.tabellaSoggetti);
 			// preparo lo statement in base al tipo di operazione
 			switch (type) {
 			case CREATE:
@@ -372,7 +372,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 					}
 				}
 				
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE);
 				sqlQueryObject.addInsertField("nome_porta", "?");
 				sqlQueryObject.addInsertField("descrizione", "?");
@@ -494,60 +494,60 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				}
 				stm.setString(index++, patternAzione);
 				stm.setString(index++, nomePortaDeleganteAzione);
-				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(forceInterfaceBased));
+				stm.setString(index++, DriverConfigurazioneDBLib.getValue(forceInterfaceBased));
 				// mtom
-				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(mtomMode_request));
-				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(mtomMode_response));
+				stm.setString(index++, DriverConfigurazioneDBLib.getValue(mtomMode_request));
+				stm.setString(index++, DriverConfigurazioneDBLib.getValue(mtomMode_response));
 				// messageSecurity
 				stm.setString(index++, messageSecurityStatus);
-				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(messageSecurityApplyMtom_request));
-				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(messageSecurityApplyMtom_response));
+				stm.setString(index++, DriverConfigurazioneDBLib.getValue(messageSecurityApplyMtom_request));
+				stm.setString(index++, DriverConfigurazioneDBLib.getValue(messageSecurityApplyMtom_response));
 				stm.setString(index++, securityRequestMode);
 				stm.setString(index++, securityResponseMode);
 				// proprietario
 				stm.setLong(index++, idProprietario);
 				//ricevuta asincrona_asimmetrica/simmetrica
-				stm.setString(index++, aPA.getRicevutaAsincronaSimmetrica()!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getRicevutaAsincronaSimmetrica()) : null);
-				stm.setString(index++, aPA.getRicevutaAsincronaAsimmetrica()!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getRicevutaAsincronaAsimmetrica()) : null);
+				stm.setString(index++, aPA.getRicevutaAsincronaSimmetrica()!=null ? DriverConfigurazioneDBLib.getValue(aPA.getRicevutaAsincronaSimmetrica()) : null);
+				stm.setString(index++, aPA.getRicevutaAsincronaAsimmetrica()!=null ? DriverConfigurazioneDBLib.getValue(aPA.getRicevutaAsincronaAsimmetrica()) : null);
 				//integrazione
 				stm.setString(index++, aPA.getIntegrazione()!=null ? aPA.getIntegrazione() : null);
 				//validazione xsd
-				stm.setString(index++, aPA.getValidazioneContenutiApplicativi()!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getValidazioneContenutiApplicativi().getStato()) : null);
-				stm.setString(index++, aPA.getValidazioneContenutiApplicativi()!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getValidazioneContenutiApplicativi().getTipo()) : null);
-				stm.setString(index++, aPA.getValidazioneContenutiApplicativi()!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getValidazioneContenutiApplicativi().getAcceptMtomMessage()) : null);
+				stm.setString(index++, aPA.getValidazioneContenutiApplicativi()!=null ? DriverConfigurazioneDBLib.getValue(aPA.getValidazioneContenutiApplicativi().getStato()) : null);
+				stm.setString(index++, aPA.getValidazioneContenutiApplicativi()!=null ? DriverConfigurazioneDBLib.getValue(aPA.getValidazioneContenutiApplicativi().getTipo()) : null);
+				stm.setString(index++, aPA.getValidazioneContenutiApplicativi()!=null ? DriverConfigurazioneDBLib.getValue(aPA.getValidazioneContenutiApplicativi().getAcceptMtomMessage()) : null);
 				
 				// InvocazionePorta: funzionalita' attachment
-				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getAllegaBody()) : null);
-				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getScartaBody()) : null);
-				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getGestioneManifest()) : null);
+				stm.setString(index++, aPA!=null ? DriverConfigurazioneDBLib.getValue(aPA.getAllegaBody()) : null);
+				stm.setString(index++, aPA!=null ? DriverConfigurazioneDBLib.getValue(aPA.getScartaBody()) : null);
+				stm.setString(index++, aPA!=null ? DriverConfigurazioneDBLib.getValue(aPA.getGestioneManifest()) : null);
 				
 				// Stateless
-				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getStateless()) : null);
+				stm.setString(index++, aPA!=null ? DriverConfigurazioneDBLib.getValue(aPA.getStateless()) : null);
 				
 				// Behaviour
 				stm.setString(index++, behaviour);
 				
 				// Autenticazione
 				stm.setString(index++, autenticazione);
-				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getAutenticazioneOpzionale()) : null);
+				stm.setString(index++, aPA!=null ? DriverConfigurazioneDBLib.getValue(aPA.getAutenticazioneOpzionale()) : null);
 				// token
 				stm.setString(index++, gestioneToken!=null ? gestioneToken.getPolicy() : null);
-				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDB_LIB.getValue(gestioneToken.getTokenOpzionale()) : null);
-				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDB_LIB.getValue(gestioneToken.getValidazione()) : null);
-				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDB_LIB.getValue(gestioneToken.getIntrospection()) : null);
-				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDB_LIB.getValue(gestioneToken.getUserInfo()) : null);
-				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDB_LIB.getValue(gestioneToken.getForward()) : null);
+				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDBLib.getValue(gestioneToken.getTokenOpzionale()) : null);
+				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDBLib.getValue(gestioneToken.getValidazione()) : null);
+				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDBLib.getValue(gestioneToken.getIntrospection()) : null);
+				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDBLib.getValue(gestioneToken.getUserInfo()) : null);
+				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDBLib.getValue(gestioneToken.getForward()) : null);
 				stm.setString(index++, gestioneToken!=null ? gestioneToken.getOptions() : null);
 				stm.setString(index++, (gestioneToken!=null && gestioneToken.getAutenticazione()!=null) ? 
-						DriverConfigurazioneDB_LIB.getValue(gestioneToken.getAutenticazione().getIssuer()) : null);
+						DriverConfigurazioneDBLib.getValue(gestioneToken.getAutenticazione().getIssuer()) : null);
 				stm.setString(index++, (gestioneToken!=null && gestioneToken.getAutenticazione()!=null) ? 
-						DriverConfigurazioneDB_LIB.getValue(gestioneToken.getAutenticazione().getClientId()) : null);
+						DriverConfigurazioneDBLib.getValue(gestioneToken.getAutenticazione().getClientId()) : null);
 				stm.setString(index++, (gestioneToken!=null && gestioneToken.getAutenticazione()!=null) ? 
-						DriverConfigurazioneDB_LIB.getValue(gestioneToken.getAutenticazione().getSubject()) : null);
+						DriverConfigurazioneDBLib.getValue(gestioneToken.getAutenticazione().getSubject()) : null);
 				stm.setString(index++, (gestioneToken!=null && gestioneToken.getAutenticazione()!=null) ? 
-						DriverConfigurazioneDB_LIB.getValue(gestioneToken.getAutenticazione().getUsername()) : null);
+						DriverConfigurazioneDBLib.getValue(gestioneToken.getAutenticazione().getUsername()) : null);
 				stm.setString(index++, (gestioneToken!=null && gestioneToken.getAutenticazione()!=null) ? 
-						DriverConfigurazioneDB_LIB.getValue(gestioneToken.getAutenticazione().getEmail()) : null);
+						DriverConfigurazioneDBLib.getValue(gestioneToken.getAutenticazione().getEmail()) : null);
 				// Autorizzazione
 				stm.setString(index++, autorizzazione);
 				stm.setString(index++, autorizzazioneXacmlPolicy);
@@ -559,11 +559,11 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				
 				// Token sa
 				stm.setString(index++, aPA!=null && aPA.getAutorizzazioneToken()!=null && aPA.getAutorizzazioneToken().getAutorizzazioneApplicativi()!=null ? 
-						DriverConfigurazioneDB_LIB.getValue(aPA.getAutorizzazioneToken().getAutorizzazioneApplicativi()) : null);
+						DriverConfigurazioneDBLib.getValue(aPA.getAutorizzazioneToken().getAutorizzazioneApplicativi()) : null);
 				
 				// Token ruoli
 				stm.setString(index++, aPA!=null && aPA.getAutorizzazioneToken()!=null && aPA.getAutorizzazioneToken().getAutorizzazioneRuoli()!=null ? 
-						DriverConfigurazioneDB_LIB.getValue(aPA.getAutorizzazioneToken().getAutorizzazioneRuoli()) : null);
+						DriverConfigurazioneDBLib.getValue(aPA.getAutorizzazioneToken().getAutorizzazioneRuoli()) : null);
 				stm.setString(index++, aPA!=null && aPA.getAutorizzazioneToken()!=null && aPA.getAutorizzazioneToken().getRuoli()!=null && 
 						aPA.getAutorizzazioneToken().getRuoli().getMatch()!=null ? 
 						aPA.getAutorizzazioneToken().getRuoli().getMatch().getValue() : null);
@@ -572,19 +572,19 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				
 				// Scope
 				stm.setString(index++, aPA!=null && aPA.getScope()!=null && aPA.getScope().getStato()!=null ? 
-						DriverConfigurazioneDB_LIB.getValue(aPA.getScope().getStato()) : null);
+						DriverConfigurazioneDBLib.getValue(aPA.getScope().getStato()) : null);
 				stm.setString(index++, aPA!=null && aPA.getScope()!=null && aPA.getScope().getMatch()!=null ? 
 						aPA.getScope().getMatch().getValue() : null);
 				
 				// RicercaPortaAzioneDelegata
-				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getRicercaPortaAzioneDelegata()) : null);
+				stm.setString(index++, aPA!=null ? DriverConfigurazioneDBLib.getValue(aPA.getRicercaPortaAzioneDelegata()) : null);
 				
 				// Tracciamento
 				stm.setString(index++, msg_diag_severita);
 				stm.setString(index++, tracciamento_esiti);
 				
 				// Stato
-				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getStato()) : null);
+				stm.setString(index++, aPA!=null ? DriverConfigurazioneDBLib.getValue(aPA.getStato()) : null);
 				
 				// cors
 				stm.setString(index++, cors_stato);
@@ -633,7 +633,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				long idServizioApplicativoDefault = -1;
 				if(aPA.getServizioApplicativoDefault()!=null) {
 					idServizioApplicativoDefault = DBUtils.getIdServizioApplicativo(aPA.getServizioApplicativoDefault(), tipoProprietario, nomeProprietario, 
-							con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+							con, DriverConfigurazioneDBLib.tipoDB,DriverConfigurazioneDBLib.tabellaSoggetti);
 					if(idServizioApplicativoDefault<=0) {
 						throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDPortaApplicativa(CREATE)] Impossibile recuperare l'ID del servizio applicativo di default '"+aPA.getServizioApplicativoDefault()+"'.");
 					}
@@ -655,10 +655,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				
 				n = stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Created " + n + " row(s)");
+				DriverConfigurazioneDBLib.log.debug("Created " + n + " row(s)");
 
 				// recupero l'id della porta applicativa appena inserita
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
 				sqlQueryObject.addSelectField("id");
 				sqlQueryObject.addWhereCondition("id_soggetto = ?");
@@ -684,7 +684,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				if(mtomProcessor!=null){
 					
 					MtomProcessorFlowParameter reqParam = null;
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_MTOM_REQUEST);
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("nome", "?");
@@ -709,10 +709,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						}	
 					}
 					stm.close();
-					DriverConfigurazioneDB_LIB.log.debug("Inserted " + i + " mtom request flow con id=" + idPortaApplicativa);
+					DriverConfigurazioneDBLib.log.debug("Inserted " + i + " mtom request flow con id=" + idPortaApplicativa);
 
 					MtomProcessorFlowParameter resParam = null;
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_MTOM_RESPONSE);
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("nome", "?");
@@ -737,7 +737,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						}
 					}
 					stm.close();
-					DriverConfigurazioneDB_LIB.log.debug("Inserted " + i + " mtom response flow con id=" + idPortaApplicativa);
+					DriverConfigurazioneDBLib.log.debug("Inserted " + i + " mtom response flow con id=" + idPortaApplicativa);
 					
 				}
 				
@@ -746,7 +746,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				// Devo settarli sempre se ci sono, in modo che lo switch abilitato-disabilitato funzioni
 				if ((messageSecurity != null) )  {
 					MessageSecurityFlowParameter reqParam = null;
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST);
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("nome", "?");
@@ -766,10 +766,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						}
 					}
 					stm.close();
-					DriverConfigurazioneDB_LIB.log.debug("Inserted " + i + " request flow con id=" + idPortaApplicativa);
+					DriverConfigurazioneDBLib.log.debug("Inserted " + i + " request flow con id=" + idPortaApplicativa);
 
 					MessageSecurityFlowParameter resParam = null;
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE);
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("nome", "?");
@@ -789,7 +789,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						}
 					}
 					stm.close();
-					DriverConfigurazioneDB_LIB.log.debug("Inserted " + i + " response flow con id=" + idPortaApplicativa);
+					DriverConfigurazioneDBLib.log.debug("Inserted " + i + " response flow con id=" + idPortaApplicativa);
 				}
 
 				// la lista di correlazioni applicative contiene tutti e soli gli elementi necessari quindi resetto la lista nel db e riscrivo la lista nuova
@@ -797,7 +797,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 
 					//inserisco i valori presenti nella lista 
 					CorrelazioneApplicativaElemento cae = null;
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_CORRELAZIONE);
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("nome_elemento", "?");
@@ -811,16 +811,16 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						cae = corrApp.getElemento(i);
 						stm.setLong(1, idPortaApplicativa);
 						stm.setString(2, cae.getNome());
-						stm.setString(3, DriverConfigurazioneDB_LIB.getValue(cae.getIdentificazione()));
+						stm.setString(3, DriverConfigurazioneDBLib.getValue(cae.getIdentificazione()));
 						if (cae.getPattern() != null)
 							stm.setString(4, cae.getPattern());
 						else
 							stm.setString(4, "");
-						stm.setString(5, DriverConfigurazioneDB_LIB.getValue(cae.getIdentificazioneFallita()));
+						stm.setString(5, DriverConfigurazioneDBLib.getValue(cae.getIdentificazioneFallita()));
 						stm.executeUpdate();
 					}
 					stm.close();
-					DriverConfigurazioneDB_LIB.log.debug("Inserted " + i + " correlazione applicativa con id=" + idPortaApplicativa);
+					DriverConfigurazioneDBLib.log.debug("Inserted " + i + " correlazione applicativa con id=" + idPortaApplicativa);
 				}
 				
 				// la lista di correlazioni applicative risposta contiene tutti e soli gli elementi necessari quindi resetto la lista nel db e riscrivo la lista nuova
@@ -828,7 +828,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 
 					//inserisco i valori presenti nella lista 
 					CorrelazioneApplicativaRispostaElemento cae = null;
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_CORRELAZIONE_RISPOSTA);
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("nome_elemento", "?");
@@ -842,20 +842,20 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						cae = corrAppRisposta.getElemento(i);
 						stm.setLong(1, idPortaApplicativa);
 						stm.setString(2, cae.getNome());
-						stm.setString(3, DriverConfigurazioneDB_LIB.getValue(cae.getIdentificazione()));
+						stm.setString(3, DriverConfigurazioneDBLib.getValue(cae.getIdentificazione()));
 						if (cae.getPattern() != null)
 							stm.setString(4, cae.getPattern());
 						else
 							stm.setString(4, "");
-						stm.setString(5, DriverConfigurazioneDB_LIB.getValue(cae.getIdentificazioneFallita()));
+						stm.setString(5, DriverConfigurazioneDBLib.getValue(cae.getIdentificazioneFallita()));
 						stm.executeUpdate();
 					}
 					stm.close();
-					DriverConfigurazioneDB_LIB.log.debug("Inserted " + i + " correlazione applicativa risposta con id=" + idPortaApplicativa);
+					DriverConfigurazioneDBLib.log.debug("Inserted " + i + " correlazione applicativa risposta con id=" + idPortaApplicativa);
 				}
 				
 				// serviziapplicativi
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_SA);
 				sqlQueryObject.addInsertField("id_porta", "?");
 				sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
@@ -885,7 +885,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 					if (tipoProprietarioSA == null || tipoProprietarioSA.equals(""))
 						throw new DriverConfigurazioneException("[CRUDPortaApplicativa(CREATE)::Tipo Proprietario del ServizioApplicativo associato non valido.");
 
-					long idSA = DriverConfigurazioneDB_serviziApplicativiLIB.getIdServizioApplicativo(nomeSA, tipoProprietarioSA, nomeProprietarioSA, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+					long idSA = DriverConfigurazioneDB_serviziApplicativiLIB.getIdServizioApplicativo(nomeSA, tipoProprietarioSA, nomeProprietarioSA, con, DriverConfigurazioneDBLib.tipoDB,DriverConfigurazioneDBLib.tabellaSoggetti);
 
 					if (idSA <= 0)
 						throw new DriverConfigurazioneException("Impossibile recuperare l'id del Servizio Applicativo [" + nomeSA + "] di [" + tipoProprietarioSA + "/" + nomeProprietarioSA + "]");
@@ -898,8 +898,8 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? servizioApplicativo.getDatiConnettore().getNome() : null);
 					stm.setInt(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? (servizioApplicativo.getDatiConnettore().isNotifica() ? CostantiDB.TRUE : CostantiDB.FALSE) : CostantiDB.FALSE);
 					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? servizioApplicativo.getDatiConnettore().getDescrizione() : null);
-					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? DriverConfigurazioneDB_LIB.getValue(servizioApplicativo.getDatiConnettore().getStato()) : null);
-					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? DriverConfigurazioneDB_LIB.getValue(servizioApplicativo.getDatiConnettore().getScheduling()) : null);
+					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? DriverConfigurazioneDBLib.getValue(servizioApplicativo.getDatiConnettore().getStato()) : null);
+					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? DriverConfigurazioneDBLib.getValue(servizioApplicativo.getDatiConnettore().getScheduling()) : null);
 					
 					String filtri = null; 
 					if(servizioApplicativo.getDatiConnettore()!=null) {
@@ -931,7 +931,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 					
 				}
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " servizi applicativi associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Inseriti " + i + " servizi applicativi associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 
 				
 				
@@ -942,7 +942,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 					
 					if(servizioApplicativo.getDatiConnettore()!=null && servizioApplicativo.getDatiConnettore().sizeProprietaList()>0) {
 					
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SA);
 						sqlQueryObject.addSelectField("id");
 						sqlQueryObject.addWhereCondition("id_porta=?");
@@ -968,7 +968,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						}
 						
 						
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_SA_PROPS);
 						sqlQueryObject.addInsertField("id_porta", "?");
 						sqlQueryObject.addInsertField("nome", "?");
@@ -993,14 +993,14 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						}
 	
 						stm.close();
-						DriverConfigurazioneDB_LIB.log.debug("Inseriti " + j + " SetSAProp associati al Servizio Applicativo [" + nomeSA + "](id:"+idSA+") della PortaApplicativa[" + idPortaApplicativa + "]");
+						DriverConfigurazioneDBLib.log.debug("Inseriti " + j + " SetSAProp associati al Servizio Applicativo [" + nomeSA + "](id:"+idSA+") della PortaApplicativa[" + idPortaApplicativa + "]");
 					}
 				}
 				
 				
 				// set prop behaviour
 				if(aPA.getBehaviour()!=null) {
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_BEHAVIOUR_PROPS);
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("nome", "?");
@@ -1015,13 +1015,13 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						stm.executeUpdate();
 					}
 					stm.close();
-					DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " SeBehaviourProp associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+					DriverConfigurazioneDBLib.log.debug("Inseriti " + i + " SeBehaviourProp associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 				}
 				
 				
 				
 				// set prop autenticazione
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_AUTENTICAZIONE_PROP);
 				sqlQueryObject.addInsertField("id_porta", "?");
 				sqlQueryObject.addInsertField("nome", "?");
@@ -1036,11 +1036,11 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 					stm.executeUpdate();
 				}
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " SetProtocolPropAutenticazione associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Inseriti " + i + " SetProtocolPropAutenticazione associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
 				// set prop autorizzazione
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_PROP);
 				sqlQueryObject.addInsertField("id_porta", "?");
 				sqlQueryObject.addInsertField("nome", "?");
@@ -1055,12 +1055,12 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 					stm.executeUpdate();
 				}
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " SetProtocolPropAutorizzazione associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Inseriti " + i + " SetProtocolPropAutorizzazione associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
 				
 				// set prop autorizzazione contenuti
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP);
 				sqlQueryObject.addInsertField("id_porta", "?");
 				sqlQueryObject.addInsertField("nome", "?");
@@ -1075,12 +1075,12 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 					stm.executeUpdate();
 				}
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " SetProtocolPropAutorizzazioneContenuti associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Inseriti " + i + " SetProtocolPropAutorizzazioneContenuti associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 								
 				
 				
 				// set prop rate limiting
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_RATE_LIMITING_PROP);
 				sqlQueryObject.addInsertField("id_porta", "?");
 				sqlQueryObject.addInsertField("nome", "?");
@@ -1095,14 +1095,14 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 					stm.executeUpdate();
 				}
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " SetProtocolPropRateLimiting associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Inseriti " + i + " SetProtocolPropRateLimiting associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
 				
 				
 				
 				// set prop
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_PROP);
 				sqlQueryObject.addInsertField("id_porta", "?");
 				sqlQueryObject.addInsertField("nome", "?");
@@ -1117,7 +1117,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 					stm.executeUpdate();
 				}
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " SetProtocolProp associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Inseriti " + i + " SetProtocolProp associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 
 				
 				// Ruoli
@@ -1125,7 +1125,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				if(aPA.getRuoli()!=null && aPA.getRuoli().sizeRuoloList()>0){
 					for (int j = 0; j < aPA.getRuoli().sizeRuoloList(); j++) {
 						Ruolo ruolo = aPA.getRuoli().getRuolo(j);
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_RUOLI);
 						sqlQueryObject.addInsertField("id_porta", "?");
 						sqlQueryObject.addInsertField("ruolo", "?");
@@ -1136,11 +1136,11 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDB_LIB.log.debug("Aggiunto ruolo[" + ruolo.getNome() + "] alla PortaApplicativa[" + idPortaApplicativa + "]");
+						DriverConfigurazioneDBLib.log.debug("Aggiunto ruolo[" + ruolo.getNome() + "] alla PortaApplicativa[" + idPortaApplicativa + "]");
 					}
 				}
 				
-				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " ruoli alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Aggiunti " + n + " ruoli alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
 				// Scope
@@ -1148,7 +1148,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				if(aPA.getScope()!=null && aPA.getScope().sizeScopeList()>0){
 					for (int j = 0; j < aPA.getScope().sizeScopeList(); j++) {
 						Scope scope = aPA.getScope().getScope(j);
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_SCOPE);
 						sqlQueryObject.addInsertField("id_porta", "?");
 						sqlQueryObject.addInsertField("scope", "?");
@@ -1159,11 +1159,11 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDB_LIB.log.debug("Aggiunto scope[" + scope.getNome() + "] alla PortaApplicativa[" + idPortaApplicativa + "]");
+						DriverConfigurazioneDBLib.log.debug("Aggiunto scope[" + scope.getNome() + "] alla PortaApplicativa[" + idPortaApplicativa + "]");
 					}
 				}
 				
-				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " scope alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Aggiunti " + n + " scope alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
 				// Soggetti
@@ -1171,7 +1171,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				if(aPA.getSoggetti()!=null && aPA.getSoggetti().sizeSoggettoList()>0){
 					for (int j = 0; j < aPA.getSoggetti().sizeSoggettoList(); j++) {
 						PortaApplicativaAutorizzazioneSoggetto soggetto = aPA.getSoggetti().getSoggetto(j);
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_SOGGETTI);
 						sqlQueryObject.addInsertField("id_porta", "?");
 						sqlQueryObject.addInsertField("tipo_soggetto", "?");
@@ -1184,16 +1184,16 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDB_LIB.log.debug("Aggiunto soggetto [" + soggetto.getTipo() + "/"+soggetto.getNome()+"] alla PortaApplicativa[" + idPortaApplicativa + "]");
+						DriverConfigurazioneDBLib.log.debug("Aggiunto soggetto [" + soggetto.getTipo() + "/"+soggetto.getNome()+"] alla PortaApplicativa[" + idPortaApplicativa + "]");
 					}
 				}
 				
-				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " soggetti alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Aggiunti " + n + " soggetti alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
 				// serviziapplicativi autorizzati
 				if(aPA.getServiziApplicativiAutorizzati()!=null && aPA.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0) {
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_SA_AUTORIZZATI);
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
@@ -1212,7 +1212,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						if (tipoProprietarioSA == null || tipoProprietarioSA.equals(""))
 							throw new DriverConfigurazioneException("[CRUDPortaApplicativa(CREATE)[Auth]::Tipo Proprietario del ServizioApplicativo associato non valido.");
 	
-						long idSA = DriverConfigurazioneDB_serviziApplicativiLIB.getIdServizioApplicativo(nomeSA, tipoProprietarioSA, nomeProprietarioSA, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+						long idSA = DriverConfigurazioneDB_serviziApplicativiLIB.getIdServizioApplicativo(nomeSA, tipoProprietarioSA, nomeProprietarioSA, con, DriverConfigurazioneDBLib.tipoDB,DriverConfigurazioneDBLib.tabellaSoggetti);
 	
 						if (idSA <= 0)
 							throw new DriverConfigurazioneException("Impossibile recuperare l'id del Servizio Applicativo [" + nomeSA + "] di [" + tipoProprietarioSA + "/" + nomeProprietarioSA + "]");
@@ -1222,14 +1222,14 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						stm.executeUpdate();
 					}
 					stm.close();
-					DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " servizi applicativi autorizzati associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+					DriverConfigurazioneDBLib.log.debug("Inseriti " + i + " servizi applicativi autorizzati associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 				}
 				
 				
 				// serviziapplicativi token autorizzati
 				if(aPA.getAutorizzazioneToken()!=null && aPA.getAutorizzazioneToken().getServiziApplicativi()!=null &&
 						aPA.getAutorizzazioneToken().getServiziApplicativi().sizeServizioApplicativoList()>0) {
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_TOKEN_SA);
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
@@ -1248,7 +1248,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						if (tipoProprietarioSA == null || tipoProprietarioSA.equals(""))
 							throw new DriverConfigurazioneException("[CRUDPortaApplicativa(CREATE)[TokenAuth]::Tipo Proprietario del ServizioApplicativo associato non valido.");
 	
-						long idSA = DriverConfigurazioneDB_serviziApplicativiLIB.getIdServizioApplicativo(nomeSA, tipoProprietarioSA, nomeProprietarioSA, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+						long idSA = DriverConfigurazioneDB_serviziApplicativiLIB.getIdServizioApplicativo(nomeSA, tipoProprietarioSA, nomeProprietarioSA, con, DriverConfigurazioneDBLib.tipoDB,DriverConfigurazioneDBLib.tabellaSoggetti);
 	
 						if (idSA <= 0)
 							throw new DriverConfigurazioneException("Impossibile recuperare l'id del Servizio Applicativo [" + nomeSA + "] di [" + tipoProprietarioSA + "/" + nomeProprietarioSA + "]");
@@ -1258,7 +1258,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						stm.executeUpdate();
 					}
 					stm.close();
-					DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " servizi applicativi autorizzati (token) associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+					DriverConfigurazioneDBLib.log.debug("Inseriti " + i + " servizi applicativi autorizzati (token) associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 				}
 				
 				
@@ -1267,7 +1267,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				if(aPA.getAutorizzazioneToken()!=null && aPA.getAutorizzazioneToken().getRuoli()!=null && aPA.getAutorizzazioneToken().getRuoli().sizeRuoloList()>0){
 					for (int j = 0; j < aPA.getAutorizzazioneToken().getRuoli().sizeRuoloList(); j++) {
 						Ruolo ruolo = aPA.getAutorizzazioneToken().getRuoli().getRuolo(j);
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_TOKEN_RUOLI);
 						sqlQueryObject.addInsertField("id_porta", "?");
 						sqlQueryObject.addInsertField("ruolo", "?");
@@ -1278,11 +1278,11 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDB_LIB.log.debug("Aggiunto ruolo[" + ruolo.getNome() + "] (token) alla PortaApplicativa[" + idPortaApplicativa + "]");
+						DriverConfigurazioneDBLib.log.debug("Aggiunto ruolo[" + ruolo.getNome() + "] (token) alla PortaApplicativa[" + idPortaApplicativa + "]");
 					}
 				}
 				
-				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " ruoli (token) alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Aggiunti " + n + " ruoli (token) alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
 				// Azioni
@@ -1290,7 +1290,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				if(aPA.getAzione()!=null && aPA.getAzione().sizeAzioneDelegataList()>0){
 					for (int j = 0; j < aPA.getAzione().sizeAzioneDelegataList(); j++) {
 						String azioneDelegata = aPA.getAzione().getAzioneDelegata(j);
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_AZIONI);
 						sqlQueryObject.addInsertField("id_porta", "?");
 						sqlQueryObject.addInsertField("azione", "?");
@@ -1301,11 +1301,11 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDB_LIB.log.debug("Aggiunto azione delegata [" + azioneDelegata + "] alla PortaApplicativa[" + idPortaApplicativa + "]");
+						DriverConfigurazioneDBLib.log.debug("Aggiunto azione delegata [" + azioneDelegata + "] alla PortaApplicativa[" + idPortaApplicativa + "]");
 					}
 				}
 				
-				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " azioni delegate alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Aggiunte " + n + " azioni delegate alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
 				
@@ -1314,7 +1314,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				if(response_cache_regole!=null && response_cache_regole.size()>0){
 					for (int j = 0; j < response_cache_regole.size(); j++) {
 						ResponseCachingConfigurazioneRegola regola = response_cache_regole.get(j);
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_CACHE_REGOLE);
 						sqlQueryObject.addInsertField("id_porta", "?");
 						if(regola.getReturnCodeMin()!=null && regola.getReturnCodeMin()>0) {
@@ -1344,11 +1344,11 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDB_LIB.log.debug("Aggiunta regola di cache alla PortaApplicativa[" + idPortaApplicativa + "]");
+						DriverConfigurazioneDBLib.log.debug("Aggiunta regola di cache alla PortaApplicativa[" + idPortaApplicativa + "]");
 					}
 				}
 				
-				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " regole di cache alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Aggiunte " + n + " regole di cache alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
 				
@@ -1370,7 +1370,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 							attributi = bf.toString();
 						}
 						
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_ATTRIBUTE_AUTHORITY);
 						sqlQueryObject.addInsertField("id_porta", "?");
 						sqlQueryObject.addInsertField("nome", "?");
@@ -1383,11 +1383,11 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDB_LIB.log.debug("Aggiunto A.A.[" + aa.getNome() + "] alla PortaApplicativa[" + idPortaApplicativa + "]");
+						DriverConfigurazioneDBLib.log.debug("Aggiunto A.A.[" + aa.getNome() + "] alla PortaApplicativa[" + idPortaApplicativa + "]");
 					}
 				}
 				
-				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " A.A. alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Aggiunte " + n + " A.A. alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
 				
@@ -1397,7 +1397,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				
 				
 				// trasformazioni
-				DriverConfigurazioneDB_trasformazioniLIB.CRUDTrasformazioni(type, con, aPA.getTrasformazioni(), aPA.getId(), false);
+				DriverConfigurazioneDBTrasformazioniLib.CRUDTrasformazioni(type, con, aPA.getTrasformazioni(), aPA.getId(), false);
 				
 								
 				// handlers
@@ -1416,11 +1416,11 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				if(aPA.sizeExtendedInfoList()>0){
 					if(extInfoConfigurazioneDriver!=null){
 						for (i = 0; i < aPA.sizeExtendedInfoList(); i++) {
-							extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDB_LIB.log, aPA, aPA.getExtendedInfo(i), CRUDType.CREATE);
+							extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDBLib.log, aPA, aPA.getExtendedInfo(i), CRUDType.CREATE);
 						}
 					}
 				}
-				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + i + " associazioni ExtendedInfo<->PortaApplicativa associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Aggiunte " + i + " associazioni ExtendedInfo<->PortaApplicativa associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
 				break;
@@ -1483,7 +1483,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 					}
 				}
 
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addUpdateTable(CostantiDB.PORTE_APPLICATIVE);
 				sqlQueryObject.addUpdateField("descrizione", "?");
 				sqlQueryObject.addUpdateField("id_soggetto_virtuale", "?");
@@ -1588,10 +1588,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				sqlQuery = sqlQueryObject.createSQLUpdate();
 				stm = con.prepareStatement(sqlQuery);
 
-				idPortaApplicativa = DBUtils.getIdPortaApplicativa(oldNomePA, con, DriverConfigurazioneDB_LIB.tipoDB);
+				idPortaApplicativa = DBUtils.getIdPortaApplicativa(oldNomePA, con, DriverConfigurazioneDBLib.tipoDB);
 				//  Puo' darsi che l'old soggetto e il nuovo soggetto siano la stesso soggetto della tabella. E' stato cambiato il nome.
 				if(idPortaApplicativa<=0) {
-					idPortaApplicativa = DBUtils.getIdPortaApplicativa(oldNomePA, con, DriverConfigurazioneDB_LIB.tipoDB);
+					idPortaApplicativa = DBUtils.getIdPortaApplicativa(oldNomePA, con, DriverConfigurazioneDBLib.tipoDB);
 				}
 				if(idPortaApplicativa<=0) 
 					throw new DriverConfigurazioneException("Impossibile recuperare l'id della Porta Applicativa nomePA["+oldNomePA+"] (old["+
@@ -1616,57 +1616,57 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				}
 				stm.setString(index++, patternAzione);
 				stm.setString(index++, nomePortaDeleganteAzione);
-				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(forceInterfaceBased));
+				stm.setString(index++, DriverConfigurazioneDBLib.getValue(forceInterfaceBased));
 				// mtom
-				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(mtomMode_request));
-				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(mtomMode_response));
+				stm.setString(index++, DriverConfigurazioneDBLib.getValue(mtomMode_request));
+				stm.setString(index++, DriverConfigurazioneDBLib.getValue(mtomMode_response));
 				// messageSecurity
 				stm.setString(index++, messageSecurityStatus);
-				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(messageSecurityApplyMtom_request));
-				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(messageSecurityApplyMtom_response));
+				stm.setString(index++, DriverConfigurazioneDBLib.getValue(messageSecurityApplyMtom_request));
+				stm.setString(index++, DriverConfigurazioneDBLib.getValue(messageSecurityApplyMtom_response));
 				stm.setString(index++, securityRequestMode);
 				stm.setString(index++, securityResponseMode);
 				// nomePorta
 				stm.setString(index++, nomePorta);
 				//ricevuta asincrona_asimmetrica/simmetrica
-				stm.setString(index++, aPA.getRicevutaAsincronaSimmetrica()!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getRicevutaAsincronaSimmetrica()) : null);
-				stm.setString(index++, aPA.getRicevutaAsincronaAsimmetrica()!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getRicevutaAsincronaAsimmetrica()) : null);
+				stm.setString(index++, aPA.getRicevutaAsincronaSimmetrica()!=null ? DriverConfigurazioneDBLib.getValue(aPA.getRicevutaAsincronaSimmetrica()) : null);
+				stm.setString(index++, aPA.getRicevutaAsincronaAsimmetrica()!=null ? DriverConfigurazioneDBLib.getValue(aPA.getRicevutaAsincronaAsimmetrica()) : null);
 				//integrazione
 				stm.setString(index++, aPA.getIntegrazione()!=null ? aPA.getIntegrazione() : null);
 				//validazione xsd
-				stm.setString(index++, aPA.getValidazioneContenutiApplicativi()!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getValidazioneContenutiApplicativi().getStato()) : null);
-				stm.setString(index++, aPA.getValidazioneContenutiApplicativi()!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getValidazioneContenutiApplicativi().getTipo()) : null);
-				stm.setString(index++, aPA.getValidazioneContenutiApplicativi()!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getValidazioneContenutiApplicativi().getAcceptMtomMessage()) : null);
+				stm.setString(index++, aPA.getValidazioneContenutiApplicativi()!=null ? DriverConfigurazioneDBLib.getValue(aPA.getValidazioneContenutiApplicativi().getStato()) : null);
+				stm.setString(index++, aPA.getValidazioneContenutiApplicativi()!=null ? DriverConfigurazioneDBLib.getValue(aPA.getValidazioneContenutiApplicativi().getTipo()) : null);
+				stm.setString(index++, aPA.getValidazioneContenutiApplicativi()!=null ? DriverConfigurazioneDBLib.getValue(aPA.getValidazioneContenutiApplicativi().getAcceptMtomMessage()) : null);
 				stm.setLong(index++, idProprietario);//il nuovo proprietario se cambiato
 				// InvocazionePorta: funzionalita' attachment
-				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getAllegaBody()) : null);
-				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getScartaBody()) : null);
-				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getGestioneManifest()) : null);
+				stm.setString(index++, aPA!=null ? DriverConfigurazioneDBLib.getValue(aPA.getAllegaBody()) : null);
+				stm.setString(index++, aPA!=null ? DriverConfigurazioneDBLib.getValue(aPA.getScartaBody()) : null);
+				stm.setString(index++, aPA!=null ? DriverConfigurazioneDBLib.getValue(aPA.getGestioneManifest()) : null);
 				// Stateless
-				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getStateless()) : null);
+				stm.setString(index++, aPA!=null ? DriverConfigurazioneDBLib.getValue(aPA.getStateless()) : null);
 				// Behaviour
 				stm.setString(index++, behaviour);
 				// Autenticazione
 				stm.setString(index++, autenticazione);
-				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getAutenticazioneOpzionale()) : null);
+				stm.setString(index++, aPA!=null ? DriverConfigurazioneDBLib.getValue(aPA.getAutenticazioneOpzionale()) : null);
 				// token
 				stm.setString(index++, gestioneToken!=null ? gestioneToken.getPolicy() : null);
-				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDB_LIB.getValue(gestioneToken.getTokenOpzionale()) : null);
-				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDB_LIB.getValue(gestioneToken.getValidazione()) : null);
-				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDB_LIB.getValue(gestioneToken.getIntrospection()) : null);
-				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDB_LIB.getValue(gestioneToken.getUserInfo()) : null);
-				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDB_LIB.getValue(gestioneToken.getForward()) : null);
+				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDBLib.getValue(gestioneToken.getTokenOpzionale()) : null);
+				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDBLib.getValue(gestioneToken.getValidazione()) : null);
+				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDBLib.getValue(gestioneToken.getIntrospection()) : null);
+				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDBLib.getValue(gestioneToken.getUserInfo()) : null);
+				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDBLib.getValue(gestioneToken.getForward()) : null);
 				stm.setString(index++, gestioneToken!=null ? gestioneToken.getOptions() : null);
 				stm.setString(index++, (gestioneToken!=null && gestioneToken.getAutenticazione()!=null) ? 
-						DriverConfigurazioneDB_LIB.getValue(gestioneToken.getAutenticazione().getIssuer()) : null);
+						DriverConfigurazioneDBLib.getValue(gestioneToken.getAutenticazione().getIssuer()) : null);
 				stm.setString(index++, (gestioneToken!=null && gestioneToken.getAutenticazione()!=null) ? 
-						DriverConfigurazioneDB_LIB.getValue(gestioneToken.getAutenticazione().getClientId()) : null);
+						DriverConfigurazioneDBLib.getValue(gestioneToken.getAutenticazione().getClientId()) : null);
 				stm.setString(index++, (gestioneToken!=null && gestioneToken.getAutenticazione()!=null) ? 
-						DriverConfigurazioneDB_LIB.getValue(gestioneToken.getAutenticazione().getSubject()) : null);
+						DriverConfigurazioneDBLib.getValue(gestioneToken.getAutenticazione().getSubject()) : null);
 				stm.setString(index++, (gestioneToken!=null && gestioneToken.getAutenticazione()!=null) ? 
-						DriverConfigurazioneDB_LIB.getValue(gestioneToken.getAutenticazione().getUsername()) : null);
+						DriverConfigurazioneDBLib.getValue(gestioneToken.getAutenticazione().getUsername()) : null);
 				stm.setString(index++, (gestioneToken!=null && gestioneToken.getAutenticazione()!=null) ? 
-						DriverConfigurazioneDB_LIB.getValue(gestioneToken.getAutenticazione().getEmail()) : null);
+						DriverConfigurazioneDBLib.getValue(gestioneToken.getAutenticazione().getEmail()) : null);
 				// Autorizzazione
 				stm.setString(index++, autorizzazione);
 				stm.setString(index++, autorizzazioneXacmlPolicy);
@@ -1676,10 +1676,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						aPA.getRuoli().getMatch().getValue() : null);
 				// Token sa
 				stm.setString(index++, aPA!=null && aPA.getAutorizzazioneToken()!=null && aPA.getAutorizzazioneToken().getAutorizzazioneApplicativi()!=null ? 
-						DriverConfigurazioneDB_LIB.getValue(aPA.getAutorizzazioneToken().getAutorizzazioneApplicativi()) : null);	
+						DriverConfigurazioneDBLib.getValue(aPA.getAutorizzazioneToken().getAutorizzazioneApplicativi()) : null);	
 				// Token ruoli
 				stm.setString(index++, aPA!=null && aPA.getAutorizzazioneToken()!=null && aPA.getAutorizzazioneToken().getAutorizzazioneRuoli()!=null ? 
-						DriverConfigurazioneDB_LIB.getValue(aPA.getAutorizzazioneToken().getAutorizzazioneRuoli()) : null);
+						DriverConfigurazioneDBLib.getValue(aPA.getAutorizzazioneToken().getAutorizzazioneRuoli()) : null);
 				stm.setString(index++, aPA!=null && aPA.getAutorizzazioneToken()!=null && aPA.getAutorizzazioneToken().getRuoli()!=null && 
 						aPA.getAutorizzazioneToken().getRuoli().getMatch()!=null ? 
 						aPA.getAutorizzazioneToken().getRuoli().getMatch().getValue() : null);
@@ -1687,16 +1687,16 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						aPA.getAutorizzazioneToken().getTipologiaRuoli().getValue() : null);
 				// Scope
 				stm.setString(index++, aPA!=null && aPA.getScope()!=null && aPA.getScope().getStato()!=null ? 
-						DriverConfigurazioneDB_LIB.getValue(aPA.getScope().getStato()) : null);
+						DriverConfigurazioneDBLib.getValue(aPA.getScope().getStato()) : null);
 				stm.setString(index++, aPA!=null && aPA.getScope()!=null && aPA.getScope().getMatch()!=null ? 
 						aPA.getScope().getMatch().getValue() : null);
 				// RicercaPortaAzioneDelegata
-				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getRicercaPortaAzioneDelegata()) : null);
+				stm.setString(index++, aPA!=null ? DriverConfigurazioneDBLib.getValue(aPA.getRicercaPortaAzioneDelegata()) : null);
 				// Tracciamento
 				stm.setString(index++, msg_diag_severita);
 				stm.setString(index++, tracciamento_esiti);
 				// Stato
-				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getStato()) : null);
+				stm.setString(index++, aPA!=null ? DriverConfigurazioneDBLib.getValue(aPA.getStato()) : null);
 				// cors
 				stm.setString(index++, cors_stato);
 				stm.setString(index++, cors_tipo);
@@ -1743,7 +1743,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				idServizioApplicativoDefault = -1;
 				if(aPA.getServizioApplicativoDefault()!=null) {
 					idServizioApplicativoDefault = DBUtils.getIdServizioApplicativo(aPA.getServizioApplicativoDefault(), tipoProprietario, nomeProprietario, 
-							con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+							con, DriverConfigurazioneDBLib.tipoDB,DriverConfigurazioneDBLib.tabellaSoggetti);
 					if(idServizioApplicativoDefault<=0) {
 						throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDPortaApplicativa(CREATE)] Impossibile recuperare l'ID del servizio applicativo di default '"+aPA.getServizioApplicativoDefault()+"'.");
 					}
@@ -1765,13 +1765,13 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 
 				n = stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Updated " + n + " row(s).");
+				DriverConfigurazioneDBLib.log.debug("Updated " + n + " row(s).");
 
 				
 				
 				// mtom
 				
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_MTOM_REQUEST);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -1780,7 +1780,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.executeUpdate();
 				stm.close();
 
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_MTOM_RESPONSE);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -1792,7 +1792,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				if(mtomProcessor!=null){
 				
 					MtomProcessorFlowParameter reqParam = null;
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_MTOM_REQUEST);
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("nome", "?");
@@ -1817,10 +1817,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						}	
 					}
 					stm.close();
-					DriverConfigurazioneDB_LIB.log.debug("Inserted " + i + " mtom request flow con id=" + idPortaApplicativa);
+					DriverConfigurazioneDBLib.log.debug("Inserted " + i + " mtom request flow con id=" + idPortaApplicativa);
 	
 					MtomProcessorFlowParameter resParam = null;
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_MTOM_RESPONSE);
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("nome", "?");
@@ -1845,7 +1845,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						}
 					}
 					stm.close();
-					DriverConfigurazioneDB_LIB.log.debug("Inserted " + i + " mtom response flow con id=" + idPortaApplicativa);
+					DriverConfigurazioneDBLib.log.debug("Inserted " + i + " mtom response flow con id=" + idPortaApplicativa);
 					
 				}
 				
@@ -1856,7 +1856,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				// Devo settarli sempre se ci sono, in modo che lo switch abilitato-disabilitato funzioni
 				if ((messageSecurity != null) )  {
 
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST);
 					sqlQueryObject.addWhereCondition("id_porta=?");
 					sqlQuery = sqlQueryObject.createSQLDelete();
@@ -1865,7 +1865,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 					stm.executeUpdate();
 					stm.close();
 
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE);
 					sqlQueryObject.addWhereCondition("id_porta=?");
 					sqlQuery = sqlQueryObject.createSQLDelete();
@@ -1876,7 +1876,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 
 					//inserisco i valori presenti nella lista 
 					MessageSecurityFlowParameter reqParam = null;
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST);
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("nome", "?");
@@ -1896,10 +1896,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						}
 					}
 					stm.close();
-					DriverConfigurazioneDB_LIB.log.debug("Inserted " + i + " request flow con id=" + idPortaApplicativa);
+					DriverConfigurazioneDBLib.log.debug("Inserted " + i + " request flow con id=" + idPortaApplicativa);
 
 					MessageSecurityFlowParameter resParam = null;
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE);
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("nome", "?");
@@ -1919,12 +1919,12 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						}
 					}
 					stm.close();
-					DriverConfigurazioneDB_LIB.log.debug("Inserted " + i + " response flow con id=" + idPortaApplicativa);
+					DriverConfigurazioneDBLib.log.debug("Inserted " + i + " response flow con id=" + idPortaApplicativa);
 				}
 
 				
 				// la lista di correlazioni applicative contiene tutti e soli gli elementi necessari quindi resetto la lista nel db e riscrivo la lista nuova
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_CORRELAZIONE);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -1936,7 +1936,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				if (corrApp != null) {
 					//inserisco i valori presenti nella lista 
 					CorrelazioneApplicativaElemento cae = null;
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_CORRELAZIONE);
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("nome_elemento", "?");
@@ -1950,20 +1950,20 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						cae = corrApp.getElemento(i);
 						stm.setLong(1, idPortaApplicativa);
 						stm.setString(2, cae.getNome());
-						stm.setString(3, DriverConfigurazioneDB_LIB.getValue(cae.getIdentificazione()));
+						stm.setString(3, DriverConfigurazioneDBLib.getValue(cae.getIdentificazione()));
 						if (cae.getPattern() != null)
 							stm.setString(4, cae.getPattern());
 						else
 							stm.setString(4, "");
-						stm.setString(5, DriverConfigurazioneDB_LIB.getValue(cae.getIdentificazioneFallita()));
+						stm.setString(5, DriverConfigurazioneDBLib.getValue(cae.getIdentificazioneFallita()));
 						stm.executeUpdate();
 					}
 					stm.close();
-					DriverConfigurazioneDB_LIB.log.debug("Inserted " + i + " correlazione applicativa con id=" + idPortaApplicativa);
+					DriverConfigurazioneDBLib.log.debug("Inserted " + i + " correlazione applicativa con id=" + idPortaApplicativa);
 				}
 				
 				// la lista di correlazioni applicative risposta contiene tutti e soli gli elementi necessari quindi resetto la lista nel db e riscrivo la lista nuova
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_CORRELAZIONE_RISPOSTA);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -1975,7 +1975,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				if (corrAppRisposta != null) {
 					//inserisco i valori presenti nella lista 
 					CorrelazioneApplicativaRispostaElemento cae = null;
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_CORRELAZIONE_RISPOSTA);
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("nome_elemento", "?");
@@ -1989,16 +1989,16 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						cae = corrAppRisposta.getElemento(i);
 						stm.setLong(1, idPortaApplicativa);
 						stm.setString(2, cae.getNome());
-						stm.setString(3, DriverConfigurazioneDB_LIB.getValue(cae.getIdentificazione()));
+						stm.setString(3, DriverConfigurazioneDBLib.getValue(cae.getIdentificazione()));
 						if (cae.getPattern() != null)
 							stm.setString(4, cae.getPattern());
 						else
 							stm.setString(4, "");
-						stm.setString(5, DriverConfigurazioneDB_LIB.getValue(cae.getIdentificazioneFallita()));
+						stm.setString(5, DriverConfigurazioneDBLib.getValue(cae.getIdentificazioneFallita()));
 						stm.executeUpdate();
 					}
 					stm.close();
-					DriverConfigurazioneDB_LIB.log.debug("Inserted " + i + " correlazione applicativa risposta con id=" + idPortaApplicativa);
+					DriverConfigurazioneDBLib.log.debug("Inserted " + i + " correlazione applicativa risposta con id=" + idPortaApplicativa);
 				}
 		
 				
@@ -2011,7 +2011,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				// serviziapplicativi props			
 				
 				idsPA_SA = new ArrayList<>(); 
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SA);
 				sqlQueryObject.addSelectField("id");
 				sqlQueryObject.addWhereCondition("id_porta=?");
@@ -2028,7 +2028,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				
 				if(!idsPA_SA.isEmpty()) {
 					for (Long idsapa : idsPA_SA) {
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SA_PROPS);
 						sqlQueryObject.addWhereCondition("id_porta=?");
 						sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2036,14 +2036,14 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						stm.setLong(1, idsapa);
 						n=stm.executeUpdate();
 						stm.close();
-						DriverConfigurazioneDB_LIB.log.debug("Eliminate "+n+" proprieta relative all'associazione '"+idsapa+"' (Porta Applicativa "+idPortaApplicativa+")");
+						DriverConfigurazioneDBLib.log.debug("Eliminate "+n+" proprieta relative all'associazione '"+idsapa+"' (Porta Applicativa "+idPortaApplicativa+")");
 					}
 				}
 				
 				
 				//TODO possibile ottimizzazione in termini di tempo
 				//cancello i servizi applicativi associati alla porta e inserisco tutti e soli quelli presenti in lista
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SA);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2051,7 +2051,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" servizi applicativi associati alla Porta Applicativa "+idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" servizi applicativi associati alla Porta Applicativa "+idPortaApplicativa);
 				
 				
 				
@@ -2072,14 +2072,14 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 					if (tipoProprietarioSA == null || tipoProprietarioSA.equals(""))
 						throw new DriverConfigurazioneException("Tipo Proprietario del ServizioApplicativo associato non valido.");
 
-					long idSA = DriverConfigurazioneDB_serviziApplicativiLIB.getIdServizioApplicativo(nomeSA, tipoProprietarioSA, nomeProprietarioSA, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+					long idSA = DriverConfigurazioneDB_serviziApplicativiLIB.getIdServizioApplicativo(nomeSA, tipoProprietarioSA, nomeProprietarioSA, con, DriverConfigurazioneDBLib.tipoDB,DriverConfigurazioneDBLib.tabellaSoggetti);
 
 					if (idSA <= 0)
 						throw new DriverConfigurazioneException("Impossibile recuperare l'id del Servizio Applicativo [" + nomeSA + "] di [" + tipoProprietarioSA + "/" + nomeProprietarioSA + "]");
 
 					idsPA_SA.add(idSA);
 					
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_SA);
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
@@ -2101,8 +2101,8 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? servizioApplicativo.getDatiConnettore().getNome() : null);
 					stm.setInt(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? (servizioApplicativo.getDatiConnettore().isNotifica() ? CostantiDB.TRUE : CostantiDB.FALSE) : CostantiDB.FALSE);
 					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? servizioApplicativo.getDatiConnettore().getDescrizione() : null);
-					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? DriverConfigurazioneDB_LIB.getValue(servizioApplicativo.getDatiConnettore().getStato()) : null);
-					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? DriverConfigurazioneDB_LIB.getValue(servizioApplicativo.getDatiConnettore().getScheduling()) : null);
+					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? DriverConfigurazioneDBLib.getValue(servizioApplicativo.getDatiConnettore().getStato()) : null);
+					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? DriverConfigurazioneDBLib.getValue(servizioApplicativo.getDatiConnettore().getScheduling()) : null);
 					
 					String filtri = null; 
 					if(servizioApplicativo.getDatiConnettore()!=null) {
@@ -2133,10 +2133,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 					stm.executeUpdate();
 					stm.close();
 					n++;
-					DriverConfigurazioneDB_LIB.log.debug("Aggiunta associazione PortaApplicativa<->ServizioApplicativo [" + idPortaApplicativa + "]<->[" + idSA + "]");
+					DriverConfigurazioneDBLib.log.debug("Aggiunta associazione PortaApplicativa<->ServizioApplicativo [" + idPortaApplicativa + "]<->[" + idSA + "]");
 				}
 
-				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " associazioni PortaApplicativa<->ServizioApplicativo associati alla PortaDelegata[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Aggiunti " + n + " associazioni PortaApplicativa<->ServizioApplicativo associati alla PortaDelegata[" + idPortaApplicativa + "]");
 
 
 				// serviziapplicativi props			
@@ -2147,7 +2147,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 					
 					if(servizioApplicativo.getDatiConnettore()!=null && servizioApplicativo.getDatiConnettore().sizeProprietaList()>0) {
 					
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SA);
 						sqlQueryObject.addSelectField("id");
 						sqlQueryObject.addWhereCondition("id_porta=?");
@@ -2173,7 +2173,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						}
 						
 						
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_SA_PROPS);
 						sqlQueryObject.addInsertField("id_porta", "?");
 						sqlQueryObject.addInsertField("nome", "?");
@@ -2198,7 +2198,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						}
 	
 						stm.close();
-						DriverConfigurazioneDB_LIB.log.debug("Inseriti " + j + " SetSAProp associati al Servizio Applicativo [" + nomeSA + "](id:"+idSA+") della PortaApplicativa[" + idPortaApplicativa + "]");
+						DriverConfigurazioneDBLib.log.debug("Inseriti " + j + " SetSAProp associati al Servizio Applicativo [" + nomeSA + "](id:"+idSA+") della PortaApplicativa[" + idPortaApplicativa + "]");
 					}
 				}
 				
@@ -2208,7 +2208,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				//TODO possibilie ottimizzazione
 				//La lista di proprieta contiene tutte e sole le proprieta associate alla porta
 				//cancello le proprieta per poi sincronizzarle con la lista passata
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_BEHAVIOUR_PROPS);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2218,7 +2218,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.close();
 				
 				if(aPA.getBehaviour()!=null) {
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_BEHAVIOUR_PROPS);
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("nome", "?");
@@ -2233,7 +2233,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						stm.executeUpdate();
 					}
 					stm.close();
-					DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " SeBehaviourProp associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+					DriverConfigurazioneDBLib.log.debug("Inseriti " + i + " SeBehaviourProp associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 				}
 				
 				
@@ -2248,7 +2248,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				//TODO possibilie ottimizzazione
 				//La lista di proprieta contiene tutte e sole le proprieta associate alla porta
 				//cancello le proprieta per poi sincronizzarle con la lista passata
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_AUTENTICAZIONE_PROP);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2256,13 +2256,13 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Eliminate "+n+" proprieta di autenticazione associate alla Porta Applicativa "+idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Eliminate "+n+" proprieta di autenticazione associate alla Porta Applicativa "+idPortaApplicativa);
 				// set prop
 				int newProps = 0;
 				for (i = 0; i < aPA.sizeProprietaAutenticazioneList(); i++) {
 					propProtocollo = aPA.getProprietaAutenticazione(i);
 
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_AUTENTICAZIONE_PROP);
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("nome", "?");
@@ -2277,7 +2277,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 					stm.close();
 					newProps++;
 				}
-				DriverConfigurazioneDB_LIB.log.debug("Inserted " + newProps + " SetProtocolPropAutenticazione associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Inserted " + newProps + " SetProtocolPropAutenticazione associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
 				
@@ -2285,7 +2285,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				//TODO possibilie ottimizzazione
 				//La lista di proprieta contiene tutte e sole le proprieta associate alla porta
 				//cancello le proprieta per poi sincronizzarle con la lista passata
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_PROP);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2293,13 +2293,13 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Eliminate "+n+" proprieta di autorizzazione associate alla Porta Applicativa "+idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Eliminate "+n+" proprieta di autorizzazione associate alla Porta Applicativa "+idPortaApplicativa);
 				// set prop
 				newProps = 0;
 				for (i = 0; i < aPA.sizeProprietaAutorizzazioneList(); i++) {
 					propProtocollo = aPA.getProprietaAutorizzazione(i);
 
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_PROP);
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("nome", "?");
@@ -2314,7 +2314,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 					stm.close();
 					newProps++;
 				}
-				DriverConfigurazioneDB_LIB.log.debug("Inserted " + newProps + " SetProtocolPropAutorizzazione associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Inserted " + newProps + " SetProtocolPropAutorizzazione associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
 				
@@ -2323,7 +2323,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				//TODO possibilie ottimizzazione
 				//La lista di proprieta contiene tutte e sole le proprieta associate alla porta
 				//cancello le proprieta per poi sincronizzarle con la lista passata
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2331,13 +2331,13 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Eliminate "+n+" proprieta di autorizzazione contenuti associate alla Porta Applicativa "+idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Eliminate "+n+" proprieta di autorizzazione contenuti associate alla Porta Applicativa "+idPortaApplicativa);
 				// set prop
 				newProps = 0;
 				for (i = 0; i < aPA.sizeProprietaAutorizzazioneContenutoList(); i++) {
 					propProtocollo = aPA.getProprietaAutorizzazioneContenuto(i);
 
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP);
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("nome", "?");
@@ -2352,7 +2352,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 					stm.close();
 					newProps++;
 				}
-				DriverConfigurazioneDB_LIB.log.debug("Inserted " + newProps + " SetProtocolPropAutorizzazioneContenuto associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Inserted " + newProps + " SetProtocolPropAutorizzazioneContenuto associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
 				
@@ -2366,7 +2366,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				//TODO possibilie ottimizzazione
 				//La lista di proprieta contiene tutte e sole le proprieta associate alla porta
 				//cancello le proprieta per poi sincronizzarle con la lista passata
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_RATE_LIMITING_PROP);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2374,13 +2374,13 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Eliminate "+n+" proprieta di rate limiting associate alla Porta Applicativa "+idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Eliminate "+n+" proprieta di rate limiting associate alla Porta Applicativa "+idPortaApplicativa);
 				// set prop
 				newProps = 0;
 				for (i = 0; i < aPA.sizeProprietaRateLimitingList(); i++) {
 					propProtocollo = aPA.getProprietaRateLimiting(i);
 
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_RATE_LIMITING_PROP);
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("nome", "?");
@@ -2395,7 +2395,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 					stm.close();
 					newProps++;
 				}
-				DriverConfigurazioneDB_LIB.log.debug("Inserted " + newProps + " SetProtocolPropRateLimiting associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Inserted " + newProps + " SetProtocolPropRateLimiting associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
 				
@@ -2406,7 +2406,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				//TODO possibilie ottimizzazione
 				//La lista di proprieta contiene tutte e sole le proprieta associate alla porta
 				//cancello le proprieta per poi sincronizzarle con la lista passata
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_PROP);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2414,13 +2414,13 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Eliminate "+n+" proprieta associate alla Porta Applicativa "+idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Eliminate "+n+" proprieta associate alla Porta Applicativa "+idPortaApplicativa);
 				// set prop
 				newProps = 0;
 				for (i = 0; i < aPA.sizeProprietaList(); i++) {
 					propProtocollo = aPA.getProprieta(i);
 
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_PROP);
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("nome", "?");
@@ -2435,13 +2435,13 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 					stm.close();
 					newProps++;
 				}
-				DriverConfigurazioneDB_LIB.log.debug("Inserted " + newProps + " SetProtocolProp associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Inserted " + newProps + " SetProtocolProp associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 
 				
 				
 				// Ruoli
 				
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_RUOLI);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2449,13 +2449,13 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" ruoli associati alla Porta Applicativa "+idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" ruoli associati alla Porta Applicativa "+idPortaApplicativa);
 				
 				n=0;
 				if(aPA.getRuoli()!=null && aPA.getRuoli().sizeRuoloList()>0){
 					for (int j = 0; j < aPA.getRuoli().sizeRuoloList(); j++) {
 						Ruolo ruolo = aPA.getRuoli().getRuolo(j);
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_RUOLI);
 						sqlQueryObject.addInsertField("id_porta", "?");
 						sqlQueryObject.addInsertField("ruolo", "?");
@@ -2466,17 +2466,17 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDB_LIB.log.debug("Aggiunto ruolo[" + ruolo.getNome() + "] alla PortaApplicativa[" + idPortaApplicativa + "]");
+						DriverConfigurazioneDBLib.log.debug("Aggiunto ruolo[" + ruolo.getNome() + "] alla PortaApplicativa[" + idPortaApplicativa + "]");
 					}
 				}
 				
-				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " ruoli alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Aggiunti " + n + " ruoli alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
 				
 				// Scope
 				
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SCOPE);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2484,13 +2484,13 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" scope associati alla Porta Applicativa "+idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" scope associati alla Porta Applicativa "+idPortaApplicativa);
 				
 				n=0;
 				if(aPA.getScope()!=null && aPA.getScope().sizeScopeList()>0){
 					for (int j = 0; j < aPA.getScope().sizeScopeList(); j++) {
 						Scope scope = aPA.getScope().getScope(j);
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_SCOPE);
 						sqlQueryObject.addInsertField("id_porta", "?");
 						sqlQueryObject.addInsertField("scope", "?");
@@ -2501,17 +2501,17 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDB_LIB.log.debug("Aggiunto scope[" + scope.getNome() + "] alla PortaApplicativa[" + idPortaApplicativa + "]");
+						DriverConfigurazioneDBLib.log.debug("Aggiunto scope[" + scope.getNome() + "] alla PortaApplicativa[" + idPortaApplicativa + "]");
 					}
 				}
 				
-				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " scope alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Aggiunti " + n + " scope alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
 				
 				// Soggetti
 				
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SOGGETTI);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2519,13 +2519,13 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" soggetti associati alla Porta Applicativa "+idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" soggetti associati alla Porta Applicativa "+idPortaApplicativa);
 				
 				n=0;
 				if(aPA.getSoggetti()!=null && aPA.getSoggetti().sizeSoggettoList()>0){
 					for (int j = 0; j < aPA.getSoggetti().sizeSoggettoList(); j++) {
 						PortaApplicativaAutorizzazioneSoggetto soggetto = aPA.getSoggetti().getSoggetto(j);
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_SOGGETTI);
 						sqlQueryObject.addInsertField("id_porta", "?");
 						sqlQueryObject.addInsertField("tipo_soggetto", "?");
@@ -2538,11 +2538,11 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDB_LIB.log.debug("Aggiunto soggetto [" + soggetto.getTipo() + "/"+soggetto.getNome()+"] alla PortaApplicativa[" + idPortaApplicativa + "]");
+						DriverConfigurazioneDBLib.log.debug("Aggiunto soggetto [" + soggetto.getTipo() + "/"+soggetto.getNome()+"] alla PortaApplicativa[" + idPortaApplicativa + "]");
 					}
 				}
 				
-				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " soggetti alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Aggiunti " + n + " soggetti alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
 				
@@ -2552,7 +2552,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 
 				//TODO possibile ottimizzazione in termini di tempo
 				//cancello i servizi applicativi associati alla porta e inserisco tutti e soli quelli presenti in lista
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SA_AUTORIZZATI);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2560,11 +2560,11 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" servizi applicativi autorizzati associati alla Porta Applicativa "+idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" servizi applicativi autorizzati associati alla Porta Applicativa "+idPortaApplicativa);
 				
 				//scrivo la lista nel db
 				if(aPA.getServiziApplicativiAutorizzati()!=null && aPA.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0) {
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_SA_AUTORIZZATI);
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
@@ -2583,7 +2583,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						if (tipoProprietarioSA == null || tipoProprietarioSA.equals(""))
 							throw new DriverConfigurazioneException("[CRUDPortaApplicativa(CREATE)[Auth]::Tipo Proprietario del ServizioApplicativo associato non valido.");
 	
-						long idSA = DriverConfigurazioneDB_serviziApplicativiLIB.getIdServizioApplicativo(nomeSA, tipoProprietarioSA, nomeProprietarioSA, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+						long idSA = DriverConfigurazioneDB_serviziApplicativiLIB.getIdServizioApplicativo(nomeSA, tipoProprietarioSA, nomeProprietarioSA, con, DriverConfigurazioneDBLib.tipoDB,DriverConfigurazioneDBLib.tabellaSoggetti);
 	
 						if (idSA <= 0)
 							throw new DriverConfigurazioneException("Impossibile recuperare l'id del Servizio Applicativo [" + nomeSA + "] di [" + tipoProprietarioSA + "/" + nomeProprietarioSA + "]");
@@ -2593,7 +2593,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						stm.executeUpdate();
 					}
 					stm.close();
-					DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " servizi applicativi autorizzati associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+					DriverConfigurazioneDBLib.log.debug("Inseriti " + i + " servizi applicativi autorizzati associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 				}
 				
 				
@@ -2604,7 +2604,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 
 				//TODO possibile ottimizzazione in termini di tempo
 				//cancello i servizi applicativi associati alla porta e inserisco tutti e soli quelli presenti in lista
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_TOKEN_SA);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2612,12 +2612,12 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" servizi applicativi autorizzati (token) associati alla Porta Applicativa "+idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" servizi applicativi autorizzati (token) associati alla Porta Applicativa "+idPortaApplicativa);
 				
 				//scrivo la lista nel db
 				if(aPA.getAutorizzazioneToken()!=null && aPA.getAutorizzazioneToken().getServiziApplicativi()!=null && 
 						aPA.getAutorizzazioneToken().getServiziApplicativi().sizeServizioApplicativoList()>0) {
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_TOKEN_SA);
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
@@ -2636,7 +2636,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						if (tipoProprietarioSA == null || tipoProprietarioSA.equals(""))
 							throw new DriverConfigurazioneException("[CRUDPortaApplicativa(CREATE)[TokenAuth]::Tipo Proprietario del ServizioApplicativo associato non valido.");
 	
-						long idSA = DriverConfigurazioneDB_serviziApplicativiLIB.getIdServizioApplicativo(nomeSA, tipoProprietarioSA, nomeProprietarioSA, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+						long idSA = DriverConfigurazioneDB_serviziApplicativiLIB.getIdServizioApplicativo(nomeSA, tipoProprietarioSA, nomeProprietarioSA, con, DriverConfigurazioneDBLib.tipoDB,DriverConfigurazioneDBLib.tabellaSoggetti);
 	
 						if (idSA <= 0)
 							throw new DriverConfigurazioneException("Impossibile recuperare l'id del Servizio Applicativo [" + nomeSA + "] di [" + tipoProprietarioSA + "/" + nomeProprietarioSA + "]");
@@ -2646,14 +2646,14 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						stm.executeUpdate();
 					}
 					stm.close();
-					DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " servizi applicativi autorizzati (token) associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+					DriverConfigurazioneDBLib.log.debug("Inseriti " + i + " servizi applicativi autorizzati (token) associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 				}
 				
 				
 				
 				// Ruoli (token)
 				
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_TOKEN_RUOLI);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2661,13 +2661,13 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" ruoli (token) associati alla Porta Applicativa "+idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" ruoli (token) associati alla Porta Applicativa "+idPortaApplicativa);
 				
 				n=0;
 				if(aPA.getAutorizzazioneToken()!=null && aPA.getAutorizzazioneToken().getRuoli()!=null && aPA.getAutorizzazioneToken().getRuoli().sizeRuoloList()>0){
 					for (int j = 0; j < aPA.getAutorizzazioneToken().getRuoli().sizeRuoloList(); j++) {
 						Ruolo ruolo = aPA.getAutorizzazioneToken().getRuoli().getRuolo(j);
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_TOKEN_RUOLI);
 						sqlQueryObject.addInsertField("id_porta", "?");
 						sqlQueryObject.addInsertField("ruolo", "?");
@@ -2678,17 +2678,17 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDB_LIB.log.debug("Aggiunto ruolo[" + ruolo.getNome() + "] (token) alla PortaApplicativa[" + idPortaApplicativa + "]");
+						DriverConfigurazioneDBLib.log.debug("Aggiunto ruolo[" + ruolo.getNome() + "] (token) alla PortaApplicativa[" + idPortaApplicativa + "]");
 					}
 				}
 				
-				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " ruoli (token) alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Aggiunti " + n + " ruoli (token) alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
 				
 				// Azioni
 				
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_AZIONI);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2696,13 +2696,13 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" azioni associati alla Porta Applicativa "+idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" azioni associati alla Porta Applicativa "+idPortaApplicativa);
 				
 				n=0;
 				if(aPA.getAzione()!=null && aPA.getAzione().sizeAzioneDelegataList()>0){
 					for (int j = 0; j < aPA.getAzione().sizeAzioneDelegataList(); j++) {
 						String azioneDelegata = aPA.getAzione().getAzioneDelegata(j);
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_AZIONI);
 						sqlQueryObject.addInsertField("id_porta", "?");
 						sqlQueryObject.addInsertField("azione", "?");
@@ -2713,18 +2713,18 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDB_LIB.log.debug("Aggiunto azione delegata [" + azioneDelegata + "] alla PortaApplicativa[" + idPortaApplicativa + "]");
+						DriverConfigurazioneDBLib.log.debug("Aggiunto azione delegata [" + azioneDelegata + "] alla PortaApplicativa[" + idPortaApplicativa + "]");
 					}
 				}
 				
-				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " azione delegate alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Aggiunte " + n + " azione delegate alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 			
 				
 				
 				// Cache Regole
 				
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_CACHE_REGOLE);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2732,13 +2732,13 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" regole di cache associate alla PortaApplicativa "+idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" regole di cache associate alla PortaApplicativa "+idPortaApplicativa);
 				
 				n=0;
 				if(response_cache_regole!=null && response_cache_regole.size()>0){
 					for (int j = 0; j < response_cache_regole.size(); j++) {
 						ResponseCachingConfigurazioneRegola regola = response_cache_regole.get(j);
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_CACHE_REGOLE);
 						sqlQueryObject.addInsertField("id_porta", "?");
 						if(regola.getReturnCodeMin()!=null && regola.getReturnCodeMin()>0) {
@@ -2768,17 +2768,17 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDB_LIB.log.debug("Aggiunta regola di cache alla PortaApplicativa[" + idPortaApplicativa + "]");
+						DriverConfigurazioneDBLib.log.debug("Aggiunta regola di cache alla PortaApplicativa[" + idPortaApplicativa + "]");
 					}
 				}
 				
-				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " regole di cache alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Aggiunte " + n + " regole di cache alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
 				
 				// AttributeAuthority
 				
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_ATTRIBUTE_AUTHORITY);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2786,7 +2786,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Cancellate "+n+" A.A. associate alla Porta Applicativa "+idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Cancellate "+n+" A.A. associate alla Porta Applicativa "+idPortaApplicativa);
 				
 				n=0;
 				if(aPA.sizeAttributeAuthorityList()>0){
@@ -2805,7 +2805,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 							attributi = bf.toString();
 						}
 						
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_ATTRIBUTE_AUTHORITY);
 						sqlQueryObject.addInsertField("id_porta", "?");
 						sqlQueryObject.addInsertField("nome", "?");
@@ -2818,11 +2818,11 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDB_LIB.log.debug("Aggiunto A.A.[" + aa.getNome() + "] alla PortaApplicativa[" + idPortaApplicativa + "]");
+						DriverConfigurazioneDBLib.log.debug("Aggiunto A.A.[" + aa.getNome() + "] alla PortaApplicativa[" + idPortaApplicativa + "]");
 					}
 				}
 				
-				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " A.A. alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Aggiunte " + n + " A.A. alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
 				
@@ -2832,7 +2832,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				
 				
 				// trasformazioni
-				DriverConfigurazioneDB_trasformazioniLIB.CRUDTrasformazioni(type, con, aPA.getTrasformazioni(), idPortaApplicativa, false);
+				DriverConfigurazioneDBTrasformazioniLib.CRUDTrasformazioni(type, con, aPA.getTrasformazioni(), idPortaApplicativa, false);
 
 				
 				// Handlers
@@ -2842,18 +2842,18 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				
 				// extendedInfo
 				if(extInfoConfigurazioneDriver!=null){
-					extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  aPA, CRUDType.UPDATE);
+					extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDBLib.log,  aPA, CRUDType.UPDATE);
 				}
 				
 				i=0;
 				if(aPA.sizeExtendedInfoList()>0){
 					if(extInfoConfigurazioneDriver!=null){
 						for (i = 0; i < aPA.sizeExtendedInfoList(); i++) {
-							extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  aPA, aPA.getExtendedInfo(i), CRUDType.UPDATE);
+							extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDBLib.log,  aPA, aPA.getExtendedInfo(i), CRUDType.UPDATE);
 						}
 					}
 				}
-				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + i + " associazioni ExtendedInfo<->PortaApplicativa associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Aggiunte " + i + " associazioni ExtendedInfo<->PortaApplicativa associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 								
 				break;
 
@@ -2864,7 +2864,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				// id della PortaApplicativa non valida.");
 
 
-				idPortaApplicativa = DBUtils.getIdPortaApplicativa(nomePorta, con, DriverConfigurazioneDB_LIB.tipoDB);
+				idPortaApplicativa = DBUtils.getIdPortaApplicativa(nomePorta, con, DriverConfigurazioneDBLib.tipoDB);
 				if (idPortaApplicativa <= 0)
 					throw new DriverConfigurazioneException("Non e' stato possibile recuperare l'id della Porta Applicativa.");
 
@@ -2872,14 +2872,14 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				DriverConfigurazioneDB_dumpLIB.CRUDDumpConfigurazione(type, con, aPA.getDump(), idPortaApplicativa, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PA);
 				
 				// trasformazioni
-				DriverConfigurazioneDB_trasformazioniLIB.CRUDTrasformazioni(type, con, aPA.getTrasformazioni(), idPortaApplicativa, false);
+				DriverConfigurazioneDBTrasformazioniLib.CRUDTrasformazioni(type, con, aPA.getTrasformazioni(), idPortaApplicativa, false);
 				
 				// Handlers
 				DriverConfigurazioneDB_handlerLIB.CRUDConfigurazioneMessageHandlers(type, con, null, idPortaApplicativa, true, (configHandlers!=null) ? configHandlers.getRequest() : null);
 				DriverConfigurazioneDB_handlerLIB.CRUDConfigurazioneMessageHandlers(type, con, null, idPortaApplicativa, false, (configHandlers!=null) ? configHandlers.getResponse() : null);
 				
 				// AttributeAuthority
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_ATTRIBUTE_AUTHORITY);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2887,10 +2887,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Cancellate "+n+" A.A. associate alla Porta Applicativa "+idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Cancellate "+n+" A.A. associate alla Porta Applicativa "+idPortaApplicativa);
 				
 				// Cache Regole
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_CACHE_REGOLE);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2898,10 +2898,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" regole di cache associate alla Porta Applicativa "+idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" regole di cache associate alla Porta Applicativa "+idPortaApplicativa);
 				
 				// azioni delegate
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_AZIONI);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2909,10 +2909,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Cancellate "+n+" azioni delegate associate alla Porta Applicativa "+idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Cancellate "+n+" azioni delegate associate alla Porta Applicativa "+idPortaApplicativa);
 				
 				// ruoli (token)
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_TOKEN_RUOLI);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2920,10 +2920,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" ruoli (token) associati alla Porta Applicativa "+idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" ruoli (token) associati alla Porta Applicativa "+idPortaApplicativa);
 				
 				// sa autorizzati (token)
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_TOKEN_SA);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2931,10 +2931,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" servizi applicativi autorizzati (token) associati alla Porta Applicativa "+idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" servizi applicativi autorizzati (token) associati alla Porta Applicativa "+idPortaApplicativa);
 				
 				// sa autorizzati
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SA_AUTORIZZATI);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2942,10 +2942,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" servizi applicativi autorizzati associati alla Porta Applicativa "+idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" servizi applicativi autorizzati associati alla Porta Applicativa "+idPortaApplicativa);
 				
 				// soggetti
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SOGGETTI);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2953,10 +2953,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" soggetti associati alla Porta Applicativa "+idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" soggetti associati alla Porta Applicativa "+idPortaApplicativa);
 				
 				// ruoli
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_RUOLI);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2964,10 +2964,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" ruoli associati alla Porta Applicativa "+idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" ruoli associati alla Porta Applicativa "+idPortaApplicativa);
 				
 				// scope
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SCOPE);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2975,10 +2975,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" scope associati alla Porta Applicativa "+idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" scope associati alla Porta Applicativa "+idPortaApplicativa);
 				
 				// mtom
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_MTOM_REQUEST);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2986,9 +2986,9 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " request flow con id=" + idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Deleted " + n + " request flow con id=" + idPortaApplicativa);
 
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_MTOM_RESPONSE);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -2996,12 +2996,12 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " response flow con id=" + idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Deleted " + n + " response flow con id=" + idPortaApplicativa);
 				
 				
 				// message security
 				//if ( CostantiConfigurazione.ABILITATO.toString().equals(messageSecurityStatus) )  {
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -3009,9 +3009,9 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " request flow con id=" + idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Deleted " + n + " request flow con id=" + idPortaApplicativa);
 
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -3019,12 +3019,12 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " response flow con id=" + idPortaApplicativa);
+				DriverConfigurazioneDBLib.log.debug("Deleted " + n + " response flow con id=" + idPortaApplicativa);
 				//}
 
 				// serviziapplicativi props
 				idsPA_SA = new ArrayList<>(); 
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SA);
 				sqlQueryObject.addSelectField("id");
 				sqlQueryObject.addWhereCondition("id_porta=?");
@@ -3041,7 +3041,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				
 				if(!idsPA_SA.isEmpty()) {
 					for (Long idsapa : idsPA_SA) {
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SA_PROPS);
 						sqlQueryObject.addWhereCondition("id_porta=?");
 						sqlQuery = sqlQueryObject.createSQLDelete();
@@ -3049,12 +3049,12 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						stm.setLong(1, idsapa);
 						n=stm.executeUpdate();
 						stm.close();
-						DriverConfigurazioneDB_LIB.log.debug("Eliminate "+n+" proprieta relative all'associazione '"+idsapa+"' (Porta Applicativa "+idPortaApplicativa+")");
+						DriverConfigurazioneDBLib.log.debug("Eliminate "+n+" proprieta relative all'associazione '"+idsapa+"' (Porta Applicativa "+idPortaApplicativa+")");
 					}
 				}
 				
 				// serviziapplicativi
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SA);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -3062,10 +3062,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " servizi applicativi associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDBLib.log.debug("Deleted " + n + " servizi applicativi associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 
 				// cancello le prop relative al behaviour
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_BEHAVIOUR_PROPS);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -3074,11 +3074,11 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				n=stm.executeUpdate();
 				stm.close();
 				if (n > 0)
-					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " BehaviourProp associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+					DriverConfigurazioneDBLib.log.debug("Deleted " + n + " BehaviourProp associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				// cancello anche le flow di request/response associate a questa
 				// porta applicativa
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -3087,9 +3087,9 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				n=stm.executeUpdate();
 				stm.close();
 				if (n > 0)
-					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " security_request flow associate alla PortaApplicativa[" + idPortaApplicativa + "]");
+					DriverConfigurazioneDBLib.log.debug("Deleted " + n + " security_request flow associate alla PortaApplicativa[" + idPortaApplicativa + "]");
 
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -3098,10 +3098,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				n=stm.executeUpdate();
 				stm.close();
 				if (n > 0)
-					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " security_response flow associate alla PortaApplicativa[" + idPortaApplicativa + "]");
+					DriverConfigurazioneDBLib.log.debug("Deleted " + n + " security_response flow associate alla PortaApplicativa[" + idPortaApplicativa + "]");
 
 				
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_CORRELAZIONE);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -3111,9 +3111,9 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				n = stm.executeUpdate();
 				stm.close();
 				if (n > 0)
-					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " correlazione associate alla PortaApplicativa[" + idPortaApplicativa + "]");
+					DriverConfigurazioneDBLib.log.debug("Deleted " + n + " correlazione associate alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_CORRELAZIONE_RISPOSTA);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -3123,10 +3123,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				n = stm.executeUpdate();
 				stm.close();
 				if (n > 0)
-					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " correlazione della risposta associate alla PortaApplicativa[" + idPortaApplicativa + "]");
+					DriverConfigurazioneDBLib.log.debug("Deleted " + n + " correlazione della risposta associate alla PortaApplicativa[" + idPortaApplicativa + "]");
 								
 				// cancello le prop
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_PROP);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -3135,10 +3135,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				n=stm.executeUpdate();
 				stm.close();
 				if (n > 0)
-					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " SetProtocolProp associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+					DriverConfigurazioneDBLib.log.debug("Deleted " + n + " SetProtocolProp associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 
 				// cancello le prop di rate limiting
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_RATE_LIMITING_PROP);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -3147,11 +3147,11 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				n=stm.executeUpdate();
 				stm.close();
 				if (n > 0)
-					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " SetProtocolPropRateLimiting associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+					DriverConfigurazioneDBLib.log.debug("Deleted " + n + " SetProtocolPropRateLimiting associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 
 				
 				// cancello le prop di autorizzazione contenuti
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -3160,10 +3160,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				n=stm.executeUpdate();
 				stm.close();
 				if (n > 0)
-					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " SetProtocolPropAutorizzazioneContenuto associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+					DriverConfigurazioneDBLib.log.debug("Deleted " + n + " SetProtocolPropAutorizzazioneContenuto associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 
 				// cancello le prop di autorizzazione
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_PROP);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -3172,10 +3172,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				n=stm.executeUpdate();
 				stm.close();
 				if (n > 0)
-					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " SetProtocolPropAutorizzazione associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+					DriverConfigurazioneDBLib.log.debug("Deleted " + n + " SetProtocolPropAutorizzazione associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				// cancello le prop di autenticazione
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_AUTENTICAZIONE_PROP);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
@@ -3184,15 +3184,15 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				n=stm.executeUpdate();
 				stm.close();
 				if (n > 0)
-					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " SetProtocolPropAutenticazione associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+					DriverConfigurazioneDBLib.log.debug("Deleted " + n + " SetProtocolPropAutenticazione associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 
 				// extendedInfo
 				if(extInfoConfigurazioneDriver!=null){
-					extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  aPA, CRUDType.DELETE);
+					extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDBLib.log,  aPA, CRUDType.DELETE);
 				}
 				
 				// porta applicativa
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE);
 				sqlQueryObject.addWhereCondition("id=?");
 				sqlQueryObject.addWhereCondition("id_soggetto=?");
@@ -3205,7 +3205,7 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setString(3, nomePorta);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " row(s).");
+				DriverConfigurazioneDBLib.log.debug("Deleted " + n + " row(s).");
 
 				break;
 			}

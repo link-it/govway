@@ -54,6 +54,14 @@ public final class CostantiDB {
     public static final String CONNETTORI_CUSTOM = "connettori_custom";
     public static final String SOGGETTI = "soggetti";
     public static final String SOGGETTI_PDD = "soggetti_pdd";
+    public static final String SOGGETTI_COLUMN_TIPO_SOGGETTO = "tipo_soggetto";
+    public static final String SOGGETTI_COLUMN_NOME_SOGGETTO = "nome_soggetto";
+    public static final String SOGGETTI_COLUMN_DESCRIZIONE = "descrizione";
+    public static final String SOGGETTI_COLUMN_IDENTIFICATIVO_PORTA = "identificativo_porta";
+    public static final String SOGGETTI_COLUMN_ROUTER = "is_router";
+    public static final String SOGGETTI_COLUMN_DEFAULT = "is_default";
+    public static final String SOGGETTI_COLUMN_TIPO_SOGGETTO_VIRTUALE = "tipo_soggetto_virtuale";
+    public static final String SOGGETTI_COLUMN_NOME_SOGGETTO_VIRTUALE = "nome_soggetto_virtuale";
     
     /*REGSERV*/
     public static final String PROTOCOL_PROPERTIES = "protocol_properties";
@@ -177,6 +185,23 @@ public final class CostantiDB {
     public static final String CONFIGURAZIONE_CANALI_NODI = "canali_nodi";
     public static final String CONFIGURAZIONE_HANDLERS = "config_handlers";
 
+    public static final String SUPERUSER_COLUMN = "superuser";
+    
+    public static final String PORTA_COLUMN_ID_REF = "id_porta";
+    
+    public static final String TRASFORMAZIONI_COLUMN_ID_RIF_TRASFORMAZIONE =  "id_trasformazione";
+    public static final String TRASFORMAZIONI_COLUMN_POSIZIONE = "posizione";
+    public static final String TRASFORMAZIONI_COLUMN_APPLICABILITA_CT = "applicabilita_ct";
+    public static final String TRASFORMAZIONI_COLUMN_APPLICABILITA_PATTERN = "applicabilita_pattern";
+    public static final String TRASFORMAZIONI_COLUMN_SOAP_ENVELOPE = "soap_envelope";
+    public static final String TRASFORMAZIONI_COLUMN_SOAP_ENVELOPE_AS_ATTACH ="soap_envelope_as_attach";
+    public static final String TRASFORMAZIONI_COLUMN_SOAP_ENVELOPE_TIPO = "soap_envelope_tipo";
+    public static final String TRASFORMAZIONI_COLUMN_SOAP_ENVELOPE_TEMPLATE = "soap_envelope_template";
+    public static final String TRASFORMAZIONI_COLUMN_TIPO_SOGGETTO = "tipo_soggetto";
+    public static final String TRASFORMAZIONI_COLUMN_NOME_SOGGETTO = "nome_soggetto";
+    public static final String TRASFORMAZIONI_COLUMN_VALORE = "valore";
+    public static final String TRASFORMAZIONI_COLUMN_IDENTIFICAZIONE_FALLITA = "identificazione_fallita";
+    
     public static final String CONFIG_NODI_RUNTIME = "nodi_runtime";
     
     public static final String CONFIG_URL_INVOCAZIONE = "config_url_invocazione";

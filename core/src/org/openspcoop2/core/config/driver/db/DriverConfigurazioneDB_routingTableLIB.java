@@ -71,7 +71,7 @@ public class DriverConfigurazioneDB_routingTableLIB {
 			switch (type) {
 			case CREATE:
 
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addUpdateTable(CostantiDB.CONFIGURAZIONE);
 				sqlQueryObject.addUpdateField("routing_enabled", "?");
 				updateQuery = sqlQueryObject.createSQLUpdate();
@@ -80,12 +80,12 @@ public class DriverConfigurazioneDB_routingTableLIB {
 					updateStmt.setString(1, CostantiConfigurazione.ABILITATO.toString());
 				else
 					updateStmt.setString(1, CostantiConfigurazione.DISABILITATO.toString());
-				DriverConfigurazioneDB_LIB.log.debug("eseguo query :" + DBUtils.formatSQLString(updateQuery, (aRT.getAbilitata()!=null && aRT.getAbilitata())));
+				DriverConfigurazioneDBLib.log.debug("eseguo query :" + DBUtils.formatSQLString(updateQuery, (aRT.getAbilitata()!=null && aRT.getAbilitata())));
 				updateStmt.executeUpdate();
 				updateStmt.close();
 
 				// CREATE
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addInsertTable(CostantiDB.ROUTING);
 				sqlQueryObject.addInsertField("tipo", "?");
 				sqlQueryObject.addInsertField("nome", "?");
@@ -124,7 +124,7 @@ public class DriverConfigurazioneDB_routingTableLIB {
 						if(rg!=null){
 							if(rg.getId()<=0){
 								if(rg.getNome()!=null && ("".equals(rg.getNome())==false)){
-									sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+									sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 									sqlQueryObject.addFromTable(CostantiDB.REGISTRI);
 									sqlQueryObject.addSelectField("id");
 									sqlQueryObject.addWhereCondition("nome = ?");
@@ -151,7 +151,7 @@ public class DriverConfigurazioneDB_routingTableLIB {
 					}
 				}
 
-				DriverConfigurazioneDB_LIB.log.debug("Inserted " + i + " Default route.");
+				DriverConfigurazioneDBLib.log.debug("Inserted " + i + " Default route.");
 
 				for (i = 0; i < aRT.sizeDestinazioneList(); i++) {
 					rtd = aRT.getDestinazione(i);
@@ -182,7 +182,7 @@ public class DriverConfigurazioneDB_routingTableLIB {
 						if(rg!=null){
 							if(rg.getId()<=0){
 								if(rg.getNome()!=null && ("".equals(rg.getNome())==false)){
-									sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+									sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 									sqlQueryObject.addFromTable(CostantiDB.REGISTRI);
 									sqlQueryObject.addSelectField("id");
 									sqlQueryObject.addWhereCondition("nome = ?");
@@ -207,14 +207,14 @@ public class DriverConfigurazioneDB_routingTableLIB {
 					}
 				}
 
-				DriverConfigurazioneDB_LIB.log.debug("Inserted " + i + " Destination route.");
+				DriverConfigurazioneDBLib.log.debug("Inserted " + i + " Destination route.");
 
 				break;
 
 			case 2:
 				// UPDATE
 
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addUpdateTable(CostantiDB.CONFIGURAZIONE);
 				sqlQueryObject.addUpdateField("routing_enabled", "?");
 				updateQuery = sqlQueryObject.createSQLUpdate();
@@ -223,11 +223,11 @@ public class DriverConfigurazioneDB_routingTableLIB {
 					updateStmt.setString(1, CostantiConfigurazione.ABILITATO.toString());
 				else
 					updateStmt.setString(1, CostantiConfigurazione.DISABILITATO.toString());
-				DriverConfigurazioneDB_LIB.log.debug("eseguo query :" + DBUtils.formatSQLString(updateQuery, aRT.getAbilitata()!=null && aRT.getAbilitata()));
+				DriverConfigurazioneDBLib.log.debug("eseguo query :" + DBUtils.formatSQLString(updateQuery, aRT.getAbilitata()!=null && aRT.getAbilitata()));
 				updateStmt.executeUpdate();
 				updateStmt.close();
 
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addUpdateTable(CostantiDB.ROUTING);
 				sqlQueryObject.addUpdateField("tipo", "?");
 				sqlQueryObject.addUpdateField("nome", "?");
@@ -239,7 +239,7 @@ public class DriverConfigurazioneDB_routingTableLIB {
 				sqlQueryObject.addWhereCondition("id = ?");
 				updateQuery = sqlQueryObject.createSQLUpdate();
 
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addInsertTable(CostantiDB.ROUTING);
 				sqlQueryObject.addInsertField("tipo", "?");
 				sqlQueryObject.addInsertField("nome", "?");
@@ -253,17 +253,17 @@ public class DriverConfigurazioneDB_routingTableLIB {
 				/**
 				 * La lista contiene tutte e sole le entry necessarie
 				 */
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addDeleteTable(CostantiDB.ROUTING);
 				//sqlQueryObject.addWhereCondition("is_default<>?");//cancello le rotte non di default
 				String queryDelete = sqlQueryObject.createSQLDelete();
-				DriverConfigurazioneDB_LIB.log.debug("DELETING Destination Route : "+queryDelete);
+				DriverConfigurazioneDBLib.log.debug("DELETING Destination Route : "+queryDelete);
 				updateStmt = con.prepareStatement(queryDelete);
 				//updateStmt.setInt(1, CostantiDB.TRUE);
 				int n = updateStmt.executeUpdate();
 				updateStmt.close();
-				DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " Destination route.");
+				DriverConfigurazioneDBLib.log.debug("Deleted " + n + " Destination route.");
 
 				i = 0;
 				if(aRT.getDefault()!=null){
@@ -280,7 +280,7 @@ public class DriverConfigurazioneDB_routingTableLIB {
 						if(rg!=null){
 							if(rg.getId()<=0){
 								if(rg.getNome()!=null && ("".equals(rg.getNome())==false)){
-									sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+									sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 									sqlQueryObject.addFromTable(CostantiDB.REGISTRI);
 									sqlQueryObject.addSelectField("id");
 									sqlQueryObject.addWhereCondition("nome = ?");
@@ -322,7 +322,7 @@ public class DriverConfigurazioneDB_routingTableLIB {
 					}
 				}
 
-				DriverConfigurazioneDB_LIB.log.debug("Updated " + i + " Default route.");
+				DriverConfigurazioneDBLib.log.debug("Updated " + i + " Default route.");
 
 				for (i = 0; i < aRT.sizeDestinazioneList(); i++) {
 					rtd = aRT.getDestinazione(i);
@@ -341,7 +341,7 @@ public class DriverConfigurazioneDB_routingTableLIB {
 						if(rg!=null){
 							if(rg.getId()<=0){
 								if(rg.getNome()!=null && ("".equals(rg.getNome())==false)){
-									sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+									sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 									sqlQueryObject.addFromTable(CostantiDB.REGISTRI);
 									sqlQueryObject.addSelectField("id");
 									sqlQueryObject.addWhereCondition("nome = ?");
@@ -376,7 +376,7 @@ public class DriverConfigurazioneDB_routingTableLIB {
 					}
 				}
 
-				DriverConfigurazioneDB_LIB.log.debug("Updated " + i + " Destination route.");
+				DriverConfigurazioneDBLib.log.debug("Updated " + i + " Destination route.");
 
 
 
@@ -393,7 +393,7 @@ public class DriverConfigurazioneDB_routingTableLIB {
 						if (route.getId() == null || route.getId() <= 0)
 							throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDRoutingTable(DELETE)] id route non valida.");
 						idRoute = route.getId();
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addDeleteTable(CostantiDB.ROUTING);
 						sqlQueryObject.addWhereCondition("id=?");
 						String sqlQuery = sqlQueryObject.createSQLDelete();
@@ -402,7 +402,7 @@ public class DriverConfigurazioneDB_routingTableLIB {
 						updateStmt.executeUpdate();
 						updateStmt.close();
 	
-						DriverConfigurazioneDB_LIB.log.debug("Deleted " + i + " Destination route.");
+						DriverConfigurazioneDBLib.log.debug("Deleted " + i + " Destination route.");
 					}
 				}
 				break;

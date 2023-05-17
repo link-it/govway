@@ -97,7 +97,7 @@ public class DriverConfigurazioneDB_routingTableDriver {
 			if (rs.next()) {
 				this.driver.logDebug("ConfigurazionePresente");
 				this.driver.logDebug("Risultato query per routing enabled ["+rs.getString("routing_enabled")+"]");
-				routingEnabled = CostantiConfigurazione.ABILITATO.equals(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("routing_enabled")));
+				routingEnabled = CostantiConfigurazione.ABILITATO.equals(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(rs.getString("routing_enabled")));
 			}
 			rs.close();
 			stm.close();

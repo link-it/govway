@@ -126,7 +126,7 @@ public class DriverConfigurazioneDB_protocolPropertiesDriver {
 
 		try {
 
-			return DriverConfigurazioneDB_LIB.getProtocolProperty(idProtocolProperty, con, this.driver.tipoDB);
+			return DriverConfigurazioneDBLib.getProtocolProperty(idProtocolProperty, con, this.driver.tipoDB);
 
 		} catch (Exception se) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneException::" + nomeMetodo + "] Exception: " + se.getMessage());

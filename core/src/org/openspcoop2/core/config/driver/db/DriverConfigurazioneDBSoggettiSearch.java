@@ -46,12 +46,16 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class DriverConfigurazioneDB_soggettiSearchDriver {
+public class DriverConfigurazioneDBSoggettiSearch {
 
 	private DriverConfigurazioneDB driver = null;
 	
-	protected DriverConfigurazioneDB_soggettiSearchDriver(DriverConfigurazioneDB driver) {
+	protected DriverConfigurazioneDBSoggettiSearch(DriverConfigurazioneDB driver) {
 		this.driver = driver;
+	}
+	
+	private String getPrefixError(String nomeMetodo) {
+		return "[DriverConfigurazioneDB::" + nomeMetodo + "] "; 
 	}
 	
 	protected List<Soggetto> soggettiList(String superuser, ISearch ricerca) throws DriverConfigurazioneException {
@@ -95,14 +99,14 @@ public class DriverConfigurazioneDB_soggettiSearchDriver {
 		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<Soggetto> lista = new ArrayList<Soggetto>();
+		ArrayList<Soggetto> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("soggettiList");
 				con.setAutoCommit(false);
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+				throw new DriverConfigurazioneException(getPrefixError(nomeMetodo)+"Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -118,12 +122,12 @@ public class DriverConfigurazioneDB_soggettiSearchDriver {
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 				sqlQueryObject.addFromTable(this.driver.tabellaSoggetti);
 				sqlQueryObject.addSelectCountField("*", "cont");
-				if(tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
-					sqlQueryObject.addWhereINCondition("tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
+				if(tipoSoggettiProtocollo!=null && !tipoSoggettiProtocollo.isEmpty()) {
+					sqlQueryObject.addWhereINCondition(CostantiDB.SOGGETTI_COLUMN_TIPO_SOGGETTO, true, tipoSoggettiProtocollo.toArray(new String[1]));
 				}
 				if(this.driver.useSuperUser && superuser!=null && !superuser.equals(""))
-					sqlQueryObject.addWhereCondition("superuser = ?");
-				sqlQueryObject.addWhereLikeCondition("nome_soggetto", search, true, true);
+					sqlQueryObject.addWhereCondition(CostantiDB.SUPERUSER_COLUMN+"= ?");
+				sqlQueryObject.addWhereLikeCondition(CostantiDB.SOGGETTI_COLUMN_NOME_SOGGETTO, search, true, true);
 				if(this.driver.useSuperUser && superuser!=null && !superuser.equals(""))
 					sqlQueryObject.setANDLogicOperator(true);
 				if(filtroProprieta) {
@@ -135,11 +139,11 @@ public class DriverConfigurazioneDB_soggettiSearchDriver {
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 				sqlQueryObject.addFromTable(this.driver.tabellaSoggetti);
 				sqlQueryObject.addSelectCountField("*", "cont");
-				if(tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
-					sqlQueryObject.addWhereINCondition("tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
+				if(tipoSoggettiProtocollo!=null && !tipoSoggettiProtocollo.isEmpty()) {
+					sqlQueryObject.addWhereINCondition(CostantiDB.SOGGETTI_COLUMN_TIPO_SOGGETTO, true, tipoSoggettiProtocollo.toArray(new String[1]));
 				}
 				if(this.driver.useSuperUser && superuser!=null && !superuser.equals(""))
-					sqlQueryObject.addWhereCondition("superuser = ?");
+					sqlQueryObject.addWhereCondition(CostantiDB.SUPERUSER_COLUMN+"= ?");
 				if(filtroProprieta) {
 					DBUtils.setFiltriProprietaSoggetto(sqlQueryObject, this.driver.tipoDB, 
 							filtroProprietaNome, filtroProprietaValore);
@@ -162,26 +166,26 @@ public class DriverConfigurazioneDB_soggettiSearchDriver {
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 				sqlQueryObject.addFromTable(this.driver.tabellaSoggetti);
 				sqlQueryObject.addSelectField("id");
-				sqlQueryObject.addSelectField("nome_soggetto");
-				sqlQueryObject.addSelectField("tipo_soggetto");
-				sqlQueryObject.addSelectField("descrizione");
-				sqlQueryObject.addSelectField("identificativo_porta");
-				sqlQueryObject.addSelectField("is_router");
-				sqlQueryObject.addSelectField("is_default");
-				if(tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
-					sqlQueryObject.addWhereINCondition("tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
+				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_COLUMN_NOME_SOGGETTO);
+				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_COLUMN_TIPO_SOGGETTO);
+				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_COLUMN_DESCRIZIONE);
+				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_COLUMN_IDENTIFICATIVO_PORTA);
+				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_COLUMN_ROUTER);
+				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_COLUMN_DEFAULT);
+				if(tipoSoggettiProtocollo!=null && !tipoSoggettiProtocollo.isEmpty()) {
+					sqlQueryObject.addWhereINCondition(CostantiDB.SOGGETTI_COLUMN_TIPO_SOGGETTO, true, tipoSoggettiProtocollo.toArray(new String[1]));
 				}
 				if(this.driver.useSuperUser && superuser!=null && !superuser.equals(""))
-					sqlQueryObject.addWhereCondition("superuser = ?");
+					sqlQueryObject.addWhereCondition(CostantiDB.SUPERUSER_COLUMN+"= ?");
 				if(filtroProprieta) {
 					DBUtils.setFiltriProprietaSoggetto(sqlQueryObject, this.driver.tipoDB, 
 							filtroProprietaNome, filtroProprietaValore);
 				}
-				sqlQueryObject.addWhereLikeCondition("nome_soggetto", search, true, true);
+				sqlQueryObject.addWhereLikeCondition(CostantiDB.SOGGETTI_COLUMN_NOME_SOGGETTO, search, true, true);
 				if(this.driver.useSuperUser && superuser!=null && !superuser.equals(""))
 					sqlQueryObject.setANDLogicOperator(true);
-				sqlQueryObject.addOrderBy("nome_soggetto");
-				sqlQueryObject.addOrderBy("tipo_soggetto");
+				sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI_COLUMN_NOME_SOGGETTO);
+				sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI_COLUMN_TIPO_SOGGETTO);
 				sqlQueryObject.setSortType(true);
 				sqlQueryObject.setLimit(limit);
 				sqlQueryObject.setOffset(offset);
@@ -191,23 +195,23 @@ public class DriverConfigurazioneDB_soggettiSearchDriver {
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 				sqlQueryObject.addFromTable(this.driver.tabellaSoggetti);
 				sqlQueryObject.addSelectField("id");
-				sqlQueryObject.addSelectField("nome_soggetto");
-				sqlQueryObject.addSelectField("tipo_soggetto");
-				sqlQueryObject.addSelectField("descrizione");
-				sqlQueryObject.addSelectField("identificativo_porta");
-				sqlQueryObject.addSelectField("is_router");
-				sqlQueryObject.addSelectField("is_default");
-				if(tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
-					sqlQueryObject.addWhereINCondition("tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
+				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_COLUMN_NOME_SOGGETTO);
+				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_COLUMN_TIPO_SOGGETTO);
+				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_COLUMN_DESCRIZIONE);
+				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_COLUMN_IDENTIFICATIVO_PORTA);
+				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_COLUMN_ROUTER);
+				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_COLUMN_DEFAULT);
+				if(tipoSoggettiProtocollo!=null && !tipoSoggettiProtocollo.isEmpty()) {
+					sqlQueryObject.addWhereINCondition(CostantiDB.SOGGETTI_COLUMN_TIPO_SOGGETTO, true, tipoSoggettiProtocollo.toArray(new String[1]));
 				}
 				if(this.driver.useSuperUser && superuser!=null && !superuser.equals(""))
-					sqlQueryObject.addWhereCondition("superuser = ?");
+					sqlQueryObject.addWhereCondition(CostantiDB.SUPERUSER_COLUMN+"= ?");
 				if(filtroProprieta) {
 					DBUtils.setFiltriProprietaSoggetto(sqlQueryObject, this.driver.tipoDB, 
 							filtroProprietaNome, filtroProprietaValore);
 				}
-				sqlQueryObject.addOrderBy("nome_soggetto");
-				sqlQueryObject.addOrderBy("tipo_soggetto");
+				sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI_COLUMN_NOME_SOGGETTO);
+				sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI_COLUMN_TIPO_SOGGETTO);
 				sqlQueryObject.setSortType(true);
 				sqlQueryObject.setLimit(limit);
 				sqlQueryObject.setOffset(offset);
@@ -223,12 +227,12 @@ public class DriverConfigurazioneDB_soggettiSearchDriver {
 
 				sog = new Soggetto();
 				sog.setId(risultato.getLong("id"));
-				sog.setNome(risultato.getString("nome_soggetto"));
-				sog.setTipo(risultato.getString("tipo_soggetto"));
-				sog.setDescrizione(risultato.getString("descrizione"));
-				sog.setIdentificativoPorta(risultato.getString("identificativo_porta"));
-				sog.setRouter(risultato.getInt("is_router") == CostantiDB.TRUE ? true : false);
-				sog.setDominioDefault(risultato.getInt("is_default") == CostantiDB.TRUE ? true : false);
+				sog.setNome(risultato.getString(CostantiDB.SOGGETTI_COLUMN_NOME_SOGGETTO));
+				sog.setTipo(risultato.getString(CostantiDB.SOGGETTI_COLUMN_TIPO_SOGGETTO));
+				sog.setDescrizione(risultato.getString(CostantiDB.SOGGETTI_COLUMN_DESCRIZIONE));
+				sog.setIdentificativoPorta(risultato.getString(CostantiDB.SOGGETTI_COLUMN_IDENTIFICATIVO_PORTA));
+				sog.setRouter(risultato.getInt(CostantiDB.SOGGETTI_COLUMN_ROUTER) == CostantiDB.TRUE);
+				sog.setDominioDefault(risultato.getInt(CostantiDB.SOGGETTI_COLUMN_DEFAULT) == CostantiDB.TRUE);
 				lista.add(sog);
 			}
 
@@ -236,7 +240,7 @@ public class DriverConfigurazioneDB_soggettiSearchDriver {
 
 		} catch (Exception qe) {
 			error = true;
-			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo)+"Errore : " + qe.getMessage(),qe);
 		} finally {
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
@@ -252,26 +256,23 @@ public class DriverConfigurazioneDB_soggettiSearchDriver {
 		int idLista = Liste.SOGGETTI;
 		int offset;
 		int limit;
-		//String search;
 		String queryString;
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		//search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
-
-
+		
 		Connection con = null;
 		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<Soggetto> lista = new ArrayList<Soggetto>();
+		ArrayList<Soggetto> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("soggettiWithServiziList");
 				con.setAutoCommit(false);
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+				throw new DriverConfigurazioneException(getPrefixError(nomeMetodo)+"Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -334,8 +335,8 @@ public class DriverConfigurazioneDB_soggettiSearchDriver {
 
 				sog = new Soggetto();
 				sog.setId(risultato.getLong("id"));
-				sog.setNome(risultato.getString("nome_soggetto"));
-				sog.setTipo(risultato.getString("tipo_soggetto"));
+				sog.setNome(risultato.getString(CostantiDB.SOGGETTI_COLUMN_NOME_SOGGETTO));
+				sog.setTipo(risultato.getString(CostantiDB.SOGGETTI_COLUMN_TIPO_SOGGETTO));
 				lista.add(sog);
 			}
 
@@ -343,7 +344,7 @@ public class DriverConfigurazioneDB_soggettiSearchDriver {
 
 		} catch (Exception qe) {
 			error = true;
-			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo)+"Errore : " + qe.getMessage(),qe);
 		} finally {
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);

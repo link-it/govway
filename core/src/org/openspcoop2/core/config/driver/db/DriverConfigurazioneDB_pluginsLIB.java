@@ -82,13 +82,13 @@ public class DriverConfigurazioneDB_pluginsLIB {
 			long idParent = -1;
 			if(type == CostantiDB.UPDATE || type == CostantiDB.DELETE) {
 				
-				idParent = DBUtils.getIdRegistroPlugin(plugin.getNome(), con, DriverConfigurazioneDB_LIB.tipoDB);
+				idParent = DBUtils.getIdRegistroPlugin(plugin.getNome(), con, DriverConfigurazioneDBLib.tipoDB);
 				if(idParent<=0) {
 					throw new DriverConfigurazioneException("Plugin con nome '"+plugin.getNome()+"' non trovato");
 				}
 				
 				// Elimino anche gli archivi (nell'update le ricreo)
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.REGISTRO_PLUGINS_ARCHIVE);
 				sqlQueryObject.addWhereCondition("id_plugin=?");
 				sqlQueryObject.setANDLogicOperator(true);
@@ -99,7 +99,7 @@ public class DriverConfigurazioneDB_pluginsLIB {
 				updateStmt.close();
 
 				// delete
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.REGISTRO_PLUGINS);
 				sqlQueryObject.addWhereCondition("id=?");
 				updateQuery = sqlQueryObject.createSQLDelete();
@@ -119,7 +119,7 @@ public class DriverConfigurazioneDB_pluginsLIB {
 				List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<>();
 				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome", plugin.getNome() , InsertAndGeneratedKeyJDBCType.STRING) );
 				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("posizione", plugin.getPosizione() , InsertAndGeneratedKeyJDBCType.INT) );
-				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("stato",  DriverConfigurazioneDB_LIB.getValue(plugin.getStato()) , InsertAndGeneratedKeyJDBCType.STRING) );
+				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("stato",  DriverConfigurazioneDBLib.getValue(plugin.getStato()) , InsertAndGeneratedKeyJDBCType.STRING) );
 				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("descrizione", plugin.getDescrizione() , InsertAndGeneratedKeyJDBCType.STRING) );
 				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("data", plugin.getData() , InsertAndGeneratedKeyJDBCType.TIMESTAMP) );
 				String compatibilita = null;
@@ -137,7 +137,7 @@ public class DriverConfigurazioneDB_pluginsLIB {
 				}
 				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("compatibilita", compatibilita , InsertAndGeneratedKeyJDBCType.STRING) );
 		       				
-				long idPlugin = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(DriverConfigurazioneDB_LIB.tipoDB), 
+				long idPlugin = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(DriverConfigurazioneDBLib.tipoDB), 
 						new CustomKeyGeneratorObject(CostantiDB.REGISTRO_PLUGINS, CostantiDB.REGISTRO_PLUGINS_COLUMN_ID, 
 								CostantiDB.REGISTRO_PLUGINS_SEQUENCE, CostantiDB.REGISTRO_PLUGINS_TABLE_FOR_ID),
 						listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
@@ -146,7 +146,7 @@ public class DriverConfigurazioneDB_pluginsLIB {
 				}
 
 				for(int l=0; l<plugin.sizeArchivioList();l++){
-					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.REGISTRO_PLUGINS_ARCHIVE);
 					sqlQueryObject.addInsertField("id_plugin", "?");
 					sqlQueryObject.addInsertField("nome", "?");
@@ -168,8 +168,8 @@ public class DriverConfigurazioneDB_pluginsLIB {
 					updateStmt.setTimestamp(index++, t);
 					
 					PluginSorgenteArchivio sorgente = plugin.getArchivio(l).getSorgente();
-					updateStmt.setString(index++, DriverConfigurazioneDB_LIB.getValue(sorgente));
-					IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(DriverConfigurazioneDB_LIB.tipoDB);
+					updateStmt.setString(index++, DriverConfigurazioneDBLib.getValue(sorgente));
+					IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(DriverConfigurazioneDBLib.tipoDB);
 					byte[] archivio = null;
 					String url = null;
 					String dir = null;
@@ -221,12 +221,12 @@ public class DriverConfigurazioneDB_pluginsLIB {
 	
 		try {
 			
-			long idParent = DBUtils.getIdRegistroPlugin(nome, con, DriverConfigurazioneDB_LIB.tipoDB);
+			long idParent = DBUtils.getIdRegistroPlugin(nome, con, DriverConfigurazioneDBLib.tipoDB);
 			if(idParent<=0) {
 				throw new DriverConfigurazioneException("Plugin con nome '"+nome+"' non trovato");
 			}
 			
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 			sqlQueryObject.addUpdateTable(CostantiDB.REGISTRO_PLUGINS);
 			sqlQueryObject.addUpdateField("nome", "?");
 			sqlQueryObject.addUpdateField("posizione", "?");
@@ -242,7 +242,7 @@ public class DriverConfigurazioneDB_pluginsLIB {
 			int index = 1;
 			updateStmt.setString(index++, plugin.getNome());
 			updateStmt.setInt(index++, plugin.getPosizione());
-			updateStmt.setString(index++, DriverConfigurazioneDB_LIB.getValue(plugin.getStato()));
+			updateStmt.setString(index++, DriverConfigurazioneDBLib.getValue(plugin.getStato()));
 			updateStmt.setString(index++, plugin.getDescrizione());
 			
 			Timestamp t = DateManager.getTimestamp();
@@ -295,7 +295,7 @@ public class DriverConfigurazioneDB_pluginsLIB {
 
 		try {
 			
-			long idParent = DBUtils.getIdRegistroPlugin(nomePlugin, con, DriverConfigurazioneDB_LIB.tipoDB);
+			long idParent = DBUtils.getIdRegistroPlugin(nomePlugin, con, DriverConfigurazioneDBLib.tipoDB);
 			if(idParent<=0) {
 				throw new DriverConfigurazioneException("Plugin con nome '"+nomePlugin+"' non trovato");
 			}
@@ -303,7 +303,7 @@ public class DriverConfigurazioneDB_pluginsLIB {
 			switch (type) {
 			case CREATE:
 				
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addInsertTable(CostantiDB.REGISTRO_PLUGINS_ARCHIVE);
 				sqlQueryObject.addInsertField("id_plugin", "?");
 				sqlQueryObject.addInsertField("nome", "?");
@@ -325,8 +325,8 @@ public class DriverConfigurazioneDB_pluginsLIB {
 				updateStmt.setTimestamp(index++, t);
 				
 				PluginSorgenteArchivio sorgente = plugin.getSorgente();
-				updateStmt.setString(index++, DriverConfigurazioneDB_LIB.getValue(sorgente));
-				IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(DriverConfigurazioneDB_LIB.tipoDB);
+				updateStmt.setString(index++, DriverConfigurazioneDBLib.getValue(sorgente));
+				IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(DriverConfigurazioneDBLib.tipoDB);
 				byte[] archivio = null;
 				String url = null;
 				String dir = null;
@@ -352,7 +352,7 @@ public class DriverConfigurazioneDB_pluginsLIB {
 				
 			case UPDATE:
 		
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addUpdateTable(CostantiDB.REGISTRO_PLUGINS_ARCHIVE);
 				sqlQueryObject.addUpdateField("data", "?");
 				sqlQueryObject.addUpdateField("sorgente", "?");
@@ -370,8 +370,8 @@ public class DriverConfigurazioneDB_pluginsLIB {
 				updateStmt.setTimestamp(index++, t);
 				
 				sorgente = plugin.getSorgente();
-				updateStmt.setString(index++, DriverConfigurazioneDB_LIB.getValue(sorgente));
-				jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(DriverConfigurazioneDB_LIB.tipoDB);
+				updateStmt.setString(index++, DriverConfigurazioneDBLib.getValue(sorgente));
+				jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(DriverConfigurazioneDBLib.tipoDB);
 				archivio = null;
 				url = null;
 				dir = null;
@@ -398,7 +398,7 @@ public class DriverConfigurazioneDB_pluginsLIB {
 				break;
 			case DELETE:
 				
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.REGISTRO_PLUGINS_ARCHIVE);
 				sqlQueryObject.addWhereCondition("id_plugin = ?");
 				sqlQueryObject.addWhereCondition("nome = ?");

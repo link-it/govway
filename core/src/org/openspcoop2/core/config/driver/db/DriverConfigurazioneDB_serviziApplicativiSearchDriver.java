@@ -66,12 +66,12 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
 public class DriverConfigurazioneDB_serviziApplicativiSearchDriver {
 
 	private DriverConfigurazioneDB driver = null;
-	private DriverConfigurazioneDB_soggettiDriver soggettiDriver = null;
+	private DriverConfigurazioneDBSoggetti soggettiDriver = null;
 	private DriverConfigurazioneDB_serviziApplicativiDriver serviziApplicativiDriver = null;
 	
 	protected DriverConfigurazioneDB_serviziApplicativiSearchDriver(DriverConfigurazioneDB driver) {
 		this.driver = driver;
-		this.soggettiDriver = new DriverConfigurazioneDB_soggettiDriver(driver);
+		this.soggettiDriver = new DriverConfigurazioneDBSoggetti(driver);
 		this.serviziApplicativiDriver = new DriverConfigurazioneDB_serviziApplicativiDriver(driver);
 	}
 	

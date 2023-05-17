@@ -42,7 +42,7 @@ import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioAppl
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto;
 import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
-import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB_LIB;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDBLib;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -293,7 +293,7 @@ public class PorteApplicativeTrasformazioniChange extends Action {
 					
 					nome = oldRegola.getNome();
 					
-					stato = DriverConfigurazioneDB_LIB.getValue(oldRegola.getStato());
+					stato = DriverConfigurazioneDBLib.getValue(oldRegola.getStato());
 					
 					TrasformazioneRegolaApplicabilitaRichiesta applicabilita = oldRegola.getApplicabilita();
 					if(applicabilita != null) {
@@ -378,7 +378,7 @@ public class PorteApplicativeTrasformazioniChange extends Action {
 					
 					reg.setNome(nome);
 					
-					reg.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(stato));
+					reg.setStato(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(stato));
 					
 					if(reg.getApplicabilita() == null)
 						reg.setApplicabilita(new TrasformazioneRegolaApplicabilitaRichiesta());

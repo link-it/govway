@@ -317,21 +317,21 @@ public class DriverConfigurazioneDB_porteDriver {
 		
 		String corsStato = rs.getString("cors_stato");
 		if(corsStato!=null && !"".equals(corsStato)) {
-			configurazione.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(corsStato));
+			configurazione.setStato(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(corsStato));
 		}
 		
 		if(StatoFunzionalita.ABILITATO.equals(configurazione.getStato())) {
 			
 			String corsTipo = rs.getString("cors_tipo");
 			if(corsTipo!=null && !"".equals(corsTipo)) {
-				configurazione.setTipo(DriverConfigurazioneDB_LIB.getEnumTipoGestioneCORS(corsTipo));
+				configurazione.setTipo(DriverConfigurazioneDBLib.getEnumTipoGestioneCORS(corsTipo));
 			}
 			
 			if(TipoGestioneCORS.GATEWAY.equals(configurazione.getTipo())) {
 				
 				String corsAllAllowOrigins = rs.getString("cors_all_allow_origins");
 				if(corsAllAllowOrigins!=null && !"".equals(corsAllAllowOrigins)) {
-					configurazione.setAccessControlAllAllowOrigins(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(corsAllAllowOrigins));
+					configurazione.setAccessControlAllAllowOrigins(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(corsAllAllowOrigins));
 				}
 				if(StatoFunzionalita.DISABILITATO.equals(configurazione.getAccessControlAllAllowOrigins())) {
 					List<String> l = DBUtils.convertToList(rs.getString("cors_allow_origins"));
@@ -345,7 +345,7 @@ public class DriverConfigurazioneDB_porteDriver {
 			
 				String corsAllowCredentials = rs.getString("cors_allow_credentials");
 				if(corsAllowCredentials!=null && !"".equals(corsAllowCredentials)) {
-					configurazione.setAccessControlAllowCredentials(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(corsAllowCredentials));
+					configurazione.setAccessControlAllowCredentials(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(corsAllowCredentials));
 				}
 				
 				int corsAllowMaxAge = rs.getInt("cors_allow_max_age");
@@ -356,7 +356,7 @@ public class DriverConfigurazioneDB_porteDriver {
 				
 				String corsAllAllowHeader = rs.getString("cors_all_allow_headers");
 				if(corsAllAllowHeader!=null && !"".equals(corsAllAllowHeader)) {
-					configurazione.setAccessControlAllAllowHeaders(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(corsAllAllowHeader));
+					configurazione.setAccessControlAllAllowHeaders(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(corsAllAllowHeader));
 				}
 				if(StatoFunzionalita.DISABILITATO.equals(configurazione.getAccessControlAllAllowHeaders())) {
 					List<String> l = DBUtils.convertToList(rs.getString("cors_allow_headers"));
@@ -370,7 +370,7 @@ public class DriverConfigurazioneDB_porteDriver {
 				
 				String corsAllAllowMethods = rs.getString("cors_all_allow_methods");
 				if(corsAllAllowMethods!=null && !"".equals(corsAllAllowMethods)) {
-					configurazione.setAccessControlAllAllowMethods(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(corsAllAllowMethods));
+					configurazione.setAccessControlAllAllowMethods(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(corsAllAllowMethods));
 				}
 				if(StatoFunzionalita.DISABILITATO.equals(configurazione.getAccessControlAllAllowMethods())) {
 					List<String> l = DBUtils.convertToList(rs.getString("cors_allow_methods"));
@@ -399,7 +399,7 @@ public class DriverConfigurazioneDB_porteDriver {
 		
 		String responseCacheStato = rs.getString("response_cache_stato");
 		if(responseCacheStato!=null && !"".equals(responseCacheStato)) {
-			configurazione.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(responseCacheStato));
+			configurazione.setStato(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(responseCacheStato));
 		}
 		
 		if(StatoFunzionalita.ABILITATO.equals(configurazione.getStato())) {
@@ -418,12 +418,12 @@ public class DriverConfigurazioneDB_porteDriver {
 			
 			String responseCacheHashUrl = rs.getString("response_cache_hash_url");
 			if(responseCacheHashUrl!=null && !"".equals(responseCacheHashUrl)) {
-				configurazione.getHashGenerator().setRequestUri(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(responseCacheHashUrl));
+				configurazione.getHashGenerator().setRequestUri(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(responseCacheHashUrl));
 			}
 			
 			String responseCacheHashQuery = rs.getString("response_cache_hash_query");
 			if(responseCacheHashQuery!=null && !"".equals(responseCacheHashQuery)) {
-				configurazione.getHashGenerator().setQueryParameters(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalitaCacheDigestQueryParameter(responseCacheHashQuery));
+				configurazione.getHashGenerator().setQueryParameters(DriverConfigurazioneDBLib.getEnumStatoFunzionalitaCacheDigestQueryParameter(responseCacheHashQuery));
 			}
 			
 			if(StatoFunzionalitaCacheDigestQueryParameter.SELEZIONE_PUNTUALE.equals(configurazione.getHashGenerator().getQueryParameters())) {
@@ -435,7 +435,7 @@ public class DriverConfigurazioneDB_porteDriver {
 			
 			String responseCacheHashHeaders = rs.getString("response_cache_hash_headers");
 			if(responseCacheHashHeaders!=null && !"".equals(responseCacheHashHeaders)) {
-				configurazione.getHashGenerator().setHeaders(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(responseCacheHashHeaders));
+				configurazione.getHashGenerator().setHeaders(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(responseCacheHashHeaders));
 			}
 			
 			if(StatoFunzionalita.ABILITATO.equals(configurazione.getHashGenerator().getHeaders())) {
@@ -447,7 +447,7 @@ public class DriverConfigurazioneDB_porteDriver {
 			
 			String responseCacheHashPayload = rs.getString("response_cache_hash_payload");
 			if(responseCacheHashPayload!=null && !"".equals(responseCacheHashPayload)) {
-				configurazione.getHashGenerator().setPayload(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(responseCacheHashPayload));
+				configurazione.getHashGenerator().setPayload(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(responseCacheHashPayload));
 			}
 			
 			configurazione.setControl(new ResponseCachingConfigurazioneControl());

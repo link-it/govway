@@ -173,6 +173,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			this.log.debug(msg,e);
 		}
 	}
+	void logInfo(String msg) {
+		if(this.log!=null) {
+			this.log.info(msg);
+		}
+	}
 
 	// Tipo database passato al momento della creazione dell'oggetto
 	protected String tipoDB = null;
@@ -193,8 +198,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 	// Driver
 	
-	private DriverConfigurazioneDB_soggettiDriver soggettiDriver = null;
-	private DriverConfigurazioneDB_soggettiSearchDriver soggettiSearchDriver = null;
+	private DriverConfigurazioneDBSoggetti soggettiDriver = null;
+	private DriverConfigurazioneDBSoggettiSearch soggettiSearchDriver = null;
 	
 	private DriverConfigurazioneDB_connettoriDriver connettoriDriver = null;
 	
@@ -220,7 +225,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	
 	private DriverConfigurazioneDB_allarmiDriver allarmiDriver = null;
 	
-	private DriverConfigurazioneDB_utilsDriver utilsDriver = null;
+	private DriverConfigurazioneDBUtils utilsDriver = null;
 	
 	
 	
@@ -230,8 +235,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 	public DriverConfigurazioneDB() {
 		
-		this.soggettiDriver = new DriverConfigurazioneDB_soggettiDriver(this);
-		this.soggettiSearchDriver = new DriverConfigurazioneDB_soggettiSearchDriver(this);
+		this.soggettiDriver = new DriverConfigurazioneDBSoggetti(this);
+		this.soggettiSearchDriver = new DriverConfigurazioneDBSoggettiSearch(this);
 		
 		this.connettoriDriver = new DriverConfigurazioneDB_connettoriDriver(this);
 		
@@ -257,7 +262,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		
 		this.allarmiDriver = new DriverConfigurazioneDB_allarmiDriver(this);
 		
-		this.utilsDriver = new DriverConfigurazioneDB_utilsDriver(this);
+		this.utilsDriver = new DriverConfigurazioneDBUtils(this);
 		
 	}
 	/**
@@ -293,7 +298,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				this.log = LoggerWrapperFactory.getLogger(CostantiConfigurazione.DRIVER_DB_LOGGER);
 			else{
 				this.log = alog;
-				DriverConfigurazioneDB_LIB.initStaticLogger(this.log);
+				DriverConfigurazioneDBLib.initStaticLogger(this.log);
 			}
 
 			if(useOp2UtilsDatasource){
@@ -303,7 +308,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				}catch(UtilsAlreadyExistsException exists){
 					this.datasource = DataSourceFactory.getInstance(nomeDataSource); 
 					if(this.datasource==null){
-						throw new Exception("Lookup datasource non riuscita ("+exists.getMessage()+")",exists);
+						throw new DriverConfigurazioneException("Lookup datasource non riuscita ("+exists.getMessage()+")",exists);
 					}
 				}
 			}
@@ -331,13 +336,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			this.tabellaSoggetti = CostantiDB.SOGGETTI;
 		}
 		// Setto il tipoDB anche in DriverConfigurazioneDB_LIB
-		DriverConfigurazioneDB_LIB.setTipoDB(tipoDB);
-		DriverConfigurazioneDB_LIB.setTabellaSoggetti(this.tabellaSoggetti);
+		DriverConfigurazioneDBLib.setTipoDB(tipoDB);
+		DriverConfigurazioneDBLib.setTabellaSoggetti(this.tabellaSoggetti);
 		
 		// driver
 		
-		this.soggettiDriver = new DriverConfigurazioneDB_soggettiDriver(this);
-		this.soggettiSearchDriver = new DriverConfigurazioneDB_soggettiSearchDriver(this);
+		this.soggettiDriver = new DriverConfigurazioneDBSoggetti(this);
+		this.soggettiSearchDriver = new DriverConfigurazioneDBSoggettiSearch(this);
 		
 		this.connettoriDriver = new DriverConfigurazioneDB_connettoriDriver(this);
 		
@@ -363,7 +368,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		
 		this.allarmiDriver = new DriverConfigurazioneDB_allarmiDriver(this);
 		
-		this.utilsDriver = new DriverConfigurazioneDB_utilsDriver(this);
+		this.utilsDriver = new DriverConfigurazioneDBUtils(this);
 	}
 
 	public DriverConfigurazioneDB(Connection connection,String tipoDB) throws DriverConfigurazioneException {
@@ -378,7 +383,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			this.log = LoggerWrapperFactory.getLogger(CostantiConfigurazione.DRIVER_DB_LOGGER);
 		else{
 			this.log = alog;
-			DriverConfigurazioneDB_LIB.initStaticLogger(this.log);
+			DriverConfigurazioneDBLib.initStaticLogger(this.log);
 		}
 
 		if (connection == null) {
@@ -391,7 +396,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::DriverConfigurazioneDB(Connection ) Il tipoDatabase non puo essere null.");
 		}
 
-		// InitialContext initCtx = new InitialContext(context);
 		this.globalConnection = connection;
 		this.create = true;
 		this.atomica = false;
@@ -403,13 +407,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}
 		
 		// Setto il tipoDB anche in DriverConfigurazioneDB_LIB
-		DriverConfigurazioneDB_LIB.setTipoDB(tipoDB);
-		DriverConfigurazioneDB_LIB.setTabellaSoggetti(this.tabellaSoggetti);
+		DriverConfigurazioneDBLib.setTipoDB(tipoDB);
+		DriverConfigurazioneDBLib.setTabellaSoggetti(this.tabellaSoggetti);
 
 		// driver
 		
-		this.soggettiDriver = new DriverConfigurazioneDB_soggettiDriver(this);
-		this.soggettiSearchDriver = new DriverConfigurazioneDB_soggettiSearchDriver(this);
+		this.soggettiDriver = new DriverConfigurazioneDBSoggetti(this);
+		this.soggettiSearchDriver = new DriverConfigurazioneDBSoggettiSearch(this);
 		
 		this.connettoriDriver = new DriverConfigurazioneDB_connettoriDriver(this);
 		
@@ -435,7 +439,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		
 		this.allarmiDriver = new DriverConfigurazioneDB_allarmiDriver(this);
 		
-		this.utilsDriver = new DriverConfigurazioneDB_utilsDriver(this);
+		this.utilsDriver = new DriverConfigurazioneDBUtils(this);
 	}
 
 	
@@ -468,16 +472,21 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			try {
 				con.close();
 			} catch (Exception e) {
+				// ignore
 			}
 		}
 	}
 	
-	protected Connection getConnectionFromDatasource(String methodName) throws Exception{
-		if(this.datasource instanceof org.openspcoop2.utils.datasource.DataSource){
-			return ((org.openspcoop2.utils.datasource.DataSource)this.datasource).getWrappedConnection(null, "DriverConfigurazione."+methodName);
-		}
-		else{
-			return this.datasource.getConnection();
+	protected Connection getConnectionFromDatasource(String methodName) throws DriverConfigurazioneException{
+		try {
+			if(this.datasource instanceof org.openspcoop2.utils.datasource.DataSource){
+				return ((org.openspcoop2.utils.datasource.DataSource)this.datasource).getWrappedConnection(null, "DriverConfigurazione."+methodName);
+			}
+			else{
+				return this.datasource.getConnection();
+			}
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
 	}
 
@@ -488,7 +497,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		Connection con = null;
 		try {
 
-			this.log.debug("operazione atomica = " + this.atomica);
+			this.logDebug("operazione atomica = " + this.atomica);
 			// prendo la connessione dal pool
 			if (this.atomica)
 				con = getConnectionFromDatasource("readCustom");
@@ -665,7 +674,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	
 	@Override
 	public List<IDServizio> getServizi_SoggettiVirtuali() throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
-		return this.soggettiDriver.getServizi_SoggettiVirtuali();
+		return this.soggettiDriver.getServiziSoggettiVirtuali();
 	}
 	
 	@Override
@@ -2632,26 +2641,38 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		Configurazione conf = null;
 		try{
 			conf = this.getConfigurazioneGenerale();
-		}catch(DriverConfigurazioneNotFound d){}
+		}catch(DriverConfigurazioneNotFound d){
+			// ignore
+		}
 		if(conf!=null){
 			try{
 				conf.setAccessoRegistro(this.getAccessoRegistro());
-			}catch(DriverConfigurazioneNotFound d){}
+			}catch(DriverConfigurazioneNotFound d){
+				// ignore
+			}
 			try{
 				conf.setAccessoConfigurazione(this.getAccessoConfigurazione());
-			}catch(DriverConfigurazioneNotFound d){}
+			}catch(DriverConfigurazioneNotFound d){
+				// ignore
+			}
 			try{
 				conf.setAccessoDatiAutorizzazione(this.getAccessoDatiAutorizzazione());
-			}catch(DriverConfigurazioneNotFound d){}
+			}catch(DriverConfigurazioneNotFound d){
+				// ignore
+			}
 			conf.setRoutingTable(this.getRoutingTable());
 			GestioneErrore compIntegrazione = null;
 			try{
 				compIntegrazione = this.getGestioneErroreComponenteIntegrazione();
-			}catch(DriverConfigurazioneNotFound d){}
+			}catch(DriverConfigurazioneNotFound d){
+				// ignore
+			}
 			GestioneErrore compCooperazione = null;
 			try{
 				compCooperazione = this.getGestioneErroreComponenteCooperazione();
-			}catch(DriverConfigurazioneNotFound d){}
+			}catch(DriverConfigurazioneNotFound d){
+				// ignore
+			}
 			if(compIntegrazione!=null && compCooperazione!=null)
 			{
 				ConfigurazioneGestioneErrore gee = new ConfigurazioneGestioneErrore();
@@ -2670,7 +2691,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		// Soggetti
 		List<Soggetto> soggetti = this.getAllSoggetti();
-		while(soggetti.size()>0){
+		while(!soggetti.isEmpty()){
 
 			Soggetto soggetto = soggetti.remove(0);
 
@@ -2687,19 +2708,19 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			// read porte delegate
 			List<PortaDelegata> pd = this.getPorteDelegateBySoggetto(soggetto.getId());
-			while(pd.size()>0){
+			while(!pd.isEmpty()){
 				soggetto.addPortaDelegata(pd.remove(0));
 			}
 
 			// read porte applicative
 			List<PortaApplicativa> pa = this.getPorteApplicativeBySoggetto(soggetto.getId());
-			while(pa.size()>0){
+			while(!pa.isEmpty()){
 				soggetto.addPortaApplicativa(pa.remove(0));
 			}
 
 			// read servizi applicativi
 			List<ServizioApplicativo> sa = this.getServiziApplicativiBySoggetto(soggetto.getId());
-			while(sa.size()>0){
+			while(!sa.isEmpty()){
 				soggetto.addServizioApplicativo(sa.remove(0));
 			}
 

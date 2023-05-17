@@ -61,7 +61,7 @@ public class DriverConfigurazioneDB_gestioneErroreLIB {
 		ResultSet rs1 = null;
 		
 		try {
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 			
 			// Get gestione errore generale
 			sqlQueryObject.addFromTable(CostantiDB.GESTIONE_ERRORE);
@@ -71,7 +71,7 @@ public class DriverConfigurazioneDB_gestioneErroreLIB {
 			sqlQueryObject.addWhereCondition("id=?");
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 
-			DriverConfigurazioneDB_LIB.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery));
+			DriverConfigurazioneDBLib.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery));
 			stm = con.prepareStatement(sqlQuery);
 			stm.setLong(1, idGestioneErrore);
 			rs = stm.executeQuery();
@@ -84,7 +84,7 @@ public class DriverConfigurazioneDB_gestioneErroreLIB {
 				gestioneErrore.setNome(rs.getString("nome"));
 
 				//trasporto
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.GESTIONE_ERRORE_TRASPORTO);
 				sqlQueryObject.addSelectField("*");
 				sqlQueryObject.addWhereCondition("id_gestione_errore = ?");
@@ -111,7 +111,7 @@ public class DriverConfigurazioneDB_gestioneErroreLIB {
 				stm1.close();
 
 				//soap
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.GESTIONE_ERRORE_SOAP);
 				sqlQueryObject.addSelectField("*");
 				sqlQueryObject.addWhereCondition("id_gestione_errore = ?");
@@ -160,7 +160,7 @@ public class DriverConfigurazioneDB_gestioneErroreLIB {
 		long idGestioneErrore=-1;
 		try
 		{
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.GESTIONE_ERRORE);
 			sqlQueryObject.addSelectField("id");
 			sqlQueryObject.addWhereCondition("nome = ?");
@@ -266,7 +266,7 @@ public class DriverConfigurazioneDB_gestioneErroreLIB {
 			switch (tipoOperazione) {
 			case CREATE:
 				// CREATE
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addInsertTable(CostantiDB.GESTIONE_ERRORE);
 				sqlQueryObject.addInsertField("comportamento_default", "?");
 				sqlQueryObject.addInsertField("cadenza_rispedizione", "?");
@@ -274,19 +274,19 @@ public class DriverConfigurazioneDB_gestioneErroreLIB {
 				updateQuery = sqlQueryObject.createSQLInsert();
 				updateStmt = con.prepareStatement(updateQuery);
 
-				updateStmt.setString(1, DriverConfigurazioneDB_LIB.getValue(gestioneErrore.getComportamento()));
+				updateStmt.setString(1, DriverConfigurazioneDBLib.getValue(gestioneErrore.getComportamento()));
 				updateStmt.setString(2, gestioneErrore.getCadenzaRispedizione());
 				updateStmt.setString(3, gestioneErrore.getNome());
 				// eseguo lo statement
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
 
-				DriverConfigurazioneDB_LIB.log.debug("CRUDGestioneErrore CREATE : \n" + DBUtils.formatSQLString(updateQuery, 
+				DriverConfigurazioneDBLib.log.debug("CRUDGestioneErrore CREATE : \n" + DBUtils.formatSQLString(updateQuery, 
 						gestioneErrore.getComportamento(),gestioneErrore.getCadenzaRispedizione(),gestioneErrore.getNome()));
-				DriverConfigurazioneDB_LIB.log.debug("CRUDGestioneErrore type = " + type + " row affected =" + n);
+				DriverConfigurazioneDBLib.log.debug("CRUDGestioneErrore type = " + type + " row affected =" + n);
 
 				// Recupero id
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.GESTIONE_ERRORE);
 				sqlQueryObject.addSelectField("id");
 				sqlQueryObject.addWhereCondition("nome = ?");
@@ -316,7 +316,7 @@ public class DriverConfigurazioneDB_gestioneErroreLIB {
 					}
 					
 					
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.GESTIONE_ERRORE_TRASPORTO);
 					sqlQueryObject.addInsertField("id_gestione_errore", "?");
 					if(valoreMassimo>=0)
@@ -336,7 +336,7 @@ public class DriverConfigurazioneDB_gestioneErroreLIB {
 					if(valoreMinimo>=0){
 						updateStmt.setInt(index, valoreMinimo); index++;
 					}
-					updateStmt.setString(index, DriverConfigurazioneDB_LIB.getValue(tr.getComportamento())); index++;
+					updateStmt.setString(index, DriverConfigurazioneDBLib.getValue(tr.getComportamento())); index++;
 					updateStmt.setString(index, tr.getCadenzaRispedizione()); index++;
 
 					// eseguo lo statement
@@ -344,26 +344,26 @@ public class DriverConfigurazioneDB_gestioneErroreLIB {
 					updateStmt.close();
 					
 					if(valoreMassimo>=0 && valoreMinimo>=0){
-						DriverConfigurazioneDB_LIB.log.debug("CRUDGestioneErrore_Trasporto("+i+") CREATE : \n" + DBUtils.formatSQLString(updateQuery, 
+						DriverConfigurazioneDBLib.log.debug("CRUDGestioneErrore_Trasporto("+i+") CREATE : \n" + DBUtils.formatSQLString(updateQuery, 
 								gestioneErrore.getId(),valoreMassimo,valoreMinimo,tr.getComportamento(),tr.getCadenzaRispedizione()));
 					}else if(valoreMassimo>=0){
-						DriverConfigurazioneDB_LIB.log.debug("CRUDGestioneErrore_Trasporto("+i+") CREATE : \n" + DBUtils.formatSQLString(updateQuery, 
+						DriverConfigurazioneDBLib.log.debug("CRUDGestioneErrore_Trasporto("+i+") CREATE : \n" + DBUtils.formatSQLString(updateQuery, 
 								gestioneErrore.getId(),valoreMassimo,tr.getComportamento(),tr.getCadenzaRispedizione()));
 					}else if(valoreMinimo>=0){
-						DriverConfigurazioneDB_LIB.log.debug("CRUDGestioneErrore_Trasporto("+i+") CREATE : \n" + DBUtils.formatSQLString(updateQuery, 
+						DriverConfigurazioneDBLib.log.debug("CRUDGestioneErrore_Trasporto("+i+") CREATE : \n" + DBUtils.formatSQLString(updateQuery, 
 								gestioneErrore.getId(),valoreMinimo,tr.getComportamento(),tr.getCadenzaRispedizione()));
 					}else{
-						DriverConfigurazioneDB_LIB.log.debug("CRUDGestioneErrore_Trasporto("+i+") CREATE : \n" + DBUtils.formatSQLString(updateQuery, 
+						DriverConfigurazioneDBLib.log.debug("CRUDGestioneErrore_Trasporto("+i+") CREATE : \n" + DBUtils.formatSQLString(updateQuery, 
 								gestioneErrore.getId(),tr.getComportamento(),tr.getCadenzaRispedizione()));
 					}
-					DriverConfigurazioneDB_LIB.log.debug("CRUDGestioneErrore_Trasporto("+i+") type = " + type + " row affected =" + n);
+					DriverConfigurazioneDBLib.log.debug("CRUDGestioneErrore_Trasporto("+i+") type = " + type + " row affected =" + n);
 				}
 				
 				// Insert gestione errore SOAP FAULT
 				for(int i=0; i<gestioneErrore.sizeSoapFaultList(); i++){
 					GestioneErroreSoapFault sf = gestioneErrore.getSoapFault(i);
 										
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.GESTIONE_ERRORE_SOAP);
 					sqlQueryObject.addInsertField("id_gestione_errore", "?");
 					sqlQueryObject.addInsertField("fault_actor", "?");
@@ -378,16 +378,16 @@ public class DriverConfigurazioneDB_gestioneErroreLIB {
 					updateStmt.setString(2, sf.getFaultActor());
 					updateStmt.setString(3,sf.getFaultCode());
 					updateStmt.setString(4,sf.getFaultString());
-					updateStmt.setString(5,DriverConfigurazioneDB_LIB.getValue(sf.getComportamento()));
+					updateStmt.setString(5,DriverConfigurazioneDBLib.getValue(sf.getComportamento()));
 					updateStmt.setString(6, sf.getCadenzaRispedizione());
 
 					// eseguo lo statement
 					n = updateStmt.executeUpdate();
 					updateStmt.close();
 					
-					DriverConfigurazioneDB_LIB.log.debug("CRUDGestioneErrore_SoapFault("+i+") CREATE : \n" + DBUtils.formatSQLString(updateQuery, 
+					DriverConfigurazioneDBLib.log.debug("CRUDGestioneErrore_SoapFault("+i+") CREATE : \n" + DBUtils.formatSQLString(updateQuery, 
 								gestioneErrore.getId(),sf.getFaultActor(),sf.getFaultCode(),sf.getFaultString(),sf.getComportamento(),sf.getCadenzaRispedizione()));
-					DriverConfigurazioneDB_LIB.log.debug("CRUDGestioneErrore_SoapFault("+i+") type = " + type + " row affected =" + n);
+					DriverConfigurazioneDBLib.log.debug("CRUDGestioneErrore_SoapFault("+i+") type = " + type + " row affected =" + n);
 				}
 				
 				break;
@@ -400,7 +400,7 @@ public class DriverConfigurazioneDB_gestioneErroreLIB {
 				gestioneErrore.setId(idGestioneErroreChange);
 				
 				// Update gestion errore
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addUpdateTable(CostantiDB.GESTIONE_ERRORE);
 				sqlQueryObject.addUpdateField("comportamento_default", "?");
 				sqlQueryObject.addUpdateField("cadenza_rispedizione", "?");
@@ -409,18 +409,18 @@ public class DriverConfigurazioneDB_gestioneErroreLIB {
 				updateQuery = sqlQueryObject.createSQLUpdate();
 				updateStmt = con.prepareStatement(updateQuery);
 				
-				updateStmt.setString(1, DriverConfigurazioneDB_LIB.getValue(gestioneErrore.getComportamento()));
+				updateStmt.setString(1, DriverConfigurazioneDBLib.getValue(gestioneErrore.getComportamento()));
 				updateStmt.setString(2, gestioneErrore.getCadenzaRispedizione());
 				updateStmt.setLong(3, idGestioneErroreChange);
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
 			
-				DriverConfigurazioneDB_LIB.log.debug("CRUDGestioneErrore UPDATE : \n" + DBUtils.formatSQLString(updateQuery, 
+				DriverConfigurazioneDBLib.log.debug("CRUDGestioneErrore UPDATE : \n" + DBUtils.formatSQLString(updateQuery, 
 						gestioneErrore.getComportamento(),gestioneErrore.getCadenzaRispedizione(),idGestioneErroreChange));
-				DriverConfigurazioneDB_LIB.log.debug("CRUGestioneErrore type = " + type + " row affected =" + n);
+				DriverConfigurazioneDBLib.log.debug("CRUGestioneErrore type = " + type + " row affected =" + n);
 				
 				// Delete vecchie gestione errore trasporto
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.GESTIONE_ERRORE_TRASPORTO);
 				sqlQueryObject.addWhereCondition("id_gestione_errore=?");
 				updateQuery = sqlQueryObject.createSQLDelete();
@@ -428,12 +428,12 @@ public class DriverConfigurazioneDB_gestioneErroreLIB {
 				updateStmt.setLong(1, idGestioneErroreChange);
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
-				DriverConfigurazioneDB_LIB.log.debug("CRUDGestioneErrore (Delete old trasporto) UPDATE : \n" + DBUtils.formatSQLString(updateQuery, 
+				DriverConfigurazioneDBLib.log.debug("CRUDGestioneErrore (Delete old trasporto) UPDATE : \n" + DBUtils.formatSQLString(updateQuery, 
 						idGestioneErroreChange));
-				DriverConfigurazioneDB_LIB.log.debug("CRUGestioneErrore (Delete old trasporto) type = " + type + " row affected =" + n);
+				DriverConfigurazioneDBLib.log.debug("CRUGestioneErrore (Delete old trasporto) type = " + type + " row affected =" + n);
 				
 				// Delete vecchie gestione errore soap fault
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.GESTIONE_ERRORE_SOAP);
 				sqlQueryObject.addWhereCondition("id_gestione_errore=?");
 				updateQuery = sqlQueryObject.createSQLDelete();
@@ -441,9 +441,9 @@ public class DriverConfigurazioneDB_gestioneErroreLIB {
 				updateStmt.setLong(1, idGestioneErroreChange);
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
-				DriverConfigurazioneDB_LIB.log.debug("CRUDGestioneErrore (Delete old soap fault) UPDATE : \n" + DBUtils.formatSQLString(updateQuery, 
+				DriverConfigurazioneDBLib.log.debug("CRUDGestioneErrore (Delete old soap fault) UPDATE : \n" + DBUtils.formatSQLString(updateQuery, 
 						idGestioneErroreChange));
-				DriverConfigurazioneDB_LIB.log.debug("CRUGestioneErrore (Delete old soap fault) type = " + type + " row affected =" + n);
+				DriverConfigurazioneDBLib.log.debug("CRUGestioneErrore (Delete old soap fault) type = " + type + " row affected =" + n);
 				
 				//  Insert gestione errore trasporto
 				for(int i=0; i<gestioneErrore.sizeCodiceTrasportoList(); i++){
@@ -459,7 +459,7 @@ public class DriverConfigurazioneDB_gestioneErroreLIB {
 					}
 					
 					
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.GESTIONE_ERRORE_TRASPORTO);
 					sqlQueryObject.addInsertField("id_gestione_errore", "?");
 					if(valoreMassimo>=0)
@@ -479,7 +479,7 @@ public class DriverConfigurazioneDB_gestioneErroreLIB {
 					if(valoreMinimo>=0){
 						updateStmt.setInt(index, valoreMinimo); index++;
 					}
-					updateStmt.setString(index, DriverConfigurazioneDB_LIB.getValue(tr.getComportamento())); index++;
+					updateStmt.setString(index, DriverConfigurazioneDBLib.getValue(tr.getComportamento())); index++;
 					updateStmt.setString(index, tr.getCadenzaRispedizione()); index++;
 
 					// eseguo lo statement
@@ -487,26 +487,26 @@ public class DriverConfigurazioneDB_gestioneErroreLIB {
 					updateStmt.close();
 					
 					if(valoreMassimo>=0 && valoreMinimo>=0){
-						DriverConfigurazioneDB_LIB.log.debug("CRUDGestioneErrore_Trasporto("+i+") CREATE : \n" + DBUtils.formatSQLString(updateQuery, 
+						DriverConfigurazioneDBLib.log.debug("CRUDGestioneErrore_Trasporto("+i+") CREATE : \n" + DBUtils.formatSQLString(updateQuery, 
 								gestioneErrore.getId(),valoreMassimo,valoreMinimo,tr.getComportamento(),tr.getCadenzaRispedizione()));
 					}else if(valoreMassimo>=0){
-						DriverConfigurazioneDB_LIB.log.debug("CRUDGestioneErrore_Trasporto("+i+") CREATE : \n" + DBUtils.formatSQLString(updateQuery, 
+						DriverConfigurazioneDBLib.log.debug("CRUDGestioneErrore_Trasporto("+i+") CREATE : \n" + DBUtils.formatSQLString(updateQuery, 
 								gestioneErrore.getId(),valoreMassimo,tr.getComportamento(),tr.getCadenzaRispedizione()));
 					}else if(valoreMinimo>=0){
-						DriverConfigurazioneDB_LIB.log.debug("CRUDGestioneErrore_Trasporto("+i+") CREATE : \n" + DBUtils.formatSQLString(updateQuery, 
+						DriverConfigurazioneDBLib.log.debug("CRUDGestioneErrore_Trasporto("+i+") CREATE : \n" + DBUtils.formatSQLString(updateQuery, 
 								gestioneErrore.getId(),valoreMinimo,tr.getComportamento(),tr.getCadenzaRispedizione()));
 					}else{
-						DriverConfigurazioneDB_LIB.log.debug("CRUDGestioneErrore_Trasporto("+i+") CREATE : \n" + DBUtils.formatSQLString(updateQuery, 
+						DriverConfigurazioneDBLib.log.debug("CRUDGestioneErrore_Trasporto("+i+") CREATE : \n" + DBUtils.formatSQLString(updateQuery, 
 								gestioneErrore.getId(),tr.getComportamento(),tr.getCadenzaRispedizione()));
 					}
-					DriverConfigurazioneDB_LIB.log.debug("CRUDGestioneErrore_Trasporto("+i+") type = " + type + " row affected =" + n);
+					DriverConfigurazioneDBLib.log.debug("CRUDGestioneErrore_Trasporto("+i+") type = " + type + " row affected =" + n);
 				}
 				
 				// Insert gestione errore SOAP FAULT
 				for(int i=0; i<gestioneErrore.sizeSoapFaultList(); i++){
 					GestioneErroreSoapFault sf = gestioneErrore.getSoapFault(i);
 										
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.GESTIONE_ERRORE_SOAP);
 					sqlQueryObject.addInsertField("id_gestione_errore", "?");
 					sqlQueryObject.addInsertField("fault_actor", "?");
@@ -521,16 +521,16 @@ public class DriverConfigurazioneDB_gestioneErroreLIB {
 					updateStmt.setString(2, sf.getFaultActor());
 					updateStmt.setString(3,sf.getFaultCode());
 					updateStmt.setString(4,sf.getFaultString());
-					updateStmt.setString(5,DriverConfigurazioneDB_LIB.getValue(sf.getComportamento()));
+					updateStmt.setString(5,DriverConfigurazioneDBLib.getValue(sf.getComportamento()));
 					updateStmt.setString(6, sf.getCadenzaRispedizione());
 
 					// eseguo lo statement
 					n = updateStmt.executeUpdate();
 					updateStmt.close();
 					
-					DriverConfigurazioneDB_LIB.log.debug("CRUDGestioneErrore_SoapFault("+i+") CREATE : \n" + DBUtils.formatSQLString(updateQuery, 
+					DriverConfigurazioneDBLib.log.debug("CRUDGestioneErrore_SoapFault("+i+") CREATE : \n" + DBUtils.formatSQLString(updateQuery, 
 								gestioneErrore.getId(),sf.getFaultActor(),sf.getFaultCode(),sf.getFaultString(),sf.getComportamento(),sf.getCadenzaRispedizione()));
-					DriverConfigurazioneDB_LIB.log.debug("CRUDGestioneErrore_SoapFault("+i+") type = " + type + " row affected =" + n);
+					DriverConfigurazioneDBLib.log.debug("CRUDGestioneErrore_SoapFault("+i+") type = " + type + " row affected =" + n);
 				}
 				
 				break;
@@ -545,7 +545,7 @@ public class DriverConfigurazioneDB_gestioneErroreLIB {
 				if(idGestioneErrore>0){
 					
 					// Delete gestione errore trasporto
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addDeleteTable(CostantiDB.GESTIONE_ERRORE_TRASPORTO);
 					sqlQueryObject.addWhereCondition("id_gestione_errore=?");
 					updateQuery = sqlQueryObject.createSQLDelete();
@@ -553,12 +553,12 @@ public class DriverConfigurazioneDB_gestioneErroreLIB {
 					updateStmt.setLong(1, idGestioneErrore);
 					n = updateStmt.executeUpdate();
 					updateStmt.close();
-					DriverConfigurazioneDB_LIB.log.debug("CRUDGestioneErrore (Delete trasporto) UPDATE : \n" + DBUtils.formatSQLString(updateQuery, 
+					DriverConfigurazioneDBLib.log.debug("CRUDGestioneErrore (Delete trasporto) UPDATE : \n" + DBUtils.formatSQLString(updateQuery, 
 							idGestioneErrore));
-					DriverConfigurazioneDB_LIB.log.debug("CRUGestioneErrore (Delete trasporto) type = " + type + " row affected =" + n);
+					DriverConfigurazioneDBLib.log.debug("CRUGestioneErrore (Delete trasporto) type = " + type + " row affected =" + n);
 					
 					// Delete gestione errore soap fault
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addDeleteTable(CostantiDB.GESTIONE_ERRORE_SOAP);
 					sqlQueryObject.addWhereCondition("id_gestione_errore=?");
 					updateQuery = sqlQueryObject.createSQLDelete();
@@ -566,12 +566,12 @@ public class DriverConfigurazioneDB_gestioneErroreLIB {
 					updateStmt.setLong(1, idGestioneErrore);
 					n = updateStmt.executeUpdate();
 					updateStmt.close();
-					DriverConfigurazioneDB_LIB.log.debug("CRUDGestioneErrore (Delete soap fault) UPDATE : \n" + DBUtils.formatSQLString(updateQuery, 
+					DriverConfigurazioneDBLib.log.debug("CRUDGestioneErrore (Delete soap fault) UPDATE : \n" + DBUtils.formatSQLString(updateQuery, 
 							idGestioneErrore));
-					DriverConfigurazioneDB_LIB.log.debug("CRUGestioneErrore (Delete soap fault) type = " + type + " row affected =" + n);
+					DriverConfigurazioneDBLib.log.debug("CRUGestioneErrore (Delete soap fault) type = " + type + " row affected =" + n);
 
 					// Delete gestione errore
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addDeleteTable(CostantiDB.GESTIONE_ERRORE);
 					sqlQueryObject.addWhereCondition("id=?");
 					updateQuery = sqlQueryObject.createSQLDelete();
@@ -580,8 +580,8 @@ public class DriverConfigurazioneDB_gestioneErroreLIB {
 					n = updateStmt.executeUpdate();
 					updateStmt.close();
 	
-					DriverConfigurazioneDB_LIB.log.debug("CRUDGestioneErrore type = " + type + " row affected =" + n);
-					DriverConfigurazioneDB_LIB.log.debug("CRUDGestioneErrore DELETE : \n" + DBUtils.formatSQLString(updateQuery, 
+					DriverConfigurazioneDBLib.log.debug("CRUDGestioneErrore type = " + type + " row affected =" + n);
+					DriverConfigurazioneDBLib.log.debug("CRUDGestioneErrore DELETE : \n" + DBUtils.formatSQLString(updateQuery, 
 							idGestioneErrore));
 					
 				}

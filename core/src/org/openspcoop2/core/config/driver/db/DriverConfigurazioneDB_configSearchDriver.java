@@ -508,7 +508,7 @@ public class DriverConfigurazioneDB_configSearchDriver {
 				regola.setId(risultato.getLong("id"));
 				regola.setNome(risultato.getString("nome"));
 				regola.setPosizione(risultato.getInt("posizione"));
-				regola.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(risultato.getString("stato")));
+				regola.setStato(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(risultato.getString("stato")));
 				regola.setDescrizione(risultato.getString("descrizione"));
 				if(risultato.getInt("regexpr") == CostantiDB.TRUE) {
 					regola.setRegexpr(true);
@@ -524,8 +524,8 @@ public class DriverConfigurazioneDB_configSearchDriver {
 				regola.setContestoEsterno(s);
 				regola.setBaseUrl(risultato.getString("base_url"));
 				regola.setProtocollo(risultato.getString("protocollo"));
-				regola.setRuolo(DriverConfigurazioneDB_LIB.getEnumRuoloContesto(risultato.getString("ruolo")));
-				regola.setServiceBinding(DriverConfigurazioneDB_LIB.getEnumServiceBinding(risultato.getString("service_binding")));
+				regola.setRuolo(DriverConfigurazioneDBLib.getEnumRuoloContesto(risultato.getString("ruolo")));
+				regola.setServiceBinding(DriverConfigurazioneDBLib.getEnumServiceBinding(risultato.getString("service_binding")));
 				String tipoSoggetto = risultato.getString("tipo_soggetto");
 				String nomeSoggetto = risultato.getString("nome_soggetto");
 				if(tipoSoggetto!=null && !"".equals(tipoSoggetto) && nomeSoggetto!=null && !"".equals(nomeSoggetto)) {

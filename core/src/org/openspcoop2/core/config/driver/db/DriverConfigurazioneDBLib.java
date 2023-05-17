@@ -70,10 +70,17 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 
-public class DriverConfigurazioneDB_LIB {
+public class DriverConfigurazioneDBLib {
+	
+	private DriverConfigurazioneDBLib() {}
 
 	/** Logger utilizzato per debug. */
-	public static org.slf4j.Logger log = LoggerWrapperFactory.getLogger(CostantiConfigurazione.DRIVER_DB_LOGGER);
+	protected static org.slf4j.Logger log = LoggerWrapperFactory.getLogger(CostantiConfigurazione.DRIVER_DB_LOGGER);
+	public static void logDebug(String msg) {
+		if(log!=null) {
+			log.debug(msg);
+		}
+	}
 
 	// Tipo database e tabella Soggetto PDD ereditato da DriverConfigurazioneDB
 	static String tipoDB = null;
@@ -83,23 +90,23 @@ public class DriverConfigurazioneDB_LIB {
 	 */
 	private static boolean initialize = false;
 	public static void initStaticLogger(Logger aLog){
-		if(DriverConfigurazioneDB_LIB.initialize==false){
+		if(!DriverConfigurazioneDBLib.initialize){
 			if(aLog!=null){
-				DriverConfigurazioneDB_LIB.log = aLog;
+				DriverConfigurazioneDBLib.log = aLog;
 			}
-			DriverConfigurazioneDB_LIB.initialize = true;
+			DriverConfigurazioneDBLib.initialize = true;
 		}
 	}
 	public static boolean isStaticLoggerInitialized(){
-		return DriverConfigurazioneDB_LIB.initialize;
+		return DriverConfigurazioneDBLib.initialize;
 	}
 
 	// Setto il tipoDB
 	public static void setTipoDB(String tipoDatabase) {
-		DriverConfigurazioneDB_LIB.tipoDB = tipoDatabase;
+		DriverConfigurazioneDBLib.tipoDB = tipoDatabase;
 	}
 	public static void setTabellaSoggetti(String tab) {
-		DriverConfigurazioneDB_LIB.tabellaSoggetti = tab;
+		DriverConfigurazioneDBLib.tabellaSoggetti = tab;
 	}
 
 	public static String getValue(StatoFunzionalita funzionalita){
@@ -538,7 +545,7 @@ public class DriverConfigurazioneDB_LIB {
 	
 
 	
-	public static void CRUDProtocolProperty(int type, List<ProtocolProperty> listPP, long idProprietario,
+	public static void crudProtocolProperty(int type, List<ProtocolProperty> listPP, long idProprietario,
 			org.openspcoop2.core.constants.ProprietariProtocolProperty tipologiaProprietarioProtocolProperty, Connection connection,
 			String tipoDatabase) throws DriverConfigurazioneException {
 		try {
