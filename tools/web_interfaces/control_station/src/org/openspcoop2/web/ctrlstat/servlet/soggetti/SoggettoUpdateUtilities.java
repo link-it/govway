@@ -848,11 +848,7 @@ public class SoggettoUpdateUtilities {
 
 
 				// recupero le porte delegate per id_soggetto_erogatore
-				try {
-					tmpListPD = this.porteDelegateCore.porteDelegateWithSoggettoErogatoreList(this.sog.getId());
-				}catch(DriverConfigurazioneNotFound notFound) {
-					// ignore
-				}
+				tmpListPD = this.porteDelegateCore.porteDelegateWithSoggettoErogatoreList(this.sog.getId());
 				if(tmpListPD!=null && !tmpListPD.isEmpty()) {
 					for (PortaDelegata portaDelegata : tmpListPD) {
 						Long idPorta = portaDelegata.getId();
@@ -878,11 +874,7 @@ public class SoggettoUpdateUtilities {
 				}
 
 				// recupero le porte delegate per tipo/nome soggetto erogatore
-				try {
-					tmpListPD = this.porteDelegateCore.porteDelegateWithTipoNomeErogatoreList(this.sog.getOldTipoForUpdate(), this.sog.getOldNomeForUpdate());
-				}catch(DriverConfigurazioneNotFound notFound) {
-					// ignore
-				}
+				tmpListPD = this.porteDelegateCore.porteDelegateWithTipoNomeErogatoreList(this.sog.getOldTipoForUpdate(), this.sog.getOldNomeForUpdate());
 				if(tmpListPD!=null && !tmpListPD.isEmpty()) {
 					for (PortaDelegata portaDelegata : tmpListPD) {
 						Long idPorta = portaDelegata.getId();

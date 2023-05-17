@@ -20,13 +20,13 @@
 package org.openspcoop2.web.ctrlstat.servlet.gruppi;
 
 import java.sql.Connection;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
-import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.registry.Gruppo;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
@@ -64,8 +64,8 @@ public class GruppiCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			return driver.getDriverRegistroServiziDB().gruppiList(superuser, ricerca);
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -85,8 +85,8 @@ public class GruppiCore extends ControlStationCore {
 			return driver.getDriverRegistroServiziDB().getGruppo(id);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -108,8 +108,8 @@ public class GruppiCore extends ControlStationCore {
 			return driver.getDriverRegistroServiziDB().getGruppo(idGruppo);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -131,15 +131,15 @@ public class GruppiCore extends ControlStationCore {
 			return driver.getDriverRegistroServiziDB().existsGruppo(idGruppo);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 
 	}
 	
-	public boolean isGruppoInUso(String gruppo, HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverConfigurazioneException {
+	public boolean isGruppoInUso(String gruppo, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "isGruppoInUso";
 		DriverControlStationDB driver = null;
@@ -153,15 +153,15 @@ public class GruppiCore extends ControlStationCore {
 			return driver.isGruppoInUso(new IDGruppo(gruppo), whereIsInUso, normalizeObjectIds);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 
 	}
 	
-	public boolean isGruppoConfigInUso(String gruppo, HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverConfigurazioneException {
+	public boolean isGruppoConfigInUso(String gruppo, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "isGruppoConfigInUso";
 		DriverControlStationDB driver = null;
@@ -175,16 +175,16 @@ public class GruppiCore extends ControlStationCore {
 			return driver.isGruppoConfigInUso(new IDGruppo(gruppo), whereIsInUso, normalizeObjectIds);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 
 	}
 	
-	public String getDettagliGruppoInUso(IDGruppo gruppo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+	public String getDettagliGruppoInUso(IDGruppo gruppo) throws DriverConfigurazioneException {
+		EnumMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new EnumMap<>(ErrorsHandlerCostant.class);
 		boolean normalizeObjectIds = true;
 		boolean gruppoInUso  = this.isGruppoInUso(gruppo.getNome(), whereIsInUso, normalizeObjectIds );
 		

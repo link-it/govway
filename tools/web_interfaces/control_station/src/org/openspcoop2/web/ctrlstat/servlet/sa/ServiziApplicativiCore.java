@@ -21,7 +21,7 @@ package org.openspcoop2.web.ctrlstat.servlet.sa;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +37,6 @@ import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
-import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.pdd.core.autenticazione.ApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ApiKeyUtilities;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -77,11 +76,11 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().getServizioApplicativo(idServizioApplicativo);
 
 		} catch (DriverConfigurazioneNotFound e) {
-			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(),e);
+			ControlStationCore.logDebug(getPrefixError(nomeMetodo,  e),e);
 			throw e;
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -103,12 +102,12 @@ public class ServiziApplicativiCore extends ControlStationCore {
 		} 
 		catch (DriverConfigurazioneNotFound  e) {
 			// Lasciare DEBUG, usato anche in servizio API RS
-			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] ExceptionNotFound :" + e.getMessage(), e);
+			ControlStationCore.logDebug("[ControlStationCore::" + nomeMetodo + "] ExceptionNotFound :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] NotFound :" + e.getMessage(),e);
 		}
 		catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -116,27 +115,27 @@ public class ServiziApplicativiCore extends ControlStationCore {
 	}
 	
 	
-	public boolean isSupportatoAutenticazioneApplicativiErogazione(String protocollo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+	public boolean isSupportatoAutenticazioneApplicativiErogazione(String protocollo) throws DriverRegistroServiziException {
 		String nomeMetodo = "isSupportatoAutenticazioneApplicativiErogazione";
 		try{
 			
 			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportoAutenticazioneApplicativiErogazioni();
 			
 		}catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		}
 	}
 	
-	public boolean isSupportatoAutenticazioneApplicativiEsterniErogazione(String protocollo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+	public boolean isSupportatoAutenticazioneApplicativiEsterniErogazione(String protocollo) throws DriverRegistroServiziException {
 		String nomeMetodo = "isSupportatoAutenticazioneApplicativiEsterniErogazione";
 		try{
 			
 			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportoAutenticazioneApplicativiEsterniErogazioni();
 			
 		}catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		}
 	}
 	
@@ -154,8 +153,8 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().getIdServizioApplicativo(idSoggetto, nomeServizioApplicativo);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -176,8 +175,8 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().servizioApplicativoWithCredenzialiBasicList(utente, password, checkPassword);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -199,8 +198,8 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			return ApiKeyUtilities.toAppId(protocollo, idSA, multipleApiKeys, driver.getDriverConfigurazioneDB());
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -222,8 +221,8 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			return ApiKeyUtilities.newApiKey(protocollo, idSA, this.getApplicativiApiKeyLunghezzaPasswordGenerate(), driver.getDriverConfigurazioneDB());
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -236,8 +235,8 @@ public class ServiziApplicativiCore extends ControlStationCore {
 		try {
 			return ApiKeyUtilities.newMultipleApiKey(this.getApplicativiApiKeyLunghezzaPasswordGenerate());
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		}
 		
 	}
@@ -256,8 +255,8 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().servizioApplicativoWithCredenzialiApiKeyList(utente, appId);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -278,8 +277,8 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().servizioApplicativoWithCredenzialiSslList(subject, issuer);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -299,8 +298,8 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().servizioApplicativoWithCredenzialiSslList(certificate, strictVerifier);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -321,8 +320,8 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().servizioApplicativoWithCredenzialiPrincipalList(principal);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -352,8 +351,8 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().servizioApplicativoWithCredenzialiTokenList(tokenPolicy, tokenClientId, tokenWithHttpsEnabled);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -374,8 +373,8 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().servizioApplicativoList(ricerca);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -396,8 +395,8 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().servizioApplicativoList(idSoggetto,ricerca);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -420,8 +419,8 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().isServizioApplicativoInUsoComeErogatore(sa, whereIsInUso);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e), e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -443,38 +442,12 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().existsServizioApplicativo(idSA);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
-	
-	/*
-	public List<ServizioApplicativo> getServiziApplicativiByIdErogatore(Long idErogatore) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		return this.getServiziApplicativiByIdErogatore(idErogatore, null);
-	}
-	public List<ServizioApplicativo> getServiziApplicativiByIdErogatore(Long idErogatore, String tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		Connection con = null;
-		String nomeMetodo = "getServiziApplicativiWithIdErogatore";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getDriverConfigurazioneDB().getServiziApplicativiWithIdErogatore(idErogatore, tipo);
-
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-	}
-	*/
 	
 	public List<IDServizioApplicativoDB> getIdServiziApplicativiWithIdErogatore(Long idErogatore) throws DriverConfigurazioneException {
 		return getIdServiziApplicativiWithIdErogatore(idErogatore, null, false, false);
@@ -498,26 +471,22 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().getIdServiziApplicativiWithIdErogatore(idErogatore, tipo, checkIM, checkConnettoreAbilitato);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
 
-//	public List<IDServizioApplicativoDB> soggettiServizioApplicativoList(IDSoggetto idSoggetto,String superuser,CredenzialeTipo credenziale, Boolean appId) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-//		return this.soggettiServizioApplicativoList(idSoggetto, superuser, credenziale, appId, null);
-//	}
-	
 	public List<IDServizioApplicativoDB> soggettiServizioApplicativoList(IDSoggetto idSoggetto,String superuser,CredenzialeTipo credenziale, Boolean appId, String tipo, 
-			boolean bothSslAndToken, String tokenPolicy) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+			boolean bothSslAndToken, String tokenPolicy) throws DriverConfigurazioneException {
 		return soggettiServizioApplicativoList(idSoggetto, superuser, credenziale, appId, tipo, 
 				bothSslAndToken, tokenPolicy, false);
 	}
 	public List<IDServizioApplicativoDB> soggettiServizioApplicativoList(IDSoggetto idSoggetto,String superuser,CredenzialeTipo credenziale, Boolean appId, String tipo, 
-			boolean bothSslAndToken, String tokenPolicy, boolean tokenPolicyOR) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+			boolean bothSslAndToken, String tokenPolicy, boolean tokenPolicyOR) throws DriverConfigurazioneException {
 		Connection con = null;
-		String nomeMetodo = "soggettiServizioApplicativoList";
+		String nomeMetodo = "soggettiServizioApplicativoList(soggetto,user,credenziale,appId,tipo,ssl,token)";
 		DriverControlStationDB driver = null;
 
 		try {
@@ -530,14 +499,14 @@ public class ServiziApplicativiCore extends ControlStationCore {
 					bothSslAndToken, tokenPolicy, tokenPolicyOR);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
 
-	public List<ServizioApplicativo> soggettiServizioApplicativoList(String superuser, ISearch ricerca) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	public List<ServizioApplicativo> soggettiServizioApplicativoList(String superuser, ISearch ricerca) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "soggettiServizioApplicativoList";
 		DriverControlStationDB driver = null;
@@ -551,14 +520,14 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().soggettiServizioApplicativoList(superuser, ricerca);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
 	
-	public List<ServizioApplicativo> soggettiServizioApplicativoList(ISearch ricerca,Long idSoggetto) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	public List<ServizioApplicativo> soggettiServizioApplicativoList(ISearch ricerca,Long idSoggetto) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "soggettiServizioApplicativoList";
 		DriverControlStationDB driver = null;
@@ -572,15 +541,15 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().soggettiServizioApplicativoList(idSoggetto, ricerca);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
 	
 	public boolean isServizioApplicativoInUso(IDServizioApplicativo idServizioApplicativo,
-			Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean isRegistroServiziLocale, boolean normalizeObjectIds, boolean verificaRuoli) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+			Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean isRegistroServiziLocale, boolean normalizeObjectIds, boolean verificaRuoli) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "isServizioApplicativoInUso";
 		
@@ -591,8 +560,8 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			return DBOggettiInUsoUtils.isServizioApplicativoInUso(con, this.tipoDB, idServizioApplicativo, whereIsInUso, isRegistroServiziLocale, normalizeObjectIds, verificaRuoli);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -613,11 +582,11 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().getAllIdServiziApplicativi(filtroRicerca);
 
 		} catch (DriverConfigurazioneNotFound e) {
-			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(),e);
-			return new ArrayList<IDServizioApplicativo>();
+			ControlStationCore.logDebug(getPrefixError(nomeMetodo,  e),e);
+			return new ArrayList<>();
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -637,8 +606,8 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().servizioApplicativoRuoliList(idSA, ricerca);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -659,15 +628,15 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().getIdServizioApplicativoByConnettore(idConnettore);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
 	
-	public String getDettagliServizioApplicativoInUso(IDServizioApplicativo idServizioApplicativo, boolean verificaRuoli) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+	public String getDettagliServizioApplicativoInUso(IDServizioApplicativo idServizioApplicativo, boolean verificaRuoli) throws DriverConfigurazioneException {
+		EnumMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new EnumMap<>(ErrorsHandlerCostant.class);
 		boolean normalizeObjectIds = true;
 		boolean saInUso  = this.isServizioApplicativoInUso(idServizioApplicativo, whereIsInUso, this.isRegistroServiziLocale(), normalizeObjectIds, verificaRuoli );
 		
@@ -699,8 +668,8 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().serviziApplicativiProprietaList(idSA, ricerca);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -720,8 +689,8 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().nomiProprietaSA(filterSoggettoTipo, filterSoggettoNome, tipoSoggettiProtocollo); 
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}

@@ -29,7 +29,6 @@ import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicerca;
-import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
@@ -54,7 +53,7 @@ public class PddCore extends ControlStationCore {
 		super(core);
 	}
 	
-	public List<PortaDominio> porteDominioWithSubject(String subject) throws DriverRegistroServiziException,ValidazioneStatoPackageException{
+	public List<PortaDominio> porteDominioWithSubject(String subject) throws DriverRegistroServiziException{
 		Connection con = null;
 		String nomeMetodo = "porteDominioWithSubject";
 		DriverRegistroServiziDB driver = null;
@@ -68,11 +67,11 @@ public class PddCore extends ControlStationCore {
 			return driver.porteDominioWithSubject(subject);
 			
 		} catch (DriverRegistroServiziException e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] DriverRegistroServiziException :" + e.getMessage(), e);
+			ControlStationCore.logError("[ControlStationCore::" + nomeMetodo + "] DriverRegistroServiziException :" + e.getMessage(), e);
 			throw e;
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e), e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -92,11 +91,11 @@ public class PddCore extends ControlStationCore {
 			return driver.getDriverRegistroServiziDB().getAllIdPorteDominio(filtroRicerca);
 
 		} catch (DriverRegistroServiziNotFound de) {
-			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			ControlStationCore.logDebug(getPrefixError(nomeMetodo,  de),de);
 			throw de;
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -116,8 +115,8 @@ public class PddCore extends ControlStationCore {
 			return driver.existPdd(nomePdd);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverControlStationException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -140,8 +139,8 @@ public class PddCore extends ControlStationCore {
 		} catch (DriverControlStationNotFound e) {
 			throw e;
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverControlStationException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -163,8 +162,8 @@ public class PddCore extends ControlStationCore {
 		} catch (DriverControlStationNotFound e) {
 			throw e;
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverControlStationException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -184,11 +183,11 @@ public class PddCore extends ControlStationCore {
 			return driver.getDriverRegistroServiziDB().getPortaDominio(nomePdD);
 
 		} catch (DriverRegistroServiziNotFound de) {
-			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			ControlStationCore.logDebug(getPrefixError(nomeMetodo,  de),de);
 			throw de;
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -211,8 +210,8 @@ public class PddCore extends ControlStationCore {
 			return driver.getDriverRegistroServiziDB().porteDominioList(userLogin, tipo, ricerca);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -234,8 +233,8 @@ public class PddCore extends ControlStationCore {
 			return driver.pddList(userLogin, ricerca);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverControlStationException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -245,15 +244,15 @@ public class PddCore extends ControlStationCore {
 	public List<PortaDominio> porteDominioList(String userLogin, ISearch ricerca) throws DriverRegistroServiziException {
 		String nomeMetodo = "porteDominioList()";
 		try {
-			List<PortaDominio> list = new ArrayList<PortaDominio>();
+			List<PortaDominio> list = new ArrayList<>();
 			List<PdDControlStation> listControlStation = this.pddList(userLogin, ricerca);
-			while (listControlStation.size() > 0) {
+			while (!listControlStation.isEmpty()) {
 				list.add(listControlStation.remove(0));
 			}
 			return list;
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		}
 	}
 	
@@ -271,8 +270,8 @@ public class PddCore extends ControlStationCore {
 			return driver.pddSoggettiList(idPDD, ricerca);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverControlStationException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -293,8 +292,8 @@ public class PddCore extends ControlStationCore {
 			return driver.getDriverRegistroServiziDB().isPddInUso(pdd, whereIsInUso);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -314,8 +313,8 @@ public class PddCore extends ControlStationCore {
 			return driver.isPddInUso(pdd, whereIsInUso, normalizeObjectIds);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverControlStationException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -335,8 +334,8 @@ public class PddCore extends ControlStationCore {
 			return driver.soggettiWithServer(nomePdD);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverControlStationException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -352,29 +351,23 @@ public class PddCore extends ControlStationCore {
 			con = ControlStationCore.dbM.getConnection();
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			// Bug: Le porte di dominio in pddList hanno il limit a 20 !!
-			//			List<PdDControlStation> list = driver.pddList(null, new org.openspcoop2.web.ctrlstat.core.ConsoleSearch());
-//			for (PdDControlStation pddControlStation : list) {
-//				if(pddControlStation.getTipo()!=null && PddTipologia.OPERATIVO.toString().equals(pddControlStation.getTipo())){
-//					return pddControlStation.getNome();
-//				}
-//			}
 			
 			FiltroRicerca filtro = new FiltroRicerca();
 			filtro.setTipo(PddTipologia.OPERATIVO.toString());
 			try{
 				List<String> nomi = driver.getDriverRegistroServiziDB().getAllIdPorteDominio(filtro);
-				if(nomi!=null && nomi.size()>0){
+				if(nomi!=null && !nomi.isEmpty()){
 					return true;
 				}
-			}catch(DriverRegistroServiziNotFound notFound){}
+			}catch(DriverRegistroServiziNotFound notFound){
+				// ignore
+			}
 
 			return false;
 			
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -390,29 +383,23 @@ public class PddCore extends ControlStationCore {
 			con = ControlStationCore.dbM.getConnection();
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			// Bug: Le porte di dominio in pddList hanno il limit a 20 !!
-			//			List<PdDControlStation> list = driver.pddList(null, new org.openspcoop2.web.ctrlstat.core.ConsoleSearch());
-//			for (PdDControlStation pddControlStation : list) {
-//				if(pddControlStation.getTipo()!=null && PddTipologia.OPERATIVO.toString().equals(pddControlStation.getTipo())){
-//					return pddControlStation.getNome();
-//				}
-//			}
 			
 			FiltroRicerca filtro = new FiltroRicerca();
 			filtro.setTipo(PddTipologia.OPERATIVO.toString());
 			try{
 				List<String> nomi = driver.getDriverRegistroServiziDB().getAllIdPorteDominio(filtro);
-				if(nomi!=null && nomi.size()>0){
+				if(nomi!=null && !nomi.isEmpty()){
 					return nomi.get(0); // dovrebbe esisterne solo una
 				}
-			}catch(DriverRegistroServiziNotFound notFound){}
+			}catch(DriverRegistroServiziNotFound notFound){
+				// ignore
+			}
 
-			throw new Exception("Non e' stata trovata una porta di dominio con tipo '"+PddTipologia.OPERATIVO.toString()+"'");
+			throw new DriverRegistroServiziException("Non e' stata trovata una porta di dominio con tipo '"+PddTipologia.OPERATIVO.toString()+"'");
 			
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}

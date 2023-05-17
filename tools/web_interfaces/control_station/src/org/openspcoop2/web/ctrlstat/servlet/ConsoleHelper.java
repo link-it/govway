@@ -5683,10 +5683,16 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
 					try {
 						if(TokenUtilities.isValidazioneEnabled(mappaDB)) {
-							de.setType(DataElementType.SELECT);
-							de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA_CON_WARNING);
-							de.setSelected(gestioneTokenValidazioneInput);
-							de.setPostBack(true);
+							if(forceGestioneToken && tipoOperazione.equals(TipoOperazione.ADD)) {
+								de.setType(DataElementType.TEXT);
+								de.setValue(gestioneTokenValidazioneInput);
+							}
+							else {
+								de.setType(DataElementType.SELECT);
+								de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA_CON_WARNING);
+								de.setSelected(gestioneTokenValidazioneInput);
+								de.setPostBack(true);
+							}
 						}else {
 							de.setType(DataElementType.HIDDEN);
 							de.setValue(StatoFunzionalita.DISABILITATO.getValue());
@@ -5702,10 +5708,16 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
 					try {
 						if(TokenUtilities.isIntrospectionEnabled(mappaDB)) {
-							de.setType(DataElementType.SELECT);
-							de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA_CON_WARNING);
-							de.setSelected(gestioneTokenIntrospection);
-							de.setPostBack(true);
+							if(forceGestioneToken && tipoOperazione.equals(TipoOperazione.ADD)) {
+								de.setType(DataElementType.TEXT);
+								de.setValue(gestioneTokenIntrospection);
+							}
+							else {
+								de.setType(DataElementType.SELECT);
+								de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA_CON_WARNING);
+								de.setSelected(gestioneTokenIntrospection);
+								de.setPostBack(true);
+							}
 						}else {
 							de.setType(DataElementType.HIDDEN);
 							de.setValue(StatoFunzionalita.DISABILITATO.getValue());
@@ -5721,10 +5733,16 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
 					try {
 						if(TokenUtilities.isUserInfoEnabled(mappaDB)) {
-							de.setType(DataElementType.SELECT);
-							de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA_CON_WARNING);
-							de.setSelected(gestioneTokenUserInfo);
-							de.setPostBack(true);
+							if(forceGestioneToken && tipoOperazione.equals(TipoOperazione.ADD)) {
+								de.setType(DataElementType.TEXT);
+								de.setValue(gestioneTokenUserInfo);
+							}
+							else {
+								de.setType(DataElementType.SELECT);
+								de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA_CON_WARNING);
+								de.setSelected(gestioneTokenUserInfo);
+								de.setPostBack(true);
+							}
 						}else {
 							de.setType(DataElementType.HIDDEN);
 							de.setValue(StatoFunzionalita.DISABILITATO.getValue());
@@ -5740,10 +5758,16 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
 					try {
 						if(TokenUtilities.isTokenForwardEnabled(mappaDB)) {
-							de.setType(DataElementType.SELECT);
-							de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA);
-							de.setSelected(gestioneTokenForward);
-							de.setPostBack(true);
+							if(forceGestioneToken && tipoOperazione.equals(TipoOperazione.ADD)) {
+								de.setType(DataElementType.TEXT);
+								de.setValue(gestioneTokenForward);
+							}
+							else {
+								de.setType(DataElementType.SELECT);
+								de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA);
+								de.setSelected(gestioneTokenForward);
+								de.setPostBack(true);
+							}
 						}else {
 							de.setType(DataElementType.HIDDEN);
 							de.setValue(StatoFunzionalita.DISABILITATO.getValue());

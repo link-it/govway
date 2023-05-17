@@ -59,8 +59,8 @@ public class AccordoServizioParteComuneRestCore extends ControlStationCore {
 			return driver.getDriverRegistroServiziDB().accordiResourceList(idAccordo, ricerca);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -81,8 +81,8 @@ public class AccordoServizioParteComuneRestCore extends ControlStationCore {
 			return driver.getDriverRegistroServiziDB().accordiResourceResponseList(idRisorsa, ricerca);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -103,8 +103,8 @@ public class AccordoServizioParteComuneRestCore extends ControlStationCore {
 			return driver.getDriverRegistroServiziDB().accordiResourceRepresentationsList(idRisorsa, isRequest, idRisposta, ricerca);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -125,8 +125,8 @@ public class AccordoServizioParteComuneRestCore extends ControlStationCore {
 			return driver.getDriverRegistroServiziDB().accordiResourceParametersList(idRisorsa, isRequest, idRisposta, ricerca);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -145,8 +145,8 @@ public class AccordoServizioParteComuneRestCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			return driver.getDriverRegistroServiziDB().existsAccordoServizioParteComuneResource(nome, idAccordo);
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -164,8 +164,8 @@ public class AccordoServizioParteComuneRestCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			return driver.getDriverRegistroServiziDB().existsAccordoServizioParteComuneResource(httpMethod, path, idAccordo, excludeResourceWithName);
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -183,8 +183,8 @@ public class AccordoServizioParteComuneRestCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			return driver.getDriverRegistroServiziDB().existsAccordoServizioResourceResponse(idRisorsa, httpStatus);
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -202,8 +202,8 @@ public class AccordoServizioParteComuneRestCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			return driver.getDriverRegistroServiziDB().existsAccordoServizioResourceRepresentation(idRisorsa, isRequest,idResponse,mediaType);
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -221,8 +221,8 @@ public class AccordoServizioParteComuneRestCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			return driver.getDriverRegistroServiziDB().existsAccordoServizioResourceParameter(idRisorsa, isRequest,idResponse,tipoParametro,nome);
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -247,11 +247,11 @@ public class AccordoServizioParteComuneRestCore extends ControlStationCore {
 			}
 
 		} catch (DriverRegistroServiziNotFound de) {
-			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			ControlStationCore.logDebug(getPrefixError(nomeMetodo,  de),de);
 			throw de;
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}

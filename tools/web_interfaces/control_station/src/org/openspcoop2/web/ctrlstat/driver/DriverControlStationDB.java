@@ -83,7 +83,6 @@ import org.openspcoop2.core.plugins.utils.handlers.HandlersDriverUtils;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Soggetto;
-import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
@@ -98,9 +97,9 @@ import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
-import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.lib.audit.DriverAudit;
@@ -1608,72 +1607,6 @@ public class DriverControlStationDB  {
 			risultato = stmt.executeQuery();
 			if (risultato.next()) {
 				return risultato.getLong("id");
-			}
-		
-			return 0;
-		} catch (Exception se) {
-			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
-		} finally {
-			// Chiudo statement and resultset
-			try {
-				if (risultato != null) {
-					risultato.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if (stmt != null) {
-					stmt.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			releaseConnection(con);
-		}
-	}
-		
-	public long existServizio_implementazioneAccordoCheck(String nomeServizio, String tipoServizio, long idSoggettoErogatore, long idAccordo, boolean servizioCorrelato) throws DriverControlStationException {
-		String nomeMetodo = "existServizio_implementazioneAccordoCheck";
-		
-		Connection con = null;
-		PreparedStatement stmt = null;
-		ResultSet risultato = null;
-		String queryString;
-		
-		con = getConnection(nomeMetodo);
-		
-		try {
-		
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
-			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition("id_soggetto = ?");
-			sqlQueryObject.addWhereCondition("servizio_correlato = ?");
-			sqlQueryObject.addWhereCondition("id_accordo = ?");
-			sqlQueryObject.setANDLogicOperator(true);
-			queryString = sqlQueryObject.createSQLQuery();
-		
-			stmt = con.prepareStatement(queryString);
-			stmt.setLong(1, idSoggettoErogatore);
-			stmt.setString(2, (servizioCorrelato ? CostantiRegistroServizi.ABILITATO.toString() : CostantiRegistroServizi.DISABILITATO.toString()));
-			stmt.setLong(3, idAccordo);
-		
-			risultato = stmt.executeQuery();
-			while (risultato.next()) {
-				if (tipoServizio.equals(risultato.getString("tipo_servizio")) && nomeServizio.equals(risultato.getString("nome_servizio")))
-					continue;
-				try{
-					return risultato.getLong("id");
-				}finally{
-					try {
-						if (risultato != null) {
-							risultato.close();
-						}
-					} catch (Exception e) {
-						// ignore
-					}
-				}
 			}
 		
 			return 0;

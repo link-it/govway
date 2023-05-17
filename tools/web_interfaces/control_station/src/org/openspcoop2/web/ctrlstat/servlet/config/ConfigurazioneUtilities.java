@@ -343,7 +343,7 @@ public class ConfigurazioneUtilities {
 			
 			boolean delete = true;
 			
-			List<ConfigurazionePolicy> policyObjectUtilizzanoAllarme = confCore.configurazioneControlloTrafficoConfigurazionePolicyList_conApplicabilitaAllarme(allarmeDaEliminare.getNome());
+			List<ConfigurazionePolicy> policyObjectUtilizzanoAllarme = confCore.configurazioneControlloTrafficoConfigurazionePolicyListConApplicabilitaAllarme(allarmeDaEliminare.getNome());
 			List<String> policyUtilizzanoAllarme = null;
 			if(policyObjectUtilizzanoAllarme!=null && !policyObjectUtilizzanoAllarme.isEmpty()) {
 				policyUtilizzanoAllarme = new ArrayList<>();

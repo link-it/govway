@@ -20,13 +20,13 @@
 package org.openspcoop2.web.ctrlstat.servlet.scope;
 
 import java.sql.Connection;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
-import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
@@ -65,8 +65,8 @@ public class ScopeCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			return driver.getDriverRegistroServiziDB().scopeList(superuser, ricerca);
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -86,8 +86,8 @@ public class ScopeCore extends ControlStationCore {
 			return driver.getDriverRegistroServiziDB().getScope(id);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -110,11 +110,11 @@ public class ScopeCore extends ControlStationCore {
 
 		} catch (DriverRegistroServiziNotFound e) {
 			// Lasciare DEBUG, usato anche in servizio API RS
-			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] NotFound :" + e.getMessage(), e);
+			ControlStationCore.logDebug("[ControlStationCore::" + nomeMetodo + "] NotFound :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] NotFound :" + e.getMessage(),e);
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -136,15 +136,15 @@ public class ScopeCore extends ControlStationCore {
 			return driver.getDriverRegistroServiziDB().existsScope(idScope);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 
 	}
 	
-	public boolean isScopeInUso(String scope, HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverConfigurazioneException {
+	public boolean isScopeInUso(String scope, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "isScopeInUso";
 		DriverControlStationDB driver = null;
@@ -158,15 +158,15 @@ public class ScopeCore extends ControlStationCore {
 			return driver.isScopeInUso(new IDScope(scope), whereIsInUso, normalizeObjectIds);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 
 	}
 	
-	public boolean isScopeConfigInUso(String scope, HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverConfigurazioneException {
+	public boolean isScopeConfigInUso(String scope, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "isScopeConfigInUso";
 		DriverControlStationDB driver = null;
@@ -180,16 +180,16 @@ public class ScopeCore extends ControlStationCore {
 			return driver.isScopeConfigInUso(new IDScope(scope), whereIsInUso, normalizeObjectIds);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 
 	}
 	
-	public String getDettagliScopeInUso(IDScope scope) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+	public String getDettagliScopeInUso(IDScope scope) throws DriverConfigurazioneException {
+		EnumMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new EnumMap<>(ErrorsHandlerCostant.class);
 		boolean normalizeObjectIds = true;
 		boolean saInUso  = this.isScopeConfigInUso(scope.getNome(), whereIsInUso, normalizeObjectIds );
 		

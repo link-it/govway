@@ -45,7 +45,6 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
-import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
@@ -366,9 +365,9 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			
 			
 			if(strutsBean.correlato == null){
-				strutsBean.correlato = ((TipologiaServizio.CORRELATO.equals(asps.getTipologiaServizio()) ?
+				strutsBean.correlato = (TipologiaServizio.CORRELATO.equals(asps.getTipologiaServizio()) ?
 						AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_CORRELATO :
-							AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_NORMALE));
+							AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_NORMALE);
 			}
 
 			/**String profiloSoggettoFruitore = null;
@@ -461,39 +460,35 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			List<String> saList = new ArrayList<>();
 			saList.add("-");
 			if(idSoggettoSelected!=null){
-				try{
-					String auth = strutsBean.fruizioneAutenticazione;
-					if(auth==null || "".equals(auth)){
-						auth = apsCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
+				String auth = strutsBean.fruizioneAutenticazione;
+				if(auth==null || "".equals(auth)){
+					auth = apsCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
+				}
+				CredenzialeTipo credenziale = CredenzialeTipo.toEnumConstant(auth);
+				Boolean appId = null;
+				if(CredenzialeTipo.APIKEY.equals(credenziale)) {
+					ApiKeyState apiKeyState =  new ApiKeyState(null);
+					appId = apiKeyState.appIdSelected;
+				}
+				boolean bothSslAndToken = false;
+				String tokenPolicy = null;
+				boolean tokenPolicyOR = false;
+				
+				List<IDServizioApplicativoDB> oldSilList = null;
+				if(apsCore.isVisioneOggettiGlobale(superUser)){
+					oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoSelected,null,
+							credenziale, appId, filtroTipoSA, 
+							bothSslAndToken, tokenPolicy, tokenPolicyOR);
+				}
+				else {
+					oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoSelected,superUser,
+							credenziale, appId, filtroTipoSA, 
+							bothSslAndToken, tokenPolicy, tokenPolicyOR);
+				}
+				if(oldSilList!=null && !oldSilList.isEmpty()){
+					for (int i = 0; i < oldSilList.size(); i++) {
+						saList.add(oldSilList.get(i).getNome());		
 					}
-					CredenzialeTipo credenziale = CredenzialeTipo.toEnumConstant(auth);
-					Boolean appId = null;
-					if(CredenzialeTipo.APIKEY.equals(credenziale)) {
-						ApiKeyState apiKeyState =  new ApiKeyState(null);
-						appId = apiKeyState.appIdSelected;
-					}
-					boolean bothSslAndToken = false;
-					String tokenPolicy = null;
-					boolean tokenPolicyOR = false;
-					
-					List<IDServizioApplicativoDB> oldSilList = null;
-					if(apsCore.isVisioneOggettiGlobale(superUser)){
-						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoSelected,null,
-								credenziale, appId, filtroTipoSA, 
-								bothSslAndToken, tokenPolicy, tokenPolicyOR);
-					}
-					else {
-						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoSelected,superUser,
-								credenziale, appId, filtroTipoSA, 
-								bothSslAndToken, tokenPolicy, tokenPolicyOR);
-					}
-					if(oldSilList!=null && !oldSilList.isEmpty()){
-						for (int i = 0; i < oldSilList.size(); i++) {
-							saList.add(oldSilList.get(i).getNome());		
-						}
-					}
-				}catch(DriverConfigurazioneNotFound dNotFound){
-					// ignore
 				}
 
 			}

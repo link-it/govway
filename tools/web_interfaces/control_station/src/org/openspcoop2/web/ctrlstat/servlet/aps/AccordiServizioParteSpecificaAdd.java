@@ -48,7 +48,6 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
-import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
@@ -428,10 +427,10 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				}
 				else {
 					if(gestioneFruitori) {
-						pd.setMessage("Non risultano registrati soggetti che possano erogare API", Costanti.MESSAGE_TYPE_INFO);
+						pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_NON_ESISTONO_SOGGETTO_EROGATORI_DI_API, Costanti.MESSAGE_TYPE_INFO);
 					}
 					else {
-						pd.setMessage("Non risultano registrati soggetti", Costanti.MESSAGE_TYPE_INFO);
+						pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_NON_ESISTONO_SOGGETTI, Costanti.MESSAGE_TYPE_INFO);
 					}
 				}
 				pd.disableEditMode();
@@ -506,11 +505,10 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						soggettoReferente.setNome(as.getSoggettoReferente().getNome());
 
 						// se ancora non ho scelto l'accordo da mostrare quando entro
-						if(accordoPrimoAccesso == -1){
+						if(accordoPrimoAccesso == -1 &&
 							//mostro il primo accordo che ha tipo che corrisponde a quello di default
-							if(apcCore.getProtocolloDefault(request, session,listaTipiProtocollo).equals(soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo()))){
-								accordoPrimoAccesso = i;
-							}
+							apcCore.getProtocolloDefault(request, session,listaTipiProtocollo).equals(soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo()))){
+							accordoPrimoAccesso = i;
 						}
 					}
 					accordiListLabel[i] = apsHelper.getLabelIdAccordo(strutsBean.tipoProtocollo, as);
@@ -526,7 +524,6 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				accordoPrimoAccesso = 0;
 			}
 
-			//			}
 			
 			// dopo il primo accesso le variabili della classe rimangono inizializzate
 			strutsBean.serviceBinding = null;
@@ -645,31 +642,30 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					}
 				}
 
-				if( apsCore.isShowCorrelazioneAsincronaInAccordi() ){
-					if (strutsBean.portType != null && !"".equals(strutsBean.portType) && !"-".equals(strutsBean.portType)){
-						PortTypeSintetico pt = null;
-						for(int i=0; i<as.getPortType().size(); i++){
-							if(strutsBean.portType.equals(as.getPortType().get(i).getNome())){
-								pt = as.getPortType().get(i);
+				if( apsCore.isShowCorrelazioneAsincronaInAccordi() &&
+					strutsBean.portType != null && !"".equals(strutsBean.portType) && !"-".equals(strutsBean.portType)){
+					PortTypeSintetico pt = null;
+					for(int i=0; i<as.getPortType().size(); i++){
+						if(strutsBean.portType.equals(as.getPortType().get(i).getNome())){
+							pt = as.getPortType().get(i);
+							break;
+						}
+					}
+					boolean servizioCorrelato = false;
+					if(pt!=null){
+						for(int i=0; i<pt.getAzione().size(); i++){
+							OperationSintetica op = pt.getAzione().get(i);
+							if(op.getCorrelataServizio()!=null && !pt.getNome().equals(op.getCorrelataServizio()) && op.getCorrelata()!=null){
+								servizioCorrelato = true;
 								break;
 							}
 						}
-						boolean servizioCorrelato = false;
-						if(pt!=null){
-							for(int i=0; i<pt.getAzione().size(); i++){
-								OperationSintetica op = pt.getAzione().get(i);
-								if(op.getCorrelataServizio()!=null && !pt.getNome().equals(op.getCorrelataServizio()) && op.getCorrelata()!=null){
-									servizioCorrelato = true;
-									break;
-								}
-							}
-						}
-						if(servizioCorrelato){
-							strutsBean.servcorr=Costanti.CHECK_BOX_ENABLED;
-						}
-						else{
-							strutsBean.servcorr=Costanti.CHECK_BOX_DISABLED;
-						}							
+					}
+					if(servizioCorrelato){
+						strutsBean.servcorr=Costanti.CHECK_BOX_ENABLED;
+					}
+					else{
+						strutsBean.servcorr=Costanti.CHECK_BOX_DISABLED;
 					}
 				}
 				
@@ -699,14 +695,13 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 			// Fix per bug che accadeva in modalita' standard quando si seleziona un servizio di un accordo operativo, poi si cambia idea e si seleziona un accordo bozza.
 			// lo stato del package rimaneva operativo.
-			if(strutsBean.statoPackage!=null && apsHelper.isModalitaStandard()){
-				if(apsHelper.isShowGestioneWorkflowStatoDocumenti()){
-					if(StatiAccordo.operativo.toString().equals(strutsBean.statoPackage) || StatiAccordo.finale.toString().equals(strutsBean.statoPackage)){
-						if(as!=null && as.getStatoPackage().equals(StatiAccordo.bozza.toString()) ){
-							strutsBean.statoPackage = StatiAccordo.bozza.toString(); 
-						}
-					}					
-				}
+			if(strutsBean.statoPackage!=null && apsHelper.isModalitaStandard() &&
+				apsHelper.isShowGestioneWorkflowStatoDocumenti() &&
+				(StatiAccordo.operativo.toString().equals(strutsBean.statoPackage) || StatiAccordo.finale.toString().equals(strutsBean.statoPackage))
+				&&
+				(as!=null && as.getStatoPackage().equals(StatiAccordo.bozza.toString()))
+			){
+				strutsBean.statoPackage = StatiAccordo.bozza.toString(); 
 			}
 			
 			// Calcolo url presente nell'API
@@ -749,7 +744,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					listSoggetti = new ArrayList<>();
 					try {
 						listSoggetti.add(soggettiCore.getSoggettoRegistro(idSoggettoSelezionato));
-					}catch(DriverRegistroServiziNotFound notFound) {}
+					}catch(DriverRegistroServiziNotFound notFound) {
+						// ignore
+					}
 				}
 			}
 			if(listSoggetti==null) {
@@ -760,12 +757,12 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				}
 			}
 			
-			if(listSoggetti==null || listSoggetti.size()<=0) {
+			if(listSoggetti==null || listSoggetti.isEmpty()) {
 				if(gestioneFruitori) {
-					pd.setMessage("Non risultano registrati soggetti che possano erogare API", Costanti.MESSAGE_TYPE_INFO);
+					pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_NON_ESISTONO_SOGGETTO_EROGATORI_DI_API, Costanti.MESSAGE_TYPE_INFO);
 				}
 				else {
-					pd.setMessage("Non risultano registrati soggetti", Costanti.MESSAGE_TYPE_INFO);
+					pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_NON_ESISTONO_SOGGETTI, Costanti.MESSAGE_TYPE_INFO);
 				}
 				
 				pd.disableEditMode();
@@ -783,7 +780,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			}
 
 			boolean existsAPCCompatibili = false;
-			if (listSoggetti.size() > 0) {
+			if (!listSoggetti.isEmpty()) {
 				List<String> soggettiListTmp = new ArrayList<>();
 				List<String> soggettiListLabelTmp = new ArrayList<>();
 				for (Soggetto soggetto : listSoggetti) {
@@ -791,14 +788,14 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					soggettiListLabelTmp.add(apsHelper.getLabelNomeSoggetto(strutsBean.tipoProtocollo, soggetto.getTipo() , soggetto.getNome()));
 				}
 
-				existsAPCCompatibili = listaIdAPI!=null && listaIdAPI.size()>0;
+				existsAPCCompatibili = listaIdAPI!=null && !listaIdAPI.isEmpty();
 
-				if(soggettiListTmp.size()>0 && existsAPCCompatibili){
+				if(!soggettiListTmp.isEmpty() && existsAPCCompatibili){
 					soggettiList = soggettiListTmp.toArray(new String[1]);
 					soggettiListLabel = soggettiListLabelTmp.toArray(new String[1]);
 				}
 				else{
-					if(listaIdAPI.size()<=0){
+					if(listaIdAPI.isEmpty()){
 						pd.setMessage("Non risultano registrate API", Costanti.MESSAGE_TYPE_INFO);
 						pd.disableEditMode();
 
@@ -834,9 +831,6 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					soggettiList = soggettiListTmp.toArray(new String[1]);
 					soggettiListLabel = soggettiListLabelTmp.toArray(new String[1]);
 
-//					if(listaIdAPI.size()>0){
-//						strutsBean.accordo = listaIdAPI.get(0).getId()+"";
-//					}
 				}
 			}
 			
@@ -853,7 +847,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					listFruitori = new ArrayList<>();
 					try {
 						listFruitori.add(soggettiCore.getSoggettoRegistro(idSoggettoSelezionato));
-					}catch(DriverRegistroServiziNotFound notFound) {}
+					}catch(DriverRegistroServiziNotFound notFound) {
+						// ignore
+					}
 				}
 				else {
 					ConsoleSearch searchSoggettiFruitori = new ConsoleSearch(true);
@@ -866,7 +862,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					}
 				}
 				
-				if (listFruitori.size() > 0) {
+				if (!listFruitori.isEmpty()) {
 					List<String> soggettiListTmp = new ArrayList<>();
 					List<String> soggettiListLabelTmp = new ArrayList<>();
 					for (Soggetto soggetto : listFruitori) {
@@ -874,7 +870,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						soggettiListLabelTmp.add(apsHelper.getLabelNomeSoggetto(strutsBean.tipoProtocollo, soggetto.getTipo() , soggetto.getNome()));
 					}
 	
-					if(soggettiListTmp.size()>0){
+					if(!soggettiListTmp.isEmpty()){
 						soggettiFruitoriList = soggettiListTmp.toArray(new String[1]);
 						soggettiFruitoriListLabel = soggettiListLabelTmp.toArray(new String[1]);
 					}
@@ -924,10 +920,10 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				if(found) {
 					if(listSoggetti.isEmpty()) {
 						if(gestioneFruitori) {
-							pd.setMessage("Non risultano registrati soggetti che possano erogare API", Costanti.MESSAGE_TYPE_INFO);
+							pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_NON_ESISTONO_SOGGETTO_EROGATORI_DI_API, Costanti.MESSAGE_TYPE_INFO);
 						}
 						else {
-							pd.setMessage("Non risultano registrati soggetti", Costanti.MESSAGE_TYPE_INFO);
+							pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_NON_ESISTONO_SOGGETTI, Costanti.MESSAGE_TYPE_INFO);
 						}
 						
 						pd.disableEditMode();
@@ -977,13 +973,15 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					}
 				}
 				// Se ancora non l'ho trovato prendo il primo della lista nel caso di gestione erogazione
-				if ((strutsBean.provider == null) || strutsBean.provider.equals("")) {
-					if( (gestioneErogatori || gestioneFruitori) && listSoggetti!=null && !listSoggetti.isEmpty()) {
-						Soggetto soggetto = listSoggetti.get(0);
-						strutsBean.provider = soggetto.getId() + "";
-						strutsBean.nomeSoggettoErogatore = soggetto.getNome();
-						strutsBean.tipoSoggettoErogatore = soggetto.getTipo();
-					}
+				if (
+						((strutsBean.provider == null) || strutsBean.provider.equals(""))
+						&&
+						( (gestioneErogatori || gestioneFruitori) && listSoggetti!=null && !listSoggetti.isEmpty()) 
+					){
+					Soggetto soggetto = listSoggetti.get(0);
+					strutsBean.provider = soggetto.getId() + "";
+					strutsBean.nomeSoggettoErogatore = soggetto.getNome();
+					strutsBean.tipoSoggettoErogatore = soggetto.getTipo();
 				}
 			}
 			
@@ -1030,42 +1028,40 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			saFruitoriList.add("-");
 			IDSoggetto idSoggettoFruitoreSelected = null;
 			if(gestioneFruitori && strutsBean.nomeSoggettoFruitore!=null && strutsBean.tipoSoggettoFruitore!=null){
-				try{
 					
-					idSoggettoFruitoreSelected = new IDSoggetto(strutsBean.tipoSoggettoFruitore, strutsBean.nomeSoggettoFruitore);
-					
-					String auth = strutsBean.fruizioneAutenticazione;
-					if(auth==null || "".equals(auth)){
-						auth = apsCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
+				idSoggettoFruitoreSelected = new IDSoggetto(strutsBean.tipoSoggettoFruitore, strutsBean.nomeSoggettoFruitore);
+				
+				String auth = strutsBean.fruizioneAutenticazione;
+				if(auth==null || "".equals(auth)){
+					auth = apsCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
+				}
+				
+				org.openspcoop2.core.config.constants.CredenzialeTipo tipoAutenticazione = org.openspcoop2.core.config.constants.CredenzialeTipo.toEnumConstant(auth);
+				Boolean appId = null;
+				if(org.openspcoop2.core.config.constants.CredenzialeTipo.APIKEY.equals(tipoAutenticazione)) {
+					ApiKeyState apiKeyState =  new ApiKeyState(null);
+					appId = apiKeyState.appIdSelected;
+				}
+				boolean bothSslAndToken = false;
+				String tokenPolicy = null;
+				boolean tokenPolicyOR = false;
+				
+				List<IDServizioApplicativoDB> oldSilList = null;
+				if(apsCore.isVisioneOggettiGlobale(userLogin)){
+					oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoFruitoreSelected,null,
+							tipoAutenticazione, appId, filtroTipoSA, 
+							bothSslAndToken, tokenPolicy, tokenPolicyOR);
+				}
+				else {
+					oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoFruitoreSelected,userLogin,
+							tipoAutenticazione, appId, filtroTipoSA, 
+							bothSslAndToken, tokenPolicy, tokenPolicyOR);
+				}
+				if(oldSilList!=null && !oldSilList.isEmpty()){
+					for (int i = 0; i < oldSilList.size(); i++) {
+						saFruitoriList.add(oldSilList.get(i).getNome());		
 					}
-					
-					org.openspcoop2.core.config.constants.CredenzialeTipo tipoAutenticazione = org.openspcoop2.core.config.constants.CredenzialeTipo.toEnumConstant(auth);
-					Boolean appId = null;
-					if(org.openspcoop2.core.config.constants.CredenzialeTipo.APIKEY.equals(tipoAutenticazione)) {
-						ApiKeyState apiKeyState =  new ApiKeyState(null);
-						appId = apiKeyState.appIdSelected;
-					}
-					boolean bothSslAndToken = false;
-					String tokenPolicy = null;
-					boolean tokenPolicyOR = false;
-					
-					List<IDServizioApplicativoDB> oldSilList = null;
-					if(apsCore.isVisioneOggettiGlobale(userLogin)){
-						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoFruitoreSelected,null,
-								tipoAutenticazione, appId, filtroTipoSA, 
-								bothSslAndToken, tokenPolicy, tokenPolicyOR);
-					}
-					else {
-						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoFruitoreSelected,userLogin,
-								tipoAutenticazione, appId, filtroTipoSA, 
-								bothSslAndToken, tokenPolicy, tokenPolicyOR);
-					}
-					if(oldSilList!=null && !oldSilList.isEmpty()){
-						for (int i = 0; i < oldSilList.size(); i++) {
-							saFruitoriList.add(oldSilList.get(i).getNome());		
-						}
-					}
-				}catch(DriverConfigurazioneNotFound dNotFound){}
+				}
 
 			}
 			
@@ -1091,7 +1087,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, userLogin, credenziale, appIdSoggetti, pddTipologiaSoggettoAutenticati);
 			}
 			
-			if(listSoggettiCompatibili != null && listSoggettiCompatibili.size() >0 ) {
+			if(listSoggettiCompatibili != null && !listSoggettiCompatibili.isEmpty() ) {
 				
 				soggettiAutenticati.add("-"); // elemento nullo di default
 				soggettiAutenticatiLabel.add("-");
@@ -1211,14 +1207,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 				if (strutsBean.nomeservizio == null) {
 					strutsBean.nomeservizio = "";
-					//					strutsBean.provider = "";
-					//					strutsBean.accordo = "";
 					strutsBean.servcorr = "";
-					// this.servpub = "";
-//					if(strutsBean.wsdlimpler.getValue() == null)
-//						strutsBean.wsdlimpler.setValue(new byte[1]);
-//					if(strutsBean.wsdlimplfru.getValue() == null)
-//						strutsBean.wsdlimplfru.setValue(new byte[1]); 
 					strutsBean.tipoconn = "";
 					strutsBean.url = "";
 					strutsBean.nome = "";
@@ -1264,7 +1253,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				}
 				
 				if(strutsBean.endpointtype==null) {
-					if(apsHelper.isModalitaCompleta()==false) {
+					if(!apsHelper.isModalitaCompleta()) {
 						strutsBean.endpointtype = TipiConnettore.HTTP.getNome();
 					}
 					else {
@@ -1303,10 +1292,11 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			
 								if(ptValid){
 			
-									if(strutsBean.nomeservizio==null || "".equals(strutsBean.nomeservizio)){
-										strutsBean.nomeservizio = strutsBean.portType;
-									}
-									else if(strutsBean.nomeservizio.equals(strutsBean.oldPortType)){
+									if(
+											(strutsBean.nomeservizio==null || "".equals(strutsBean.nomeservizio))
+											||
+											(strutsBean.nomeservizio.equals(strutsBean.oldPortType))
+									){
 										strutsBean.nomeservizio = strutsBean.portType;
 									}
 			
@@ -1356,7 +1346,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, userLogin, credenziale, appIdSoggetti, pddTipologiaSoggettoAutenticati);
 					}
 					
-					if(listSoggettiCompatibili != null && listSoggettiCompatibili.size() >0 ) {
+					if(listSoggettiCompatibili != null && !listSoggettiCompatibili.isEmpty() ) {
 						soggettiAutenticati.add("-"); // elemento nullo di default
 						soggettiAutenticatiLabel.add("-");
 						for (IDSoggettoDB soggetto : listSoggettiCompatibili) {
@@ -1621,17 +1611,17 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					strutsBean.autenticazioneToken,strutsBean.tokenPolicy,strutsBean.erogazioneServizioApplicativoServerEnabled,
 					strutsBean.erogazioneServizioApplicativoServer, strutsBean.canaleStato, strutsBean.canale, gestioneCanaliEnabled);
 
-			if(isOk){
-				if(generaPortaApplicativa && apsHelper.isModalitaCompleta() && (strutsBean.nomeSA==null || "".equals(strutsBean.nomeSA) || "-".equals(strutsBean.nomeSA))){
-					if(saSoggetti==null || saSoggetti.length==0 || (saSoggetti.length==1 && "-".equals(saSoggetti[0]))){
-						pd.setMessage(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_PRIMA_DI_POTER_DEFINIRE_UN_ACCORDO_PARTE_SPECIFICA_DEVE_ESSERE_CREATO_UN_SERVIZIO_APPLICATIVO_EROGATO_DAL_SOGGETTO_X_Y,
-								strutsBean.tipoSoggettoErogatore, strutsBean.nomeSoggettoErogatore));
-					}
-					else{
-						pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_NON_E_POSSIBILE_CREARE_L_ACCORDO_PARTE_SPECIFICA_SENZA_SELEZIONARE_UN_SERVIZIO_APPLICATIVO_EROGATORE);
-					}
-					isOk = false;
+			if(isOk &&
+				(generaPortaApplicativa && apsHelper.isModalitaCompleta() && (strutsBean.nomeSA==null || "".equals(strutsBean.nomeSA) || "-".equals(strutsBean.nomeSA)))
+				){
+				if(saSoggetti==null || saSoggetti.length==0 || (saSoggetti.length==1 && "-".equals(saSoggetti[0]))){
+					pd.setMessage(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_PRIMA_DI_POTER_DEFINIRE_UN_ACCORDO_PARTE_SPECIFICA_DEVE_ESSERE_CREATO_UN_SERVIZIO_APPLICATIVO_EROGATO_DAL_SOGGETTO_X_Y,
+							strutsBean.tipoSoggettoErogatore, strutsBean.nomeSoggettoErogatore));
 				}
+				else{
+					pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_NON_E_POSSIBILE_CREARE_L_ACCORDO_PARTE_SPECIFICA_SENZA_SELEZIONARE_UN_SERVIZIO_APPLICATIVO_EROGATORE);
+				}
+				isOk = false;
 			}
 
 			// updateDynamic
@@ -1829,7 +1819,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				asps.setSuperUser(ServletUtils.getUserLoginFromSession(session));
 				
 				// Versione Protocollo
-				if ("-".equals(strutsBean.profilo) == false)
+				if (!"-".equals(strutsBean.profilo))
 					asps.setVersioneProtocollo(strutsBean.profilo);
 				else
 					asps.setVersioneProtocollo(null);
@@ -1871,7 +1861,6 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			Connettore connettore = null;
 			if(!connettoreStatic) {
 				connettore = new Connettore();
-				// strutsBean.nomeservizio);
 				if (strutsBean.endpointtype.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM))
 					connettore.setTipo(strutsBean.tipoconn);
 				else
@@ -2210,7 +2199,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				}
 			}
 		
-			String servizioApplicativo = null, ruolo = null;
+			String servizioApplicativo = null;
+			String ruolo = null;
 			String soggettoAutenticato = null;
 			if(generaPortaApplicativa){
 				servizioApplicativo = strutsBean.nome;

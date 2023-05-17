@@ -59,8 +59,8 @@ public class OperazioniCore extends ControlStationCore {
 			driver = new ClassQueue(con, this.tipoDB);
 			return driver.getOperation(idOperation);
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new ClassQueueException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage());
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new ClassQueueException(getPrefixError(nomeMetodo,  e));
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -78,8 +78,8 @@ public class OperazioniCore extends ControlStationCore {
 			driver = new ClassQueue(con, this.tipoDB);
 			return driver.updateOperation(operation);
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new ClassQueueException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage());
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new ClassQueueException(getPrefixError(nomeMetodo,  e));
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -107,8 +107,8 @@ public class OperazioniCore extends ControlStationCore {
 			driver = new ClassQueue(con, this.tipoDB);
 			return driver.operationsList(ricerca, os, utenti, logAdm, hostname, pezzoAny, daSql, aSql);
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new ClassQueueException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage());
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new ClassQueueException(getPrefixError(nomeMetodo,  e));
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -125,8 +125,8 @@ public class OperazioniCore extends ControlStationCore {
 			driver = new ClassQueue(con, this.tipoDB);
 			return driver.hostnameList();
 		} catch (Exception e) {
-			ControlStationCore.log.error("[OperationsCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new ClassQueueException("[OperationsCore::" + nomeMetodo + "] Error :" + e.getMessage());
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new ClassQueueException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}

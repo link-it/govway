@@ -71,17 +71,17 @@ public class AccordoServizioParteComuneServiziCompostiCore extends ControlStatio
 			return driver.getDriverRegistroServiziDB().idAccordiServizioCompostiList(superuser, ricerca, 
 					soloAccordiConsistentiRest, soloAccordiConsistentiSoap);
 		} catch (DriverRegistroServiziException e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
 			throw e;
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e), e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
 	
-	public List<AccordoServizioParteComune> accordiServizio_serviziComponentiConSoggettoErogatore(IDSoggetto idSoggetto) throws DriverRegistroServiziException {
+	public List<AccordoServizioParteComune> accordiServizioServiziComponentiConSoggettoErogatore(IDSoggetto idSoggetto) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "accordiServizio_serviziComponentiConSoggettoErogatore";
 		DriverRegistroServiziDB driver = null;
@@ -94,17 +94,17 @@ public class AccordoServizioParteComuneServiziCompostiCore extends ControlStatio
 
 			return driver.accordiServizio_serviziComponentiConSoggettoErogatore(idSoggetto);
 		} catch (DriverRegistroServiziException e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
 			throw e;
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e), e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
 
-	public List<AccordoServizioParteComune> accordiServizio_serviziComponenti(IDServizio idServizio) throws DriverRegistroServiziException {
+	public List<AccordoServizioParteComune> accordiServizioServiziComponenti(IDServizio idServizio) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "accordiServizio_serviziComponenti";
 		DriverRegistroServiziDB driver = null;
@@ -117,11 +117,11 @@ public class AccordoServizioParteComuneServiziCompostiCore extends ControlStatio
 
 			return driver.accordiServizio_serviziComponenti(idServizio);
 		} catch (DriverRegistroServiziException e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
 			throw e;
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e), e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -140,11 +140,11 @@ public class AccordoServizioParteComuneServiziCompostiCore extends ControlStatio
 
 			return driver.accordiServizioWithAccordoCooperazione(idAccordoCooperazione);
 		} catch (DriverRegistroServiziException e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
 			throw e;
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e), e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -164,8 +164,8 @@ public class AccordoServizioParteComuneServiziCompostiCore extends ControlStatio
 
 			return driver.getDriverRegistroServiziDB().accordiComponentiList(idAccordo, ricerca);
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e), e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -193,11 +193,11 @@ public class AccordoServizioParteComuneServiziCompostiCore extends ControlStatio
 			sqlQueryObject.addSelectCountField(CostantiDB.SERVIZI + ".id", "tot", true);
 			sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_SERVIZI_COMPOSTO+".id_accordo=?");
 			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo<>?");
-			if(as.getPrivato()==null || as.getPrivato()==false){
+			if(as.getPrivato()==null || !as.getPrivato()){
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".privato=?");
 			}
 			sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id="+CostantiDB.SERVIZI+".id_soggetto");
-			if( isVisioneOggettiGlobale(userLogin)==false){
+			if( !isVisioneOggettiGlobale(userLogin)){
 				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".superuser = ?");
 			}
 			sqlQueryObject.setANDLogicOperator(true);
@@ -216,11 +216,11 @@ public class AccordoServizioParteComuneServiziCompostiCore extends ControlStatio
 			stmt.setLong(1, idAccordoLong);
 			stmt.setLong(2, idAccordoLong);
 			int index = 3;
-			if(as.getPrivato()==null || as.getPrivato()==false){
+			if(as.getPrivato()==null || !as.getPrivato()){
 				stmt.setInt(index, 0);
 				index++;
 			}
-			if( isVisioneOggettiGlobale(userLogin)==false){
+			if( !isVisioneOggettiGlobale(userLogin)){
 				stmt.setString(index, userLogin);
 				index++;
 			}
@@ -234,7 +234,6 @@ public class AccordoServizioParteComuneServiziCompostiCore extends ControlStatio
 
 			List<String> serviziL = new ArrayList<>();
 			List<String> serviziLabelL = new ArrayList<>();
-			//serviziList = new String[totServ+1];
 			serviziL.add("-1");
 			serviziLabelL.add("-");
 
@@ -247,11 +246,11 @@ public class AccordoServizioParteComuneServiziCompostiCore extends ControlStatio
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI, "id","idServizio");
 				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_SERVIZI_COMPOSTO+".id_accordo=?");
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo<>?");
-				if(as.getPrivato()==null || as.getPrivato()==false){
+				if(as.getPrivato()==null || !as.getPrivato()){
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".privato=?");
 				}
 				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id="+CostantiDB.SERVIZI+".id_soggetto");
-				if( isVisioneOggettiGlobale(userLogin)==false){
+				if( !isVisioneOggettiGlobale(userLogin)){
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".superuser = ?");
 				}
 				sqlQueryObject.setANDLogicOperator(true);
@@ -270,16 +269,15 @@ public class AccordoServizioParteComuneServiziCompostiCore extends ControlStatio
 				stmt.setLong(1, idAccordoLong);
 				stmt.setLong(2, idAccordoLong);
 				index = 3;
-				if(as.getPrivato()==null || as.getPrivato()==false){
+				if(as.getPrivato()==null || !as.getPrivato()){
 					stmt.setInt(index, 0);
 					index++;
 				}
-				if( isVisioneOggettiGlobale(userLogin)==false){
+				if( !isVisioneOggettiGlobale(userLogin)){
 					stmt.setString(index, userLogin);
 					index++;
 				}
 				risultato = stmt.executeQuery();
-				//int i=1;
 				while (risultato.next()) {
 					long idServizio = risultato.getLong("idServizio");
 					AccordoServizioParteSpecifica asps =  apsCore.getAccordoServizioParteSpecifica(idServizio);
@@ -288,8 +286,6 @@ public class AccordoServizioParteComuneServiziCompostiCore extends ControlStatio
 						serviziL.add(""+idServizio);
 						serviziLabelL.add(helper.getLabelIdServizio(asps));
 					}
-
-					//i++;
 				}
 				risultato.close();
 				stmt.close();
@@ -298,26 +294,26 @@ public class AccordoServizioParteComuneServiziCompostiCore extends ControlStatio
 				serviziListLabel = serviziLabelL.toArray(new String[1]);
 			}
 		}catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
 		} finally{
 			try {
 				if(risultato!=null) {
 					risultato.close();
 				}
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				// ignore
 			}
 			try {
 				if(stmt!=null) {
 					stmt.close();
 				}
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				// ignore
 			}
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 
-		List<String[]> toRet = new ArrayList<String[]>();
+		List<String[]> toRet = new ArrayList<>();
 		toRet.add(serviziList);
 		toRet.add(serviziListLabel);
 

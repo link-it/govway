@@ -84,9 +84,8 @@ public final class Importer extends Action {
 			ArchiviHelper archiviHelper = new ArchiviHelper(request, pd, session);
 			ArchiviCore archiviCore = new ArchiviCore();
 			
-			// TODO: In caso di ControlStation remota, gestire a quale pdd 'operativa' associare i soggetti senza 'pdd'
 			PddCore pddCore = new PddCore(archiviCore);
-			if(pddCore.existsPddOperativa()==false){
+			if(!pddCore.existsPddOperativa()){
 				
 				archiviHelper.makeMenu();
 				
@@ -148,9 +147,9 @@ public final class Importer extends Action {
 				strutsBean.protocollo = null;
 			}
 			// Volutamente per default si vogliono tutti!
-//			if(strutsBean.protocollo==null){
+/**			if(strutsBean.protocollo==null){
 //				strutsBean.protocollo = archiviCore.getProtocolloDefault();
-//			}
+//			}*/
 			
 			
 			
@@ -168,16 +167,15 @@ public final class Importer extends Action {
 				protocolliForModes.addAll(protocolli);
 			}
 			Map<String, String> importModesMap = importerUtils.getImportModesWithProtocol(protocolliForModes);
-			List<ImportMode> importModes = new ArrayList<ImportMode>();
+			List<ImportMode> importModes = new ArrayList<>();
 			for (String imp : importModesMap.keySet()) {
 				importModes.add(new ImportMode(imp));
 			}
 			strutsBean.importMode = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO);
-			if(strutsBean.importMode!=null){
+			if(strutsBean.importMode!=null &&
 				// verifico che esista nei modes disponibili per i protocolli selezionati
-				if(importModes.contains(new ImportMode(strutsBean.importMode))==false){
-					strutsBean.importMode = null;
-				}
+				!importModes.contains(new ImportMode(strutsBean.importMode))){
+				strutsBean.importMode = null;
 			}
 			if(strutsBean.importMode==null){
 				if(importModes.contains(org.openspcoop2.protocol.basic.Costanti.OPENSPCOOP_IMPORT_ARCHIVE_MODE)){
@@ -194,17 +192,16 @@ public final class Importer extends Action {
 			
 			// import types
 			String protocolloEffettivo = importModesMap.get(strutsBean.importMode);
-			//System.out.println("PROTOCOLLO EFFETTIVO: "+protocolloEffettivo);
+			/**System.out.println("PROTOCOLLO EFFETTIVO: "+protocolloEffettivo);*/
 			List<ArchiveModeType> importTypes = null;
 			if(strutsBean.importMode!=null){
 				importTypes = importerUtils.getImportModeTypes(archiveMode, protocolloEffettivo);
 			}
 			strutsBean.importType = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO);
-			if(strutsBean.importType!=null){
+			if(strutsBean.importType!=null &&
 				// verifico che esista nei tyoes disponibili per il mode selezionato
-				if(importTypes.contains(new ArchiveModeType(strutsBean.importType))==false){
-					strutsBean.importType = null;
-				}
+				!importTypes.contains(new ArchiveModeType(strutsBean.importType))){
+				strutsBean.importType = null;
 			}
 			if(strutsBean.importType==null){
 				strutsBean.importType = importTypes.get(0).toString();
@@ -455,13 +452,13 @@ public final class Importer extends Action {
 			}
 			
 			// MapPlaceHolder			
-			MapPlaceholder importInformationMissing_placeholder = null;
+			MapPlaceholder importInformationMissingPlaceholder = null;
 			if(isOk){
 				try{
 					if(!archiviHelper.isEditModeInProgress()){
-						importInformationMissing_placeholder = archiviHelper.readPlaceholder();
-						if(importInformationMissing_placeholder!=null){
-							strutsBean.importInformationMissing_globalPlaceholder.putAll(importInformationMissing_placeholder);
+						importInformationMissingPlaceholder = archiviHelper.readPlaceholder();
+						if(importInformationMissingPlaceholder!=null){
+							strutsBean.importInformationMissing_globalPlaceholder.putAll(importInformationMissingPlaceholder);
 						}
 					}
 				}catch(Exception e){
@@ -506,7 +503,7 @@ public final class Importer extends Action {
 								strutsBean.importInformationMissing_invocazioneServizio,
 								strutsBean.importInformationMissing_connettore,
 								strutsBean.importInformationMissing_credenziali,
-								importInformationMissing_placeholder,
+								importInformationMissingPlaceholder,
 								strutsBean.importInformationMissingCollectionFilePath, 
 								strutsBean.importInformationMissingObjectId,
 								importInformationMissingCollection);
@@ -532,15 +529,14 @@ public final class Importer extends Action {
 			}
 			
 			// check requisiti wizard
-			if(isOk){
-				if(archive!=null && archive.getInformationMissing()!=null && archive.getInformationMissing().getWizard()!=null){
-					try{
-						isOk = archiviHelper.checkRequiisitiWizard(archive.getInformationMissing().getWizard());
-					}catch(Exception e){
-						ControlStationCore.logError(e.getMessage(), e);
-						pd.setMessage(e.getMessage());
-						isOk = false;
-					}
+			if(isOk &&
+				archive!=null && archive.getInformationMissing()!=null && archive.getInformationMissing().getWizard()!=null){
+				try{
+					isOk = archiviHelper.checkRequiisitiWizard(archive.getInformationMissing().getWizard());
+				}catch(Exception e){
+					ControlStationCore.logError(e.getMessage(), e);
+					pd.setMessage(e.getMessage());
+					isOk = false;
 				}
 			}
 			
@@ -551,7 +547,7 @@ public final class Importer extends Action {
 					archiviCore.validateArchive(archive, protocolloEffettivo, 
 							strutsBean.validazioneDocumenti, importInformationMissingCollection, userLogin, deleter);
 				}catch(ImportInformationMissingException e){
-					//ControlStationCore.logError(importInformationMissingException.getMessage(), importInformationMissingException);
+					/**ControlStationCore.logError(importInformationMissingException.getMessage(), importInformationMissingException);*/
 					importInformationMissingException = e;
 					isOk = false;
 				}
@@ -563,16 +559,15 @@ public final class Importer extends Action {
 			}
 			
 			// finalizeArchive
-			if(isOk){
-				if(archive!=null){
-					try{
-						archiviCore.finalizeArchive(archive, archiveModeType, archiveMode, protocolloEffettivo,strutsBean.validazioneDocumenti,
-								strutsBean.importInformationMissing_globalPlaceholder);
-					}catch(Exception e){
-						ControlStationCore.logError(e.getMessage(), e);
-						pd.setMessage(e.getMessage());
-						isOk = false;
-					}
+			if(isOk &&
+				archive!=null){
+				try{
+					archiviCore.finalizeArchive(archive, archiveModeType, archiveMode, protocolloEffettivo,strutsBean.validazioneDocumenti,
+							strutsBean.importInformationMissing_globalPlaceholder);
+				}catch(Exception e){
+					ControlStationCore.logError(e.getMessage(), e);
+					pd.setMessage(e.getMessage());
+					isOk = false;
 				}
 			}
 						
@@ -629,10 +624,9 @@ public final class Importer extends Action {
 				
 				pd.setDati(dati);
 
-				if(pd.getMessage()!=null){
-					if(importInformationMissingException==null){
-						pd.setMessage(ArchiviCostanti.LABEL_IMPORT_ERROR_HEADER+StringEscapeUtils.escapeHtml(pd.getMessage()));
-					}
+				if(pd.getMessage()!=null &&
+					importInformationMissingException==null){
+					pd.setMessage(ArchiviCostanti.LABEL_IMPORT_ERROR_HEADER+StringEscapeUtils.escapeHtml(pd.getMessage()));
 				}
 				
 				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
@@ -650,7 +644,7 @@ public final class Importer extends Action {
 
 			dati.add(ServletUtils.getDataElementForEditModeFinished());
 			
-			/*
+			/**
 			System.out.println("IMPORT COME PROTOCOL["+protocolloEffettivo+"] MODE["+strutsBean.importMode+"] TIPO["+
 					strutsBean.importType+"]");
 			

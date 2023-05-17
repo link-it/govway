@@ -20,7 +20,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.apc;
 
 import java.sql.Connection;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -70,8 +70,8 @@ public class AccordoServizioParteComuneInUsoCore extends ControlStationCore {
 			return driver.isAccordoInUso(idAccordo, whereIsInUso, normalizeObjectIds);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e), e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -92,8 +92,8 @@ public class AccordoServizioParteComuneInUsoCore extends ControlStationCore {
 			return driver.isAccordoInUso(as, whereIsInUso, normalizeObjectIds);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e), e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -101,7 +101,7 @@ public class AccordoServizioParteComuneInUsoCore extends ControlStationCore {
 	}
 	
 	public String getDettagliAccordoInUso(IDAccordo idAccordo) throws DriverRegistroServiziException {
-		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+		EnumMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new EnumMap<>(ErrorsHandlerCostant.class);
 		boolean normalizeObjectIds = true;
 		boolean apcInUso  = this.isAccordoInUso(idAccordo, whereIsInUso, normalizeObjectIds );
 		
@@ -120,7 +120,7 @@ public class AccordoServizioParteComuneInUsoCore extends ControlStationCore {
 		return inUsoMessage.toString();
 	}
 	
-	public boolean isRisorsaInUso(IDResource idRisorsa, HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverRegistroServiziException {
+	public boolean isRisorsaInUso(IDResource idRisorsa, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "isRisorsaInUso";
 		DriverControlStationDB driver = null;
@@ -134,8 +134,8 @@ public class AccordoServizioParteComuneInUsoCore extends ControlStationCore {
 			return driver.isRisorsaInUso(idRisorsa, whereIsInUso, normalizeObjectIds);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -143,7 +143,7 @@ public class AccordoServizioParteComuneInUsoCore extends ControlStationCore {
 	}
 	
 	public String getDettagliRisorsaInUso(IDResource idResource) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
-		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+		EnumMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new EnumMap<>(ErrorsHandlerCostant.class);
 		boolean normalizeObjectIds = true;
 		boolean risorsaInUso  = this.isRisorsaInUso(idResource, whereIsInUso, normalizeObjectIds );
 		
@@ -152,23 +152,7 @@ public class AccordoServizioParteComuneInUsoCore extends ControlStationCore {
 			
 			// traduco nomeRisorsa in path
 			AccordoServizioParteComuneSintetico as = this.sinteticoCore.getAccordoServizioSintetico(idResource.getIdAccordo());			
-			String methodPath = null;
-			if(as.getResource()!=null) {
-				for (int j = 0; j < as.getResource().size(); j++) {
-					ResourceSintetica risorsa = as.getResource().get(j);
-					if (idResource.getNome().equals(risorsa.getNome())) {
-						try {
-							methodPath = NamingUtils.getLabelResource(risorsa);
-						}catch(Exception e) {
-							throw new DriverRegistroServiziException(e.getMessage(),e);
-						}
-						break;
-					}
-				}
-			}
-			if(methodPath==null) {
-				methodPath = idResource.getNome();
-			}
+			String methodPath = getMethodPath(idResource, as);
 			
 			String s = DBOggettiInUsoUtils.toString(idResource, methodPath, whereIsInUso, false, "\n");
 			if(s!=null && s.startsWith("\n") && s.length()>1) {
@@ -182,8 +166,28 @@ public class AccordoServizioParteComuneInUsoCore extends ControlStationCore {
 		
 		return inUsoMessage.toString();
 	}
+	private String getMethodPath(IDResource idResource, AccordoServizioParteComuneSintetico as) throws DriverRegistroServiziException {
+		String methodPath = null;
+		if(as.getResource()!=null) {
+			for (int j = 0; j < as.getResource().size(); j++) {
+				ResourceSintetica risorsa = as.getResource().get(j);
+				if (idResource.getNome().equals(risorsa.getNome())) {
+					try {
+						methodPath = NamingUtils.getLabelResource(risorsa);
+					}catch(Exception e) {
+						throw new DriverRegistroServiziException(e.getMessage(),e);
+					}
+					break;
+				}
+			}
+		}
+		if(methodPath==null) {
+			methodPath = idResource.getNome();
+		}
+		return methodPath;
+	}
 	
-	public boolean isPortTypeInUso(IDPortType idPT, HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverRegistroServiziException {
+	public boolean isPortTypeInUso(IDPortType idPT, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "isPortTypeInUso";
 		DriverControlStationDB driver = null;
@@ -197,16 +201,16 @@ public class AccordoServizioParteComuneInUsoCore extends ControlStationCore {
 			return driver.isPortTypeInUso(idPT, whereIsInUso, normalizeObjectIds);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 
 	}
 	
-	public String getDettagliPortTypeInUso(IDPortType idPT) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
-		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+	public String getDettagliPortTypeInUso(IDPortType idPT) throws DriverRegistroServiziException {
+		EnumMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new EnumMap<>(ErrorsHandlerCostant.class);
 		boolean normalizeObjectIds = true;
 		boolean ptInUso  = this.isPortTypeInUso(idPT, whereIsInUso, normalizeObjectIds );
 		
@@ -225,7 +229,7 @@ public class AccordoServizioParteComuneInUsoCore extends ControlStationCore {
 		return inUsoMessage.toString();
 	}
 	
-	public boolean isOperazioneInUso(IDPortTypeAzione idOperazione, HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverRegistroServiziException {
+	public boolean isOperazioneInUso(IDPortTypeAzione idOperazione, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "isOperazioneInUso";
 		DriverControlStationDB driver = null;
@@ -239,16 +243,16 @@ public class AccordoServizioParteComuneInUsoCore extends ControlStationCore {
 			return driver.isOperazioneInUso(idOperazione, whereIsInUso, normalizeObjectIds);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 
 	}
 	
-	public String getDettagliOperazioneInUso(IDPortTypeAzione idOperazione) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
-		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+	public String getDettagliOperazioneInUso(IDPortTypeAzione idOperazione) throws DriverRegistroServiziException {
+		EnumMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new EnumMap<>(ErrorsHandlerCostant.class);
 		boolean normalizeObjectIds = true;
 		boolean risorsaInUso  = this.isOperazioneInUso(idOperazione, whereIsInUso, normalizeObjectIds );
 		

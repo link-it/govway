@@ -45,7 +45,6 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
-import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
@@ -61,8 +60,8 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
@@ -409,13 +408,11 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			String postBackElementName = apsHelper.getPostBackElementName();
 			boolean initConnettore = false;
 			// Controllo se ho modificato l'azione allora ricalcolo il nome
-			if(postBackElementName != null ){
-				if(postBackElementName.equalsIgnoreCase(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CREAZIONE_CONNETTORE)){
-					// devo resettare il connettore
-					if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
-						initConnettore = true;
-					}
-				}
+			if(postBackElementName != null &&
+				postBackElementName.equalsIgnoreCase(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CREAZIONE_CONNETTORE) &&
+				// devo resettare il connettore
+				ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
+				initConnettore = true;
 			}
 			
 			// ServiziApplicativi
@@ -425,41 +422,36 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			List<String> saList = new ArrayList<>();
 			saList.add("-");
 			if(idSoggettoFruitore!=null){
-				try{
-					String auth = fruizioneAutenticazione;
-					if(auth==null || "".equals(auth)){
-						auth = apsCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
-					}
-					CredenzialeTipo credenziale = CredenzialeTipo.toEnumConstant(auth);
-					Boolean appId = null;
-					if(CredenzialeTipo.APIKEY.equals(credenziale)) {
-						ApiKeyState apiKeyState =  new ApiKeyState(null);
-						appId = apiKeyState.appIdSelected;
-					}
-					boolean bothSslAndToken = false;
-					String tokenPolicyNull = null;
-					boolean tokenPolicyOR = false;
-					
-					List<IDServizioApplicativoDB> oldSilList = null;
-					if(apsCore.isVisioneOggettiGlobale(userLogin)){
-						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoFruitore,null,
-								credenziale, appId, filtroTipoSA, 
-								bothSslAndToken, tokenPolicyNull, tokenPolicyOR);
-					}
-					else {
-						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoFruitore,userLogin,
-								credenziale, appId, filtroTipoSA, 
-								bothSslAndToken, tokenPolicyNull, tokenPolicyOR);
-					}
-					if(oldSilList!=null && !oldSilList.isEmpty()){
-						for (int i = 0; i < oldSilList.size(); i++) {
-							saList.add(oldSilList.get(i).getNome());		
-						}
-					}
-				}catch(DriverConfigurazioneNotFound dNotFound){
-					// ignore
+				String auth = fruizioneAutenticazione;
+				if(auth==null || "".equals(auth)){
+					auth = apsCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
 				}
-
+				CredenzialeTipo credenziale = CredenzialeTipo.toEnumConstant(auth);
+				Boolean appId = null;
+				if(CredenzialeTipo.APIKEY.equals(credenziale)) {
+					ApiKeyState apiKeyState =  new ApiKeyState(null);
+					appId = apiKeyState.appIdSelected;
+				}
+				boolean bothSslAndToken = false;
+				String tokenPolicyNull = null;
+				boolean tokenPolicyOR = false;
+				
+				List<IDServizioApplicativoDB> oldSilList = null;
+				if(apsCore.isVisioneOggettiGlobale(userLogin)){
+					oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoFruitore,null,
+							credenziale, appId, filtroTipoSA, 
+							bothSslAndToken, tokenPolicyNull, tokenPolicyOR);
+				}
+				else {
+					oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoFruitore,userLogin,
+							credenziale, appId, filtroTipoSA, 
+							bothSslAndToken, tokenPolicyNull, tokenPolicyOR);
+				}
+				if(oldSilList!=null && !oldSilList.isEmpty()){
+					for (int i = 0; i < oldSilList.size(); i++) {
+						saList.add(oldSilList.get(i).getNome());		
+					}
+				}
 			}
 
 			List<Parameter> lstParm = porteDelegateHelper.getTitoloPD(parentPD, idSoggFruitoreDelServizio, idAsps, idFruizione);
@@ -595,7 +587,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 						httpspwdprivatekey = "";
 						
 						if(endpointtype==null) {
-							if(apsHelper.isModalitaCompleta()==false) {
+							if(!apsHelper.isModalitaCompleta()) {
 								endpointtype = TipiConnettore.HTTP.getNome();
 							}
 							else {

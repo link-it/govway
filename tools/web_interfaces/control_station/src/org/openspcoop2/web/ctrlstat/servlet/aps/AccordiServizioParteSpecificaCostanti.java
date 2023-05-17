@@ -444,4 +444,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public static final String MESSAGGIO_ERRORE_CAMBIO_EROGATORE_NON_COMPATIBILE_ESISTE_FRUIZIONE = "I dati identificativi forniti indirizzano una API {0} per la quale esiste già una fruizione; attualmente non è supportato questo tipo di aggiornamento.";
 	public static final String MESSAGGIO_ERRORE_CAMBIO_EROGATORE_NON_COMPATIBILE_ESISTE_EROGAZIONE = "I dati identificativi forniti indirizzano una API {0} per la quale esiste già una erogazione; attualmente non è supportato questo tipo di aggiornamento.";
 
+	
+	public static final String MESSAGGIO_NON_ESISTONO_SOGGETTO_EROGATORI_DI_API = "Non risultano registrati soggetti che possano erogare API";
+	public static final String MESSAGGIO_NON_ESISTONO_SOGGETTI = "Non risultano registrati soggetti";
 }

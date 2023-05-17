@@ -82,15 +82,15 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 			protocol.createArchive().setProtocolInfo(as);
 		}catch (Exception e) {
 			if(validazioneDocumenti) {
-				ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-				throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+				ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+				throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e), e);
 			}
 		}
 	}
 
 	
 	public void popolaResourceDaUnAltroASPC(AccordoServizioParteComune aspcDestinazione, AccordoServizioParteComune aspcSorgente, 
-			boolean aggiornaRisorseEsistenti, boolean eliminaRisorseNonPresentiNuovaInterfaccia, List<IDResource> risorseEliminate) throws Exception{
+			boolean aggiornaRisorseEsistenti, boolean eliminaRisorseNonPresentiNuovaInterfaccia, List<IDResource> risorseEliminate) throws DriverRegistroServiziException{
 		String nomeMetodo = "popolaResourceDaUnAltroASPC";
 		try {
 			if(aspcSorgente.sizeResourceList() > 0){
@@ -171,11 +171,10 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 									ridefinisci = true;
 								}
 								// filtro duplicati gestito nel BasicArchive.setProtocolInfo
-								if(vecchiaResource.getFiltroDuplicati()!=null) {
-									if(!vecchiaResource.getFiltroDuplicati().equals(nuovoResource.getFiltroDuplicati())) {
-										nuovoResource.setFiltroDuplicati(vecchiaResource.getFiltroDuplicati());
-										ridefinisci = true;
-									}
+								if(vecchiaResource.getFiltroDuplicati()!=null &&
+									!vecchiaResource.getFiltroDuplicati().equals(nuovoResource.getFiltroDuplicati())) {
+									nuovoResource.setFiltroDuplicati(vecchiaResource.getFiltroDuplicati());
+									ridefinisci = true;
 								}
 								if(ridefinisci) {
 									nuovoResource.setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
@@ -192,7 +191,7 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromAccordo(aspcDestinazione);
 				
 				if(aspcDestinazione.sizeResourceList() > 0){
-					List<Resource> risorseDaEliminare = new ArrayList<Resource>();
+					List<Resource> risorseDaEliminare = new ArrayList<>();
 					for (Resource oldResource : aspcDestinazione.getResourceList()) {
 						
 						Resource find = find(oldResource, aspcSorgente.getResourceList());
@@ -202,7 +201,7 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 						
 					}
 					if(!risorseDaEliminare.isEmpty()) {
-						while(risorseDaEliminare.size()>0) {
+						while(!risorseDaEliminare.isEmpty()) {
 							Resource risorsaDaEliminare = risorseDaEliminare.remove(0);
 							for (int i = 0; i < aspcDestinazione.sizeResourceList(); i++) {
 								if(aspcDestinazione.getResource(i).getNome().equals(risorsaDaEliminare.getNome())) {
@@ -222,7 +221,7 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 			}
 		}
 		catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
 			throw e;
 		}
 	}
@@ -262,7 +261,7 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 	
 	public void popolaPorttypeOperationDaUnAltroASPC(AccordoServizioParteComune aspcDestinazione, AccordoServizioParteComune aspcSorgente, 
 			boolean aggiornaServiziAzioniEsistenti, boolean eliminaServiziAzioniNonPresentiNuovaInterfaccia,
-			List<IDPortType> portTypeEliminati, List<IDPortTypeAzione> operationEliminate) throws Exception{
+			List<IDPortType> portTypeEliminati, List<IDPortTypeAzione> operationEliminate) throws DriverRegistroServiziException{
 		String nomeMetodo = "popolaPorttypeOperationDaUnAltroASPC";
 		try {
 			IDAccordo idAccordo = null;
@@ -352,11 +351,10 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 											ridefinisci = true;
 										}
 										// filtro duplicati gestito nel BasicArchive.setProtocolInfo
-										if(vecchiaAzione.getFiltroDuplicati()!=null) {
-											if(!vecchiaAzione.getFiltroDuplicati().equals(nuovaAzione.getFiltroDuplicati())) {
-												nuovaAzione.setFiltroDuplicati(vecchiaAzione.getFiltroDuplicati());
-												ridefinisci = true;
-											}
+										if(vecchiaAzione.getFiltroDuplicati()!=null &&
+											!vecchiaAzione.getFiltroDuplicati().equals(nuovaAzione.getFiltroDuplicati())) {
+											nuovaAzione.setFiltroDuplicati(vecchiaAzione.getFiltroDuplicati());
+											ridefinisci = true;
 										}
 										if(ridefinisci) {
 											nuovaAzione.setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
@@ -445,7 +443,7 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 				
 				// elimino port type non più presenti
 				if(aspcDestinazione.sizePortTypeList() > 0){
-					List<PortType> portTypeDaEliminare = new ArrayList<PortType>();
+					List<PortType> portTypeDaEliminare = new ArrayList<>();
 					for (PortType oldPortType : aspcDestinazione.getPortTypeList()) {
 						
 						if(aspcSorgente.sizePortTypeList() > 0){
@@ -463,7 +461,7 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 						
 					}
 					if(!portTypeDaEliminare.isEmpty()) {
-						while(portTypeDaEliminare.size()>0) {
+						while(!portTypeDaEliminare.isEmpty()) {
 							PortType ptDaEliminare = portTypeDaEliminare.remove(0);
 							for (int i = 0; i < aspcDestinazione.sizePortTypeList(); i++) {
 								if(aspcDestinazione.getPortType(i).getNome().equals(ptDaEliminare.getNome())) {
@@ -511,7 +509,7 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 								}
 							}
 						}
-						while(operationDaEliminare.size()>0) {
+						while(!operationDaEliminare.isEmpty()) {
 							Operation opDaEliminare = operationDaEliminare.remove(0);
 							for (int i = 0; i < oldPortType.sizeAzioneList(); i++) {
 								if(oldPortType.getAzione(i).getNome().equals(opDaEliminare.getNome())) {
@@ -535,19 +533,21 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 			}
 		}
 		catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
 			throw e;
 		}
 	}
 	
-
+	private static final String WSDL_PREFIX = "WsdlTypes_";
+	private static final String COMPARE_ERROR = "Compare external failed: ";
+	
 	public void estraiSchemiFromWSDLTypesAsAllegati(AccordoServizioParteComune as, byte[] wsdl, String tipoWSDL, Map<String, byte[]> schemiAggiuntiInQuestaOperazione) throws Exception{
 				
 		String nomeMetodo = "addSchemiFromWSDLTypesAsAllegati";
 		try {
 			
 			// Allegati
-			List<byte[]> schemiPresentiInternamenteTypes = new ArrayList<byte[]>();
+			List<byte[]> schemiPresentiInternamenteTypes = new ArrayList<>();
 			List<String> nomiSchemiPresentiInternamenteTypes = new ArrayList<>();
 			
 			try{
@@ -563,8 +563,7 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 				Map<String, String> declarationNamespacesWSDL = xmlUtils.getNamespaceDeclaration(dConAllegati.getDocumentElement());
 				
 				List<Node> schemi = wsdlUtilities.getSchemiXSD(dConAllegati);
-				//System.out.println("SCHEMI ["+schemi.size()+"]");
-				if(schemi.size()>0){
+				if(!schemi.isEmpty()){
 					wsdlUtilities.removeSchemiIntoTypes(dConAllegati);
 					
 					for (int i = 0; i < schemi.size(); i++) {
@@ -578,7 +577,6 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 						boolean schemaWithOnlyImport = xsdUtils.isSchemaWithOnlyImports(schema);
 						if(schemaWithOnlyImport){
 							// riaggiungo l'import
-							//System.out.println("SOLO IMPORTS");
 							wsdlUtilities.addSchemaIntoTypes(dConAllegati, schema);
 							continue;
 						}
@@ -599,67 +597,64 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 									byte[] content = schemiAggiuntiInQuestaOperazione.get(nomeFile);
 									// check se si tratta di questo documento
 									try{
-										String tmp = checkXsdAlreadyExists(archiviCore, xmlUtils, content, nomeFile, schema);
+										String tmp = checkXsdAlreadyExists(xmlUtils, content, nomeFile, schema);
 										if(tmp!=null){
 											nomeSchema = tmp;
 											break;
 										}
-									}catch(Throwable t){
-										log.error("Compare external failed: "+t.getMessage(),t);
+									}catch(Exception t){
+										logError(COMPARE_ERROR+t.getMessage(),t);
 									}
 								}
 							}
-							if(nomeSchema==null){
-								if(as.getByteWsdlDefinitorio()!=null){
-									// check se si tratta di questo documento
+							if(nomeSchema==null &&
+								as.getByteWsdlDefinitorio()!=null){
+								// check se si tratta di questo documento
+								try{
+									String tmp = checkXsdAlreadyExists(xmlUtils, as.getByteWsdlDefinitorio(), 
+											Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_INTERFACCIA_DEFINITORIA, schema);
+									if(tmp!=null){
+										nomeSchema = tmp;
+									}
+								}catch(Exception t){
+									logError(COMPARE_ERROR+t.getMessage(),t);
+								}
+							}
+							if(nomeSchema==null &&
+								as.sizeAllegatoList()>0){
+								for (Documento docTMP : as.getAllegatoList()) {
+									String nomeDocumento = docTMP.getFile();
 									try{
-										String tmp = checkXsdAlreadyExists(archiviCore, xmlUtils, as.getByteWsdlDefinitorio(), 
-												Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_INTERFACCIA_DEFINITORIA, schema);
-										if(tmp!=null){
-											nomeSchema = tmp;
+										Documento doc = archiviCore.getDocumento(docTMP.getId(),true);
+										if(xsdUtils.isXSDSchema(doc.getByteContenuto())){
+											// check se si tratta di questo documento
+											String tmp = checkXsdAlreadyExists(xmlUtils, doc.getByteContenuto(), nomeDocumento, schema);
+											if(tmp!=null){
+												nomeSchema = tmp;
+												break;
+											}
 										}
-									}catch(Throwable t){
-										log.error("Compare external failed: "+t.getMessage(),t);
+									}catch(Exception t){
+										logError(COMPARE_ERROR+t.getMessage(),t);
 									}
 								}
 							}
-							if(nomeSchema==null){
-								if(as.sizeAllegatoList()>0){
-									for (Documento docTMP : as.getAllegatoList()) {
-										String nomeDocumento = docTMP.getFile();
-										try{
-											Documento doc = archiviCore.getDocumento(docTMP.getId(),true);
-											if(xsdUtils.isXSDSchema(doc.getByteContenuto())){
-												// check se si tratta di questo documento
-												String tmp = checkXsdAlreadyExists(archiviCore, xmlUtils, doc.getByteContenuto(), nomeDocumento, schema);
-												if(tmp!=null){
-													nomeSchema = tmp;
-													break;
-												}
+							if(nomeSchema==null &&
+								as.sizeSpecificaSemiformaleList()>0){
+								for (Documento docTMP : as.getSpecificaSemiformaleList()) {
+									String nomeDocumento = docTMP.getFile();
+									try{
+										Documento doc = archiviCore.getDocumento(docTMP.getId(),true);
+										if(xsdUtils.isXSDSchema(doc.getByteContenuto())){
+											// check se si tratta di questo documento
+											String tmp = checkXsdAlreadyExists(xmlUtils, doc.getByteContenuto(), nomeDocumento, schema);
+											if(tmp!=null){
+												nomeSchema = tmp;
+												break;
 											}
-										}catch(Throwable t){
-											log.error("Compare external failed: "+t.getMessage(),t);
 										}
-									}
-								}
-							}
-							if(nomeSchema==null){
-								if(as.sizeSpecificaSemiformaleList()>0){
-									for (Documento docTMP : as.getSpecificaSemiformaleList()) {
-										String nomeDocumento = docTMP.getFile();
-										try{
-											Documento doc = archiviCore.getDocumento(docTMP.getId(),true);
-											if(xsdUtils.isXSDSchema(doc.getByteContenuto())){
-												// check se si tratta di questo documento
-												String tmp = checkXsdAlreadyExists(archiviCore, xmlUtils, doc.getByteContenuto(), nomeDocumento, schema);
-												if(tmp!=null){
-													nomeSchema = tmp;
-													break;
-												}
-											}
-										}catch(Throwable t){
-											log.error("Compare external failed: "+t.getMessage(),t);
-										}
+									}catch(Exception t){
+										logError(COMPARE_ERROR+t.getMessage(),t);
 									}
 								}
 							}
@@ -669,7 +664,7 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 							if(nomeSchema==null){
 								// build new nome
 								int index = 1;
-								nomeSchema = "WsdlTypes_"+(index)+".xsd";
+								nomeSchema = WSDL_PREFIX+(index)+".xsd";
 								while(index<10000){ // 10000 allegati??
 									boolean found = false;
 									if(nomiSchemiPresentiInternamenteTypes.contains(nomeSchema)){
@@ -677,7 +672,7 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 									}
 									else{
 										for (Documento vecchioAllegatoTMP : as.getAllegatoList()) {
-											if(vecchioAllegatoTMP.getFile().startsWith("WsdlTypes_") && vecchioAllegatoTMP.getFile().equals(nomeSchema)){
+											if(vecchioAllegatoTMP.getFile().startsWith(WSDL_PREFIX) && vecchioAllegatoTMP.getFile().equals(nomeSchema)){
 												found = true;
 												break;
 											}
@@ -687,15 +682,13 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 										break;
 									}
 									index++;
-									nomeSchema = "WsdlTypes_"+(index)+".xsd";
+									nomeSchema = WSDL_PREFIX+(index)+".xsd";
 								}
-								//System.out.println("CALCOLATO ["+nomeSchema+"]");
 							}
 							
-							//System.out.println("ADD MODIFICATO");
 							wsdlUtilities.addImportSchemaIntoTypes(dConAllegati, targetNamespace, nomeSchema);
 							
-							if(alreadyExistsSchema==false){
+							if(!alreadyExistsSchema){
 								
 								nomiSchemiPresentiInternamenteTypes.add(nomeSchema);
 								schemiPresentiInternamenteTypes.add(xmlUtils.toByteArray(schema));
@@ -705,11 +698,10 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 						}
 						else{
 							try{
-								log.error("Presente schema senza targetNamespace? (Viene usato l'originale) ["+xmlUtils.toString(schema)+"]");
-							}catch(Throwable t){
-								log.error("Presente schema senza targetNamespace? (Viene usato l'originale)");
+								logError("Presente schema senza targetNamespace? (Viene usato l'originale) ["+xmlUtils.toString(schema)+"]");
+							}catch(Exception t){
+								logError("Presente schema senza targetNamespace? (Viene usato l'originale)");
 							}
-							//System.out.println("NON VALIDO??? RIPRISTINO ORIGINALE");
 							wsdlUtilities.addSchemaIntoTypes(dConAllegati, schema);
 						}
 						
@@ -730,11 +722,11 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 					}
 				}
 				
-			}catch(Throwable t){
-				log.error("Errore durante la lettura degli schemi presenti all'interno del wsdl: "+t.getMessage(),t);
+			}catch(Exception t){
+				logError("Errore durante la lettura degli schemi presenti all'interno del wsdl: "+t.getMessage(),t);
 			}
 			
-			if(nomiSchemiPresentiInternamenteTypes.size() > 0){
+			if(!nomiSchemiPresentiInternamenteTypes.isEmpty()){
 				int i = 0;
 				for (String nomeNuovoAllegato : nomiSchemiPresentiInternamenteTypes) {
 					
@@ -771,39 +763,39 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 						
 						i++;
 						
-					}catch(Throwable t){
-						log.error("Errore durante l'aggiornamento dello schema ["+nomeNuovoAllegato+"] estratto dal wsdl: "+t.getMessage(),t);
+					}catch(Exception t){
+						logError("Errore durante l'aggiornamento dello schema ["+nomeNuovoAllegato+"] estratto dal wsdl: "+t.getMessage(),t);
 					}
 				}
 			}
 			
 		}
 		catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
 			throw e;
 		}
 	}
 	
-	private String checkXsdAlreadyExists(ArchiviCore archiviCore,AbstractXMLUtils xmlUtils, byte[] xsdEsistenteContenuto, String xsdEsistenteNome,  Node schema){
+	private String checkXsdAlreadyExists(AbstractXMLUtils xmlUtils, byte[] xsdEsistenteContenuto, String xsdEsistenteNome,  Node schema){
 		// check se si tratta di questo documento
 		try{
 			Node n = xmlUtils.newElement(xsdEsistenteContenuto);
 			XMLDiff xmlDiff = new XMLDiff(OpenSPCoop2MessageFactory.getDefaultMessageFactory());
-//			System.out.println("["+vecchioAllegatoTMP.getFile()+"] N:"+xmlUtils.toString(n));
-//			System.out.println("["+vecchioAllegatoTMP.getFile()+"] Schema:"+xmlUtils.toString(schema));
+			/**System.out.println("["+vecchioAllegatoTMP.getFile()+"] N:"+xmlUtils.toString(n));
+			System.out.println("["+vecchioAllegatoTMP.getFile()+"] Schema:"+xmlUtils.toString(schema));*/
 			// NOTA: la ricostruzione in N2 è necessaria, poichè schema si porta dietro il definition wsdl (non ho capito perchè)
 			Node n2 = xmlUtils.newElement(xmlUtils.toString(schema).getBytes());
-//			System.out.println("["+vecchioAllegatoTMP.getFile()+"] N2:"+xmlUtils.toString(n2));
+			/**System.out.println("["+vecchioAllegatoTMP.getFile()+"] N2:"+xmlUtils.toString(n2));*/
 			if(xmlDiff.diff(n, n2)){
 				return xsdEsistenteNome;
-				//System.out.println("["+vecchioAllegatoTMP.getFile()+"] TROVATO UGUALE ["+nomeSchema+"]");
+				/**System.out.println("["+vecchioAllegatoTMP.getFile()+"] TROVATO UGUALE ["+nomeSchema+"]");*/
 			}
-//			else{
-//				System.out.println("["+vecchioAllegatoTMP.getFile()+"] TROVATO NON UGUALE: \n"+xmlDiff.getDifferenceDetails());
-//			}
+			/**else{
+				System.out.println("["+vecchioAllegatoTMP.getFile()+"] TROVATO NON UGUALE: \n"+xmlDiff.getDifferenceDetails());
+			}*/
 			return null;
-		}catch(Throwable t){
-			log.error("Compare failed: "+t.getMessage(),t);
+		}catch(Exception t){
+			logError("Compare failed: "+t.getMessage(),t);
 			return null;
 		}
 	}

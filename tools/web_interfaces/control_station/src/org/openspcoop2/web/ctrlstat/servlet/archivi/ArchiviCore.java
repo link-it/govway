@@ -51,6 +51,7 @@ import org.openspcoop2.protocol.sdk.archive.MapPlaceholder;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 
 /**
@@ -72,8 +73,8 @@ public class ArchiviCore extends ControlStationCore {
 	public boolean isCascadeEnabled(List<ExportMode> exportModes,String exportMode){
 		boolean cascadeEnabled = false;
 		for (ExportMode exp : exportModes) {
-			if(exp.equals(exportMode)){
-				if(exp.getCascade()!=null &&
+			if(exp.equals(exportMode) &&
+				exp.getCascade()!=null &&
 						(exp.getCascade().isCascadePdd() || 
 								exp.getCascade().isCascadeRuoli() || 
 								exp.getCascade().isCascadeScope() || 
@@ -85,10 +86,11 @@ public class ArchiviCore extends ControlStationCore {
 								exp.getCascade().isCascadeAccordoServizioComposto() ||
 								exp.getCascade().isCascadeAccordoServizioParteComune() ||
 								exp.getCascade().isCascadeAccordoServizioParteSpecifica() ||
-								exp.getCascade().isCascadeFruizioni()) ){
-					cascadeEnabled = true;
-					break;
-				}
+								exp.getCascade().isCascadeFruizioni()
+						) 
+			){
+				cascadeEnabled = true;
+				break;
 			}
 		}
 		return cascadeEnabled;
@@ -103,7 +105,7 @@ public class ArchiviCore extends ControlStationCore {
 	}
 	
 	public byte[] export(String userLogin, boolean smista,
-			String protocol,Archive archive,ArchiveMode archiveMode) throws Exception,ImportInformationMissingException{
+			String protocol,Archive archive,ArchiveMode archiveMode) throws DriverControlStationException, ImportInformationMissingException{
 		
 		Connection con = null;
 		DriverControlStationDB driver = null;
@@ -131,13 +133,20 @@ public class ArchiviCore extends ControlStationCore {
 			bout.close();
 			return bout.toByteArray();
 			
-		} finally {
+		} 
+		catch(ImportInformationMissingException iime) {
+			throw iime;
+		}
+		catch(Exception e) {
+			throw new DriverControlStationException(getPrefixError("export",  e),e);
+		}
+		finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
 	
 	public void export(String userLogin, boolean smista,
-			String protocol,Archive archive,OutputStream out, ArchiveMode archiveMode) throws Exception,ImportInformationMissingException{
+			String protocol,Archive archive,OutputStream out, ArchiveMode archiveMode) throws DriverControlStationException, ImportInformationMissingException{
 		
 		Connection con = null;
 		DriverControlStationDB driver = null;
@@ -159,12 +168,19 @@ public class ArchiviCore extends ControlStationCore {
 			
 			exportUtils.export(protocol, archive, out, archiveMode);
 			
-		} finally {
+		} 
+		catch(ImportInformationMissingException iime) {
+			throw iime;
+		}
+		catch(Exception e) {
+			throw new DriverControlStationException(getPrefixError("export",  e),e);
+		}
+		finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
 	
-	public Archive readArchiveForExport(String userLogin, boolean smista,ArchiveType tipoEsportazione,List<?> listObject, ArchiveCascadeConfiguration cascadeConfig) throws Exception,ImportInformationMissingException{
+	public Archive readArchiveForExport(String userLogin, boolean smista,ArchiveType tipoEsportazione,List<?> listObject, ArchiveCascadeConfiguration cascadeConfig) throws DriverControlStationException, ImportInformationMissingException{
 		
 		Connection con = null;
 		DriverControlStationDB driver = null;
@@ -188,7 +204,14 @@ public class ArchiviCore extends ControlStationCore {
 			
 			return archive;
 			
-		} finally {
+		} 
+		catch(ImportInformationMissingException iime) {
+			throw iime;
+		}
+		catch(Exception e) {
+			throw new DriverControlStationException(getPrefixError("readArchiveForExport",  e),e);
+		}
+		finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
@@ -198,7 +221,7 @@ public class ArchiviCore extends ControlStationCore {
 			boolean importPolicyConfig, 
 			boolean importPluginConfig, boolean checkExistsPluginConfig,
 			boolean importConfig, String nomePddOperativa,
-			ConsoleHelper consoleHelper) throws Exception,ImportInformationMissingException{
+			ConsoleHelper consoleHelper) throws DriverControlStationException, ImportInformationMissingException{
 		
 		Connection con = null;
 		DriverControlStationDB driver = null;
@@ -235,14 +258,21 @@ public class ArchiviCore extends ControlStationCore {
 			IArchive archiveEngine = pf.createArchive();
 			return archiveEngine.toString(esito, archiveMode);
 						
-		} finally {
+		} 
+		catch(ImportInformationMissingException iime) {
+			throw iime;
+		}
+		catch(Exception e) {
+			throw new DriverControlStationException(getPrefixError("importArchive",  e),e);
+		}
+		finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
 	
 	
 	public String deleteArchive(Archive archive,ArchiveMode archiveMode,String protocol, String userLogin, boolean smista,
-			 boolean deletePolicyConfig, boolean deletePluginConfig) throws Exception,ImportInformationMissingException{
+			 boolean deletePolicyConfig, boolean deletePluginConfig) throws DriverControlStationException, ImportInformationMissingException{
 		
 		Connection con = null;
 		DriverControlStationDB driver = null;
@@ -270,7 +300,14 @@ public class ArchiviCore extends ControlStationCore {
 			IArchive archiveEngine = pf.createArchive();
 			return archiveEngine.toString(esito, archiveMode);
 						
-		} finally {
+		} 
+		catch(ImportInformationMissingException iime) {
+			throw iime;
+		}
+		catch(Exception e) {
+			throw new DriverControlStationException(getPrefixError("deleteArchive",  e),e);
+		}
+		finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
@@ -278,7 +315,7 @@ public class ArchiviCore extends ControlStationCore {
 	
 	public void validateArchive(Archive archive, String protocolloEffettivo, 
 			boolean validazioneDocumenti, ImportInformationMissingCollection importInformationMissingCollection, 
-			String userLogin, boolean delete) throws Exception,ImportInformationMissingException{
+			String userLogin, boolean delete) throws ImportInformationMissingException, DriverControlStationException{
 		
 		Connection con = null;
 		DriverControlStationDB driver = null;
@@ -295,14 +332,21 @@ public class ArchiviCore extends ControlStationCore {
 			validator.validateArchive(archive, protocolloEffettivo, validazioneDocumenti, importInformationMissingCollection, userLogin, 
 					this.isShowCorrelazioneAsincronaInAccordi(),delete);
 			
-		} finally {
+		} 
+		catch(ImportInformationMissingException iime) {
+			throw iime;
+		}
+		catch(Exception e) {
+			throw new DriverControlStationException(getPrefixError("validateArchive",  e),e);
+		}
+		finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
 	
 	
 	public Archive convert(byte[] file,ArchiveModeType type,ArchiveMode mode,String protocol,boolean validateDocuments,
-			MapPlaceholder importInformationMissing_globalPlaceholder) throws Exception {
+			MapPlaceholder importInformationMissingGlobalPlaceholder) throws DriverControlStationException, ImportInformationMissingException {
 		Connection con = null;
 		DriverControlStationDB driver = null;
 
@@ -318,15 +362,22 @@ public class ArchiviCore extends ControlStationCore {
 			IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
 			IArchive archiveEngine = pf.createArchive();
 			return archiveEngine.importArchive(file, mode, type, registryReader, configReader,
-					validateDocuments, importInformationMissing_globalPlaceholder);
+					validateDocuments, importInformationMissingGlobalPlaceholder);
 			
-		} finally {
+		} 
+		catch(ImportInformationMissingException iime) {
+			throw iime;
+		}
+		catch(Exception e) {
+			throw new DriverControlStationException(getPrefixError("convert",  e),e);
+		}
+		finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
 	
 	public void finalizeArchive(Archive archive,ArchiveModeType type,ArchiveMode mode,String protocol,boolean validateDocuments,
-			MapPlaceholder importInformationMissing_globalPlaceholder) throws Exception {
+			MapPlaceholder importInformationMissingGlobalPlaceholder) throws DriverControlStationException, ImportInformationMissingException {
 		Connection con = null;
 		DriverControlStationDB driver = null;
 
@@ -342,15 +393,22 @@ public class ArchiviCore extends ControlStationCore {
 			IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
 			IArchive archiveEngine = pf.createArchive();
 			archiveEngine.finalizeImportArchive(archive, mode, type, registryReader, configReader,
-					validateDocuments, importInformationMissing_globalPlaceholder);
+					validateDocuments, importInformationMissingGlobalPlaceholder);
 			
-		} finally {
+		} 
+		catch(ImportInformationMissingException iime) {
+			throw iime;
+		}
+		catch(Exception e) {
+			throw new DriverControlStationException(getPrefixError("finalizeArchive",  e),e);
+		}
+		finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
 	
 	
-	public Documento getDocumento(long idDocumento,boolean readBytes) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
+	public Documento getDocumento(long idDocumento,boolean readBytes) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "getDocumento";
 		DriverControlStationDB driver = null;
@@ -364,11 +422,11 @@ public class ArchiviCore extends ControlStationCore {
 			return driver.getDriverRegistroServiziDB().getDocumento(idDocumento,readBytes);
 			
 		} catch (DriverRegistroServiziException e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
 			throw e;
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -389,14 +447,14 @@ public class ArchiviCore extends ControlStationCore {
 			
 		} catch (DriverRegistroServiziNotFound e) {
 			// Lasciare DEBUG, usato anche in servizio API RS
-			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] NotFound :" + e.getMessage(), e);
+			ControlStationCore.logDebug("[ControlStationCore::" + nomeMetodo + "] NotFound :" + e.getMessage(), e);
 			throw e;
 		} catch (DriverRegistroServiziException e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
 			throw e;
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -422,8 +480,8 @@ public class ArchiviCore extends ControlStationCore {
 			
 			return driver.getDriverRegistroServiziDB().existsDocumento(documento.getFile(),tipo,ruoloDoc,documento.getIdProprietarioDocumento(),proprietarioDocumento);
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}

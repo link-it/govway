@@ -3059,7 +3059,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 			if(validazioneParteComune){
-				ValidazioneResult result = this.apcCore.validaInterfacciaWsdlParteComune(as, this.soggettiCore, protocollo);
+				ValidazioneResult result = this.apcCore.validaInterfacciaWsdlParteComune(as, protocollo);
 				if(result.isEsito()==false){
 					String msgErroreHTML = result.getMessaggioErrore();
 					if(msgErroreHTML!=null) {
@@ -3077,7 +3077,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				return result.isEsito();
 			}
 			if(validazioneSpecificaConversazione){
-				ValidazioneResult result = this.apcCore.validaSpecificaConversazione(as, this.soggettiCore, protocollo);
+				ValidazioneResult result = this.apcCore.validaSpecificaConversazione(as, protocollo);
 				if(result.isEsito()==false){
 					pd.setMessage(result.getMessaggioErrore());
 				}
@@ -5124,7 +5124,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 				as = this.apcCore.getAccordoServizioSintetico(idAccordoOLD);
 
-				if((as.getPrivato()==null || as.getPrivato()==false) && as.getServizioComposto()!=null){
+				if((as.getPrivato()==null || !as.getPrivato()) && as.getServizioComposto()!=null){
 					for(int i=0;i<as.getServizioComposto().getServizioComponente().size(); i++){
 						AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(as.getServizioComposto().getServizioComponente().get(i).getIdServizioComponente());
 						if(asps.getPrivato()!=null && asps.getPrivato()){
@@ -5161,8 +5161,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			accordoServizioParteComune.setMessageType(this.apcCore.fromMessageMessageType(messageType));
 			accordoServizioParteComune.setFormatoSpecifica(this.apcCore.interfaceType2FormatoSpecifica(formatoSpecifica));
 			
-			ValidazioneResult v = this.apcCore.validazione(accordoServizioParteComune, this.soggettiCore, tipoProtocollo);
-			if(v.isEsito()==false){
+			ValidazioneResult v = this.apcCore.validazione(accordoServizioParteComune, tipoProtocollo);
+			if(!v.isEsito()){
 				this.pd.setMessage("[validazione-"+tipoProtocollo+"] "+v.getMessaggioErrore());
 				if(v.getException()!=null)
 					this.log.error("[validazione-"+tipoProtocollo+"] "+v.getMessaggioErrore(),v.getException());
@@ -5211,8 +5211,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				accordoServizioParteComune.setByteSpecificaConversazioneErogatore(wsblLogicoErogatore);
 				accordoServizioParteComune.setByteSpecificaConversazioneFruitore(wsblLogicoFruitore);
 
-				v = this.apcCore.validaInterfacciaWsdlParteComune(accordoServizioParteComune, this.soggettiCore, tipoProtocollo);
-				if(v.isEsito()==false){
+				v = this.apcCore.validaInterfacciaWsdlParteComune(accordoServizioParteComune, tipoProtocollo);
+				if(!v.isEsito()){
 					String msgErroreHTML = v.getMessaggioErrore();
 					if(msgErroreHTML!=null) {
 						msgErroreHTML = msgErroreHTML.replaceAll("\n", org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
@@ -5236,8 +5236,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						this.log.warn("[validazione-"+tipoProtocollo+"] "+v.getMessaggioWarning());
 				}
 
-				v = this.apcCore.validaSpecificaConversazione(accordoServizioParteComune, this.soggettiCore, tipoProtocollo);
-				if(v.isEsito()==false){
+				v = this.apcCore.validaSpecificaConversazione(accordoServizioParteComune, tipoProtocollo);
+				if(!v.isEsito()){
 					String msgErroreHTML = v.getMessaggioErrore();
 					if(msgErroreHTML!=null) {
 						msgErroreHTML = msgErroreHTML.replaceAll("\n", org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);

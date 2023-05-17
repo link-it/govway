@@ -213,7 +213,6 @@ import org.openspcoop2.web.lib.mvc.properties.utils.ReadPropertiesUtilities;
 import org.openspcoop2.web.lib.queue.config.QueueProperties;
 import org.openspcoop2.web.lib.queue.costanti.Operazione;
 import org.openspcoop2.web.lib.users.dao.User;
-//import org.openspcoop2.web.ctrlstat.gestori.GestorePdDInitThread;
 import org.slf4j.Logger;
 
 /**
@@ -268,6 +267,10 @@ public class ControlStationCore {
 		ControlStationCore.checkInitLogger();
 		ControlStationCore.log.debug(msg);
 	}
+	public static void logDebug(String msg,Throwable e){
+		ControlStationCore.checkInitLogger();
+		ControlStationCore.log.debug(msg,e);
+	}
 	public static void logError(String msg){
 		ControlStationCore.checkInitLogger();
 		ControlStationCore.log.error(msg);
@@ -277,6 +280,18 @@ public class ControlStationCore {
 		ControlStationCore.log.error(msg,e);
 	}
 
+	
+	protected String getPrefixMethod(String nomeMetodo) {
+		return "[ControlStationCore::" + nomeMetodo + "] ";
+	}
+	protected String getPrefixError(String nomeMetodo, Exception e) {
+		return getPrefixMethod(nomeMetodo)+"Exception:" + e.getMessage();
+	}
+	protected String getPrefixNotFound(String nomeMetodo, Exception e) {
+		return getPrefixMethod(nomeMetodo)+"NotFound:" + e.getMessage();
+	}
+	
+	
 
 
 	/* ------- INFO ----- */
@@ -2856,7 +2871,7 @@ public class ControlStationCore {
 			}
 			
 		} catch (java.lang.Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::initConnections] Impossibile leggere i dati dal file console.datasource.properties[" + e.toString() + "]",e);
+			ControlStationCore.logError("[ControlStationCore::initConnections] Impossibile leggere i dati dal file console.datasource.properties[" + e.toString() + "]",e);
 			throw new ControlStationCoreException("Impossibile leggere i dati dal file console.datasource.properties: " + e.getMessage(),e);
 		} 
 
@@ -2865,13 +2880,13 @@ public class ControlStationCore {
 			while (!DBManager.isInitialized() && (i < 6)) {
 
 				try {
-					ControlStationCore.log.debug("jndiName=" + jndiName);
-					ControlStationCore.log.debug("jndiProp=" + jndiProp.toString());
+					ControlStationCore.logDebug("jndiName=" + jndiName);
+					ControlStationCore.logDebug("jndiProp=" + jndiProp.toString());
 					DBManager.initialize(jndiName, jndiProp);
-					ControlStationCore.log.info("Inizializzazione DBManager Effettuata.");
+					ControlStationCore.logInfo("Inizializzazione DBManager Effettuata.");
 				} catch (Exception e) {
-					ControlStationCore.log.error("Inizializzazione DBManager fallita.", e);
-					ControlStationCore.log.info("Ritento inizializzazione ...");
+					ControlStationCore.logError("Inizializzazione DBManager fallita.", e);
+					ControlStationCore.logInfo("Ritento inizializzazione ...");
 				}
 
 				i++;
@@ -3135,7 +3150,7 @@ public class ControlStationCore {
 			this.pluginPortaApplicativa = this.newIExtendedListServlet(consoleProperties.getPlugins_PortaApplicativa());
 
 		} catch (java.lang.Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::initCore] Impossibile leggere i dati dal file console.properties:" + e.toString(),e);
+			ControlStationCore.logError("[ControlStationCore::initCore] Impossibile leggere i dati dal file console.properties:" + e.toString(),e);
 			throw new ControlStationCoreException("[ControlStationCore::initCore] Impossibile leggere i dati dal file console.properties:" + e.toString(),e);
 		}
 		
@@ -3152,7 +3167,7 @@ public class ControlStationCore {
 				this.cfProp = queueProperties.getConnectionFactoryContext();
 				
 			} catch (java.lang.Exception e) {
-				ControlStationCore.log.error("[ControlStationCore::initCore] Impossibile leggere i dati dal file queue.properties[" + e.toString() + "]", e);
+				ControlStationCore.logError("[ControlStationCore::initCore] Impossibile leggere i dati dal file queue.properties[" + e.toString() + "]", e);
 				throw new ControlStationCoreException("ControlStationCore: Impossibile leggere i dati dal file queue.properties[" + e.toString() + "]",e);
 			} 
 		}
@@ -3366,7 +3381,7 @@ public class ControlStationCore {
 			this.jmxPdD_gruppi_aliases = consoleProperties.getJmxPdD_gruppi_aliases();
 			
 		} catch (java.lang.Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::initCoreJmxResources] Impossibile leggere i dati dal file console.properties:" + e.toString(),e);
+			ControlStationCore.logError("[ControlStationCore::initCoreJmxResources] Impossibile leggere i dati dal file console.properties:" + e.toString(),e);
 			throw new ControlStationCoreException("[ControlStationCore::initCoreJmxResources] Impossibile leggere i dati dal file console.properties:" + e.toString(),e);
 		}
 	}
@@ -3420,7 +3435,7 @@ public class ControlStationCore {
 							ControlStationCore.log); 
 				}
 			} catch (java.lang.Exception e) {
-				ControlStationCore.log.error("[pdd] Inizializzazione DriverTracciamento non riuscita : " + e.getMessage(),e);
+				ControlStationCore.logError("[pdd] Inizializzazione DriverTracciamento non riuscita : " + e.getMessage(),e);
 				throw new Exception("[pdd] Inizializzazione DriverTracciamento non riuscita : " + e.getMessage(),e);
 			}
 
@@ -3476,7 +3491,7 @@ public class ControlStationCore {
 							ControlStationCore.log); 
 				}
 			} catch (java.lang.Exception e) {
-				ControlStationCore.log.error("[pdd] Inizializzazione DriverMSGDiagnostici non riuscita : " + e.getMessage(),e);
+				ControlStationCore.logError("[pdd] Inizializzazione DriverMSGDiagnostici non riuscita : " + e.getMessage(),e);
 				throw new Exception("[pdd] Inizializzazione DriverMSGDiagnostici non riuscita : " + e.getMessage(),e);
 			}
 
@@ -5320,7 +5335,7 @@ public class ControlStationCore {
 				for (OperazioneDaSmistare operazione : operazioneDaSmistareList) {
 					if ((operazione == null) || (operazione.getIDTable() <= 0)) {
 						// se ci sono degli errori faccio il rollback
-						ControlStationCore.log.error("[ControlStationCore::performOperation] Operazione da smistare non valida.");
+						ControlStationCore.logError("[ControlStationCore::performOperation] Operazione da smistare non valida.");
 
 						// il rollback viene gestito da dal blocco di catch
 						throw new ControlStationCoreException("[ControlStationCore::performOperation]Operazione da smistare non valida.");
@@ -5354,7 +5369,7 @@ public class ControlStationCore {
 								throw new Exception(msg);
 							}
 							else{
-								ControlStationCore.log.debug(msg);
+								ControlStationCore.logDebug(msg);
 							}
 						}
 					}
@@ -5380,10 +5395,10 @@ public class ControlStationCore {
 
 		} catch (DriverConfigurazioneNotFound e) {
 			// se ci sono degli errori faccio il rollback
-			ControlStationCore.log.error(e.getMessage(),e);
+			ControlStationCore.logError(e.getMessage(),e);
 
 			try {
-				ControlStationCore.log.debug("[ControlStationCore::performOperation] rollback on error :" + e.getMessage(), e);
+				ControlStationCore.logDebug("[ControlStationCore::performOperation] rollback on error :" + e.getMessage(), e);
 				if(con!=null)con.rollback();
 
 			} catch (Exception ex) {
@@ -5392,10 +5407,10 @@ public class ControlStationCore {
 			throw e;
 		} catch (DriverConfigurazioneException e) {
 			// se ci sono degli errori faccio il rollback
-			ControlStationCore.log.error(e.getMessage(),e);
+			ControlStationCore.logError(e.getMessage(),e);
 
 			try {
-				ControlStationCore.log.debug("[ControlStationCore::performOperation] rollback on error :" + e.getMessage(), e);
+				ControlStationCore.logDebug("[ControlStationCore::performOperation] rollback on error :" + e.getMessage(), e);
 				if(con!=null)con.rollback();
 
 			} catch (Exception ex) {
@@ -5403,10 +5418,10 @@ public class ControlStationCore {
 
 			throw e;
 		} catch (DriverRegistroServiziNotFound e) {
-			ControlStationCore.log.error(e.getMessage(),e);
+			ControlStationCore.logError(e.getMessage(),e);
 
 			try {
-				ControlStationCore.log.debug("[ControlStationCore::performOperation] rollback on error :" + e.getMessage(), e);
+				ControlStationCore.logDebug("[ControlStationCore::performOperation] rollback on error :" + e.getMessage(), e);
 				if(con!=null)con.rollback();
 
 			} catch (Exception ex) {
@@ -5415,10 +5430,10 @@ public class ControlStationCore {
 			throw e;
 
 		} catch (DriverRegistroServiziException e) {
-			ControlStationCore.log.error(e.getMessage(),e);
+			ControlStationCore.logError(e.getMessage(),e);
 
 			try {
-				ControlStationCore.log.debug("[ControlStationCore::performOperation] rollback on error :" + e.getMessage(), e);
+				ControlStationCore.logDebug("[ControlStationCore::performOperation] rollback on error :" + e.getMessage(), e);
 				if(con!=null)con.rollback();
 
 			} catch (Exception ex) {
@@ -5427,10 +5442,10 @@ public class ControlStationCore {
 			throw e;
 
 		} catch (DriverControlStationException e) {
-			ControlStationCore.log.error(e.getMessage(),e);
+			ControlStationCore.logError(e.getMessage(),e);
 
 			try {
-				ControlStationCore.log.debug("[ControlStationCore::performOperation] rollback on error :" + e.getMessage(), e);
+				ControlStationCore.logDebug("[ControlStationCore::performOperation] rollback on error :" + e.getMessage(), e);
 				if(con!=null)con.rollback();
 
 			} catch (Exception ex) {
@@ -5438,10 +5453,10 @@ public class ControlStationCore {
 
 			throw new DriverControlStationException(e);
 		} catch (Exception e) {
-			ControlStationCore.log.error(e.getMessage(),e);
+			ControlStationCore.logError(e.getMessage(),e);
 
 			try {
-				ControlStationCore.log.debug("[ControlStationCore::performOperation] rollback on error :" + e.getMessage(), e);
+				ControlStationCore.logDebug("[ControlStationCore::performOperation] rollback on error :" + e.getMessage(), e);
 				if(con!=null)
 					con.rollback();
 			} catch (Exception ex) {
@@ -5466,7 +5481,7 @@ public class ControlStationCore {
 
 	public void performOperationMultiTypes(String superUser, boolean smista,int[] operationTypes,Object ... oggetti) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException, Exception {
 		String nomeMetodo = "performOperationIbrido";
-		ControlStationCore.log.info("[ControlStationCore::" + nomeMetodo + "] performing operation on objects " + this.getClassNames(oggetti));
+		ControlStationCore.logInfo(getPrefixMethod(nomeMetodo)+"performing operation on objects " + this.getClassNames(oggetti));
 		Tipologia[] tipoOperazione = new Tipologia[oggetti.length];
 		for (int i = 0; i < oggetti.length; i++) {
 			if(operationTypes[i]==CostantiControlStation.PERFORM_OPERATION_CREATE)
@@ -5498,7 +5513,7 @@ public class ControlStationCore {
 			throw e;
 		}
 
-		ControlStationCore.log.info("[ControlStationCore::" + nomeMetodo + "] performed operation on objects " + this.getClassNames(oggetti));
+		ControlStationCore.logInfo(getPrefixMethod(nomeMetodo)+"performed operation on objects " + this.getClassNames(oggetti));
 	}
 
 	/**
@@ -5508,7 +5523,7 @@ public class ControlStationCore {
 	public void performCreateOperation(String superUser, boolean smista, Object ... oggetti) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException, Exception {
 		String nomeMetodo = "performCreateOperation";
 		String operationType = "CREATE";
-		ControlStationCore.log.info("[ControlStationCore::" + nomeMetodo + "] performing operation type [" + operationType + "] on objects " + this.getClassNames(oggetti));
+		ControlStationCore.logInfo(getPrefixMethod(nomeMetodo)+"performing operation type [" + operationType + "] on objects " + this.getClassNames(oggetti));
 		int[] operationTypes = new int[oggetti.length];
 		for (int i = 0; i < oggetti.length; i++) {
 			operationTypes[i] = CostantiControlStation.PERFORM_OPERATION_CREATE;
@@ -5539,7 +5554,7 @@ public class ControlStationCore {
 			throw e;
 		}
 
-		ControlStationCore.log.info("[ControlStationCore::" + nomeMetodo + "] performed operation type [" + operationType + "] on objects " + this.getClassNames(oggetti));
+		ControlStationCore.logInfo(getPrefixMethod(nomeMetodo)+"performed operation type [" + operationType + "] on objects " + this.getClassNames(oggetti));
 	}
 
 	/**
@@ -5550,7 +5565,7 @@ public class ControlStationCore {
 		String nomeMetodo = "performUpdateOperation";
 		String operationType = "UPDATE";
 
-		ControlStationCore.log.info("[ControlStationCore::" + nomeMetodo + "] performing operation type [" + operationType + "] on objects " + this.getClassNames(oggetti));
+		ControlStationCore.logInfo(getPrefixMethod(nomeMetodo)+"performing operation type [" + operationType + "] on objects " + this.getClassNames(oggetti));
 		int[] operationTypes = new int[oggetti.length];
 		for (int i = 0; i < oggetti.length; i++) {
 			operationTypes[i] = CostantiControlStation.PERFORM_OPERATION_UPDATE;
@@ -5581,7 +5596,7 @@ public class ControlStationCore {
 			throw e;
 		}
 
-		ControlStationCore.log.info("[ControlStationCore::" + nomeMetodo + "] performed operation type [" + operationType + "] on objects " + this.getClassNames(oggetti));
+		ControlStationCore.logInfo(getPrefixMethod(nomeMetodo)+"performed operation type [" + operationType + "] on objects " + this.getClassNames(oggetti));
 
 	}
 
@@ -5593,7 +5608,7 @@ public class ControlStationCore {
 		String nomeMetodo = "performDeleteOperation";
 		String operationType = "DELETE";
 
-		ControlStationCore.log.info("[ControlStationCore::" + nomeMetodo + "] performing operation type [" + operationType + "] on objects " + this.getClassNames(oggetti));
+		ControlStationCore.logInfo(getPrefixMethod(nomeMetodo)+"performing operation type [" + operationType + "] on objects " + this.getClassNames(oggetti));
 		int[] operationTypes = new int[oggetti.length];
 		for (int i = 0; i < oggetti.length; i++) {
 			operationTypes[i] = CostantiControlStation.PERFORM_OPERATION_DELETE;
@@ -5624,7 +5639,7 @@ public class ControlStationCore {
 			throw e;
 		}
 
-		ControlStationCore.log.info("[ControlStationCore::" + nomeMetodo + "] performed operation type [" + operationType + "] on objects " + this.getClassNames(oggetti));
+		ControlStationCore.logInfo(getPrefixMethod(nomeMetodo)+"performed operation type [" + operationType + "] on objects " + this.getClassNames(oggetti));
 
 	}
 
@@ -5888,15 +5903,15 @@ public class ControlStationCore {
 			AuditAppender auditManager = ControlStationCore.getAuditManagerInstance(this.tipoDB);
 			auditManager.registraOperazioneAccesso(Tipologia.LOGIN, user,msg, this.isAuditingRegistrazioneElementiBinari);
 		}catch(AuditDisabilitatoException disabilitato){
-			ControlStationCore.log.debug("Auditing dell'operazione ["+msg+"] non effettuato: "+disabilitato.getMessage());
+			ControlStationCore.logDebug("Auditing dell'operazione ["+msg+"] non effettuato: "+disabilitato.getMessage());
 			auditAbilitato = false;
 		}catch(Exception e){
-			ControlStationCore.log.error("Auditing dell'operazione ["+msg+"] non riuscito: "+e.getMessage(),e);
+			ControlStationCore.logError("Auditing dell'operazione ["+msg+"] non riuscito: "+e.getMessage(),e);
 		}
 
 		// loggo su file dell'interfaccia (dopo chiamata ad auditManager, in modo che viene registrato il msg solo se abilitato l'audit)
 		if(auditAbilitato)
-			ControlStationCore.log.info(msg);
+			ControlStationCore.logInfo(msg);
 	}
 
 	public void performAuditLogout(String user){
@@ -5910,15 +5925,15 @@ public class ControlStationCore {
 			auditManager.registraOperazioneAccesso(Tipologia.LOGOUT, user,msg, this.isAuditingRegistrazioneElementiBinari);
 
 		}catch(AuditDisabilitatoException disabilitato){
-			ControlStationCore.log.debug("Auditing dell'operazione ["+msg+"] non effettuato: "+disabilitato.getMessage());
+			ControlStationCore.logDebug("Auditing dell'operazione ["+msg+"] non effettuato: "+disabilitato.getMessage());
 			auditAbilitato = false;
 		}catch(Exception e){
-			ControlStationCore.log.error("Auditing dell'operazione ["+msg+"] non riuscito: "+e.getMessage(),e);
+			ControlStationCore.logError("Auditing dell'operazione ["+msg+"] non riuscito: "+e.getMessage(),e);
 		}
 
 		// loggo su file dell'interfaccia (dopo chiamata ad auditManager, in modo che viene registrato il msg solo se abilitato l'audit)
 		if(auditAbilitato)
-			ControlStationCore.log.info(msg);
+			ControlStationCore.logInfo(msg);
 	}
 
 	public IDOperazione[] performAuditRequest(Tipologia[] operationTypes, String user, Object ... obj) throws AuditDisabilitatoException{
@@ -5943,7 +5958,7 @@ public class ControlStationCore {
 			try{
 				msg = this.generaMsgAuditing(user, Stato.REQUESTING, tipoOperazione, oggetto);
 			}catch(Exception e){
-				ControlStationCore.log.error("GenerazioneIDOperazione non riuscita: "+e.getMessage(),e);
+				ControlStationCore.logError("GenerazioneIDOperazione non riuscita: "+e.getMessage(),e);
 				msg = "GenerazioneIDOperazione non riuscita: "+e.getMessage();
 			}
 
@@ -6041,16 +6056,16 @@ public class ControlStationCore {
 				}
 
 			}catch(AuditDisabilitatoException disabilitato){
-				ControlStationCore.log.debug("Auditing dell'operazione ["+msg+"] non effettuato: "+disabilitato.getMessage());
+				ControlStationCore.logDebug("Auditing dell'operazione ["+msg+"] non effettuato: "+disabilitato.getMessage());
 				auditAbilitato = false;
 				throw disabilitato;
 			}catch(Exception e){
-				ControlStationCore.log.error("Auditing dell'operazione ["+msg+"] non riuscito: "+e.getMessage(),e);
+				ControlStationCore.logError("Auditing dell'operazione ["+msg+"] non riuscito: "+e.getMessage(),e);
 			}
 
 			// loggo su file dell'interfaccia (dopo chiamata ad auditManager, in modo che viene registrato il msg solo se abilitato l'audit)
 			if(auditAbilitato)
-				ControlStationCore.log.info(msg);
+				ControlStationCore.logInfo(msg);
 		}
 		return idOperazione;
 	}
@@ -6073,11 +6088,11 @@ public class ControlStationCore {
 				return null;
 
 		}  catch (DriverRegistroServiziException e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] DriverRegistroServiziException :" + e.getMessage(), e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
 			throw e;
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e), e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -6094,7 +6109,7 @@ public class ControlStationCore {
 			try{
 				msg = this.generaMsgAuditing(user, Stato.COMPLETED, tipoOperazione, oggetto);
 			}catch(Exception e){
-				ControlStationCore.log.error("GenerazioneIDOperazione non riuscita: "+e.getMessage(),e);
+				ControlStationCore.logError("GenerazioneIDOperazione non riuscita: "+e.getMessage(),e);
 				msg = "GenerazioneIDOperazione non riuscita: "+e.getMessage();
 			}
 
@@ -6105,15 +6120,15 @@ public class ControlStationCore {
 				auditManager.registraOperazioneCompletataConSuccesso(idOperazione[i],msg);
 
 			}catch(AuditDisabilitatoException disabilitato){
-				ControlStationCore.log.debug("Auditing dell'operazione ["+msg+"] non effettuato: "+disabilitato.getMessage());
+				ControlStationCore.logDebug("Auditing dell'operazione ["+msg+"] non effettuato: "+disabilitato.getMessage());
 				auditAbilitato = false;
 			}catch(Exception e){
-				ControlStationCore.log.error("Auditing dell'operazione ["+msg+"] non riuscito: "+e.getMessage(),e);
+				ControlStationCore.logError("Auditing dell'operazione ["+msg+"] non riuscito: "+e.getMessage(),e);
 			}
 
 			// loggo su file dell'interfaccia (dopo chiamata ad auditManager, in modo che viene registrato il msg solo se abilitato l'audit)
 			if(auditAbilitato)
-				ControlStationCore.log.info(msg);
+				ControlStationCore.logInfo(msg);
 		}
 	}
 
@@ -6129,7 +6144,7 @@ public class ControlStationCore {
 			try{
 				msg = this.generaMsgAuditing(user, Stato.ERROR, tipoOperazione, oggetto);
 			}catch(Exception e){
-				ControlStationCore.log.error("GenerazioneIDOperazione non riuscita: "+e.getMessage(),e);
+				ControlStationCore.logError("GenerazioneIDOperazione non riuscita: "+e.getMessage(),e);
 				msg = "GenerazioneIDOperazione non riuscita: "+e.getMessage();
 			}
 
@@ -6140,15 +6155,15 @@ public class ControlStationCore {
 				auditManager.registraOperazioneTerminataConErrore(idOperazione[i], motivoErrore,msg);
 
 			}catch(AuditDisabilitatoException disabilitato){
-				ControlStationCore.log.debug("Auditing dell'operazione ["+msg+"] non effettuato: "+disabilitato.getMessage());
+				ControlStationCore.logDebug("Auditing dell'operazione ["+msg+"] non effettuato: "+disabilitato.getMessage());
 				auditAbilitato = false;
 			}catch(Exception e){
-				ControlStationCore.log.error("Auditing dell'operazione ["+msg+"] non riuscito: "+e.getMessage(),e);
+				ControlStationCore.logError("Auditing dell'operazione ["+msg+"] non riuscito: "+e.getMessage(),e);
 			}
 
 			// loggo su file dell'interfaccia (dopo chiamata ad auditManager, in modo che viene registrato il msg solo se abilitato l'audit)
 			if(auditAbilitato)
-				ControlStationCore.log.error(msg+", errore avvenuto:"+motivoErrore);
+				ControlStationCore.logError(msg+", errore avvenuto:"+motivoErrore);
 		}
 	}
 
@@ -6604,8 +6619,8 @@ public class ControlStationCore {
 			return protocolFactory.getRegistryReader(driver);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} 
 	}
 	
@@ -6618,8 +6633,8 @@ public class ControlStationCore {
 			return protocolFactory.getConfigIntegrationReader(driver);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		}
 	}
 	
@@ -6637,8 +6652,8 @@ public class ControlStationCore {
 			driver.initMappingErogazione(forceMapping,log);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -6659,8 +6674,8 @@ public class ControlStationCore {
 			driver.initMappingFruizione(forceMapping,log);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -6721,11 +6736,11 @@ public class ControlStationCore {
 			return config;
 
 		} catch (DriverConfigurazioneNotFound de) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  de),de);
 			throw de;
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -6754,11 +6769,11 @@ public class ControlStationCore {
 			return config;
 
 		} catch (DriverConfigurazioneNotFound de) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  de),de);
 			throw de;
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -6803,11 +6818,11 @@ public class ControlStationCore {
 			}
 
 		} catch (DriverRegistroServiziNotFound de) {
-			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
-			return new ArrayList<IDGruppo>();
+			ControlStationCore.logDebug(getPrefixError(nomeMetodo,  de),de);
+			return new ArrayList<>();
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -6840,11 +6855,11 @@ public class ControlStationCore {
 			}
 
 		} catch (DriverRegistroServiziNotFound de) {
-			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
-			return new ArrayList<IDRuolo>();
+			ControlStationCore.logDebug(getPrefixError(nomeMetodo,  de),de);
+			return new ArrayList<>();
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -6877,11 +6892,11 @@ public class ControlStationCore {
 			}
 
 		} catch (DriverRegistroServiziNotFound de) {
-			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
-			return new ArrayList<IDScope>();
+			ControlStationCore.logDebug(getPrefixError(nomeMetodo,  de),de);
+			return new ArrayList<>();
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -6931,8 +6946,9 @@ public class ControlStationCore {
 			return this.getProtocolli(); // ordinato dentro il metodo
 
 		}catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + getProtocolli + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + getProtocolli + "] Error :" + e.getMessage(),e);
+			String errorMsg = getPrefixError(getProtocolli,  e);
+			ControlStationCore.logError(errorMsg, e);
+			throw new DriverRegistroServiziException(errorMsg,e);
 		}
 	}
 	public List<String> getProtocolli(){
@@ -7164,8 +7180,8 @@ public class ControlStationCore {
 			return driver.getDriverRegistroServiziDB().soggettiRegistroList(superuser, ricerca);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -7185,8 +7201,8 @@ public class ControlStationCore {
 			return driver.getDriverRegistroServiziDB().getSoggettiDefault();
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -7206,8 +7222,8 @@ public class ControlStationCore {
 			return driver.getDriverRegistroServiziDB().accordiList(superuser, ricerca);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -7230,8 +7246,8 @@ public class ControlStationCore {
 					soloAccordiConsistentiRest, soloAccordiConsistentiSoap);
 
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -7251,11 +7267,11 @@ public class ControlStationCore {
 
 			return driver.getDriverRegistroServiziDB().accordiCooperazioneList(superuser, ricerca);
 		} catch (DriverRegistroServiziException e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
 			throw e;
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e), e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -7274,11 +7290,11 @@ public class ControlStationCore {
 
 			return driver.getDriverConfigurazioneDB().getLabelNomeServizioApplicativo(servizioApplicativo);
 		} catch (DriverConfigurazioneException e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
 			throw e;
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e), e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -7632,8 +7648,8 @@ public class ControlStationCore {
 			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().getVersioni();
 
 		}catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		}
 	}
 	
@@ -7655,8 +7671,8 @@ public class ControlStationCore {
 			
 			return lstProt.toArray(new String[lstProt.size()]);
 		}catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		}
 	}
 	
@@ -7678,8 +7694,8 @@ public class ControlStationCore {
 			
 			return lstProt.toArray(new String[lstProt.size()]);
 		}catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		}
 	}
 	
@@ -7690,8 +7706,8 @@ public class ControlStationCore {
 			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().getVersioneDefault();
 
 		}catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		}
 	}
 	
@@ -7702,8 +7718,8 @@ public class ControlStationCore {
 					|| this.protocolFactoryManager.getDefaultProtocolFactory().createProtocolConfiguration().isSupportato(serviceBinding,ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO)
 					;
 		}catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		}
 	}
 	
@@ -7713,8 +7729,8 @@ public class ControlStationCore {
 			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportato(serviceBinding,ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO)
 					|| this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportato(serviceBinding,ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO);
 		}catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		}
 	}
 	
@@ -7724,8 +7740,8 @@ public class ControlStationCore {
 		try{
 			return this.protocolFactoryManager.getDefaultProtocolFactory().createProtocolConfiguration().isSupportato(serviceBinding, profiloCollaborazione );
 		}catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		}
 	}
 	
@@ -7734,8 +7750,8 @@ public class ControlStationCore {
 		try{
 			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportato(serviceBinding,profiloCollaborazione );
 		}catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		}
 	}
 		
@@ -7749,8 +7765,8 @@ public class ControlStationCore {
 			}
 			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportato(serviceBinding,funzionalitaProtocollo);
 		}catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		}
 	}
 	
@@ -7764,8 +7780,8 @@ public class ControlStationCore {
 			if(defaultServiceBindingConfiguration.isServiceBindingSupported(ServiceBinding.SOAP))
 				lst.add(ServiceBinding.SOAP);
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		}
 		return lst;
 	}
@@ -7781,8 +7797,8 @@ public class ControlStationCore {
 			if(defaultServiceBindingConfiguration.isServiceBindingSupported(ServiceBinding.SOAP))
 				lst.add(ServiceBinding.SOAP);
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		}
 		return lst;
 	}
@@ -7794,8 +7810,8 @@ public class ControlStationCore {
 			ServiceBindingConfiguration defaultServiceBindingConfiguration = protocolFactory.createProtocolConfiguration().getDefaultServiceBindingConfiguration(null);
 			messageTypeSupported = defaultServiceBindingConfiguration.getMessageTypeSupported(serviceBinding);
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		}
 		return messageTypeSupported;
 	}
@@ -7807,8 +7823,8 @@ public class ControlStationCore {
 		try {
 			interfacceSupportate = protocolFactory.createProtocolConfiguration().getInterfacceSupportate(serviceBinding);
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		}
 		return interfacceSupportate;
 	}
@@ -7819,8 +7835,8 @@ public class ControlStationCore {
 		try {
 			interfacceSupportate = this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().getInterfacceSupportate(serviceBinding);
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		}
 		return interfacceSupportate;
 	}
@@ -7831,8 +7847,8 @@ public class ControlStationCore {
 			ServiceBindingConfiguration defaultServiceBindingConfiguration = protocolFactory.createProtocolConfiguration().getDefaultServiceBindingConfiguration(null);
 			return defaultServiceBindingConfiguration.getDefaultBinding();
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		}
 	}
 	

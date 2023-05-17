@@ -65,8 +65,8 @@ public class AuditingCore extends ControlStationCore {
 					tipooggetto, id, oldid, utente,
 					statooperazione, contoggetto);
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new AuditException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new AuditException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -84,8 +84,8 @@ public class AuditingCore extends ControlStationCore {
 			driver = new DriverAuditDBAppender(con, this.tipoDB);
 			return driver.getOperation(idOp);
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new AuditException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new AuditException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
@@ -105,11 +105,11 @@ public class AuditingCore extends ControlStationCore {
 			return driver.getDriverAuditDB().getConfigurazione();
 
 		} catch (AuditException ae) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + ae.getMessage(),ae);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  ae),ae);
 			throw ae;
 		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new AuditException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new AuditException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}

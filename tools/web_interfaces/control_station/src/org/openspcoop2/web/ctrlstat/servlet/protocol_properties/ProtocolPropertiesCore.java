@@ -22,10 +22,8 @@ package org.openspcoop2.web.ctrlstat.servlet.protocol_properties;
 import java.sql.Connection;
 
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
-import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
-import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 
@@ -45,7 +43,7 @@ public class ProtocolPropertiesCore  extends ControlStationCore {
 		super(core);
 	}
 	
-	public ProtocolProperty getProtocolPropertyBinaria(long idProperty) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+	public ProtocolProperty getProtocolPropertyBinaria(long idProperty) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "getProtocolPropertyBinaria";
 		DriverControlStationDB driver = null;
@@ -58,14 +56,14 @@ public class ProtocolPropertiesCore  extends ControlStationCore {
 
 			return driver.getDriverRegistroServiziDB().getProtocolProperty(idProperty);
 		}  catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
 	
-	public org.openspcoop2.core.config.ProtocolProperty getProtocolPropertyConfigBinaria(long idProperty) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+	public org.openspcoop2.core.config.ProtocolProperty getProtocolPropertyConfigBinaria(long idProperty) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "getProtocolPropertyConfigBinaria";
 		DriverControlStationDB driver = null;
@@ -78,8 +76,8 @@ public class ProtocolPropertiesCore  extends ControlStationCore {
 
 			return driver.getDriverConfigurazioneDB().getProtocolProperty(idProperty);
 		}  catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
