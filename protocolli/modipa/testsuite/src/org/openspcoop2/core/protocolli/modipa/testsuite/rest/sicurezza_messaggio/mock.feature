@@ -563,6 +563,84 @@ Scenario: isTest('idar03-custom-doppi-header-multipart')
     * def response = read('classpath:test/rest/sicurezza-messaggio/richiestaConAllegati.bin')
 
 
+
+
+
+##########################################
+#                IDAR04                  #
+##########################################
+
+Scenario: isTest('connettivita-base-idar04-jwk-ApplicativoBlockingIDA01') ||
+		isTest('connettivita-base-idar04-jwk-ApplicativoBlockingJWK') ||
+		isTest('connettivita-base-idar04-jwk-ApplicativoBlockingKeyPair') ||
+		isTest('connettivita-base-idar04-keypair-ApplicativoBlockingIDA01') ||
+		isTest('connettivita-base-idar04-keypair-ApplicativoBlockingJWK') ||
+		isTest('connettivita-base-idar04-keypair-ApplicativoBlockingKeyPair') ||
+		isTest('connettivita-base-idar04-pdnd-ApplicativoBlockingIDA01') ||
+		isTest('connettivita-base-idar04-pdnd-ApplicativoBlockingJWK') ||
+		isTest('connettivita-base-idar04-pdnd-ApplicativoBlockingKeyPair') ||
+		isTest('manomissione-token-risposta-idar04-jwk')  ||
+		isTest('manomissione-token-risposta-idar04-pdnd') ||
+		isTest('manomissione-payload-risposta-idar04-jwk') ||
+		isTest('manomissione-payload-risposta-idar04-pdnd') ||
+		isTest('manomissione-header-http-firmati-risposta-idar04-jwk') ||
+		isTest('manomissione-header-http-firmati-risposta-idar04-pdnd') ||
+		isTest('assenza-header-digest-risposta-idar04-jwk') ||
+		isTest('assenza-header-digest-risposta-idar04-pdnd') ||
+		isTest('idar04-token-risposta-jwk') ||
+		isTest('idar04-token-risposta-pdnd')
+
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * def responseStatus = 200
+    * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+    * def responseHeaders = { IDAR04TestHeader: "TestHeaderResponse" }
+
+
+Scenario: isTest('response-without-payload-idar04-jwk')  || 
+	 	isTest('response-without-payload-idar04-pdnd')  || 
+		isTest('response-without-payload-idar04-tampered-header-jwk') || 
+		isTest('response-without-payload-idar04-tampered-header-pdnd')
+
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * def responseStatus = 201
+    * def response = ''
+    * def responseHeaders = ({ 'Content-Type': null, 'IDAR04TestHeader': "TestHeaderResponse" })
+
+
+Scenario: isTest('response-without-payload-idar04-digest-richiesta-jwk') ||
+		isTest('response-without-payload-idar04-digest-richiesta-pdnd')
+
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * def responseStatus = 201
+    * def response = ''
+    * def responseHeaders = ({ 'Content-Type': null })
+
+Scenario: isTest('idar04-token-richiesta-jwk') ||
+		isTest('idar04-token-richiesta-pdnd')
+
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * def responseStatus = 200
+    * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+
+Scenario: isTest('authorization-richiesta-integrity-risposta-idar04-jwk') ||
+		isTest('authorization-richiesta-integrity-risposta-idar04-pdnd')
+
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * def responseStatus = 200
+    * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+    * def responseHeaders = { IDAR04TestHeader: "TestHeaderResponse" }
+
+Scenario: isTest('solo-authorization-richiesta-idar04-jwk') ||
+		isTest('solo-authorization-richiesta-idar04-pdnd')
+
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * def responseStatus = 200
+    * def response = ''
+    * def responseHeaders = ({ 'Content-Type': null })
+
+
 # catch all
 #
 #

@@ -19,9 +19,9 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.pd;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.ArrayList;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
@@ -49,8 +49,8 @@ import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.utils.BooleanNullable;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
@@ -284,9 +284,14 @@ public class PorteDelegateConnettoreDefault extends Action {
 				BooleanNullable forcePDNDWrapper = BooleanNullable.NULL(); 
 				BooleanNullable forceOAuthWrapper = BooleanNullable.NULL(); 
 				
+				List<String> azioniList = null;
+				if(portaDelegata!=null && portaDelegata.getAzione()!=null && portaDelegata.getAzione().sizeAzioneDelegataList()>0) {
+					azioniList = portaDelegata.getAzione().getAzioneDelegataList();
+				}
+				
 				porteDelegateHelper.readModIConfiguration(forceHttpsClientWrapper, forcePDNDWrapper, forceOAuthWrapper, 
 						IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), asps.getPortType(), 
-						null);
+						azioniList);
 				
 				if(forceHttpsClientWrapper.getValue()!=null) {
 					forceHttpsClient = forceHttpsClientWrapper.getValue().booleanValue();

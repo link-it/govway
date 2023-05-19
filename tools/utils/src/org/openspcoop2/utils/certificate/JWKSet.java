@@ -132,7 +132,43 @@ public class JWKSet {
 			if(this.jwkSetJson==null){
 				throw new UtilsException("Json not defined");
 			}
-			this.jwkSetCxf = this.engineCxf.jsonToJwkSet(this.jwkSetJson);
+			try {
+				this.jwkSetCxf = this.engineCxf.jsonToJwkSet(this.jwkSetJson);
+			}catch(Exception e) {
+				/* Fix bug cxf che va in errore se il keystore è pretty print e la , tra una chiave e l'altra struttura json va a capo.
+				 * Esempio:
+				 * {
+					  "keys" : [ 
+					{
+					  "kty" : "RSA",
+					  "e" : "AQAB",
+					  "kid" : "KID-ApplicativoBlockingIDA01",
+					  "n" : "8IYnrIeYyuCCZQJvdkxL5bD5-v-L2bwAgiz4ZMJPqWqhbgsGmneyaHQIKL-ihiKRgbDT02HIDlLeJp6uXCxRu6MYVEXkpuI1Kte2xqlGzw2F-WALNkoFgaXeIrEwIugj5eeiqqBbedZdQPr7YmXHiZOSztVsQSeyRTGhIfMtvrqKUa8R4U2gFAp5wo2cgCU2Dk1gJ_B2mooxgvewi2Ea2SSuuOAJThvAEwAk1cxXwZcxVqOAjzgeKe7kPs79VgCpnGuottrhqlLtT0hPpij2T1S_r2ENZrQ9ex4hkFF8q2EpxqveKcF5bmTaNS1ezjKCthJjmq1zu-zELLFAx4bY_w"
+					}
+					,
+					{
+					  "kty" : "RSA",
+					  "e" : "AQAB",
+					  "kid" : "KID-ExampleServer",
+					  "n" : "4OKbeAjhuWBnATnd2FjdvRAdyks05AnW5nYNRWVt2RIvBfPsASZD858hv_ts1W2uUN1EbJTSgQzgZskufBKz3KApI1Lq3F3IEH2jLBYGywpCbus6hHNCi8xN1OzRLEDp-uaZvIeP26RDjush53j9YFvVEI5Hic6thLT0zqtFhm-u1VtDH0uEZ_1S5CUspMYbZTOkl-PEz7Y77dIGk0vfhfJ3uW3g1khWQONVHA7X4XOZLKDo1rnQxzZv3l7r__h5GlHqZRopLBwqn6hDRyoeRzZfQtrl_fMp5Pgyg0Fi5hKI5o0YLnOhHzB_MJJrgoXOjirvoFBO-qkET-BAjU6BAQ"
+					}
+					   ]
+					}
+				 *  Produce il seguente errore: "String index out of range: 0"
+				 * 
+				 **/
+				if(e.getMessage()!=null && e.getMessage().contains("String index out of range")) {
+					try {
+						JSONUtils jsonUtils = JSONUtils.getInstance();
+						JsonNode node = jsonUtils.getAsNode(this.jwkSetJson);
+						String sNonPretty = jsonUtils.toString(node);
+						this.jwkSetCxf = this.engineCxf.jsonToJwkSet(sNonPretty);
+					}catch(Exception eCxf) {
+						// rilancio eccezione originale
+						throw e;
+					}
+				}
+			}
 		}
 	}
 	public JsonWebKeys getJsonWebKeys() throws UtilsException {

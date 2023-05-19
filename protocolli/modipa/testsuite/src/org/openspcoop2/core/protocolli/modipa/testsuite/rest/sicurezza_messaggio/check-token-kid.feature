@@ -1,4 +1,4 @@
-Feature: Controllo Token JWT REST
+Feature: Controllo Token JWT REST con solo kid
 
 Scenario:
     * def decodeToken = read('classpath:utils/decode-token.js')
@@ -12,8 +12,8 @@ Scenario:
         'alg': 'RS256',
         'typ': 'JWT',
         'kid': '#string',
-        'x5c': [ '#string' ],
-        'x5t#S256': '#ignore'
+        'x5c': '#notpresent',
+        'x5t#S256': '#notpresent'
     }
     """
     * def tok_payload = 

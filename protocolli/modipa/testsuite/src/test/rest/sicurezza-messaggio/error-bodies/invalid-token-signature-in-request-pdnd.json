@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/400/InteroperabilityInvalidRequest.html",
+    "title": "InteroperabilityInvalidRequest",
+    "status": 400,
+    "detail": "Signature verification failed: [COMPACT] Signature verification failure: org.apache.cxf.common.util.Base64Exception: Runtime exception in Base64Utility.decode() during output",
+    "govway_id": "#string"
+}

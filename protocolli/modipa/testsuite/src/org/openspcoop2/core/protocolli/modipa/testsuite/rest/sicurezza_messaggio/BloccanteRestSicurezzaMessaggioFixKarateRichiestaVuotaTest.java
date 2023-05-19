@@ -45,7 +45,8 @@ import com.intuit.karate.netty.FeatureServer;
 */
 @RunWith(Karate.class)
 @KarateOptions(features = {
-    "classpath:test/rest/sicurezza-messaggio/idar03-fix-karate.feature"
+    "classpath:test/rest/sicurezza-messaggio/idar03-fix-karate.feature",
+    "classpath:test/rest/sicurezza-messaggio/idar04-fix-karate.feature"
     })
 public class BloccanteRestSicurezzaMessaggioFixKarateRichiestaVuotaTest extends ConfigLoader {
     

@@ -1,0 +1,31 @@
+{
+  "keys" : [ 
+{
+  "kty" : "RSA",
+  "e" : "AQAB",
+  "kid" : "KID-ApplicativoBlockingIDA01",
+  "n" : "8IYnrIeYyuCCZQJvdkxL5bD5-v-L2bwAgiz4ZMJPqWqhbgsGmneyaHQIKL-ihiKRgbDT02HIDlLeJp6uXCxRu6MYVEXkpuI1Kte2xqlGzw2F-WALNkoFgaXeIrEwIugj5eeiqqBbedZdQPr7YmXHiZOSztVsQSeyRTGhIfMtvrqKUa8R4U2gFAp5wo2cgCU2Dk1gJ_B2mooxgvewi2Ea2SSuuOAJThvAEwAk1cxXwZcxVqOAjzgeKe7kPs79VgCpnGuottrhqlLtT0hPpij2T1S_r2ENZrQ9ex4hkFF8q2EpxqveKcF5bmTaNS1ezjKCthJjmq1zu-zELLFAx4bY_w"
+}
+,
+{
+  "kty" : "RSA",
+  "e" : "AQAB",
+  "kid" : "KID-ApplicativoBlockingJWK",
+  "n" : "uO0lSzNdA4G084FnllC1gIZIWPBG5oGPC2XnsWWpw0Hw2dzo5e5nYzXGS9CChVRN6CPrybeksNuVAg8_RzCF1ZJmDCCkQeocNmrB0HhXJVLgLU3Bo4XZw_2G4zxo8RpemhyL2b3PzxplpKsmrIDI1TaCEgcvlsvmF6muMTmF9hnboGyXkapbrvVrxzU_WqZb580FzAFGyzSDNvUpIhl21k6An21jzwTQUS-M8hbXbbyO7SwMXlltbP0R1KYozBnxbfZyLlzIfw3ekuLqvjsRT68Ohej9WE3bCBKLJ2Bon7gpCgk0YaHlvGm6Dsa9E_kzWqoMurYMTPbhqCHbER5Y8w"
+}
+,
+{
+  "kty" : "RSA",
+  "e" : "AQAB",
+  "kid" : "KID-ApplicativoBlockingKeyPair",
+  "n" : "x3eeq3vIzrHzXvVuBBSt1OocfSr0YdY-_uXvbz944Ewd1INI4Zh_64uf7eVHl_hNp3T7-c-rE8UOZHNAozYMyb4vdOUe8cZOdEWWYN6dnX4ZvK52n91M4DvdAJGBo7peOJ1DRUs30uUM74TudAO-0O6NM-nt0A2ycbphcqRJ_UzwyPEbrqU-gHqWEdqUOBxn9AT03Szn4OgRoQUEJ-QGz8tV1-TBjMSVO_HHbUklPmDgizGPfWqV92K2gvD_C9nZuaa3MKfpmbvwErGsWd8Tffd8jZl5EZvtszKxXi0VyVtk06Glj6-OV12JjXaFd4bSbasILoYT8sufo6gC0YR7uw"
+}
+,
+{
+  "kty" : "RSA",
+  "e" : "AQAB",
+  "kid" : "KID-ExampleServer",
+  "n" : "4OKbeAjhuWBnATnd2FjdvRAdyks05AnW5nYNRWVt2RIvBfPsASZD858hv_ts1W2uUN1EbJTSgQzgZskufBKz3KApI1Lq3F3IEH2jLBYGywpCbus6hHNCi8xN1OzRLEDp-uaZvIeP26RDjush53j9YFvVEI5Hic6thLT0zqtFhm-u1VtDH0uEZ_1S5CUspMYbZTOkl-PEz7Y77dIGk0vfhfJ3uW3g1khWQONVHA7X4XOZLKDo1rnQxzZv3l7r__h5GlHqZRopLBwqn6hDRyoeRzZfQtrl_fMp5Pgyg0Fi5hKI5o0YLnOhHzB_MJJrgoXOjirvoFBO-qkET-BAjU6BAQ"
+}
+   ]
+}

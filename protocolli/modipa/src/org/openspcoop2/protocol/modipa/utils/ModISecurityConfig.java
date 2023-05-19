@@ -51,6 +51,7 @@ import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autorizzazione.canali.CanaliUtils;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
+import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.modipa.config.ModIAuditClaimConfig;
@@ -490,6 +491,27 @@ public class ModISecurityConfig {
 			if(this.audience==null &&
 				bustaRichiesta!=null) {
 				this.audience = bustaRichiesta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_SUBJECT);
+			}
+			
+			// Nel caso di sorgente non locale, ripeto i punti 2 e 3 per il token ricevuto
+			if(kidMode) {
+				// guardo 
+				boolean sicurezzaToken = context!=null && context.containsKey(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+				if(sicurezzaToken) {
+					InformazioniToken informazioniTokenNormalizzate = null;
+					Object oInformazioniTokenNormalizzate = context.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+					if(oInformazioniTokenNormalizzate!=null) {
+						informazioniTokenNormalizzate = (InformazioniToken) oInformazioniTokenNormalizzate;
+					}
+					if(informazioniTokenNormalizzate!=null) {
+						if(informazioniTokenNormalizzate.getClientId()!=null && StringUtils.isNotEmpty(informazioniTokenNormalizzate.getClientId())) {
+							this.audience = informazioniTokenNormalizzate.getClientId();
+						}
+						else if(informazioniTokenNormalizzate.getSub()!=null && StringUtils.isNotEmpty(informazioniTokenNormalizzate.getSub())) {
+							this.audience = informazioniTokenNormalizzate.getSub();
+						}
+					}
+				}
 			}
 			
 			// 4. Utilizzo quello di default associato al 'sa' se identificato
@@ -1111,6 +1133,12 @@ public class ModISecurityConfig {
 					else {
 						throw new ProtocolException("Configurazione errata; Audience non definito sull'applicativo e verifica abilitata sulla fruizione");
 					}
+				}
+				
+				/* OAuth - ClientId */
+				
+				if(this.tokenClientId==null && sa!=null) {
+					this.tokenClientId = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_SICUREZZA_TOKEN_CLIENT_ID);
 				}
 			}
 			else {

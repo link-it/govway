@@ -5,6 +5,7 @@ Background:
     * def getRequestHeader = read('classpath:utils/get-request-header.js')
     * def setRequestHeader = read('classpath:utils/set-request-header.js')
     * def get_traccia = read('classpath:utils/get_traccia.js')
+    * def get_diagnostici = read('classpath:utils/get_diagnostici.js')
 
     * def isTest =
     """
@@ -21,6 +22,7 @@ Background:
     """
 
     * def checkToken = read('check-token.feature')
+    * def checkTokenKid = read('check-token-kid.feature')
     * def decodeToken = read('classpath:utils/decode-token.js')
 
     * def client_token_match = 
@@ -5157,6 +5159,1077 @@ Scenario: isTest('idar03-custom-doppi-header-multipart')
     })
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+
+
+
+
+
+
+
+########################
+#       IDAR04         #
+########################
+
+Scenario: isTest('connettivita-base-idar04-jwk-ApplicativoBlockingIDA01') ||
+		isTest('connettivita-base-idar04-jwk-ApplicativoBlockingJWK') ||
+		isTest('connettivita-base-idar04-jwk-ApplicativoBlockingKeyPair') ||
+		isTest('connettivita-base-idar04-keypair-ApplicativoBlockingIDA01') ||
+		isTest('connettivita-base-idar04-keypair-ApplicativoBlockingJWK') ||
+		isTest('connettivita-base-idar04-keypair-ApplicativoBlockingKeyPair') ||
+		isTest('connettivita-base-idar04-pdnd-ApplicativoBlockingIDA01') ||
+		isTest('connettivita-base-idar04-pdnd-ApplicativoBlockingJWK') ||
+		isTest('connettivita-base-idar04-pdnd-ApplicativoBlockingKeyPair')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('connettivita-base-idar04-jwk-ApplicativoBlockingIDA01') ||
+		isTest('connettivita-base-idar04-jwk-ApplicativoBlockingJWK') ||
+		isTest('connettivita-base-idar04-jwk-ApplicativoBlockingKeyPair')) {
+      tipoTest = 'JWK'
+    }
+    """
+    * eval
+    """
+    if (isTest('connettivita-base-idar04-keypair-ApplicativoBlockingIDA01') ||
+		isTest('connettivita-base-idar04-keypair-ApplicativoBlockingJWK') ||
+		isTest('connettivita-base-idar04-keypair-ApplicativoBlockingKeyPair')) {
+      tipoTest = 'KeyPair'
+    }
+    """
+    * eval
+    """
+    if (isTest('connettivita-base-idar04-pdnd-ApplicativoBlockingIDA01') ||
+		isTest('connettivita-base-idar04-pdnd-ApplicativoBlockingJWK') ||
+		isTest('connettivita-base-idar04-pdnd-ApplicativoBlockingKeyPair')) {
+      tipoTest = 'PDND'
+    }
+    """
+
+    * def clientIdExpected = 'N.D.'
+    * def subExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * def audExpected = 'RestBlockingIDAR04-'+tipoTest+'/v1'
+
+    * eval
+    """
+    if (isTest('connettivita-base-idar04-jwk-ApplicativoBlockingIDA01') ||
+		isTest('connettivita-base-idar04-keypair-ApplicativoBlockingIDA01') ||
+		isTest('connettivita-base-idar04-pdnd-ApplicativoBlockingIDA01')) {
+      kidExpected = 'KID-ApplicativoBlockingIDA01'
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+      subExpected = 'ApplicativoBlockingIDA01'
+    }
+    """
+    * eval
+    """
+    if (isTest('connettivita-base-idar04-jwk-ApplicativoBlockingJWK') ||
+		isTest('connettivita-base-idar04-keypair-ApplicativoBlockingJWK') ||
+		isTest('connettivita-base-idar04-pdnd-ApplicativoBlockingJWK')) {
+      kidExpected = 'KID-ApplicativoBlockingJWK'
+      clientIdExpected = 'DemoSoggettoFruitore/KidOnly/ApplicativoBlockingJWK'
+      subExpected = 'ApplicativoBlockingJWK'
+    }
+    """
+    * eval
+    """
+    if (isTest('connettivita-base-idar04-jwk-ApplicativoBlockingKeyPair') ||
+		isTest('connettivita-base-idar04-keypair-ApplicativoBlockingKeyPair') ||
+		isTest('connettivita-base-idar04-pdnd-ApplicativoBlockingKeyPair')) {
+      kidExpected = 'KID-ApplicativoBlockingKeyPair'
+      clientIdExpected = 'DemoSoggettoFruitore/KeyPair/ApplicativoBlockingKeyPair'
+      subExpected = 'ApplicativoBlockingKeyPair'
+    }
+    """
+
+    * def client_token_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json; charset=UTF-8' },
+                { idar04testheader: 'TestHeaderRequest' }
+            ]
+        }
+    })
+    """
+
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+	    purposeId: 'purposeId-'+subExpected
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkTokenKid ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
+    
+    * def request_token = decodeToken(requestHeaders['Agid-JWT-Signature'][0], "AGID")
+    * def request_digest = get request_token $.payload.signed_headers..digest
+
+    * match requestHeaders['Digest'][0] == request_digest[0]
+
+    * karate.log("Ret: ", responseHeaders)
+
+    * def server_token_match =
+    """
+    ({
+        header: { kid: 'KID-ExampleServer'},
+        payload: {
+            aud: clientIdExpected,
+            client_id: 'ExampleServer'+tipoTest,
+            iss: 'DemoSoggettoErogatore',
+            sub: audExpected,
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json' },
+                { idar04testheader: 'TestHeaderResponse' }
+            ],
+            request_digest: request_digest[0]
+        }
+    })
+    """
+    * call checkTokenKid ({token: responseHeaders['Agid-JWT-Signature'][0], match_to: server_token_match, kind: "AGID"  })
+
+    * def response_token = decodeToken(responseHeaders['Agid-JWT-Signature'][0], "AGID")
+    * def response_digest = get response_token $.payload.signed_headers..digest
+    
+    * match responseHeaders['Digest'][0] == response_digest[0]
+
+    * def newHeaders = 
+    """
+    ({
+	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['Agid-JWT-Signature'][0],
+        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders['Agid-JWT-Signature'][0],
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+
+Scenario: isTest('connettivita-base-idar04-jwk-ApplicativoBlockingIDA01ExampleClient2')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('connettivita-base-idar04-jwk-ApplicativoBlockingIDA01ExampleClient2')) {
+      tipoTest = 'JWK'
+    }
+    """
+
+    * def clientIdExpected = 'N.D.'
+    * def subExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * def audExpected = 'RestBlockingIDAR04-'+tipoTest+'/v1'
+
+    * eval
+    """
+    if (isTest('connettivita-base-idar04-jwk-ApplicativoBlockingIDA01ExampleClient2')) {
+      kidExpected = 'ExampleClient2'
+      clientIdExpected = 'http://client2'
+      subExpected = 'ApplicativoBlockingIDA01ExampleClient2'
+    }
+    """
+
+    * def client_token_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json; charset=UTF-8' },
+                { idar04testheader: 'TestHeaderRequest' }
+            ]
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
+    
+    * match responseStatus == 401
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/kid-not-authorized.json')
+    * match header GovWay-Transaction-ErrorType == 'TokenAuthenticationFailed'
+
+    * def tid = responseHeaders['GovWay-Transaction-ID'][0]
+    * def result = get_diagnostici(tid) 
+
+    * def errorExpected = 'Certificato, corrispondente al kid \''+kidExpected+'\', non trovato nel TrustStore dei certificati'
+    * match result[0].MESSAGGIO contains errorExpected
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['Agid-JWT-Signature'][0],
+        'GovWay-TestSuite-GovWay-Transaction-ID': tid,
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+    * def responseStatus = 200
+
+
+
+Scenario: isTest('connettivita-base-idar04-pdnd-ApplicativoBlockingIDA01ExampleClient2')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('connettivita-base-idar04-pdnd-ApplicativoBlockingIDA01ExampleClient2')) {
+      tipoTest = 'PDND'
+    }
+    """
+
+    * def clientIdExpected = 'N.D.'
+    * def subExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * def audExpected = 'RestBlockingIDAR04-'+tipoTest+'/v1'
+
+    * eval
+    """
+    if (isTest('connettivita-base-idar04-pdnd-ApplicativoBlockingIDA01ExampleClient2')) {
+      kidExpected = 'ExampleClient2'
+      clientIdExpected = 'http://client2'
+      subExpected = 'ApplicativoBlockingIDA01ExampleClient2'
+    }
+    """
+
+    * def client_token_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json; charset=UTF-8' },
+                { idar04testheader: 'TestHeaderRequest' }
+            ]
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
+    
+    * match responseStatus == 401
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/kid-not-authorized.json')
+    * match header GovWay-Transaction-ErrorType == 'TokenAuthenticationFailed'
+
+    * def tid = responseHeaders['GovWay-Transaction-ID'][0]
+    * def result = get_diagnostici(tid) 
+
+    * def errorExpected = 'Retrieve remote key \''+kidExpected+'\' failed: Retrieve external resource \'http://localhost:8080/govway/rest/in/DemoSoggettoErogatore/simulazione-api-pdnd/v1/keys/'+kidExpected+'\' failed: (http code: 500)'
+    * match result[0].MESSAGGIO contains errorExpected
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['Agid-JWT-Signature'][0],
+        'GovWay-TestSuite-GovWay-Transaction-ID': tid,
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+    * def responseStatus = 200
+
+
+Scenario: isTest('manomissione-token-richiesta-idar04-jwk')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('manomissione-token-richiesta-idar04-jwk')) {
+      tipoTest = 'JWK'
+    }
+    """
+
+    * set requestHeaders['Agid-JWT-Signature'][0] = tamper_token_agid(requestHeaders['Agid-JWT-Signature'][0])
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/invalid-token-signature-in-request.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+Scenario: isTest('manomissione-token-richiesta-idar04-pdnd')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('manomissione-token-richiesta-idar04-pdnd')) {
+      tipoTest = 'PDND'
+    }
+    """
+
+    * set requestHeaders['Agid-JWT-Signature'][0] = tamper_token_agid(requestHeaders['Agid-JWT-Signature'][0])
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/invalid-token-signature-in-request-pdnd.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+Scenario: isTest('manomissione-token-risposta-idar04-jwk')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('manomissione-token-risposta-idar04-jwk')) {
+      tipoTest = 'JWK'
+    }
+    """
+
+    * karate.proceed(govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
+    
+    * set responseHeaders['Agid-JWT-Signature'][0] = tamper_token_agid(responseHeaders['Agid-JWT-Signature'][0])
+
+Scenario: isTest('manomissione-token-risposta-idar04-pdnd')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('manomissione-token-risposta-idar04-pdnd')) {
+      tipoTest = 'PDND'
+    }
+    """
+
+    * karate.proceed(govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
+    
+    * set responseHeaders['Agid-JWT-Signature'][0] = tamper_token_agid(responseHeaders['Agid-JWT-Signature'][0])
+
+Scenario: isTest('manomissione-payload-richiesta-idar04-jwk') ||
+	isTest('manomissione-payload-richiesta-idar04-pdnd')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('manomissione-payload-richiesta-idar04-jwk')) {
+      tipoTest = 'JWK'
+    }
+    """
+    * eval
+    """
+    if (isTest('manomissione-payload-richiesta-idar04-pdnd')) {
+      tipoTest = 'PDND'
+    }
+    """
+
+    * def c = request
+    * set c.nuovo_campo = "pippa"
+
+    * karate.proceed(govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/manomissione-payload-richiesta.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+Scenario: isTest('manomissione-payload-risposta-idar04-jwk') ||
+	isTest('manomissione-payload-risposta-idar04-pdnd')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('manomissione-payload-risposta-idar04-jwk')) {
+      tipoTest = 'JWK'
+    }
+    """
+    * eval
+    """
+    if (isTest('manomissione-payload-risposta-idar04-pdnd')) {
+      tipoTest = 'PDND'
+    }
+    """
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
+    * match responseStatus == 200
+
+    * set response.nuovo_campo = "pippa"
+
+
+Scenario: isTest('manomissione-header-http-firmati-richiesta-idar04-jwk') ||
+		isTest('manomissione-header-http-firmati-richiesta-idar04-pdnd')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('manomissione-header-http-firmati-richiesta-idar04-jwk')) {
+      tipoTest = 'JWK'
+    }
+    """
+    * eval
+    """
+    if (isTest('manomissione-header-http-firmati-richiesta-idar04-pdnd')) {
+      tipoTest = 'PDND'
+    }
+    """
+
+    * setRequestHeader("IDAR04TestHeader","tampered_content")
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/manomissione-header-http-firmati-richiesta-idar04.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+Scenario: isTest('manomissione-header-http-firmati-risposta-idar04-jwk') ||
+		isTest('manomissione-header-http-firmati-risposta-idar04-pdnd')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('manomissione-header-http-firmati-risposta-idar04-jwk')) {
+      tipoTest = 'JWK'
+    }
+    """
+    * eval
+    """
+    if (isTest('manomissione-header-http-firmati-risposta-idar04-pdnd')) {
+      tipoTest = 'PDND'
+    }
+    """
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
+    * match responseStatus == 200
+    * set responseHeaders['IDAR04TestHeader'][0] = 'tampered_content'
+
+Scenario: isTest('assenza-header-digest-richiesta-idar04-jwk') ||
+		isTest('assenza-header-digest-richiesta-idar04-pdnd')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('assenza-header-digest-richiesta-idar04-jwk')) {
+      tipoTest = 'JWK'
+    }
+    """
+    * eval
+    """
+    if (isTest('assenza-header-digest-richiesta-idar04-pdnd')) {
+      tipoTest = 'PDND'
+    }
+    """
+
+    * remove requestHeaders['Digest']
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
+    
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/assenza-header-digest-richiesta.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+Scenario: isTest('assenza-header-digest-risposta-idar04-jwk') ||
+		isTest('assenza-header-digest-risposta-idar04-pdnd')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('assenza-header-digest-risposta-idar04-jwk')) {
+      tipoTest = 'JWK'
+    }
+    """
+    * eval
+    """
+    if (isTest('assenza-header-digest-risposta-idar04-pdnd')) {
+      tipoTest = 'PDND'
+    }
+    """
+    
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
+    * remove responseHeaders['Digest']
+
+
+Scenario: isTest('response-without-payload-idar04-jwk') ||
+		isTest('response-without-payload-idar04-pdnd')
+
+   * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('response-without-payload-idar04-jwk')) {
+      tipoTest = 'JWK'
+    }
+    """
+    * eval
+    """
+    if (isTest('response-without-payload-idar04-pdnd')) {
+      tipoTest = 'PDND'
+    }
+    """
+
+    * def clientIdExpected = 'N.D.'
+    * def subExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * def audExpected = 'RestBlockingIDAR04-'+tipoTest+'/v1'
+
+    * eval
+    """
+    if (isTest('response-without-payload-idar04-jwk') ||
+		isTest('response-without-payload-idar04-pdnd')) {
+      kidExpected = 'KID-ApplicativoBlockingIDA01'
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+      subExpected = 'ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def client_token_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json; charset=UTF-8' },
+                { idar04testheader: 'TestHeaderRequest' }
+            ]
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
+
+    * def request_token = decodeToken(requestHeaders['Agid-JWT-Signature'][0], "AGID")
+    * def request_digest = get request_token $.payload.signed_headers..digest
+
+    * match requestHeaders['Digest'][0] == request_digest[0]
+
+    * karate.log("Ret: ", responseHeaders)
+
+    * def server_token_match =
+    """
+    ({
+        header: { kid: 'KID-ExampleServer'},
+        payload: {
+            aud: clientIdExpected,
+            client_id: 'ExampleServer'+tipoTest,
+            iss: 'DemoSoggettoErogatore',
+            sub: audExpected,
+            signed_headers: [
+                { idar04testheader: 'TestHeaderResponse' }
+            ],
+            request_digest: request_digest[0]
+        }
+    })
+    """
+    * call checkTokenKid ({token: responseHeaders['Agid-JWT-Signature'][0], match_to: server_token_match, kind: "AGID"  })
+
+  
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['Agid-JWT-Signature'][0],
+        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders['Agid-JWT-Signature'][0],
+        'Content-Type': null
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+Scenario: isTest('response-without-payload-idar04-tampered-header-jwk') ||
+		isTest('response-without-payload-idar04-tampered-header-pdnd')
+
+   * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('response-without-payload-idar04-tampered-header-jwk')) {
+      tipoTest = 'JWK'
+    }
+    """
+    * eval
+    """
+    if (isTest('response-without-payload-idar04-tampered-header-pdnd')) {
+      tipoTest = 'PDND'
+    }
+    """
+
+    * def clientIdExpected = 'N.D.'
+    * def subExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * def audExpected = 'RestBlockingIDAR04-'+tipoTest+'/v1'
+
+    * eval
+    """
+    if (isTest('response-without-payload-idar04-tampered-header-jwk') ||
+		isTest('response-without-payload-idar04-tampered-header-pdnd')) {
+      kidExpected = 'KID-ApplicativoBlockingIDA01'
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+      subExpected = 'ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def client_token_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json; charset=UTF-8' },
+                { idar04testheader: 'TestHeaderRequest' }
+            ]
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
+
+    * def request_token = decodeToken(requestHeaders['Agid-JWT-Signature'][0], "AGID")
+    * def request_digest = get request_token $.payload.signed_headers..digest
+
+    * match requestHeaders['Digest'][0] == request_digest[0]
+
+    * karate.log("Ret: ", responseHeaders)
+
+    * def server_token_match =
+    """
+    ({
+        header: { kid: 'KID-ExampleServer'},
+        payload: {
+            aud: clientIdExpected,
+            client_id: 'ExampleServer'+tipoTest,
+            iss: 'DemoSoggettoErogatore',
+            sub: audExpected,
+            signed_headers: [
+                { idar04testheader: 'TestHeaderResponse' }
+            ],
+            request_digest: request_digest[0]
+        }
+    })
+    """
+    * call checkTokenKid ({token: responseHeaders['Agid-JWT-Signature'][0], match_to: server_token_match, kind: "AGID"  })
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['Agid-JWT-Signature'][0],
+        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders['Agid-JWT-Signature'][0],
+        'Content-Type': null,
+        'IDAR04TestHeader': 'tampered_header'
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+
+
+Scenario: isTest('response-without-payload-idar04-digest-richiesta-jwk') ||
+		isTest('response-without-payload-idar04-digest-richiesta-pdnd')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('response-without-payload-idar04-digest-richiesta-jwk')) {
+      tipoTest = 'JWK'
+    }
+    """
+    * eval
+    """
+    if (isTest('response-without-payload-idar04-digest-richiesta-pdnd')) {
+      tipoTest = 'PDND'
+    }
+    """
+
+    * def clientIdExpected = 'N.D.'
+    * def subExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * def audExpected = 'RestBlockingIDAR04-'+tipoTest+'/v1'
+
+    * eval
+    """
+    if (isTest('response-without-payload-idar04-digest-richiesta-jwk') ||
+		isTest('response-without-payload-idar04-digest-richiesta-pdnd')) {
+      kidExpected = 'KID-ApplicativoBlockingIDA01'
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+      subExpected = 'ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def client_token_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json; charset=UTF-8' },
+                { idar04testheader: 'TestHeaderRequest' }
+            ]
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
+
+
+    * def request_token = decodeToken(requestHeaders['Agid-JWT-Signature'][0], "AGID")
+    * def request_digest = get request_token $.payload.signed_headers..digest
+
+    * match requestHeaders['Digest'][0] == request_digest[0]
+
+    * karate.log("Ret: ", responseHeaders)
+
+    * match responseHeaders['Agid-JWT-Signature'] == '#notpresent'
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['Agid-JWT-Signature'][0],
+        'Content-Type': null
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+
+Scenario: isTest('idar04-token-richiesta-jwk') ||
+		isTest('idar04-token-richiesta-pdnd')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('idar04-token-richiesta-jwk')) {
+      tipoTest = 'JWK'
+    }
+    """
+    * eval
+    """
+    if (isTest('idar04-token-richiesta-pdnd')) {
+      tipoTest = 'PDND'
+    }
+    """
+
+    * def clientIdExpected = 'N.D.'
+    * def subExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * def audExpected = 'RestBlockingIDAR04-'+tipoTest+'/v1'
+
+    * eval
+    """
+    if (isTest('idar04-token-richiesta-jwk') ||
+		isTest('idar04-token-richiesta-pdnd')) {
+      kidExpected = 'KID-ApplicativoBlockingIDA01'
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+      subExpected = 'ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def client_token_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json; charset=UTF-8' },
+                { idar04testheader: 'TestHeaderRequest' }
+            ]
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
+
+
+    * def request_token = decodeToken(requestHeaders['Agid-JWT-Signature'][0], "AGID")
+    * def request_digest = get request_token $.payload.signed_headers..digest
+
+    * match requestHeaders['Digest'][0] == request_digest[0]
+
+    * match responseHeaders['Agid-JWT-Signature'] == "#notpresent"
+    * match responseHeaders['Digest'] == "#notpresent"
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['Agid-JWT-Signature'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+Scenario: isTest('idar04-token-risposta-jwk') ||
+		isTest('idar04-token-risposta-pdnd')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('idar04-token-risposta-jwk')) {
+      tipoTest = 'JWK'
+    }
+    """
+    * eval
+    """
+    if (isTest('idar04-token-risposta-pdnd')) {
+      tipoTest = 'PDND'
+    }
+    """
+
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['Digest'][0] == '#notpresent'
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
+
+    * def clientIdExpected = 'anonymous'
+    * def audExpected = 'RestBlockingIDAR04-'+tipoTest+'/v1'
+
+    * def server_token_match =
+    """
+    ({
+        header: { kid: 'KID-ExampleServer'},
+        payload: {
+            aud: clientIdExpected,
+            client_id: 'ExampleServer'+tipoTest,
+            iss: 'DemoSoggettoErogatore',
+            sub: audExpected,
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json' },
+                { idar04testheader: 'TestHeaderResponse' }
+            ]
+        }
+    })
+    """
+    * call checkTokenKid ({token: responseHeaders['Agid-JWT-Signature'][0], match_to: server_token_match, kind: "AGID"  })   
+
+    * def response_token = decodeToken(responseHeaders['Agid-JWT-Signature'][0], "AGID")
+    * def response_digest = get response_token $.payload.signed_headers..digest
+    * match responseHeaders['Digest'][0] == response_digest[0]
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders['Agid-JWT-Signature'][0],
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+Scenario: isTest('authorization-richiesta-integrity-risposta-idar04-jwk') ||
+		isTest('authorization-richiesta-integrity-risposta-idar04-pdnd')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('authorization-richiesta-integrity-risposta-idar04-jwk')) {
+      tipoTest = 'JWK'
+    }
+    """
+    * eval
+    """
+    if (isTest('authorization-richiesta-integrity-risposta-idar04-pdnd')) {
+      tipoTest = 'PDND'
+    }
+    """
+
+    * def clientIdExpected = 'N.D.'
+    * def subExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * def audExpected = 'RestBlockingIDAR04-'+tipoTest+'/v1'
+
+    * eval
+    """
+    if (isTest('authorization-richiesta-integrity-risposta-idar04-jwk') ||
+		isTest('authorization-richiesta-integrity-risposta-idar04-pdnd')) {
+      kidExpected = 'KID-ApplicativoBlockingIDA01'
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+      subExpected = 'ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def client_token_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+	    purposeId: 'purposeId-'+subExpected
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkTokenKid ({token: requestHeaders['Authorization'][0], match_to: client_token_match, kind: "Bearer" })
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent' 
+    * match requestHeaders['Digest'] == '#notpresent'
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
+
+    
+    * match responseHeaders['Authorization'] == '#notpresent' 
+    
+    * def server_token_match =
+    """
+    ({
+        header: { kid: 'KID-ExampleServer'},
+        payload: {
+            aud: clientIdExpected,
+            client_id: 'ExampleServer'+tipoTest,
+            iss: 'DemoSoggettoErogatore',
+            sub: audExpected,
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json' },
+                { idar04testheader: 'TestHeaderResponse' }
+            ]
+        }
+    })
+    """
+    * call checkTokenKid ({token: responseHeaders['Agid-JWT-Signature'][0], match_to: server_token_match, kind: "AGID"  })
+
+    * def server_token_integrity = decodeToken(responseHeaders['Agid-JWT-Signature'][0], "AGID")
+    
+    * def response_digest = get server_token_integrity $.payload.signed_headers..digest
+    * match responseHeaders['Digest'][0] == response_digest[0]
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Server-Integrity-Token': responseHeaders['Agid-JWT-Signature'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+Scenario: isTest('solo-authorization-richiesta-idar04-jwk') ||
+		isTest('solo-authorization-richiesta-idar04-pdnd')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('solo-authorization-richiesta-idar04-jwk')) {
+      tipoTest = 'JWK'
+    }
+    """
+    * eval
+    """
+    if (isTest('solo-authorization-richiesta-idar04-pdnd')) {
+      tipoTest = 'PDND'
+    }
+    """
+
+    * def clientIdExpected = 'N.D.'
+    * def subExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * def audExpected = 'RestBlockingIDAR04-'+tipoTest+'/v1'
+
+    * eval
+    """
+    if (isTest('solo-authorization-richiesta-idar04-jwk') ||
+		isTest('solo-authorization-richiesta-idar04-pdnd')) {
+      kidExpected = 'KID-ApplicativoBlockingIDA01'
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+      subExpected = 'ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def client_token_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+	    purposeId: 'purposeId-'+subExpected
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkTokenKid ({token: requestHeaders['Authorization'][0], match_to: client_token_match, kind: "Bearer" })
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent' 
+    * match requestHeaders['Digest'] == '#notpresent'
+
+    * request ''
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
+
+    * match responseHeaders['Authorization'] == '#notpresent' 
+    * match responseHeaders['Agid-JWT-Signature'] == '#notpresent'
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)  
+
+
+
 
 
 

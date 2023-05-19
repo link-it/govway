@@ -79,6 +79,11 @@ Prerequisiti:
 + Copiare o creare un link simbolico della cartella <protocolli/modipa/example/keys/xca> sotto </etc/govway/keys/xca>
   Qui sono presenti i keystore e truststore per i test sulla sicurezza messaggio
 
+  Copiare anche i file descritti nella specifica: 'protocolli/modipa/example/jwk/README.txt'
+  cp -r protocolli/modipa/example/jwk/jwk_private_keys /etc/govway/keys/
+  cp -r protocolli/modipa/example/jwk/jwk_public_keys /etc/govway/keys/
+  cp protocolli/modipa/example/jwk/truststore_certificati.jwk /etc/govway/keys
+
 	- Modificare quindi il file </etc/govway/modipa_local.properties> configurando i valori per il keystore e truststore di default,
           oltre alle impostazioni relative al tipo di codifica del digest e alla generazione del kid nei token X509
 
@@ -90,6 +95,21 @@ Prerequisiti:
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.trustStore.tipo=jks
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.trustStore.password=123456
 		#org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.trustStore.crls=PATH1.crl,PATH2.crl...
+
+		# ----- Remote TrustStore 
+
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStores=pdnd,simulazione-pdnd
+
+		# Tipo di certificato recuperato
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd.keyType=jwk
+
+		# Configurazione utilizzata per invocare il servizio esposto sulla PDND per l'ottenimento delle chiavi pubbliche rispetto al kid
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd.name=PDNDSimulato
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd.label=PDND-Simulato
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd.baseUrl=http://localhost:8080/govway/rest/in/DemoSoggettoErogatore/simulazione-api-pdnd/v1/keys
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd.keyId.mode=URL_SUFFIX
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd.readTimeout=15000
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd.connectTimeout=10000
 
 		# ================================================
 		# -------- KeyStore -------- 

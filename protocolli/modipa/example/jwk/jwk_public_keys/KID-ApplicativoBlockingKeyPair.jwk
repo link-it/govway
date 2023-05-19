@@ -1,0 +1,6 @@
+{
+  "kty" : "RSA",
+  "e" : "AQAB",
+  "kid" : "KID-ApplicativoBlockingKeyPair",
+  "n" : "x3eeq3vIzrHzXvVuBBSt1OocfSr0YdY-_uXvbz944Ewd1INI4Zh_64uf7eVHl_hNp3T7-c-rE8UOZHNAozYMyb4vdOUe8cZOdEWWYN6dnX4ZvK52n91M4DvdAJGBo7peOJ1DRUs30uUM74TudAO-0O6NM-nt0A2ycbphcqRJ_UzwyPEbrqU-gHqWEdqUOBxn9AT03Szn4OgRoQUEJ-QGz8tV1-TBjMSVO_HHbUklPmDgizGPfWqV92K2gvD_C9nZuaa3MKfpmbvwErGsWd8Tffd8jZl5EZvtszKxXi0VyVtk06Glj6-OV12JjXaFd4bSbasILoYT8sufo6gC0YR7uw"
+}

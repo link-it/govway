@@ -1,0 +1,7 @@
+{
+    "type" : "https://govway.org/handling-errors/401/TokenAuthenticationFailed.html",
+    "title" : "TokenAuthenticationFailed",
+    "status" : 401,
+    "detail" : "Errore nel processamento del messaggio di cooperazione",
+    "govway_id" : "#string"
+}

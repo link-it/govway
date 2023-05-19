@@ -1,0 +1,6 @@
+{
+  "kty" : "RSA",
+  "e" : "AQAB",
+  "kid" : "KID-ApplicativoBlockingJWK",
+  "n" : "uO0lSzNdA4G084FnllC1gIZIWPBG5oGPC2XnsWWpw0Hw2dzo5e5nYzXGS9CChVRN6CPrybeksNuVAg8_RzCF1ZJmDCCkQeocNmrB0HhXJVLgLU3Bo4XZw_2G4zxo8RpemhyL2b3PzxplpKsmrIDI1TaCEgcvlsvmF6muMTmF9hnboGyXkapbrvVrxzU_WqZb580FzAFGyzSDNvUpIhl21k6An21jzwTQUS-M8hbXbbyO7SwMXlltbP0R1KYozBnxbfZyLlzIfw3ekuLqvjsRT68Ohej9WE3bCBKLJ2Bon7gpCgk0YaHlvGm6Dsa9E_kzWqoMurYMTPbhqCHbER5Y8w"
+}

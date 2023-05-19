@@ -200,20 +200,18 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 						}
 						
 					}
-					if(!risorseDaEliminare.isEmpty()) {
-						while(!risorseDaEliminare.isEmpty()) {
-							Resource risorsaDaEliminare = risorseDaEliminare.remove(0);
-							for (int i = 0; i < aspcDestinazione.sizeResourceList(); i++) {
-								if(aspcDestinazione.getResource(i).getNome().equals(risorsaDaEliminare.getNome())) {
-									aspcDestinazione.removeResource(i);
-									IDResource idResource = new IDResource();
-									idResource.setIdAccordo(idAccordo);
-									idResource.setNome(risorsaDaEliminare.getNome());
-									
-									risorseEliminate.add(idResource);
-									
-									break;
-								}
+					while(!risorseDaEliminare.isEmpty()) {
+						Resource risorsaDaEliminare = risorseDaEliminare.remove(0);
+						for (int i = 0; i < aspcDestinazione.sizeResourceList(); i++) {
+							if(aspcDestinazione.getResource(i).getNome().equals(risorsaDaEliminare.getNome())) {
+								aspcDestinazione.removeResource(i);
+								IDResource idResource = new IDResource();
+								idResource.setIdAccordo(idAccordo);
+								idResource.setNome(risorsaDaEliminare.getNome());
+								
+								risorseEliminate.add(idResource);
+								
+								break;
 							}
 						}
 					}
@@ -460,20 +458,18 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 						}
 						
 					}
-					if(!portTypeDaEliminare.isEmpty()) {
-						while(!portTypeDaEliminare.isEmpty()) {
-							PortType ptDaEliminare = portTypeDaEliminare.remove(0);
-							for (int i = 0; i < aspcDestinazione.sizePortTypeList(); i++) {
-								if(aspcDestinazione.getPortType(i).getNome().equals(ptDaEliminare.getNome())) {
-									aspcDestinazione.removePortType(i);
-									
-									IDPortType idPortType = new IDPortType();
-									idPortType.setIdAccordo(idAccordo);
-									idPortType.setNome(ptDaEliminare.getNome());
-									portTypeEliminati.add(idPortType);
-									
-									break;
-								}
+					while(!portTypeDaEliminare.isEmpty()) {
+						PortType ptDaEliminare = portTypeDaEliminare.remove(0);
+						for (int i = 0; i < aspcDestinazione.sizePortTypeList(); i++) {
+							if(aspcDestinazione.getPortType(i).getNome().equals(ptDaEliminare.getNome())) {
+								aspcDestinazione.removePortType(i);
+								
+								IDPortType idPortType = new IDPortType();
+								idPortType.setIdAccordo(idAccordo);
+								idPortType.setNome(ptDaEliminare.getNome());
+								portTypeEliminati.add(idPortType);
+								
+								break;
 							}
 						}
 					}

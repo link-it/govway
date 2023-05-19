@@ -483,10 +483,16 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 						if(!rest) {
 							signAttachments = ModIPropertiesUtils.isAttachmentsSignature(aspc, nomePortType, azione, request, msg);
 						}
+							
+						boolean integritaX509 = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile) || 
+								ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile);
+						boolean integritaKid = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile) || 
+								ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile);
+						boolean integrita = integritaX509 || integritaKid;
 												
 						if(rest) {
 							boolean securityHeaderObbligatorio = true;
-							
+
 							if(headerTokenRestIntegrity==null) {
 								
 								String token = null;
@@ -500,6 +506,10 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 								try {
 									msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_IN_CORSO);
 									
+									// Nel caso di 1 solo header da generare localmente, l'integrity, e l'authorization prodotto tramite token policy, l'integrity è obbligatorio solo se c'è un payload, altrimenti se presente viene validato, altrimenti non da errore.
+									if(!sorgenteLocale) {
+										securityHeaderObbligatorio = msg.castAsRest().hasContent();
+									}
 									token = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfile, false, headerTokenRest, 
 											corniceSicurezza, patternCorniceSicurezza, 
 											null, // devo fornirlo solo durante la validazione dell'Audit Token 
@@ -541,6 +551,20 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 											}
 										}
 										msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK, audience);
+									}
+									
+									if(!request && securityConfig.isCheckAudience() && integritaKid && securityConfig.getTokenClientId()!=null) {
+										String audienceClientId = null;
+										try {
+											audienceClientId = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE+"-OAuth", 
+													securityConfig.getTokenClientId(), dynamicMap, this.context);
+										}catch(Exception e) {
+											this.logError(e.getMessage(),e);
+											throw e;
+										}
+										if(audienceClientId!=null) {
+											msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK_OAUTH, audienceClientId);
+										}
 									}
 									
 									rawContent = new ModIBustaRawContent(headerTokenRest, token);
@@ -662,6 +686,20 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 										}
 									}
 									msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_INTEGRITY_CHECK, audIntegrity);
+									
+									if(!request && securityConfig.isCheckAudience() && integritaKid && securityConfig.getTokenClientId()!=null) {
+										String audienceClientId = null;
+										try {
+											audienceClientId = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE+"-OAuth", 
+													securityConfig.getTokenClientId(), dynamicMap, this.context);
+										}catch(Exception e) {
+											this.logError(e.getMessage(),e);
+											throw e;
+										}
+										if(audienceClientId!=null) {
+											msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_INTEGRITY_CHECK_OAUTH, audienceClientId);
+										}
+									}
 								}
 								
 								// Finalizzo
@@ -682,12 +720,6 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 						else {
 
 							// soap
-							
-							boolean integritaX509 = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile) || 
-									ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile);
-							boolean integritaKid = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile) || 
-									ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile);
-							boolean integrita = integritaX509 || integritaKid;
 							
 							String prefixMsgDiag = null;
 							if(integrita) {

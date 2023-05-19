@@ -316,13 +316,38 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				String audience = busta.getProperty(rest ? 
 						ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE :
 						ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SOAP_WSA_TO	);
+				
 				Object audienceAttesoObject = null;
 				if(msg!=null) {
 					audienceAttesoObject = msg.getContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK);
 				}
+				String audienceAtteso = null;
 				if(audienceAttesoObject!=null) {
-					String audienceAtteso = (String) audienceAttesoObject;
-					if(!audienceAtteso.equals(audience)) {
+					audienceAtteso = (String) audienceAttesoObject;
+				}
+				
+				Object audienceAttesoOAuthObject = null;
+				if(msg!=null) {
+					audienceAttesoOAuthObject = msg.getContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK_OAUTH);
+				}
+				String audienceOAuthAtteso = null;
+				if(audienceAttesoOAuthObject!=null) {
+					audienceOAuthAtteso = (String) audienceAttesoOAuthObject;
+				}
+				
+				if(audienceAtteso!=null || audienceOAuthAtteso!=null) {
+					
+					boolean checkAudience = false;
+					if(audienceAtteso!=null) {
+						checkAudience = audienceAtteso.equals(audience);
+					}
+					
+					boolean checkAudienceOAuth = false;
+					if(audienceOAuthAtteso!=null) {
+						checkAudienceOAuth = audienceOAuthAtteso.equals(audience);
+					}
+					
+					if(!checkAudience && !checkAudienceOAuth) {
 						
 						boolean buildSecurityTokenInRequest = true;
 						Object buildSecurityTokenInRequestObject = msg.getContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_BUILD_SECURITY_REQUEST_TOKEN);
@@ -345,14 +370,38 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 					if(msg!=null) {
 						audienceIntegrityAttesoObject = msg.getContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_INTEGRITY_CHECK);
 					}
+					String audienceIntegrityAtteso = null;
 					if(audienceIntegrityAttesoObject!=null) {
-						String audienceIntegrityAtteso = (String) audienceIntegrityAttesoObject;
+						audienceIntegrityAtteso = (String) audienceIntegrityAttesoObject;
+					}
+					
+					Object audienceIntegrityAttesoOAuthObject = null;
+					if(msg!=null) {
+						audienceIntegrityAttesoOAuthObject = msg.getContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_INTEGRITY_CHECK_OAUTH);
+					}
+					String audienceIntegrityOAuthAtteso = null;
+					if(audienceIntegrityAttesoOAuthObject!=null) {
+						audienceIntegrityOAuthAtteso = (String) audienceIntegrityAttesoOAuthObject;
+					}
+					
+					if(audienceIntegrityAtteso!=null || audienceIntegrityOAuthAtteso!=null) {
 						String audienceIntegrity = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_AUDIENCE);
 						if(audienceIntegrity==null) {
 							// significa che l'audience tra i due token ricevuto e' identico
 							audienceIntegrity = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE);
 						}
-						if(!audienceIntegrityAtteso.equals(audienceIntegrity)) {
+						
+						boolean checkAudience = false;
+						if(audienceIntegrityAtteso!=null) {
+							checkAudience = audienceIntegrity.equals(audienceIntegrityAtteso);
+						}
+						
+						boolean checkAudienceOAuth = false;
+						if(audienceIntegrityAttesoOAuthObject!=null) {
+							checkAudienceOAuth = audienceIntegrity.equals(audienceIntegrityAttesoOAuthObject);
+						}
+						
+						if(!checkAudience && !checkAudienceOAuth) {
 							this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
 									isRichiesta ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_VALIDO :
 										CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_VALIDO, 

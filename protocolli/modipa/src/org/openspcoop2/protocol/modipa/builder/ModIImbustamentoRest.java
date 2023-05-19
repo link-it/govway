@@ -1180,6 +1180,12 @@ public class ModIImbustamentoRest {
 		// Aggiungo a traccia informazioni sul certificato utilizzato
 		X509Certificate x509 = null;
 		if(ks!=null) {
+			
+			if(!richiestaConfigurazioneX509 && kid!=null && StringUtils.isNotEmpty(kid)) {
+				busta.addProperty(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_KID : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_KID,
+						kid);
+			}
+			
 			Certificate certificate = null;
 			try {
 				certificate = ks.getCertificate(keystoreConfig.getSecurityMessageKeyAlias());

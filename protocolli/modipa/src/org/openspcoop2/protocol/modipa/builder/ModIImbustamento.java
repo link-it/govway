@@ -449,8 +449,7 @@ public class ModIImbustamento {
 						
 					}
 				}
-				
-				
+								
 				String purposeId = null;
 				if(addSecurity || addAudit) {
 					purposeId =  ModIPropertiesUtils.readPurposeId(configIntegrationReader, asps, idSoggettoMittente, azione);
@@ -470,34 +469,62 @@ public class ModIImbustamento {
 					}
 						
 					if(rest) {
+						
+						// Integrity verrà generato solo se:
+						// Nel caso di 2 header da generare localmente, quello integrity viene prodotto solo se c'è un payload o uno degli header indicati da firmare.
+						// Nel caso di 1 solo header da generare localmente, l'integrity, e l'authorization prodotto tramite token policy lo stesso verrà generato solo se c'è un payload o uno degli header indicati da firmare.
+						boolean addIntegrity = false;
+						boolean signedHeaders = false;
+						if(securityConfig.getHttpHeaders()!=null && !securityConfig.getHttpHeaders().isEmpty()) {
+							Map<String, List<String>> mapForceTransportHeaders = msg.getForceTransportHeaders();
+							for (String httpHeader : securityConfig.getHttpHeaders()) {
+								if(!httpHeader.equalsIgnoreCase(HttpConstants.DIGEST)) {
+									List<String> values = ModIImbustamentoRest.getHeaderValues(ruoloMessaggio, msg, mapForceTransportHeaders, httpHeader);
+									if(values!=null && !values.isEmpty()) {
+										signedHeaders = true;
+										break;
+									}
+								}
+							}
+						}
+						if(msg.castAsRest().hasContent() || signedHeaders) {
+							addIntegrity = true;
+						}
+						
+						
 						if(headerTokenRestIntegrity==null) {
-							String prefixMsgDiag = null;
-							if(HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
-								prefixMsgDiag = DIAGNOSTIC_ADD_TOKEN_ID_AUTH;
-							}
-							else {
-								prefixMsgDiag = DIAGNOSTIC_ADD_TOKEN_INTEGRITY;
-							}
-							try {
-								msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_IN_CORSO);
 							
-								ModIJWTToken modiToken = imbustamentoRest.addToken(msg, isRichiesta, context, keystoreConfig, securityConfig, busta, 
-										securityMessageProfile, false, headerTokenRest, 
-										corniceSicurezza, patternCorniceSicurezza, 
-										null, // devo fornirlo solo durante la generazione dell'Audit Token 
-										ruoloMessaggio, includiRequestDigest,
-										now, busta.getID(), ModIHeaderType.SINGLE, integritaCustom,
-										dynamicMap, requestInfo,
-										purposeId, sicurezzaRidefinitaOperazione);
-								protocolMessage.setBustaRawContent(new ModIBustaRawContent(headerTokenRest, modiToken.getToken()));
+							// Nel caso di 1 solo header da generare localmente, l'integrity, e l'authorization prodotto tramite token policy lo stesso verrà generato solo se c'è un payload o uno degli header indicati da firmare.
+							if(sorgenteLocale || addIntegrity) {
+							
+								String prefixMsgDiag = null;
+								if(HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
+									prefixMsgDiag = DIAGNOSTIC_ADD_TOKEN_ID_AUTH;
+								}
+								else {
+									prefixMsgDiag = DIAGNOSTIC_ADD_TOKEN_INTEGRITY;
+								}
+								try {
+									msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_IN_CORSO);
 								
-								CostantiPdD.addKeywordInCache(msgDiag, modiToken.isInCache(), context, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_MODI_TOKEN_AUTHORIZATION); 
-								msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_COMPLETATA);
-							}
-							catch(ProtocolException pe) {
-								msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, pe.getMessage());
-								msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_FALLITA);
-								throw pe;
+									ModIJWTToken modiToken = imbustamentoRest.addToken(msg, isRichiesta, context, keystoreConfig, securityConfig, busta, 
+											securityMessageProfile, false, headerTokenRest, 
+											corniceSicurezza, patternCorniceSicurezza, 
+											null, // devo fornirlo solo durante la generazione dell'Audit Token 
+											ruoloMessaggio, includiRequestDigest,
+											now, busta.getID(), ModIHeaderType.SINGLE, integritaCustom,
+											dynamicMap, requestInfo,
+											purposeId, sicurezzaRidefinitaOperazione);
+									protocolMessage.setBustaRawContent(new ModIBustaRawContent(headerTokenRest, modiToken.getToken()));
+									
+									CostantiPdD.addKeywordInCache(msgDiag, modiToken.isInCache(), context, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_MODI_TOKEN_AUTHORIZATION); 
+									msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_COMPLETATA);
+								}
+								catch(ProtocolException pe) {
+									msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, pe.getMessage());
+									msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_FALLITA);
+									throw pe;
+								}
 							}
 							
 						}
@@ -555,23 +582,6 @@ public class ModIImbustamento {
 							
 							// Integrity
 							// !! Nel caso di 2 header, quello integrity viene prodotto solo se c'è un payload o uno degli header indicati da firmare.
-							boolean addIntegrity = false;
-							boolean signedHeaders = false;
-							if(securityConfig.getHttpHeaders()!=null && !securityConfig.getHttpHeaders().isEmpty()) {
-								Map<String, List<String>> mapForceTransportHeaders = msg.getForceTransportHeaders();
-								for (String httpHeader : securityConfig.getHttpHeaders()) {
-									if(!httpHeader.equalsIgnoreCase(HttpConstants.DIGEST)) {
-										List<String> values = ModIImbustamentoRest.getHeaderValues(ruoloMessaggio, msg, mapForceTransportHeaders, httpHeader);
-										if(values!=null && !values.isEmpty()) {
-											signedHeaders = true;
-											break;
-										}
-									}
-								}
-							}
-							if(msg.castAsRest().hasContent() || signedHeaders) {
-								addIntegrity = true;
-							}
 							ModIJWTToken modiTokenIntegrity = null;
 							if(addIntegrity) {
 								try {
