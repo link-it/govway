@@ -27,6 +27,7 @@ import org.openspcoop2.pdd.core.Utilities;
 import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.utils.regexp.RegExpException;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
+import org.openspcoop2.utils.regexp.RegExpNotValidException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 
 /**
@@ -40,7 +41,7 @@ public class ConfigurazioneCondizionale {
 
 	private boolean byFilter = true; 
 	private ConfigurazioneSelettoreCondizione defaultConfig;
-	private TreeMap<String, ConfigurazioneSelettoreCondizioneRegola> regolaList = new TreeMap<String, ConfigurazioneSelettoreCondizioneRegola>();
+	private TreeMap<String, ConfigurazioneSelettoreCondizioneRegola> regolaList = new TreeMap<>();
 	
 	private IdentificazioneFallitaConfigurazione condizioneNonIdentificata;
 	private IdentificazioneFallitaConfigurazione nessunConnettoreTrovato; 
@@ -79,33 +80,7 @@ public class ConfigurazioneCondizionale {
 			for (String nomeRegola: getRegoleOrdinate()) {
 				ConfigurazioneSelettoreCondizioneRegola config = this.regolaList.get(nomeRegola);
 				
-				boolean match = false;
-				
-				if(operazione.equals(config.getPatternOperazione())) {
-					match=true;
-				}
-				
-				if(!match && restResource!=null) {
-					if(config.getPatternOperazione()!=null && !"".equals(config.getPatternOperazione())) {
-						String [] parseResourceRest = Utilities.parseResourceRest(config.getPatternOperazione());
-						if(parseResourceRest!=null) {
-							match = Utilities.isRestResourceMatch(parseResourceRest, restResource);
-						}
-					}
-				}
-				
-				if(!match) {
-					boolean exprRegular = false;
-					try {
-						RegularExpressionEngine.validate(config.getPatternOperazione());
-						exprRegular = true;
-					}catch(Throwable e) {}
-					if(exprRegular) {
-						try {
-							match = RegularExpressionEngine.isMatch(operazione, config.getPatternOperazione());
-						}catch(RegExpNotFoundException notFound) {}
-					}
-				}
+				boolean match = isMatch(operazione, restResource, config);
 				
 				if(match) {
 					return config;
@@ -113,6 +88,43 @@ public class ConfigurazioneCondizionale {
 			}
 		}
 		return null;
+	}
+	
+	private boolean isMatch(String operazione, Resource restResource, ConfigurazioneSelettoreCondizioneRegola config) throws RegExpException {
+		boolean match = false;
+		
+		if(operazione.equals(config.getPatternOperazione())) {
+			match=true;
+		}
+		
+		if(!match && restResource!=null &&
+			config.getPatternOperazione()!=null && !"".equals(config.getPatternOperazione())) {
+			String [] parseResourceRest = Utilities.parseResourceRest(config.getPatternOperazione());
+			if(parseResourceRest!=null) {
+				match = Utilities.isRestResourceMatch(parseResourceRest, restResource);
+			}
+		}
+		
+		if(!match) {
+			boolean exprRegular = false;
+			try {
+				RegularExpressionEngine.validate(config.getPatternOperazione());
+				exprRegular = true;
+			}catch(Exception e) {
+				// ignore
+			}
+			if(exprRegular) {
+				try {
+					match = RegularExpressionEngine.isMatch(operazione, config.getPatternOperazione());
+				}
+				catch(RegExpNotValidException | RegExpNotFoundException e) {
+					// RegExpNotValidException: non dovrebbe accadere, garantito da validate sopra
+					// RegExpNotFoundException: ignore
+				}
+			}
+		}
+		
+		return match;
 	}
 
 	public String getNomeRegolaByOperazione(String operazione, Resource restResource) throws RegExpException {

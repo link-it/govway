@@ -28,6 +28,7 @@ import java.util.Map;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.regexp.RegExpException;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
+import org.openspcoop2.utils.regexp.RegExpNotValidException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.regexp.RegularExpressionPatternCompileMode;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -83,7 +84,7 @@ public class EsitoTransportContextIdentification  {
 	public boolean match(Map<String, List<String>> p) throws ProtocolException{
 		Iterator<String> keys = p.keySet().iterator();
 		while (keys.hasNext()) {
-			String key = (String) keys.next();
+			String key = keys.next();
 			List<String> values = TransportUtils.getRawObject(p, key);
 			if(values!=null && !values.isEmpty()) {
 				for (String valueKey : values) {
@@ -100,7 +101,7 @@ public class EsitoTransportContextIdentification  {
 								}
 							}catch(RegExpNotFoundException notFound){	
 								continue;
-							}catch(RegExpException exp){
+							}catch(RegExpException | RegExpNotValidException exp){
 								throw new ProtocolException(exp.getMessage(),exp);
 							}
 							break;
@@ -117,7 +118,7 @@ public class EsitoTransportContextIdentification  {
 									valueRexExp = RegularExpressionEngine.getStringMatchPattern(valueKey, this.regularExpr, RegularExpressionPatternCompileMode.CASE_INSENSITIVE);
 								}catch(RegExpNotFoundException notFound){	
 									continue;
-								}catch(RegExpException exp){
+								}catch(RegExpException | RegExpNotValidException exp){
 									throw new ProtocolException(exp.getMessage(),exp);
 								}
 								if(this.value!=null && valueRexExp!=null && valueRexExp.toLowerCase().contains(this.value.toLowerCase())){
@@ -147,7 +148,7 @@ public class EsitoTransportContextIdentification  {
 									valueRexExp = RegularExpressionEngine.getStringMatchPattern(valueKey, this.regularExpr, RegularExpressionPatternCompileMode.CASE_INSENSITIVE);
 								}catch(RegExpNotFoundException notFound){	
 									continue;
-								}catch(RegExpException exp){
+								}catch(RegExpException | RegExpNotValidException exp){
 									throw new ProtocolException(exp.getMessage(),exp);
 								}
 								if(this.value==null){

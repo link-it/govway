@@ -36,12 +36,10 @@ public class RegExpNotFoundException extends Exception {
 	 public RegExpNotFoundException(String message, Throwable cause)
 		{
 			super(message, cause);
-			// TODO Auto-generated constructor stub
 		}
 		public RegExpNotFoundException(Throwable cause)
 		{
 			super(cause);
-			// TODO Auto-generated constructor stub
 		}
 		/**
 		 * serialVersionUID

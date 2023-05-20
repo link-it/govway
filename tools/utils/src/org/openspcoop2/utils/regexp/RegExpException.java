@@ -36,12 +36,10 @@ public class RegExpException extends Exception {
 	 public RegExpException(String message, Throwable cause)
 		{
 			super(message, cause);
-			// TODO Auto-generated constructor stub
 		}
 		public RegExpException(Throwable cause)
 		{
 			super(cause);
-			// TODO Auto-generated constructor stub
 		}
 		/**
 		 * serialVersionUID

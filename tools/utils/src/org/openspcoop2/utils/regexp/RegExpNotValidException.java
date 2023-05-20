@@ -31,17 +31,15 @@ package org.openspcoop2.utils.regexp;
  */
 
 
-public class RegExpNotValidException extends RegExpException {
+public class RegExpNotValidException extends Exception {
 
 	 public RegExpNotValidException(String message, Throwable cause)
 		{
 			super(message, cause);
-			// TODO Auto-generated constructor stub
 		}
 		public RegExpNotValidException(Throwable cause)
 		{
 			super(cause);
-			// TODO Auto-generated constructor stub
 		}
 		/**
 		 * serialVersionUID

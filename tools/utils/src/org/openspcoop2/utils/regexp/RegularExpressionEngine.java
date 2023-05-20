@@ -36,6 +36,8 @@ import java.util.regex.Pattern;
  */
 
 public class RegularExpressionEngine {
+	
+	private RegularExpressionEngine() {}
 
 	/**
 	 * NOTA: Le regole sotto riportate sono state prese da http://download-llnw.oracle.com/javase/1.5.0/docs/api/java/util/regex/Pattern.html
@@ -317,6 +319,12 @@ public class RegularExpressionEngine {
 	 **/
 	
 	
+	private static final String CONTENUTO_NON_FORNITO = "Contenuto su cui effettuare una ricerca non fornita";
+	private static final String NESSUN_MATCH_TROVATO = "nessun match trovato";
+	private static RegExpException getErrorMessage(String method,String contenuto, String pattern, Exception e) {
+		return new RegExpException(method+" contenuto["+contenuto+"] pattern["+pattern+"] error: "+e.getMessage(),e);
+	}
+	
 	
 	
 	/**
@@ -328,62 +336,74 @@ public class RegularExpressionEngine {
 	 * 
 	 */
 	public static List<String> getAllStringMatchPattern(String contenuto, String pattern) throws RegExpException,RegExpNotValidException,RegExpNotFoundException{
-		return RegularExpressionEngine._getAllStringPattern(contenuto,pattern,true,(RegularExpressionPatternCompileMode[])null);
+		return RegularExpressionEngine.getAllStringPatternEngine(contenuto,pattern,true,(RegularExpressionPatternCompileMode[])null);
 	}
 	public static List<String> getAllStringMatchPattern(String contenuto, String pattern, RegularExpressionPatternCompileMode ... compileModes) throws RegExpException,RegExpNotValidException,RegExpNotFoundException{
-		return RegularExpressionEngine._getAllStringPattern(contenuto,pattern,true,compileModes);
+		return RegularExpressionEngine.getAllStringPatternEngine(contenuto,pattern,true,compileModes);
 	}
 	public static List<String> getAllStringFindPattern(String contenuto, String pattern) throws RegExpException,RegExpNotValidException,RegExpNotFoundException{
-		return RegularExpressionEngine._getAllStringPattern(contenuto,pattern,false,(RegularExpressionPatternCompileMode[])null);
+		return RegularExpressionEngine.getAllStringPatternEngine(contenuto,pattern,false,(RegularExpressionPatternCompileMode[])null);
 	}
 	public static List<String> getAllStringFindPattern(String contenuto, String pattern, RegularExpressionPatternCompileMode ... compileModes) throws RegExpException,RegExpNotValidException,RegExpNotFoundException{
-		return RegularExpressionEngine._getAllStringPattern(contenuto,pattern,false,compileModes);
+		return RegularExpressionEngine.getAllStringPatternEngine(contenuto,pattern,false,compileModes);
 	}
-	private static List<String> _getAllStringPattern(String contenuto, String pattern, boolean usingMatch, RegularExpressionPatternCompileMode ... compileModes) throws RegExpException,RegExpNotValidException,RegExpNotFoundException{
+	private static List<String> getAllStringPatternEngine(String contenuto, String pattern, boolean usingMatch, RegularExpressionPatternCompileMode ... compileModes) throws RegExpException,RegExpNotValidException,RegExpNotFoundException{
 		
-		Pattern p = _validate(pattern, compileModes);
+		Pattern p = validateEngine(pattern, compileModes);
 		
 		if( (contenuto == null) || (contenuto.length() == 0))
-			throw new RegExpNotFoundException("Contenuto su cui effettuare una ricerca non fornita");
+			throw new RegExpNotFoundException(CONTENUTO_NON_FORNITO);
 			
 		try{
 			Matcher matcher = p.matcher(contenuto);
-			String [] result = null;
 			
-			boolean esito = false;
 			if(usingMatch) {
-				esito = matcher.matches(); /*Attempts to match the entire region against the pattern: deve essere definito un pattern che considera tutto il contenuto*/ 
+				
+				/*Attempts to match the entire region against the pattern: deve essere definito un pattern che considera tutto il contenuto*/ 
+				String [] result = null;
+				if(matcher.matches()){
+					//log.info("URLBased, match trovati: "+matcher.groupCount());
+					result = new String[matcher.groupCount()];
+					for(int i=1; i<=matcher.groupCount();i++){
+						//log.info("URLBased, stringa trovata: "+matcher.group(i));
+						result[i-1]=matcher.group(i);
+					}
+				}
+				else{
+					//log.info("URLBased, nessun match trovato");
+					throw new RegExpNotFoundException("nessun match trovato");
+				}	
+				
+				if(result!=null && result.length>0) {
+					List<String> l = new ArrayList<>();
+					for (int i = 0; i < result.length; i++) {
+						l.add(result[i]);
+					}
+					return l;
+				}
+				
+				throw new RegExpNotFoundException("nessun match trovato");
 			}
 			else {
-				esito = matcher.find(); /* Attempts to find the next subsequence of the input sequence that matches the pattern*/ 
-			}
-			
-			if(esito){
-				//log.info("URLBased, match trovati: "+matcher.groupCount());
-				result = new String[matcher.groupCount()];
-				for(int i=1; i<=matcher.groupCount();i++){
-					//log.info("URLBased, stringa trovata: "+matcher.group(i));
-					result[i-1]=matcher.group(i);
-				}
-			}
-			else{
-				//log.info("URLBased, nessun match trovato");
-				throw new RegExpNotFoundException("nessun match trovato");
-			}	
-			
-			if(result!=null && result.length>0) {
+				
+				/* Attempts to find the next subsequence of the input sequence that matches the pattern*/ 
 				List<String> l = new ArrayList<>();
-				for (int i = 0; i < result.length; i++) {
-					l.add(result[i]);
+				while (matcher.find()) {
+		            final String varname = matcher.group(1);
+		            l.add(varname);
+		        }
+				
+				if(!l.isEmpty()) {
+					return l;
 				}
-				return l;
+				
+				throw new RegExpNotFoundException(NESSUN_MATCH_TROVATO);
 			}
-			
-			throw new RegExpNotFoundException("nessun match trovato");
+
 		}catch(RegExpNotFoundException ex){
 			throw ex;
 		}catch(Exception e){
-			throw new RegExpException("getAllStringMatchPattern url["+contenuto+"] pattern["+pattern+"] error: "+e.getMessage(),e);
+			throw getErrorMessage("getAllStringMatchPattern", contenuto, pattern, e);
 		}
 	}
 
@@ -397,23 +417,23 @@ public class RegularExpressionEngine {
 	 * 
 	 */
 	public static String getStringMatchPattern(String contenuto, String pattern) throws RegExpException,RegExpNotValidException,RegExpNotFoundException{
-		return RegularExpressionEngine._getStringPattern(contenuto, pattern, true, (RegularExpressionPatternCompileMode[])null);
+		return RegularExpressionEngine.getStringPatternEngine(contenuto, pattern, true, (RegularExpressionPatternCompileMode[])null);
 	}
 	public static String getStringMatchPattern(String contenuto, String pattern, RegularExpressionPatternCompileMode ... compileModes) throws RegExpException,RegExpNotValidException,RegExpNotFoundException{
-		return RegularExpressionEngine._getStringPattern(contenuto, pattern, true, compileModes);
+		return RegularExpressionEngine.getStringPatternEngine(contenuto, pattern, true, compileModes);
 	}
 	public static String getStringFindPattern(String contenuto, String pattern) throws RegExpException,RegExpNotValidException,RegExpNotFoundException{
-		return RegularExpressionEngine._getStringPattern(contenuto, pattern, false, (RegularExpressionPatternCompileMode[])null);
+		return RegularExpressionEngine.getStringPatternEngine(contenuto, pattern, false, (RegularExpressionPatternCompileMode[])null);
 	}
 	public static String getStringFindPattern(String contenuto, String pattern, RegularExpressionPatternCompileMode ... compileModes) throws RegExpException,RegExpNotValidException,RegExpNotFoundException{
-		return RegularExpressionEngine._getStringPattern(contenuto, pattern, false, compileModes);
+		return RegularExpressionEngine.getStringPatternEngine(contenuto, pattern, false, compileModes);
 	}
-	private static String _getStringPattern(String contenuto, String pattern, boolean usingMatch, RegularExpressionPatternCompileMode ... compileModes) throws RegExpException,RegExpNotValidException,RegExpNotFoundException{
+	private static String getStringPatternEngine(String contenuto, String pattern, boolean usingMatch, RegularExpressionPatternCompileMode ... compileModes) throws RegExpException,RegExpNotValidException,RegExpNotFoundException{
 		
-		Pattern p = _validate(pattern, compileModes);
+		Pattern p = validateEngine(pattern, compileModes);
 		
 		if( (contenuto == null) || (contenuto.length() == 0))
-			throw new RegExpNotFoundException("Contenuto su cui effettuare una ricerca non fornita");
+			throw new RegExpNotFoundException(CONTENUTO_NON_FORNITO);
 		
 		try{
 			Matcher matcher = p.matcher(contenuto);
@@ -428,24 +448,21 @@ public class RegularExpressionEngine {
 			}
 			
 			if(esito){
-				//log.info("URLBased, stringa trovata: "+matcher.group(1));
 				result = matcher.group(1);
 			}
 			else{
-				//log.info("URLBased, nessun match trovato");
-				throw new RegExpNotFoundException("nessun match trovato");
+				throw new RegExpNotFoundException(NESSUN_MATCH_TROVATO);
 			}
 			
 			if("".equals(result)){
-				//	log.info("URLBased, nessun match trovato");
-				throw new RegExpNotFoundException("nessun match trovato");
+				throw new RegExpNotFoundException(NESSUN_MATCH_TROVATO);
 			}
 			
 			return result;
 		}catch(RegExpNotFoundException ex){
 			throw ex;
 		}catch(Exception e){
-			throw new RegExpException("getStringMatchPattern contenuto["+contenuto+"] pattern["+pattern+"] error: "+e.getMessage(),e);
+			throw getErrorMessage("getStringMatchPattern", contenuto, pattern, e);
 		}
 	}
 
@@ -460,23 +477,23 @@ public class RegularExpressionEngine {
 	 * @throws ExpressionNotFoundException
 	 */
 	public static boolean isMatch(String contenuto, String pattern) throws RegExpException,RegExpNotValidException,RegExpNotFoundException{
-		return RegularExpressionEngine._isMatch(contenuto, pattern, true, (RegularExpressionPatternCompileMode[])null);
+		return RegularExpressionEngine.isMatchEngine(contenuto, pattern, true, (RegularExpressionPatternCompileMode[])null);
 	}
 	public static boolean isMatch(String contenuto, String pattern, RegularExpressionPatternCompileMode ... compileModes) throws RegExpException,RegExpNotValidException,RegExpNotFoundException{
-		return RegularExpressionEngine._isMatch(contenuto, pattern, true, compileModes);
+		return RegularExpressionEngine.isMatchEngine(contenuto, pattern, true, compileModes);
 	}
 	public static boolean isFind(String contenuto, String pattern) throws RegExpException,RegExpNotValidException,RegExpNotFoundException{
-		return RegularExpressionEngine._isMatch(contenuto, pattern, false, (RegularExpressionPatternCompileMode[])null);
+		return RegularExpressionEngine.isMatchEngine(contenuto, pattern, false, (RegularExpressionPatternCompileMode[])null);
 	}
 	public static boolean isFind(String contenuto, String pattern, RegularExpressionPatternCompileMode ... compileModes) throws RegExpException,RegExpNotValidException,RegExpNotFoundException{
-		return RegularExpressionEngine._isMatch(contenuto, pattern, false, compileModes);
+		return RegularExpressionEngine.isMatchEngine(contenuto, pattern, false, compileModes);
 	}
-	private static boolean _isMatch(String contenuto, String pattern, boolean usingMatch, RegularExpressionPatternCompileMode ... compileModes) throws RegExpException,RegExpNotValidException,RegExpNotFoundException{
+	private static boolean isMatchEngine(String contenuto, String pattern, boolean usingMatch, RegularExpressionPatternCompileMode ... compileModes) throws RegExpException,RegExpNotValidException,RegExpNotFoundException{
 			
-		Pattern p = _validate(pattern, compileModes);
+		Pattern p = validateEngine(pattern, compileModes);
 		
 		if( (contenuto == null) || (contenuto.length() == 0))
-			throw new RegExpNotFoundException("Contenuto su cui effettuare una ricerca non fornita");
+			throw new RegExpNotFoundException(CONTENUTO_NON_FORNITO);
 		
 		try{
 			Matcher matcher = p.matcher(contenuto);
@@ -487,7 +504,7 @@ public class RegularExpressionEngine {
 				return matcher.find();
 			}
 		}catch(Exception e){
-			throw new RegExpException("isMatch contenuto["+contenuto+"] pattern["+pattern+"] error: "+e.getMessage(),e);
+			throw getErrorMessage("isMatch", contenuto, pattern, e);
 		}
 	}
 
@@ -496,18 +513,18 @@ public class RegularExpressionEngine {
 	/* ---------- VALIDATORE -------------- */
 	
 	public static void validate(String pattern) throws RegExpNotValidException{
-		_validate(pattern);
+		validateEngine(pattern);
 	}
 	public static void validate(String pattern, RegularExpressionPatternCompileMode ... compileModes) throws RegExpNotValidException{
-		_validate(pattern, compileModes);
+		validateEngine(pattern, compileModes);
 	}
-	private static Pattern _validate(String pattern, RegularExpressionPatternCompileMode ... compileModes) throws RegExpNotValidException{
+	private static Pattern validateEngine(String pattern, RegularExpressionPatternCompileMode ... compileModes) throws RegExpNotValidException{
 		
 		if( (pattern == null) || (pattern.length() == 0))
 			throw new RegExpNotValidException("Pattern di ricerca non fornito");
 		try{
 			pattern = pattern.trim();
-			return _createPattern(pattern, compileModes);
+			return createPatternEngine(pattern, compileModes);
 		}catch(Exception e){
 			throw new RegExpNotValidException("Validazione del pattern indicato ["+pattern+"] fallita: "+e.getMessage(),e);
 		}
@@ -517,7 +534,7 @@ public class RegularExpressionEngine {
 	
 	/* UTILITY */
 	
-	private static  Pattern _createPattern(String pattern,RegularExpressionPatternCompileMode ... compileModes){
+	private static  Pattern createPatternEngine(String pattern,RegularExpressionPatternCompileMode ... compileModes){
 		Pattern p = null;
 		if(compileModes!=null && compileModes.length>0){
 			int mode = compileModes[0].getPatternCompileMode();

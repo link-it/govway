@@ -248,6 +248,7 @@ import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.regexp.RegExpException;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
+import org.openspcoop2.utils.regexp.RegExpNotValidException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -4405,9 +4406,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 			}
 
-		} catch (RegExpException e) {
-			throw new ProtocolException(e);
-		} catch (RegExpNotFoundException e) {
+		} catch (RegExpException | RegExpNotValidException | RegExpNotFoundException e) {
 			throw new ProtocolException(e);
 		} catch (ProtocolException e) {
 			throw e;

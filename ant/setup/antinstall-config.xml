@@ -8,6 +8,12 @@
     <!-- Se si caricano i loadDefaults non funzionano piu' i cambi di stato per il db -->
     <!-- loadDefaults="true" > -->
 
+    <!-- per caricare il file di proprietà:
+	 - sed -i -r -e 's%ui="(.*)"%ui="\1,text-auto,text-auto"%' installer/setup/antinstall-config.xml
+	 - cp custom.properties installer/setup/ant.install.properties.template
+	 - ./install.sh text ant.install.properties 
+    -->
+
     <page type="input" name="intro" displayText="Installer GovWay v3.3.13">
         <comment explanatoryText=""/>
         <comment explanatoryText="Il software GovWay e' distribuito con licenza GPL v3"/>
@@ -581,7 +587,7 @@
 	<hidden property="antinstaller_tiposoggetto_modipa" value="modipa"/>
         <hidden property="antinstaller_tiposoggetto_spcoop" value="spc"/>
         <hidden property="antinstaller_tiposoggetto_sdi" value="sdi"/>
-        <validated defaultValue="" property="antinstaller_nomesoggetto" displayText="Soggetto" regex="^[0-9A-Za-z][\-A-Za-z0-9]*$"/>
+        <validated defaultValue="" property="antinstaller_nomesoggetto" displayText="Soggetto" regex="^[0-9A-Za-z][\-A-Za-z0-9]*$|\$\{GOVWAY_DEFAULT_ENTITY_NAME\}"/>
         
     </page>
 
@@ -611,7 +617,7 @@
 	<hidden property="antinstaller_tiposoggetto_modipa" value="modipa"/>
         <hidden property="antinstaller_tiposoggetto_spcoop" value="spc"/>
         <hidden property="antinstaller_tiposoggetto_sdi" value="sdi"/>
-        <validated defaultValue="" property="antinstaller_nomesoggetto" displayText="Soggetto" regex="^[0-9A-Za-z]+$"/>
+        <validated defaultValue="" property="antinstaller_nomesoggetto" displayText="Soggetto" regex="^[0-9A-Za-z][\-A-Za-z0-9]*$|\$\{GOVWAY_DEFAULT_ENTITY_NAME\}"/>
         
     </page>
     
