@@ -50,6 +50,7 @@ import com.intuit.karate.netty.FeatureServer;
     "classpath:test/rest/sicurezza-messaggio/idar02.feature",
     "classpath:test/rest/sicurezza-messaggio/idar03.feature",
     "classpath:test/rest/sicurezza-messaggio/idar04.feature", // lasciare prima degli altri 03 altrimenti vanno in conflitto di attachments
+    "classpath:test/rest/sicurezza-messaggio/idar0402.feature",
     "classpath:test/rest/sicurezza-messaggio/idar0302.feature",
     "classpath:test/rest/sicurezza-messaggio/idar03custom.feature",
     "classpath:test/rest/sicurezza-messaggio/autorizzazioneMessaggio.feature",

@@ -211,7 +211,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	private DriverConfigurazioneDB_porteDriver porteDriver = null;
 	
 	private DriverConfigurazioneDB_serviziApplicativiDriver serviziApplicativiDriver = null;
-	private DriverConfigurazioneDB_serviziApplicativiSearchDriver serviziApplicativiSearchDriver = null;
+	private DriverConfigurazioneDBServiziApplicativiSearch serviziApplicativiSearchDriver = null;
 	
 	private DriverConfigurazioneDB_protocolPropertiesDriver protocolPropertiesDriver = null;
 	
@@ -248,7 +248,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		this.porteDriver = new DriverConfigurazioneDB_porteDriver(this);
 		
 		this.serviziApplicativiDriver = new DriverConfigurazioneDB_serviziApplicativiDriver(this);
-		this.serviziApplicativiSearchDriver = new DriverConfigurazioneDB_serviziApplicativiSearchDriver(this);
+		this.serviziApplicativiSearchDriver = new DriverConfigurazioneDBServiziApplicativiSearch(this);
 		
 		this.protocolPropertiesDriver = new DriverConfigurazioneDB_protocolPropertiesDriver(this);
 		
@@ -354,7 +354,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		this.porteDriver = new DriverConfigurazioneDB_porteDriver(this);
 		
 		this.serviziApplicativiDriver = new DriverConfigurazioneDB_serviziApplicativiDriver(this);
-		this.serviziApplicativiSearchDriver = new DriverConfigurazioneDB_serviziApplicativiSearchDriver(this);
+		this.serviziApplicativiSearchDriver = new DriverConfigurazioneDBServiziApplicativiSearch(this);
 		
 		this.protocolPropertiesDriver = new DriverConfigurazioneDB_protocolPropertiesDriver(this);
 		
@@ -425,7 +425,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		this.porteDriver = new DriverConfigurazioneDB_porteDriver(this);
 		
 		this.serviziApplicativiDriver = new DriverConfigurazioneDB_serviziApplicativiDriver(this);
-		this.serviziApplicativiSearchDriver = new DriverConfigurazioneDB_serviziApplicativiSearchDriver(this);
+		this.serviziApplicativiSearchDriver = new DriverConfigurazioneDBServiziApplicativiSearch(this);
 		
 		this.protocolPropertiesDriver = new DriverConfigurazioneDB_protocolPropertiesDriver(this);
 		
@@ -636,7 +636,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		return this.soggettiDriver.getRouter();
 	}
 
-	public List<IDSoggetto> getSoggettiWithSuperuser(String user) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+	public List<IDSoggetto> getSoggettiWithSuperuser(String user) throws DriverConfigurazioneException {
 		return this.soggettiDriver.getSoggettiWithSuperuser(user);
 	}
 

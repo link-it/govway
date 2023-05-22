@@ -1345,6 +1345,23 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 		}
 		return false;
 	}
+	static boolean isProfiloSicurezzaMessaggioConSorgenteTokenNonLocale(AccordoServizioParteComune api, String portType) {
+		List<String> tmp = getPropertySicurezzaMessaggioEngine(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_ID, 
+				ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_ID, 
+				api, portType, false);
+		if(tmp!=null && !tmp.isEmpty()) {
+			for (String headerSorgenteToken : tmp) {
+				
+				List<String> splitValues = RegistroServiziUtils.splitPropertyProtocolloResult(headerSorgenteToken);
+				String sorgenteToken = splitValues.get(1);
+				
+				if(!isSicurezzaMessaggioGenerazioneTokenIdAuthLocale(sorgenteToken) ) {
+					return true;
+				}		
+			}
+		}
+		return false;
+	}
 	static List<String> getPropertySicurezzaMessaggioEngine(String propertyName, AccordoServizioParteComune api, String portType, boolean booleanValue) {
 		return RegistroServiziUtils.fillPropertyProtocollo(propertyName, api, portType, booleanValue);
 	}

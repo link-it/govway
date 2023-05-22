@@ -8,7 +8,10 @@ Background:
     
     * def check_traccia = read('check-tracce/check-traccia.feature')
     * def check_traccia_self_signed = read('check-tracce/check-traccia-self-signed.feature')
+    * def check_traccia_id_messaggio = read('check-tracce/check-traccia-id-messaggio.feature')
     * def check_signature = read('classpath:org/openspcoop2/core/protocolli/modipa/testsuite/soap/sicurezza_messaggio/check-signature.feature')
+
+    * def decode_token = read('classpath:utils/decode-token.js')
 
     * def x509sub_client1 = 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT'
     * def x509sub_server = 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT'
@@ -186,6 +189,100 @@ When method post
 Then status 500
 And match response == read("error-bodies/identificativo-token-riutilizzato-in-risposta.xml")
 And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidResponse'
+
+
+
+
+
+
+
+
+@riutilizzo-token-oauth2
+Scenario: Il token viene riutilizzato, fruizione ed erogazione devono arrabbiarsi, token generato tramite authorization server
+
+* def soap_url = govway_base_path + '/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/SoapBlockingIDAS0302TokenOAuth/v1'
+
+Given url soap_url
+And request read("request.xml")
+And header Content-Type = 'application/soap+xml'
+And header action = soap_url
+And header GovWay-TestSuite-Test-ID = 'riutilizzo-token-generato-auth-server-idas0302'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+And header simulazionepdnd-username = 'ApplicativoBlockingIDA01'
+And header simulazionepdnd-password = 'ApplicativoBlockingIDA01'
+And header simulazionepdnd-purposeId = 'purposeId-ApplicativoBlockingIDA01'
+And header simulazionepdnd-audience = 'testsuite'
+When method post
+Then status 200
+And match response == read("response.xml")
+
+* def client_token_header = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+
+* def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
+* def jti_token = get client_token $.payload.jti
+
+
+* def karateCache = Java.type('org.openspcoop2.core.protocolli.modipa.testsuite.KarateCache')
+* xml client_request = karateCache.get("Client-Request")
+* xml server_response = karateCache.get("Server-Response")
+
+
+# Verifico che l'identificativo utilizzato sia quello di Authorization, per l'id della busta
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+# Implementato solo lato erogazione l'associazione del jti del token come id di messaggio per fare il filtro duplicato * call check_traccia_id_messaggio ({ tid: tid, tipo: 'Richiesta', id_messaggio: jti_token })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia_id_messaggio ({ tid: tid, tipo: 'Richiesta', id_messaggio: jti_token })
+
+
+
+
+# Ripeto la richiesta all'erogazione per farla arrabbiare
+
+* def soap_url = govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS0302TokenOAuth/v1'
+
+Given url soap_url
+And request client_request
+And header Content-Type = 'application/soap+xml'
+And header action = soap_url
+And header Authorization = client_token_header
+When method post
+Then status 500
+And match response == read("error-bodies/identificativo-token-riutilizzato-in-richiesta.xml")
+And match header GovWay-Transaction-ErrorType == 'Conflict'
+
+# Faccio in modo che il proxy risponda alla fruizione con la precedente risposta dell'erogazione
+# NOTA: Questo test non controlla in realtà che la fruizione si arrabbi perchè il token è stato riutilizzato,
+#   infatti si arrabbia perchè "IdentificativoBusta presente nel RiferimentoMessaggio non è valido", infatti
+# inviando nuovamente la stessa risposta, l'identificativo busta appartiene a quello della richiesta precedente.
+
+* def soap_url = govway_base_path + '/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/SoapBlockingIDAS0302TokenOAuth/v1'
+
+# La richiesta normale fa generare un nuovo indentificativo, devo riusare la stessa richiesta
+# e la stessa risposta. Ma non è possibile perchè ad ogni richiesta la fruizione imposta nello header
+# un nuovo valore per il campo ReleaseTo che riferisce l'identificativo della precedente richiesta.
+
+Given url soap_url
+And request read("request.xml")
+And header Content-Type = 'application/soap+xml'
+And header action = soap_url
+And header GovWay-TestSuite-Test-ID = 'riutilizzo-token-idas0302'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+And header simulazionepdnd-username = 'ApplicativoBlockingIDA01'
+And header simulazionepdnd-password = 'ApplicativoBlockingIDA01'
+And header simulazionepdnd-purposeId = 'purposeId-ApplicativoBlockingIDA01'
+And header simulazionepdnd-audience = 'testsuite'
+When method post
+Then status 500
+And match response == read("error-bodies/identificativo-token-riutilizzato-in-risposta.xml")
+And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidResponse'
+
+
+
+
+
+
 
 
 @pkcs11

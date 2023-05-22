@@ -47,7 +47,9 @@ Scenario: isTest('connettivita-base') || isTest('connettivita-base-default-trust
 	isTest('low-ttl-erogazione') || isTest('low-iat-ttl-erogazione') || isTest('iat-future-response') || 
 	isTest('custom-claims') || isTest('custom-claims-sub-iss-clientid-empty') || 
 	isTest('manomissione-token-risposta') || 
-	isTest('connettivita-base-idar02') || isTest('riutilizzo-token') || 
+	isTest('connettivita-base-idar02') || 
+	isTest('riutilizzo-token') || 
+	isTest('riutilizzo-token-generato-auth-server') ||
 	isTest('check-authz-idar02') ||
 	isTest('manomissione-token-risposta-idar03') || isTest('manomissione-token-risposta-idar0302') || isTest('manomissione-payload-risposta-idar0302') || 
 	isTest('doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authorization-firmato') ||
@@ -588,7 +590,8 @@ Scenario: isTest('connettivita-base-idar04-jwk-ApplicativoBlockingIDA01') ||
 		isTest('assenza-header-digest-risposta-idar04-jwk') ||
 		isTest('assenza-header-digest-risposta-idar04-pdnd') ||
 		isTest('idar04-token-risposta-jwk') ||
-		isTest('idar04-token-risposta-pdnd')
+		isTest('idar04-token-risposta-pdnd') ||
+		isTest('audience-differenti-ok-idar04-jwk') 
 
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
     * def responseStatus = 200
@@ -639,6 +642,26 @@ Scenario: isTest('solo-authorization-richiesta-idar04-jwk') ||
     * def responseStatus = 200
     * def response = ''
     * def responseHeaders = ({ 'Content-Type': null })
+
+
+
+
+
+##########################################
+#                IDAR0402                  #
+##########################################
+
+Scenario: isTest('connettivita-base-idar0402-pdnd') ||
+		isTest('connettivita-base-idar0402-keypair') ||
+		isTest('riutilizzo-token-idar0402-pdnd') ||
+		isTest('riutilizzo-token-idar0402-keypair')
+
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * def responseStatus = 200
+    * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+
+
+
 
 
 # catch all

@@ -23,6 +23,7 @@
 package org.openspcoop2.utils.regexp;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -360,44 +361,12 @@ public class RegularExpressionEngine {
 			if(usingMatch) {
 				
 				/*Attempts to match the entire region against the pattern: deve essere definito un pattern che considera tutto il contenuto*/ 
-				String [] result = null;
-				if(matcher.matches()){
-					//log.info("URLBased, match trovati: "+matcher.groupCount());
-					result = new String[matcher.groupCount()];
-					for(int i=1; i<=matcher.groupCount();i++){
-						//log.info("URLBased, stringa trovata: "+matcher.group(i));
-						result[i-1]=matcher.group(i);
-					}
-				}
-				else{
-					//log.info("URLBased, nessun match trovato");
-					throw new RegExpNotFoundException("nessun match trovato");
-				}	
-				
-				if(result!=null && result.length>0) {
-					List<String> l = new ArrayList<>();
-					for (int i = 0; i < result.length; i++) {
-						l.add(result[i]);
-					}
-					return l;
-				}
-				
-				throw new RegExpNotFoundException("nessun match trovato");
+				return getAllStringPatternEngineMatch(matcher);
 			}
 			else {
 				
 				/* Attempts to find the next subsequence of the input sequence that matches the pattern*/ 
-				List<String> l = new ArrayList<>();
-				while (matcher.find()) {
-		            final String varname = matcher.group(1);
-		            l.add(varname);
-		        }
-				
-				if(!l.isEmpty()) {
-					return l;
-				}
-				
-				throw new RegExpNotFoundException(NESSUN_MATCH_TROVATO);
+				return getAllStringPatternEngineFind(matcher);
 			}
 
 		}catch(RegExpNotFoundException ex){
@@ -405,6 +374,40 @@ public class RegularExpressionEngine {
 		}catch(Exception e){
 			throw getErrorMessage("getAllStringMatchPattern", contenuto, pattern, e);
 		}
+	}
+	private static List<String> getAllStringPatternEngineMatch(Matcher matcher) throws RegExpNotFoundException{
+		/*Attempts to match the entire region against the pattern: deve essere definito un pattern che considera tutto il contenuto*/ 
+		String [] result = null;
+		if(matcher.matches()){
+			result = new String[matcher.groupCount()];
+			for(int i=1; i<=matcher.groupCount();i++){
+				result[i-1]=matcher.group(i);
+			}
+		}
+		else{
+			throw new RegExpNotFoundException(NESSUN_MATCH_TROVATO);
+		}	
+		
+		if(result.length>0) {
+			List<String> l = new ArrayList<>();
+			l.addAll(Arrays.asList(result));
+			return l;
+		}
+		
+		throw new RegExpNotFoundException(NESSUN_MATCH_TROVATO);
+	}
+	private static List<String> getAllStringPatternEngineFind(Matcher matcher) throws RegExpNotFoundException{
+		List<String> l = new ArrayList<>();
+		while (matcher.find()) {
+            final String varname = matcher.group(1);
+            l.add(varname);
+        }
+		
+		if(!l.isEmpty()) {
+			return l;
+		}
+		
+		throw new RegExpNotFoundException(NESSUN_MATCH_TROVATO);
 	}
 
 

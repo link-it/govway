@@ -124,10 +124,12 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 			boolean headerDuplicati = false;
 			boolean riferimentoX509 = false;
 			boolean kidMode = false;
+			boolean tokenNonLocale = true;
 			if(rest) {
 				headerDuplicati = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioConHeaderDuplicati(api, portType);
 				riferimentoX509 = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isSicurezzaMessaggioRiferimentoX509Required(api, portType);
 				kidMode =  ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isSicurezzaMessaggioKidModeSupported(api, portType);
+				tokenNonLocale = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioConSorgenteTokenNonLocale(api, portType);
 			}
 			
 			if(ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioApplicabileRichiesta(api, portType, true)) {
@@ -137,7 +139,8 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 					headerDuplicati,
 					consoleOperationType, consoleHelper, registryReader, configIntegrationReader, id, idFruitore,
 					riferimentoX509, kidMode,
-					false);
+					false, 
+					tokenNonLocale);
 			}
 			if(ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioApplicabileRisposta(api, portType, true)) {
 				ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.addSicurezzaMessaggio(modiProperties,
@@ -146,7 +149,8 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 					headerDuplicati,
 					consoleOperationType, consoleHelper, registryReader, configIntegrationReader, id, idFruitore,
 					riferimentoX509, kidMode,
-					false);
+					false, 
+					tokenNonLocale);
 			}
 			
 			return configuration;
@@ -169,7 +173,8 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 						consoleOperationType, consoleHelper, registryReader, configIntegrationReader, id, idFruitore,
 						false, // riferimentoX509
 						false, // kidMode
-						true // audit
+						true, // audit
+						false // tokenNonLocale
 						); 
 				
 				return configuration; // NOTA: contiene già i dati richiesti in sicurezza OAuth
@@ -268,19 +273,23 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 			
 			boolean kidMode = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isSicurezzaMessaggioKidModeSupported(api, portType);
 			
+			boolean tokenNonLocale = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioConSorgenteTokenNonLocale(api, portType);
+			
 			if(ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioApplicabileRichiesta(api, portType, true)) {
 				ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.updateSicurezzaMessaggio(modiProperties,
 					consoleConfiguration, properties, rest, fruizioni, true, casoSpecialeModificaNomeFruizione, 
 					patternDatiCorniceSicurezza, schemaDatiCorniceSicurezza,
 					headerDuplicati, consoleHelper,
-					kidMode);
+					kidMode,
+					tokenNonLocale);
 			}
 			if(ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioApplicabileRisposta(api, portType, true)) {
 				ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.updateSicurezzaMessaggio(modiProperties,
 					consoleConfiguration, properties, rest, fruizioni, false, casoSpecialeModificaNomeFruizione, 
 					patternDatiCorniceSicurezza, schemaDatiCorniceSicurezza,
 					headerDuplicati, consoleHelper,
-					kidMode);
+					kidMode,
+					tokenNonLocale);
 			}
 			
 		}
@@ -300,7 +309,9 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 						patternDatiCorniceSicurezza, schemaDatiCorniceSicurezza,
 						false, // headerDuplicati
 						consoleHelper,
-						kidMode);
+						kidMode,
+						false // tokenNonLocale
+						);
 				
 			}
 			

@@ -486,6 +486,18 @@ Scenario: isTest('connettivita-base-idas02') || isTest('connettivita-base-idas02
     * xmlstring server_response = response
     * eval karateCache.add("Server-Response", server_response)
 
+Scenario: isTest('riutilizzo-token-generato-auth-server')
+
+    * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS02TokenOAuth/v1')
+
+    * def newHeaders = 
+    """
+    ({
+	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
 Scenario: isTest('connettivita-base-idas02-richiesta-con-header-e-trasformazione')
 
     * xmlstring client_request = bodyPath('/')
@@ -925,6 +937,41 @@ Scenario: isTest('connettivita-base-idas0302')
 
     * xmlstring server_response = response
     * eval karateCache.add("Server-Response", server_response)
+
+
+Scenario: isTest('riutilizzo-token-generato-auth-server-idas0302')
+    # Salvo la richiesta e la risposta per far controllare la traccia del token
+    # alla feature chiamante
+    * xmlstring client_request = bodyPath('/')
+    * eval karateCache.add("Client-Request", client_request)
+
+    * call check_client_token ({ address: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", to: "testsuite" })
+
+    # Siccome abbiamo un Riferimento X509 DirectReference, controllo che KeyInfo riferisca il BinarySecurityToken
+    * def keyRef = bodyPath('/Envelope/Header/Security/Signature/KeyInfo/SecurityTokenReference/Reference/@URI')
+    * def key = bodyPath('/Envelope/Header/Security/BinarySecurityToken/@Id')
+    * match keyRef == '#' + key
+
+    * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS0302TokenOAuth/v1')
+
+    * call check_server_token ({ from: "SoapBlockingIDAS0302TokenOAuth/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
+
+    * def keyRef = /Envelope/Header/Security/Signature/KeyInfo/SecurityTokenReference/Reference/@URI
+    * def key = /Envelope/Header/Security/BinarySecurityToken/@Id
+    * match keyRef == '#' + key
+
+    * def digests = bodyPath('/Envelope/Header/Security/Signature/SignedInfo/Reference/DigestValue')
+
+    * xmlstring server_response = response
+    * eval karateCache.add("Server-Response", server_response)
+
+    * def newHeaders = 
+    """
+    ({
+	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
 
 
 Scenario: isTest('manomissione-token-richiesta-idas0302')

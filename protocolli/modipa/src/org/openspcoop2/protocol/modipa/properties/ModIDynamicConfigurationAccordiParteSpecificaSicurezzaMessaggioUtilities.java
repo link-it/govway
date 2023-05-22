@@ -87,7 +87,8 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, 
 			IDServizio idServizio, IDSoggetto idFruitore,
 			boolean riferimentoX509, boolean kidMode,
-			boolean auditOnly) throws ProtocolException {
+			boolean auditOnly,
+			boolean tokenNonLocale) throws ProtocolException {
 		
 		boolean requiredValue = !casoSpecialeModificaNomeFruizione;
 		
@@ -355,7 +356,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 		}
 		
 		
-		
+				
 		// Header Duplicati
 		if(rest && headerDuplicati && 
 				( 
@@ -557,6 +558,45 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 			audValueItem.setInfo(info);
 			configuration.addConsoleItem(audValueItem);
 			
+			// NOTA: se si aggiunge un elemento a questo posizione, riconfigurare setLastItemId nel subsection item
+			
+		}
+		
+		
+		// Header Duplicati (gestione con token non locale)
+		if(!headerDuplicati && tokenNonLocale && 
+				request && !fruizione	
+			) {
+			
+			String labelSub = null;
+			if(rest) {
+				labelSub = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_SUBSECTION_LABEL.
+					replace(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_SUBSECTION_TEMPLATE_HEADER_AGID, modiProperties.getRestSecurityTokenHeaderModI());
+			}
+			else {
+				labelSub = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_SUBSECTION_SOAP_LABEL;
+			}
+			
+			SubtitleConsoleItem subtitleItem = (SubtitleConsoleItem) ProtocolPropertiesFactory.newSubTitleItem(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_SUBSECTION_VALIDAZIONE_ID, 
+					labelSub);
+			subtitleItem.setCloseable(true);
+			subtitleItem.setLastItemId(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_FILTRO_DUPLICATI_RICHIESTA_ID);
+			configuration.addConsoleItem(subtitleItem);
+			
+			StringConsoleItem jtiItem = (StringConsoleItem) 
+					ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+					ConsoleItemType.SELECT,
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_FILTRO_DUPLICATI_RICHIESTA_ID, 
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_FILTRO_DUPLICATI_LABEL);
+			jtiItem.addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_FILTRO_DUPLICATI_LABEL_AUTHORIZATION,
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_FILTRO_DUPLICATI_VALUE_AUTHORIZATION);
+			jtiItem.addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_FILTRO_DUPLICATI_LABEL_MODI.
+					replace(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_SUBSECTION_TEMPLATE_HEADER_AGID, modiProperties.getRestSecurityTokenHeaderModI()),
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_FILTRO_DUPLICATI_VALUE_MODI);
+			jtiItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_FILTRO_DUPLICATI_VALUE_DEFAULT);
+			jtiItem.setUseDefaultValueForCloseableSection(true);
+			configuration.addConsoleItem(jtiItem);
+						
 			// NOTA: se si aggiunge un elemento a questo posizione, riconfigurare setLastItemId nel subsection item
 			
 		}
@@ -1459,7 +1499,8 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 			String patternDatiCorniceSicurezza, String schemaDatiCorniceSicurezza, 
 			boolean headerDuplicati,
 			IConsoleHelper consoleHelper,
-			boolean kidMode) throws ProtocolException {
+			boolean kidMode, 
+			boolean tokenNonLocale) throws ProtocolException {
 		
 		boolean requiredValue = !casoSpecialeModificaNomeFruizione;
 		

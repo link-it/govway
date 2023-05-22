@@ -49,7 +49,12 @@ public final class CostantiDB {
 	public static final String TABELLA_ID_COLONNA_PROGRESSIVO = org.openspcoop2.utils.id.serial.Constants.TABELLA_ID_COLONNA_PROGRESSIVO;
 	public static final String TABELLA_ID_COLONNA_INFO_ASSOCIATA = org.openspcoop2.utils.id.serial.Constants.TABELLA_ID_COLONNA_INFO_ASSOCIATA;
 	
+	public static final String CONDITION_IS_NOT_NULL = "is not null";
+	public static final String CONDITION_IS_NULL = "is null";
+	
     /*COMMONS*/
+	public static final String COLUMN_ALIAS_COUNT = "count";
+    public static final String COLUMN_ID = "id";
     public static final String CONNETTORI = "connettori";
     public static final String CONNETTORI_CUSTOM = "connettori_custom";
     public static final String SOGGETTI = "soggetti";
@@ -58,21 +63,27 @@ public final class CostantiDB {
     public static final String SOGGETTI_COLUMN_NOME_SOGGETTO = "nome_soggetto";
     public static final String SOGGETTI_COLUMN_DESCRIZIONE = "descrizione";
     public static final String SOGGETTI_COLUMN_IDENTIFICATIVO_PORTA = "identificativo_porta";
+    public static final String SOGGETTI_COLUMN_SERVER = "server";
     public static final String SOGGETTI_COLUMN_ROUTER = "is_router";
     public static final String SOGGETTI_COLUMN_DEFAULT = "is_default";
     public static final String SOGGETTI_COLUMN_TIPO_SOGGETTO_VIRTUALE = "tipo_soggetto_virtuale";
     public static final String SOGGETTI_COLUMN_NOME_SOGGETTO_VIRTUALE = "nome_soggetto_virtuale";
+    public static final String SOGGETTI_COLUMN_SUPERUSER = "superuser";
     
     /*REGSERV*/
     public static final String PROTOCOL_PROPERTIES = "protocol_properties";
     public static final String PDD = "pdd";
+    public static final String PDD_COLUMN_NOME = "nome";
+    public static final String PDD_COLUMN_TIPO = "tipo";
     public static final String GRUPPI	= "gruppi";
+    public static final String GRUPPI_COLUMN_NOME = "nome";
     public static final String RUOLI	= "ruoli";
     public static final String SCOPE	= "scope";
     public static final String SOGGETTI_RUOLI = "soggetti_ruoli";
     public static final String SOGGETTI_CREDENZIALI = "soggetti_credenziali";
     public static final String SOGGETTI_PROPS = "soggetti_properties";
     public static final String SERVIZI = "servizi";
+    public static final String SERVIZI_COLUMN_ID_ACCORDO_REF = "id_accordo";
     public static final String SERVIZI_AZIONI = "servizi_azioni";
     public static final String SERVIZI_AZIONE = "servizi_azione";
     public static final String SERVIZI_FRUITORI = "servizi_fruitori";
@@ -88,6 +99,8 @@ public final class CostantiDB {
     public static final String API_RESOURCES_MEDIA = "api_resources_media";
     public static final String API_RESOURCES_PARAMETER = "api_resources_parameter";
     public static final String ACCORDI_GRUPPI = "accordi_gruppi";
+    public static final String ACCORDI_GRUPPI_COLUMN_ID_ACCORDO_REF = "id_accordo";
+    public static final String ACCORDI_GRUPPI_COLUMN_ID_GRUPPO_REF = "id_gruppo";
     public static final String CONNETTORI_PROPERTIES = "connettori_properties";
     public static final String DOCUMENTI = "documenti";
     public static final String ACCORDI_SERVIZI_COMPOSTO = "acc_serv_composti";
@@ -97,9 +110,21 @@ public final class CostantiDB {
     
     /*CONFIG*/
     public static final String SERVIZI_APPLICATIVI = "servizi_applicativi";
+    public static final String SERVIZI_APPLICATIVI_COLUMN_ID_SOGGETTO = "id_soggetto";
+    public static final String SERVIZI_APPLICATIVI_COLUMN_NOME = "nome";
+    public static final String SERVIZI_APPLICATIVI_COLUMN_TIPO = "tipo";
+    public static final String SERVIZI_APPLICATIVI_COLUMN_TIPOLOGIA_FRUIZIONE = "tipologia_fruizione";
+    public static final String SERVIZI_APPLICATIVI_COLUMN_TIPOLOGIA_EROGAZIONE = "tipologia_erogazione";
+    public static final String SERVIZI_APPLICATIVI_COLUMN_TOKEN_POLICY = "token_policy";
+    public static final String SERVIZI_APPLICATIVI_COLUMN_AS_CLIENT = "as_client";
+    public static final String SERVIZI_APPLICATIVI_COLUMN_TIPOAUTH = "tipoauth";
     public static final String SERVIZI_APPLICATIVI_RUOLI = "sa_ruoli";
+    public static final String SERVIZI_APPLICATIVI_RUOLI_ID_SERVIZIO_APPLICATIVO_REF = "id_servizio_applicativo";
+    public static final String SERVIZI_APPLICATIVI_RUOLI_COLUMN_RUOLO = "ruolo";
     public static final String SERVIZI_APPLICATIVI_CREDENZIALI = "sa_credenziali";
     public static final String SERVIZI_APPLICATIVI_PROPS = "sa_properties";
+    public static final String SERVIZI_APPLICATIVI_PROPS_COLUMN_NOME = "nome";
+    public static final String SERVIZI_APPLICATIVI_PROPS_ID_SERVIZIO_APPLICATIVO_REF = "id_servizio_applicativo";
     public static final String PORTE_APPLICATIVE = "porte_applicative";
     public static final String PORTE_APPLICATIVE_SA = "porte_applicative_sa";
     public static final String PORTE_APPLICATIVE_SA_PROPS = "pa_sa_properties";
@@ -188,6 +213,16 @@ public final class CostantiDB {
     public static final String SUPERUSER_COLUMN = "superuser";
     
     public static final String PORTA_COLUMN_ID_REF = "id_porta";
+    public static final String PORTA_COLUMN_ID_SERVIZIO_APPLICATIVO_REF = "id_servizio_applicativo";
+    public static final String PORTA_COLUMN_ID_SOGGETTO_REF = "id_soggetto";
+    public static final String PORTA_COLUMN_ID_SERVIZIO_REF = "id_servizio";
+    public static final String PORTA_COLUMN_TIPO_SOGGETTO_EROGATORE = "tipo_soggetto_erogatore";
+    public static final String PORTA_COLUMN_NOME_SOGGETTO_EROGATORE = "nome_soggetto_erogatore";
+    public static final String PORTA_COLUMN_TIPO_SERVIZIO = "tipo_servizio";
+    public static final String PORTA_COLUMN_NOME_SERVIZIO = "nome_servizio";
+    public static final String PORTA_COLUMN_SERVIZIO = "servizio";
+    public static final String PORTA_COLUMN_VERSIONE_SERVIZIO = "versione_servizio";
+    public static final String PORTA_COLUMN_NOME_PORTA = "nome_porta";
     
     public static final String TRASFORMAZIONI_COLUMN_ID_RIF_TRASFORMAZIONE =  "id_trasformazione";
     public static final String TRASFORMAZIONI_COLUMN_POSIZIONE = "posizione";
@@ -217,6 +252,11 @@ public final class CostantiDB {
     public static final String CONTROLLO_TRAFFICO_CONFIG_RATE_LIMITING_PROPERTIES = "ct_rt_props";
     public static final String CONTROLLO_TRAFFICO_CONFIG_POLICY = "ct_config_policy";
     public static final String CONTROLLO_TRAFFICO_ACTIVE_POLICY = "ct_active_policy";
+    public static final String CONTROLLO_TRAFFICO_ACTIVE_POLICY_COLUMN_FILTRO_TIPO_FRUITORE = "filtro_tipo_fruitore";
+    public static final String CONTROLLO_TRAFFICO_ACTIVE_POLICY_COLUMN_FILTRO_NOME_FRUITORE = "filtro_nome_fruitore";
+    public static final String CONTROLLO_TRAFFICO_ACTIVE_POLICY_COLUMN_FILTRO_SA_FRUITORE = "filtro_sa_fruitore";
+    public static final String CONTROLLO_TRAFFICO_ACTIVE_POLICY_COLUMN_FILTRO_PORTA = "filtro_porta";
+    public static final String CONTROLLO_TRAFFICO_ACTIVE_POLICY_COLUMN_FILTRO_RUOLO = "filtro_ruolo";
     
     public static final String REGISTRO_PLUGINS = "registro_plugins";
     public static final String REGISTRO_PLUGINS_COLUMN_ID = "id";

@@ -11,6 +11,7 @@ mkdir -p jwk_public_keys
 ./generaJWK.sh ../../../../core/dist ../../../../lib ../keys/xca/ExampleServer.crt jwk_public_keys/KID-ExampleServer.jwk KID-ExampleServer
 ./generaJWK.sh ../../../../core/dist ../../../../lib ../keys/xca/ExampleClient1.crt jwk_public_keys/KID-ApplicativoBlockingIDA01.jwk KID-ApplicativoBlockingIDA01
 ./generaJWK.sh ../../../../core/dist ../../../../lib trasparente_keys/testJWKrsapubkey.pem jwk_public_keys/KID-ApplicativoBlockingJWK.jwk KID-ApplicativoBlockingJWK
+./generaJWK.sh ../../../../core/dist ../../../../lib trasparente_keys/testJWKrsapubkey.pem jwk_public_keys/de606068-01cb-49a5-824d-fb171b5d5ae4.jwk de606068-01cb-49a5-824d-fb171b5d5ae4
 ./generaJWK.sh ../../../../core/dist ../../../../lib trasparente_keys/keyPair-test.rsa.publicKey.pem jwk_public_keys/KID-ApplicativoBlockingKeyPair.jwk KID-ApplicativoBlockingKeyPair
 
 ./generaTrustStoreJWK.sh jwk_public_keys/ truststore_certificati.jwk

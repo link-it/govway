@@ -273,8 +273,13 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				}
 				else {
 				
+					validateTokenAuthorizationId(msg, state, requestInfo,
+							isRichiesta, prefixAuthorization,
+							busta);
+					
 					pa = validateTokenAuthorizationAudience(msg, factory, state, requestInfo,
-							isRichiesta, prefixAuthorization);
+							isRichiesta, prefixAuthorization,
+							sicurezzaMessaggio);
 					
 				}
 				
@@ -998,10 +1003,99 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		return digestValue;
 	}
 	
-	private PortaApplicativa validateTokenAuthorizationAudience(OpenSPCoop2Message msg, IProtocolFactory<?> factory, IState state, RequestInfo requestInfo,
-			boolean isRichiesta, String prefixAuthorization) throws ProtocolException {
-		boolean checkAudienceDefinedModIConfig = true;
+	private void validateTokenAuthorizationId(OpenSPCoop2Message msg, IState state, RequestInfo requestInfo,
+			boolean isRichiesta, String prefixAuthorization,
+			Busta busta) throws ProtocolException {
+	
+		Object useJtiAuthorizationObject = msg.getContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_USE_JTI_AUTHORIZATION);
+		boolean useJtiAuthorization = false;
+		if(useJtiAuthorizationObject instanceof Boolean) {
+			useJtiAuthorization = (Boolean) useJtiAuthorizationObject;
+		}
+		
+		if(useJtiAuthorization) {
+			Object oInformazioniTokenNormalizzate = null;
+			if(this.context!=null) {
+				oInformazioniTokenNormalizzate = this.context.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+			}
+			InformazioniToken informazioniTokenNormalizzate = null;
+			String jtiClaimReceived = null;
+			if(oInformazioniTokenNormalizzate!=null) {
+				informazioniTokenNormalizzate = (InformazioniToken) oInformazioniTokenNormalizzate;
+				jtiClaimReceived = informazioniTokenNormalizzate.getJti();
+			}
+			
+			if(jtiClaimReceived==null || StringUtils.isEmpty(jtiClaimReceived)) {
 				
+				this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+						CodiceErroreCooperazione.IDENTIFICATIVO_MESSAGGIO_NON_PRESENTE, 
+							prefixAuthorization+getErroreClaimNonPresente(Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID)));
+				
+			}
+			else {
+				
+				String idIntegrity = busta.getID();
+				busta.removeProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID);
+				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID, idIntegrity);
+				busta.setID(jtiClaimReceived);
+				
+			}
+		}
+		
+	}
+	
+	private PortaApplicativa validateTokenAuthorizationAudience(OpenSPCoop2Message msg, IProtocolFactory<?> factory, IState state, RequestInfo requestInfo,
+			boolean isRichiesta, String prefixAuthorization,
+			boolean sicurezzaMessaggio) throws ProtocolException {
+		
+		PortaApplicativa pa = readPortaApplicativa(msg, factory, state, requestInfo);
+		
+		boolean audienceCheckDefinedInAuthorizationTokenClaims = isAudienceCheckDefinedInAuthorizationTokenClaims(pa);
+	
+		if(!audienceCheckDefinedInAuthorizationTokenClaims) {
+			
+			validateTokenAuthorizationAudienceByModIConfig(msg, factory, state, requestInfo,
+					isRichiesta, prefixAuthorization,
+					sicurezzaMessaggio);
+			
+		}
+		
+		return pa;
+	}
+	
+	private void validateTokenAuthorizationAudienceByModIConfig(OpenSPCoop2Message msg, IProtocolFactory<?> factory, IState state, RequestInfo requestInfo,
+			boolean isRichiesta, String prefixAuthorization,
+			boolean sicurezzaMessaggio) throws ProtocolException {
+		List<String> audienceClaimReceived = readAudienceFromTokenOAuth();			
+		if(audienceClaimReceived==null || audienceClaimReceived.isEmpty()) {
+			
+			this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+					isRichiesta ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_PRESENTE :
+						CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_PRESENTE, 
+						prefixAuthorization+getErroreClaimNonPresente(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE)));
+			
+		}
+		else {
+		
+			if(sicurezzaMessaggio) {
+				checkAudienceModIConfig(msg, factory, state, requestInfo,
+						isRichiesta, prefixAuthorization,
+						audienceClaimReceived);
+			}
+			else {
+				
+				this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+						isRichiesta ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_VALIDO :
+							CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_VALIDO, 
+							prefixAuthorization+"Token contenente un claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE+"' non verificabile; autorizzazione per token claim non definita"));
+				
+			}
+			
+		}
+	}
+	
+	private PortaApplicativa readPortaApplicativa(OpenSPCoop2Message msg, IProtocolFactory<?> factory, IState state, RequestInfo requestInfo) throws ProtocolException {
+		
 		PortaApplicativa pa = null;
 		String interfaceName = null;
 		if(msg!=null && msg.getTransportRequestContext()!=null && msg.getTransportRequestContext().getInterfaceName()!=null) {
@@ -1021,6 +1115,42 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 			throw new ProtocolException(e.getMessage(),e);
 		}
 		
+		return pa;
+		
+	}
+	private PortaApplicativa readPortaApplicativaDefault(OpenSPCoop2Message msg, IProtocolFactory<?> factory, IState state, RequestInfo requestInfo) throws ProtocolException {
+		PortaApplicativa paDefault = null;
+		if(msg!=null) {
+			Object nomePortaInvocataObject = msg.getContextProperty(CostantiPdD.NOME_PORTA_INVOCATA);
+			String nomePorta = null;
+			if(nomePortaInvocataObject instanceof String) {
+				nomePorta = (String) nomePortaInvocataObject;
+			}
+			if(nomePorta==null && this.context!=null && this.context.containsKey(CostantiPdD.NOME_PORTA_INVOCATA)) {
+				nomePorta = (String) this.context.getObject(CostantiPdD.NOME_PORTA_INVOCATA);
+			}
+			if(nomePorta==null && requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
+				nomePorta = requestInfo.getProtocolContext().getInterfaceName(); // se non e' presente 'NOME_PORTA_INVOCATA' significa che non e' stato invocato un gruppo specifico
+			}
+			if(nomePorta!=null) {
+				IDPortaApplicativa idPA = new IDPortaApplicativa();
+				idPA.setNome(nomePorta);
+				try {
+					paDefault = factory.getCachedConfigIntegrationReader(state, requestInfo).getPortaApplicativa(idPA);
+				}catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
+				}
+			}
+			else {
+				throw new ProtocolException("ID Porta 'default' non presente");
+			}
+		}
+		return paDefault;
+	}
+	private boolean isAudienceCheckDefinedInAuthorizationTokenClaims(PortaApplicativa pa) throws ProtocolException {
+		
+		boolean audienceCheckDefinedInAuthorizationTokenClaims = false;
+	
 		if(pa.getGestioneToken()!=null && pa.getGestioneToken().getOptions()!=null) {
 			SortedMap<List<String>> properties = null;
 			try {
@@ -1029,86 +1159,59 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				throw new ProtocolException(e.getMessage(),e);
 			}
 			if(properties!=null && properties.size()>0 && properties.containsKey(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE)) {
-				checkAudienceDefinedModIConfig = false; // la verifica viene fatta nell'autorizzazione per token claims					
+				audienceCheckDefinedInAuthorizationTokenClaims = true; // la verifica viene fatta nell'autorizzazione per token claims					
 			}
 		}
 		
-		if(checkAudienceDefinedModIConfig) {
-			
-			PortaApplicativa paDefault = null;
-			if(msg!=null) {
-				Object nomePortaInvocataObject = msg.getContextProperty(CostantiPdD.NOME_PORTA_INVOCATA);
-				String nomePorta = null;
-				if(nomePortaInvocataObject instanceof String) {
-					nomePorta = (String) nomePortaInvocataObject;
-				}
-				if(nomePorta==null && this.context!=null && this.context.containsKey(CostantiPdD.NOME_PORTA_INVOCATA)) {
-					nomePorta = (String) this.context.getObject(CostantiPdD.NOME_PORTA_INVOCATA);
-				}
-				if(nomePorta==null && requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
-					nomePorta = requestInfo.getProtocolContext().getInterfaceName(); // se non e' presente 'NOME_PORTA_INVOCATA' significa che non e' stato invocato un gruppo specifico
-				}
-				if(nomePorta!=null) {
-					idPA = new IDPortaApplicativa();
-					idPA.setNome(nomePorta);
-					try {
-						paDefault = factory.getCachedConfigIntegrationReader(state, requestInfo).getPortaApplicativa(idPA);
-					}catch(Exception e) {
-						throw new ProtocolException(e.getMessage(),e);
-					}
-				}
-				else {
-					throw new ProtocolException("ID Porta 'default' non presente");
-				}
-			}
-			
-			ModISecurityConfig modISecurityConfig = new ModISecurityConfig(msg, this.protocolFactory, state,requestInfo, 
-					!isRichiesta, // fruizione, 
-					isRichiesta, // request,
-					paDefault);
-			
-			/**System.out.println("VERIFICO RISPETTO AL VALORE ATTESO '"+modISecurityConfig.getAudience()+"'");*/
-			
-			Object oInformazioniTokenNormalizzate = null;
-			if(this.context!=null) {
-				oInformazioniTokenNormalizzate = this.context.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
-			}
-			InformazioniToken informazioniTokenNormalizzate = null;
-			List<String> audienceClaimReceived = null;
-			if(oInformazioniTokenNormalizzate!=null) {
-				informazioniTokenNormalizzate = (InformazioniToken) oInformazioniTokenNormalizzate;
-				audienceClaimReceived = informazioniTokenNormalizzate.getAud();
-			}
-			
-			if(audienceClaimReceived==null || audienceClaimReceived.isEmpty()) {
-				
-				this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
-						isRichiesta ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_PRESENTE :
-							CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_PRESENTE, 
-							prefixAuthorization+getErroreClaimNonPresente(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE)));
-				
-			}
-			else {
-			
-				boolean find = false;
-				for (String claim : audienceClaimReceived) {
-					if(claim.equalsIgnoreCase(modISecurityConfig.getAudience())) {
-						find = true;
-						break;
-					}	
-				}
-				if(!find) {
-					this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
-							isRichiesta ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_VALIDO :
-								CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_VALIDO, 
-								prefixAuthorization+getErroreClaimNonValido(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE)));
-				}
-				
-			}
-			
+		return audienceCheckDefinedInAuthorizationTokenClaims;
+	}
+	private List<String> readAudienceFromTokenOAuth() {
+		Object oInformazioniTokenNormalizzate = null;
+		if(this.context!=null) {
+			oInformazioniTokenNormalizzate = this.context.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
 		}
+		InformazioniToken informazioniTokenNormalizzate = null;
+		List<String> audienceClaimReceived = null;
+		if(oInformazioniTokenNormalizzate!=null) {
+			informazioniTokenNormalizzate = (InformazioniToken) oInformazioniTokenNormalizzate;
+			audienceClaimReceived = informazioniTokenNormalizzate.getAud();
+		}
+		return audienceClaimReceived;
+	}
+	private void checkAudienceModIConfig(OpenSPCoop2Message msg, IProtocolFactory<?> factory, IState state, RequestInfo requestInfo,
+			boolean isRichiesta, String prefixAuthorization,
+			List<String> audienceClaimReceived) throws ProtocolException {
+		PortaApplicativa paDefault = readPortaApplicativaDefault(msg, factory, state, requestInfo);
 		
-		return pa;
+		/**System.out.println("VERIFICO RISPETTO AL VALORE ATTESO '"+modISecurityConfig.getAudience()+"'");*/
+		
+		checkAudienceModIConfig(msg, state, requestInfo,
+				isRichiesta, prefixAuthorization,
+				paDefault,
+				audienceClaimReceived);
+	}
+	private void checkAudienceModIConfig(OpenSPCoop2Message msg, IState state, RequestInfo requestInfo,
+			boolean isRichiesta, String prefixAuthorization,
+			PortaApplicativa paDefault,
+			List<String> audienceClaimReceived) throws ProtocolException {
+		ModISecurityConfig modISecurityConfig = new ModISecurityConfig(msg, this.protocolFactory, state,requestInfo, 
+				!isRichiesta, // fruizione, 
+				isRichiesta, // request,
+				paDefault);
+		
+		boolean find = false;
+		for (String claim : audienceClaimReceived) {
+			if(claim.equalsIgnoreCase(modISecurityConfig.getAudience())) {
+				find = true;
+				break;
+			}	
+		}
+		if(!find) {
+			this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+					isRichiesta ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_VALIDO :
+						CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_VALIDO, 
+						prefixAuthorization+getErroreClaimNonValido(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE)));
+		}
 	}
 	
 	private void logError(String msg) {

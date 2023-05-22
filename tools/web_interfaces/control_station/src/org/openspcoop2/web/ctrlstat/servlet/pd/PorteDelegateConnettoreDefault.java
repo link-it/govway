@@ -37,6 +37,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.id.IDServizio;
@@ -256,6 +257,9 @@ public class PorteDelegateConnettoreDefault extends Action {
 			}
 
 			PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
+			if(portaDelegata==null) {
+				throw new DriverConfigurazioneNotFound("Porta Delegata con id '"+idInt+"' non trovata");
+			}
 			String idporta = portaDelegata.getNome();
 			
 			AccordoServizioParteSpecifica asps = null;

@@ -49,7 +49,7 @@ public class PdDContext extends Context implements Serializable {
 		String value = null;
 		if(pddContext!=null){
 			Object o = pddContext.getObject(key);
-			if(o!=null && (o instanceof String) ){
+			if(o instanceof String ){
 				value = (String) o;
 			}
 		}

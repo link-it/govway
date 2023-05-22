@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.constants.Costanti;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
@@ -731,6 +732,13 @@ public class PostOutResponseHandler_TransazioneUtilities {
 
 				// Richiesta
 				String idMessaggioRichiesta = context.getProtocollo().getIdRichiesta();
+				if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta()) &&
+						CostantiLabel.MODIPA_PROTOCOL_NAME.equals(protocolFactory.getProtocol()) &&
+						tracciaRichiesta!=null && tracciaRichiesta.getBusta()!=null && tracciaRichiesta.getBusta().getID()!=null &&
+						!tracciaRichiesta.getBusta().getID().equals(idMessaggioRichiesta)) {
+					// modificato durante la gestione della validazione semantica
+					idMessaggioRichiesta = tracciaRichiesta.getBusta().getID();
+				}
 				Timestamp dateInternaIdProtocolloRichiesta = null;
 				if(op2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
 					if(idMessaggioRichiesta!=null){

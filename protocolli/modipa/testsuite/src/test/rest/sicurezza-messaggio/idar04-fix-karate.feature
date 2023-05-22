@@ -9,6 +9,13 @@ Background:
     * def get_traccia = read('classpath:utils/get_traccia.js')
     * def get_info_transazione = read('classpath:utils/get_info_transazione.js')
     
+    * def clean_remote_store_key = read('classpath:utils/remote_store_key.js')
+    * def result = clean_remote_store_key('KID-ExampleServer')
+    * def result = clean_remote_store_key('KID-ApplicativoBlockingIDA01')
+    * def result = clean_remote_store_key('KID-ApplicativoBlockingJWK')
+    * def result = clean_remote_store_key('de606068-01cb-49a5-824d-fb171b5d5ae4')
+    * def result = clean_remote_store_key('KID-ApplicativoBlockingKeyPair')
+
     * def result = callonce read('classpath:utils/jmx-enable-error-disclosure.feature')
     * configure afterFeature = function(){ karate.call('classpath:utils/jmx-disable-error-disclosure.feature'); }
 

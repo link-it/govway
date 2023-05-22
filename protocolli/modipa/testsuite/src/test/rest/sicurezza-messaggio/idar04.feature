@@ -8,6 +8,13 @@ Background:
     * def decode_token = read('classpath:utils/decode-token.js')
     * def get_traccia = read('classpath:utils/get_traccia.js')
     * def get_info_transazione = read('classpath:utils/get_info_transazione.js')
+
+    * def clean_remote_store_key = read('classpath:utils/remote_store_key.js')
+    * def result = clean_remote_store_key('KID-ExampleServer')
+    * def result = clean_remote_store_key('KID-ApplicativoBlockingIDA01')
+    * def result = clean_remote_store_key('KID-ApplicativoBlockingJWK')
+    * def result = clean_remote_store_key('de606068-01cb-49a5-824d-fb171b5d5ae4')
+    * def result = clean_remote_store_key('KID-ApplicativoBlockingKeyPair')
     
     * def result = callonce read('classpath:utils/jmx-enable-error-disclosure.feature')
     * configure afterFeature = function(){ karate.call('classpath:utils/jmx-disable-error-disclosure.feature'); }
@@ -649,6 +656,148 @@ Examples:
 | tipo-test | tipo-test-minuscolo | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId |
 | JWK | jwk | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 |
 | PDND | pdnd | servizio che genera una risposta tramite jwk. La validazione dei certificati token è basata su PDND | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 |
+
+
+
+
+
+
+@audience-differenti-ok
+Scenario Outline: Test con audience differenti <tipo-test> (<descrizione>)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR04-<tipo-test>/v1"
+And path 'differentAudience', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audience-differenti-ok-idar04-<tipo-test-minuscolo>'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header IDAR04TestHeader = "TestHeaderRequest"
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = 'Different-RestBlockingIDAR04-<tipo-test>/v1'
+
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+
+* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
+* def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0], "AGID")
+* def server_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0], "AGID")
+* def request_digest = get client_token $.payload.signed_headers..digest
+* def response_digest = get server_token $.payload.signed_headers..digest
+
+* def clientIdExpected = '<clientId>'
+* def subExpected = '<username>'
+* def issExpected = 'DemoSoggettoFruitore'
+
+* def other_checks_authorization_richiesta = 
+"""
+([
+])
+"""
+
+* def other_checks_richiesta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Digest', value: request_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-digest', value: request_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-content-type', value: 'application/json; charset=UTF-8' },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-idar04testheader', value: 'TestHeaderRequest' },
+    { name: 'GenerazioneTokenIDAuth', value: 'Authorization OAuth' },
+    { name: 'ProfiloSicurezzaMessaggio-Subject', value: subExpected },
+    { name: 'ProfiloSicurezzaMessaggio-Issuer', value: issExpected },
+    { name: 'ProfiloSicurezzaMessaggio-ClientId', value: clientIdExpected }
+])
+"""
+
+* def clientIdResponseExpected = 'ExampleServer<tipo-test>'
+* def subResponseExpected = 'RestBlockingIDAR04-<tipo-test>/v1'
+* def issResponseExpected = 'DemoSoggettoErogatore'
+
+* def other_checks_risposta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Digest', value: response_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-digest', value: response_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-content-type', value: 'application/json' },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-idar04testheader', value: 'TestHeaderResponse' },
+    { name: 'GenerazioneTokenIDAuth', value: 'Authorization OAuth' },
+    { name: 'ProfiloSicurezzaMessaggio-Subject', value: subResponseExpected },
+    { name: 'ProfiloSicurezzaMessaggio-Issuer', value: issResponseExpected },
+    { name: 'ProfiloSicurezzaMessaggio-ClientId', value: clientIdResponseExpected }
+])
+"""
+
+* def kidRequest = '<kid>'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: 'IDAR0401', other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth' })
+* call check_traccia_kid ({ tid: tid, tipo: 'Richiesta', token: client_token, kid: kidRequest, profilo_sicurezza: 'IDAR0401', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+* call check_traccia_kid ({ tid: tid, tipo: 'Risposta', token: server_token, kid: 'KID-ExampleServer', profilo_sicurezza: 'IDAR0401', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: 'IDAR0401', other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth' })
+* call check_traccia_kid ({ tid: tid, tipo: 'Richiesta', token: client_token, kid: kidRequest, profilo_sicurezza: 'IDAR0401', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+* call check_traccia_kid ({ tid: tid, tipo: 'Risposta', token: server_token, kid: 'KID-ExampleServer', profilo_sicurezza: 'IDAR0401', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+
+Examples:
+| tipo-test | tipo-test-minuscolo | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId |
+| JWK | jwk | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 |
+
+
+
+
+
+@audience-differenti-ko-auth-claim-deny
+Scenario Outline: Test con audience nell'authorazione token diverso da quello atteso <tipo-test> (<descrizione>)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR04-<tipo-test>/v1"
+And path 'differentAudience', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audience-differenti-ko-auth-claim-deny-idar04-<tipo-test-minuscolo>'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header IDAR04TestHeader = "TestHeaderRequest"
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = 'Wrong-RestBlockingIDAR04-<tipo-test>/v1'
+
+When method post
+Then status 403
+And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/token-authorization-not-authorized-by-auth-claims.json')
+And match header Authorization == '#notpresent'
+
+Examples:
+| tipo-test | tipo-test-minuscolo | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId |
+| JWK | jwk | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 |
+
+
+
+
+@audience-differenti-ko
+Scenario Outline: Test con audience nell'authorazione token diverso da quello atteso <tipo-test> (<descrizione>)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR04-<tipo-test>/v1"
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audience-differenti-ko-idar04-<tipo-test-minuscolo>'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header IDAR04TestHeader = "TestHeaderRequest"
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = 'Wrong-RestBlockingIDAR04-<tipo-test>/v1'
+
+When method post
+Then status 400
+And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/token-authorization-not-authorized.json')
+And match header Authorization == '#notpresent'
+
+Examples:
+| tipo-test | tipo-test-minuscolo | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId |
+| JWK | jwk | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 |
 
 
 

@@ -7,7 +7,10 @@ Background:
     * configure afterFeature = function(){ karate.call('classpath:utils/jmx-disable-error-disclosure.feature'); }
     
     * def check_traccia = read('check-tracce/check-traccia.feature')
+    * def check_traccia_id_messaggio = read('check-tracce/check-traccia-id-messaggio.feature')
     * def check_signature = read('classpath:org/openspcoop2/core/protocolli/modipa/testsuite/soap/sicurezza_messaggio/check-signature.feature')
+
+    * def decode_token = read('classpath:utils/decode-token.js')
 
     * def client_x509_sub = 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT'
     * def server_x509_sub = 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT'
@@ -150,6 +153,68 @@ When method post
 Then status 500
 And match response == read("error-bodies/identificativo-token-riutilizzato-in-risposta.xml")
 And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidResponse'
+
+
+
+
+
+
+
+
+@riutilizzo-token-oauth2
+Scenario: Il token viene riutilizzato, fruizione ed erogazione devono arrabbiarsi, token generato tramite authorization server
+
+* def soap_url = govway_base_path + '/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/SoapBlockingIDAS02TokenOAuth/v1'
+
+Given url soap_url
+And request read("request.xml")
+And header Content-Type = 'application/soap+xml'
+And header action = soap_url
+And header GovWay-TestSuite-Test-ID = 'riutilizzo-token-generato-auth-server'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+And header simulazionepdnd-username = 'ApplicativoBlockingIDA01'
+And header simulazionepdnd-password = 'ApplicativoBlockingIDA01'
+And header simulazionepdnd-purposeId = 'purposeId-ApplicativoBlockingIDA01'
+And header simulazionepdnd-audience = 'SoapBlockingIDAS02TokenOAuth/v1'
+When method post
+Then status 200
+And match response == read("response.xml")
+
+* def client_token_header = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+
+* def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
+* def jti_token = get client_token $.payload.jti
+
+
+# Verifico che l'identificativo utilizzato sia quello di Authorization, per l'id della busta
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+# Implementato solo lato erogazione l'associazione del jti del token come id di messaggio per fare il filtro duplicato * call check_traccia_id_messaggio ({ tid: tid, tipo: 'Richiesta', id_messaggio: jti_token })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia_id_messaggio ({ tid: tid, tipo: 'Richiesta', id_messaggio: jti_token })
+
+
+
+# Ripeto la richiesta all'erogazione per farla arrabbiare
+
+* def soap_url = govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS02TokenOAuth/v1'
+
+Given url soap_url
+And request read("request.xml")
+And header Content-Type = 'application/soap+xml'
+And header action = soap_url
+And header Authorization = client_token_header
+When method post
+Then status 500
+And match response == read("error-bodies/identificativo-token-riutilizzato-in-richiesta.xml")
+And match header GovWay-Transaction-ErrorType == 'Conflict'
+
+
+
+
+
+
 
 
 @authorization-criteri-autorizzativi

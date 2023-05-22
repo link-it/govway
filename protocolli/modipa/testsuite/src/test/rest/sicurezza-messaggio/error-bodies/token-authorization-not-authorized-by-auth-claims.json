@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/403/AuthorizationTokenDeny.html",
+    "title": "AuthorizationTokenDeny",
+    "status": 403,
+    "detail": "La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
+    "govway_id": "#string"
+}

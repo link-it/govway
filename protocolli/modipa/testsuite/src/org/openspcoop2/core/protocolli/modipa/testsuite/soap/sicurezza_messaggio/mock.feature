@@ -35,9 +35,14 @@ Scenario: isTest('connettivita-base') || isTest('connettivita-base-default-trust
 		isTest('keystore-default-fruizione') ||
 		isTest('keystore-ridefinito-fruizione') || isTest('keystore-ridefinito-fruizione-applicativo-no-keystore') || 
 		isTest('keystore-ridefinito-fruizione-archivio') ||
-		isTest('keystore-definito-applicativo')
+		isTest('keystore-definito-applicativo') 
     
     * match bodyPath('/Envelope/Header') == ''
+    * def responseStatus = 200
+    * def response = read('classpath:test/soap/sicurezza-messaggio/response.xml')
+
+Scenario: isTest('riutilizzo-token-generato-auth-server')
+    
     * def responseStatus = 200
     * def response = read('classpath:test/soap/sicurezza-messaggio/response.xml')
 
@@ -166,7 +171,8 @@ Scenario: isTest('idas03-token-azione-puntuale') || isTest('idas03-token-azione-
 #                     IDAS0302                      #
 #####################################################
 
-Scenario: isTest('connettivita-base-idas0302')
+Scenario: isTest('connettivita-base-idas0302') ||
+		isTest('riutilizzo-token-generato-auth-server-idas0302')
 
     * def responseStatus = 200
     * def response = read('classpath:test/soap/sicurezza-messaggio/response.xml')

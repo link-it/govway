@@ -39,6 +39,7 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -66,6 +67,7 @@ import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.state.IState;
@@ -854,6 +856,25 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 							throw pe;
 						}
 						
+					}
+					
+					
+					// jit as filtro duplicato
+					if(request && !sorgenteLocale) {
+						if(processSecurity) {
+							String idPropertyMultipleHeaderUseJtiAuthorizationAsIdMessaggio = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_FILTRO_DUPLICATI;
+							List<ProtocolProperty> listProtocolPropertiesInternal = ModIPropertiesUtils.getProtocolProperties(fruizione, idSoggettoMittente, asps);
+							if(listProtocolPropertiesInternal!=null && !listProtocolPropertiesInternal.isEmpty()) {
+								String multipleHeaderUseJtiAuthorizationAsIdMessaggioPropRegistry = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolPropertiesInternal, idPropertyMultipleHeaderUseJtiAuthorizationAsIdMessaggio);
+								if(multipleHeaderUseJtiAuthorizationAsIdMessaggioPropRegistry!=null) {
+									boolean multipleHeaderUseJtiAuthorizationAsIdMessaggio = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_FILTRO_DUPLICATI_VALUE_AUTHORIZATION.equals(multipleHeaderUseJtiAuthorizationAsIdMessaggioPropRegistry);
+									msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_USE_JTI_AUTHORIZATION, multipleHeaderUseJtiAuthorizationAsIdMessaggio);
+								}
+							}
+						}
+						else {
+							msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_USE_JTI_AUTHORIZATION, true);
+						}
 					}
 				}
 
