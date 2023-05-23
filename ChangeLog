@@ -1,3 +1,9 @@
+2023-05-23  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2023-33264: aggiornata libreria 'com.hazelcast:hazelcast' alla versione 5.3.0
+
 2023-05-16  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

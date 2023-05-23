@@ -1136,7 +1136,9 @@ public class DriverConfigurazioneDBServiziApplicativiSearch {
 					if(CostantiConfigurazione.CREDENZIALE_TOKEN.toString().equals(filterTipoCredenziali)) {
 						sqlQueryObject.addWhereCondition(false,
 								CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TIPOAUTH+" = ?",
-								CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TIPOAUTH+" = ? AND "+CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TOKEN_POLICY+" "+CostantiDB.CONDITION_IS_NOT_NULL+" AND "+CostantiDB.SERVIZI_APPLICATIVI+".utente "+CostantiDB.CONDITION_IS_NOT_NULL);
+								CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TIPOAUTH+" = ?"+
+									CostantiDB.CONDITION_AND+CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TOKEN_POLICY+" "+CostantiDB.CONDITION_IS_NOT_NULL+
+									CostantiDB.CONDITION_AND+CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_UTENTE+" "+CostantiDB.CONDITION_IS_NOT_NULL);
 							
 					}
 					else {
@@ -1145,26 +1147,25 @@ public class DriverConfigurazioneDBServiziApplicativiSearch {
 					if(filterCredenziale!=null && !"".equals(filterCredenziale)) {
 						if(CostantiConfigurazione.CREDENZIALE_SSL.toString().equals(filterTipoCredenziali)) {
 							sqlQueryObject.addWhereCondition(false, 
-									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".cn_subject", filterCredenziale, 
+									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_CN_SUBJECT, filterCredenziale, 
 											LikeConfig.contains(true,true)),
-									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".subject", filterCredenziale, 
+									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_SUBJECT, filterCredenziale, 
 											LikeConfig.contains(true,true)));
 						}
 						else if(CostantiConfigurazione.CREDENZIALE_BASIC.toString().equals(filterTipoCredenziali) || 
 								CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString().equals(filterTipoCredenziali) || 
 								CostantiConfigurazione.CREDENZIALE_TOKEN.toString().equals(filterTipoCredenziali)) {
-							sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".utente", 
+							sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_UTENTE, 
 									filterCredenziale, LikeConfig.contains(true,true));
 						}
 					}
-					if(filterCredenzialeIssuer!=null && !"".equals(filterCredenzialeIssuer)) {
-						if(CostantiConfigurazione.CREDENZIALE_SSL.toString().equals(filterTipoCredenziali)) {
-							sqlQueryObject.addWhereCondition(false, 
-									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".cn_issuer", filterCredenzialeIssuer, 
-											LikeConfig.contains(true,true)),
-									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".issuer", filterCredenzialeIssuer, 
-											LikeConfig.contains(true,true)));
-						}
+					if(filterCredenzialeIssuer!=null && !"".equals(filterCredenzialeIssuer) &&
+						CostantiConfigurazione.CREDENZIALE_SSL.toString().equals(filterTipoCredenziali)) {
+						sqlQueryObject.addWhereCondition(false, 
+								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_CN_ISSUER, filterCredenzialeIssuer, 
+										LikeConfig.contains(true,true)),
+								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_ISSUER, filterCredenzialeIssuer, 
+										LikeConfig.contains(true,true)));
 					}
 					if(filterCredenzialeTokenPolicy!=null && !"".equals(filterCredenzialeTokenPolicy)) {
 						sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TOKEN_POLICY+" = ?");
@@ -1243,7 +1244,9 @@ public class DriverConfigurazioneDBServiziApplicativiSearch {
 					if(CostantiConfigurazione.CREDENZIALE_TOKEN.toString().equals(filterTipoCredenziali)) {
 						sqlQueryObject.addWhereCondition(false,
 								CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TIPOAUTH+" = ?",
-								CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TIPOAUTH+" = ? AND "+CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TOKEN_POLICY+" "+CostantiDB.CONDITION_IS_NOT_NULL+" AND "+CostantiDB.SERVIZI_APPLICATIVI+".utente "+CostantiDB.CONDITION_IS_NOT_NULL);
+								CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TIPOAUTH+" = ?"+
+									CostantiDB.CONDITION_AND+CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TOKEN_POLICY+" "+CostantiDB.CONDITION_IS_NOT_NULL+
+									CostantiDB.CONDITION_AND+CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_UTENTE+" "+CostantiDB.CONDITION_IS_NOT_NULL);
 							
 					}
 					else {
@@ -1252,24 +1255,24 @@ public class DriverConfigurazioneDBServiziApplicativiSearch {
 					if(filterCredenziale!=null && !"".equals(filterCredenziale)) {
 						if(CostantiConfigurazione.CREDENZIALE_SSL.toString().equals(filterTipoCredenziali)) {
 							sqlQueryObject.addWhereCondition(false, 
-									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".cn_subject", filterCredenziale, 
+									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_CN_SUBJECT, filterCredenziale, 
 											LikeConfig.contains(true,true)),
-									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".subject", filterCredenziale, 
+									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_SUBJECT, filterCredenziale, 
 											LikeConfig.contains(true,true)));
 						}
 						else if(CostantiConfigurazione.CREDENZIALE_BASIC.toString().equals(filterTipoCredenziali) || 
 								CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString().equals(filterTipoCredenziali) || 
 								CostantiConfigurazione.CREDENZIALE_TOKEN.toString().equals(filterTipoCredenziali)) {
-							sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".utente", 
+							sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_UTENTE, 
 									filterCredenziale, LikeConfig.contains(true,true));
 						}
 					}
 					if(filterCredenzialeIssuer!=null && !"".equals(filterCredenzialeIssuer) &&
 						CostantiConfigurazione.CREDENZIALE_SSL.toString().equals(filterTipoCredenziali)) {
 						sqlQueryObject.addWhereCondition(false, 
-								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".cn_issuer", filterCredenzialeIssuer, 
+								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_CN_ISSUER, filterCredenzialeIssuer, 
 										LikeConfig.contains(true,true)),
-								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".issuer", filterCredenzialeIssuer, 
+								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_ISSUER, filterCredenzialeIssuer, 
 										LikeConfig.contains(true,true)));
 					}
 					if(filterCredenzialeTokenPolicy!=null && !"".equals(filterCredenzialeTokenPolicy)) {
@@ -1422,7 +1425,9 @@ public class DriverConfigurazioneDBServiziApplicativiSearch {
 					if(CostantiConfigurazione.CREDENZIALE_TOKEN.toString().equals(filterTipoCredenziali)) {
 						sqlQueryObject.addWhereCondition(false,
 								CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TIPOAUTH+" = ?",
-								CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TIPOAUTH+" = ? AND "+CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TOKEN_POLICY+" "+CostantiDB.CONDITION_IS_NOT_NULL+" AND "+CostantiDB.SERVIZI_APPLICATIVI+".utente "+CostantiDB.CONDITION_IS_NOT_NULL);
+								CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TIPOAUTH+" = ?"+
+									CostantiDB.CONDITION_AND+CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TOKEN_POLICY+" "+CostantiDB.CONDITION_IS_NOT_NULL+
+									CostantiDB.CONDITION_AND+CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_UTENTE+" "+CostantiDB.CONDITION_IS_NOT_NULL);
 							
 					}
 					else {
@@ -1431,24 +1436,24 @@ public class DriverConfigurazioneDBServiziApplicativiSearch {
 					if(filterCredenziale!=null && !"".equals(filterCredenziale)) {
 						if(CostantiConfigurazione.CREDENZIALE_SSL.toString().equals(filterTipoCredenziali)) {
 							sqlQueryObject.addWhereCondition(false, 
-									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".cn_subject", filterCredenziale, 
+									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_CN_SUBJECT, filterCredenziale, 
 											LikeConfig.contains(true,true)),
-									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".subject", filterCredenziale, 
+									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_SUBJECT, filterCredenziale, 
 											LikeConfig.contains(true,true)));
 						}
 						else if(CostantiConfigurazione.CREDENZIALE_BASIC.toString().equals(filterTipoCredenziali) || 
 								CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString().equals(filterTipoCredenziali) || 
 								CostantiConfigurazione.CREDENZIALE_TOKEN.toString().equals(filterTipoCredenziali)) {
-							sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".utente", 
+							sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_UTENTE, 
 									filterCredenziale, LikeConfig.contains(true,true));
 						}
 					}
 					if(filterCredenzialeIssuer!=null && !"".equals(filterCredenzialeIssuer) &&
 						CostantiConfigurazione.CREDENZIALE_SSL.toString().equals(filterTipoCredenziali)) {
 						sqlQueryObject.addWhereCondition(false, 
-								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".cn_issuer", filterCredenzialeIssuer, 
+								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_CN_ISSUER, filterCredenzialeIssuer, 
 										LikeConfig.contains(true,true)),
-								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".issuer", filterCredenzialeIssuer, 
+								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_ISSUER, filterCredenzialeIssuer, 
 										LikeConfig.contains(true,true)));
 					}
 					if(filterCredenzialeTokenPolicy!=null && !"".equals(filterCredenzialeTokenPolicy)) {
@@ -1539,7 +1544,9 @@ public class DriverConfigurazioneDBServiziApplicativiSearch {
 					if(CostantiConfigurazione.CREDENZIALE_TOKEN.toString().equals(filterTipoCredenziali)) {
 						sqlQueryObject.addWhereCondition(false,
 								CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TIPOAUTH+" = ?",
-								CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TIPOAUTH+" = ? AND "+CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TOKEN_POLICY+" "+CostantiDB.CONDITION_IS_NOT_NULL+" AND "+CostantiDB.SERVIZI_APPLICATIVI+".utente "+CostantiDB.CONDITION_IS_NOT_NULL);
+								CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TIPOAUTH+" = ?"+
+									CostantiDB.CONDITION_AND+CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TOKEN_POLICY+" "+CostantiDB.CONDITION_IS_NOT_NULL+
+									CostantiDB.CONDITION_AND+CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_UTENTE+" "+CostantiDB.CONDITION_IS_NOT_NULL);
 							
 					}
 					else {
@@ -1548,24 +1555,24 @@ public class DriverConfigurazioneDBServiziApplicativiSearch {
 					if(filterCredenziale!=null && !"".equals(filterCredenziale)) {
 						if(CostantiConfigurazione.CREDENZIALE_SSL.toString().equals(filterTipoCredenziali)) {
 							sqlQueryObject.addWhereCondition(false, 
-									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".cn_subject", filterCredenziale, 
+									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_CN_SUBJECT, filterCredenziale, 
 											LikeConfig.contains(true,true)),
-									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".subject", filterCredenziale, 
+									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_SUBJECT, filterCredenziale, 
 											LikeConfig.contains(true,true)));
 						}
 						else if(CostantiConfigurazione.CREDENZIALE_BASIC.toString().equals(filterTipoCredenziali) || 
 								CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString().equals(filterTipoCredenziali) || 
 								CostantiConfigurazione.CREDENZIALE_TOKEN.toString().equals(filterTipoCredenziali)) {
-							sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".utente", 
+							sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_UTENTE, 
 									filterCredenziale, LikeConfig.contains(true,true));
 						}
 					}
 					if(filterCredenzialeIssuer!=null && !"".equals(filterCredenzialeIssuer) &&
 						CostantiConfigurazione.CREDENZIALE_SSL.toString().equals(filterTipoCredenziali)) {
 						sqlQueryObject.addWhereCondition(false, 
-								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".cn_issuer", filterCredenzialeIssuer, 
+								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_CN_ISSUER, filterCredenzialeIssuer, 
 										LikeConfig.contains(true,true)),
-								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".issuer", filterCredenzialeIssuer, 
+								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_ISSUER, filterCredenzialeIssuer, 
 										LikeConfig.contains(true,true)));
 					}
 					if(filterCredenzialeTokenPolicy!=null && !"".equals(filterCredenzialeTokenPolicy)) {
@@ -1937,7 +1944,9 @@ public class DriverConfigurazioneDBServiziApplicativiSearch {
 					if(CostantiConfigurazione.CREDENZIALE_TOKEN.toString().equals(filterTipoCredenziali)) {
 						sqlQueryObject.addWhereCondition(false,
 								CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TIPOAUTH+" = ?",
-								CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TIPOAUTH+" = ? AND "+CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TOKEN_POLICY+" "+CostantiDB.CONDITION_IS_NOT_NULL+" AND "+CostantiDB.SERVIZI_APPLICATIVI+".utente "+CostantiDB.CONDITION_IS_NOT_NULL);
+								CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TIPOAUTH+" = ?"+
+									CostantiDB.CONDITION_AND+CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TOKEN_POLICY+" "+CostantiDB.CONDITION_IS_NOT_NULL+
+									CostantiDB.CONDITION_AND+CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_UTENTE+" "+CostantiDB.CONDITION_IS_NOT_NULL);
 							
 					}
 					else {
@@ -1946,24 +1955,24 @@ public class DriverConfigurazioneDBServiziApplicativiSearch {
 					if(filterCredenziale!=null && !"".equals(filterCredenziale)) {
 						if(CostantiConfigurazione.CREDENZIALE_SSL.toString().equals(filterTipoCredenziali)) {
 							sqlQueryObject.addWhereCondition(false, 
-									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".cn_subject", filterCredenziale, 
+									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_CN_SUBJECT, filterCredenziale, 
 											LikeConfig.contains(true,true)),
-									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".subject", filterCredenziale, 
+									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_SUBJECT, filterCredenziale, 
 											LikeConfig.contains(true,true)));
 						}
 						else if(CostantiConfigurazione.CREDENZIALE_BASIC.toString().equals(filterTipoCredenziali) || 
 								CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString().equals(filterTipoCredenziali)  || 
 								CostantiConfigurazione.CREDENZIALE_TOKEN.toString().equals(filterTipoCredenziali)) {
-							sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".utente", 
+							sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_UTENTE, 
 									filterCredenziale, LikeConfig.contains(true,true));
 						}
 					}
 					if(filterCredenzialeIssuer!=null && !"".equals(filterCredenzialeIssuer) &&
 						CostantiConfigurazione.CREDENZIALE_SSL.toString().equals(filterTipoCredenziali)) {
 						sqlQueryObject.addWhereCondition(false, 
-								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".cn_issuer", filterCredenzialeIssuer, 
+								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_CN_ISSUER, filterCredenzialeIssuer, 
 										LikeConfig.contains(true,true)),
-								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".issuer", filterCredenzialeIssuer, 
+								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_ISSUER, filterCredenzialeIssuer, 
 										LikeConfig.contains(true,true)));
 					}
 					if(filterCredenzialeTokenPolicy!=null && !"".equals(filterCredenzialeTokenPolicy)) {
@@ -2023,7 +2032,9 @@ public class DriverConfigurazioneDBServiziApplicativiSearch {
 					if(CostantiConfigurazione.CREDENZIALE_TOKEN.toString().equals(filterTipoCredenziali)) {
 						sqlQueryObject.addWhereCondition(false,
 								CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TIPOAUTH+" = ?",
-								CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TIPOAUTH+" = ? AND "+CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TOKEN_POLICY+" "+CostantiDB.CONDITION_IS_NOT_NULL+" AND "+CostantiDB.SERVIZI_APPLICATIVI+".utente "+CostantiDB.CONDITION_IS_NOT_NULL);
+								CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TIPOAUTH+" = ?"+
+									CostantiDB.CONDITION_AND+CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TOKEN_POLICY+" "+CostantiDB.CONDITION_IS_NOT_NULL+
+									CostantiDB.CONDITION_AND+CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_UTENTE+" "+CostantiDB.CONDITION_IS_NOT_NULL);
 							
 					}
 					else {
@@ -2032,24 +2043,24 @@ public class DriverConfigurazioneDBServiziApplicativiSearch {
 					if(filterCredenziale!=null && !"".equals(filterCredenziale)) {
 						if(CostantiConfigurazione.CREDENZIALE_SSL.toString().equals(filterTipoCredenziali)) {
 							sqlQueryObject.addWhereCondition(false, 
-									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".cn_subject", filterCredenziale, 
+									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_CN_SUBJECT, filterCredenziale, 
 											LikeConfig.contains(true,true)),
-									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".subject", filterCredenziale, 
+									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_SUBJECT, filterCredenziale, 
 											LikeConfig.contains(true,true)));
 						}
 						else if(CostantiConfigurazione.CREDENZIALE_BASIC.toString().equals(filterTipoCredenziali) || 
 								CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString().equals(filterTipoCredenziali) || 
 								CostantiConfigurazione.CREDENZIALE_TOKEN.toString().equals(filterTipoCredenziali)) {
-							sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".utente", 
+							sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_UTENTE, 
 									filterCredenziale, LikeConfig.contains(true,true));
 						}
 					}
 					if(filterCredenzialeIssuer!=null && !"".equals(filterCredenzialeIssuer) &&
 						CostantiConfigurazione.CREDENZIALE_SSL.toString().equals(filterTipoCredenziali)) {
 						sqlQueryObject.addWhereCondition(false, 
-								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".cn_issuer", filterCredenzialeIssuer, 
+								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_CN_ISSUER, filterCredenzialeIssuer, 
 										LikeConfig.contains(true,true)),
-								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".issuer", filterCredenzialeIssuer, 
+								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_ISSUER, filterCredenzialeIssuer, 
 										LikeConfig.contains(true,true)));
 					}
 					if(filterCredenzialeTokenPolicy!=null && !"".equals(filterCredenzialeTokenPolicy)) {
@@ -2164,7 +2175,9 @@ public class DriverConfigurazioneDBServiziApplicativiSearch {
 					if(CostantiConfigurazione.CREDENZIALE_TOKEN.toString().equals(filterTipoCredenziali)) {
 						sqlQueryObject.addWhereCondition(false,
 								CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TIPOAUTH+" = ?",
-								CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TIPOAUTH+" = ? AND "+CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TOKEN_POLICY+" "+CostantiDB.CONDITION_IS_NOT_NULL+" AND "+CostantiDB.SERVIZI_APPLICATIVI+".utente "+CostantiDB.CONDITION_IS_NOT_NULL);
+								CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TIPOAUTH+" = ?"+
+									CostantiDB.CONDITION_AND+CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TOKEN_POLICY+" "+CostantiDB.CONDITION_IS_NOT_NULL+
+									CostantiDB.CONDITION_AND+CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_UTENTE+" "+CostantiDB.CONDITION_IS_NOT_NULL);
 							
 					}
 					else {
@@ -2173,24 +2186,24 @@ public class DriverConfigurazioneDBServiziApplicativiSearch {
 					if(filterCredenziale!=null && !"".equals(filterCredenziale)) {
 						if(CostantiConfigurazione.CREDENZIALE_SSL.toString().equals(filterTipoCredenziali)) {
 							sqlQueryObject.addWhereCondition(false, 
-									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".cn_subject", filterCredenziale, 
+									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_CN_SUBJECT, filterCredenziale, 
 											LikeConfig.contains(true,true)),
-									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".subject", filterCredenziale, 
+									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_SUBJECT, filterCredenziale, 
 											LikeConfig.contains(true,true)));
 						}
 						else if(CostantiConfigurazione.CREDENZIALE_BASIC.toString().equals(filterTipoCredenziali) || 
 								CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString().equals(filterTipoCredenziali) || 
 								CostantiConfigurazione.CREDENZIALE_TOKEN.toString().equals(filterTipoCredenziali)) {
-							sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".utente", 
+							sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_UTENTE, 
 									filterCredenziale, LikeConfig.contains(true,true));
 						}
 					}
 					if(filterCredenzialeIssuer!=null && !"".equals(filterCredenzialeIssuer) &&
 						CostantiConfigurazione.CREDENZIALE_SSL.toString().equals(filterTipoCredenziali)) {
 						sqlQueryObject.addWhereCondition(false, 
-								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".cn_issuer", filterCredenzialeIssuer, 
+								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_CN_ISSUER, filterCredenzialeIssuer, 
 										LikeConfig.contains(true,true)),
-								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".issuer", filterCredenzialeIssuer, 
+								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_ISSUER, filterCredenzialeIssuer, 
 										LikeConfig.contains(true,true)));
 					}
 					if(filterCredenzialeTokenPolicy!=null && !"".equals(filterCredenzialeTokenPolicy)) {
@@ -2262,7 +2275,9 @@ public class DriverConfigurazioneDBServiziApplicativiSearch {
 					if(CostantiConfigurazione.CREDENZIALE_TOKEN.toString().equals(filterTipoCredenziali)) {
 						sqlQueryObject.addWhereCondition(false,
 								CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TIPOAUTH+" = ?",
-								CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TIPOAUTH+" = ? AND "+CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TOKEN_POLICY+" "+CostantiDB.CONDITION_IS_NOT_NULL+" AND "+CostantiDB.SERVIZI_APPLICATIVI+".utente "+CostantiDB.CONDITION_IS_NOT_NULL);
+								CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TIPOAUTH+" = ?"+
+									CostantiDB.CONDITION_AND+CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_TOKEN_POLICY+" "+CostantiDB.CONDITION_IS_NOT_NULL+
+									CostantiDB.CONDITION_AND+CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_UTENTE+" "+CostantiDB.CONDITION_IS_NOT_NULL);
 							
 					}
 					else {
@@ -2271,24 +2286,24 @@ public class DriverConfigurazioneDBServiziApplicativiSearch {
 					if(filterCredenziale!=null && !"".equals(filterCredenziale)) {
 						if(CostantiConfigurazione.CREDENZIALE_SSL.toString().equals(filterTipoCredenziali)) {
 							sqlQueryObject.addWhereCondition(false, 
-									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".cn_subject", filterCredenziale, 
+									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_CN_SUBJECT, filterCredenziale, 
 											LikeConfig.contains(true,true)),
-									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".subject", filterCredenziale, 
+									sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_SUBJECT, filterCredenziale, 
 											LikeConfig.contains(true,true)));
 						}
 						else if(CostantiConfigurazione.CREDENZIALE_BASIC.toString().equals(filterTipoCredenziali) || 
 								CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString().equals(filterTipoCredenziali) || 
 								CostantiConfigurazione.CREDENZIALE_TOKEN.toString().equals(filterTipoCredenziali)) {
-							sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".utente", 
+							sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_UTENTE, 
 									filterCredenziale, LikeConfig.contains(true,true));
 						}
 					}
 					if(filterCredenzialeIssuer!=null && !"".equals(filterCredenzialeIssuer) &&
 						CostantiConfigurazione.CREDENZIALE_SSL.toString().equals(filterTipoCredenziali)) {
 						sqlQueryObject.addWhereCondition(false, 
-								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".cn_issuer", filterCredenzialeIssuer, 
+								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_CN_ISSUER, filterCredenzialeIssuer, 
 										LikeConfig.contains(true,true)),
-								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".issuer", filterCredenzialeIssuer, 
+								sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_ISSUER, filterCredenzialeIssuer, 
 										LikeConfig.contains(true,true)));
 					}
 					if(filterCredenzialeTokenPolicy!=null && !"".equals(filterCredenzialeTokenPolicy)) {
@@ -3249,9 +3264,10 @@ public class DriverConfigurazioneDBServiziApplicativiSearch {
 				sqlQueryObjectEmptyCondition.addWhereIsNotEmptyCondition("url");
 				
 				sqlQueryObjectConnettore.addWhereCondition(false,
-						"endpointtype<>? AND endpointtype<>?",
+						"endpointtype<>?"+CostantiDB.CONDITION_AND+"endpointtype<>?",
 						//"endpointtype=? AND url is not null AND url <> ?"); OP-708
-						"endpointtype=? AND "+sqlQueryObjectNullCondition.createSQLConditions()+" AND "+sqlQueryObjectEmptyCondition.createSQLConditions());
+						"endpointtype=?"+CostantiDB.CONDITION_AND+""+sqlQueryObjectNullCondition.createSQLConditions()+
+										CostantiDB.CONDITION_AND+sqlQueryObjectEmptyCondition.createSQLConditions());
 				
 				sqlQueryObject.addWhereExistsCondition(!erogazioneIsBound, sqlQueryObjectConnettore);
 

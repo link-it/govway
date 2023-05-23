@@ -107,7 +107,7 @@
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/testsuite" >
 			<include name="jcommander-1.82.jar"/>
-			<include name="testng-7.6.1.jar"/>
+			<include name="testng-7.8.0.jar"/>
 			<include name="slf4j-testng-2.0.0.jar"/>
 			<include name="guice-5.1.0.jar"/>
 		</fileset>
@@ -157,7 +157,7 @@
 	</path>
 	
 	<!-- estensione per testNG -->
-	<taskdef resource="testngtasks" classpath="${openspcoop2_lib}/testsuite/testng-7.6.1.jar">
+	<taskdef resource="testngtasks" classpath="${openspcoop2_lib}/testsuite/testng-7.8.0.jar">
 		<classpath>
 			<fileset dir="${openspcoop2_lib}/log" >
 				<include name="*.jar"/>

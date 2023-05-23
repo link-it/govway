@@ -177,7 +177,7 @@
 				<equals arg1="${hazelcastLibraries}" arg2="true"/>
 			</or>
 			<then>
-				<var name="hazelcast-all_jar" value="hazelcast-5.2.0.jar" />
+				<var name="hazelcast-all_jar" value="hazelcast-5.3.0.jar" />
 				<var name="hazelcast-hibernate_jar" value="hibernate-core-6.1.4.Final.jar" />
 				<var name="hazelcast_properties" value="govway.hazelcast*" />
 			</then>

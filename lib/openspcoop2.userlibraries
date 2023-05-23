@@ -243,7 +243,7 @@
 	<archive path="/op2_3.3.dev/lib/shared/ehcache-3.10.2.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/rhino-1.7.14.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/hibernate-core-6.1.4.Final.jar"/>
-	<archive path="/op2_3.3.dev/lib/shared/hazelcast-5.2.0.jar"/>
+	<archive path="/op2_3.3.dev/lib/shared/hazelcast-5.3.0.jar"/>
 	<!-- soapbox -->
         <archive path="/op2_3.3.dev/lib/soapbox/ultraesb-core-1.7.1.jar"/>
         <archive path="/op2_3.3.dev/lib/soapbox/ultraesb-api-1.7.1.jar"/>
@@ -280,7 +280,7 @@
 	<archive path="/op2_3.3.dev/lib/swagger/swagger-ui-4.15.0.jar"/>
 	<archive path="/op2_3.3.dev/lib/swagger/swagger-request-validator-core-2.30.0-gov4j-2.jar"/>
 	<!-- testsuite-->
-        <archive path="/op2_3.3.dev/lib/testsuite/testng-7.6.1.jar"/>
+        <archive path="/op2_3.3.dev/lib/testsuite/testng-7.8.0.jar"/>
 	<archive path="/op2_3.3.dev/lib/testsuite/jcommander-1.82.jar"/>
 	<archive path="/op2_3.3.dev/lib/testsuite/guice-5.1.0.jar"/>
 	<archive path="/op2_3.3.dev/lib/testsuite/junit-4.13.2.jar"/>

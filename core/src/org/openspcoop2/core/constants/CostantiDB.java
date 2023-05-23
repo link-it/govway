@@ -51,6 +51,8 @@ public final class CostantiDB {
 	
 	public static final String CONDITION_IS_NOT_NULL = "is not null";
 	public static final String CONDITION_IS_NULL = "is null";
+	public static final String CONDITION_AND = " AND ";
+	public static final String CONDITION_OR = " OR ";
 	
     /*COMMONS*/
 	public static final String COLUMN_ALIAS_COUNT = "count";
@@ -118,6 +120,11 @@ public final class CostantiDB {
     public static final String SERVIZI_APPLICATIVI_COLUMN_TOKEN_POLICY = "token_policy";
     public static final String SERVIZI_APPLICATIVI_COLUMN_AS_CLIENT = "as_client";
     public static final String SERVIZI_APPLICATIVI_COLUMN_TIPOAUTH = "tipoauth";
+    public static final String SERVIZI_APPLICATIVI_COLUMN_CN_SUBJECT = "cn_subject";
+    public static final String SERVIZI_APPLICATIVI_COLUMN_SUBJECT = "subject";
+    public static final String SERVIZI_APPLICATIVI_COLUMN_CN_ISSUER = "cn_issuer";
+    public static final String SERVIZI_APPLICATIVI_COLUMN_ISSUER = "issuer";
+    public static final String SERVIZI_APPLICATIVI_COLUMN_UTENTE = "utente";
     public static final String SERVIZI_APPLICATIVI_RUOLI = "sa_ruoli";
     public static final String SERVIZI_APPLICATIVI_RUOLI_ID_SERVIZIO_APPLICATIVO_REF = "id_servizio_applicativo";
     public static final String SERVIZI_APPLICATIVI_RUOLI_COLUMN_RUOLO = "ruolo";
