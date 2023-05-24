@@ -2,6 +2,6 @@
     "type": "https://govway.org/handling-errors/400/InteroperabilityInvalidRequest.html",
     "title": "InteroperabilityInvalidRequest",
     "status": 400,
-    "detail": "Signature verification failed",
+    "detail": "[Header 'Authorization'] possiede un valore nel campo 'digest.value' non corrispondente al token di audit previsto dal pattern 'AUDIT_REST_02'",
     "govway_id": "#string"
 }

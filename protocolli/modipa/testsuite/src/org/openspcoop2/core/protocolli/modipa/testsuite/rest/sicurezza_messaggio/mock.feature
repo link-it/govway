@@ -664,6 +664,129 @@ Scenario: isTest('connettivita-base-idar0402-pdnd') ||
 
 
 
+##########################################
+#       IDAR04 (CUSTOM)                  #
+##########################################
+
+Scenario: isTest('idar04-custom-header-pdnd')
+
+    * def integration_header = karate.readAsString('classpath:test/rest/sicurezza-messaggio/integration_info.json')
+    * def integration_header_base64 = encode_base64(integration_header);
+
+    * karate.log("Response: ", integration_header_base64)
+
+    * match requestHeaders['CustomTestSuite-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Digest'] == '#notpresent'
+    * def responseStatus = 200
+    * def newHeaders = 
+    """
+    ({
+       'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("requestHeaders['GovWay-Transaction-ID'][0]"),
+       'GovWay-Integration': integration_header_base64
+    })
+    """
+    * configure responseHeaders = newHeaders
+    * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+
+
+
+
+##########################################
+#                AUDIT REST              #
+##########################################
+
+Scenario: isTest('audit-rest-jwk-01')  || 
+		isTest('audit-rest-jwk-02') ||
+		isTest('audit-rest-jwk-custom-01') || 
+		isTest('audit-rest-jwk-custom-02')
+
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
+    * match requestHeaders['GovWay-Audit-UserID'][0] == 'utente-token'
+    * match requestHeaders['GovWay-Audit-UserLocation'][0] == 'ip-utente-token'
+    * match requestHeaders['GovWay-Audit-LoA'][0] == 'livello-autenticazione-utente-token'
+    * def responseStatus = 200
+    * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+
+Scenario: isTest('audit-rest-jwk-mixed-01')  || 
+		isTest('audit-rest-jwk-mixed-02')
+
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
+    * match requestHeaders['GovWay-Audit-UserID'][0] == 'utente-token'
+    * match requestHeaders['GovWay-Audit-UserLocation'][0] == 'ip-utente-token'
+    * match requestHeaders['GovWay-Audit-LoA'][0] == '#notpresent'
+    * def responseStatus = 200
+    * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+
+Scenario: isTest('audit-rest-x509-01')
+
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
+    * match requestHeaders['GovWay-Audit-UserID'][0] == 'utente-token-ridefinito'
+    * match requestHeaders['GovWay-Audit-UserLocation'][0] == 'ip-utente-token-ridefinito'
+    * match requestHeaders['GovWay-Audit-LoA'][0] == 'livello-autenticazione-utente-token-ridefinito'
+    * def responseStatus = 200
+    * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+
+Scenario: isTest('audit-rest-jwk-0401')  || 
+		isTest('audit-rest-jwk-0402')
+
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
+    * match requestHeaders['GovWay-Audit-UserID'][0] == 'utente-token'
+    * match requestHeaders['GovWay-Audit-UserLocation'][0] == 'ip-utente-token'
+    * match requestHeaders['GovWay-Audit-LoA'][0] == 'livello-autenticazione-utente-token'
+    * def responseStatus = 200
+    * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+
+Scenario: isTest('audit-rest-x509-0301')
+
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
+    * match requestHeaders['GovWay-Audit-UserID'][0] == 'utente-token-ridefinito'
+    * match requestHeaders['GovWay-Audit-UserLocation'][0] == 'ip-utente-token-ridefinito'
+    * match requestHeaders['GovWay-Audit-LoA'][0] == 'livello-autenticazione-utente-token-ridefinito'
+    * def responseStatus = 200
+    * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+
+Scenario: isTest('audit-rest-jwk-notrace-noforward-default-01') ||
+		isTest('audit-rest-jwk-notrace-noforward-default-02')
+
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
+    * match requestHeaders['GovWay-Audit-UserID'][0] == '#notpresent'
+    * match requestHeaders['GovWay-Audit-UserLocation'][0] == '#notpresent'
+    * match requestHeaders['GovWay-Audit-LoA'][0] == '#notpresent'
+    * def responseStatus = 200
+    * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+
+Scenario: isTest('audit-rest-jwk-customtrace-customforward-01')
+
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
+    * match requestHeaders['GovWay-Audit-UserID'][0] == '#notpresent'
+    * match requestHeaders['GovWay-Audit-UserLocation'][0] == '#notpresent'
+    * match requestHeaders['audit-custom-location'][0] == 'ip-utente-token'
+    * match requestHeaders['GovWay-Audit-LoA'][0] == 'livello-autenticazione-utente-token'
+    * def responseStatus = 200
+    * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+
+Scenario: isTest('audit-rest-jwk-criteri-autorizzativi-ok-01')
+
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
+    * match requestHeaders['GovWay-Audit-UserID'][0] == 'utente-token'
+    * match requestHeaders['GovWay-Audit-UserLocation'][0] == 'ip-utente-token'
+    * match requestHeaders['GovWay-Audit-LoA'][0] == 'livello-autenticazione-utente-token'
+    * match requestHeaders['audit-test-security-token-kid'][0] == 'KID-ApplicativoBlockingIDA01'
+    * def responseStatus = 200
+    * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+
 # catch all
 #
 #

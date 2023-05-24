@@ -37,7 +37,7 @@ import com.intuit.karate.netty.FeatureServer;
 
 
 /**
-* BloccanteRestSicurezzaMessaggioTest
+* BloccanteRestSicurezzaMessaggioAuditTest
 *
 * @author Francesco Scarlato (scarlato@link.it)
 * @author $Author$
@@ -45,21 +45,9 @@ import com.intuit.karate.netty.FeatureServer;
 */
 @RunWith(Karate.class)
 @KarateOptions(features = {
-    "classpath:test/rest/sicurezza-messaggio/idar01.feature",
-    "classpath:test/rest/sicurezza-messaggio/idar01-no-disclosure.feature",
-    "classpath:test/rest/sicurezza-messaggio/idar02.feature",
-    "classpath:test/rest/sicurezza-messaggio/idar03.feature",
-    "classpath:test/rest/sicurezza-messaggio/idar04.feature", 
-    "classpath:test/rest/sicurezza-messaggio/idar0402.feature", // lasciare prima degli altri 03 altrimenti vanno in conflitto di attachments  
-    "classpath:test/rest/sicurezza-messaggio/idar0302.feature",
-    "classpath:test/rest/sicurezza-messaggio/idar03custom.feature",
-    "classpath:test/rest/sicurezza-messaggio/idar04custom.feature",
-    "classpath:test/rest/sicurezza-messaggio/autorizzazioneMessaggio.feature",
-    "classpath:test/rest/sicurezza-messaggio/autorizzazioneToken.feature",
-    "classpath:test/rest/sicurezza-messaggio/autorizzazioneMessaggioToken.feature",
-    "classpath:test/rest/sicurezza-messaggio/negoziazioneToken.feature"
+    "classpath:test/rest/sicurezza-messaggio/audit.feature"
     })
-public class BloccanteRestSicurezzaMessaggioTest extends ConfigLoader {
+public class BloccanteRestSicurezzaMessaggioAuditTest extends ConfigLoader {
     
     private static FeatureServer server;
     private static FeatureServer proxy;
@@ -67,10 +55,10 @@ public class BloccanteRestSicurezzaMessaggioTest extends ConfigLoader {
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	@BeforeClass
     public static void beforeClass() {       
-        File file = FileUtils.getFileRelativeTo(BloccanteRestSicurezzaMessaggioTest.class, "mock.feature");
+        File file = FileUtils.getFileRelativeTo(BloccanteRestSicurezzaMessaggioAuditTest.class, "mock.feature");
         server = FeatureServer.start(file, Integer.valueOf(prop.getProperty("http_mock_port")), false, new HashMap<>((Map) prop));
 
-        file = FileUtils.getFileRelativeTo(BloccanteRestSicurezzaMessaggioTest.class, "proxy.feature");
+        file = FileUtils.getFileRelativeTo(BloccanteRestSicurezzaMessaggioAuditTest.class, "proxy.feature");
         proxy = FeatureServer.start(file, Integer.valueOf(prop.getProperty("http_port")), false, new HashMap<>((Map) prop));
     }
         

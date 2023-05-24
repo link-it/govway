@@ -2,6 +2,6 @@
     "type": "https://govway.org/handling-errors/400/InteroperabilityInvalidRequest.html",
     "title": "InteroperabilityInvalidRequest",
     "status": 400,
-    "detail": "Signature verification failed",
+    "detail": "[Header 'Authorization'] Token non contiene il claim 'digest.alg'",
     "govway_id": "#string"
 }

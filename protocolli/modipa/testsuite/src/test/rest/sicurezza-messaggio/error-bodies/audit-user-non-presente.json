@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/400/BadRequest.html",
+    "title": "BadRequest",
+    "status": 400,
+    "detail": "Il servizio richiede una funzionalità non supportata dal protocollo modipa: Non è stato possibile recuperare un valore da associare alla risorsa 'Informazioni Audit - UserID': \nConversione valore della risorsa (Informazioni Audit - UserID) '${header:GovWay-Audit-User}' non riuscita: Proprieta' 'Informazioni Audit - UserID' contiene un valore non corretto: Placeholder [{header:GovWay-Audit-User}] resolution failed: object [java.util.HashMap] 'GovWay-Audit-User' not exists in map\nConversione valore della risorsa (Informazioni Audit - UserID) '${query:govway_audit_user}' non riuscita: Proprieta' 'Informazioni Audit - UserID' contiene un valore non corretto: Placeholder [{query:govway_audit_user}] resolution failed: object [java.util.HashMap] 'govway_audit_user' not exists in map",
+    "govway_id": "#string"
+}

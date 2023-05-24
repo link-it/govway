@@ -1339,7 +1339,9 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA_AUTH_IN_RESPONSE.equals(header) ||
 						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM.equals(header) ||
 						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM_AUTH_IN_RESPONSE.equals(header)) {
-					return isSicurezzaMessaggioGenerazioneTokenIdAuthLocale(sorgenteToken);
+					if(isSicurezzaMessaggioGenerazioneTokenIdAuthLocale(sorgenteToken)) {
+						return true;
+					}
 				}		
 			}
 		}
@@ -1381,7 +1383,9 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 				
 				if(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01.equals(sicurezzaMessaggio) ||
 						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02.equals(sicurezzaMessaggio)) {
-					return isSicurezzaMessaggioGenerazioneTokenIdAuthLocale(sorgenteToken);
+					if(isSicurezzaMessaggioGenerazioneTokenIdAuthLocale(sorgenteToken)) {
+						return true;
+					}
 				}
 				else if(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(sicurezzaMessaggio) ||
 						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(sicurezzaMessaggio) ||

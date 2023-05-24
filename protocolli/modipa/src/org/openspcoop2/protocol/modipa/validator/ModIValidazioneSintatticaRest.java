@@ -535,7 +535,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 		String prefix = "";
 		boolean headerDuplicati = headerType.isHeaderDuplicati();
 		boolean headerAuthentication = headerType.isUsabledForAuthentication();
-		if(headerDuplicati) {
+		if(headerDuplicati || tokenAudit) {
 			prefix = "[Header '"+headerTokenRest+"'] ";
 		}
 		

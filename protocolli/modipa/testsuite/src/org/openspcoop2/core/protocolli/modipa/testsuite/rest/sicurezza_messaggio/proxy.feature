@@ -24,6 +24,7 @@ Background:
     * def checkToken = read('check-token.feature')
     * def checkTokenKid = read('check-token-kid.feature')
     * def decodeToken = read('classpath:utils/decode-token.js')
+    * def encode_base64 = read('classpath:utils/encode-base64.js')
 
     * def client_token_match = 
     """
@@ -54,6 +55,15 @@ Background:
     function(tok) {
         var components = tok.split('.')
         components[1] = components[1] + 'tamper'
+        return components[0] + '.' + components[1] + '.' + components[2]
+    }
+    """
+
+    * def tamper_token_audit = 
+    """
+    function(tok) {
+        var components = tok.split('.')
+        components[2] = components[2] + 'tamper'
         return components[0] + '.' + components[1] + '.' + components[2]
     }
     """
@@ -6709,6 +6719,1564 @@ Scenario: isTest('riutilizzo-token-risposta-idar0402-pdnd') ||
     * def responseHeaders =  ({ 'Agid-JWT-Signature': getRequestHeader("GovWay-TestSuite-Server-Token"), 'Digest': getRequestHeader("GovWay-TestSuite-Digest") })
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+
+
+
+
+
+
+########################
+#       IDAR04 (CUSTOM)#
+########################
+
+Scenario: isTest('idar04-custom-header-pdnd')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('idar04-custom-header-pdnd')) {
+      tipoTest = 'PDND'
+    }
+    """
+
+    * def clientIdExpected = 'N.D.'
+    * def subExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * def audExpected = 'RestBlockingIDAR04Custom-'+tipoTest+'/v1'
+
+    * eval
+    """
+    if (isTest('idar04-custom-header-pdnd')) {
+      kidExpected = 'KID-ApplicativoBlockingIDA01'
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+      subExpected = 'ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+	    purposeId: 'purposeId-'+subExpected
+        }
+    })
+    """
+
+    * def client_token_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+	    integrationInfoString: 'valoreClientString',
+            integrationInfoInt: 13,
+            integrationInfoBoolean: true,
+	    integrationInfoFloat: 24.2,
+            integrationInfoList0: 'val1',
+            integrationInfoList1: 'val2',
+	    integrationInfoList: ['val1','val2'],
+	    level2_integrationInfoString: 'valoreClientLeve2String',
+            level2_integrationInfoInt: 99,
+            level2_integrationInfoBoolean: false,
+	    level2_integrationInfoFloat: 102.29,
+            level2_integrationInfoList0: 33,
+            level2_integrationInfoList1: 1234,
+	    level2_integrationInfoList: [33,1234],
+	    level3_integrationInfoString: 'valoreClientLeve3String',
+            level3_integrationInfoInt: 12467,
+            level3_integrationInfoBoolean: false,
+	    level3_claims_integrationInfoString: 'valoreClientLeve3String',
+            level3_claims_integrationInfoInt: 12467,
+            level3_claims_integrationInfoBoolean: false,
+	    complex_integrationInfo: {
+               clientClaimLeve3String: 'valoreClientLeve3String',
+               clientClaimLeve3Boolean: false,
+               clientClaimLeve3Int: 12467,
+               clientClaimLeve4Complex: {
+                  clientClaimLeve4String: "valoreClientLeve4String",
+                  clientClaimLeve4ListInt: [ 33, 1234 ],
+                  clientClaimLeve4ListStringInt: [ '666', '999' ],
+                  clientClaimLeve4ListString: [ 'val1', 'val2' ]
+               }
+            },
+            complex_integrationInfoListTest1: [ '666' , '999' ],
+            complex_integrationInfoListTest2: [ '666' , '999' ],
+            optional_integrationInfoString: 'valoreClientString',
+            optional_integrationInfoBoolean: true,
+            optional_integrationInfoLong: 2147483747,
+            optional_integrationInfoDouble: 1399.56,
+            optional_integrationInfoListTest: [ '666' , '999' ],
+            optional_complex_integrationInfo: {
+               clientClaimLeve3String: 'valoreClientLeve3String',
+               clientClaimLeve3Boolean: false,
+               clientClaimLeve3Int: 12467,
+               clientClaimLeve4Complex: {
+                  clientClaimLeve4String: "valoreClientLeve4String",
+                  clientClaimLeve4ListInt: [ 33, 1234 ],
+                  clientClaimLeve4ListStringInt: [ '666', '999' ],
+                  clientClaimLeve4ListString: [ 'val1', 'val2' ]
+               }
+            }
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkTokenKid ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * call checkTokenKid ({token: requestHeaders['CustomTestSuite-JWT-Signature'][0], match_to: client_token_match, kind: "AGID" })
+   
+    * def request_token = decodeToken(requestHeaders['CustomTestSuite-JWT-Signature'][0], "AGID")
+    * karate.log("Ret: ", request_token)
+    * match request_token.payload.signed_headers == "#notpresent"
+    
+    * match requestHeaders['Digest'] == '#notpresent'
+    * match requestHeaders['Authorization'] == '#present'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['GovWay-Integration'] == '#notpresent'
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04Custom-'+tipoTest+'/v1')
+
+    * karate.log("Ret: ", responseHeaders)
+
+
+    * def server_token_match =
+    """
+    ({
+        header: { kid: 'KID-ExampleServer'},
+        payload: {
+            aud: clientIdExpected,
+            client_id: 'ExampleServer'+tipoTest,
+            iss: 'DemoSoggettoErogatore',
+            sub: audExpected,
+	    integrationInfoString: 'valoreClientString',
+            integrationInfoInt: 13,
+            integrationInfoBoolean: true,
+	    integrationInfoFloat: 24.2,
+            integrationInfoList0: 'val1',
+            integrationInfoList1: 'val2',
+	    integrationInfoList: ['val1','val2'],
+	    level2_integrationInfoString: 'valoreClientLeve2String',
+            level2_integrationInfoInt: 99,
+            level2_integrationInfoBoolean: false,
+	    level2_integrationInfoFloat: 102.29,
+            level2_integrationInfoList0: 33,
+            level2_integrationInfoList1: 1234,
+	    level2_integrationInfoList: [33,1234],
+	    level3_integrationInfoString: 'valoreClientLeve3String',
+            level3_integrationInfoInt: 12467,
+            level3_integrationInfoBoolean: false,
+	    level3_claims_integrationInfoString: 'valoreClientLeve3String',
+            level3_claims_integrationInfoInt: 12467,
+            level3_claims_integrationInfoBoolean: false,
+	    complex_integrationInfo: {
+               clientClaimLeve3String: 'valoreClientLeve3String',
+               clientClaimLeve3Boolean: false,
+               clientClaimLeve3Int: 12467,
+               clientClaimLeve4Complex: {
+                  clientClaimLeve4String: "valoreClientLeve4String",
+                  clientClaimLeve4ListInt: [ 33, 1234 ],
+                  clientClaimLeve4ListStringInt: [ '666', '999' ],
+                  clientClaimLeve4ListString: [ 'val1', 'val2' ]
+               }
+            },
+            complex_integrationInfoListTest1: [ '666' , '999' ],
+            complex_integrationInfoListTest2: [ '666' , '999' ],
+            optional_integrationInfoString: 'valoreClientString',
+            optional_integrationInfoBoolean: true,
+            optional_integrationInfoLong: 2147483747,
+            optional_integrationInfoDouble: 1399.56,
+            optional_integrationInfoListTest: [ '666' , '999' ],
+            optional_complex_integrationInfo: {
+               clientClaimLeve3String: 'valoreClientLeve3String',
+               clientClaimLeve3Boolean: false,
+               clientClaimLeve3Int: 12467,
+               clientClaimLeve4Complex: {
+                  clientClaimLeve4String: "valoreClientLeve4String",
+                  clientClaimLeve4ListInt: [ 33, 1234 ],
+                  clientClaimLeve4ListStringInt: [ '666', '999' ],
+                  clientClaimLeve4ListString: [ 'val1', 'val2' ]
+               }
+            }
+        }
+    })
+    """
+    * call checkTokenKid ({token: responseHeaders['CustomTestSuite-JWT-Signature'][0], match_to: server_token_match, kind: "AGID"  })
+
+    * def response_token = decodeToken(responseHeaders['CustomTestSuite-JWT-Signature'][0], "AGID")
+    * match response_token.payload.signed_headers == "#notpresent"
+    
+    * match responseHeaders['Digest'] == '#notpresent'
+    * match responseHeaders['Authorization'] == '#notpresent'
+    * match responseHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match responseHeaders['GovWay-Integration'] == '#notpresent'
+
+    * def newHeaders = 
+    """
+    ({
+	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['CustomTestSuite-JWT-Signature'][0],
+        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders['CustomTestSuite-JWT-Signature'][0],
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+
+
+
+
+
+
+
+
+########################
+#       AUDIT REST     #
+########################
+
+
+
+Scenario: isTest('audit-rest-jwk-01') || 
+		isTest('audit-rest-jwk-02') ||
+		isTest('audit-rest-jwk-mixed-01') || 
+		isTest('audit-rest-jwk-mixed-02') ||
+		isTest('audit-rest-jwk-custom-01') || 
+		isTest('audit-rest-jwk-custom-02') ||
+		isTest('audit-rest-jwk-notrace-noforward-default-01') ||
+		isTest('audit-rest-jwk-notrace-noforward-default-02') ||
+		isTest('audit-rest-jwk-customtrace-customforward-01')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01') || 
+		isTest('audit-rest-jwk-02') ||
+		isTest('audit-rest-jwk-mixed-01') || 
+		isTest('audit-rest-jwk-mixed-02') ||
+		isTest('audit-rest-jwk-custom-01') || 
+		isTest('audit-rest-jwk-custom-02') ||
+		isTest('audit-rest-jwk-notrace-noforward-default-01') ) {
+      tipoTest = 'JWK'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-customtrace-customforward-01') ) {
+      tipoTest = 'JWK-CustomTrace-CustomForward'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01') ||
+		isTest('audit-rest-jwk-mixed-01') ||
+		isTest('audit-rest-jwk-custom-01') ||
+		isTest('audit-rest-jwk-customtrace-customforward-01') ) {
+      audExpected = 'RestBlockingAuditRest01-'+tipoTest+'/v1'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-notrace-noforward-default-01')) {
+      audExpected = 'RestBlockingAuditRest01Optional-'+tipoTest+'/v1'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-02') || 
+		isTest('audit-rest-jwk-mixed-02') ||
+		isTest('audit-rest-jwk-custom-02') ) {
+      audExpected = 'RestBlockingAuditRest02-'+tipoTest+'/v1'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-notrace-noforward-default-02')) {
+      audExpected = 'RestBlockingAuditRest02Optional-'+tipoTest+'/v1'
+    }
+    """
+
+    * def clientIdExpected = 'N.D.'
+    * def issExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01') || 
+		isTest('audit-rest-jwk-mixed-01') ||
+		isTest('audit-rest-jwk-custom-01') ||
+		isTest('audit-rest-jwk-notrace-noforward-default-01') ||
+		isTest('audit-rest-jwk-customtrace-customforward-01')) {
+      kidExpected = 'KID-ApplicativoBlockingIDA01'
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+      issExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-02') || 
+		isTest('audit-rest-jwk-mixed-02') ||
+		isTest('audit-rest-jwk-custom-02') ||
+		isTest('audit-rest-jwk-notrace-noforward-default-02')) {
+      kidExpected = 'KID-ApplicativoBlockingJWK'
+      clientIdExpected = 'DemoSoggettoFruitore/KidOnly/ApplicativoBlockingJWK'
+      issExpected = 'DemoSoggettoFruitore/KidOnly/ApplicativoBlockingJWK'
+    }
+    """
+
+    * def subExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01') || 
+		isTest('audit-rest-jwk-mixed-01') ||
+		isTest('audit-rest-jwk-custom-01') ||
+		isTest('audit-rest-jwk-notrace-noforward-default-01') ||
+		isTest('audit-rest-jwk-customtrace-customforward-01')) {
+      subExpected = 'ApplicativoBlockingIDA01'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-02') || 
+		isTest('audit-rest-jwk-mixed-02') ||
+		isTest('audit-rest-jwk-custom-02') ||
+		isTest('audit-rest-jwk-notrace-noforward-default-02')) {
+      subExpected = 'ApplicativoBlockingJWK-CredenzialePrincipal'
+    }
+    """
+
+
+    * def purposeIdExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01') || 
+		isTest('audit-rest-jwk-mixed-01') ||
+		isTest('audit-rest-jwk-custom-01') ||
+		isTest('audit-rest-jwk-notrace-noforward-default-01') ||
+		isTest('audit-rest-jwk-customtrace-customforward-01')) {
+      purposeIdExpected = 'purposeId-ApplicativoBlockingIDA01'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-02') || 
+		isTest('audit-rest-jwk-mixed-02') ||
+		isTest('audit-rest-jwk-custom-02') ||
+		isTest('audit-rest-jwk-notrace-noforward-default-02')) {
+      purposeIdExpected = 'purposeId-ApplicativoBlockingJWK'
+    }
+    """
+
+
+    * def dnonceExpected = '#notpresent'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01') || 
+		isTest('audit-rest-jwk-mixed-01') ||
+		isTest('audit-rest-jwk-custom-01') ||
+		isTest('audit-rest-jwk-notrace-noforward-default-01') ||
+		isTest('audit-rest-jwk-customtrace-customforward-01')) {
+      dnonceExpected = '#notpresent'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-02') || 
+		isTest('audit-rest-jwk-mixed-02') ||
+		isTest('audit-rest-jwk-custom-02') ||
+		isTest('audit-rest-jwk-notrace-noforward-default-02')) {
+      dnonceExpected = '#number'
+    }
+    """
+
+    * def digestExpected = '#notpresent'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01') || 
+		isTest('audit-rest-jwk-mixed-01') ||
+		isTest('audit-rest-jwk-custom-01') ||
+		isTest('audit-rest-jwk-notrace-noforward-default-01') ||
+		isTest('audit-rest-jwk-customtrace-customforward-01')) {
+      digestExpected = '#notpresent'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-02') || 
+		isTest('audit-rest-jwk-mixed-02') ||
+		isTest('audit-rest-jwk-custom-02') ||
+		isTest('audit-rest-jwk-notrace-noforward-default-02')) {
+      digestExpected = { alg: 'SHA256', value: '#string' }
+    }
+    """
+
+    * def client_token_audit_match = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01') || 
+	isTest('audit-rest-jwk-02') ||
+	isTest('audit-rest-jwk-custom-01') || 
+	isTest('audit-rest-jwk-custom-02') ||
+	isTest('audit-rest-jwk-notrace-noforward-default-01') ||
+	isTest('audit-rest-jwk-notrace-noforward-default-02') ||
+	isTest('audit-rest-jwk-customtrace-customforward-01') ) {
+    client_token_audit_match = ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: '#notpresent',
+            iss: issExpected,
+            sub: '#notpresent',
+	    userID: 'utente-token', 
+            userLocation: 'ip-utente-token', 
+            LoA: 'livello-autenticazione-utente-token',
+	    dnonce: dnonceExpected
+        }
+    })
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-mixed-01') || 
+	isTest('audit-rest-jwk-mixed-02')) {
+    client_token_audit_match = ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: '#notpresent',
+            iss: issExpected,
+            sub: '#notpresent',
+	    userID: 'utente-token', 
+            userLocation: 'ip-utente-token', 
+            LoA: '#notpresent',
+	    dnonce: dnonceExpected
+        }
+    })
+    }
+    """
+
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+	    purposeId: purposeIdExpected,
+	    digest: digestExpected
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkTokenKid ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-TrackingEvidence'][0], match_to: client_token_audit_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
+    
+    * def newHeaders = 
+    """
+    ({
+	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Client-Audit-Token': requestHeaders['Agid-JWT-TrackingEvidence'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+
+
+
+Scenario: isTest('audit-rest-jwk-0401') || 
+		isTest('audit-rest-jwk-0402') 
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-0401') || 
+		isTest('audit-rest-jwk-0402')) {
+      tipoTest = 'JWK'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-0401')) {
+      audExpected = 'RestBlockingAuditRest01-'+tipoTest+'/v1'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-0402')) {
+      audExpected = 'RestBlockingAuditRest02-'+tipoTest+'/v1'
+    }
+    """
+
+    * def clientIdExpected = 'N.D.'
+    * def issExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-0401')) {
+      kidExpected = 'KID-ApplicativoBlockingJWK'
+      clientIdExpected = 'DemoSoggettoFruitore/KidOnly/ApplicativoBlockingJWK'
+      issExpected = 'DemoSoggettoFruitore/KidOnly/ApplicativoBlockingJWK'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-0402')) {
+      kidExpected = 'KID-ApplicativoBlockingIDA01'
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+      issExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def subExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-0401')) {
+      subExpected = 'ApplicativoBlockingJWK'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-0402')) {
+      subExpected = 'ApplicativoBlockingIDA01-CredenzialePrincipal'
+    }
+    """
+
+
+    * def purposeIdExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-0401')) {
+      purposeIdExpected = 'purposeId-ApplicativoBlockingJWK'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-0402')) {
+      purposeIdExpected = 'purposeId-ApplicativoBlockingIDA01'
+    }
+    """
+
+
+    * def dnonceExpected = '#notpresent'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-0401')) {
+      dnonceExpected = '#notpresent'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-0402')) {
+      dnonceExpected = '#number'
+    }
+    """
+
+    * def digestExpected = '#notpresent'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-0401')) {
+      digestExpected = '#notpresent'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-0402')) {
+      digestExpected = { alg: 'SHA256', value: '#string' }
+    }
+    """
+
+    * def client_token_audit_match = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-0401') || 
+	isTest('audit-rest-jwk-0402')) {
+    client_token_audit_match = ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: '#notpresent',
+            iss: issExpected,
+            sub: '#notpresent',
+	    userID: 'utente-token', 
+            userLocation: 'ip-utente-token', 
+            LoA: 'livello-autenticazione-utente-token',
+	    dnonce: dnonceExpected
+        }
+    })
+    }
+    """
+
+    * def audAuthorizationExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-0401')) {
+      audAuthorizationExpected = 'RestBlockingAuditRest01-'+tipoTest+'/v1'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-0402')) {
+      audAuthorizationExpected = 'RestBlockingAuditRest02-'+tipoTest+'/v1'
+    }
+    """
+
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audAuthorizationExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+	    purposeId: purposeIdExpected,
+	    digest: digestExpected
+        }
+    })
+    """
+
+    * def subExpectedIntegrity = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-0401')) {
+      subExpectedIntegrity = 'ApplicativoBlockingJWK'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-0402')) {
+      subExpectedIntegrity = 'ApplicativoBlockingIDA01'
+    }
+    """
+
+
+    * def client_token_integrity_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpectedIntegrity,
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json; charset=UTF-8' }
+            ]
+        }
+    })
+    """
+
+    * karate.log("Ret (idTransazione: "+requestHeaders['GovWay-Transaction-ID'][0]+"): ", requestHeaders)
+
+    * call checkTokenKid ({token: requestHeaders['Authorization'][0], id_transazione: requestHeaders['GovWay-Transaction-ID'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-Signature'][0], id_transazione: requestHeaders['GovWay-Transaction-ID'][0], match_to: client_token_integrity_match, kind: "AGID" })
+
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-TrackingEvidence'][0], id_transazione: requestHeaders['GovWay-Transaction-ID'][0], match_to: client_token_audit_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
+    
+    * def newHeaders = 
+    """
+    ({
+	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+	'GovWay-TestSuite-GovWay-Client-Integrity-Token': requestHeaders['Agid-JWT-Signature'][0],
+        'GovWay-TestSuite-GovWay-Client-Audit-Token': requestHeaders['Agid-JWT-TrackingEvidence'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+
+Scenario: isTest('audit-rest-x509-01')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-x509-01')) {
+      tipoTest = 'X509'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-x509-01')) {
+      audExpected = 'RestBlockingAuditRest01-'+tipoTest+'/v1'
+    }
+    """
+
+    * def audExpectedAUDIT = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-x509-01')) {
+      audExpectedAUDIT = 'RestBlockingAuditRest01-'+tipoTest+'-AUDIT/v1'
+    }
+    """
+
+    * def clientIdExpected = 'N.D.'
+    * def issExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-x509-01')) {
+      kidExpected = 'ExampleClient1'
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+      issExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def subExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-x509-01')) {
+      subExpected = 'ApplicativoBlockingIDA01'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-x509-02')) {
+      subExpected = 'ApplicativoBlockingIDA01-CredenzialePrincipal'
+    }
+    """
+
+
+    * def client_token_audit_match = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-x509-01')) {
+    client_token_audit_match = ({
+        header: { 
+		kid: '#notpresent',
+	        x5c: '#present',
+                x5u: '#notpresent',
+               'x5t#S256': '#present'
+	},
+        payload: { 
+            aud: audExpectedAUDIT,
+            client_id: '#notpresent',
+            iss: '#notpresent',
+            sub: '#notpresent',
+	    userID: 'utente-token-ridefinito', 
+            userLocation: 'ip-utente-token-ridefinito', 
+            LoA: 'livello-autenticazione-utente-token-ridefinito',
+	    dnonce: '#notpresent'
+        }
+    })
+    }
+    """
+
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+	    purposeId: '#notpresent',
+	    digest: '#notpresent'
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkToken ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * call checkToken ({token: requestHeaders['Agid-JWT-TrackingEvidence'][0], match_to: client_token_audit_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
+    
+    * def newHeaders = 
+    """
+    ({
+	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Client-Audit-Token': requestHeaders['Agid-JWT-TrackingEvidence'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+
+
+
+Scenario: isTest('audit-rest-x509-0301')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-x509-0301')) {
+      tipoTest = 'X509'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-x509-0301')) {
+      audExpected = 'RestBlockingAuditRest01-'+tipoTest+'/v1'
+    }
+    """
+
+    * def audExpectedAUDIT = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-x509-0301')) {
+      audExpectedAUDIT = 'RestBlockingAuditRest01-'+tipoTest+'-AUDIT/v1'
+    }
+    """
+
+    * def clientIdExpected = 'N.D.'
+    * def issExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-x509-0301')) {
+      kidExpected = 'ExampleClient1'
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+      issExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def subExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-x509-0301')) {
+      subExpected = 'ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def client_token_audit_match = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-x509-0301')) {
+    client_token_audit_match = ({
+        header: { 
+		kid: '#notpresent',
+	        x5c: '#present',
+                x5u: '#notpresent',
+               'x5t#S256': '#present'
+	},
+        payload: { 
+            aud: audExpectedAUDIT,
+            client_id: '#notpresent',
+            iss: '#notpresent',
+            sub: '#notpresent',
+	    userID: 'utente-token-ridefinito', 
+            userLocation: 'ip-utente-token-ridefinito', 
+            LoA: 'livello-autenticazione-utente-token-ridefinito',
+	    dnonce: '#notpresent'
+        }
+    })
+    }
+    """
+
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+	    purposeId: '#notpresent',
+	    digest: '#notpresent'
+        }
+    })
+    """
+
+
+    * def subExpectedIntegrity = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-x509-0301')) {
+      subExpectedIntegrity = 'ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def client_token_integrity_match = 
+    """
+    ({
+        header: { 
+		kid: 'ExampleClient1',
+	        x5c: '#present',
+                x5u: '#notpresent',
+               'x5t#S256': '#present'
+	},
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpectedIntegrity,
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json; charset=UTF-8' }
+            ]
+        }
+    })
+    """
+
+
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkToken ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * call checkToken ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID" })
+
+    * call checkToken ({token: requestHeaders['Agid-JWT-TrackingEvidence'][0], match_to: client_token_audit_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
+    
+    * def newHeaders = 
+    """
+    ({
+	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+	'GovWay-TestSuite-GovWay-Client-Integrity-Token': requestHeaders['Agid-JWT-Signature'][0],
+        'GovWay-TestSuite-GovWay-Client-Audit-Token': requestHeaders['Agid-JWT-TrackingEvidence'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+
+
+
+Scenario: isTest('audit-rest-jwk-manomissione-firma-01') || 
+		isTest('audit-rest-jwk-manomissione-firma-02') 
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-manomissione-firma-01') || 
+		isTest('audit-rest-jwk-manomissione-firma-02')) {
+      tipoTest = 'JWK'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-manomissione-firma-01')) {
+      audExpected = 'RestBlockingAuditRest01-'+tipoTest+'/v1'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-manomissione-firma-02')) {
+      audExpected = 'RestBlockingAuditRest02-'+tipoTest+'/v1'
+    }
+    """
+
+    * set requestHeaders['Agid-JWT-TrackingEvidence'][0] = tamper_token_audit(requestHeaders['Agid-JWT-TrackingEvidence'][0])
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/invalid-token-audit-signature-in-request.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+
+
+
+Scenario: isTest('audit-rest-jwk-manomissione-digest-authorization-02') 
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-manomissione-digest-authorization-02')) {
+      tipoTest = 'JWK'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-manomissione-digest-authorization-02')) {
+      audExpected = 'RestBlockingAuditRest02-'+tipoTest+'/v1'
+    }
+    """
+
+    * karate.log("req: ", requestHeaders);
+
+    * def old_authz = requestHeaders['Old-Authorization'][0]
+    * karate.log("old: ", old_authz);
+    * set requestHeaders['Authorization'][0] = old_authz
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/invalid-audit-digest-in-authorization-request.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+
+
+
+
+
+Scenario: isTest('audit-rest-jwk-eliminazione-digest-value-authorization-02') 
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-eliminazione-digest-value-authorization-02')) {
+      tipoTest = 'JWK'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-eliminazione-digest-value-authorization-02')) {
+      audExpected = 'RestBlockingAuditRest02-'+tipoTest+'/v1'
+    }
+    """
+
+    * karate.log("req: ", requestHeaders);
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/audit-digest-in-authorization-request-senza-value.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+
+
+Scenario: isTest('audit-rest-jwk-eliminazione-digest-alg-authorization-02') 
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-eliminazione-digest-alg-authorization-02')) {
+      tipoTest = 'JWK'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-eliminazione-digest-alg-authorization-02')) {
+      audExpected = 'RestBlockingAuditRest02-'+tipoTest+'/v1'
+    }
+    """
+
+    * karate.log("req: ", requestHeaders);
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/audit-digest-in-authorization-request-senza-alg.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+
+
+Scenario: isTest('audit-rest-jwk-eliminazione-digest-authorization-02') 
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-eliminazione-digest-authorization-02')) {
+      tipoTest = 'JWK'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-eliminazione-digest-authorization-02')) {
+      audExpected = 'RestBlockingAuditRest02-'+tipoTest+'/v1'
+    }
+    """
+
+    * karate.log("req: ", requestHeaders);
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/audit-digest-in-authorization-request-non-presente.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+
+
+
+Scenario: isTest('audit-rest-jwk-kid-not-trusted-01') ||
+		isTest('audit-rest-jwk-kid-not-trusted-02') 
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-kid-not-trusted-01') ||
+		isTest('audit-rest-jwk-kid-not-trusted-02') ) {
+      tipoTest = 'JWK'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-kid-not-trusted-01')) {
+      audExpected = 'RestBlockingAuditRest01-'+tipoTest+'/v1'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-kid-not-trusted-02')) {
+      audExpected = 'RestBlockingAuditRest02-'+tipoTest+'/v1'
+    }
+    """
+
+    * karate.log("req: ", requestHeaders);
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
+
+    * match responseStatus == 401
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/kid-not-authorized.json')
+    * match header GovWay-Transaction-ErrorType == 'TokenAuthenticationFailed'
+
+    * def tid = responseHeaders['GovWay-Transaction-ID'][0]
+    * def result = get_diagnostici(tid) 
+
+    * def errorExpected = 'Certificato, corrispondente al kid \'ExampleClient2\', non trovato nel TrustStore dei certificati'
+    * match result[0].MESSAGGIO contains errorExpected
+
+    * def responseStatus = 200
+
+
+Scenario: isTest('audit-rest-jwk-audit-user-non-fornito-01') ||
+		isTest('audit-rest-jwk-audit-user-non-fornito-02') 
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-audit-user-non-fornito-01') ||
+		isTest('audit-rest-jwk-audit-user-non-fornito-02')) {
+      tipoTest = 'JWK'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-audit-user-non-fornito-01')) {
+      audExpected = 'RestBlockingAuditRest01-'+tipoTest+'/v1'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-audit-user-non-fornito-02')) {
+      audExpected = 'RestBlockingAuditRest02-'+tipoTest+'/v1'
+    }
+    """
+
+    * karate.log("req: ", requestHeaders);
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/audit-user-non-presente.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+
+
+
+Scenario: isTest('audit-rest-jwk-audit-user-location-non-fornito-01') ||
+		isTest('audit-rest-jwk-audit-user-location-non-fornito-02') 
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-audit-user-location-non-fornito-01') ||
+		isTest('audit-rest-jwk-audit-user-location-non-fornito-02')) {
+      tipoTest = 'JWK'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-audit-user-location-non-fornito-01')) {
+      audExpected = 'RestBlockingAuditRest01-'+tipoTest+'/v1'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-audit-use-locationr-non-fornito-02')) {
+      audExpected = 'RestBlockingAuditRest02-'+tipoTest+'/v1'
+    }
+    """
+
+    * karate.log("req: ", requestHeaders);
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/audit-user-location-non-presente.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+
+
+
+
+
+Scenario: isTest('audit-rest-jwk-audit-user-non-fornito-erogazione-01') ||
+		isTest('audit-rest-jwk-audit-user-non-fornito-erogazione-02') 
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-audit-user-non-fornito-erogazione-01') ||
+		isTest('audit-rest-jwk-audit-user-non-fornito-erogazione-02')) {
+      tipoTest = 'JWK'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-audit-user-non-fornito-erogazione-01')) {
+      audExpected = 'RestBlockingAuditRest01-'+tipoTest+'/v1'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-audit-user-non-fornito-erogazione-02')) {
+      audExpected = 'RestBlockingAuditRest02-'+tipoTest+'/v1'
+    }
+    """
+
+    * karate.log("req: ", requestHeaders);
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/audit-user-non-presente-erogazione.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+
+
+
+Scenario: isTest('audit-rest-jwk-audit-user-location-non-fornito-erogazione-01') ||
+		isTest('audit-rest-jwk-audit-user-location-non-fornito-erogazione-02') 
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-audit-user-location-non-fornito-erogazione-01') ||
+		isTest('audit-rest-jwk-audit-user-location-non-fornito-erogazione-02')) {
+      tipoTest = 'JWK'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-audit-user-location-non-fornito-erogazione-01')) {
+      audExpected = 'RestBlockingAuditRest01-'+tipoTest+'/v1'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-audit-use-locationr-non-fornito-erogazione-02')) {
+      audExpected = 'RestBlockingAuditRest02-'+tipoTest+'/v1'
+    }
+    """
+
+    * karate.log("req: ", requestHeaders);
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/audit-user-location-non-presente-erogazione.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+
+
+
+Scenario: isTest('audit-rest-jwk-audience-errato-01') ||
+	isTest('audit-rest-jwk-audience-errato-atteso-differente-01') 
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-audience-errato-01')) {
+      tipoTest = 'JWK'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-audience-errato-atteso-differente-01')) {
+      tipoTest = 'JWK-AudienceDifferente'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-audience-errato-01') ||
+	isTest('audit-rest-jwk-audience-errato-atteso-differente-01')) {
+      audExpected = 'RestBlockingAuditRest01-'+tipoTest+'/v1'
+    }
+    """
+
+    * karate.log("req: ", requestHeaders);
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/audit-audience-non-valida-erogazione.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+
+
+
+Scenario: isTest('audit-rest-jwk-token-audit-scaduto-01') 
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-audit-scaduto-01')) {
+      tipoTest = 'JWK'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-audit-scaduto-01')) {
+      audExpected = 'RestBlockingAuditRest01-'+tipoTest+'/v1'
+    }
+    """
+
+    * karate.log("req: ", requestHeaders);
+
+    * def old_audit = requestHeaders['Old-Audit'][0]
+    * karate.log("old: ", old_audit);
+    * set requestHeaders['Agid-JWT-TrackingEvidence'][0] = old_audit
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/expired-audit-token.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+
+Scenario: isTest('audit-rest-jwk-token-audit-iat-oldest-01') 
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-audit-iat-oldest-01')) {
+      tipoTest = 'JWK-TTLShort'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-audit-iat-oldest-01')) {
+      audExpected = 'RestBlockingAuditRest01-'+tipoTest+'/v1'
+    }
+    """
+
+    * karate.log("req: ", requestHeaders);
+
+    * def old_audit = requestHeaders['Old-Audit'][0]
+    * karate.log("old: ", old_audit);
+    * set requestHeaders['Agid-JWT-TrackingEvidence'][0] = old_audit
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/token-audit-iat-oldest.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+
+
+Scenario: isTest('audit-rest-jwk-criteri-autorizzativi-ok-01') 
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-criteri-autorizzativi-ok-01') ) {
+      tipoTest = 'JWK'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-criteri-autorizzativi-ok-01') ) {
+      audExpected = 'RestBlockingAuditRest01-'+tipoTest+'/v1'
+    }
+    """
+
+    * def clientIdExpected = 'N.D.'
+    * def issExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-criteri-autorizzativi-ok-01')) {
+      kidExpected = 'KID-ApplicativoBlockingIDA01'
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+      issExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def subExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-criteri-autorizzativi-ok-01')) {
+      subExpected = 'ApplicativoBlockingIDA01'
+    }
+    """
+
+
+    * def purposeIdExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-criteri-autorizzativi-ok-01')) {
+      purposeIdExpected = 'purposeId-ApplicativoBlockingIDA01'
+    }
+    """
+
+
+    * def dnonceExpected = '#notpresent'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-criteri-autorizzativi-ok-01')) {
+      dnonceExpected = '#notpresent'
+    }
+    """
+
+    * def digestExpected = '#notpresent'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-criteri-autorizzativi-ok-01')) {
+      digestExpected = '#notpresent'
+    }
+    """
+
+    * def client_token_audit_match = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-criteri-autorizzativi-ok-01') ) {
+    client_token_audit_match = ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: '#notpresent',
+            iss: issExpected,
+            sub: '#notpresent',
+	    userID: 'utente-token', 
+            userLocation: 'ip-utente-token', 
+            LoA: 'livello-autenticazione-utente-token',
+	    dnonce: dnonceExpected
+        }
+    })
+    }
+    """
+
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+	    purposeId: purposeIdExpected,
+	    digest: digestExpected
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkTokenKid ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-TrackingEvidence'][0], match_to: client_token_audit_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+'RestBlockingAuditRest01-'+tipoTest+'-CheckAuthz/v1')
+    
+    * def newHeaders = 
+    """
+    ({
+	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Client-Audit-Token': requestHeaders['Agid-JWT-TrackingEvidence'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+Scenario: isTest('audit-rest-jwk-criteri-autorizzativi-ko-01') 
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-criteri-autorizzativi-ko-01')) {
+      tipoTest = 'JWK-CheckAuthz'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-criteri-autorizzativi-ko-01')) {
+      audExpected = 'RestBlockingAuditRest01-'+tipoTest+'/v1'
+    }
+    """
+
+    * karate.log("req: ", requestHeaders);
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
+    * match responseStatus == 403
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/authorization-deny.json')
+    * match header GovWay-Transaction-ErrorType == 'AuthorizationContentDeny'
+
+
+
+
+
+
+
+Scenario: isTest('tengo-da-parte') 
+
+    * def tamper_token_authorization_digest_value = 
+    """
+    function(tok, newPayload) {
+        var components = tok.split('.');
+	return components[0] + '.' + newPayload + '.' + components[2];
+    }
+    """
+
+    * def tokenDecoded = decodeToken(requestHeaders['Authorization'][0], "Bearer")
+    * eval
+    """
+    tokenDecoded.payload.digest.value = tokenDecoded.payload.digest.value+'tamper';
+    """
+    * string payload = tokenDecoded.payload;
+    * karate.log("Payload: ", payload);
+    * def payload_base64 = encode_base64(payload);
+    * karate.log("Payload base64: ", payload_base64);
+
+    * set requestHeaders['Authorization'][0] = tamper_token_authorization_digest_value(requestHeaders['Authorization'][0],payload_base64)
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/invalid-token-signature-in-request.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+
+
+
 
 
 

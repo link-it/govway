@@ -275,11 +275,13 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				
 					validateTokenAuthorizationId(msg, state, requestInfo,
 							isRichiesta, prefixAuthorization,
-							busta);
+							busta, 
+							sicurezzaMessaggio);
 					
+					boolean checkAudienceByModIConfig = sicurezzaMessaggio || sicurezzaAudit;
 					pa = validateTokenAuthorizationAudience(msg, factory, state, requestInfo,
 							isRichiesta, prefixAuthorization,
-							sicurezzaMessaggio);
+							checkAudienceByModIConfig);
 					
 				}
 				
@@ -1005,7 +1007,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 	
 	private void validateTokenAuthorizationId(OpenSPCoop2Message msg, IState state, RequestInfo requestInfo,
 			boolean isRichiesta, String prefixAuthorization,
-			Busta busta) throws ProtocolException {
+			Busta busta, boolean sicurezzaMessaggio) throws ProtocolException {
 	
 		Object useJtiAuthorizationObject = msg.getContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_USE_JTI_AUTHORIZATION);
 		boolean useJtiAuthorization = false;
@@ -1036,7 +1038,9 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				
 				String idIntegrity = busta.getID();
 				busta.removeProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID);
-				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID, idIntegrity);
+				if(sicurezzaMessaggio) {
+					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID, idIntegrity);
+				}
 				busta.setID(jtiClaimReceived);
 				
 			}
@@ -1046,7 +1050,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 	
 	private PortaApplicativa validateTokenAuthorizationAudience(OpenSPCoop2Message msg, IProtocolFactory<?> factory, IState state, RequestInfo requestInfo,
 			boolean isRichiesta, String prefixAuthorization,
-			boolean sicurezzaMessaggio) throws ProtocolException {
+			boolean checkAudienceByModIConfig) throws ProtocolException {
 		
 		PortaApplicativa pa = readPortaApplicativa(msg, factory, state, requestInfo);
 		
@@ -1056,7 +1060,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 			
 			validateTokenAuthorizationAudienceByModIConfig(msg, factory, state, requestInfo,
 					isRichiesta, prefixAuthorization,
-					sicurezzaMessaggio);
+					checkAudienceByModIConfig);
 			
 		}
 		
@@ -1065,7 +1069,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 	
 	private void validateTokenAuthorizationAudienceByModIConfig(OpenSPCoop2Message msg, IProtocolFactory<?> factory, IState state, RequestInfo requestInfo,
 			boolean isRichiesta, String prefixAuthorization,
-			boolean sicurezzaMessaggio) throws ProtocolException {
+			boolean checkAudienceByModIConfig) throws ProtocolException {
 		List<String> audienceClaimReceived = readAudienceFromTokenOAuth();			
 		if(audienceClaimReceived==null || audienceClaimReceived.isEmpty()) {
 			
@@ -1077,7 +1081,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		}
 		else {
 		
-			if(sicurezzaMessaggio) {
+			if(checkAudienceByModIConfig) {
 				checkAudienceModIConfig(msg, factory, state, requestInfo,
 						isRichiesta, prefixAuthorization,
 						audienceClaimReceived);

@@ -2,6 +2,6 @@
     "type": "https://govway.org/handling-errors/400/InteroperabilityInvalidRequest.html",
     "title": "InteroperabilityInvalidRequest",
     "status": 400,
-    "detail": "Signature verification failed",
+    "detail": "#regex ^\\[Header 'Agid\\-JWT\\-TrackingEvidence'] Token scaduto in data '.+'$",
     "govway_id": "#string"
 }

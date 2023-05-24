@@ -846,7 +846,8 @@ public class ModIImbustamentoRest {
 		if(audit02) {
 			
 			String dNonce = RandomGenerator.getDefaultInstance().nextRandomInt(this.modiProperties.getSecurityTokenAuditDnonceSize());
-			payloadToken.put(Costanti.PDND_DNONCE, dNonce);
+			long dNonceInt = Long.parseLong(dNonce);
+			payloadToken.put(Costanti.PDND_DNONCE, dNonceInt);
 			modiTokenClaims.setdNonce(dNonce);
 				
 		}

@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/403/AuthorizationContentDeny.html",
+    "title": "AuthorizationContentDeny",
+    "status": 403,
+    "detail": "Il chiamante non è autorizzato ad invocare l'API",
+    "govway_id": "#string"
+}

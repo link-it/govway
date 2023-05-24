@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/400/BadRequest.html",
+    "title": "BadRequest",
+    "status": 400,
+    "detail": "Il servizio richiede una funzionalità non supportata dal protocollo modipa: Non è stato possibile recuperare un valore da associare alla risorsa 'Informazioni Audit - Identificativo Postazione': \nConversione valore della risorsa (Informazioni Audit - Identificativo Postazione) '${header:GovWay-Audit-UserLocation}' non riuscita: Proprieta' 'Informazioni Audit - Identificativo Postazione' contiene un valore non corretto: Placeholder [{header:GovWay-Audit-UserLocation}] resolution failed: object [java.util.HashMap] 'GovWay-Audit-UserLocation' not exists in map\nConversione valore della risorsa (Informazioni Audit - Identificativo Postazione) '${query:govway_audit_user_location}' non riuscita: Proprieta' 'Informazioni Audit - Identificativo Postazione' contiene un valore non corretto: Placeholder [{query:govway_audit_user_location}] resolution failed: object [java.util.HashMap] 'govway_audit_user_location' not exists in map",
+    "govway_id": "#string"
+}

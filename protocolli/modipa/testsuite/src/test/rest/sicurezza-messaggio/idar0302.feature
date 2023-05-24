@@ -52,12 +52,12 @@ And match header Authorization == '#notpresent'
 """
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
-* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_richiesta })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_risposta })
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_richiesta, profilo_interazione: 'bloccante' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_risposta, profilo_interazione: 'bloccante' })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
-* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_richiesta })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_risposta })
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_richiesta, profilo_interazione: 'bloccante' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_risposta, profilo_interazione: 'bloccante' })
 
 
 @manomissione-token-richiesta
@@ -252,12 +252,12 @@ And match header Authorization == '#notpresent'
 """
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
-* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_richiesta })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_risposta })
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_richiesta, profilo_interazione: 'bloccante' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_risposta, profilo_interazione: 'bloccante' })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
-* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_richiesta })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_risposta })
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_richiesta, profilo_interazione: 'bloccante' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_risposta, profilo_interazione: 'bloccante' })
 
 
 @doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authorization-firmato
