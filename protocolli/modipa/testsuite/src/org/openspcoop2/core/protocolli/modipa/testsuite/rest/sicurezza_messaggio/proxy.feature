@@ -7725,7 +7725,7 @@ Scenario: isTest('audit-rest-jwk-manomissione-digest-authorization-02')
 
     * karate.log("req: ", requestHeaders);
 
-    * def old_authz = requestHeaders['Old-Authorization'][0]
+    * def old_authz = requestHeaders['old-authorization'][0]
     * karate.log("old: ", old_authz);
     * set requestHeaders['Authorization'][0] = old_authz
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
@@ -8059,7 +8059,7 @@ Scenario: isTest('audit-rest-jwk-token-audit-scaduto-01')
 
     * karate.log("req: ", requestHeaders);
 
-    * def old_audit = requestHeaders['Old-Audit'][0]
+    * def old_audit = requestHeaders['old-audit'][0]
     * karate.log("old: ", old_audit);
     * set requestHeaders['Agid-JWT-TrackingEvidence'][0] = old_audit
 
@@ -8089,7 +8089,7 @@ Scenario: isTest('audit-rest-jwk-token-audit-iat-oldest-01')
 
     * karate.log("req: ", requestHeaders);
 
-    * def old_audit = requestHeaders['Old-Audit'][0]
+    * def old_audit = requestHeaders['old-audit'][0]
     * karate.log("old: ", old_audit);
     * set requestHeaders['Agid-JWT-TrackingEvidence'][0] = old_audit
 

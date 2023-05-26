@@ -16,6 +16,9 @@ Background:
     * def check_client_token = read('check-client-token.feature')
     * def check_server_token = read('check-server-token.feature')
 
+    * def checkTokenAudit = read('classpath:org/openspcoop2/core/protocolli/modipa/testsuite/rest/sicurezza_messaggio/check-token.feature')
+    * def checkTokenKid = read('classpath:org/openspcoop2/core/protocolli/modipa/testsuite/rest/sicurezza_messaggio/check-token-kid.feature')
+
 
 Scenario: isTest('connettivita-base')
     # Salvo la richiesta e la risposta per far controllare la traccia del token
@@ -1039,6 +1042,364 @@ Scenario: isTest('pkcs11-trustStore')
     * xmlstring server_response = response
     * eval karateCache.add("Server-Response", server_response)    
     
+
+
+
+
+########################
+#       AUDIT REST     #
+########################
+
+
+
+Scenario: isTest('audit-rest-jwk-01') || 
+		isTest('audit-rest-pdnd-02')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01') ) {
+      tipoTest = 'JWK'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-pdnd-02') ) {
+      tipoTest = 'PDND'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01') ) {
+      audExpected = 'SoapBlockingAuditRest01-'+tipoTest+'/v1'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-pdnd-02') ) {
+      audExpected = 'SoapBlockingAuditRest02-'+tipoTest+'/v1'
+    }
+    """
+
+    * def clientIdExpected = 'N.D.'
+    * def issExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01')) {
+      kidExpected = 'KID-ApplicativoBlockingIDA01'
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+      issExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-pdnd-02')) {
+      kidExpected = 'KID-ApplicativoBlockingJWK'
+      clientIdExpected = 'DemoSoggettoFruitore/KidOnly/ApplicativoBlockingJWK'
+      issExpected = 'DemoSoggettoFruitore/KidOnly/ApplicativoBlockingJWK'
+    }
+    """
+
+    * def subExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01')) {
+      subExpected = 'ApplicativoBlockingIDA01'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-pdnd-02')) {
+      subExpected = 'ApplicativoBlockingJWK-CredenzialePrincipal'
+    }
+    """
+
+
+    * def purposeIdExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01')) {
+      purposeIdExpected = 'purposeId-ApplicativoBlockingIDA01'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-pdnd-02')) {
+      purposeIdExpected = 'purposeId-ApplicativoBlockingJWK'
+    }
+    """
+
+
+    * def dnonceExpected = '#notpresent'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01')) {
+      dnonceExpected = '#notpresent'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-pdnd-02')) {
+      dnonceExpected = '#number'
+    }
+    """
+
+    * def digestExpected = '#notpresent'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01')) {
+      digestExpected = '#notpresent'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-pdnd-02')) {
+      digestExpected = { alg: 'SHA256', value: '#string' }
+    }
+    """
+
+    * def client_token_audit_match = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01') || 
+	isTest('audit-rest-pdnd-02') ) {
+    client_token_audit_match = ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: '#notpresent',
+            iss: issExpected,
+            sub: '#notpresent',
+	    userID: 'utente-token', 
+            userLocation: 'ip-utente-token', 
+            LoA: 'livello-autenticazione-utente-token',
+	    dnonce: dnonceExpected
+        }
+    })
+    }
+    """
+
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+	    purposeId: purposeIdExpected,
+	    digest: digestExpected
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkTokenKid ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-TrackingEvidence'][0], match_to: client_token_audit_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/'+audExpected+"/idar01.oauth")
+    
+    * def newHeaders = 
+    """
+    ({
+	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Client-Audit-Token': requestHeaders['Agid-JWT-TrackingEvidence'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+Scenario: isTest('audit-rest-x509-01')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-x509-01')) {
+      tipoTest = 'X509'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-x509-01')) {
+      audExpected = 'SoapBlockingAuditRest01-'+tipoTest+'/v1'
+    }
+    """
+
+    * def audExpectedAUDIT = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-x509-01')) {
+      audExpectedAUDIT = 'SoapBlockingAuditRest01-'+tipoTest+'-AUDIT/v1'
+    }
+    """
+
+    * def clientIdExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-x509-01')) {
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+    }
+    """
+
+
+    * def client_token_audit_match = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-x509-01')) {
+    client_token_audit_match = ({
+        header: { 
+		kid: '#notpresent',
+	        x5c: '#present',
+                x5u: '#notpresent',
+               'x5t#S256': '#notpresent'
+	},
+        payload: { 
+            aud: audExpectedAUDIT,
+            client_id: '#notpresent',
+            iss: '#notpresent',
+            sub: '#notpresent',
+	    userID: 'utente-token-ridefinito', 
+            userLocation: 'ip-utente-token-ridefinito', 
+            LoA: 'livello-autenticazione-utente-token-ridefinito',
+	    dnonce: '#notpresent'
+        }
+    })
+    }
+    """
+
+
+    * karate.log("Ret: ", requestHeaders)
+
+
+    # Salvo la richiesta per far controllare la traccia del token
+    # alla feature chiamante
+    * xmlstring client_request = bodyPath('/')
+    * eval karateCache.add("Client-Request", client_request)
+
+    * call check_client_token ({ address: clientIdExpected, to: audExpected })
+
+    # Siccome abbiamo un Riferimento X509 DirectReference, controllo che KeyInfo riferisca il BinarySecurityToken
+    * def keyRef = bodyPath('/Envelope/Header/Security/Signature/KeyInfo/SecurityTokenReference/Reference/@URI')
+    * def key = bodyPath('/Envelope/Header/Security/BinarySecurityToken/@Id')
+    * match keyRef == '#' + key
+
+    * call checkTokenAudit ({token: requestHeaders['Agid-JWT-TrackingEvidence'][0], match_to: client_token_audit_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/soap/in//DemoSoggettoErogatore/'+audExpected+'/idar01.locale')
+    
+    * def newHeaders = 
+    """
+    ({
+	'GovWay-TestSuite-GovWay-Client-Audit-Token': requestHeaders['Agid-JWT-TrackingEvidence'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+
+
+
+Scenario: isTest('audit-rest-x509-0301')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-x509-0301')) {
+      tipoTest = 'X509'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-x509-0301')) {
+      audExpected = 'SoapBlockingAuditRest01-'+tipoTest+'/v1'
+    }
+    """
+
+    * def audExpectedAUDIT = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-x509-0301')) {
+      audExpectedAUDIT = 'SoapBlockingAuditRest01-'+tipoTest+'-AUDIT/v1'
+    }
+    """
+
+    * def clientIdExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-x509-0301')) {
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+    }
+    """
+
+
+    * def client_token_audit_match = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-x509-0301')) {
+    client_token_audit_match = ({
+        header: { 
+		kid: '#notpresent',
+	        x5c: '#present',
+                x5u: '#notpresent',
+               'x5t#S256': '#notpresent'
+	},
+        payload: { 
+            aud: audExpectedAUDIT,
+            client_id: '#notpresent',
+            iss: '#notpresent',
+            sub: '#notpresent',
+	    userID: 'utente-token-ridefinito', 
+            userLocation: 'ip-utente-token-ridefinito', 
+            LoA: 'livello-autenticazione-utente-token-ridefinito',
+	    dnonce: '#notpresent'
+        }
+    })
+    }
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    # Salvo la richiesta per far controllare la traccia del token
+    # alla feature chiamante
+    * xmlstring client_request = bodyPath('/')
+    * eval karateCache.add("Client-Request", client_request)
+
+    # Siccome abbiamo un Riferimento X509 DirectReference, controllo che KeyInfo riferisca il BinarySecurityToken
+    * def keyRef = bodyPath('/Envelope/Header/Security/Signature/KeyInfo/SecurityTokenReference/Reference/@URI')
+    * def key = bodyPath('/Envelope/Header/Security/BinarySecurityToken/@Id')
+    * match keyRef == '#' + key
+
+
+    * call check_client_token ({ address: clientIdExpected, to: audExpected })
+
+    * call checkTokenAudit ({token: requestHeaders['Agid-JWT-TrackingEvidence'][0], match_to: client_token_audit_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/soap/in//DemoSoggettoErogatore/'+audExpected+'/idar03.locale')
+    
+    * def newHeaders = 
+    """
+    ({
+	'GovWay-TestSuite-GovWay-Client-Audit-Token': requestHeaders['Agid-JWT-TrackingEvidence'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+
+
 # catch all
 #
 #

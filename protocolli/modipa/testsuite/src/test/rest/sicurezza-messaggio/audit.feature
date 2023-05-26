@@ -495,7 +495,7 @@ And header simulazionepdnd-digest-mode = 'proxy'
 And header GovWay-Audit-User = "utente-token"
 And header GovWay-Audit-UserLocation = "ip-utente-token"
 And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
-And header Old-Authorization = authorization_token_giro_ok
+And header old-authorization = authorization_token_giro_ok
 When method post
 Then status 400
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/invalid-audit-digest-in-authorization-request.json')
@@ -852,9 +852,9 @@ And header simulazionepdnd-password = '<password>'
 And header simulazionepdnd-purposeId = '<purposeId>'
 And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
 And header simulazionepdnd-digest-mode = 'proxy'
-And header GovWay-Audit-User = "utente-token"
-And header GovWay-Audit-UserLocation = "ip-utente-token"
-And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+And header govWay-audit-User = "utente-token"
+And header GovWay-AUDIT-USERLocation = "ip-utente-token"
+And header govWay-Audit-loa = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
@@ -1101,7 +1101,7 @@ And header simulazionepdnd-digest-mode = 'proxy'
 And header GovWay-Audit-User = "utente-token"
 And header GovWay-Audit-UserLocation = "ip-utente-token"
 And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
-And header Old-Audit = audit_token_giro_ok
+And header old-audit = audit_token_giro_ok
 When method post
 Then status 400
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/expired-audit-token.json')
@@ -1161,7 +1161,7 @@ And header simulazionepdnd-digest-mode = 'proxy'
 And header GovWay-Audit-User = "utente-token"
 And header GovWay-Audit-UserLocation = "ip-utente-token"
 And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
-And header Old-Audit = audit_token_giro_ok
+And header old-audit = audit_token_giro_ok
 When method post
 Then status 400
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/token-audit-iat-oldest.json')

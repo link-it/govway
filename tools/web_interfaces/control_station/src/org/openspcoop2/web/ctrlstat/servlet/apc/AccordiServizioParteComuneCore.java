@@ -57,6 +57,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.registro.GestoreRegistroServiziRemoto;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
@@ -77,7 +78,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 	private AccordoServizioParteComuneServiziCompostiCore serviziCompostiCore;
 	private AccordoServizioParteComuneMappingCore mappingCore;
 	
-	public AccordiServizioParteComuneCore() throws Exception {
+	public AccordiServizioParteComuneCore() throws DriverControlStationException {
 		super();
 		this.soapCore = new AccordoServizioParteComuneSoapCore(this);
 		this.restCore = new AccordoServizioParteComuneRestCore(this);
@@ -86,7 +87,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		this.serviziCompostiCore = new AccordoServizioParteComuneServiziCompostiCore(this);
 		this.mappingCore = new AccordoServizioParteComuneMappingCore(this);
 	}
-	public AccordiServizioParteComuneCore(ControlStationCore core) throws Exception {
+	public AccordiServizioParteComuneCore(ControlStationCore core) throws DriverControlStationException {
 		super(core);
 		this.soapCore = new AccordoServizioParteComuneSoapCore(this);
 		this.restCore = new AccordoServizioParteComuneRestCore(this);

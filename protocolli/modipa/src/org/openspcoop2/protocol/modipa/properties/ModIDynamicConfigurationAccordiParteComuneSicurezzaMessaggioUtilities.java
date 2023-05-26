@@ -1399,7 +1399,8 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 		return false;
 	}
 	
-	static boolean isSicurezzaMessaggioRiferimentoX509Required(AccordoServizioParteComune api, String portType) {
+	// NOTA: riferito dalla classe org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeServizioApplicativoAutorizzatoUtilities tramite reflection
+	public static boolean isSicurezzaMessaggioRiferimentoX509Required(AccordoServizioParteComune api, String portType) {
 		
 		// ne basta uno presente
 		

@@ -431,7 +431,8 @@ public class ModIImbustamento {
 							patternCorniceSicurezza, schemaCorniceSicurezza,
 							busta, bustaRichiesta, 
 							multipleHeaderAuthorizationConfig,
-							keystoreDefinitoInFruizione, keystoreKidMode);
+							keystoreDefinitoInFruizione, keystoreKidMode,
+							addSecurity, addAudit);
 					
 					if(isRichiesta) {
 					
@@ -593,7 +594,8 @@ public class ModIImbustamento {
 											patternCorniceSicurezza, schemaCorniceSicurezza,
 											busta, bustaRichiesta, 
 											false,
-											keystoreDefinitoInFruizione, keystoreKidMode);
+											keystoreDefinitoInFruizione, keystoreKidMode,
+											addSecurity, addAudit);
 									modiTokenIntegrity = imbustamentoRest.addToken(msg, isRichiesta, context, keystoreConfig, securityConfigIntegrity, busta, 
 											securityMessageProfile, false, headerTokenRestIntegrity, 
 											corniceSicurezza, patternCorniceSicurezza, 

@@ -38,6 +38,7 @@ import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
 
 /**
@@ -51,7 +52,7 @@ public class AccordoServizioParteComuneInUsoCore extends ControlStationCore {
 
 	private AccordoServizioParteComuneSinteticoCore sinteticoCore;
 	
-	protected AccordoServizioParteComuneInUsoCore(ControlStationCore core) throws Exception {
+	protected AccordoServizioParteComuneInUsoCore(ControlStationCore core) throws DriverControlStationException {
 		super(core);
 		this.sinteticoCore = new AccordoServizioParteComuneSinteticoCore(core);
 	}

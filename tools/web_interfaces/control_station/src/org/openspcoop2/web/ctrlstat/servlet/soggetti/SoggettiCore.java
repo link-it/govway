@@ -62,10 +62,10 @@ import org.openspcoop2.web.lib.users.DriverUsersDBException;
  */
 public class SoggettiCore extends ControlStationCore {
 
-	public SoggettiCore() throws Exception {
+	public SoggettiCore() throws DriverControlStationException {
 		super();
 	}
-	public SoggettiCore(ControlStationCore core) throws Exception {
+	public SoggettiCore(ControlStationCore core) throws DriverControlStationException {
 		super(core);
 	}
 		

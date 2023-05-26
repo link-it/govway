@@ -1091,10 +1091,13 @@ public class ModIUtils {
 		return false;
 	}
 	
+	private static final String CLASS_MODIPA_PROPERTIES = "org.openspcoop2.protocol.modipa.config.ModIProperties";
+	private static final String CLASS_MODIPA_PROPERTIES_GET_INSTANCE_METHOD = "getInstance";
+	
 	private static String getHeaderModI() throws ProtocolException {
 		try {
-			Class<?> modiPropertiesClass = Class.forName("org.openspcoop2.protocol.modipa.config.ModIProperties");
-			Method mGetInstance = modiPropertiesClass.getMethod("getInstance");
+			Class<?> modiPropertiesClass = Class.forName(CLASS_MODIPA_PROPERTIES);
+			Method mGetInstance = modiPropertiesClass.getMethod(CLASS_MODIPA_PROPERTIES_GET_INSTANCE_METHOD);
 			Object instance = mGetInstance.invoke(null);
 			Method mGetRestSecurityTokenHeaderModI = instance.getClass().getMethod("getRestSecurityTokenHeaderModI");
 			return (String) mGetRestSecurityTokenHeaderModI.invoke(instance);
@@ -1106,8 +1109,8 @@ public class ModIUtils {
 	@SuppressWarnings("unchecked")
 	public static List<RemoteStoreConfig> getRemoteStoreConfig() throws ProtocolException {
 		try {
-			Class<?> modiPropertiesClass = Class.forName("org.openspcoop2.protocol.modipa.config.ModIProperties");
-			Method mGetInstance = modiPropertiesClass.getMethod("getInstance");
+			Class<?> modiPropertiesClass = Class.forName(CLASS_MODIPA_PROPERTIES);
+			Method mGetInstance = modiPropertiesClass.getMethod(CLASS_MODIPA_PROPERTIES_GET_INSTANCE_METHOD);
 			Object instance = mGetInstance.invoke(null);
 			Method mGetRemoteStoreConfig = instance.getClass().getMethod("getRemoteStoreConfig");
 			return (List<RemoteStoreConfig>) mGetRemoteStoreConfig.invoke(instance);
@@ -1118,8 +1121,8 @@ public class ModIUtils {
 	
 	public static RemoteKeyType getRemoteKeyType(String name) throws ProtocolException {
 		try {
-			Class<?> modiPropertiesClass = Class.forName("org.openspcoop2.protocol.modipa.config.ModIProperties");
-			Method mGetInstance = modiPropertiesClass.getMethod("getInstance");
+			Class<?> modiPropertiesClass = Class.forName(CLASS_MODIPA_PROPERTIES);
+			Method mGetInstance = modiPropertiesClass.getMethod(CLASS_MODIPA_PROPERTIES_GET_INSTANCE_METHOD);
 			Object instance = mGetInstance.invoke(null);
 			Method mGetRemoteKey = instance.getClass().getMethod("getRemoteKeyType",String.class);
 			return (RemoteKeyType) mGetRemoteKey.invoke(instance,name);
@@ -1130,8 +1133,8 @@ public class ModIUtils {
 	
 	private static KeystoreParams getSicurezzaMessaggioCertificatiTrustStore() throws ProtocolException {
 		try {
-			Class<?> modiPropertiesClass = Class.forName("org.openspcoop2.protocol.modipa.config.ModIProperties");
-			Method mGetInstance = modiPropertiesClass.getMethod("getInstance");
+			Class<?> modiPropertiesClass = Class.forName(CLASS_MODIPA_PROPERTIES);
+			Method mGetInstance = modiPropertiesClass.getMethod(CLASS_MODIPA_PROPERTIES_GET_INSTANCE_METHOD);
 			Object instance = mGetInstance.invoke(null);
 			Method mGet = instance.getClass().getMethod("getSicurezzaMessaggioCertificatiTrustStore");
 			return (KeystoreParams) mGet.invoke(instance);
@@ -1142,8 +1145,8 @@ public class ModIUtils {
 	
 	private static KeystoreParams getSicurezzaMessaggioSslTrustStore() throws ProtocolException {
 		try {
-			Class<?> modiPropertiesClass = Class.forName("org.openspcoop2.protocol.modipa.config.ModIProperties");
-			Method mGetInstance = modiPropertiesClass.getMethod("getInstance");
+			Class<?> modiPropertiesClass = Class.forName(CLASS_MODIPA_PROPERTIES);
+			Method mGetInstance = modiPropertiesClass.getMethod(CLASS_MODIPA_PROPERTIES_GET_INSTANCE_METHOD);
 			Object instance = mGetInstance.invoke(null);
 			Method mGet = instance.getClass().getMethod("getSicurezzaMessaggioSslTrustStore");
 			return (KeystoreParams) mGet.invoke(instance);
@@ -1154,8 +1157,8 @@ public class ModIUtils {
 	
 	private static KeystoreParams getSicurezzaMessaggioCertificatiKeyStore() throws ProtocolException {
 		try {
-			Class<?> modiPropertiesClass = Class.forName("org.openspcoop2.protocol.modipa.config.ModIProperties");
-			Method mGetInstance = modiPropertiesClass.getMethod("getInstance");
+			Class<?> modiPropertiesClass = Class.forName(CLASS_MODIPA_PROPERTIES);
+			Method mGetInstance = modiPropertiesClass.getMethod(CLASS_MODIPA_PROPERTIES_GET_INSTANCE_METHOD);
 			Object instance = mGetInstance.invoke(null);
 			Method mGet = instance.getClass().getMethod("getSicurezzaMessaggioCertificatiKeyStore");
 			return (KeystoreParams) mGet.invoke(instance);

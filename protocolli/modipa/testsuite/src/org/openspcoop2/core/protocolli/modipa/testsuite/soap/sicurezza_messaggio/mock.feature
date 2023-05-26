@@ -192,6 +192,38 @@ Scenario: isTest('manomissione-payload-risposta-idas0302') ||
     * def response = read('classpath:test/soap/sicurezza-messaggio/response.xml')
 
 
+
+
+##########################################
+#                AUDIT REST              #
+##########################################
+
+Scenario: isTest('audit-rest-jwk-01')  || 
+		isTest('audit-rest-pdnd-02') 
+
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
+    * match requestHeaders['GovWay-Audit-UserID'][0] == 'utente-token'
+    * match requestHeaders['GovWay-Audit-UserLocation'][0] == 'ip-utente-token'
+    * match requestHeaders['GovWay-Audit-LoA'][0] == 'livello-autenticazione-utente-token'
+    * def responseStatus = 200
+    * def response = read('classpath:test/soap/sicurezza-messaggio/response.xml')
+
+Scenario: isTest('audit-rest-x509-01') ||
+		isTest('audit-rest-x509-0301')
+
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
+    * match requestHeaders['GovWay-Audit-UserID'][0] == 'utente-token-ridefinito'
+    * match requestHeaders['GovWay-Audit-UserLocation'][0] == 'ip-utente-token-ridefinito'
+    * match requestHeaders['GovWay-Audit-LoA'][0] == 'livello-autenticazione-utente-token-ridefinito'
+    * def responseStatus = 200
+    * def response = read('classpath:test/soap/sicurezza-messaggio/response.xml')
+
+
+
+
 # catch all
 #
 #

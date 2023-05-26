@@ -106,7 +106,7 @@ public class ModIAuditConfig {
 		this.claims = new ArrayList<>();
 		for (String c : tmp) {
 			c = c.trim();
-			this.claims.add(new ModIAuditClaimConfig(prefix+"."+PROPERTY_CLAIMS, c, p));
+			this.claims.add(new ModIAuditClaimConfig(prefix, c, p));
 		}
 		
 		this.issLocale = getBooleanProperty(prefix, p, PROPERTY_ISS_LOCALE, false, false);

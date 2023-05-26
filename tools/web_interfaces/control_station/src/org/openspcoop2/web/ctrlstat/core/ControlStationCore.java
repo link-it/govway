@@ -2193,7 +2193,7 @@ public class ControlStationCore {
 		}
 	}
 	public static boolean isAPIMode() {
-		return API!=null ? API : false;
+		return API!=null && API.booleanValue();
 	}
 		
 	protected boolean usedByApi = false;
@@ -2201,11 +2201,11 @@ public class ControlStationCore {
 		return this.usedByApi;
 	}
 		
-	public ControlStationCore() throws Exception {
+	public ControlStationCore() throws DriverControlStationException {
 		this(false,null,null);
 	}
 	
-	public ControlStationCore(boolean initForApi, String confDir, String protocolloDefault) throws Exception {
+	public ControlStationCore(boolean initForApi, String confDir, String protocolloDefault) throws DriverControlStationException {
 
 		this.usedByApi = initForApi;
 		
@@ -2349,11 +2349,11 @@ public class ControlStationCore {
 
 		}catch(Exception e){
 			ControlStationCore.logError("Errore di inizializzazione: "+e.getMessage(), e);
-			throw e;
+			throw new DriverControlStationException(e.getMessage(),e);
 		}
 	}
 
-	public ControlStationCore(ControlStationCore core) throws Exception {
+	public ControlStationCore(ControlStationCore core) throws DriverControlStationException {
 
 		/** Impostazioni grafiche */
 		this.consoleNomeSintesi = core.consoleNomeSintesi;

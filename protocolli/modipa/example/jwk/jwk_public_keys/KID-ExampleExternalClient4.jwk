@@ -1,0 +1,6 @@
+{
+  "kty" : "RSA",
+  "e" : "AQAB",
+  "kid" : "KID-ExampleExternalClient4",
+  "n" : "v2dLfcehkKCc9fPxkykHF3BmoAno9thaTE8GNummvDFJLrA_22IWAUjw3DSDZrngoRc5lcstIyinm9LshIcMzkFSAbA77TQsBsi4Mpufepx_RIaeOIbLxetvNyU5FF5ctR88YskUZqxV0kZXbD92IU0FR3t87mLENE5200FnC0zjd_JzGQ5nF1RI82axufUqF1rUqB8jnRAHiegE04JXnKwRmubgkbZBI7_oaSjifBeIqq2m0zbHjO7Hvra4mhJpBJgmeh6tv1oMU_3KoPuXFGcyO2-DY3f_mlqOU761R4Q1yPbNZxiwImnR_1o873KU2elx_WTlyryZ6VIIFRyvfw"
+}

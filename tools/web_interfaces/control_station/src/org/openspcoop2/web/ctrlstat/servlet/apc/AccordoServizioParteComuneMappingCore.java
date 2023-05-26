@@ -54,6 +54,7 @@ import org.openspcoop2.utils.wsdl.WSDLUtilities;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.XSDUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaAdd;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
@@ -71,7 +72,7 @@ import org.w3c.dom.Node;
  */
 public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 
-	protected AccordoServizioParteComuneMappingCore(ControlStationCore core) throws Exception {
+	protected AccordoServizioParteComuneMappingCore(ControlStationCore core) throws DriverControlStationException {
 		super(core);
 	}
 	

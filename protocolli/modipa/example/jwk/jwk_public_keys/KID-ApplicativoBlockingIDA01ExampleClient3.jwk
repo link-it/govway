@@ -1,0 +1,6 @@
+{
+  "kty" : "RSA",
+  "e" : "AQAB",
+  "kid" : "KID-ApplicativoBlockingIDA01ExampleClient3",
+  "n" : "wcV8b2XbS70Dxep8pOg-wAWF6rI1vVUZ2T-WFISeiAi8ow02LhCF_gApV1ccli9BUysTbBxfy_Gt-5rWU7rhBpXixcWORctXaqj5EQHSWQRBv0bN4f-pqE1keZ5FXM8gpzrY4XqGukE7fduEc4Rx_sutfwl8PQ3QWEHgtpYLH12M3jJrU2XW1G85mk7iTuvj4b2HH0NYd93K-vFVZ_OWiEOmIyPUBrdWvC80XLJ8vftwvr9JAxQg_g5fbbCAO_j7IWugrO6Q_SkQmLlMjre_2ZayOrTnU7jEzt0BTgsQlF00qePj3tct0F5wFsDDtBI1FRZtMJRnTXenIon0cG5lxQ"
+}

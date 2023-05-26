@@ -347,3 +347,66 @@ Examples:
 | tipo-test | fruitore | username | password | response |
 | interno | DemoSoggettoFruitore | ApplicativoBlockingIDA01ExampleClient3 | ApplicativoBlockingIDA01ExampleClient3 | authorization-roles-deny-ApplicativoBlockingIDA01ExampleClient3.json |
 | esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient3| ApplicativoBlockingIDA01ExampleExternalClient3 | authorization-roles-deny-ApplicativoBlockingIDA01ExampleExternalClient3.json |
+
+
+
+
+
+
+@autorizzazioneSicurezzaTokenOAuthPuntualeOk
+Scenario Outline: Test autorizzazione token oauth puntuale caso ok (applicativo dominio <tipo-test>)
+
+Given url govway_base_path + "/rest/out/<fruitore>/DemoSoggettoErogatore/DemoAutorizzazioneTokenOAuth-<tipo-api>/v1"
+And path 'idar04'
+And request read('request.json')
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = 'purposeId-<username>'
+And header simulazionepdnd-audience = 'DemoAutorizzazioneTokenOAuth-<tipo-api>/v1'
+When method post
+Then status 200
+And match response == read('request.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+And match header GovWay-TestSuite-GovWay-Application == '<application>'
+
+Examples:
+| tipo-test | tipo-api | tipo-keystore-applicativo | fruitore | username | password | application |
+| interno | JWK | pkcs12 | DemoSoggettoFruitore | ExampleExternalClient1-SimulazionePDND-JWK | ExampleExternalClient1-SimulazionePDND-JWK | ExampleExternalClient1-SimulazionePDND-JWK |
+| interno | PDND | pkcs12 | DemoSoggettoFruitore | ExampleExternalClient1-SimulazionePDND-JWK | ExampleExternalClient1-SimulazionePDND-JWK | ExampleExternalClient1-SimulazionePDND-JWK |
+| esterno (con certificato) | JWK | pkcs12 | DemoSoggettoFruitore | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01-SimulazionePDND-JWK |
+| esterno (con certificato) | PDND | pkcs12 | DemoSoggettoFruitore | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01-SimulazionePDND-JWK |
+| interno | JWK | jwk | DemoSoggettoFruitore | ApplicativoBlockingJWK | ApplicativoBlockingJWK | ApplicativoBlockingJWK |
+| interno | PDND | jwk | DemoSoggettoFruitore | ApplicativoBlockingJWK | ApplicativoBlockingJWK | ApplicativoBlockingJWK |
+| esterno (con certificato) | JWK | jwk | DemoSoggettoFruitore | ExampleExternalClient2-SimulazionePDND-JWK-Interno | ExampleExternalClient2-SimulazionePDND-JWK-Interno | ExampleExternalClient2-SimulazionePDND-JWK |
+| esterno (con certificato) | PDND | jwk | DemoSoggettoFruitore | ExampleExternalClient2-SimulazionePDND-JWK-Interno | ExampleExternalClient2-SimulazionePDND-JWK-Interno | ExampleExternalClient2-SimulazionePDND-JWK |
+| interno | JWK | keypair | DemoSoggettoFruitore | ApplicativoBlockingKeyPair | ApplicativoBlockingKeyPair | ApplicativoBlockingKeyPair |
+| interno | PDND | keypair | DemoSoggettoFruitore | ApplicativoBlockingKeyPair | ApplicativoBlockingKeyPair | ApplicativoBlockingKeyPair |
+| esterno | JWK | keypair | DemoSoggettoFruitore | ExampleExternalClient3-SimulazionePDND-JWK-Interno | ExampleExternalClient3-SimulazionePDND-JWK-Interno | ExampleExternalClient3-SimulazionePDND-JWK |
+| esterno | PDND | keypair | DemoSoggettoFruitore | ExampleExternalClient3-SimulazionePDND-JWK-Interno | ExampleExternalClient3-SimulazionePDND-JWK-Interno | ExampleExternalClient3-SimulazionePDND-JWK |
+
+
+@autorizzazioneSicurezzaTokenOAuthPuntualeKo
+Scenario Outline: Test autorizzazione token oauth puntuale caso ko (applicativo dominio <tipo-test>)
+
+Given url govway_base_path + "/rest/out/<fruitore>/DemoSoggettoErogatore/DemoAutorizzazioneTokenOAuth-<tipo-api>/v1"
+And path 'idar04'
+And request read('request.json')
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = 'purposeId-<username>'
+And header simulazionepdnd-audience = 'DemoAutorizzazioneTokenOAuth-<tipo-api>/v1'
+When method post
+Then status 403
+And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/<response>')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+Examples:
+| tipo-test | tipo-api | tipo-keystore-applicativo | fruitore | username | password | application | response |
+| esterno | JWK | pkcs12 | DemoSoggettoFruitore | ApplicativoBlockingIDA01ExampleClient3 | ApplicativoBlockingIDA01ExampleClient3 | ApplicativoBlockingIDA01ExampleClient3-SimulazionePDND-JWK | authorization-deny-ApplicativoBlockingIDA01ExampleClient3.json |
+| esterno | PDND | pkcs12 | DemoSoggettoFruitore | ApplicativoBlockingIDA01ExampleClient3 | ApplicativoBlockingIDA01ExampleClient3 | ApplicativoBlockingIDA01ExampleClient3-SimulazionePDND-JWK | authorization-deny-ApplicativoBlockingIDA01ExampleClient3.json |
+| interno | JWK | jwk | DemoSoggettoFruitore | ExampleExternalClient4-SimulazionePDND-JWK | ExampleExternalClient4-SimulazionePDND-JWK | ExampleExternalClient4-SimulazionePDND-JWK | authorization-deny-ExampleExternalClient4-SimulazionePDND-JWK.json |
+| interno | PDND | jwk | DemoSoggettoFruitore | ExampleExternalClient4-SimulazionePDND-JWK | ExampleExternalClient4-SimulazionePDND-JWK | ExampleExternalClient4-SimulazionePDND-JWK | authorization-deny-ExampleExternalClient4-SimulazionePDND-JWK.json |

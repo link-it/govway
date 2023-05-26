@@ -38,6 +38,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaOperations;
 import org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.registro.GestoreRegistroServiziRemoto;
 
 /**
@@ -49,7 +50,7 @@ import org.openspcoop2.web.ctrlstat.registro.GestoreRegistroServiziRemoto;
  */
 public class AccordoServizioParteComuneSoapCore extends ControlStationCore {
 
-	protected AccordoServizioParteComuneSoapCore(ControlStationCore core) throws Exception {
+	protected AccordoServizioParteComuneSoapCore(ControlStationCore core) throws DriverControlStationException {
 		super(core);
 	}
 	

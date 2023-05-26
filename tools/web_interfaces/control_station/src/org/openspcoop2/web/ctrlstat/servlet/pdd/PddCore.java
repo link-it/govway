@@ -46,10 +46,10 @@ import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
  */
 public class PddCore extends ControlStationCore {
 
-	public PddCore() throws Exception {
+	public PddCore() throws DriverControlStationException {
 		super();
 	}
-	public PddCore(ControlStationCore core) throws Exception {
+	public PddCore(ControlStationCore core) throws DriverControlStationException {
 		super(core);
 	}
 	

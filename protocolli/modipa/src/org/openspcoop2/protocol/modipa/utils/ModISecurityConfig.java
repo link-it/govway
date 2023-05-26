@@ -84,6 +84,7 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
 public class ModISecurityConfig {
 
 	private String algorithm = null;
+	private String apiSoapAlgorithmUsedOnlyForAudit = null;
 	private String digestAlgorithm = null;
 	private DigestEncoding digestEncoding = null;
 	private List<DigestEncoding> digestEncodingAccepted = null;
@@ -126,7 +127,8 @@ public class ModISecurityConfig {
 	private String tokenKid;
 	private String tokenClientId;
 
-	
+	private static final String AUDIENCE_UNDEFINED = "Audience undefined";
+	private static final String CONFIGURAZIONE_SICUREZZA_INCOMPLETA = "Configurazione della sicurezza incompleta";
 	
 	public ModISecurityConfig(OpenSPCoop2Message msg, Context context, IProtocolFactory<?> protocolFactory, IState state, RequestInfo requestInfo,
 			IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica aspsParam, ServizioApplicativo sa, 
@@ -134,7 +136,8 @@ public class ModISecurityConfig {
 			String patternCorniceSicurezza, String schemaCorniceSicurezza, 
 			Busta busta, Busta bustaRichiesta,
 			Boolean multipleHeaderAuthorizationConfig,
-			boolean keystoreDefinitoInFruizione, boolean kidMode) throws ProtocolException {
+			boolean keystoreDefinitoInFruizione, boolean kidMode,
+			boolean addSecurity, boolean addAudit) throws ProtocolException {
 		
 		// METODO USATO IN IMBUSTAMENTO
 		
@@ -180,7 +183,11 @@ public class ModISecurityConfig {
 		}
 		
 		if(this.listProtocolPropertiesInternal==null || this.listProtocolPropertiesInternal.isEmpty()) {
-			throw new ProtocolException("Configurazione della sicurezza incompleta");
+			throw new ProtocolException(CONFIGURAZIONE_SICUREZZA_INCOMPLETA);
+		}
+		
+		if(addAudit && !addSecurity) {
+			this.apiSoapAlgorithmUsedOnlyForAudit = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this.listProtocolPropertiesInternal, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_ALG);
 		}
 		
 		if(rest) {
@@ -287,7 +294,7 @@ public class ModISecurityConfig {
 				}
 			}
 			if(this.audience==null) {
-				throw new ProtocolException("Audience undefined");
+				throw new ProtocolException(AUDIENCE_UNDEFINED);
 			}
 			
 			
@@ -890,7 +897,7 @@ public class ModISecurityConfig {
 				this.listProtocolPropertiesInternal = ModIPropertiesUtils.getProtocolProperties(false, null, asps);
 				
 				if(this.listProtocolPropertiesInternal==null || this.listProtocolPropertiesInternal.isEmpty()) {
-					throw new ProtocolException("Configurazione della sicurezza incompleta");
+					throw new ProtocolException(CONFIGURAZIONE_SICUREZZA_INCOMPLETA);
 				}
 				
 				this.audience = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this.listProtocolPropertiesInternal, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE);
@@ -908,7 +915,7 @@ public class ModISecurityConfig {
 							requestInfo, paDefault);
 				}
 				if(this.audience==null) {
-					throw new ProtocolException("Audience undefined");
+					throw new ProtocolException(AUDIENCE_UNDEFINED);
 				}
 				
 			}
@@ -990,7 +997,7 @@ public class ModISecurityConfig {
 		this.listProtocolPropertiesInternal = ModIPropertiesUtils.getProtocolProperties(fruizione, soggettoFruitore, aspsParam);
 		
 		if(this.listProtocolPropertiesInternal==null || this.listProtocolPropertiesInternal.isEmpty()) {
-			throw new ProtocolException("Configurazione della sicurezza incompleta");
+			throw new ProtocolException(CONFIGURAZIONE_SICUREZZA_INCOMPLETA);
 		}
 		
 		if(rest) {
@@ -1084,7 +1091,7 @@ public class ModISecurityConfig {
 					
 				}
 				if(this.audience==null) {
-					throw new ProtocolException("Audience undefined");
+					throw new ProtocolException(AUDIENCE_UNDEFINED);
 				}
 				
 				
@@ -1295,18 +1302,30 @@ public class ModISecurityConfig {
 		
 		if(fruizione) {
 			if(request) {
-				this.algorithm = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RICHIESTA_ALG);
-				this.c14nAlgorithm = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RICHIESTA_CANONICALIZATION_ALG);
-				this.keyIdentifierMode = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RICHIESTA_RIFERIMENTO_X509);
+				boolean auditConfig = false;
 				try {
-					this.useSingleCertificate = !ProtocolPropertiesUtils.getBooleanValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RICHIESTA_RIFERIMENTO_X509_BINARY_SECURITY_TOKEN_USE_CERTIFICATE_CHAIN, true);
-				}catch(ProtocolException pNotFound) {
-					// lascio il default true 
+					this.algorithm = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RICHIESTA_ALG);
+				}catch(Exception e) {
+					if(this.apiSoapAlgorithmUsedOnlyForAudit!=null && StringUtils.isNotEmpty(this.apiSoapAlgorithmUsedOnlyForAudit)) {
+						auditConfig = true;
+					}
+					else {
+						throw e;
+					}
 				}
-				try {
-					this.includeSignatureToken = ProtocolPropertiesUtils.getBooleanValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RICHIESTA_RIFERIMENTO_X509_BINARY_SECURITY_TOKEN_INCLUDE_SIGNATURE_TOKEN, true);
-				}catch(ProtocolException pNotFound) {
-					// lascio il default false 
+				if(!auditConfig) {
+					this.c14nAlgorithm = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RICHIESTA_CANONICALIZATION_ALG);
+					this.keyIdentifierMode = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RICHIESTA_RIFERIMENTO_X509);
+					try {
+						this.useSingleCertificate = !ProtocolPropertiesUtils.getBooleanValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RICHIESTA_RIFERIMENTO_X509_BINARY_SECURITY_TOKEN_USE_CERTIFICATE_CHAIN, true);
+					}catch(ProtocolException pNotFound) {
+						// lascio il default true 
+					}
+					try {
+						this.includeSignatureToken = ProtocolPropertiesUtils.getBooleanValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RICHIESTA_RIFERIMENTO_X509_BINARY_SECURITY_TOKEN_INCLUDE_SIGNATURE_TOKEN, true);
+					}catch(ProtocolException pNotFound) {
+						// lascio il default false 
+					}
 				}
 			}
 		}
@@ -1358,21 +1377,7 @@ public class ModISecurityConfig {
 			}
 			l = new ArrayList<>();
 			if(value.contains(",")) {
-				String [] tmp = value.split(",");
-				if(tmp==null || tmp.length<=0) {
-					throw new ProtocolException(nonDefinita);
-				}
-				for (String s : tmp) {
-					if(s!=null) {
-						s = s.trim();
-						if(!"".equals(s)) {
-							l.add(s);
-						}
-					}
-				}
-				if(l.isEmpty()) {
-					throw new ProtocolException(nonDefinita);
-				}
+				converToList(value, nonDefinita, l);
 			}
 			else {
 				l.add(value);
@@ -1383,6 +1388,23 @@ public class ModISecurityConfig {
 		}
 		return l;
 	}
+	private static void converToList(String value, String nonDefinita, List<String> l) throws ProtocolException {
+		String [] tmp = value.split(",");
+		if(tmp==null || tmp.length<=0) {
+			throw new ProtocolException(nonDefinita);
+		}
+		for (String s : tmp) {
+			if(s!=null) {
+				s = s.trim();
+				if(!"".equals(s)) {
+					l.add(s);
+				}
+			}
+		}
+		if(l.isEmpty()) {
+			throw new ProtocolException(nonDefinita);
+		}
+	}
 	
 
 	public String getAlgorithm() {
@@ -1392,6 +1414,21 @@ public class ModISecurityConfig {
 	private static final String RSA = "RSA";
 	private static final String ECDSA = "ECDSA";
 	public String getAlgorithmConvertForREST() throws ProtocolException {
+		
+		if(this.algorithm!=null) {
+			String algo = convertAlgorithmForREST();
+			if(algo!=null) {
+				return algo;
+			}
+		}
+		
+		if(this.apiSoapAlgorithmUsedOnlyForAudit!=null && StringUtils.isNotEmpty(this.apiSoapAlgorithmUsedOnlyForAudit)) {
+			return this.apiSoapAlgorithmUsedOnlyForAudit;
+		}
+		
+		throw new ProtocolException("Convert signature algorithm '"+this.algorithm+"' for audit token failed");
+	}
+	private String convertAlgorithmForREST() {
 		String algoLowerCase = this.algorithm.toLowerCase();
 		String size256 = "256";
 		String size384 = "384";
@@ -1418,8 +1455,7 @@ public class ModISecurityConfig {
 				return ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_ES512;
 			}
 		}
-		
-		throw new ProtocolException("Convert signature algorithm '"+this.algorithm+"' for audt token failed");
+		return null;
 	}
 	
 	public String getDigestAlgorithm() {

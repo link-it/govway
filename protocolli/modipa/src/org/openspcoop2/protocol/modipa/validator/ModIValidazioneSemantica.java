@@ -241,6 +241,12 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH.equals(securityMessageProfileSorgenteTokenIdAuth);
 			
 			boolean sicurezzaMessaggio = securityMessageProfile!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED.equals(securityMessageProfile);
+			boolean sicurezzaMessaggioIDAR04 = false;
+			if(sicurezzaMessaggio) {
+				sicurezzaMessaggioIDAR04 = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile) 
+												|| 
+											ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile);
+			}
 			
 			String securityAuditPattern = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PATTERN);
 			
@@ -643,7 +649,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 					(autorizzazionePerRichiedente || checkRuoloRegistro) 
 					){
 					// se utilizzo l'informazione dell'applicativo, tale informazione deve essere consistente rispetto a tutti i criteri di sicurezza
-					if(sicurezzaMessaggio &&
+					if(sicurezzaMessaggio && !sicurezzaMessaggioIDAR04 &&
 						!saIdentificatoBySecurity && !saVerificatoBySecurity) {
 						this.context.addObject(Costanti.ERRORE_AUTORIZZAZIONE, Costanti.ERRORE_TRUE);
 						addErroreMittenteNonAutorizzato(busta, "il certificato di firma non corrisponde all'applicativo");

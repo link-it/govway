@@ -20,6 +20,7 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,16 +33,29 @@ import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.FiltroRicercaProtocolPropertyConfig;
 import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.db.IDSoggettoDB;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaServiziApplicativi;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.servlet.ApiKeyState;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
@@ -73,21 +87,21 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 			PorteApplicativeCore paCore, ConsoleHelper porteApplicativeHelper, boolean escludiSAServer,
 			boolean isSupportatoAutenticazioneApplicativiEsterni,
 			boolean isAutorizzazioneToken,
-			boolean modiSicurezzaMessaggio) throws Exception {
+			boolean isModiSicurezzaMessaggio) throws DriverControlStationException, DriverRegistroServiziException, DriverControlStationNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound {
 		buildList(pa, modipa, protocollo, escludiSoggettoErogatore,
 				idSoggettoToAdd,
 				paCore, porteApplicativeHelper, escludiSAServer,
 				isSupportatoAutenticazioneApplicativiEsterni,
 				null,
 				isAutorizzazioneToken,
-				modiSicurezzaMessaggio);
+				isModiSicurezzaMessaggio);
 	}
 	
 	public void buildListTrasformazioni(PortaApplicativa pa, boolean modipa, String protocollo, boolean escludiSoggettoErogatore,
 			String idSoggettoToAdd,
 			PorteApplicativeCore paCore, ConsoleHelper porteApplicativeHelper, boolean escludiSAServer,
 			boolean isSupportatoAutenticazioneApplicativiEsterni,
-			TrasformazioneRegola regola) throws Exception {
+			TrasformazioneRegola regola) throws DriverControlStationException, DriverRegistroServiziException, DriverControlStationNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound {
 		buildList(pa, modipa, protocollo, escludiSoggettoErogatore,
 				idSoggettoToAdd,
 				paCore, porteApplicativeHelper, escludiSAServer,
@@ -100,8 +114,8 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 	public void buildListTrasformazioniSoggettiToken(PortaApplicativa pa, boolean modipa, String protocollo, boolean escludiSoggettoErogatore,
 			String idSoggettoToAdd,
 			PorteApplicativeCore paCore, ConsoleHelper porteApplicativeHelper, boolean escludiSAServer,
-			boolean isSupportatoAutenticazioneApplicativiEsterni) throws Exception {
-		this.soggettiDBList_trasformazioniSoggettiToken = new ArrayList<IDSoggettoDB>();
+			boolean isSupportatoAutenticazioneApplicativiEsterni) throws DriverControlStationException, DriverRegistroServiziException, DriverControlStationNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound {
+		this.soggettiDBList_trasformazioniSoggettiToken = new ArrayList<>();
 		buildList(pa, modipa, protocollo, escludiSoggettoErogatore,
 				idSoggettoToAdd,
 				paCore, porteApplicativeHelper, escludiSAServer,
@@ -111,19 +125,54 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 				false);
 	}
 	
+	private boolean isSicurezzaMessaggioRiferimentoX509Required(AccordoServizioParteComune aspc, String portType) throws DriverControlStationException {
+		try {
+			Class<?> modiPropertiesClass = Class.forName("org.openspcoop2.protocol.modipa.properties.ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities");
+			Method mGetMethod = modiPropertiesClass.getMethod("isSicurezzaMessaggioRiferimentoX509Required", AccordoServizioParteComune.class, String.class);
+			Object oValue = mGetMethod.invoke(null, aspc, portType);
+			if(oValue instanceof Boolean) {
+				return ((Boolean)oValue).booleanValue();
+			}
+			throw new DriverControlStationException("Type '"+oValue.getClass().getName()+"' not expected");
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
+	}
+
 	private void buildList(PortaApplicativa pa, boolean modipa, String protocollo, boolean escludiSoggettoErogatore,
 			String idSoggettoToAdd,
 			PorteApplicativeCore paCore, ConsoleHelper porteApplicativeHelper, boolean escludiSAServer,
 			boolean isSupportatoAutenticazioneApplicativiEsterni,
 			TrasformazioneRegola regola,
 			boolean isAutorizzazioneToken,
-			boolean isModiSicurezzaMessaggio) throws Exception {
+			boolean isModiSicurezzaMessaggio) throws DriverControlStationException, DriverRegistroServiziException, DriverControlStationNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound {
 		
 		if(pa==null) {
-			throw new Exception("Param pa is null");
+			throw new DriverControlStationException("Param pa is null");
 		}
 		
 		this.idSoggettoToAdd = idSoggettoToAdd;
+		
+		boolean isModiSicurezzaMessaggioRichiedeX509 = false;
+		if(modipa && isModiSicurezzaMessaggio) {
+			
+			if(isAutorizzazioneToken) {
+				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pa.getServizio().getTipo(), pa.getServizio().getNome(),
+					pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(),
+					pa.getServizio().getVersione());
+				AccordiServizioParteSpecificaCore aspsCore = new AccordiServizioParteSpecificaCore(paCore);
+				AccordoServizioParteSpecifica asps = aspsCore.getServizio(idServizio, false);
+				if(asps!=null) {
+					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+					AccordiServizioParteComuneCore aspcCore = new AccordiServizioParteComuneCore(paCore);
+					AccordoServizioParteComune aspc = aspcCore.getAccordoServizioFull(idAccordo, false);
+					isModiSicurezzaMessaggioRichiedeX509 = isSicurezzaMessaggioRiferimentoX509Required(aspc, asps.getPortType());
+				}
+			}
+			else {
+				isModiSicurezzaMessaggioRichiedeX509 = true;
+			}
+		}
 		
 		CredenzialeTipo tipoAutenticazione = null;
 		boolean tokenWithHttpsEnabled = false;
@@ -132,7 +181,7 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 		boolean tokenPolicyOR = false;
 		if(isAutorizzazioneToken) {
 			tipoAutenticazione = CredenzialeTipo.TOKEN;
-			if(isModiSicurezzaMessaggio) {
+			if(isModiSicurezzaMessaggioRichiedeX509) {
 				tokenWithHttpsEnabled=true;
 			}
 			if(pa.getGestioneToken()!=null && pa.getGestioneToken().getPolicy()!=null) {
@@ -145,16 +194,15 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 				ApiKeyState apiKeyState =  new ApiKeyState(paCore.getParametroAutenticazione(pa.getAutenticazione(), pa.getProprietaAutenticazioneList()));
 				appId = apiKeyState.appIdSelected;
 			}
-			if(regola!=null) {
-				if(pa.getGestioneToken()!=null && pa.getGestioneToken().getPolicy()!=null) {
-					tokenPolicy = pa.getGestioneToken().getPolicy();
-					if(tokenPolicy!=null && !"".equals(tokenPolicy)) {
-						if(tipoAutenticazione!=null && !CredenzialeTipo.TOKEN.equals(tipoAutenticazione)) {
-							tokenPolicyOR = true;
-						}
-						else {
-							tipoAutenticazione = CredenzialeTipo.TOKEN;
-						}
+			if(regola!=null &&
+				pa.getGestioneToken()!=null && pa.getGestioneToken().getPolicy()!=null) {
+				tokenPolicy = pa.getGestioneToken().getPolicy();
+				if(tokenPolicy!=null && !"".equals(tokenPolicy)) {
+					if(tipoAutenticazione!=null && !CredenzialeTipo.TOKEN.equals(tipoAutenticazione)) {
+						tokenPolicyOR = true;
+					}
+					else {
+						tipoAutenticazione = CredenzialeTipo.TOKEN;
 					}
 				}
 			}
@@ -214,7 +262,7 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 				if(regola!=null || !modipa || pddCore.isPddEsterna(soggetto.getPortaDominio())) {
 					
 					boolean bothSslAndToken = false;
-					if(modipa && isModiSicurezzaMessaggio && isAutorizzazioneToken) {
+					if(modipa && isModiSicurezzaMessaggioRichiedeX509 && isAutorizzazioneToken) {
 						bothSslAndToken = true;
 					}
 					listServiziApplicativiTmp = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione, appId, filtroTipoSA, bothSslAndToken, tokenPolicy, tokenPolicyOR);
@@ -226,7 +274,7 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 				else {
 					// modipa, soggetto interno
 					
-					if(isModiSicurezzaMessaggio && isAutorizzazioneToken) {
+					if(isModiSicurezzaMessaggioRichiedeX509 && isAutorizzazioneToken) {
 						ProtocolFiltroRicercaServiziApplicativi filtro = new ProtocolFiltroRicercaServiziApplicativi();
 						filtro.setTipoSoggetto(idSoggetto.getTipo());
 						filtro.setNomeSoggetto(idSoggetto.getNome());
@@ -255,7 +303,7 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 					}
 					else {
 					
-						if(isModiSicurezzaMessaggio) {
+						if(isModiSicurezzaMessaggioRichiedeX509) {
 							ProtocolFiltroRicercaServiziApplicativi filtro = new ProtocolFiltroRicercaServiziApplicativi();
 							filtro.setTipoSoggetto(idSoggetto.getTipo());
 							filtro.setNomeSoggetto(idSoggetto.getNome());
@@ -305,7 +353,7 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 				List<IDServizioApplicativoDB> listServiziApplicativiTmpUnique = new ArrayList<>();
 				
 				// scarto i sa già associati
-				if(listServiziApplicativiTmp!=null && listServiziApplicativiTmp.size()>0) {
+				if(listServiziApplicativiTmp!=null && !listServiziApplicativiTmp.isEmpty()) {
 					for (IDServizioApplicativoDB sa : listServiziApplicativiTmp) {
 						boolean found = false;
 						if(regola!=null) {
@@ -338,7 +386,7 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 					}
 				}
 
-				if(listServiziApplicativiTmpUnique!=null && listServiziApplicativiTmpUnique.size()>0) {
+				if(listServiziApplicativiTmpUnique!=null && !listServiziApplicativiTmpUnique.isEmpty()) {
 					String id = soggetto.getId().toString();
 					soggettiListBuild.add(id);
 					soggettiLabelListBuild.add(porteApplicativeHelper.getLabelNomeSoggetto(protocollo, soggetto.getTipo() , soggetto.getNome()));
@@ -354,7 +402,7 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 				}
 			}
 			
-			if(soggettiListBuild!=null && soggettiListBuild.size()>0) {
+			if(soggettiListBuild!=null && !soggettiListBuild.isEmpty()) {
 				this.soggettiList = soggettiListBuild.toArray(new String[1]);
 				this.soggettiListLabel = soggettiLabelListBuild.toArray(new String[1]);
 			}

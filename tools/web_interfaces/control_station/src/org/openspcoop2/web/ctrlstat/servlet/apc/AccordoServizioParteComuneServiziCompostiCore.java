@@ -40,6 +40,7 @@ import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.UtilitiesSQLQuery;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 
@@ -52,7 +53,7 @@ import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCor
  */
 public class AccordoServizioParteComuneServiziCompostiCore extends ControlStationCore {
 
-	protected AccordoServizioParteComuneServiziCompostiCore(ControlStationCore core) throws Exception {
+	protected AccordoServizioParteComuneServiziCompostiCore(ControlStationCore core) throws DriverControlStationException {
 		super(core);
 	}
 	

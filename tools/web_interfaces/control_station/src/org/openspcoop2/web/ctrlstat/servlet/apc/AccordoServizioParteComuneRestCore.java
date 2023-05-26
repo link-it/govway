@@ -30,6 +30,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaResources;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.registro.GestoreRegistroServiziRemoto;
 
 /**
@@ -41,7 +42,7 @@ import org.openspcoop2.web.ctrlstat.registro.GestoreRegistroServiziRemoto;
  */
 public class AccordoServizioParteComuneRestCore extends ControlStationCore {
 
-	protected AccordoServizioParteComuneRestCore(ControlStationCore core) throws Exception {
+	protected AccordoServizioParteComuneRestCore(ControlStationCore core) throws DriverControlStationException {
 		super(core);
 	}
 	

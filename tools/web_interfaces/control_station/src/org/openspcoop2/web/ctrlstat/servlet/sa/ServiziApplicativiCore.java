@@ -45,6 +45,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 
 /**
  * ServiziApplicativiCore
@@ -55,10 +56,10 @@ import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
  */
 public class ServiziApplicativiCore extends ControlStationCore {
 
-	public ServiziApplicativiCore() throws Exception {
+	public ServiziApplicativiCore() throws DriverControlStationException {
 		super();
 	}
-	public ServiziApplicativiCore(ControlStationCore core) throws Exception {
+	public ServiziApplicativiCore(ControlStationCore core) throws DriverControlStationException {
 		super(core);
 	}
 		

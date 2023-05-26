@@ -82,10 +82,10 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 
-	public AccordiServizioParteSpecificaCore() throws Exception {
+	public AccordiServizioParteSpecificaCore() throws DriverControlStationException {
 		super();
 	}
-	public AccordiServizioParteSpecificaCore(ControlStationCore core) throws Exception {
+	public AccordiServizioParteSpecificaCore(ControlStationCore core) throws DriverControlStationException {
 		super(core);
 	}
 
