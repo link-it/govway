@@ -61,7 +61,8 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 
 	
 	static void addProfiloSicurezzaMessaggio(ModIProperties modiProperties,
-			ConsoleConfiguration configuration, boolean rest, boolean action) throws ProtocolException {
+			ConsoleConfiguration configuration, boolean rest, boolean action,
+			String schemaAuditImpostatoInAPIoAltreAzioni) throws ProtocolException {
 		
 		configuration.addConsoleItem(ProtocolPropertiesFactory.newSubTitleItem(ModIConsoleCostanti.MODIPA_API_PROFILO_SICUREZZA_MESSAGGIO_ID, 
 				ModIConsoleCostanti.MODIPA_API_PROFILO_SICUREZZA_MESSAGGIO_LABEL));
@@ -422,8 +423,16 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 					ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA_ID, 
 					ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA_LABEL);
 			for (ModIAuditConfig modIAuditConfig : listConfig) {
-				profiloSicurezzaCorniceSicurezzaSchemaItem.addLabelValue(modIAuditConfig.getLabel(),
+				if(schemaAuditImpostatoInAPIoAltreAzioni!=null && StringUtils.isNotEmpty(schemaAuditImpostatoInAPIoAltreAzioni)) {
+					if(schemaAuditImpostatoInAPIoAltreAzioni.equals(modIAuditConfig.getNome())){
+						profiloSicurezzaCorniceSicurezzaSchemaItem.addLabelValue(modIAuditConfig.getLabel(),
+								modIAuditConfig.getNome());
+					}
+				}
+				else {
+					profiloSicurezzaCorniceSicurezzaSchemaItem.addLabelValue(modIAuditConfig.getLabel(),
 						modIAuditConfig.getNome());
+				}
 			}
 			profiloSicurezzaCorniceSicurezzaSchemaItem.setDefaultValue(listConfig.get(0).getNome());
 			profiloSicurezzaCorniceSicurezzaSchemaItem.setReloadOnChange(true);

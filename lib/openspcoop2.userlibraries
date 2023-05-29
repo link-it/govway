@@ -233,7 +233,7 @@
 	<archive path="/op2_3.3.dev/lib/shared/xmlresolver-4.4.3.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/xmlunit-legacy-2.9.0.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/xmlunit-core-2.9.0.jar"/>
-	<archive path="/op2_3.3.dev/lib/shared/guava-31.1-jre.jar"/>
+	<archive path="/op2_3.3.dev/lib/shared/guava-32.0.0-jre.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/joda-time-2.12.0.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/java-uuid-generator-4.0.1.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/snakeyaml-1.33-gov4j-1.jar"/>

@@ -26,6 +26,7 @@ import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.protocol.basic.properties.BasicDynamicConfiguration;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti;
@@ -145,7 +146,8 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		boolean rest = ModIDynamicConfigurationAccordiParteComuneUtilities.isApiRest(consoleOperationType, consoleHelper, registryReader, id);
 		
 		ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.addProfiloSicurezzaMessaggio(this.modiProperties,
-				configuration, rest, false);
+				configuration, rest, false,
+				null);
 		
 		return configuration;
 	}
@@ -195,8 +197,17 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		ModIDynamicConfigurationAccordiParteComuneUtilities.addProfiloInterazione(this.modiProperties,
 				configuration, false, null);
 		
+		AccordoServizioParteComune api = null;
+		try {
+			api = registryReader.getAccordoServizioParteComune(id.getIdPortType().getIdAccordo(), false, false);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+		String schemaAuditImpostatoInAPIoAltreAzioni = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.getProfiloSicurezzaMessaggioCorniceSicurezzaSchema(api, id.getIdPortType().getNome());
+	
 		ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.addProfiloSicurezzaMessaggio(this.modiProperties,
-				configuration, false, true);
+				configuration, false, true,
+				schemaAuditImpostatoInAPIoAltreAzioni);
 		
 		return configuration;
 		
@@ -247,8 +258,17 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		ModIDynamicConfigurationAccordiParteComuneUtilities.addProfiloInterazione(this.modiProperties,
 				configuration, true, httpMethod);
 		
+		AccordoServizioParteComune api = null;
+		try {
+			api = registryReader.getAccordoServizioParteComune(id.getIdAccordo(), false, false);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+		String schemaAuditImpostatoInAPIoAltreAzioni = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.getProfiloSicurezzaMessaggioCorniceSicurezzaSchema(api, null);
+		
 		ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.addProfiloSicurezzaMessaggio(this.modiProperties,
-				configuration, true, true);
+				configuration, true, true,
+				schemaAuditImpostatoInAPIoAltreAzioni);
 		
 		return configuration;
 		

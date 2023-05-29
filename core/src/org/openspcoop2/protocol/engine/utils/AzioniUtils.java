@@ -266,11 +266,10 @@ public class AzioniUtils {
 	
 	public static Map<String,String> getAzioniConLabel(AccordoServizioParteSpecifica asps,AccordoServizioParteComuneSintetico aspc, 
 			boolean addTrattinoSelezioneNonEffettuata, boolean throwException, List<String> filtraAzioniUtilizzate,
-			String DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA, String DEFAULT_LABEL_AZIONE_RISORSA_NON_SELEZIONATA, Logger log) throws Exception{
-		Map<String,String> mapAzioni = getMapAzioni(asps, aspc, addTrattinoSelezioneNonEffettuata, throwException, filtraAzioniUtilizzate,
+			String defaultValueAzioneRisorsaNonSelezionata, String defaultLabelAzioneRisorsaNonSelezionata, Logger log) throws DriverConfigurazioneException {
+		return getMapAzioni(asps, aspc, addTrattinoSelezioneNonEffettuata, throwException, filtraAzioniUtilizzate,
 				true, true,
-				DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA, DEFAULT_LABEL_AZIONE_RISORSA_NON_SELEZIONATA, log);
-		return mapAzioni;
+				defaultValueAzioneRisorsaNonSelezionata, defaultLabelAzioneRisorsaNonSelezionata, log);
 	}
 	
 	
