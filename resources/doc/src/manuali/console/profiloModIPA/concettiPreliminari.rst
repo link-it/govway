@@ -32,9 +32,22 @@ Nel processo di configurazione, tramite la govwayConsole, sono inoltre tenuti in
 
 - *Sicurezza Messaggio*: gestione della sicurezza inerente lo scambio di informazioni tra le applicazioni agli estremi del flusso di comunicazione. I pattern di sicurezza previsti si distinguono per il caso SOAP e per quello REST:
 
-    + *[ID_AUTH_SOAP_01 o ID_AUTH_REST_01] Direct Trust con certificato X.509 su SOAP o REST*: Tramite la validazione del certificato X509, inserito dall'applicazione mittente nel token di sicurezza della richiesta, l'applicativo destinatario verifica la corrispondenza delle identità e la validità del messaggio, prima di procedere con la produzione della risposta.
+    + *[ID_AUTH_SOAP_01 o ID_AUTH_REST_01] Direct Trust con certificato X.509 su SOAP o REST*: Tramite la validazione del certificato X509, inserito dall'applicazione mittente nel token di sicurezza della richiesta, l'applicativo destinatario verifica la corrispondenza delle identità e la validità del messaggio, prima di procedere con la produzione della risposta. Con l'aggiornamento delle linee guida nella 'Determinazione n. 128 del 23 maggio 2023' il pattern ID_AUTH_REST_01 (utilizzabile anche per API SOAP) indica dove possibile di utilizzare la Piattaforma Digitale Nazionale Dati (PDND) per l’interoperabilità dove la costituzione del trust avviene tramite il materiale crittografico depositato applicando i profili di emissione dei voucher previsti.
     + *[ID_AUTH_SOAP_02 o ID_AUTH_REST_02]  Direct  Trust  con  certificato  X.509  su  SOAP o REST  con  unicità  del messaggio/token*: estensione del pattern precedente con l'aggiunta di un meccanismo di filtro che impedisce il processamento di un messaggio duplicato.
     + *[INTEGRITY_SOAP_01 o INTEGRITY_REST_01] Integrità del payload del messaggio SOAP o REST*: pattern che estende i precedenti aggiungendo la gestione della firma del payload come verifica di integrità del messaggio ricevuto.
+    + *[INTEGRITY_REST_02] Integrità del payload delle request REST in PDND*: simile al precedente pattern INTEGRITY_REST_01, assume che il trust avvenga tramite il materiale crittografico depositato sulla Piattaforma Digitale Nazionale Dati (PDND) applicando i profili di emissione dei voucher previsti. All'interno del token viene indicato l'identificativo della chiave pubblica (kid) associata alla chiave privata utilizzata dal client per firmare il token; identificativo kid generato dalla PDND e recuperabile dall'erogatore tramite le API messe a disposizione dalla PDND stessa.
+
+- *Sicurezza Audit*: consente all'erogatore di identificare la specifica provenienza di ogni singola richiesta di accesso ai dati effettuta dal fruitore. Le Linee Guida definiscono 2 pattern utilizzabili sia per API REST che per API SOAP:
+
+    + *[AUDIT_REST_01]  Inoltro dati tracciati nel dominio del Fruitore REST*: definisce la struttura del token di audit utilizzabile in alternativa o tramite un criterio di trust realizzato tramite il materiale crittografico depositato sulla PDND o tramite il trust diretto fruitore-erogatore tramite certificati X509. Le Linee Guida indicano che l'erogatore e il fruitore devono individuare i claim da includere nel JWT di audit e suggeriscono i seguenti dati che dovranno essere presenti nel token generato dal fruitore, per ogni richiesta effettuata:
+
+	- userID, un identificativo univoco dell'utente interno al dominio del fruitore che ha determinato l'esigenza della request di accesso all'e-service dell'erogatore;
+
+	- userLocation, un identificativo univoco della postazione interna al dominio del fruitore da cui è avviata l'esigenza della request di accesso all'e-service dell'erogatore;
+
+	- LoA, livello di sicurezza o di garanzia adottato nel processo di autenticazione informatica nel dominio del fruitore.
+
+    + *[AUDIT_REST_02] Inoltro dati tracciati nel dominio del Fruitore REST con correlazione*: pattern che estende il precedente aggiungendo la correlazione tra il token di autenticazione e il token di audit. Il pattern richiede un trust realizzato tramite il materiale crittografico depositato sulla PDND.
 
 - *URL di Invocazione API*: le linee guida richiedono una indicazione esplicita della tecnologia utilizzata (REST o SOAP) e la versione. Le url con cui vengono esposte le API su GovWay soddisfano entrambi i requisiti.
 

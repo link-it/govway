@@ -1,6 +1,6 @@
 .. _modipa_pdnd:
 
-ID_AUTH tramite la Piattaforma Digitale Nazionale Dati (PDND)
+ID_AUTH_REST_01 tramite la Piattaforma Digitale Nazionale Dati (PDND)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Il token di autenticazione ID_AUTH_REST_01 descritto nella sezione ':ref:`modipa_idar01`' viene generato e firmato dall'applicativo mittente. Un token con analoga struttura può essere richiesto sulla Piattaforma Digitale Nazionale Dati (PDND) al fine di ottere un voucher di autenticazione spendibile verso l'erogatore. 

@@ -7,7 +7,7 @@ Le richieste che provengono dagli applicativi interni del dominio e sono dirette
 
 Per la configurazione delle fruizioni con i pattern di sicurezza messaggio è necessario registrare ciascun applicativo interno coinvolto al fine principale di associargli una chiave privata e un certificato X509 che GovWay utilizza per firmare il token di sicurezza 'ModI' prodotto. Gli applicativi vengono identificati da GovWay tramite una delle modalità di autenticazione supportate descritte nella sezione :ref:`apiGwAutenticazione` (:numref:`FruizioneModIPA2`). 
 
-.. figure:: ../../_figure_console/FruizioneModIPA.jpg
+.. figure:: ../../../../_figure_console/FruizioneModIPA.jpg
  :scale: 70%
  :align: center
  :name: FruizioneModIPA2
@@ -16,7 +16,7 @@ Per la configurazione delle fruizioni con i pattern di sicurezza messaggio è ne
 
 La registrazione dell'applicativo avviene come già descritto nella sez. :ref:`applicativo`. In questo contesto sarà necessario specificare il dominio "Interno" dell'applicativo e procedere all'inserimento dei dati nel form "ModI" (:numref:`applicativo_interno_fig`).
 
-.. figure:: ../../_figure_console/modipa_applicativo_interno.png
+.. figure:: ../../../../_figure_console/modipa_applicativo_interno.png
  :scale: 60%
  :name: applicativo_interno_fig
 
@@ -56,7 +56,7 @@ L'interfaccia per la creazione della fruizione, basata su una API con pattern "I
     + Time to Live: tempo di validità del token prodotto (in secondi)
     + Audience: identificativo dell'applicativo destinatario da indicare come audience nel token di sicurezza; se non viene indicato alcun valore verrà utilizzato la url del connettore. Il valore fornito può contenere parti dinamiche risolte a runtime dal Gateway (per maggiori dettagli :ref:`valoriDinamici`).
 
-.. figure:: ../../_figure_console/modipa_fruizione_richiesta.png
+.. figure:: ../../../../_figure_console/modipa_fruizione_richiesta.png
  :scale: 70%
  :name: fruizione_richiesta_fig
 
@@ -69,7 +69,7 @@ L'interfaccia per la creazione della fruizione, basata su una API con pattern "I
     - TrustStore Certificati: Riferimento al truststore che contiene le CA, i certificati, CRL e policy OCSP da utilizzare per poter verificare i token di sicurezza ricevuti nelle risposte. È possibile mantenere l'impostazione di default che è stata fornita al momento dell'installazione del prodotto, oppure definire un diverso riferimento (opzione "Ridefinito") fornendo Path, Tipo, Password del TrustStore e criteri di verifica tramite CRL o OCSP.
     - Verifica Audience: Se l'opzione è abilitata, viene effettuata la verifica che il campo Audience, presente nel token di sicurezza della risposta, corrisponda al valore presente nel campo successivo, se indicato, o altrimenti a quello configurato nell'applicativo mittente nella voce 'Identificativo Client'.
 
-.. figure:: ../../_figure_console/modipa_fruizione_risposta.png
+.. figure:: ../../../../_figure_console/modipa_fruizione_risposta.png
  :scale: 70%
  :name: fruizione_risposta_fig
 

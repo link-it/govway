@@ -10,14 +10,14 @@ Questo pattern di sicurezza presenta le medesime caratteristiche di :ref:`modipa
 
 L'attivazione di questo pattern avviene a livello della relativa API, nella sezione "ModI", elemento "Sicurezza Messaggio", selezionando il pattern "ID_AUTH_REST_02" per API REST o "ID_AUTH_SOAP_02" per API SOAP come indicato in :numref:`api_messaggio2_fig` e :numref:`api_messaggio2_soap_fig`.
 
-.. figure:: ../../_figure_console/modipa_api_messaggio2.png
+.. figure:: ../../../../_figure_console/modipa_api_messaggio2.png
   :scale: 50%
   :align: center
   :name: api_messaggio2_fig
 
   Pattern di sicurezza messaggio "ID_AUTH_REST_02" per l'API
 
-.. figure:: ../../_figure_console/modipa_api_messaggio2_soap.png
+.. figure:: ../../../../_figure_console/modipa_api_messaggio2_soap.png
   :scale: 50%
   :align: center
   :name: api_messaggio2_soap_fig

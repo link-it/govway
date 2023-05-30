@@ -17,7 +17,7 @@ Di seguito vengono riportati tutte le informazioni da registrare nella policy:
 
 - URL: endpoint esposto dalla PDND su cui è possibile richiedere lo stacco del voucher;
 
-  .. figure:: ../../_figure_console/TokenPDNDNegoziazione1.png
+  .. figure:: ../../../../_figure_console/TokenPDNDNegoziazione1.png
     :scale: 50%
     :align: center
     :name: TokenPDNDNegoziazione1
@@ -28,7 +28,7 @@ Di seguito vengono riportati tutte le informazioni da registrare nella policy:
 
 	- 'JKS', 'PKCS12', 'JWK Set': deve essere definito il path su filesystem dove risiede il keystore, la password per l'accesso al keystore, l'alias con cui è riferita la chiave privata e la password;
 
-          .. figure:: ../../_figure_console/TokenPDNDNegoziazioneKeystorePKCS12.png
+          .. figure:: ../../../../_figure_console/TokenPDNDNegoziazioneKeystorePKCS12.png
             :scale: 60%
             :align: center
             :name: TokenPDNDNegoziazioneKeystorePKCS12
@@ -37,7 +37,7 @@ Di seguito vengono riportati tutte le informazioni da registrare nella policy:
 
 	- 'Definito nell'applicativo ModI': il keystore utilizzato per firmare l'asserzione JWT inviata alla PDND sarà quello definito nell'applicativo ModI richiedente come descritto nella sezione ':ref:`modipa_idar01_fruizione`';
 
-          .. figure:: ../../_figure_console/TokenPDNDNegoziazioneKeystoreApplicativoModI.png
+          .. figure:: ../../../../_figure_console/TokenPDNDNegoziazioneKeystoreApplicativoModI.png
             :scale: 60%
             :align: center
             :name: TokenPDNDNegoziazioneKeystoreApplicativoModI
@@ -46,7 +46,7 @@ Di seguito vengono riportati tutte le informazioni da registrare nella policy:
 
 	- 'Definito nella fruizione ModI': il keystore utilizzato per firmare l'asserzione JWT inviata alla PDND sarà quello definito nella fruizione ModI come descritto nella sezione ':ref:`modipa_sicurezza_avanzate_fruizione_pdnd`';
 
-          .. figure:: ../../_figure_console/TokenPDNDNegoziazioneKeystoreFruizioneModI.png
+          .. figure:: ../../../../_figure_console/TokenPDNDNegoziazioneKeystoreFruizioneModI.png
             :scale: 60%
             :align: center
             :name: TokenPDNDNegoziazioneKeystoreFruizioneModI
@@ -57,7 +57,7 @@ Di seguito vengono riportati tutte le informazioni da registrare nella policy:
 
 - JWT Signature: algoritmo di firma
 
-  .. figure:: ../../_figure_console/TokenPDNDNegoziazioneFirma.png
+  .. figure:: ../../../../_figure_console/TokenPDNDNegoziazioneFirma.png
     :scale: 50%
     :align: center
     :name: TokenPDNDNegoziazioneFirma
@@ -72,7 +72,7 @@ Di seguito vengono riportati tutte le informazioni da registrare nella policy:
 
 		- 'Personalizzato': selezionando la modalità 'Personalizzato' è possibile indicarlo puntualmente. Il valore può essere definito come costante o contenere parti dinamiche risolte a runtime dal Gateway (':ref:`valoriDinamici`');
 
-                  .. figure:: ../../_figure_console/TokenPDNDNegoziazioneKIDpersonalizzato.png
+                  .. figure:: ../../../../_figure_console/TokenPDNDNegoziazioneKIDpersonalizzato.png
                     :scale: 60%
                     :align: center
                     :name: TokenPDNDNegoziazioneKIDpersonalizzato
@@ -81,7 +81,7 @@ Di seguito vengono riportati tutte le informazioni da registrare nella policy:
 
 		- 'Definito nell'applicativo ModI': nel caso in cui è stato indicato un keystore definito nell'applicativo ModI, è possibile selezionare una modalità analoga anche per il KID (:numref:`TokenPDNDNegoziazioneKIDapplicativo`).
 
-                  .. figure:: ../../_figure_console/TokenPDNDNegoziazioneKIDapplicativo.png
+                  .. figure:: ../../../../_figure_console/TokenPDNDNegoziazioneKIDapplicativo.png
                     :scale: 60%
                     :align: center
                     :name: TokenPDNDNegoziazioneKIDapplicativo
@@ -90,7 +90,7 @@ Di seguito vengono riportati tutte le informazioni da registrare nella policy:
 
                   Questa modalità richiede che oltre al keystore, nell'applicativo ModI richiedente descritto nella sezione ':ref:`modipa_idar01_fruizione`', venga abilitata anche la sezione 'Authorization OAuth' e venga indicato il KID nel campo 'Key Id del Certificato' (:numref:`ApplicativoInternoAutorizzazioneOAuth`).
 
-                  .. figure:: ../../_figure_console/ApplicativoInternoAutorizzazioneOAuth.png
+                  .. figure:: ../../../../_figure_console/ApplicativoInternoAutorizzazioneOAuth.png
                     :scale: 60%
                     :align: center
                     :name: ApplicativoInternoAutorizzazioneOAuth
@@ -99,7 +99,7 @@ Di seguito vengono riportati tutte le informazioni da registrare nella policy:
 
 		- 'Definito nella fruizione ModI': nel caso in cui è stato indicato un keystore definito nella fruizione ModI, è possibile selezionare una modalità analoga anche per il KID (:numref:`TokenPDNDNegoziazioneKIDfruizione`).
 
-                  .. figure:: ../../_figure_console/TokenPDNDNegoziazioneKIDfruizione.png
+                  .. figure:: ../../../../_figure_console/TokenPDNDNegoziazioneKIDfruizione.png
                     :scale: 60%
                     :align: center
                     :name: TokenPDNDNegoziazioneKIDfruizione
@@ -118,7 +118,7 @@ Di seguito vengono riportati tutte le informazioni da registrare nella policy:
 
   - Subject
 
-  .. figure:: ../../_figure_console/TokenPDNDNegoziazioneClientId.png
+  .. figure:: ../../../../_figure_console/TokenPDNDNegoziazioneClientId.png
     :scale: 60%
     :align: center
     :name: TokenPDNDNegoziazioneClientId
@@ -127,7 +127,7 @@ Di seguito vengono riportati tutte le informazioni da registrare nella policy:
 
   In alternativa nel caso in cui sia stato indicato un keystore definito nell'applicativo ModI, è possibile selezionare una modalità analoga anche per la tripla clientId/issuer/subject (:numref:`TokenPDNDNegoziazioneClientIdApplicativoModI`).
 
-  .. figure:: ../../_figure_console/TokenPDNDNegoziazioneClientIdApplicativoModI.png
+  .. figure:: ../../../../_figure_console/TokenPDNDNegoziazioneClientIdApplicativoModI.png
     :scale: 60%
     :align: center
     :name: TokenPDNDNegoziazioneClientIdApplicativoModI
@@ -136,7 +136,7 @@ Di seguito vengono riportati tutte le informazioni da registrare nella policy:
 
   Questa modalità richiede che oltre al keystore, nell'applicativo ModI richiedente descritto nella sezione ':ref:`modipa_idar01_fruizione`', venga abilitata anche la sezione 'Authorization OAuth' e venga indicato il clientId nel campo 'Identificativo' (:numref:`ApplicativoInternoAutorizzazioneOAuth2`).
 
-  .. figure:: ../../_figure_console/ApplicativoInternoAutorizzazioneOAuth.png
+  .. figure:: ../../../../_figure_console/ApplicativoInternoAutorizzazioneOAuth.png
     :scale: 60%
     :align: center
     :name: ApplicativoInternoAutorizzazioneOAuth2
@@ -145,7 +145,7 @@ Di seguito vengono riportati tutte le informazioni da registrare nella policy:
 
   In alternativa nel caso in cui sia stato indicato un keystore definito nella fruizione ModI, è possibile selezionare una modalità analoga anche per la tripla clientId/issuer/subject (:numref:`TokenPDNDNegoziazioneClientIdFruizioneModI`).
 
-  .. figure:: ../../_figure_console/TokenPDNDNegoziazioneClientIdFruizioneModI.png
+  .. figure:: ../../../../_figure_console/TokenPDNDNegoziazioneClientIdFruizioneModI.png
     :scale: 60%
     :align: center
     :name: TokenPDNDNegoziazioneClientIdFruizioneModI
@@ -166,7 +166,7 @@ Di seguito vengono riportati tutte le informazioni da registrare nella policy:
 
 	- Informazioni Sessione: consente di valorizzare il claim 'sessionInfo' previsto dalla PDND. La valorizzazione può essere statica o formata da parti dinamiche risolte a runtime dal Gateway (per maggiori dettagli :ref:`valoriDinamici`).
 
-  .. figure:: ../../_figure_console/TokenPDNDNegoziazioneJWTPayload.png
+  .. figure:: ../../../../_figure_console/TokenPDNDNegoziazioneJWTPayload.png
     :scale: 60%
     :align: center
     :name: TokenPDNDNegoziazioneJWTPayload
@@ -179,7 +179,7 @@ Di seguito vengono riportati tutte le informazioni da registrare nella policy:
 
 	- Client ID: indicare il medesimo valore inserito nel campo 'Client ID' della sezione 'JWT Payload';
 
-  .. figure:: ../../_figure_console/TokenPDNDNegoziazioneDatiRichiesta.png
+  .. figure:: ../../../../_figure_console/TokenPDNDNegoziazioneDatiRichiesta.png
     :scale: 60%
     :align: center
     :name: TokenPDNDNegoziazioneDatiRichiesta
@@ -188,7 +188,7 @@ Di seguito vengono riportati tutte le informazioni da registrare nella policy:
 
   Per quanto concerne il campo 'Client ID', nel caso in cui sia stato indicato un keystore definito nell'applicativo ModI, è possibile selezionare una modalità analoga anche per il campo 'Client ID' (:numref:`TokenPDNDNegoziazioneDatiRichiestaApplicativoModI`).
 
-  .. figure:: ../../_figure_console/TokenPDNDNegoziazioneDatiRichiestaApplicativoModI.png
+  .. figure:: ../../../../_figure_console/TokenPDNDNegoziazioneDatiRichiestaApplicativoModI.png
     :scale: 60%
     :align: center
     :name: TokenPDNDNegoziazioneDatiRichiestaApplicativoModI
@@ -197,7 +197,7 @@ Di seguito vengono riportati tutte le informazioni da registrare nella policy:
 
   Nel caso invece in cui sia stato indicato un keystore definito nella fruizione ModI, è possibile selezionare una modalità analoga anche per il campo 'Client ID' (:numref:`TokenPDNDNegoziazioneDatiRichiestaFruizioneModI`).
 
-  .. figure:: ../../_figure_console/TokenPDNDNegoziazioneDatiRichiestaFruizioneModI.png
+  .. figure:: ../../../../_figure_console/TokenPDNDNegoziazioneDatiRichiestaFruizioneModI.png
     :scale: 60%
     :align: center
     :name: TokenPDNDNegoziazioneDatiRichiestaFruizioneModI
