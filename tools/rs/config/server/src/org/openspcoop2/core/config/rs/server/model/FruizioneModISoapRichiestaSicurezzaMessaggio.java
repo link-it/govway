@@ -60,13 +60,16 @@ public class FruizioneModISoapRichiestaSicurezzaMessaggio  {
   private String wsaTo = null;
   
   @Schema(description = "")
-  private FruizioneModISoapRichiestaInformazioneUtente informazioniUtenteCodiceEnte = null;
+  private FruizioneModIRichiestaInformazioneUtente informazioniUtenteCodiceEnte = null;
   
   @Schema(description = "")
-  private FruizioneModISoapRichiestaInformazioneUtente informazioniUtenteUserid = null;
+  private FruizioneModIRichiestaInformazioneUtente informazioniUtenteUserid = null;
   
   @Schema(description = "")
-  private FruizioneModISoapRichiestaInformazioneUtente informazioniUtenteIndirizzoIp = null;
+  private FruizioneModIRichiestaInformazioneUtente informazioniUtenteIndirizzoIp = null;
+  
+  @Schema(description = "")
+  private FruizioneModIRichiestaInformazioniUtenteAudit audit = null;
  /**
    * Get algoritmo
    * @return algoritmo
@@ -249,15 +252,15 @@ public class FruizioneModISoapRichiestaSicurezzaMessaggio  {
   **/
   @JsonProperty("informazioni_utente_codice_ente")
   @Valid
-  public FruizioneModISoapRichiestaInformazioneUtente getInformazioniUtenteCodiceEnte() {
+  public FruizioneModIRichiestaInformazioneUtente getInformazioniUtenteCodiceEnte() {
     return this.informazioniUtenteCodiceEnte;
   }
 
-  public void setInformazioniUtenteCodiceEnte(FruizioneModISoapRichiestaInformazioneUtente informazioniUtenteCodiceEnte) {
+  public void setInformazioniUtenteCodiceEnte(FruizioneModIRichiestaInformazioneUtente informazioniUtenteCodiceEnte) {
     this.informazioniUtenteCodiceEnte = informazioniUtenteCodiceEnte;
   }
 
-  public FruizioneModISoapRichiestaSicurezzaMessaggio informazioniUtenteCodiceEnte(FruizioneModISoapRichiestaInformazioneUtente informazioniUtenteCodiceEnte) {
+  public FruizioneModISoapRichiestaSicurezzaMessaggio informazioniUtenteCodiceEnte(FruizioneModIRichiestaInformazioneUtente informazioniUtenteCodiceEnte) {
     this.informazioniUtenteCodiceEnte = informazioniUtenteCodiceEnte;
     return this;
   }
@@ -268,15 +271,15 @@ public class FruizioneModISoapRichiestaSicurezzaMessaggio  {
   **/
   @JsonProperty("informazioni_utente_userid")
   @Valid
-  public FruizioneModISoapRichiestaInformazioneUtente getInformazioniUtenteUserid() {
+  public FruizioneModIRichiestaInformazioneUtente getInformazioniUtenteUserid() {
     return this.informazioniUtenteUserid;
   }
 
-  public void setInformazioniUtenteUserid(FruizioneModISoapRichiestaInformazioneUtente informazioniUtenteUserid) {
+  public void setInformazioniUtenteUserid(FruizioneModIRichiestaInformazioneUtente informazioniUtenteUserid) {
     this.informazioniUtenteUserid = informazioniUtenteUserid;
   }
 
-  public FruizioneModISoapRichiestaSicurezzaMessaggio informazioniUtenteUserid(FruizioneModISoapRichiestaInformazioneUtente informazioniUtenteUserid) {
+  public FruizioneModISoapRichiestaSicurezzaMessaggio informazioniUtenteUserid(FruizioneModIRichiestaInformazioneUtente informazioniUtenteUserid) {
     this.informazioniUtenteUserid = informazioniUtenteUserid;
     return this;
   }
@@ -287,16 +290,35 @@ public class FruizioneModISoapRichiestaSicurezzaMessaggio  {
   **/
   @JsonProperty("informazioni_utente_indirizzo_ip")
   @Valid
-  public FruizioneModISoapRichiestaInformazioneUtente getInformazioniUtenteIndirizzoIp() {
+  public FruizioneModIRichiestaInformazioneUtente getInformazioniUtenteIndirizzoIp() {
     return this.informazioniUtenteIndirizzoIp;
   }
 
-  public void setInformazioniUtenteIndirizzoIp(FruizioneModISoapRichiestaInformazioneUtente informazioniUtenteIndirizzoIp) {
+  public void setInformazioniUtenteIndirizzoIp(FruizioneModIRichiestaInformazioneUtente informazioniUtenteIndirizzoIp) {
     this.informazioniUtenteIndirizzoIp = informazioniUtenteIndirizzoIp;
   }
 
-  public FruizioneModISoapRichiestaSicurezzaMessaggio informazioniUtenteIndirizzoIp(FruizioneModISoapRichiestaInformazioneUtente informazioniUtenteIndirizzoIp) {
+  public FruizioneModISoapRichiestaSicurezzaMessaggio informazioniUtenteIndirizzoIp(FruizioneModIRichiestaInformazioneUtente informazioniUtenteIndirizzoIp) {
     this.informazioniUtenteIndirizzoIp = informazioniUtenteIndirizzoIp;
+    return this;
+  }
+
+ /**
+   * Get audit
+   * @return audit
+  **/
+  @JsonProperty("audit")
+  @Valid
+  public FruizioneModIRichiestaInformazioniUtenteAudit getAudit() {
+    return this.audit;
+  }
+
+  public void setAudit(FruizioneModIRichiestaInformazioniUtenteAudit audit) {
+    this.audit = audit;
+  }
+
+  public FruizioneModISoapRichiestaSicurezzaMessaggio audit(FruizioneModIRichiestaInformazioniUtenteAudit audit) {
+    this.audit = audit;
     return this;
   }
 
@@ -318,6 +340,7 @@ public class FruizioneModISoapRichiestaSicurezzaMessaggio  {
     sb.append("    informazioniUtenteCodiceEnte: ").append(FruizioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.informazioniUtenteCodiceEnte)).append("\n");
     sb.append("    informazioniUtenteUserid: ").append(FruizioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.informazioniUtenteUserid)).append("\n");
     sb.append("    informazioniUtenteIndirizzoIp: ").append(FruizioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.informazioniUtenteIndirizzoIp)).append("\n");
+    sb.append("    audit: ").append(FruizioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.audit)).append("\n");
     sb.append("}");
     return sb.toString();
   }

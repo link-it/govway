@@ -54,6 +54,9 @@ public class ErogazioneModIRestRichiestaSicurezzaMessaggio  {
   
   @Schema(description = "")
   private ErogazioneModIRestRichiestaSicurezzaMessaggioContemporaneita contemporaneita = null;
+  
+  @Schema(description = "")
+  private BaseModIRichiestaInformazioniUtenteAudit audit = null;
  /**
    * Get riferimentoX509
    * @return riferimentoX509
@@ -175,6 +178,25 @@ public class ErogazioneModIRestRichiestaSicurezzaMessaggio  {
     return this;
   }
 
+ /**
+   * Get audit
+   * @return audit
+  **/
+  @JsonProperty("audit")
+  @Valid
+  public BaseModIRichiestaInformazioniUtenteAudit getAudit() {
+    return this.audit;
+  }
+
+  public void setAudit(BaseModIRichiestaInformazioniUtenteAudit audit) {
+    this.audit = audit;
+  }
+
+  public ErogazioneModIRestRichiestaSicurezzaMessaggio audit(BaseModIRichiestaInformazioniUtenteAudit audit) {
+    this.audit = audit;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -187,6 +209,7 @@ public class ErogazioneModIRestRichiestaSicurezzaMessaggio  {
     sb.append("    timeToLive: ").append(ErogazioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.timeToLive)).append("\n");
     sb.append("    audience: ").append(ErogazioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.audience)).append("\n");
     sb.append("    contemporaneita: ").append(ErogazioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.contemporaneita)).append("\n");
+    sb.append("    audit: ").append(ErogazioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.audit)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -39,6 +39,9 @@ public class ErogazioneModISoapRichiestaSicurezzaMessaggio  {
   
   @Schema(description = "")
   private String wsaTo = null;
+  
+  @Schema(description = "")
+  private BaseModIRichiestaInformazioniUtenteAudit audit = null;
  /**
    * Get truststore
    * @return truststore
@@ -97,6 +100,25 @@ public class ErogazioneModISoapRichiestaSicurezzaMessaggio  {
     return this;
   }
 
+ /**
+   * Get audit
+   * @return audit
+  **/
+  @JsonProperty("audit")
+  @Valid
+  public BaseModIRichiestaInformazioniUtenteAudit getAudit() {
+    return this.audit;
+  }
+
+  public void setAudit(BaseModIRichiestaInformazioniUtenteAudit audit) {
+    this.audit = audit;
+  }
+
+  public ErogazioneModISoapRichiestaSicurezzaMessaggio audit(BaseModIRichiestaInformazioniUtenteAudit audit) {
+    this.audit = audit;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -106,6 +128,7 @@ public class ErogazioneModISoapRichiestaSicurezzaMessaggio  {
     sb.append("    truststore: ").append(ErogazioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.truststore)).append("\n");
     sb.append("    timeToLive: ").append(ErogazioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.timeToLive)).append("\n");
     sb.append("    wsaTo: ").append(ErogazioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.wsaTo)).append("\n");
+    sb.append("    audit: ").append(ErogazioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.audit)).append("\n");
     sb.append("}");
     return sb.toString();
   }

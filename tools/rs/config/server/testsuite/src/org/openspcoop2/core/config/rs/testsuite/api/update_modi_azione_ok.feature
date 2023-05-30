@@ -134,3 +134,9 @@ Examples:
 | api_modi_soap_i01a02_richiesta.json |
 | api_modi_soap_i01a02_risposta_firma_all.json |
 | api_modi_soap_i01a02_risposta.json |
+| api_modi_soap_a01_token_modi.json |
+| api_modi_soap_i01a01_richiesta_token_pdnd.json |
+| api_modi_soap_i01a02_richiesta_token_oauth.json |
+| api_modi_soap_a01_audit01.json |
+| api_modi_soap_a01_audit02.json |
+| api_modi_soap_a01_auditLegacy.json |

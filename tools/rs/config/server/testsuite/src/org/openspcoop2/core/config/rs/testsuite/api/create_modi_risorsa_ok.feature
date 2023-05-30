@@ -118,3 +118,13 @@ Examples:
 | api_modi_rest_i01a02_qualsiasi_info.json |
 | api_modi_rest_i01a02_qualsiasi.json |
 | api_modi_rest_i01a02_richiesta_info.json |
+| api_modi_rest_a01_token_modi.json |
+| api_modi_rest_i01a01_richiesta_token_pdnd.json |
+| api_modi_rest_i02a01_richiesta_token_oauth.json |
+| api_modi_rest_i02a02_richiesta_token_pdnd.json |
+| api_modi_rest_a01_audit01.json |
+| api_modi_rest_a01_audit02.json |
+| api_modi_rest_a01_auditLegacy.json |
+| api_modi_rest_a02_custom_abilitato_entrambi_audit01.json |
+| api_modi_rest_i01_custom_abilitato_entrambi_audit02.json |
+

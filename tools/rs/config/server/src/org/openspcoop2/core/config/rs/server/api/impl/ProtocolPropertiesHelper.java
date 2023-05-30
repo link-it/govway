@@ -22,6 +22,7 @@ package org.openspcoop2.core.config.rs.server.api.impl;
 
 import java.util.Map;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.protocol.sdk.properties.AbstractProperty;
 import org.openspcoop2.protocol.sdk.properties.BinaryProperty;
 import org.openspcoop2.protocol.sdk.properties.BooleanProperty;
@@ -35,56 +36,66 @@ import org.openspcoop2.protocol.sdk.properties.StringProperty;
  * @version $Rev$, $Date$
  */
 public class ProtocolPropertiesHelper {
+	
+	private ProtocolPropertiesHelper() {}
 
-	public static Boolean getBooleanProperty(Map<String, AbstractProperty<?>> p, String key, boolean required) throws Exception {
+	private static String getPropertyPrefix(String key) {
+		return "Property "+key+" ";
+	}
+	
+	public static Boolean getBooleanProperty(Map<String, AbstractProperty<?>> p, String key, boolean required) throws CoreException {
 		AbstractProperty<?> prop = getProperty(p, key, required);
-		if(prop!=null && prop instanceof BooleanProperty) {
+		if(prop instanceof BooleanProperty) {
 			return ((BooleanProperty)prop).getValue();
 		} else {
-			throw new Exception("Property "+key+" non e' una Boolean:" + (prop!=null ? prop.getClass().getName() : "null prop" ) );
+			throw new CoreException(getPropertyPrefix(key)+"non è una Boolean:" + (prop!=null ? prop.getClass().getName() : "null prop" ) );
 		}
 	}
 
 
-	public static String getStringProperty(Map<String, AbstractProperty<?>> p, String key, boolean required) throws Exception {
+	public static String getStringProperty(Map<String, AbstractProperty<?>> p, String key, boolean required) throws CoreException {
 
 		AbstractProperty<?> prop = getProperty(p, key, required);
 		if(prop == null) return null;
 		if(prop instanceof StringProperty) {
 			return ((StringProperty)prop).getValue();
 		} else {
-			throw new Exception("Property "+key+" non e' una StringProperty:" + prop.getClass().getName());
+			throw new CoreException(getPropertyPrefix(key)+"non è una StringProperty:" + prop.getClass().getName());
 		}
 	}
 
-	public static byte[] getByteArrayProperty(Map<String, AbstractProperty<?>> p, String key, boolean required) throws Exception {
+	public static byte[] getByteArrayProperty(Map<String, AbstractProperty<?>> p, String key, boolean required) throws CoreException {
 
+		byte[] empty = null;
+		
 		AbstractProperty<?> prop = getProperty(p, key, required);
-		if(prop == null) return null;
+		if(prop == null) 
+			return empty;
 		if(prop instanceof BinaryProperty) {
 			return ((BinaryProperty)prop).getValue();
 		} else {
-			throw new Exception("Property "+key+" non e' una BinaryProperty:" + prop.getClass().getName());
+			throw new CoreException(getPropertyPrefix(key)+"non è una BinaryProperty:" + prop.getClass().getName());
 		}
 	}
 
-	public static Integer getIntegerProperty(Map<String, AbstractProperty<?>> p, String key, boolean required) throws Exception {
+	public static Integer getIntegerProperty(Map<String, AbstractProperty<?>> p, String key, boolean required) throws CoreException {
 
 		AbstractProperty<?> prop = getProperty(p, key, required);
 		if(prop == null) return null;
 		if(prop instanceof NumberProperty) {
 			return ((NumberProperty)prop).getValue().intValue();
 		} else {
-			throw new Exception("Property "+key+" non e' una NumberProperty:" + prop.getClass().getName());
+			throw new CoreException(getPropertyPrefix(key)+"non è una NumberProperty:" + prop.getClass().getName());
 		}
 	}
 
-	public static AbstractProperty<?> getProperty(Map<String, AbstractProperty<?>> p, String key, boolean required) throws Exception {
+	@SuppressWarnings("rawtypes")
+	public static AbstractProperty getProperty(Map<String, AbstractProperty<?>> p, String key, boolean required) throws CoreException {
 		if(p.containsKey(key)) {
 			return p.get(key);
 		} else {
 			if(required) {
-				throw new Exception("Property "+key+" non trovata");
+				throw new CoreException(getPropertyPrefix(key)+"non trovata");
 			} else {
 				return null;
 			}

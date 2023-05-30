@@ -8774,12 +8774,19 @@ components:
       properties:
         pattern:
           $ref: "#/components/schemas/ModISicurezzaMessaggioEnum"
+        generazione_token:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioGenerazioneTokenEnum"
         digest_richiesta:
           type: "boolean"
           default: false
         informazioni_utente:
           type: "boolean"
           default: false
+        pattern_audit:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioPatternAuditEnum"
+        schema_audit:
+          maxLength: 255
+          type: "string"
         rest_header:
           $ref: "#/components/schemas/ModISicurezzaMessaggioRestHeaderEnum"
         rest_header_custom:
@@ -10136,6 +10143,8 @@ components:
         wsa_to:
           maxLength: 4000
           type: "string"
+        audit:
+          $ref: "#/components/schemas/BaseModIRichiestaInformazioniUtenteAudit"
     ErogazioneModISoapRisposta:
       required:
       - "sicurezza_messaggio"
@@ -10237,6 +10246,8 @@ components:
           type: "string"
         contemporaneita:
           $ref: "#/components/schemas/ErogazioneModIRestRichiestaSicurezzaMessaggioContemporaneita"
+        audit:
+          $ref: "#/components/schemas/BaseModIRichiestaInformazioniUtenteAudit"
     ErogazioneModIRestRichiestaSicurezzaMessaggioContemporaneita:
       required:
       - "audience"
@@ -10431,21 +10442,13 @@ components:
           maxLength: 4000
           type: "string"
         informazioni_utente_codice_ente:
-          $ref: "#/components/schemas/FruizioneModISoapRichiestaInformazioneUtente"
+          $ref: "#/components/schemas/FruizioneModIRichiestaInformazioneUtente"
         informazioni_utente_userid:
-          $ref: "#/components/schemas/FruizioneModISoapRichiestaInformazioneUtente"
+          $ref: "#/components/schemas/FruizioneModIRichiestaInformazioneUtente"
         informazioni_utente_indirizzo_ip:
-          $ref: "#/components/schemas/FruizioneModISoapRichiestaInformazioneUtente"
-    FruizioneModISoapRichiestaInformazioneUtente:
-      required:
-      - "modalita"
-      type: "object"
-      properties:
-        modalita:
-          $ref: "#/components/schemas/StatoDefaultRidefinitoEnum"
-        valore:
-          maxLength: 4000
-          type: "string"
+          $ref: "#/components/schemas/FruizioneModIRichiestaInformazioneUtente"
+        audit:
+          $ref: "#/components/schemas/FruizioneModIRichiestaInformazioniUtenteAudit"
     FruizioneModISoapRisposta:
       required:
       - "sicurezza_messaggio"
@@ -10537,11 +10540,13 @@ components:
           maxLength: 4000
           type: "string"
         informazioni_utente_codice_ente:
-          $ref: "#/components/schemas/FruizioneModISoapRichiestaInformazioneUtente"
+          $ref: "#/components/schemas/FruizioneModIRichiestaInformazioneUtente"
         informazioni_utente_userid:
-          $ref: "#/components/schemas/FruizioneModISoapRichiestaInformazioneUtente"
+          $ref: "#/components/schemas/FruizioneModIRichiestaInformazioneUtente"
         informazioni_utente_indirizzo_ip:
-          $ref: "#/components/schemas/FruizioneModISoapRichiestaInformazioneUtente"
+          $ref: "#/components/schemas/FruizioneModIRichiestaInformazioneUtente"
+        audit:
+          $ref: "#/components/schemas/FruizioneModIRichiestaInformazioniUtenteAudit"
         claims:
           type: "array"
           description: "Indicare i claims richiesti (nome=valore); è possibile elencare\
@@ -10644,6 +10649,45 @@ components:
         audience_atteso:
           maxLength: 4000
           type: "string"
+    FruizioneModIRichiestaInformazioneUtente:
+      required:
+      - "modalita"
+      type: "object"
+      properties:
+        modalita:
+          $ref: "#/components/schemas/StatoDefaultRidefinitoEnum"
+        valore:
+          maxLength: 4000
+          type: "string"
+    BaseModIRichiestaInformazioniUtenteAudit:
+      type: "object"
+      properties:
+        audience:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioRestSameDifferentEnum"
+        audience_atteso:
+          maxLength: 4000
+          type: "string"
+    FruizioneModIRichiestaInformazioniUtenteAudit:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/BaseModIRichiestaInformazioniUtenteAudit"
+      - type: "object"
+        properties:
+          informazioni:
+            type: "array"
+            items:
+              $ref: "#/components/schemas/FruizioneModIRichiestaInformazioneUtenteAudit"
+    FruizioneModIRichiestaInformazioneUtenteAudit:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/FruizioneModIRichiestaInformazioneUtente"
+      - required:
+        - "nome"
+        type: "object"
+        properties:
+          nome:
+            maxLength: 255
+            type: "string"
     ModIApplicativoEsterno:
       required:
       - "dominio"
@@ -12050,6 +12094,12 @@ components:
       - "integrity01-auth02"
       - "integrity02-auth01"
       - "integrity02-auth02"
+    ModISicurezzaMessaggioGenerazioneTokenEnum:
+      type: "string"
+      enum:
+      - "locale"
+      - "pdnd"
+      - "oauth"
     ModISicurezzaMessaggioRestHeaderEnum:
       type: "string"
       enum:
@@ -12060,6 +12110,12 @@ components:
       - "custom"
       - "custom+bearer-request"
       - "custom+bearer"
+    ModISicurezzaMessaggioPatternAuditEnum:
+      type: "string"
+      enum:
+      - "audit-rest01"
+      - "audit-rest02"
+      - "audit-legacy"
     ModISicurezzaMessaggioRestTokenChoiseEnum:
       type: "string"
       default: "agid"

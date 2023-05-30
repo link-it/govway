@@ -16,6 +16,7 @@ expected.sicurezza_messaggio.digest_richiesta = expected.sicurezza_messaggio.dig
 return expected;
 } 
 """
+
 @UpdateModi204
 Scenario Outline: Api Update Interfaccia 204 <nome-test>
 
@@ -100,3 +101,18 @@ Examples:
 | api_modi_soap_i01a02_richiesta.json | soap |
 | api_modi_soap_i01a02_risposta_firma_all.json | soap |
 | api_modi_soap_i01a02_risposta.json | soap |
+| api_modi_rest_a01_token_modi.json | rest |
+| api_modi_rest_i01a01_richiesta_token_pdnd.json | rest |
+| api_modi_rest_i02a01_richiesta_token_oauth.json | rest |
+| api_modi_rest_i02a02_richiesta_token_pdnd.json | rest |
+| api_modi_soap_a01_token_modi.json | soap |
+| api_modi_soap_i01a01_richiesta_token_pdnd.json | soap |
+| api_modi_soap_i01a02_richiesta_token_oauth.json | soap |
+| api_modi_rest_a01_audit01.json | rest |
+| api_modi_rest_a01_audit02.json | rest |
+| api_modi_rest_a01_auditLegacy.json | rest |
+| api_modi_rest_a02_custom_abilitato_entrambi_audit01.json | rest |
+| api_modi_rest_i01_custom_abilitato_entrambi_audit02.json | rest |
+| api_modi_soap_a01_audit01.json | soap |
+| api_modi_soap_a01_audit02.json | soap |
+| api_modi_soap_a01_auditLegacy.json | soap |

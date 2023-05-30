@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class FruizioneModISoapRichiestaInformazioneUtente  {
+public class FruizioneModIRichiestaInformazioneUtente  {
   
   @Schema(required = true, description = "")
   private StatoDefaultRidefinitoEnum modalita = null;
@@ -47,7 +47,7 @@ public class FruizioneModISoapRichiestaInformazioneUtente  {
     this.modalita = modalita;
   }
 
-  public FruizioneModISoapRichiestaInformazioneUtente modalita(StatoDefaultRidefinitoEnum modalita) {
+  public FruizioneModIRichiestaInformazioneUtente modalita(StatoDefaultRidefinitoEnum modalita) {
     this.modalita = modalita;
     return this;
   }
@@ -66,7 +66,7 @@ public class FruizioneModISoapRichiestaInformazioneUtente  {
     this.valore = valore;
   }
 
-  public FruizioneModISoapRichiestaInformazioneUtente valore(String valore) {
+  public FruizioneModIRichiestaInformazioneUtente valore(String valore) {
     this.valore = valore;
     return this;
   }
@@ -75,10 +75,10 @@ public class FruizioneModISoapRichiestaInformazioneUtente  {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class FruizioneModISoapRichiestaInformazioneUtente {\n");
+    sb.append("class FruizioneModIRichiestaInformazioneUtente {\n");
     
-    sb.append("    modalita: ").append(FruizioneModISoapRichiestaInformazioneUtente.toIndentedString(this.modalita)).append("\n");
-    sb.append("    valore: ").append(FruizioneModISoapRichiestaInformazioneUtente.toIndentedString(this.valore)).append("\n");
+    sb.append("    modalita: ").append(FruizioneModIRichiestaInformazioneUtente.toIndentedString(this.modalita)).append("\n");
+    sb.append("    valore: ").append(FruizioneModIRichiestaInformazioneUtente.toIndentedString(this.valore)).append("\n");
     sb.append("}");
     return sb.toString();
   }

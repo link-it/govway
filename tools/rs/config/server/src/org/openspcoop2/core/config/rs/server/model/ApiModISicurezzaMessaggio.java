@@ -31,10 +31,19 @@ public class ApiModISicurezzaMessaggio  {
   private ModISicurezzaMessaggioEnum pattern = null;
   
   @Schema(description = "")
+  private ModISicurezzaMessaggioGenerazioneTokenEnum generazioneToken = null;
+  
+  @Schema(description = "")
   private Boolean digestRichiesta = false;
   
   @Schema(description = "")
   private Boolean informazioniUtente = false;
+  
+  @Schema(description = "")
+  private ModISicurezzaMessaggioPatternAuditEnum patternAudit = null;
+  
+  @Schema(description = "")
+  private String schemaAudit = null;
   
   @Schema(description = "")
   private ModISicurezzaMessaggioRestHeaderEnum restHeader = null;
@@ -67,6 +76,25 @@ public class ApiModISicurezzaMessaggio  {
 
   public ApiModISicurezzaMessaggio pattern(ModISicurezzaMessaggioEnum pattern) {
     this.pattern = pattern;
+    return this;
+  }
+
+ /**
+   * Get generazioneToken
+   * @return generazioneToken
+  **/
+  @JsonProperty("generazione_token")
+  @Valid
+  public ModISicurezzaMessaggioGenerazioneTokenEnum getGenerazioneToken() {
+    return this.generazioneToken;
+  }
+
+  public void setGenerazioneToken(ModISicurezzaMessaggioGenerazioneTokenEnum generazioneToken) {
+    this.generazioneToken = generazioneToken;
+  }
+
+  public ApiModISicurezzaMessaggio generazioneToken(ModISicurezzaMessaggioGenerazioneTokenEnum generazioneToken) {
+    this.generazioneToken = generazioneToken;
     return this;
   }
 
@@ -105,6 +133,44 @@ public class ApiModISicurezzaMessaggio  {
 
   public ApiModISicurezzaMessaggio informazioniUtente(Boolean informazioniUtente) {
     this.informazioniUtente = informazioniUtente;
+    return this;
+  }
+
+ /**
+   * Get patternAudit
+   * @return patternAudit
+  **/
+  @JsonProperty("pattern_audit")
+  @Valid
+  public ModISicurezzaMessaggioPatternAuditEnum getPatternAudit() {
+    return this.patternAudit;
+  }
+
+  public void setPatternAudit(ModISicurezzaMessaggioPatternAuditEnum patternAudit) {
+    this.patternAudit = patternAudit;
+  }
+
+  public ApiModISicurezzaMessaggio patternAudit(ModISicurezzaMessaggioPatternAuditEnum patternAudit) {
+    this.patternAudit = patternAudit;
+    return this;
+  }
+
+ /**
+   * Get schemaAudit
+   * @return schemaAudit
+  **/
+  @JsonProperty("schema_audit")
+  @Valid
+ @Size(max=255)  public String getSchemaAudit() {
+    return this.schemaAudit;
+  }
+
+  public void setSchemaAudit(String schemaAudit) {
+    this.schemaAudit = schemaAudit;
+  }
+
+  public ApiModISicurezzaMessaggio schemaAudit(String schemaAudit) {
+    this.schemaAudit = schemaAudit;
     return this;
   }
 
@@ -210,8 +276,11 @@ public class ApiModISicurezzaMessaggio  {
     sb.append("class ApiModISicurezzaMessaggio {\n");
     
     sb.append("    pattern: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.pattern)).append("\n");
+    sb.append("    generazioneToken: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.generazioneToken)).append("\n");
     sb.append("    digestRichiesta: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.digestRichiesta)).append("\n");
     sb.append("    informazioniUtente: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.informazioniUtente)).append("\n");
+    sb.append("    patternAudit: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.patternAudit)).append("\n");
+    sb.append("    schemaAudit: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.schemaAudit)).append("\n");
     sb.append("    restHeader: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.restHeader)).append("\n");
     sb.append("    restHeaderCustom: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.restHeaderCustom)).append("\n");
     sb.append("    soapFirmaAllegati: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.soapFirmaAllegati)).append("\n");

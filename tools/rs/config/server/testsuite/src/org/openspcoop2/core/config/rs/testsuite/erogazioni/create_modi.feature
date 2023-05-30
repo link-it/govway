@@ -7,6 +7,11 @@ Background:
 * def api_petstore_soap = read('api_modi_soap.json')
 * eval randomize(api_petstore_soap, ["nome"])
 * eval api_petstore_soap.referente = soggettoDefault
+
+* def api_petstore_soap_audit = read('api_modi_soap_audit.json')
+* eval randomize(api_petstore_soap_audit, ["nome"])
+* eval api_petstore_soap_audit.referente = soggettoDefault
+
 * def query_param_profilo_modi = {'profilo': 'ModI'}
 
 * def api_petstore_rest = read('api_modi_rest.json')
@@ -16,6 +21,10 @@ Background:
 * def api_petstore_rest_contemporaneita = read('api_modi_rest_contemporaneita.json')
 * eval randomize(api_petstore_rest_contemporaneita, ["nome"])
 * eval api_petstore_rest_contemporaneita.referente = soggettoDefault
+
+* def api_petstore_rest_audit = read('api_modi_rest_audit.json')
+* eval randomize(api_petstore_rest_audit, ["nome"])
+* eval api_petstore_rest_audit.referente = soggettoDefault
 
 * def header_firmare_default = read('api_modi_header_firmare_default.json')
 
@@ -94,6 +103,58 @@ Examples:
 |erogazione_modi_soap_rif_x509_ski-key-identifier.json|
 |erogazione_modi_soap_rif_x509_thumbprint-key-identifier.json|
 |erogazione_modi_soap_rif_x509_x509-key-identifier.json|
+
+
+
+@CreatePetstore204_modi_audit_SOAP
+Scenario Outline: Erogazioni Creazione Petstore 204 REST <nome>
+
+	* def erogazione_petstore = read('<nome>')
+	* eval erogazione_petstore.api_nome = api_petstore_soap_audit.nome
+	* eval erogazione_petstore.api_versione = api_petstore_soap_audit.versione
+		
+	* def petstore_key = erogazione_petstore.api_soap_servizio + '/' + erogazione_petstore.api_versione
+	* def api_petstore_path = 'api/' + api_petstore_soap_audit.nome + '/' + api_petstore_soap_audit.versione
+
+	* call create ({ resourcePath: 'api', body: api_petstore_soap_audit, query_params: query_param_profilo_modi })
+	* call create ( { resourcePath: 'erogazioni', body: erogazione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
+	* call get ( { resourcePath: 'erogazioni', key: petstore_key + '/modi', query_params: query_param_profilo_modi } )
+	* def expected = getExpectedSOAP(erogazione_petstore.modi)
+	* match response.modi == expected
+	* call delete ({ resourcePath: 'erogazioni/' + petstore_key, query_params: query_param_profilo_modi } )
+	* call delete ({ resourcePath: api_petstore_path, query_params: query_param_profilo_modi } )
+
+Examples:
+|nome|
+|erogazione_modi_soap_audit_same.json|
+|erogazione_modi_soap_audit_different.json|
+
+
+
+@CreatePetstore400_modi_audit_SOAP
+Scenario Outline: Erogazioni Creazione Petstore 400 <nome>
+
+	* def erogazione_petstore = read('<nome>')
+	* eval erogazione_petstore.erogazione_nome = api_petstore_soap_audit.nome
+	* eval erogazione_petstore.api_nome = api_petstore_soap_audit.nome
+	* eval erogazione_petstore.api_versione = api_petstore_soap_audit.versione
+		
+	* def petstore_key = erogazione_petstore.api_soap_servizio + '/' + erogazione_petstore.api_versione
+	* def api_petstore_path = 'api/' + api_petstore_soap_audit.nome + '/' + api_petstore_soap_audit.versione
+
+    	* call create ({ resourcePath: 'api', body: api_petstore_soap_audit, query_params: query_param_profilo_modi })
+	* call create_400 ( { resourcePath: 'erogazioni', body: erogazione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
+	* match response.detail == '<errore>'
+    	* call delete ({ resourcePath: api_petstore_path, query_params: query_param_profilo_modi } )
+
+Examples:
+|nome|errore
+|erogazione_modi_soap_audit_different_senza_valore_atteso.json|Audience di audit non definito|
+
+
+
+
+
 
 
 @CreatePetstore204_modi_REST
@@ -193,3 +254,53 @@ Examples:
 |erogazione_modi_soap.json|api_modi_soap_no_sicurezza.json|Impossibile abilitare la sicurezza messaggio, deve essere abilitata nella API implementata|
 |erogazione_modi_rest_contemporaneita_default.json|api_modi_rest.json|L\'API implementata non risulta configurata per gestire la contemporaneità dei token AGID che servirebbe alle opzioni indicate per la richiesta|
 |erogazione_modi_rest_contemporaneita_soloRisposta.json|api_modi_rest.json|L\'API implementata non risulta configurata per gestire la contemporaneità dei token AGID che servirebbe alle opzioni indicate per la risposta|
+
+
+
+
+@CreatePetstore204_modi_audit_REST
+Scenario Outline: Erogazioni Creazione Petstore 204 REST <nome>
+
+	* def erogazione_petstore = read('<nome>')
+	* eval erogazione_petstore.erogazione_nome = api_petstore_rest_audit.nome
+	* eval erogazione_petstore.api_nome = api_petstore_rest_audit.nome
+	* eval erogazione_petstore.api_versione = api_petstore_rest_audit.versione
+		
+	* def petstore_key = erogazione_petstore.erogazione_nome + '/' + erogazione_petstore.api_versione
+	* def api_petstore_path = 'api/' + api_petstore_rest_audit.nome + '/' + api_petstore_rest_audit.versione
+
+    	* call create ({ resourcePath: 'api', body: api_petstore_rest_audit, query_params: query_param_profilo_modi })
+    	* call create ( { resourcePath: 'erogazioni', body: erogazione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
+	* call get ( { resourcePath: 'erogazioni', key: petstore_key + '/modi', query_params: query_param_profilo_modi } )
+	* def expected = getExpectedRest(erogazione_petstore.modi, header_firmare_default)
+    	* match response.modi == expected
+    	* call delete ({ resourcePath: 'erogazioni/' + petstore_key, query_params: query_param_profilo_modi } )
+    	* call delete ({ resourcePath: api_petstore_path, query_params: query_param_profilo_modi } )
+
+
+Examples:
+|nome|
+|erogazione_modi_rest_audit_same.json|
+|erogazione_modi_rest_audit_different.json|
+
+
+
+@CreatePetstore400_modi_audit_REST
+Scenario Outline: Erogazioni Creazione Petstore 400 <nome>
+
+	* def erogazione_petstore = read('<nome>')
+	* eval erogazione_petstore.erogazione_nome = api_petstore_rest_audit.nome
+	* eval erogazione_petstore.api_nome = api_petstore_rest_audit.nome
+	* eval erogazione_petstore.api_versione = api_petstore_rest_audit.versione
+		
+	* def petstore_key = erogazione_petstore.erogazione_nome + '/' + erogazione_petstore.api_versione
+	* def api_petstore_path = 'api/' + api_petstore_rest_audit.nome + '/' + api_petstore_rest_audit.versione
+
+    	* call create ({ resourcePath: 'api', body: api_petstore_rest_audit, query_params: query_param_profilo_modi })
+	* call create_400 ( { resourcePath: 'erogazioni', body: erogazione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
+	* match response.detail == '<errore>'
+    	* call delete ({ resourcePath: api_petstore_path, query_params: query_param_profilo_modi } )
+
+Examples:
+|nome|errore
+|erogazione_modi_rest_audit_different_senza_valore_atteso.json|Audience di audit non definito|
