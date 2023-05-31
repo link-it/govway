@@ -1,7 +1,7 @@
 .. _modipa_pdnd_fruizione:
 
-Fruizione (PDND)
-----------------
+Fruizione ID_AUTH_REST_01 (PDND)
+---------------------------------
 
 Le richieste che provengono dagli applicativi interni del dominio e sono dirette verso altre amministrazioni verranno arricchite del token di sicurezza 'ModI' previsto dall'operazione invocata, come indicato precedentemente nella sezione :ref:`modipa_pdnd`. 
 

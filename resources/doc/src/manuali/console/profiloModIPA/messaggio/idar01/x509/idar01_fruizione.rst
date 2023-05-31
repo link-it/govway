@@ -1,7 +1,7 @@
 .. _modipa_idar01_fruizione:
 
-Fruizione
----------
+Fruizione ID_AUTH_REST_01 / ID_AUTH_SOAP_01 (X509)
+---------------------------------------------------
 
 Le richieste che provengono dagli applicativi interni del dominio e sono dirette verso altre amministrazioni verranno arricchite del token di sicurezza 'ModI' previsto dall'operazione invocata, come indicato precedentemente nella sezione :ref:`modipa_idar01`. 
 

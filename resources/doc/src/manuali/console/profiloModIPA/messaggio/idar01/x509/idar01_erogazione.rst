@@ -1,7 +1,7 @@
 .. _modipa_idar01_erogazione:
 
-Erogazione
-----------
+Erogazione ID_AUTH_REST_01 / ID_AUTH_SOAP_01 (X509)
+---------------------------------------------------
 
 In un'erogazione di una API le richieste provengono da amministrazioni esterne al dominio e sono dirette ad applicativi interni. Prima di procedere con l'inoltro della richiesta verso il backend interno, GovWay valida il token di sicurezza ricevuto rispetto al pattern associato all'operazione invocata: verifica firma, validazione temporale, filtro duplicati, verifica integrità del messaggio, verifica del token di audit etc.
 

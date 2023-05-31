@@ -11,7 +11,7 @@ L'adozione di questo pattern consente, alla ricezione di un messaggio, di valida
 
 **API**
 
-La registrazione della API deve essere effettuata agendo nella sezione "ModI - Sicurezza Messaggio" come indicato rispettavamente per una API REST in :numref:`api_messaggio1_fig` e per una API SOAP in :numref:`api_messaggio1_soap_fig`
+La registrazione della API deve essere effettuata agendo nella sezione "ModI - Sicurezza Messaggio" come indicato rispettavamente per una API REST in :numref:`api_messaggio1_fig` e per una API SOAP in :numref:`api_messaggio1_soap_fig`:
 
 - selezionare il 'Pattern' "ID_AUTH_REST_01" su API REST o 'ID_AUTH_SOAP_01' su API SOAP;
 - selezionare una 'Generazione Token' di tipo 'Authorization ModI' per far si che il Token 'ID_AUTH' sia generato dalla parte mittente.

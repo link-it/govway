@@ -1,7 +1,7 @@
 .. _modipa_oauth_erogazione:
 
-Erogazione (Authorization Server)
----------------------------------
+Erogazione ID_AUTH_REST_01 (Authorization Server)
+--------------------------------------------------
 
 Di seguito vengono descritti tutti i passi di configurazione che differiscono da quando già descritto nella sezione ':ref:`modipa_pdnd_erogazione`'.
 
