@@ -8,7 +8,11 @@
 
 Questo pattern di sicurezza presenta le medesime caratteristiche di :ref:`modipa_idar01`, con l'unica differenza di prevedere un meccanismo di filtro che impedisce la ricezione di messaggi duplicati da parte di ciascun ricevente.
 
-L'attivazione di questo pattern avviene a livello della relativa API, nella sezione "ModI", elemento "Sicurezza Messaggio", selezionando il pattern "ID_AUTH_REST_02" per API REST o "ID_AUTH_SOAP_02" per API SOAP come indicato in :numref:`api_messaggio2_fig` e :numref:`api_messaggio2_soap_fig`.
+
+La registrazione della API deve essere effettuata agendo nella sezione "ModI - Sicurezza Messaggio" come indicato rispettavamente per una API REST in :numref:`api_messaggio2_fig` e per una API SOAP in :numref:`api_messaggio2_soap_fig`
+
+- selezionare il 'Pattern' "ID_AUTH_REST_02" su API REST o 'ID_AUTH_SOAP_02' su API SOAP;
+- selezionare una 'Generazione Token' di tipo 'Authorization ModI' per far si che il Token 'ID_AUTH' sia generato dalla parte mittente.
 
 .. figure:: ../../../../_figure_console/modipa_api_messaggio2.png
   :scale: 50%
@@ -24,6 +28,5 @@ L'attivazione di questo pattern avviene a livello della relativa API, nella sezi
 
   Pattern di sicurezza messaggio "ID_AUTH_SOAP_02" per l'API
 
-Le voci 'Header HTTP del Token' (presente solamente su API di tipo REST) e 'Applicabilità' consentono di personalizzare l'header HTTP utilizzato e di indicare se il pattern di sicurezza verrà attuato sia sulla richiesta che sulla risposta. Maggiori informazioni vengono fornite nella sezione ':ref:`modipa_sicurezza_avanzate`'.
 
-Per le configurazioni successive procedere come già descritto in precedenza per il pattern :ref:`modipa_idar01`.
+Le configurazioni successive alla registrazione della API sono le medesime già descritte in precedenza per il pattern :ref:`modipa_idar01`.

@@ -3,16 +3,26 @@
 Erogazione
 ----------
 
-Nelle erogazioni, le richieste provengono da amministrazioni esterne al dominio e sono dirette ad applicativi interni. Prima di procedere con l'inoltro della richiesta verso il backend interno, GovWay valida il token di sicurezza ricevuto rispetto al pattern associato all'operazione invocata (come descritto nella sezione :ref:`modipa_idar01`): verifica firma, validazione temporale, filtro duplicati, verifica integrità del messaggio ... (:numref:`ErogazioneModIPA2`)
+In un'erogazione di una API le richieste provengono da amministrazioni esterne al dominio e sono dirette ad applicativi interni. Prima di procedere con l'inoltro della richiesta verso il backend interno, GovWay valida il token di sicurezza ricevuto rispetto al pattern associato all'operazione invocata: verifica firma, validazione temporale, filtro duplicati, verifica integrità del messaggio, verifica del token di audit etc.
 
-.. figure:: ../../../../_figure_console/ErogazioneModIPA.jpg
+Nella figura ':numref:`ErogazioneModIPA2`' viene raffigurato lo scenario di erogazione in cui il trust avviene tra fruitore ed erogatore tramite certificati x509.
+
+.. figure:: ../../../../_figure_console/ErogazioneModIPA_TokenLocale.jpg
  :scale: 70%
  :align: center
  :name: ErogazioneModIPA2
 
- Erogazione con Profilo di Interoperabilità 'ModI'
+ Erogazione con Profilo di Interoperabilità 'ModI', pattern 'ID_AUTH_REST_01': trust tra fruitore ed erogatore tramite certificati x509
 
-Per la configurazione di erogazioni basate su una API con pattern "ID_AUTH_REST_01" (o "ID_AUTH_SOAP_01"), nella relativa maschera della govwayConsole saranno presenti le sezioni "ModI - Richiesta" e "ModI - Risposta":
+
+**API**
+
+La registrazione della API deve essere effettuata seguendo le indicazioni descritte nella sezione :ref:`modipa_idar01`
+
+
+**Erogazione**
+
+L'interfaccia per la creazione dell'erogazione, basata su una API con pattern "ID_AUTH_REST_01" (o "ID_AUTH_SOAP_01"), presenta le sezioni "ModI - Richiesta" e "ModI - Risposta":
 
 - ModI - Richiesta (:numref:`erogazione_richiesta_fig`): la maschera relativa alla richiesta prevede la configurazione del meccanismo di validazione del token ricevuto sul messaggio di richiesta:
 
@@ -20,11 +30,11 @@ Per la configurazione di erogazioni basate su una API con pattern "ID_AUTH_REST_
     + TrustStore Certificati: Riferimento al truststore che contiene le CA, i certificati, CRL e policy OCSP da utilizzare per poter verificare i token di sicurezza ricevuti nelle richieste. È possibile mantenere l'impostazione di default che è stata fornita al momento dell'installazione del prodotto, oppure definire un diverso riferimento (opzione "Ridefinito") fornendo Path, Tipo, Password del TrustStore e criteri di verifica tramite CRL o OCSP.
     + Audience: valore del campo Audience atteso nel token di sicurezza della richiesta.
 
-.. figure:: ../../../../_figure_console/modipa_erogazione_richiesta.png
- :scale: 70%
- :name: erogazione_richiesta_fig
+  .. figure:: ../../../../_figure_console/modipa_erogazione_richiesta.png
+   :scale: 70%
+   :name: erogazione_richiesta_fig
 
- Dati per la configurazione della sicurezza messaggio sulla richiesta di una erogazione
+   Dati per la configurazione della sicurezza messaggio sulla richiesta di una erogazione
 
 
 - ModI - Risposta (:numref:`erogazione_risposta_fig`): la maschera prevede la configurazione del meccanismo di firma digitale del messaggio di risposta, e la produzione del relativo token di sicurezza, da inviare all'applicativo mittente:
@@ -35,24 +45,19 @@ Per la configurazione di erogazioni basate su una API con pattern "ID_AUTH_REST_
     + Keystore: il keystore da utilizzare per la firma del messaggio di risposta. È possibile mantenere il riferimento al keystore di default, fornito in fase di installazione del prodotto, oppure indicare un diverso riferimento (opzione "Ridefinito") fornendo il path sul filesystem, o in alternativa direttamente l'archivio, unitamente a Tipo, Password, Alias Chiave Privata e Password Chiave Privata.
     + Time to Live (secondi): validità temporale del token prodotto.
 
-.. figure:: ../../../../_figure_console/modipa_erogazione_risposta.png
- :scale: 70%
- :name: erogazione_risposta_fig
+  .. figure:: ../../../../_figure_console/modipa_erogazione_risposta.png
+   :scale: 70%
+   :name: erogazione_risposta_fig
 
- Dati per la configurazione della sicurezza messaggio sulla risposta di una erogazione
+   Dati per la configurazione della sicurezza messaggio sulla risposta di una erogazione
 
+**Identificazione ed Autorizzazione dei fruitori**
 
-Nel contesto dei pattern di sicurezza messaggio è possibile registrare anche gli applicativi dei domini esterni al fine di:
+È possibile registrare gli applicativi dei domini esterni al fine di:
 
 1. identificare puntualmente le componenti esterne coinvolte nella comunicazione abilitando le funzionalità di tracciamento e statistica per tali elementi.
-2. abilitare le funzionalità di autorizzazione sugli applicativi identificando puntualmente chi autorizzare dopo il superamento del processo di autenticazione/autorizzazione canale e validazione del token di sicurezza (:numref:`ErogazioneModIPA_autorizzazione`).
+2. abilitare le funzionalità di autorizzazione sugli applicativi identificando puntualmente chi autorizzare dopo il superamento del processo di autenticazione/autorizzazione canale e validazione del token di sicurezza.
 
-.. figure:: ../../../../_figure_console/ErogazioneModIPA_autorizzazione.jpg
- :scale: 70%
- :align: center
- :name: ErogazioneModIPA_autorizzazione
-
- Erogazione con Profilo di Interoperabilità 'ModI' e criteri di autorizzazione puntuali
 
 Per abilitare quanto al punto 1 è sufficiente la sola registrazione degli applicativi esterni coinvolti (:numref:`applicativo_esterno_fig`).
 

@@ -2217,8 +2217,10 @@ public class ModiErogazioniApiHelper {
 				List<String> claimsDefiniti = getInformazioniAudit(fruizioneConf.schemaAudit);
 				
 				for (FruizioneModIRichiestaInformazioneUtenteAudit info : sicurezzaMessaggioRichiesta.getAudit().getInformazioni()) {
-					addInformazioniUtente(info, p, fruizioneConf, claimsDefiniti);		
-					infoAuditRequired.remove(info.getNome());
+					if(info!=null) {
+						addInformazioniUtente(info, p, fruizioneConf, claimsDefiniti);		
+						infoAuditRequired.remove(info.getNome());
+					}
 				}
 			}
 			
@@ -2936,8 +2938,10 @@ public class ModiErogazioniApiHelper {
 				List<String> claimsDefiniti = getInformazioniAudit(fruizioneConf.schemaAudit);
 				
 				for (FruizioneModIRichiestaInformazioneUtenteAudit info : sicurezzaMessaggioRichiesta.getAudit().getInformazioni()) {
-					addInformazioniUtente(info, p, fruizioneConf, claimsDefiniti);	
-					infoAuditRequired.remove(info.getNome());
+					if(info!=null) {
+						addInformazioniUtente(info, p, fruizioneConf, claimsDefiniti);	
+						infoAuditRequired.remove(info.getNome());
+					}
 				}
 			}
 			

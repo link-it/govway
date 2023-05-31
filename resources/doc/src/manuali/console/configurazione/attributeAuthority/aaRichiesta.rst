@@ -26,7 +26,15 @@ La sezione seguente consente di definire come GovWay debba formare la richiesta 
 
 Nel caso di richiesta di tipo *JWS* si devono fornire le informazioni necessarie a produrre il JWT firmato così suddivise:
 
--  *JWS KeyStore*: dati di accesso al keystore contenente la chiave privata ed il certificato da utilizzare per firmare il JWT.
+-  *JWS KeyStore*: consente di fornire i parametri di accesso al keystore contenente la chiave privata ed il certificato da utilizzare per firmare, tramite una dei seguenti tipi:
+
+	- 'JKS' o 'PKCS12': viene richiesta l'indicazione del path assoluto del keystore nel campo *File*, la definizione della password per l'accesso al keystore nel campo *Password*, l'alias con cui è riferita la chiave privata nel keystore nel campo *Alias Chiave Privata* e la password della chiave privata nel campo *Password Chiave Privata*;
+
+	- 'JWK Set': deve essere definito il path su filesystem dove risiede l'archivio json nel formato 'JWK Set' e l'identificativo 'kid' (alias) con cui è riferita la chiave privata nel campo *Alias Chiave Privata*;
+
+	- 'Key Pair': deve essere definito il path su filesystem dove risiedono la chiave privata e pubblica in formato PEM o DER (sono supportati sia i formati pkcs1 che pkcs8) e la password della chiave privata se cifrata nel campo *Password Chiave Privata*;
+
+	- Tipi PKCS11: i tipi disponibili sono quelli corrispondenti ai tipi di keystore PKCS11 registrati (':ref:`pkcs11`').
 
 -  *JWS Header*: consente di indicare quali dati debbano essere inseriti nella parte header (non firmati) del JWT; tra i parametri impostabili vi sono l'algoritmo di firma e l'indicazione se deve essere inserito il certificato utilizzato per la firma nell'header (x5c).
 

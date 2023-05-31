@@ -18,7 +18,7 @@ Per attuare la configurazione è necessario agire nella sezione "ModI - Richiest
 
 - KeyStore: deve essere selezionata la voce 'Definito nella fruizione' e successivamente vanno configurati i riferimenti al keystore da utilizzare per la firma:
 
-	- utilizzando il keystore di default (riferimenti descritti in :ref:`modipa_passiPreliminari`) non vengono richiesti ulteriori parametri (:numref:`modipa_fruizione_keystore_default`);
+	- utilizzando il keystore di default (riferimenti descritti in :ref:`modipa_passiPreliminari_keystore`) non vengono richiesti ulteriori parametri (:numref:`modipa_fruizione_keystore_default`);
 	- ridefinendo il keystore dovranno essere indicati i seguenti parametri (:numref:`modipa_fruizione_keystore_ridefinito`):
 
     		+ *Modalità*: il keystore può essere fornito tramite differenti modalità

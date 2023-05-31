@@ -5,15 +5,15 @@ Signed JWT
 
 Nel caso di modalità di negoziazione basata su uno scambio di un JWT firmato con l'authorization server si dovranno fornire tutti i parametri che andranno a definire il JWT firmato.
 
-Innanzitutto se la modalità prevede una firma tramite chiave asimmetrica devono essere forniti i parametri di accesso ad un keystore contenente la chiave privata da utilizzare per la firma:
+Innanzitutto se la modalità prevede una firma tramite chiave asimmetrica devono essere forniti i parametri di accesso ad un keystore contenente la chiave privata da utilizzare per la firma tramite una dei seguenti tipi:
 
--  *Tipo*: tipo del keystore selezionabile tra JKS, PKCS12, JWK o uno dei tipi di keystore PKCS11 registrati (':ref:`pkcs11`');
+	- 'JKS' o 'PKCS12': viene richiesta l'indicazione del path assoluto del keystore nel campo *File*, la definizione della password per l'accesso al keystore nel campo *Password*, l'alias con cui è riferita la chiave privata nel keystore nel campo *Alias Chiave Privata* e la password della chiave privata nel campo *Password Chiave Privata*;
 
--  *File*: path assoluto al keystore;
+	- 'JWK Set': deve essere definito il path su filesystem dove risiede l'archivio json nel formato 'JWK Set' e l'identificativo 'kid' (alias) con cui è riferita la chiave privata nel campo *Alias Chiave Privata*;
 
--  *Password*: password del keystre;
+	- 'Key Pair': deve essere definito il path su filesystem dove risiedono la chiave privata e pubblica in formato PEM o DER (sono supportati sia i formati pkcs1 che pkcs8) e la password della chiave privata se cifrata nel campo *Password Chiave Privata*;
 
--  *Alias Chiave Privata* e *Password Chiave Privata*: alias con cui è stata registrata la chiave nel keystore e eventuale password.
+	- Tipi PKCS11: i tipi disponibili sono quelli corrispondenti ai tipi di keystore PKCS11 registrati (':ref:`pkcs11`').
 
 Nella sezione 'JWT Signature' si deve indicare l'algoritmo di firma e l'eventuale chiave segreta nel caso in cui sia prevista una firma tramite chiave simmetrica.
 

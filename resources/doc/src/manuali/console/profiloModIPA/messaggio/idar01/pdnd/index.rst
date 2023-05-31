@@ -21,7 +21,7 @@ Per ottenere un token, un applicativo mittente deve:
 
 L'adozione del pattern ID_AUTH_REST_01 rilasciato dalla PDND consente alla ricezione di un messaggio di effettuare i medesimi controlli attuati su un token conforme al pattern descritto nella sezione ':ref:`modipa_idar01`' con la differenza che il token non è più firmato dall'applicativo mittente ma bensì dall'authorization server della PDND e l'identificazione dell'applicativo chiamante non è più attuabile tramite il certificato fornito nell'header del JWT tramite claim 'x5c/x5t/x5u' ma bensì tramite l'identificativo presente nel claim 'client_id'.
 
-Di seguito vengono forniti i dettagli di configurazione necessari ad utilizzare la PDND come fruitore o erogatore di un servizio.
+Di seguito vengono forniti i dettagli di configurazione necessari ad utilizzare la PDND negli scenari di fruizione o erogazione di un servizio.
 
 .. toctree::
    :maxdepth: 2
