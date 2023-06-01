@@ -1,6 +1,6 @@
 .. _modipa_sicurezzaMessaggio_ida01:
 
-[ID_AUTH_SOAP_01 / ID_AUTH_REST_01]
+ID_AUTH_SOAP_01 / ID_AUTH_REST_01
 ------------------------------------
 
 Il pattern ID_AUTH nelle sue varie declinazioni ha lo scopo di identificare e autorizzare l'accesso del fruitore ad un servizio.

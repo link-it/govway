@@ -98,6 +98,13 @@ Per abilitare il processamento degli header inoltrati dal frontend è necessario
       # Policy OCSP utilizzata per verificare i certificati ricevuti
       org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.truststore.ocspPolicy=INDICARE_TIPO_POLICY
 
+   Se il web server di frontend, anche nel caso il chiamante non presenta un certificato client, inoltra comunque l'header indicato nella proprietà 'org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate' valorizzato con una costante che rappresenta l'assenza del certificato, tramite la proprietà seguente è possibile configurare GovWay su questo aspetto:
+
+   ::
+
+      # Se la proprietà seguente viene valorizzata, il valore indicato specifica una keyword utilizzata dal web server di frontend per indicare che non è presente alcun certificato client
+      org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.none=COSTANTE_UTILIZZATA_INDICARE_NESSUN_CERTIFICATO_CLIENT
+
 #. Se il frontend inserisce in un header http il principal dell'identità relativa al chiamante, deve essere indicato il nome di tale header tramite la seguente configurazione:
 
    ::

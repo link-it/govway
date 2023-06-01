@@ -1,6 +1,6 @@
 .. _modipa_sicurezzaMessaggio_ida03:
 
-[INTEGRITY_SOAP_01 / INTEGRITY_REST_01 / INTEGRITY_REST_02 ]
+INTEGRITY_SOAP_01 / INTEGRITY_REST_01 / INTEGRITY_REST_02
 ------------------------------------------------------------
 
 Il pattern INTEGRITY nelle sue varie declinazioni ha lo scopo di garantire l'integrità del payload del messaggio.

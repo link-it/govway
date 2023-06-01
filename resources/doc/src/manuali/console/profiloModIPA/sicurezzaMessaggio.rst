@@ -5,13 +5,19 @@ Sicurezza Messaggio
 
 Il pattern di sicurezza sul messaggio definisce le modalità di comunicazione dei messaggi tra componenti interne  ai domini delle entità coinvolte. Tali pattern sono distinti per il caso SOAP e per quello REST:
 
-- *[ID_AUTH_SOAP_01 o ID_AUTH_REST_01] Direct Trust con certificato X.509 su SOAP o REST*: Tramite la validazione del certificato X509, inserito dall'applicazione mittente nel token di sicurezza, l'applicativo destinatario verifica la corrispondenza delle identità e la validità del messaggio, prima di procedere con il processamento del messaggio. Con l'aggiornamento delle linee guida nella 'Determinazione n. 128 del 23 maggio 2023' il pattern ID_AUTH_REST_01 (utilizzabile anche per API SOAP) indica dove possibile di utilizzare la Piattaforma Digitale Nazionale Dati (PDND) per l’interoperabilità dove la costituzione del trust avviene tramite il materiale crittografico depositato applicando i profili di emissione dei voucher previsti.
+- *ID_AUTH_SOAP_01 o ID_AUTH_REST_01 - Direct Trust con certificato X.509 su SOAP o REST*: tramite la validazione del certificato X509, inserito dall'applicazione mittente nel token di sicurezza, l'applicativo destinatario verifica la corrispondenza delle identità e la validità del messaggio, prima di procedere con il processamento del messaggio attraverso un trust tra fruitore e erogatore basato su certificati x509.
 
-- *[ID_AUTH_SOAP_02 o ID_AUTH_REST_02]  Direct  Trust  con  certificato  X.509  su  SOAP o REST  con  unicità  del messaggio/token*: estensione del pattern precedente con l'aggiunta di un meccanismo di filtro che impedisce il processamento di un messaggio duplicato.
+- *ID_AUTH_REST_01 tramite la Piattaforma Digitale Nazionale Dati (PDND)*: con l'aggiornamento delle linee guida nella 'Determinazione n. 128 del 23 maggio 2023', viene indicato di utilizzare la PDND per ottenere un token conforme al pattern ID_AUTH_REST_01; la costituzione del trust avviene attraverso il materiale crittografico depositato sulla PDND applicando i profili di emissione dei voucher previsti.
 
-- *[INTEGRITY_SOAP_01 o INTEGRITY_REST_01] Integrità del payload del messaggio SOAP o REST*: pattern che estende i precedenti aggiungendo la gestione della firma del payload come verifica di integrità del messaggio ricevuto.
+- *ID_AUTH_SOAP_02 o ID_AUTH_REST_02 - Direct Trust con certificato X.509 su SOAP o REST con unicità del messaggio/token*: estensione dei pattern precedenti con l'aggiunta di un meccanismo di filtro che impedisce il processamento di un messaggio duplicato.
 
-- *[INTEGRITY_REST_02] Integrità del payload delle request REST in PDND*: simile al precedente pattern INTEGRITY_REST_01, assume che il trust avvenga tramite il materiale crittografico depositato sulla Piattaforma Digitale Nazionale Dati (PDND) applicando i profili di emissione dei voucher previsti. All'interno del token viene indicato l'identificativo della chiave pubblica (kid) associata alla chiave privata utilizzata dal client per firmare il token; identificativo kid generato dalla PDND e recuperabile dall'erogatore tramite le API messe a disposizione dalla PDND stessa.
+- *INTEGRITY_SOAP_01 o INTEGRITY_REST_01 - Integrità del payload del messaggio SOAP o REST*: pattern che estende i precedenti aggiungendo la gestione della firma del payload come verifica di integrità del messaggio ricevuto.
+
+- *INTEGRITY_REST_02 - Integrità del payload delle request REST in PDND*: simile al precedente pattern INTEGRITY_REST_01, assume che il trust avvenga tramite il materiale crittografico depositato sulla PDND applicando i profili di emissione dei voucher previsti. All'interno del token viene indicato l'identificativo della chiave pubblica (kid) associata alla chiave privata utilizzata dal client per firmare il token di integrità; identificativo kid generato dalla PDND e recuperabile dall'erogatore tramite le API messe a disposizione dalla PDND stessa.
+
+- *PROFILE_NON_REPUDIATION_01 - Profilo per la non ripudiabilità della trasmissione*: estende i pattern di integrità allo scopo di fornire una conferma al fruitore da parte dell’erogatore della ricezione del contenuto della richiesta. Descrive inoltre la necessità di definire un arco temporale di persistenza dei messaggi utile per soddisfare l opponibilità ai terzi.
+
+- *AUDIT_REST_01 o AUDIT_REST_02 - Inoltro dati tracciati nel dominio del Fruitore*: consente all'erogatore di identificare la specifica provenienza di ogni singola richiesta di accesso ai dati effettuta dal fruitore. 
 
 Le applicazioni di un dominio interno o esterno, descritte negli scenari del Modello di Interoperabilità, vengono rappresentate in GovWay tramite la registrazione di Applicativi come entità di configurazione. In accordo al modello di GovWay, ciascun applicativo è associato al soggetto di riferimento che, nell'ottica ModI, rappresenta il dominio di appartenenza. Un applicativo viene identificato attraverso il criterio di trust del pattern di sicurezza scelto:
 
@@ -80,5 +86,5 @@ Nella figura ':numref:`ErogazioneModIPA`' viene invece raffigurato lo scenario d
         messaggio/idar02/index
         messaggio/idar03/index
 	messaggio/requestDigest
-	messaggio/informazioniUtente
+	messaggio/audit/index
 	messaggio/avanzata/index

@@ -1,6 +1,6 @@
 .. _modipa_idar01:
 
-[ID_AUTH_SOAP_01 / ID_AUTH_REST_01] Direct Trust con certificato X.509
+ID_AUTH_SOAP_01 / ID_AUTH_REST_01 - Direct Trust con certificato X.509
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. note::

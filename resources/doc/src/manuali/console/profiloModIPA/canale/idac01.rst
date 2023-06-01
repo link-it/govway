@@ -1,6 +1,6 @@
 .. _modipa_idac01:
 
-[ID_AUTH_CHANNEL_01] Direct Trust Transport-Level Security
+ID_AUTH_CHANNEL_01 - Direct Trust Transport-Level Security
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Questo pattern di sicurezza prevede l'utilizzo del canale HTTPS, per le comunicazioni sul confine tra i due domini, con validazione del certificato dell'ente destinatario della comunicazione.

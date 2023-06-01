@@ -1,6 +1,6 @@
 .. _modipa_idar03:
 
-[INTEGRITY_SOAP_01 / INTEGRITY_REST_01] Integrità payload del messaggio
+INTEGRITY_SOAP_01 / INTEGRITY_REST_01 - Integrità payload del messaggio
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. note::

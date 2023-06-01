@@ -1,6 +1,6 @@
 .. _modipa_idar04:
 
-[INTEGRITY_REST_02] Integrità del payload delle request REST in PDND
+INTEGRITY_REST_02 - Integrità del payload delle request REST in PDND
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Questo pattern di sicurezza consente di estendere il pattern "ID_AUTH_REST_01" aggiungendo un meccanismo che garantisce l'integrità del payload del messaggio.
