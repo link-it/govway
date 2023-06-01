@@ -778,6 +778,8 @@ public final class CostantiDB {
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD = "old";
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA = "modipaSecurityMessageCorniceSicurezzaSchema";
+
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_OPZIONALE = "modipaSecurityMessageCorniceSicurezzaOpzionale";
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST = "modipaSecurityMessageRequestDigest";
 

@@ -371,6 +371,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 					boolean corniceSicurezza = ModIPropertiesUtils.isPropertySecurityMessageConCorniceSicurezza(aspc, nomePortType, azione);
 					String patternCorniceSicurezza = null;
 					String schemaCorniceSicurezza = null;
+					boolean corniceSicurezzaOpzionale = false;
 					if(corniceSicurezza) {
 						patternCorniceSicurezza = ModIPropertiesUtils.readPropertySecurityMessageCorniceSicurezzaPattern(aspc, nomePortType, azione);
 						if(patternCorniceSicurezza==null) {
@@ -379,6 +380,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 						}
 						if(!ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_VALUE_OLD.equals(patternCorniceSicurezza)) {
 							schemaCorniceSicurezza = ModIPropertiesUtils.readPropertySecurityMessageCorniceSicurezzaSchema(aspc, nomePortType, azione);
+							corniceSicurezzaOpzionale = ModIPropertiesUtils.isPropertySecurityMessageCorniceSicurezzaOpzionale(aspc, nomePortType, azione);
 						}
 					}
 					
@@ -818,11 +820,13 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 						try {
 							msgDiag.logPersonalizzato("validateTokenAudit.richiesta.inCorso");
 						
+							boolean securityHeaderObbligatorio = !corniceSicurezzaOpzionale;
+							
 							String tokenAudit = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfileAudit, useKIDforAudit, headerTokenAudit, 
 									corniceSicurezza, patternCorniceSicurezza, schemaCorniceSicurezza,
 									false, bustaRitornata, 
 									erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfig,
-									buildSecurityTokenInRequest, ModIHeaderType.SINGLE, integritaCustom, true,
+									buildSecurityTokenInRequest, ModIHeaderType.SINGLE, integritaCustom, securityHeaderObbligatorio,
 									dynamicMap, datiRichiesta);
 							
 							if(tokenAudit!=null){

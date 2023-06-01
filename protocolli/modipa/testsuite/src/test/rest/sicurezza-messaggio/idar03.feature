@@ -200,6 +200,37 @@ And match response == read('error-bodies/manomissione-header-http-firmati-rispos
 And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidResponse'
 
 
+
+
+@assenza-header-integrity-richiesta
+Scenario: Il proxy rimuove lo header integrity per far arrabbiare l'erogazione
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03/v1"
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'assenza-header-integrity-richiesta'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 502
+
+
+@assenza-header-integrity-risposta
+Scenario: Il proxy rimuove lo header Digest per far arrabbiare la fruizione
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03/v1"
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'assenza-header-integrity-risposta'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 502
+And match response == read('error-bodies/assenza-header-integrity-risposta.json')
+And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidResponse'
+
+
+
+
+
 @assenza-header-digest-richiesta
 Scenario: Il proxy rimuove lo header Digest per far arrabbiare l'erogazione
 

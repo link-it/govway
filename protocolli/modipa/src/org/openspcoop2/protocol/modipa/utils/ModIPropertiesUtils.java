@@ -136,6 +136,10 @@ public class ModIPropertiesUtils {
 	public static String readPropertySecurityMessageCorniceSicurezzaSchema(AccordoServizioParteComune aspc, String nomePortType, String azione) throws ProtocolException {
 		return readPropertyEngine(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA);
 	}
+	public static boolean isPropertySecurityMessageCorniceSicurezzaOpzionale(AccordoServizioParteComune aspc, String nomePortType, String azione) throws ProtocolException {
+		String tmp = readPropertyEngine(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_OPZIONALE);
+		return tmp!=null && Boolean.valueOf(tmp);
+	}
 	public static boolean isPropertySecurityMessageIncludiRequestDigest(AccordoServizioParteComune aspc, String nomePortType, String azione) throws ProtocolException {
 		String tmp = readPropertyEngine(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST);
 		return tmp!=null && Boolean.valueOf(tmp);

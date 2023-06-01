@@ -35,8 +35,10 @@ Background:
 Scenario: isTest('connettivita-base') || isTest('connettivita-base-default-trustore') || isTest('connettivita-base-truststore-ca') || 
 	isTest('disabled-security-on-action') || isTest('enabled-security-on-action') || 
 	isTest('riferimento-x509-x5u-x5t') || isTest('riferimento-x509-x5u-x5t-client2') || isTest('riferimento-x509-x5t-x5u') || isTest('riferimento-x509-x5cx5t-x5cx5t') || 
-	isTest('manomissione-payload-risposta') || isTest('doppi-header-manomissione-payload-risposta') || isTest('doppi-header-assenza-header-digest-risposta') || 
-	isTest('doppi-header-assenza-header-authorization-risposta') || isTest('doppi-header-assenza-header-agid-jwt-signature-risposta') || 
+	isTest('manomissione-payload-risposta') || isTest('doppi-header-manomissione-payload-risposta') || 
+	isTest('doppi-header-assenza-header-digest-risposta') || 
+	isTest('doppi-header-assenza-header-authorization-risposta') || 
+	isTest('doppi-header-assenza-header-agid-jwt-signature-risposta') || 
 	isTest('doppi-header-audience-risposta-authorization-non-valida-rispetto-client') || isTest('doppi-header-audience-risposta-agid-jwt-signature-non-valida-rispetto-client') || 
 	isTest('doppi-header-audience-risposta-differente-audience-valida-rispetto-client') ||
 	isTest('doppi-header-audience-risposta-differente-audience-non-valida-rispetto-client') ||
@@ -164,7 +166,7 @@ Scenario: isTest('connettivita-base-idar03-header-bearer')
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
 
-Scenario: isTest('assenza-header-digest-risposta')
+Scenario: isTest('assenza-header-integrity-risposta') || isTest('assenza-header-digest-risposta')
     
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
@@ -587,6 +589,8 @@ Scenario: isTest('connettivita-base-idar04-jwk-ApplicativoBlockingIDA01') ||
 		isTest('manomissione-payload-risposta-idar04-pdnd') ||
 		isTest('manomissione-header-http-firmati-risposta-idar04-jwk') ||
 		isTest('manomissione-header-http-firmati-risposta-idar04-pdnd') ||
+		isTest('assenza-header-integrity-risposta-idar04-jwk') ||
+		isTest('assenza-header-integrity-risposta-idar04-pdnd') ||
 		isTest('assenza-header-digest-risposta-idar04-jwk') ||
 		isTest('assenza-header-digest-risposta-idar04-pdnd') ||
 		isTest('idar04-token-risposta-jwk') ||
@@ -700,7 +704,8 @@ Scenario: isTest('idar04-custom-header-pdnd')
 Scenario: isTest('audit-rest-jwk-01')  || 
 		isTest('audit-rest-jwk-02') ||
 		isTest('audit-rest-jwk-custom-01') || 
-		isTest('audit-rest-jwk-custom-02')
+		isTest('audit-rest-jwk-custom-02') ||
+		isTest('audit-rest-jwk-token-optional-01')
 
     * match requestHeaders['Authorization'] == '#notpresent'
     * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
@@ -784,6 +789,16 @@ Scenario: isTest('audit-rest-jwk-criteri-autorizzativi-ok-01')
     * match requestHeaders['GovWay-Audit-UserLocation'][0] == 'ip-utente-token'
     * match requestHeaders['GovWay-Audit-LoA'][0] == 'livello-autenticazione-utente-token'
     * match requestHeaders['audit-test-security-token-kid'][0] == 'KID-ApplicativoBlockingIDA01'
+    * def responseStatus = 200
+    * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+
+Scenario: isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01')
+
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
+    * match requestHeaders['GovWay-Audit-UserID'] == '#notpresent'
+    * match requestHeaders['GovWay-Audit-UserLocation'] == '#notpresent'
+    * match requestHeaders['GovWay-Audit-LoA'] == '#notpresent'
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 

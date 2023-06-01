@@ -336,6 +336,64 @@ Examples:
 
 
 
+
+
+@assenza-header-integrity-richiesta
+Scenario Outline: Il proxy rimuove lo header integrity per far arrabbiare l'erogazione (<tipo-test>; <descrizione>)
+
+Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR04-<tipo-test>/v1'
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'assenza-header-integrity-richiesta-idar04-<tipo-test-minuscolo>'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header IDAR04TestHeader = "TestHeaderRequest"
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = 'RestBlockingIDAR04-<tipo-test>/v1'
+
+When method post
+Then status 400
+
+Examples:
+| tipo-test | tipo-test-minuscolo | descrizione | tipo-keystore-client | username | password | purposeId | 
+| JWK | jwk | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 |
+| PDND | pdnd | servizio che genera una risposta tramite jwk. La validazione dei certificati token è basata su PDND | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 |
+
+
+
+
+@assenza-header-integrity-risposta
+Scenario Outline: Il proxy rimuove lo header integrity per far arrabbiare la fruizione (<tipo-test>; <descrizione>)
+
+Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR04-<tipo-test>/v1'
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'assenza-header-integrity-risposta-idar04-<tipo-test-minuscolo>'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header IDAR04TestHeader = "TestHeaderRequest"
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = 'RestBlockingIDAR04-<tipo-test>/v1'
+
+When method post
+Then status 502
+And match response == read('error-bodies/assenza-header-integrity-risposta.json')
+And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidResponse'
+
+Examples:
+| tipo-test | tipo-test-minuscolo | descrizione | tipo-keystore-client | username | password | purposeId | 
+| JWK | jwk | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 |
+| PDND | pdnd | servizio che genera una risposta tramite jwk. La validazione dei certificati token è basata su PDND | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 |
+
+
+
+
+
+
+
+
 @assenza-header-digest-richiesta
 Scenario Outline: Il proxy rimuove lo header Digest per far arrabbiare l'erogazione (<tipo-test>; <descrizione>)
 

@@ -383,6 +383,10 @@ public class ModIConsoleCostanti {
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA_INFO_HEADER = "Il pattern selezionato consente di aggiungere all’interno del token di sicurezza di Audit le informazioni sul fruitore che ha effettuato la richiesta. Le informazioni sono veicolate nei seguenti claims:";   
     
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_OPZIONALE_LABEL = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_OPZIONALE_LABEL;
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_OPZIONALE_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_OPZIONALE;
+    public static final boolean MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_OPZIONALE_DEFAULT_VALUE = false;
+    
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_REST_INFO_HEADER = "Questa funzionalità consente di estendere il pattern aggiungendo all’interno del token di sicurezza le informazioni sull’utente che ha effettuato la richiesta. Le informazioni sono veicolate nei seguenti claims:";
     private static final List<String> MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_REST_INFO_VALORI = new ArrayList<>();
 	public static List<String> getModipaProfiloSicurezzaMessaggioCorniceSicurezzaRestInfoValori() {

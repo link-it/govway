@@ -765,6 +765,41 @@ Examples:
 
 
 
+@audit-non-fornito-erogazione
+Scenario Outline: il token audit non viene fornito; <tipo-test> pattern:<sicurezzaPattern> audit:<auditPattern> (<descrizione>)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path 'idar01', 'oauth'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'delete'
+And header GovWay-Audit-User = "utente-token"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 400
+And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/audit-non-presente-erogazione.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-TrackingEvidence == '#notpresent'
+
+
+Examples:
+| tipo-test | tipo-test-minuscolo | nome-api-impl | auditPattern | sicurezzaPattern | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId |
+| JWK | jwk-audit-non-fornito-erogazione-01 | RestBlockingAuditRest01 | AUDIT_REST_01 | IDAR01 | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 |
+| JWK | jwk-audit-non-fornito-erogazione-02 | RestBlockingAuditRest02 | AUDIT_REST_02 | IDAR02 | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | jwk | ApplicativoBlockingJWK | ApplicativoBlockingJWK | purposeId-ApplicativoBlockingJWK | KID-ApplicativoBlockingJWK | DemoSoggettoFruitore/KidOnly/ApplicativoBlockingJWK |
+
+
+
+
+
+
+
+
 @informazioni-utente-custom
 Scenario Outline: Giro Ok con informazioni utente passate negli header http e parametri della url custom <tipo-test> pattern:<sicurezzaPattern> audit:<auditPattern> (<descrizione>)
 
@@ -1277,3 +1312,135 @@ Examples:
 | tipo-test | tipo-test-minuscolo | nome-api-impl | auditPattern | sicurezzaPattern | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId |
 | JWK | jwk-criteri-autorizzativi-ko-01 | RestBlockingAuditRest01 | AUDIT_REST_01 | IDAR01 | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | jwk | ApplicativoBlockingJWK | ApplicativoBlockingJWK | purposeId-ApplicativoBlockingJWK | KID-ApplicativoBlockingJWK | DemoSoggettoFruitore/KidOnly/ApplicativoBlockingJWK |
 
+
+
+
+
+
+@informazioni-utente-token-optional-fornito
+Scenario Outline: Giro Ok con informazioni utente passate negli header http (token configurato come opzionale, ma fornito) <tipo-test> pattern:<sicurezzaPattern> audit:<auditPattern> (<descrizione>)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path 'idar01', 'oauth'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-User = "utente-token"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
+* def client_audit_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0], "AGID")
+
+* def clientIdExpected = '<clientId>'
+* def subExpected = '<username>'
+* def issExpected = '<clientId>'
+
+* def other_checks_authorization_richiesta = 
+"""
+([
+])
+"""
+
+* def audExpected = '<nome-api-impl>-<tipo-test>/v1'
+
+* def kidRequest = '<kid>'
+
+* def other_checks_richiesta = 
+"""
+([
+    { name: 'GenerazioneTokenIDAuth', value: 'Authorization OAuth' },
+    { name: 'ProfiloSicurezzaMessaggioAudit-Issuer', value: issExpected },
+    { name: 'ProfiloSicurezzaMessaggioAudit-userID', value: 'utente-token' },
+    { name: 'ProfiloSicurezzaMessaggioAudit-userLocation', value: 'ip-utente-token' },
+    { name: 'ProfiloSicurezzaMessaggioAudit-LoA', value: 'livello-autenticazione-utente-token' },
+    { name: 'ProfiloSicurezzaMessaggioAudit-Audience', value: audExpected },
+    { name: 'ProfiloSicurezzaMessaggioAudit-Issuer', value: client_audit_token.payload.iss },
+    { name: 'ProfiloSicurezzaMessaggioAudit-Kid', value: kidRequest }
+])
+"""
+
+* def auditPattern = '<auditPattern>'
+
+* def sicurezzaPattern = '<sicurezzaPattern>'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth' })
+* call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth' })
+* call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+
+
+Examples:
+| tipo-test | tipo-test-minuscolo | nome-api-impl | auditPattern | sicurezzaPattern | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId |
+| JWK | jwk-token-optional-01 | RestBlockingAuditRest01TokenAuditOptional | AUDIT_REST_01 | IDAR01 | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 |
+
+
+
+
+@informazioni-utente-token-optional-non-fornito-erogazione
+Scenario Outline: Giro Ok con informazioni utente passate negli header http (token configurato come opzionale, nel proxy viene eliminato prima di inoltrarlo all'erogazione) <tipo-test> pattern:<sicurezzaPattern> audit:<auditPattern> (<descrizione>)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path 'idar01', 'oauth-noaudit'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
+
+* def clientIdExpected = '<clientId>'
+* def subExpected = '<username>'
+* def issExpected = '<clientId>'
+
+* def other_checks_authorization_richiesta = 
+"""
+([
+])
+"""
+
+* def audExpected = '<nome-api-impl>-<tipo-test>/v1'
+
+* def kidRequest = '<kid>'
+
+* def other_checks_richiesta = 
+"""
+([
+    { name: 'GenerazioneTokenIDAuth', value: 'Authorization OAuth' }
+])
+"""
+
+* def auditPattern = '<auditPattern>'
+
+* def sicurezzaPattern = '<sicurezzaPattern>'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth' })
+
+
+Examples:
+| tipo-test | tipo-test-minuscolo | nome-api-impl | auditPattern | sicurezzaPattern | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId |
+| JWK | jwk-token-optional-non-fornito-erogazione-01 | RestBlockingAuditRest01TokenAuditOptional | AUDIT_REST_01 | IDAR01 | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 |

@@ -441,6 +441,15 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 			}
 			configuration.addConsoleItem(profiloSicurezzaCorniceSicurezzaSchemaItem);
 		}
+		
+		BooleanConsoleItem profiloSicurezzaMessaggioCorniceSicurezzaOpzionale = (BooleanConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.BOOLEAN,
+				ConsoleItemType.CHECKBOX,
+				ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_OPZIONALE_ID,
+				ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_OPZIONALE_LABEL);
+		profiloSicurezzaMessaggioCorniceSicurezzaOpzionale.setDefaultValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_OPZIONALE_DEFAULT_VALUE);
+		profiloSicurezzaMessaggioCorniceSicurezzaOpzionale.setReloadOnChange(false);
+		configuration.addConsoleItem(profiloSicurezzaMessaggioCorniceSicurezzaOpzionale);
 
 	}
 	
@@ -1066,7 +1075,12 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 		
 		StringConsoleItem profiloSicurezzaMessaggioCorniceSicurezzaSchemaItem = (StringConsoleItem)
 				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA_ID);
-		StringProperty profiloSicurezzaMessaggioCorniceSicurezzaSchematemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA_ID);
+		StringProperty profiloSicurezzaMessaggioCorniceSicurezzaSchemaItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA_ID);
+		
+		BooleanConsoleItem profiloSicurezzaMessaggioCorniceSicurezzaOpzionaleItem = (BooleanConsoleItem)
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_OPZIONALE_ID);
+		BooleanProperty profiloSicurezzaMessaggioCorniceSicurezzaOpzionaleItemValue = (BooleanProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_OPZIONALE_ID);
+		
 		
 		boolean infoUtenteAbilitata = profiloSicurezzaMessaggioCorniceSicurezzaItemValue!=null && profiloSicurezzaMessaggioCorniceSicurezzaItemValue.getValue()!=null &&
 				profiloSicurezzaMessaggioCorniceSicurezzaItemValue.getValue().booleanValue();
@@ -1133,18 +1147,18 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 							ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_VALUE_OLD.equals(profiloSicurezzaMessaggioCorniceSicurezzaPatternItemValue.getValue())) {
 						profiloSicurezzaMessaggioCorniceSicurezzaSchemaItem.setType(ConsoleItemType.HIDDEN);
 						profiloSicurezzaMessaggioCorniceSicurezzaSchemaItem.setInfo(null);
-						if(profiloSicurezzaMessaggioCorniceSicurezzaSchematemValue!=null) {
-							profiloSicurezzaMessaggioCorniceSicurezzaSchematemValue.setValue(null);
+						if(profiloSicurezzaMessaggioCorniceSicurezzaSchemaItemValue!=null) {
+							profiloSicurezzaMessaggioCorniceSicurezzaSchemaItemValue.setValue(null);
 						}
 					}
 					else {
 						
 						profiloSicurezzaMessaggioCorniceSicurezzaSchemaItem.setType(ConsoleItemType.SELECT);
 						
-						String schemaSelected = profiloSicurezzaMessaggioCorniceSicurezzaSchematemValue!=null ? profiloSicurezzaMessaggioCorniceSicurezzaSchematemValue.getValue() : null;
-						if( (schemaSelected==null || StringUtils.isEmpty(schemaSelected)) && profiloSicurezzaMessaggioCorniceSicurezzaSchematemValue!=null) {
+						String schemaSelected = profiloSicurezzaMessaggioCorniceSicurezzaSchemaItemValue!=null ? profiloSicurezzaMessaggioCorniceSicurezzaSchemaItemValue.getValue() : null;
+						if( (schemaSelected==null || StringUtils.isEmpty(schemaSelected)) && profiloSicurezzaMessaggioCorniceSicurezzaSchemaItemValue!=null) {
 							schemaSelected = listConfig.get(0).getNome();
-							profiloSicurezzaMessaggioCorniceSicurezzaSchematemValue.setValue(schemaSelected);
+							profiloSicurezzaMessaggioCorniceSicurezzaSchemaItemValue.setValue(schemaSelected);
 						}
 						
 						if(schemaSelected!=null && StringUtils.isNotEmpty(schemaSelected)) {
@@ -1176,6 +1190,20 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 				}
 				
 			}
+			
+			if(profiloSicurezzaMessaggioCorniceSicurezzaOpzionaleItem!=null) {
+				
+				String pattern = profiloSicurezzaMessaggioCorniceSicurezzaPatternItemValue!=null ? profiloSicurezzaMessaggioCorniceSicurezzaPatternItemValue.getValue() : null;
+				if(pattern==null || ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_VALUE_OLD.equals(profiloSicurezzaMessaggioCorniceSicurezzaPatternItemValue.getValue())) {
+					profiloSicurezzaMessaggioCorniceSicurezzaOpzionaleItem.setType(ConsoleItemType.HIDDEN);
+					if(profiloSicurezzaMessaggioCorniceSicurezzaOpzionaleItemValue!=null) {
+						profiloSicurezzaMessaggioCorniceSicurezzaOpzionaleItemValue.setValue(null);
+					}
+				}
+				else {
+					profiloSicurezzaMessaggioCorniceSicurezzaOpzionaleItem.setType(ConsoleItemType.CHECKBOX);
+				}
+			}
 		}
 		else {
 			if(!sicurezzaSullaRichiesta) {
@@ -1206,8 +1234,15 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 			if(profiloSicurezzaMessaggioCorniceSicurezzaSchemaItem!=null) {
 				profiloSicurezzaMessaggioCorniceSicurezzaSchemaItem.setType(ConsoleItemType.HIDDEN);
 			}
-			if(profiloSicurezzaMessaggioCorniceSicurezzaSchematemValue!=null) {
-				profiloSicurezzaMessaggioCorniceSicurezzaSchematemValue.setValue(null);
+			if(profiloSicurezzaMessaggioCorniceSicurezzaSchemaItemValue!=null) {
+				profiloSicurezzaMessaggioCorniceSicurezzaSchemaItemValue.setValue(null);
+			}
+			
+			if(profiloSicurezzaMessaggioCorniceSicurezzaOpzionaleItem!=null) {
+				profiloSicurezzaMessaggioCorniceSicurezzaOpzionaleItem.setType(ConsoleItemType.HIDDEN);
+			}
+			if(profiloSicurezzaMessaggioCorniceSicurezzaOpzionaleItemValue!=null) {
+				profiloSicurezzaMessaggioCorniceSicurezzaOpzionaleItemValue.setValue(null);
 			}
 		}
 
