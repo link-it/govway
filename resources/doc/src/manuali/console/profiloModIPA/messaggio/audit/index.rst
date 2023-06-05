@@ -15,12 +15,12 @@ Le Linee Guida indicano che l'erogatore e il fruitore devono individuare i claim
 
 Le Linee Guida definiscono 2 pattern utilizzabili sia per API REST che per API SOAP, che si aggiungono al precedente pattern legacy di GovWay:
 
-- :ref:`modipa_infoUtente_audi01`: definisce la struttura del token di audit utilizzabile tramite due modalità:
+- :ref:`modipa_infoUtente_audit01`: definisce la struttura del token di audit utilizzabile tramite due modalità:
 	
 	- un criterio di trust realizzato tramite il materiale crittografico depositato sulla PDND;
 	- un trust diretto fruitore-erogatore attraverso l'utilizzo di certificati X509. 
 
-- :ref:`modipa_infoUtente_audi02`: pattern che estende il precedente aggiungendo la correlazione tra il token di autenticazione e il token di audit. Il pattern richiede un trust realizzato tramite il materiale crittografico depositato sulla PDND.
+- :ref:`modipa_infoUtente_audit02`: pattern che estende il precedente aggiungendo la correlazione tra il token di autenticazione e il token di audit. Il pattern richiede un trust realizzato tramite il materiale crittografico depositato sulla PDND.
 
 - :ref:`modipa_infoUtente_legacy`: soluzione legacy di GovWay già presente nelle precedenti versioni.
 
@@ -29,6 +29,6 @@ Le Linee Guida definiscono 2 pattern utilizzabili sia per API REST che per API S
 .. toctree::
         :maxdepth: 2
 
-	audit01
+	audit01/index
         audit02
 	auditLegacy

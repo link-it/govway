@@ -49,6 +49,9 @@ Nella figura :numref:`api_modipaInfoUtente_exampleSoap_fig` viene riportato un e
 
   Payload del Token di Sicurezza SOAP con pattern "INTEGRITY_SOAP_01" + Informazioni Audit "AUDIT_LEGACY"
 
+
+**Fruizione**
+
 In una fruizione, le informazioni aggiuntive che vengono aggiunte nel token, sono per default attese nella richiesta pervenuta a GovWay sotto forma di header http o parametro della url:
 
 - UserID Utente: l'identificativo dell'utente deve essere indicato nella richiesta di fruizione all'interno dell'header http 'GovWay-CS-User' o del parametro della url con nome 'govway_cs_user';

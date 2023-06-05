@@ -1,0 +1,58 @@
+diff --git ant/setup/deploy/resources/protocolli/modipa/modipa_local.properties ant/setup/deploy/resources/protocolli/modipa/modipa_local.properties
+index 1fc6c13185..1d7d3c0888 100755
+--- ant/setup/deploy/resources/protocolli/modipa/modipa_local.properties
++++ ant/setup/deploy/resources/protocolli/modipa/modipa_local.properties
+@@ -62,6 +62,53 @@ org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.key.kid=
+ # ================================================
+ 
+ 
++# ================================================
++# ----- AUDIT_REST_XX
++# L'erogatore e il fruitore DEVONO concordare i dati tracciati dal fruitore nel proprio dominio richiesti dall'erogatore individuando i claim da includere nel JWT di audit.
++# 
++# Ogni insieme di dati concordati tra fruitore ed erogatore viene identificato da una keyword da aggiungere alla seguente proprietà (elenco separato da virgola):
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern=default
++#
++# ... Pattern di default ...
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.nome=Linee-Guida-ModI
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.label=Linee Guida ModI
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims=userID,userLocation,loa
++#
++# userID:  un identificativo univoco dell'utente interno al dominio del fruitore che ha determinato l'esigenza della request di accesso all'e-service dell'erogatore
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.userID.nome=userID
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.userID.label=UserID
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.userID.required=true
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.userID.stringType=true
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.userID.info= Identificativo univoco dell'utente interno al dominio del fruitore che ha determinato l'esigenza della richiesta di accesso all'e-service dell'erogatore
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.userID.rule=${header:GovWay-Audit-User},${query:govway_audit_user}
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.userID.rule.info=Header http 'GovWay-Audit-User',Parametro della url 'govway_audit_user'
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.userID.forwardBackend=GovWay-Audit-UserID
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.userID.trace=true
++#
++# userLocation: un identificativo univoco della postazione interna al dominio del fruitore da cui è avviata l'esigenza della request di accesso all'e-service dell'erogatore
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.userLocation.nome=userLocation
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.userLocation.label=Identificativo Postazione
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.userLocation.required=true
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.userLocation.stringType=true
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.userLocation.info= Identificativo univoco della postazione interna al dominio del fruitore che ha determinato l'esigenza della richiesta di accesso all'e-service dell'erogatore
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.userLocation.rule=${header:GovWay-Audit-UserLocation},${query:govway_audit_user_location}
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.userLocation.rule.info=Header http 'GovWay-Audit-UserLocation',Parametro della url 'govway_audit_user_location'
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.userLocation.forwardBackend=GovWay-Audit-UserLocation
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.userLocation.trace=true
++#
++# LoA: livello di sicurezza o di garanzia adottato nel processo di autenticazione informatica nel dominio del fruitore.
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.loa.nome=LoA
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.loa.label=Livello di Sicurezza
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.loa.required=false
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.loa.stringType=true
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.loa.info= Livello di sicurezza o di garanzia adottato nel processo di autenticazione informatica nel dominio del fruitore
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.loa.rule=${header:GovWay-Audit-LoA},${query:govway_audit_loa}
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.loa.rule.info=Header http 'GovWay-Audit-LoA',Parametro della url 'govway_audit_loa'
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.loa.forwardBackend=GovWay-Audit-LoA
++org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.loa.trace=true
++# ================================================
++
++
+ # ================================================
+ # -------- Informazioni Utente -------- 
+ 

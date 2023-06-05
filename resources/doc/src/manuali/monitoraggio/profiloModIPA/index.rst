@@ -33,3 +33,12 @@ All'interno di una traccia vengono fornite le informazioni riguardanti i pattern
     :name: ModIPA-DettaglioTracciaSicurezza
 
     ModI: informazioni aggiuntive sulla Traccia riguardanti il Pattern di Sicurezza.
+
+- *Token di Audit*: consente all'erogatore di identificare la specifica provenienza di ogni singola richiesta di accesso ai dati effettuta dal fruitore. Nella figura :numref:`ModIPA-DettaglioTracciaSicurezzaAudit` viene riportato un esempio di traccia relativa ad un'API REST che implementa il pattern di audit 'AUDIT_REST_01'.
+
+   .. figure:: ../_figure_monitoraggio/ModIPA-DettaglioTracciaSicurezzaAudit.png
+    :scale: 100%
+    :align: center
+    :name: ModIPA-DettaglioTracciaSicurezzaAudit
+
+    ModI: informazioni aggiuntive sulla Traccia riguardanti il Pattern di Audit.
