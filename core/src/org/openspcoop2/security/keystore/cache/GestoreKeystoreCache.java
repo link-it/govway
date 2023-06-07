@@ -44,6 +44,7 @@ import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.remote.IRemoteStoreProvider;
 import org.openspcoop2.utils.certificate.remote.RemoteKeyType;
+import org.openspcoop2.utils.certificate.remote.RemoteStoreClientInfo;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.transport.http.ExternalResourceConfig;
 import org.openspcoop2.utils.transport.http.IOCSPValidator;
@@ -68,6 +69,7 @@ public class GestoreKeystoreCache {
 	private static final KeyPairStoreCache keyPairStoreCache = new KeyPairStoreCache();
 	private static final PublicKeyStoreCache publicKeyStoreCache = new PublicKeyStoreCache();
 	private static final RemoteStoreCache remoteStoreCache = new RemoteStoreCache();
+	private static final RemoteStoreClientInfoCache remoteStoreClientInfoCache = new RemoteStoreClientInfoCache();
 	private static final HttpStoreCache httpStoreCache = new HttpStoreCache();
 	private static final CRLCertstoreCache crlCertstoreCache = new CRLCertstoreCache();
 	private static final SSLSocketFactoryCache sslSocketFactoryCache = new SSLSocketFactoryCache();
@@ -86,6 +88,7 @@ public class GestoreKeystoreCache {
 		GestoreKeystoreCache.keyPairStoreCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.publicKeyStoreCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.remoteStoreCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
+		GestoreKeystoreCache.remoteStoreClientInfoCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.httpStoreCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.crlCertstoreCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.sslSocketFactoryCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
@@ -103,6 +106,7 @@ public class GestoreKeystoreCache {
 		GestoreKeystoreCache.keyPairStoreCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.publicKeyStoreCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.remoteStoreCache.setCacheJCS(cacheLifeSecond, cacheJCS);
+		GestoreKeystoreCache.remoteStoreClientInfoCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.httpStoreCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.crlCertstoreCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.sslSocketFactoryCache.setCacheJCS(cacheLifeSecond, cacheJCS);
@@ -488,10 +492,47 @@ public class GestoreKeystoreCache {
 		}
 	}
 	public static List<String> keysRemoteStore() throws SecurityException{
+		List<String> l = null;
 		if(GestoreKeystoreCache.cacheEnabled) {
 			return GestoreKeystoreCache.remoteStoreCache.keys();
 		}
-		return null;
+		return l;
+	}
+	
+	
+	
+	
+	public static RemoteStoreClientInfo getRemoteStoreClientInfo(RequestInfo requestInfo, String keyId, String clientId, RemoteStoreConfig remoteStoreConfig, IRemoteStoreProvider provider) throws SecurityException{
+		
+		String keyCache = RemoteStoreClientInfoCache.getKeyCache(remoteStoreConfig, keyId);
+		
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && keyCache!=null;
+		if(useRequestInfo) {
+			Object o = requestInfo.getRequestConfig().getRemoteStoreClientInfo(keyCache);
+			if(o instanceof RemoteStoreClientInfo) {
+				return (RemoteStoreClientInfo) o;
+			}
+		}
+		org.openspcoop2.security.keystore.RemoteStoreClientInfo k = null;
+		if(GestoreKeystoreCache.cacheEnabled)
+			k = GestoreKeystoreCache.remoteStoreClientInfoCache.getKeystoreAndCreateIfNotExists(keyCache, keyId, clientId, remoteStoreConfig, provider);
+		else
+			k = new org.openspcoop2.security.keystore.RemoteStoreClientInfo(keyId, clientId, remoteStoreConfig, provider);
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addRemoteStoreClientInfo(keyCache, k, requestInfo.getIdTransazione());
+		}
+		return k.getClientInfo();
+	}
+	public static void removeRemoteStoreClientInfo(RequestInfo requestInfo, String keyId, RemoteStoreConfig remoteStoreConfig) throws SecurityException{
+		String keyCache = RemoteStoreClientInfoCache.getKeyCache(remoteStoreConfig, keyId);
+		
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && keyCache!=null;
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().removeRemoteStoreClientInfo(keyCache);
+		}
+		if(GestoreKeystoreCache.cacheEnabled) {
+			GestoreKeystoreCache.remoteStoreClientInfoCache.removeObjectFromCache(keyCache);
+		}
 	}
 	
 	

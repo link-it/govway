@@ -48,6 +48,7 @@ import org.openspcoop2.utils.cache.Constants;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.remote.IRemoteStoreProvider;
 import org.openspcoop2.utils.certificate.remote.RemoteKeyType;
+import org.openspcoop2.utils.certificate.remote.RemoteStoreClientInfo;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.transport.http.ExternalResourceConfig;
 import org.openspcoop2.utils.transport.http.IOCSPValidator;
@@ -461,6 +462,12 @@ public class GestoreKeystoreCaching {
 		org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.removeRemoteStore(requestInfo, keyId, keyType, remoteStoreConfig);
 	}
 	
+	public static RemoteStoreClientInfo getRemoteStoreClientInfo(RequestInfo requestInfo, String keyId, String clientId, RemoteStoreConfig remoteStoreConfig, IRemoteStoreProvider provider) throws SecurityException{
+		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getRemoteStoreClientInfo(requestInfo, keyId, clientId, remoteStoreConfig, provider);
+	}
+	public static void removeRemoteStoreClientInfo(RequestInfo requestInfo, String keyId, RemoteStoreConfig remoteStoreConfig) throws SecurityException{
+		org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.removeRemoteStoreClientInfo(requestInfo, keyId, remoteStoreConfig);
+	}
 	
 	public static HttpStore getHttpStore(RequestInfo requestInfo, String endpoint) throws SecurityException{
 		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getHttpStore(requestInfo, endpoint);

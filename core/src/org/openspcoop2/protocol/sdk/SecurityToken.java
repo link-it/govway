@@ -99,5 +99,14 @@ public class SecurityToken implements Serializable {
 		}
 		this.modI.setAudit(audit);
 	}
+	public PDNDTokenInfo getPdnd() {
+		return this.modI!=null ? this.modI.getPdnd() : null;
+	}
+	public void setPdnd(PDNDTokenInfo pdnd) {
+		if(this.modI==null) {
+			this.modI = new SecurityTokenModI();
+		}
+		this.modI.setPdnd(pdnd);
+	}
 
 }

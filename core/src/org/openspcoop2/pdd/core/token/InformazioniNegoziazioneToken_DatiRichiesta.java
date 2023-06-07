@@ -40,7 +40,9 @@ public class InformazioniNegoziazioneToken_DatiRichiesta  extends org.openspcoop
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	public InformazioniNegoziazioneToken_DatiRichiesta() {} // per serializzatore
+	public InformazioniNegoziazioneToken_DatiRichiesta() {
+		 // per serializzatore
+	}
 
 	private String policy;
 	private String transactionId;

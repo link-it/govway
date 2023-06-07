@@ -36,6 +36,7 @@ public class SecurityTokenModI implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private RestMessageSecurityToken authorization;
+	private PDNDTokenInfo pdnd;
 	private RestMessageSecurityToken integrity;
 	private SoapMessageSecurityToken envelope;
 	private RestMessageSecurityToken audit;
@@ -63,6 +64,12 @@ public class SecurityTokenModI implements Serializable {
 	}
 	protected void setAudit(RestMessageSecurityToken audit) {
 		this.audit = audit;
+	}
+	public PDNDTokenInfo getPdnd() {
+		return this.pdnd;
+	}
+	public void setPdnd(PDNDTokenInfo pdnd) {
+		this.pdnd = pdnd;
 	}
 
 }

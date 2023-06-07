@@ -103,6 +103,8 @@ import org.openspcoop2.pdd.config.DBTransazioniManager;
 import org.openspcoop2.pdd.config.DynamicClusterManager;
 import org.openspcoop2.pdd.config.GeneralInstanceProperties;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.config.PDNDConfig;
+import org.openspcoop2.pdd.config.PDNDConfigUtilities;
 import org.openspcoop2.pdd.config.PddProperties;
 import org.openspcoop2.pdd.config.PreLoadingConfig;
 import org.openspcoop2.pdd.config.QueueManager;
@@ -200,7 +202,6 @@ import org.openspcoop2.protocol.sdk.state.RequestConfig;
 import org.openspcoop2.protocol.sdk.state.RequestThreadContext;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.utils.ErroriProperties;
-import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.message.WsuIdAllocator;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
@@ -3516,22 +3517,19 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			if(protocolFactoryManager.existsProtocolFactory(CostantiLabel.MODIPA_PROTOCOL_NAME)) { // verifico che esista su PDND
 				
 				RemoteStoreProviderDriver.setKeyMaxLifeMinutes(propertiesReader.getGestoreChiaviPDNDkeysMaxLifeMinutes());
-				OpenSPCoop2Startup.logStartupInfo("PDND Key max file minutes: "+RemoteStoreProviderDriver.getKeyMaxLifeMinutes());
+				OpenSPCoop2Startup.logStartupInfo("PDND Key max life minutes: "+RemoteStoreProviderDriver.getKeyMaxLifeMinutes());
+				
+				RemoteStoreProviderDriver.setClientDetailsMaxLifeMinutes(propertiesReader.getGestoreChiaviPDNDclientInfoMaxLifeMinutes());
+				OpenSPCoop2Startup.logStartupInfo("PDND ClientId details max life minutes: "+RemoteStoreProviderDriver.getClientDetailsMaxLifeMinutes());
 				
 				
 				RemoteStoreConfig remoteStoreConfig = null;
 				RemoteKeyType remoteKeyType = RemoteKeyType.JWK;
 				try {
-					List<RemoteStoreConfig> listRSC = ModIUtils.getRemoteStoreConfig();
-					if(listRSC!=null && !listRSC.isEmpty()) {
-						String pdndName = propertiesReader.getGestoreChiaviPDNDRemoteStoreName();
-						for (RemoteStoreConfig r : listRSC) {
-							if(pdndName.equals(r.getStoreName())) {
-								remoteStoreConfig = r;
-								remoteKeyType = ModIUtils.getRemoteKeyType(pdndName);
-								break;
-							}
-						}
+					PDNDConfig c = PDNDConfigUtilities.getRemoteStoreConfig(propertiesReader);
+					if(c!=null) {
+						remoteStoreConfig = c.getRemoteStoreConfig();
+						remoteKeyType = c.getRemoteKeyType();
 					}
 				}catch(Exception e){
 					String msgError = "Inizializzazione thread per la gestione delle chiavi PDND non riuscita: "+e.getMessage();

@@ -21,8 +21,8 @@
 package org.openspcoop2.pdd.timers.pdnd;
 
 
-import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.config.PDNDConfigUtilities;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -105,7 +105,7 @@ public class TimerGestoreChiaviPDND extends BaseThread{
 		this.remoteStore = remoteStore;
 		
 		try {
-			this.urlCheckEventi = buildUrlCheckEventi(this.remoteStore, this.op2Properties);
+			this.urlCheckEventi = PDNDConfigUtilities.buildUrlCheckEventi(this.remoteStore, this.op2Properties);
 		} catch (Exception e) {
 			this.msgDiag.logErroreGenerico(e,"InizializzazioneTimer");
 			String msgErrore = "Riscontrato errore durante l'inizializzazione della configurazione del timer: "+e.getMessage();
@@ -123,41 +123,6 @@ public class TimerGestoreChiaviPDND extends BaseThread{
 		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioEffettuato"));
 	}
 	
-	private static final String URL_CHAR_DELIMITER = "/"; 
-	private static String buildUrlCheckEventi(RemoteStoreConfig remoteStore, OpenSPCoop2Properties propertiesReader) throws CoreException {
-		
-		String urlCheckEventi = remoteStore.getBaseUrl();
-		
-		// elimino path keys dalla url
-		String pathKeys = propertiesReader.getGestoreChiaviPDNDkeysPath();	
-		if(!pathKeys.startsWith(URL_CHAR_DELIMITER)) {
-			pathKeys = URL_CHAR_DELIMITER + pathKeys;
-		}
-		if(urlCheckEventi.endsWith(pathKeys)) {
-			urlCheckEventi = urlCheckEventi.substring(0,urlCheckEventi.length()-pathKeys.length());
-		}
-		else {
-			if(pathKeys.endsWith(URL_CHAR_DELIMITER)) {
-				// provo senza
-				pathKeys = pathKeys.substring(0, (pathKeys.length()-1));
-			}
-			else {
-				// provo con
-				pathKeys = pathKeys + URL_CHAR_DELIMITER;
-			}
-			if(urlCheckEventi.endsWith(pathKeys)) {
-				urlCheckEventi = urlCheckEventi.substring(0,urlCheckEventi.length()-pathKeys.length());
-			}
-		}
-			
-		// aggiungo event keys
-		
-		String pathEventKeys = propertiesReader.getGestoreChiaviPDNDeventsKeysPath();
-		if(!pathEventKeys.startsWith(URL_CHAR_DELIMITER)) {
-			pathEventKeys = URL_CHAR_DELIMITER + pathEventKeys;
-		}
-		return urlCheckEventi + pathEventKeys;
-	}
 
 	@Override
 	public void process(){

@@ -701,6 +701,11 @@ CREATE TABLE remote_store_key
 	data_registrazione TIMESTAMP(3) NOT NULL DEFAULT 0,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	data_aggiornamento TIMESTAMP(3) NOT NULL DEFAULT 0,
+	client_id VARCHAR(255),
+	client_details TEXT,
+	organization_details TEXT,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	client_data_aggiornamento TIMESTAMP(3) DEFAULT 0,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- unique constraints

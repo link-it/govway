@@ -44,4 +44,6 @@ public interface IRemoteStoreProvider {
 	public PublicKey readPublicKey(String keyId, RemoteStoreConfig remoteConfig) throws UtilsException;
 	public PublicKey readPublicKey(String keyId, RemoteStoreConfig remoteConfig, ByteArrayOutputStream bout) throws UtilsException;
 	
+	public RemoteStoreClientInfo readClientInfo(String keyId, String clientId, RemoteStoreConfig remoteConfig) throws UtilsException;
+	
 }

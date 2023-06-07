@@ -50,6 +50,7 @@ public class Costanti {
 	
 	// Context
 		
+	public static final MapKey<String> PDD_CONTEXT_TOKEN_POLICY = Map.newMapKey("TOKEN_POLICY");
 	public static final MapKey<String> PDD_CONTEXT_TOKEN_REALM = Map.newMapKey("PDD_CONTEXT_TOKEN_REALM");
 	public static final MapKey<String> PDD_CONTEXT_TOKEN_MESSAGE_ERROR_BODY_EMPTY = Map.newMapKey("PDD_CONTEXT_TOKEN_MESSAGE_ERROR_BODY_EMPTY");
 	public static final MapKey<String> PDD_CONTEXT_TOKEN_MESSAGE_ERROR_GENERIC_MESSAGE = Map.newMapKey("PDD_CONTEXT_TOKEN_MESSAGE_ERROR_GENERIC_MESSAGE");

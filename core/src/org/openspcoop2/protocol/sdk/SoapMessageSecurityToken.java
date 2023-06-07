@@ -30,11 +30,20 @@ import javax.xml.soap.SOAPEnvelope;
  * @author $Author$
  * @version $Rev$, $Date$AuthorizationMessageSecurityToken
  */
-public class SoapMessageSecurityToken extends AbstractMessageSecurityToken<SOAPEnvelope> implements Serializable {
+public class SoapMessageSecurityToken extends AbstractSecurityTokenInfo implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
+	protected transient SOAPEnvelope token;
+
+	public SOAPEnvelope getToken() {
+		return this.token;
+	}
+
+	public void setToken(SOAPEnvelope token) {
+		this.token = token;
+	}
 }

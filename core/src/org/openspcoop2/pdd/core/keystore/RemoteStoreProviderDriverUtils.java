@@ -29,7 +29,10 @@ import java.util.List;
 
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.config.PDNDConfigUtilities;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.certificate.remote.RemoteStoreClientInfo;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
@@ -43,6 +46,7 @@ import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
+import org.slf4j.Logger;
 
 /**
  * RemoteStoreProviderDriverUtils
@@ -64,6 +68,13 @@ public class RemoteStoreProviderDriverUtils {
 	private static final String COLUMN_ID_REMOTE_STORE = "id_remote_store";
 	private static final String COLUMN_KID = "kid";
 	private static final String COLUMN_KEY = "content_key";
+	
+	private static final String COLUMN_CLIENT_ID = "client_id";
+	private static final String COLUMN_CLIENT_DETAILS = "client_details";
+	private static final String COLUMN_ORGANIZATION_DETAILS = "organization_details";
+	private static final String COLUMN_CLIENT_DATA_AGGIORNAMENTO = "client_data_aggiornamento";
+	
+	private static final String SUFFIX_NOT_FOUND = " not found";
 	
 	public static long registerIfNotExistsRemoteStore(DriverConfigurazioneDB driverConfigurazioneDB, RemoteStoreConfig remoteStoreConfig) throws KeystoreException {
 		long idRemoteStore = getIdRemoteStore(driverConfigurazioneDB, remoteStoreConfig);
@@ -207,7 +218,7 @@ public class RemoteStoreProviderDriverUtils {
 				remoteStore.setNome(selectRS.getString(COLUMN_NOME));
 			}
 			else if(throwExceptionNotFound){
-				throw new KeystoreException("RemoteStore '"+remoteStoreName+"' not found");
+				throw new KeystoreException("RemoteStore '"+remoteStoreName+"'"+SUFFIX_NOT_FOUND);
 			}
 		}
 		catch(Exception e) {
@@ -368,6 +379,9 @@ public class RemoteStoreProviderDriverUtils {
 				jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(tipoDatabase);
 			}
 			sqlQueryObject.addUpdateField(COLUMN_DATA_AGGIORNAMENTO, "?");
+			if(invalid) {
+				sqlQueryObject.addUpdateField(COLUMN_CLIENT_DATA_AGGIORNAMENTO, "?");
+			}
 			addWhereKidConditions(sqlQueryObject);
 			sqlQueryObject.setANDLogicOperator(true);
 			String updateQuery = sqlQueryObject.createSQLUpdate();
@@ -375,6 +389,7 @@ public class RemoteStoreProviderDriverUtils {
 			int index = 1;
 			Timestamp now = DateManager.getTimestamp();
 			if(invalid) {
+				updateStmt.setTimestamp(index++, dataInvalidaScaduta);
 				updateStmt.setTimestamp(index++, dataInvalidaScaduta);
 			}
 			else {
@@ -463,7 +478,7 @@ public class RemoteStoreProviderDriverUtils {
 				rsk.setInvalid(dataInvalidaScaduta.equals(rsk.getDataAggiornamento()));
 				return rsk;
 			}
-			throw new KeystoreNotFoundException("Key with kid '"+kid+"' not found");
+			throw new KeystoreNotFoundException("Key with kid '"+kid+"'"+SUFFIX_NOT_FOUND);
 		}
 		catch(KeystoreNotFoundException e) {
 			throw e;
@@ -540,6 +555,176 @@ public class RemoteStoreProviderDriverUtils {
 			JDBCUtilities.closeResources(selectRS, selectStmt);
 		}
 		
+	}
+	
+	
+	public static RemoteStoreClientDetails getRemoteStoreClientDetails(DriverConfigurazioneDB driverConfigurazioneDB, long idStore, String kid, Logger log,
+			boolean createEntryIfNotExists) throws KeystoreException,KeystoreNotFoundException {
+		
+		Connection con = null;
+		try {
+			con = driverConfigurazioneDB.getConnection("getRemoteStoreClientDetails", false);
+			
+			return getRemoteStoreClientDetails(con, driverConfigurazioneDB.getTipoDB(), idStore, kid, log,
+					createEntryIfNotExists);
+		}
+		catch(KeystoreNotFoundException e) {
+			throw e;
+		}
+		catch(Exception e) {
+			throw new KeystoreException(e.getMessage(),e);
+		}
+		finally {
+			driverConfigurazioneDB.releaseConnection(con);
+		}
+		
+	}
+	public static RemoteStoreClientDetails getRemoteStoreClientDetails(Connection con, String tipoDatabase, long idStore, String kid, Logger log, 
+			boolean createEntryIfNotExists) throws KeystoreException,KeystoreNotFoundException {
+		
+		PreparedStatement selectStmt = null;
+		ResultSet selectRS = null;
+		try {
+			checkParams(idStore, kid);
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+			sqlQueryObject.addFromTable(CostantiDB.REMOTE_STORE_KEY);
+			sqlQueryObject.addSelectField(COLUMN_CLIENT_ID);
+			sqlQueryObject.addSelectField(COLUMN_CLIENT_DETAILS);
+			sqlQueryObject.addSelectField(COLUMN_ORGANIZATION_DETAILS);
+			sqlQueryObject.addSelectField(COLUMN_CLIENT_DATA_AGGIORNAMENTO);
+			addWhereKidConditions(sqlQueryObject);
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			selectStmt = con.prepareStatement(sqlQuery);
+			selectStmt.setLong(1, idStore);
+			selectStmt.setString(2, kid);
+			selectRS = selectStmt.executeQuery();
+			if(selectRS.next()) {
+				RemoteStoreClientDetails rsk = new RemoteStoreClientDetails();
+				rsk.setClientInfo(new RemoteStoreClientInfo());
+				rsk.getClientInfo().setClientId(selectRS.getString(COLUMN_CLIENT_ID));
+				rsk.getClientInfo().setClientDetails(selectRS.getString(COLUMN_CLIENT_DETAILS));
+				if(rsk.getClientInfo().getClientId()!=null && rsk.getClientInfo().getClientDetails()!=null) {
+					String jsonPath = OpenSPCoop2Properties.getInstance().getGestoreChiaviPDNDclientsOrganizationJsonPath();
+					boolean readErrorAbortTransaction = false;
+					String organizationId = PDNDConfigUtilities.readOrganizationId(jsonPath, readErrorAbortTransaction, rsk.getClientInfo().getClientDetails(), log);
+					rsk.getClientInfo().setOrganizationId(organizationId);
+				}
+				rsk.getClientInfo().setOrganizationDetails(selectRS.getString(COLUMN_ORGANIZATION_DETAILS));
+				rsk.setDataAggiornamento(selectRS.getTimestamp(COLUMN_CLIENT_DATA_AGGIORNAMENTO));
+				rsk.setInvalid(dataInvalidaScaduta.equals(rsk.getDataAggiornamento()));
+				return rsk;
+			}
+			
+			if(createEntryIfNotExists) {
+				int row = initializeEmptyEntry(con, tipoDatabase, idStore, kid, log);
+				if(row>0) {
+					return new RemoteStoreClientDetails();
+				}
+			}
+			
+			throw new KeystoreNotFoundException("Key with kid '"+kid+"'"+SUFFIX_NOT_FOUND);
+		}
+		catch(KeystoreNotFoundException e) {
+			throw e;
+		}
+		catch(Exception e) {
+			throw new KeystoreException(e.getMessage(),e);
+		}
+		finally {
+			JDBCUtilities.closeResources(selectRS, selectStmt);
+		}
+		
+	}
+	
+	private static final byte[] KEY_UNDEFINED = "KEY_UNDEFINED".getBytes();
+	private static int initializeEmptyEntry(Connection con, String tipoDB, long idStore, String kid, Logger log) {
+		PreparedStatement updateStmt = null;
+		try {
+			IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(tipoDB);
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addInsertTable(CostantiDB.REMOTE_STORE_KEY);
+			sqlQueryObject.addInsertField(COLUMN_ID_REMOTE_STORE, "?");
+			sqlQueryObject.addInsertField(COLUMN_KID, "?");
+			sqlQueryObject.addInsertField(COLUMN_KEY, "?");
+			sqlQueryObject.addInsertField(COLUMN_DATA_REGISTRAZIONE, "?");
+			sqlQueryObject.addInsertField(COLUMN_DATA_AGGIORNAMENTO, "?");
+			String updateQuery = sqlQueryObject.createSQLInsert();
+			updateStmt = con.prepareStatement(updateQuery);
+			int index = 1;
+			updateStmt.setLong(index++, idStore);
+			updateStmt.setString(index++, kid);
+			jdbcAdapter.setBinaryData(updateStmt, index++, KEY_UNDEFINED);
+			Timestamp now = DateManager.getTimestamp();
+			updateStmt.setTimestamp(index++, now);
+			updateStmt.setTimestamp(index++, dataInvalidaScaduta);
+			int rows = updateStmt.executeUpdate();
+			updateStmt.close();
+			return rows;
+		}
+		catch(Exception e) {
+			log.error("initializeEmptyEntry failed: "+e.getMessage(),e);
+			return -1;
+		}
+		finally {
+			JDBCUtilities.closeResources(updateStmt);
+		}
+	}
+	
+	public static int updateRemoteStoreClientDetails(DriverConfigurazioneDB driverConfigurazioneDB, long idStore, String kid, RemoteStoreClientDetails clientDetails) throws KeystoreException {
+		Connection con = null;
+		try {
+			con = driverConfigurazioneDB.getConnection("updateRemoteStoreClientDetails", false);
+			return updateRemoteStoreClientDetails(con, driverConfigurazioneDB.getTipoDB(), idStore, kid, clientDetails);
+		}
+		catch(Exception e) {
+			throw new KeystoreException(e.getMessage(),e);
+		}
+		finally {
+			driverConfigurazioneDB.releaseConnection(con);
+		}
+	}
+	public static int updateRemoteStoreClientDetails(Connection con, String tipoDatabase, long idStore, String kid, RemoteStoreClientDetails clientDetails) throws KeystoreException {
+		PreparedStatement updateStmt = null;
+		try {
+			checkParams(idStore, kid);	
+
+			if(clientDetails==null) {
+				throw new KeystoreException("ClientDetails undefined");
+			}
+			if(clientDetails.getClientInfo()==null) {
+				throw new KeystoreException("ClientInfo undefined");
+			}
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+			sqlQueryObject.addUpdateTable(CostantiDB.REMOTE_STORE_KEY);
+			sqlQueryObject.addUpdateField(COLUMN_CLIENT_ID, "?");
+			sqlQueryObject.addUpdateField(COLUMN_CLIENT_DETAILS, "?");
+			sqlQueryObject.addUpdateField(COLUMN_ORGANIZATION_DETAILS, "?");
+			sqlQueryObject.addUpdateField(COLUMN_CLIENT_DATA_AGGIORNAMENTO, "?");
+			addWhereKidConditions(sqlQueryObject);
+			sqlQueryObject.setANDLogicOperator(true);
+			String updateQuery = sqlQueryObject.createSQLUpdate();
+			updateStmt = con.prepareStatement(updateQuery);
+			int index = 1;
+			updateStmt.setString(index++, clientDetails.getClientInfo().getClientId());
+			updateStmt.setString(index++, clientDetails.getClientInfo().getClientDetails());
+			updateStmt.setString(index++, clientDetails.getClientInfo().getOrganizationDetails());
+			updateStmt.setTimestamp(index++, clientDetails.getDataAggiornamento()!=null ? new Timestamp(clientDetails.getDataAggiornamento().getTime()) : DateManager.getTimestamp());
+			updateStmt.setLong(index++, idStore);
+			updateStmt.setString(index++, kid);
+			int rows = updateStmt.executeUpdate();
+			updateStmt.close();
+			return rows;
+		}
+		catch(Exception e) {
+			throw new KeystoreException(e.getMessage(),e);
+		}
+		finally {
+			JDBCUtilities.closeResources(updateStmt);
+		}
 	}
 
 	

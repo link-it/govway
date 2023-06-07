@@ -107,7 +107,7 @@ Per consentire a GovWay di utilizzare le risorse precedentemente descritte, vien
 	- *https.trustAllCerts* (opzionale): nel caso in cui la baseUrl indicata sia https disabilta l'autenticazione del certificato server.
 	- *https.trustStore*, *https.trustStore.type*, *https.trustStore.password*, *https.trustStore.crl* (opzionale): consente di effettuare una autenticazione del certificato server rispetto ai parametri di truststore indicati.
 
-- *Pull sulla PDND per ottenre gli eventi relativi alle chiavi*: come indicato nella sezione `Endpoint di notifica eventi <https://docs.pagopa.it/interoperabilita-1/manuale-operativo/api-esposte-da-pdnd-interoperabilita#endpoint-di-notifica-eventi>`_, le API della PDND consentono all'aderente di ottenere una lista di eventi che possono essere utilizzate da GovWay per mantenere aggiornata la cache locale delle chiavi scaricate dalla PDND. Per default la consultazione degli eventi è disabilitata e per abilitarla si deve intervenire sulle proprietà presenti nel file "/etc/govway/govway_local.properties" tutte con prefisso 'org.openspcoop2.pdd.gestoreChiaviPDND.':
+- *Pull sulla PDND per ottenere gli eventi relativi alle chiavi*: come indicato nella sezione `Endpoint di notifica eventi <https://docs.pagopa.it/interoperabilita-1/manuale-operativo/api-esposte-da-pdnd-interoperabilita#endpoint-di-notifica-eventi>`_, le API della PDND consentono all'aderente di ottenere una lista di eventi che possono essere utilizzate da GovWay per mantenere aggiornata la cache locale delle chiavi scaricate dalla PDND. Per default la consultazione degli eventi è disabilitata e per abilitarla si deve intervenire sulle proprietà presenti nel file "/etc/govway/govway_local.properties" tutte con prefisso 'org.openspcoop2.pdd.gestoreChiaviPDND.':
 
 	- *enabled*: impostare a true la proprietà per abilitare la consultazione degli eventi.
 	- *keys.maxLifeMinutes*: indica la vita in minuti di una chiave scaricata dalla PDND e salvata nella cache locale (default: 43200, 30 giorni).
@@ -115,4 +115,14 @@ Per consentire a GovWay di utilizzare le risorse precedentemente descritte, vien
 	- *events.keys.timer.intervalloSecondi*: definisce l'intervallo, in secondi, rispetto al quale vengono controllati eventuali nuovi eventi sulla PDND (default: 3600, un'ora). 
 	- *cache.keys.timer.intervalloSecondi*: govway dispone di più livelli di cache (che si differenziano se risiedono in RAM o su Database). Questa proprietà definisce l'intervallo, in secondi, rispetto al quale le chiavi presenti nella cache in RAM vengono verificate rispetto alla chiavi presenti nella cache su Database (default: 300, 5 minuti).
 
+- *Erogazione: maggiori informazioni sul mittente*: le API della PDND consentono anche di ottenere informazioni sull'organizzazione a cui il client afferisce. Tali informazioni possono essere recuperate da GovWay al fine di arricchire le tracce e definire criteri autorizzativi; una volta scaricate vengono mantenute in una cache locale. Per default la consultazione della PDND per ottenere maggiori informazioni sui client è disabilitata e per abilitarla si deve intervenire sulle proprietà presenti nel file "/etc/govway/govway_local.properties" tutte con prefisso 'org.openspcoop2.pdd.gestorePDND.':
+
+	- *clientInfo.enabled*: impostare a true la proprietà per abilitare la raccolta delle informazioni sul client;
+	- *clientInfo.maxLifeMinutes*: indica la vita in minuti delle informazioni scaricate dalla PDND e salvate nella cache locale (default: 43200, 30 giorni);
+	- *clients.error.abortTransaction* indicazione se far fallire la transazione in caso il recupero delle informazioni sul client fallisca (default: false);
+	- *organizations.error.abortTransaction* indicazione se far fallire la transazione in caso il recupero delle informazioni sull'organizzazione fallisca (default: false).
+
+  .. note::
+	
+ 	  La raccolta delle informazioni sul mittente tramite la PDND richiede che la consultazione degli eventi, descritta nel precedente punto, sia stata abilitata nel file "/etc/govway/govway_local.properties" tramite la proprietà 'org.openspcoop2.pdd.gestoreChiaviPDND.enabled'
 

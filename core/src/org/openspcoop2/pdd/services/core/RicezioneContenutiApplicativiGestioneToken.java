@@ -168,6 +168,8 @@ public class RicezioneContenutiApplicativiGestioneToken {
 					
 					PolicyGestioneToken policyGestioneToken = this.configurazionePdDReader.getPolicyGestioneToken(this.portaDelegata, this.requestInfo);
 					
+					this.pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_POLICY, 
+							policyGestioneToken.getName());
 					this.pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_REALM,
 							policyGestioneToken.getRealm());
 					this.pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_MESSAGE_ERROR_BODY_EMPTY,

@@ -24,12 +24,12 @@ package org.openspcoop2.pdd.timers.pdnd;
 import java.sql.Connection;
 import java.util.List;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.keystore.KeystoreException;
-import org.openspcoop2.pdd.core.keystore.KeystoreNotFoundException;
 import org.openspcoop2.pdd.core.keystore.RemoteStoreProviderDriverUtils;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -195,7 +195,7 @@ public class TimerGestoreCacheChiaviPDNDLib {
 			
 	}
 	
-	private void process(long startControlloTimer, Connection conConfigurazione, long idStore) throws SecurityException, KeystoreException, KeystoreNotFoundException {
+	private void process(long startControlloTimer, Connection conConfigurazione, long idStore) throws SecurityException, KeystoreException, CoreException {
 		// NOTA: non viene eliminato dalla cache di primo livello "GestoreRichieste" poichè:
 		// - per default i remote store non sono salvati nella cache di primo livello, vedi proprietà 'org.openspcoop2.pdd.cache.impl.requestManager.remoteStore.saveInCache' di govway.properties
 		// - se vengono salvati, il tempo di vita di questi elementi deve essere più basso rispetto alle normali cache (per default è 30 secondi)
@@ -211,9 +211,7 @@ public class TimerGestoreCacheChiaviPDNDLib {
 					size++;
 					String kid = key.substring(keyCachePrefix.length());
 					if(!RemoteStoreProviderDriverUtils.existsRemoteStoreKey(conConfigurazione, this.tipoDatabase, idStore, kid, true)) {
-						this.logTimerDebug("Elimino chiave '"+key+"' dalla cache");
-						
-						GestoreKeystoreCache.removeRemoteStore(null, kid, this.remoteKeyType, this.remoteStore);
+						removeFromCache(key, kid);
 					}
 					
 				}
@@ -230,6 +228,16 @@ public class TimerGestoreCacheChiaviPDNDLib {
 		emitDiagnosticLog("letturaCacheKeys.effettuata");
 	}
 
+	private void removeFromCache(String key, String kid) throws SecurityException, CoreException {
+		this.logTimerDebug("Elimino chiave '"+key+"' dalla cache");
+		
+		GestoreKeystoreCache.removeRemoteStore(null, kid, this.remoteKeyType, this.remoteStore);
+		
+		if(this.op2Properties.isGestoreChiaviPDNDclientInfoEnabled()) {
+			GestoreKeystoreCache.removeRemoteStoreClientInfo(null, kid, this.remoteStore);
+		}
+	}
+	
 	private void emitDiagnosticLog(String code) {
 		this.msgDiag.logPersonalizzato(code);
 		String msg = this.msgDiag.getMessaggio_replaceKeywords(code);

@@ -1,3 +1,9 @@
+2023-06-07  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Aggiunta funzionalità OP-1580
+	In una erogazione configurata per validare un token ricevuto tramite PDND, è adesso possibile arricchire la traccia di informazioni relative al client-id presente nel token prelevate dalla PDND. 
+
 2023-05-30  Andrea Poli <apoli@link.it>
 
 	* [ApiRsConfigurazione]

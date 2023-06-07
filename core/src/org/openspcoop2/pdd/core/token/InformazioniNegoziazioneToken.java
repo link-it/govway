@@ -82,7 +82,7 @@ public class InformazioniNegoziazioneToken extends org.openspcoop2.utils.beans.B
 		this.refreshExpiresIn = tokenParser.getRefreshExpired();
 		this.tokenType = tokenParser.getTokenType();
 		List<String> s = tokenParser.getScopes(); 
-		if(s!=null && s.size()>0) {
+		if(s!=null && !s.isEmpty()) {
 			if(this.scopes == null) {
 				this.scopes = new ArrayList<>();
 			}
@@ -128,26 +128,26 @@ public class InformazioniNegoziazioneToken extends org.openspcoop2.utils.beans.B
 	private String accessToken;
 	
 	// String representing the refresh token, which can be used to obtain new access tokens using the same authorization grant
-	public String refreshToken;
+	private String refreshToken;
 
 	// Data in cui il token è stato recuperato
-	public Date retrievedIn;
+	private Date retrievedIn;
 	
 	// The lifetime in seconds of the access token.  For example, the value "3600" denotes that the access token will
 	// expire in one hour from the time the response was generated.
     // If omitted, the authorization server SHOULD provide the expiration time via other means or document the default value.
-	public Date expiresIn;
+	private Date expiresIn;
 	
 	// Data in cui il refresh token è stato recuperato
-	public Date retrievedRefreshTokenIn;
+	private Date retrievedRefreshTokenIn;
 	
 	// The lifetime in seconds of the refresh token.  For example, the value "3600" denotes that the access token will
 	// expire in one hour from the time the response was generated.
     // If omitted, the authorization server SHOULD provide the expiration time via other means or document the default value.
-	public Date refreshExpiresIn;
+	private Date refreshExpiresIn;
 	
 	// The type of the token issued
-	public String tokenType;
+	private String tokenType;
 	
 	// Scopes
 	private List<String> scopes;

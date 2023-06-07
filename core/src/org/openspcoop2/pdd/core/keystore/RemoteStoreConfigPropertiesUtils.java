@@ -42,6 +42,8 @@ public class RemoteStoreConfigPropertiesUtils {
 	public static final String PROPERTY_STORE_NAME = "name";
 	public static final String PROPERTY_STORE_LABEL = "label";
 	
+	public static final String PROPERTY_STORE_TOKEN_POLICY = "tokenPolicy";
+	
 	public static final String PROPERTY_STORE_URL = "baseUrl";
 	
 	public static final String PROPERTY_STORE_ID_MODE = "keyId.mode";
@@ -82,6 +84,11 @@ public class RemoteStoreConfigPropertiesUtils {
 		String storeLabel = getProperty(p, PROPERTY_STORE_LABEL, false);
 		if(storeLabel!=null && StringUtils.isNotEmpty(storeLabel)) {
 			config.setStoreLabel(storeLabel);
+		}
+		
+		String tokenPolicy = getProperty(p, PROPERTY_STORE_TOKEN_POLICY, false);
+		if(tokenPolicy!=null && StringUtils.isNotEmpty(tokenPolicy)) {
+			config.setTokenPolicy(tokenPolicy);
 		}
 		
 		String storeUrl = getProperty(p, PROPERTY_STORE_URL, true);

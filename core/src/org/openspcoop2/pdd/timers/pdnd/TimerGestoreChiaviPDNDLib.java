@@ -341,6 +341,10 @@ public class TimerGestoreChiaviPDNDLib {
 					break;
 				}
 			}
+			
+			if(letti==-1) {
+				throw new TimerException("Recupero eventi dalla PDND non riuscito");
+			}
 							
 			this.msgDiag.addKeyword(CostantiPdD.KEY_OFFSET, this.lastEventId+"");
 			emitDiagnosticLog("inizializzazione.effettuata");

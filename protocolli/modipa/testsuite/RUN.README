@@ -98,7 +98,7 @@ Prerequisiti:
 
 		# ----- Remote TrustStore 
 
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStores=pdnd,simulazione-pdnd
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStores=pdnd,simulazione-pdnd,simulazione-pdnd-recupero-info-client
 
 		# Tipo di certificato recuperato
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd.keyType=jwk
@@ -110,6 +110,18 @@ Prerequisiti:
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd.keyId.mode=URL_SUFFIX
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd.readTimeout=15000
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd.connectTimeout=10000
+
+		# Tipo di certificato recuperato
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client.keyType=jwk
+
+		# Configurazione utilizzata per invocare il servizio esposto sulla PDND per l'ottenimento delle chiavi pubbliche rispetto al kid, e anche per recuperare le informazioni sui client
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client.name=PDNDSimulatoRecuperoInfoClient
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client.label=PDND-Simulato-RecuperoInfoClient
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client.tokenPolicy=SimulazionePDND-JWK-RecuperoInfoClient
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client.baseUrl=http://localhost:8080/govway/rest/in/DemoSoggettoErogatore/simulazione-api-pdnd/v1/keys
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client.keyId.mode=URL_SUFFIX
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client.readTimeout=15000
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client.connectTimeout=10000
 
 		# ================================================
 		# -------- KeyStore -------- 
@@ -176,6 +188,12 @@ Prerequisiti:
 
 		# Nel token di integrity viene aggiunto il kid del certificato anche se si usa la modalità 'X509' (x5c/x5u/x5t)
 		org.openspcoop2.protocol.modipa.rest.securityToken.x509.kid=true
+
++ Nel file /etc/govway/govway_local.properties abilitare le seguenti proprietà:
+
+	org.openspcoop2.pdd.gestoreChiaviPDND.enabled=true
+	org.openspcoop2.pdd.gestoreChiaviPDND.remoteStore.name=PDNDSimulato
+	org.openspcoop2.pdd.gestorePDND.clientInfo.enabled=true
 
 + Copiare nella cartella dell'application server che serve il contenuto statico, i ExampleClient1.crt, ExampleClient2.crt ed ExampleServer.crt, utilizzati
 	nei test per verificare il riferimento x509 x5u. Ad esempio per wildfly:

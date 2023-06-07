@@ -30,6 +30,7 @@ import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.JWK;
 import org.openspcoop2.utils.certificate.remote.IRemoteStoreProvider;
 import org.openspcoop2.utils.certificate.remote.RemoteKeyType;
+import org.openspcoop2.utils.certificate.remote.RemoteStoreClientInfo;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 
 /**
@@ -114,6 +115,16 @@ public class RemoteStoreProvider implements IRemoteStoreProvider {
 				bout.write(remoteStore.getResource());
 			}
 			return remoteStore.getPublicKey();
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+
+	@Override
+	public RemoteStoreClientInfo readClientInfo(String keyId, String clientId, RemoteStoreConfig remoteConfig)
+			throws UtilsException {
+		try {
+			return RemoteStoreProviderDriver.getProviderStore(remoteConfig.getStoreName()).readClientInfo(keyId, clientId, remoteConfig);
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}

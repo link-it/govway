@@ -73,7 +73,7 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 		this.sub = tokenParser.getSubject();
 		this.username = tokenParser.getUsername();
 		List<String> a = tokenParser.getAudience();
-		if(a!=null && a.size()>0) {
+		if(a!=null && !a.isEmpty()) {
 			this.aud = new ArrayList<>();
 			this.aud.addAll(a);
 		}
@@ -83,12 +83,12 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 		this.clientId = tokenParser.getClientId();
 		this.jti = tokenParser.getJWTIdentifier();
 		List<String> r = tokenParser.getRoles();
-		if(r!=null && r.size()>0) {
+		if(r!=null && !r.isEmpty()) {
 			this.roles = new ArrayList<>();
 			this.roles.addAll(r);
 		}
 		List<String> s = tokenParser.getScopes(); 
-		if(s!=null && s.size()>0) {
+		if(s!=null && !s.isEmpty()) {
 			this.scopes = new ArrayList<>();
 			this.scopes.addAll(s);
 		}
@@ -138,25 +138,25 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 				}
 			}
 			
-			Object iss = getValue("iss", informazioniTokens); 
-			if(iss!=null && iss instanceof String) {
-				this.iss = (String) iss;
+			Object issV = getValue("iss", informazioniTokens); 
+			if(issV instanceof String) {
+				this.iss = (String) issV;
 			}
 			
-			Object sub = getValue("sub", informazioniTokens); 
-			if(sub!=null && sub instanceof String) {
-				this.sub = (String) sub;
+			Object subV = getValue("sub", informazioniTokens); 
+			if(subV instanceof String) {
+				this.sub = (String) subV;
 			}
 			
-			Object username = getValue("username", informazioniTokens); 
-			if(username!=null && username instanceof String) {
-				this.username = (String) username;
+			Object usernameV = getValue("username", informazioniTokens); 
+			if(usernameV instanceof String) {
+				this.username = (String) usernameV;
 			}
 			
-			Object aud = getValue("aud", informazioniTokens); 
-			if(aud!=null && aud instanceof List) {
-				List<String> l = (List<String>) aud;
-				if(l.size()>0) {
+			Object audV = getValue("aud", informazioniTokens); 
+			if(audV instanceof List) {
+				List<String> l = (List<String>) audV;
+				if(!l.isEmpty()) {
 					if(this.aud == null) {
 						this.aud = new ArrayList<>();
 					}
@@ -164,35 +164,35 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 				}
 			}
 			
-			Object exp = getValue("exp", informazioniTokens); 
-			if(exp!=null && exp instanceof Date) {
-				this.exp = (Date) exp;
+			Object expV = getValue("exp", informazioniTokens); 
+			if(expV instanceof Date) {
+				this.exp = (Date) expV;
 			}
 			
-			Object iat = getValue("iat", informazioniTokens); 
-			if(iat!=null && iat instanceof Date) {
-				this.iat = (Date) iat;
+			Object iatV = getValue("iat", informazioniTokens); 
+			if(iatV instanceof Date) {
+				this.iat = (Date) iatV;
 			}
 			
-			Object nbf = getValue("nbf", informazioniTokens); 
-			if(nbf!=null && nbf instanceof Date) {
-				this.nbf = (Date) nbf;
+			Object nbfV = getValue("nbf", informazioniTokens); 
+			if(nbfV instanceof Date) {
+				this.nbf = (Date) nbfV;
 			}
 			
-			Object clientId = getValue("clientId", informazioniTokens); 
-			if(clientId!=null && clientId instanceof String) {
-				this.clientId = (String) clientId;
+			Object clientIdV = getValue("clientId", informazioniTokens); 
+			if(clientIdV instanceof String) {
+				this.clientId = (String) clientIdV;
 			}
 			
-			Object jti = getValue("jti", informazioniTokens); 
-			if(jti!=null && jti instanceof String) {
-				this.jti = (String) jti;
+			Object jtiV = getValue("jti", informazioniTokens); 
+			if(jtiV instanceof String) {
+				this.jti = (String) jtiV;
 			}
 			
-			Object roles = getValue("roles", informazioniTokens); 
-			if(roles!=null && roles instanceof List) {
-				List<String> l = (List<String>) roles;
-				if(l.size()>0) {
+			Object rolesV = getValue("roles", informazioniTokens); 
+			if(rolesV instanceof List) {
+				List<String> l = (List<String>) rolesV;
+				if(!l.isEmpty()) {
 					if(this.roles == null) {
 						this.roles = new ArrayList<>();
 					}
@@ -200,10 +200,10 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 				}
 			}
 			
-			Object scopes = getValue("scopes", informazioniTokens); 
-			if(scopes!=null && scopes instanceof List) {
-				List<String> l = (List<String>) scopes;
-				if(l.size()>0) {
+			Object scopesV = getValue("scopes", informazioniTokens); 
+			if(scopesV instanceof List) {
+				List<String> l = (List<String>) scopesV;
+				if(!l.isEmpty()) {
 					if(this.scopes == null) {
 						this.scopes = new ArrayList<>();
 					}
@@ -213,9 +213,9 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 			
 			List<InformazioniTokenUserInfo> listUserInfo = new ArrayList<>();
 			for (int i = 0; i < informazioniTokens.length; i++) {
-				InformazioniTokenUserInfo userInfo = informazioniTokens[i].getUserInfo();
-				if(userInfo!=null) {
-					listUserInfo.add(userInfo);
+				InformazioniTokenUserInfo userInfoV = informazioniTokens[i].getUserInfo();
+				if(userInfoV!=null) {
+					listUserInfo.add(userInfoV);
 				}
 			}
 			if(listUserInfo.size()==1) {
@@ -239,7 +239,7 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 			if(o!=null) {
 				if(o instanceof List<?>) {
 					List<?> list = (List<?>) o;
-					if(list.size()>0) {
+					if(!list.isEmpty()) {
 						for (Object object : list) {
 							if(!listTmp.contains(object)) {
 								listTmp.add(object);
@@ -252,7 +252,7 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 				}
 			}
 		}
-		if(listTmp.size()>0) {
+		if(!listTmp.isEmpty()) {
 			return listTmp;
 		}
 		else {
@@ -308,7 +308,7 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 
 	// UserInfo
 	private InformazioniTokenUserInfo userInfo;
-		
+			
 	// Claims
 	private Map<String,Object> claims = new HashMap<>();
 		
@@ -338,7 +338,9 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	
 	// InformazioniNegoziazioneToken (ulteriore informazione valorizzata con la funzionalità specifica)
 	private InformazioniNegoziazioneToken retrievedToken;
-	
+		
+	// InformazioniPDND
+	private Map<String,Object> pdnd = null;
 	
 	public TipoInformazioni getType() {
 		return this.type;
@@ -506,5 +508,12 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	}
 	public void setRetrievedToken(InformazioniNegoziazioneToken retrievedToken) {
 		this.retrievedToken = retrievedToken;
+	}
+	
+	public Map<String, Object> getPdnd() {
+		return this.pdnd;
+	}
+	public void setPdnd(Map<String, Object> pdnd) {
+		this.pdnd = pdnd;
 	}
 }

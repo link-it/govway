@@ -23,6 +23,10 @@ CREATE TABLE remote_store_key
 	content_key BLOB NOT NULL,
 	data_registrazione TIMESTAMP NOT NULL,
 	data_aggiornamento TIMESTAMP NOT NULL,
+	client_id VARCHAR(255),
+	client_details CLOB,
+	organization_details CLOB,
+	client_data_aggiornamento TIMESTAMP,
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
 	-- unique constraints

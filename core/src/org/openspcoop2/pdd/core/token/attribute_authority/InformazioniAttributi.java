@@ -100,7 +100,7 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 		this.iss = responseParser.getIssuer();
 		this.sub = responseParser.getSubject();
 		List<String> a = responseParser.getAudience();
-		if(a!=null && a.size()>0) {
+		if(a!=null && !a.isEmpty()) {
 			if(this.aud == null) {
 				this.aud = new ArrayList<>();
 			}
@@ -183,7 +183,7 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 			for (int i = 0; i < informazioniTokens.length; i++) {
 				if(informazioniTokens[i].getExp()!=null) {
 					if(this.aaExp==null) {
-						this.aaExp = new HashMap<String, Date>();
+						this.aaExp = new HashMap<>();
 					}
 					this.aaExp.put(informazioniTokens[i].getSourceAttributeAuthority(),informazioniTokens[i].getExp());
 				}
@@ -191,7 +191,7 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 			for (int i = 0; i < informazioniTokens.length; i++) {
 				if(informazioniTokens[i].getIat()!=null) {
 					if(this.aaIat==null) {
-						this.aaIat = new HashMap<String, Date>();
+						this.aaIat = new HashMap<>();
 					}
 					this.aaIat.put(informazioniTokens[i].getSourceAttributeAuthority(),informazioniTokens[i].getIat());
 				}
@@ -199,7 +199,7 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 			for (int i = 0; i < informazioniTokens.length; i++) {
 				if(informazioniTokens[i].getNbf()!=null) {
 					if(this.aaNbf==null) {
-						this.aaNbf = new HashMap<String, Date>();
+						this.aaNbf = new HashMap<>();
 					}
 					this.aaNbf.put(informazioniTokens[i].getSourceAttributeAuthority(),informazioniTokens[i].getNbf());
 				}
@@ -298,10 +298,11 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 		return BooleanNullable.NULL();
 	}
 	public List<String> getAttributeAuthorities() {
+		List<String> l = null;
 		if(this.attributeAuthorities!=null && !this.attributeAuthorities.isEmpty()) {
 			return this.attributeAuthorities;
 		}
-		return null;
+		return l;
 	}
 	
 	public Map<String, Object> getAttributes() {
@@ -311,6 +312,7 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 		this.attributes = attributes;
 	}
 	public List<String> getAttributesNames(){
+		List<String> l = null;
 		if(this.attributes!=null && !this.attributes.isEmpty()) {
 			if(this.multipleAttributeAuthorities!=null && this.multipleAttributeAuthorities) {
 				// informazioni normalizzate, devo scendere di un livello, senno al primo degli attributi ci sono le attribute authority
@@ -320,15 +322,15 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 					if(o instanceof Map) {
 						try {
 							@SuppressWarnings("unchecked")
-							Map<String, Object> attributes = (Map<String, Object>) o;
-							if(attributes!=null && !attributes.isEmpty()) {
-								for (String attrName : attributes.keySet()) {
+							Map<String, Object> attributesO = (Map<String, Object>) o;
+							if(attributesO!=null && !attributesO.isEmpty()) {
+								for (String attrName : attributesO.keySet()) {
 									if(!attributesNames.contains(attrName)) {
 										attributesNames.add(attrName);
 									}
 								}
 							}
-						}catch(Throwable t) {
+						}catch(Exception t) {
 							OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("getAttributesNames failed (A.A. "+attrAuthName+"): "+t.getMessage(),t);
 						}
 					}
@@ -345,7 +347,7 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 				return attributesNames;
 			}
 		}
-		return null;
+		return l;
 	}
 	
 	public String getIss() {

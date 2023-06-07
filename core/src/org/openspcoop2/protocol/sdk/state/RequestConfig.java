@@ -181,6 +181,7 @@ public class RequestConfig implements java.io.Serializable {
 	private Map<String, Serializable> keyPairStore = null;
 	private Map<String, Serializable> publicKeyStore = null;
 	private Map<String, Serializable> remoteStore = null;
+	private Map<String, Serializable> remoteStoreClientInfo = null;
 	private Map<String, Serializable> httpStore = null;
 	private Map<String, Serializable> crlCertstore = null;
 	private Map<String, Serializable> sslSocketFactory = null;
@@ -432,6 +433,9 @@ public class RequestConfig implements java.io.Serializable {
 		}
 		if(source.remoteStore!=null) {
 			this.remoteStore = source.remoteStore;
+		}
+		if(source.remoteStoreClientInfo!=null) {
+			this.remoteStoreClientInfo = source.remoteStoreClientInfo;
 		}
 		if(source.httpStore!=null) {
 			this.httpStore = source.httpStore;
@@ -1392,6 +1396,39 @@ public class RequestConfig implements java.io.Serializable {
 	public void removeRemoteStore(String key) {
 		if(this.remoteStore!=null) {
 			this.remoteStore.remove(key);
+		}
+	}
+	
+	public void addRemoteStoreClientInfo(String key, Serializable remoteStore, String idTransazione) {
+		 
+		if(!useCacheForRemoteStore) {
+			return;
+		}
+		
+		if(this.semaphoreStore==null) {
+			// serializzazione da transient
+			initSemaphoreStore();
+		}
+		
+		this.semaphoreStore.acquireThrowRuntime("addRemoteStoreClientInfo", idTransazione);
+		try {
+			if(this.remoteStoreClientInfo==null) {
+				this.remoteStoreClientInfo = new HashMap<>(3);
+			}
+			this.remoteStoreClientInfo.put(key, remoteStore);
+		}finally {
+			this.semaphoreStore.release("addRemoteStoreClientInfo", idTransazione);
+		}
+	}
+	public Serializable getRemoteStoreClientInfo(String key) {
+		if(this.remoteStoreClientInfo==null) {
+			return null;
+		}
+		return this.remoteStoreClientInfo.get(key);
+	}
+	public void removeRemoteStoreClientInfo(String key) {
+		if(this.remoteStoreClientInfo!=null) {
+			this.remoteStoreClientInfo.remove(key);
 		}
 	}
 

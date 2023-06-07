@@ -20,29 +20,43 @@
 package org.openspcoop2.protocol.sdk;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**     
- * AbstractMessageSecurityToken
+ * PDNDTokenInfoDetails
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
- * @version $Rev$, $Date$
+ * @version $Rev$, $Date$AuthorizationMessageSecurityToken
  */
-public class AbstractMessageSecurityToken<T extends Serializable> extends AbstractSecurityTokenInfo implements Serializable {
+public class PDNDTokenInfoDetails implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	protected T token;
+	private String id;
+	private String details;
+	private Map<String,Serializable> claims = new HashMap<>();
 
-	public T getToken() {
-		return this.token;
+	public String getId() {
+		return this.id;
 	}
-
-	public void setToken(T token) {
-		this.token = token;
+	public void setId(String id) {
+		this.id = id;
 	}
-	
+	public String getDetails() {
+		return this.details;
+	}
+	public void setDetails(String details) {
+		this.details = details;
+	}
+	public Map<String, Serializable> getClaims() {
+		return this.claims;
+	}
+	public void setClaims(Map<String, Serializable> claims) {
+		this.claims = claims;
+	}
 }

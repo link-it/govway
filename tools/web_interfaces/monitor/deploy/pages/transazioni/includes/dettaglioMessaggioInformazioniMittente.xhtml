@@ -81,6 +81,9 @@
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTokenClientApplicativoFruitore" value="Applicativo Client" rendered="#{not empty dettagliBean.dettaglio.tokenClientWithOrganizationNameLabel and not empty dettagliBean.dettaglio.tokenClientWithOrganizationNameLabel}"/>
 			<h:outputText id="outTokenClientApplicativoFruitore" value="#{dettagliBean.dettaglio.tokenClientWithOrganizationNameLabel}" rendered="#{not empty dettagliBean.dettaglio.tokenClientWithOrganizationNameLabel and not empty dettagliBean.dettaglio.tokenClientWithOrganizationNameLabel}"/>
 			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTokenPDNDOrganizationName" value="PDND Organization" rendered="#{not empty dettagliBean.dettaglio.pdndOrganization}"/>
+			<h:outputText id="outTokenPDNDOrganizationName" value="#{dettagliBean.dettaglio.pdndOrganization}" escape="false" rendered="#{not empty dettagliBean.dettaglio.pdndOrganization}"/>
+						
 			<h:outputLabel id="outLabelTokenInfo" styleClass="outputFieldLabel" value="#{msg['commons.tokenInfo.label']}" 
 				rendered="#{not empty dettagliBean.dettaglio.tokenInfo and not dettagliBean.attributeInfo}"/>
 			<h:outputLabel id="outLabelAttributi" styleClass="outputFieldLabel" value="#{msg['commons.attributi.label']}" 

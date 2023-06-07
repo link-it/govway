@@ -1081,6 +1081,10 @@ CREATE TABLE remote_store_key
 	content_key BLOB NOT NULL,
 	data_registrazione TIMESTAMP NOT NULL,
 	data_aggiornamento TIMESTAMP NOT NULL,
+	client_id VARCHAR2(255),
+	client_details CLOB,
+	organization_details CLOB,
+	client_data_aggiornamento TIMESTAMP,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints

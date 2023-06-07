@@ -85,21 +85,22 @@ public class RestMessageSecurityToken extends AbstractMessageSecurityToken<Strin
 		return null;
 	}
 	public Map<String, String> getHeaderClaims() throws UtilsException {
+		Map<String, String> m = null;
 		if(this.token!=null) {
-			if(this.readClaims_header==null) {
-				this.initReadClaims_header();
+			if(this.readClaimsHeader==null) {
+				this.initReadClaimsHeader();
 			}
-			return this.readClaims_header;
+			return this.readClaimsHeader;
 		}
-		return null;
+		return m;
 	}
 	public String getHeaderClaim(String claim) throws UtilsException {
 		if(this.token!=null) {
-			if(this.readClaims_header==null) {
-				this.initReadClaims_header();
+			if(this.readClaimsHeader==null) {
+				this.initReadClaimsHeader();
 			}
-			if(this.readClaims_header!=null) {
-				return this.readClaims_header.get(claim);
+			if(this.readClaimsHeader!=null) {
+				return this.readClaimsHeader.get(claim);
 			}
 		}
 		return null;
@@ -122,21 +123,22 @@ public class RestMessageSecurityToken extends AbstractMessageSecurityToken<Strin
 		return null;
 	}
 	public Map<String, String> getPayloadClaims() throws UtilsException {
+		Map<String, String> m = null;
 		if(this.token!=null) {
-			if(this.readClaims_payload==null) {
-				this.initReadClaims_payload();
+			if(this.readClaimsPayload==null) {
+				this.initReadClaimsPayload();
 			}
-			return this.readClaims_payload;
+			return this.readClaimsPayload;
 		}
-		return null;
+		return m;
 	}
 	public String getPayloadClaim(String claim) throws UtilsException {
 		if(this.token!=null) {
-			if(this.readClaims_payload==null) {
-				this.initReadClaims_payload();
+			if(this.readClaimsPayload==null) {
+				this.initReadClaimsPayload();
 			}
-			if(this.readClaims_payload!=null) {
-				return this.readClaims_payload.get(claim);
+			if(this.readClaimsPayload!=null) {
+				return this.readClaimsPayload.get(claim);
 			}
 		}
 		return null;
@@ -145,74 +147,82 @@ public class RestMessageSecurityToken extends AbstractMessageSecurityToken<Strin
 	
 	// -- Utilities
 	
-	private Map<String, String> readClaims_header = null;
-	private synchronized void initReadClaims_header() throws UtilsException {
-		if(this.readClaims_header==null) {
-			this.readClaims_header = new HashMap<>();
+	private Map<String, String> readClaimsHeader = null;
+	private synchronized void initReadClaimsHeader() throws UtilsException {
+		if(this.readClaimsHeader==null) {
+			this.readClaimsHeader = new HashMap<>();
 			String hdr = getDecodedHeader();
 			JSONUtils jsonUtils = JSONUtils.getInstance();
 			if(jsonUtils.isJson(hdr)) {
 				JsonNode root = jsonUtils.getAsNode(hdr);
 				Map<String, Object> readClaims = jsonUtils.convertToSimpleMap(root);
-				if(readClaims!=null && readClaims.size()>0) {
-					for (String claim : readClaims.keySet()) {
-						Object o = readClaims.get(claim);
-						if(o!=null) {
-							List<String> lClaimValues = getClaimValues(o);
-							if(lClaimValues!=null && !lClaimValues.isEmpty()) {
-								String v = getClaimValuesAsString(lClaimValues);
-								if(v!=null) {
-									this.readClaims_header.put(claim, v);
-								}
-							}
-						}
-					}
+				initReadClaimsHeader(readClaims);
+			}
+		}
+	}
+	private void initReadClaimsHeader(Map<String, Object> readClaims) {
+		if(readClaims!=null && readClaims.size()>0) {
+			for (Map.Entry<String,Object> entry: readClaims.entrySet()) {
+				String claim = entry.getKey();
+				Object o = readClaims.get(claim);
+				putClaimHeader(claim, o);
+			}
+		}
+	}
+	private void putClaimHeader(String claim, Object o) {
+		if(o!=null) {
+			List<String> lClaimValues = getClaimValues(o);
+			if(lClaimValues!=null && !lClaimValues.isEmpty()) {
+				String v = getClaimValuesAsString(lClaimValues);
+				if(v!=null) {
+					this.readClaimsHeader.put(claim, v);
 				}
 			}
 		}
 	}
 	
-	private Map<String, String> readClaims_payload = null;
-	private synchronized void initReadClaims_payload() throws UtilsException {
-		if(this.readClaims_payload==null) {
-			this.readClaims_payload = new HashMap<>();
+	private Map<String, String> readClaimsPayload = null;
+	private synchronized void initReadClaimsPayload() throws UtilsException {
+		if(this.readClaimsPayload==null) {
+			this.readClaimsPayload = new HashMap<>();
 			String hdr = getDecodedPayload();
 			JSONUtils jsonUtils = JSONUtils.getInstance();
 			if(jsonUtils.isJson(hdr)) {
 				JsonNode root = jsonUtils.getAsNode(hdr);
 				Map<String, Object> readClaims = jsonUtils.convertToSimpleMap(root);
-				if(readClaims!=null && readClaims.size()>0) {
-					for (String claim : readClaims.keySet()) {
-						Object o = readClaims.get(claim);
-						if(o!=null) {
-							List<String> lClaimValues = getClaimValues(o);
-							if(lClaimValues!=null && !lClaimValues.isEmpty()) {
-								String v = getClaimValuesAsString(lClaimValues);
-								if(v!=null) {
-									this.readClaims_payload.put(claim, v);
-								}
-							}
-						}
-					}
+				initReadClaimsPayload(readClaims);
+			}
+		}
+	}
+	private void initReadClaimsPayload(Map<String, Object> readClaims) {
+		if(readClaims!=null && readClaims.size()>0) {
+			for (Map.Entry<String,Object> entry: readClaims.entrySet()) {
+				String claim = entry.getKey();
+				Object o = readClaims.get(claim);
+				putClaimPayload(claim, o);
+			}
+		}
+	}
+	private void putClaimPayload(String claim, Object o) {
+		if(o!=null) {
+			List<String> lClaimValues = getClaimValues(o);
+			if(lClaimValues!=null && !lClaimValues.isEmpty()) {
+				String v = getClaimValuesAsString(lClaimValues);
+				if(v!=null) {
+					this.readClaimsPayload.put(claim, v);
 				}
 			}
 		}
 	}
 
 	public static List<String> getClaimValues(Object value) {
+		List<String> lreturn = null;
 		if(value!=null) {
 			if(value instanceof List<?>) {
 				List<?> l = (List<?>) value;
-				if(!l.isEmpty()) {
-					List<String> lString = new ArrayList<>();
-					for (Object o : l) {
-						if(o!=null) {
-							lString.add(o.toString());
-						}
-					}
-					if(!lString.isEmpty()) {
-						return lString;
-					}
+				List<String> lString = convertTo(l);
+				if(lString!=null) {
+					return lString;
 				}
 			}
 			else {
@@ -222,7 +232,22 @@ public class RestMessageSecurityToken extends AbstractMessageSecurityToken<Strin
 				return l;
 			}
 		}
-		return null;
+		return lreturn;
+	}
+	private static List<String> convertTo(List<?> l){
+		List<String> lreturn = null;
+		if(!l.isEmpty()) {
+			List<String> lString = new ArrayList<>();
+			for (Object o : l) {
+				if(o!=null) {
+					lString.add(o.toString());
+				}
+			}
+			if(!lString.isEmpty()) {
+				return lString;
+			}
+		}
+		return lreturn;
 	}
 	private static String getClaimValuesAsString(List<String> claimValues) {
 		String claimValue = null;
@@ -230,14 +255,14 @@ public class RestMessageSecurityToken extends AbstractMessageSecurityToken<Strin
 			return null;
 		}
 		if(claimValues.size()>1) {
+			StringBuilder sb = new StringBuilder();
 			for (String c : claimValues) {
-				if(claimValue!=null) {
-					claimValue = claimValue +","+c;
+				if(sb.length()>0) {
+					sb.append(",");
 				}
-				else {
-					claimValue = c;
-				}
+				sb.append(c);
 			}
+			claimValue = sb.toString();
 		}
 		else {
 			claimValue = claimValues.get(0);

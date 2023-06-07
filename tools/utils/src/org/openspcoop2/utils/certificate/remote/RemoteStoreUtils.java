@@ -29,6 +29,8 @@ import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.JWK;
 import org.openspcoop2.utils.certificate.KeyUtils;
+import org.openspcoop2.utils.resources.Charset;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ExternalResourceUtils;
 
 /**
@@ -72,11 +74,12 @@ public class RemoteStoreUtils {
 				if(!remoteConfig.getBaseUrl().endsWith("/")) {
 					url = url + "/";
 				}
-				url = url + keyId;
+				url = url + TransportUtils.urlEncodePath(keyId, Charset.UTF_8.getValue());
 				break;
 			case URL_PARAMETER:
 				remoteConfig.setQueryParameters(new HashMap<>());
-				remoteConfig.getQueryParameters().put(remoteConfig.getParameterName(), keyId);
+				remoteConfig.getQueryParameters().put(remoteConfig.getParameterName(), 
+						TransportUtils.urlEncodeParam(keyId, Charset.UTF_8.getValue()));
 				break;
 			case HEADER:
 				remoteConfig.setHeaders(new HashMap<>());

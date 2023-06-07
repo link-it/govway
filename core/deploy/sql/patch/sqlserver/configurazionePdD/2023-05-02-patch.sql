@@ -23,6 +23,10 @@ CREATE TABLE remote_store_key
 	content_key VARBINARY(MAX) NOT NULL,
 	data_registrazione DATETIME2 NOT NULL,
 	data_aggiornamento DATETIME2 NOT NULL,
+	client_id VARCHAR(255),
+	client_details VARCHAR(max),
+	organization_details VARCHAR(max),
+	client_data_aggiornamento DATETIME2,
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- unique constraints

@@ -34,6 +34,8 @@ public class RemoteStoreConfig extends ExternalResourceConfig {
 	private String storeName;
 	private String storeLabel;
 	
+	private String tokenPolicy; 
+	
 	private String baseUrl;
 	
 	private RemoteKeyIdMode idMode;
@@ -55,6 +57,14 @@ public class RemoteStoreConfig extends ExternalResourceConfig {
 
 	public void setStoreLabel(String storeLabel) {
 		this.storeLabel = storeLabel;
+	}
+	
+	public String getTokenPolicy() {
+		return this.tokenPolicy;
+	}
+
+	public void setTokenPolicy(String tokenPolicy) {
+		this.tokenPolicy = tokenPolicy;
 	}
 	
 	public String getKeyAlgorithm() {

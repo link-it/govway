@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.resources.Charset;
 import org.slf4j.Logger;
 import org.springframework.web.util.UriUtils;
@@ -46,17 +47,19 @@ import org.springframework.web.util.UriUtils;
  * @version $Rev$, $Date$
  */
 public class TransportUtils {
+	
+	private TransportUtils() {}
 
 	/* Gestione CaseInsensitive per Properties */
 
 	public static boolean containsKey(Map<String, List<String>> p, String name) {
-		return _hasKey(p, name);
+		return hasKeyEngine(p, name);
 	}
 	@Deprecated
 	public static boolean hasKey(Map<String, String> p, String name) {
-		return _hasKey(p, name);
+		return hasKeyEngine(p, name);
 	}
-	private static boolean _hasKey(Map<String, ?> p, String name) {
+	private static boolean hasKeyEngine(Map<String, ?> p, String name) {
 		
 		// rfc7230#page-22: Each header field consists of a case-insensitive field name followed by a colon (":")
 		
@@ -78,7 +81,7 @@ public class TransportUtils {
 		}
 		Iterator<String> keys = p.keySet().iterator();
 		while (keys.hasNext()) {
-			String key = (String) keys.next();
+			String key = keys.next();
 			String keyCaseInsensitive = key.toLowerCase();
 			if(keyCaseInsensitive.equals( lowerName )) {
 				return true;
@@ -91,14 +94,14 @@ public class TransportUtils {
 	// Usare i metodi sottostanti come getRawObject e getObjectAsString
 	@Deprecated
 	public static String get(Map<String, String> p, String name) {
-		Object o = _properties(p, name, true);
-		return (o !=null && o instanceof String) ? ((String)o) : null;
+		Object o = propertiesEngine(p, name, true);
+		return (o instanceof String) ? ((String)o) : null;
 	}
 	@Deprecated
 	public static Object remove(Map<String, String> p, String name) {
-		return _properties(p, name, false);
+		return propertiesEngine(p, name, false);
 	}
-	private static <T> T _properties(Map<String, T> p, String name, boolean get) {
+	private static <T> T propertiesEngine(Map<String, T> p, String name, boolean get) {
 		
 		// rfc7230#page-22: Each header field consists of a case-insensitive field name followed by a colon (":")
 		
@@ -121,7 +124,7 @@ public class TransportUtils {
 			List<String> keysFound = new ArrayList<>();
 			Iterator<String> keys = p.keySet().iterator();
 			while (keys.hasNext()) {
-				String key = (String) keys.next();
+				String key = keys.next();
 				String keyCaseInsensitive = key.toLowerCase();
 				if ( lowerName == null )
 					lowerName = name.toLowerCase();
@@ -181,23 +184,23 @@ public class TransportUtils {
 		
 	}
 	public static String getObjectAsString(Map<String, ?> map, String name) {
-		return (String) _map(map, name, true, true);
+		return (String) mapEngine(map, name, true, true);
 	}
 	public static String removeObjectAsString(Map<String, ?> map, String name) {
-		return (String) _map(map, name, false, true);
+		return (String) mapEngine(map, name, false, true);
 	}
 	@SuppressWarnings("unchecked")
 	public static <T> T getRawObject(Map<String, T> map, String name) {
-		return (T) _map(map, name, true, false);
+		return (T) mapEngine(map, name, true, false);
 	}
 	@SuppressWarnings("unchecked")
 	public static <T> T removeRawObject(Map<String, T> map, String name) {
-		return (T) _map(map, name, false, false);
+		return (T) mapEngine(map, name, false, false);
 	}
 	public static void removeObject(Map<String, ?> map, String name) {
-		_map(map, name, false, false);
+		mapEngine(map, name, false, false);
 	}
-	private static Object _map(Map<String, ?> map, String name, boolean get, boolean returnAsString) {
+	private static Object mapEngine(Map<String, ?> map, String name, boolean get, boolean returnAsString) {
 		
 		// rfc7230#page-22: Each header field consists of a case-insensitive field name followed by a colon (":")
 		
@@ -248,12 +251,11 @@ public class TransportUtils {
 		}
 		else {
 			if(value instanceof String) {
-				return (String) value;
+				return value;
 			}
 			else if(value instanceof List<?>) {
 				List<?> l = (List<?>) value;
-				String v = convertToSingleValue(l);
-				return v;
+				return convertToSingleValue(l);
 			}
 			else {
 				return value.toString();
@@ -280,11 +282,13 @@ public class TransportUtils {
 	public static List<String> getParameterValues(HttpServletRequest request, String name) {
 		// rfc7230#page-22: Each header field consists of a case-insensitive field name followed by a colon (":")
 		
+		List<String> lNullReturn = null;
+		
 		if(request==null) {
-			return null;
+			return lNullReturn;
 		}
 		if(name==null) {
-			return null;
+			return lNullReturn;
 		}
 		String lowerName = null;
 		String exactKeyName = null;
@@ -303,7 +307,7 @@ public class TransportUtils {
 			}
 		}
 		if(exactKeyName==null) {
-			return null;
+			return lNullReturn;
 		}
 		
 		String [] s = request.getParameterValues(exactKeyName);
@@ -312,11 +316,11 @@ public class TransportUtils {
 			for (int i = 0; i < s.length; i++) {
 				String value = s[i];
 				values.add(value);
-				//System.out("Parameter ["+nomeProperty+"] valore-"+i+" ["+value+"]");
+				/**System.out("Parameter ["+nomeProperty+"] valore-"+i+" ["+value+"]");*/
 			}
 		}
 		else {
-			//System.out("Parameter ["+nomeProperty+"] valore ["+req.getParameter(nomeProperty)+"]");
+			/**System.out("Parameter ["+nomeProperty+"] valore ["+req.getParameter(nomeProperty)+"]");*/
 			values.add(request.getParameter(exactKeyName));
 		}
 		
@@ -339,11 +343,13 @@ public class TransportUtils {
 		
 		// rfc7230#page-22: Each header field consists of a case-insensitive field name followed by a colon (":")
 		
+		List<String> lNullReturn = null;
+		
 		if(request==null) {
-			return null;
+			return lNullReturn;
 		}
 		if(name==null) {
-			return null;
+			return lNullReturn;
 		}
 		String lowerName = null;
 		String exactKeyName = null;
@@ -362,7 +368,7 @@ public class TransportUtils {
 			}
 		}
 		if(exactKeyName==null) {
-			return null;
+			return lNullReturn;
 		}
 		
 		Enumeration<String> enValues = request.getHeaders(exactKeyName);
@@ -371,14 +377,14 @@ public class TransportUtils {
 			@SuppressWarnings("unused")
 			int i = 0;
 			while (enValues.hasMoreElements()) {
-				String value = (String) enValues.nextElement();
+				String value = enValues.nextElement();
 				values.add(value);
-				//System.out("Header ["+nomeHeader+"] valore-"+i+" ["+value+"]");
+				/**System.out("Header ["+nomeHeader+"] valore-"+i+" ["+value+"]");*/
 				i++;
 			}
 		}
 		if(values.isEmpty()) {
-			//System.out("Header ["+nomeHeader+"] valore ["+req.getHeader(nomeHeader)+"]");
+			/**System.out("Header ["+nomeHeader+"] valore ["+req.getHeader(nomeHeader)+"]");*/
 			values.add(request.getHeader(exactKeyName));
 		}
 		
@@ -401,11 +407,13 @@ public class TransportUtils {
 				
 		// rfc7230#page-22: Each header field consists of a case-insensitive field name followed by a colon (":")
 		
+		List<String> lNullReturn = null;
+		
 		if(response==null) {
-			return null;
+			return lNullReturn;
 		}
 		if(name==null) {
-			return null;
+			return lNullReturn;
 		}
 		String lowerName = null;
 		String exactKeyName = null;
@@ -425,7 +433,7 @@ public class TransportUtils {
 			}
 		}
 		if(exactKeyName==null) {
-			return null;
+			return lNullReturn;
 		}
 		
 		Collection<String> enValues = response.getHeaders(exactKeyName);
@@ -435,12 +443,12 @@ public class TransportUtils {
 			int i = 0;
 			for (String value : enValues) {
 				values.add(value);
-				//System.out("Header ["+nomeHeader+"] valore-"+i+" ["+value+"]");
+				/**System.out("Header ["+nomeHeader+"] valore-"+i+" ["+value+"]");*/
 				i++;
 			}
 		}
 		if(values.isEmpty()) {
-			//System.out("Header ["+nomeHeader+"] valore ["+req.getHeader(nomeHeader)+"]");
+			/**System.out("Header ["+nomeHeader+"] valore ["+req.getHeader(nomeHeader)+"]");*/
 			values.add(response.getHeader(exactKeyName));
 		}
 		
@@ -468,7 +476,7 @@ public class TransportUtils {
 					try {
 						return URLDecoder.decode(cookie.getValue(), Charset.UTF_8.getValue());
 					}catch(Exception e) {
-						throw new RuntimeException(e.getMessage(),e);
+						throw new UtilsRuntimeException(e.getMessage(),e);
 					}
 				}
 			}
@@ -521,13 +529,13 @@ public class TransportUtils {
 			Iterator<String> keys = parameters.keySet().iterator();
 			while (keys.hasNext()) {
 				
-				String key = (String) keys.next();
+				String key = keys.next();
 				List<String> list = parameters.get(key);
 				if(list!=null && !list.isEmpty()) {
 				
 					for (String value : list) {
 						
-						if(urlBuilder.toString().contains("?")==false)
+						if(!urlBuilder.toString().contains("?"))
 							urlBuilder.append("?");
 						else
 							urlBuilder.append("&");
@@ -539,7 +547,7 @@ public class TransportUtils {
 								log.error("URLEncode key["+key+"] error: "+e.getMessage(),e);
 							}
 							else {
-								e.printStackTrace(System.out);
+								LoggerWrapperFactory.getLogger(TransportUtils.class).error("URLEncode key["+key+"] error: "+e.getMessage(),e);
 							}
 						}
 						
@@ -550,7 +558,7 @@ public class TransportUtils {
 								log.error("URLEncode value:["+value+"] error: "+e.getMessage(),e);
 							}
 							else {
-								e.printStackTrace(System.out);
+								LoggerWrapperFactory.getLogger(TransportUtils.class).error("URLEncode value:["+value+"] error: "+e.getMessage(),e);
 							}
 						}
 						
@@ -578,7 +586,7 @@ public class TransportUtils {
 	}
 	
 	
-	public static String urlEncodeParam(String value, String charset) throws Exception {
+	public static String urlEncodeParam(String value, String charset) {
 		
 		// Note that Java’s URLEncoder class encodes space character(" ") into a + sign. 
 		// This is contrary to other languages like Javascript that encode space character into %20.
@@ -588,7 +596,7 @@ public class TransportUtils {
 		 *  That is, for transforming plain text into the application/x-www-form-urlencoded MIME format as described in the HTML specification. 
 		 **/
 				
-		//return java.net.URLEncoder.encode(value,"UTF8");
+		/**return java.net.URLEncoder.encode(value,"UTF8");*/
 		
 		// fix
 		String p = UriUtils.encodeQueryParam(value, charset);
@@ -600,6 +608,9 @@ public class TransportUtils {
 		return p;
 	}
 	
+	public static String urlEncodePath(String value, String charset) {
+		return UriUtils.encode(value, charset);
+	}
 	
 	
 	/* ************** UTILITIES *************/
@@ -632,7 +643,7 @@ public class TransportUtils {
 			mapMultipleValues = new HashMap<>();
 			Iterator<String> keys = mapSingleValue.keySet().iterator();
 			while (keys.hasNext()) {
-				String key = (String) keys.next();
+				String key = keys.next();
 				String value = mapSingleValue.get(key);
 				List<String> l = new ArrayList<>();
 				l.add(value);
@@ -648,7 +659,7 @@ public class TransportUtils {
 			mapSingleValue = new HashMap<>();
 			Iterator<String> keys = mapMultipleValues.keySet().iterator();
 			while (keys.hasNext()) {
-				String key = (String) keys.next();
+				String key = keys.next();
 				List<String> values = mapMultipleValues.get(key);
 				String v = convertToSingleValue(values);
 				if(v!=null) {
@@ -701,13 +712,14 @@ public class TransportUtils {
 	
 	
 	public static List<String> getValues(Map<String, List<String>> map, String key) {
+		List<String> lReturn = null;
 		if(map!=null && !map.isEmpty()) {
 			List<String> l = getRawObject(map, key); 
 			if(l!=null && !l.isEmpty()) {
 				return l;
 			}
 		}
-		return null;
+		return lReturn;
 	}
 	
 	public static String getFirstValue(Map<String, List<String>> map, String key) {

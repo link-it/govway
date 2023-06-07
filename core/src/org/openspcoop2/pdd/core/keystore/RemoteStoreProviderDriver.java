@@ -30,6 +30,7 @@ import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.eventi.Evento;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.config.PDNDConfigUtilities;
 import org.openspcoop2.pdd.core.eventi.GestoreEventi;
 import org.openspcoop2.pdd.timers.pdnd.TimerGestoreChiaviPDNDEvent;
 import org.openspcoop2.pdd.timers.pdnd.TimerGestoreChiaviPDNDLib;
@@ -40,6 +41,7 @@ import org.openspcoop2.utils.certificate.JWK;
 import org.openspcoop2.utils.certificate.KeyUtils;
 import org.openspcoop2.utils.certificate.remote.IRemoteStoreProvider;
 import org.openspcoop2.utils.certificate.remote.RemoteKeyType;
+import org.openspcoop2.utils.certificate.remote.RemoteStoreClientInfo;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreUtils;
 import org.openspcoop2.utils.date.DateManager;
@@ -61,6 +63,15 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 	}
 	public static void setKeyMaxLifeMinutes(int keyMaxLifeMinutes) {
 		RemoteStoreProviderDriver.keyMaxLifeMinutes = keyMaxLifeMinutes;
+	}
+	
+	
+	private static int clientDetailsMaxLifeMinutes = -1; // infinito
+	public static int getClientDetailsMaxLifeMinutes() {
+		return clientDetailsMaxLifeMinutes;
+	}
+	public static void setClientDetailsMaxLifeMinutes(int clientDetailsMaxLifeMinutes) {
+		RemoteStoreProviderDriver.clientDetailsMaxLifeMinutes = clientDetailsMaxLifeMinutes;
 	}
 
 
@@ -308,4 +319,120 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 		}
 	}
 	
+	
+	
+	@Override
+	public RemoteStoreClientInfo readClientInfo(String keyId, String clientId, RemoteStoreConfig remoteConfig)
+			throws UtilsException {
+		try {
+			return readClientInfo(keyId, clientId);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	private static boolean createEntryIfNotExists = true;
+	public static void setCreateEntryIfNotExists(boolean createEntryIfNotExists) {
+		RemoteStoreProviderDriver.createEntryIfNotExists = createEntryIfNotExists;
+	}
+	public RemoteStoreClientInfo readClientInfo(String keyId, String clientId) throws KeystoreException {
+		
+		RemoteStoreClientDetails clientDetails = null;
+		try {
+			clientDetails = RemoteStoreProviderDriverUtils.getRemoteStoreClientDetails(this.driverConfigurazioneDB, this.remoteStoreId, keyId, this.log, createEntryIfNotExists);
+			if(clientDetails==null) {
+				throw new KeystoreNotFoundException("Client details not found");
+			}
+		}catch(KeystoreNotFoundException notFound) {
+			String msg = getPrefixKidClientDetails(keyId)+" non presente su database";
+			this.log.error(msg);
+			return null;
+		}
+		boolean updateRequired = isUpdateRequired(clientDetails, keyId, clientId);
+		if(!updateRequired) {
+			return clientDetails.getClientInfo();
+		}
+		
+		org.openspcoop2.utils.Semaphore semaphore = getLockStore(this.remoteStoreConfig.getStoreName());
+		try {
+			semaphore.acquire("readClientDetails");
+		}catch(Exception e) {
+			throw new KeystoreException(e.getMessage(),e);
+		}
+		try {
+			
+			OpenSPCoop2Properties propertiesReader = OpenSPCoop2Properties.getInstance();
+			
+			String clientJson = PDNDConfigUtilities.readClientDetails(this.remoteStoreConfig, propertiesReader, clientId, this.log);
+			String organizationId = null;
+			String organizationJson = null;
+			if(clientJson!=null) {
+				organizationId = PDNDConfigUtilities.readOrganizationId(propertiesReader, clientJson, this.log);
+				if(organizationId!=null) {
+					organizationJson = PDNDConfigUtilities.readOrganizationDetails(this.remoteStoreConfig, propertiesReader, organizationId, this.log);
+				}
+			}
+			
+			clientDetails.setDataAggiornamento(DateManager.getDate());
+			
+			if(clientDetails.getClientInfo()==null) {
+				clientDetails.setClientInfo(new RemoteStoreClientInfo());
+			}
+			clientDetails.getClientInfo().setClientId(clientId);
+			clientDetails.getClientInfo().setClientDetails(clientJson);
+			clientDetails.getClientInfo().setOrganizationId(organizationId);
+			clientDetails.getClientInfo().setOrganizationDetails(organizationJson);
+			
+			String msg = getPrefixKidClientDetails(keyId)+" ottenuta da remote store config, aggiornamento entry sul db ...";
+			this.log.debug(msg);
+			int rows = RemoteStoreProviderDriverUtils.updateRemoteStoreClientDetails(this.driverConfigurazioneDB, this.remoteStoreId, keyId, clientDetails);
+			msg = getPrefixKidClientDetails(keyId)+" ottenuta da remote store config, aggiornata entry sul db (updateRows:"+rows+")";
+			this.log.debug(msg);
+						
+			return clientDetails.getClientInfo();
+			
+		}catch(Exception e) {
+			throw new KeystoreException(e.getMessage(),e);
+		}finally {
+			semaphore.release("readClientDetails");
+		}
+		
+	}
+	
+	private String getPrefixKidClientDetails(String keyId) {
+		return "ClientDetails con kid '"+keyId+"'";
+	}
+	
+	private boolean isUpdateRequired(RemoteStoreClientDetails clientDetails, String keyId, String clientId) {
+		if(clientDetails!=null && clientDetails.isInvalid()) {
+			String msg = getPrefixKidClientDetails(keyId)+" non è valida";
+			this.log.debug(msg);
+			return true;
+		}
+		if(clientDetails!=null && clientDetails.getClientInfo()==null) {
+			String msg = getPrefixKidClientDetails(keyId)+" client info non presente";
+			this.log.debug(msg);
+			return true;
+		}
+		if(clientDetails!=null && clientDetails.getClientInfo().getClientId()==null) {
+			String msg = getPrefixKidClientDetails(keyId)+" client id non presente";
+			this.log.debug(msg);
+			return true;
+		}
+		if(clientDetails!=null && !clientDetails.getClientInfo().getClientId().equals(clientId)) {
+			String msg = getPrefixKidClientDetails(keyId)+" client id differente da quello presente su database";
+			this.log.debug(msg);
+			return true;
+		}
+		if(clientDetails!=null && clientDetailsMaxLifeMinutes>0 && clientDetails.getDataAggiornamento()!=null) {
+			long maxLifeSeconds = clientDetailsMaxLifeMinutes * 60l;
+			long maxLifeMs = maxLifeSeconds * 1000l;
+			Date tooOld = new Date(DateManager.getTimeMillis()-maxLifeMs);
+			if(clientDetails.getDataAggiornamento().before(tooOld)) {
+				String msg = getPrefixKidClientDetails(keyId)+" è più vecchia di "+clientDetailsMaxLifeMinutes+" minuti (data aggiornamento: "+DateUtils.getSimpleDateFormatMs().format(clientDetails.getDataAggiornamento())+")";
+				this.log.debug(msg);
+				return true;
+			}
+		}
+		return false;
+	}
 }

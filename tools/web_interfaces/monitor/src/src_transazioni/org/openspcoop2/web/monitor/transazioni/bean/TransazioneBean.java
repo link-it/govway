@@ -50,14 +50,18 @@ import org.openspcoop2.pdd.logger.info.InfoMittenteFormatUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.protocol.sdk.diagnostica.DriverMsgDiagnosticiException;
 import org.openspcoop2.protocol.sdk.diagnostica.DriverMsgDiagnosticiNotFoundException;
 import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnosticiConPaginazione;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.beans.BlackListElement;
+import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.MBeanUtilsService;
@@ -115,8 +119,7 @@ public class TransazioneBean extends Transazione{
 		
 		this.soggettoPddMonitor = soggettoPddMonitor;
 		
-		List<BlackListElement> metodiEsclusi = new ArrayList<BlackListElement>(
-				0);
+		List<BlackListElement> metodiEsclusi = new ArrayList<>(0);
 		metodiEsclusi.add(new BlackListElement("setLatenzaTotale", Long.class));
 		metodiEsclusi.add(new BlackListElement("setLatenzaServizio", Long.class));
 		metodiEsclusi.add(new BlackListElement("setLatenzaPorta", Long.class));
@@ -133,6 +136,10 @@ public class TransazioneBean extends Transazione{
 		metodiEsclusi.add(new BlackListElement("setTokenClientWithOrganizationNameLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setTokenUsernameLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setTokenMailLabel", String.class));
+		metodiEsclusi.add(new BlackListElement("setPdndOrganization", String.class));
+		metodiEsclusi.add(new BlackListElement("setPdndOrganizationName", String.class));
+		metodiEsclusi.add(new BlackListElement("setPdndOrganizationExternalId", String.class));
+		metodiEsclusi.add(new BlackListElement("setPdndOrganizationCategory", String.class));
 		metodiEsclusi.add(new BlackListElement("setEventiLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setGruppiLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setOperazioneLabel", String.class));
@@ -142,11 +149,27 @@ public class TransazioneBean extends Transazione{
 		BeanUtils.copy(this, transazione, metodiEsclusi);
 	}
 
-	public Long getLatenzaTotale() {
-		if(this.latenzaTotale == null){
-			if(this.dataUscitaRisposta != null && this.dataIngressoRichiesta != null){
-				this.latenzaTotale = this.dataUscitaRisposta.getTime() - this.dataIngressoRichiesta.getTime();
+	private String formatHTML(String tmp) {
+		String [] split = tmp.split(",");
+		if(split!=null && split.length>0){
+			StringBuilder bf = new StringBuilder();
+			for (int i = 0; i < split.length; i++) {
+				if(bf.length()>0){
+					bf.append("<BR/>");
+				}
+				bf.append(split[i].trim());
 			}
+			return bf.toString();
+		}
+		else{
+			return tmp;
+		}
+	}
+	
+	public Long getLatenzaTotale() {
+		if(this.latenzaTotale == null &&
+			this.dataUscitaRisposta != null && this.dataIngressoRichiesta != null){
+			this.latenzaTotale = this.dataUscitaRisposta.getTime() - this.dataIngressoRichiesta.getTime();
 		}
 
 		if(this.latenzaTotale == null)
@@ -160,10 +183,9 @@ public class TransazioneBean extends Transazione{
 	}
 
 	public Long getLatenzaServizio() {
-		if(this.latenzaServizio == null){
-			if(this.dataUscitaRichiesta != null && this.dataIngressoRisposta != null){
-				this.latenzaServizio = this.dataIngressoRisposta.getTime() - this.dataUscitaRichiesta.getTime();
-			}
+		if(this.latenzaServizio == null &&
+			this.dataUscitaRichiesta != null && this.dataIngressoRisposta != null){
+			this.latenzaServizio = this.dataIngressoRisposta.getTime() - this.dataUscitaRichiesta.getTime();
 		}
 
 		if(this.latenzaServizio == null)
@@ -177,13 +199,12 @@ public class TransazioneBean extends Transazione{
 	}
 
 	public Long getLatenzaPorta() {
-		if(this.latenzaPorta == null){
-			if(this.getLatenzaTotale() != null && this.getLatenzaTotale()>=0)
-				if(this.getLatenzaServizio() != null && this.getLatenzaServizio()>=0)
-					this.latenzaPorta = this.getLatenzaTotale().longValue() - this.getLatenzaServizio().longValue();
-				else 
-					this.latenzaPorta = this.getLatenzaTotale();
-
+		if(this.latenzaPorta == null &&
+			this.getLatenzaTotale() != null && this.getLatenzaTotale()>=0) {
+			if(this.getLatenzaServizio() != null && this.getLatenzaServizio()>=0)
+				this.latenzaPorta = this.getLatenzaTotale().longValue() - this.getLatenzaServizio().longValue();
+			else 
+				this.latenzaPorta = this.getLatenzaTotale();
 		}
 
 		if(this.latenzaPorta == null)
@@ -230,7 +251,9 @@ public class TransazioneBean extends Transazione{
 		if(this.getCodiceRispostaUscita()!=null && !"".equals(this.getCodiceRispostaUscita())) {
 			try {
 				httpStatus = Integer.valueOf(this.getCodiceRispostaUscita());
-			}catch(Throwable t) {}
+			}catch(Exception t) {
+				// ignore
+			}
 		}
 		return TransazioniEsitiUtils.getEsitoLabelSyntetic(this.getEsito(), this.getProtocollo(), httpStatus, this.getTipoApi());
 	}
@@ -240,13 +263,17 @@ public class TransazioneBean extends Transazione{
 		if(this.getCodiceRispostaUscita()!=null && !"".equals(this.getCodiceRispostaUscita())) {
 			try {
 				httpStatus = Integer.valueOf(this.getCodiceRispostaUscita());
-			}catch(Throwable t) {}
+			}catch(Exception t) {
+				// ignore
+			}
 		}
 		Integer httpInStatus = null;
 		if(this.getCodiceRispostaIngresso()!=null && !"".equals(this.getCodiceRispostaIngresso())) {
 			try {
 				httpInStatus = Integer.valueOf(this.getCodiceRispostaIngresso());
-			}catch(Throwable t) {}
+			}catch(Exception t) {
+				// ignore
+			}
 		}
 		return TransazioniEsitiUtils.getEsitoLabelDescription(this.getEsito(), this.getProtocollo(), httpStatus, httpInStatus, this.getTipoApi());
 	}
@@ -299,8 +326,9 @@ public class TransazioneBean extends Transazione{
 	@Override
 	public String getNomePorta(){
 		String nomePorta = super.getNomePorta();
-		if(nomePorta!=null && nomePorta.startsWith("null_") && (nomePorta.length()>"null_".length())){
-			return nomePorta.substring("null_".length());
+		String prefixNull = "null_";
+		if(nomePorta!=null && nomePorta.startsWith(prefixNull) && (nomePorta.length()>prefixNull.length())){
+			return nomePorta.substring(prefixNull.length());
 		}
 		else{
 			return nomePorta;
@@ -343,7 +371,7 @@ public class TransazioneBean extends Transazione{
 		return "";
 	}
 
-	public String getPortaLabel() throws Exception{
+	public String getPortaLabel() throws ProtocolException {
 		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.getProtocollo());
 		PorteNamingUtils n = new PorteNamingUtils(protocolFactory);
 		switch(this.getPddRuolo()) {
@@ -444,7 +472,9 @@ public class TransazioneBean extends Transazione{
 				boolean equals = false;
 				try {
 					equals = this.tokenClientOrganizationNameLabel.equals(this.getSoggettoFruitore());
-				}catch(Throwable t) {}
+				}catch(Exception t) {
+					// ignore
+				}
 				if(!equals) {
 					return this.tokenClientNameLabel + NamingUtils.LABEL_DOMINIO + this.tokenClientOrganizationNameLabel;
 				}
@@ -477,8 +507,124 @@ public class TransazioneBean extends Transazione{
 		this.tokenMailLabel = tokenMailLabel;
 	}
 
+	private String pdndOrganizationName;
+	public void setPdndOrganizationName(String pdndOrganizationName) {
+		this.pdndOrganizationName = pdndOrganizationName;
+	}
+	public String getPdndOrganizationName() {
+		if(this.pdndOrganizationName!=null) {
+			if(StringUtils.isEmpty(this.pdndOrganizationName)) {
+				return null;
+			}
+			return this.pdndOrganizationName;
+		}
+		if(this.tokenInfo!=null && StringUtils.isNotEmpty(this.tokenInfo)) {
+			try {
+				Logger log = LoggerManager.getPddMonitorCoreLogger();
+				this.pdndOrganizationName = JsonPathExpressionEngine.extractAndConvertResultAsString(this.tokenInfo, "$..pdnd.organization.name", log);
+				
+			}catch(Exception e) {
+				// ignore
+			}
+		}
+		if(this.pdndOrganizationName==null) {
+			this.pdndOrganizationName = "";
+		}
+		return this.pdndOrganizationName;
+	}
 	
+	private String pdndOrganizationExternalId;
+	public void setPdndOrganizationExternalId(String pdndOrganizationExternalId) {
+		this.pdndOrganizationExternalId = pdndOrganizationExternalId;
+	}
+	public String getPdndOrganizationExternalId() {
+		if(this.pdndOrganizationExternalId!=null) {
+			if(StringUtils.isEmpty(this.pdndOrganizationExternalId)) {
+				return null;
+			}
+			return this.pdndOrganizationExternalId;
+		}
+		if(this.tokenInfo!=null && StringUtils.isNotEmpty(this.tokenInfo)) {
+			try {
+				Logger log = LoggerManager.getPddMonitorCoreLogger();
+				String origin = JsonPathExpressionEngine.extractAndConvertResultAsString(this.tokenInfo, "$..pdnd.organization.['externalId.origin']", log);
+				String id = JsonPathExpressionEngine.extractAndConvertResultAsString(this.tokenInfo, "$..pdnd.organization.['externalId.id']", log);
+				if(origin!=null && StringUtils.isNotEmpty(origin) &&
+						id!=null && StringUtils.isNotEmpty(id)) {
+					this.pdndOrganizationExternalId = origin + " "+id;
+				}
+				else if(origin!=null && StringUtils.isNotEmpty(origin)) {
+					this.pdndOrganizationExternalId = origin;
+				}
+				else if(id!=null && StringUtils.isNotEmpty(id)) {
+					this.pdndOrganizationExternalId = id;
+				}
+			}catch(Exception e) {
+				// ignore
+			}
+		}
+		if(this.pdndOrganizationExternalId==null) {
+			this.pdndOrganizationExternalId = "";
+		}
+		return this.pdndOrganizationExternalId;
+	}
 	
+	private String pdndOrganizationCategory;
+	public void setPdndOrganizationCategory(String pdndOrganizationCategory) {
+		this.pdndOrganizationCategory = pdndOrganizationCategory;
+	}
+	public String getPdndOrganizationCategory() {
+		if(this.pdndOrganizationCategory!=null) {
+			if(StringUtils.isEmpty(this.pdndOrganizationCategory)) {
+				return null;
+			}
+			return this.pdndOrganizationCategory;
+		}
+		if(this.tokenInfo!=null && StringUtils.isNotEmpty(this.tokenInfo)) {
+			try {
+				Logger log = LoggerManager.getPddMonitorCoreLogger();
+				this.pdndOrganizationCategory = JsonPathExpressionEngine.extractAndConvertResultAsString(this.tokenInfo, "$..pdnd.organization.category", log);
+			}catch(Exception e) {
+				// ignore
+			}
+		}
+		if(this.pdndOrganizationCategory==null) {
+			this.pdndOrganizationCategory = "";
+		}
+		return this.pdndOrganizationCategory;
+	}
+	
+	public void setPdndOrganization(String pdndOrganizationCategory) {
+		// nop
+	}
+	public String getPdndOrganization() {
+		StringBuilder sb = new StringBuilder();
+		
+		String name = getPdndOrganizationName();
+		if(name!=null && StringUtils.isNotEmpty(name)) {
+			sb.append(name);
+		}
+		
+		String cat = getPdndOrganizationCategory();
+		if(cat!=null && StringUtils.isNotEmpty(cat)) {
+			if(sb.length()>0){
+				sb.append("<BR/>");
+			}
+			sb.append("category: ");
+			sb.append(cat);
+		}
+		
+		String extId = getPdndOrganizationExternalId();
+		if(extId!=null && StringUtils.isNotEmpty(extId)) {
+			if(sb.length()>0){
+				sb.append("<BR/>");
+			}
+			sb.append("externalId: ");
+			sb.append(extId);
+		}
+		
+		return sb.length()>0 ? sb.toString() : null;
+	}
 	
 	@Override
 	public String getEventiGestione() {
@@ -496,20 +642,7 @@ public class TransazioneBean extends Transazione{
 				tmp = tmp.replace(CostantiPdD.PREFIX_CONNETTORI_MULTIPLI, "");
 			}
 			if(tmp.contains(",")){
-				String [] split = tmp.split(",");
-				if(split!=null && split.length>0){
-					StringBuilder bf = new StringBuilder();
-					for (int i = 0; i < split.length; i++) {
-						if(bf.length()>0){
-							bf.append("<BR/>");
-						}
-						bf.append(split[i].trim());
-					}
-					return bf.toString();
-				}
-				else{
-					return tmp;
-				}
+				return formatHTML(tmp);
 			}
 			else{
 				return tmp;
@@ -550,11 +683,13 @@ public class TransazioneBean extends Transazione{
 				if(evento!=null && evento.startsWith(CostantiPdD.PREFIX_HTTP_STATUS_CODE_IN) && evento.length()>CostantiPdD.PREFIX_HTTP_STATUS_CODE_IN.length()) {
 					try {
 						String sub = evento.substring(CostantiPdD.PREFIX_HTTP_STATUS_CODE_IN.length());
-						int httpStatus = Integer.valueOf(sub);
+						int httpStatus = Integer.parseInt(sub);
 						if(httpStatus>0) {
 							return httpStatus;
 						}
-					}catch(Throwable t) {}
+					}catch(Exception t) {
+						// ignore
+					}
 				}
 			}
 		}
@@ -567,11 +702,13 @@ public class TransazioneBean extends Transazione{
 				if(evento!=null && evento.startsWith(CostantiPdD.PREFIX_HTTP_STATUS_CODE_OUT) && evento.length()>CostantiPdD.PREFIX_HTTP_STATUS_CODE_OUT.length()) {
 					try {
 						String sub = evento.substring(CostantiPdD.PREFIX_HTTP_STATUS_CODE_OUT.length());
-						int httpStatus = Integer.valueOf(sub);
+						int httpStatus = Integer.parseInt(sub);
 						if(httpStatus>0) {
 							return httpStatus;
 						}
-					}catch(Throwable t) {}
+					}catch(Exception t) {
+						// ignore
+					}
 				}
 			}
 		}
@@ -584,11 +721,13 @@ public class TransazioneBean extends Transazione{
 				if(evento!=null && evento.startsWith(CostantiPdD.PREFIX_API) && evento.length()>CostantiPdD.PREFIX_API.length()) {
 					try {
 						String sub = evento.substring(CostantiPdD.PREFIX_API.length());
-						int tipoApi = Integer.valueOf(sub);
+						int tipoApi = Integer.parseInt(sub);
 						if(tipoApi>0) {
 							return tipoApi;
 						}
-					}catch(Throwable t) {}
+					}catch(Exception t) {
+						// ignore
+					}
 				}
 			}
 		}
@@ -628,20 +767,7 @@ public class TransazioneBean extends Transazione{
 		if(tmp!=null){
 			tmp = tmp.trim();
 			if(tmp.contains(",")){
-				String [] split = tmp.split(",");
-				if(split!=null && split.length>0){
-					StringBuilder bf = new StringBuilder();
-					for (int i = 0; i < split.length; i++) {
-						if(bf.length()>0){
-							bf.append("<BR/>");
-						}
-						bf.append(split[i].trim());
-					}
-					return bf.toString();
-				}
-				else{
-					return tmp;
-				}
+				return formatHTML(tmp);
 			}
 			else{
 				return tmp;
@@ -662,7 +788,7 @@ public class TransazioneBean extends Transazione{
 	
 	public List<Gruppo> getListaGruppi(){
 		String tmp = this.getGruppi();
-		List<Gruppo> gruppiObj = new ArrayList<Gruppo>();
+		List<Gruppo> gruppiObj = new ArrayList<>();
 		if(tmp!=null){
 			// colleziono i tags registrati
 			List<String> tagsDisponibili = Utility.getListaNomiGruppi();
@@ -704,7 +830,9 @@ public class TransazioneBean extends Transazione{
 		return gruppiObj;
 	}
 	
-	public void setListaGruppi(List<Gruppo> lista) {}
+	public void setListaGruppi(List<Gruppo> lista) {
+		// nop
+	}
 	
 	
 	public TempiElaborazioneBean getTempiElaborazioneObject() {
@@ -786,7 +914,9 @@ public class TransazioneBean extends Transazione{
 						return true;
 					}
 				}
-			}catch(Throwable t) {}
+			}catch(Exception t) {
+				// ignore
+			}
 		}
 		return false;
 	}
@@ -797,7 +927,9 @@ public class TransazioneBean extends Transazione{
 			try {
 				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(parteComune);
 				return NamingUtils.getLabelAccordoServizioParteComune(idAccordo);
-			}catch(Throwable t) {}
+			}catch(Exception t) {
+				// ignore
+			}
 		}
 		return "";
 	}
@@ -877,11 +1009,10 @@ public class TransazioneBean extends Transazione{
 		}
 		
 		// 4a) Client ID, per il caso di ClientCredential
-		if(clientCredentialsFlow) {
-			if(StringUtils.isNotEmpty(sTokenClientId)) {
-				// gia' normalizzato prima
-				return;
-			}
+		if(clientCredentialsFlow &&
+			StringUtils.isNotEmpty(sTokenClientId)) {
+			// gia' normalizzato prima
+			return;
 		}
 		
 		// 4b) Subject/Issuer del Token
@@ -895,29 +1026,23 @@ public class TransazioneBean extends Transazione{
 		}
 		
 		// 4c) Client ID, per il caso diverso da ClientCredential
-		if(!clientCredentialsFlow) {
-			if(StringUtils.isNotEmpty(sTokenClientId)) {
-				// gia' normalizzato prima
-				return;
-			}
+		if(!clientCredentialsFlow &&
+			StringUtils.isNotEmpty(sTokenClientId)) {
+			// gia' normalizzato prima
+			return;
 		}
 		
 		// 5) Credenziali dell'autenticazione di trasporto
 		String sTrasportoMittente = getTrasportoMittente();
 		if(StringUtils.isNotEmpty(sTrasportoMittente)) {
 			transazioniService.normalizeInfoTransazioniFromCredenzialiMittenteTrasporto(transazioneBean, t);
-			return;
 		}
 
 	}
 	
 	public boolean isVisualizzaTextAreaRichiedente() throws Exception {
 		String de = this.getRichiedente();
-		if(StringUtils.isNotEmpty(de)) {
-			if(de.length() > 150)
-				return true;
-		} 
-		return false;
+		return StringUtils.isNotEmpty(de) && de.length() > 150;
 	}
 	
 	public DatiMittente convertToDatiMittente() {
@@ -935,7 +1060,7 @@ public class TransazioneBean extends Transazione{
 			try {
 				datiMittente.setTokenClientSoggettoFruitore(getTokenClientOrganizationNameLabel());
 			}catch(Exception e) {
-				throw new RuntimeException(e.getMessage(),e);
+				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
 		}
 				
@@ -947,7 +1072,7 @@ public class TransazioneBean extends Transazione{
 		try {
 			datiMittente.setSoggettoFruitore(getSoggettoFruitore());
 		}catch(Exception e) {
-			throw new RuntimeException(e.getMessage(),e);
+			throw new UtilsRuntimeException(e.getMessage(),e);
 		}
 		datiMittente.setTipoSoggettoFruitore(getTipoSoggettoFruitore());
 		datiMittente.setNomeSoggettoFruitore(getNomeSoggettoFruitore());
@@ -1044,11 +1169,10 @@ public class TransazioneBean extends Transazione{
 		
 			boolean addErogatore = true;
 			
-			if(org.openspcoop2.core.transazioni.constants.PddRuolo.APPLICATIVA.equals(this.getPddRuolo())) {
-				if(this.soggettoPddMonitor!=null && StringUtils.isNotEmpty(this.getTipoSoggettoErogatore()) && StringUtils.isNotEmpty(this.getNomeSoggettoErogatore())) {
-					IDSoggetto idSoggettoErogatore = new IDSoggetto(this.getTipoSoggettoErogatore(), this.getNomeSoggettoErogatore());
-					addErogatore = !this.soggettoPddMonitor.equals(idSoggettoErogatore.toString());
-				}
+			if(org.openspcoop2.core.transazioni.constants.PddRuolo.APPLICATIVA.equals(this.getPddRuolo()) &&
+				this.soggettoPddMonitor!=null && StringUtils.isNotEmpty(this.getTipoSoggettoErogatore()) && StringUtils.isNotEmpty(this.getNomeSoggettoErogatore())) {
+				IDSoggetto idSoggettoErogatore = new IDSoggetto(this.getTipoSoggettoErogatore(), this.getNomeSoggettoErogatore());
+				addErogatore = !this.soggettoPddMonitor.equals(idSoggettoErogatore.toString());
 			}
 			
 			if(addErogatore) {
@@ -1102,7 +1226,7 @@ public class TransazioneBean extends Transazione{
 						Map<String,Object> map = l.get(0);
 						String method = (String) map.get(Resource.model().HTTP_METHOD.getFieldName());
 						String path = (String) map.get(Resource.model().PATH.getFieldName());
-						//System.out.println("LETTO ["+method+"] ["+path+"]");
+						/**System.out.println("LETTO ["+method+"] ["+path+"]");*/
 						StringBuilder bf = new StringBuilder();
 						if(!CostantiDB.API_RESOURCE_HTTP_METHOD_ALL_VALUE.equals(method)) {
 							bf.append(method);
@@ -1126,7 +1250,7 @@ public class TransazioneBean extends Transazione{
 		this.operazioneLabel = getAzione();
 	}
 	
-	public String getLabelOperazioneConGestioneNonPresenza() throws Exception {
+	public String getLabelOperazioneConGestioneNonPresenza() {
 		
 		String op = getOperazioneLabel();
 		if(StringUtils.isNotEmpty(op)) {
@@ -1186,7 +1310,9 @@ public class TransazioneBean extends Transazione{
 		}
 	}
 
-	public void setConsegnaMultipla(boolean consegnaMultipla) {}
+	public void setConsegnaMultipla(boolean consegnaMultipla) {
+		// nop
+	}
 	
 	public String getLabelDettaglioErrore() {
 		return this.isEsitoOk() ? "Dettaglio Anomalia" : "Dettaglio Errore";
@@ -1194,11 +1320,7 @@ public class TransazioneBean extends Transazione{
 	
 	public boolean isVisualizzaTextAreaDettaglioErrore() {
 		String de = this.getDettaglioErrore();
-		if(StringUtils.isNotEmpty(de)) {
-			if(de.length() > 150)
-				return true;
-		} 
-		return false;
+		return StringUtils.isNotEmpty(de) && de.length() > 150;
 	}
 
 	private String dettaglioErrore;
@@ -1208,7 +1330,7 @@ public class TransazioneBean extends Transazione{
 			return this.dettaglioErrore;
 		}
 		
-		return _getDettaglioErrore(null);
+		return getDettaglioErroreEngine(null);
 	}
 	public String getDettaglioErrore(List<MsgDiagnostico> msgs) {
 		
@@ -1216,9 +1338,9 @@ public class TransazioneBean extends Transazione{
 			return this.dettaglioErrore;
 		}
 		
-		return _getDettaglioErrore(msgs);
+		return getDettaglioErroreEngine(msgs);
 	}
-	private synchronized String _getDettaglioErrore(List<MsgDiagnostico> msgsParams) {
+	private synchronized String getDettaglioErroreEngine(List<MsgDiagnostico> msgsParams) {
 		
 		if(this.dettaglioErrore!=null) {
 			return this.dettaglioErrore;
@@ -1254,21 +1376,13 @@ public class TransazioneBean extends Transazione{
 				filter.setProperties(properties);
 				
 				filter.setApplicativo(null);
-				if(EsitoTransazioneName.isConsegnaMultipla(esitoTransactionName)) {
-					filter.setCheckApplicativoIsNull(true);
-				}
-				else {
-					filter.setCheckApplicativoIsNull(false);
-				}
+				filter.setCheckApplicativoIsNull(EsitoTransazioneName.isConsegnaMultipla(esitoTransactionName));
+				
 				filter.setSeverita(LogLevels.SEVERITA_ERROR_INTEGRATION);
 				filter.setAsc(true);
 				
-				try {
-					msgs = driver.getMessaggiDiagnostici(filter);
-				}catch(DriverMsgDiagnosticiNotFoundException notFound){
-					msgs = new ArrayList<MsgDiagnostico>();
-					log.debug(notFound.getMessage(), notFound);
-				}
+				msgs = getDiagnostici(driver, filter, log);
+				
 			}catch(Exception e){
 				LoggerManager.getPddMonitorCoreLogger().error("Errore durante il recupero dei diagnostici per la ricostruzione del motivo dell'errore: "+e.getMessage(),e);
 			}
@@ -1285,5 +1399,16 @@ public class TransazioneBean extends Transazione{
 		}
 		return this.dettaglioErrore;
 		
+	}
+	
+	private List<MsgDiagnostico> getDiagnostici(IDiagnosticDriver driver, FiltroRicercaDiagnosticiConPaginazione filter, Logger log) throws DriverMsgDiagnosticiException{
+		List<MsgDiagnostico> msgs = null;
+		try {
+			msgs = driver.getMessaggiDiagnostici(filter);
+		}catch(DriverMsgDiagnosticiNotFoundException notFound){
+			msgs = new ArrayList<>();
+			log.debug(notFound.getMessage(), notFound);
+		}
+		return msgs;
 	}
 }

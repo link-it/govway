@@ -818,6 +818,14 @@ public class ModIProperties {
 		}
 		return null;
 	}
+	public RemoteStoreConfig getRemoteStoreConfigByTokenPolicy(String name) throws ProtocolException {
+		for (RemoteStoreConfig rsc : getRemoteStoreConfig()) {
+			if(name.equals(rsc.getTokenPolicy())) {
+				return rsc;
+			}
+		}
+		return null;
+	}
 	// riferito in org.openspcoop2.protocol.utils.ModIUtils
 	// non modificare il nome
 	public RemoteKeyType getRemoteKeyType(String name) throws ProtocolException {

@@ -739,6 +739,10 @@ CREATE TABLE remote_store_key
 	content_key BYTEA NOT NULL,
 	data_registrazione TIMESTAMP NOT NULL,
 	data_aggiornamento TIMESTAMP NOT NULL,
+	client_id VARCHAR(255),
+	client_details TEXT,
+	organization_details TEXT,
+	client_data_aggiornamento TIMESTAMP,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_remote_store_key') NOT NULL,
 	-- unique constraints

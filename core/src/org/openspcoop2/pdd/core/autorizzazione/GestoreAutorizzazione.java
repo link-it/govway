@@ -1028,7 +1028,7 @@ public class GestoreAutorizzazione {
     	}
     	if(authScope!=null && authScope.sizeScopeList()>0) {
     		EsitoAutorizzazionePortaApplicativa esitoNew = (EsitoAutorizzazionePortaApplicativa) autorizzazioneScope(authScope, esito, pddContext, datiInvocazione);
-    		if(esitoNew.isAutorizzato()==false) {
+    		if(!esitoNew.isAutorizzato()) {
     			esitoNew.setErroreCooperazione(IntegrationFunctionError.AUTHORIZATION_MISSING_SCOPE, ErroriCooperazione.TOKEN_AUTORIZZAZIONE_FALLITA.getErroreCooperazione());
     			return esitoNew;
         	}
@@ -1054,7 +1054,7 @@ public class GestoreAutorizzazione {
     				(EsitoAutorizzazionePortaApplicativa) autorizzazioneTokenOptions(tokenOptions, 
     						esito, pddContext, datiInvocazione,
     						log, msg);
-    		if(esitoNew.isAutorizzato()==false) {
+    		if(!esitoNew.isAutorizzato()) {
     			esitoNew.setErroreCooperazione(IntegrationFunctionError.AUTHORIZATION_TOKEN_DENY, ErroriCooperazione.TOKEN_AUTORIZZAZIONE_FALLITA.getErroreCooperazione());
     			return esitoNew;
         	}
@@ -1371,7 +1371,7 @@ public class GestoreAutorizzazione {
 		String errorMessage = null;
     	if(tokenOptions!=null) {
     		
-    		//Properties properties = PropertiesUtilities.convertTextToProperties(tokenOptions);
+    		/**Properties properties = PropertiesUtilities.convertTextToProperties(tokenOptions);*/
     		// Fix per preservare l'ordine di configurazione
     		SortedMap<List<String>> properties = PropertiesUtilities.convertTextToSortedListMap(tokenOptions);
 			if(properties!=null && properties.size()>0) {
@@ -1389,12 +1389,12 @@ public class GestoreAutorizzazione {
 	    		else {
 	    				    			
 	    			/* Costruisco dynamic Map */
-	    			boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
-	    			Map<String, Object> dynamicMap = DynamicUtils.buildDynamicMap(message, pddContext, datiInvocazione.getBusta(), log, bufferMessage_readOnly);
+	    			boolean bufferMessageReadOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
+	    			Map<String, Object> dynamicMap = DynamicUtils.buildDynamicMap(message, pddContext, datiInvocazione.getBusta(), log, bufferMessageReadOnly);
 	    				    			
 	    			/* Analisi claims di autorizzazione */
 	    			
-	    			//System.out.println("\n\n@ ===== AUTH TOKEN CLAIMS =====");
+	    			/**System.out.println("\n\n@ ===== AUTH TOKEN CLAIMS =====");*/
 					
 					List<String> keys = properties.keys();
 		    		for (String key : keys) {
@@ -1404,7 +1404,7 @@ public class GestoreAutorizzazione {
 		    				
 		    				for (String expectedValue : expectedValues) {
 								
-								//System.out.println("check '"+key+"'='"+expectedValue+"'");
+								/**System.out.println("check '"+key+"'='"+expectedValue+"'");*/
 								
 								String attributeAuthorityName = null;
 								String attributeName = null;

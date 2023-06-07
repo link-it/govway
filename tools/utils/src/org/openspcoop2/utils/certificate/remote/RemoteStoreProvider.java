@@ -61,5 +61,11 @@ public class RemoteStoreProvider implements IRemoteStoreProvider {
 	public PublicKey readPublicKey(String keyId, RemoteStoreConfig remoteConfig, ByteArrayOutputStream bout) throws UtilsException{
 		return RemoteStoreUtils.readPublicKey(keyId, remoteConfig, bout);
 	}
+	
+	@Override
+	public RemoteStoreClientInfo readClientInfo(String keyId, String clientId, RemoteStoreConfig remoteConfig)
+			throws UtilsException {
+		throw new UtilsException("Not Implemented");
+	}
 
 }

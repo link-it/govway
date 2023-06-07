@@ -2482,6 +2482,14 @@ public class OpenSPCoop2Properties {
 				getGestoreChiaviPDNDTimerLockIdleTime();
 				getGestoreChiaviPDNDTimerLockAttesaAttiva();
 				getGestoreChiaviPDNDTimerLockCheckInterval();
+				getGestoreChiaviPDNDclientsPath();
+				getGestoreChiaviPDNDclientsOrganizationJsonPath();
+				getGestoreChiaviPDNDorganizationsPath();
+				
+				isGestoreChiaviPDNDclientInfoEnabled();
+				getGestoreChiaviPDNDclientInfoMaxLifeMinutes();
+				isGestoreChiaviPDNDclientsErrorAbortTransaction();
+				isGestoreChiaviPDNDorganizationsErrorAbortTransaction();
 			}
 			
 			return true;
@@ -30248,9 +30256,9 @@ public class OpenSPCoop2Properties {
 				}
 				name = name.trim();
 				this.getGestoreChiaviPDNDkeysMaxLifeMinutes = Integer.valueOf(name);
-				if(this.getGestoreChiaviPDNDkeysMaxLifeMinutes<=0) {
+				/**if(this.getGestoreChiaviPDNDkeysMaxLifeMinutes<=0) {
 					throw new CoreException("Atteso un limite maggiore di zero");
-				}
+				}*/ // Se la proprietà viene valorizzata con un valore <=0 le informazioni hanno vita infinita
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+defaultValue+" : "+e.getMessage(),e);
 				this.getGestoreChiaviPDNDkeysMaxLifeMinutes = defaultValue;
@@ -30259,7 +30267,7 @@ public class OpenSPCoop2Properties {
 
 		return this.getGestoreChiaviPDNDkeysMaxLifeMinutes;
 	}
-	
+		
 	private String getGestoreChiaviPDNDkeysPath = null;
 	public String getGestoreChiaviPDNDkeysPath() throws CoreException {	
 		if(this.getGestoreChiaviPDNDkeysPath==null){
@@ -30527,6 +30535,165 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.getGestoreChiaviPDNDTimerLockCheckInterval;
+	}
+	
+	private String getGestoreChiaviPDNDclientsPath = null;
+	public String getGestoreChiaviPDNDclientsPath() throws CoreException {	
+		if(this.getGestoreChiaviPDNDclientsPath==null){
+			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.clients.path";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					throw new CoreException("Proprieta' non impostata");
+				}
+				name = name.trim();
+				this.getGestoreChiaviPDNDclientsPath = name;
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getGestoreChiaviPDNDclientsPath;
+	}
+		
+	private String getGestoreChiaviPDNDclientsOrganizationJsonPath = null;
+	public String getGestoreChiaviPDNDclientsOrganizationJsonPath() throws CoreException {	
+		if(this.getGestoreChiaviPDNDclientsOrganizationJsonPath==null){
+			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.clients.organizationJsonPath";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					throw new CoreException("Proprieta' non impostata");
+				}
+				name = name.trim();
+				this.getGestoreChiaviPDNDclientsOrganizationJsonPath = name;
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getGestoreChiaviPDNDclientsOrganizationJsonPath;
+	}
+	
+	private String getGestoreChiaviPDNDorganizationsPath = null;
+	public String getGestoreChiaviPDNDorganizationsPath() throws CoreException {	
+		if(this.getGestoreChiaviPDNDorganizationsPath==null){
+			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.organizations.path";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					throw new CoreException("Proprieta' non impostata");
+				}
+				name = name.trim();
+				this.getGestoreChiaviPDNDorganizationsPath = name;
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getGestoreChiaviPDNDorganizationsPath;
+	}
+	
+	
+	
+	private Boolean isGestoreChiaviPDNDclientInfoEnabled = null;
+	public boolean isGestoreChiaviPDNDclientInfoEnabled() throws CoreException {	
+		if(this.isGestoreChiaviPDNDclientInfoEnabled==null){
+			String pName = "org.openspcoop2.pdd.gestorePDND.clientInfo.enabled";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					throw new CoreException("Proprieta' non impostata");
+				}
+				name = name.trim();
+				this.isGestoreChiaviPDNDclientInfoEnabled = Boolean.valueOf(name);
+				
+				if(this.isGestoreChiaviPDNDclientInfoEnabled.booleanValue() && !this.isGestoreChiaviPDNDEnabled()) {
+					throw new CoreException("per abilitare la proprietà è richiesto che sia abilitata la gestione delle chiavi PDND");
+				}
+				
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+
+		return this.isGestoreChiaviPDNDclientInfoEnabled;
+	}
+	
+	private Integer getGestoreChiaviPDNDclientInfoMaxLifeMinutes = null;
+	public int getGestoreChiaviPDNDclientInfoMaxLifeMinutes() {	
+		if(this.getGestoreChiaviPDNDclientInfoMaxLifeMinutes==null){
+			String pName = "org.openspcoop2.pdd.gestorePDND.clientInfo.maxLifeMinutes";
+			int defaultValue = 43200;
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName,defaultValue));
+					name=defaultValue+"";
+				}
+				name = name.trim();
+				this.getGestoreChiaviPDNDclientInfoMaxLifeMinutes = Integer.valueOf(name);
+				/**if(this.getGestoreChiaviPDNDclientInfoMaxLifeMinutes<=0) {
+					throw new CoreException("Atteso un limite maggiore di zero");
+				}*/ // Se la proprietà viene valorizzata con un valore <=0 le informazioni hanno vita infinita
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+defaultValue+" : "+e.getMessage(),e);
+				this.getGestoreChiaviPDNDclientInfoMaxLifeMinutes = defaultValue;
+			}    
+		}
+
+		return this.getGestoreChiaviPDNDclientInfoMaxLifeMinutes;
+	}
+		
+	private Boolean isGestoreChiaviPDNDclientsErrorAbortTransaction = null;
+	public boolean isGestoreChiaviPDNDclientsErrorAbortTransaction() throws CoreException {	
+		if(this.isGestoreChiaviPDNDclientsErrorAbortTransaction==null){
+			String pName = "org.openspcoop2.pdd.gestorePDND.clients.error.abortTransaction";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					throw new CoreException("Proprieta' non impostata");
+				}
+				name = name.trim();
+				this.isGestoreChiaviPDNDclientsErrorAbortTransaction = Boolean.valueOf(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+
+		return this.isGestoreChiaviPDNDclientsErrorAbortTransaction;
+	}
+	
+	private Boolean isGestoreChiaviPDNDorganizationsErrorAbortTransaction = null;
+	public boolean isGestoreChiaviPDNDorganizationsErrorAbortTransaction() throws CoreException {	
+		if(this.isGestoreChiaviPDNDorganizationsErrorAbortTransaction==null){
+			String pName = "org.openspcoop2.pdd.gestorePDND.organizations.error.abortTransaction";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					throw new CoreException("Proprieta' non impostata");
+				}
+				name = name.trim();
+				this.isGestoreChiaviPDNDorganizationsErrorAbortTransaction = Boolean.valueOf(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+
+		return this.isGestoreChiaviPDNDorganizationsErrorAbortTransaction;
 	}
 }
 
