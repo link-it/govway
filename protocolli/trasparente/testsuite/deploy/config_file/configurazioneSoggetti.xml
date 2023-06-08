@@ -3383,13 +3383,13 @@
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStateful" descrizione="Invocazione servizio SOAPOneway erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 			 <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
 			 <servizio tipo="gw" nome="Oneway"/>
-			 <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStateful/([^/|^?]*).*"/>
+			 <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStateful/([^/?]*).*"/>
 		</porta-delegata>
 
                 <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStateless" descrizione="Invocazione servizio SOAPOneway erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
                          <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
                          <servizio tipo="gw" nome="Oneway"/>
-                         <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStateless/([^/|^?]*).*"/>
+                         <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStateless/([^/?]*).*"/>
                 </porta-delegata>
 
                 <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStatefulAutenticato" autenticazione="basic" autorizzazione="authenticated" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
@@ -3409,14 +3409,14 @@
                 <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPOnewayStatefulLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
                     <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
                     <servizio tipo="gw" nome="Oneway"/>
-                    <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatore/SOAPOnewayStatefulLocalForward/([^/|^?]*).*"/>
+                    <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatore/SOAPOnewayStatefulLocalForward/([^/?]*).*"/>
 		    <local-forward stato="abilitato" porta-applicativa="APIMinisteroErogatore/SOAPOnewayLocalForwardStateful"/>
                 </porta-delegata>
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPOnewayStatelessLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
 		    <servizio tipo="gw" nome="Oneway"/>
-		    <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatore/SOAPOnewayStatelessLocalForward/([^/|^?]*).*"/>
+		    <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatore/SOAPOnewayStatelessLocalForward/([^/?]*).*"/>
 		    <local-forward stato="abilitato" porta-applicativa="APIMinisteroErogatore/SOAPOnewayLocalForwardStateless"/>
 		</porta-delegata>
 
@@ -3426,13 +3426,13 @@
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStateful" descrizione="Invocazione servizio SOAPSincrono erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
 		    <servizio tipo="gw" nome="Sincrono"/>
-		    <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStateful/([^/|^?]*).*"/>
+		    <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStateful/([^/?]*).*"/>
 		</porta-delegata>
 
                 <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStateless" descrizione="Invocazione servizio SOAPSincrono erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
                     <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
                     <servizio tipo="gw" nome="Sincrono"/>
-                    <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStateless/([^/|^?]*).*"/>
+                    <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStateless/([^/?]*).*"/>
                 </porta-delegata>
 
                 <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStatefulAutenticato" autenticazione="basic" autorizzazione="authenticated" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
@@ -3452,14 +3452,14 @@
                 <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPSincronoStatefulLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
                     <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
                     <servizio tipo="gw" nome="Sincrono"/>
-                    <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatore/SOAPSincronoStatefulLocalForward/([^/|^?]*).*"/>
+                    <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatore/SOAPSincronoStatefulLocalForward/([^/?]*).*"/>
 		    <local-forward stato="abilitato" porta-applicativa="APIMinisteroErogatore/SOAPSincronoLocalForwardStateful"/>
                 </porta-delegata>
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPSincronoStatelessLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
 		    <servizio tipo="gw" nome="Sincrono"/>
-		    <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatore/SOAPSincronoStatelessLocalForward/([^/|^?]*).*"/>
+		    <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatore/SOAPSincronoStatelessLocalForward/([^/?]*).*"/>
 		    <local-forward stato="abilitato" porta-applicativa="APIMinisteroErogatore/SOAPSincronoLocalForwardStateless"/>
 		</porta-delegata>
 

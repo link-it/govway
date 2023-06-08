@@ -1,3 +1,17 @@
+2023-06-08  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Risolto Bug OP-1590
+	Nella configurazione di default, su API SOAP, il riconoscimento dell'operazione viene effettuato comparando il path indicato dopo la base-url rispetto alle operazioni della API.
+	Se il riconoscimento non va a buon fine, viene poi verificato se il payload della richiesta corrisponde ad una delle operazioni definite nell'interfaccia WSDL.
+	Il riconoscimento dell'operazione basata sulla url non funzionava correttamente in presenza di una url formata da molteplici endpoint:
+	   http://endpoint/govway/ente/service/v1/azione1,http://localhost:8080/govway/ente/serviceS1/v1/azione2,http://localhost:8080/govway/ente/service/v1/azione3
+	L'operazione che veniva erroneamente individuata era 'azione3'.
+	La problematica risiedeva nell'espressione regolare generata per default dalla console di configurazione e associata alla funzionalità di identificazione dell'operazione, nell'esempio:
+	  .*/(?:gw_)?ente/(?:gw_)?service/v1/([^/|^?]*).*
+	L'espressione è stata corretta in:
+	  /(?:gw_)?ente/(?:gw_)?service/v1/([^/?]*).*
+
 2023-06-07  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]

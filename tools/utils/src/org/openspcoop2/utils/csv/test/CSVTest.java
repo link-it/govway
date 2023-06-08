@@ -143,7 +143,7 @@ public class CSVTest {
 		listParserInstruction.add(ParserMappingRecord.newCsvColumnNameRecord("saFruitoreUsername","SA FRUITORE",ParserRegexpNotFound.ORIGINAL, 
 				new String [] {"(.*)MatchCheNonFunziona/.*","(.*)/.*","(.*)AltroMatchCheNonFunziona/.*"}));
 		
-		listParserInstruction.add(ParserMappingRecord.newCsvColumnPositionRecord("saFruitorePassword",4, new String [] {".*/([^/|^?]*).*"}));
+		listParserInstruction.add(ParserMappingRecord.newCsvColumnPositionRecord("saFruitorePassword",4, new String [] {".*/([^/?]*).*"}));
 		
 		listParserInstruction.add(ParserMappingRecord.newCsvColumnNameRecord("saErogatore","SA EROGATORE"));
 	

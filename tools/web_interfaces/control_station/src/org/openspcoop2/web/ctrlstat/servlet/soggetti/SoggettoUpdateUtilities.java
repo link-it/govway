@@ -88,6 +88,18 @@ import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
  */
 public class SoggettoUpdateUtilities {
 
+	// pattern (fruitore)/(erogatore)/....
+	private static final String REGEXP_FRUITORE_EROGATORE_OTHER = ".*\\/.*\\/.*";
+	
+	private static final String REGEXP_FRUITORE_EROGATORE_OTHER_MATCH = "(.*)\\/(.*)\\/(.*)";
+	
+	private static final String PATTERN_AZIONE_PREFIX_OLD = ".*/";
+	private static final String PATTERN_AZIONE_SUFFIX_OLD = "/([^/|^?]*).*";
+	
+	private static final String PATTERN_AZIONE_PREFIX_NEW = "/";
+	private static final String PATTERN_AZIONE_SUFFIX_NEW = "/([^/?]*).*";
+	
+	
 	List<Object> oggettiDaAggiornare = null;
 	private SoggettiCore soggettiCore;
 	private ServiziApplicativiCore saCore;
@@ -133,7 +145,7 @@ public class SoggettoUpdateUtilities {
 		this.oggettiDaAggiornare.add(this.sog);
 	}
 
-	public void checkServiziApplicativi() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+	public void checkServiziApplicativi() throws DriverConfigurazioneException{
 		// SERVIZI - APPLICATIVI 
 		// Se e' cambiato il tipo o il nome del soggetto devo effettuare la modifica dei servizi applicativi
 		// poiche il cambio si riflette sul nome dei connettori del servizio applicativo
@@ -172,74 +184,75 @@ public class SoggettoUpdateUtilities {
 		// Se e' cambiato il tipo o il nome del soggetto devo effettuare la modifica degli accordi di cooperazione:
 		// - soggetto referente
 		// - soggetti partecipanti
-		if(this.soggettiCore.isRegistroServiziLocale()){
-			if (!this.oldnomeprov.equals(this.nomeprov) || !this.oldtipoprov.equals(this.tipoprov)) {
+		if(this.soggettiCore.isRegistroServiziLocale() &&
+			 (!this.oldnomeprov.equals(this.nomeprov) || !this.oldtipoprov.equals(this.tipoprov)) 
+			 ){
 
-				// - Soggetto referente
-				FiltroRicercaAccordi filtroRicercaAccordi = new FiltroRicercaAccordi();
-				filtroRicercaAccordi.setTipoSoggettoReferente(this.oldtipoprov);
-				filtroRicercaAccordi.setNomeSoggettoReferente(this.oldnomeprov);
-				List<IDAccordoCooperazione> idAccordiCooperazione = null;
-				try{
-					idAccordiCooperazione = this.acCore.getAllIdAccordiCooperazione(filtroRicercaAccordi);
-				}catch(DriverRegistroServiziNotFound dNot){
-					// ignore
-				}
-				if(idAccordiCooperazione!=null){
-					for(int i=0; i<idAccordiCooperazione.size(); i++){
-						AccordoCooperazione ac = this.acCore.getAccordoCooperazione(idAccordiCooperazione.get(i));
-						ac.getSoggettoReferente().setTipo(this.tipoprov);
-						ac.getSoggettoReferente().setNome(this.nomeprov);
+			// - Soggetto referente
+			FiltroRicercaAccordi filtroRicercaAccordi = new FiltroRicercaAccordi();
+			filtroRicercaAccordi.setTipoSoggettoReferente(this.oldtipoprov);
+			filtroRicercaAccordi.setNomeSoggettoReferente(this.oldnomeprov);
+			List<IDAccordoCooperazione> idAccordiCooperazione = null;
+			try{
+				idAccordiCooperazione = this.acCore.getAllIdAccordiCooperazione(filtroRicercaAccordi);
+			}catch(DriverRegistroServiziNotFound dNot){
+				// ignore
+			}
+			if(idAccordiCooperazione!=null){
+				for(int i=0; i<idAccordiCooperazione.size(); i++){
+					AccordoCooperazione ac = this.acCore.getAccordoCooperazione(idAccordiCooperazione.get(i));
+					ac.getSoggettoReferente().setTipo(this.tipoprov);
+					ac.getSoggettoReferente().setNome(this.nomeprov);
 
-						// Check se come soggetto partecipante c'e' il soggetto stesso
-						if(ac.getElencoPartecipanti()!=null){
-							AccordoCooperazionePartecipanti partecipanti = ac.getElencoPartecipanti();
-							for(int j=0; j<partecipanti.sizeSoggettoPartecipanteList(); j++){
-								if(partecipanti.getSoggettoPartecipante(j).getTipo().equals(this.oldtipoprov) && 
-										partecipanti.getSoggettoPartecipante(j).getNome().equals(this.oldnomeprov)){
-									partecipanti.getSoggettoPartecipante(j).setTipo(this.tipoprov);
-									partecipanti.getSoggettoPartecipante(j).setNome(this.nomeprov);
-								}
-							}
-						}
-
-						this.oggettiDaAggiornare.add(ac);
-						//System.out.println("AC ["+IDAccordoCooperazione.getUriFromAccordo(ac)+"]");
-					}
-				}
-
-
-				// - Soggetti Partecipanti
-				List<AccordoCooperazione> acs = this.acCore.accordiCoopWithSoggettoPartecipante(new IDSoggetto(this.oldtipoprov,this.oldnomeprov));
-				for(int i=0; i<acs.size(); i++){
-					AccordoCooperazione ac = acs.get(i);
-
-					// check accordi con referente (non effettuo il change 2 volte)
-					boolean find = false;
-					if(idAccordiCooperazione!=null){
-						for(int j=0; j<idAccordiCooperazione.size(); j++){
-							if(this.idAccordoCooperazioneFactory.getUriFromIDAccordo(idAccordiCooperazione.get(j)).equals(this.idAccordoCooperazioneFactory.getUriFromAccordo(ac))){
-								find = true;
-								break;
+					// Check se come soggetto partecipante c'e' il soggetto stesso
+					if(ac.getElencoPartecipanti()!=null){
+						AccordoCooperazionePartecipanti partecipanti = ac.getElencoPartecipanti();
+						for(int j=0; j<partecipanti.sizeSoggettoPartecipanteList(); j++){
+							if(partecipanti.getSoggettoPartecipante(j).getTipo().equals(this.oldtipoprov) && 
+									partecipanti.getSoggettoPartecipante(j).getNome().equals(this.oldnomeprov)){
+								partecipanti.getSoggettoPartecipante(j).setTipo(this.tipoprov);
+								partecipanti.getSoggettoPartecipante(j).setNome(this.nomeprov);
 							}
 						}
 					}
-					if(find==false){
-						if(ac.getElencoPartecipanti()!=null){
-							AccordoCooperazionePartecipanti partecipanti = ac.getElencoPartecipanti();
-							for(int j=0; j<partecipanti.sizeSoggettoPartecipanteList(); j++){
-								if(partecipanti.getSoggettoPartecipante(j).getTipo().equals(this.oldtipoprov) && 
-										partecipanti.getSoggettoPartecipante(j).getNome().equals(this.oldnomeprov)){
-									partecipanti.getSoggettoPartecipante(j).setTipo(this.tipoprov);
-									partecipanti.getSoggettoPartecipante(j).setNome(this.nomeprov);
-								}
-							}
-						}
-						this.oggettiDaAggiornare.add(ac);
-						//System.out.println("AC PARTECIPANTE ["+IDAccordoCooperazione.getUriFromAccordo(ac)+"]");
-					}
+
+					this.oggettiDaAggiornare.add(ac);
+					/**System.out.println("AC ["+IDAccordoCooperazione.getUriFromAccordo(ac)+"]");*/
 				}
 			}
+
+
+			// - Soggetti Partecipanti
+			List<AccordoCooperazione> acs = this.acCore.accordiCoopWithSoggettoPartecipante(new IDSoggetto(this.oldtipoprov,this.oldnomeprov));
+			for(int i=0; i<acs.size(); i++){
+				AccordoCooperazione ac = acs.get(i);
+
+				// check accordi con referente (non effettuo il change 2 volte)
+				boolean find = false;
+				if(idAccordiCooperazione!=null){
+					for(int j=0; j<idAccordiCooperazione.size(); j++){
+						if(this.idAccordoCooperazioneFactory.getUriFromIDAccordo(idAccordiCooperazione.get(j)).equals(this.idAccordoCooperazioneFactory.getUriFromAccordo(ac))){
+							find = true;
+							break;
+						}
+					}
+				}
+				if(!find){
+					if(ac.getElencoPartecipanti()!=null){
+						AccordoCooperazionePartecipanti partecipanti = ac.getElencoPartecipanti();
+						for(int j=0; j<partecipanti.sizeSoggettoPartecipanteList(); j++){
+							if(partecipanti.getSoggettoPartecipante(j).getTipo().equals(this.oldtipoprov) && 
+									partecipanti.getSoggettoPartecipante(j).getNome().equals(this.oldnomeprov)){
+								partecipanti.getSoggettoPartecipante(j).setTipo(this.tipoprov);
+								partecipanti.getSoggettoPartecipante(j).setNome(this.nomeprov);
+							}
+						}
+					}
+					this.oggettiDaAggiornare.add(ac);
+					/**System.out.println("AC PARTECIPANTE ["+IDAccordoCooperazione.getUriFromAccordo(ac)+"]");*/
+				}
+			}
+
 		}
 	}
 
@@ -250,83 +263,82 @@ public class SoggettoUpdateUtilities {
 		// Se e' cambiato il tipo o il nome del soggetto devo effettuare la modifica degli accordi di servizio 
 		// poiche il cambio si riflette sul soggetto gestore
 
-		if(this.soggettiCore.isRegistroServiziLocale()){
-			if (!this.oldnomeprov.equals(this.nomeprov) || !this.oldtipoprov.equals(this.tipoprov)) {
+		if(this.soggettiCore.isRegistroServiziLocale() &&
+			 (!this.oldnomeprov.equals(this.nomeprov) || !this.oldtipoprov.equals(this.tipoprov)) 
+			 ){
 
-				/*try{
-					as = core.getAllIdAccordiWithSoggettoReferente(new IDSoggetto(oldtipoprov,oldnomeprov));
-				}catch(DriverRegistroServiziNotFound dNotFound){}
-				if(as!=null){
-					for(int i=0; i<as.length; i++){
-						as[i].getSoggettoReferente().setTipo(tipoprov);
-						as[i].getSoggettoReferente().setNome(nomeprov);
-						oggettiDaAggiornare.add(as[i]);
-					}
-				}*/
-
-				FiltroRicercaAccordi filtroRicercaAccordi = new FiltroRicercaAccordi();
-				filtroRicercaAccordi.setTipoSoggettoReferente(this.oldtipoprov);
-				filtroRicercaAccordi.setNomeSoggettoReferente(this.oldnomeprov);
-				List<IDAccordo> idAccordoServizio = null;
-				try{
-					idAccordoServizio = this.apcCore.getAllIdAccordiServizio(filtroRicercaAccordi);
-				}catch(DriverRegistroServiziNotFound dNot){
-					// ignore
+			/**try{
+				as = core.getAllIdAccordiWithSoggettoReferente(new IDSoggetto(oldtipoprov,oldnomeprov));
+			}catch(DriverRegistroServiziNotFound dNotFound){}
+			if(as!=null){
+				for(int i=0; i<as.length; i++){
+					as[i].getSoggettoReferente().setTipo(tipoprov);
+					as[i].getSoggettoReferente().setNome(nomeprov);
+					oggettiDaAggiornare.add(as[i]);
 				}
+			}*/
+
+			FiltroRicercaAccordi filtroRicercaAccordi = new FiltroRicercaAccordi();
+			filtroRicercaAccordi.setTipoSoggettoReferente(this.oldtipoprov);
+			filtroRicercaAccordi.setNomeSoggettoReferente(this.oldnomeprov);
+			List<IDAccordo> idAccordoServizio = null;
+			try{
+				idAccordoServizio = this.apcCore.getAllIdAccordiServizio(filtroRicercaAccordi);
+			}catch(DriverRegistroServiziNotFound dNot){
+				// ignore
+			}
+			if(idAccordoServizio!=null){
+				for(int i=0; i<idAccordoServizio.size(); i++){
+					AccordoServizioParteComune as = this.apcCore.getAccordoServizioFull(idAccordoServizio.get(i));
+					as.getSoggettoReferente().setTipo(this.tipoprov);
+					as.getSoggettoReferente().setNome(this.nomeprov);
+					IDAccordo idAccordoOLD = this.idAccordoFactory.getIDAccordoFromValues(as.getNome(), this.oldtipoprov, this.oldnomeprov, as.getVersione());
+					as.setOldIDAccordoForUpdate(idAccordoOLD);
+					this.oggettiDaAggiornare.add(as);
+					/**System.out.println("AS ["+IDAccordo.getUriFromAccordo(as)+"]");*/
+				}
+			}
+
+
+			// - soggetti erogatore di servizi componenti
+			List<AccordoServizioParteComune> ass = this.apcCore.accordiServizioServiziComponentiConSoggettoErogatore(new IDSoggetto(this.oldtipoprov,this.oldnomeprov));
+			for(int i=0; i<ass.size(); i++){
+				AccordoServizioParteComune as = ass.get(i);
+				// check accordi con referente (non effettuo il change 2 volte)
+				boolean find = false;
 				if(idAccordoServizio!=null){
-					for(int i=0; i<idAccordoServizio.size(); i++){
-						AccordoServizioParteComune as = this.apcCore.getAccordoServizioFull(idAccordoServizio.get(i));
+					for(int j=0; j<idAccordoServizio.size(); j++){
+						if(this.idAccordoFactory.getUriFromIDAccordo(idAccordoServizio.get(j)).equals(IDAccordoFactory.getInstance().getUriFromAccordo(as))){
+							find = true;
+							break;
+						}
+					}
+				}
+				if(!find &&
+					as.getServizioComposto()!=null){
+					for(int j=0;j<as.getServizioComposto().sizeServizioComponenteList();j++){
+						if(as.getServizioComposto().getServizioComponente(j).getTipoSoggetto().equals(this.oldtipoprov) &&
+								as.getServizioComposto().getServizioComponente(j).getNomeSoggetto().equals(this.oldnomeprov)){
+							as.getServizioComposto().getServizioComponente(j).setTipoSoggetto(this.tipoprov);
+							as.getServizioComposto().getServizioComponente(j).setNomeSoggetto(this.nomeprov);
+						}
+					}
+					// Devo anche controllare che non sia cambiato il soggetto referente di questo as.
+					if(as.getSoggettoReferente()!=null &&
+						this.oldtipoprov.equals(as.getSoggettoReferente().getTipo()) &&
+								this.oldnomeprov.equals(as.getSoggettoReferente().getNome())){
 						as.getSoggettoReferente().setTipo(this.tipoprov);
 						as.getSoggettoReferente().setNome(this.nomeprov);
-						IDAccordo idAccordoOLD = this.idAccordoFactory.getIDAccordoFromValues(as.getNome(), this.oldtipoprov, this.oldnomeprov, as.getVersione());
+						IDAccordo idAccordoOLD = IDAccordoFactory.getInstance().getIDAccordoFromValues(as.getNome(), this.oldtipoprov, this.oldnomeprov, as.getVersione());
 						as.setOldIDAccordoForUpdate(idAccordoOLD);
-						this.oggettiDaAggiornare.add(as);
-						//System.out.println("AS ["+IDAccordo.getUriFromAccordo(as)+"]");
 					}
+					this.oggettiDaAggiornare.add(as);
+					/**System.out.println("As SERVIZIO COMPONENTE ["+IDAccordo.getUriFromAccordo(as)+"]");*/
 				}
-
-
-				// - soggetti erogatore di servizi componenti
-				List<AccordoServizioParteComune> ass = this.apcCore.accordiServizioServiziComponentiConSoggettoErogatore(new IDSoggetto(this.oldtipoprov,this.oldnomeprov));
-				for(int i=0; i<ass.size(); i++){
-					AccordoServizioParteComune as = ass.get(i);
-					// check accordi con referente (non effettuo il change 2 volte)
-					boolean find = false;
-					if(idAccordoServizio!=null){
-						for(int j=0; j<idAccordoServizio.size(); j++){
-							if(this.idAccordoFactory.getUriFromIDAccordo(idAccordoServizio.get(j)).equals(IDAccordoFactory.getInstance().getUriFromAccordo(as))){
-								find = true;
-								break;
-							}
-						}
-					}
-					if(find==false){
-						if(as.getServizioComposto()!=null){
-							for(int j=0;j<as.getServizioComposto().sizeServizioComponenteList();j++){
-								if(as.getServizioComposto().getServizioComponente(j).getTipoSoggetto().equals(this.oldtipoprov) &&
-										as.getServizioComposto().getServizioComponente(j).getNomeSoggetto().equals(this.oldnomeprov)){
-									as.getServizioComposto().getServizioComponente(j).setTipoSoggetto(this.tipoprov);
-									as.getServizioComposto().getServizioComponente(j).setNomeSoggetto(this.nomeprov);
-								}
-							}
-							// Devo anche controllare che non sia cambiato il soggetto referente di questo as.
-							if(as.getSoggettoReferente()!=null){
-								if(this.oldtipoprov.equals(as.getSoggettoReferente().getTipo()) &&
-										this.oldnomeprov.equals(as.getSoggettoReferente().getNome())){
-									as.getSoggettoReferente().setTipo(this.tipoprov);
-									as.getSoggettoReferente().setNome(this.nomeprov);
-									IDAccordo idAccordoOLD = IDAccordoFactory.getInstance().getIDAccordoFromValues(as.getNome(), this.oldtipoprov, this.oldnomeprov, as.getVersione());
-									as.setOldIDAccordoForUpdate(idAccordoOLD);
-								}
-							}
-							this.oggettiDaAggiornare.add(as);
-							//System.out.println("As SERVIZIO COMPONENTE ["+IDAccordo.getUriFromAccordo(as)+"]");
-						}
-					}
-				}
-
 			}
+
 		}
+
 	}
 
 	private List<AccordoServizioParteSpecifica> accordiServizioParteSpecifica = null;
@@ -440,7 +452,7 @@ public class SoggettoUpdateUtilities {
 					}
 					
 					String nomeAttuale = portaDelegata.getNome();
-					String regex = ".*\\/.*\\/.*";
+					String regex = REGEXP_FRUITORE_EROGATORE_OTHER;
 					// pattern (fruitore)/(erogatore)/....
 					if(nomeAttuale.matches(regex)){
 						String[] tmp = nomeAttuale.split("\\/");
@@ -459,11 +471,10 @@ public class SoggettoUpdateUtilities {
 								modificatoNome = true;
 							}
 						}
-						else if(("__"+tipoNomeSoggettoFruitore).equals(partFruitore)){
-							if((tipoNomeSoggettoFruitore).equals(this.oldtipoprov + "_" + this.oldnomeprov)){
-								partFruitore = "__"+this.tipoprov + "_" + this.nomeprov;
-								modificatoNome = true;
-							}
+						else if(("__"+tipoNomeSoggettoFruitore).equals(partFruitore) &&
+							(tipoNomeSoggettoFruitore).equals(this.oldtipoprov + "_" + this.oldnomeprov)){
+							partFruitore = "__"+this.tipoprov + "_" + this.nomeprov;
+							modificatoNome = true;
 						}
 						
 						// se (erogatore) contiene tipoNomeSoggetto erogatore della PortaDelegata deve essere modificato
@@ -471,13 +482,12 @@ public class SoggettoUpdateUtilities {
 								portaDelegata.getSoggettoErogatore().getTipo()!=null && !"".equals(portaDelegata.getSoggettoErogatore().getTipo()) &&
 								portaDelegata.getSoggettoErogatore().getNome()!=null && !"".equals(portaDelegata.getSoggettoErogatore().getNome())){
 							String tipoNomeSoggettoErogatore = portaDelegata.getSoggettoErogatore().getTipo()+"_"+portaDelegata.getSoggettoErogatore().getNome();
-							if(tipoNomeSoggettoErogatore.equals(partErogatore)){
-								if(tipoNomeSoggettoErogatore.equals(this.oldtipoprov + "_" + this.oldnomeprov)){
-									partErogatore = this.tipoprov + "_" + this.nomeprov;
-									portaDelegata.getSoggettoErogatore().setTipo(this.tipoprov);
-									portaDelegata.getSoggettoErogatore().setNome(this.nomeprov);
-									modificatoNome = true;
-								}
+							if(tipoNomeSoggettoErogatore.equals(partErogatore) &&
+								tipoNomeSoggettoErogatore.equals(this.oldtipoprov + "_" + this.oldnomeprov)){
+								partErogatore = this.tipoprov + "_" + this.nomeprov;
+								portaDelegata.getSoggettoErogatore().setTipo(this.tipoprov);
+								portaDelegata.getSoggettoErogatore().setNome(this.nomeprov);
+								modificatoNome = true;
 							}
 						}
 						
@@ -494,28 +504,28 @@ public class SoggettoUpdateUtilities {
 
 								// Caso 1: subscription default
 								// Subscription from gw/ENTE for service gw/ErogatoreEsterno:gw/EsempioREST:1
-								String match_caso1_testFrom = " "+this.oldtipoprov+"/"+this.oldnomeprov+" ";
-								if(descrizionePD.contains(match_caso1_testFrom)) {
-									String replace_caso1_testFrom = " "+this.tipoprov+"/"+this.nomeprov+" ";
-									descrizionePD = descrizionePD.replace(match_caso1_testFrom, replace_caso1_testFrom);
+								String matchCaso1testFrom = " "+this.oldtipoprov+"/"+this.oldnomeprov+" ";
+								if(descrizionePD.contains(matchCaso1testFrom)) {
+									String replaceCaso1testFrom = " "+this.tipoprov+"/"+this.nomeprov+" ";
+									descrizionePD = descrizionePD.replace(matchCaso1testFrom, replaceCaso1testFrom);
 								}
-								String match_caso1_testService = " "+this.oldtipoprov+"/"+this.oldnomeprov+":";
-								if(descrizionePD.contains(match_caso1_testService)) {
-									String replace_caso1_testService = " "+this.tipoprov+"/"+this.nomeprov+":";
-									descrizionePD = descrizionePD.replace(match_caso1_testService, replace_caso1_testService);
+								String matchCaso1testService = " "+this.oldtipoprov+"/"+this.oldnomeprov+":";
+								if(descrizionePD.contains(matchCaso1testService)) {
+									String replaceCaso1testService = " "+this.tipoprov+"/"+this.nomeprov+":";
+									descrizionePD = descrizionePD.replace(matchCaso1testService, replaceCaso1testService);
 								}
 							
 								// Caso 2: altra subscription
 								// Internal Subscription 'Specific1' for gw_ENTE/gw_ErogatoreEsterno/gw_EsempioREST/1
-								String match_caso2_testMittente = " "+this.oldtipoprov+"_"+this.oldnomeprov+"/";
-								if(descrizionePD.contains(match_caso2_testMittente)) {
-									String replace_caso2_testMittente = " "+this.tipoprov+"_"+this.nomeprov+"/";
-									descrizionePD = descrizionePD.replace(match_caso2_testMittente, replace_caso2_testMittente);
+								String matchCaso2testMittente = " "+this.oldtipoprov+"_"+this.oldnomeprov+"/";
+								if(descrizionePD.contains(matchCaso2testMittente)) {
+									String replaceCaso2testMittente = " "+this.tipoprov+"_"+this.nomeprov+"/";
+									descrizionePD = descrizionePD.replace(matchCaso2testMittente, replaceCaso2testMittente);
 								}
-								String match_caso2_testErogatore = "/"+this.oldtipoprov+"_"+this.oldnomeprov+"/";
-								if(descrizionePD.contains(match_caso2_testErogatore)) {
-									String replace_caso2_testErogatore = "/"+this.tipoprov+"_"+this.nomeprov+"/";
-									descrizionePD = descrizionePD.replace(match_caso2_testErogatore, replace_caso2_testErogatore);
+								String matchCaso2testErogatore = "/"+this.oldtipoprov+"_"+this.oldnomeprov+"/";
+								if(descrizionePD.contains(matchCaso2testErogatore)) {
+									String replaceCaso2testErogatore = "/"+this.tipoprov+"_"+this.nomeprov+"/";
+									descrizionePD = descrizionePD.replace(matchCaso2testErogatore, replaceCaso2testErogatore);
 								}
 								
 								portaDelegata.setDescrizione(descrizionePD);
@@ -523,18 +533,29 @@ public class SoggettoUpdateUtilities {
 							}
 							
 							// regex del pattern azione
-							// .*(fruitore)/(erogatore)/(servizio)/([^/|^?]*).*
+							// OLD: .*/(fruitore)/(erogatore)/(servizio)/([^/|^?]*).*
+							// NEW 3.3.13: /(fruitore)/(erogatore)/(servizio)/([^/?]*).*
 							PortaDelegataAzione pdAzione = portaDelegata.getAzione();
 							PortaDelegataAzioneIdentificazione identificazione = pdAzione != null ? pdAzione.getIdentificazione() : null;
-							String patterAzione = pdAzione != null ? (pdAzione.getPattern() != null ? pdAzione.getPattern() : "") : "";
-							String patternAzionePrefix = ".*/";
-							String patternAzioneSuffix1 = "/([^/|^?]*).*";
+							String patterAzione = "";
+							if(pdAzione!=null) {
+								patterAzione = pdAzione.getPattern() != null ? pdAzione.getPattern() : "";
+							}
+							String patternAzionePrefixOld = PATTERN_AZIONE_PREFIX_OLD;
+							String patternAzioneSuffix1Old = PATTERN_AZIONE_SUFFIX_OLD;
+							String patternAzionePrefixNew = PATTERN_AZIONE_PREFIX_NEW;
+							String patternAzioneSuffix1New = PATTERN_AZIONE_SUFFIX_NEW;
 							// se identificazione urlbased procedo con i controlli
 							if (PortaDelegataAzioneIdentificazione.URL_BASED.equals(identificazione)) {
-								if (patterAzione.startsWith(patternAzionePrefix) && patterAzione.endsWith(patternAzioneSuffix1)) {
+								
+								boolean oldPattern = patterAzione.startsWith(patternAzionePrefixOld) && patterAzione.endsWith(patternAzioneSuffix1Old);
+								boolean newPattern = patterAzione.startsWith(patternAzionePrefixNew) && patterAzione.endsWith(patternAzioneSuffix1New);
+								
+								if(oldPattern || newPattern) {
+								
 									// caso1
-									int startidx = patternAzionePrefix.length();
-									int endidx = patterAzione.lastIndexOf(patternAzioneSuffix1);
+									int startidx = oldPattern ? patternAzionePrefixOld.length() : patternAzionePrefixNew.length();
+									int endidx = oldPattern ? patterAzione.lastIndexOf(patternAzioneSuffix1Old) : patterAzione.lastIndexOf(patternAzioneSuffix1New);
 									String tmpPat = patterAzione.substring(startidx, endidx);
 									// a questo punto ottengo una stringa del tipo
 									// (fruitore)/(erogatore)/(servizio)
@@ -568,7 +589,7 @@ public class SoggettoUpdateUtilities {
 										}
 
 										if(match){
-											String newPatternAzione = patternAzionePrefix + fruitore + "/" + erogatore + rimanenteRegExp + patternAzioneSuffix1;
+											String newPatternAzione = patternAzionePrefixNew + fruitore + "/" + erogatore + rimanenteRegExp + patternAzioneSuffix1New;
 											pdAzione.setPattern(newPatternAzione);
 											portaDelegata.setAzione(pdAzione);
 										}
@@ -577,9 +598,12 @@ public class SoggettoUpdateUtilities {
 							}// fine controllo azione
 	
 							// DelegatedBy
-							String nomePortaDelegante = pdAzione != null ? (pdAzione.getNomePortaDelegante() != null ? pdAzione.getNomePortaDelegante() : null) : null;
+							String nomePortaDelegante = null;
+							if(pdAzione!=null) {
+								nomePortaDelegante = pdAzione.getNomePortaDelegante() != null ? pdAzione.getNomePortaDelegante() : null;
+							}
 							if (PortaDelegataAzioneIdentificazione.DELEGATED_BY.equals(identificazione) && nomePortaDelegante!=null ) {
-								String regexDelegante = ".*\\/.*\\/.*";
+								String regexDelegante = REGEXP_FRUITORE_EROGATORE_OTHER;
 								// pattern (fruitore)/(erogatore)/....
 								if(nomePortaDelegante.matches(regexDelegante)){
 									String[] tmpDelegante = nomePortaDelegante.split("\\/");
@@ -599,11 +623,10 @@ public class SoggettoUpdateUtilities {
 											modificatoNomeDelegante = true;
 										}
 									}
-									else if(("__"+tipoNomeSoggettoFruitore).equals(partFruitoreDelegante)){
-										if((tipoNomeSoggettoFruitore).equals(this.oldtipoprov + "_" + this.oldnomeprov)){
-											partFruitoreDelegante = "__"+this.tipoprov + "_" + this.nomeprov;
-											modificatoNomeDelegante = true;
-										}
+									else if(("__"+tipoNomeSoggettoFruitore).equals(partFruitoreDelegante) &&
+										(tipoNomeSoggettoFruitore).equals(this.oldtipoprov + "_" + this.oldnomeprov)){
+										partFruitoreDelegante = "__"+this.tipoprov + "_" + this.nomeprov;
+										modificatoNomeDelegante = true;
 									}
 									
 									// se (erogatore) contiene tipoNomeSoggetto erogatore della PortaDelegata deve essere modificato
@@ -709,28 +732,28 @@ public class SoggettoUpdateUtilities {
 							
 							// Caso 1: subscription default
 							// Subscription from gw/ENTE for service gw/ErogatoreEsterno:gw/EsempioREST:1
-							String match_caso1_testFrom = " "+this.oldtipoprov+"/"+this.oldnomeprov+" ";
-							if(descrizionePD.contains(match_caso1_testFrom)) {
-								String replace_caso1_testFrom = " "+this.tipoprov+"/"+this.nomeprov+" ";
-								descrizionePD = descrizionePD.replace(match_caso1_testFrom, replace_caso1_testFrom);
+							String matchCaso1testFrom = " "+this.oldtipoprov+"/"+this.oldnomeprov+" ";
+							if(descrizionePD.contains(matchCaso1testFrom)) {
+								String replaceCaso1testFrom = " "+this.tipoprov+"/"+this.nomeprov+" ";
+								descrizionePD = descrizionePD.replace(matchCaso1testFrom, replaceCaso1testFrom);
 							}
-							String match_caso1_testService = " "+this.oldtipoprov+"/"+this.oldnomeprov+":";
-							if(descrizionePD.contains(match_caso1_testService)) {
-								String replace_caso1_testService = " "+this.tipoprov+"/"+this.nomeprov+":";
-								descrizionePD = descrizionePD.replace(match_caso1_testService, replace_caso1_testService);
+							String matchCaso1testService = " "+this.oldtipoprov+"/"+this.oldnomeprov+":";
+							if(descrizionePD.contains(matchCaso1testService)) {
+								String replaceCaso1testService = " "+this.tipoprov+"/"+this.nomeprov+":";
+								descrizionePD = descrizionePD.replace(matchCaso1testService, replaceCaso1testService);
 							}
 						
 							// Caso 2: altra subscription
 							// Internal Subscription 'Specific1' for gw_ENTE/gw_ErogatoreEsterno/gw_EsempioREST/1
-							String match_caso2_testMittente = " "+this.oldtipoprov+"_"+this.oldnomeprov+"/";
-							if(descrizionePD.contains(match_caso2_testMittente)) {
-								String replace_caso2_testMittente = " "+this.tipoprov+"_"+this.nomeprov+"/";
-								descrizionePD = descrizionePD.replace(match_caso2_testMittente, replace_caso2_testMittente);
+							String matchCaso2testMittente = " "+this.oldtipoprov+"_"+this.oldnomeprov+"/";
+							if(descrizionePD.contains(matchCaso2testMittente)) {
+								String replaceCaso2testMittente = " "+this.tipoprov+"_"+this.nomeprov+"/";
+								descrizionePD = descrizionePD.replace(matchCaso2testMittente, replaceCaso2testMittente);
 							}
-							String match_caso2_testErogatore = "/"+this.oldtipoprov+"_"+this.oldnomeprov+"/";
-							if(descrizionePD.contains(match_caso2_testErogatore)) {
-								String replace_caso2_testErogatore = "/"+this.tipoprov+"_"+this.nomeprov+"/";
-								descrizionePD = descrizionePD.replace(match_caso2_testErogatore, replace_caso2_testErogatore);
+							String matchCaso2testErogatore = "/"+this.oldtipoprov+"_"+this.oldnomeprov+"/";
+							if(descrizionePD.contains(matchCaso2testErogatore)) {
+								String replaceCaso2testErogatore = "/"+this.tipoprov+"_"+this.nomeprov+"/";
+								descrizionePD = descrizionePD.replace(matchCaso2testErogatore, replaceCaso2testErogatore);
 							}
 							
 							portaDelegata.setDescrizione(descrizionePD);
@@ -747,18 +770,32 @@ public class SoggettoUpdateUtilities {
 						// caso il pattern azione fosse URLBASED e fosse
 						// quello di default allora va cambiato
 
-						String regex = "(.*)\\/(.*)\\/(.*)";
+						String regex = REGEXP_FRUITORE_EROGATORE_OTHER_MATCH;
 						PortaDelegataAzione pdAzione = portaDelegata.getAzione();
 						PortaDelegataAzioneIdentificazione identificazione = pdAzione != null ? pdAzione.getIdentificazione() : null;
-						String patterAzione = pdAzione != null ? (pdAzione.getPattern() != null ? pdAzione.getPattern() : "") : "";
-						String patternAzionePrefix = ".*/";
-						String patternAzioneSuffix = "/([^/|^?]*).*";
+						String patterAzione = "";
+						if(pdAzione!=null) {
+							patterAzione = pdAzione.getPattern() != null ? pdAzione.getPattern() : "";
+						}
+						
+						// regex del pattern azione
+						// OLD: .*/(fruitore)/(erogatore)/(servizio)/([^/|^?]*).*
+						// NEW 3.3.13: /(fruitore)/(erogatore)/(servizio)/([^/?]*).*
+						String patternAzionePrefixOld = PATTERN_AZIONE_PREFIX_OLD;
+						String patternAzioneSuffixOld = PATTERN_AZIONE_SUFFIX_OLD;
+						String patternAzionePrefixNew = PATTERN_AZIONE_PREFIX_NEW;
+						String patternAzioneSuffixNew = PATTERN_AZIONE_SUFFIX_NEW;
 						// se identificazione urlbased procedo con i
 						// controlli
 						if (PortaDelegataAzioneIdentificazione.URL_BASED.equals(identificazione)) {
-							if (patterAzione.startsWith(patternAzionePrefix) && patterAzione.endsWith(patternAzioneSuffix)) {
-								int startidx = patternAzionePrefix.length();
-								int endidx = patterAzione.lastIndexOf(patternAzioneSuffix);
+							
+							boolean oldPattern = patterAzione.startsWith(patternAzionePrefixOld) && patterAzione.endsWith(patternAzioneSuffixOld);
+							boolean newPattern = patterAzione.startsWith(patternAzionePrefixNew) && patterAzione.endsWith(patternAzioneSuffixNew);
+							
+							if(oldPattern || newPattern) {
+							
+								int startidx = oldPattern ? patternAzionePrefixOld.length() : patternAzionePrefixNew.length();
+								int endidx = oldPattern ? patterAzione.lastIndexOf(patternAzioneSuffixOld) : patterAzione.lastIndexOf(patternAzioneSuffixNew);
 								String tmpPat = patterAzione.substring(startidx, endidx);
 								// a questo punto ottengo una stringa del tipo
 								// (fruitore)/(erogatore)/(servizio)
@@ -792,7 +829,7 @@ public class SoggettoUpdateUtilities {
 									}
 
 									if(match){
-										String newPatternAzione = patternAzionePrefix + fruitoreA + "/" + erogatore + rimanenteRegExp + patternAzioneSuffix;
+										String newPatternAzione = patternAzionePrefixNew + fruitoreA + "/" + erogatore + rimanenteRegExp + patternAzioneSuffixNew;
 										pdAzione.setPattern(newPatternAzione);
 										portaDelegata.setAzione(pdAzione);
 									}
@@ -802,9 +839,12 @@ public class SoggettoUpdateUtilities {
 						}// fine controllo azione
 						
 						// DelegatedBy
-						String nomePortaDelegante = pdAzione != null ? (pdAzione.getNomePortaDelegante() != null ? pdAzione.getNomePortaDelegante() : null) : null;
+						String nomePortaDelegante = null;
+						if(pdAzione!=null) {
+							nomePortaDelegante = pdAzione.getNomePortaDelegante() != null ? pdAzione.getNomePortaDelegante() : null;
+						}
 						if (PortaDelegataAzioneIdentificazione.DELEGATED_BY.equals(identificazione) && nomePortaDelegante!=null ) {
-							String regexDelegante = ".*\\/.*\\/.*";
+							String regexDelegante = REGEXP_FRUITORE_EROGATORE_OTHER;
 							// pattern (fruitore)/(erogatore)/....
 							if(nomePortaDelegante.matches(regexDelegante)){
 								String[] tmpDelegante = nomePortaDelegante.split("\\/");
@@ -914,7 +954,7 @@ public class SoggettoUpdateUtilities {
 		if(listaPD!=null && !listaPD.isEmpty()) {
 			for (PortaDelegata portaDelegata : listaPD.values()) {
 				
-				_updateSoggettoInliste(portaDelegata);
+				updateSoggettoInlisteEngine(portaDelegata);
 				
 				this.oggettiDaAggiornare.add(portaDelegata);
 				
@@ -939,7 +979,7 @@ public class SoggettoUpdateUtilities {
 							// aggiorno nome porta
 							ap.getFiltro().setNomePorta(portaDelegata.getNome());
 							
-							_updateFiltroSoggetto(ap);
+							updateFiltroSoggettoEngine(ap);
 															
 							listaPolicyPD.put(ap.getIdActivePolicy(), ap);
 						}
@@ -967,7 +1007,7 @@ public class SoggettoUpdateUtilities {
 								// aggiorno nome porta
 								allarme.getFiltro().setNomePorta(portaDelegata.getNome());
 								
-								_updateFiltroSoggetto(allarme);
+								updateFiltroSoggettoEngine(allarme);
 																
 								listaAllarmiPD.put(allarme.getNome(), allarme);
 							}
@@ -1034,7 +1074,7 @@ public class SoggettoUpdateUtilities {
 			
 				if(ap.getFiltro()!=null) {
 					
-					_updateFiltroSoggetto(ap);
+					updateFiltroSoggettoEngine(ap);
 													
 					listaPolicyPD.put(ap.getIdActivePolicy(), ap);
 				}
@@ -1106,7 +1146,7 @@ public class SoggettoUpdateUtilities {
 				
 					if(allarme.getFiltro()!=null) {
 						
-						_updateFiltroSoggetto(allarme);
+						updateFiltroSoggettoEngine(allarme);
 														
 						listaAllarmiPD.put(allarme.getNome(), allarme);
 					}
@@ -1124,7 +1164,7 @@ public class SoggettoUpdateUtilities {
 		}
 	}
 
-	private void _updateSoggettoInliste(PortaDelegata portaDelegata) {
+	private void updateSoggettoInlisteEngine(PortaDelegata portaDelegata) {
 				
 		// controlloServiziApplicativi riferiti nelle Trasformazioni
 		
@@ -1172,7 +1212,7 @@ public class SoggettoUpdateUtilities {
 					String nomeAttuale = portaApplicativa.getNome();
 
 					// se il nome e' quello di default cioe' (erogatore)/(servizio)/(versioneServizio) o (erogatore)/(servizio)/(versioneServizio)/azione
-					String regex = "(.*)\\/(.*)\\/(.*)";
+					String regex = REGEXP_FRUITORE_EROGATORE_OTHER_MATCH;
 					String newNome = null;
 					if (nomeAttuale.matches(regex)) {
 
@@ -1180,16 +1220,16 @@ public class SoggettoUpdateUtilities {
 						String patErogatore = val[0];
 						String patServizio = val[1];
 						String patVersioneServizio = val[2];
-						String patAzione = null;
+						StringBuilder sbPatAzione = new StringBuilder();
 						if(val.length>3){
-							patAzione = "";
 							for (int i = 3; i < val.length; i++) {
 								if(i>3){
-									patAzione = patAzione + "/";
+									sbPatAzione.append("/");
 								}
-								patAzione = patAzione + val[i];
+								sbPatAzione.append(val[i]);
 							}
 						}
+						String patAzione = sbPatAzione.toString();
 
 						// erogatore
 						if (patErogatore.equals(this.oldtipoprov+ "_" +this.oldnomeprov)) {
@@ -1215,36 +1255,47 @@ public class SoggettoUpdateUtilities {
 
 							// Caso 1: implementation default
 							// Service implementation gw/ENTE:gw/TEST:1
-							String match_caso1_testService = " "+this.oldtipoprov+"/"+this.oldnomeprov+":";
-							if(descrizionePA.contains(match_caso1_testService)) {
-								String replace_caso1_testService = " "+this.tipoprov+"/"+this.nomeprov+":";
-								descrizionePA = descrizionePA.replace(match_caso1_testService, replace_caso1_testService);
+							String matchCaso1testService = " "+this.oldtipoprov+"/"+this.oldnomeprov+":";
+							if(descrizionePA.contains(matchCaso1testService)) {
+								String replaceCaso1testService = " "+this.tipoprov+"/"+this.nomeprov+":";
+								descrizionePA = descrizionePA.replace(matchCaso1testService, replaceCaso1testService);
 							}
 						
 							// Caso 2: altra subscription
 							// Internal Implementation 'Specific1' for gw_ENTE/gw_TEST/1
-							String match_caso2_testService = " "+this.oldtipoprov+"_"+this.oldnomeprov+"/";
-							if(descrizionePA.contains(match_caso2_testService)) {
-								String replace_caso2_testService = " "+this.tipoprov+"_"+this.nomeprov+"/";
-								descrizionePA = descrizionePA.replace(match_caso2_testService, replace_caso2_testService);
+							String matchCaso2testService = " "+this.oldtipoprov+"_"+this.oldnomeprov+"/";
+							if(descrizionePA.contains(matchCaso2testService)) {
+								String replaceCaso2testService = " "+this.tipoprov+"_"+this.nomeprov+"/";
+								descrizionePA = descrizionePA.replace(matchCaso2testService, replaceCaso2testService);
 							}
 							
 							portaApplicativa.setDescrizione(descrizionePA);
 						}
 						
 						// regex del pattern azione
-						// .*(erogatore)/(servizio)/([^/|^?]*).*
+						// OLD: .*/(erogatore)/(servizio)/([^/|^?]*).*
+						// NEW 3.3.13: /(erogatore)/(servizio)/([^/?]*).*
 						PortaApplicativaAzione paAzione = portaApplicativa.getAzione();
 						PortaApplicativaAzioneIdentificazione identificazione = paAzione != null ? paAzione.getIdentificazione() : null;
-						String patterAzione = paAzione != null ? (paAzione.getPattern() != null ? paAzione.getPattern() : "") : "";
-						String patternAzionePrefix = ".*/";
-						String patternAzioneSuffix1 = "/([^/|^?]*).*";
+						String patterAzione = "";
+						if(paAzione!=null) {
+							patterAzione = paAzione.getPattern() != null ? paAzione.getPattern() : "";
+						}
+						String patternAzionePrefixOld = PATTERN_AZIONE_PREFIX_OLD;
+						String patternAzioneSuffix1Old = PATTERN_AZIONE_SUFFIX_OLD;
+						String patternAzionePrefixNew = PATTERN_AZIONE_PREFIX_NEW;
+						String patternAzioneSuffix1New = PATTERN_AZIONE_SUFFIX_NEW;
 						// se identificazione urlbased procedo con i controlli
 						if (PortaApplicativaAzioneIdentificazione.URL_BASED.equals(identificazione)) {
-							if (patterAzione.startsWith(patternAzionePrefix) && patterAzione.endsWith(patternAzioneSuffix1)) {
+							
+							boolean oldPattern = patterAzione.startsWith(patternAzionePrefixOld) && patterAzione.endsWith(patternAzioneSuffix1Old);
+							boolean newPattern = patterAzione.startsWith(patternAzionePrefixNew) && patterAzione.endsWith(patternAzioneSuffix1New);
+							
+							if(oldPattern || newPattern) {
+							
 								// caso1
-								int startidx = patternAzionePrefix.length();
-								int endidx = patterAzione.lastIndexOf(patternAzioneSuffix1);
+								int startidx = oldPattern ? patternAzionePrefixOld.length() : patternAzionePrefixNew.length();
+								int endidx = oldPattern ? patterAzione.lastIndexOf(patternAzioneSuffix1Old) : patterAzione.lastIndexOf(patternAzioneSuffix1New);
 								String tmpPat = patterAzione.substring(startidx, endidx);
 								// a questo punto ottengo una stringa del tipo
 								// (fruitore)/(erogatore)/(servizio)
@@ -1273,7 +1324,7 @@ public class SoggettoUpdateUtilities {
 									}
 									
 									if(matchURL){
-										String newPatternAzione = patternAzionePrefix + partErogatore+ "/" + partServizio+ "/" + partVersione + rimanenteRegExp + patternAzioneSuffix1;
+										String newPatternAzione = patternAzionePrefixNew + partErogatore+ "/" + partServizio+ "/" + partVersione + rimanenteRegExp + patternAzioneSuffix1New;
 										paAzione.setPattern(newPatternAzione);
 										portaApplicativa.setAzione(paAzione);
 									}
@@ -1283,27 +1334,30 @@ public class SoggettoUpdateUtilities {
 						}
 						
 						// DelegatedBy
-						String nomePortaDelegante = paAzione != null ? (paAzione.getNomePortaDelegante() != null ? paAzione.getNomePortaDelegante() : null) : null;
+						String nomePortaDelegante = null;
+						if(paAzione!=null) {
+							nomePortaDelegante = paAzione.getNomePortaDelegante() != null ? paAzione.getNomePortaDelegante() : null;
+						}
 						if (PortaApplicativaAzioneIdentificazione.DELEGATED_BY.equals(identificazione) && nomePortaDelegante!=null ) {
 							
-							String regexDelegante = "(.*)\\/(.*)\\/(.*)";
+							String regexDelegante = REGEXP_FRUITORE_EROGATORE_OTHER_MATCH;
 							if (nomePortaDelegante.matches(regexDelegante)) {
 
 								String[] valDelegante = nomePortaDelegante.split("\\/");
 								String patErogatoreDelegante = valDelegante[0];
 								String patServizioDelegante = valDelegante[1];
 								String patVersioneServizioDelegante = valDelegante[2];
-								String patAzioneDelegante = null;
+								StringBuilder sbPatAzioneDelegante = new StringBuilder();
 								if(valDelegante.length>3){
-									patAzioneDelegante = "";
 									for (int i = 3; i < valDelegante.length; i++) {
 										if(i>3){
-											patAzioneDelegante = patAzioneDelegante + "/";
+											sbPatAzioneDelegante.append("/");
 										}
-										patAzioneDelegante = patAzioneDelegante + valDelegante[i];
+										sbPatAzioneDelegante.append(valDelegante[i]);
 									}
 								}
-
+								String patAzioneDelegante = sbPatAzioneDelegante.toString();
+								
 								// erogatore
 								if (patErogatoreDelegante.equals(this.oldtipoprov+ "_" +this.oldnomeprov)) {
 									patErogatoreDelegante = this.tipoprov+ "_" +this.nomeprov;
@@ -1324,7 +1378,7 @@ public class SoggettoUpdateUtilities {
 												
 					}// fine controllo nome
 					
-					_updateSoggettoInliste(portaApplicativa);
+					updateSoggettoInListeEngine(portaApplicativa);
 										
 					portaApplicativa.setTipoSoggettoProprietario(this.tipoprov);
 					portaApplicativa.setNomeSoggettoProprietario(this.nomeprov);
@@ -1342,7 +1396,6 @@ public class SoggettoUpdateUtilities {
 							if(nameEquals || nameConnettoreMultiplo) {
 								// devo aggiornare il nome del SA
 								IDServizioApplicativo idSA = new IDServizioApplicativo();
-								//idSA.setNome(oldIDPortaApplicativaForUpdate.getNome());
 								idSA.setNome(portaApplicativaSA.getNome());
 								idSA.setIdSoggettoProprietario(new IDSoggetto(this.oldtipoprov, this.oldnomeprov));
 								ServizioApplicativo sa = this.saCore.getServizioApplicativo(idSA);
@@ -1354,32 +1407,24 @@ public class SoggettoUpdateUtilities {
 								sa.setTipoSoggettoProprietario(this.tipoprov);
 								sa.setNomeSoggettoProprietario(this.nomeprov);
 								
-								if(nameEquals) {
-									// gw_ENTE/gw_TEST/1
+								if(nameEquals || nameConnettoreMultiplo) {
+									// nameEquals: gw_ENTE/gw_TEST/1
+									// nameConnettoreMultiplo: gw_ENTE/gw_TEST/v1__SA2
 									if(sa.getNome().startsWith(this.oldtipoprov+"_"+this.oldnomeprov+"/")) {
 										sa.setNome(sa.getNome().replace(this.oldtipoprov+"_"+this.oldnomeprov+"/", this.tipoprov+"_"+this.nomeprov+"/"));
 									}
-									// __gw_ENTE/gw_TEST/1__Specific2
-									else if(sa.getNome().startsWith("__"+this.oldtipoprov+"_"+this.oldnomeprov+"/")) {
-										sa.setNome(sa.getNome().replace("__"+this.oldtipoprov+"_"+this.oldnomeprov+"/", "__"+this.tipoprov+"_"+this.nomeprov+"/"));
-									}
-								}
-								else if(nameConnettoreMultiplo){
-									// gw_ENTE/gw_TEST/v1__SA2
-									if(sa.getNome().startsWith(this.oldtipoprov+"_"+this.oldnomeprov+"/")) {
-										sa.setNome(sa.getNome().replace(this.oldtipoprov+"_"+this.oldnomeprov+"/", this.tipoprov+"_"+this.nomeprov+"/"));
-									}
-									// __gw_ENTE/gw_TEST/v1__Specific2__SA2
+									// nameEquals: __gw_ENTE/gw_TEST/1__Specific2
+									// nameConnettoreMultiplo: __gw_ENTE/gw_TEST/v1__Specific2__SA2
 									else if(sa.getNome().startsWith("__"+this.oldtipoprov+"_"+this.oldnomeprov+"/")) {
 										sa.setNome(sa.getNome().replace("__"+this.oldtipoprov+"_"+this.oldnomeprov+"/", "__"+this.tipoprov+"_"+this.nomeprov+"/"));
 									}
 								}
 								
-								//NON SERVE, sono riferiti tramite id e prima modifico le porte applicative!! portaApplicativaSA.setNome(sa.getNome());
-								// Inoltre anche se cambio il nome del soggetto, l'id del soggetto rimane lo stesso
+								/**NON SERVE, sono riferiti tramite id e prima modifico le porte applicative!! portaApplicativaSA.setNome(sa.getNome());
+								// Inoltre anche se cambio il nome del soggetto, l'id del soggetto rimane lo stesso*/
 								
 								listaPAeSA.put(sa.getNome(), sa);
-								// ?? nei connettori multipli, salta break;
+								/** ?? nei connettori multipli, salta break;*/
 							}
 						}
 					}
@@ -1402,7 +1447,7 @@ public class SoggettoUpdateUtilities {
 									ap.getFiltro().setNomePorta(newNome);
 								}
 								
-								_updateFiltroSoggetto(ap);
+								updateFiltroSoggettoEngine(ap);
 																
 								listaPolicyPA.put(ap.getIdActivePolicy(), ap);
 							}
@@ -1428,7 +1473,7 @@ public class SoggettoUpdateUtilities {
 										allarme.getFiltro().setNomePorta(newNome);
 									}
 									
-									_updateFiltroSoggetto(allarme);
+									updateFiltroSoggettoEngine(allarme);
 																	
 									listaAllarmiPA.put(allarme.getNome(), allarme);
 								}
@@ -1520,7 +1565,7 @@ public class SoggettoUpdateUtilities {
 								pa.getSoggettoVirtuale().setNome(this.nomeprov);
 							}
 							
-							_updateSoggettoInliste(pa);
+							updateSoggettoInListeEngine(pa);
 							
 							listaPA.put(pa.getNome(), pa);
 						}
@@ -1580,7 +1625,7 @@ public class SoggettoUpdateUtilities {
 					
 						if(ap.getFiltro()!=null) {
 							
-							_updateFiltroSoggetto(ap);
+							updateFiltroSoggettoEngine(ap);
 															
 							listaPolicyPA.put(ap.getIdActivePolicy(), ap);
 						}
@@ -1642,7 +1687,7 @@ public class SoggettoUpdateUtilities {
 						
 							if(allarme.getFiltro()!=null) {
 								
-								_updateFiltroSoggetto(allarme);
+								updateFiltroSoggettoEngine(allarme);
 																
 								listaAllarmiPA.put(allarme.getNome(), allarme);
 							}
@@ -1672,18 +1717,17 @@ public class SoggettoUpdateUtilities {
 					this.oggettiDaAggiornare.add(ap);
 				}
 			}
-			if(this.confCore.isConfigurazioneAllarmiEnabled()) {
+			if(this.confCore.isConfigurazioneAllarmiEnabled() &&
 				// aggiorno gli allarmi associati alle porte applicative
-				if(listaAllarmiPA!=null && !listaAllarmiPA.isEmpty()) {
-					for (ConfigurazioneAllarmeBean allarme : listaAllarmiPA.values()) {
-						this.oggettiDaAggiornare.add(allarme);
-					}
+				listaAllarmiPA!=null && !listaAllarmiPA.isEmpty()) {
+				for (ConfigurazioneAllarmeBean allarme : listaAllarmiPA.values()) {
+					this.oggettiDaAggiornare.add(allarme);
 				}
 			}
 		}
 	}
 
-	private void _updateSoggettoInliste(PortaApplicativa portaApplicativa) {
+	private void updateSoggettoInListeEngine(PortaApplicativa portaApplicativa) {
 		
 		// controlloSoggetti Autorizzati
 		if(portaApplicativa.getSoggetti()!=null && portaApplicativa.getSoggetti().sizeSoggettoList()>0) {
@@ -1750,48 +1794,44 @@ public class SoggettoUpdateUtilities {
 		// fine controlloSoggetti riferiti nelle Trasformazioni
 	}
 	
-	private void _updateFiltroSoggetto(AttivazionePolicy ap) {
+	private void updateFiltroSoggettoEngine(AttivazionePolicy ap) {
 		if(ap.getFiltro()!=null) {
 			
 			// aggiorno soggetto fruitore
-			if(ap.getFiltro().getTipoFruitore()!=null && ap.getFiltro().getNomeFruitore()!=null) {
-				if (this.oldtipoprov.equals(ap.getFiltro().getTipoFruitore()) && 
-						this.oldnomeprov.equals(ap.getFiltro().getNomeFruitore())) {
-					ap.getFiltro().setTipoFruitore(this.tipoprov);
-					ap.getFiltro().setNomeFruitore(this.nomeprov);
-				}
+			if(ap.getFiltro().getTipoFruitore()!=null && ap.getFiltro().getNomeFruitore()!=null &&
+				this.oldtipoprov.equals(ap.getFiltro().getTipoFruitore()) && 
+				this.oldnomeprov.equals(ap.getFiltro().getNomeFruitore())) {
+				ap.getFiltro().setTipoFruitore(this.tipoprov);
+				ap.getFiltro().setNomeFruitore(this.nomeprov);
 			}
 			
 			// aggiorno soggetto erogatore
-			if(ap.getFiltro().getTipoErogatore()!=null && ap.getFiltro().getNomeErogatore()!=null) {
-				if (this.oldtipoprov.equals(ap.getFiltro().getTipoErogatore()) && 
-						this.oldnomeprov.equals(ap.getFiltro().getNomeErogatore())) {
-					ap.getFiltro().setTipoErogatore(this.tipoprov);
-					ap.getFiltro().setNomeErogatore(this.nomeprov);
-				}
+			if(ap.getFiltro().getTipoErogatore()!=null && ap.getFiltro().getNomeErogatore()!=null &&
+				this.oldtipoprov.equals(ap.getFiltro().getTipoErogatore()) && 
+				this.oldnomeprov.equals(ap.getFiltro().getNomeErogatore())) {
+				ap.getFiltro().setTipoErogatore(this.tipoprov);
+				ap.getFiltro().setNomeErogatore(this.nomeprov);
 			}
 			
 		}
 	}
-	private void _updateFiltroSoggetto(ConfigurazioneAllarmeBean allarme) {
+	private void updateFiltroSoggettoEngine(ConfigurazioneAllarmeBean allarme) {
 		if(allarme.getFiltro()!=null) {
 			
 			// aggiorno soggetto fruitore
-			if(allarme.getFiltro().getTipoFruitore()!=null && allarme.getFiltro().getNomeFruitore()!=null) {
-				if (this.oldtipoprov.equals(allarme.getFiltro().getTipoFruitore()) && 
-						this.oldnomeprov.equals(allarme.getFiltro().getNomeFruitore())) {
-					allarme.getFiltro().setTipoFruitore(this.tipoprov);
-					allarme.getFiltro().setNomeFruitore(this.nomeprov);
-				}
+			if(allarme.getFiltro().getTipoFruitore()!=null && allarme.getFiltro().getNomeFruitore()!=null &&
+				this.oldtipoprov.equals(allarme.getFiltro().getTipoFruitore()) && 
+				this.oldnomeprov.equals(allarme.getFiltro().getNomeFruitore())) {
+				allarme.getFiltro().setTipoFruitore(this.tipoprov);
+				allarme.getFiltro().setNomeFruitore(this.nomeprov);
 			}
 			
 			// aggiorno soggetto erogatore
-			if(allarme.getFiltro().getTipoErogatore()!=null && allarme.getFiltro().getNomeErogatore()!=null) {
-				if (this.oldtipoprov.equals(allarme.getFiltro().getTipoErogatore()) && 
-						this.oldnomeprov.equals(allarme.getFiltro().getNomeErogatore())) {
-					allarme.getFiltro().setTipoErogatore(this.tipoprov);
-					allarme.getFiltro().setNomeErogatore(this.nomeprov);
-				}
+			if(allarme.getFiltro().getTipoErogatore()!=null && allarme.getFiltro().getNomeErogatore()!=null &&
+				this.oldtipoprov.equals(allarme.getFiltro().getTipoErogatore()) && 
+				this.oldnomeprov.equals(allarme.getFiltro().getNomeErogatore())) {
+				allarme.getFiltro().setTipoErogatore(this.tipoprov);
+				allarme.getFiltro().setNomeErogatore(this.nomeprov);
 			}
 			
 		}
@@ -1799,136 +1839,137 @@ public class SoggettoUpdateUtilities {
 
 	public void checkFruitori() throws DriverRegistroServiziException{
 		// Fruitori nei servizi 
-		if(this.soggettiCore.isRegistroServiziLocale()){
-			if (!this.oldnomeprov.equals(this.nomeprov) || !this.oldtipoprov.equals(this.tipoprov)) {
+		if(this.soggettiCore.isRegistroServiziLocale() &&
+			(!this.oldnomeprov.equals(this.nomeprov) || !this.oldtipoprov.equals(this.tipoprov)) 
+			){
 			
-				List<AccordoServizioParteSpecifica> sfruitori = this.apsCore.servizioWithSoggettoFruitore(new IDSoggetto(this.oldtipoprov,this.oldnomeprov));
-				for(int i=0; i<sfruitori.size(); i++){
-					AccordoServizioParteSpecifica asps = sfruitori.get(i);
-					if(asps.getTipoSoggettoErogatore().equals(this.oldtipoprov) &&
-							asps.getNomeSoggettoErogatore().equals(this.oldnomeprov)){
-						asps.setTipoSoggettoErogatore(this.tipoprov);
-						asps.setNomeSoggettoErogatore(this.nomeprov);
-					}
-					// Check accordo di Servizio
-					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
-					if(idAccordo.getSoggettoReferente()!=null && 
-							idAccordo.getSoggettoReferente().getTipo().equals(this.oldtipoprov) &&
-							idAccordo.getSoggettoReferente().getNome().equals(this.oldnomeprov)){
-						idAccordo.getSoggettoReferente().setTipo(this.tipoprov);
-						idAccordo.getSoggettoReferente().setNome(this.nomeprov);
-						asps.setAccordoServizioParteComune(IDAccordoFactory.getInstance().getUriFromIDAccordo(idAccordo));
-					}	
-					// Fruitori
-					for(int j=0; j<asps.sizeFruitoreList(); j++){
-						if(asps.getFruitore(j).getTipo().equals(this.oldtipoprov) && 
-								asps.getFruitore(j).getNome().equals(this.oldnomeprov)){
-							asps.getFruitore(j).setTipo(this.tipoprov);
-							asps.getFruitore(j).setNome(this.nomeprov);
-						}
-					}			
-					this.oggettiDaAggiornare.add(asps);
+			List<AccordoServizioParteSpecifica> sfruitori = this.apsCore.servizioWithSoggettoFruitore(new IDSoggetto(this.oldtipoprov,this.oldnomeprov));
+			for(int i=0; i<sfruitori.size(); i++){
+				AccordoServizioParteSpecifica asps = sfruitori.get(i);
+				if(asps.getTipoSoggettoErogatore().equals(this.oldtipoprov) &&
+						asps.getNomeSoggettoErogatore().equals(this.oldnomeprov)){
+					asps.setTipoSoggettoErogatore(this.tipoprov);
+					asps.setNomeSoggettoErogatore(this.nomeprov);
 				}
-				
+				// Check accordo di Servizio
+				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+				if(idAccordo.getSoggettoReferente()!=null && 
+						idAccordo.getSoggettoReferente().getTipo().equals(this.oldtipoprov) &&
+						idAccordo.getSoggettoReferente().getNome().equals(this.oldnomeprov)){
+					idAccordo.getSoggettoReferente().setTipo(this.tipoprov);
+					idAccordo.getSoggettoReferente().setNome(this.nomeprov);
+					asps.setAccordoServizioParteComune(IDAccordoFactory.getInstance().getUriFromIDAccordo(idAccordo));
+				}	
+				// Fruitori
+				for(int j=0; j<asps.sizeFruitoreList(); j++){
+					if(asps.getFruitore(j).getTipo().equals(this.oldtipoprov) && 
+							asps.getFruitore(j).getNome().equals(this.oldnomeprov)){
+						asps.getFruitore(j).setTipo(this.tipoprov);
+						asps.getFruitore(j).setNome(this.nomeprov);
+					}
+				}			
+				this.oggettiDaAggiornare.add(asps);
 			}
+				
 		}
 	}
 
-	public void checkPolicyGlobali() throws DriverConfigurazioneException{
-		if(this.soggettiCore.isRegistroServiziLocale()){
+	public void checkPolicyGlobali() {
+		if(this.soggettiCore.isRegistroServiziLocale() &&
+				(!this.oldnomeprov.equals(this.nomeprov) || !this.oldtipoprov.equals(this.tipoprov)) 
+			){
 			
-			if (!this.oldnomeprov.equals(this.nomeprov) || !this.oldtipoprov.equals(this.tipoprov)) {
+			Map<String, AttivazionePolicy> listaPolicyPA = new HashMap<>();
 			
-				Map<String, AttivazionePolicy> listaPolicyPA = new HashMap<>();
-				
-				
-				IDSoggetto filtroSoggettoFruitore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
-				ConsoleSearch ricercaPolicies = new ConsoleSearch(true);
-				List<AttivazionePolicy> listaPolicies = null;
-				try {
-					listaPolicies = this.confCore.attivazionePolicyListByFilter(ricercaPolicies, null, null,
-							filtroSoggettoFruitore, null, null,
-							null, null,
-							null, null);
-				}catch(Exception e) {
-					// ignore
-				}
-				if(listaPolicies!=null && !listaPolicies.isEmpty()) {
-					for (AttivazionePolicy ap : listaPolicies) {
-						if(listaPolicyPA.containsKey(ap.getIdActivePolicy())) {
-							continue; // modifica gia' effettuata o cmq gestita dopo poiche' porta gia trovata
-						}
-												
-						if(ap.getFiltro()!=null) {
-							
-							_updateFiltroSoggetto(ap);
-															
-							listaPolicyPA.put(ap.getIdActivePolicy(), ap);
-						}
+			
+			IDSoggetto filtroSoggettoFruitore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
+			ConsoleSearch ricercaPolicies = new ConsoleSearch(true);
+			List<AttivazionePolicy> listaPolicies = null;
+			try {
+				listaPolicies = this.confCore.attivazionePolicyListByFilter(ricercaPolicies, null, null,
+						filtroSoggettoFruitore, null, null,
+						null, null,
+						null, null);
+			}catch(Exception e) {
+				// ignore
+			}
+			if(listaPolicies!=null && !listaPolicies.isEmpty()) {
+				for (AttivazionePolicy ap : listaPolicies) {
+					if(listaPolicyPA.containsKey(ap.getIdActivePolicy())) {
+						continue; // modifica gia' effettuata o cmq gestita dopo poiche' porta gia trovata
 					}
-				}
-				
-				IDSoggetto filtroSoggettoErogatore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
-				ricercaPolicies = new ConsoleSearch(true);
-				listaPolicies = null;
-				try {
-					listaPolicies = this.confCore.attivazionePolicyListByFilter(ricercaPolicies, null, null,
-							null, null, null,
-							filtroSoggettoErogatore, null,
-							null, null);
-				}catch(Exception e) {
-					// ignore
-				}
-				if(listaPolicies!=null && !listaPolicies.isEmpty()) {
-					for (AttivazionePolicy ap : listaPolicies) {
-						if(listaPolicyPA.containsKey(ap.getIdActivePolicy())) {
-							continue; // modifica gia' effettuata o cmq gestita dopo poiche' porta gia trovata
-						}
+											
+					if(ap.getFiltro()!=null) {
 						
-						if(ap.getFiltro()!=null) {
-							
-							_updateFiltroSoggetto(ap);
-															
-							listaPolicyPA.put(ap.getIdActivePolicy(), ap);
-						}
-					}
-				}
-				
-				// fine Controllo policy di Rate Limiting
-				
-				// aggiorno le policy di rate limiting globali
-				if(listaPolicyPA!=null && !listaPolicyPA.isEmpty()) {
-					for (AttivazionePolicy ap : listaPolicyPA.values()) {
-						this.oggettiDaAggiornare.add(ap);
+						updateFiltroSoggettoEngine(ap);
+														
+						listaPolicyPA.put(ap.getIdActivePolicy(), ap);
 					}
 				}
 			}
+			
+			IDSoggetto filtroSoggettoErogatore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
+			ricercaPolicies = new ConsoleSearch(true);
+			listaPolicies = null;
+			try {
+				listaPolicies = this.confCore.attivazionePolicyListByFilter(ricercaPolicies, null, null,
+						null, null, null,
+						filtroSoggettoErogatore, null,
+						null, null);
+			}catch(Exception e) {
+				// ignore
+			}
+			if(listaPolicies!=null && !listaPolicies.isEmpty()) {
+				for (AttivazionePolicy ap : listaPolicies) {
+					if(listaPolicyPA.containsKey(ap.getIdActivePolicy())) {
+						continue; // modifica gia' effettuata o cmq gestita dopo poiche' porta gia trovata
+					}
+					
+					if(ap.getFiltro()!=null) {
+						
+						updateFiltroSoggettoEngine(ap);
+														
+						listaPolicyPA.put(ap.getIdActivePolicy(), ap);
+					}
+				}
+			}
+			
+			// fine Controllo policy di Rate Limiting
+			
+			// aggiorno le policy di rate limiting globali
+			if(listaPolicyPA!=null && !listaPolicyPA.isEmpty()) {
+				for (AttivazionePolicy ap : listaPolicyPA.values()) {
+					this.oggettiDaAggiornare.add(ap);
+				}
+			}
+			
 		}
 	}
 	
 	public void checkConfigurazione() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		if(this.soggettiCore.isRegistroServiziLocale()){
-			if (!this.oldnomeprov.equals(this.nomeprov) || !this.oldtipoprov.equals(this.tipoprov)) {
+		if(this.soggettiCore.isRegistroServiziLocale() &&
+			(!this.oldnomeprov.equals(this.nomeprov) || !this.oldtipoprov.equals(this.tipoprov)) 
+			){
 				
-				Configurazione configurazioneGenerale = this.confCore.getConfigurazioneGenerale();
-				boolean updated = false;
-				if(configurazioneGenerale!=null && configurazioneGenerale.getUrlInvocazione()!=null && configurazioneGenerale.getUrlInvocazione().sizeRegolaList()>0) {
-					for (ConfigurazioneUrlInvocazioneRegola regola : configurazioneGenerale.getUrlInvocazione().getRegolaList()) {
-						if(regola.getSoggetto()!=null && 
-								this.oldtipoprov.equals(regola.getSoggetto().getTipo()) && 
-								this.oldnomeprov.equals(regola.getSoggetto().getNome())
-								) {
-							regola.getSoggetto().setTipo(this.tipoprov);
-							regola.getSoggetto().setNome(this.nomeprov);
-							updated = true;
-						}
+			Configurazione configurazioneGenerale = this.confCore.getConfigurazioneGenerale();
+			boolean updated = false;
+			if(configurazioneGenerale!=null && configurazioneGenerale.getUrlInvocazione()!=null && configurazioneGenerale.getUrlInvocazione().sizeRegolaList()>0) {
+				for (ConfigurazioneUrlInvocazioneRegola regola : configurazioneGenerale.getUrlInvocazione().getRegolaList()) {
+					if(regola.getSoggetto()!=null && 
+							this.oldtipoprov.equals(regola.getSoggetto().getTipo()) && 
+							this.oldnomeprov.equals(regola.getSoggetto().getNome())
+							) {
+						regola.getSoggetto().setTipo(this.tipoprov);
+						regola.getSoggetto().setNome(this.nomeprov);
+						updated = true;
 					}
 				}
-				
-				if(updated) {
-					this.oggettiDaAggiornare.add(configurazioneGenerale);
-				}
 			}
+			
+			if(updated) {
+				this.oggettiDaAggiornare.add(configurazioneGenerale);
+			}
+			
 		}
 	}
 		

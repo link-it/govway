@@ -78,6 +78,7 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
@@ -90,10 +91,10 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
  */
 public class PorteApplicativeCore extends ControlStationCore {
 
-	public PorteApplicativeCore() throws Exception {
+	public PorteApplicativeCore() throws DriverControlStationException {
 		super();
 	}
-	public PorteApplicativeCore(ControlStationCore core) throws Exception {
+	public PorteApplicativeCore(ControlStationCore core) throws DriverControlStationException {
 		super(core);
 	}
 	

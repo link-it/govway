@@ -606,7 +606,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			
-			final MappingFruizionePortaDelegata mapping= AccordiServizioParteSpecificaUtilities.getMappingPD_filterByDescription(
+			final MappingFruizionePortaDelegata mapping= AccordiServizioParteSpecificaUtilities.getMappingPDFilterByDescription(
 					 listaMapping, 
 					 nomeGruppo
 					);

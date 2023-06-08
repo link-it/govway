@@ -547,7 +547,7 @@ public class ErogazioniApiHelper {
 		final String endpoint_url = connRegistro.getProperties().get(CostantiDB.CONNETTORE_HTTP_LOCATION);
 		
 		// Recupero i Servizi Esposti dalla API 
-        final String[] ptArray =  AccordiServizioParteSpecificaUtilities.getListaPortTypes(as, env.apsCore, env.apsHelper)
+        final String[] ptArray =  AccordiServizioParteSpecificaUtilities.getListaPortTypes(as, env.apsHelper)
         		.stream()
          		.map( p -> p.getNome() )
          		.toArray(String[]::new);
@@ -1191,7 +1191,7 @@ public class ErogazioniApiHelper {
 		
 		 boolean accordoPrivato = as.getPrivato()!=null && as.getPrivato();		
          
-         List<PortTypeSintetico> ptList = AccordiServizioParteSpecificaUtilities.getListaPortTypes(as, env.apsCore, env.apsHelper);
+         List<PortTypeSintetico> ptList = AccordiServizioParteSpecificaUtilities.getListaPortTypes(as, env.apsHelper);
          
          String[] ptArray =  ptList.stream()
          		.map( p -> p.getNome() )

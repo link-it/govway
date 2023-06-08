@@ -104,7 +104,7 @@ Scenario: Fruizioni Get Url Invocazione PetStore di una API SOAP appena creata
     And assert response.modalita == 'url-based'
     And match response.force_interface == true
     And assert response.nome == null
-    And assert response.pattern == '.*/(?:gw_)?'+soggettoDefault+'/(?:gw_)?'+fruizione_soap_piu_azioni.erogatore+'/(?:gw_)?'+fruizione_soap_piu_azioni.fruizione_nome+'/v1/([^/|^?]*).*'
+    And assert response.pattern == '/(?:gw_)?'+soggettoDefault+'/(?:gw_)?'+fruizione_soap_piu_azioni.erogatore+'/(?:gw_)?'+fruizione_soap_piu_azioni.fruizione_nome+'/v1/([^/?]*).*'
 
     * call delete ({ resourcePath: 'fruizioni/' + soap_piu_azioni_key })
     * call delete ({ resourcePath: api_soap_piu_azioni_path })

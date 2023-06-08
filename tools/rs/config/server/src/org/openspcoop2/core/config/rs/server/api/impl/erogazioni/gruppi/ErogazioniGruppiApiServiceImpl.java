@@ -594,7 +594,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			
-			final MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = AccordiServizioParteSpecificaUtilities.getMappingPA_filterByDescription(
+			final MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = AccordiServizioParteSpecificaUtilities.getMappingPAFilterByDescription(
 					 listaMapping, 
 					 nomeGruppo
 					);

@@ -50,6 +50,8 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -77,6 +79,8 @@ import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.beans.PortTypeSintetico;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.db.IDAccordoDB;
@@ -86,15 +90,20 @@ import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.ProtocolImplementation;
 import org.openspcoop2.protocol.sdk.config.ProtocolSubscription;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCoreException;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
@@ -127,6 +136,8 @@ import org.openspcoop2.web.lib.users.dao.PermessiUtente;
  * @version $Rev$, $Date$
  */
 public class AccordiServizioParteSpecificaUtilities {
+	
+	private AccordiServizioParteSpecificaUtilities() {}
 
 	public static boolean [] getPermessiUtente(AccordiServizioParteSpecificaHelper apsHelper) {
 		PermessiUtente pu = null;
@@ -160,17 +171,17 @@ public class AccordiServizioParteSpecificaUtilities {
 		}
 		else {
 			// filtro accordi senza risorse o senza pt/operation
-			listaAPI = new ArrayList<AccordoServizioParteComuneSintetico>();
+			listaAPI = new ArrayList<>();
 			for (AccordoServizioParteComuneSintetico accordoServizioParteComune : listaTmp) {
 				if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(accordoServizioParteComune.getServiceBinding())) {
-					if(accordoServizioParteComune.getResource().size()>0) {
+					if(!accordoServizioParteComune.getResource().isEmpty()) {
 						listaAPI.add(accordoServizioParteComune);	
 					}
 				}
 				else {
 					boolean ptValido = false;
 					for (PortTypeSintetico pt : accordoServizioParteComune.getPortType()) {
-						if(pt.getAzione().size()>0) {
+						if(!pt.getAzione().isEmpty()) {
 							ptValido = true;
 							break;
 						}
@@ -184,7 +195,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		return listaAPI;
 	}
 	
-	public static List<IDAccordoDB> getListaIdAPI(String tipoProtocollo, String userLogin, AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper) throws Exception {
+	public static List<IDAccordoDB> getListaIdAPI(String tipoProtocollo, String userLogin, AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper) throws DriverControlStationException, DriverRegistroServiziException {
 		
 		AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
 		
@@ -198,18 +209,13 @@ public class AccordiServizioParteSpecificaUtilities {
 		
 		ConsoleSearch searchAccordi = new ConsoleSearch(true);
 		searchAccordi.addFilter(Liste.ACCORDI, Filtri.FILTRO_PROTOCOLLO, tipoProtocollo);
-		List<IDAccordoDB> listaTmp =  
-				AccordiServizioParteComuneUtilities.idAccordiListFromPermessiUtente(apcCore, userLogin, searchAccordi, 
+		return	AccordiServizioParteComuneUtilities.idAccordiListFromPermessiUtente(apcCore, userLogin, searchAccordi, 
 						getPermessiUtente(apsHelper), soloAccordiConsistentiRest, soloAccordiConsistentiSoap);
 		
-		return listaTmp;
 	}
 	
-	public static List<PortTypeSintetico> getListaPortTypes(AccordoServizioParteComuneSintetico as, AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper) throws Exception{
+	public static List<PortTypeSintetico> getListaPortTypes(AccordoServizioParteComuneSintetico as, AccordiServizioParteSpecificaHelper apsHelper) {
 		
-		//AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
-		
-		//List<PortType> portTypesTmp = apcCore.accordiPorttypeList(as.getId().intValue(), new Search(true));
 		List<PortTypeSintetico> portTypesTmp = as.getPortType();
 		List<PortTypeSintetico> portTypes = null;
 		
@@ -218,9 +224,9 @@ public class AccordiServizioParteSpecificaUtilities {
 		}
 		else {
 			// filtro pt senza op
-			portTypes = new ArrayList<PortTypeSintetico>();
+			portTypes = new ArrayList<>();
 			for (PortTypeSintetico portType : portTypesTmp) {
-				if(portType.getAzione().size()>0) {
+				if(!portType.getAzione().isEmpty()) {
 					portTypes.add(portType);
 				}
 			}
@@ -229,14 +235,11 @@ public class AccordiServizioParteSpecificaUtilities {
 		return portTypes; 
 	}
 	
-	public static boolean isSoggettoOperativo(IDSoggetto idSoggettoErogatore, AccordiServizioParteSpecificaCore apsCore) throws Exception {
+	public static boolean isSoggettoOperativo(IDSoggetto idSoggettoErogatore, AccordiServizioParteSpecificaCore apsCore) throws DriverControlStationException, DriverRegistroServiziException, DriverRegistroServiziNotFound, DriverControlStationNotFound {
 		SoggettiCore soggettiCore = new SoggettiCore(apsCore);
 		PddCore pddCore = new PddCore(apsCore);
 		Soggetto soggetto = soggettiCore.getSoggettoRegistro(idSoggettoErogatore );
-		if(pddCore.isPddEsterna(soggetto.getPortaDominio())){
-			return false;
-		}
-		return true;
+		return !pddCore.isPddEsterna(soggetto.getPortaDominio());
 	}
 	
 	public static void create(AccordoServizioParteSpecifica asps,boolean alreadyExists,
@@ -257,10 +260,10 @@ public class AccordiServizioParteSpecificaUtilities {
 			String autenticazioneTokenIssuer, String autenticazioneTokenClientId, String autenticazioneTokenSubject, String autenticazioneTokenUsername, String autenticazioneTokenEMail,
 			ProtocolProperties protocolProperties, ConsoleOperationType consoleOperationType,
 			AccordiServizioParteSpecificaCore apsCore, ErogazioniHelper apsHelper, String nomeSAServer, String canaleStato, String canale, boolean gestioneCanaliEnabled,
-			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws Exception {
+			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws DriverControlStationException, ProtocolException, DriverConfigurazioneException, DriverConfigurazioneNotFound, DriverRegistroServiziNotFound, DriverRegistroServiziException, ControlStationCoreException, UtilsException {
 		
 		if(asps==null) {
-			throw new Exception("Param asps is null");
+			throw new DriverControlStationException("Param asps is null");
 		}
 		
 		List<Object> listaOggettiDaCreare = new ArrayList<>();
@@ -319,9 +322,8 @@ public class AccordiServizioParteSpecificaUtilities {
 			}
 		}
 		else {
-			//if(!alreadyExists) { Devo comunque aggiornalo: caso in cui ho creato prima la fruizione e solo dopo l'erogazione
+			/**if(!alreadyExists) { Devo comunque aggiornalo: caso in cui ho creato prima la fruizione e solo dopo l'erogazione*/
 			asps.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, consoleOperationType,null));
-			//}
 		}
 
 		if(alreadyExists) {
@@ -339,14 +341,14 @@ public class AccordiServizioParteSpecificaUtilities {
 			String nomeSA, String erogazioneRuolo, String erogazioneSoggettoAutenticato, 
 			String autorizzazioneAutenticatiToken, 
 			String autorizzazioneRuoliToken, String autorizzazioneRuoliTipologiaToken, String autorizzazioneRuoliMatchToken,
-			String autorizzazione_tokenOptions,
+			String autorizzazioneTokenOptions,
 			String autorizzazioneScope, String scope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
 			String gestioneToken, 
 			String gestioneTokenPolicy,  String gestioneTokenOpzionale,  
 			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
 			String autenticazioneTokenIssuer, String autenticazioneTokenClientId, String autenticazioneTokenSubject, String autenticazioneTokenUsername, String autenticazioneTokenEMail,
 			AccordiServizioParteSpecificaCore apsCore, ErogazioniHelper apsHelper, String nomeSAServer, String canaleStato, String canale, boolean gestioneCanaliEnabled,
-			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws Exception {
+			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws DriverControlStationException, ProtocolException {
 		
 		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
 			
@@ -358,7 +360,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		
 		PortaApplicativa portaApplicativa = implementationDefault.getPortaApplicativa();
 		MappingErogazionePortaApplicativa mappingErogazione = implementationDefault.getMapping();
-		portaApplicativa.setIdSoggetto((long) idProv);
+		portaApplicativa.setIdSoggetto(idProv);
 		
 		IDSoggetto idSoggettoAutenticatoErogazione = null;
 		if(erogazioneSoggettoAutenticato != null && !"".equals(erogazioneSoggettoAutenticato) && !"-".equals(erogazioneSoggettoAutenticato)) {
@@ -386,7 +388,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			sa.setNome(nomeServizioApplicativoErogatore);
 			sa.setTipologiaFruizione(TipologiaFruizione.DISABILITATO.getValue());
 			sa.setTipologiaErogazione(TipologiaErogazione.TRASPARENTE.getValue());
-			sa.setIdSoggetto((long) idProv);
+			sa.setIdSoggetto(idProv);
 			sa.setTipoSoggettoProprietario(portaApplicativa.getTipoSoggettoProprietario());
 			sa.setNomeSoggettoProprietario(portaApplicativa.getNomeSoggettoProprietario());
 			
@@ -438,7 +440,7 @@ public class AccordiServizioParteSpecificaUtilities {
 				nomeServizioApplicativoErogatore, erogazioneRuolo,idSoggettoAutenticatoErogazione,
 				autorizzazioneAutenticatiToken, 
 				autorizzazioneRuoliToken, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken,
-				autorizzazione_tokenOptions,
+				autorizzazioneTokenOptions,
 				autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 				identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 		
@@ -446,7 +448,7 @@ public class AccordiServizioParteSpecificaUtilities {
 				gestioneTokenPolicy,  gestioneTokenOpzionale,
 				gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward,
 				autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-				autorizzazione_tokenOptions
+				autorizzazioneTokenOptions
 				);
 		
 		// canali
@@ -465,9 +467,6 @@ public class AccordiServizioParteSpecificaUtilities {
 	
 	}
 	
-	public static void crea() {
-		
-	}
 	
 	public static void generaPortaDelegata(List<Object> listaOggettiDaCreare,
 			IDSoggetto idFruitore, IDServizio idServizio, String tipoProtocollo, ServiceBinding serviceBinding,
@@ -477,14 +476,14 @@ public class AccordiServizioParteSpecificaUtilities {
 			String fruizioneServizioApplicativo, String fruizioneRuolo, 
 			String autorizzazioneAutenticatiToken, 
 			String autorizzazioneRuoliToken, String autorizzazioneRuoliTipologiaToken, String autorizzazioneRuoliMatchToken,
-			String autorizzazione_tokenOptions,
+			String autorizzazioneTokenOptions,
 			String autorizzazioneScope, String scope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
 			String gestioneToken, 
 			String gestioneTokenPolicy,  String gestioneTokenOpzionale,  
 			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
 			String autenticazioneTokenIssuer, String autenticazioneTokenClientId, String autenticazioneTokenSubject, String autenticazioneTokenUsername, String autenticazioneTokenEMail,
 			AccordiServizioParteSpecificaCore apsCore, String canaleStato, String canale, boolean gestioneCanaliEnabled,
-			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws Exception {
+			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws DriverControlStationException, ProtocolException, DriverConfigurazioneException {
 		
 		PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
 		
@@ -496,7 +495,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		
 		PortaDelegata portaDelegata = subscriptionDefault.getPortaDelegata();
 		MappingFruizionePortaDelegata mappingFruizione = subscriptionDefault.getMapping();
-		portaDelegata.setIdSoggetto((long) idProv);
+		portaDelegata.setIdSoggetto(idProv);
 
 		porteDelegateCore.configureControlloAccessiPortaDelegata(portaDelegata, 
 				fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList,
@@ -504,7 +503,7 @@ public class AccordiServizioParteSpecificaUtilities {
 				fruizioneServizioApplicativo, fruizioneRuolo,
 				autorizzazioneAutenticatiToken, 
 				autorizzazioneRuoliToken, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken,
-				autorizzazione_tokenOptions,
+				autorizzazioneTokenOptions,
 				autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 				identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 		
@@ -512,7 +511,7 @@ public class AccordiServizioParteSpecificaUtilities {
 				gestioneTokenPolicy,  gestioneTokenOpzionale,
 				gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward,
 				autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-				autorizzazione_tokenOptions
+				autorizzazioneTokenOptions
 				);
 		
 		// canali
@@ -543,11 +542,11 @@ public class AccordiServizioParteSpecificaUtilities {
 		
 		// Se sono cambiati il tipo o il nome allora devo aggiornare
 		// anche le porte delegate e porte applicative
-		List<PortaDelegata> listaPD = new ArrayList<PortaDelegata>();
-		List<PortaApplicativa> listaPA = new ArrayList<PortaApplicativa>();
-		List<ServizioApplicativo> listaPA_SA = new ArrayList<ServizioApplicativo>();
-		Map<String, AttivazionePolicy> listaPolicyDaAggiornare = new HashMap<String, AttivazionePolicy>();
-		Map<String, ConfigurazioneAllarmeBean> listaAllarmiDaAggiornare = new HashMap<String, ConfigurazioneAllarmeBean>();
+		List<PortaDelegata> listaPD = new ArrayList<>();
+		List<PortaApplicativa> listaPA = new ArrayList<>();
+		List<ServizioApplicativo> listaPASA = new ArrayList<>();
+		Map<String, AttivazionePolicy> listaPolicyDaAggiornare = new HashMap<>();
+		Map<String, ConfigurazioneAllarmeBean> listaAllarmiDaAggiornare = new HashMap<>();
 		
 		// check dati modificati
 		String newUri = IDServizioFactory.getInstance().getUriFromAccordo(asps);
@@ -572,7 +571,7 @@ public class AccordiServizioParteSpecificaUtilities {
 						"/v" + asps.getOldIDServizioForUpdate().getVersione().intValue();
 
 				// backward compatibility: provare ad eliminare la v, che prima non veniva utilizzata
-				String locationSuffix_oldWithoutV = tmpLocationSuffix +
+				String locationSuffixOldWithoutV = tmpLocationSuffix +
 						"/" + asps.getOldIDServizioForUpdate().getVersione().intValue();
 
 				String newLocationSuffix = "/" + asps.getTipoSoggettoErogatore() + "_" + asps.getNomeSoggettoErogatore() + 
@@ -594,12 +593,13 @@ public class AccordiServizioParteSpecificaUtilities {
 					String locationPrefix = tmpPorta.getTipoSoggettoProprietario()+"_"+tmpPorta.getNomeSoggettoProprietario();
 					String check1 = locationPrefix+locationSuffix;
 					String check2 = "__"+locationPrefix+locationSuffix;
-					String check1_oldWithoutV = locationPrefix+locationSuffix_oldWithoutV;
-					String check2_oldWithoutV = "__"+locationPrefix+locationSuffix_oldWithoutV;
+					String check1oldWithoutV = locationPrefix+locationSuffixOldWithoutV;
+					String check2oldWithoutV = "__"+locationPrefix+locationSuffixOldWithoutV;
 					String parteRimanente = "";
 					String nuovoNome = null;
 					boolean match = false;
-					if(tmpPorta.getNome().equals(check1)) {
+					if(tmpPorta.getNome().equals(check1) || 
+							tmpPorta.getNome().equals(check1oldWithoutV)) {
 						match = true;	
 						nuovoNome = locationPrefix+newLocationSuffix;
 					}
@@ -608,13 +608,9 @@ public class AccordiServizioParteSpecificaUtilities {
 						parteRimanente = tmpPorta.getNome().substring(check2.length());
 						nuovoNome = "__"+locationPrefix+newLocationSuffix+parteRimanente;
 					}
-					else if(tmpPorta.getNome().equals(check1_oldWithoutV)) {
+					else if(tmpPorta.getNome().startsWith(check2oldWithoutV)) {
 						match = true;	
-						nuovoNome = locationPrefix+newLocationSuffix;
-					}
-					else if(tmpPorta.getNome().startsWith(check2_oldWithoutV)) {
-						match = true;	
-						parteRimanente = tmpPorta.getNome().substring(check2_oldWithoutV.length());
+						parteRimanente = tmpPorta.getNome().substring(check2oldWithoutV.length());
 						nuovoNome = "__"+locationPrefix+newLocationSuffix+parteRimanente;
 					}
 
@@ -632,10 +628,10 @@ public class AccordiServizioParteSpecificaUtilities {
 							// Subscription from gw/ENTE for service gw/ErogatoreEsterno:gw/EsempioREST:1
 							String soggettoOldCaso1 = asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo()+"/"+asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome();
 							String soggettoNewCaso1 = asps.getTipoSoggettoErogatore()+"/"+asps.getNomeSoggettoErogatore();
-							String match_caso = soggettoOldCaso1+":"+asps.getOldIDServizioForUpdate().getTipo()+"/"+asps.getOldIDServizioForUpdate().getNome()+":"+asps.getOldIDServizioForUpdate().getVersione().intValue();
-							if(descrizionePD.endsWith(match_caso)) {
-								String replace_caso = soggettoNewCaso1+":"+asps.getTipo()+"/"+asps.getNome()+":"+asps.getVersione().intValue();
-								descrizionePD = descrizionePD.replace(match_caso, replace_caso);
+							String matchCaso = soggettoOldCaso1+":"+asps.getOldIDServizioForUpdate().getTipo()+"/"+asps.getOldIDServizioForUpdate().getNome()+":"+asps.getOldIDServizioForUpdate().getVersione().intValue();
+							if(descrizionePD.endsWith(matchCaso)) {
+								String replaceCaso = soggettoNewCaso1+":"+asps.getTipo()+"/"+asps.getNome()+":"+asps.getVersione().intValue();
+								descrizionePD = descrizionePD.replace(matchCaso, replaceCaso);
 							}
 
 							// Caso 2: altra subscription
@@ -643,15 +639,15 @@ public class AccordiServizioParteSpecificaUtilities {
 							String soggettoOldCaso2 = asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo()+"_"+asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome();
 							String soggettoNewCaso2 = asps.getTipoSoggettoErogatore()+"_"+asps.getNomeSoggettoErogatore();
 							String tmpMatchCaso2 = soggettoOldCaso2+"/"+asps.getOldIDServizioForUpdate().getTipo()+"_"+asps.getOldIDServizioForUpdate().getNome()+"/";
-							String match_caso2 = tmpMatchCaso2 +"v"+ asps.getOldIDServizioForUpdate().getVersione().intValue();
-							String match_caso2_oldWithoutV = tmpMatchCaso2 + asps.getOldIDServizioForUpdate().getVersione().intValue();
-							if(descrizionePD.contains(match_caso2)) {
-								String replace_caso2 = soggettoNewCaso2+"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue();
-								descrizionePD = descrizionePD.replace(match_caso2, replace_caso2);
+							String matchCaso2 = tmpMatchCaso2 +"v"+ asps.getOldIDServizioForUpdate().getVersione().intValue();
+							String matchCaso2oldWithoutV = tmpMatchCaso2 + asps.getOldIDServizioForUpdate().getVersione().intValue();
+							if(descrizionePD.contains(matchCaso2)) {
+								String replaceCaso2 = soggettoNewCaso2+"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue();
+								descrizionePD = descrizionePD.replace(matchCaso2, replaceCaso2);
 							}
-							else if(descrizionePD.contains(match_caso2_oldWithoutV)) {
-								String replace_caso2 = soggettoNewCaso2+"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue();
-								descrizionePD = descrizionePD.replace(match_caso2_oldWithoutV, replace_caso2);
+							else if(descrizionePD.contains(matchCaso2oldWithoutV)) {
+								String replaceCaso2 = soggettoNewCaso2+"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue();
+								descrizionePD = descrizionePD.replace(matchCaso2oldWithoutV, replaceCaso2);
 							}
 
 							tmpPorta.setDescrizione(descrizionePD);
@@ -659,18 +655,28 @@ public class AccordiServizioParteSpecificaUtilities {
 						}
 
 						// regex del pattern azione
-						// .*(fruitore)/(erogatore)/(servizio)/([^/|^?]*).*
+						// OLD: .*/(fruitore)/(erogatore)/(servizio)/([^/|^?]*).*
+						// NEW 3.3.13: /(fruitore)/(erogatore)/(servizio)/([^/?]*).*
 						PortaDelegataAzione pdAzione = tmpPorta.getAzione();
 						PortaDelegataAzioneIdentificazione identificazione = pdAzione != null ? pdAzione.getIdentificazione() : null;
-						String patterAzione = pdAzione != null ? (pdAzione.getPattern() != null ? pdAzione.getPattern() : "") : "";
-						String patternAzionePrefix = ".*/";
-						String patternAzioneSuffix1 = "/([^/|^?]*).*";
+						String patterAzione = "";
+						if(pdAzione!=null) {
+							patterAzione = pdAzione.getPattern() != null ? pdAzione.getPattern() : "";
+						}
+						String patternAzionePrefixOld = ".*/";
+						String patternAzioneSuffix1Old = "/([^/|^?]*).*";
+						String patternAzionePrefixNew = "/";
+						String patternAzioneSuffix1New = "/([^/?]*).*";
 						// se identificazione urlbased procedo con i controlli
 						if (PortaDelegataAzioneIdentificazione.URL_BASED.equals(identificazione)) {
-							if (patterAzione.startsWith(patternAzionePrefix) && patterAzione.endsWith(patternAzioneSuffix1)) {
+							
+							boolean oldPattern = patterAzione.startsWith(patternAzionePrefixOld) && patterAzione.endsWith(patternAzioneSuffix1Old);
+							boolean newPattern = patterAzione.startsWith(patternAzionePrefixNew) && patterAzione.endsWith(patternAzioneSuffix1New);
+							
+							if(oldPattern || newPattern) {
 								// caso1
-								int startidx = patternAzionePrefix.length();
-								int endidx = patterAzione.lastIndexOf(patternAzioneSuffix1);
+								int startidx = oldPattern ? patternAzionePrefixOld.length() : patternAzionePrefixNew.length();
+								int endidx = oldPattern ? patterAzione.lastIndexOf(patternAzioneSuffix1Old) : patterAzione.lastIndexOf(patternAzioneSuffix1New);
 								String tmpPat = patterAzione.substring(startidx, endidx);
 								// a questo punto ottengo una stringa del tipo
 								// (fruitore)/(erogatore)/(servizio)/(versioneServizio)
@@ -689,7 +695,7 @@ public class AccordiServizioParteSpecificaUtilities {
 									if(tmpPat.length()>lengthParteRimanenteRegExp){
 										rimanenteRegExp = tmpPat.substring(lengthParteRimanenteRegExp);
 									}	
-
+	
 									boolean matchURL = false;
 									
 									// vedo se matcha l'erogatore
@@ -707,35 +713,35 @@ public class AccordiServizioParteSpecificaUtilities {
 										partServizio = partServizioNew;
 										matchURL = true;
 									}
-
+	
 									// vedo se matcha verione
 									String versioneOld = "v"+(asps.getOldIDServizioForUpdate().getVersione().intValue()+"");
-									String versioneOld_oldWithoutV = (asps.getOldIDServizioForUpdate().getVersione().intValue()+"");
-									if (partVersione.equals(versioneOld) || partVersione.equals(versioneOld_oldWithoutV)) {
+									String versioneOldOldWithoutV = (asps.getOldIDServizioForUpdate().getVersione().intValue()+"");
+									if (partVersione.equals(versioneOld) || partVersione.equals(versioneOldOldWithoutV)) {
 										partVersione = "v"+asps.getVersione().intValue()+"";
 										matchURL = true;
 									}
-
+	
 									if(matchURL){
-										String newPatternAzione = patternAzionePrefix + partFruitore + "/" + partErogatore+ "/" + partServizio+ "/" + partVersione + rimanenteRegExp + patternAzioneSuffix1;
+										String newPatternAzione = patternAzionePrefixNew + partFruitore + "/" + partErogatore+ "/" + partServizio+ "/" + partVersione + rimanenteRegExp + patternAzioneSuffix1New;
 										pdAzione.setPattern(newPatternAzione);
 										tmpPorta.setAzione(pdAzione);
 									}
-
+	
 								}
 							}
 						}// fine controllo azione
 
 						// DelegatedBy
-						String nomePortaDelegante = pdAzione != null ? (pdAzione.getNomePortaDelegante() != null ? pdAzione.getNomePortaDelegante() : null) : null;
+						String nomePortaDelegante = null;
+						if(pdAzione!=null) {
+							nomePortaDelegante = pdAzione.getNomePortaDelegante() != null ? pdAzione.getNomePortaDelegante() : null;
+						}
 						if (PortaDelegataAzioneIdentificazione.DELEGATED_BY.equals(identificazione) && nomePortaDelegante!=null ) {
 							String nuovoNomeDelegate = null;
 							boolean matchDelegate = false;
-							if(nomePortaDelegante.equals(check1)) {
-								matchDelegate = true;	
-								nuovoNomeDelegate = locationPrefix+newLocationSuffix;
-							}
-							else if(nomePortaDelegante.equals(check1_oldWithoutV)) {
+							if(nomePortaDelegante.equals(check1) ||
+									nomePortaDelegante.equals(check1oldWithoutV)) {
 								matchDelegate = true;	
 								nuovoNomeDelegate = locationPrefix+newLocationSuffix;
 							}
@@ -767,30 +773,29 @@ public class AccordiServizioParteSpecificaUtilities {
 						}
 						// fine Controllo policy di Rate Limiting
 						
-						if(confCore.isConfigurazioneAllarmiEnabled()) {
+						if(confCore.isConfigurazioneAllarmiEnabled() &&
 							// Controllo Allarmi
-							if(tmpPorta.getOldIDPortaDelegataForUpdate()!=null && tmpPorta.getOldIDPortaDelegataForUpdate().getNome()!=null) {
-								ConsoleSearch ricercaPolicies = new ConsoleSearch(true);
-								List<ConfigurazioneAllarmeBean> listaAllarmi = null;
-								try {
-									listaAllarmi = confCore.allarmiList(ricercaPolicies, RuoloPorta.DELEGATA, tmpPorta.getOldIDPortaDelegataForUpdate().getNome());
-								}catch(Exception e) {
-									// ignore
-								}
-								if(listaAllarmi!=null && !listaAllarmi.isEmpty()) {
-									for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
-										if(allarme.getFiltro()!=null && tmpPorta.getOldIDPortaDelegataForUpdate().getNome().equals(allarme.getFiltro().getNomePorta())) {
-											
-											// aggiorno nome porta
-											allarme.getFiltro().setNomePorta(tmpPorta.getNome());
-																			
-											listaAllarmiDaAggiornare.put(allarme.getNome(), allarme);
-										}
+							tmpPorta.getOldIDPortaDelegataForUpdate()!=null && tmpPorta.getOldIDPortaDelegataForUpdate().getNome()!=null) {
+							ConsoleSearch ricercaPolicies = new ConsoleSearch(true);
+							List<ConfigurazioneAllarmeBean> listaAllarmi = null;
+							try {
+								listaAllarmi = confCore.allarmiList(ricercaPolicies, RuoloPorta.DELEGATA, tmpPorta.getOldIDPortaDelegataForUpdate().getNome());
+							}catch(Exception e) {
+								// ignore
+							}
+							if(listaAllarmi!=null && !listaAllarmi.isEmpty()) {
+								for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
+									if(allarme.getFiltro()!=null && tmpPorta.getOldIDPortaDelegataForUpdate().getNome().equals(allarme.getFiltro().getNomePorta())) {
+										
+										// aggiorno nome porta
+										allarme.getFiltro().setNomePorta(tmpPorta.getNome());
+																		
+										listaAllarmiDaAggiornare.put(allarme.getNome(), allarme);
 									}
 								}
 							}
-							// fine Controllo Allarmi
 						}
+						// fine Controllo Allarmi
 					}
 					
 					listaPD.add(tmpPorta); // la porta la aggiungo cmq per modificare i dati
@@ -819,7 +824,7 @@ public class AccordiServizioParteSpecificaUtilities {
 
 				// backward compatibility: provare ad eliminare la v, che prima non veniva utilizzata
 
-				String locationSuffix_oldWithoutV = tmpLocationSuffix +
+				String locationSuffixOldWithoutV = tmpLocationSuffix +
 						"/" + asps.getOldIDServizioForUpdate().getVersione().intValue();
 
 				String newLocationSuffix = asps.getTipoSoggettoErogatore() + "_" + asps.getNomeSoggettoErogatore() + 
@@ -840,12 +845,13 @@ public class AccordiServizioParteSpecificaUtilities {
 
 					String check1 = locationSuffix;
 					String check2 = "__"+locationSuffix;
-					String check1_oldWithoutV = locationSuffix_oldWithoutV;
-					String check2_oldWithoutV = "__"+locationSuffix_oldWithoutV;
+					String check1oldWithoutV = locationSuffixOldWithoutV;
+					String check2oldWithoutV = "__"+locationSuffixOldWithoutV;
 					String parteRimanente = "";
 					String nuovoNome = null;
 					boolean match = false;
-					if(tmpPorta.getNome().equals(check1)) {
+					if(tmpPorta.getNome().equals(check1) ||
+							tmpPorta.getNome().equals(check1oldWithoutV)) {
 						match = true;	
 						nuovoNome = newLocationSuffix;
 					}
@@ -854,13 +860,9 @@ public class AccordiServizioParteSpecificaUtilities {
 						parteRimanente = tmpPorta.getNome().substring(check2.length());
 						nuovoNome = "__"+newLocationSuffix+parteRimanente;
 					}
-					else if(tmpPorta.getNome().equals(check1_oldWithoutV)) {
+					else if(tmpPorta.getNome().startsWith(check2oldWithoutV)) {
 						match = true;	
-						nuovoNome = newLocationSuffix;
-					}
-					else if(tmpPorta.getNome().startsWith(check2_oldWithoutV)) {
-						match = true;	
-						parteRimanente = tmpPorta.getNome().substring(check2_oldWithoutV.length());
+						parteRimanente = tmpPorta.getNome().substring(check2oldWithoutV.length());
 						nuovoNome = "__"+newLocationSuffix+parteRimanente;
 					}
 
@@ -879,26 +881,26 @@ public class AccordiServizioParteSpecificaUtilities {
 							// Service implementation gw/ENTE:gw/TEST:1
 							String soggettoOldCaso1 = asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo()+"/"+asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome();
 							String soggettoNewCaso1 = asps.getTipoSoggettoErogatore()+"/"+asps.getNomeSoggettoErogatore();
-							String match_caso = soggettoOldCaso1+":"+asps.getOldIDServizioForUpdate().getTipo()+"/"+asps.getOldIDServizioForUpdate().getNome()+":"+asps.getOldIDServizioForUpdate().getVersione().intValue();
-							if(descrizionePA.endsWith(match_caso)) {
-								String replace_caso = soggettoNewCaso1+":"+asps.getTipo()+"/"+asps.getNome()+":"+asps.getVersione().intValue();
-								descrizionePA = descrizionePA.replace(match_caso, replace_caso);
+							String matchCaso = soggettoOldCaso1+":"+asps.getOldIDServizioForUpdate().getTipo()+"/"+asps.getOldIDServizioForUpdate().getNome()+":"+asps.getOldIDServizioForUpdate().getVersione().intValue();
+							if(descrizionePA.endsWith(matchCaso)) {
+								String replaceCaso = soggettoNewCaso1+":"+asps.getTipo()+"/"+asps.getNome()+":"+asps.getVersione().intValue();
+								descrizionePA = descrizionePA.replace(matchCaso, replaceCaso);
 							}
 
 							// Caso 2: altra i
 							// Internal Implementation 'Specific1' for gw_ENTE/gw_TEST/1
 							String soggettoOldCaso2 = asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo()+"_"+asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome();
 							String soggettoNewCaso2 = asps.getTipoSoggettoErogatore()+"_"+asps.getNomeSoggettoErogatore();
-							String tmpMatch_caso2 = soggettoOldCaso2+"/"+asps.getOldIDServizioForUpdate().getTipo()+"_"+asps.getOldIDServizioForUpdate().getNome()+"/";
-							String match_caso2 = tmpMatch_caso2+"v"+asps.getOldIDServizioForUpdate().getVersione().intValue();
-							String match_caso2_oldWithoutV = tmpMatch_caso2+asps.getOldIDServizioForUpdate().getVersione().intValue();
-							if(descrizionePA.contains(match_caso2)) {
-								String replace_caso2 = soggettoNewCaso2+"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue();
-								descrizionePA = descrizionePA.replace(match_caso2, replace_caso2);
+							String tmpMatchCaso2 = soggettoOldCaso2+"/"+asps.getOldIDServizioForUpdate().getTipo()+"_"+asps.getOldIDServizioForUpdate().getNome()+"/";
+							String matchCaso2 = tmpMatchCaso2+"v"+asps.getOldIDServizioForUpdate().getVersione().intValue();
+							String matchCaso2oldWithoutV = tmpMatchCaso2+asps.getOldIDServizioForUpdate().getVersione().intValue();
+							if(descrizionePA.contains(matchCaso2)) {
+								String replaceCaso2 = soggettoNewCaso2+"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue();
+								descrizionePA = descrizionePA.replace(matchCaso2, replaceCaso2);
 							}
-							else if(descrizionePA.contains(match_caso2_oldWithoutV)) {
-								String replace_caso2 = soggettoNewCaso2+"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue();
-								descrizionePA = descrizionePA.replace(match_caso2_oldWithoutV, replace_caso2);
+							else if(descrizionePA.contains(matchCaso2oldWithoutV)) {
+								String replaceCaso2 = soggettoNewCaso2+"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue();
+								descrizionePA = descrizionePA.replace(matchCaso2oldWithoutV, replaceCaso2);
 							}
 
 							tmpPorta.setDescrizione(descrizionePA);
@@ -906,18 +908,29 @@ public class AccordiServizioParteSpecificaUtilities {
 						}
 
 						// regex del pattern azione
-						// .*(erogatore)/(servizio)/([^/|^?]*).*
+						// OLD: .*/(erogatore)/(servizio)/([^/|^?]*).*
+						// NEW 3.3.13: .*/(erogatore)/(servizio)/([^/?]*).*
 						PortaApplicativaAzione paAzione = tmpPorta.getAzione();
 						PortaApplicativaAzioneIdentificazione identificazione = paAzione != null ? paAzione.getIdentificazione() : null;
-						String patterAzione = paAzione != null ? (paAzione.getPattern() != null ? paAzione.getPattern() : "") : "";
-						String patternAzionePrefix = ".*/";
-						String patternAzioneSuffix1 = "/([^/|^?]*).*";
+						String patterAzione = "";
+						if(paAzione!=null) {
+							patterAzione = paAzione.getPattern() != null ? paAzione.getPattern() : "";
+						}
+						String patternAzionePrefixOld = ".*/";
+						String patternAzioneSuffix1Old = "/([^/|^?]*).*";
+						String patternAzionePrefixNew = "/";
+						String patternAzioneSuffix1New = "/([^/?]*).*";
 						// se identificazione urlbased procedo con i controlli
 						if (PortaApplicativaAzioneIdentificazione.URL_BASED.equals(identificazione)) {
-							if (patterAzione.startsWith(patternAzionePrefix) && patterAzione.endsWith(patternAzioneSuffix1)) {
+							
+							boolean oldPattern = patterAzione.startsWith(patternAzionePrefixOld) && patterAzione.endsWith(patternAzioneSuffix1Old);
+							boolean newPattern = patterAzione.startsWith(patternAzionePrefixNew) && patterAzione.endsWith(patternAzioneSuffix1New);
+							
+							if(oldPattern || newPattern) {
+							
 								// caso1
-								int startidx = patternAzionePrefix.length();
-								int endidx = patterAzione.lastIndexOf(patternAzioneSuffix1);
+								int startidx = oldPattern ? patternAzionePrefixOld.length() : patternAzionePrefixNew.length();
+								int endidx = oldPattern ? patterAzione.lastIndexOf(patternAzioneSuffix1Old) : patterAzione.lastIndexOf(patternAzioneSuffix1New);							
 								String tmpPat = patterAzione.substring(startidx, endidx);
 								// a questo punto ottengo una stringa del tipo
 								// (fruitore)/(erogatore)/(servizio)
@@ -935,7 +948,7 @@ public class AccordiServizioParteSpecificaUtilities {
 									if(tmpPat.length()>lengthParteRimanenteRegExp){
 										rimanenteRegExp = tmpPat.substring(lengthParteRimanenteRegExp);
 									}	
-
+	
 									boolean matchURL = false;
 									
 									// vedo se matcha l'erogatore
@@ -953,36 +966,36 @@ public class AccordiServizioParteSpecificaUtilities {
 										partServizio = partNewServizio;
 										matchURL = true;
 									}
-
+	
 									// vedo se matcha versione
 									String versioneOld = "v"+(asps.getOldIDServizioForUpdate().getVersione().intValue()+"");
-									String versioneOld_oldWithoutV = (asps.getOldIDServizioForUpdate().getVersione().intValue()+"");
-									if (partVersione.equals(versioneOld) || partVersione.equals(versioneOld_oldWithoutV)) {
+									String versioneOldOldWithoutV = (asps.getOldIDServizioForUpdate().getVersione().intValue()+"");
+									if (partVersione.equals(versioneOld) || partVersione.equals(versioneOldOldWithoutV)) {
 										partVersione = "v"+asps.getVersione().intValue()+"";
 										matchURL = true;
 									}
-
+	
 									if(matchURL){
-										String newPatternAzione = patternAzionePrefix + partErogatore+ "/" + partServizio+ "/" + partVersione + rimanenteRegExp + patternAzioneSuffix1;
+										String newPatternAzione = patternAzionePrefixNew + partErogatore+ "/" + partServizio+ "/" + partVersione + rimanenteRegExp + patternAzioneSuffix1New;
 										paAzione.setPattern(newPatternAzione);
 										tmpPorta.setAzione(paAzione);
 									}
-
+	
 								}
 							}
 						}// fine controllo azione
 
 
 						// DelegatedBy
-						String nomePortaDelegante = paAzione != null ? (paAzione.getNomePortaDelegante() != null ? paAzione.getNomePortaDelegante() : null) : null;
+						String nomePortaDelegante = null;
+						if(paAzione!=null) {
+							nomePortaDelegante = paAzione.getNomePortaDelegante() != null ? paAzione.getNomePortaDelegante() : null;
+						}
 						if (PortaApplicativaAzioneIdentificazione.DELEGATED_BY.equals(identificazione) && nomePortaDelegante!=null ) {
 							String nuovoNomeDelegate = null;
 							boolean matchDelegate = false;
-							if(nomePortaDelegante.equals(check1)) {
-								matchDelegate = true;	
-								nuovoNomeDelegate = newLocationSuffix;
-							}
-							else if(nomePortaDelegante.equals(check1_oldWithoutV)) {
+							if(nomePortaDelegante.equals(check1) ||
+									nomePortaDelegante.equals(check1oldWithoutV)) {
 								matchDelegate = true;	
 								nuovoNomeDelegate = newLocationSuffix;
 							}
@@ -1014,30 +1027,29 @@ public class AccordiServizioParteSpecificaUtilities {
 						}
 						// fine Controllo policy di Rate Limiting
 						
-						if(confCore.isConfigurazioneAllarmiEnabled()) {
+						if(confCore.isConfigurazioneAllarmiEnabled() &&
 							// Controllo Allarmi
-							if(tmpPorta.getOldIDPortaApplicativaForUpdate()!=null && tmpPorta.getOldIDPortaApplicativaForUpdate().getNome()!=null) {
-								ConsoleSearch ricercaPolicies = new ConsoleSearch(true);
-								List<ConfigurazioneAllarmeBean> listaAllarmi = null;
-								try {
-									listaAllarmi = confCore.allarmiList(ricercaPolicies, RuoloPorta.APPLICATIVA, tmpPorta.getOldIDPortaApplicativaForUpdate().getNome());
-								}catch(Exception e) {
-									// ignore
-								}
-								if(listaAllarmi!=null && !listaAllarmi.isEmpty()) {
-									for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
-										if(allarme.getFiltro()!=null && tmpPorta.getOldIDPortaApplicativaForUpdate().getNome().equals(allarme.getFiltro().getNomePorta())) {
-											
-											// aggiorno nome porta
-											allarme.getFiltro().setNomePorta(tmpPorta.getNome());
-																			
-											listaAllarmiDaAggiornare.put(allarme.getNome(), allarme);
-										}
+								tmpPorta.getOldIDPortaApplicativaForUpdate()!=null && tmpPorta.getOldIDPortaApplicativaForUpdate().getNome()!=null) {
+							ConsoleSearch ricercaPolicies = new ConsoleSearch(true);
+							List<ConfigurazioneAllarmeBean> listaAllarmi = null;
+							try {
+								listaAllarmi = confCore.allarmiList(ricercaPolicies, RuoloPorta.APPLICATIVA, tmpPorta.getOldIDPortaApplicativaForUpdate().getNome());
+							}catch(Exception e) {
+								// ignore
+							}
+							if(listaAllarmi!=null && !listaAllarmi.isEmpty()) {
+								for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
+									if(allarme.getFiltro()!=null && tmpPorta.getOldIDPortaApplicativaForUpdate().getNome().equals(allarme.getFiltro().getNomePorta())) {
+										
+										// aggiorno nome porta
+										allarme.getFiltro().setNomePorta(tmpPorta.getNome());
+																		
+										listaAllarmiDaAggiornare.put(allarme.getNome(), allarme);
 									}
 								}
 							}
-							// fine Controllo Allarmi
 						}
+						// fine Controllo Allarmi
 					}
 
 					listaPA.add(tmpPorta); // la porta la aggiungo cmq per modificare i dati
@@ -1053,23 +1065,22 @@ public class AccordiServizioParteSpecificaUtilities {
 							// gw_ENTE/gw_MULTIPLO/v1__SA1 e __gw_ENTE/gw_MULTIPLO/v1__Specific1__SA1
 							boolean equalsConSuffissoConnettoriMultipli = false;
 							String suffixConnettoreMultiplo = null;
-							if(!equalsName) {
-								if(portaApplicativaSA.getNome().startsWith(oldIDPortaApplicativaForUpdate.getNome())) {
-									String withoutPrefix = portaApplicativaSA.getNome().substring(oldIDPortaApplicativaForUpdate.getNome().length());
-									if(withoutPrefix!=null && withoutPrefix.startsWith(ConnettoriCostanti.PARAMETRO_CONNETTORI_MULTIPLI_SAX_PREFIX) && 
-											!withoutPrefix.equals(ConnettoriCostanti.PARAMETRO_CONNETTORI_MULTIPLI_SAX_PREFIX)) {
-										String checkNumero = withoutPrefix.substring(ConnettoriCostanti.PARAMETRO_CONNETTORI_MULTIPLI_SAX_PREFIX.length());
-										if(checkNumero!=null) {
-											try {
-												int numero = Integer.valueOf(checkNumero);
-												if(numero>0) {
-													suffixConnettoreMultiplo = withoutPrefix;
-													equalsConSuffissoConnettoriMultipli = true;
-													//System.out.println("TROVATO ("+portaApplicativaSA.getNome()+")!!!! suffix["+suffixConnettoreMultiplo+"]");
-												}
-											}catch(Throwable t) {
-												// ignore
+							if(!equalsName &&
+								portaApplicativaSA.getNome().startsWith(oldIDPortaApplicativaForUpdate.getNome())) {
+								String withoutPrefix = portaApplicativaSA.getNome().substring(oldIDPortaApplicativaForUpdate.getNome().length());
+								if(withoutPrefix!=null && withoutPrefix.startsWith(ConnettoriCostanti.PARAMETRO_CONNETTORI_MULTIPLI_SAX_PREFIX) && 
+										!withoutPrefix.equals(ConnettoriCostanti.PARAMETRO_CONNETTORI_MULTIPLI_SAX_PREFIX)) {
+									String checkNumero = withoutPrefix.substring(ConnettoriCostanti.PARAMETRO_CONNETTORI_MULTIPLI_SAX_PREFIX.length());
+									if(checkNumero!=null) {
+										try {
+											int numero = Integer.parseInt(checkNumero);
+											if(numero>0) {
+												suffixConnettoreMultiplo = withoutPrefix;
+												equalsConSuffissoConnettoriMultipli = true;
+												/**System.out.println("TROVATO ("+portaApplicativaSA.getNome()+")!!!! suffix["+suffixConnettoreMultiplo+"]");*/
 											}
+										}catch(Exception t) {
+											// ignore
 										}
 									}
 								}
@@ -1079,7 +1090,6 @@ public class AccordiServizioParteSpecificaUtilities {
 								// devo aggiornare il nome del SA
 								IDServizioApplicativo idSA = new IDServizioApplicativo();
 								idSA.setNome(portaApplicativaSA.getNome());
-								//idSA.setIdSoggettoProprietario(new IDSoggetto(tmpPorta.getTipoSoggettoProprietario(), tmpPorta.getNomeSoggettoProprietario()));
 								idSA.setIdSoggettoProprietario(new IDSoggetto(asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo(),asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome()));
 								ServizioApplicativo sa = saCore.getServizioApplicativo(idSA);
 
@@ -1097,55 +1107,55 @@ public class AccordiServizioParteSpecificaUtilities {
 									// __gw_ENTE/gw_TEST/1__Specific2
 									// gw_ENTE/gw_TEST/1
 																		
-									String tmp_check_nomeSA = soggettoOld+"/"+asps.getOldIDServizioForUpdate().getTipo()+"_"+asps.getOldIDServizioForUpdate().getNome()+"/";
-									String check_nomeSA = tmp_check_nomeSA+"v"+asps.getOldIDServizioForUpdate().getVersione().intValue();
-									String check_nomeSA_oldWithoutV = tmp_check_nomeSA+asps.getOldIDServizioForUpdate().getVersione().intValue();
-									if(sa.getNome().endsWith(check_nomeSA)) {
-										sa.setNome(sa.getNome().replace(check_nomeSA, 
+									String tmpCheckNomeSA = soggettoOld+"/"+asps.getOldIDServizioForUpdate().getTipo()+"_"+asps.getOldIDServizioForUpdate().getNome()+"/";
+									String checkNomeSA = tmpCheckNomeSA+"v"+asps.getOldIDServizioForUpdate().getVersione().intValue();
+									String checkNomeSAoldWithoutV = tmpCheckNomeSA+asps.getOldIDServizioForUpdate().getVersione().intValue();
+									if(sa.getNome().endsWith(checkNomeSA)) {
+										sa.setNome(sa.getNome().replace(checkNomeSA, 
 												soggettoNew+"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue()));
 									}
-									else if(sa.getNome().startsWith("__") && sa.getNome().contains(check_nomeSA)) {
-										sa.setNome(sa.getNome().replace(check_nomeSA, 
+									else if(sa.getNome().startsWith("__") && sa.getNome().contains(checkNomeSA)) {
+										sa.setNome(sa.getNome().replace(checkNomeSA, 
 												soggettoNew+"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue()));
 									}
-									else if(sa.getNome().endsWith(check_nomeSA_oldWithoutV)) {
-										sa.setNome(sa.getNome().replace(check_nomeSA_oldWithoutV, 
+									else if(sa.getNome().endsWith(checkNomeSAoldWithoutV)) {
+										sa.setNome(sa.getNome().replace(checkNomeSAoldWithoutV, 
 												soggettoNew+"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue()));
 									}
-									else if(sa.getNome().startsWith("__") && sa.getNome().contains(check_nomeSA_oldWithoutV)) {
-										sa.setNome(sa.getNome().replace(check_nomeSA_oldWithoutV, 
+									else if(sa.getNome().startsWith("__") && sa.getNome().contains(checkNomeSAoldWithoutV)) {
+										sa.setNome(sa.getNome().replace(checkNomeSAoldWithoutV, 
 												soggettoNew+"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue()));
 									}
 									mapOldToNewSaName.put(portaApplicativaSA.getNome(), sa.getNome());
 									portaApplicativaSA.setNome(sa.getNome());
-									listaPA_SA.add(sa);
+									listaPASA.add(sa);
 								}
 								else if(equalsConSuffissoConnettoriMultipli){
 									
 									// gw_ENTE/gw_MULTIPLO/v1__SA1 e __gw_ENTE/gw_MULTIPLO/v1__Specific1__SA1
 									
-									String tmp_check_nomeSA = soggettoOld+"/"+asps.getOldIDServizioForUpdate().getTipo()+"_"+asps.getOldIDServizioForUpdate().getNome()+"/";
-									String check_nomeSA = tmp_check_nomeSA+"v"+asps.getOldIDServizioForUpdate().getVersione().intValue();
-									String check_nomeSA_oldWithoutV = tmp_check_nomeSA+asps.getOldIDServizioForUpdate().getVersione().intValue();
-									if(sa.getNome().endsWith(check_nomeSA+suffixConnettoreMultiplo)) {
-										sa.setNome(sa.getNome().replace(check_nomeSA, 
+									String tmpCheckNomeSA = soggettoOld+"/"+asps.getOldIDServizioForUpdate().getTipo()+"_"+asps.getOldIDServizioForUpdate().getNome()+"/";
+									String checkNomeSA = tmpCheckNomeSA+"v"+asps.getOldIDServizioForUpdate().getVersione().intValue();
+									String checkNomeSAoldWithoutV = tmpCheckNomeSA+asps.getOldIDServizioForUpdate().getVersione().intValue();
+									if(sa.getNome().endsWith(checkNomeSA+suffixConnettoreMultiplo)) {
+										sa.setNome(sa.getNome().replace(checkNomeSA, 
 												soggettoNew+"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue()));
 									}
-									else if(sa.getNome().startsWith("__") && sa.getNome().contains(check_nomeSA) && sa.getNome().endsWith(suffixConnettoreMultiplo)) {
-										sa.setNome(sa.getNome().replace(check_nomeSA, 
+									else if(sa.getNome().startsWith("__") && sa.getNome().contains(checkNomeSA) && sa.getNome().endsWith(suffixConnettoreMultiplo)) {
+										sa.setNome(sa.getNome().replace(checkNomeSA, 
 												soggettoNew+"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue()));
 									}
-									else if(sa.getNome().endsWith(check_nomeSA_oldWithoutV+suffixConnettoreMultiplo)) {
-										sa.setNome(sa.getNome().replace(check_nomeSA_oldWithoutV, 
+									else if(sa.getNome().endsWith(checkNomeSAoldWithoutV+suffixConnettoreMultiplo)) {
+										sa.setNome(sa.getNome().replace(checkNomeSAoldWithoutV, 
 												soggettoNew+"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue()));
 									}
-									else if(sa.getNome().startsWith("__") && sa.getNome().contains(check_nomeSA_oldWithoutV) && sa.getNome().endsWith(suffixConnettoreMultiplo)) {
-										sa.setNome(sa.getNome().replace(check_nomeSA_oldWithoutV, 
+									else if(sa.getNome().startsWith("__") && sa.getNome().contains(checkNomeSAoldWithoutV) && sa.getNome().endsWith(suffixConnettoreMultiplo)) {
+										sa.setNome(sa.getNome().replace(checkNomeSAoldWithoutV, 
 												soggettoNew+"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue()));
 									}
 									mapOldToNewSaName.put(portaApplicativaSA.getNome(), sa.getNome());
 									portaApplicativaSA.setNome(sa.getNome());
-									listaPA_SA.add(sa);
+									listaPASA.add(sa);
 								}
 								
 							}
@@ -1182,7 +1192,7 @@ public class AccordiServizioParteSpecificaUtilities {
 
 		// aggiorno gli eventuali servizi applicativi
 		// qua vanno fatti prima, poichè sono stati modificati anche i riferimenti dentro la PA
-		for (ServizioApplicativo sa : listaPA_SA) {
+		for (ServizioApplicativo sa : listaPASA) {
 			oggettiDaAggiornare.add(sa);
 		}
 		
@@ -1216,7 +1226,6 @@ public class AccordiServizioParteSpecificaUtilities {
 						}
 					}
 					oggettiDaAggiornare.add(accordoServizioComposto);
-					//System.out.println("As SERVIZIO COMPONENTE ["+IDAccordo.getUriFromAccordo(accordoServizioComposto)+"]");
 				}
 			}
 		}
@@ -1369,7 +1378,7 @@ public class AccordiServizioParteSpecificaUtilities {
 								
 				// Verifico se esiste il mapping con la fruizione
 				idPDGenerateAutomaticamente = porteDelegateCore.getIDPorteDelegateAssociate(idServizio, idSoggettoFruitore);
-				if(idPDGenerateAutomaticamente!=null && idPDGenerateAutomaticamente.size()>0){
+				if(idPDGenerateAutomaticamente!=null && !idPDGenerateAutomaticamente.isEmpty()){
 					for (IDPortaDelegata idPortaDelegata : idPDGenerateAutomaticamente) {
 						if(idPortaDelegata.getIdentificativiFruizione()==null) {
 							idPortaDelegata.setIdentificativiFruizione(new IdentificativiFruizione());
@@ -1388,18 +1397,18 @@ public class AccordiServizioParteSpecificaUtilities {
 					for (Fruitore fruitore: asps.getFruitoreList()) {
 						IDSoggetto idF = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
 						if(idF.equals(idSoggettoFruitore)) {
-							if(idPDGenerateAutomaticamente!=null && idPDGenerateAutomaticamente.size()>0){
+							if(idPDGenerateAutomaticamente!=null && !idPDGenerateAutomaticamente.isEmpty()){
 								if(idPDGenerateAutomaticamenteTutteFruizioni==null) {
-									idPDGenerateAutomaticamenteTutteFruizioni = new ArrayList<IDPortaDelegata>();
+									idPDGenerateAutomaticamenteTutteFruizioni = new ArrayList<>();
 								}
 								idPDGenerateAutomaticamenteTutteFruizioni.addAll(idPDGenerateAutomaticamente);
 							}
 						}
 						else {
 							List<IDPortaDelegata> l = porteDelegateCore.getIDPorteDelegateAssociate(idServizio, idF);
-							if(l!=null && l.size()>0){
+							if(l!=null && !l.isEmpty()){
 								if(idPDGenerateAutomaticamenteTutteFruizioni==null) {
-									idPDGenerateAutomaticamenteTutteFruizioni = new ArrayList<IDPortaDelegata>();
+									idPDGenerateAutomaticamenteTutteFruizioni = new ArrayList<>();
 								}
 								idPDGenerateAutomaticamenteTutteFruizioni.addAll(l);
 							}
@@ -1414,7 +1423,7 @@ public class AccordiServizioParteSpecificaUtilities {
 					
 				// Verifico se esiste il mapping con l'erogazione
 				idPAGenerateAutomaticamente = porteApplicativeCore.getIDPorteApplicativeAssociate(idServizio);
-				if(idPAGenerateAutomaticamente!=null && idPAGenerateAutomaticamente.size()>0){
+				if(idPAGenerateAutomaticamente!=null && !idPAGenerateAutomaticamente.isEmpty()){
 					for (IDPortaApplicativa idPortaApplicativa : idPAGenerateAutomaticamente) {
 						if(paGenerateAutomcaticamente==null) {
 							paGenerateAutomcaticamente=new ArrayList<>();
@@ -1427,7 +1436,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			
 		}
 		
-		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<>();
 		
 		boolean normalizeObjectIds = !apsHelper.isModalitaCompleta();
 		
@@ -1436,7 +1445,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		List<IDPortaDelegata> idPDGenerateAutomaticamenteCheckInUso = new ArrayList<>();
 		List<IDPortaApplicativa> idPAGenerateAutomaticamenteCheckInUso = new ArrayList<>();
 		if(gestioneErogatori) {
-			if(idPAGenerateAutomaticamente!=null && idPAGenerateAutomaticamente.size()>0){
+			if(idPAGenerateAutomaticamente!=null && !idPAGenerateAutomaticamente.isEmpty()){
 				idPAGenerateAutomaticamenteCheckInUso.addAll(idPAGenerateAutomaticamente);
 			}
 			
@@ -1458,7 +1467,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		}
 		else if(gestioneFruitori) {
 			
-			if(idPDGenerateAutomaticamente!=null && idPDGenerateAutomaticamente.size()>0){
+			if(idPDGenerateAutomaticamente!=null && !idPDGenerateAutomaticamente.isEmpty()){
 				idPDGenerateAutomaticamenteCheckInUso.addAll(idPDGenerateAutomaticamente);
 			}
 			
@@ -1492,11 +1501,9 @@ public class AccordiServizioParteSpecificaUtilities {
 		boolean inUso = false;
 		// Fix: l'eliminazione dell'APS come oggetto non viene eliminato, ma viene eliminato tutto il resto (porte, allarmi, controlloTraffico).
 		// Devo quindi capire se la fruizione o l'erogazione deve essere eliminata o meno
-		// if(apsEliminabile) {
 		inUso = apsCore.isAccordoServizioParteSpecificaInUso(asps, whereIsInUso, 
 					idPDGenerateAutomaticamenteTutteFruizioni,//idPDGenerateAutomaticamente, 
 					idPAGenerateAutomaticamente, normalizeObjectIds);
-		//}
 		
 		if (inUso) {// accordo in uso
 			String tipo = null;
@@ -1518,7 +1525,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			List<Object> listaOggettiDaEliminare = new ArrayList<>();
 			List<Object> listaServiziApplicativiDaEliminare = new ArrayList<>();
 			
-			if(paGenerateAutomcaticamente!=null && paGenerateAutomcaticamente.size()>0){
+			if(paGenerateAutomcaticamente!=null && !paGenerateAutomcaticamente.isEmpty()){
 				
 				for (PortaApplicativa paGenerataAutomcaticamente : paGenerateAutomcaticamente) {
 					
@@ -1529,7 +1536,7 @@ public class AccordiServizioParteSpecificaUtilities {
 						}catch(Exception e){
 							ControlStationCore.logError(e.getMessage(), e);
 						}
-						if(listExt!=null && listExt.size()>0){
+						if(listExt!=null && !listExt.isEmpty()){
 							for (IExtendedBean iExtendedBean : listExt) {
 								WrapperExtendedBean wrapper = new WrapperExtendedBean();
 								wrapper.setExtendedBean(iExtendedBean);
@@ -1578,7 +1585,6 @@ public class AccordiServizioParteSpecificaUtilities {
 						idSA.setNome(paGenerataAutomcaticamente.getServizioApplicativoDefault());
 						ServizioApplicativo saGeneratoAutomaticamente = saCore.getServizioApplicativo(idSA);
 						if(!ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(saGeneratoAutomaticamente.getTipo())) {
-							//listaOggettiDaEliminare.add(saGeneratoAutomaticamente);
 							listaServiziApplicativiDaEliminare.add(saGeneratoAutomaticamente);
 						}
 					}
@@ -1595,7 +1601,6 @@ public class AccordiServizioParteSpecificaUtilities {
 							ServizioApplicativo saGeneratoAutomaticamente = saCore.getServizioApplicativo(idSA);
 							
 							if(!ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(saGeneratoAutomaticamente.getTipo())) {
-								//listaOggettiDaEliminare.add(saGeneratoAutomaticamente);
 								listaServiziApplicativiDaEliminare.add(saGeneratoAutomaticamente);
 							}
 						}
@@ -1604,7 +1609,7 @@ public class AccordiServizioParteSpecificaUtilities {
 				
 			}
 			
-			if(pdGenerateAutomcaticamente!=null && pdGenerateAutomcaticamente.size()>0){
+			if(pdGenerateAutomcaticamente!=null && !pdGenerateAutomcaticamente.isEmpty()){
 				
 				for (PortaDelegata pdGenerataAutomcaticamente : pdGenerateAutomcaticamente) {
 					
@@ -1615,7 +1620,7 @@ public class AccordiServizioParteSpecificaUtilities {
 						}catch(Exception e){
 							ControlStationCore.logError(e.getMessage(), e);
 						}
-						if(listExt!=null && listExt.size()>0){
+						if(listExt!=null && !listExt.isEmpty()){
 							for (IExtendedBean iExtendedBean : listExt) {
 								WrapperExtendedBean wrapper = new WrapperExtendedBean();
 								wrapper.setExtendedBean(iExtendedBean);
@@ -1672,17 +1677,16 @@ public class AccordiServizioParteSpecificaUtilities {
 				
 				listaOggettiDaEliminare.add(asps);
 			}
-			else if(gestioneFruitori) {
+			else if(gestioneFruitori &&
 				// elimino fruitore
-				if(asps.sizeFruitoreList()>0) {
-					for (int j = 0; j < asps.sizeFruitoreList(); j++) {
-						Fruitore fruitore = asps.getFruitore(j);
-						IDSoggetto idSoggettoFruitoreCheck = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
-						if(idSoggettoFruitoreCheck.equals(idSoggettoFruitore)) {
-							asps.removeFruitore(j);
-							updateAPS = true;
-							break;
-						}
+				asps.sizeFruitoreList()>0) {
+				for (int j = 0; j < asps.sizeFruitoreList(); j++) {
+					Fruitore fruitore = asps.getFruitore(j);
+					IDSoggetto idSoggettoFruitoreCheck = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
+					if(idSoggettoFruitoreCheck.equals(idSoggettoFruitore)) {
+						asps.removeFruitore(j);
+						updateAPS = true;
+						break;
 					}
 				}
 			}
@@ -1864,7 +1868,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			
 		}
 		
-		if(listaOggettiDaModificare.size()>0) {
+		if(!listaOggettiDaModificare.isEmpty()) {
 			porteDelegateCore.performUpdateOperation(superUser, apsHelper.smista(), listaOggettiDaModificare.toArray());
 		}
 	}
@@ -1877,15 +1881,15 @@ public class AccordiServizioParteSpecificaUtilities {
 		return listaMappingErogazione.stream().filter( m -> m.getNome().equals(mappingPA)).findFirst().orElse(null);
 	}
 	
-	public static final MappingErogazionePortaApplicativa getMappingPA_filterByDescription(List<MappingErogazionePortaApplicativa> listaMappingErogazione, String descrizione) {
+	public static final MappingErogazionePortaApplicativa getMappingPAFilterByDescription(List<MappingErogazionePortaApplicativa> listaMappingErogazione, String descrizione) {
 		return listaMappingErogazione.stream().filter( m -> m.getDescrizione().equals(descrizione)).findFirst().orElse(null);
 	}
 	
 	public static AccordiServizioParteSpecificaPorteApplicativeMappingInfo getMappingInfo(String mappingPA, AccordoServizioParteSpecifica asps, 
-			AccordiServizioParteSpecificaCore apsCore) throws Exception {
+			AccordiServizioParteSpecificaCore apsCore) throws DriverControlStationException, DriverRegistroServiziException, DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		
 		if(asps==null) {
-			throw new Exception("Param asps is null");
+			throw new DriverControlStationException("Param asps is null");
 		}
 		
 		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
@@ -1893,7 +1897,8 @@ public class AccordiServizioParteSpecificaUtilities {
 		IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
 		
 		List<MappingErogazionePortaApplicativa> listaMappingErogazione = apsCore.mappingServiziPorteAppList(idServizio2,asps.getId(), null);
-		MappingErogazionePortaApplicativa mappingSelezionato = null, mappingDefault = null;
+		MappingErogazionePortaApplicativa mappingSelezionato = null;
+		MappingErogazionePortaApplicativa mappingDefault = null;
 		boolean paMappingSelezionatoMulti=false;
 		
 		String mappingLabel = "";
@@ -1901,7 +1906,6 @@ public class AccordiServizioParteSpecificaUtilities {
 		String[] listaMappingValues = null;
 		List<String> azioniOccupate = new ArrayList<>();
 		
-		String nomeNuovaConfigurazione = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_AZIONE_SPECIFIC_PREFIX + "1";
 		int idxConfigurazione = 0;
 		int listaMappingErogazioneSize = listaMappingErogazione != null ? listaMappingErogazione.size() : 0;
 		
@@ -1918,7 +1922,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			}
 
 			if(mappingSelezionato==null) {
-				throw new Exception("Mapping not found");
+				throw new DriverControlStationException("Mapping not found");
 			}
 			
 			PortaApplicativa paMappingTmp = porteApplicativeCore.getPortaApplicativa(mappingSelezionato.getIdPortaApplicativa());
@@ -1932,14 +1936,9 @@ public class AccordiServizioParteSpecificaUtilities {
 			listaMappingValues = new String[listaMappingErogazioneSize];
 			for (int i = 0; i < listaMappingErogazione.size(); i++) {
 				MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = listaMappingErogazione.get(i);
-				//String nomeMappingNoDefault = mappingErogazionePortaApplicativa.getNome();
 				String nomeMappingNoDefault = null;
-				//if(!mappingErogazionePortaApplicativa.isDefault()) {
 				PortaApplicativa paMapping = porteApplicativeCore.getPortaApplicativa(mappingErogazionePortaApplicativa.getIdPortaApplicativa());
 				nomeMappingNoDefault = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(null,null,paMapping,70,true);
-				//}
-//				listaMappingLabels[i] = mappingErogazionePortaApplicativa.isDefault()?
-//						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT: nomeMappingNoDefault;
 				listaMappingLabels[i] = nomeMappingNoDefault;
 				listaMappingValues[i] = mappingErogazionePortaApplicativa.getNome();
 				
@@ -1965,7 +1964,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			}
 		}
 		
-		nomeNuovaConfigurazione = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_AZIONE_SPECIFIC_PREFIX + ( ++ idxConfigurazione);
+		String nomeNuovaConfigurazione = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_AZIONE_SPECIFIC_PREFIX + ( ++ idxConfigurazione);
 		
 		AccordiServizioParteSpecificaPorteApplicativeMappingInfo mappingInfo = new AccordiServizioParteSpecificaPorteApplicativeMappingInfo();
 		mappingInfo.setListaMappingErogazione(listaMappingErogazione);
@@ -1997,10 +1996,10 @@ public class AccordiServizioParteSpecificaUtilities {
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
 			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy,
-			String proxy_enabled, String proxy_hostname, String proxy_port, String proxy_username, String proxy_password,
-			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
-			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
-			String requestOutputFileName, String requestOutputFileName_permissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeaders_permissions,
+			String proxyEnabled, String proxyHostname, String proxyPort, String proxyUsername, String proxyPassword,
+			String tempiRispostaEnabled, String tempiRispostaConnectionTimeout, String tempiRispostaReadTimeout, String tempiRispostaTempoMedioRisposta,
+			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop,
+			String requestOutputFileName, String requestOutputFileNamePermissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeadersPermissions,
 			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
 			boolean autenticazioneToken, String tokenPolicy,
@@ -2010,7 +2009,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			String nomeSA, String erogazioneRuolo, String erogazioneSoggettoAutenticato, 
 			String autorizzazioneAutenticatiToken, 
 			String autorizzazioneRuoliToken, String autorizzazioneRuoliTipologiaToken, String autorizzazioneRuoliMatchToken,
-			String autorizzazione_tokenOptions,
+			String autorizzazioneTokenOptions,
 			String autorizzazioneScope, String scope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
 			String gestioneToken, 
 			String gestioneTokenPolicy,  String gestioneTokenOpzionale,  
@@ -2021,6 +2020,10 @@ public class AccordiServizioParteSpecificaUtilities {
 			AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper, String nomeSAServer,
 			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws Exception {
 	
+		if(autenticazioneToken && nomeSA!=null) {
+			// nop: eliminare questo if se viene usato uno dei parametri
+		}
+		
 		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
 		AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
 		SoggettiCore soggettiCore = new SoggettiCore(apcCore);
@@ -2067,7 +2070,6 @@ public class AccordiServizioParteSpecificaUtilities {
 		if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 			// Connettore
 			connettore = new Connettore();
-			// this.nomeservizio);
 			if (endpointtype.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM))
 				connettore.setTipo(tipoconn);
 			else
@@ -2084,10 +2086,10 @@ public class AccordiServizioParteSpecificaUtilities {
 					httpspwdkey, httpspwdprivatekey,
 					httpsalgoritmokey,
 					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
-					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-					requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+					proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+					tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+					requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					tokenPolicy,
@@ -2098,9 +2100,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		if(!modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
 			// nuova porta applicativa
 						
-			//String nomeServizioApplicativoErogatore = portaApplicativa.getServizioApplicativo(0).getNome();
 			String nomeServizioApplicativoErogatore = portaApplicativaDefault.getServizioApplicativo(0).getNome();
-//			String nomeServizioApplicativoDefault = portaApplicativa.getServizioApplicativoDefault();
 			
 			if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 								
@@ -2110,7 +2110,7 @@ public class AccordiServizioParteSpecificaUtilities {
 				sa.setNome(nomeServizioApplicativoErogatore);
 				sa.setTipologiaFruizione(TipologiaFruizione.DISABILITATO.getValue());
 				sa.setTipologiaErogazione(TipologiaErogazione.TRASPARENTE.getValue());
-				sa.setIdSoggetto((long) soggInt);
+				sa.setIdSoggetto(soggInt);
 				sa.setTipoSoggettoProprietario(portaApplicativa.getTipoSoggettoProprietario());
 				sa.setNomeSoggettoProprietario(portaApplicativa.getNomeSoggettoProprietario());
 				
@@ -2132,15 +2132,14 @@ public class AccordiServizioParteSpecificaUtilities {
 				}
 				invServizio.setGetMessage(CostantiConfigurazione.DISABILITATO);
 				invServizio.setConnettore(connettore.mappingIntoConnettoreConfigurazione());
-				if (endpointtype.equals(TipiConnettore.JMS.getNome())) {
-					if(user!=null && !"".equals(user) &&
-							password!=null && !"".equals(password)) {
-						invServizio.setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
-						InvocazioneCredenziali invCredenziali = new InvocazioneCredenziali();
-						invCredenziali.setUser(user);
-						invCredenziali.setPassword(password);
-						invServizio.setCredenziali(invCredenziali);
-					}
+				if (endpointtype.equals(TipiConnettore.JMS.getNome()) &&
+					user!=null && !"".equals(user) &&
+					password!=null && !"".equals(password)) {
+					invServizio.setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
+					InvocazioneCredenziali invCredenziali = new InvocazioneCredenziali();
+					invCredenziali.setUser(user);
+					invCredenziali.setPassword(password);
+					invServizio.setCredenziali(invCredenziali);
 				}
 				sa.setInvocazioneServizio(invServizio);
 				
@@ -2175,7 +2174,7 @@ public class AccordiServizioParteSpecificaUtilities {
 					nomeServizioApplicativoErogatore, erogazioneRuolo,idSoggettoAutenticatoErogazione,
 					autorizzazioneAutenticatiToken, 
 					autorizzazioneRuoliToken, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken,
-					autorizzazione_tokenOptions,
+					autorizzazioneTokenOptions,
 					autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 					identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 			
@@ -2183,7 +2182,7 @@ public class AccordiServizioParteSpecificaUtilities {
 					gestioneTokenPolicy, gestioneTokenOpzionale,
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward,
 					autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-					autorizzazione_tokenOptions);
+					autorizzazioneTokenOptions);
 		}
 		else {
 			// clona porta applicativa
@@ -2238,15 +2237,14 @@ public class AccordiServizioParteSpecificaUtilities {
 							sa.getInvocazioneServizio().setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
 							sa.getInvocazioneServizio().setCredenziali(null);
 						}
-						if (endpointtype.equals(TipiConnettore.JMS.getNome())) {
-							if(user!=null && !"".equals(user) &&
-									password!=null && !"".equals(password)) {
-								sa.getInvocazioneServizio().setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
-								InvocazioneCredenziali invCredenziali = new InvocazioneCredenziali();
-								invCredenziali.setUser(user);
-								invCredenziali.setPassword(password);
-								sa.getInvocazioneServizio().setCredenziali(invCredenziali);
-							}
+						if (endpointtype.equals(TipiConnettore.JMS.getNome()) &&
+							user!=null && !"".equals(user) &&
+							password!=null && !"".equals(password)) {
+							sa.getInvocazioneServizio().setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
+							InvocazioneCredenziali invCredenziali = new InvocazioneCredenziali();
+							invCredenziali.setUser(user);
+							invCredenziali.setPassword(password);
+							sa.getInvocazioneServizio().setCredenziali(invCredenziali);
 						}
 					}
 					else {
@@ -2379,7 +2377,7 @@ public class AccordiServizioParteSpecificaUtilities {
 				listaOggettiDaCreare.add(attivazionePolicy);
 			}
 		}
-		List<ConfigurazioneAllarmeBean> confAllarmi = new ArrayList<ConfigurazioneAllarmeBean>();
+		List<ConfigurazioneAllarmeBean> confAllarmi = new ArrayList<>();
 		if(allarmi!=null && !allarmi.isEmpty()) {
 			for (Allarme allarme : allarmi) {
 				
@@ -2431,13 +2429,13 @@ public class AccordiServizioParteSpecificaUtilities {
 		return listaMappingFruizione.stream().filter( m -> m.getNome().equals(mappingPD)).findFirst().orElse(null);
 	}
 	
-	public static final MappingFruizionePortaDelegata getMappingPD_filterByDescription(List<MappingFruizionePortaDelegata> listaMappingFruizione, String descrizione) {
+	public static final MappingFruizionePortaDelegata getMappingPDFilterByDescription(List<MappingFruizionePortaDelegata> listaMappingFruizione, String descrizione) {
 		return listaMappingFruizione.stream().filter( m -> m.getDescrizione().equals(descrizione)).findFirst().orElse(null);
 	}
 	
 	public static AccordiServizioParteSpecificaFruitoriPorteDelegateMappingInfo getMappingInfo(String mappingPD, 
 			IDSoggetto idSoggettoFruitore, AccordoServizioParteSpecifica asps, 
-			AccordiServizioParteSpecificaCore apsCore) throws Exception {
+			AccordiServizioParteSpecificaCore apsCore) throws DriverControlStationException, DriverRegistroServiziException, DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		
 		PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
 		
@@ -2447,13 +2445,13 @@ public class AccordiServizioParteSpecificaUtilities {
 				
 		List<MappingFruizionePortaDelegata> listaMappingFruizione = apsCore.serviziFruitoriMappingList(idFru, idSoggettoFruitore, idServizio2, null);
 		
-		MappingFruizionePortaDelegata mappingSelezionato = null, mappingDefault = null;
+		MappingFruizionePortaDelegata mappingSelezionato = null;
+		MappingFruizionePortaDelegata mappingDefault = null;
 		
 		String mappingLabel = "";
 		String[] listaMappingLabels = null;
 		String[] listaMappingValues = null;
 		List<String> azioniOccupate = new ArrayList<>();
-		String nomeNuovaConfigurazione = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_AZIONE_SPECIFIC_PREFIX + "1";
 		int idxConfigurazione = 0;
 		int listaMappingFruizioneSize = listaMappingFruizione != null ? listaMappingFruizione.size() : 0;
 		if(listaMappingFruizioneSize > 0) {
@@ -2469,7 +2467,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			}
 			
 			if(mappingSelezionato==null) {
-				throw new Exception("Mapping not found");
+				throw new DriverControlStationException("Mapping not found");
 			}
 			
 			if(!mappingSelezionato.isDefault()) {
@@ -2481,14 +2479,9 @@ public class AccordiServizioParteSpecificaUtilities {
 			listaMappingValues = new String[listaMappingFruizioneSize];
 			for (int i = 0; i < listaMappingFruizione.size(); i++) {
 				MappingFruizionePortaDelegata mappingFruizionePortaDelegata = listaMappingFruizione.get(i);
-				//String nomeMappingNoDefault = mappingFruizionePortaDelegata.getNome();
 				String nomeMappingNoDefault = null;
-				//if(!mappingFruizionePortaDelegata.isDefault()) {
 				PortaDelegata pdMapping = porteDelegateCore.getPortaDelegata(mappingFruizionePortaDelegata.getIdPortaDelegata());
 				nomeMappingNoDefault = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(null,null,pdMapping,70,true);
-				//}
-//				listaMappingLabels[i] = mappingFruizionePortaDelegata.isDefault()? 
-//						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME_DEFAULT: nomeMappingNoDefault;
 				listaMappingLabels[i] = nomeMappingNoDefault;
 				listaMappingValues[i] = mappingFruizionePortaDelegata.getNome();
 				
@@ -2514,7 +2507,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			}
 		}
 		
-		nomeNuovaConfigurazione = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_AZIONE_SPECIFIC_PREFIX + (++ idxConfigurazione);
+		String nomeNuovaConfigurazione = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_AZIONE_SPECIFIC_PREFIX + (++ idxConfigurazione);
 
 		
 		AccordiServizioParteSpecificaFruitoriPorteDelegateMappingInfo info = new AccordiServizioParteSpecificaFruitoriPorteDelegateMappingInfo();
@@ -2546,10 +2539,10 @@ public class AccordiServizioParteSpecificaUtilities {
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
 			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy,
-			String proxy_enabled, String proxy_hostname, String proxy_port, String proxy_username, String proxy_password,
-			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
-			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
-			String requestOutputFileName, String requestOutputFileName_permissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeaders_permissions,
+			String proxyEnabled, String proxyHostname, String proxyPort, String proxyUsername, String proxyPassword,
+			String tempiRispostaEnabled, String tempiRispostaConnectionTimeout, String tempiRispostaReadTimeout, String tempiRispostaTempoMedioRisposta,
+			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop,
+			String requestOutputFileName, String requestOutputFileNamePermissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeadersPermissions,
 			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
 			boolean autenticazioneToken, String tokenPolicy,
@@ -2559,7 +2552,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			String fruizioneServizioApplicativo, String fruizioneRuolo, 
 			String autorizzazioneAutenticatiToken, 
 			String autorizzazioneRuoliToken, String autorizzazioneRuoliTipologiaToken, String autorizzazioneRuoliMatchToken,
-			String autorizzazione_tokenOptions,
+			String autorizzazioneTokenOptions,
 			String autorizzazioneScope, String scope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
 			String gestioneToken, 
 			String gestioneTokenPolicy,  String gestioneTokenOpzionale,  
@@ -2570,6 +2563,10 @@ public class AccordiServizioParteSpecificaUtilities {
 			AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper,
 			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws Exception {
 	
+		if(autenticazioneHttp!=null && autenticazioneToken) {
+			// nop: rimuovere questo if se viene usato un qualche parametro
+		}
+		
 		PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
 		AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
 		SoggettiCore soggettiCore = new SoggettiCore(apcCore);
@@ -2598,7 +2595,6 @@ public class AccordiServizioParteSpecificaUtilities {
 		Connettore connettore = null;
 		if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 			connettore = new Connettore();
-			// this.nomeservizio);
 			if (endpointtype.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM))
 				connettore.setTipo(tipoconn);
 			else
@@ -2615,10 +2611,10 @@ public class AccordiServizioParteSpecificaUtilities {
 					httpspwdkey, httpspwdprivatekey,
 					httpsalgoritmokey,
 					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
-					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-					requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+					proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+					tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+					requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					tokenPolicy,
@@ -2707,7 +2703,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		List<AttivazionePolicy> rateLimitingPolicies = subscription.getRateLimitingPolicies();
 		List<Allarme> allarmi = subscription.getAllarmi();
 		long idSoggFru = soggettiCore.getIdSoggetto(nomeSoggettoFruitore, tipoSoggettoFruitore);
-		portaDelegata.setIdSoggetto((long) idSoggFru);
+		portaDelegata.setIdSoggetto(idSoggFru);
 
 		if(!modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
 			porteDelegateCore.configureControlloAccessiPortaDelegata(portaDelegata, 
@@ -2716,7 +2712,7 @@ public class AccordiServizioParteSpecificaUtilities {
 					fruizioneServizioApplicativo, fruizioneRuolo,
 					autorizzazioneAutenticatiToken, 
 					autorizzazioneRuoliToken, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken,
-					autorizzazione_tokenOptions,
+					autorizzazioneTokenOptions,
 					autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 					identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 			
@@ -2724,7 +2720,7 @@ public class AccordiServizioParteSpecificaUtilities {
 					gestioneTokenPolicy, gestioneTokenOpzionale,
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward,
 					autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-					autorizzazione_tokenOptions
+					autorizzazioneTokenOptions
 					);
 		}
 		
@@ -2735,7 +2731,7 @@ public class AccordiServizioParteSpecificaUtilities {
 				listaOggettiDaCreare.add(attivazionePolicy);
 			}
 		}
-		List<ConfigurazioneAllarmeBean> confAllarmi = new ArrayList<ConfigurazioneAllarmeBean>();
+		List<ConfigurazioneAllarmeBean> confAllarmi = new ArrayList<>();
 		if(allarmi!=null && !allarmi.isEmpty()) {
 			for (Allarme allarme : allarmi) {
 				
@@ -2754,7 +2750,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			listaOggettiDaModificare.add(asps);
 		}
 		
-		if(listaOggettiDaModificare.size()>0) {
+		if(!listaOggettiDaModificare.isEmpty()) {
 			porteDelegateCore.performUpdateOperation(userLogin, apsHelper.smista(), listaOggettiDaModificare.toArray());
 		}
 		
@@ -2906,7 +2902,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			String tipoFruitore, String nomeFruitore,
 			String protocollo, String profilo, String portType,
 			boolean gestioneFruitori, boolean gestioneErogatori,
-			StringBuilder inUsoMessage) throws Exception {
+			StringBuilder inUsoMessage) throws DriverControlStationException, DriverRegistroServiziException, DriverRegistroServiziNotFound, DriverConfigurazioneException {
 		
 		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
 		
@@ -2925,14 +2921,14 @@ public class AccordiServizioParteSpecificaUtilities {
 			AccordoServizioParteSpecifica asps = apsCore.getServizio(idAccordoServizioParteSpecifica, false);
 			if(gestioneFruitori || gestioneErogatori) {
 				// verifico che l'api indicata sia la stessa dell'api del servizio già esistente
-				String uri_apc = asps.getAccordoServizioParteComune();
-				if(uriAccordoServizioParteComune.equals(uri_apc)==false) {
+				String uriApc = asps.getAccordoServizioParteComune();
+				if(!uriAccordoServizioParteComune.equals(uriApc)) {
 					String msg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_API_DIFFERENTE;
-					msg = MessageFormat.format(msg,	labelServizio, labelSoggetto, apsHelper.getLabelIdAccordo(idAccordoFactory.getIDAccordoFromUri(uri_apc)));
+					msg = MessageFormat.format(msg,	labelServizio, labelSoggetto, apsHelper.getLabelIdAccordo(idAccordoFactory.getIDAccordoFromUri(uriApc)));
 					inUsoMessage.append(msg);
 					return true;
 				}
-				if (profilo!=null && !"".equals(profilo) && "-".equals(profilo) == false && !profilo.equals(asps.getVersioneProtocollo())) {
+				if (profilo!=null && !"".equals(profilo) && !"-".equals(profilo) && !profilo.equals(asps.getVersioneProtocollo())) {
 					String msg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_VERSIONE_PROTOCOLLO_DIFFERENTE;
 					msg = MessageFormat.format(msg,	labelServizio, labelSoggetto, 
 							asps.getVersioneProtocollo()==null? AccordiServizioParteSpecificaCostanti.LABEL_APS_USA_VERSIONE_EROGATORE : asps.getVersioneProtocollo());
@@ -2968,7 +2964,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			else if(gestioneErogatori) {
 				
 				List<IDPortaApplicativa> l = porteApplicativeCore.getIDPorteApplicativeAssociate(idAccordoServizioParteSpecifica);
-				if(l!=null && l.size()>0) {
+				if(l!=null && !l.isEmpty()) {
 					msg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_PARAMETRI;
 					msg = MessageFormat.format(msg,	labelServizio, labelSoggetto);
 				}

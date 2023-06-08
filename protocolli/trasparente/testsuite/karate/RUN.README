@@ -450,6 +450,9 @@ Di seguito vengono descritti i test del package 'integrazione':
 - 'json', verifica  l'utilizzo dell'interscambio di informazioni tramite una struttura JSON e l'utilizzo della correlazione applicativa di tipo template, velocity e freemarker
    ant run_test -Ddelete=false -Dload=false -Dpackage=integrazione.json
 
+- 'identificazione_azione', verifica la corretta identificazione dell'azione in erogazioni o fruizioni con url non corrette
+   ant run_test -Ddelete=false -Dload=false -Dpackage=integrazione.identificazione_azione
+
 Di seguito vengono descritti i test del package 'autenticazione':
 
 - 'applicativi_esterni', verifica l'autenticazione degli applicativi di dominio esterno

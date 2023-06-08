@@ -79,7 +79,7 @@ Scenario: Erogazioni Get Url Invocazione PetStore di una API SOAP appena creata
     And assert response.modalita == 'url-based'
     And match response.force_interface == true
     And assert response.nome == null
-    And assert response.pattern == '.*/(?:gw_)?'+soggettoDefault+'/(?:gw_)?'+erogazione_soap_piu_azioni.erogazione_nome+'/v1/([^/|^?]*).*'
+    And assert response.pattern == '/(?:gw_)?'+soggettoDefault+'/(?:gw_)?'+erogazione_soap_piu_azioni.erogazione_nome+'/v1/([^/?]*).*'
 
     * call delete ({ resourcePath: 'erogazioni/' + soap_piu_azioni_key })
     * call delete ({ resourcePath: api_soap_piu_azioni_path })

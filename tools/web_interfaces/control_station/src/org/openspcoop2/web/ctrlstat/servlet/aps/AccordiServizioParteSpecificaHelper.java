@@ -9720,7 +9720,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		if(this.checkLength255(nomeGruppo, PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_GRUPPO)==false) {
 			return false;
 		}
-		if(AccordiServizioParteSpecificaUtilities.getMappingPA_filterByDescription(mappingInfo.getListaMappingErogazione(), nomeGruppo)!=null) {
+		if(AccordiServizioParteSpecificaUtilities.getMappingPAFilterByDescription(mappingInfo.getListaMappingErogazione(), nomeGruppo)!=null) {
 			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NOME_GRUPPO_GIA_ESISTENTE);
 			return false;
 		}
@@ -9853,7 +9853,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			return false;
 		}
 		
-		if(AccordiServizioParteSpecificaUtilities.getMappingPD_filterByDescription(mappingInfo.getListaMappingFruizione(), nomeGruppo)!=null) {
+		if(AccordiServizioParteSpecificaUtilities.getMappingPDFilterByDescription(mappingInfo.getListaMappingFruizione(), nomeGruppo)!=null) {
 			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NOME_GRUPPO_GIA_ESISTENTE);
 			return false;
 		}

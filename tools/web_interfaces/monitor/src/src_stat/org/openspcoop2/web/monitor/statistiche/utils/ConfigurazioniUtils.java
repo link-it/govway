@@ -88,9 +88,10 @@ import org.openspcoop2.web.monitor.statistiche.constants.CostantiConfigurazioni;
  *
  */
 public class ConfigurazioniUtils {
+	
+	private ConfigurazioniUtils(){}
 
 	public static void fillAzioniPD(DettaglioPD dettaglioPD, org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager) throws ServiceException, NotFoundException, MultipleResultException, NotImplementedException, ExpressionNotImplementedException, ExpressionException {
-		//		if(dettaglioPD.getPortaDelegata().getNomeAzione()==null){
 		AccordoServizioParteSpecifica asps = getAspsFromValues(dettaglioPD.getPortaDelegata().getTipoSoggettoErogatore(), 
 				dettaglioPD.getPortaDelegata().getNomeSoggettoErogatore(), dettaglioPD.getPortaDelegata().getTipoServizio(),
 				dettaglioPD.getPortaDelegata().getNomeServizio(), dettaglioPD.getPortaDelegata().getVersioneServizio(), serviceManager);
@@ -99,7 +100,6 @@ public class ConfigurazioniUtils {
 		dettaglioPD.setPortType(asps.getPortType());
 
 		fillAzioni(dettaglioPD.getAzioni(), serviceManager, asps, "rest".equalsIgnoreCase(asps.getIdAccordoServizioParteComune().getServiceBinding()));
-		//			}
 	}
 
 	public static ServiceBinding getServiceBindingFromValues(String tipoSoggettoErogatore, String nomeSoggettoErogatore,
@@ -131,12 +131,10 @@ public class ConfigurazioniUtils {
 		idAPS.setTipo(tipoServizio);
 		idAPS.setNome(nomeServizio);
 		idAPS.setVersione(versioneServizio);
-		AccordoServizioParteSpecifica asps = serviceManager.getAccordoServizioParteSpecificaServiceSearch().get(idAPS);
-		return asps;
+		return serviceManager.getAccordoServizioParteSpecificaServiceSearch().get(idAPS);
 	}
 
 	public static void fillAzioniPA(DettaglioPA dettaglioPA, org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager) throws ServiceException, NotFoundException, MultipleResultException, NotImplementedException, ExpressionNotImplementedException, ExpressionException {
-		//		if(dettaglioPA.getPortaApplicativa().getNomeAzione()==null){
 		AccordoServizioParteSpecifica asps = getAspsFromValues(dettaglioPA.getPortaApplicativa().getIdSoggetto().getTipo(),
 				dettaglioPA.getPortaApplicativa().getIdSoggetto().getNome(), dettaglioPA.getPortaApplicativa().getTipoServizio(),	
 				dettaglioPA.getPortaApplicativa().getNomeServizio(),  dettaglioPA.getPortaApplicativa().getVersioneServizio(), serviceManager);
@@ -145,7 +143,6 @@ public class ConfigurazioniUtils {
 		dettaglioPA.setPortType(asps.getPortType());
 
 		fillAzioni(dettaglioPA.getAzioni(), serviceManager, asps, "rest".equalsIgnoreCase(asps.getIdAccordoServizioParteComune().getServiceBinding()));
-		//		}
 	}
 
 	private static void fillAzioni(List<String> azioni, org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager,
@@ -269,7 +266,7 @@ public class ConfigurazioniUtils {
 	}
 
 	public static List<Property> printConnettore(Connettore connettore,String labelTipoConnettore ,InvocazioneCredenziali invCredenziali){
-		List<Property> lst = new ArrayList<Property>();
+		List<Property> lst = new ArrayList<>();
 		long idx = 0;
 		Property p = new Property();
 		p.setId(idx++); 
@@ -329,7 +326,7 @@ public class ConfigurazioniUtils {
 				if(cert!=null){
 					invioCertificatoClient = true;
 				}
-				//System.out.println("Client Certificate: "+invioCertificatoClient);
+
 				p = new Property();
 				p.setId(idx++);
 				p.setNome(CostantiConfigurazioni.LABEL_CLIENT_CERTIFICATE); p.setValore(invioCertificatoClient + "");
@@ -428,7 +425,7 @@ public class ConfigurazioniUtils {
 		}
 		else{
 			List<Property> list = connettore.getPropertyList();
-			if(list!=null && list.size()>0){
+			if(list!=null && !list.isEmpty()){
 				for (Property property : list) {
 					p = new Property();
 					p.setId(idx++);
@@ -442,7 +439,7 @@ public class ConfigurazioniUtils {
 			debug = getProperty(CostantiConnettori.CONNETTORE_DEBUG, connettore.getPropertyList());
 		}
 		p = new Property();
-		p.setId(idx++);
+		p.setId(idx);
 		p.setNome(CostantiConfigurazioni.LABEL_DEBUG); p.setValore(debug);
 		lst.add(p);
 
@@ -450,7 +447,7 @@ public class ConfigurazioniUtils {
 	}
 
 	public static String getProperty(String nome,List<Property> list){
-		if(list!=null && list.size()>0){
+		if(list!=null && !list.isEmpty()){
 			for (Property property : list) {
 				if(property.getNome().equals(nome)){
 					return property.getValore();
@@ -463,9 +460,9 @@ public class ConfigurazioniUtils {
 
 	public static List<Property> getPropertiesAutenticazionePD(DettaglioPD dettaglioPD){
 		org.openspcoop2.core.config.PortaDelegata pdOp2 = dettaglioPD.getPortaDelegataOp2();
-		List<Property> lst = new ArrayList<Property>();
+		List<Property> lst = new ArrayList<>();
 		long idx = 0;
-		Property p = new Property();
+		Property p = null;
 
 		if(CostantiConfigurazione.AUTORIZZAZIONE_NONE.equals(pdOp2.getAutenticazione())){
 			p = new Property();
@@ -479,15 +476,16 @@ public class ConfigurazioniUtils {
 			p.setNome(CostantiConfigurazioni.LABEL_STATO); p.setValore(pdOp2.getAutenticazione());
 			lst.add(p);
 		}
+		
 		if(CostantiConfigurazione.ABILITATO.equals(pdOp2.getAutenticazioneOpzionale())){
 			p = new Property();
-			p.setId(idx++); 
+			p.setId(idx); 
 			p.setNome(CostantiConfigurazioni.LABEL_OPZIONALE); p.setValore(CostantiConfigurazione.ABILITATO.getValue());
 			lst.add(p);
 		}
 		else{
 			p = new Property();
-			p.setId(idx++); 
+			p.setId(idx); 
 			p.setNome(CostantiConfigurazioni.LABEL_OPZIONALE); p.setValore(CostantiConfigurazione.DISABILITATO.getValue());
 			lst.add(p);
 		}
@@ -497,11 +495,16 @@ public class ConfigurazioniUtils {
 
 
 	public static List<Property> getPropertiesAutorizzazionePD(DettaglioPD dettaglioPD,IDPortaDelegata idPD, DriverConfigurazioneDB driverConfigDB ,DriverRegistroServiziDB driverRegistroDB) 
-			throws DriverConfigurazioneException, DriverConfigurazioneNotFound, DriverRegistroServiziException, DriverRegistroServiziNotFound{
+			throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		
+		if(driverConfigDB!=null) {
+			// nop
+		}
+		
 		org.openspcoop2.core.config.PortaDelegata pdOp2 = dettaglioPD.getPortaDelegataOp2();
-		List<Property> lst = new ArrayList<Property>();
+		List<Property> lst = new ArrayList<>();
 		long idx = 0;
-		Property p = new Property();
+		Property p = null;
 
 		// Autorizzazione
 		// Tipo: disabilitato/abilitato/xacmlPolicy/NomeCustom
@@ -562,7 +565,7 @@ public class ConfigurazioniUtils {
 				IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
 				idServizioApplicativo.setIdSoggettoProprietario(idPD.getIdentificativiFruizione().getSoggettoFruitore());
 				idServizioApplicativo.setNome(saNome);
-//				ServizioApplicativo saOp2 = driverConfigDB.getServizioApplicativo(idServizioApplicativo);
+/**				ServizioApplicativo saOp2 = driverConfigDB.getServizioApplicativo(idServizioApplicativo);
 //				if(saOp2.getInvocazionePorta()!=null && saOp2.getInvocazionePorta().sizeCredenzialiList()>0){
 //					String credenziale = null;
 //					org.openspcoop2.core.config.Credenziali cr = saOp2.getInvocazionePorta().getCredenziali(0);
@@ -584,15 +587,14 @@ public class ConfigurazioniUtils {
 //					sa.add(saNome+" ("+credenziale+")");
 //					p.setValore(saNome+" ("+credenziale+")");
 //				}
-//				else{
+//				else{*/
 				sa.add(saNome);
 				p.setValore(saNome);
-				//}
 
 
 				lst.add(p);
 			}
-			if(sa.size() == 0) {
+			if(sa.isEmpty()) {
 				p = new Property();
 				p.setId(idx++); 
 				p.setNome(CostantiConfigurazioni.LABEL_APPLICATIVI_AUTORIZZATI);
@@ -654,9 +656,9 @@ public class ConfigurazioniUtils {
 			dettaglioPD.setRuoli(ruoli);
 			dettaglioPD.setMatchRuoli(match);
 
-			if(ruoli.size() == 0) {
+			if(ruoli.isEmpty()) {
 				p = new Property();
-				p.setId(idx++); 
+				p.setId(idx); 
 				if(StringUtils.isEmpty(match))
 					p.setNome(CostantiConfigurazioni.LABEL_RUOLI);
 				else 
@@ -670,9 +672,9 @@ public class ConfigurazioniUtils {
 	}
 
 	public static List<Property> getPropertiesIntegrazionePD(DettaglioPD dettaglioPD){
-		List<Property> lst = new ArrayList<Property>();
+		List<Property> lst = new ArrayList<>();
 		long idx = 0;
-		Property p = new Property();
+		Property p = null;
 		
 		PortaDelegataAzione pdAzione = dettaglioPD.getPortaDelegataOp2().getAzione();
 		if(dettaglioPD.getPortaDelegata().getNomeAzione()!=null &&
@@ -686,7 +688,7 @@ public class ConfigurazioniUtils {
 
 			// URL di Invocazione: (Endpoint Applicativo PD)/PD/SPCEnte/SPCMinistero/SPCAnagrafica
 			p = new Property();
-			p.setId(idx++); 
+			p.setId(idx); 
 			p.setNome(CostantiConfigurazioni.LABEL_URL_DI_INVOCAZIONE); p.setValore(dettaglioPD.getUrlInvocazione());
 			lst.add(p);
 		}
@@ -694,18 +696,15 @@ public class ConfigurazioniUtils {
 
 			List<String> azioni = dettaglioPD.getAzioni();
 			
-			if(pdAzione==null && (azioni == null || azioni.size() == 0)){
+			if(pdAzione==null && (azioni == null || azioni.isEmpty())){
 				p = new Property();
-				p.setId(idx++); 
+				p.setId(idx); 
 				p.setNome(CostantiConfigurazioni.LABEL_UTILIZZO_DEL_SERVIZIO_SENZA_AZIONE); p.setValore("");
 				lst.add(p);
 			}
 			else{
 
-				// Azioni: XXXs
-				//System.out.println("Azioni: ["+dettaglioPD.getAzioni()+"]");
-
-				if(azioni != null && azioni.size() > 0){
+				if(azioni != null && !azioni.isEmpty()){
 					boolean first = true;
 					for (String azione : azioni) {
 						p = new Property();
@@ -742,17 +741,21 @@ public class ConfigurazioniUtils {
 				if(pdAzione!= null && CostantiConfigurazione.PORTA_DELEGATA_AZIONE_CONTENT_BASED.equals(pdAzione.getIdentificazione())){
 					// Expressione XPath: _XXX
 					p = new Property();
-					p.setId(idx++); 
+					p.setId(idx); 
 					p.setNome(CostantiConfigurazioni.LABEL_EXPRESSIONE_X_PATH); p.setValore(pdAzione.getPattern());
 					lst.add(p);
 				}
 				else if(pdAzione!= null && CostantiConfigurazione.PORTA_DELEGATA_AZIONE_URL_BASED.equals(pdAzione.getIdentificazione())){
 
-					String exprDefault = ".*"+dettaglioPD.getPortaDelegata().getNome()+"/([^/|^?]*).*";
-					if(exprDefault.equals(pdAzione.getPattern())==false){
+					String exprDefaultOld1 = ".*"+dettaglioPD.getPortaDelegata().getNome()+"/([^/|^?]*).*";
+					String exprDefaultOld2 = ".*/"+dettaglioPD.getPortaDelegata().getNome()+"/([^/|^?]*).*";
+					String exprDefaultNew = "/"+dettaglioPD.getPortaDelegata().getNome()+"/([^/?]*).*";
+					if(!exprDefaultOld1.equals(pdAzione.getPattern()) &&
+							!exprDefaultOld2.equals(pdAzione.getPattern()) &&
+							!exprDefaultNew.equals(pdAzione.getPattern())){
 						// Expressione Regolare: _XXX
 						p = new Property();
-						p.setId(idx++); 
+						p.setId(idx); 
 						p.setNome(CostantiConfigurazioni.LABEL_EXPRESSIONE_REGOLARE); p.setValore(pdAzione.getPattern());
 						lst.add(p);
 					}
@@ -764,9 +767,9 @@ public class ConfigurazioniUtils {
 	}
 	
 	public static List<Property> getPropertiesIntegrazionePA(DettaglioPA dettaglioPA){
-		List<Property> lst = new ArrayList<Property>();
+		List<Property> lst = new ArrayList<>();
 		long idx = 0;
-		Property p = new Property();
+		Property p = null;
 		
 		if(dettaglioPA.getPortaApplicativa().getNomeAzione()!=null){
 			// Azione: _XXX
@@ -777,17 +780,15 @@ public class ConfigurazioniUtils {
 
 			// URL di Invocazione: (Endpoint Applicativo PD)/PA/SPCEnte/SPCMinistero/SPCAnagrafica
 			p = new Property();
-			p.setId(idx++); 
+			p.setId(idx); 
 			p.setNome(CostantiConfigurazioni.LABEL_URL_DI_INVOCAZIONE); p.setValore(dettaglioPA.getUrlInvocazione());
 			lst.add(p);
 		}
 		else{
 
 			List<String> azioni = dettaglioPA.getAzioni();
-			// Azioni: XXXs
-			//System.out.println("Azioni: ["+dettaglioPD.getAzioni()+"]");
-
-			if(azioni != null && azioni.size() > 0){
+			
+			if(azioni != null && !azioni.isEmpty()){
 				boolean first = true;
 				for (String azione : azioni) {
 					p = new Property();
@@ -811,7 +812,7 @@ public class ConfigurazioniUtils {
 			
 			String value = CostantiConfigurazione.PORTA_DELEGATA_AZIONE_URL_BASED.getValue()+"/"+CostantiConfigurazione.PORTA_DELEGATA_AZIONE_WSDL_BASED.getValue();
 			p = new Property();
-			p.setId(idx++); 
+			p.setId(idx); 
 			p.setNome(CostantiConfigurazioni.LABEL_IDENTIFICAZIONE_AZIONE); p.setValore(value);
 			lst.add(p);
 
@@ -822,9 +823,9 @@ public class ConfigurazioniUtils {
 
 
 	public static List<Property> getPropertiesGeneraliPA(DettaglioPA dettaglioPA) throws DriverRegistroServiziException{
-		List<Property> lst = new ArrayList<Property>();
+		List<Property> lst = new ArrayList<>();
 		long idx = 0;
-		Property p = new Property();
+		Property p = null;
 		PortaApplicativa portaApplicativa = dettaglioPA.getPortaApplicativa();
 		org.openspcoop2.core.config.PortaApplicativa paOp2 = dettaglioPA.getPortaApplicativaOp2(); 
 
@@ -878,22 +879,22 @@ public class ConfigurazioniUtils {
 			if(portaApplicativa.getNomeAzione()!=null){
 				// Azione: _XXX
 				p = new Property();
-				p.setId(idx++); 
+				p.setId(idx); 
 				p.setNome(CostantiConfigurazioni.LABEL_AZIONE); p.setValore(portaApplicativa.getNomeAzione());
 				lst.add(p);
 			}
 			else{
 				PortaApplicativaAzione paAzione = paOp2.getAzione();
 				List<String> azioni = dettaglioPA.getAzioni(); 
-				if(paAzione==null && (azioni == null || azioni.size() == 0)){
+				if(paAzione==null && (azioni == null || azioni.isEmpty())){
 					p = new Property();
-					p.setId(idx++); 
+					p.setId(idx); 
 					p.setNome(CostantiConfigurazioni.LABEL_AZIONE); p.setValore(CostantiConfigurazioni.LABEL_UTILIZZO_DEL_SERVIZIO_SENZA_AZIONE);
 					lst.add(p);
 				}
 				else{
 					// Azioni: XXXs
-					if(azioni != null && azioni.size() > 0){
+					if(azioni != null && !azioni.isEmpty()){
 						boolean first = true;
 						for (String azione : azioni) {
 							p = new Property();
@@ -915,9 +916,9 @@ public class ConfigurazioniUtils {
 	}
 
 	public static List<Property> getPropertiesGeneraliPD(DettaglioPD dettaglioPD) throws DriverRegistroServiziException{
-		List<Property> lst = new ArrayList<Property>();
+		List<Property> lst = new ArrayList<>();
 		long idx = 0;
-		Property p = new Property();
+		Property p = null;
 		PortaDelegata portaDelegata = dettaglioPD.getPortaDelegata();
 
 		// Nome PA: SPC/_XXX
@@ -969,7 +970,7 @@ public class ConfigurazioniUtils {
 
 		// Servizio: SPC/_XXX
 		p = new Property();
-		p.setId(idx++); 
+		p.setId(idx); 
 		p.setNome(CostantiConfigurazioni.LABEL_SERVIZIO); p.setValore(portaDelegata.getTipoServizio()+"/"+portaDelegata.getNomeServizio());
 		lst.add(p);
 
@@ -978,9 +979,9 @@ public class ConfigurazioniUtils {
 
 	public static List<Property> getPropertiesAutenticazionePA(DettaglioPA dettaglioPA){
 		org.openspcoop2.core.config.PortaApplicativa paOp2 = dettaglioPA.getPortaApplicativaOp2(); 
-		List<Property> lst = new ArrayList<Property>();
+		List<Property> lst = new ArrayList<>();
 		long idx = 0;
-		Property p = new Property();
+		Property p = null;
 
 		if(dettaglioPA.isSupportatoAutenticazione()){
 			if(CostantiConfigurazione.AUTORIZZAZIONE_NONE.equals(paOp2.getAutenticazione())){
@@ -995,15 +996,16 @@ public class ConfigurazioniUtils {
 				p.setNome(CostantiConfigurazioni.LABEL_STATO); p.setValore(paOp2.getAutenticazione());
 				lst.add(p);
 			}
+			
 			if(CostantiConfigurazione.ABILITATO.equals(paOp2.getAutenticazioneOpzionale())){
 				p = new Property();
-				p.setId(idx++); 
+				p.setId(idx); 
 				p.setNome(CostantiConfigurazioni.LABEL_OPZIONALE); p.setValore(CostantiConfigurazione.ABILITATO.getValue());
 				lst.add(p);
 			}
 			else{
 				p = new Property();
-				p.setId(idx++); 
+				p.setId(idx); 
 				p.setNome(CostantiConfigurazioni.LABEL_OPZIONALE); p.setValore(CostantiConfigurazione.DISABILITATO.getValue());
 				lst.add(p);
 			}
@@ -1015,9 +1017,9 @@ public class ConfigurazioniUtils {
 			throws ServiceException, NotImplementedException, ExpressionNotImplementedException, ExpressionException, DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		PortaApplicativa portaApplicativa = dettaglioPA.getPortaApplicativa();
 		org.openspcoop2.core.config.PortaApplicativa paOp2 = dettaglioPA.getPortaApplicativaOp2(); 
-		List<Property> lst = new ArrayList<Property>();
+		List<Property> lst = new ArrayList<>();
 		long idx = 0;
-		Property p = new Property();
+		Property p = null;
 
 		// Autorizzazione
 		// Tipo: disabilitato/abilitato/xacmlPolicy/NomeCustom
@@ -1072,7 +1074,7 @@ public class ConfigurazioniUtils {
 
 			dettaglioPA.setFruitori(fruitori);
 
-			if(fruitori != null && fruitori.size() > 0){
+			if(fruitori != null && !fruitori.isEmpty()){
 				boolean first = true;
 				for (String fruitore : fruitori) {
 					p = new Property();
@@ -1148,9 +1150,9 @@ public class ConfigurazioniUtils {
 			dettaglioPA.setRuoli(ruoli);
 			dettaglioPA.setMatchRuoli(match);
 			
-			if(ruoli.size() == 0) {
+			if(ruoli.isEmpty()) {
 				p = new Property();
-				p.setId(idx++); 
+				p.setId(idx); 
 				if(StringUtils.isEmpty(match))
 					p.setNome(CostantiConfigurazioni.LABEL_RUOLI);
 				else 
@@ -1167,15 +1169,15 @@ public class ConfigurazioniUtils {
 			DriverConfigurazioneDB driverConfigDB, IDPortaApplicativa idPA ) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		org.openspcoop2.core.config.PortaApplicativa paOp2 = dettaglioPA.getPortaApplicativaOp2();
 
-		List<DettaglioSA> listaSA = new ArrayList<DettaglioSA>();
+		List<DettaglioSA> listaSA = new ArrayList<>();
 		// --- Informazioni di Integrazione ---
 		for (PortaApplicativaServizioApplicativo saOp : paOp2.getServizioApplicativoList()) {
 			DettaglioSA sa = new DettaglioPA().new DettaglioSA();
 
 
-			List<Property> lstPropertySA = new ArrayList<Property>();
+			List<Property> lstPropertySA = new ArrayList<>();
 			long idx = 0;
-			Property p = new Property();
+			Property p = null;
 
 			String saNome = saOp.getNome();
 			p = new Property();
@@ -1199,7 +1201,7 @@ public class ConfigurazioniUtils {
 				p.setNome(CostantiConfigurazioni.LABEL_SBUSTAMENTO_SOAP); p.setValore(saOp2.getInvocazioneServizio().getSbustamentoSoap().getValue());
 				lstPropertySA.add(p);
 				p = new Property();
-				p.setId(idx++); 
+				p.setId(idx); 
 				p.setNome(CostantiConfigurazioni.LABEL_SBUSTAMENTO_PROTOCOLLO); p.setValore(saOp2.getInvocazioneServizio().getSbustamentoInformazioniProtocollo().getValue());
 				lstPropertySA.add(p);
 

@@ -69,6 +69,7 @@ import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
@@ -82,10 +83,10 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
  */
 public class PorteDelegateCore extends ControlStationCore {
 
-	public PorteDelegateCore() throws Exception {
+	public PorteDelegateCore() throws DriverControlStationException {
 		super();
 	}
-	public PorteDelegateCore(ControlStationCore core) throws Exception {
+	public PorteDelegateCore(ControlStationCore core) throws DriverControlStationException {
 		super(core);
 	}
 	
@@ -565,15 +566,7 @@ public class PorteDelegateCore extends ControlStationCore {
 							List<MappingFruizionePortaDelegata> lPD = DBMappingUtils.mappingFruizionePortaDelegataList(con, this.tipoDB, idSoggettoFruitore, idServizio, false);
 							if(lPD!=null && !lPD.isEmpty()) {
 								for (MappingFruizionePortaDelegata mapping : lPD) {
-									try {
-										PortaDelegata pd = this.getPortaDelegata(mapping.getIdPortaDelegata());
-										if(pd!=null && pd.getAzione()!=null && pd.getAzione().getAzioneDelegataList()!=null &&
-												pd.getAzione().getAzioneDelegataList().contains(nomeAzione)) {
-											listInUtilizzo.add(mapping);
-										}
-									}catch(DriverConfigurazioneNotFound notFound) {
-										// ignore
-									}
+									fill(nomeAzione, mapping, listInUtilizzo);
 								}
 							}
 						}
@@ -589,6 +582,17 @@ public class PorteDelegateCore extends ControlStationCore {
 			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	private void fill(String nomeAzione, MappingFruizionePortaDelegata mapping, List<MappingFruizionePortaDelegata> listInUtilizzo) throws DriverConfigurazioneException {
+		try {
+			PortaDelegata pd = this.getPortaDelegata(mapping.getIdPortaDelegata());
+			if(pd!=null && pd.getAzione()!=null && pd.getAzione().getAzioneDelegataList()!=null &&
+					pd.getAzione().getAzioneDelegataList().contains(nomeAzione)) {
+				listInUtilizzo.add(mapping);
+			}
+		}catch(DriverConfigurazioneNotFound notFound) {
+			// ignore
 		}
 	}
 	

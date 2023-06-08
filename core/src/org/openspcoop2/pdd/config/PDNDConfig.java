@@ -19,8 +19,6 @@
  */
 package org.openspcoop2.pdd.config;
 
-import java.io.Serializable;
-
 import org.openspcoop2.utils.certificate.remote.RemoteKeyType;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 
@@ -31,9 +29,7 @@ import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class PDNDConfig implements Serializable {
-		
-	private static final long serialVersionUID = 1L;
+public class PDNDConfig {
 	
 	private RemoteStoreConfig remoteStoreConfig;
 	private RemoteKeyType remoteKeyType;	

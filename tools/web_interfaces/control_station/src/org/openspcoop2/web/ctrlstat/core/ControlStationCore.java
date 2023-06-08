@@ -5393,65 +5393,6 @@ public class ControlStationCore {
 				}
 			}
 
-		} catch (DriverConfigurazioneNotFound e) {
-			// se ci sono degli errori faccio il rollback
-			ControlStationCore.logError(e.getMessage(),e);
-
-			try {
-				ControlStationCore.logDebug("[ControlStationCore::performOperation] rollback on error :" + e.getMessage(), e);
-				if(con!=null)con.rollback();
-
-			} catch (Exception ex) {
-			}
-
-			throw e;
-		} catch (DriverConfigurazioneException e) {
-			// se ci sono degli errori faccio il rollback
-			ControlStationCore.logError(e.getMessage(),e);
-
-			try {
-				ControlStationCore.logDebug("[ControlStationCore::performOperation] rollback on error :" + e.getMessage(), e);
-				if(con!=null)con.rollback();
-
-			} catch (Exception ex) {
-			}
-
-			throw e;
-		} catch (DriverRegistroServiziNotFound e) {
-			ControlStationCore.logError(e.getMessage(),e);
-
-			try {
-				ControlStationCore.logDebug("[ControlStationCore::performOperation] rollback on error :" + e.getMessage(), e);
-				if(con!=null)con.rollback();
-
-			} catch (Exception ex) {
-			}
-
-			throw e;
-
-		} catch (DriverRegistroServiziException e) {
-			ControlStationCore.logError(e.getMessage(),e);
-
-			try {
-				ControlStationCore.logDebug("[ControlStationCore::performOperation] rollback on error :" + e.getMessage(), e);
-				if(con!=null)con.rollback();
-
-			} catch (Exception ex) {
-			}
-
-			throw e;
-
-		} catch (DriverControlStationException e) {
-			ControlStationCore.logError(e.getMessage(),e);
-
-			try {
-				ControlStationCore.logDebug("[ControlStationCore::performOperation] rollback on error :" + e.getMessage(), e);
-				if(con!=null)con.rollback();
-
-			} catch (Exception ex) {
-			}
-
-			throw new DriverControlStationException(e);
 		} catch (Exception e) {
 			ControlStationCore.logError(e.getMessage(),e);
 
@@ -5479,7 +5420,7 @@ public class ControlStationCore {
 
 	}
 
-	public void performOperationMultiTypes(String superUser, boolean smista,int[] operationTypes,Object ... oggetti) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException, Exception {
+	public void performOperationMultiTypes(String superUser, boolean smista,int[] operationTypes,Object ... oggetti) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException, UtilsException {
 		String nomeMetodo = "performOperationIbrido";
 		ControlStationCore.logInfo(getPrefixMethod(nomeMetodo)+"performing operation on objects " + this.getClassNames(oggetti));
 		Tipologia[] tipoOperazione = new Tipologia[oggetti.length];
@@ -5519,8 +5460,9 @@ public class ControlStationCore {
 	/**
 	 * Crea un nuovo oggetto nella govwayConsole e si occupa di inoltrare
 	 * l'operazione nella coda dello Smistatore
+	 * @throws UtilsException 
 	 */
-	public void performCreateOperation(String superUser, boolean smista, Object ... oggetti) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException, Exception {
+	public void performCreateOperation(String superUser, boolean smista, Object ... oggetti) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException, UtilsException {
 		String nomeMetodo = "performCreateOperation";
 		String operationType = "CREATE";
 		ControlStationCore.logInfo(getPrefixMethod(nomeMetodo)+"performing operation type [" + operationType + "] on objects " + this.getClassNames(oggetti));
@@ -5560,8 +5502,9 @@ public class ControlStationCore {
 	/**
 	 * Aggiorna un oggetto nella govwayConsole e si occupa di inoltrare
 	 * l'operazione nella coda dello Smistatore
+	 * @throws UtilsException 
 	 */
-	public void performUpdateOperation(String superUser, boolean smista, Object ... oggetti) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException, Exception {
+	public void performUpdateOperation(String superUser, boolean smista, Object ... oggetti) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException, UtilsException {
 		String nomeMetodo = "performUpdateOperation";
 		String operationType = "UPDATE";
 
@@ -5603,8 +5546,9 @@ public class ControlStationCore {
 	/**
 	 * Cancella un oggetto nella govwayConsole e si occupa di inoltrare
 	 * l'operazione nella coda dello Smistatore
+	 * @throws UtilsException 
 	 */
-	public void performDeleteOperation(String superUser, boolean smista, Object ... oggetti) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException, Exception {
+	public void performDeleteOperation(String superUser, boolean smista, Object ... oggetti) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException, UtilsException {
 		String nomeMetodo = "performDeleteOperation";
 		String operationType = "DELETE";
 
@@ -5643,9 +5587,9 @@ public class ControlStationCore {
 
 	}
 
-	private <Type> ArrayList<String> getClassNames(Type[] array) {
+	private <T> ArrayList<String> getClassNames(T[] array) {
 		ArrayList<String> c = new ArrayList<>();
-		for (Type type : array) {
+		for (T type : array) {
 			c.add(type.getClass().getName());
 		}
 
