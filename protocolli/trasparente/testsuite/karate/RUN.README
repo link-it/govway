@@ -369,7 +369,7 @@ Di seguito vengono descritti i test del package 'trasformazione':
 
 Di seguito vengono descritti i test del package 'registrazione_messaggi':
 
-- 'dump_binario', verifica la registrazione dei messaggi in modalità 'binaria'
+- 'dump_binario', verifica la registrazione dei messaggi in modalità 'binaria'. Viene inoltre verificata la funzionalità che consente di creare blackList o whiteList per quanto concerne gli header http registrati.
    ant run_test -Ddelete=false -Dload=false -Dpackage=registrazione_messaggi.dump_binario
 
 - 'dump_normale', verifica la registrazione dei messaggi in modalità 'normale'. Si tratta della vecchia modalità in cui era il gateway ad analizzare in realtime la struttura multipart.

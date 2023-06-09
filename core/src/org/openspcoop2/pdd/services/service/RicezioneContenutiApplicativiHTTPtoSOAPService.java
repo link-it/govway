@@ -181,7 +181,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					req.setRequestReadTimeout(openSPCoopProperties.getReadConnectionTimeout_ricezioneContenutiApplicativi());
 				}
 				req.setThresholdContext(null, 
-					openSPCoopProperties.getDumpBinario_inMemoryThreshold(), openSPCoopProperties.getDumpBinario_repository());
+					openSPCoopProperties.getDumpBinarioInMemoryThreshold(), openSPCoopProperties.getDumpBinarioRepository());
 			}catch(Throwable t) {
 				logCore.error(t.getMessage(),t);
 			}
@@ -314,7 +314,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				requestInfo.setIdTransazione(idTransazione);
 				
 				req.setThresholdContext((context!=null ? context.getPddContext(): null), 
-						openSPCoopProperties.getDumpBinario_inMemoryThreshold(), openSPCoopProperties.getDumpBinario_repository());
+						openSPCoopProperties.getDumpBinarioInMemoryThreshold(), openSPCoopProperties.getDumpBinarioRepository());
 			
 			}catch(Throwable e) {
 				context = null;
@@ -437,12 +437,12 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			if(dumpRaw.isActiveDumpRichiesta()) {
 				req = new DumpRawConnectorInMessage(logCore, req, 
 						(context!=null ? context.getPddContext(): null), 
-						openSPCoopProperties.getDumpBinario_inMemoryThreshold(), openSPCoopProperties.getDumpBinario_repository());
+						openSPCoopProperties.getDumpBinarioInMemoryThreshold(), openSPCoopProperties.getDumpBinarioRepository());
 			}
 			if(dumpRaw.isActiveDumpRisposta()) {
 				res = new DumpRawConnectorOutMessage(logCore, res, 
 						(context!=null ? context.getPddContext(): null), 
-						openSPCoopProperties.getDumpBinario_inMemoryThreshold(), openSPCoopProperties.getDumpBinario_repository(),
+						openSPCoopProperties.getDumpBinarioInMemoryThreshold(), openSPCoopProperties.getDumpBinarioRepository(),
 						dumpRaw);
 			}
 		}catch(Throwable e){

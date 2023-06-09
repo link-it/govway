@@ -146,7 +146,7 @@ public class NotifierCallback implements INotifierCallback {
 			Object context) throws NotifierException {
 		this.emitLog(notifierType, context, "throwStreamingHandlerException");
 		try{
-			return OpenSPCoop2Properties.getInstance().isDumpNonRealtime_throwStreamingHandlerException();
+			return OpenSPCoop2Properties.getInstance().isDumpNonRealtimeThrowStreamingHandlerException();
 		}catch(Exception e){
 			error(notifierType, context, "throwStreamingHandlerException", e.getMessage(), e);
 			throw new NotifierException(e.getMessage(),e);

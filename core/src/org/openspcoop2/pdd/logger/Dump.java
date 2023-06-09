@@ -31,9 +31,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.config.DumpConfigurazione;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -43,11 +48,14 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.rest.DumpRestMessageUtils;
 import org.openspcoop2.message.soap.DumpSoapMessageUtils;
 import org.openspcoop2.message.utils.DumpAttachment;
 import org.openspcoop2.message.utils.DumpMessaggio;
 import org.openspcoop2.message.utils.DumpMessaggioConfig;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -90,13 +98,46 @@ import org.slf4j.Logger;
 public class Dump {
 
 	/** Indicazione di un dump funzionante */
-	public static boolean sistemaDumpDisponibile = true;
-	/** Primo errore avvenuto nel momento in cui è stato rilevato un malfunzionamento nel sistema di dump */
-	public static Throwable motivoMalfunzionamentoDump = null;
+	private static boolean sistemaDumpDisponibile = true;
+	public static boolean isSistemaDumpDisponibile() {
+		return sistemaDumpDisponibile;
+	}
+	public static void setSistemaDumpDisponibile(boolean sistemaDumpDisponibile) {
+		Dump.sistemaDumpDisponibile = sistemaDumpDisponibile;
+	}
 
+	/** Primo errore avvenuto nel momento in cui è stato rilevato un malfunzionamento nel sistema di dump */
+	private static Throwable motivoMalfunzionamentoDump = null;
+	public static Throwable getMotivoMalfunzionamentoDump() {
+		return motivoMalfunzionamentoDump;
+	}
+	public static void setMotivoMalfunzionamentoDump(Throwable motivoMalfunzionamentoDump) {
+		Dump.motivoMalfunzionamentoDump = motivoMalfunzionamentoDump;
+	}
+	
+	private static final String DIAGNOSTICO_REGISTRAZIONE_NON_RIUSCITA = "dumpContenutiApplicativi.registrazioneNonRiuscita";
+	
 
 	/**  Logger log4j utilizzato per effettuare un dump dei messaggi applicativi */
 	private Logger loggerDump = null;
+	private void loggerDumpError(String msg) {
+		if(this.loggerDump!=null) {
+			this.loggerDump.error(msg);
+		}
+	}
+	private void loggerDumpError(String msg, Throwable e) {
+		if(this.loggerDump!=null) {
+			this.loggerDump.error(msg,e);
+		}
+	}
+	
+	private void loggerOpenSPCoopResourcesError(String msg, Throwable e) {
+		if(OpenSPCoop2Logger.loggerOpenSPCoopResources!=null) {
+			OpenSPCoop2Logger.loggerOpenSPCoopResources.error(msg,e);
+		}
+	}
+	
+	
 	
 	/** Soggetto che richiede il logger */
 	private IDSoggetto dominio;
@@ -114,6 +155,7 @@ public class Dump {
 	private Date gdo;
 	/** TipoPdD */
 	private TipoPdD tipoPdD;
+	private String nomePorta;
 	/** PdDContext */
 	private PdDContext pddContext;
 	/** RequestInfo */
@@ -131,8 +173,6 @@ public class Dump {
 	private List<String> tipoDumpOpenSPCoopAppender = null; 
 	
 	private DumpConfigurazione dumpConfigurazione;
-	private List<String> dumpHeaderWhiteList;
-	private List<String> dumpHeaderBlackList;
 	
 	private IProtocolFactory<?> protocolFactory = null;
 	private String idTransazione = null;
@@ -162,10 +202,6 @@ public class Dump {
 	 * @param pddContext pddContext
 	 * 
 	 */
-//	public Dump(IDSoggetto dominio, String modulo, TipoPdD tipoPdD, PdDContext pddContext,
-//			DumpConfigurazione dumpConfigurazione) throws DumpException{
-//		this(dominio, modulo, null, null, null, tipoPdD, pddContext,null,null,dumpConfigurazione);
-//	}
 	public Dump(IDSoggetto dominio, String modulo, TipoPdD tipoPdD, String nomePorta, PdDContext pddContext, DumpConfigurazione dumpConfigurazione) throws DumpException{ // dump binario
 		this(dominio, modulo, null, null, null, tipoPdD, nomePorta, pddContext,null,null,dumpConfigurazione);
 	}
@@ -190,24 +226,23 @@ public class Dump {
 		else
 			this.signature = "<"+this.gdo+"> "+this.idModulo+"\n";
 		this.tipoPdD = tipoPdD;
+		this.nomePorta = nomePorta;
 		this.pddContext = pddContext;
 		if(this.pddContext==null) {
 			throw new DumpException("PdDContext is null");
 		}
 		
 		this.properties = OpenSPCoop2Properties.getInstance();
-		if(stateParam!=null && stateParam instanceof StateMessage){
+		if(stateParam instanceof StateMessage){
 			this.statoRichiesta = (StateMessage) stateParam;
 		}
-		if(responseStateParam!=null && responseStateParam instanceof StateMessage){
+		if(responseStateParam instanceof StateMessage){
 			this.statoRisposta = (StateMessage) responseStateParam;
 		}
 		
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 		
 		this.dumpConfigurazione = dumpConfigurazione;
-		this.dumpHeaderWhiteList = op2Properties.getDumpHeaderWhiteList();
-		this.dumpHeaderBlackList = op2Properties.getDumpHeaderBlackList();
 		
 		if(this.pddContext.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
 			this.requestInfo = (RequestInfo) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
@@ -240,7 +275,7 @@ public class Dump {
 			// La transazione potrebbe essere stata eliminata nelle comunicazioni stateful
 		}
 	}
-
+	
 	private Connection getConnectionFromState(boolean richiesta){
 		if(richiesta){
 			Connection c = StateMessage.getConnection(this.statoRichiesta);
@@ -536,19 +571,18 @@ public class Dump {
 					}
 				}
 			}
-			else if(TipoMessaggio.RISPOSTA_USCITA.equals(tipoMessaggio)) {
-				if(this.dumpConfigurazione!=null && this.dumpConfigurazione.getRispostaUscita()!=null) {
-					if(StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getPayload()) &&
-							StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getPayloadParsing())){
-						dumpHeaders = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getHeaders());
-						dumpBody = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getBody());
-						dumpAttachments = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getAttachments());
-					}
-					else {
-						dumpHeaders = false;
-						dumpBody = false;
-						dumpAttachments = false;
-					}
+			else if(TipoMessaggio.RISPOSTA_USCITA.equals(tipoMessaggio) &&
+				this.dumpConfigurazione!=null && this.dumpConfigurazione.getRispostaUscita()!=null) {
+				if(StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getPayload()) &&
+						StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getPayloadParsing())){
+					dumpHeaders = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getHeaders());
+					dumpBody = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getBody());
+					dumpAttachments = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getAttachments());
+				}
+				else {
+					dumpHeaders = false;
+					dumpBody = false;
+					dumpAttachments = false;
 				}
 			}
 			if(!dumpHeaders && !dumpBody && !dumpAttachments) {
@@ -600,15 +634,14 @@ public class Dump {
 						}
 					}
 				}
-				else if(TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO.equals(tipoMessaggio)) {
-					if(this.dumpConfigurazione!=null && this.dumpConfigurazione.getRispostaUscita()!=null) {
-						boolean payloadParsing = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getPayload()) &&
-								StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getPayloadParsing());
-						if(!payloadParsing) {
-							dumpHeaders = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getHeaders());
-							dumpBody = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getPayload());
-							dumpBinarioAttivatoTramiteRegolaConfigurazione = dumpHeaders || dumpBody;
-						}
+				else if(TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO.equals(tipoMessaggio) &&
+					this.dumpConfigurazione!=null && this.dumpConfigurazione.getRispostaUscita()!=null) {
+					boolean payloadParsing = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getPayload()) &&
+							StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getPayloadParsing());
+					if(!payloadParsing) {
+						dumpHeaders = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getHeaders());
+						dumpBody = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getPayload());
+						dumpBinarioAttivatoTramiteRegolaConfigurazione = dumpHeaders || dumpBody;
 					}
 				}
 			}
@@ -643,9 +676,9 @@ public class Dump {
 						this.msgDiagErroreDump.setTransazioneApplicativoServer(this.transazioneApplicativoServer, this.idPortaApplicativa);
 					}
 					this.msgDiagErroreDump.logPersonalizzato(identificativoDiagnostico+"completato");
-				}catch(Throwable t) {
+				}catch(Exception t) {
 					if(this.loggerDump!=null) {
-						this.loggerDump.error("Riscontrato errore durante l'emissione del diagnostico per il dump del contenuto applicativo in corso del messaggio ("+tipoMessaggio+
+						this.loggerDumpError("Riscontrato errore durante l'emissione del diagnostico per il dump del contenuto applicativo in corso del messaggio ("+tipoMessaggio+
 								") "+getLogIdTransazione()+":"+t.getMessage(),t);
 					}
 				}finally {
@@ -714,15 +747,226 @@ public class Dump {
 					this.msgDiagErroreDump.setTransazioneApplicativoServer(this.transazioneApplicativoServer, this.idPortaApplicativa);
 				}
 				this.msgDiagErroreDump.logPersonalizzato(identificativoDiagnostico+"inCorso");
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				if(this.loggerDump!=null) {
-					this.loggerDump.error("Riscontrato errore durante l'emissione del diagnostico per il dump del contenuto applicativo in corso del messaggio ("+tipoMessaggio+
+					this.loggerDumpError("Riscontrato errore durante l'emissione del diagnostico per il dump del contenuto applicativo in corso del messaggio ("+tipoMessaggio+
 							") "+getLogIdTransazione()+":"+t.getMessage(),t);
 				}
 			}finally {
 				this.msgDiagErroreDump.setTransazioneApplicativoServer(null, null);
 			}
 		}
+	}
+	
+	
+	private List<String> initDumpWhiteHeaderList(TipoMessaggio tipoMessaggio) {
+		return initDumpHeaderList(true, tipoMessaggio);
+	}
+	private List<String> initDumpBlackHeaderList(TipoMessaggio tipoMessaggio) {
+		return initDumpHeaderList(false, tipoMessaggio);
+	}
+	private List<String> initDumpHeaderList(boolean whiteList, TipoMessaggio tipoMessaggio) {
+		
+		List<String> l = initDumpHeaderPorta(whiteList, tipoMessaggio);
+		if(l!=null && !l.isEmpty()) {
+			return l;
+		}
+				
+		if(this.tipoPdD!=null && tipoMessaggio!=null) {
+			l = initDumpHeaderListRequestResponse(whiteList, tipoMessaggio);
+			if(l!=null && !l.isEmpty()) {
+				return l;
+			}
+		}
+		
+		if(this.tipoPdD!=null) {
+			l = initDumpHeaderList(whiteList, 
+					this.properties.getDumpHeaderErogazioniWhiteList(), 
+					this.properties.getDumpHeaderErogazioniBlackList(), 
+					this.properties.getDumpHeaderFruizioniWhiteList(), 
+					this.properties.getDumpHeaderFruizioniBlackList());
+			if(l!=null && !l.isEmpty()) {
+				return l;
+			}
+		}
+		
+		return whiteList ? this.properties.getDumpHeaderWhiteList() : this.properties.getDumpHeaderBlackList();
+	}
+	private List<Proprieta> getProprietaPortaList() throws DriverConfigurazioneException{
+		List<Proprieta> lReturn = null;
+		if(this.tipoPdD!=null && this.nomePorta!=null) {
+			
+			ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance(this.statoRichiesta!=null ? this.statoRichiesta : this.statoRisposta);
+			
+			if(TipoPdD.APPLICATIVA.equals(this.tipoPdD)) {
+				IDPortaApplicativa idPA = new IDPortaApplicativa();
+				idPA.setNome(this.nomePorta);
+				PortaApplicativa pa = configPdDManager.getPortaApplicativa_SafeMethod(idPA, this.requestInfo);
+				if(pa!=null) {
+					return pa.getProprieta();
+				}
+			}
+			else if(TipoPdD.DELEGATA.equals(this.tipoPdD)) {
+				IDPortaDelegata idPD = new IDPortaDelegata();
+				idPD.setNome(this.nomePorta);
+				PortaDelegata pd = configPdDManager.getPortaDelegata_SafeMethod(idPD, this.requestInfo);
+				if(pd!=null) {
+					return pd.getProprieta();
+				}
+			}
+			
+		}
+		return lReturn;
+	}
+	private List<String> initDumpHeaderPorta(boolean whiteList, TipoMessaggio tipoMessaggio) {
+		
+		List<String> l = null;
+		
+		List<Proprieta> portaProps = null;
+		try {
+			portaProps = getProprietaPortaList();
+		}catch(Exception e) {
+			this.loggerDumpError("Recupero proprietà dalla porta '"+this.nomePorta+"' (tipo: "+this.tipoPdD+") fallito: "+e.getMessage(),e);
+		}
+		
+		if(portaProps!=null && !portaProps.isEmpty()) {
+			
+			l = initDumpHeaderListRequestResponsePorta(whiteList, tipoMessaggio, portaProps);
+			if(l!=null && !l.isEmpty()) {
+				return l;
+			}
+			
+			List<String> white = CostantiProprieta.getRegistrazioneMessaggiWhiteList(portaProps);
+			List<String> black = CostantiProprieta.getRegistrazioneMessaggiBlackList(portaProps);
+			l = initDumpHeaderList(whiteList, 
+					white, 
+					black, 
+					white, 
+					black);
+			if(l!=null && !l.isEmpty()) {
+				return l;
+			}
+			
+		}
+		
+		return l;
+	}
+	private List<String> initDumpHeaderListRequestResponsePorta(boolean whiteList, TipoMessaggio tipoMessaggio, List<Proprieta> proprieta) {
+		List<String> l = null;
+		
+		if(this.tipoPdD!=null && tipoMessaggio!=null) {
+			switch (tipoMessaggio) {
+			
+			case RICHIESTA_INGRESSO:
+			case RICHIESTA_INGRESSO_DUMP_BINARIO:{
+				List<String> white = CostantiProprieta.getRegistrazioneMessaggiRichiestaIngressoWhiteList(proprieta);
+				List<String> black = CostantiProprieta.getRegistrazioneMessaggiRichiestaIngressoBlackList(proprieta);
+				l = initDumpHeaderList(whiteList, 
+						white, 
+						black, 
+						white, 
+						black);
+				break;
+			}
+			case RICHIESTA_USCITA:
+			case RICHIESTA_USCITA_DUMP_BINARIO:{
+				List<String> white = CostantiProprieta.getRegistrazioneMessaggiRichiestaUscitaWhiteList(proprieta);
+				List<String> black = CostantiProprieta.getRegistrazioneMessaggiRichiestaUscitaBlackList(proprieta);
+				l = initDumpHeaderList(whiteList, 
+						white, 
+						black, 
+						white, 
+						black);
+				break;
+			}
+			case RISPOSTA_INGRESSO:
+			case RISPOSTA_INGRESSO_DUMP_BINARIO:{
+				List<String> white = CostantiProprieta.getRegistrazioneMessaggiRispostaIngressoWhiteList(proprieta);
+				List<String> black = CostantiProprieta.getRegistrazioneMessaggiRispostaIngressoBlackList(proprieta);
+				l = initDumpHeaderList(whiteList, 
+						white, 
+						black, 
+						white, 
+						black);
+				break;
+			}
+	
+			case RISPOSTA_USCITA:
+			case RISPOSTA_USCITA_DUMP_BINARIO:{
+				List<String> white = CostantiProprieta.getRegistrazioneMessaggiRispostaUscitaWhiteList(proprieta);
+				List<String> black = CostantiProprieta.getRegistrazioneMessaggiRispostaUscitaBlackList(proprieta);
+				l = initDumpHeaderList(whiteList, 
+						white, 
+						black, 
+						white, 
+						black);
+				break;
+			}
+				
+			default:
+				break;
+			}
+		}
+		return l;
+	}
+	private List<String> initDumpHeaderListRequestResponse(boolean whiteList, TipoMessaggio tipoMessaggio) {
+		
+		List<String> l = null;
+		
+		if(this.tipoPdD!=null && tipoMessaggio!=null) {
+			switch (tipoMessaggio) {
+			
+			case RICHIESTA_INGRESSO:
+			case RICHIESTA_INGRESSO_DUMP_BINARIO:
+				l = initDumpHeaderList(whiteList, 
+						this.properties.getDumpHeaderErogazioniRichiestaIngressoWhiteList(), 
+						this.properties.getDumpHeaderErogazioniRichiestaIngressoBlackList(), 
+						this.properties.getDumpHeaderFruizioniRichiestaIngressoWhiteList(), 
+						this.properties.getDumpHeaderFruizioniRichiestaIngressoBlackList());
+				break;
+	
+			case RICHIESTA_USCITA:
+			case RICHIESTA_USCITA_DUMP_BINARIO:
+				l = initDumpHeaderList(whiteList, 
+						this.properties.getDumpHeaderErogazioniRichiestaUscitaWhiteList(), 
+						this.properties.getDumpHeaderErogazioniRichiestaUscitaBlackList(), 
+						this.properties.getDumpHeaderFruizioniRichiestaUscitaWhiteList(), 
+						this.properties.getDumpHeaderFruizioniRichiestaUscitaBlackList());
+				break;
+				
+			case RISPOSTA_INGRESSO:
+			case RISPOSTA_INGRESSO_DUMP_BINARIO:
+				l = initDumpHeaderList(whiteList, 
+						this.properties.getDumpHeaderErogazioniRispostaIngressoWhiteList(), 
+						this.properties.getDumpHeaderErogazioniRispostaIngressoBlackList(), 
+						this.properties.getDumpHeaderFruizioniRispostaIngressoWhiteList(), 
+						this.properties.getDumpHeaderFruizioniRispostaIngressoBlackList());
+				break;
+	
+			case RISPOSTA_USCITA:
+			case RISPOSTA_USCITA_DUMP_BINARIO:
+				l = initDumpHeaderList(whiteList, 
+						this.properties.getDumpHeaderErogazioniRispostaUscitaWhiteList(), 
+						this.properties.getDumpHeaderErogazioniRispostaUscitaBlackList(), 
+						this.properties.getDumpHeaderFruizioniRispostaUscitaWhiteList(), 
+						this.properties.getDumpHeaderFruizioniRispostaUscitaBlackList());
+				break;
+				
+			default:
+				break;
+			}
+		}
+		return l;
+	}
+	private List<String> initDumpHeaderList(boolean whiteList, List<String> erogazioniWhiteList, List<String> erogazioniBlackList, List<String> fruizioniWhiteList, List<String> fruizioniBlackList){
+		List<String> l = null;
+		if(TipoPdD.APPLICATIVA.equals(this.tipoPdD)) {
+			l = whiteList ? erogazioniWhiteList : erogazioniBlackList;
+		}
+		else if(TipoPdD.DELEGATA.equals(this.tipoPdD)) {
+			l = whiteList ? fruizioniWhiteList : fruizioniBlackList;
+		}
+		return l;
 	}
 	
 	
@@ -790,7 +1034,7 @@ public class Dump {
 				if(forwardHeader!=null && forwardHeader.size()>0){
 					Iterator<String> enHdr = forwardHeader.getKeys();
 					while (enHdr.hasNext()) {
-						String key = (String) enHdr.next();
+						String key = enHdr.next();
 						if(key!=null){
 							List<String> values = forwardHeader.getPropertyValues(key);
 							if(values!=null && !values.isEmpty()){
@@ -812,56 +1056,60 @@ public class Dump {
 			// Si tratta di un errore che non dovrebbe mai avvenire
 			String messaggioErrore = "Riscontrato errore durante la lettura degli header di trasporto del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
 					") "+getLogIdTransazione()+":"+e.getMessage();
-			this.loggerDump.error(messaggioErrore);
+			this.loggerDumpError(messaggioErrore);
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error(messaggioErrore);
 		}
-		if(dumpHeaders || onlyLogFileTraceHeaders) {
-			if(transportHeader!=null && transportHeader.size()>0){
+		if( (dumpHeaders || onlyLogFileTraceHeaders) &&
+			(transportHeader!=null && transportHeader.size()>0)
+			){
 				
-				List<String> filterList = null;
-				boolean white = false;
-				if(this.dumpHeaderWhiteList!=null && !this.dumpHeaderWhiteList.isEmpty()) {
-					filterList = this.dumpHeaderWhiteList;
-					white = true;
-				}
-				else if(this.dumpHeaderBlackList!=null && !this.dumpHeaderBlackList.isEmpty()) {
-					filterList = this.dumpHeaderBlackList;
-					white = false;
-				}
-				
-				Iterator<String> keys = transportHeader.keySet().iterator();
-				while (keys.hasNext()) {
-					String key = keys.next();					
-					if(key!=null){
-						
-						boolean add = false;
-						if(filterList!=null) {
-							boolean find = false;
-							for (String filterHdr : filterList) {
-								if(filterHdr.toLowerCase().equals(key.toLowerCase())) {
-									find = true;
-									break;
-								}
+			List<String> filterList = null;
+			boolean white = false;
+			
+			List<String> dumpHeaderWhiteList = initDumpWhiteHeaderList(tipoMessaggio);
+			List<String> dumpHeaderBlackList = initDumpBlackHeaderList(tipoMessaggio);
+			
+			if(dumpHeaderWhiteList!=null && !dumpHeaderWhiteList.isEmpty()) {
+				filterList = dumpHeaderWhiteList;
+				white = true;
+			}
+			else if(dumpHeaderBlackList!=null && !dumpHeaderBlackList.isEmpty()) {
+				filterList = dumpHeaderBlackList;
+				white = false;
+			}
+			
+			Iterator<String> keys = transportHeader.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = keys.next();					
+				if(key!=null){
+					
+					boolean add = false;
+					if(filterList!=null) {
+						boolean find = false;
+						for (String filterHdr : filterList) {
+							if(filterHdr.equalsIgnoreCase(key)) {
+								find = true;
+								break;
 							}
-							if(white) {
-								if(find) {
-									add = true;
-								}
-							}
-							else {
-								if(!find) {
-									add = true;
-								}
+						}
+						if(white) {
+							if(find) {
+								add = true;
 							}
 						}
 						else {
-							add = true;
+							if(!find) {
+								add = true;
+							}
 						}
-						
-						if(add) {
-							List<String> values = transportHeader.get(key);
-							messaggio.getHeaders().put(key, values);
-						}
+					}
+					else {
+						add = true;
+					}
+					
+					if(add) {
+						List<String> values = transportHeader.get(key);
+						messaggio.getHeaders().put(key, values);
 					}
 				}
 			}
@@ -909,17 +1157,17 @@ public class Dump {
 		}catch(Exception e){
 			try{
 				// Registro l'errore sul file dump.log
-				this.loggerDump.error("Riscontrato errore durante la preparazione al dump del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
+				this.loggerDumpError("Riscontrato errore durante la preparazione al dump del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
 						") "+getLogIdTransazione()+":"+e.getMessage());
 			}catch(Exception eLog){
 				// ignore
 			}
-			OpenSPCoop2Logger.loggerOpenSPCoopResources.error("Errore durante la preparazione al dump del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
+			loggerOpenSPCoopResourcesError("Errore durante la preparazione al dump del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
 					") "+getLogIdTransazione()+": "+e.getMessage(),e);
 			try{
 				this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, tipoMessaggio.getValue());
 				this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
-				this.msgDiagErroreDump.logPersonalizzato("dumpContenutiApplicativi.registrazioneNonRiuscita");
+				this.msgDiagErroreDump.logPersonalizzato(DIAGNOSTICO_REGISTRAZIONE_NON_RIUSCITA);
 			}catch(Exception eMsg){
 				// ignore
 			}
@@ -941,14 +1189,14 @@ public class Dump {
 					messaggio.setServizioApplicativoErogatore(this.transazioneApplicativoServer.getServizioApplicativoErogatore());
 					messaggio.setDataConsegna(this.dataConsegnaTransazioneApplicativoServer);
 					GestoreConsegnaMultipla.getInstance().safeSave(messaggio, this.idPortaApplicativa, this.statoRichiesta!=null ? this.statoRichiesta : this.statoRisposta, this.requestInfo);
-				}catch(Throwable t) {
+				}catch(Exception t) {
 					String msgError = "Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage();
-					this.loggerDump.error(msgError,t);
-					OpenSPCoop2Logger.loggerOpenSPCoopResources.error(msgError,t);
+					this.loggerDumpError(msgError,t);
+					loggerOpenSPCoopResourcesError(msgError,t);
 					try{
 						this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, tipoMessaggio.getValue());
 						this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,t.getMessage());
-						this.msgDiagErroreDump.logPersonalizzato("dumpContenutiApplicativi.registrazioneNonRiuscita");
+						this.msgDiagErroreDump.logPersonalizzato(DIAGNOSTICO_REGISTRAZIONE_NON_RIUSCITA);
 					}catch(Exception eMsg){
 						// ignore
 					}
@@ -965,16 +1213,14 @@ public class Dump {
 						messaggio.getBody().lock();
 					}
 					tr.addMessaggio(messaggio, onlyLogFileTraceHeaders, onlyLogFileTraceBody);
-				}catch(TransactionDeletedException e){
-					gestioneStateful = true;
-				}catch(TransactionNotExistsException e){
+				}catch(TransactionDeletedException | TransactionNotExistsException e){
 					gestioneStateful = true;
 				}catch(Exception e){
 					exc = e;
 				}
 				if(gestioneStateful && !dumpIntegrationManager){
 					try{
-						//System.out.println("@@@@@REPOSITORY@@@@@ LOG DUMP ID TRANSAZIONE ["+idTransazione+"] ADD");
+						/**System.out.println("@@@@@REPOSITORY@@@@@ LOG DUMP ID TRANSAZIONE ["+idTransazione+"] ADD");*/
 						RepositoryGestioneStateful.addMessaggio(this.idTransazione, messaggio);
 					}catch(Exception e){
 						exc = e;
@@ -983,17 +1229,17 @@ public class Dump {
 				if(exc!=null) {
 					try{
 						// Registro l'errore sul file dump.log
-						this.loggerDump.error("Riscontrato errore durante la registrazione, nel contesto della transazione, del dump del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
+						this.loggerDumpError("Riscontrato errore durante la registrazione, nel contesto della transazione, del dump del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
 								") "+getLogIdTransazione()+":"+exc.getMessage());
 					}catch(Exception eLog){
 						// ignore
 					}
-					OpenSPCoop2Logger.loggerOpenSPCoopResources.error("Errore durante la registrazione, nel contesto della transazione, del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
+					loggerOpenSPCoopResourcesError("Errore durante la registrazione, nel contesto della transazione, del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
 							") "+getLogIdTransazione()+": "+exc.getMessage(),exc);
 					try{
 						this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, tipoMessaggio.getValue());
 						this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,exc.getMessage());
-						this.msgDiagErroreDump.logPersonalizzato("dumpContenutiApplicativi.registrazioneNonRiuscita");
+						this.msgDiagErroreDump.logPersonalizzato(DIAGNOSTICO_REGISTRAZIONE_NON_RIUSCITA);
 					}catch(Exception eMsg){
 						// ignore
 					}
@@ -1113,22 +1359,23 @@ public class Dump {
 				
 				}
 				
-				this.loggerDump.info(out.toString()); 
+				String msgDump = out.toString();
+				this.loggerDump.info(msgDump); 
 				
 			}catch(Exception e){
 				try{
 					// Registro l'errore sul file dump.log
-					this.loggerDump.error("Riscontrato errore durante il dump su file di log del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
+					this.loggerDumpError("Riscontrato errore durante il dump su file di log del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
 							") "+getLogIdTransazione()+":"+e.getMessage());
 				}catch(Exception eLog){
 					// ignore
 				}
-				OpenSPCoop2Logger.loggerOpenSPCoopResources.error("Errore durante il dump su file di log del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
+				loggerOpenSPCoopResourcesError("Errore durante il dump su file di log del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
 						") "+getLogIdTransazione()+": "+e.getMessage(),e);
 				try{
 					this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, tipoMessaggio.getValue());
 					this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
-					this.msgDiagErroreDump.logPersonalizzato("dumpContenutiApplicativi.registrazioneNonRiuscita");
+					this.msgDiagErroreDump.logPersonalizzato(DIAGNOSTICO_REGISTRAZIONE_NON_RIUSCITA);
 				}catch(Exception eMsg){
 					// ignore
 				}
@@ -1150,7 +1397,7 @@ public class Dump {
 					boolean headersCompact = false; //non supportato nei plugins
 					this.loggerDumpOpenSPCoopAppender.get(i).dump(getConnectionFromState(false),messaggio,headersCompact);
 				}catch(Exception e){
-					OpenSPCoop2Logger.loggerOpenSPCoopResources.error("Errore durante il dump personalizzato ["+this.tipoDumpOpenSPCoopAppender.get(i)+
+					loggerOpenSPCoopResourcesError("Errore durante il dump personalizzato ["+this.tipoDumpOpenSPCoopAppender.get(i)+
 							"] del contenuto applicativo presente nel messaggio ("+tipoMessaggio+") "+getLogIdTransazione()+": "+e.getMessage(),e);
 					try{
 						this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, tipoMessaggio.getValue());
@@ -1169,7 +1416,7 @@ public class Dump {
 	
 	public static DumpMessaggio fillMessaggio(OpenSPCoop2Message msg, DumpMessaggioConfig dumpMessaggioConfig,
 			boolean dumpBody, boolean dumpAttachments, boolean dumpMultipartHeaders,
-			Messaggio messaggio) throws Exception {
+			Messaggio messaggio) throws MessageException  {
 			
 		DumpMessaggio dumpMessaggio = null;
 		
@@ -1179,10 +1426,10 @@ public class Dump {
 		dumpMessaggioConfig.setDumpMultipartHeaders(dumpMultipartHeaders);
 		
 		if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
-			dumpMessaggio = DumpSoapMessageUtils.dumpMessage(msg.castAsSoap(), dumpMessaggioConfig, true); //!Devo leggere tutti gli attachments! this.properties.isDumpAllAttachments());
+			dumpMessaggio = DumpSoapMessageUtils.dumpMessage(msg.castAsSoap(), dumpMessaggioConfig, true); /**!Devo leggere tutti gli attachments! this.properties.isDumpAllAttachments());*/
 		}
 		else{
-			dumpMessaggio = DumpRestMessageUtils.dumpMessage(msg.castAsRest(), dumpMessaggioConfig, true); //!Devo leggere tutti gli attachments! this.properties.isDumpAllAttachments());
+			dumpMessaggio = DumpRestMessageUtils.dumpMessage(msg.castAsRest(), dumpMessaggioConfig, true); /**!Devo leggere tutti gli attachments! this.properties.isDumpAllAttachments());*/
 		}
 		
 		messaggio.setContentType(dumpMessaggio.getContentType());
@@ -1196,15 +1443,14 @@ public class Dump {
 				bodyMultipartInfo.setContentLocation(dumpMessaggio.getMultipartInfoBody().getContentLocation());
 				bodyMultipartInfo.setContentType(dumpMessaggio.getMultipartInfoBody().getContentType());
 				
-				if(dumpMultipartHeaders) {
-					if(dumpMessaggio.getMultipartInfoBody().getHeadersValues()!=null &&
-							dumpMessaggio.getMultipartInfoBody().getHeadersValues().size()>0) {
-						Iterator<?> it = dumpMessaggio.getMultipartInfoBody().getHeadersValues().keySet().iterator();
-						while (it.hasNext()) {
-							String key = (String) it.next();
-							List<String> values = dumpMessaggio.getMultipartInfoBody().getHeadersValues().get(key);
-							bodyMultipartInfo.getHeaders().put(key, values);
-						}
+				if(dumpMultipartHeaders &&
+					dumpMessaggio.getMultipartInfoBody().getHeadersValues()!=null &&
+					dumpMessaggio.getMultipartInfoBody().getHeadersValues().size()>0) {
+					Iterator<?> it = dumpMessaggio.getMultipartInfoBody().getHeadersValues().keySet().iterator();
+					while (it.hasNext()) {
+						String key = (String) it.next();
+						List<String> values = dumpMessaggio.getMultipartInfoBody().getHeadersValues().get(key);
+						bodyMultipartInfo.getHeaders().put(key, values);
 					}
 				}
 				
@@ -1213,7 +1459,7 @@ public class Dump {
 		}
 		
 		if(dumpAttachments && dumpMessaggio.getAttachments()!=null &&
-				dumpMessaggio.getAttachments().size()>0) {
+				!dumpMessaggio.getAttachments().isEmpty()) {
 			for (DumpAttachment dumpAttach : dumpMessaggio.getAttachments()) {
 				
 				Attachment attachment = new Attachment();
@@ -1222,15 +1468,14 @@ public class Dump {
 				attachment.setContentLocation(dumpAttach.getContentLocation());
 				attachment.setContentType(dumpAttach.getContentType());
 				
-				if(dumpMultipartHeaders) {
-					if(dumpAttach.getHeadersValues()!=null &&
-							dumpAttach.getHeadersValues().size()>0) {
-						Iterator<?> it = dumpAttach.getHeadersValues().keySet().iterator();
-						while (it.hasNext()) {
-							String key = (String) it.next();
-							List<String> values = dumpAttach.getHeadersValues().get(key);
-							attachment.getHeaders().put(key, values);
-						}
+				if(dumpMultipartHeaders &&
+					dumpAttach.getHeadersValues()!=null &&
+					dumpAttach.getHeadersValues().size()>0) {
+					Iterator<?> it = dumpAttach.getHeadersValues().keySet().iterator();
+					while (it.hasNext()) {
+						String key = (String) it.next();
+						List<String> values = dumpAttach.getHeadersValues().get(key);
+						attachment.getHeaders().put(key, values);
 					}
 				}
 				
@@ -1239,7 +1484,7 @@ public class Dump {
 				else if(dumpAttach.getErrorContentNotSerializable()!=null)
 					attachment.setContent(dumpAttach.getErrorContentNotSerializable().getBytes());
 				else
-					throw new Exception("Contenuto dell'attachment con id '"+attachment.getContentId()+"' non presente ?");
+					throw new MessageException("Contenuto dell'attachment con id '"+attachment.getContentId()+"' non presente ?");
 				
 				messaggio.getAttachments().add(attachment);
 			}
@@ -1251,21 +1496,21 @@ public class Dump {
 	
 	private void gestioneErroreDump(Throwable e) throws DumpException{
 		
-		if(this.properties.isDumpFallito_BloccoServiziPdD()){
-			Dump.sistemaDumpDisponibile=false;
-			Dump.motivoMalfunzionamentoDump=e;
+		if(this.properties.isDumpFallitoBloccoServiziPdD()){
+			Dump.setSistemaDumpDisponibile(false);
+			Dump.setMotivoMalfunzionamentoDump(e);
 			try{
 				this.msgDiagErroreDump.logPersonalizzato("dumpContenutiApplicativi.errore.bloccoServizi");
 			}catch(Exception eMsg){
 				// ignore
 			}
-			OpenSPCoop2Logger.loggerOpenSPCoopResources.error("Il Sistema di dump dei contenuti applicativi ha rilevato un errore "+
+			loggerOpenSPCoopResourcesError("Il Sistema di dump dei contenuti applicativi ha rilevato un errore "+
 					"durante la registrazione di un contenuto applicativo, tutti i servizi/moduli della porta di dominio sono sospesi."+
 					" Si richiede un intervento sistemistico per la risoluzione del problema e il riavvio di GovWay. "+
 					"Errore rilevato: ",e);
 		}
 		
-		if(this.properties.isDumpFallito_BloccaCooperazioneInCorso()){
+		if(this.properties.isDumpFallitoBloccaCooperazioneInCorso()){
 			throw new DumpException(e);
 		}
 	}

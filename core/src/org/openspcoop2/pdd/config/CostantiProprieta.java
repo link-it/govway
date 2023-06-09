@@ -468,10 +468,81 @@ public class CostantiProprieta {
 	
 	
 	
+	
+	// ****  REGISTRAZIONE MESSAGGI *****
+		
+	private static final String REGISTRAZIONE_MESSAGGI_WHITE_LIST = "registrazioneMessaggi.whiteList";
+	private static final String REGISTRAZIONE_MESSAGGI_BLACK_LIST = "registrazioneMessaggi.blackList";
+	
+	private static final String REGISTRAZIONE_MESSAGGI_RICHIESTA_INGRESSO_WHITE_LIST = "registrazioneMessaggi.richiestaIngresso.whiteList";
+	private static final String REGISTRAZIONE_MESSAGGI_RICHIESTA_INGRESSO_BLACK_LIST = "registrazioneMessaggi.richiestaIngresso.blackList";
+	
+	private static final String REGISTRAZIONE_MESSAGGI_RICHIESTA_USCITA_WHITE_LIST = "registrazioneMessaggi.richiestaUscita.whiteList";
+	private static final String REGISTRAZIONE_MESSAGGI_RICHIESTA_USCITA_BLACK_LIST = "registrazioneMessaggi.richiestaUscita.blackList";
+	
+	private static final String REGISTRAZIONE_MESSAGGI_RISPOSTA_INGRESSO_WHITE_LIST = "registrazioneMessaggi.rispostaIngresso.whiteList";
+	private static final String REGISTRAZIONE_MESSAGGI_RISPOSTA_INGRESSO_BLACK_LIST = "registrazioneMessaggi.rispostaIngresso.blackList";
+	
+	private static final String REGISTRAZIONE_MESSAGGI_RISPOSTA_USCITA_WHITE_LIST = "registrazioneMessaggi.rispostaUscita.whiteList";
+	private static final String REGISTRAZIONE_MESSAGGI_RISPOSTA_USCITA_BLACK_LIST = "registrazioneMessaggi.rispostaUscita.blackList";
+	
+	public static List<String> getRegistrazioneMessaggiWhiteList(List<Proprieta> proprieta) {
+		return getRegistrazioneMessaggiLista(proprieta, REGISTRAZIONE_MESSAGGI_WHITE_LIST);
+	}
+	public static List<String> getRegistrazioneMessaggiBlackList(List<Proprieta> proprieta) {
+		return getRegistrazioneMessaggiLista(proprieta, REGISTRAZIONE_MESSAGGI_BLACK_LIST);
+	}
+	
+	public static List<String> getRegistrazioneMessaggiRichiestaIngressoWhiteList(List<Proprieta> proprieta) {
+		return getRegistrazioneMessaggiLista(proprieta, REGISTRAZIONE_MESSAGGI_RICHIESTA_INGRESSO_WHITE_LIST);
+	}
+	public static List<String> getRegistrazioneMessaggiRichiestaIngressoBlackList(List<Proprieta> proprieta) {
+		return getRegistrazioneMessaggiLista(proprieta, REGISTRAZIONE_MESSAGGI_RICHIESTA_INGRESSO_BLACK_LIST);
+	}
+	
+	public static List<String> getRegistrazioneMessaggiRichiestaUscitaWhiteList(List<Proprieta> proprieta) {
+		return getRegistrazioneMessaggiLista(proprieta, REGISTRAZIONE_MESSAGGI_RICHIESTA_USCITA_WHITE_LIST);
+	}
+	public static List<String> getRegistrazioneMessaggiRichiestaUscitaBlackList(List<Proprieta> proprieta) {
+		return getRegistrazioneMessaggiLista(proprieta, REGISTRAZIONE_MESSAGGI_RICHIESTA_USCITA_BLACK_LIST);
+	}
+	
+	public static List<String> getRegistrazioneMessaggiRispostaIngressoWhiteList(List<Proprieta> proprieta) {
+		return getRegistrazioneMessaggiLista(proprieta, REGISTRAZIONE_MESSAGGI_RISPOSTA_INGRESSO_WHITE_LIST);
+	}
+	public static List<String> getRegistrazioneMessaggiRispostaIngressoBlackList(List<Proprieta> proprieta) {
+		return getRegistrazioneMessaggiLista(proprieta, REGISTRAZIONE_MESSAGGI_RISPOSTA_INGRESSO_BLACK_LIST);
+	}
+	
+	public static List<String> getRegistrazioneMessaggiRispostaUscitaWhiteList(List<Proprieta> proprieta) {
+		return getRegistrazioneMessaggiLista(proprieta, REGISTRAZIONE_MESSAGGI_RISPOSTA_USCITA_WHITE_LIST);
+	}
+	public static List<String> getRegistrazioneMessaggiRispostaUscitaBlackList(List<Proprieta> proprieta) {
+		return getRegistrazioneMessaggiLista(proprieta, REGISTRAZIONE_MESSAGGI_RISPOSTA_USCITA_BLACK_LIST);
+	}
+	
+	private static List<String> getRegistrazioneMessaggiLista(List<Proprieta> proprieta, String propertyName) {
+		
+		List<String> l = new ArrayList<>();
+		
+		String v = readValue(proprieta, propertyName);
+		if(v==null || StringUtils.isEmpty(v)) {
+			return l;
+		}
+		
+		initList(l, v);
+		return l;
+	}
+	
+
+	
+	
+	
+	
 	// ****  FILE TRACE *****
 		
-	public static final String FILE_TRACE_VALUE_ENABLED = VALUE_ENABLED;
-	public static final String FILE_TRACE_VALUE_DISABLED = VALUE_DISABLED;
+	private static final String FILE_TRACE_VALUE_ENABLED = VALUE_ENABLED;
+	private static final String FILE_TRACE_VALUE_DISABLED = VALUE_DISABLED;
 	
 	private static final String FILE_TRACE_ENABLED = "fileTrace.enabled";
 	
@@ -832,6 +903,31 @@ public class CostantiProprieta {
 			}
 		}
 		return defaultValue;
+	}
+	
+	private static void initList(List<String> list, String tmp) {
+		if(tmp!=null && !"".equals(tmp.trim())) {
+			tmp = tmp.trim();
+			if(tmp.contains(",")) {
+				String [] split = tmp.split(",");
+				initList(list, split);
+			}
+			else {
+				list.add(tmp);
+			}
+		}
+	}
+	private static void initList(List<String> list, String [] split) {
+		if(split!=null && split.length>0) {
+			for (String s : split) {
+				if(s!=null) {
+					s = s.trim();
+					if(!"".equals(s)) {
+						list.add(s);
+					}
+				}
+			}
+		}
 	}
 	
 	public static void checkFile(File file) throws CoreException {

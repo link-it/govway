@@ -57,7 +57,7 @@ public class NotifierStreamingHandler extends AbstractStreamingHandler {
 			long idDumpConfigurazione,
 			String contentType, Logger log,
 			IDSoggetto dominio) throws Exception{
-		super(log, OpenSPCoop2Properties.getInstance().getDumpNonRealtime_inMemoryThreshold());
+		super(log, OpenSPCoop2Properties.getInstance().getDumpNonRealtimeInMemoryThreshold());
 		this.notifierCallback = notifierCallback; // Per i log
 		this.idTransazione = idTransazione;
 		this.tipoMessaggio = tipoMessaggio;
@@ -89,7 +89,7 @@ public class NotifierStreamingHandler extends AbstractStreamingHandler {
 			
 			OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 			
-			if(op2Properties.isDumpNonRealtime_databaseMode()){
+			if(op2Properties.isDumpNonRealtimeDatabaseMode()){
 				
 				this.notifierCallback.debug("Save on database.....");
 				
@@ -117,7 +117,7 @@ public class NotifierStreamingHandler extends AbstractStreamingHandler {
 				// save on fs
 				
 				// directory
-				File fDir =op2Properties.getDumpNonRealtime_repository();
+				File fDir =op2Properties.getDumpNonRealtimeRepository();
 				if(fDir.exists()==false){
 					throw new Exception("Directory ["+fDir.getAbsolutePath()+"] not exists");
 				}

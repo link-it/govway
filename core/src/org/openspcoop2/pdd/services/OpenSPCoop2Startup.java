@@ -851,10 +851,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					DumpByteArrayOutputStream.setClassImpl(propertiesReader.getDumpBufferImpl());
 				}
 				OpenSPCoop2Startup.logStartupInfo("DumpByteArrayOutputStream buffer implementation: "+DumpByteArrayOutputStream.getClassImpl());
-				OpenSPCoop2Startup.logStartupInfo("DumpBinario set buffer threshold: "+propertiesReader.getDumpBinario_inMemoryThreshold());
-				AbstractBaseOpenSPCoop2MessageDynamicContent.setSoglia(propertiesReader.getDumpBinario_inMemoryThreshold());
-				OpenSPCoop2Startup.logStartupInfo("DumpBinario set buffer repository: "+propertiesReader.getDumpBinario_repository());
-				AbstractBaseOpenSPCoop2MessageDynamicContent.setRepositoryFile(propertiesReader.getDumpBinario_repository());
+				OpenSPCoop2Startup.logStartupInfo("DumpBinario set buffer threshold: "+propertiesReader.getDumpBinarioInMemoryThreshold());
+				AbstractBaseOpenSPCoop2MessageDynamicContent.setSoglia(propertiesReader.getDumpBinarioInMemoryThreshold());
+				OpenSPCoop2Startup.logStartupInfo("DumpBinario set buffer repository: "+propertiesReader.getDumpBinarioRepository());
+				AbstractBaseOpenSPCoop2MessageDynamicContent.setRepositoryFile(propertiesReader.getDumpBinarioRepository());
 				
 				// SoapBuffer
 				boolean soapReader = propertiesReader.useSoapMessageReader();
@@ -1344,8 +1344,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					OpenSPCoop2Startup.logStartupInfo("UUID Generator: "+classClusterID);
 					
 					if(propertiesReader.generazioneDateCasualiLogAbilitato()){
-						GeneratoreCasualeDate.init(propertiesReader.getGenerazioneDateCasualiLog_dataInizioIntervallo(), 
-								propertiesReader.getGenerazioneDateCasualiLog_dataFineIntervallo(),
+						GeneratoreCasualeDate.init(propertiesReader.getGenerazioneDateCasualiLogDataInizioIntervallo(), 
+								propertiesReader.getGenerazioneDateCasualiLogDataFineIntervallo(),
 								OpenSPCoop2Startup.log);
 						OpenSPCoop2Startup.logStartupInfo("Abilitata generazione date casuali");
 					}
@@ -1391,7 +1391,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					propertiesReader.isDSOp2UtilsEnabled(), propertiesReader.isRisorseJMXAbilitate(),
 					propertiesReader.isConfigurazioneCache_ConfigPrefill(), propertiesReader.getCryptConfigAutenticazioneApplicativi(),
 					propertiesReader.getCacheTypeConfig());
-			if(isInitializeConfig == false){
+			if(!isInitializeConfig){
 				this.logError("Riscontrato errore durante l'inizializzazione della configurazione di OpenSPCoop.");
 				return;
 			}
@@ -1444,9 +1444,6 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			/*----------- Inizializzazione libreria --------------*/
 			try{
 				IGestoreRepository repository = null;
-//				if(propertiesReader.getDatabaseType()!=null){
-//					repository = GestoreRepositoryFactory.createRepositoryBuste(propertiesReader.getDatabaseType());
-//				}else{
 				// Il tipo deve sempre essere letto da openspcoop.properties, altrimenti la testsuite che richiede il tipo di default non viene mai eseguita.
 				String tipoClass = classNameReader.getRepositoryBuste(propertiesReader.getGestoreRepositoryBuste());
 				repository = (IGestoreRepository) loader.newInstance(tipoClass);
@@ -1478,7 +1475,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			/* -------------- Creazione lock entry non esistenti -------------------- */
-			if(TimerUtils.createEmptyLockTimers(propertiesReader, ID_MODULO, OpenSPCoop2Logger.getLoggerOpenSPCoopTimers(), true)==false) {
+			if(!TimerUtils.createEmptyLockTimers(propertiesReader, ID_MODULO, OpenSPCoop2Logger.getLoggerOpenSPCoopTimers(), true)) {
 				msgDiag.logStartupError("Inizializzazione lock per i timer fallita","Inizializzazione Lock");
 				return;
 			}
@@ -2537,12 +2534,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				FileSystemUtilities.mkdir(fs.getDirEventi().getAbsolutePath(), configMkdir);
 				
 				// dumpBinario
-				File dirBinario = propertiesReader.getDumpBinario_repository();
+				File dirBinario = propertiesReader.getDumpBinarioRepository();
 				FileSystemUtilities.mkdir(dirBinario, configMkdir);
 								
 				// dumpNotRealTime
-				if(propertiesReader.isDumpNonRealtime_fileSystemMode()) {
-					File dir = propertiesReader.getDumpNonRealtime_repository();
+				if(propertiesReader.isDumpNonRealtimeFileSystemMode()) {
+					File dir = propertiesReader.getDumpNonRealtimeRepository();
 					FileSystemUtilities.mkdir(dir, configMkdir);
 				}
 				

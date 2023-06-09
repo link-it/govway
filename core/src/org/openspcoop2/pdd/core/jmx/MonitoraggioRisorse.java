@@ -629,32 +629,32 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 	public void refreshDatiMonitoraggioPdD(){
 
 		StringBuilder bf = new StringBuilder();
-		if( TimerMonitoraggioRisorseThread.risorseDisponibili == false){
+		if( !TimerMonitoraggioRisorseThread.risorseDisponibili){
 			bf.append("Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage());
 		}
-		if( TimerThresholdThread.freeSpace == false){
+		if( !TimerThresholdThread.freeSpace){
 			if(bf.length()>0){
 				bf.append("\n");
 			}
 			bf.append("[ThresholdCheck] Non sono disponibili abbastanza risorse per la gestione delle richieste");
 		}
-		if( Tracciamento.tracciamentoDisponibile == false){
+		if( !Tracciamento.tracciamentoDisponibile){
 			if(bf.length()>0){
 				bf.append("\n");
 			}
 			bf.append("Tracciamento non disponibile: "+Tracciamento.motivoMalfunzionamentoTracciamento.getMessage());
 		}
-		if( MsgDiagnostico.gestoreDiagnosticaDisponibile == false){
+		if( !MsgDiagnostico.gestoreDiagnosticaDisponibile){
 			if(bf.length()>0){
 				bf.append("\n");
 			}
 			bf.append("Sistema di diagnostica non disponibile: "+MsgDiagnostico.motivoMalfunzionamentoDiagnostici.getMessage());
 		}
-		if( Dump.sistemaDumpDisponibile == false){
+		if( !Dump.isSistemaDumpDisponibile()){
 			if(bf.length()>0){
 				bf.append("\n");
 			}
-			bf.append("Sistema di dump dei contenuti applicativi non disponibile: "+Dump.motivoMalfunzionamentoDump.getMessage());
+			bf.append("Sistema di dump dei contenuti applicativi non disponibile: "+Dump.getMotivoMalfunzionamentoDump().getMessage());
 		}
 		if(bf.length()==0){
 			bf.append(MonitoraggioRisorse.MESSAGGIO_RISORSE_ADEGUATE);
@@ -761,7 +761,7 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 				}
 			}
 			
-			if(prop.isServerJ2EE()!=null && prop.isServerJ2EE()==false){
+			if(prop.isServerJ2EE()!=null && !prop.isServerJ2EE()){
 				if(prop.isTimerConsegnaContenutiApplicativiAbilitato()){
 					boolean useDefaultManager = DBConsegnePreseInCaricoManager.getInstanceSmistatore().useDefaultManager();
 					if(!useDefaultManager) {

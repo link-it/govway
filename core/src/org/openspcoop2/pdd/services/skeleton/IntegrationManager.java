@@ -29,6 +29,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -120,6 +121,13 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	public static final IDService ID_SERVICE = IDService.INTEGRATION_MANAGER_SOAP;
 	public static final String ID_MODULO = ID_SERVICE.getValue();
 	
+	private static void logError(Logger logCore, String msg) {
+		logCore.error(msg);
+	}
+	private static void logError(Logger logCore, String msg, Throwable e) {
+		logCore.error(msg,e);
+	}
+	
 	private OpenSPCoop2Properties propertiesReader;
 	private ClassNameProperties className;
 
@@ -138,7 +146,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			this.inizializzato = true;
 			semaphore.acquireThrowRuntime("init");
 			try {
-				if(IntegrationManager.staticInitialized==false){
+				if(!IntegrationManager.staticInitialized){
 					IntegrationManager.staticInitialized = true;
 				}
 			}finally {
@@ -155,7 +163,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		ErroriProperties erroriProperties = null;
 		try {
 			erroriProperties = ErroriProperties.getInstance(log);
-		}catch(Exception Ignoree) {
+		}catch(Exception ignore) {
 			// non succede
 		}
 		return erroriProperties;
@@ -175,12 +183,12 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	private void checkIMAuthorization(Logger log) throws IntegrationManagerException{
 		try {
 			Object o = getHttpServletRequest().getAttribute(org.openspcoop2.core.constants.Costanti.INTEGRATION_MANAGER_ENGINE_AUTHORIZED.getValue());
-			if(o == null || !(o instanceof Boolean)){
-				throw new Exception("Invocazione del Servizio non autorizzata");
+			if(!(o instanceof Boolean)){
+				throw new CoreException("Invocazione del Servizio non autorizzata");
 			}
 			Boolean b = (Boolean) o;
-			if(!b){
-				throw new Exception("Invocazione del Servizio non autorizzata");
+			if(!b.booleanValue()){
+				throw new CoreException("Invocazione del Servizio non autorizzata");
 			}
 		} catch (Exception e) {
 			log.error(e.getMessage(),e);
@@ -229,7 +237,6 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	}
 
 	/** IGestoreCredenziali: lista di gestori delle credenziali */
-	//private java.util.Map<String, IGestoreCredenzialiIM> gestoriCredenziali = null;
 	// E' stato aggiunto lo stato dentro l'oggetto.
 	private String [] tipiGestoriCredenziali = null;
 	private synchronized void initializeGestoreCredenziali(Logger logCore,IProtocolFactory<?> protocolFactory,MsgDiagnostico msgDiag) throws IntegrationManagerException{
@@ -237,7 +244,6 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			
 			Loader loader = Loader.getInstance();
 			
-			//this.gestoriCredenziali = new java.util.HashMap<String, IGestoreCredenzialiIM>();
 			this.tipiGestoriCredenziali = this.propertiesReader.getTipoGestoreCredenzialiIM();
 			if(this.tipiGestoriCredenziali!=null){
 				for (int i = 0; i < this.tipiGestoriCredenziali.length; i++) {
@@ -245,7 +251,6 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					try {
 						IGestoreCredenzialiIM gestore = (IGestoreCredenzialiIM)loader.newInstance(classType);
 						gestore.toString();
-						//this.gestoriCredenziali.put(this.tipiGestoriCredenziali[i],gestore);
 					} catch (Exception e) {
 						msgDiag.logErroreGenerico(e, "InizializzazioneGestoreCredenziali("+this.tipiGestoriCredenziali[i]+")");
 						throw new IntegrationManagerException(protocolFactory,
@@ -287,7 +292,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					if (gestore != null) {
 						Credenziali credenzialiRitornate = gestore.elaborazioneCredenziali(infoConnettoreIngresso);
 						if(credenzialiRitornate==null){
-							throw new Exception("Credenziali non ritornate");
+							throw new CoreException("Credenziali non ritornate");
 						}
 						if(infoConnettoreIngresso.getCredenziali().equals(credenzialiRitornate) == false){
 							String nuoveCredenziali = credenzialiRitornate.toString();
@@ -304,7 +309,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 							infoConnettoreIngresso.setCredenziali(credenzialiRitornate);	
 						}
 					} else {
-						throw new Exception("non inizializzato");
+						throw new CoreException("non inizializzato");
 					}
 				} 
 				catch (Exception e) {
@@ -354,7 +359,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		}		
 		msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_SA_FRUITORE, credenzialiFornite);
 
-		IDServizioApplicativo servizio_applicativo = null;	    
+		IDServizioApplicativo servizioApplicativo = null;	    
 		String [] tipoAutenticazione = configPdDManager.getIntegrationManagerAuthentication();
 		if(tipoAutenticazione==null || tipoAutenticazione.length<1){
 			msgDiag.logPersonalizzato("autenticazioneNonImpostata");
@@ -412,12 +417,12 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				}
 			}
 			else{
-				servizio_applicativo = esito.getIdServizioApplicativo();
+				servizioApplicativo = esito.getIdServizioApplicativo();
 				break; //sa individuato
 			}
 		}
 		
-		if(servizio_applicativo == null){
+		if(servizioApplicativo == null){
 			if(errori.length()>0){
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, errori.toString());
 				msgDiag.logPersonalizzato("servizioApplicativo.identificazioneTramiteCredenziali");
@@ -434,53 +439,53 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			}
 		}
 		
-		msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE, servizio_applicativo.getNome());
-		msgDiag.addKeyword(CostantiPdD.KEY_SA_EROGATORE, servizio_applicativo.getNome());
-		msgDiag.setServizioApplicativo(servizio_applicativo.getNome());
-		if(servizio_applicativo.getIdSoggettoProprietario()!=null){
-			msgDiag.addKeyword(CostantiPdD.KEY_TIPO_MITTENTE_BUSTA_RICHIESTA, servizio_applicativo.getIdSoggettoProprietario().getTipo());
-			msgDiag.addKeyword(CostantiPdD.KEY_MITTENTE_BUSTA_RICHIESTA, servizio_applicativo.getIdSoggettoProprietario().getNome());
-			msgDiag.setFruitore(servizio_applicativo.getIdSoggettoProprietario());
+		msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE, servizioApplicativo.getNome());
+		msgDiag.addKeyword(CostantiPdD.KEY_SA_EROGATORE, servizioApplicativo.getNome());
+		msgDiag.setServizioApplicativo(servizioApplicativo.getNome());
+		if(servizioApplicativo.getIdSoggettoProprietario()!=null){
+			msgDiag.addKeyword(CostantiPdD.KEY_TIPO_MITTENTE_BUSTA_RICHIESTA, servizioApplicativo.getIdSoggettoProprietario().getTipo());
+			msgDiag.addKeyword(CostantiPdD.KEY_MITTENTE_BUSTA_RICHIESTA, servizioApplicativo.getIdSoggettoProprietario().getNome());
+			msgDiag.setFruitore(servizioApplicativo.getIdSoggettoProprietario());
 		}
-		return  servizio_applicativo;
+		return  servizioApplicativo;
 	}
 
 
 	/* ----------- Init -------------- */
 	private void verificaRisorseSistema(IProtocolFactory<?> protocolFactory,Logger logCore,String tipoOperazione) throws IntegrationManagerException {
 		
-		if( OpenSPCoop2Startup.initialize == false){
-			logCore.error("["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Inizializzazione di GovWay non correttamente effettuata");
+		if( !OpenSPCoop2Startup.initialize){
+			logError(logCore, "["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Inizializzazione di GovWay non correttamente effettuata");
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA),
 					IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, this.getErroriProperties(logCore));
 		}
-		if( TimerMonitoraggioRisorseThread.risorseDisponibili == false){
-			logCore.error("["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
+		if( !TimerMonitoraggioRisorseThread.risorseDisponibili){
+			logError(logCore, "["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_532_RISORSE_NON_DISPONIBILI),
 					IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE, this.getErroriProperties(logCore));
 		}
-		if (TimerThresholdThread.freeSpace == false) {
-			logCore.error("["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Non sono disponibili abbastanza risorse per la gestione della richiesta");
+		if (!TimerThresholdThread.freeSpace) {
+			logError(logCore, "["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Non sono disponibili abbastanza risorse per la gestione della richiesta");
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_533_RISORSE_DISPONIBILI_LIVELLO_CRITICO),
 					IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE, this.getErroriProperties(logCore));
 		}
-		if( Tracciamento.tracciamentoDisponibile == false){
-			logCore.error("["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Tracciatura non disponibile: "+Tracciamento.motivoMalfunzionamentoTracciamento.getMessage(),Tracciamento.motivoMalfunzionamentoTracciamento);
+		if( !Tracciamento.tracciamentoDisponibile){
+			logError(logCore, "["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Tracciatura non disponibile: "+Tracciamento.motivoMalfunzionamentoTracciamento.getMessage(),Tracciamento.motivoMalfunzionamentoTracciamento);
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_545_TRACCIATURA_NON_FUNZIONANTE),
 					IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE, this.getErroriProperties(logCore));
 		}
-		if( MsgDiagnostico.gestoreDiagnosticaDisponibile == false){
-			logCore.error("["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Sistema di diagnostica non disponibile: "+MsgDiagnostico.motivoMalfunzionamentoDiagnostici.getMessage(),MsgDiagnostico.motivoMalfunzionamentoDiagnostici);
+		if( !MsgDiagnostico.gestoreDiagnosticaDisponibile){
+			logError(logCore, "["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Sistema di diagnostica non disponibile: "+MsgDiagnostico.motivoMalfunzionamentoDiagnostici.getMessage(),MsgDiagnostico.motivoMalfunzionamentoDiagnostici);
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_546_DIAGNOSTICA_NON_FUNZIONANTE),
 					IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE, this.getErroriProperties(logCore));
 		}
-		if( Dump.sistemaDumpDisponibile == false){
-			logCore.error("["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Sistema di dump dei contenuti applicativi non disponibile: "+Dump.motivoMalfunzionamentoDump.getMessage(),Dump.motivoMalfunzionamentoDump);
+		if( !Dump.isSistemaDumpDisponibile()){
+			logError(logCore, "["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Sistema di dump dei contenuti applicativi non disponibile: "+Dump.getMotivoMalfunzionamentoDump().getMessage(),Dump.getMotivoMalfunzionamentoDump());
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_547_DUMP_CONTENUTI_APPLICATIVI_NON_FUNZIONANTE),
 					IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE, this.getErroriProperties(logCore));
@@ -489,7 +494,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		try{
 			ConfigurazionePdDManager.getInstance().verificaConsistenzaConfigurazione();
 		}catch(Exception e){
-			logCore.error("["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Riscontrato errore durante la verifica della consistenza della configurazione PdD",e);
+			logError(logCore, "["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Riscontrato errore durante la verifica della consistenza della configurazione PdD",e);
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),
 					IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE, this.getErroriProperties(logCore));
@@ -504,9 +509,9 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		}
 		if (!serviceIsEnabled || serviceIsEnabledExceptionProcessamento!=null) {
 			if(serviceIsEnabledExceptionProcessamento!=null){
-				logCore.error("["+ IntegrationManager.ID_MODULO+ "]["+tipoOperazione+"] Identificazione stato servizio IntegrationManager non riuscita: "+serviceIsEnabledExceptionProcessamento.getMessage(),serviceIsEnabledExceptionProcessamento);
+				logError(logCore, "["+ IntegrationManager.ID_MODULO+ "]["+tipoOperazione+"] Identificazione stato servizio IntegrationManager non riuscita: "+serviceIsEnabledExceptionProcessamento.getMessage(),serviceIsEnabledExceptionProcessamento);
 			}else{
-				logCore.error("["+ IntegrationManager.ID_MODULO+ "]["+tipoOperazione+"] Servizio IntegrationManager disabilitato");
+				logError(logCore, "["+ IntegrationManager.ID_MODULO+ "]["+tipoOperazione+"] Servizio IntegrationManager disabilitato");
 			}
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_552_IM_SERVICE_NOT_ACTIVE),
@@ -577,7 +582,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		MsgDiagnostico msgDiag = getMsgDiagnostico();
 		msgDiag.addKeyword(CostantiPdD.KEY_TIPO_OPERAZIONE_IM, tipoOperazione.toString());
 		
-		IDServizioApplicativo id_servizio_applicativo = null;
+		IDServizioApplicativo idServizioApplicativo = null;
 		OpenSPCoopStateful stato = null;
 		
 		// PddContext
@@ -658,8 +663,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			this.gestioneCredenziali(logCore, protocolFactory,msgDiag, imRequestContext.getConnettore(),pddContext);
 						
 			// Autenticazione Servizio Applicativo
-			id_servizio_applicativo = autenticazione(logCore, protocolFactory,msgDiag,imRequestContext.getConnettore(),configPdDManager,pddContext);
-			imResponseContext.setServizioApplicativo(id_servizio_applicativo);
+			idServizioApplicativo = autenticazione(logCore, protocolFactory,msgDiag,imRequestContext.getConnettore(),configPdDManager,pddContext);
+			imResponseContext.setServizioApplicativo(idServizioApplicativo);
 			String tipoServizioLog = "";
 			String servizioLog = "";
 			String azioneLog = "";
@@ -672,7 +677,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				azioneLog = " azione["+azione+"]";
 			if(counter>=0)
 				counterLog = " counter["+counter+"]";
-			String param = "ServizioApplicativo["+id_servizio_applicativo.getNome()+"]"+tipoServizioLog+servizioLog+azioneLog+counterLog;
+			String param = "ServizioApplicativo["+idServizioApplicativo.getNome()+"]"+tipoServizioLog+servizioLog+azioneLog+counterLog;
 			msgDiag.addKeyword(CostantiPdD.KEY_PARAMETRI_OPERAZIONE_IM, param);
 			msgDiag.logPersonalizzato("logInvocazioneOperazione");
 
@@ -682,20 +687,20 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			GestoreMessaggi gestoreMessaggi = new GestoreMessaggi(stato, true, msgDiag,pddContext);
 
 			if(counter<0 && offset<0){
-				ids = gestoreMessaggi.getIDMessaggi_ServizioApplicativo(id_servizio_applicativo.getNome(),tipoServizio,servizio,azione);
+				ids = gestoreMessaggi.getIDMessaggi_ServizioApplicativo(idServizioApplicativo.getNome(),tipoServizio,servizio,azione);
 			}else if(offset<0){
-				ids = gestoreMessaggi.getIDMessaggi_ServizioApplicativo(id_servizio_applicativo.getNome(),tipoServizio,servizio,azione,counter);
+				ids = gestoreMessaggi.getIDMessaggi_ServizioApplicativo(idServizioApplicativo.getNome(),tipoServizio,servizio,azione,counter);
 			}else{
-				ids = gestoreMessaggi.getIDMessaggi_ServizioApplicativo(id_servizio_applicativo.getNome(),tipoServizio,servizio,azione,counter,offset);
+				ids = gestoreMessaggi.getIDMessaggi_ServizioApplicativo(idServizioApplicativo.getNome(),tipoServizio,servizio,azione,counter,offset);
 			}
-			if(ids==null || ids.size() == 0){
+			if(ids==null || ids.isEmpty()){
 				msgDiag.logPersonalizzato("messaggiNonPresenti");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI.
-						getErroreIntegrazione(),id_servizio_applicativo,
+						getErroreIntegrazione(),idServizioApplicativo,
 						IntegrationFunctionError.IM_MESSAGES_NOT_FOUND, this.getErroriProperties(logCore));
 			}
 			List<String> listResponse = new ArrayList<>();
-			if(ids!=null && ids.size()>0){
+			if(ids!=null && !ids.isEmpty()){
 				for (IdentificativoIM id : ids) {
 					if(this.propertiesReader.isIntegrationManagerIdWithDate()) {
 						listResponse.add(id.getIdWithDate());
@@ -725,7 +730,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					}
 				}
 			}catch(Exception eInteral){
-				logCore.error("Errore durante la generazione dell'esito: "+eInteral.getMessage(),eInteral);
+				logError(logCore, "Errore durante la generazione dell'esito: "+eInteral.getMessage(),eInteral);
 				imResponseContext.setEsito(EsitoTransazione.ESITO_TRANSAZIONE_ERROR);
 			}
 			
@@ -735,7 +740,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				throw (IntegrationManagerException)e;
 			}else{
 				msgDiag.logErroreGenerico(e,"getAllMessagesId("+tipoOperazione+")");
-				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),id_servizio_applicativo,
+				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),idServizioApplicativo,
 						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 			}
 		}finally{
@@ -911,7 +916,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_RISPOSTA, idMessaggio);
 		}
 		
-		IDServizioApplicativo id_servizio_applicativo = null;
+		IDServizioApplicativo idServizioApplicativo = null;
 		OpenSPCoopStateful stato = null;
 		// PddContext
 		PdDContext pddContext = new PdDContext();
@@ -972,9 +977,9 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			this.gestioneCredenziali(logCore, protocolFactory,msgDiag, imRequestContext.getConnettore(),pddContext);
 			
 			// Autenticazione Servizio Applicativo
-			id_servizio_applicativo = autenticazione(logCore, protocolFactory,msgDiag,imRequestContext.getConnettore(),configPdDManager,pddContext);
-			imResponseContext.setServizioApplicativo(id_servizio_applicativo);
-			String param = "ServizioApplicativo["+id_servizio_applicativo.getNome()+"] ID["+idMessaggio+"]";
+			idServizioApplicativo = autenticazione(logCore, protocolFactory,msgDiag,imRequestContext.getConnettore(),configPdDManager,pddContext);
+			imResponseContext.setServizioApplicativo(idServizioApplicativo);
+			String param = "ServizioApplicativo["+idServizioApplicativo.getNome()+"] ID["+idMessaggio+"]";
 			msgDiag.addKeyword(CostantiPdD.KEY_PARAMETRI_OPERAZIONE_IM, param);
 			msgDiag.logPersonalizzato("logInvocazioneOperazione");
 
@@ -982,7 +987,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			GestoreMessaggi gestoreMessaggi = new GestoreMessaggi(stato, true, idMessaggio, Costanti.INBOX, msgDiag, pddContext);
 			MessaggioIM messaggioIM = null;
 			if(useNewMethod) {
-				messaggioIM = gestoreMessaggi.readMessageForSIL(id_servizio_applicativo.getNome(),isRiferimentoMessaggio, dataMessaggio);
+				messaggioIM = gestoreMessaggi.readMessageForSIL(idServizioApplicativo.getNome(),isRiferimentoMessaggio, dataMessaggio);
 			}
 			
 			// Check Esistenza Messaggio
@@ -991,13 +996,13 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				exists = messaggioIM!=null;
 			}
 			else { 
-				exists = gestoreMessaggi.existsMessageForSIL(id_servizio_applicativo.getNome(),isRiferimentoMessaggio); 
+				exists = gestoreMessaggi.existsMessageForSIL(idServizioApplicativo.getNome(),isRiferimentoMessaggio); 
 			}
 			if(!exists){
 				msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_TRANSACTION_MANAGER, idMessaggio);
 				msgDiag.logPersonalizzato("messaggioNonTrovato");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO.
-						getErroreIntegrazione(),id_servizio_applicativo,
+						getErroreIntegrazione(),idServizioApplicativo,
 						IntegrationFunctionError.IM_MESSAGE_NOT_FOUND, this.getErroriProperties(logCore));
 			}
 
@@ -1007,13 +1012,13 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				authorized = messaggioIM.isAuthorized();
 			}
 			else { 
-				authorized = gestoreMessaggi.checkAutorizzazione(id_servizio_applicativo.getNome(),isRiferimentoMessaggio);
+				authorized = gestoreMessaggi.checkAutorizzazione(idServizioApplicativo.getNome(),isRiferimentoMessaggio);
 			}
-			if(authorized==false){
+			if(!authorized){
 				msgDiag.logPersonalizzato("servizioApplicativo.nonAutorizzato");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.
-						getErrore404_AutorizzazioneFallitaServizioApplicativo(id_servizio_applicativo.getNome()),
-						id_servizio_applicativo,
+						getErrore404_AutorizzazioneFallitaServizioApplicativo(idServizioApplicativo.getNome()),
+						idServizioApplicativo,
 						IntegrationFunctionError.AUTHORIZATION, this.getErroriProperties(logCore));
 			}
 
@@ -1032,7 +1037,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				msgDiag.addKeywordErroreProcessamento(e);
 				msgDiag.logPersonalizzato("mappingRifMsgToId.nonRiuscito");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo,
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),idServizioApplicativo,
 						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 			}
 
@@ -1076,7 +1081,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				msgDiag.logErroreGenerico(e,"ReadInformazioniProtocollo("+tipoOperazione+","+idMessaggioRichiesto+")");
 				if(e.getMessage()==null || (e.getMessage().indexOf("Busta non trovata")<0) ){
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo,
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),idServizioApplicativo,
 							IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 				}// else
 				//{
@@ -1086,19 +1091,19 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 
 
 			// Indicazione se il messaggio deve essere sbustato
-			boolean sbustamento_soap = false;
+			boolean sbustamentoSoap = false;
 			if(useNewMethod) {
-				sbustamento_soap = messaggioIM.isSbustamentoSoap();
+				sbustamentoSoap = messaggioIM.isSbustamentoSoap();
 			}
 			else {
-				sbustamento_soap = gestoreMessaggi.sbustamentoSOAP(id_servizio_applicativo.getNome(),isRiferimentoMessaggio);
+				sbustamentoSoap = gestoreMessaggi.sbustamentoSOAP(idServizioApplicativo.getNome(),isRiferimentoMessaggio);
 			}
-			boolean sbustamento_informazioni_protocollo = false;
+			boolean sbustamentoInformazioniProtocollo = false;
 			if(useNewMethod) {
-				sbustamento_informazioni_protocollo = messaggioIM.isSbustamentoInformazioniProtocollo();
+				sbustamentoInformazioniProtocollo = messaggioIM.isSbustamentoInformazioniProtocollo();
 			}
 			else {
-				sbustamento_informazioni_protocollo = gestoreMessaggi.sbustamentoInformazioniProtocollo(id_servizio_applicativo.getNome(),isRiferimentoMessaggio);
+				sbustamentoInformazioniProtocollo = gestoreMessaggi.sbustamentoInformazioniProtocollo(idServizioApplicativo.getNome(),isRiferimentoMessaggio);
 			}
 
 			// TipoMessaggio
@@ -1113,7 +1118,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					ruoloMessaggio = gestoreMessaggiIdentificativoReale.getRiferimentoMessaggio()==null ? RuoloMessaggio.RICHIESTA : RuoloMessaggio.RISPOSTA;
 				}
 			}catch(Exception e){
-				logCore.error("Identificazione tipo messaggio non riuscita: "+e.getMessage(),e);
+				logError(logCore, "Identificazione tipo messaggio non riuscita: "+e.getMessage(),e);
 			}
 			
 			// Messaggio
@@ -1128,12 +1133,12 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e,"gestoreMessaggi.getMessage("+isRiferimentoMessaggio+","+tipoOperazione+")");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo,
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),idServizioApplicativo,
 						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 			}
 			
 			// Eventuale sbustamento
-			if(sbustamento_informazioni_protocollo){
+			if(sbustamentoInformazioniProtocollo){
 				try{
 					IBustaBuilder<?> bustaBuilder = protocolFactory.createBustaBuilder(stato.getStatoRichiesta());
 					
@@ -1148,14 +1153,14 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					ProprietaManifestAttachments proprietaManifest = this.propertiesReader.getProprietaManifestAttachments("standard");
 					proprietaManifest.setGestioneManifest(false);
 					ProtocolMessage  protocolMessage = bustaBuilder.sbustamento(consegnaMessage, pddContext,
-							busta, ruoloMessaggio, proprietaManifest, fase, null, null); // TODO: salvare nel messaggio su I.M. il service binding associato ??? Oppure fare prima lo sbustamento ??
+							busta, ruoloMessaggio, proprietaManifest, fase, null, null); 
 					if(protocolMessage!=null) {
 						consegnaMessage = protocolMessage.getMessage(); // updated
 					}
 				}catch(Exception e){
 					msgDiag.logErroreGenerico(e,"gestoreMessaggi.getMessage("+isRiferimentoMessaggio+","+tipoOperazione+")");
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo,
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),idServizioApplicativo,
 							IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));				
 				}
 			}
@@ -1168,13 +1173,12 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					TipoPdD.INTEGRATION_MANAGER,null,pddContext,
 					stato.getStatoRichiesta(),stato.getStatoRisposta(),
 					null);
-					//ConfigurazionePdDManager.getInstance(stato.getStatoRichiesta(),stato.getStatoRisposta()).getDumpConfigurazione());
 			dumpApplicativo.dumpIntegrationManagerGetMessage(consegnaMessage);
 
 			// Costruzione Message da ritornare
 			IntegrationManagerMessage msgReturn = null;
 			try{
-				if(sbustamento_soap==false){
+				if(!sbustamentoSoap){
 					msgReturn = new IntegrationManagerMessage(consegnaMessage,false,protocolHeaderInfo);
 				}else{
 					byte [] sbustato = TunnelSoapUtils.sbustamentoMessaggio(consegnaMessage);
@@ -1183,7 +1187,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e,"buildMsgReturn("+idMessaggio+","+tipoOperazione+")");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_523_CREAZIONE_PROTOCOL_MESSAGE),id_servizio_applicativo,
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_523_CREAZIONE_PROTOCOL_MESSAGE),idServizioApplicativo,
 						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 			}
 
@@ -1204,7 +1208,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					nomePorta = messaggioIM.getNomePorta();
 				}
 				else {
-					MessaggioServizioApplicativo info = gestoreMessaggiIdentificativoReale.readInfoDestinatario(id_servizio_applicativo.getNome(), true, logCore);
+					MessaggioServizioApplicativo info = gestoreMessaggiIdentificativoReale.readInfoDestinatario(idServizioApplicativo.getNome(), true, logCore);
 					if(info!=null) {
 						transazioneApplicativoServer = new TransazioneApplicativoServer();
 						transazioneApplicativoServer.setIdTransazione(info.getIdTransazione());
@@ -1221,11 +1225,11 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					try {
 						GestoreConsegnaMultipla.getInstance().safeUpdatePrelievoIM(transazioneApplicativoServer, idPA, stato);
 					}catch(Throwable t) {
-						logCore.error("["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
+						logError(logCore, "["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
 					}
 				}
 			}catch(Exception e){
-				logCore.error("Salvataggio informazioni sulla transazione non riuscita: "+e.getMessage(),e);
+				logError(logCore, "Salvataggio informazioni sulla transazione non riuscita: "+e.getMessage(),e);
 			}
 			
 			return msgReturn;
@@ -1247,7 +1251,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					}
 				}
 			}catch(Exception eInteral){
-				logCore.error("Errore durante la generazione dell'esito: "+eInteral.getMessage(),eInteral);
+				logError(logCore, "Errore durante la generazione dell'esito: "+eInteral.getMessage(),eInteral);
 				imResponseContext.setEsito(EsitoTransazione.ESITO_TRANSAZIONE_ERROR);
 			}
 			
@@ -1257,7 +1261,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				throw (IntegrationManagerException)e;
 			}else{	
 				msgDiag.logErroreGenerico(e,"getMessage("+tipoOperazione+")");
-				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),id_servizio_applicativo,
+				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),idServizioApplicativo,
 						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 			}
 		}finally{
@@ -1383,8 +1387,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		}
 		
 		GestoreMessaggi gestoreMessaggi = null;
-		IDServizioApplicativo id_servizio_applicativo = null;
-		String servizio_applicativo = null;
+		IDServizioApplicativo idServizioApplicativo = null;
+		String servizioApplicativo = null;
 		OpenSPCoopStateful stato = null;
 		// PddContext
 		PdDContext pddContext = new PdDContext();
@@ -1446,10 +1450,10 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			this.gestioneCredenziali(logCore, protocolFactory,msgDiag, imRequestContext.getConnettore(),pddContext);
 			
 			// Autenticazione Servizio Applicativo
-			id_servizio_applicativo = autenticazione(logCore, protocolFactory,msgDiag,imRequestContext.getConnettore(),configPdDManager,pddContext);
-			servizio_applicativo = id_servizio_applicativo.getNome();
-			imResponseContext.setServizioApplicativo(id_servizio_applicativo);
-			String param = "ServizioApplicativo["+servizio_applicativo+"] ID["+idMessaggio+"]";
+			idServizioApplicativo = autenticazione(logCore, protocolFactory,msgDiag,imRequestContext.getConnettore(),configPdDManager,pddContext);
+			servizioApplicativo = idServizioApplicativo.getNome();
+			imResponseContext.setServizioApplicativo(idServizioApplicativo);
+			String param = "ServizioApplicativo["+servizioApplicativo+"] ID["+idMessaggio+"]";
 			msgDiag.addKeyword(CostantiPdD.KEY_PARAMETRI_OPERAZIONE_IM, param);
 			msgDiag.logPersonalizzato("logInvocazioneOperazione");
 
@@ -1457,7 +1461,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			gestoreMessaggi = new GestoreMessaggi(stato, true, idMessaggio, Costanti.INBOX, msgDiag, pddContext);
 			MessaggioIM messaggioIM = null;
 			if(useNewMethod) {
-				messaggioIM = gestoreMessaggi.readMessageForSIL(id_servizio_applicativo.getNome(),isRiferimentoMessaggio, dataMessaggio);
+				messaggioIM = gestoreMessaggi.readMessageForSIL(idServizioApplicativo.getNome(),isRiferimentoMessaggio, dataMessaggio);
 			}
 			
 			// Check Esistenza Messaggio
@@ -1466,13 +1470,13 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				exists = messaggioIM!=null;
 			}
 			else { 
-				exists = gestoreMessaggi.existsMessageForSIL(servizio_applicativo,isRiferimentoMessaggio); 
+				exists = gestoreMessaggi.existsMessageForSIL(servizioApplicativo,isRiferimentoMessaggio); 
 			}
 			if(!exists){
 				msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_TRANSACTION_MANAGER, idMessaggio);
 				msgDiag.logPersonalizzato("messaggioNonTrovato");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO.
-						getErroreIntegrazione(),id_servizio_applicativo,
+						getErroreIntegrazione(),idServizioApplicativo,
 						IntegrationFunctionError.IM_MESSAGE_NOT_FOUND, this.getErroriProperties(logCore));
 			}
 
@@ -1482,13 +1486,13 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				authorized = messaggioIM.isAuthorized();
 			}
 			else { 
-				authorized = gestoreMessaggi.checkAutorizzazione(servizio_applicativo,isRiferimentoMessaggio);
+				authorized = gestoreMessaggi.checkAutorizzazione(servizioApplicativo,isRiferimentoMessaggio);
 			}
-			if(authorized==false){
+			if(!authorized){
 				msgDiag.logPersonalizzato("servizioApplicativo.nonAutorizzato");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.
-						getErrore404_AutorizzazioneFallitaServizioApplicativo(servizio_applicativo),
-						id_servizio_applicativo,
+						getErrore404_AutorizzazioneFallitaServizioApplicativo(servizioApplicativo),
+						idServizioApplicativo,
 						IntegrationFunctionError.AUTHORIZATION, this.getErroriProperties(logCore));
 			}
 
@@ -1507,7 +1511,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				msgDiag.addKeywordErroreProcessamento(e);
 				msgDiag.logPersonalizzato("mappingRifMsgToId.nonRiuscito");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo,
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),idServizioApplicativo,
 						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 			}
 
@@ -1516,9 +1520,9 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			try{
 				gestoreEliminazione = new GestoreMessaggi(stato, true, idMessaggioRichiesto,Costanti.INBOX,msgDiag,pddContext);
 			}catch(Exception e){
-				msgDiag.logErroreGenerico(e,"gestoreMessaggi.eliminaDestinatarioMessaggio("+tipoOperazione+","+servizio_applicativo+","+idMessaggio+")");
+				msgDiag.logErroreGenerico(e,"gestoreMessaggi.eliminaDestinatarioMessaggio("+tipoOperazione+","+servizioApplicativo+","+idMessaggio+")");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_522_DELETE_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo,
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_522_DELETE_MSG_FROM_INTEGRATION_MANAGER),idServizioApplicativo,
 						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 			}
 			
@@ -1536,7 +1540,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					nomePorta = messaggioIM.getNomePorta();
 				}
 				else {
-					MessaggioServizioApplicativo info = gestoreEliminazione.readInfoDestinatario(id_servizio_applicativo.getNome(), true, logCore);
+					MessaggioServizioApplicativo info = gestoreEliminazione.readInfoDestinatario(idServizioApplicativo.getNome(), true, logCore);
 					if(info!=null) {
 						transazioneApplicativoServer = new TransazioneApplicativoServer();
 						transazioneApplicativoServer.setIdTransazione(info.getIdTransazione());
@@ -1553,20 +1557,20 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					try {
 						GestoreConsegnaMultipla.getInstance().safeUpdateEliminazioneIM(transazioneApplicativoServer, idPA, stato);
 					}catch(Throwable t) {
-						logCore.error("["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
+						logError(logCore, "["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
 					}
 				}
 			}catch(Exception e){
-				logCore.error("Salvataggio informazioni sulla transazione non riuscita: "+e.getMessage(),e);
+				logError(logCore, "Salvataggio informazioni sulla transazione non riuscita: "+e.getMessage(),e);
 			}
 			
 			// Elimino Messaggio
 			try{
-				gestoreEliminazione.eliminaDestinatarioMessaggio(servizio_applicativo, gestoreEliminazione.getRiferimentoMessaggio(), dataMessaggio);
+				gestoreEliminazione.eliminaDestinatarioMessaggio(servizioApplicativo, gestoreEliminazione.getRiferimentoMessaggio(), dataMessaggio);
 			}catch(Exception e){
-				msgDiag.logErroreGenerico(e,"gestoreMessaggi.eliminaDestinatarioMessaggio("+tipoOperazione+","+servizio_applicativo+","+idMessaggio+")");
+				msgDiag.logErroreGenerico(e,"gestoreMessaggi.eliminaDestinatarioMessaggio("+tipoOperazione+","+servizioApplicativo+","+idMessaggio+")");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_522_DELETE_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo,
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_522_DELETE_MSG_FROM_INTEGRATION_MANAGER),idServizioApplicativo,
 						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 			}
 
@@ -1589,7 +1593,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					}
 				}
 			}catch(Exception eInteral){
-				logCore.error("Errore durante la generazione dell'esito: "+eInteral.getMessage(),eInteral);
+				logError(logCore, "Errore durante la generazione dell'esito: "+eInteral.getMessage(),eInteral);
 				imResponseContext.setEsito(EsitoTransazione.ESITO_TRANSAZIONE_ERROR);
 			}
 			
@@ -1599,7 +1603,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				throw (IntegrationManagerException)e;
 			}else{
 				msgDiag.logErroreGenerico(e,"deleteMessage("+tipoOperazione+")");
-				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),id_servizio_applicativo,
+				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),idServizioApplicativo,
 						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 			}
 		}finally{
@@ -1705,7 +1709,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		MsgDiagnostico msgDiag = getMsgDiagnostico();
 		msgDiag.addKeyword(CostantiPdD.KEY_TIPO_OPERAZIONE_IM, tipoOperazione.toString());
 		
-		IDServizioApplicativo id_servizio_applicativo = null;
+		IDServizioApplicativo idServizioApplicativo = null;
 		OpenSPCoopStateful stato = null;
 		// PddContext
 		PdDContext pddContext = new PdDContext();
@@ -1765,20 +1769,20 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			this.gestioneCredenziali(logCore, protocolFactory,msgDiag, imRequestContext.getConnettore(),pddContext);
 			
 			// Autenticazione Servizio Applicativo
-			id_servizio_applicativo = autenticazione(logCore, protocolFactory,msgDiag,imRequestContext.getConnettore(),configPdDManager,pddContext);
-			imResponseContext.setServizioApplicativo(id_servizio_applicativo);
-			String param = "ServizioApplicativo["+id_servizio_applicativo.getNome()+"]";
+			idServizioApplicativo = autenticazione(logCore, protocolFactory,msgDiag,imRequestContext.getConnettore(),configPdDManager,pddContext);
+			imResponseContext.setServizioApplicativo(idServizioApplicativo);
+			String param = "ServizioApplicativo["+idServizioApplicativo.getNome()+"]";
 			msgDiag.addKeyword(CostantiPdD.KEY_PARAMETRI_OPERAZIONE_IM, param);
 			msgDiag.logPersonalizzato("logInvocazioneOperazione");
 
 			// Effettuo ricerca ID DEL SERVIZIO APPLICATIVO
 			GestoreMessaggi gestoreSearchID = new GestoreMessaggi(stato, true,msgDiag,pddContext);
 
-			List<IdentificativoIM> ids =  gestoreSearchID.getIDMessaggi_ServizioApplicativo(id_servizio_applicativo.getNome());      
-			if(ids.size() == 0){
+			List<IdentificativoIM> ids =  gestoreSearchID.getIDMessaggi_ServizioApplicativo(idServizioApplicativo.getNome());      
+			if(ids.isEmpty()){
 				msgDiag.logPersonalizzato("messaggiNonPresenti");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI.
-						getErroreIntegrazione(),id_servizio_applicativo,
+						getErroreIntegrazione(),idServizioApplicativo,
 						IntegrationFunctionError.IM_MESSAGES_NOT_FOUND, this.getErroriProperties(logCore));
 			}
 
@@ -1792,7 +1796,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				GestoreMessaggi gestoreMessaggi = new GestoreMessaggi(stato, true,idMessaggio,Costanti.INBOX,msgDiag,pddContext);
 				MessaggioIM messaggioIM = null;
 				if(useNewMethod) {
-					messaggioIM = gestoreMessaggi.readMessageForSIL(id_servizio_applicativo.getNome(), dataMessaggio);
+					messaggioIM = gestoreMessaggi.readMessageForSIL(idServizioApplicativo.getNome(), dataMessaggio);
 					if(messaggioIM!=null) {
 						messaggiIM.add(messaggioIM);
 					}
@@ -1804,13 +1808,13 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					exists = messaggioIM!=null;
 				}
 				else { 
-					exists = gestoreMessaggi.existsMessageForSIL(id_servizio_applicativo.getNome()); 
+					exists = gestoreMessaggi.existsMessageForSIL(idServizioApplicativo.getNome()); 
 				}
 				if(!exists){
 					msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_TRANSACTION_MANAGER, idMessaggio);
 					msgDiag.logPersonalizzato("messaggioNonTrovato");
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo,
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),idServizioApplicativo,
 							IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 				}
 
@@ -1820,19 +1824,19 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					authorized = messaggioIM.isAuthorized();
 				}
 				else { 
-					authorized = gestoreMessaggi.checkAutorizzazione(id_servizio_applicativo.getNome());
+					authorized = gestoreMessaggi.checkAutorizzazione(idServizioApplicativo.getNome());
 				}
-				if(authorized==false){
+				if(!authorized){
 					msgDiag.logPersonalizzato("servizioApplicativo.nonAutorizzato");
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA
-							.getErrore404_AutorizzazioneFallitaServizioApplicativo(id_servizio_applicativo.getNome()),
-							id_servizio_applicativo,
+							.getErrore404_AutorizzazioneFallitaServizioApplicativo(idServizioApplicativo.getNome()),
+							idServizioApplicativo,
 							IntegrationFunctionError.AUTHORIZATION, this.getErroriProperties(logCore));
 				}
 			}
 
 			// Elimino i messaggi
-			while(ids.size() > 0){
+			while(!ids.isEmpty()){
 				// Elimino Messaggio
 				IdentificativoIM idIM = ids.remove(0);
 				String idMessaggio = idIM.getId();
@@ -1846,12 +1850,11 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				GestoreMessaggi gestoreEliminazione = null;
 				try{
 					//	Elimino accesso daPdD
-					//	GestoreMessaggi gestoreEliminazione = new GestoreMessaggi(stato, true,idMessaggio,Costanti.INBOX,this.msgDiag);
 					gestoreEliminazione = new GestoreMessaggi(stato, true,idMessaggio,Costanti.INBOX,msgDiag,pddContext);
 				}catch(Exception e){
-					msgDiag.logErroreGenerico(e,"gestoreMessaggi.eliminaDestinatarioMessaggio("+tipoOperazione+","+id_servizio_applicativo.getNome()+","+idMessaggio+")");
+					msgDiag.logErroreGenerico(e,"gestoreMessaggi.eliminaDestinatarioMessaggio("+tipoOperazione+","+idServizioApplicativo.getNome()+","+idMessaggio+")");
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_522_DELETE_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo,
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_522_DELETE_MSG_FROM_INTEGRATION_MANAGER),idServizioApplicativo,
 							IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 				}
 				
@@ -1869,7 +1872,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 						nomePorta = messaggioIM.getNomePorta();
 					}
 					else {				
-						MessaggioServizioApplicativo info = gestoreEliminazione.readInfoDestinatario(id_servizio_applicativo.getNome(), true, logCore);
+						MessaggioServizioApplicativo info = gestoreEliminazione.readInfoDestinatario(idServizioApplicativo.getNome(), true, logCore);
 						if(info!=null) {
 							transazioneApplicativoServer = new TransazioneApplicativoServer();
 							transazioneApplicativoServer.setIdTransazione(info.getIdTransazione());
@@ -1886,20 +1889,20 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 						try {
 							GestoreConsegnaMultipla.getInstance().safeUpdateEliminazioneIM(transazioneApplicativoServer, idPA, stato);
 						}catch(Throwable t) {
-							logCore.error("["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
+							logError(logCore, "["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
 						}
 					}
 				}catch(Exception e){
-					logCore.error("Salvataggio informazioni sulla transazione non riuscita: "+e.getMessage(),e);
+					logError(logCore, "Salvataggio informazioni sulla transazione non riuscita: "+e.getMessage(),e);
 				}
 				
 				// Elimino Messaggio
 				try{
-					gestoreEliminazione.eliminaDestinatarioMessaggio(id_servizio_applicativo.getNome(), gestoreEliminazione.getRiferimentoMessaggio(), dataMessaggio);
+					gestoreEliminazione.eliminaDestinatarioMessaggio(idServizioApplicativo.getNome(), gestoreEliminazione.getRiferimentoMessaggio(), dataMessaggio);
 				}catch(Exception e){
-					msgDiag.logErroreGenerico(e,"gestoreMessaggi.eliminaDestinatarioMessaggio("+tipoOperazione+","+id_servizio_applicativo.getNome()+","+idMessaggio+")");
+					msgDiag.logErroreGenerico(e,"gestoreMessaggi.eliminaDestinatarioMessaggio("+tipoOperazione+","+idServizioApplicativo.getNome()+","+idMessaggio+")");
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_522_DELETE_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo,
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_522_DELETE_MSG_FROM_INTEGRATION_MANAGER),idServizioApplicativo,
 							IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 				}
 			}
@@ -1924,7 +1927,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					}
 				}
 			}catch(Exception eInteral){
-				logCore.error("Errore durante la generazione dell'esito: "+eInteral.getMessage(),eInteral);
+				logError(logCore, "Errore durante la generazione dell'esito: "+eInteral.getMessage(),eInteral);
 				imResponseContext.setEsito(EsitoTransazione.ESITO_TRANSAZIONE_ERROR);
 			}
 			
@@ -1934,7 +1937,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				throw (IntegrationManagerException)e;
 			}else{
 				msgDiag.logErroreGenerico(e,"deleteAllMessages("+tipoOperazione+")");
-				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),id_servizio_applicativo,
+				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),idServizioApplicativo,
 						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 			}
 		}finally{

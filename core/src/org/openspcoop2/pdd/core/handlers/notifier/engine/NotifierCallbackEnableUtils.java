@@ -122,7 +122,7 @@ public class NotifierCallbackEnableUtils {
 		ManagementMode mode = null;
 		if(length>0){
 			mode = ManagementMode.STREAMING;
-			Integer thresholdInMemory = OpenSPCoop2Properties.getInstance().getDumpNonRealtime_inMemoryThreshold();
+			Integer thresholdInMemory = OpenSPCoop2Properties.getInstance().getDumpNonRealtimeInMemoryThreshold();
 			if(thresholdInMemory!=null){
 				if(length<thresholdInMemory){
 					mode = ManagementMode.BUFFER;

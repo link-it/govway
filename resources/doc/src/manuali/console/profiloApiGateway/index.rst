@@ -32,5 +32,5 @@ nell'intestazione della pagina.
 	tracciamento
 	correlazione/index
 	mtom
-	registrazioneMessaggi
+	registrazioneMessaggi/index
 	proprieta

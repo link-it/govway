@@ -73,12 +73,9 @@ public class SbustamentoRisposteMDB implements MessageDrivenBean, MessageListene
 	private static final long serialVersionUID = 1L;
 
 	/* ********  F I E L D S  P R I V A T I   ******** */
-
-	/** Logger utilizzato per debug. */
-	private Logger log = null;
 	
 	/** Message Driven Context */
-	private MessageDrivenContext ctxMDB;
+	private transient MessageDrivenContext ctxMDB;
 
 	/* ********  M E T O D I   ******** */
 
@@ -102,7 +99,9 @@ public class SbustamentoRisposteMDB implements MessageDrivenBean, MessageListene
 	 *
 	 * 
 	 */
-	public void ejbCreate() {}
+	public void ejbCreate() {
+		// nop
+	}
 
 
 
@@ -111,7 +110,9 @@ public class SbustamentoRisposteMDB implements MessageDrivenBean, MessageListene
 	 * 
 	 */
 	@Override
-	public void ejbRemove() {}
+	public void ejbRemove() {
+		// nop
+	}
 
 
 
@@ -131,56 +132,56 @@ public class SbustamentoRisposteMDB implements MessageDrivenBean, MessageListene
 		if(message instanceof ObjectMessage) {
 
 			/* ------------ Controllo inizializzazione OpenSPCoop -------------------- */
-			if( OpenSPCoop2Startup.initialize == false){
+			if( !OpenSPCoop2Startup.initialize){
 				this.ctxMDB.setRollbackOnly();
 				return;
 			}
 			
 			/* logger */
-			this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
-			if (this.log == null) {
-				System.out.println("["+SbustamentoRisposte.ID_MODULO+"]"+" Logger nullo. MDB abortito");
+			Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
+			if (log == null) {
+				LoggerWrapperFactory.getLogger(SbustamentoRisposteMDB.class).error("["+SbustamentoRisposte.ID_MODULO+"]"+" Logger nullo. MDB abortito");
 				return;
 			}
 			
 			/* ----------- Controllo risorse disponibili --------------- */
-			if( TimerMonitoraggioRisorseThread.risorseDisponibili == false){
-				this.log.error("["+SbustamentoRisposte.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
+			if( !TimerMonitoraggioRisorseThread.risorseDisponibili){
+				log.error("["+SbustamentoRisposte.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
 				this.ctxMDB.setRollbackOnly();
 				return;
 			}
-			if( Tracciamento.tracciamentoDisponibile == false){
-				this.log.error("["+SbustamentoRisposte.ID_MODULO+"] Tracciatura non disponibile: "+Tracciamento.motivoMalfunzionamentoTracciamento.getMessage(),Tracciamento.motivoMalfunzionamentoTracciamento);
+			if( !Tracciamento.tracciamentoDisponibile){
+				log.error("["+SbustamentoRisposte.ID_MODULO+"] Tracciatura non disponibile: "+Tracciamento.motivoMalfunzionamentoTracciamento.getMessage(),Tracciamento.motivoMalfunzionamentoTracciamento);
 				this.ctxMDB.setRollbackOnly();
 				return;
 			}
-			if( MsgDiagnostico.gestoreDiagnosticaDisponibile == false){
-				this.log.error("["+SbustamentoRisposte.ID_MODULO+"] Sistema di diagnostica non disponibile: "+MsgDiagnostico.motivoMalfunzionamentoDiagnostici.getMessage(),MsgDiagnostico.motivoMalfunzionamentoDiagnostici);
+			if( !MsgDiagnostico.gestoreDiagnosticaDisponibile){
+				log.error("["+SbustamentoRisposte.ID_MODULO+"] Sistema di diagnostica non disponibile: "+MsgDiagnostico.motivoMalfunzionamentoDiagnostici.getMessage(),MsgDiagnostico.motivoMalfunzionamentoDiagnostici);
 				this.ctxMDB.setRollbackOnly();
 				return;
 			}
-			if( Dump.sistemaDumpDisponibile == false){
-				this.log.error("["+SbustamentoRisposte.ID_MODULO+"] Sistema di dump dei contenuti applicativi non disponibile: "+Dump.motivoMalfunzionamentoDump.getMessage(),Dump.motivoMalfunzionamentoDump);
+			if( !Dump.isSistemaDumpDisponibile()){
+				log.error("["+SbustamentoRisposte.ID_MODULO+"] Sistema di dump dei contenuti applicativi non disponibile: "+Dump.getMotivoMalfunzionamentoDump().getMessage(),Dump.getMotivoMalfunzionamentoDump());
 				this.ctxMDB.setRollbackOnly();
 				return;
 			}
 
 			SbustamentoRisposte lib = null;
 			try{
-				lib = new SbustamentoRisposte(this.log);
+				lib = new SbustamentoRisposte(log);
 			}catch(Exception e){
-				this.log.error("SbustamentoRisposte.instanziazione: "+e.getMessage(),e);
+				log.error("SbustamentoRisposte.instanziazione: "+e.getMessage(),e);
 				this.ctxMDB.setRollbackOnly();
 				return;
 			}
 
 						
 			/* ----------- Controllo inizializzazione lib ----------- */
-			if( lib.inizializzazioneUltimata == false ){
-					this.log = LoggerWrapperFactory.getLogger(SbustamentoRisposteMDB.class);
-					this.log.error("["+SbustamentoRisposte.ID_MODULO+"] Inizializzazione MDB non riuscita");
-					this.ctxMDB.setRollbackOnly();
-					return;
+			if( !lib.inizializzazioneUltimata ){
+				log = LoggerWrapperFactory.getLogger(SbustamentoRisposteMDB.class);
+				log.error("["+SbustamentoRisposte.ID_MODULO+"] Inizializzazione MDB non riuscita");
+				this.ctxMDB.setRollbackOnly();
+				return;
 			}
 
 
@@ -225,7 +226,7 @@ public class SbustamentoRisposteMDB implements MessageDrivenBean, MessageListene
 				stato.setIDMessaggioSessione(idMessageRequest);
 				stato.setMessageLib(sbustamentoRisposteMsg);
 			}catch (Exception e) {
-				this.log.error("["+SbustamentoRisposte.ID_MODULO+"] Invocazione della libreria non riuscita (verrà effettuato un rollback sulla coda JMS)",e);
+				log.error("["+SbustamentoRisposte.ID_MODULO+"] Invocazione della libreria non riuscita (verrà effettuato un rollback sulla coda JMS)",e);
 				this.ctxMDB.setRollbackOnly();
 				return;
 			}
@@ -253,8 +254,8 @@ public class SbustamentoRisposteMDB implements MessageDrivenBean, MessageListene
 			/* ------------------ Validity Check  --------------- */
 			msgDiag.mediumDebug("Transaction Manager...");
 			try{
-				if(TransactionManager.validityCheck(msgDiag,SbustamentoRisposte.ID_MODULO,idMessageResponse,
-						Costanti.INBOX,received.getJMSMessageID(),pddContext)==false){
+				if(!TransactionManager.validityCheck(msgDiag,SbustamentoRisposte.ID_MODULO,idMessageResponse,
+						Costanti.INBOX,received.getJMSMessageID(),pddContext)){
 					msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_TRANSACTION_MANAGER, idMessageRequest);
 					msgDiag.addKeyword(CostantiPdD.KEY_PROPRIETARIO_MESSAGGIO, SbustamentoRisposte.ID_MODULO);
 					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL,"transactionManager.validityCheckError");
@@ -270,19 +271,18 @@ public class SbustamentoRisposteMDB implements MessageDrivenBean, MessageListene
 			try { 
 				esito =	lib.onMessage(stato);
 			}catch (Exception e) {
-				this.log.error("["+SbustamentoRisposte.ID_MODULO+"] Invocazione della libreria non riuscita (verrà effettuato un rollback sulla coda JMS)",e);
+				log.error("["+SbustamentoRisposte.ID_MODULO+"] Invocazione della libreria non riuscita (verrà effettuato un rollback sulla coda JMS)",e);
 				this.ctxMDB.setRollbackOnly();
 				return;
 			}
 			
-			if (esito.isEsitoInvocazione()==false){
-				this.log.info("["+SbustamentoRisposte.ID_MODULO+"] Invocazione della libreria terminata con esito negativo, verrà effettuato un rollback sulla coda JMS");
+			if (!esito.isEsitoInvocazione()){
+				log.info("["+SbustamentoRisposte.ID_MODULO+"] Invocazione della libreria terminata con esito negativo, verrà effettuato un rollback sulla coda JMS");
 				this.ctxMDB.setRollbackOnly();
-				return;
 			}	
 			
 			else {
-				this.log.debug("["+SbustamentoRisposte.ID_MODULO+"] Invocazione della libreria terminata correttamente");
+				log.debug("["+SbustamentoRisposte.ID_MODULO+"] Invocazione della libreria terminata correttamente");
 			}
 			
 		}

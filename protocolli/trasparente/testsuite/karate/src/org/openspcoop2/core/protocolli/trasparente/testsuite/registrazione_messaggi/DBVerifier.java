@@ -174,7 +174,20 @@ public class DBVerifier {
 	}
 	
 	private static void verify_message(String idTransazione, TipoMessaggio tipoMessaggio,
-			boolean header, boolean body,
+			boolean header,
+			boolean body,
+			boolean multipartParsing, int numAttachmentsExpected,
+			String contentTypeExpected, long contentLengthExpected, String formatoMessaggioExpected) throws Exception {
+		verify_message(idTransazione, tipoMessaggio,
+				header, null, null,
+				body,
+				multipartParsing, numAttachmentsExpected,
+				contentTypeExpected, contentLengthExpected, formatoMessaggioExpected);
+	}
+	private static final String NOT_VERIFY = "NOT_VERIFY";
+	private static void verify_message(String idTransazione, TipoMessaggio tipoMessaggio,
+			boolean header, List<String> headerWhiteList, List<String> headerBlackList,
+			boolean body,
 			boolean multipartParsing, int numAttachmentsExpected,
 			String contentTypeExpected, long contentLengthExpected, String formatoMessaggioExpected) throws Exception {
 	
@@ -233,7 +246,7 @@ public class DBVerifier {
 				assertTrue(msg+" Verifico content-type '"+contentType+"' sia multipart", ContentTypeUtilities.isMultipartType(contentType));
 			}
 		}
-		else {
+		else if(!NOT_VERIFY.equals(contentTypeExpected)) {
 			assertTrue(msg+" Verifico che il content-type '"+contentType+"' sia null",contentType==null);
 		}
 		
@@ -256,8 +269,10 @@ public class DBVerifier {
 		}
 		
 		formatoMessaggio = (String) row.get("formato_messaggio");
-		assertNotNull(msg,formatoMessaggio);
-		assertEquals(msg,formatoMessaggioExpected, formatoMessaggio);
+		if(!NOT_VERIFY.equals(formatoMessaggioExpected)) {
+			assertNotNull(msg,formatoMessaggio);
+			assertEquals(msg,formatoMessaggioExpected, formatoMessaggio);
+		}
 		
 		
 		// numero di allegati
@@ -285,6 +300,101 @@ public class DBVerifier {
 		else {
 			assertTrue(message, (countHeaders==0 && !compactHeaders));
 		}
+		
+		if( header &&
+			(
+					(headerWhiteList!=null && !headerWhiteList.isEmpty())  
+					|| 
+					(headerBlackList!=null && !headerBlackList.isEmpty())
+			)
+			) {
+			
+			
+			if(headerWhiteList!=null && !headerWhiteList.isEmpty()) {
+				message = msg+" Headers trovati tabella:"+countHeaders+" attesiInWhiteList:"+headerWhiteList.size();
+				log().info(message);
+				assertTrue(message, countHeaders==headerWhiteList.size());
+			}
+			
+			query = "select * from dump_header_trasporto where id_messaggio = ?";
+			log().info(query);
+			List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query, idMessaggio);
+			
+			for (Map<String, Object> map : letto) {
+				
+				String nome = (String) map.get("nome");
+				String valore = (String) map.get("valore");
+				
+				
+				if(headerWhiteList!=null && !headerWhiteList.isEmpty()) {
+					message = msg+" Trovato header ["+nome+"]=["+valore+"]; verifica white list ...";
+					log().info(message);
+					if(!headerWhiteList.contains(nome)) {
+						throw new Exception("Presente header '"+nome+"' non definito in whiteList con valore '"+valore+"'");
+					}
+				}
+				
+				if(headerBlackList!=null && !headerBlackList.isEmpty()) {
+					message = msg+" Trovato header ["+nome+"]=["+valore+"]; verifica black list ...";
+					log().info(message);
+					if(headerBlackList.contains(nome)) {
+						throw new Exception("Presente header '"+nome+"' definito in blackList con valore '"+valore+"'");
+					}
+				}
+				
+			}
+			
+		}
 
+	}
+	
+	
+	
+	public static void verifyHeaders(String idTransazione, TipoMessaggio tipoMessaggio,
+			boolean whiteList, List<String> headerList) throws Exception  {
+		
+		// La scrittura su database avviene dopo aver risposto al client
+		
+		Utilities.sleep(100); 
+		try {
+			DBVerifier.verify_message(idTransazione, tipoMessaggio,
+					true, 
+					(whiteList ? headerList : null), 
+					(whiteList ? null : headerList),
+					false,
+					false, 0,
+					NOT_VERIFY, -1, NOT_VERIFY);
+		}catch(Throwable t) {
+			Utilities.sleep(500);
+			try {
+				DBVerifier.verify_message(idTransazione, tipoMessaggio,
+						true, 
+						(whiteList ? headerList : null), 
+						(whiteList ? null : headerList),
+						false,
+						false, 0,
+						NOT_VERIFY, -1, NOT_VERIFY);
+			}catch(Throwable t2) {
+				Utilities.sleep(2000);
+				try {
+					DBVerifier.verify_message(idTransazione, tipoMessaggio,
+							true, 
+							(whiteList ? headerList : null), 
+							(whiteList ? null : headerList),
+							false,
+							false, 0,
+							NOT_VERIFY, -1, NOT_VERIFY);
+				}catch(Throwable t3) {
+					Utilities.sleep(5000);
+					DBVerifier.verify_message(idTransazione, tipoMessaggio,
+							true, 
+							(whiteList ? headerList : null), 
+							(whiteList ? null : headerList),
+							false,
+							false, 0,
+							NOT_VERIFY, -1, NOT_VERIFY);
+				}
+			}
+		}
 	}
 }

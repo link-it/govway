@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.ServletException;
 
 import org.slf4j.Logger;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.Dump;
@@ -77,11 +78,12 @@ public class CheckStatoPdD extends HttpServlet {
 	}
 	private static void sendError(HttpServletResponse res, Logger log, String msg, int code, String logMsg, Throwable e)  {
 		String prefix = "[GovWayCheck] ";
+		String msgLog = prefix+logMsg;
 		if(e!=null) {
-			log.error(prefix+logMsg, e);
+			log.error(msgLog, e);
 		}
 		else {
-			log.error(prefix+logMsg);
+			log.error(msgLog);
 		}
 		res.setStatus(code);
 		res.setContentType(HttpConstants.CONTENT_TYPE_PLAIN);
@@ -104,7 +106,7 @@ public class CheckStatoPdD extends HttpServlet {
 		if(log==null)
 			log = LoggerWrapperFactory.getLogger(CheckStatoPdD.class);
 		
-		if( OpenSPCoop2Startup.initialize == false){
+		if( !OpenSPCoop2Startup.initialize){
 			serializeNotInitializedResponse(res, log);
 			return;
 		}
@@ -119,7 +121,7 @@ public class CheckStatoPdD extends HttpServlet {
 			if(properties!=null && properties.isCheckReadJMXResourcesEnabled() ){
 				checkReadEnabled = true;
 			}
-			if(checkReadEnabled==false){
+			if(!checkReadEnabled){
 				String msg = "Servizio non abilitato";
 				sendError(res, log, msg, 500); 
 				return;
@@ -130,13 +132,13 @@ public class CheckStatoPdD extends HttpServlet {
 			String password = properties.getCheckReadJMXResourcesPassword();
 			if(username!=null && password!=null){
 				HttpServletCredential identity = new HttpServletCredential(req, log);
-				if(username.equals(identity.getUsername())==false){
+				if(!username.equals(identity.getUsername())){
 					String msg = "Lettura risorsa ["+resourceName+"] non autorizzata";
 					String logMsg = msg+". Richiesta effettuata da username ["+identity.getUsername()+"] sconosciuto";
 					sendError(res, log, msg, 500, logMsg); 
 					return;
 				}
-				if(password.equals(identity.getPassword())==false){
+				if(!password.equals(identity.getPassword())){
 					String msg = "Lettura risorsa ["+resourceName+"] non autorizzata";
 					String logMsg = msg+". Richiesta effettuata da username ["+identity.getUsername()+"] (password errata)";
 					sendError(res, log, msg, 500, logMsg); 
@@ -218,35 +220,35 @@ public class CheckStatoPdD extends HttpServlet {
 		if(properties!=null && properties.isCheckEnabled() ){
 			checkEnabled = true;
 		}
-		if(checkEnabled==false){
+		if(!checkEnabled){
 			String msg = "Servizio non abilitato";
 			sendError(res, log, msg, 500); 
 			return;
 		}
 		
 						
-		if( OpenSPCoop2Startup.initialize == false){
+		if( !OpenSPCoop2Startup.initialize){
 			serializeNotInitializedResponse(res, log);
 		}
-		else if( TimerMonitoraggioRisorseThread.risorseDisponibili == false){
+		else if( !TimerMonitoraggioRisorseThread.risorseDisponibili){
 			String msg = "Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage();
 			sendError(res, log, msg, 500, TimerMonitoraggioRisorseThread.risorsaNonDisponibile); 
 		}
-		else if( TimerThresholdThread.freeSpace == false){
+		else if( !TimerThresholdThread.freeSpace){
 			String msg = "Non sono disponibili abbastanza risorse per la gestione della richiesta";
 			sendError(res, log, msg, 500); 
 		}
-		else if( Tracciamento.tracciamentoDisponibile == false){
+		else if( !Tracciamento.tracciamentoDisponibile){
 			String msg = "Tracciatura non disponibile: "+Tracciamento.motivoMalfunzionamentoTracciamento.getMessage();
 			sendError(res, log, msg, 500, Tracciamento.motivoMalfunzionamentoTracciamento); 	
 		}
-		else if( MsgDiagnostico.gestoreDiagnosticaDisponibile == false){
+		else if( !MsgDiagnostico.gestoreDiagnosticaDisponibile){
 			String msg = "Sistema di diagnostica non disponibile: "+MsgDiagnostico.motivoMalfunzionamentoDiagnostici.getMessage();
 			sendError(res, log, msg, 500, MsgDiagnostico.motivoMalfunzionamentoDiagnostici); 		
 		}
-		else if( Dump.sistemaDumpDisponibile == false){
-			String msg = "Sistema di dump dei contenuti applicativi non disponibile: "+Dump.motivoMalfunzionamentoDump.getMessage();
-			sendError(res, log, msg, 500, Dump.motivoMalfunzionamentoDump); 
+		else if( !Dump.isSistemaDumpDisponibile()){
+			String msg = "Sistema di dump dei contenuti applicativi non disponibile: "+Dump.getMotivoMalfunzionamentoDump().getMessage();
+			sendError(res, log, msg, 500, Dump.getMotivoMalfunzionamentoDump()); 
 		}
 		
 		if(properties.isCheckHealthCheckApiRestEnabled()) {
@@ -304,7 +306,6 @@ public class CheckStatoPdD extends HttpServlet {
 				request.setHostnameVerifier(false);
 				request.setTrustAllCerts(true);
 			}
-			//request.addHeader(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_SOAP_1_1);
 			request.setContentType(HttpConstants.CONTENT_TYPE_SOAP_1_1);
 			request.addHeader(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, "echo");
 			request.setMethod(HttpRequestMethod.POST);
@@ -337,17 +338,14 @@ public class CheckStatoPdD extends HttpServlet {
 					if(response.getContent()!=null) {
 						responseS += "\n\n"+(new String(response.getContent()));
 					}
-					throw new Exception("HTTP Result:"+response.getResultHTTPOperation()+responseS);
+					throw new ServletException("HTTP Result:"+response.getResultHTTPOperation()+responseS);
 				}
 				
 			}catch(Throwable t) {
 				String msg = "API SOAP HealthCheck failed ("+endpoint+")\n"+t.getMessage();
 				sendError(res, log, msg, 500, t); 
-				return;
 			}
 		}
-		
-		return;
 
 	}
 
@@ -371,19 +369,16 @@ public class CheckStatoPdD extends HttpServlet {
 			return;
 		}
 		
-		add = addParameter(params, signatures, req,
+		addParameter(params, signatures, req,
 				CostantiPdD.CHECK_STATO_PDD_PARAM_VALUE_3,
 				CostantiPdD.CHECK_STATO_PDD_PARAM_INT_VALUE_3, 
 				CostantiPdD.CHECK_STATO_PDD_PARAM_LONG_VALUE_3,
 				CostantiPdD.CHECK_STATO_PDD_PARAM_BOOLEAN_VALUE_3);
-		if(!add) {
-			return;
-		}
 			
 	}
 	
 	private boolean addParameter(List<Object> params, List<String> signatures, HttpServletRequest req,
-			String stringNameParameter, String intNameParameter, String longNameParameter, String booleanNameParameter) throws Exception {
+			String stringNameParameter, String intNameParameter, String longNameParameter, String booleanNameParameter) throws CoreException {
 		
 		int count = 0;
 		List<String> pFound = new ArrayList<>();
@@ -420,7 +415,7 @@ public class CheckStatoPdD extends HttpServlet {
 			return false;
 		}
 		if(count>1) {
-			throw new Exception("È stato fornito più di un tipo di parametro per la stessa posizione: "+pFound);
+			throw new CoreException("È stato fornito più di un tipo di parametro per la stessa posizione: "+pFound);
 		}
 		
 		if(paramStringDefined){

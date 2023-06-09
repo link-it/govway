@@ -244,6 +244,23 @@ public class RicezioneBuste {
 	/** Variabile che indica il Nome del modulo dell'architettura di OpenSPCoop rappresentato da questa classe */
 	public static final String ID_MODULO = "RicezioneBuste";
 
+	private static void logDebug(Logger logCore, String msg) {
+		logCore.debug(msg);
+	}
+	private static void logDebug(Logger logCore, String msg, Throwable e) {
+		logCore.debug(msg, e);
+	}
+	private static void logInfo(Logger logCore, String msg) {
+		logCore.info(msg);
+	}
+	private static void logError(Logger logCore, String msg) {
+		logCore.error(msg);
+	}
+	private static void logError(Logger logCore, String msg, Throwable e) {
+		logCore.error(msg,e);
+	}
+	
+	
 	/** Indicazione se sono state inizializzate le variabili del servizio */
 	public static boolean initializeService = false;
 
@@ -253,7 +270,7 @@ public class RicezioneBuste {
 	
 	/** IGestoreCredenziali: lista di gestori delle credenziali */
 	private static String [] tipiGestoriCredenziali = null;
-	
+		
 	/**
 	 * Inizializzatore del servizio RicezioneBuste
 	 * 
@@ -271,7 +288,7 @@ public class RicezioneBuste {
 		try{
 			INodeSender nodeSender = (INodeSender) loader.newInstance(classTypeNodeSender);
 			nodeSender.toString();
-			logCore.info("Inizializzazione gestore NodeSender di tipo "+classTypeNodeSender+" effettuata.");
+			logInfo(logCore, "Inizializzazione gestore NodeSender di tipo "+classTypeNodeSender+" effettuata.");
 		}catch(Exception e){
 			throw new Exception("Riscontrato errore durante il caricamento della classe ["+classTypeNodeSender+
 					"] da utilizzare per la spedizione nell'infrastruttura: "+e.getMessage());
@@ -282,7 +299,7 @@ public class RicezioneBuste {
 		try{
 			INodeReceiver nodeReceiver = (INodeReceiver) loader.newInstance(classType);
 			nodeReceiver.toString();
-			logCore.info("Inizializzazione gestore NodeReceiver di tipo "+classType+" effettuata.");
+			logInfo(logCore, "Inizializzazione gestore NodeReceiver di tipo "+classType+" effettuata.");
 		}catch(Exception e){
 			throw new Exception("Riscontrato errore durante il caricamento della classe ["+classType+
 					"] da utilizzare per la ricezione dall'infrastruttura: "+e.getMessage());
@@ -521,37 +538,36 @@ public class RicezioneBuste {
 		
 		
 		// ------------- Dump richiesta in ingresso -----------------------------
-		if(internalObjects.containsKey(CostantiPdD.DUMP_RICHIESTA_EFFETTUATO)==false) {
-			if(Dump.sistemaDumpDisponibile){
-				try{
-					ConfigurazionePdDManager configurazionePdDReader = ConfigurazionePdDManager.getInstance();	
-					
-					if(internalObjects.containsKey(CostantiPdD.DUMP_CONFIG)==false) {
-						URLProtocolContext urlProtocolContext = this.msgContext.getUrlProtocolContext();
-						if(urlProtocolContext!=null && urlProtocolContext.getInterfaceName()!=null) {
-							IDPortaApplicativa identificativoPortaApplicativa = new IDPortaApplicativa();
-							identificativoPortaApplicativa.setNome(urlProtocolContext.getInterfaceName());
-							PortaApplicativa portaApplicativa = configurazionePdDReader.getPortaApplicativa_SafeMethod(identificativoPortaApplicativa, this.msgContext.getRequestInfo());
-							if(portaApplicativa!=null) {
-								DumpConfigurazione dumpConfig = configurazionePdDReader.getDumpConfigurazione(portaApplicativa);
-								internalObjects.put(CostantiPdD.DUMP_CONFIG, dumpConfig);
-							}
+		if(!internalObjects.containsKey(CostantiPdD.DUMP_RICHIESTA_EFFETTUATO) &&
+			Dump.isSistemaDumpDisponibile()){
+			try{
+				ConfigurazionePdDManager configurazionePdDReader = ConfigurazionePdDManager.getInstance();	
+				
+				if(!internalObjects.containsKey(CostantiPdD.DUMP_CONFIG)) {
+					URLProtocolContext urlProtocolContext = this.msgContext.getUrlProtocolContext();
+					if(urlProtocolContext!=null && urlProtocolContext.getInterfaceName()!=null) {
+						IDPortaApplicativa identificativoPortaApplicativa = new IDPortaApplicativa();
+						identificativoPortaApplicativa.setNome(urlProtocolContext.getInterfaceName());
+						PortaApplicativa portaApplicativa = configurazionePdDReader.getPortaApplicativa_SafeMethod(identificativoPortaApplicativa, this.msgContext.getRequestInfo());
+						if(portaApplicativa!=null) {
+							DumpConfigurazione dumpConfig = configurazionePdDReader.getDumpConfigurazione(portaApplicativa);
+							internalObjects.put(CostantiPdD.DUMP_CONFIG, dumpConfig);
 						}
 					}
-					
-					OpenSPCoop2Message msgRichiesta = inRequestContext.getMessaggio();
-					if (msgRichiesta!=null) {
-						
-						Dump dumpApplicativo = getDump(configurazionePdDReader, protocolFactory, internalObjects, msgDiag.getPorta());
-						dumpApplicativo.dumpRichiestaIngresso(msgRichiesta, 
-								inRequestContext.getConnettore().getUrlProtocolContext());
-					}
-				}catch(DumpException dumpException){
-					setSOAPFault_processamento(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, dumpException, "DumpNonRiuscito");
-					return;
-				}catch(Exception e){
-					// Se non riesco ad accedere alla configurazione sicuramente gia' nel messaggio di risposta e' presente l'errore di PdD non correttamente inizializzata
 				}
+				
+				OpenSPCoop2Message msgRichiesta = inRequestContext.getMessaggio();
+				if (msgRichiesta!=null) {
+					
+					Dump dumpApplicativo = getDump(configurazionePdDReader, protocolFactory, internalObjects, msgDiag.getPorta());
+					dumpApplicativo.dumpRichiestaIngresso(msgRichiesta, 
+							inRequestContext.getConnettore().getUrlProtocolContext());
+				}
+			}catch(DumpException dumpException){
+				setSOAPFault_processamento(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, dumpException, "DumpNonRiuscito");
+				return;
+			}catch(Exception e){
+				// Se non riesco ad accedere alla configurazione sicuramente gia' nel messaggio di risposta e' presente l'errore di PdD non correttamente inizializzata
 			}
 		}
 		
@@ -625,7 +641,7 @@ public class RicezioneBuste {
 		
 		
 		// ------------- Dump risposta in uscita-----------------------------
-		if(Dump.sistemaDumpDisponibile){
+		if(Dump.isSistemaDumpDisponibile()){
 			try{
 				ConfigurazionePdDManager configurazionePdDReader = ConfigurazionePdDManager.getInstance();	
 				if (msgRisposta!=null) {
@@ -645,9 +661,8 @@ public class RicezioneBuste {
 				}
 			}catch(DumpException dumpException){
 				setSOAPFault_processamento(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, dumpException, "DumpNonRiuscito");
-				return;
 			}catch(Exception e){
-				logCore.error(e.getMessage(),e);
+				logError(logCore, e.getMessage(),e);
 				// Se non riesco ad accedere alla configurazione sicuramente gia' nel messaggio di risposta e' presente l'errore di PdD non correttamente inizializzata
 			}
 		}
@@ -803,20 +818,20 @@ public class RicezioneBuste {
 				msgDiag.logErroreGenerico(descrizioneErrore, posizioneErrore); // nota: non emette informazioni sul core
 				if(logCore!=null){
 					if(e!=null) {
-						logCore.error(descrizioneErrore+": "+e.getMessage(),e);
+						logError(logCore, descrizioneErrore+": "+e.getMessage(),e);
 					}
 					else {
-						logCore.error(descrizioneErrore);
+						logError(logCore, descrizioneErrore);
 					}
 				}
 			}
 		}
 		else if(logCore!=null){
 			if(e!=null) {
-				logCore.error(posizioneErrore+": "+e.getMessage(),e);
+				logError(logCore, posizioneErrore+": "+e.getMessage(),e);
 			}
 			else {
-				logCore.error(posizioneErrore);
+				logError(logCore, posizioneErrore);
 			}
 		}
 		if (this.msgContext.isGestioneRisposta()) {
@@ -869,85 +884,85 @@ public class RicezioneBuste {
 	
 	
 	private boolean checkInizializzazione(Logger logCore, ConfigurazionePdDManager configurazionePdDReader, RegistroServiziManager registroServiziReader) {
-		if( OpenSPCoop2Startup.initialize == false){
+		if( !OpenSPCoop2Startup.initialize){
 			String msgErrore = "Inizializzazione di GovWay non correttamente effettuata";
-			logCore.error("["+RicezioneBuste.ID_MODULO+"]  "+msgErrore);
+			logError(logCore, "["+RicezioneBuste.ID_MODULO+"]  "+msgErrore);
 			try{
 				// provo ad emetter un diagnostico
 				if(this.msgContext.getMsgDiagnostico()!=null){
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"InizializzazioneGovWay");
 				}
-			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
+			}catch(Throwable t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_NOT_INITIALIZED,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msgErrore,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA));
 			return false;
 		}
-		if( TimerMonitoraggioRisorseThread.risorseDisponibili == false){
+		if( !TimerMonitoraggioRisorseThread.risorseDisponibili){
 			String msgErrore = "Risorse di sistema non disponibili: "+ TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage();
-			logCore.error("["+RicezioneBuste.ID_MODULO+"]  "+msgErrore,TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
+			logError(logCore, "["+RicezioneBuste.ID_MODULO+"]  "+msgErrore,TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
 			try{
 				// provo ad emetter un diagnostico
 				if(this.msgContext.getMsgDiagnostico()!=null){
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"InizializzazioneRisorseGovWay");
 				}
-			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
+			}catch(Throwable t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msgErrore,CodiceErroreIntegrazione.CODICE_532_RISORSE_NON_DISPONIBILI));
 			return false;
 		}
-		if( TimerThresholdThread.freeSpace == false){
+		if( !TimerThresholdThread.freeSpace){
 			String msgErrore = "Non sono disponibili abbastanza risorse per la gestione della richiesta";
-			logCore.error("["+RicezioneBuste.ID_MODULO+"]  "+msgErrore);
+			logError(logCore, "["+RicezioneBuste.ID_MODULO+"]  "+msgErrore);
 			try{
 				// provo ad emetter un diagnostico
 				if(this.msgContext.getMsgDiagnostico()!=null){
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"DisponibilitaRisorseGovWay");
 				}
-			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
+			}catch(Throwable t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msgErrore,CodiceErroreIntegrazione.CODICE_533_RISORSE_DISPONIBILI_LIVELLO_CRITICO));
 			return false;
 		}
-		if( Tracciamento.tracciamentoDisponibile == false){
+		if( !Tracciamento.tracciamentoDisponibile){
 			String msgErrore = "Tracciatura non disponibile: "+ Tracciamento.motivoMalfunzionamentoTracciamento.getMessage();
-			logCore.error("["+RicezioneBuste.ID_MODULO+"]  "+msgErrore,Tracciamento.motivoMalfunzionamentoTracciamento);
+			logError(logCore, "["+RicezioneBuste.ID_MODULO+"]  "+msgErrore,Tracciamento.motivoMalfunzionamentoTracciamento);
 			try{
 				// provo ad emetter un diagnostico
 				if(this.msgContext.getMsgDiagnostico()!=null){
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"Tracciamento");
 				}
-			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
+			}catch(Throwable t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msgErrore,CodiceErroreIntegrazione.CODICE_545_TRACCIATURA_NON_FUNZIONANTE));
 			return false;
 		}
-		if( MsgDiagnostico.gestoreDiagnosticaDisponibile == false){
+		if( !MsgDiagnostico.gestoreDiagnosticaDisponibile){
 			String msgErrore = "Sistema di diagnostica non disponibile: "+ MsgDiagnostico.motivoMalfunzionamentoDiagnostici.getMessage();
-			logCore.error("["+RicezioneBuste.ID_MODULO+"]  "+msgErrore,MsgDiagnostico.motivoMalfunzionamentoDiagnostici);
+			logError(logCore, "["+RicezioneBuste.ID_MODULO+"]  "+msgErrore,MsgDiagnostico.motivoMalfunzionamentoDiagnostici);
 			try{
 				// provo ad emetter un diagnostico lo stesso (molto probabilmente non ci riuscirà essendo proprio la risorsa diagnostica non disponibile)
 				if(this.msgContext.getMsgDiagnostico()!=null){
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"Diagnostica");
 				}
-			}catch(Throwable t){logCore.debug("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
+			}catch(Throwable t){logDebug(logCore, "Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msgErrore,CodiceErroreIntegrazione.CODICE_546_DIAGNOSTICA_NON_FUNZIONANTE));
 			return false;
 		}
-		if( Dump.sistemaDumpDisponibile == false){
-			String msgErrore = "Sistema di dump dei contenuti applicativi non disponibile: "+ Dump.motivoMalfunzionamentoDump.getMessage();
-			logCore.error("["+RicezioneBuste.ID_MODULO+"]  "+msgErrore,Dump.motivoMalfunzionamentoDump);
+		if( !Dump.isSistemaDumpDisponibile()){
+			String msgErrore = "Sistema di dump dei contenuti applicativi non disponibile: "+ Dump.getMotivoMalfunzionamentoDump().getMessage();
+			logError(logCore, "["+RicezioneBuste.ID_MODULO+"]  "+msgErrore,Dump.getMotivoMalfunzionamentoDump());
 			try{
 				// provo ad emetter un diagnostico
 				if(this.msgContext.getMsgDiagnostico()!=null){
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"Dump");
 				}
-			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
+			}catch(Throwable t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msgErrore,CodiceErroreIntegrazione.CODICE_547_DUMP_CONTENUTI_APPLICATIVI_NON_FUNZIONANTE));
@@ -958,13 +973,13 @@ public class RicezioneBuste {
 			configurazionePdDReader.verificaConsistenzaConfigurazione();
 		}catch(Exception e){
 			String msgErrore = "Riscontrato errore durante la verifica della consistenza della configurazione";
-			logCore.error("["+RicezioneBuste.ID_MODULO+"]  "+msgErrore,e);
+			logError(logCore, "["+RicezioneBuste.ID_MODULO+"]  "+msgErrore,e);
 			try{
 				// provo ad emetter un diagnostico
 				if(this.msgContext.getMsgDiagnostico()!=null){
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"CheckConfigurazioneGovWay");
 				}
-			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
+			}catch(Throwable t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msgErrore,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e);
@@ -975,13 +990,13 @@ public class RicezioneBuste {
 			registroServiziReader.verificaConsistenzaRegistroServizi();
 		}catch(Exception e){
 			String msgErrore = "Riscontrato errore durante la verifica del registro dei servizi";
-			logCore.error("["+ RicezioneBuste.ID_MODULO+ "]  "+msgErrore,e);
+			logError(logCore, "["+ RicezioneBuste.ID_MODULO+ "]  "+msgErrore,e);
 			try{
 				// provo ad emetter un diagnostico
 				if(this.msgContext.getMsgDiagnostico()!=null){
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"CheckRegistroServizi");
 				}
-			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
+			}catch(Throwable t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msgErrore,CodiceErroreIntegrazione.CODICE_534_REGISTRO_DEI_SERVIZI_NON_DISPONIBILE),e);
@@ -1297,7 +1312,7 @@ public class RicezioneBuste {
 				
 			}catch(Exception e){
 				
-				logCore.debug(e.getMessage(),e); // lascio come debug puo' essere utile
+				logDebug(logCore, e.getMessage(),e); // lascio come debug puo' essere utile
 				
 //				boolean checkAsSecondaFaseAsincrono = false;
 //				try{
@@ -1318,7 +1333,7 @@ public class RicezioneBuste {
 //						}
 //					}
 //				}catch(Exception eAsincronoCheck){
-//					logCore.error("Errore durante il controllo della presenza di un profilo asincrono: "+eAsincronoCheck.getMessage(),eAsincronoCheck);
+//					logError(logCore, "Errore durante il controllo della presenza di un profilo asincrono: "+eAsincronoCheck.getMessage(),eAsincronoCheck);
 //				}
 //				
 //				if(checkAsSecondaFaseAsincrono==false) {
@@ -1657,7 +1672,7 @@ public class RicezioneBuste {
 			msgDiag.logPersonalizzato("autorizzazioneCanale.fallita");
 			
 			if(canaleNonAutorizzato) {
-				logCore.error(e.getMessage(),e);
+				logError(logCore, e.getMessage(),e);
 				setSOAPFault_intestazione(IntegrationFunctionError.AUTHORIZATION_DENY,
 						ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(msgErrore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
 			}
@@ -1793,7 +1808,7 @@ public class RicezioneBuste {
 			               pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE, configProperties);
 			            }
 					}catch(Exception e) {
-						logCore.error("Errore durante la lettura delle proprietà di configurazione della porta applicativa [" + pa.getNome() + "]: " + e.getMessage(), e);
+						logError(logCore, "Errore durante la lettura delle proprietà di configurazione della porta applicativa [" + pa.getNome() + "]: " + e.getMessage(), e);
 					}
 				}
 			}else {
@@ -1917,7 +1932,7 @@ public class RicezioneBuste {
 			is = new InformazioniServizioURLMapping(requestMessage,protocolFactory,urlProtocolContext,
 					logCore, this.msgContext.getIdModuloAsIDService(),
 					propertiesReader.getCustomContexts());
-			logCore.debug("InformazioniServizioTramiteURLMapping: "+is.toString());		
+			logDebug(logCore, "InformazioniServizioTramiteURLMapping: "+is.toString());		
 			
 		
 			Credential identity = null;
@@ -2308,7 +2323,7 @@ public class RicezioneBuste {
 				}
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e,"TracciamentoBustaMalformata");
-				logCore.error("Riscontrato errore durante il tracciamento della busta malformata ricevuta",e);
+				logError(logCore, "Riscontrato errore durante il tracciamento della busta malformata ricevuta",e);
 			}
 
 			if(erroreIntestazione!=null){
@@ -2359,7 +2374,7 @@ public class RicezioneBuste {
 				try{
 					msgDiag.addKeyword(CostantiPdD.KEY_ECCEZIONI, validatore.getErrore().getDescrizione(protocolFactory));
 				}catch(Exception e){
-					logCore.error("getDescrizione Error:"+e.getMessage(),e);
+					logError(logCore, "getDescrizione Error:"+e.getMessage(),e);
 				}
 				msgDiag.addKeyword(CostantiPdD.KEY_TIPO_VALIDAZIONE_BUSTA, "sintattica");
 				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"validazioneNonRiuscita");
@@ -2738,7 +2753,7 @@ public class RicezioneBuste {
 					}
 				} 
 				catch (Exception e) {
-					logCore.error("Errore durante l'identificazione delle credenziali ["+ RicezioneBuste.tipiGestoriCredenziali[i]
+					logError(logCore, "Errore durante l'identificazione delle credenziali ["+ RicezioneBuste.tipiGestoriCredenziali[i]
 					         + "]: "+ e.getMessage(),e);
 					msgDiag.addKeyword(CostantiPdD.KEY_TIPO_GESTORE_CREDENZIALI,RicezioneBuste.tipiGestoriCredenziali[i]);
 					msgDiag.addKeywordErroreProcessamento(e);
@@ -2994,7 +3009,7 @@ public class RicezioneBuste {
 			String esito = null;
 			IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.API_SUSPEND;
 			if(serviceIsEnabledExceptionProcessamento!=null){
-				logCore.error("["+ RicezioneBuste.ID_MODULO+ "] Identificazione stato servizio di ricezione buste non riuscita: "+serviceIsEnabledExceptionProcessamento.getMessage(),serviceIsEnabledExceptionProcessamento);
+				logError(logCore, "["+ RicezioneBuste.ID_MODULO+ "] Identificazione stato servizio di ricezione buste non riuscita: "+serviceIsEnabledExceptionProcessamento.getMessage(),serviceIsEnabledExceptionProcessamento);
 				msgDiag.logErroreGenerico("Identificazione stato servizio di ricezione buste non riuscita", "PA");
 				esito = "["+ RicezioneBuste.ID_MODULO+ "] Identificazione stato servizio di ricezione buste non riuscita";
 				errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione();
@@ -3017,7 +3032,7 @@ public class RicezioneBuste {
 					errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_551_PA_SERVICE_NOT_ACTIVE);
 				}
-				logCore.error("["+ RicezioneBuste.ID_MODULO+ "] "+msg);
+				logError(logCore, "["+ RicezioneBuste.ID_MODULO+ "] "+msg);
 				msgDiag.logErroreGenerico(msg, "PA");
 				esito = "["+ RicezioneBuste.ID_MODULO+ "] "+msg;
 			}
@@ -3154,10 +3169,10 @@ public class RicezioneBuste {
 		
 							String msgErrore = "processo di gestione dell'attribute authority ["+ aa.getNome() + "] fallito: " + esitoRecuperoAttributi.getDetails();
 							if(esitoRecuperoAttributi.getEccezioneProcessamento()!=null) {
-								logCore.error(msgErrore,esitoRecuperoAttributi.getEccezioneProcessamento());
+								logError(logCore, msgErrore,esitoRecuperoAttributi.getEccezioneProcessamento());
 							}
 							else {
-								logCore.error(msgErrore);
+								logError(logCore, msgErrore);
 							}							
 						}
 						
@@ -3166,7 +3181,7 @@ public class RicezioneBuste {
 						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
 						msgDiag.logPersonalizzato("gestioneAAInCorso.retrieve.fallita");
 						String msgErrore = "processo di gestione dell'attribute authority ["+ aa.getNome() + "] fallito: " + e.getMessage();
-						logCore.error(msgErrore,e);
+						logError(logCore, msgErrore,e);
 						
 					}
 					
@@ -3199,7 +3214,7 @@ public class RicezioneBuste {
 				
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
 				msgDiag.logPersonalizzato("gestioneAAFallita");
-				logCore.error("processo di gestione delle attribute authorities fallito: " + e.getMessage(),e);
+				logError(logCore, "processo di gestione delle attribute authorities fallito: " + e.getMessage(),e);
 				
 			}
 			finally {
@@ -3230,7 +3245,7 @@ public class RicezioneBuste {
 			
 			msgDiag.addKeywordErroreProcessamento(e,"Aggiornamento messaggio fallito");
 			msgDiag.logErroreGenerico(e,"ProtocolManager.updateOpenSPCoop2Message");
-			logCore.error("ProtocolManager.updateOpenSPCoop2Message error: "+e.getMessage(),e);
+			logError(logCore, "ProtocolManager.updateOpenSPCoop2Message error: "+e.getMessage(),e);
 			
 			// Tracciamento richiesta: non ancora registrata
 			if(this.msgContext.isTracciamentoAbilitato()){
@@ -3351,7 +3366,7 @@ public class RicezioneBuste {
 					msgDiag.emitRicezioneMessaggioModuloBuste(msgDiag, pddContext, !mittenteEsistente);
 					
 					msgDiag.logErroreGenerico(e,"checkPresenzaRichiestaRicevutaAsincronaAncoraInGestione");
-					logCore.error("Controllo presenza richieste/ricevuteRichieste ancora in gestione " +
+					logError(logCore, "Controllo presenza richieste/ricevuteRichieste ancora in gestione " +
 							"correlate alla risposta/richiesta-stato asincrona simmetrica/asimmetrica arrivata, non riuscito",e);
 					// Tracciamento richiesta: non ancora registrata
 					if(this.msgContext.isTracciamentoAbilitato()){
@@ -3784,7 +3799,7 @@ public class RicezioneBuste {
 			
 		} catch (Exception e) {
 			msgDiag.logErroreGenerico(e,"AnalisiModalitaGestioneStatefulStateless");
-			logCore.error("Analisi modalita di gestione STATEFUL/STATELESS non riuscita: "	+ e);
+			logError(logCore, "Analisi modalita di gestione STATEFUL/STATELESS non riuscita: "	+ e);
 			if (this.msgContext.isGestioneRisposta()) {
 				
 				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
@@ -3867,14 +3882,14 @@ public class RicezioneBuste {
 				if(he.isEmettiDiagnostico()){
 					msgDiag.logErroreGenerico(e,he.getIdentitaHandler());
 				}
-				logCore.error("Gestione InRequestProtocolHandler non riuscita ("+he.getIdentitaHandler()+"): "	+ he);
+				logError(logCore, "Gestione InRequestProtocolHandler non riuscita ("+he.getIdentitaHandler()+"): "	+ he);
 				if(this.msgContext.isGestioneRisposta()){
 					erroreIntegrazione = he.convertToErroreIntegrazione();
 					integrationFunctionError = he.getIntegrationFunctionError();
 				}
 			}else{
 				msgDiag.logErroreGenerico(e,"InvocazioneInRequestHandler");
-				logCore.error("Gestione InRequestProtocolHandler non riuscita: "	+ e);
+				logError(logCore, "Gestione InRequestProtocolHandler non riuscita: "	+ e);
 			}
 			if (this.msgContext.isGestioneRisposta()) {
 				
@@ -4115,7 +4130,7 @@ public class RicezioneBuste {
 				try{
 					msgDiag.addKeyword(CostantiPdD.KEY_ECCEZIONI, validatore.getErrore().getDescrizione(protocolFactory));
 				}catch(Exception e){
-					logCore.error("getDescrizione Error:"+e.getMessage(),e);
+					logError(logCore, "getDescrizione Error:"+e.getMessage(),e);
 				}
 				msgDiag.addKeyword(CostantiPdD.KEY_TIPO_VALIDAZIONE_BUSTA, "semantica");
 				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"validazioneNonRiuscita");
@@ -4355,7 +4370,7 @@ public class RicezioneBuste {
 				pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_CORRELAZIONE_APPLICATIVA_RICHIESTA, "true");
 				
 				msgDiag.logErroreGenerico(e,"CorrelazioneApplicativa("+bustaRichiesta.getID()+")");
-				logCore.error("Riscontrato errore durante la correlazione applicativa ["+bustaRichiesta.getID()+"]",e);
+				logError(logCore, "Riscontrato errore durante la correlazione applicativa ["+bustaRichiesta.getID()+"]",e);
 				
 				// Tracciamento richiesta: non ancora registrata
 				if(this.msgContext.isTracciamentoAbilitato()){
@@ -4529,7 +4544,7 @@ public class RicezioneBuste {
 			try{
 				dettaglioEccezione = XMLUtils.getDettaglioEccezione(logCore,requestMessage);
 			}catch(Exception e){
-				logCore.error("Errore durante l'analisi del dettaglio dell'eccezione",e);
+				logError(logCore, "Errore durante l'analisi del dettaglio dell'eccezione",e);
 			}
 			
 		}else{
@@ -4593,7 +4608,7 @@ public class RicezioneBuste {
 				try{
 					errore.append("Processamento["+traduttore.toString(erroreProcessamento.getCodiceEccezione(),erroreProcessamento.getSubCodiceEccezione())+"] "+erroriProcessamento.get(k).getDescrizione(protocolFactory)+"\n");
 				}catch(Exception e){
-					logCore.error("getDescrizione Error:"+e.getMessage(),e);
+					logError(logCore, "getDescrizione Error:"+e.getMessage(),e);
 				}
 			}
 			for(int k=0; k<erroriValidazione.size();k++){
@@ -4601,7 +4616,7 @@ public class RicezioneBuste {
 				try{
 					errore.append("Validazione["+traduttore.toString(erroreValidazione.getCodiceEccezione(),erroreValidazione.getSubCodiceEccezione())+"] "+erroriValidazione.get(k).getDescrizione(protocolFactory)+"\n");
 				}catch(Exception e){
-					logCore.error("getDescrizione Error:"+e.getMessage(),e);
+					logError(logCore, "getDescrizione Error:"+e.getMessage(),e);
 				}
 			}
 			msgDiag.addKeyword(CostantiPdD.KEY_ECCEZIONI, errore.toString());
@@ -4982,16 +4997,16 @@ public class RicezioneBuste {
 						}
 						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, descrizioneErrore);
 					}catch(Exception e){
-						logCore.error("getDescrizione Error:"+e.getMessage(),e);
+						logError(logCore, "getDescrizione Error:"+e.getMessage(),e);
 					}
 					msgDiag.addKeyword(CostantiPdD.KEY_POSIZIONE_ERRORE, traduttore.toString(esito.getErroreCooperazione().getCodiceErrore()));
 					msgDiag.logPersonalizzato("autorizzazioneBusteFallita");
 					String errorMsg =  "Riscontrato errore durante il processo di Autorizzazione per il messaggio con identificativo ["+bustaRichiesta.getID()+"]: "+descrizioneErrore;
 					if(esito.getEccezioneProcessamento()!=null){
-						logCore.error(errorMsg,esito.getEccezioneProcessamento());
+						logError(logCore, errorMsg,esito.getEccezioneProcessamento());
 					}
 					else{
-						logCore.error(errorMsg);
+						logError(logCore, errorMsg);
 					}
 					if(this.msgContext.isGestioneRisposta()){
 						
@@ -5061,7 +5076,7 @@ public class RicezioneBuste {
 				CostantiPdD.addKeywordInCache(msgDiag, false,
 						pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTORIZZAZIONE);
 				msgDiag.logErroreGenerico(e,"AutorizzazioneMessaggio("+bustaRichiesta.getID()+")");
-				logCore.error("Riscontrato errore durante il processo di Autorizzazione per il messaggio con identificativo ["+bustaRichiesta.getID()+"]",e);
+				logError(logCore, "Riscontrato errore durante il processo di Autorizzazione per il messaggio con identificativo ["+bustaRichiesta.getID()+"]",e);
 				if(this.msgContext.isGestioneRisposta()){
 					
 					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
@@ -5382,7 +5397,7 @@ public class RicezioneBuste {
 	
 					}catch(ValidatoreMessaggiApplicativiException ex){
 						msgDiag.addKeywordErroreProcessamento(ex);
-						logCore.error("[ValidazioneContenutiApplicativi Richiesta] "+ex.getMessage(),ex);
+						logError(logCore, "[ValidazioneContenutiApplicativi Richiesta] "+ex.getMessage(),ex);
 						if (CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato())) {
 							msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaNonRiuscita.warningOnly");
 						}
@@ -5423,7 +5438,7 @@ public class RicezioneBuste {
 						}
 					}catch(Exception ex){
 						msgDiag.addKeywordErroreProcessamento(ex);
-						logCore.error("Riscontrato errore durante la validazione dei contenuti applicativi (richiesta applicativa)",ex);
+						logError(logCore, "Riscontrato errore durante la validazione dei contenuti applicativi (richiesta applicativa)",ex);
 						if (CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato())) {
 							msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaNonRiuscita.warningOnly");
 						}
@@ -5565,7 +5580,7 @@ public class RicezioneBuste {
 						try{
 							msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, esito.getErroreCooperazione().getDescrizione(protocolFactory));
 						}catch(Exception e){
-							logCore.error("getDescrizione Error:"+e.getMessage(),e);
+							logError(logCore, "getDescrizione Error:"+e.getMessage(),e);
 						}
 						msgDiag.addKeyword(CostantiPdD.KEY_POSIZIONE_ERRORE, traduttore.toString(esito.getErroreCooperazione().getCodiceErrore()));
 						msgDiag.logPersonalizzato("autorizzazioneContenutiBusteFallita");
@@ -5606,7 +5621,7 @@ public class RicezioneBuste {
 					CostantiPdD.addKeywordInCache(msgDiag, false,
 							pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTORIZZAZIONE_CONTENUTI);
 					msgDiag.logErroreGenerico(ex,"AutorizzazioneContenuto Messaggio("+bustaRichiesta.getID()+")");
-					logCore.error("Riscontrato errore durante il processo di Autorizzazione del Contenuto per il messaggio con identificativo ["+bustaRichiesta.getID()+"]",ex);
+					logError(logCore, "Riscontrato errore durante il processo di Autorizzazione del Contenuto per il messaggio con identificativo ["+bustaRichiesta.getID()+"]",ex);
 					if(this.msgContext.isGestioneRisposta()){
 						
 						parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
@@ -5668,7 +5683,7 @@ public class RicezioneBuste {
 			}
 		} catch (Exception e){
 			msgDiag.logErroreGenerico(e,"calcoloDigestSalvataggioRisposta");
-			logCore.error("Calcolo Digest Salvataggio Risposta non riuscito: "	+ e);
+			logError(logCore, "Calcolo Digest Salvataggio Risposta non riuscito: "	+ e);
 			if (this.msgContext.isGestioneRisposta()) {
 				
 				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
@@ -5703,7 +5718,7 @@ public class RicezioneBuste {
 			}
 		} catch (Exception e) {
 			msgDiag.logErroreGenerico(e,"OpenSPCoopState.toStateless");
-			logCore.error("Creazione stato STATEFUL/STATELESS non riuscita: "	+ e);
+			logError(logCore, "Creazione stato STATEFUL/STATELESS non riuscita: "	+ e);
 			if (this.msgContext.isGestioneRisposta()) {
 				
 				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
@@ -5922,7 +5937,7 @@ public class RicezioneBuste {
 				}
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e,"ControlloPresenzaMessaggioGiaInGestione");
-				logCore.error("Controllo/gestione presenza messaggio gia in gestione non riuscito",e);
+				logError(logCore, "Controllo/gestione presenza messaggio gia in gestione non riuscito",e);
 				if(this.msgContext.isGestioneRisposta()){
 					
 					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
@@ -6153,7 +6168,7 @@ public class RicezioneBuste {
 
 				// send jms solo x il comportamento stateful
 				if (!portaStateless) {
-					logCore.debug(RicezioneBuste.ID_MODULO + " :eseguo send a sbustamento");
+					logDebug(logCore, RicezioneBuste.ID_MODULO + " :eseguo send a sbustamento");
 					
 					String classTypeNodeSender = null;
 					INodeSender nodeSender = null;
@@ -6168,16 +6183,16 @@ public class RicezioneBuste {
 					
 					nodeSender.send(sbustamentoMSG, org.openspcoop2.pdd.mdb.Sbustamento.ID_MODULO, msgDiag, 
 							identitaPdD,this.msgContext.getIdModulo(), idMessageRequest, msgRequest);
-					logCore.debug(RicezioneBuste.ID_MODULO + " :send a sbustamento eseguita");
+					logDebug(logCore, RicezioneBuste.ID_MODULO + " :send a sbustamento eseguita");
 				}
 			}
 
 		} catch (Exception e) {	
 			if(functionAsRouter){
-				logCore.error("Spedizione->InoltroBuste(router) non riuscita",e);
+				logError(logCore, "Spedizione->InoltroBuste(router) non riuscita",e);
 				msgDiag.logErroreGenerico(e,"GenericLib.nodeSender.send(InoltroBuste)");
 			}else{
-				logCore.error("Spedizione->Sbustamento non riuscita",e);
+				logError(logCore, "Spedizione->Sbustamento non riuscita",e);
 				msgDiag.logErroreGenerico(e,"GenericLib.nodeSender.send(Sbustamento)");
 			}
 			if(this.msgContext.isGestioneRisposta()){
@@ -6207,7 +6222,7 @@ public class RicezioneBuste {
 		msgDiag.mediumDebug("Commit delle operazioni per la gestione della richiesta...");
 		try{
 			openspcoopstate.commit();
-			logCore.debug(RicezioneBuste.ID_MODULO+ " :RicezioneBuste commit eseguito");
+			logDebug(logCore, RicezioneBuste.ID_MODULO+ " :RicezioneBuste commit eseguito");
 		}catch (Exception e) {	
 			msgDiag.logErroreGenerico(e,"openspcoopstate.commit()");
 			if(this.msgContext.isGestioneRisposta()){
@@ -6294,7 +6309,7 @@ public class RicezioneBuste {
 				//}
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e,"GestioneRoutingStateless");
-				logCore.error("Errore Generale durante la gestione del routing stateless: "+e.getMessage(),e);
+				logError(logCore, "Errore Generale durante la gestione del routing stateless: "+e.getMessage(),e);
 
 				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
 				parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -6409,7 +6424,7 @@ public class RicezioneBuste {
 				}
 			}catch (Exception e) {
 				msgDiag.logErroreGenerico(e,"GestioneStateless");
-				logCore.error("Errore Generale durante la gestione stateless: "+e.getMessage(),e);
+				logError(logCore, "Errore Generale durante la gestione stateless: "+e.getMessage(),e);
 
 				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
 				parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -6602,7 +6617,7 @@ public class RicezioneBuste {
 		try {
 			gestioneRisposta(parametriGestioneRisposta);
 		} catch (Exception e) {
-			logCore.error("ErroreGenerale",e);
+			logError(logCore, "ErroreGenerale",e);
 			msgDiag.logErroreGenerico(e, "Generale");
 			
 			parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
@@ -6629,11 +6644,11 @@ public class RicezioneBuste {
 					try{
 						msgDiag.logErroreGenerico(e, "Rilascio risorsa");
 					}catch(Throwable eLog){
-						logCore.error("Diagnostico errore per Rilascio risorsa: "+eLog.getMessage(),eLog);
+						logError(logCore, "Diagnostico errore per Rilascio risorsa: "+eLog.getMessage(),eLog);
 					}
 				}
 				else{
-					logCore.error("Rilascio risorsa: "+e.getMessage(),e);
+					logError(logCore, "Rilascio risorsa: "+e.getMessage(),e);
 				}
 			}
 		}
@@ -6784,7 +6799,7 @@ public class RicezioneBuste {
 
 		} catch (Exception e) {
 			msgDiag.logErroreGenerico(e,"GestioneRisposta("+this.msgContext.getIdModulo()+")");
-			logCore.error("Gestione risposta ("+this.msgContext.getIdModulo()+") con errore",e);
+			logError(logCore, "Gestione risposta ("+this.msgContext.getIdModulo()+") con errore",e);
 			
 			// per la costruzione dell'errore ho bisogno di una connessione al database
 			if ( portaStateless==false && routingStateless== false  ) {
@@ -7233,7 +7248,7 @@ public class RicezioneBuste {
 						
 						msgDiag.addKeywordErroreProcessamento(e);
 						msgDiag.logPersonalizzato("messageSecurity.processamentoRispostaInErrore");
-						logCore.error("[MessageSecurityResponse]" + e.getMessage(),e);
+						logError(logCore, "[MessageSecurityResponse]" + e.getMessage(),e);
 						
 						parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
 						parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -7544,7 +7559,7 @@ public class RicezioneBuste {
 						msgDiag.addKeyword(CostantiPdD.KEY_TIPO_HEADER_INTEGRAZIONE,tipiIntegrazionePA_response[i]);
 						msgDiag.addKeywordErroreProcessamento(e);
 						msgDiag.logPersonalizzato("headerIntegrazione.creazioneFallita");
-						logCore.error(msgDiag.getMessaggio_replaceKeywords("headerIntegrazione.creazioneFallita"), e);
+						logError(logCore, msgDiag.getMessaggio_replaceKeywords("headerIntegrazione.creazioneFallita"), e);
 					}
 				}
 			}
@@ -7570,7 +7585,7 @@ public class RicezioneBuste {
 				// Committo modifiche (I commit servono per eventuali modifiche ai duplicati)
 				openspcoopstate.commit();
 			} catch (Exception e) {
-				logCore.error("Riscontrato errore durante l'aggiornamento proprietario messaggio", e);
+				logError(logCore, "Riscontrato errore durante l'aggiornamento proprietario messaggio", e);
 				msgDiag.logErroreGenerico(e, "openspcoopstate.commit(stateless risposta)");
 				
 				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
@@ -7597,7 +7612,7 @@ public class RicezioneBuste {
 				// Committo modifiche
 				openspcoopstate.commit();
 			} catch (Exception e) {
-				logCore.error("Riscontrato errore durante il commit della gestione oneWay stateful/stateless ibrido", e);
+				logError(logCore, "Riscontrato errore durante il commit della gestione oneWay stateful/stateless ibrido", e);
 				msgDiag.logErroreGenerico(e, "openspcoopstate.commit(oneway1.1 risposta)");
 				
 				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);

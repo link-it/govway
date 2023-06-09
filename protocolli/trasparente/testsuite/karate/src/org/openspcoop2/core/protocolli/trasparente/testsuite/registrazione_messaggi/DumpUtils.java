@@ -25,12 +25,16 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.xml.soap.AttachmentPart;
 
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
+import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
@@ -185,5 +189,130 @@ public class DumpUtils {
 			
 			i++;
 		}
+	}
+	
+	
+	public static final String HEADER_TEST_1 = "HeaderTest1";
+	public static final String HEADER_TEST_2 = "HeaderTest2";
+	public static final String HEADER_TEST_3 = "HeaderTest3";
+	public static final String HEADER_TEST_4 = "HeaderTest4";
+	public static final String HEADER_TEST_5 = "HeaderTest5";
+	public static final String HEADER_TEST_VALORE_PREFIX = "Valore-";
+	private static List<String> headerWhiteList = new ArrayList<>();
+	public static List<String> getHeaderWhiteList() {
+		return headerWhiteList;
+	}
+	static {
+		headerWhiteList.add(HEADER_TEST_1);
+		headerWhiteList.add(HEADER_TEST_2);
+		headerWhiteList.add(HEADER_TEST_5);
+	}
+	private static List<String> headerBlackList = new ArrayList<>();
+	public static List<String> getHeaderBlackList() {
+		return headerBlackList;
+	}
+	static {
+		headerBlackList.add(HEADER_TEST_1);
+		headerBlackList.add(HEADER_TEST_3);
+		headerBlackList.add(HEADER_TEST_4);
+	}
+	
+	public static List<String> getHeaderListCustom(String ... hdr) {
+		List<String> l = new ArrayList<>();
+		if(hdr!=null && hdr.length>0) {
+			l.addAll(Arrays.asList(hdr));
+		}
+		return l;
+	}
+	
+	
+	public static HttpResponse testHeader(boolean rest, boolean dumpBinario, 
+			TipoServizio tipoServizio, String operazione, String contentType, byte[]content, long contentLength, MessageType formatoMessaggio,
+			boolean richiestaIngressoHeaderWhiteList, List<String> richiestaIngressoHeaderList,
+			boolean richiestaUscitaHeaderWhiteList, List<String> richiestaUscitaHeaderList,
+			boolean rispostaIngressoHeaderWhiteList, List<String> rispostaIngressoHeaderList,
+			boolean rispostaUscitaHeaderWhiteList, List<String> rispostaUscitaHeaderList) throws Exception {
+		
+
+		String url = tipoServizio == TipoServizio.EROGAZIONE
+				? System.getProperty("govway_base_path") + "/SoggettoInternoTest/TestRegistrazioneMessaggiHeaderCustom/v1/"+operazione
+				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/TestRegistrazioneMessaggiHeaderCustom/v1/"+operazione;
+		
+		
+		HttpRequest request = new HttpRequest();
+		
+		if(!rest) {
+			if(HttpConstants.CONTENT_TYPE_SOAP_1_2.equals(content)) {
+				// NOTA: lo metto nella url per tenere, ma non e' corretto, andrebbe nel content-type
+				// per questi test di dump non e' comunque una informazione importante
+				url=url+"?"+HttpConstants.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION+"=test";
+			}
+			else {
+				request.addHeader(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, "\"test\"");
+			}
+		}
+		
+		request.addHeader(HEADER_TEST_1, HEADER_TEST_VALORE_PREFIX+HEADER_TEST_1);
+		request.addHeader(HEADER_TEST_2, HEADER_TEST_VALORE_PREFIX+HEADER_TEST_2);
+		request.addHeader(HEADER_TEST_3, HEADER_TEST_VALORE_PREFIX+HEADER_TEST_3);
+		request.addHeader(HEADER_TEST_4, HEADER_TEST_VALORE_PREFIX+HEADER_TEST_4);
+		request.addHeader(HEADER_TEST_5, HEADER_TEST_VALORE_PREFIX+HEADER_TEST_5);
+		
+		request.setMethod(HttpRequestMethod.POST);
+		request.setContentType(contentType);
+		
+		request.setContent(content);
+		
+		request.setUrl(url);
+		
+		HttpResponse response = HttpUtilities.httpInvoke(request);
+		assertEquals(200, response.getResultHTTPOperation());
+		assertNotNull(response.getContentType());
+		assertEquals(contentType, response.getContentType());
+		
+		String idTransazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
+		assertNotNull(idTransazione);
+		
+		assertNotNull(response.getContent());
+		String msgContentLength = "";
+		if(rest) {
+			if(content.length!=response.getContent().length) {
+				File fSend = File.createTempFile("sendFile-"+idTransazione, ".tmp");
+				FileSystemUtilities.writeFile(fSend, content);
+				File fReceived = File.createTempFile("receivedFile-"+idTransazione, ".tmp");
+				FileSystemUtilities.writeFile(fReceived, response.getContent());
+				msgContentLength = "Richiesta spedita serializzata in:"+fSend.getAbsolutePath()+"\nRisposta ricevuta serializzata in: "+fReceived.getAbsolutePath();
+			}
+			assertEquals(msgContentLength, content.length, response.getContent().length);
+		}
+		else {
+			assertTrue("Verifico content-length '"+response.getContent().length+"' >0", response.getContent().length>0);
+		}
+		
+		
+		
+		DBVerifier.verifyHeaders(idTransazione, 
+				dumpBinario ? TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO : TipoMessaggio.RICHIESTA_INGRESSO,
+						richiestaIngressoHeaderWhiteList, 
+						richiestaIngressoHeaderList);
+		
+		DBVerifier.verifyHeaders(idTransazione, 
+				dumpBinario ? TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO : TipoMessaggio.RICHIESTA_USCITA,
+						richiestaUscitaHeaderWhiteList, 
+						richiestaUscitaHeaderList);
+		
+		DBVerifier.verifyHeaders(idTransazione, 
+				dumpBinario ? TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO : TipoMessaggio.RISPOSTA_INGRESSO,
+						rispostaIngressoHeaderWhiteList, 
+						rispostaIngressoHeaderList);
+		
+		DBVerifier.verifyHeaders(idTransazione, 
+				dumpBinario ? TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO : TipoMessaggio.RISPOSTA_USCITA,
+						rispostaUscitaHeaderWhiteList, 
+						rispostaUscitaHeaderList);
+
+		
+		return response;
+		
 	}
 }

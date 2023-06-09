@@ -69,13 +69,9 @@ Vediamo il significato delle sezioni di questa pagina:
    Per ciascuno dei messaggi, su cui è stata abilitata la registrazione,
    è possibile scegliere quale elemento viene registrato:
 
-   -  *Headers*: vengono salvati gli header di trasporto (HTTP HEADERS)
-      associati al messaggio.
+   -  *Headers*: vengono salvati gli header di trasporto (HTTP Headers) associati al messaggio;
 
-   -  *Body*: viene salvato il corpo del messaggio.
-
-   -  *Attachments*: vengono salvati gli eventuali attachments presenti
-      nel messaggio.
+   -  *Payload*: viene salvato il corpo del messaggio (HTTP Payload).
 
 .. note::
     Le configurazioni effettuate in questa sezione della console hanno
@@ -83,4 +79,4 @@ Vediamo il significato delle sezioni di questa pagina:
     adottato dal gateway nella gestione dei diversi flussi di
     comunicazione. Tale comportamento può essere ridefinito puntualmente
     su ogni singola erogazione/fruizione agendo sulla voce di
-    configurazione *Tracciamento* in quel contesto.
+    configurazione *Tracciamento* o *Registrazione Messaggi*.

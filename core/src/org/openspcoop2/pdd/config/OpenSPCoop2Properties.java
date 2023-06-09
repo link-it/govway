@@ -31,6 +31,7 @@ import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.sql.Connection;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -242,6 +243,28 @@ public class OpenSPCoop2Properties {
 	
 	private static final String NON_DEFINITA = "non definita";
 
+	
+	private String getPrefixFile(File f, boolean expectedDir) {
+		return (expectedDir ? "Dir ":"")+"["+f.getAbsolutePath()+"] ";
+	}
+	private CoreException newCoreExceptionNotDir(File f, boolean expectedDir){
+		return new CoreException(getPrefixFile(f, expectedDir)+"isn't dir");
+	}
+	private CoreException newCoreExceptionNotFile(File f, boolean expectedDir){
+		return new CoreException(getPrefixFile(f, expectedDir)+"isn't file");
+	}
+	private CoreException newCoreExceptionCannotRead(File f, boolean expectedDir){
+		return new CoreException(getPrefixFile(f, expectedDir)+"cannot read");
+	}
+	private CoreException newCoreExceptionCannotWrite(File f, boolean expectedDir){
+		return new CoreException(getPrefixFile(f, expectedDir)+"cannot write");
+	}
+	private CoreException newCoreExceptionNotExists(File f, boolean expectedDir){
+		return new CoreException(getPrefixFile(f, expectedDir)+"not exists");
+	}
+	
+
+	
 	/** Copia Statica */
 	private static OpenSPCoop2Properties openspcoopProperties = null;
 
@@ -1736,24 +1759,49 @@ public class OpenSPCoop2Properties {
 			// Dump
 			this.getDumpBufferImpl();
 			this.isDumpAllAttachments();
-			this.isDumpFallito_BloccaCooperazioneInCorso();
-			this.isDumpFallito_BloccoServiziPdD();
+			this.isDumpFallitoBloccaCooperazioneInCorso();
+			this.isDumpFallitoBloccoServiziPdD();
+			
 			this.getDumpHeaderWhiteList();
 			this.getDumpHeaderBlackList();
+			
+			this.getDumpHeaderErogazioniWhiteList();
+			this.getDumpHeaderErogazioniBlackList();
+			this.getDumpHeaderFruizioniWhiteList();
+			this.getDumpHeaderFruizioniBlackList();
+			
+			this.getDumpHeaderErogazioniRichiestaIngressoWhiteList();
+			this.getDumpHeaderErogazioniRichiestaIngressoBlackList();
+			this.getDumpHeaderErogazioniRichiestaUscitaWhiteList();
+			this.getDumpHeaderErogazioniRichiestaUscitaBlackList();
+			this.getDumpHeaderErogazioniRispostaIngressoWhiteList();
+			this.getDumpHeaderErogazioniRispostaIngressoBlackList();
+			this.getDumpHeaderErogazioniRispostaUscitaWhiteList();
+			this.getDumpHeaderErogazioniRispostaUscitaBlackList();
+			
+			this.getDumpHeaderFruizioniRichiestaIngressoWhiteList();
+			this.getDumpHeaderFruizioniRichiestaIngressoBlackList();
+			this.getDumpHeaderFruizioniRichiestaUscitaWhiteList();
+			this.getDumpHeaderFruizioniRichiestaUscitaBlackList();
+			this.getDumpHeaderFruizioniRispostaIngressoWhiteList();
+			this.getDumpHeaderFruizioniRispostaIngressoBlackList();
+			this.getDumpHeaderFruizioniRispostaUscitaWhiteList();
+			this.getDumpHeaderFruizioniRispostaUscitaBlackList();
+			
 			this.isDumpEmitDiagnostic();
 			
 			// DumpBinario
-			this.isDumpBinario_registrazioneDatabase();
-			this.getDumpBinario_inMemoryThreshold();
-			this.getDumpBinario_repository();
+			this.isDumpBinarioRegistrazioneDatabase();
+			this.getDumpBinarioInMemoryThreshold();
+			this.getDumpBinarioRepository();
 
 			// DumpNotRealtime
-			this.getDumpNonRealtime_inMemoryThreshold();
-			this.getDumpNonRealtime_mode();
-			if(this.isDumpNonRealtime_fileSystemMode()) {
-				this.getDumpNonRealtime_repository();
+			this.getDumpNonRealtimeInMemoryThreshold();
+			this.getDumpNonRealtimeMode();
+			if(this.isDumpNonRealtimeFileSystemMode()) {
+				this.getDumpNonRealtimeRepository();
 			}
-			this.isDumpNonRealtime_throwStreamingHandlerException();
+			this.isDumpNonRealtimeThrowStreamingHandlerException();
 			
 			// Generatore di ID
 			String tipoIDGenerator = this.getTipoIDManager();
@@ -13978,13 +14026,13 @@ public class OpenSPCoop2Properties {
 				this.getConnettoreHttp_urlHttps_repository_inoltroBuste = new File(name);
 				if(this.getConnettoreHttp_urlHttps_repository_inoltroBuste.exists()) {
 					if(this.getConnettoreHttp_urlHttps_repository_inoltroBuste.isDirectory()==false) {
-						throw new CoreException("Dir ["+this.getConnettoreHttp_urlHttps_repository_inoltroBuste.getAbsolutePath()+"] not dir");
+						throw newCoreExceptionNotDir(this.getConnettoreHttp_urlHttps_repository_inoltroBuste,true);
 					}
 					if(this.getConnettoreHttp_urlHttps_repository_inoltroBuste.canRead()==false) {
-						throw new CoreException("Dir ["+this.getConnettoreHttp_urlHttps_repository_inoltroBuste.getAbsolutePath()+"] cannot read");
+						throw newCoreExceptionCannotRead(this.getConnettoreHttp_urlHttps_repository_inoltroBuste,true);
 					}
 					if(this.getConnettoreHttp_urlHttps_repository_inoltroBuste.canWrite()==false) {
-						throw new CoreException("Dir ["+this.getConnettoreHttp_urlHttps_repository_inoltroBuste.getAbsolutePath()+"] cannot write");
+						throw newCoreExceptionCannotWrite(this.getConnettoreHttp_urlHttps_repository_inoltroBuste,true);
 					}
 				}
 				else {
@@ -14012,13 +14060,13 @@ public class OpenSPCoop2Properties {
 				this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi = new File(name);
 				if(this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi.exists()) {
 					if(this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi.isDirectory()==false) {
-						throw new CoreException("Dir ["+this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi.getAbsolutePath()+"] not dir");
+						throw newCoreExceptionNotDir(this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi,true);
 					}
 					if(this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi.canRead()==false) {
-						throw new CoreException("Dir ["+this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi.getAbsolutePath()+"] cannot read");
+						throw newCoreExceptionCannotRead(this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi,true);
 					}
 					if(this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi.canWrite()==false) {
-						throw new CoreException("Dir ["+this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi.getAbsolutePath()+"] cannot write");
+						throw newCoreExceptionCannotWrite(this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi,true);
 					}
 				}
 				else {
@@ -17887,10 +17935,10 @@ public class OpenSPCoop2Properties {
 					this.getAutenticazioneHttpsPortaDelegataTruststorePath = new File(value);
 					if(this.getAutenticazioneHttpsPortaDelegataTruststorePath.exists()) {
 						if(!this.getAutenticazioneHttpsPortaDelegataTruststorePath.isFile()) {
-							throw new CoreException(this.getAutenticazioneHttpsPortaDelegataTruststorePath.getAbsolutePath()+" is not file");
+							throw newCoreExceptionNotFile(this.getAutenticazioneHttpsPortaDelegataTruststorePath, false);
 						}
 						if(!this.getAutenticazioneHttpsPortaDelegataTruststorePath.canRead()) {
-							throw new CoreException(this.getAutenticazioneHttpsPortaDelegataTruststorePath.getAbsolutePath()+" cannot read");
+							throw newCoreExceptionCannotRead(this.getAutenticazioneHttpsPortaDelegataTruststorePath,false);
 						}
 					}
 					else {
@@ -18022,10 +18070,10 @@ public class OpenSPCoop2Properties {
 					this.getAutenticazioneHttpsPortaApplicativaTruststorePath = new File(value);
 					if(this.getAutenticazioneHttpsPortaApplicativaTruststorePath.exists()) {
 						if(!this.getAutenticazioneHttpsPortaApplicativaTruststorePath.isFile()) {
-							throw new CoreException(this.getAutenticazioneHttpsPortaApplicativaTruststorePath.getAbsolutePath()+" is not file");
+							throw newCoreExceptionNotFile(this.getAutenticazioneHttpsPortaApplicativaTruststorePath, false);
 						}
 						if(!this.getAutenticazioneHttpsPortaApplicativaTruststorePath.canRead()) {
-							throw new CoreException(this.getAutenticazioneHttpsPortaApplicativaTruststorePath.getAbsolutePath()+" cannot read");
+							throw newCoreExceptionCannotRead(this.getAutenticazioneHttpsPortaApplicativaTruststorePath, false);
 						}
 					}
 					else {
@@ -18615,9 +18663,9 @@ public class OpenSPCoop2Properties {
 	/* ----------- Dump --------------------- */
 	
 	private String getDumpBufferImpl = null;
-	private Boolean getDumpBufferImpl_read = null;
+	private Boolean getDumpBufferImplRead = null;
 	public String getDumpBufferImpl() {	
-		if(this.getDumpBufferImpl_read==null){
+		if(this.getDumpBufferImplRead==null){
 			String pName = "org.openspcoop2.pdd.logger.dump.buffer.impl";
 			
 			try{ 
@@ -18628,7 +18676,7 @@ public class OpenSPCoop2Properties {
 					this.getDumpBufferImpl = name;
 				}
 				
-				this.getDumpBufferImpl_read = true;
+				this.getDumpBufferImplRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
@@ -18674,28 +18722,28 @@ public class OpenSPCoop2Properties {
 	 * @return Indica se in caso di errore di dump applicativo (es. salvataggio contenuto non riuscito) deve essere bloccata la gestione del messaggio e generato un errore al client
 	 * 
 	 */
-	private Boolean isDumpFallito_BloccaCooperazioneInCorso = null;
-	public boolean isDumpFallito_BloccaCooperazioneInCorso(){
+	private Boolean isDumpFallitoBloccaCooperazioneInCorso = null;
+	public boolean isDumpFallitoBloccaCooperazioneInCorso(){
 
-		if(this.isDumpFallito_BloccaCooperazioneInCorso==null){
+		if(this.isDumpFallitoBloccaCooperazioneInCorso==null){
 			try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.logger.dump.registrazioneFallita.bloccaCooperazioneInCorso"); 
 
 				if (value != null){
 					value = value.trim();
-					this.isDumpFallito_BloccaCooperazioneInCorso = Boolean.parseBoolean(value);
+					this.isDumpFallitoBloccaCooperazioneInCorso = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.dump.registrazioneFallita.bloccaCooperazioneInCorso' non impostata, viene utilizzato il default=false");
-					this.isDumpFallito_BloccaCooperazioneInCorso = false;
+					this.isDumpFallitoBloccaCooperazioneInCorso = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.dump.registrazioneFallita.bloccaCooperazioneInCorso' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
-				this.isDumpFallito_BloccaCooperazioneInCorso = false;
+				this.isDumpFallitoBloccaCooperazioneInCorso = false;
 			}
 		}
 
-		return this.isDumpFallito_BloccaCooperazioneInCorso;
+		return this.isDumpFallitoBloccaCooperazioneInCorso;
 	}
 	/**
 	 * Indica se in caso di rilevamento di un errore di tracciatura devono essere bloccati tutti i servizi esposti da GovWay, in modo da non permettere alla PdD di gestire ulteriori richieste fino ad un intervento sistemistico.
@@ -18703,28 +18751,28 @@ public class OpenSPCoop2Properties {
 	 * @return Indica se in caso di rilevamento di un errore di tracciatura devono essere bloccati tutti i servizi esposti da GovWay, in modo da non permettere alla PdD di gestire ulteriori richieste fino ad un intervento sistemistico.
 	 * 
 	 */
-	private Boolean isDumpFallito_BloccoServiziPdD = null;
-	public boolean isDumpFallito_BloccoServiziPdD(){
+	private Boolean isDumpFallitoBloccoServiziPdD = null;
+	public boolean isDumpFallitoBloccoServiziPdD(){
 
-		if(this.isDumpFallito_BloccoServiziPdD==null){
+		if(this.isDumpFallitoBloccoServiziPdD==null){
 			try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.logger.dump.registrazione.bloccoServiziPdD"); 
 
 				if (value != null){
 					value = value.trim();
-					this.isDumpFallito_BloccoServiziPdD = Boolean.parseBoolean(value);
+					this.isDumpFallitoBloccoServiziPdD = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.dump.registrazione.bloccoServiziPdD' non impostata, viene utilizzato il default=false");
-					this.isDumpFallito_BloccoServiziPdD = false;
+					this.isDumpFallitoBloccoServiziPdD = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.dump.registrazione.bloccoServiziPdD' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
-				this.isDumpFallito_BloccoServiziPdD = false;
+				this.isDumpFallitoBloccoServiziPdD = false;
 			}
 		}
 
-		return this.isDumpFallito_BloccoServiziPdD;
+		return this.isDumpFallitoBloccoServiziPdD;
 	}
 
 	private List<String> getDumpHeaderWhiteList = null;
@@ -18734,28 +18782,8 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.logger.dump.header.whiteList";
 			try{
 				this.getDumpHeaderWhiteList = new ArrayList<>();
-				
-				String tmp = this.reader.getValue_convertEnvProperties(pName); 
-				if(tmp!=null && !"".equals(tmp.trim())) {
-					tmp = tmp.trim();
-					if(tmp.contains(",")) {
-						String [] split = tmp.split(",");
-						if(split!=null && split.length>0) {
-							for (String s : split) {
-								if(s!=null) {
-									s = s.trim();
-									if(!"".equals(s)) {
-										this.getDumpHeaderWhiteList.add(s);
-									}
-								}
-							}
-						}
-					}
-					else {
-						this.getDumpHeaderWhiteList.add(tmp);
-					}
-				}
-				
+				String tmp = this.reader.getValue_convertEnvProperties(pName);
+				initDumpList(this.getDumpHeaderWhiteList, tmp);
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
@@ -18771,34 +18799,379 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.logger.dump.header.blackList";
 			try{
 				this.getDumpHeaderBlackList = new ArrayList<>();
-				
 				String tmp = this.reader.getValue_convertEnvProperties(pName); 
-				if(tmp!=null && !"".equals(tmp.trim())) {
-					tmp = tmp.trim();
-					if(tmp.contains(",")) {
-						String [] split = tmp.split(",");
-						if(split!=null && split.length>0) {
-							for (String s : split) {
-								if(s!=null) {
-									s = s.trim();
-									if(!"".equals(s)) {
-										this.getDumpHeaderBlackList.add(s);
-									}
-								}
-							}
-						}
-					}
-					else {
-						this.getDumpHeaderBlackList.add(tmp);
-					}
-				}
-				
+				initDumpList(this.getDumpHeaderBlackList, tmp);
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 		}
 
 		return this.getDumpHeaderBlackList;
+	}
+	
+	private List<String> getDumpHeaderErogazioniWhiteList = null;
+	public List<String> getDumpHeaderErogazioniWhiteList(){
+
+		if(this.getDumpHeaderErogazioniWhiteList==null){
+			String pName = "org.openspcoop2.pdd.logger.dump.header.erogazioni.whiteList";
+			try{
+				this.getDumpHeaderErogazioniWhiteList = new ArrayList<>();
+				String tmp = this.reader.getValue_convertEnvProperties(pName);
+				initDumpList(this.getDumpHeaderErogazioniWhiteList, tmp);
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+		}
+
+		return this.getDumpHeaderErogazioniWhiteList;
+	}
+	
+	private List<String> getDumpHeaderErogazioniBlackList = null;
+	public List<String> getDumpHeaderErogazioniBlackList(){
+
+		if(this.getDumpHeaderErogazioniBlackList==null){
+			String pName = "org.openspcoop2.pdd.logger.dump.header.erogazioni.blackList";
+			try{
+				this.getDumpHeaderErogazioniBlackList = new ArrayList<>();
+				String tmp = this.reader.getValue_convertEnvProperties(pName); 
+				initDumpList(this.getDumpHeaderErogazioniBlackList, tmp);
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+		}
+
+		return this.getDumpHeaderErogazioniBlackList;
+	}
+	
+	private List<String> getDumpHeaderFruizioniWhiteList = null;
+	public List<String> getDumpHeaderFruizioniWhiteList(){
+
+		if(this.getDumpHeaderFruizioniWhiteList==null){
+			String pName = "org.openspcoop2.pdd.logger.dump.header.fruizioni.whiteList";
+			try{
+				this.getDumpHeaderFruizioniWhiteList = new ArrayList<>();
+				String tmp = this.reader.getValue_convertEnvProperties(pName);
+				initDumpList(this.getDumpHeaderFruizioniWhiteList, tmp);
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+		}
+
+		return this.getDumpHeaderFruizioniWhiteList;
+	}
+	
+	private List<String> getDumpHeaderFruizioniBlackList = null;
+	public List<String> getDumpHeaderFruizioniBlackList(){
+
+		if(this.getDumpHeaderFruizioniBlackList==null){
+			String pName = "org.openspcoop2.pdd.logger.dump.header.fruizioni.blackList";
+			try{
+				this.getDumpHeaderFruizioniBlackList = new ArrayList<>();
+				String tmp = this.reader.getValue_convertEnvProperties(pName); 
+				initDumpList(this.getDumpHeaderFruizioniBlackList, tmp);
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+		}
+
+		return this.getDumpHeaderFruizioniBlackList;
+	}
+	
+	private List<String> getDumpHeaderErogazioniRichiestaIngressoWhiteList = null;
+	public List<String> getDumpHeaderErogazioniRichiestaIngressoWhiteList(){
+
+		if(this.getDumpHeaderErogazioniRichiestaIngressoWhiteList==null){
+			String pName = "org.openspcoop2.pdd.logger.dump.header.erogazioni.richiesta-ingresso.whiteList";
+			try{
+				this.getDumpHeaderErogazioniRichiestaIngressoWhiteList = new ArrayList<>();
+				String tmp = this.reader.getValue_convertEnvProperties(pName);
+				initDumpList(this.getDumpHeaderErogazioniRichiestaIngressoWhiteList, tmp);
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+		}
+
+		return this.getDumpHeaderErogazioniRichiestaIngressoWhiteList;
+	}
+	
+	private List<String> getDumpHeaderErogazioniRichiestaIngressoBlackList = null;
+	public List<String> getDumpHeaderErogazioniRichiestaIngressoBlackList(){
+
+		if(this.getDumpHeaderErogazioniRichiestaIngressoBlackList==null){
+			String pName = "org.openspcoop2.pdd.logger.dump.header.erogazioni.richiesta-ingresso.blackList";
+			try{
+				this.getDumpHeaderErogazioniRichiestaIngressoBlackList = new ArrayList<>();
+				String tmp = this.reader.getValue_convertEnvProperties(pName); 
+				initDumpList(this.getDumpHeaderErogazioniRichiestaIngressoBlackList, tmp);
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+		}
+
+		return this.getDumpHeaderErogazioniRichiestaIngressoBlackList;
+	}
+	
+	private List<String> getDumpHeaderErogazioniRichiestaUscitaWhiteList = null;
+	public List<String> getDumpHeaderErogazioniRichiestaUscitaWhiteList(){
+
+		if(this.getDumpHeaderErogazioniRichiestaUscitaWhiteList==null){
+			String pName = "org.openspcoop2.pdd.logger.dump.header.erogazioni.richiesta-uscita.whiteList";
+			try{
+				this.getDumpHeaderErogazioniRichiestaUscitaWhiteList = new ArrayList<>();
+				String tmp = this.reader.getValue_convertEnvProperties(pName);
+				initDumpList(this.getDumpHeaderErogazioniRichiestaUscitaWhiteList, tmp);
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+		}
+
+		return this.getDumpHeaderErogazioniRichiestaUscitaWhiteList;
+	}
+	
+	private List<String> getDumpHeaderErogazioniRichiestaUscitaBlackList = null;
+	public List<String> getDumpHeaderErogazioniRichiestaUscitaBlackList(){
+
+		if(this.getDumpHeaderErogazioniRichiestaUscitaBlackList==null){
+			String pName = "org.openspcoop2.pdd.logger.dump.header.erogazioni.richiesta-uscita.blackList";
+			try{
+				this.getDumpHeaderErogazioniRichiestaUscitaBlackList = new ArrayList<>();
+				String tmp = this.reader.getValue_convertEnvProperties(pName); 
+				initDumpList(this.getDumpHeaderErogazioniRichiestaUscitaBlackList, tmp);
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+		}
+
+		return this.getDumpHeaderErogazioniRichiestaUscitaBlackList;
+	}
+	
+	private List<String> getDumpHeaderErogazioniRispostaIngressoWhiteList = null;
+	public List<String> getDumpHeaderErogazioniRispostaIngressoWhiteList(){
+
+		if(this.getDumpHeaderErogazioniRispostaIngressoWhiteList==null){
+			String pName = "org.openspcoop2.pdd.logger.dump.header.erogazioni.risposta-ingresso.whiteList";
+			try{
+				this.getDumpHeaderErogazioniRispostaIngressoWhiteList = new ArrayList<>();
+				String tmp = this.reader.getValue_convertEnvProperties(pName);
+				initDumpList(this.getDumpHeaderErogazioniRispostaIngressoWhiteList, tmp);
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+		}
+
+		return this.getDumpHeaderErogazioniRispostaIngressoWhiteList;
+	}
+	
+	private List<String> getDumpHeaderErogazioniRispostaIngressoBlackList = null;
+	public List<String> getDumpHeaderErogazioniRispostaIngressoBlackList(){
+
+		if(this.getDumpHeaderErogazioniRispostaIngressoBlackList==null){
+			String pName = "org.openspcoop2.pdd.logger.dump.header.erogazioni.risposta-ingresso.blackList";
+			try{
+				this.getDumpHeaderErogazioniRispostaIngressoBlackList = new ArrayList<>();
+				String tmp = this.reader.getValue_convertEnvProperties(pName); 
+				initDumpList(this.getDumpHeaderErogazioniRispostaIngressoBlackList, tmp);
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+		}
+
+		return this.getDumpHeaderErogazioniRispostaIngressoBlackList;
+	}
+	
+	private List<String> getDumpHeaderErogazioniRispostaUscitaWhiteList = null;
+	public List<String> getDumpHeaderErogazioniRispostaUscitaWhiteList(){
+
+		if(this.getDumpHeaderErogazioniRispostaUscitaWhiteList==null){
+			String pName = "org.openspcoop2.pdd.logger.dump.header.erogazioni.risposta-uscita.whiteList";
+			try{
+				this.getDumpHeaderErogazioniRispostaUscitaWhiteList = new ArrayList<>();
+				String tmp = this.reader.getValue_convertEnvProperties(pName);
+				initDumpList(this.getDumpHeaderErogazioniRispostaUscitaWhiteList, tmp);
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+		}
+
+		return this.getDumpHeaderErogazioniRispostaUscitaWhiteList;
+	}
+	
+	private List<String> getDumpHeaderErogazioniRispostaUscitaBlackList = null;
+	public List<String> getDumpHeaderErogazioniRispostaUscitaBlackList(){
+
+		if(this.getDumpHeaderErogazioniRispostaUscitaBlackList==null){
+			String pName = "org.openspcoop2.pdd.logger.dump.header.erogazioni.risposta-uscita.blackList";
+			try{
+				this.getDumpHeaderErogazioniRispostaUscitaBlackList = new ArrayList<>();
+				String tmp = this.reader.getValue_convertEnvProperties(pName); 
+				initDumpList(this.getDumpHeaderErogazioniRispostaUscitaBlackList, tmp);
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+		}
+
+		return this.getDumpHeaderErogazioniRispostaUscitaBlackList;
+	}
+	
+	private List<String> getDumpHeaderFruizioniRichiestaIngressoWhiteList = null;
+	public List<String> getDumpHeaderFruizioniRichiestaIngressoWhiteList(){
+
+		if(this.getDumpHeaderFruizioniRichiestaIngressoWhiteList==null){
+			String pName = "org.openspcoop2.pdd.logger.dump.header.fruizioni.richiesta-ingresso.whiteList";
+			try{
+				this.getDumpHeaderFruizioniRichiestaIngressoWhiteList = new ArrayList<>();
+				String tmp = this.reader.getValue_convertEnvProperties(pName);
+				initDumpList(this.getDumpHeaderFruizioniRichiestaIngressoWhiteList, tmp);
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+		}
+
+		return this.getDumpHeaderFruizioniRichiestaIngressoWhiteList;
+	}
+	
+	private List<String> getDumpHeaderFruizioniRichiestaIngressoBlackList = null;
+	public List<String> getDumpHeaderFruizioniRichiestaIngressoBlackList(){
+
+		if(this.getDumpHeaderFruizioniRichiestaIngressoBlackList==null){
+			String pName = "org.openspcoop2.pdd.logger.dump.header.fruizioni.richiesta-ingresso.blackList";
+			try{
+				this.getDumpHeaderFruizioniRichiestaIngressoBlackList = new ArrayList<>();
+				String tmp = this.reader.getValue_convertEnvProperties(pName); 
+				initDumpList(this.getDumpHeaderFruizioniRichiestaIngressoBlackList, tmp);
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+		}
+
+		return this.getDumpHeaderFruizioniRichiestaIngressoBlackList;
+	}
+	
+	private List<String> getDumpHeaderFruizioniRichiestaUscitaWhiteList = null;
+	public List<String> getDumpHeaderFruizioniRichiestaUscitaWhiteList(){
+
+		if(this.getDumpHeaderFruizioniRichiestaUscitaWhiteList==null){
+			String pName = "org.openspcoop2.pdd.logger.dump.header.fruizioni.richiesta-uscita.whiteList";
+			try{
+				this.getDumpHeaderFruizioniRichiestaUscitaWhiteList = new ArrayList<>();
+				String tmp = this.reader.getValue_convertEnvProperties(pName);
+				initDumpList(this.getDumpHeaderFruizioniRichiestaUscitaWhiteList, tmp);
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+		}
+
+		return this.getDumpHeaderFruizioniRichiestaUscitaWhiteList;
+	}
+	
+	private List<String> getDumpHeaderFruizioniRichiestaUscitaBlackList = null;
+	public List<String> getDumpHeaderFruizioniRichiestaUscitaBlackList(){
+
+		if(this.getDumpHeaderFruizioniRichiestaUscitaBlackList==null){
+			String pName = "org.openspcoop2.pdd.logger.dump.header.fruizioni.richiesta-uscita.blackList";
+			try{
+				this.getDumpHeaderFruizioniRichiestaUscitaBlackList = new ArrayList<>();
+				String tmp = this.reader.getValue_convertEnvProperties(pName); 
+				initDumpList(this.getDumpHeaderFruizioniRichiestaUscitaBlackList, tmp);
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+		}
+
+		return this.getDumpHeaderFruizioniRichiestaUscitaBlackList;
+	}
+	
+	private List<String> getDumpHeaderFruizioniRispostaIngressoWhiteList = null;
+	public List<String> getDumpHeaderFruizioniRispostaIngressoWhiteList(){
+
+		if(this.getDumpHeaderFruizioniRispostaIngressoWhiteList==null){
+			String pName = "org.openspcoop2.pdd.logger.dump.header.fruizioni.risposta-ingresso.whiteList";
+			try{
+				this.getDumpHeaderFruizioniRispostaIngressoWhiteList = new ArrayList<>();
+				String tmp = this.reader.getValue_convertEnvProperties(pName);
+				initDumpList(this.getDumpHeaderFruizioniRispostaIngressoWhiteList, tmp);
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+		}
+
+		return this.getDumpHeaderFruizioniRispostaIngressoWhiteList;
+	}
+	
+	private List<String> getDumpHeaderFruizioniRispostaIngressoBlackList = null;
+	public List<String> getDumpHeaderFruizioniRispostaIngressoBlackList(){
+
+		if(this.getDumpHeaderFruizioniRispostaIngressoBlackList==null){
+			String pName = "org.openspcoop2.pdd.logger.dump.header.fruizioni.risposta-ingresso.blackList";
+			try{
+				this.getDumpHeaderFruizioniRispostaIngressoBlackList = new ArrayList<>();
+				String tmp = this.reader.getValue_convertEnvProperties(pName); 
+				initDumpList(this.getDumpHeaderFruizioniRispostaIngressoBlackList, tmp);
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+		}
+
+		return this.getDumpHeaderFruizioniRispostaIngressoBlackList;
+	}
+	
+	private List<String> getDumpHeaderFruizioniRispostaUscitaWhiteList = null;
+	public List<String> getDumpHeaderFruizioniRispostaUscitaWhiteList(){
+
+		if(this.getDumpHeaderFruizioniRispostaUscitaWhiteList==null){
+			String pName = "org.openspcoop2.pdd.logger.dump.header.fruizioni.risposta-uscita.whiteList";
+			try{
+				this.getDumpHeaderFruizioniRispostaUscitaWhiteList = new ArrayList<>();
+				String tmp = this.reader.getValue_convertEnvProperties(pName);
+				initDumpList(this.getDumpHeaderFruizioniRispostaUscitaWhiteList, tmp);
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+		}
+
+		return this.getDumpHeaderFruizioniRispostaUscitaWhiteList;
+	}
+	
+	private List<String> getDumpHeaderFruizioniRispostaUscitaBlackList = null;
+	public List<String> getDumpHeaderFruizioniRispostaUscitaBlackList(){
+
+		if(this.getDumpHeaderFruizioniRispostaUscitaBlackList==null){
+			String pName = "org.openspcoop2.pdd.logger.dump.header.fruizioni.risposta-uscita.blackList";
+			try{
+				this.getDumpHeaderFruizioniRispostaUscitaBlackList = new ArrayList<>();
+				String tmp = this.reader.getValue_convertEnvProperties(pName); 
+				initDumpList(this.getDumpHeaderFruizioniRispostaUscitaBlackList, tmp);
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+		}
+
+		return this.getDumpHeaderFruizioniRispostaUscitaBlackList;
+	}
+	
+	private void initDumpList(List<String> list, String tmp) {
+		if(tmp!=null && !"".equals(tmp.trim())) {
+			tmp = tmp.trim();
+			if(tmp.contains(",")) {
+				String [] split = tmp.split(",");
+				initDumpList(list, split);
+			}
+			else {
+				list.add(tmp);
+			}
+		}
+	}
+	private void initDumpList(List<String> list, String [] split) {
+		if(split!=null && split.length>0) {
+			for (String s : split) {
+				if(s!=null) {
+					s = s.trim();
+					if(!"".equals(s)) {
+						list.add(s);
+					}
+				}
+			}
+		}
 	}
 	
 	
@@ -18830,57 +19203,57 @@ public class OpenSPCoop2Properties {
 	
 	/* ----------- Dump (Binario) --------------------- */
 	
-	private Boolean isDumpBinario_registrazioneDatabase = null;
-	public boolean isDumpBinario_registrazioneDatabase(){
+	private Boolean isDumpBinarioRegistrazioneDatabase = null;
+	public boolean isDumpBinarioRegistrazioneDatabase(){
 
-		if(this.isDumpBinario_registrazioneDatabase==null){
+		if(this.isDumpBinarioRegistrazioneDatabase==null){
 			try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.logger.dumpBinario.registrazioneDatabase"); 
 
 				if (value != null){
 					value = value.trim();
-					this.isDumpBinario_registrazioneDatabase = Boolean.parseBoolean(value);
+					this.isDumpBinarioRegistrazioneDatabase = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.dumpBinario.registrazioneDatabase' non impostata, viene utilizzato il default=false");
-					this.isDumpBinario_registrazioneDatabase = false;
+					this.isDumpBinarioRegistrazioneDatabase = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.dumpBinario.registrazioneDatabase' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
-				this.isDumpBinario_registrazioneDatabase = false;
+				this.isDumpBinarioRegistrazioneDatabase = false;
 			}
 		}
 
-		return this.isDumpBinario_registrazioneDatabase;
+		return this.isDumpBinarioRegistrazioneDatabase;
 	}
 	
-	private Integer getDumpBinario_inMemoryThreshold = null;
-	public int getDumpBinario_inMemoryThreshold() {	
+	private Integer getDumpBinarioInMemoryThreshold = null;
+	public int getDumpBinarioInMemoryThreshold() {	
 		String pName = "org.openspcoop2.pdd.logger.dumpBinario.inMemory.threshold";
-		if(this.getDumpBinario_inMemoryThreshold==null){
+		if(this.getDumpBinarioInMemoryThreshold==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
-					this.getDumpBinario_inMemoryThreshold = java.lang.Integer.parseInt(name);
+					this.getDumpBinarioInMemoryThreshold = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName,CostantiPdD.DUMP_BINARIO_THRESHOLD));
-					this.getDumpBinario_inMemoryThreshold = CostantiPdD.DUMP_BINARIO_THRESHOLD;
+					this.getDumpBinarioInMemoryThreshold = CostantiPdD.DUMP_BINARIO_THRESHOLD;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName,e,CostantiPdD.DUMP_BINARIO_THRESHOLD),e);
-				this.getDumpBinario_inMemoryThreshold = CostantiPdD.DUMP_BINARIO_THRESHOLD;
+				this.getDumpBinarioInMemoryThreshold = CostantiPdD.DUMP_BINARIO_THRESHOLD;
 			}  
 		}
 
-		return this.getDumpBinario_inMemoryThreshold;
+		return this.getDumpBinarioInMemoryThreshold;
 	}
 	
-	private File getDumpBinario_repository = null;
-	public File getDumpBinario_repository() throws CoreException {	
+	private File getDumpBinarioRepository = null;
+	public File getDumpBinarioRepository() throws CoreException {	
 		String pName = "org.openspcoop2.pdd.logger.dumpBinario.msgRepository";
-		if(this.getDumpBinario_repository==null){
+		if(this.getDumpBinarioRepository==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
@@ -18888,61 +19261,63 @@ public class OpenSPCoop2Properties {
 					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
-				this.getDumpBinario_repository = new File(name);
-				if(this.getDumpBinario_repository.exists()) {
-					if(this.getDumpBinario_repository.isDirectory()==false) {
-						throw new CoreException("Dir ["+this.getDumpBinario_repository.getAbsolutePath()+"] not dir");
-					}
-					if(this.getDumpBinario_repository.canRead()==false) {
-						throw new CoreException("Dir ["+this.getDumpBinario_repository.getAbsolutePath()+"] cannot read");
-					}
-					if(this.getDumpBinario_repository.canWrite()==false) {
-						throw new CoreException("Dir ["+this.getDumpBinario_repository.getAbsolutePath()+"] cannot write");
-					}
-				}
-				else {
-					// viene creata automaticamente
-				}
+				this.getDumpBinarioRepository = new File(name);
+				checkDumpBinarioRepository();
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
 
-		return this.getDumpBinario_repository;
+		return this.getDumpBinarioRepository;
 	}
-	
+	private void checkDumpBinarioRepository() throws CoreException {
+		if(this.getDumpBinarioRepository.exists()) {
+			if(!this.getDumpBinarioRepository.isDirectory()) {
+				throw newCoreExceptionNotDir(this.getDumpBinarioRepository,true);
+			}
+			if(!this.getDumpBinarioRepository.canRead()) {
+				throw newCoreExceptionCannotRead(this.getDumpBinarioRepository, true);
+			}
+			if(!this.getDumpBinarioRepository.canWrite()) {
+				throw newCoreExceptionCannotWrite(this.getDumpBinarioRepository, true);
+			}
+		}
+		else {
+			// viene creata automaticamente
+		}
+	}
 	
 	
 	
 	
 	/* ----------- Dump (NonRealtime) --------------------- */
 	
-	private Integer getDumpNonRealtime_inMemoryThreshold = null;
-	public int getDumpNonRealtime_inMemoryThreshold() {	
-		if(this.getDumpNonRealtime_inMemoryThreshold==null){
+	private Integer getDumpNonRealtimeInMemoryThreshold = null;
+	public int getDumpNonRealtimeInMemoryThreshold() {	
+		if(this.getDumpNonRealtimeInMemoryThreshold==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.dump.nonRealTime.inMemory.threshold");
 				if(name!=null){
 					name = name.trim();
-					this.getDumpNonRealtime_inMemoryThreshold = java.lang.Integer.parseInt(name);
+					this.getDumpNonRealtimeInMemoryThreshold = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.dump.nonRealTime.inMemory.threshold' non impostata, viene utilizzato il default="+CostantiPdD.DUMP_NON_REALTIME_THRESHOLD);
-					this.getDumpNonRealtime_inMemoryThreshold = CostantiPdD.DUMP_NON_REALTIME_THRESHOLD;
+					this.getDumpNonRealtimeInMemoryThreshold = CostantiPdD.DUMP_NON_REALTIME_THRESHOLD;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.dump.nonRealTime.inMemory.threshold' non impostata, viene utilizzato il default="+CostantiPdD.DUMP_NON_REALTIME_THRESHOLD+", errore:"+e.getMessage(),e);
-				this.getDumpNonRealtime_inMemoryThreshold = CostantiPdD.DUMP_NON_REALTIME_THRESHOLD;
+				this.getDumpNonRealtimeInMemoryThreshold = CostantiPdD.DUMP_NON_REALTIME_THRESHOLD;
 			}  
 		}
 
-		return this.getDumpNonRealtime_inMemoryThreshold;
+		return this.getDumpNonRealtimeInMemoryThreshold;
 	}
 	
-	private String getDumpNonRealtime_mode = null;
-	private String getDumpNonRealtime_mode() throws CoreException {	
-		if(this.getDumpNonRealtime_mode==null){
+	private String getDumpNonRealtimeMode = null;
+	private String getDumpNonRealtimeMode() throws CoreException {	
+		if(this.getDumpNonRealtimeMode==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.dump.nonRealTime.mode");
@@ -18953,44 +19328,47 @@ public class OpenSPCoop2Properties {
 							!CostantiPdD.DUMP_NON_REALTIME_MODE_AUTO.equalsIgnoreCase(name) ) {
 						throw new CoreException("Modalità non supportata (attesi: "+CostantiPdD.DUMP_NON_REALTIME_MODE_DB+","+CostantiPdD.DUMP_NON_REALTIME_MODE_FILE_SYSTEM+","+CostantiPdD.DUMP_NON_REALTIME_MODE_AUTO+")");
 					}
-					this.getDumpNonRealtime_mode = name;
+					this.getDumpNonRealtimeMode = name;
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.dump.nonRealTime.mode' non impostata, viene utilizzato il default="+CostantiPdD.DUMP_NON_REALTIME_MODE_AUTO);
-					this.getDumpNonRealtime_mode = CostantiPdD.DUMP_NON_REALTIME_MODE_AUTO;
+					this.getDumpNonRealtimeMode = CostantiPdD.DUMP_NON_REALTIME_MODE_AUTO;
 				}
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop ''org.openspcoop2.pdd.dump.nonRealTime.mode' non impostata, errore:"+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}  
 			
-			if(CostantiPdD.DUMP_NON_REALTIME_MODE_AUTO.equalsIgnoreCase(this.getDumpNonRealtime_mode)) {
-				String databaseType = this.getDatabaseType();
-				if(databaseType==null) {
-					throw new CoreException("Proprieta' 'org.openspcoop2.pdd.dump.nonRealTime.mode=auto' richiede che sia indicato un tipo di database nella proprieta' 'org.openspcoop2.pdd.repository.tipoDatabase'");
-				}
-				if(TipiDatabase.POSTGRESQL.getNome().equalsIgnoreCase(databaseType) || TipiDatabase.HSQL.getNome().equalsIgnoreCase(databaseType)) {
-					// Allo stato attuale (13/02/2014) i sequenti sql server (postgresql e hsql) non supportano la funzionalita' jdbc per fare setStream senza fornire la lenght
-					this.getDumpNonRealtime_mode = CostantiPdD.DUMP_NON_REALTIME_MODE_FILE_SYSTEM;
-				}
-				else {
-					this.getDumpNonRealtime_mode = CostantiPdD.DUMP_NON_REALTIME_MODE_DB;
-				}
-			}
+			checkDumpNonRealtimeMode();
 		}
 
-		return this.getDumpNonRealtime_mode;
+		return this.getDumpNonRealtimeMode;
+	}
+	private void checkDumpNonRealtimeMode() throws CoreException {	
+		if(CostantiPdD.DUMP_NON_REALTIME_MODE_AUTO.equalsIgnoreCase(this.getDumpNonRealtimeMode)) {
+			String databaseTypeCheck = this.getDatabaseType();
+			if(databaseTypeCheck==null) {
+				throw new CoreException("Proprieta' 'org.openspcoop2.pdd.dump.nonRealTime.mode=auto' richiede che sia indicato un tipo di database nella proprieta' 'org.openspcoop2.pdd.repository.tipoDatabase'");
+			}
+			if(TipiDatabase.POSTGRESQL.getNome().equalsIgnoreCase(databaseTypeCheck) || TipiDatabase.HSQL.getNome().equalsIgnoreCase(databaseTypeCheck)) {
+				// Allo stato attuale (13/02/2014) i sequenti sql server (postgresql e hsql) non supportano la funzionalita' jdbc per fare setStream senza fornire la lenght
+				this.getDumpNonRealtimeMode = CostantiPdD.DUMP_NON_REALTIME_MODE_FILE_SYSTEM;
+			}
+			else {
+				this.getDumpNonRealtimeMode = CostantiPdD.DUMP_NON_REALTIME_MODE_DB;
+			}
+		}
 	}
 	
-	public boolean isDumpNonRealtime_databaseMode() {
-		return CostantiPdD.DUMP_NON_REALTIME_MODE_DB.equalsIgnoreCase(this.getDumpNonRealtime_mode);
+	public boolean isDumpNonRealtimeDatabaseMode() {
+		return CostantiPdD.DUMP_NON_REALTIME_MODE_DB.equalsIgnoreCase(this.getDumpNonRealtimeMode);
 	}
-	public boolean isDumpNonRealtime_fileSystemMode() {
-		return CostantiPdD.DUMP_NON_REALTIME_MODE_FILE_SYSTEM.equalsIgnoreCase(this.getDumpNonRealtime_mode);
+	public boolean isDumpNonRealtimeFileSystemMode() {
+		return CostantiPdD.DUMP_NON_REALTIME_MODE_FILE_SYSTEM.equalsIgnoreCase(this.getDumpNonRealtimeMode);
 	}
 	
-	private File getDumpNonRealtime_repository = null;
-	public File getDumpNonRealtime_repository() throws CoreException {	
-		if(this.getDumpNonRealtime_repository==null){
+	private File getDumpNonRealtimeRepository = null;
+	public File getDumpNonRealtimeRepository() throws CoreException {	
+		if(this.getDumpNonRealtimeRepository==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.dump.nonRealTime.msgRepository");
@@ -18998,52 +19376,55 @@ public class OpenSPCoop2Properties {
 					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
-				this.getDumpNonRealtime_repository = new File(name);
-				if(this.getDumpNonRealtime_repository.exists()) {
-					if(this.getDumpNonRealtime_repository.isDirectory()==false) {
-						throw new CoreException("Dir ["+this.getDumpNonRealtime_repository.getAbsolutePath()+"] not dir");
-					}
-					if(this.getDumpNonRealtime_repository.canRead()==false) {
-						throw new CoreException("Dir ["+this.getDumpNonRealtime_repository.getAbsolutePath()+"] cannot read");
-					}
-					if(this.getDumpNonRealtime_repository.canWrite()==false) {
-						throw new CoreException("Dir ["+this.getDumpNonRealtime_repository.getAbsolutePath()+"] cannot write");
-					}
-				}
-				else {
-					// viene creata automaticamente
-				}
+				this.getDumpNonRealtimeRepository = new File(name);
+				checkDumpNonRealtimeRepository();
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.dump.nonRealTime.msgRepository': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
 
-		return this.getDumpNonRealtime_repository;
+		return this.getDumpNonRealtimeRepository;
+	}
+	private void checkDumpNonRealtimeRepository() throws CoreException {	
+		if(this.getDumpNonRealtimeRepository.exists()) {
+			if(!this.getDumpNonRealtimeRepository.isDirectory()) {
+				throw newCoreExceptionNotDir(this.getDumpNonRealtimeRepository,true);
+			}
+			if(!this.getDumpNonRealtimeRepository.canRead()) {
+				throw newCoreExceptionCannotRead(this.getDumpNonRealtimeRepository, true);
+			}
+			if(!this.getDumpNonRealtimeRepository.canWrite()) {
+				throw newCoreExceptionCannotWrite(this.getDumpNonRealtimeRepository, true);
+			}
+		}
+		else {
+			// viene creata automaticamente
+		}
 	}
 	
-	private Boolean isDumpNonRealtime_throwStreamingHandlerException = null;
-	public boolean isDumpNonRealtime_throwStreamingHandlerException(){
+	private Boolean isDumpNonRealtimeThrowStreamingHandlerException = null;
+	public boolean isDumpNonRealtimeThrowStreamingHandlerException(){
 
-		if(this.isDumpNonRealtime_throwStreamingHandlerException==null){
+		if(this.isDumpNonRealtimeThrowStreamingHandlerException==null){
 			try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.dump.nonRealTime.throwStreamingHandlerException"); 
 
 				if (value != null){
 					value = value.trim();
-					this.isDumpNonRealtime_throwStreamingHandlerException = Boolean.parseBoolean(value);
+					this.isDumpNonRealtimeThrowStreamingHandlerException = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.dump.nonRealTime.throwStreamingHandlerException' non impostata, viene utilizzato il default=true");
-					this.isDumpNonRealtime_throwStreamingHandlerException = true;
+					this.isDumpNonRealtimeThrowStreamingHandlerException = true;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.dump.nonRealTime.throwStreamingHandlerException' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
-				this.isDumpNonRealtime_throwStreamingHandlerException = true;
+				this.isDumpNonRealtimeThrowStreamingHandlerException = true;
 			}
 		}
 
-		return this.isDumpNonRealtime_throwStreamingHandlerException;
+		return this.isDumpNonRealtimeThrowStreamingHandlerException;
 	}
 	
 	
@@ -19112,23 +19493,7 @@ public class OpenSPCoop2Properties {
 			try{  
 				String value = this.reader.getValue_convertEnvProperties(pName); 
 
-				if (value != null){
-					value = value.trim();
-					
-					if(value.contains(",")) {
-						String [] tmp = value.split(",");
-						if(tmp!=null && tmp.length>0) {
-							this.listIDManagerParameters = new ArrayList<>();
-							for (String v : tmp) {
-								this.listIDManagerParameters.add(v);
-							}
-						}
-					}
-					else {
-						this.listIDManagerParameters = new ArrayList<>();
-						this.listIDManagerParameters.add(value);
-					}
-				}
+				initIDManagerParameters(value);
 
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
@@ -19137,6 +19502,25 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.listIDManagerParameters;
+	}
+	private void initIDManagerParameters(String value){
+		if (value != null){
+			value = value.trim();
+			
+			if(value.contains(",")) {
+				String [] tmp = value.split(",");
+				if(tmp!=null && tmp.length>0) {
+					this.listIDManagerParameters = new ArrayList<>();
+					for (String v : tmp) {
+						this.listIDManagerParameters.add(v);
+					}
+				}
+			}
+			else {
+				this.listIDManagerParameters = new ArrayList<>();
+				this.listIDManagerParameters.add(value);
+			}
+		}
 	}
 	
 	private Integer getIDManagerBufferSize = null;
@@ -19170,13 +19554,13 @@ public class OpenSPCoop2Properties {
 	
 	/* ------------- DEMO Mode ---------------------*/
 	private Boolean generazioneDateCasualiLogAbilitato = null;
-	private Date generazioneDateCasualiLog_dataInizioIntervallo = null;
-	private Date generazioneDateCasualiLog_dataFineIntervallo = null;
-	public Date getGenerazioneDateCasualiLog_dataInizioIntervallo() {
-		return this.generazioneDateCasualiLog_dataInizioIntervallo;
+	private Date generazioneDateCasualiLogDataInizioIntervallo = null;
+	private Date generazioneDateCasualiLogDataFineIntervallo = null;
+	public Date getGenerazioneDateCasualiLogDataInizioIntervallo() {
+		return this.generazioneDateCasualiLogDataInizioIntervallo;
 	}
-	public Date getGenerazioneDateCasualiLog_dataFineIntervallo() {
-		return this.generazioneDateCasualiLog_dataFineIntervallo;
+	public Date getGenerazioneDateCasualiLogDataFineIntervallo() {
+		return this.generazioneDateCasualiLogDataFineIntervallo;
 	}
 	public boolean generazioneDateCasualiLogAbilitato() {	
 		if(this.generazioneDateCasualiLogAbilitato==null){
@@ -19187,30 +19571,7 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.generazioneDateCasualiLogAbilitato = Boolean.parseBoolean(name);
 					
-					if(this.generazioneDateCasualiLogAbilitato){
-						
-						if(getTipoIDManager()==null || CostantiConfigurazione.NONE.equals(getTipoIDManager())){
-							throw new CoreException("Non e' possibile utilizzare la modalita' di generazione casuale delle date, se non si abilita la generazione di un ID");
-						}
-						
-						String inizioIntervallo = this.reader.getValue_convertEnvProperties("org.openspcoop2.generazioneDateCasuali.inizioIntervallo");
-						String fineIntervallo = this.reader.getValue_convertEnvProperties("org.openspcoop2.generazioneDateCasuali.fineIntervallo");
-						SimpleDateFormat sdf = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd hh:mm");
-						if(inizioIntervallo==null){
-							throw new CoreException("Non e' stato definito l'intervallo di inizio per la modalita' di generazione casuale delle date");
-						}
-						else{inizioIntervallo=inizioIntervallo.trim();}
-						this.generazioneDateCasualiLog_dataInizioIntervallo = sdf.parse(inizioIntervallo);
-						if(fineIntervallo==null){
-							throw new CoreException("Non e' stato definito l'intervallo di fine per la modalita' di generazione casuale delle date");
-						}
-						else{fineIntervallo=fineIntervallo.trim();}
-						this.generazioneDateCasualiLog_dataFineIntervallo = sdf.parse(fineIntervallo);
-						
-						if(this.generazioneDateCasualiLog_dataInizioIntervallo.after(this.generazioneDateCasualiLog_dataFineIntervallo)){
-							throw new CoreException("Non e' stato definito un intervallo di generazione casuale delle date corretto (inizioIntervallo>fineIntervallo)");
-						}
-					}
+					initDateCasualiLogAbilitato();
 					
 				}else{
 					this.generazioneDateCasualiLogAbilitato = false; //default, anche senza che sia definita la proprieta'
@@ -19222,6 +19583,32 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.generazioneDateCasualiLogAbilitato;
+	}
+	private void initDateCasualiLogAbilitato() throws CoreException, UtilsException, ParseException {	
+		if(this.generazioneDateCasualiLogAbilitato.booleanValue()){
+			
+			if(getTipoIDManager()==null || CostantiConfigurazione.NONE.equals(getTipoIDManager())){
+				throw new CoreException("Non e' possibile utilizzare la modalita' di generazione casuale delle date, se non si abilita la generazione di un ID");
+			}
+			
+			String inizioIntervallo = this.reader.getValue_convertEnvProperties("org.openspcoop2.generazioneDateCasuali.inizioIntervallo");
+			String fineIntervallo = this.reader.getValue_convertEnvProperties("org.openspcoop2.generazioneDateCasuali.fineIntervallo");
+			SimpleDateFormat sdf = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd hh:mm");
+			if(inizioIntervallo==null){
+				throw new CoreException("Non e' stato definito l'intervallo di inizio per la modalita' di generazione casuale delle date");
+			}
+			else{inizioIntervallo=inizioIntervallo.trim();}
+			this.generazioneDateCasualiLogDataInizioIntervallo = sdf.parse(inizioIntervallo);
+			if(fineIntervallo==null){
+				throw new CoreException("Non e' stato definito l'intervallo di fine per la modalita' di generazione casuale delle date");
+			}
+			else{fineIntervallo=fineIntervallo.trim();}
+			this.generazioneDateCasualiLogDataFineIntervallo = sdf.parse(fineIntervallo);
+			
+			if(this.generazioneDateCasualiLogDataInizioIntervallo.after(this.generazioneDateCasualiLogDataFineIntervallo)){
+				throw new CoreException("Non e' stato definito un intervallo di generazione casuale delle date corretto (inizioIntervallo>fineIntervallo)");
+			}
+		}
 	}
 	
 	
@@ -26586,13 +26973,13 @@ public class OpenSPCoop2Properties {
 				}
 				
 				if(!this.getTransazioniFileTraceConfig.exists()) {
-					throw new CoreException("Config file ["+this.getTransazioniFileTraceConfig.getAbsolutePath()+"] not exists");
+					throw newCoreExceptionNotExists(this.getTransazioniFileTraceConfig, false);
 				}
 				if(this.getTransazioniFileTraceConfig.isDirectory()) {
-					throw new CoreException("Config file ["+this.getTransazioniFileTraceConfig.getAbsolutePath()+"] is directory");
+					throw newCoreExceptionNotFile(this.getTransazioniFileTraceConfig, false);
 				}
 				if(this.getTransazioniFileTraceConfig.canRead()==false) {
-					throw new CoreException("Config file ["+this.getTransazioniFileTraceConfig.getAbsolutePath()+"] cannot read");
+					throw newCoreExceptionCannotRead(this.getTransazioniFileTraceConfig, false);
 				}
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
@@ -26764,13 +27151,13 @@ public class OpenSPCoop2Properties {
 				this.getFileSystemRecovery_repository = new File(name);
 				if(this.getFileSystemRecovery_repository.exists()) {
 					if(this.getFileSystemRecovery_repository.isDirectory()==false) {
-						throw new CoreException("Dir ["+this.getFileSystemRecovery_repository.getAbsolutePath()+"] not dir");
+						throw newCoreExceptionNotDir(this.getFileSystemRecovery_repository,true);
 					}
 					if(this.getFileSystemRecovery_repository.canRead()==false) {
-						throw new CoreException("Dir ["+this.getFileSystemRecovery_repository.getAbsolutePath()+"] cannot read");
+						throw newCoreExceptionCannotRead(this.getFileSystemRecovery_repository,true);
 					}
 					if(this.getFileSystemRecovery_repository.canWrite()==false) {
-						throw new CoreException("Dir ["+this.getFileSystemRecovery_repository.getAbsolutePath()+"] cannot write");
+						throw newCoreExceptionCannotWrite(this.getFileSystemRecovery_repository,true);
 					}
 				}
 				else {
@@ -27917,10 +28304,10 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig = new File(name);
 					if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig.exists()) {
 						if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig.isFile()==false) {
-							throw new CoreException("Configuration ["+this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig.getAbsolutePath()+"] isn't file");
+							throw newCoreExceptionNotFile(this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig,false);
 						}
 						if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig.canRead()==false) {
-							throw new CoreException("Configuration ["+this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig.getAbsolutePath()+"] cannot read");
+							throw newCoreExceptionCannotRead(this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig,false);
 						}
 					}
 					else {
@@ -28128,13 +28515,13 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository = new File(name);
 					if(this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.exists()) {
 						if(this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.isDirectory()==false) {
-							throw new CoreException("Dir ["+this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.getAbsolutePath()+"] not dir");
+							throw newCoreExceptionNotDir(this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository, true);
 						}
 						if(this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.canRead()==false) {
-							throw new CoreException("Dir ["+this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.getAbsolutePath()+"] cannot read");
+							throw newCoreExceptionCannotRead(this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository, true);
 						}
 						if(this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.canWrite()==false) {
-							throw new CoreException("Dir ["+this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.getAbsolutePath()+"] cannot write");
+							throw newCoreExceptionCannotWrite(this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository, true);
 						}
 					}
 					else {
@@ -30079,10 +30466,10 @@ public class OpenSPCoop2Properties {
 		File f = new File(name);
 		if(f.exists()) {
 			if(f.isDirectory()) {
-				throw new CoreException("File ["+f+"] is directory");
+				throw newCoreExceptionNotFile(f,false);
 			}
 			if(!f.canRead()) {
-				throw new CoreException("File ["+f+"] cannot read");
+				throw newCoreExceptionCannotRead(f, false);
 			}
 		}
 		else {

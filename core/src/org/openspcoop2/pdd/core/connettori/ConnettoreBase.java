@@ -345,8 +345,8 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		if(this.idModulo!=null) {
 			try {
 				// Soglia Dump
-				this.dumpBinario_soglia = this.openspcoopProperties.getDumpBinario_inMemoryThreshold();
-				this.dumpBinario_repositoryFile = this.openspcoopProperties.getDumpBinario_repository();
+				this.dumpBinario_soglia = this.openspcoopProperties.getDumpBinarioInMemoryThreshold();
+				this.dumpBinario_repositoryFile = this.openspcoopProperties.getDumpBinarioRepository();
 				
 				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance();
 				if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){

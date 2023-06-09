@@ -208,7 +208,7 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 					directVMProtocolInfo,
 					newPddContext);
 			OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
-			inMessage.setThresholdContext(newPddContext, op2Properties.getDumpBinario_inMemoryThreshold(), op2Properties.getDumpBinario_repository());
+			inMessage.setThresholdContext(newPddContext, op2Properties.getDumpBinarioInMemoryThreshold(), op2Properties.getDumpBinarioRepository());
 			
 			DirectVMConnectorOutMessage outMessage = new DirectVMConnectorOutMessage();
 			

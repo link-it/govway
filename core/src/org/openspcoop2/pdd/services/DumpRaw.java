@@ -105,7 +105,7 @@ public class DumpRaw {
 		
 		this.dumpBinario = dumpBinario;
 		if(this.dumpBinario) {
-			this.dumpBinario_registrazioneDatabase = OpenSPCoop2Properties.getInstance().isDumpBinario_registrazioneDatabase();
+			this.dumpBinario_registrazioneDatabase = OpenSPCoop2Properties.getInstance().isDumpBinarioRegistrazioneDatabase();
 		}
 		
 		if(dumpConfigurazione!=null) {
