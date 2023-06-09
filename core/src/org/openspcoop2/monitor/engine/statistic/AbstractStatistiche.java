@@ -482,8 +482,8 @@ public abstract class AbstractStatistiche {
 			}
 
 			if(this.forceIndexConfig!=null){
-				if(this.forceIndexConfig.getTransazioniForceIndexGroupBy_numero_dimensione()!=null){
-					List<Index> listForceIndexes = this.forceIndexConfig.getTransazioniForceIndexGroupBy_numero_dimensione();
+				if(this.forceIndexConfig.getTransazioniForceIndexGroupByNumeroDimensione()!=null){
+					List<Index> listForceIndexes = this.forceIndexConfig.getTransazioniForceIndexGroupByNumeroDimensione();
 					if(listForceIndexes.size()>0){
 						for (Index index : listForceIndexes) {
 							exprConLatenze.addForceIndex(index);
@@ -607,8 +607,8 @@ public abstract class AbstractStatistiche {
 			}
 
 			if(this.forceIndexConfig!=null){
-				if(this.forceIndexConfig.getTransazioniForceIndexGroupBy_numero_dimensione()!=null){
-					List<Index> listForceIndexes = this.forceIndexConfig.getTransazioniForceIndexGroupBy_numero_dimensione();
+				if(this.forceIndexConfig.getTransazioniForceIndexGroupByNumeroDimensione()!=null){
+					List<Index> listForceIndexes = this.forceIndexConfig.getTransazioniForceIndexGroupByNumeroDimensione();
 					if(listForceIndexes.size()>0){
 						for (Index index : listForceIndexes) {
 							expr.addForceIndex(index);
@@ -717,8 +717,8 @@ public abstract class AbstractStatistiche {
 
 		try{
 			if(this.forceIndexConfig!=null){
-				if(this.forceIndexConfig.getTransazioniForceIndexGroupBy_latenze()!=null){
-					List<Index> listForceIndexes = this.forceIndexConfig.getTransazioniForceIndexGroupBy_latenze();
+				if(this.forceIndexConfig.getTransazioniForceIndexGroupByLatenze()!=null){
+					List<Index> listForceIndexes = this.forceIndexConfig.getTransazioniForceIndexGroupByLatenze();
 					if(listForceIndexes.size()>0){
 						for (Index index : listForceIndexes) {
 							exprDateNotNull.addForceIndex(index);
@@ -996,8 +996,8 @@ public abstract class AbstractStatistiche {
 			}
 
 			if(this.forceIndexConfig!=null){
-				if(this.forceIndexConfig.getTransazioniForceIndexGroupBy_custom_numero_dimensione()!=null){
-					List<Index> listForceIndexes = this.forceIndexConfig.getTransazioniForceIndexGroupBy_custom_numero_dimensione();
+				if(this.forceIndexConfig.getTransazioniForceIndexGroupByCustomNumeroDimensione()!=null){
+					List<Index> listForceIndexes = this.forceIndexConfig.getTransazioniForceIndexGroupByCustomNumeroDimensione();
 					if(listForceIndexes.size()>0){
 						for (Index index : listForceIndexes) {
 							expr.addForceIndex(index);
@@ -1076,8 +1076,8 @@ public abstract class AbstractStatistiche {
 				}
 	
 				if(this.forceIndexConfig!=null){
-					if(this.forceIndexConfig.getTransazioniForceIndexGroupBy_custom_latenze()!=null){
-						List<Index> listForceIndexes = this.forceIndexConfig.getTransazioniForceIndexGroupBy_custom_latenze();
+					if(this.forceIndexConfig.getTransazioniForceIndexGroupByCustomLatenze()!=null){
+						List<Index> listForceIndexes = this.forceIndexConfig.getTransazioniForceIndexGroupByCustomLatenze();
 						if(listForceIndexes.size()>0){
 							for (Index index : listForceIndexes) {
 								expr.addForceIndex(index);

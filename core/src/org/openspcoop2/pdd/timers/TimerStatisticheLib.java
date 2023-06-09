@@ -296,8 +296,8 @@ public class TimerStatisticheLib {
 		if(this.op2Properties.isTimerLockByDatabase()) {
 			this.semaphore_statistics = new InfoStatistics();
 
-			SemaphoreConfiguration config = GestoreMessaggi.newSemaphoreConfiguration(this.op2Properties.getStatisticheGenerazioneTimer_lockMaxLife(), 
-					this.op2Properties.getStatisticheGenerazioneTimer_lockIdleTime());
+			SemaphoreConfiguration config = GestoreMessaggi.newSemaphoreConfiguration(this.op2Properties.getStatisticheGenerazioneTimerLockMaxLife(), 
+					this.op2Properties.getStatisticheGenerazioneTimerLockIdleTime());
 
 			TipiDatabase databaseType = TipiDatabase.toEnumConstant(this.tipoDatabase);
 			try {
@@ -454,8 +454,8 @@ public class TimerStatisticheLib {
 				GestoreMessaggi.acquireLock(
 						this.semaphore, conStatistiche, this.timerLock,
 						this.msgDiag, causa, 
-						this.op2Properties.getStatisticheGenerazioneTimer_lockAttesaAttiva(), 
-						this.op2Properties.getStatisticheGenerazioneTimer_lockCheckInterval());
+						this.op2Properties.getStatisticheGenerazioneTimerLockAttesaAttiva(), 
+						this.op2Properties.getStatisticheGenerazioneTimerLockCheckInterval());
 				
 				StatisticsLibrary sLibrary = new StatisticsLibrary(this.statisticsConfig, statisticheSM, transazioniSM, 
 						pluginsStatisticheSM, pluginsBaseSM, utilsSM, pluginsTransazioniSM);

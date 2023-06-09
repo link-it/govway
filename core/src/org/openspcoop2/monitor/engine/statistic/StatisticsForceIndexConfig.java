@@ -21,14 +21,16 @@ package org.openspcoop2.monitor.engine.statistic;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.openspcoop2.generic_project.expression.Index;
-import org.openspcoop2.utils.properties.InstanceProperties;
 import org.openspcoop2.core.transazioni.Transazione;
+import org.openspcoop2.generic_project.expression.Index;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.properties.InstanceProperties;
 
 /**
  * StatisticsForceIndexConfig
@@ -40,115 +42,96 @@ import org.openspcoop2.core.transazioni.Transazione;
 public class StatisticsForceIndexConfig {
 
 	/** Lista di indici forzati */
-	private List<Index> transazioniForceIndexGroupBy_numero_dimensione = null;
-	private List<Index> transazioniForceIndexGroupBy_latenze = null;
-	private List<Index> transazioniForceIndexGroupBy_custom_numero_dimensione = null;
-	private List<Index> transazioniForceIndexGroupBy_custom_latenze = null;
+	private List<Index> transazioniForceIndexGroupByNumeroDimensione = null;
+	private List<Index> transazioniForceIndexGroupByLatenze = null;
+	private List<Index> transazioniForceIndexGroupByCustomNumeroDimensione = null;
+	private List<Index> transazioniForceIndexGroupByCustomLatenze = null;
 	
 	public StatisticsForceIndexConfig(){}
 	
-	private static final String pRepo = "statistiche.generazione.forceIndex.repository";
-	private static final String pGroupBy_numero_dimensione = "statistiche.generazione.forceIndex.groupBy.numero_dimensione";
-	private static final String pGroupBy_latenza = "statistiche.generazione.forceIndex.groupBy.latenza";
-	private static final String pGroupBy_custom_numero_dimensione = "statistiche.generazione.forceIndex.groupBy.custom.numero_dimensione";
-	private static final String pGroupBy_custom_latenza = "statistiche.generazione.forceIndex.groupBy.custom.latenza";
+	private static final String P_REPO = "statistiche.generazione.forceIndex.repository";
+	private static final String P_GROUPBY_NUMERO_DIMENSIONE = "statistiche.generazione.forceIndex.groupBy.numero_dimensione";
+	private static final String P_GROUPBY_LATENZA = "statistiche.generazione.forceIndex.groupBy.latenza";
+	private static final String P_GROUPBY_CUSTOM_NUMERO_DIMENSIONE = "statistiche.generazione.forceIndex.groupBy.custom.numero_dimensione";
+	private static final String P_GROUPBY_CUSTOM_LATENZA = "statistiche.generazione.forceIndex.groupBy.custom.latenza";
 	
-	public StatisticsForceIndexConfig(Properties p) throws Exception{
+	public StatisticsForceIndexConfig(Properties p) throws IOException {
 		
-		String tmpRepo = p.getProperty(StatisticsForceIndexConfig.pRepo);
+		String tmpRepo = p.getProperty(StatisticsForceIndexConfig.P_REPO);
 		Properties pRepoExternal = this.getExternalRepository(tmpRepo);
 
-		
-		String groupByNumeroDimensione = p.getProperty(StatisticsForceIndexConfig.pGroupBy_numero_dimensione);
+		String groupByNumeroDimensione = p.getProperty(StatisticsForceIndexConfig.P_GROUPBY_NUMERO_DIMENSIONE);
 		if(groupByNumeroDimensione!=null){
 			groupByNumeroDimensione = groupByNumeroDimensione.trim();
 		}
-		this.transazioniForceIndexGroupBy_numero_dimensione = this.getIndexList(StatisticsForceIndexConfig.pGroupBy_numero_dimensione, groupByNumeroDimensione, pRepoExternal);
+		this.transazioniForceIndexGroupByNumeroDimensione = this.getIndexList(StatisticsForceIndexConfig.P_GROUPBY_NUMERO_DIMENSIONE, groupByNumeroDimensione, pRepoExternal);
 		
-		String groupByLatenza = p.getProperty(StatisticsForceIndexConfig.pGroupBy_latenza);
+		String groupByLatenza = p.getProperty(StatisticsForceIndexConfig.P_GROUPBY_LATENZA);
 		if(groupByLatenza!=null){
 			groupByLatenza = groupByLatenza.trim();
 		}
-		this.transazioniForceIndexGroupBy_latenze = this.getIndexList(StatisticsForceIndexConfig.pGroupBy_latenza, groupByLatenza, pRepoExternal);
+		this.transazioniForceIndexGroupByLatenze = this.getIndexList(StatisticsForceIndexConfig.P_GROUPBY_LATENZA, groupByLatenza, pRepoExternal);
 		
-		String groupCustomByNumeroDimensione = p.getProperty(StatisticsForceIndexConfig.pGroupBy_custom_numero_dimensione);
+		String groupCustomByNumeroDimensione = p.getProperty(StatisticsForceIndexConfig.P_GROUPBY_CUSTOM_NUMERO_DIMENSIONE);
 		if(groupCustomByNumeroDimensione!=null){
 			groupCustomByNumeroDimensione = groupCustomByNumeroDimensione.trim();
 		}
-		this.transazioniForceIndexGroupBy_custom_numero_dimensione = this.getIndexList(StatisticsForceIndexConfig.pGroupBy_custom_numero_dimensione, groupCustomByNumeroDimensione, pRepoExternal);
+		this.transazioniForceIndexGroupByCustomNumeroDimensione = this.getIndexList(StatisticsForceIndexConfig.P_GROUPBY_CUSTOM_NUMERO_DIMENSIONE, groupCustomByNumeroDimensione, pRepoExternal);
 		
-		String groupCustomByLatenza = p.getProperty(StatisticsForceIndexConfig.pGroupBy_custom_latenza);
+		String groupCustomByLatenza = p.getProperty(StatisticsForceIndexConfig.P_GROUPBY_CUSTOM_LATENZA);
 		if(groupCustomByLatenza!=null){
 			groupCustomByLatenza = groupCustomByLatenza.trim();
 		}
-		this.transazioniForceIndexGroupBy_custom_latenze = this.getIndexList(StatisticsForceIndexConfig.pGroupBy_custom_latenza, groupCustomByLatenza, pRepoExternal);
+		this.transazioniForceIndexGroupByCustomLatenze = this.getIndexList(StatisticsForceIndexConfig.P_GROUPBY_CUSTOM_LATENZA, groupCustomByLatenza, pRepoExternal);
 		
 	}
 	
-	public StatisticsForceIndexConfig(InstanceProperties p) throws Exception{
+	public StatisticsForceIndexConfig(InstanceProperties p) throws IOException, UtilsException {
 		
-		String tmpRepo = p.getValue_convertEnvProperties(StatisticsForceIndexConfig.pRepo);
+		String tmpRepo = p.getValue_convertEnvProperties(StatisticsForceIndexConfig.P_REPO);
 		Properties pRepoExternal = this.getExternalRepository(tmpRepo);
 		
-		
-		
-		String groupByNumeroDimensione = p.getValue_convertEnvProperties(StatisticsForceIndexConfig.pGroupBy_numero_dimensione);
+		String groupByNumeroDimensione = p.getValue_convertEnvProperties(StatisticsForceIndexConfig.P_GROUPBY_NUMERO_DIMENSIONE);
 		if(groupByNumeroDimensione!=null){
 			groupByNumeroDimensione = groupByNumeroDimensione.trim();
 		}
-		this.transazioniForceIndexGroupBy_numero_dimensione = this.getIndexList(StatisticsForceIndexConfig.pGroupBy_numero_dimensione, groupByNumeroDimensione, pRepoExternal);
+		this.transazioniForceIndexGroupByNumeroDimensione = this.getIndexList(StatisticsForceIndexConfig.P_GROUPBY_NUMERO_DIMENSIONE, groupByNumeroDimensione, pRepoExternal);
 		
-		String groupByLatenza = p.getValue_convertEnvProperties(StatisticsForceIndexConfig.pGroupBy_latenza);
+		String groupByLatenza = p.getValue_convertEnvProperties(StatisticsForceIndexConfig.P_GROUPBY_LATENZA);
 		if(groupByLatenza!=null){
 			groupByLatenza = groupByLatenza.trim();
 		}
-		this.transazioniForceIndexGroupBy_latenze = this.getIndexList(StatisticsForceIndexConfig.pGroupBy_latenza, groupByLatenza, pRepoExternal);
+		this.transazioniForceIndexGroupByLatenze = this.getIndexList(StatisticsForceIndexConfig.P_GROUPBY_LATENZA, groupByLatenza, pRepoExternal);
 		
-		String groupCustomByNumeroDimensione = p.getValue_convertEnvProperties(StatisticsForceIndexConfig.pGroupBy_custom_numero_dimensione);
+		String groupCustomByNumeroDimensione = p.getValue_convertEnvProperties(StatisticsForceIndexConfig.P_GROUPBY_CUSTOM_NUMERO_DIMENSIONE);
 		if(groupCustomByNumeroDimensione!=null){
 			groupCustomByNumeroDimensione = groupCustomByNumeroDimensione.trim();
 		}
-		this.transazioniForceIndexGroupBy_custom_numero_dimensione = this.getIndexList(StatisticsForceIndexConfig.pGroupBy_custom_numero_dimensione, groupCustomByNumeroDimensione, pRepoExternal);
+		this.transazioniForceIndexGroupByCustomNumeroDimensione = this.getIndexList(StatisticsForceIndexConfig.P_GROUPBY_CUSTOM_NUMERO_DIMENSIONE, groupCustomByNumeroDimensione, pRepoExternal);
 		
-		String groupCustomByLatenza = p.getValue_convertEnvProperties(StatisticsForceIndexConfig.pGroupBy_custom_latenza);
+		String groupCustomByLatenza = p.getValue_convertEnvProperties(StatisticsForceIndexConfig.P_GROUPBY_CUSTOM_LATENZA);
 		if(groupCustomByLatenza!=null){
 			groupCustomByLatenza = groupCustomByLatenza.trim();
 		}
-		this.transazioniForceIndexGroupBy_custom_latenze = this.getIndexList(StatisticsForceIndexConfig.pGroupBy_custom_latenza, groupCustomByLatenza, pRepoExternal);
+		this.transazioniForceIndexGroupByCustomLatenze = this.getIndexList(StatisticsForceIndexConfig.P_GROUPBY_CUSTOM_LATENZA, groupCustomByLatenza, pRepoExternal);
 		
 	}
 	
-	private Properties getExternalRepository(String tmpRepo)throws Exception{
+	private Properties getExternalRepository(String tmpRepo) throws IOException{
 		Properties pRepoExternal = null;
 		if(tmpRepo!=null){
-			InputStream is = null;
-			try {
-				File f = new File(tmpRepo);
-				if(f.exists()){
-					is = new FileInputStream(f);
-				}
-				else{
-					// provo a cercarlo nel classpath
-					is = StatisticsForceIndexConfig.class.getResourceAsStream(tmpRepo);
-				}
+			File f = new File(tmpRepo);
+			try (InputStream is = f.exists() ? new FileInputStream(f) : StatisticsForceIndexConfig.class.getResourceAsStream(tmpRepo)){ // provo a cercarlo nel classpath se non e' un file esistente
 				if(is!=null){
 					pRepoExternal = new Properties();
 					pRepoExternal.load(is);
-				}
-			}finally {
-				try {
-					if(is!=null) {
-						is.close();
-					}
-				}catch(Exception e) {
-					// ignore
 				}
 			}
 		}
 		return  pRepoExternal;
 	}
 	
-	private List<Index> getIndexList(String propertyName,String propertyValue, Properties externalRepository) throws Exception{
+	private List<Index> getIndexList(String propertyName,String propertyValue, Properties externalRepository) {
 		
 		String s = null;
 		if(externalRepository!=null){
@@ -162,8 +145,9 @@ public class StatisticsForceIndexConfig {
 			s = propertyValue;
 		}
 		
+		List<Index> l = null;
 		if(s!=null){
-			List<Index> l = new ArrayList<Index>();
+			l = new ArrayList<>();
 			if(s.contains(",")){
 				String [] split = s.split(",");
 				for (int i = 0; i < split.length; i++) {
@@ -175,42 +159,42 @@ public class StatisticsForceIndexConfig {
 			}
 			return l;
 		}
-		return null;
+		return l;
 	}
 	
 
-	public List<Index> getTransazioniForceIndexGroupBy_numero_dimensione() {
-		return this.transazioniForceIndexGroupBy_numero_dimensione;
+	public List<Index> getTransazioniForceIndexGroupByNumeroDimensione() {
+		return this.transazioniForceIndexGroupByNumeroDimensione;
 	}
 
-	public void setTransazioniForceIndexGroupBy_numero_dimensione(
-			List<Index> transazioniForceIndexGroupBy_numero_dimensione) {
-		this.transazioniForceIndexGroupBy_numero_dimensione = transazioniForceIndexGroupBy_numero_dimensione;
+	public void setTransazioniForceIndexGroupByNumeroDimensione(
+			List<Index> transazioniForceIndexGroupByNumeroDimensione) {
+		this.transazioniForceIndexGroupByNumeroDimensione = transazioniForceIndexGroupByNumeroDimensione;
 	}
 
-	public List<Index> getTransazioniForceIndexGroupBy_latenze() {
-		return this.transazioniForceIndexGroupBy_latenze;
+	public List<Index> getTransazioniForceIndexGroupByLatenze() {
+		return this.transazioniForceIndexGroupByLatenze;
 	}
 
-	public void setTransazioniForceIndexGroupBy_latenze(List<Index> transazioniForceIndexGroupBy_latenze) {
-		this.transazioniForceIndexGroupBy_latenze = transazioniForceIndexGroupBy_latenze;
+	public void setTransazioniForceIndexGroupByLatenze(List<Index> transazioniForceIndexGroupByLatenze) {
+		this.transazioniForceIndexGroupByLatenze = transazioniForceIndexGroupByLatenze;
 	}
 	
-	public List<Index> getTransazioniForceIndexGroupBy_custom_numero_dimensione() {
-		return this.transazioniForceIndexGroupBy_custom_numero_dimensione;
+	public List<Index> getTransazioniForceIndexGroupByCustomNumeroDimensione() {
+		return this.transazioniForceIndexGroupByCustomNumeroDimensione;
 	}
 
-	public void setTransazioniForceIndexGroupBy_custom_numero_dimensione(
-			List<Index> transazioniForceIndexGroupBy_custom_numero_dimensione) {
-		this.transazioniForceIndexGroupBy_custom_numero_dimensione = transazioniForceIndexGroupBy_custom_numero_dimensione;
+	public void setTransazioniForceIndexGroupByCustomNumeroDimensione(
+			List<Index> transazioniForceIndexGroupByCustomNumeroDimensione) {
+		this.transazioniForceIndexGroupByCustomNumeroDimensione = transazioniForceIndexGroupByCustomNumeroDimensione;
 	}
 
-	public List<Index> getTransazioniForceIndexGroupBy_custom_latenze() {
-		return this.transazioniForceIndexGroupBy_custom_latenze;
+	public List<Index> getTransazioniForceIndexGroupByCustomLatenze() {
+		return this.transazioniForceIndexGroupByCustomLatenze;
 	}
 
-	public void setTransazioniForceIndexGroupBy_custom_latenze(List<Index> transazioniForceIndexGroupBy_custom_latenze) {
-		this.transazioniForceIndexGroupBy_custom_latenze = transazioniForceIndexGroupBy_custom_latenze;
+	public void setTransazioniForceIndexGroupByCustomLatenze(List<Index> transazioniForceIndexGroupByCustomLatenze) {
+		this.transazioniForceIndexGroupByCustomLatenze = transazioniForceIndexGroupByCustomLatenze;
 	}
 
 

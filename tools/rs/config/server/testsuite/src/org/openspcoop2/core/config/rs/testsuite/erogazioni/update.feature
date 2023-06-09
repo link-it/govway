@@ -748,13 +748,13 @@ Examples:
 | mode | nome | pattern | force | status | mode-get | nome-get | pattern-get | force-get |
 | "content-based" | null | "concat($.test,'#',$.prova2)" | true | 204 | "content-based" | null | "concat($.test,'#',$.prova2)" | true |
 | "content-based" | null | "concat($.test,'#',$.prova2)" | false | 204 | "content-based" | null | "concat($.test,'#',$.prova2)" | false |
-| "content-based" | null | null | true | 400 | "url-based" | null | ".*/(?:gw_)?"+soggettoDefault+"/(?:gw_)?"+erogazione_soap_una_azione.erogazione_nome+"/v1/([^/\|^?]*).*" | true |
-| "content-based" | "nomeinutile" | null | true | 400 | "url-based" | null | ".*/(?:gw_)?"+soggettoDefault+"/(?:gw_)?"+erogazione_soap_una_azione.erogazione_nome+"/v1/([^/\|^?]*).*" | true |
+| "content-based" | null | null | true | 400 | "url-based" | null | "/(?:gw_)?"+soggettoDefault+"/(?:gw_)?"+erogazione_soap_una_azione.erogazione_nome+"/v1/([^/\?]*).*" | true |
+| "content-based" | "nomeinutile" | null | true | 400 | "url-based" | null | "/(?:gw_)?"+soggettoDefault+"/(?:gw_)?"+erogazione_soap_una_azione.erogazione_nome+"/v1/([^/\?]*).*" | true |
 | "header-based" | null | "X-ProvaP" | true | 204 | "header-based" | "X-ProvaP" | null | true |
 | "header-based" | "X-ProvaP" | null | true | 204 | "header-based" | "X-ProvaP" | null | true |
 | "header-based" | null | "X-ProvaP" | false | 204 | "header-based" | "X-ProvaP" | null | false |
 | "header-based" | "X-ProvaP" | null | false | 204 | "header-based" | "X-ProvaP" | null | false |
-| "header-based" | null | null | true | 400 | "url-based" | null | ".*/(?:gw_)?"+soggettoDefault+"/(?:gw_)?"+erogazione_soap_una_azione.erogazione_nome+"/v1/([^/\|^?]*).*" | true |
+| "header-based" | null | null | true | 400 | "url-based" | null | "/(?:gw_)?"+soggettoDefault+"/(?:gw_)?"+erogazione_soap_una_azione.erogazione_nome+"/v1/([^/\?]*).*" | true |
 | "input-based" | null | null | true | 204 | "input-based" | null | null | true |
 | "input-based" | "vieneignorato" | null | true | 204 | "input-based" | null | null | true |
 | "input-based" | null | "vieneignorato" | true | 204 | "input-based" | null | null | true |
@@ -767,12 +767,12 @@ Examples:
 | "soap-action-based" | null | null | false | 204 | "soap-action-based" | null | null | false |
 | "url-based" | null | "/.(espressioneRegolare)?" | true | 204 | "url-based" | null | "/.(espressioneRegolare)?" | true |
 | "url-based" | null | "/.(espressioneRegolare)?" | false | 204 | "url-based" | null | "/.(espressioneRegolare)?" | false |
-| "url-based" | null | null | true | 400 | "url-based" | null | ".*/(?:gw_)?"+soggettoDefault+"/(?:gw_)?"+erogazione_soap_una_azione.erogazione_nome+"/v1/([^/\|^?]*).*" | true |
-| "url-based" | "nomeinutile" | null | true | 400 | "url-based" | null | ".*/(?:gw_)?"+soggettoDefault+"/(?:gw_)?"+erogazione_soap_una_azione.erogazione_nome+"/v1/([^/\|^?]*).*" | true |
+| "url-based" | null | null | true | 400 | "url-based" | null | "/(?:gw_)?"+soggettoDefault+"/(?:gw_)?"+erogazione_soap_una_azione.erogazione_nome+"/v1/([^/\?]*).*" | true |
+| "url-based" | "nomeinutile" | null | true | 400 | "url-based" | null | "/(?:gw_)?"+soggettoDefault+"/(?:gw_)?"+erogazione_soap_una_azione.erogazione_nome+"/v1/([^/\?]*).*" | true |
 | "static" | "MRequest" | null | true | 204 | "static" | null | null | false |
-| "static" | "AzioneNonEsistente" | null | true | 400 | "url-based" | null | ".*/(?:gw_)?"+soggettoDefault+"/(?:gw_)?"+erogazione_soap_una_azione.erogazione_nome+"/v1/([^/\|^?]*).*" | true |
-| "static" | null | "patternInutile" | true | 400 | "url-based" | null | ".*/(?:gw_)?"+soggettoDefault+"/(?:gw_)?"+erogazione_soap_una_azione.erogazione_nome+"/v1/([^/\|^?]*).*" | true |
-| "static" | null | null | true | 400 | "url-based" | null | ".*/(?:gw_)?"+soggettoDefault+"/(?:gw_)?"+erogazione_soap_una_azione.erogazione_nome+"/v1/([^/\|^?]*).*" | true |
+| "static" | "AzioneNonEsistente" | null | true | 400 | "url-based" | null | "/(?:gw_)?"+soggettoDefault+"/(?:gw_)?"+erogazione_soap_una_azione.erogazione_nome+"/v1/([^/\?]*).*" | true |
+| "static" | null | "patternInutile" | true | 400 | "url-based" | null | "/(?:gw_)?"+soggettoDefault+"/(?:gw_)?"+erogazione_soap_una_azione.erogazione_nome+"/v1/([^/\?]*).*" | true |
+| "static" | null | null | true | 400 | "url-based" | null | "/(?:gw_)?"+soggettoDefault+"/(?:gw_)?"+erogazione_soap_una_azione.erogazione_nome+"/v1/([^/\?]*).*" | true |
 
 @UpdateUrlInvocazioneSoapPiuAzioni204
 Scenario Outline: Erogazioni Update Url Invocazione 204 per API SOAP con piu azioni
@@ -819,10 +819,10 @@ Examples:
 | "interface-based" | null | null | true | 204 | "interface-based" | null | null | false |
 | "soap-action-based" | null | null | true | 204 | "soap-action-based" | null | null | true |
 | "url-based" | null | "/.(espressioneRegolare)?" | true | 204 | "url-based" | null | "/.(espressioneRegolare)?" | true |
-| "static" | "MRequest" | null | true | 400 | "url-based" | null | ".*/(?:gw_)?"+soggettoDefault+"/(?:gw_)?"+erogazione_soap_piu_azioni.erogazione_nome+"/v1/([^/\|^?]*).*" | true |
-| "static" | "AzioneNonEsistente" | null | true | 400 | "url-based" | null | ".*/(?:gw_)?"+soggettoDefault+"/(?:gw_)?"+erogazione_soap_piu_azioni.erogazione_nome+"/v1/([^/\|^?]*).*" | true |
-| "static" | null | "patternInutile" | true | 400 | "url-based" | null | ".*/(?:gw_)?"+soggettoDefault+"/(?:gw_)?"+erogazione_soap_piu_azioni.erogazione_nome+"/v1/([^/\|^?]*).*" | true |
-| "static" | null | null | true | 400 | "url-based" | null | ".*/(?:gw_)?"+soggettoDefault+"/(?:gw_)?"+erogazione_soap_piu_azioni.erogazione_nome+"/v1/([^/\|^?]*).*" | true |
+| "static" | "MRequest" | null | true | 400 | "url-based" | null | "/(?:gw_)?"+soggettoDefault+"/(?:gw_)?"+erogazione_soap_piu_azioni.erogazione_nome+"/v1/([^/\?]*).*" | true |
+| "static" | "AzioneNonEsistente" | null | true | 400 | "url-based" | null | "/(?:gw_)?"+soggettoDefault+"/(?:gw_)?"+erogazione_soap_piu_azioni.erogazione_nome+"/v1/([^/\?]*).*" | true |
+| "static" | null | "patternInutile" | true | 400 | "url-based" | null | "/(?:gw_)?"+soggettoDefault+"/(?:gw_)?"+erogazione_soap_piu_azioni.erogazione_nome+"/v1/([^/\?]*).*" | true |
+| "static" | null | null | true | 400 | "url-based" | null | "/(?:gw_)?"+soggettoDefault+"/(?:gw_)?"+erogazione_soap_piu_azioni.erogazione_nome+"/v1/([^/\?]*).*" | true |
 
 
 @UpdateVersione204

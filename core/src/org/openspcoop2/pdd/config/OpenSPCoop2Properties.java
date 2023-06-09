@@ -25,6 +25,7 @@ package org.openspcoop2.pdd.config;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.URL;
@@ -2457,10 +2458,10 @@ public class OpenSPCoop2Properties {
 				this.getStatisticheGiornaliereGenerazioneTimerIntervalSeconds();
 				this.getStatisticheSettimanaliGenerazioneTimerIntervalSeconds();
 				this.getStatisticheMensiliGenerazioneTimerIntervalSeconds();
-				this.getStatisticheGenerazioneTimer_lockMaxLife();
-				this.getStatisticheGenerazioneTimer_lockIdleTime();
-				this.getStatisticheGenerazioneTimer_lockAttesaAttiva();
-				this.getStatisticheGenerazioneTimer_lockCheckInterval();
+				this.getStatisticheGenerazioneTimerLockMaxLife();
+				this.getStatisticheGenerazioneTimerLockIdleTime();
+				this.getStatisticheGenerazioneTimerLockAttesaAttiva();
+				this.getStatisticheGenerazioneTimerLockCheckInterval();
 				this.getStatisticheGenerazioneExternalForceIndexRepository();
 			}
 			
@@ -29472,8 +29473,8 @@ public class OpenSPCoop2Properties {
 				if(p!=null && !p.isEmpty()) {
 					Iterator<Object> it = p.values().iterator();
 					while (it.hasNext()) {
-						Object o = (Object) it.next();
-						if(o!=null && o instanceof String) {
+						Object o = it.next();
+						if(o instanceof String) {
 							String s = (String) o;
 							this.isReadTimedOut.add(s);
 						}
@@ -29485,7 +29486,7 @@ public class OpenSPCoop2Properties {
 			}    
 		}
 
-		if(this.isReadTimedOut!=null && !this.isReadTimedOut.isEmpty()) {
+		if(!this.isReadTimedOut.isEmpty()) {
 			for (String s : this.isReadTimedOut) {
 				if(msg.contains(s)) {
 					return true;
@@ -29782,63 +29783,63 @@ public class OpenSPCoop2Properties {
 		return this.getStatisticheMensiliGenerazioneTimerIntervalSeconds;
 	}
 	
-	private Integer getStatisticheGenerazioneTimer_lockMaxLife = null;
-	public int getStatisticheGenerazioneTimer_lockMaxLife() {	
-		if(this.getStatisticheGenerazioneTimer_lockMaxLife==null){
+	private Integer getStatisticheGenerazioneTimerLockMaxLife = null;
+	public int getStatisticheGenerazioneTimerLockMaxLife() {	
+		if(this.getStatisticheGenerazioneTimerLockMaxLife==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.timer.lock.maxLife");
 
 				if(name!=null){
 					name = name.trim();
-					this.getStatisticheGenerazioneTimer_lockMaxLife = java.lang.Integer.parseInt(name);
+					this.getStatisticheGenerazioneTimerLockMaxLife = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.timer.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE);
-					this.getStatisticheGenerazioneTimer_lockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
+					this.getStatisticheGenerazioneTimerLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.timer.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE+", errore:"+e.getMessage(),e);
-				this.getStatisticheGenerazioneTimer_lockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
+				this.getStatisticheGenerazioneTimerLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 			}
-			if(this.getStatisticheGenerazioneTimer_lockMaxLife!=null && this.getStatisticheGenerazioneTimer_lockMaxLife>0) {
+			if(this.getStatisticheGenerazioneTimerLockMaxLife!=null && this.getStatisticheGenerazioneTimerLockMaxLife>0) {
 				// trasformo in millisecondi l'informazione fornita in secondi
-				this.getStatisticheGenerazioneTimer_lockMaxLife = this.getStatisticheGenerazioneTimer_lockMaxLife *1000;
+				this.getStatisticheGenerazioneTimerLockMaxLife = this.getStatisticheGenerazioneTimerLockMaxLife *1000;
 			}
 		}
 
-		return this.getStatisticheGenerazioneTimer_lockMaxLife;
+		return this.getStatisticheGenerazioneTimerLockMaxLife;
 	}
 	
-	private Integer getStatisticheGenerazioneTimer_lockIdleTime = null;
-	public int getStatisticheGenerazioneTimer_lockIdleTime() {	
-		if(this.getStatisticheGenerazioneTimer_lockIdleTime==null){
+	private Integer getStatisticheGenerazioneTimerLockIdleTime = null;
+	public int getStatisticheGenerazioneTimerLockIdleTime() {	
+		if(this.getStatisticheGenerazioneTimerLockIdleTime==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.timer.lock.idleTime");
 
 				if(name!=null){
 					name = name.trim();
-					this.getStatisticheGenerazioneTimer_lockIdleTime = java.lang.Integer.parseInt(name);
+					this.getStatisticheGenerazioneTimerLockIdleTime = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.timer.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME);
-					this.getStatisticheGenerazioneTimer_lockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
+					this.getStatisticheGenerazioneTimerLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.timer.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME+", errore:"+e.getMessage(),e);
-				this.getStatisticheGenerazioneTimer_lockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
+				this.getStatisticheGenerazioneTimerLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 			}
-			if(this.getStatisticheGenerazioneTimer_lockIdleTime!=null && this.getStatisticheGenerazioneTimer_lockIdleTime>0) {
+			if(this.getStatisticheGenerazioneTimerLockIdleTime!=null && this.getStatisticheGenerazioneTimerLockIdleTime>0) {
 				// trasformo in millisecondi l'informazione fornita in secondi
-				this.getStatisticheGenerazioneTimer_lockIdleTime = this.getStatisticheGenerazioneTimer_lockIdleTime *1000;
+				this.getStatisticheGenerazioneTimerLockIdleTime = this.getStatisticheGenerazioneTimerLockIdleTime *1000;
 			}
 		}
 
-		return this.getStatisticheGenerazioneTimer_lockIdleTime;
+		return this.getStatisticheGenerazioneTimerLockIdleTime;
 	}
 	
-	private Long getStatisticheGenerazioneTimer_lockAttesaAttiva = null;
-	public long getStatisticheGenerazioneTimer_lockAttesaAttiva() {	
-		if(this.getStatisticheGenerazioneTimer_lockAttesaAttiva==null){
+	private Long getStatisticheGenerazioneTimerLockAttesaAttiva = null;
+	public long getStatisticheGenerazioneTimerLockAttesaAttiva() {	
+		if(this.getStatisticheGenerazioneTimerLockAttesaAttiva==null){
 			String pName = "org.openspcoop2.pdd.statistiche.generazione.timer.lock.attesaAttiva";
 			try{ 
 				String name = null;
@@ -29847,24 +29848,24 @@ public class OpenSPCoop2Properties {
 				if(name!=null){
 					name = name.trim();
 					long time = java.lang.Long.parseLong(name);
-					this.getStatisticheGenerazioneTimer_lockAttesaAttiva = time*1000;
+					this.getStatisticheGenerazioneTimerLockAttesaAttiva = time*1000;
 				}else{
 					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA);
-					this.getStatisticheGenerazioneTimer_lockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
+					this.getStatisticheGenerazioneTimerLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
-				this.getStatisticheGenerazioneTimer_lockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
+				this.getStatisticheGenerazioneTimerLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
 			}    
 		}
 
-		return this.getStatisticheGenerazioneTimer_lockAttesaAttiva;
+		return this.getStatisticheGenerazioneTimerLockAttesaAttiva;
 	}
 
-	private Integer getStatisticheGenerazioneTimer_lockCheckInterval = null;
-	public int getStatisticheGenerazioneTimer_lockCheckInterval() {	
-		if(this.getStatisticheGenerazioneTimer_lockCheckInterval==null){
+	private Integer getStatisticheGenerazioneTimerLockCheckInterval = null;
+	public int getStatisticheGenerazioneTimerLockCheckInterval() {	
+		if(this.getStatisticheGenerazioneTimerLockCheckInterval==null){
 			String pName = "org.openspcoop2.pdd.statistiche.generazione.timer.lock.check";
 			try{ 
 				String name = null;
@@ -29873,18 +29874,18 @@ public class OpenSPCoop2Properties {
 				if(name!=null){
 					name = name.trim();
 					int time = java.lang.Integer.parseInt(name);
-					this.getStatisticheGenerazioneTimer_lockCheckInterval = time;
+					this.getStatisticheGenerazioneTimerLockCheckInterval = time;
 				}else{
 					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL);
-					this.getStatisticheGenerazioneTimer_lockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
+					this.getStatisticheGenerazioneTimerLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
-				this.getStatisticheGenerazioneTimer_lockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
+				this.getStatisticheGenerazioneTimerLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
 			}  
 		}
 
-		return this.getStatisticheGenerazioneTimer_lockCheckInterval;
+		return this.getStatisticheGenerazioneTimerLockCheckInterval;
 	}
 	
 	private Boolean isStatisticheGenerazioneBaseOrariaEnabled = null;
@@ -30063,36 +30064,7 @@ public class OpenSPCoop2Properties {
 			name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.forceIndex.repository");
 			if(name!=null){
 				name = name.trim();
-				InputStream is = null;
-				try {
-					File f = new File(name);
-					if(f.exists()) {
-						if(f.isDirectory()) {
-							throw new CoreException("File ["+f+"] is directory");
-						}
-						if(!f.canRead()) {
-							throw new CoreException("File ["+f+"] cannot read");
-						}
-						is = new FileInputStream(f);
-					}
-					else {
-						// provo a cercarlo nel classpath
-						is = OpenSPCoop2Properties.class.getResourceAsStream(name);
-					}
-					if(is!=null) {
-						Properties p = new Properties();
-						p.load(is);
-						return new StatisticsForceIndexConfig(p);
-					}
-				}finally{
-					try {
-						if(is!=null) {
-							is.close();
-						}
-					}catch(Exception eClose) {
-						// close
-					}
-				}
+				return readStatisticsForceIndexConfig(name);
 			}
 			
 			return null;
@@ -30102,6 +30074,28 @@ public class OpenSPCoop2Properties {
 			throw new CoreException(e.getMessage(),e);
 		}    
 		
+	}
+	private StatisticsForceIndexConfig readStatisticsForceIndexConfig(String name) throws CoreException, IOException {
+		File f = new File(name);
+		if(f.exists()) {
+			if(f.isDirectory()) {
+				throw new CoreException("File ["+f+"] is directory");
+			}
+			if(!f.canRead()) {
+				throw new CoreException("File ["+f+"] cannot read");
+			}
+		}
+		else {
+			// provo a cercarlo nel classpath
+		}
+		try (InputStream is = f.exists() ? new FileInputStream(f) : OpenSPCoop2Properties.class.getResourceAsStream(name);){
+			if(is!=null) {
+				Properties p = new Properties();
+				p.load(is);
+				return new StatisticsForceIndexConfig(p);
+			}
+		}
+		return null;
 	}
 	
 	
