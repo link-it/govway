@@ -410,3 +410,51 @@ Examples:
 | esterno | PDND | pkcs12 | DemoSoggettoFruitore | ApplicativoBlockingIDA01ExampleClient3 | ApplicativoBlockingIDA01ExampleClient3 | ApplicativoBlockingIDA01ExampleClient3-SimulazionePDND-JWK | authorization-deny-ApplicativoBlockingIDA01ExampleClient3.json |
 | interno | JWK | jwk | DemoSoggettoFruitore | ExampleExternalClient4-SimulazionePDND-JWK | ExampleExternalClient4-SimulazionePDND-JWK | ExampleExternalClient4-SimulazionePDND-JWK | authorization-deny-ExampleExternalClient4-SimulazionePDND-JWK.json |
 | interno | PDND | jwk | DemoSoggettoFruitore | ExampleExternalClient4-SimulazionePDND-JWK | ExampleExternalClient4-SimulazionePDND-JWK | ExampleExternalClient4-SimulazionePDND-JWK | authorization-deny-ExampleExternalClient4-SimulazionePDND-JWK.json |
+
+
+
+
+
+@autorizzazioneSicurezzaTokenOAuthPuntualeOkIntegrityRest01
+Scenario Outline: Test autorizzazione token oauth puntuale caso ok, con utilizzo dell'integrity rest 01 (applicativo dominio <tipo-test>)
+
+Given url govway_base_path + "/rest/out/<fruitore>/DemoSoggettoErogatore/DemoAutorizzazioneTokenOAuthIntegrity01/v1"
+And path 'idar03'
+And request read('request.json')
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = 'purposeId-<username>'
+And header simulazionepdnd-audience = 'DemoAutorizzazioneTokenOAuthIntegrity01/v1'
+When method post
+Then status 200
+And match response == read('request.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+Examples:
+| tipo-test | fruitore | username | password | application |
+| interno | DemoSoggettoFruitore | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 |  ApplicativoBlockingIDA01 |
+
+
+
+@autorizzazioneSicurezzaMessaggioTokenPuntualeKoIntegrityRest01
+Scenario Outline: Test autorizzazione sicurezza messaggio+token puntuale caso ko (applicativo dominio <tipo-test>)
+
+Given url govway_base_path + "/rest/out/<fruitore>/DemoSoggettoErogatore/DemoAutorizzazioneTokenOAuthIntegrity01/v1"
+And path 'idar03'
+And request read('request.json')
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = 'purposeId-<username>'
+And header simulazionepdnd-audience = 'DemoAutorizzazioneTokenOAuthIntegrity01/v1'
+When method post
+Then status 403
+And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/<response>')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+Examples:
+| tipo-test | fruitore | username | password | response |
+| interno | DemoSoggettoFruitore | ApplicativoBlockingIDA01ExampleClient3 | ApplicativoBlockingIDA01ExampleClient3 | authorization-deny-ApplicativoBlockingIDA01ExampleClient3-integrity.json |

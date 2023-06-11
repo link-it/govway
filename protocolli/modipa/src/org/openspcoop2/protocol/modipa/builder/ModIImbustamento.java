@@ -367,6 +367,7 @@ public class ModIImbustamento {
 				Map<String, Object> dynamicMap = null;
 				
 				ModISecurityConfig securityConfig = null;
+				ModISecurityConfig securityConfigAudit = null;
 				ModIKeystoreConfig keystoreConfig = null;
 				boolean keystoreDefinitoInFruizione = false;
 				
@@ -424,15 +425,39 @@ public class ModIImbustamento {
 						}
 					}
 					
-					// keystore
+					// security config
+					
+					if(addAudit) {
+						securityConfigAudit = new ModISecurityConfig(msg, context, protocolFactory, state, requestInfo, 
+								idSoggettoMittente, asps, sa, 
+								rest, fruizione, isRichiesta, 
+								patternCorniceSicurezza, schemaCorniceSicurezza,
+								busta, bustaRichiesta, 
+								multipleHeaderAuthorizationConfig,
+								keystoreDefinitoInFruizione, keystoreKidMode,
+								addSecurity, addAudit);
+					}
+					
+					boolean keystoreKidModeSecurityToken = keystoreKidMode;
+					if(rest && headerTokenRestIntegrity==null) {
+						// un solo header
+						if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile)
+								||
+								ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile)) {
+							keystoreKidModeSecurityToken = false;
+						}
+					}
+					
 					securityConfig = new ModISecurityConfig(msg, context, protocolFactory, state, requestInfo, 
 							idSoggettoMittente, asps, sa, 
 							rest, fruizione, isRichiesta, 
 							patternCorniceSicurezza, schemaCorniceSicurezza,
 							busta, bustaRichiesta, 
 							multipleHeaderAuthorizationConfig,
-							keystoreDefinitoInFruizione, keystoreKidMode,
+							keystoreDefinitoInFruizione, keystoreKidModeSecurityToken,
 							addSecurity, addAudit);
+					
+					// keystore
 					
 					if(isRichiesta) {
 					
@@ -588,13 +613,16 @@ public class ModIImbustamento {
 								try {
 									msgDiag.logPersonalizzato(DIAGNOSTIC_ADD_TOKEN_INTEGRITY+tipoDiagnostico+DIAGNOSTIC_IN_CORSO);
 									
+									boolean keystoreKidModeIntegrity = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile)
+											||
+											ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile);									
 									ModISecurityConfig securityConfigIntegrity = new ModISecurityConfig(msg, context, protocolFactory, state, requestInfo,  
 											idSoggettoMittente, asps, sa, 
 											rest, fruizione, isRichiesta, 
 											patternCorniceSicurezza, schemaCorniceSicurezza,
 											busta, bustaRichiesta, 
 											false,
-											keystoreDefinitoInFruizione, keystoreKidMode,
+											keystoreDefinitoInFruizione, keystoreKidModeIntegrity,
 											addSecurity, addAudit);
 									modiTokenIntegrity = imbustamentoRest.addToken(msg, isRichiesta, context, keystoreConfig, securityConfigIntegrity, busta, 
 											securityMessageProfile, false, headerTokenRestIntegrity, 
@@ -705,7 +733,7 @@ public class ModIImbustamento {
 					try {
 						msgDiag.logPersonalizzato("addTokenAudit.richiesta.inCorso");
 					
-						ModIJWTToken modiTokenAudit = imbustamentoRest.addToken(msg, isRichiesta, context, keystoreConfig, securityConfig, busta, 
+						ModIJWTToken modiTokenAudit = imbustamentoRest.addToken(msg, isRichiesta, context, keystoreConfig, securityConfigAudit, busta, 
 								securityMessageProfileAudit, useKIDforAudit, headerTokenAudit, 
 								corniceSicurezza, patternCorniceSicurezza, schemaCorniceSicurezza,
 								ruoloMessaggio, false,

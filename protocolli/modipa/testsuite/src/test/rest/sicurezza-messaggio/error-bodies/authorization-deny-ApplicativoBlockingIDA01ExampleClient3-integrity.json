@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/403/Authorization.html",
+    "title": "Authorization",
+    "status": 403,
+    "detail": "Applicativo Mittente ApplicativoBlockingIDA01ExampleClient3-SimulazionePDND-JWK (Soggetto: DemoSoggettoFruitoreEsterno) non autorizzato; il certificato di firma (subject=\"CN=ExampleClient3, O=Example, L=Pisa, ST=Italy, C=IT\" issuer=\"CN=ExampleCA, O=Example, L=Pisa, ST=Italy, C=IT\") del security token (Agid-JWT-Signature) non corrisponde all'applicativo",
+    "govway_id": "#string"
+}

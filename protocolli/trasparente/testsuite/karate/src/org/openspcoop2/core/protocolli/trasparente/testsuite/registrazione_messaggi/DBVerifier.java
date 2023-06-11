@@ -329,7 +329,7 @@ public class DBVerifier {
 				if(headerWhiteList!=null && !headerWhiteList.isEmpty()) {
 					message = msg+" Trovato header ["+nome+"]=["+valore+"]; verifica white list ...";
 					log().info(message);
-					if(!headerWhiteList.contains(nome)) {
+					if(!contains(headerWhiteList,nome)) {
 						throw new Exception("Presente header '"+nome+"' non definito in whiteList con valore '"+valore+"'");
 					}
 				}
@@ -337,7 +337,7 @@ public class DBVerifier {
 				if(headerBlackList!=null && !headerBlackList.isEmpty()) {
 					message = msg+" Trovato header ["+nome+"]=["+valore+"]; verifica black list ...";
 					log().info(message);
-					if(headerBlackList.contains(nome)) {
+					if(contains(headerBlackList,nome)) {
 						throw new Exception("Presente header '"+nome+"' definito in blackList con valore '"+valore+"'");
 					}
 				}
@@ -346,6 +346,16 @@ public class DBVerifier {
 			
 		}
 
+	}
+	private static boolean contains(List<String> list, String nome) {
+		if(nome!=null && list!=null && !list.isEmpty()) {
+			for (String check : list) {
+				if(nome.equalsIgnoreCase(check)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	

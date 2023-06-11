@@ -398,6 +398,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 					Map<String, Object> dynamicMap = null;
 					
 					ModISecurityConfig securityConfig = null;
+					ModISecurityConfig securityConfigAudit = null;					
 					ModITruststoreConfig trustStoreCertificati = null;
 					ModITruststoreConfig trustStoreSsl = null;
 					
@@ -448,12 +449,33 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 							}
 						}
 						
-						// truststore
+						// security config
+						
+						if(processAudit) {
+							securityConfigAudit = new ModISecurityConfig(msg, this.context, this.protocolFactory, this.state, requestInfo, idSoggettoMittente, 
+									aspc, asps, sa, rest, fruizione, request,
+									multipleHeaderAuthorizationConfig,
+									keystoreKidMode,
+									patternCorniceSicurezza, schemaCorniceSicurezza);
+						}
+						
+						boolean keystoreKidModeSecurityToken = keystoreKidMode;
+						if(rest && headerTokenRestIntegrity==null) {
+							// un solo header
+							if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile)
+									||
+									ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile)) {
+								keystoreKidModeSecurityToken = false;
+							}
+						}
+						
 						securityConfig = new ModISecurityConfig(msg, this.context, this.protocolFactory, this.state, requestInfo, idSoggettoMittente, 
 								aspc, asps, sa, rest, fruizione, request,
 								multipleHeaderAuthorizationConfig,
-								keystoreKidMode,
+								keystoreKidModeSecurityToken,
 								patternCorniceSicurezza, schemaCorniceSicurezza);
+						
+						// truststore
 						trustStoreCertificati = new ModITruststoreConfig(fruizione, idSoggettoMittente, asps, false);
 						if(securityConfig.isX5u()) {
 							trustStoreSsl = new ModITruststoreConfig(fruizione, idSoggettoMittente, asps, true);
@@ -646,10 +668,13 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 									
 									// !! Nel caso di 2 header, quello integrity è obbligatorio solo se c'è un payload, altrimenti se presente viene validato, altrimenti non da errore.
 									boolean securityHeaderIntegrityObbligatorio = msg.castAsRest().hasContent();
+									boolean keystoreKidModeIntegrity = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile)
+											||
+											ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile);
 									securityConfigIntegrity = new ModISecurityConfig(msg, this.context, this.protocolFactory, this.state, requestInfo, idSoggettoMittente, 
 											aspc, asps, sa, rest, fruizione, request,
 											false,
-											keystoreKidMode,
+											keystoreKidModeIntegrity,
 											patternCorniceSicurezza, schemaCorniceSicurezza);
 									tokenIntegrity = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfile, useKIDforIdAUTH, headerTokenRestIntegrity, 
 											corniceSicurezza, patternCorniceSicurezza, 
@@ -825,7 +850,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 							String tokenAudit = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfileAudit, useKIDforAudit, headerTokenAudit, 
 									corniceSicurezza, patternCorniceSicurezza, schemaCorniceSicurezza,
 									false, bustaRitornata, 
-									erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfig,
+									erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfigAudit,
 									buildSecurityTokenInRequest, ModIHeaderType.SINGLE, integritaCustom, securityHeaderObbligatorio,
 									dynamicMap, datiRichiesta);
 							
