@@ -12,7 +12,7 @@ alcune modifiche di stato. Le informazioni presenti sono:
    -  *Download*: consente di effettuare il download di un file di testo
       che contiene tutti i parametri visualizzati nella pagina.
 
-   -  *ResetAllCaches*: consente di effettuare il reset contemporaneo di
+   -  *Svuota tutte le Cache*: consente di effettuare il reset contemporaneo di
       tutte le cache utilizzate dal gateway.
 
 -  *Informazioni Generali*: Informazioni sul prodotto e sul software di

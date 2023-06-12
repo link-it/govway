@@ -1,8 +1,8 @@
 .. _scenari_modi_integrity:
 
-====================
-Pattern 'INTEGRITY'
-====================
+======================
+Pattern 'INTEGRITY_01'
+======================
 
 Gli scenari riportati in questa sezione riguardano API configurate con pattern :ref:`modipa_idar03`.
 

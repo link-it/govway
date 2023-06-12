@@ -16,6 +16,8 @@ I scenari descritti si differenziano rispetto ai pattern di sicurezza associati 
 
 - nella sezione :ref:`scenari_modi_integrity_pdnd` viene utilizzato il pattern :ref:`modipa_pdnd_integrity`.
 
+- nella sezione :ref:`scenari_modi_integrity_02` viene utilizzato il pattern :ref:`modipa_idar04`.
+
 .. note:: 
 
     Per una consultazione mirata alle informazioni di interesse per lo scenario si consiglia di impostare nel menù in alto a destra il profilo 'ModI' e la selezione del soggetto 'Ente' come mostrato nella figura :numref:`profilo_apigateway_selezione`.
@@ -34,3 +36,4 @@ I scenari descritti si differenziano rispetto ai pattern di sicurezza associati 
     integrity/index
     idauth_pdnd/index
     integrity_pdnd/index
+    integrity_02/index

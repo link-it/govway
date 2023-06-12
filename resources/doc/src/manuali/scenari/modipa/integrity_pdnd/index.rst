@@ -1,7 +1,7 @@
 .. _scenari_modi_integrity_pdnd:
 
 ======================================================
-Pattern 'ID_AUTH' via PDND + 'INTEGRITY'
+Pattern 'ID_AUTH' via PDND + 'INTEGRITY_01'
 ======================================================
 
 Gli scenari riportati in questa sezione riguardano API configurate con pattern :ref:`modipa_pdnd_integrity`.
