@@ -14,7 +14,7 @@ I scenari descritti si differenziano rispetto ai pattern di sicurezza associati 
 
 - nella sezione :ref:`scenari_modi_idauth_pdnd` le API sono configurate tramite il pattern :ref:`modipa_pdnd`;
 
-- infine nella sezione :ref:`scenari_modi_integrity_pdnd` viene utilizzato il pattern :ref:`modipa_pdnd_integrity`.
+- nella sezione :ref:`scenari_modi_integrity_pdnd` viene utilizzato il pattern :ref:`modipa_pdnd_integrity`.
 
 .. note:: 
 

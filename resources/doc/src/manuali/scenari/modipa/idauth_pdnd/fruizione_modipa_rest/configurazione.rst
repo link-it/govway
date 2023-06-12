@@ -17,7 +17,7 @@ Configurazione
 
 **Registrazione API**
 
-Viene registrata l'API "PetStoreAuthPDND" con il relativo descrittore OpenAPI 3. Viene selezionato il solo pattern "ID_AUTH_CHANNEL_01" (sicurezza canale) mentre non deve essere selezionato alcun pattern di sicurezza messaggio nella sezione "ModI" poichè la gestione del token avverrà tramite validazione di un token OAuth attivato sull'erogazione (:numref:`modipa_profili_api_pdnd_fr_fig`).
+Viene registrata l'API "PetStoreAuthPDND" con il relativo descrittore OpenAPI 3. Vengono selezionati i pattern "ID_AUTH_CHANNEL_01" (sicurezza canale) e "ID_AUTH_REST_01" (sicurezza messaggio) nella sezione "ModI"  indicando nel campo "Generazione Token" il valore "Authorization PDND" (:numref:`modipa_profili_api_pdnd_fig`).
 
 .. figure:: ../../../_figure_scenari/modipa_profili_pdnd_api.png
  :scale: 80%
@@ -53,7 +53,7 @@ Per la configurazione delle fruizioni con un pattern di sicurezza via PDND è ne
 
 Una volta effettuata la registrazione della Token Policy, per utilizzarla in una fruizione è sufficiente associarla al connettore della fruizione come descritto nella sezione :ref:`avanzate_connettori_tokenPolicy`. 
 
-Di seguito vengono riportati tutte le informazioni più importanti della policy:
+Di seguito vengono riportate tutte le informazioni più importanti della policy:
 
 - Tipo: SignedJWT;
 
@@ -68,11 +68,11 @@ Di seguito vengono riportati tutte le informazioni più importanti della policy:
 
     Token Policy di Negoziazione PDND (Endpoint)
 
-- JWT Keystore: parametri di accesso al keystore contenente la chiave privata corrispondente al certificato X509 caricato sulla PDND durante la registrazione dell'applicativo client. I parametri variano in funzione del tipo di keystore selezionato e nello scenario preconfigurato è stata scelta la modalità 'Definito nell'applicativo ModI' nella quale il keystore utilizzato per firmare l'asserzione JWT inviata alla PDND sarà quello definito nell'applicativo ModI richiedente (:numref:`modipa_applicativo_fruitore_pdnd_policy_negoziazione2`).
+- JWT Keystore: parametri di accesso al keystore contenente la chiave privata corrispondente alla chiave pubblica caricata sulla PDND durante la registrazione dell'applicativo client. I parametri variano in funzione del tipo di keystore selezionato e nello scenario preconfigurato è stata scelta la modalità 'Definito nell'applicativo ModI' nella quale il keystore utilizzato per firmare l'asserzione JWT inviata alla PDND sarà quello definito nell'applicativo ModI richiedente (:numref:`modipa_applicativo_fruitore_pdnd_policy_negoziazione2`).
 
 .. note::
 
-  Questa modalità consente di definire una unica TokenPolicy di negoziazione utilizzabile da più applicativi richiedenti ognuno configurato con la propria coppia di chiavi di firma e i relativi identificativi 'client_id' e 'kid'.
+  Questa modalità consente di definire un'unica TokenPolicy di negoziazione utilizzabile da più applicativi richiedenti ognuno configurato con la propria coppia di chiavi di firma e i relativi identificativi 'client_id' e 'kid'.
 
 - JWT Signature: algoritmo di firma
 

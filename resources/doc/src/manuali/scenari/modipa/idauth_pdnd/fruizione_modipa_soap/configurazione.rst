@@ -18,7 +18,7 @@ Il processo di configurazione per questo scenario è del tutto analogo a quello 
 
 **Registrazione API**
 
-Viene registrata l'API "TemperatureConversionAuthPDND" con il relativo descrittore WSDL. Viene selezionato il solo pattern "ID_AUTH_CHANNEL_01" (sicurezza canale) mentre non deve essere selezionato alcun pattern di sicurezza messaggio nella sezione "ModI" poichè la gestione del token avverrà tramite validazione di un token OAuth attivato sull'erogazione (:numref:`modipa_profili_api_soap_pdnd_fr_fig`).
+Viene registrata l'API "TemperatureConversionAuthPDND" con il relativo descrittore WSDL. Vengono selezionati i pattern "ID_AUTH_CHANNEL_01" (sicurezza canale) e "ID_AUTH_SOAP_01" (sicurezza messaggio) nella sezione "ModI"  indicando nel campo "Generazione Token" il valore "Authorization PDND" (:numref:`modipa_profili_api_soap_pdnd_fr_fig`).
 
 .. figure:: ../../../_figure_scenari/modipa_profili_api_soap_pdnd.png
  :scale: 80%

@@ -17,7 +17,7 @@ Configurazione
 
 **Registrazione API**
 
-Viene registrata l'API "PetStoreAuthPDND" con il relativo descrittore OpenAPI 3. Viene selezionato il solo pattern "ID_AUTH_CHANNEL_01" (sicurezza canale) mentre non deve essere selezionato alcun pattern di sicurezza messaggio nella sezione "ModI" poichè la gestione del token avverrà tramite validazione di un token OAuth attivato sull'erogazione (:numref:`modipa_profili_api_pdnd_fig`).
+Viene registrata l'API "PetStoreAuthPDND" con il relativo descrittore OpenAPI 3. Vengono selezionati i pattern "ID_AUTH_CHANNEL_01" (sicurezza canale) e "ID_AUTH_REST_01" (sicurezza messaggio) nella sezione "ModI"  indicando nel campo "Generazione Token" il valore "Authorization PDND" (:numref:`modipa_profili_api_pdnd_fig`).
 
 .. figure:: ../../../_figure_scenari/modipa_profili_pdnd_api.png
  :scale: 80%
@@ -44,7 +44,7 @@ Viene registrata l'API "PetStoreAuthPDND" con il relativo descrittore OpenAPI 3.
 
 **Token Policy PDND**
 
-Con il prodotto viene fornita built-in la token policy 'PDND' (:numref:`modipa_erogazione_policy_token_pdnd1`) da finalizzare nella sezione 'TrustStore' nei seguenti aspetti (:numref:`modipa_erogazione_policy_token_pdnd2`):
+Con il prodotto viene fornita built-in la token policy 'PDND' (:numref:`modipa_erogazione_policy_token_pdnd1`) da finalizzare nella sezione 'TrustStore', come descritto nel manuale 'Console di Gestione' nella sezione :ref:`modipa_passiPreliminari_trustStore_pdnd`. La configurazione utilizzata per gli scenari (:numref:`modipa_erogazione_policy_token_pdnd2`) simula la PDND tramite i certificati predisposti su 'Keycloak':
 
 - File: deve essere indicato un path su file system che contiene il certificato di firma della PDND ottenibile tramite la url '.../.well-known/jwks.json' fornita dalla PDND stessa;
 

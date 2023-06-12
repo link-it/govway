@@ -19,7 +19,7 @@ Il processo di configurazione per questo scenario è del tutto analogo a quello 
 
 **Registrazione API**
 
-Viene registrata l'API "TemperatureConversionIntegrityPDND" con il relativo descrittore WSDL. Vengono selezionati i pattern "ID_AUTH_CHANNEL_01" (sicurezza canale) e "INTEGRITY_SOAP_01 con ID_AUTH_SOAP_01"  (sicurezza messaggio) nella sezione "ModI" (:numref:`modipa_profili_api_soap_integrity_pdnd_fig`).
+Viene registrata l'API "TemperatureConversionIntegrityPDND" con il relativo descrittore WSDL. Vengono selezionati i pattern "ID_AUTH_CHANNEL_01" (sicurezza canale) e "INTEGRITY_SOAP_01 con ID_AUTH_SOAP_01" (sicurezza messaggio) nella sezione "ModI"  indicando nel campo "Generazione Token" il valore "Authorization PDND" (:numref:`modipa_profili_api_soap_integrity_pdnd_fig`).
 
 .. figure:: ../../../_figure_scenari/modipa_profili_api_soap_integrity_pdnd.png
  :scale: 80%

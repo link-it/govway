@@ -18,14 +18,14 @@ La configurazione dello scenario è del tutto analogo a quello descritto nello s
 
 **Registrazione API**
 
-Viene registrata l'API "PetStoreIntegrityPDND" con il relativo descrittore OpenAPI 3. Vengono selezionati i pattern "ID_AUTH_CHANNEL_01" (sicurezza canale) e "INTEGRITY_REST_01 con ID_AUTH_REST_01" (sicurezza messaggio) nella sezione "ModI" (:numref:`modipa_profili_api_integrity_pdnd_fr_fig`). Viene inoltre indicato di utilizzare il solo header HTTP 'Agid-JWT-Signature'.
+Viene registrata l'API "PetStoreIntegrityPDND" con il relativo descrittore OpenAPI 3. Vengono selezionati i pattern "ID_AUTH_CHANNEL_01" (sicurezza canale) e "INTEGRITY_REST_01 con ID_AUTH_REST_01" (sicurezza messaggio) nella sezione "ModI"  indicando nel campo "Generazione Token" il valore "Authorization PDND" (:numref:`modipa_profili_api_integrity_pdnd_fr_fig`).
 
 .. figure:: ../../../_figure_scenari/modipa_profili_api_integrity_pdnd.png
  :scale: 80%
  :align: center
  :name: modipa_profili_api_integrity_pdnd_fr_fig
 
- Configurazione Pattern ModI "INTEGRITY_REST_01 con ID_AUTH_REST_01" sulla API REST con utilizzo del solo header HTTP 'Agid-JWT-Signature'
+ Configurazione Pattern ModI "INTEGRITY_REST_01 con ID_AUTH_REST_01" sulla API REST
 
 
 **Fruizione**
