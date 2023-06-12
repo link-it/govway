@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.utils.beans;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
@@ -29,7 +31,9 @@ import javax.xml.bind.annotation.XmlTransient;
  * @version $Rev$, $Date$
  */
 @XmlTransient
-public abstract class BaseBeanWithId extends BaseBean {
+public abstract class BaseBeanWithId extends BaseBean implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	protected BaseBeanWithId(){
 		super();

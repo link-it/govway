@@ -1,3 +1,14 @@
+2022-06-12  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-1594
+	L'apertura di un nuovo tab tramite le breadcump rendeva la console inutilizzabile sul nuovo tab. Per provocare l'anomalia si doveva procedere come segue:
+	- aprire una lista si api, erogazioni, fruizioni, soggetti o applicativi;
+	- entrare nel dettaglio di un oggetto;
+	- cliccare con il tasto destro sulla breadcump che indica l'elenco degli oggetti ed aprire un nuovo tab;
+	- spostarsi sul nuovo tab;
+	- entrare nel dettaglio di un oggetto qualsiasi: la console andava in errore.
+
 2023-06-09  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

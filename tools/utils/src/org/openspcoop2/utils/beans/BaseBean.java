@@ -21,6 +21,7 @@ package org.openspcoop2.utils.beans;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.serialization.ISerializer;
 import org.openspcoop2.utils.serialization.JavaSerializer;
@@ -47,11 +49,19 @@ import org.openspcoop2.utils.xml.JaxbUtils;
  * @version $Rev$, $Date$
  */
 @XmlTransient
-public abstract class BaseBean {
+public abstract class BaseBean implements Serializable {
 
-	public BaseBean(){
+	private static final long serialVersionUID = 1L;
+	
+	private static final String TO_STRING_METHOD = "toString";
+	
+	protected BaseBean(){
+		// nop
 	}
 	
+	private void logExceptionStackTrace(Exception e) {
+		logExceptionStackTrace(e);
+	}
 	
 	/* ********** GENERIC UTILS ********* */
 	
@@ -73,7 +83,7 @@ public abstract class BaseBean {
 				// provo a recuperare getDefault
 				try{
 					method = c.getMethod("getDefault");
-				}catch(Throwable t){
+				}catch(Exception t){
 					throw nsme; // rilancio eccezione originale
 				}
 			}
@@ -102,7 +112,7 @@ public abstract class BaseBean {
 				// provo a recuperare setDefault
 				try{
 					method = c.getMethod("setDefault",parameterType);
-				}catch(Throwable t){
+				}catch(Exception t){
 					throw nsme; // rilancio eccezione originale
 				}
 			}
@@ -119,29 +129,29 @@ public abstract class BaseBean {
 	
 	// Non lo si vuole realizzare, si demanda eventualmente alla classe che lo implementa
 	// Se lo si aggiunge poi viene invocato l'equals e per alcuni field per cui non esiste il metodo get si ottiene errore (es. transazioneBean)
-//	@Override
-//	public int hashCode(){
-//		return this.getClass().getName().hashCode();
-//	}
+	/**@Override
+	public int hashCode(){
+		return this.getClass().getName().hashCode();
+	}*/
 	
 	/* ********** EQUALS ********* */
 	
 	@Override
 	public boolean equals(Object object){
-		return this._equalsEngine(object,null);
+		return this.equalsEngine(object,null);
 	}
 	public boolean equals(Object object,boolean checkLongId){
 		List<String> listFieldsNotCheck = new ArrayList<>();
-		if(checkLongId==false){
+		if(!checkLongId){
 			listFieldsNotCheck.add("id");
 		}
-		return this._equalsEngine(object, listFieldsNotCheck);
+		return this.equalsEngine(object, listFieldsNotCheck);
 	}
 	public boolean equals(Object object,List<String> fieldsNotCheck){
-		return this._equalsEngine(object, fieldsNotCheck);
+		return this.equalsEngine(object, fieldsNotCheck);
 	}
 	@SuppressWarnings("unchecked")
-	private boolean _equalsEngine(Object object,List<String> fieldsNotCheck){
+	private boolean equalsEngine(Object object,List<String> fieldsNotCheck){
 		try{
 			if(object==null){
 				return false;
@@ -149,9 +159,9 @@ public abstract class BaseBean {
 			java.lang.reflect.Field[] fields = getClass().getDeclaredFields();
 			for(int i=0; i<fields.length;i++){
 				
-				//System.out.println("["+fields[i].getName()+"]");
+				/**System.out.println("["+fields[i].getName()+"]");*/
 				if(java.lang.reflect.Modifier.isStatic(fields[i].getModifiers())){
-					//System.out.println("IS STATIC");
+					/**System.out.println("IS STATIC");*/
 					continue;
 				}
 				
@@ -161,7 +171,7 @@ public abstract class BaseBean {
 				
 				// field id non controllato se in fieldsNotCheckList
 				boolean ignoreField = false;
-				if(fieldsNotCheck!=null && fieldsNotCheck.size()>0){
+				if(fieldsNotCheck!=null && !fieldsNotCheck.isEmpty()){
 					for (String fieldName : fieldsNotCheck) {
 						if(fieldName.equals(fields[i].getName())){
 							ignoreField = true;
@@ -173,63 +183,61 @@ public abstract class BaseBean {
 					continue;
 				}
 				
-				Object fieldValue_this = this.getFieldValue(fields[i].getName(),this);
-				Object fieldValue_object = this.getFieldValue(fields[i].getName(),object);
-				//System.out.println("LETTO VALORE["+fieldValue+"]");
+				Object fieldValueThis = this.getFieldValue(fields[i].getName(),this);
+				Object fieldValueObject = this.getFieldValue(fields[i].getName(),object);
+				/**System.out.println("LETTO VALORE["+fieldValue+"]");*/
 				
-				if(fieldValue_this==null){
+				if(fieldValueThis==null){
 					// FIELD
-					if(fieldValue_object!=null){
+					if(fieldValueObject!=null){
 						return false;
 					}
 				}else{
 					// ARRAY_LIST
-					//if(fields[i].getType().getName().equals("java.util.ArrayList") || fields[i].getType().getName().equals("java.util.List") ){
 					if( (fields[i].getType().isAssignableFrom(java.util.ArrayList.class)) || (fields[i].getType().isAssignableFrom(java.util.List.class)) ){
-						java.util.List<?> lista_this = (java.util.List<?>) fieldValue_this;
-						java.util.List<?> lista_parameter = (java.util.List<?>) fieldValue_object;
-						if(lista_parameter==null)
+						java.util.List<?> listaThis = (java.util.List<?>) fieldValueThis;
+						java.util.List<?> listaParameter = (java.util.List<?>) fieldValueObject;
+						if(listaParameter==null)
 							return false;
-						if(lista_this.size() != lista_parameter.size())
+						if(listaThis.size() != listaParameter.size())
 							return false;
-						for(int j=0; j<lista_this.size(); j++){
-							if(lista_this.get(j)==null){
-								if(lista_parameter.get(j)!=null)
-									return false;
+						for(int j=0; j<listaThis.size(); j++){
+							if(listaThis.get(j)==null &&
+								listaParameter.get(j)!=null) {
+								return false;
 							}
 						}
 						// SORT
-						java.util.List<Object> lista_thisSORT = new java.util.ArrayList<>();
-						java.util.List<Object> lista_parameterSORT = new java.util.ArrayList<>();
+						java.util.List<Object> listaThisSORT = new java.util.ArrayList<>();
+						java.util.List<Object> listaParameterSORT = new java.util.ArrayList<>();
 						try{
-							java.util.List<String> lista_thisTMP = new java.util.ArrayList<>();
-							java.util.Map<String, Object> thisTmp = new java.util.HashMap<String, Object>();
-							java.util.Map<String, Object> parameterTmp = new java.util.HashMap<String, Object>();
-							for(int k=0; k<lista_this.size(); k++){
-								Object thisObject = lista_this.get(k);
-								Object paramObject = lista_parameter.get(k);
+							java.util.List<String> listaThisTMP = new java.util.ArrayList<>();
+							java.util.Map<String, Object> thisTmp = new java.util.HashMap<>();
+							java.util.Map<String, Object> parameterTmp = new java.util.HashMap<>();
+							for(int k=0; k<listaThis.size(); k++){
+								Object thisObject = listaThis.get(k);
+								Object paramObject = listaParameter.get(k);
 								if(thisObject==null && paramObject!=null)
-									throw new Exception("DIFF");
+									throw new UtilsException("DIFF");
 								if(thisObject!=null && paramObject==null)
-									throw new Exception("DIFF");
+									throw new UtilsException("DIFF");
 								if(thisObject!=null && paramObject!=null){
 									// THIS
 									String key = null;
 									if(thisObject.getClass().getName().startsWith(this.getClass().getPackage().getName())){
 										Class<?> c =  thisObject.getClass();
-										java.lang.reflect.Method method =  c.getMethod("toString",boolean.class,boolean.class);
+										java.lang.reflect.Method method =  c.getMethod(TO_STRING_METHOD,boolean.class,boolean.class);
 										key = (String) method.invoke(thisObject,false,true);
 									}else{
 										key = thisObject.toString();
 									}
 									thisTmp.put(key, thisObject);
-									lista_thisTMP.add(key);
+									listaThisTMP.add(key);
 
 									// PARAM
-									key = null;
 									if(paramObject.getClass().getName().startsWith(this.getClass().getPackage().getName())){
 										Class<?> c =  paramObject.getClass();
-										java.lang.reflect.Method method =  c.getMethod("toString",boolean.class,boolean.class);
+										java.lang.reflect.Method method =  c.getMethod(TO_STRING_METHOD,boolean.class,boolean.class);
 										key = (String) method.invoke(paramObject,false,true);
 									}else{
 										key = paramObject.toString();
@@ -237,46 +245,45 @@ public abstract class BaseBean {
 									parameterTmp.put(key, paramObject);
 								}
 							}
-							java.util.Collections.sort(lista_thisTMP);
-							for(int k=0; k<lista_thisTMP.size(); k++){
-								String key = lista_thisTMP.get(k);
+							java.util.Collections.sort(listaThisTMP);
+							for(int k=0; k<listaThisTMP.size(); k++){
+								String key = listaThisTMP.get(k);
 								Object thisObject = thisTmp.get(key);
 								Object paramObject = parameterTmp.get(key);
 								if(thisObject==null || paramObject==null){
 									// significa che manca un elemento
 									return false;
 								}
-								lista_thisSORT.add(thisObject);
-								lista_parameterSORT.add(paramObject);
+								listaThisSORT.add(thisObject);
+								listaParameterSORT.add(paramObject);
 							}
 						}catch(Exception e){
-							lista_thisSORT = (java.util.List<Object>) lista_this;
-							lista_parameterSORT = (java.util.List<Object>) lista_parameter;
+							listaThisSORT = (java.util.List<Object>) listaThis;
+							listaParameterSORT = (java.util.List<Object>) listaParameter;
 						}
-						for(int j=0; j<lista_thisSORT.size(); j++){
-							Class<?> c =  lista_thisSORT.get(j).getClass();
+						for(int j=0; j<listaThisSORT.size(); j++){
+							Class<?> c =  listaThisSORT.get(j).getClass();
 							boolean resultMethod = false;
-							if(lista_this.get(j).getClass().getName().startsWith(this.getClass().getPackage().getName())){
+							if(listaThis.get(j).getClass().getName().startsWith(this.getClass().getPackage().getName())){
 								java.lang.reflect.Method method =  c.getMethod("equals",Object.class,List.class);
-								resultMethod = (Boolean) method.invoke(lista_thisSORT.get(j),lista_parameterSORT.get(j),fieldsNotCheck);
+								resultMethod = (Boolean) method.invoke(listaThisSORT.get(j),listaParameterSORT.get(j),fieldsNotCheck);
 							}else{
-								resultMethod = lista_thisSORT.get(j).equals(lista_parameterSORT.get(j));
+								resultMethod = listaThisSORT.get(j).equals(listaParameterSORT.get(j));
 							}
-							if(resultMethod==false)
+							if(!resultMethod)
 								return false;
 						}
 					}else{
 						boolean resultMethod = false;
 						if(fields[i].getType().getName().startsWith(this.getClass().getPackage().getName())){
 							java.lang.reflect.Method method =  fields[i].getType().getMethod("equals",Object.class,List.class);
-							resultMethod = (Boolean) method.invoke(fieldValue_this,fieldValue_object,fieldsNotCheck);
+							resultMethod = (Boolean) method.invoke(fieldValueThis,fieldValueObject,fieldsNotCheck);
 						}else{
 							boolean checkUguaglianza = false;
-							//if("[B".equals(fields[i].getType().getName())){
 							if(fields[i].getType().isAssignableFrom(byte[].class)){
-								if(fieldValue_object!=null){
-									byte[] origi = (byte[]) fieldValue_this;
-									byte[] dest = (byte[]) fieldValue_object;
+								if(fieldValueObject!=null){
+									byte[] origi = (byte[]) fieldValueThis;
+									byte[] dest = (byte[]) fieldValueObject;
 									checkUguaglianza = (origi.length == dest.length);
 									if(checkUguaglianza){
 										for(int k=0;k<origi.length;k++){
@@ -288,16 +295,15 @@ public abstract class BaseBean {
 									}
 								}
 							}else{
-								//if("java.util.Date".equals(fields[i].getType().getName())){
 								if(fields[i].getType().isAssignableFrom(java.util.Date.class)){
-									if(fieldValue_object==null) {
+									if(fieldValueObject==null) {
 										checkUguaglianza=false; // che fieldValue_this non sia null e' gia' stato controllato sopra
 									}
 									else {
 										java.util.Calendar calendarThis = new java.util.GregorianCalendar();
-										calendarThis.setTime((java.util.Date)fieldValue_this);
+										calendarThis.setTime((java.util.Date)fieldValueThis);
 										java.util.Calendar calendarObject = new java.util.GregorianCalendar();
-										calendarObject.setTime((java.util.Date)fieldValue_object);
+										calendarObject.setTime((java.util.Date)fieldValueObject);
 										checkUguaglianza = (  calendarThis.get(java.util.Calendar.YEAR) == calendarObject.get(java.util.Calendar.YEAR) ) && 
 												( calendarThis.get(java.util.Calendar.MONTH) == calendarObject.get(java.util.Calendar.MONTH) ) && 
 												( calendarThis.get(java.util.Calendar.DAY_OF_MONTH) == calendarObject.get(java.util.Calendar.DAY_OF_MONTH) ) && 
@@ -307,20 +313,20 @@ public abstract class BaseBean {
 												( calendarThis.get(java.util.Calendar.MILLISECOND) == calendarObject.get(java.util.Calendar.MILLISECOND) ) ;
 									}
 								}else{
-									checkUguaglianza = fieldValue_this.equals(fieldValue_object);
+									checkUguaglianza = fieldValueThis.equals(fieldValueObject);
 								}
 							}
 							resultMethod = checkUguaglianza;
 						}
-						if(resultMethod==false)
+						if(!resultMethod)
 							return false;
 					}
 				}
 			}
 			return true;
 		}catch(Exception e){
-			e.printStackTrace(System.out);
-			throw new RuntimeException(e.toString(),e);
+			logExceptionStackTrace(e);
+			throw new UtilsRuntimeException(e.toString(),e);
 		}
 	}
 
@@ -369,9 +375,9 @@ public abstract class BaseBean {
 		return this.serialize(WriteToSerializerType.JSON_JACKSON);
 	}
 	// Non è utile. Al massimo si usa sopra come writeTo
-//	public String toJava() throws UtilsException{
-//		return this.serialize(WriteToSerializerType.JAVA);
-//	}
+	/**public String toJava() throws UtilsException{
+		return this.serialize(WriteToSerializerType.JAVA);
+	}*/
 	public String serialize(WriteToSerializerType type) throws UtilsException{
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		this.writeTo(bout, type);
@@ -387,19 +393,19 @@ public abstract class BaseBean {
 	
 	/* ********** TO STRING ********* */
 	
-	private static ToStringStyle DEFAULT_TO_STRING_STYLE =  ToStringStyle.MULTI_LINE_STYLE;
-	private static boolean DEFAULT_TO_STRING_OUTPUT_TRANSIENTS =  false;
-	private static boolean DEFAULT_TO_STRING_OUTPUT_STATICS =  false;
+	private static ToStringStyle defaultToStringStyle =  ToStringStyle.MULTI_LINE_STYLE;
+	private static boolean defaultToStringOutputTransients =  false;
+	private static boolean defaultToStringOutputStatics =  false;
 	public static void setDefaultStyleToString(ToStringStyle style,boolean outputTransients,boolean outputStatics){
 		// Il default statico serve per impostare uno "stile" che viene ereditato da tutti gli oggetti che estendono il base bean.
 		// In questa maniera gli oggetti interni all'oggetto stesso vengono serializzati con lo stile impostato.
-		DEFAULT_TO_STRING_STYLE = style;
-		DEFAULT_TO_STRING_OUTPUT_TRANSIENTS = outputTransients;
-		DEFAULT_TO_STRING_OUTPUT_STATICS = outputStatics;
+		defaultToStringStyle = style;
+		defaultToStringOutputTransients = outputTransients;
+		defaultToStringOutputStatics = outputStatics;
 	}
 	@Override
 	public String toString(){
-		return this.toString(DEFAULT_TO_STRING_STYLE, DEFAULT_TO_STRING_OUTPUT_TRANSIENTS, DEFAULT_TO_STRING_OUTPUT_STATICS, null);
+		return this.toString(defaultToStringStyle, defaultToStringOutputTransients, defaultToStringOutputStatics, null);
 	}
 	public String toString(ToStringStyle style){
 		return this.toString(style, false, false, null);
@@ -425,44 +431,43 @@ public abstract class BaseBean {
 	
 	// Old Method
 	public String toString_oldMethod(){
-		return _toStringEngine(false, null);
+		return toStringEngine(false, null);
 	}
 	public String toString(boolean reportHTML){
-		return _toStringEngine(reportHTML,null);
+		return toStringEngine(reportHTML,null);
 	}
 	public String toString(List<String> fieldsNotIncluded){
-		return _toStringEngine(false,fieldsNotIncluded);
+		return toStringEngine(false,fieldsNotIncluded);
 	}
 	public String toString(boolean reportHTML,boolean includeLongId){
 		List<String> fieldsNotIncluded = new ArrayList<>();
-		if(includeLongId==false){
+		if(!includeLongId){
 			fieldsNotIncluded.add("id");
 		}
-		return _toStringEngine(reportHTML,fieldsNotIncluded);
+		return toStringEngine(reportHTML,fieldsNotIncluded);
 	}
 	public String toString(boolean reportHTML,List<String> fieldsNotIncluded){
-		return _toStringEngine(reportHTML,fieldsNotIncluded);
+		return toStringEngine(reportHTML,fieldsNotIncluded);
 	}
-	private String _toStringEngine(boolean reportHTML,List<String> fieldsNotIncluded){	
+	private String toStringEngine(boolean reportHTML,List<String> fieldsNotIncluded){	
 		try{
 			StringBuilder bf = new StringBuilder();
 			java.lang.reflect.Field[] fields = getClass().getDeclaredFields();
 			for(int i=0; i<fields.length;i++){
 			
-				//System.out.println("["+fields[i].getName()+"]");
+				/**System.out.println("["+fields[i].getName()+"]");*/
 				if(java.lang.reflect.Modifier.isStatic(fields[i].getModifiers())){
-					//System.out.println("IS STATIC");
+					/**System.out.println("IS STATIC");*/
 					continue;
 				}
 				
-				//if(org.openspcoop2.utils.jaxb.DecimalWrapper.class.getName().equals(fields[i].getType().getName())){
 				if(fields[i].getType().isAssignableFrom(org.openspcoop2.utils.jaxb.DecimalWrapper.class)){
 					continue;
 				}
 				
 				// field id non controllato se in fieldsNotCheckList
 				boolean ignoreField = false;
-				if(fieldsNotIncluded!=null && fieldsNotIncluded.size()>0){
+				if(fieldsNotIncluded!=null && !fieldsNotIncluded.isEmpty()){
 					for (String fieldName : fieldsNotIncluded) {
 						if(fieldName.equals(fields[i].getName())){
 							ignoreField = true;
@@ -482,27 +487,26 @@ public abstract class BaseBean {
 				if(reportHTML) bf.append("<br>"); else bf.append("\n");
 				
 				Object fieldValue = this.getFieldValue(fields[i].getName(),this);
-				//System.out.println("LETTO VALORE["+fieldValue+"]");
+				/**System.out.println("LETTO VALORE["+fieldValue+"]");*/
 				
 				if(fieldValue==null){
 					bf.append("null");
 				}else{
-					//if(fields[i].getType().getName().equals("java.util.ArrayList") || fields[i].getType().getName().equals("java.util.List")){
 					if(fields[i].getType().isAssignableFrom(java.util.ArrayList.class) || fields[i].getType().isAssignableFrom(java.util.List.class)){
-						java.util.List<?> lista_this = (java.util.List<?>) fieldValue;
-						bf.append("List size("+lista_this.size()+")");
-						if(lista_this.size()>0){
+						java.util.List<?> listaThis = (java.util.List<?>) fieldValue;
+						bf.append("List size("+listaThis.size()+")");
+						if(!listaThis.isEmpty()){
 							if(reportHTML) bf.append("<br>"); else bf.append("\n");
 						}
 						java.util.List<String> sortLISTKEY = new java.util.ArrayList<>();
-						for(int j=0; j<lista_this.size(); j++){
+						for(int j=0; j<listaThis.size(); j++){
 							String key = null;
-							if(lista_this.get(j).getClass().getName().startsWith(this.getClass().getPackage().getName())){
-								Class<?> c =  lista_this.get(j).getClass();
-								java.lang.reflect.Method method =  c.getMethod("toString",boolean.class,List.class);
-								key = (String) method.invoke(lista_this.get(j),reportHTML,fieldsNotIncluded);
+							if(listaThis.get(j).getClass().getName().startsWith(this.getClass().getPackage().getName())){
+								Class<?> c =  listaThis.get(j).getClass();
+								java.lang.reflect.Method method =  c.getMethod(TO_STRING_METHOD,boolean.class,List.class);
+								key = (String) method.invoke(listaThis.get(j),reportHTML,fieldsNotIncluded);
 							}else{
-								key =  lista_this.get(j).toString();
+								key =  listaThis.get(j).toString();
 							}
 							sortLISTKEY.add(key);
 						}
@@ -531,16 +535,14 @@ public abstract class BaseBean {
 					}else{
 						if(fieldValue.getClass().getName().startsWith(this.getClass().getPackage().getName())){
 							Class<?> c =  fieldValue.getClass();
-							java.lang.reflect.Method method =  c.getMethod("toString",boolean.class,List.class);
+							java.lang.reflect.Method method =  c.getMethod(TO_STRING_METHOD,boolean.class,List.class);
 							bf.append(method.invoke(fieldValue,reportHTML,fieldsNotIncluded));
 						}else{
-							//if("[B".equals(fields[i].getType().getName())){
 							if(fields[i].getType().isAssignableFrom(byte[].class)){
 								byte[] array = (byte[])fieldValue;
 								for(int k=0; k<array.length;k++){
 									bf.append(((char)array[k]));
 								}
-							//}else if("java.util.Date".equals(fields[i].getType().getName())){
 							}else if(fields[i].getType().isAssignableFrom(java.util.Date.class)){
 								java.util.Date date = (java.util.Date) fieldValue;
 								bf.append(DateUtils.getSimpleDateFormatMs().format(date));
@@ -560,8 +562,8 @@ public abstract class BaseBean {
 			}
 			return bf.toString();
 		}catch(Exception e){
-			e.printStackTrace(System.out);
-			throw new RuntimeException(e.toString(),e);
+			logExceptionStackTrace(e);
+			throw new UtilsRuntimeException(e.toString(),e);
 		}
 	}
 
@@ -573,26 +575,26 @@ public abstract class BaseBean {
 	/* ********** DIFF ********* */
 	
 	public String diff(Object object,StringBuilder bf){
-		return _diffEngine(object,bf,false, null);
+		return diffEngine(object,bf,false, null);
 	}
 	public String diff(Object object,StringBuilder bf,boolean reportHTML){
-		return _diffEngine(object,bf,reportHTML,null);
+		return diffEngine(object,bf,reportHTML,null);
 	}
 	public String diff(Object object,StringBuilder bf,List<String> fieldsNotIncluded){
-		return _diffEngine(object,bf,false,fieldsNotIncluded);
+		return diffEngine(object,bf,false,fieldsNotIncluded);
 	}
 	public String diff(Object object,StringBuilder bf,boolean reportHTML,boolean includeLongId){
 		List<String> fieldsNotIncluded = new ArrayList<>();
-		if(includeLongId==false){
+		if(!includeLongId){
 			fieldsNotIncluded.add("id");
 		}
-		return _diffEngine(object,bf,reportHTML,fieldsNotIncluded);
+		return diffEngine(object,bf,reportHTML,fieldsNotIncluded);
 	}
 	public String diff(Object object,StringBuilder bf,boolean reportHTML,List<String> fieldsNotIncluded){
-		return _diffEngine(object,bf,reportHTML,fieldsNotIncluded);
+		return diffEngine(object,bf,reportHTML,fieldsNotIncluded);
 	}
 	@SuppressWarnings("unchecked")
-	private String _diffEngine(Object object,StringBuilder bf,boolean reportHTML,List<String> fieldsNotIncluded){	
+	private String diffEngine(Object object,StringBuilder bf,boolean reportHTML,List<String> fieldsNotIncluded){	
 	
 		try{
 			if(object==null){
@@ -603,88 +605,85 @@ public abstract class BaseBean {
 			java.lang.reflect.Field[] fields = getClass().getDeclaredFields();
 			for(int i=0; i<fields.length;i++){
 				
-				//System.out.println("["+fields[i].getName()+"]");
+				/**System.out.println("["+fields[i].getName()+"]");*/
 				if(java.lang.reflect.Modifier.isStatic(fields[i].getModifiers())){
-					//System.out.println("IS STATIC");
+					/**System.out.println("IS STATIC");*/
 					continue;
 				}
 				
-				//if(org.openspcoop2.utils.jaxb.DecimalWrapper.class.getName().equals(fields[i].getType().getName())){
 				if(fields[i].getType().isAssignableFrom(org.openspcoop2.utils.jaxb.DecimalWrapper.class)){
 					continue;
 				}
 				
-				Object fieldValue_this = this.getFieldValue(fields[i].getName(),this);
-				Object fieldValue_object = this.getFieldValue(fields[i].getName(),object);
+				Object fieldValueThis = this.getFieldValue(fields[i].getName(),this);
+				Object fieldValueObject = this.getFieldValue(fields[i].getName(),object);
 				
-				//if(fields[i].getType().getName().equals("java.util.ArrayList") || fields[i].getType().getName().equals("java.util.List")){
 				if(fields[i].getType().isAssignableFrom(java.util.ArrayList.class) || fields[i].getType().isAssignableFrom(java.util.List.class)){
 					// LISTA
-					java.util.List<?> lista_this = (java.util.List<?>) fieldValue_this;
-					java.util.List<?> lista_parameter = (java.util.List<?>) fieldValue_object;
-					if(lista_this==null){
+					java.util.List<?> listaThis = (java.util.List<?>) fieldValueThis;
+					java.util.List<?> listaParameter = (java.util.List<?>) fieldValueObject;
+					if(listaThis==null){
 						// this_list is null, parameter list is not null
-						if(lista_parameter!=null){
+						if(listaParameter!=null){
 							bf.append(this.getClass().getName());
 							bf.append(".");
 							bf.append(fields[i].getName());
 							bf.append(" this_list:is null, parameter_list: is not null");
-							bf.append(" ,parameter_list_size:"+lista_parameter.size());
+							bf.append(" ,parameter_list_size:"+listaParameter.size());
 							if(reportHTML) bf.append("<br>"); else bf.append("\n");
 						}
 					}else{
 						// this_list is not null, parameter list is null
-						if(lista_parameter==null){
+						if(listaParameter==null){
 							bf.append(this.getClass().getName());
 							bf.append(".");
 							bf.append(fields[i].getName());
 							bf.append(" this_list: is not null, parameter_list: is null");
-							bf.append(" ,this_list_size:"+lista_this.size());
+							bf.append(" ,this_list_size:"+listaThis.size());
 							if(reportHTML) bf.append("<br>"); else bf.append("\n");
 						}
 						// this_list different size from parameter_list
-						else if(lista_this.size() != lista_parameter.size()){
+						else if(listaThis.size() != listaParameter.size()){
 							bf.append(this.getClass().getName());
 							bf.append(".");
 							bf.append(fields[i].getName());
-							bf.append(" this_list_size:"+lista_this.size()+", parameter_list_size:"+lista_parameter.size());
+							bf.append(" this_list_size:"+listaThis.size()+", parameter_list_size:"+listaParameter.size());
 							if(reportHTML) bf.append("<br>"); else bf.append("\n");
 						}
 						// Controllo elementi della lista
 						else{
 							// SORT
-							java.util.List<Object> lista_thisSORT = new java.util.ArrayList<>();
-							java.util.List<Object> lista_parameterSORT = new java.util.ArrayList<>();
+							java.util.List<Object> listaThisSORT = new java.util.ArrayList<>();
+							java.util.List<Object> listaParameterSORT = new java.util.ArrayList<>();
 							boolean listaNonCompleta = false;
 							try{
-								java.util.List<String> lista_thisTMP = new java.util.ArrayList<>();
-								java.util.Map<String, Object> thisTmp = new java.util.HashMap<String, Object>();
-								java.util.Map<String, Object> parameterTmp = new java.util.HashMap<String, Object>();
-								for(int k=0; k<lista_this.size(); k++){
-									Object thisObject = lista_this.get(k);
-									Object paramObject = lista_parameter.get(k);
+								java.util.List<String> listaThisTMP = new java.util.ArrayList<>();
+								java.util.Map<String, Object> thisTmp = new java.util.HashMap<>();
+								java.util.Map<String, Object> parameterTmp = new java.util.HashMap<>();
+								for(int k=0; k<listaThis.size(); k++){
+									Object thisObject = listaThis.get(k);
+									Object paramObject = listaParameter.get(k);
 									if(thisObject==null && paramObject!=null)
-										throw new Exception("DIFF");
+										throw new UtilsException("DIFF");
 									if(thisObject!=null && paramObject==null)
-										throw new Exception("DIFF");
+										throw new UtilsException("DIFF");
 									if(thisObject!=null && paramObject!=null){
 										// THIS
 										String key = null;
 										if(thisObject.getClass().getName().startsWith(this.getClass().getPackage().getName())){
 											Class<?> c =  thisObject.getClass();
-											java.lang.reflect.Method method =  c.getMethod("toString",boolean.class,boolean.class);
+											java.lang.reflect.Method method =  c.getMethod(TO_STRING_METHOD,boolean.class,boolean.class);
 											key = (String) method.invoke(thisObject,false,true);
 										}else{
 											key = thisObject.toString();
 										}
 										thisTmp.put(key, thisObject);
-										lista_thisTMP.add(key);
+										listaThisTMP.add(key);
 
 										// PARAM
-										key = null;
 										if(paramObject.getClass().getName().startsWith(this.getClass().getPackage().getName())){
 											Class<?> c =  paramObject.getClass();
-											java.lang.reflect.Method method =  c.getMethod("toString",boolean.class,boolean.class);
+											java.lang.reflect.Method method =  c.getMethod(TO_STRING_METHOD,boolean.class,boolean.class);
 											key = (String) method.invoke(paramObject,false,true);
 										}else{
 											key = paramObject.toString();
@@ -692,15 +691,15 @@ public abstract class BaseBean {
 										parameterTmp.put(key, paramObject);
 									}
 								}
-								java.util.Collections.sort(lista_thisTMP);
-								for(int k=0; k<lista_thisTMP.size(); k++){
-									String key = lista_thisTMP.get(k);
+								java.util.Collections.sort(listaThisTMP);
+								for(int k=0; k<listaThisTMP.size(); k++){
+									String key = listaThisTMP.get(k);
 									Object thisObject = thisTmp.get(key);
 									Object paramObject = parameterTmp.get(key);
 									if(thisObject==null){
 										// significa che manca un elemento
-										lista_thisSORT = (java.util.List<Object>) lista_this;
-										lista_parameterSORT = (java.util.List<Object>) lista_parameter;
+										listaThisSORT = (java.util.List<Object>) listaThis;
+										listaParameterSORT = (java.util.List<Object>) listaParameter;
 										bf.append("["+this.getClass().getName());
 										bf.append(".");
 										bf.append(fields[i].getName()+"] ");
@@ -717,8 +716,8 @@ public abstract class BaseBean {
 									}
 									if(paramObject==null){
 										// significa che manca un elemento
-										lista_thisSORT = (java.util.List<Object>) lista_this;
-										lista_parameterSORT = (java.util.List<Object>) lista_parameter;
+										listaThisSORT = (java.util.List<Object>) listaThis;
+										listaParameterSORT = (java.util.List<Object>) listaParameter;
 										bf.append("["+this.getClass().getName());
 										bf.append(".");
 										bf.append(fields[i].getName()+"] ");
@@ -733,41 +732,41 @@ public abstract class BaseBean {
 										listaNonCompleta = true;
 										break;
 									}
-									lista_thisSORT.add(thisObject);
-									lista_parameterSORT.add(paramObject);
+									listaThisSORT.add(thisObject);
+									listaParameterSORT.add(paramObject);
 								}
 							}catch(Exception e){
-								lista_thisSORT = (java.util.List<Object>) lista_this;
-								lista_parameterSORT = (java.util.List<Object>) lista_parameter;
+								listaThisSORT = (java.util.List<Object>) listaThis;
+								listaParameterSORT = (java.util.List<Object>) listaParameter;
 							}
-							if(listaNonCompleta==false){
-								for(int j=0; j<lista_thisSORT.size(); j++){
-									if(lista_thisSORT.get(j)==null){
+							if(!listaNonCompleta){
+								for(int j=0; j<listaThisSORT.size(); j++){
+									if(listaThisSORT.get(j)==null){
 										bf.append(this.getClass().getName());
 										bf.append(".");
 										bf.append(fields[i].getName()+"["+j+"]");
 										bf.append(" this_list: is null, parameter: is not null");
 										bf.append(" parameter_value:");
 										if(reportHTML) bf.append("<br>"); else bf.append("\n");
-										if(lista_parameterSORT.get(j).getClass().getName().startsWith(this.getClass().getPackage().getName())){
-											Class<?> c =  lista_parameterSORT.get(j).getClass();
-											java.lang.reflect.Method method =  c.getMethod("toString",boolean.class);
-											bf.append(method.invoke(lista_parameterSORT.get(j),reportHTML));
+										if(listaParameterSORT.get(j).getClass().getName().startsWith(this.getClass().getPackage().getName())){
+											Class<?> c =  listaParameterSORT.get(j).getClass();
+											java.lang.reflect.Method method =  c.getMethod(TO_STRING_METHOD,boolean.class);
+											bf.append(method.invoke(listaParameterSORT.get(j),reportHTML));
 										}else{
-											bf.append(lista_parameterSORT.get(j).toString());
+											bf.append(listaParameterSORT.get(j).toString());
 										}
 										if(reportHTML) bf.append("<br>"); else bf.append("\n");
 									}else{
-										if(lista_thisSORT.get(j).getClass().getName().startsWith(this.getClass().getPackage().getName())){
-											Class<?> c =  lista_thisSORT.get(j).getClass();
+										if(listaThisSORT.get(j).getClass().getName().startsWith(this.getClass().getPackage().getName())){
+											Class<?> c =  listaThisSORT.get(j).getClass();
 											java.lang.reflect.Method method =  c.getMethod("diff",Object.class,bf.getClass(),boolean.class,List.class);
-											method.invoke(lista_thisSORT.get(j),lista_parameterSORT.get(j),bf,reportHTML,fieldsNotIncluded);
+											method.invoke(listaThisSORT.get(j),listaParameterSORT.get(j),bf,reportHTML,fieldsNotIncluded);
 										}else{
 											boolean checkUguaglianza = false;
-											if(lista_thisSORT.get(j).getClass().isAssignableFrom(byte[].class)){
-												if(lista_parameterSORT.get(j)!=null){
-													byte[] origi = (byte[]) lista_thisSORT.get(j);
-													byte[] dest = (byte[]) lista_parameterSORT.get(j);
+											if(listaThisSORT.get(j).getClass().isAssignableFrom(byte[].class)){
+												if(listaParameterSORT.get(j)!=null){
+													byte[] origi = (byte[]) listaThisSORT.get(j);
+													byte[] dest = (byte[]) listaParameterSORT.get(j);
 													checkUguaglianza = (origi.length == dest.length);
 													if(checkUguaglianza){
 														for(int k=0;k<origi.length;k++){
@@ -779,51 +778,51 @@ public abstract class BaseBean {
 													}
 												}
 											}else{
-												checkUguaglianza = lista_thisSORT.get(j).equals(lista_parameterSORT.get(j));
+												checkUguaglianza = listaThisSORT.get(j).equals(listaParameterSORT.get(j));
 											}
-											if(checkUguaglianza==false){
+											if(!checkUguaglianza){
 												bf.append(this.getClass().getName());
 												bf.append(".");
 												bf.append(fields[i].getName()+"["+j+"]");
 												
 												bf.append(" this:");
-												if(lista_thisSORT.get(j).getClass().isAssignableFrom(byte[].class)){
-													if(lista_thisSORT.get(j)!=null){
-														byte[] array = (byte[])lista_thisSORT.get(j);
+												if(listaThisSORT.get(j).getClass().isAssignableFrom(byte[].class)){
+													if(listaThisSORT.get(j)!=null){
+														byte[] array = (byte[])listaThisSORT.get(j);
 														for(int k=0; k<array.length;k++)
 															bf.append(((char)array[k]));
 													}
 													else
 														bf.append("null");
-												}else if(lista_thisSORT.get(j).getClass().isAssignableFrom(java.util.Date.class)){
-													if(lista_thisSORT.get(j)!=null){
-														java.util.Date date = (java.util.Date) lista_thisSORT.get(j);
+												}else if(listaThisSORT.get(j).getClass().isAssignableFrom(java.util.Date.class)){
+													if(listaThisSORT.get(j)!=null){
+														java.util.Date date = (java.util.Date) listaThisSORT.get(j);
 														bf.append(DateUtils.getSimpleDateFormatMs().format(date));
 													}
 													else
 														bf.append("null");
 												}else{
-													bf.append(lista_thisSORT.get(j));
+													bf.append(listaThisSORT.get(j));
 												}
 												
 												bf.append(" parameter:");
-												if(lista_parameterSORT.get(j).getClass().isAssignableFrom(byte[].class)){
-													if(lista_parameterSORT.get(j)!=null){
-														byte[] array = (byte[])lista_parameterSORT.get(j);
+												if(listaParameterSORT.get(j).getClass().isAssignableFrom(byte[].class)){
+													if(listaParameterSORT.get(j)!=null){
+														byte[] array = (byte[])listaParameterSORT.get(j);
 														for(int k=0; k<array.length;k++)
 															bf.append(((char)array[k]));
 													}
 													else
 														bf.append("null");
-												}else if(lista_parameterSORT.get(j).getClass().isAssignableFrom(java.util.Date.class)){
-													if(lista_parameterSORT.get(j)!=null){
-														java.util.Date date = (java.util.Date) lista_parameterSORT.get(j);
+												}else if(listaParameterSORT.get(j).getClass().isAssignableFrom(java.util.Date.class)){
+													if(listaParameterSORT.get(j)!=null){
+														java.util.Date date = (java.util.Date) listaParameterSORT.get(j);
 														bf.append(DateUtils.getSimpleDateFormatMs().format(date));
 													}
 													else
 														bf.append("null");
 												}else{
-													bf.append(lista_parameterSORT.get(j));
+													bf.append(listaParameterSORT.get(j));
 												}
 												if(reportHTML) bf.append("<br>"); else bf.append("\n");
 											}
@@ -837,7 +836,7 @@ public abstract class BaseBean {
 				else{
 					// field id non controllato se in fieldsNotCheckList
 					boolean ignoreField = false;
-					if(fieldsNotIncluded!=null && fieldsNotIncluded.size()>0){
+					if(fieldsNotIncluded!=null && !fieldsNotIncluded.isEmpty()){
 						for (String fieldName : fieldsNotIncluded) {
 							if(fieldName.equals(fields[i].getName())){
 								ignoreField = true;
@@ -850,29 +849,29 @@ public abstract class BaseBean {
 					}
 
 					// ELEMENTO SINGOLO
-					if(fieldValue_this==null){
+					if(fieldValueThis==null){
 						// this is null, parameter is not null
-						if(fieldValue_object!=null){
+						if(fieldValueObject!=null){
 							bf.append(this.getClass().getName());
 							bf.append(".");
 							bf.append(fields[i].getName());
 							bf.append(" this:is null, parameter: is not null");
 							bf.append(" parameter_value:");
 							if(reportHTML) bf.append("<br>"); else bf.append("\n");
-							if(fieldValue_object.getClass().getName().startsWith(this.getClass().getPackage().getName())){
-								Class<?> c =  fieldValue_object.getClass();
-								java.lang.reflect.Method method =  c.getMethod("toString",boolean.class);
-								bf.append(method.invoke(fieldValue_object,reportHTML));
+							if(fieldValueObject.getClass().getName().startsWith(this.getClass().getPackage().getName())){
+								Class<?> c =  fieldValueObject.getClass();
+								java.lang.reflect.Method method =  c.getMethod(TO_STRING_METHOD,boolean.class);
+								bf.append(method.invoke(fieldValueObject,reportHTML));
 							}else{
 								if(fields[i].getType().isAssignableFrom(byte[].class)){
-									byte[] array = (byte[])fieldValue_object;
+									byte[] array = (byte[])fieldValueObject;
 									for(int k=0; k<array.length;k++)
 										bf.append(array[k]);
 								}else if(fields[i].getType().isAssignableFrom(java.util.Date.class)){
-									java.util.Date date = (java.util.Date) fieldValue_object;
+									java.util.Date date = (java.util.Date) fieldValueObject;
 									bf.append(DateUtils.getSimpleDateFormatMs().format(date));
 								}else{
-									bf.append(fieldValue_object);
+									bf.append(fieldValueObject);
 								}
 							}
 							if(reportHTML) bf.append("<br>"); else bf.append("\n");
@@ -880,13 +879,13 @@ public abstract class BaseBean {
 					}else{
 						if(fields[i].getType().getName().startsWith(this.getClass().getPackage().getName())){
 							java.lang.reflect.Method method =  fields[i].getType().getMethod("diff",Object.class,bf.getClass(),boolean.class,List.class);
-							method.invoke(fieldValue_this,fieldValue_object,bf,reportHTML,fieldsNotIncluded);
+							method.invoke(fieldValueThis,fieldValueObject,bf,reportHTML,fieldsNotIncluded);
 						}else{
 							boolean checkUguaglianza = false;
 							if(fields[i].getType().isAssignableFrom(byte[].class)){
-								if(fieldValue_object!=null){
-									byte[] origi = (byte[]) fieldValue_this;
-									byte[] dest = (byte[]) fieldValue_object;
+								if(fieldValueObject!=null){
+									byte[] origi = (byte[]) fieldValueThis;
+									byte[] dest = (byte[]) fieldValueObject;
 									checkUguaglianza = (origi.length == dest.length);
 									if(checkUguaglianza){
 										for(int k=0;k<origi.length;k++){
@@ -899,11 +898,11 @@ public abstract class BaseBean {
 								}
 							}else{
 								if(fields[i].getType().isAssignableFrom(java.util.Date.class)){
-									if(fieldValue_object!=null){
+									if(fieldValueObject!=null){
 										java.util.Calendar calendarThis = new java.util.GregorianCalendar();
-										calendarThis.setTime((java.util.Date)fieldValue_this);
+										calendarThis.setTime((java.util.Date)fieldValueThis);
 										java.util.Calendar calendarObject = new java.util.GregorianCalendar();
-										calendarObject.setTime((java.util.Date)fieldValue_object);
+										calendarObject.setTime((java.util.Date)fieldValueObject);
 										checkUguaglianza = (  calendarThis.get(java.util.Calendar.YEAR) == calendarObject.get(java.util.Calendar.YEAR) ) && 
 												( calendarThis.get(java.util.Calendar.MONTH) == calendarObject.get(java.util.Calendar.MONTH) ) && 
 												( calendarThis.get(java.util.Calendar.DAY_OF_MONTH) == calendarObject.get(java.util.Calendar.DAY_OF_MONTH) ) && 
@@ -913,43 +912,43 @@ public abstract class BaseBean {
 												( calendarThis.get(java.util.Calendar.MILLISECOND) == calendarObject.get(java.util.Calendar.MILLISECOND) );
 									}
 								}else{
-									checkUguaglianza = fieldValue_this.equals(fieldValue_object);
+									checkUguaglianza = fieldValueThis.equals(fieldValueObject);
 								}
 							}
-							if(checkUguaglianza==false){
+							if(!checkUguaglianza){
 								bf.append(this.getClass().getName());
 								bf.append(".");
 								bf.append(fields[i].getName());
 								
 								bf.append(" this:");
 								if(fields[i].getType().isAssignableFrom(byte[].class)){
-									byte[] array = (byte[])fieldValue_this;
+									byte[] array = (byte[])fieldValueThis;
 									for(int k=0; k<array.length;k++)
 										bf.append(((char)array[k]));
 								}else if(fields[i].getType().isAssignableFrom(java.util.Date.class)){
-									java.util.Date date = (java.util.Date) fieldValue_this;
+									java.util.Date date = (java.util.Date) fieldValueThis;
 									bf.append(DateUtils.getSimpleDateFormatMs().format(date));
 								}else{
-									bf.append(fieldValue_this);
+									bf.append(fieldValueThis);
 								}
 								
 								bf.append(" parameter:");
 								if(fields[i].getType().isAssignableFrom(byte[].class)){
-									if(fieldValue_object!=null){
-										byte[] array = (byte[])fieldValue_object;
+									if(fieldValueObject!=null){
+										byte[] array = (byte[])fieldValueObject;
 										for(int k=0; k<array.length;k++)
 											bf.append(((char)array[k]));
 									}
 									else
 										bf.append("null");
 								}else if(fields[i].getType().isAssignableFrom(java.util.Date.class)){
-									if(fieldValue_object!=null){
-										java.util.Date date = (java.util.Date) fieldValue_object;
+									if(fieldValueObject!=null){
+										java.util.Date date = (java.util.Date) fieldValueObject;
 										bf.append(DateUtils.getSimpleDateFormatMs().format(date));
 									}else
 										bf.append("null");
 								}else{
-									bf.append(fieldValue_object);
+									bf.append(fieldValueObject);
 								}
 								if(reportHTML) bf.append("<br>"); else bf.append("\n");
 							}
@@ -959,8 +958,8 @@ public abstract class BaseBean {
 			}
 			return bf.toString();
 		}catch(Exception e){
-			e.printStackTrace(System.out);
-			throw new RuntimeException(e.toString(),e);
+			logExceptionStackTrace(e);
+			throw new UtilsRuntimeException(e.toString(),e);
 		}
 	}
 
@@ -989,13 +988,12 @@ public abstract class BaseBean {
 			if(fields!=null && fields.length>0){
 				for (int i = 0; i < fields.length; i++) {
 					
-					//System.out.println("["+fields[i].getName()+"]");
+					/**System.out.println("["+fields[i].getName()+"]");*/
 					if(java.lang.reflect.Modifier.isStatic(fields[i].getModifiers())){
-						//System.out.println("IS STATIC");
+						/**System.out.println("IS STATIC");*/
 						continue;
 					}
 					
-					//if(org.openspcoop2.utils.jaxb.DecimalWrapper.class.getName().equals(fields[i].getType().getName())){
 					if(fields[i].getType().isAssignableFrom(org.openspcoop2.utils.jaxb.DecimalWrapper.class)){
 						continue;
 					}
@@ -1007,7 +1005,7 @@ public abstract class BaseBean {
 						continue;
 					}
 					
-					//System.out.println("ESAMINO FIELD ["+field.getName()+"] type["+field.getType().getName()+"] isEnum["+(field.getType().isEnum())+"]");
+					/**System.out.println("ESAMINO FIELD ["+field.getName()+"] type["+field.getType().getName()+"] isEnum["+(field.getType().isEnum())+"]");*/
 					
 					if(field.getType().isAssignableFrom(byte[].class)){
 						//caso particolare arrya di byte
@@ -1019,7 +1017,6 @@ public abstract class BaseBean {
 							}
 							this.setFieldValue(field.getName(), clone, field.getType(), arrayClone);
 						}
-						continue;
 					}
 					else if(field.getType().isEnum()){
 						// Imposto nel nuovo oggetto il valore dell'enum
@@ -1054,22 +1051,19 @@ public abstract class BaseBean {
 			}
 
 		}catch (Exception e) {
-			e.printStackTrace(System.out);
-			throw new RuntimeException(e.toString(),e);
+			logExceptionStackTrace(e);
+			throw new UtilsRuntimeException(e.toString(),e);
 		}
 		return clone;
 	}
 
 	private boolean isSupportedCloneList(java.lang.reflect.Field field){
-		if(field.getType().isAssignableFrom(java.util.List.class) ||
+		return field.getType().isAssignableFrom(java.util.List.class) ||
 				field.getType().isAssignableFrom(java.util.ArrayList.class)  ||
 				field.getType().isAssignableFrom(java.util.Vector.class) ||
 				field.getType().isAssignableFrom(java.util.Stack.class) ||
 				field.getType().isAssignableFrom(java.util.LinkedList.class) ||
-				field.getType().isAssignableFrom(java.util.concurrent.CopyOnWriteArrayList.class)){
-			return true;
-		}
-		return false;
+				field.getType().isAssignableFrom(java.util.concurrent.CopyOnWriteArrayList.class);
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private List cloneList(List<?> listOriginale) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
