@@ -113,6 +113,6 @@ Se il processo di validazione del token ha successo è possibile consultare i da
 
 I requisiti iniziali, legati alla comunicazione basata su uno scenario ModI, sono verificati dalle seguenti evidenze:
 
-1. La sicurezza messaggio applicata è quella dei pattern "ID_AUTH_REST_01 via PDND" come ampiamente mostrato precedentemente dove sono stati mostrati i token validati e i criteri autorizzativi.
+1. la sicurezza messaggio applicata è quella dei pattern "ID_AUTH_REST_01 via PDND" come ampiamente mostrato precedentemente dove sono stati mostrati i token validati e i criteri autorizzativi;
 
-2. L'identificazione del fruitore avviene rispetto al claim 'client_id' presente all'interno del token. È stato anche mostrato come sia possibile configurare criteri autorizzativi puntuali.
+2. l'identificazione del fruitore avviene rispetto al claim 'client_id' presente all'interno del token. È stato anche mostrato come sia possibile configurare criteri autorizzativi puntuali.

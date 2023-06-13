@@ -257,7 +257,13 @@ public abstract class BaseBean implements Serializable {
 								listaThisSORT.add(thisObject);
 								listaParameterSORT.add(paramObject);
 							}
-						}catch(Exception e){
+						}
+						catch(RuntimeException e){
+							// By SpotBugs
+							listaParameterSORT = (java.util.List<Object>) listaParameter;
+							listaThisSORT = (java.util.List<Object>) listaThis;
+						}
+						catch(Exception e){
 							listaThisSORT = (java.util.List<Object>) listaThis;
 							listaParameterSORT = (java.util.List<Object>) listaParameter;
 						}
@@ -735,7 +741,13 @@ public abstract class BaseBean implements Serializable {
 									listaThisSORT.add(thisObject);
 									listaParameterSORT.add(paramObject);
 								}
-							}catch(Exception e){
+							}
+							catch(RuntimeException e){
+								// By SpotBugs
+								listaParameterSORT = (java.util.List<Object>) listaParameter;
+								listaThisSORT = (java.util.List<Object>) listaThis;
+							}
+							catch(Exception e){
 								listaThisSORT = (java.util.List<Object>) listaThis;
 								listaParameterSORT = (java.util.List<Object>) listaParameter;
 							}

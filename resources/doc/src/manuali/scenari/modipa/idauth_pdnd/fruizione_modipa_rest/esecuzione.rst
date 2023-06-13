@@ -101,6 +101,6 @@ Dopo aver eseguito la "Send" e verificato il corretto esito dell'operazione è p
 
 I requisiti iniziali, legati alla comunicazione basata su uno scenario ModI, sono verificati dalle seguenti evidenze:
 
-1. Viene effettuata una negoziazione del voucher PDND come mostrato nelle tracce relative ai token scambiati con la PDND.
+1. viene effettuata una negoziazione del voucher PDND come mostrato nelle tracce relative ai token scambiati con la PDND;
 
-2. L'invocazione del servizio avviene fornendo il voucher della PDND precedentemente negoziato.
+2. l'invocazione del servizio avviene fornendo il voucher della PDND precedentemente negoziato.

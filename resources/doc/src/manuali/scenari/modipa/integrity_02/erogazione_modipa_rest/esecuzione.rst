@@ -124,8 +124,8 @@ Le evidenze del processo di validazione relative al token PDND sono le medesime 
 
 I requisiti iniziali, legati alla comunicazione basata su uno scenario ModI, sono verificati dalle seguenti evidenze:
 
-1. La sicurezza messaggio applicata è quella dei pattern "ID_AUTH_REST_01 via PDND" + "INTEGRITY_REST_02" come ampiamente mostrato precedentemente dove sono stati mostrati i token validati e i criteri autorizzativi.
+1. la sicurezza messaggio applicata è quella dei pattern "ID_AUTH_REST_01 via PDND" + "INTEGRITY_REST_02" come ampiamente mostrato precedentemente dove sono stati mostrati i token validati e i criteri autorizzativi;
 
-2. La validazione del token di integrità viene effettuata scaricando la chiave pubblica, corrispondente al kid presente nel token, tramite le :ref:`modipa_passiPreliminari_api_pdnd`.
+2. la validazione del token di integrità viene effettuata scaricando la chiave pubblica, corrispondente al kid presente nel token, tramite le :ref:`modipa_passiPreliminari_api_pdnd`;
 
-3. L'identificazione del fruitore avviene rispetto al claim 'client_id' presente all'interno del token e ulteriori informazioni sull'organizzazione afferente vengono ottenute invocando le :ref:`modipa_passiPreliminari_api_pdnd`.
+3. l'identificazione del fruitore avviene rispetto al claim 'client_id' presente all'interno del token e ulteriori informazioni sull'organizzazione afferente vengono ottenute invocando le :ref:`modipa_passiPreliminari_api_pdnd`.

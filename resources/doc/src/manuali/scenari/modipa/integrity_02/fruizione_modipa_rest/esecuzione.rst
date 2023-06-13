@@ -76,10 +76,10 @@ Le verifiche da effettuare sono le medesime di quelle descritte nello scenario :
 
 I requisiti iniziali, legati alla comunicazione basata su uno scenario ModI, sono verificati dalle seguenti evidenze:
 
-1. Viene effettuata una negoziazione del voucher PDND come mostrato nelle tracce relative ai token scambiati con la PDND.
+1. viene effettuata una negoziazione del voucher PDND come mostrato nelle tracce relative ai token scambiati con la PDND;
 
-2. L'invocazione del servizio avviene fornendo il voucher della PDND precedentemente negoziato.
+2. l'invocazione del servizio avviene fornendo il voucher della PDND precedentemente negoziato;
 
-3. Vengono inoltre prodotti gli header http "Agid-Jwt-Signature" e "Digest" previsti dal pattern di sicurezza "INTEGRITY_REST_02"
+3. vengono inoltre prodotti gli header http "Agid-Jwt-Signature" e "Digest" previsti dal pattern di sicurezza "INTEGRITY_REST_02";
 
-4. La validazione del token di integrità della risposta viene effettuata scaricando la chiave pubblica, corrispondente al kid presente nel token, tramite le :ref:`modipa_passiPreliminari_api_pdnd`.
+4. la validazione del token di integrità della risposta viene effettuata scaricando la chiave pubblica, corrispondente al kid presente nel token, tramite le :ref:`modipa_passiPreliminari_api_pdnd`.

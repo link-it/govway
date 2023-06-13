@@ -14,9 +14,13 @@ I scenari descritti si differenziano rispetto ai pattern di sicurezza associati 
 
 - nella sezione :ref:`scenari_modi_idauth_pdnd` le API sono configurate tramite il pattern :ref:`modipa_pdnd`;
 
-- nella sezione :ref:`scenari_modi_integrity_pdnd` viene utilizzato il pattern :ref:`modipa_pdnd_integrity`.
+- nella sezione :ref:`scenari_modi_integrity_pdnd` viene utilizzato il pattern :ref:`modipa_pdnd_integrity`;
 
-- nella sezione :ref:`scenari_modi_integrity_02` viene utilizzato il pattern :ref:`modipa_idar04`.
+- nella sezione :ref:`scenari_modi_integrity_02` viene utilizzato il pattern :ref:`modipa_idar04`;
+
+- nella sezione :ref:`scenari_modi_audit_01` viene descritto come aggiungere un token di audit conforme al pattern :ref:`modipa_infoUtente_audit01`;
+
+.. - nella sezione :ref:`scenari_modi_audit_02` il token di audit è invece conforme al pattern :ref:`modipa_infoUtente_audit02`.
 
 .. note:: 
 
@@ -37,3 +41,4 @@ I scenari descritti si differenziano rispetto ai pattern di sicurezza associati 
     idauth_pdnd/index
     integrity_pdnd/index
     integrity_02/index
+    audit_01/index

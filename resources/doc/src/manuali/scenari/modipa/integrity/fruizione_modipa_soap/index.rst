@@ -22,10 +22,10 @@ La figura seguente descrive graficamente questo scenario.
 
 Le caratteristiche principali di questo scenario sono:
 
-1. Un applicativo fruitore che dialoga con il servizio erogato in modalità ModI in accordo ad una API condivisa
-2. La comunicazione diretta verso il dominio erogatore veicolata su un canale gestito con il pattern di sicurezza canale "ID_AUTH_CHANNEL_02"
-3. L'autenticità della comunicazione tra fruitore ed erogatore è garantita tramite sicurezza a livello messaggio con pattern "ID_AUTH_SOAP_01"
-4. L'integrità del messaggio scambiato è garantita tramite sicurezza messaggio aggiuntiva prevista nel pattern "INTEGRITY_SOAP_01"
+1. un applicativo fruitore che dialoga con il servizio erogato in modalità ModI in accordo ad una API condivisa;
+2. la comunicazione diretta verso il dominio erogatore veicolata su un canale gestito con il pattern di sicurezza canale "ID_AUTH_CHANNEL_02";
+3. l'autenticità della comunicazione tra fruitore ed erogatore è garantita tramite sicurezza a livello messaggio con pattern "ID_AUTH_SOAP_01";
+4. l'integrità del messaggio scambiato è garantita tramite sicurezza messaggio aggiuntiva prevista nel pattern "INTEGRITY_SOAP_01".
 
 .. toctree::
     :maxdepth: 2
