@@ -11,5 +11,5 @@ Gli scenari riportati in questa sezione riguardano API configurate con pattern :
 
     erogazione_modipa_rest/index
     fruizione_modipa_rest/index
-.. erogazione_modipa_soap/index
-.. fruizione_modipa_soap/index
+    erogazione_modipa_soap/index
+    fruizione_modipa_soap/index

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "e70c8541-fe11-4074-b504-d3ed44326739",
+		"_postman_id": "c9064e10-cbbd-43d8-8c26-b32b27246cc9",
 		"name": "Scenari GovWay",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1817,6 +1817,164 @@
 										"{{soggetto}}",
 										"{{soggettoEsterno}}",
 										"TempConvertSoapIntegrityPDND",
+										"v1",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Audit+PDND",
+					"item": [
+						{
+							"name": "IN App1",
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"content-type": true
+								}
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "SoloPerDemoFirmatarioApp1.{{soggettoEsterno}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "123456",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "text/xml"
+									},
+									{
+										"key": "SOAPAction",
+										"value": "https://www.w3schools.com/xml/CelsiusToFahrenheit",
+										"type": "text"
+									},
+									{
+										"key": "X-Purpose-Id",
+										"value": "b149ca3c-4edf-11ed-80f4-0242ac140002",
+										"type": "default"
+									},
+									{
+										"key": "GovWay-Audit-User",
+										"value": "Paolo Rossi",
+										"type": "default"
+									},
+									{
+										"key": "GovWay-Audit-UserLocation",
+										"value": "UfficioXYZ",
+										"type": "default"
+									},
+									{
+										"key": "GovWay-Audit-LoA",
+										"value": "SPID-2",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CelsiusToFahrenheit xmlns=\"https://www.w3schools.com/xml/\">\n            <Celsius>20</Celsius>\n        </CelsiusToFahrenheit>\n    </soapenv:Body>\n</soapenv:Envelope>"
+								},
+								"url": {
+									"raw": "{{govway-url}}/soap/out/SoloPerDemo{{soggettoEsterno}}/{{soggetto}}/TempConvertSoapAuditPDND/v1/",
+									"host": [
+										"{{govway-url}}"
+									],
+									"path": [
+										"soap",
+										"out",
+										"SoloPerDemo{{soggettoEsterno}}",
+										"{{soggetto}}",
+										"TempConvertSoapAuditPDND",
+										"v1",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "OUT App1",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "App1-PDND.{{soggetto}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "123456",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "text/xml"
+									},
+									{
+										"key": "SOAPAction",
+										"value": "https://www.w3schools.com/xml/CelsiusToFahrenheit",
+										"type": "text"
+									},
+									{
+										"key": "X-Purpose-Id",
+										"value": "b149ca3c-4edf-11ed-80f4-0242ac140002",
+										"type": "default"
+									},
+									{
+										"key": "GovWay-Audit-User",
+										"value": "Paolo Rossi",
+										"type": "default"
+									},
+									{
+										"key": "GovWay-Audit-UserLocation",
+										"value": "UfficioXYZ",
+										"type": "default"
+									},
+									{
+										"key": "GovWay-Audit-LoA",
+										"value": "SPID-2",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CelsiusToFahrenheit xmlns=\"https://www.w3schools.com/xml/\">\n            <Celsius>20</Celsius>\n        </CelsiusToFahrenheit>\n    </soapenv:Body>\n</soapenv:Envelope>"
+								},
+								"url": {
+									"raw": "{{govway-url}}/soap/out/{{soggetto}}/{{soggettoEsterno}}/TempConvertSoapAuditPDND/v1/",
+									"host": [
+										"{{govway-url}}"
+									],
+									"path": [
+										"soap",
+										"out",
+										"{{soggetto}}",
+										"{{soggettoEsterno}}",
+										"TempConvertSoapAuditPDND",
 										"v1",
 										""
 									]
