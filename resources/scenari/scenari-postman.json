@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "c9064e10-cbbd-43d8-8c26-b32b27246cc9",
+		"_postman_id": "d52904a3-13b8-4a72-9947-619e6e92328c",
 		"name": "Scenari GovWay",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1094,6 +1094,159 @@
 										"{{soggetto}}",
 										"{{soggettoEsterno}}",
 										"PetStoreAuditPDND",
+										"v1",
+										"pet"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Audit02+PDND",
+					"item": [
+						{
+							"name": "IN App4",
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"content-type": true
+								}
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "SoloPerDemoFirmatarioApp4.{{soggettoEsterno}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "123456",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "X-Purpose-Id",
+										"value": "b149ca3c-4edf-11ed-80f4-0242ac140002",
+										"type": "default"
+									},
+									{
+										"key": "GovWay-Audit-User",
+										"value": "Paolo Rossi",
+										"type": "default"
+									},
+									{
+										"key": "GovWay-Audit-UserLocation",
+										"value": "UfficioXYZ",
+										"type": "default"
+									},
+									{
+										"key": "GovWay-Audit-LoA",
+										"value": "SPID-2",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"id\": 32,\n  \"category\": {\n    \"id\": 0,\n    \"name\": \"Alano\"\n  },\n  \"name\": \"Leo\",\n  \"photoUrls\": [\n    \"string\"\n  ],\n  \"tags\": [\n    {\n      \"id\": 0,\n      \"name\": \"pelo corto\"\n    }\n  ],\n  \"status\": \"available\"\n}"
+								},
+								"url": {
+									"raw": "{{govway-url}}/rest/out/SoloPerDemo{{soggettoEsterno}}/{{soggetto}}/PetStoreAudit02PDND/v1/pet",
+									"host": [
+										"{{govway-url}}"
+									],
+									"path": [
+										"rest",
+										"out",
+										"SoloPerDemo{{soggettoEsterno}}",
+										"{{soggetto}}",
+										"PetStoreAudit02PDND",
+										"v1",
+										"pet"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "OUT App4",
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"content-type": true
+								}
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "App4-PDND.{{soggetto}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "123456",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "X-Purpose-Id",
+										"value": "b149ca3c-4edf-11ed-80f4-0242ac140002",
+										"type": "default"
+									},
+									{
+										"key": "GovWay-Audit-User",
+										"value": "Paolo Rossi",
+										"type": "default"
+									},
+									{
+										"key": "GovWay-Audit-UserLocation",
+										"value": "UfficioXYZ",
+										"type": "default"
+									},
+									{
+										"key": "GovWay-Audit-LoA",
+										"value": "SPID-2",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"id\": 32,\n  \"category\": {\n    \"id\": 0,\n    \"name\": \"Alano\"\n  },\n  \"name\": \"Leo\",\n  \"photoUrls\": [\n    \"string\"\n  ],\n  \"tags\": [\n    {\n      \"id\": 0,\n      \"name\": \"pelo corto\"\n    }\n  ],\n  \"status\": \"available\"\n}"
+								},
+								"url": {
+									"raw": "{{govway-url}}/rest/out/{{soggetto}}/{{soggettoEsterno}}/PetStoreAudit02PDND/v1/pet",
+									"host": [
+										"{{govway-url}}"
+									],
+									"path": [
+										"rest",
+										"out",
+										"{{soggetto}}",
+										"{{soggettoEsterno}}",
+										"PetStoreAudit02PDND",
 										"v1",
 										"pet"
 									]

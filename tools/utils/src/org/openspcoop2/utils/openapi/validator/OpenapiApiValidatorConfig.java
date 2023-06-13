@@ -32,6 +32,8 @@ import org.openspcoop2.utils.rest.ApiValidatorConfig;
  */
 public class OpenapiApiValidatorConfig extends ApiValidatorConfig {
 
+	private static final long serialVersionUID = 1L;
+	
 	private ApiName jsonValidatorAPI;
 	private OpenapiLibraryValidatorConfig openApiValidatorConfig;
 

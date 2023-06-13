@@ -1,3 +1,9 @@
+2023-06-13  Andrea Poli <apoli@link.it>
+
+	* [Documentazione]
+	Aggiunta funzionalità OP-1580
+	Introdotti scenari che descrivono i pattern 'AUDIT_REST_01' e 'AUDIT_REST_02'
+
 2023-06-12  Andrea Poli <apoli@link.it>
 
 	* [Documentazione]

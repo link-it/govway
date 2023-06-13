@@ -30,7 +30,7 @@ Viene registrata l'API "PetStoreAuditPDND" con il relativo descrittore OpenAPI 3
 
 **Fruizione**
 
-Nella fruizione "PetStoreAuditPDND", relativa all'API precedentemente inserita, vanno indicati i dati specifici nella sezione "ModI Richiesta" (:numref:`modipa_fruizione_richiesta_integrity_02_fig`) necessari a generare il token 'Agid-JWT-TrackingEvidence'. In particolare è possibile specificare l'audience atteso dall'erogatore e il tempo di validità del token.
+Nella fruizione "PetStoreAuditPDND", relativa all'API precedentemente inserita, vanno indicati i dati specifici nella sezione "ModI Richiesta" (:numref:`modipa_fruizione_richiesta_audit_01_fig`) necessari a generare il token 'Agid-JWT-TrackingEvidence'. In particolare è possibile specificare l'audience atteso dall'erogatore e il tempo di validità del token.
 
 .. figure:: ../../../_figure_scenari/modipa_fruizione_richiesta_audit_01.png
  :scale: 80%

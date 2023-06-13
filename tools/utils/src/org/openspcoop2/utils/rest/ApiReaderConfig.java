@@ -35,11 +35,13 @@ import org.openspcoop2.utils.xml.XMLUtils;
  */
 public class ApiReaderConfig extends BaseBean {
 
+	private static final long serialVersionUID = 1L;
+	
 	private boolean verbose = false;
 	private boolean processInclude = true;
 	private boolean processInlineSchema = true;
 	private Charset charset = Charset.UTF_8;
-	private AbstractXMLUtils xmlUtils = XMLUtils.getInstance();
+	private transient AbstractXMLUtils xmlUtils = XMLUtils.getInstance();
 	
 	public AbstractXMLUtils getXmlUtils() {
 		return this.xmlUtils;

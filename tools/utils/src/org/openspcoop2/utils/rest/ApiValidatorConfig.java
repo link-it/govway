@@ -35,8 +35,10 @@ import org.openspcoop2.utils.xml.XMLUtils;
  */
 public class ApiValidatorConfig extends BaseBean {
 
+	private static final long serialVersionUID = 1L;
+	
 	private boolean verbose = false;
-	private AbstractXMLUtils xmlUtils = XMLUtils.getInstance();
+	private transient AbstractXMLUtils xmlUtils = XMLUtils.getInstance();
 	private ADDITIONAL policyAdditionalProperties = ADDITIONAL.DEFAULT;
 	private boolean emitLogError = true;
 	

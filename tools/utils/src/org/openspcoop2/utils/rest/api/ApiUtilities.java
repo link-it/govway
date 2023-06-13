@@ -40,6 +40,8 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
  */
 public class ApiUtilities extends BaseBean {
 
+	private static final long serialVersionUID = 1L;
+	
 	private static List<String> _static_list_characters = new ArrayList<>();
 	static {
 		for (int i = 'A'; i <= 'Z'; i++) {

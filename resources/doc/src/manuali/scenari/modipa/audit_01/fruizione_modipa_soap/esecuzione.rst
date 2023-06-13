@@ -29,7 +29,7 @@ Dopo aver eseguito la "Send" e verificato il corretto esito dell'operazione è p
 
 Le evidenze del processo di validazione relative al token PDND sono le medesime descritte nella scenario :ref:`scenari_fruizione_soap_modipa_auth_pdnd_esecuzione`. 
 
-Le evindenze del processo di validazione del token di audit "Agid-Jwt-TrackingEvidence" sono le stesse descritto nello scenario :ref:`scenari_fruizione_rest_modipa_audit_01_esecuzione`. 
+Le evindenze del processo di validazione del token di audit "Agid-Jwt-TrackingEvidence" sono le stesse descritte nello scenario :ref:`scenari_fruizione_rest_modipa_audit_01_esecuzione`. 
 
 
 **Conformità ai requisiti ModI**

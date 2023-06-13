@@ -30,7 +30,7 @@ Viene registrata l'API "TemperatureConversionAuditPDND" con il relativo descritt
 
 **Fruizione**
 
-Si registra la fruizione SOAP 'TempConvertSoapAuditPDND', relativa all'API precedentemente inserita, indicando i dati specifici nella sezione "ModI Richiesta" (:numref:`modipa_fruizione_richiesta_soap_integrity_fig`) necessari a generare il token 'Agid-JWT-TrackingEvidence'. In particolare è possibile specificare l'audience atteso dall'erogatore e il tempo di validità del token.
+Si registra la fruizione SOAP 'TempConvertSoapAuditPDND', relativa all'API precedentemente inserita, indicando i dati specifici nella sezione "ModI Richiesta" (:numref:`modipa_fruizione_richiesta_soap_audit_01_fig`) necessari a generare il token 'Agid-JWT-TrackingEvidence'. In particolare è possibile specificare l'audience atteso dall'erogatore e il tempo di validità del token.
 
    .. figure:: ../../../_figure_scenari/modipa_fruizione_richiesta_soap_audit_01.png
     :scale: 80%
