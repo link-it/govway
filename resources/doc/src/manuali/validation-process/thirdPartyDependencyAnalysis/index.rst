@@ -8,7 +8,7 @@ Ogni libreria terza parte utilizzata da GovWay viene sottoposta a verifica di po
 Il tool è configurato per utilizzare le seguenti base dati di vulnerabilità note:
 
 - `National Vulnerability Database <https://nvd.nist.gov/>`_;
-- `NPM Public Advisories <https://www.npmjs.com/advisories>`_;
+- `Github Advisory Database (via NPM Audit API) <https://github.com/advisories/>`_;
 - `RetireJS <https://retirejs.github.io/retire.js/>`_;
 - `Sonatype OSS Index <https://ossindex.sonatype.org/>`_;
 - `CISA Known Exploited Vulnerabilities Catalog <https://www.cisa.gov/known-exploited-vulnerabilities-catalog>`_.

@@ -1,3 +1,11 @@
+2023-06-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2023-34411: aggiornata libreria 'com.fasterxml.woodstox:woodstox-core' alla versione 6.5.1
+                          aggiornata libreria 'org.apache.cxf:*' alla versione 3.6.1
+                          aggiornata libreria 'org.ow2.asm:asm' alla versione 9.5
+
 2023-06-13  Andrea Poli <apoli@link.it>
 
 	* [Documentazione]

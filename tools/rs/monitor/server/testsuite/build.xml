@@ -44,7 +44,7 @@
                         <include name="snakeyaml-1.33-gov4j-1.jar"/>
                 </fileset>
                 <fileset dir="${required_lib}/cxf" >
-                        <include name="asm-9.4.jar"/>
+                        <include name="asm-9.5.jar"/>
                 </fileset>
 	</path> 
 
