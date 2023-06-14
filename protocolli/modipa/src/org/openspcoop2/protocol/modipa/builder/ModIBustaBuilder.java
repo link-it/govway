@@ -119,14 +119,14 @@ public class ModIBustaBuilder extends BustaBuilder<AbstractModISecurityToken<?>>
 			if(ignoraEccezioniNonGravi){
 				if(busta.containsEccezioniGravi() ){
 					this.enrichFault(msg, busta, ignoraEccezioniNonGravi,
-							this.modipaProperties.isPortaApplicativaBustaErrore_personalizzaElementiFault(),
-							this.modipaProperties.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo());
+							this.modipaProperties.isPortaApplicativaBustaErrorePersonalizzaElementiFault(),
+							this.modipaProperties.isPortaApplicativaBustaErroreAggiungiErroreApplicativo());
 				}	
 			}
 			else{
 				this.enrichFault(msg, busta, ignoraEccezioniNonGravi,
-						this.modipaProperties.isPortaApplicativaBustaErrore_personalizzaElementiFault(),
-						this.modipaProperties.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo());
+						this.modipaProperties.isPortaApplicativaBustaErrorePersonalizzaElementiFault(),
+						this.modipaProperties.isPortaApplicativaBustaErroreAggiungiErroreApplicativo());
 			}
 
 		}

@@ -128,12 +128,12 @@ public class ModIProtocolManager extends BasicManager {
 	
 	@Override
 	public BooleanNullable isAggiungiDetailErroreApplicativo_FaultApplicativo() {
-		return this.modipaProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo();
+		return this.modipaProperties.isAggiungiDetailErroreApplicativoSoapFaultApplicativo();
 	}
 
 	@Override
 	public BooleanNullable isAggiungiDetailErroreApplicativo_FaultPdD() {
-		return this.modipaProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD();
+		return this.modipaProperties.isAggiungiDetailErroreApplicativoSoapFaultPdD();
 	}
 	
 	

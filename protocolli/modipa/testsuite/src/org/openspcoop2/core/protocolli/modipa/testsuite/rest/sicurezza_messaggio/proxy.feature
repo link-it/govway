@@ -8465,6 +8465,124 @@ Scenario: isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01')
 
 
 
+
+Scenario: isTest('audit-rest-jwk-purpose-id-uguali') ||
+		isTest('audit-rest-jwk-purpose-id-differenti') ||
+		isTest('audit-rest-jwk-purpose-id-non-presente-audit')
+
+    * def tipoTest = 'N.D.'
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-purpose-id-uguali') ||
+		isTest('audit-rest-jwk-purpose-id-differenti') ||
+		isTest('audit-rest-jwk-purpose-id-non-presente-audit')) {
+      tipoTest = 'JWK-RecuperoInfoClient'
+      audExpected = 'RestBlockingAuditRest01-'+tipoTest+'/v1'
+    }
+    """
+   
+    * def clientIdExpected = 'N.D.'
+    * def issExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * def subExpected = 'N.D.'    
+    * def purposeIdExpectedAuth = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-purpose-id-uguali') ||
+		isTest('audit-rest-jwk-purpose-id-differenti') ||
+		isTest('audit-rest-jwk-purpose-id-non-presente-audit')) {
+      kidExpected = 'KID-ApplicativoBlockingIDA01'
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+      issExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+      subExpected = 'ApplicativoBlockingIDA01-CredenzialePrincipal'
+      purposeIdExpectedAuth = 'purposeId-ApplicativoBlockingIDA01'
+    }
+    """
+        
+    * def purposeIdExpectedAudit = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-purpose-id-uguali') ) {
+      purposeIdExpectedAudit = 'purposeId-ApplicativoBlockingIDA01'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-purpose-id-differenti')) {
+      purposeIdExpectedAudit = 'purposeId-ApplicativoBlockingIDA01-differente'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-purpose-id-non-presente-audit')) {
+      purposeIdExpectedAudit = '#notpresent'
+    }
+    """
+
+    * def dnonceExpected = '#notpresent'
+   
+    * def digestExpected = '#notpresent'
+   
+    * def client_token_audit_match = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-purpose-id-uguali') ||
+		isTest('audit-rest-jwk-purpose-id-differenti') ||
+		isTest('audit-rest-jwk-purpose-id-non-presente-audit') ) {
+    client_token_audit_match = ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: '#notpresent',
+            iss: issExpected,
+            sub: '#notpresent',
+	    userID: 'utente-token', 
+            userLocation: 'ip-utente-token', 
+            LoA: 'livello-autenticazione-utente-token',
+	    dnonce: dnonceExpected,
+	    purposeId: purposeIdExpectedAudit
+        }
+    })
+    }
+    """
+
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+	    purposeId: purposeIdExpectedAuth,
+	    digest: digestExpected
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkTokenKid ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-TrackingEvidence'][0], match_to: client_token_audit_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
+    
+    * def newHeaders = 
+    """
+    ({
+	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Client-Audit-Token': requestHeaders['Agid-JWT-TrackingEvidence'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+
+
 Scenario: isTest('tengo-da-parte') 
 
     * def tamper_token_authorization_digest_value = 

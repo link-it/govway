@@ -556,7 +556,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 		try {
 		
 			//  ** Timestamp **
-			Long timeToLive = this.modiProperties.getRestSecurityTokenClaimsIatTimeCheck_milliseconds();
+			Long timeToLive = this.modiProperties.getRestSecurityTokenClaimsIatTimeCheckMilliseconds();
 			if(securityConfig.getCheckTtlIatMilliseconds()!=null) {
 				timeToLive = securityConfig.getCheckTtlIatMilliseconds();
 			}

@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/400/InteroperabilityInvalidRequest.html",
+    "title": "InteroperabilityInvalidRequest",
+    "status": 400,
+    "detail": "[Header 'Agid-JWT-TrackingEvidence'] Claim 'purposeId' presente nel token contiene un valore 'purposeId-ApplicativoBlockingIDA01-differente' differente da quello presente nel token Authorization (purposeId-ApplicativoBlockingIDA01)",
+    "govway_id": "#string"
+}

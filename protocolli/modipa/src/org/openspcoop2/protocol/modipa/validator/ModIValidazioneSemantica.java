@@ -281,6 +281,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 			
 			PortaApplicativa pa = null;
 			
+			RemoteStoreConfig rsc = null;
 			
 			if(isRichiesta && sicurezzaTokenOauth) {
 				
@@ -305,7 +306,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 							isRichiesta, prefixAuthorization,
 							checkAudienceByModIConfig);
 					
-					enrichTokenInfo(requestInfo);
+					rsc = enrichTokenInfo(requestInfo);
 				
 				}
 				
@@ -483,6 +484,13 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 									CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_VALIDO, 
 									prefixAudit+getErroreClaimNonValido(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE)));
 					}
+				}
+				
+				
+				if(rsc!=null) {
+					
+					validatePurposeId(rsc, prefixAudit, securityAuditPattern);
+					
 				}
 				
 				if(audit02) {
@@ -817,10 +825,10 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		Date checkNow = now;
 		Long tolerance = null;
 		if(rest) {
-			tolerance = this.modiProperties.getRestSecurityTokenClaimsExpTimeCheck_toleranceMilliseconds();
+			tolerance = this.modiProperties.getRestSecurityTokenClaimsExpTimeCheckToleranceMilliseconds();
 		}
 		else {
-			tolerance = this.modiProperties.getSoapSecurityTokenTimestampExpiresTimeCheck_toleranceMilliseconds();
+			tolerance = this.modiProperties.getSoapSecurityTokenTimestampExpiresTimeCheckToleranceMilliseconds();
 		}
 		if(tolerance!=null && tolerance.longValue()>0) {
 			checkNow = new Date(now.getTime() - tolerance.longValue());
@@ -879,10 +887,10 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		}
 		if(old==null) {
 			if(rest) {
-				old = this.modiProperties.getRestSecurityTokenClaimsIatTimeCheck_milliseconds();
+				old = this.modiProperties.getRestSecurityTokenClaimsIatTimeCheckMilliseconds();
 			}
 			else {
-				old = this.modiProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds();
+				old = this.modiProperties.getSoapSecurityTokenTimestampCreatedTimeCheckMilliseconds();
 			}
 		}
 		if(old!=null) {
@@ -900,10 +908,10 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 	private void checkIatFuture(Date dateIat, String prefix, String iat, boolean rest) throws ProtocolException {
 		Long future = null;
 		if(rest) {
-			future = this.modiProperties.getRestSecurityTokenClaimsIatTimeCheck_futureToleranceMilliseconds();
+			future = this.modiProperties.getRestSecurityTokenClaimsIatTimeCheckFutureToleranceMilliseconds();
 		}
 		else {
-			future = this.modiProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_futureToleranceMilliseconds();
+			future = this.modiProperties.getSoapSecurityTokenTimestampCreatedTimeCheckFutureToleranceMilliseconds();
 		}
 		if(future!=null) {
 			Date futureMax = new Date((DateManager.getTimeMillis() + future.longValue()));
@@ -913,6 +921,77 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 						prefix+"Token creato nel futuro (data creazione: '"+iat+"')"));
 			}
 		}
+	}
+	
+	private void validatePurposeId(RemoteStoreConfig rsc, String prefixAudit, String securityAuditPattern) throws ProtocolException {
+		
+		try {
+			if(rsc!=null &&
+					(this.modiProperties.isSecurityTokenAuditExpectedPurposeId() || this.modiProperties.isSecurityTokenAuditCompareAuthorizationPurposeId())) {
+			
+				SecurityToken securityToken = ModIUtilities.readSecurityToken(this.context);
+				if(securityToken==null) {
+					this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+							CodiceErroreCooperazione.SICUREZZA_NON_PRESENTE, 
+							"Token di sicurezza non presenti"));
+					return;
+				}
+				
+				RestMessageSecurityToken restSecurityToken = securityToken.getAccessToken();
+
+				String prefixAuthorization = getPrefixHeader(HttpConstants.AUTHORIZATION);
+				String labelAuditPattern = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_02.equals(securityAuditPattern) ? 
+						CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_02 : CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_01;
+				String suffixAudit02 = " (richiesto con pattern '"+labelAuditPattern+"')";
+				if(restSecurityToken==null) {
+					this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+							CodiceErroreCooperazione.SICUREZZA_NON_PRESENTE, 
+							prefixAuthorization+MSG_ERRORE_NON_PRESENTE+suffixAudit02));
+					return;
+				}
+				
+				RestMessageSecurityToken auditToken = securityToken.getAudit();
+				if(auditToken==null) {
+					this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+							CodiceErroreCooperazione.SICUREZZA_NON_PRESENTE, 
+							prefixAudit+MSG_ERRORE_NON_PRESENTE));
+					return;
+				}
+				
+				boolean expected = this.modiProperties.isSecurityTokenAuditExpectedPurposeId();
+				String purposeIdAuthorization = readPurposeId(restSecurityToken, prefixAuthorization, expected);
+				String purposeIdAudit = readPurposeId(auditToken, prefixAudit, expected);
+				
+				if(this.modiProperties.isSecurityTokenAuditCompareAuthorizationPurposeId() &&
+					purposeIdAuthorization!=null && purposeIdAudit!=null && !purposeIdAuthorization.equals(purposeIdAudit)) {
+					String claim = org.openspcoop2.pdd.core.token.Costanti.PDND_PURPOSE_ID;
+					this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+							CodiceErroreCooperazione.SICUREZZA_NON_PRESENTE, 
+							prefixAudit+"Claim '"+claim+"' presente nel token contiene un valore '"+purposeIdAudit+"' differente da quello presente nel token "+HttpConstants.AUTHORIZATION+" ("+purposeIdAuthorization+")"));
+				}
+			}
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+
+	}
+	private String readPurposeId(RestMessageSecurityToken restSecurityToken, String prefixAuthorization, boolean required) throws ProtocolException {
+		String purposeId = null;
+		String purposeIdClaim = org.openspcoop2.pdd.core.token.Costanti.PDND_PURPOSE_ID;
+		try {
+			purposeId = restSecurityToken.getPayloadClaim(purposeIdClaim);
+			if( (purposeId==null || StringUtils.isEmpty(purposeId)) && required ) {
+				this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+						CodiceErroreCooperazione.SICUREZZA_TOKEN_NON_VALIDO, 
+						prefixAuthorization+getErroreClaimNonPresente(purposeIdClaim)));
+			}
+		}catch(Exception e) {
+			logError("Lettura purpose id token fallita: "+e.getMessage(),e);
+			this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+					CodiceErroreCooperazione.SICUREZZA_TOKEN_NON_VALIDO, 
+					prefixAuthorization+getErroreClaimNonValido(purposeIdClaim)));
+		}
+		return purposeId;
 	}
 	
 	private void validateAudit02(String securityMessageProfileSorgenteTokenIdAuth, boolean rest, String prefixAudit) throws ProtocolException {
@@ -1029,22 +1108,23 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		return digestValue;
 	}
 	
-	private void enrichTokenInfo(RequestInfo requestInfo) throws ProtocolException {
+	private RemoteStoreConfig enrichTokenInfo(RequestInfo requestInfo) throws ProtocolException {
 	
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+		RemoteStoreConfig rsc = null;
 		try {
 			if(op2Properties.isGestoreChiaviPDNDclientInfoEnabled()) {
 			
-				RemoteStoreConfig rsc = getRemoteStoreConfig();
+				rsc = getRemoteStoreConfig();
 				if(rsc==null) {
-					return;
+					return rsc;
 				}
 				
 				SecurityToken securityTokenForContext = SecurityTokenUtilities.readSecurityToken(this.context);
 								
 				String kid = readKidFromToken(securityTokenForContext);
 				if(kid==null) {
-					return;
+					return rsc;
 				}
 				
 				Object oInformazioniTokenNormalizzate = null;
@@ -1058,7 +1138,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 					clientId = informazioniTokenNormalizzate.getClientId();
 				}
 				if(clientId==null) {
-					return;
+					return rsc;
 				}
 				
 				enrichTokenInfo(securityTokenForContext, informazioniTokenNormalizzate, requestInfo, rsc,
@@ -1068,6 +1148,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 			throw new ProtocolException(e.getMessage(),e);
 		}
 		
+		return rsc;
 	}
 	private RemoteStoreConfig getRemoteStoreConfig() throws ProtocolException {
 		Object oTokenPolicy = null;

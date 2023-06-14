@@ -705,7 +705,8 @@ Scenario: isTest('audit-rest-jwk-01')  ||
 		isTest('audit-rest-jwk-02') ||
 		isTest('audit-rest-jwk-custom-01') || 
 		isTest('audit-rest-jwk-custom-02') ||
-		isTest('audit-rest-jwk-token-optional-01')
+		isTest('audit-rest-jwk-token-optional-01') || 
+		isTest('audit-rest-jwk-purpose-id-uguali')
 
     * match requestHeaders['Authorization'] == '#notpresent'
     * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'

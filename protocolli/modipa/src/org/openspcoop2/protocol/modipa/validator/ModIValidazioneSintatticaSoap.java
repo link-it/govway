@@ -398,7 +398,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			
 			
 			//  ** Timestamp **
-			Long timeToLive = this.modiProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds(); // viene usato per vedere la data di creazione quanto si discosta da adesso
+			Long timeToLive = this.modiProperties.getSoapSecurityTokenTimestampCreatedTimeCheckMilliseconds(); // viene usato per vedere la data di creazione quanto si discosta da adesso
 			if(securityConfig.getCheckTtlIatMilliseconds()!=null) {
 				timeToLive = securityConfig.getCheckTtlIatMilliseconds();
 			}
@@ -422,7 +422,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 				secProperties.put(SecurityConstants.TIMESTAMP_TTL, 315360000+"");
 			}
 			
-			Long futureTimeToLive = this.modiProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_futureToleranceMilliseconds();
+			Long futureTimeToLive = this.modiProperties.getSoapSecurityTokenTimestampCreatedTimeCheckFutureToleranceMilliseconds();
 			if(futureTimeToLive!=null) {
 				// Non imposto il valore qua, in modo che la libreria non effettui il controllo, che invece avviene nella validazione semantica
 				/**

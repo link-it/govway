@@ -51,10 +51,10 @@ public class ModIProtocolConfiguration extends BasicConfiguration {
 		
 		if (FunzionalitaProtocollo.RIFERIMENTO_ID_RICHIESTA.equals(funzionalitaProtocollo)){
 			if(TipoPdD.DELEGATA.equals(tipoPdD)) {
-				return this.properties.isRiferimentoIDRichiesta_PD_Required();
+				return this.properties.isRiferimentoIDRichiestaPortaDelegataRequired();
 			}
 			else {
-				return this.properties.isRiferimentoIDRichiesta_PA_Required();
+				return this.properties.isRiferimentoIDRichiestaPortaApplicativaRequired();
 			}
 		}
 		else {

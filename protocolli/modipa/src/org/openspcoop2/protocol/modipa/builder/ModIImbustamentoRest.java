@@ -631,12 +631,20 @@ public class ModIImbustamentoRest {
 		}
 		
 		String clientId = null;
-		if(securityConfig.getClientId()!=null &&
-				!DynamicHelperCostanti.NOT_GENERATE.equalsIgnoreCase(securityConfig.getClientId())) {
-			clientId = securityConfig.getClientId();
+		boolean clientIdNotGenerate = false;
+		if(securityConfig.getClientId()!=null) {
+			clientIdNotGenerate = DynamicHelperCostanti.NOT_GENERATE.equalsIgnoreCase(securityConfig.getClientId());
+			if(!clientIdNotGenerate) {
+				clientId = securityConfig.getClientId();
+			}
+			if(tokenAudit) {
+				clientIdNotGenerate = false; // forzo a false dopo averlo usato per l'if precedente: nel token di audit la presenza o meno non viene piloata dai claims custom
+			}
 		}
 		boolean clientIdKid = false;
-		if(integritaKid || useKIDtokenHeader || tokenAudit) {
+		if(	!clientIdNotGenerate && 
+			(integritaKid || useKIDtokenHeader || tokenAudit)
+			) {
 			String clientIdIntegritaKid = securityConfig.getTokenClientId();
 			if(clientIdIntegritaKid!=null) {
 				try {

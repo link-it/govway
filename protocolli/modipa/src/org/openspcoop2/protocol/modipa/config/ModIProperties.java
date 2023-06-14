@@ -88,6 +88,10 @@ public class ModIProperties {
 
 		/* ---- Lettura del cammino del file di configurazione ---- */
 
+		if(confDir!=null) {
+			// nop
+		}
+		
 		Properties propertiesReader = new Properties();
 		java.io.InputStream properties = null;
 		try{  
@@ -103,7 +107,7 @@ public class ModIProperties {
 			try{
 				if(properties!=null)
 					properties.close();
-			}catch(Throwable er){
+			}catch(Exception er){
 				// close
 			}
 		}
@@ -157,6 +161,15 @@ public class ModIProperties {
 	private String getPrefixProprieta(String propertyName) {
 		return "Proprietà '"+propertyName+"'";
 	}
+	private String getPrefixValoreIndicatoProprieta(String value, String name) {
+		return "Valore '"+value+"' indicato nella proprietà '"+name+"'";
+	}
+	private String getSuffixSuperioreMassimoConsentitoControlloDisabilitato(long maxLongValue) {
+		return " superiore al massimo consentito '"+maxLongValue+"'; il controllo viene disabilitato";
+	}
+	private String getMessaggioVerificaDisabilitata(String name) {
+		return "Verifica gestita tramite la proprietà '"+name+"' disabilitata.";
+	}
 	private String getMessaggioErroreProprietaNonImpostata(String propertyName, Boolean defaultValue) {
 		return getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue.toString());
 	}
@@ -172,6 +185,7 @@ public class ModIProperties {
 	private String getMessaggioErroreProprietaNonCorretta(String pName, Exception e) {
 		return getPrefixProprieta(pName)+" non corretta, errore:"+e.getMessage();
 	}
+		
 	private String getSuffixErrore(Exception e) {
 		return ", errore:"+e.getMessage();
 	}
@@ -180,10 +194,16 @@ public class ModIProperties {
 		return new ProtocolException("non definita");
 	}
 	
+	private static final String INVALID_VALUE = "Invalid value";
+	
 
 	public void validaConfigurazione(Loader loader) throws ProtocolException  {	
 		try{  
 
+			if(loader!=null) {
+				// nop
+			}
+			
 			generateIDasUUID();
 			
 			/* **** TRUST STORE **** */
@@ -250,6 +270,8 @@ public class ModIProperties {
 			isSecurityTokenAuditApiSoapX509RiferimentoX5u();
 			isSecurityTokenAuditApiSoapX509RiferimentoX5t();
 			isSecurityTokenAuditAddPurposeId();
+			isSecurityTokenAuditExpectedPurposeId();
+			isSecurityTokenAuditCompareAuthorizationPurposeId();
 			getSecurityTokenAuditDnonceSize();
 			getSecurityTokenAuditDigestAlgorithm();
 					
@@ -281,10 +303,10 @@ public class ModIProperties {
 			getRestSecurityTokenClaimSignedHeaders();
 			getRestSecurityTokenClaimRequestDigest();
 			getRestSecurityTokenSignedHeaders();
-			getRestSecurityTokenClaimsIatTimeCheck_milliseconds();
-			getRestSecurityTokenClaimsIatTimeCheck_futureToleranceMilliseconds();
+			getRestSecurityTokenClaimsIatTimeCheckMilliseconds();
+			getRestSecurityTokenClaimsIatTimeCheckFutureToleranceMilliseconds();
 			isRestSecurityTokenClaimsExpTimeCheck();
-			getRestSecurityTokenClaimsExpTimeCheck_toleranceMilliseconds();
+			getRestSecurityTokenClaimsExpTimeCheckToleranceMilliseconds();
 			getRestSecurityTokenDigestDefaultEncoding();
 			isRestSecurityTokenDigestEncodingChoice();
 			getRestSecurityTokenDigestEncodingAccepted();
@@ -324,10 +346,10 @@ public class ModIProperties {
 			
 			isSoapSecurityTokenMustUnderstand();
 			getSoapSecurityTokenActor();
-			getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds();
-			getSoapSecurityTokenTimestampCreatedTimeCheck_futureToleranceMilliseconds();
+			getSoapSecurityTokenTimestampCreatedTimeCheckMilliseconds();
+			getSoapSecurityTokenTimestampCreatedTimeCheckFutureToleranceMilliseconds();
 			isSoapSecurityTokenTimestampExpiresTimeCheck();
-			getSoapSecurityTokenTimestampExpiresTimeCheck_toleranceMilliseconds();
+			getSoapSecurityTokenTimestampExpiresTimeCheckToleranceMilliseconds();
 			isSoapSecurityTokenFaultProcessEnabled();
 			
 			isSoapWSAddressingMustUnderstand();
@@ -369,13 +391,13 @@ public class ModIProperties {
 			
 			isReadByPathBufferEnabled();
 			isValidazioneBufferEnabled();
-			isRiferimentoIDRichiesta_PD_Required();
-			isRiferimentoIDRichiesta_PA_Required();
+			isRiferimentoIDRichiestaPortaDelegataRequired();
+			isRiferimentoIDRichiestaPortaApplicativaRequired();
 			
 			/* **** SOAP FAULT (Generati dagli attori esterni) **** */
 			
-			this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo();
-			this.isAggiungiDetailErroreApplicativo_SoapFaultPdD();
+			this.isAggiungiDetailErroreApplicativoSoapFaultApplicativo();
+			this.isAggiungiDetailErroreApplicativoSoapFaultPdD();
 			this.isGenerazioneDetailsSOAPFaultProtocolValidazione();
 			this.isGenerazioneDetailsSOAPFaultProtocolProcessamento();
 			this.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace();
@@ -390,8 +412,8 @@ public class ModIProperties {
 			
 			/* **** SOAP FAULT (Protocollo, Porta Applicativa) **** */
 			
-			this.isPortaApplicativaBustaErrore_personalizzaElementiFault();
-			this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo();
+			this.isPortaApplicativaBustaErrorePersonalizzaElementiFault();
+			this.isPortaApplicativaBustaErroreAggiungiErroreApplicativo();
 			
 			/* **** Static instance config **** */
 			
@@ -987,7 +1009,7 @@ public class ModIProperties {
 				this.sicurezzaMessaggioCertificatiKeyClientIdRead = true;
 				
 			}catch(java.lang.Exception e) {
-				this.logError("Proprietà '"+pName+"' non impostata, errore:"+e.getMessage());
+				this.logError(getPrefixProprieta(pName)+"non impostata, errore:"+e.getMessage());
 				throw new ProtocolException(e.getMessage(),e);
 			}
     	}
@@ -1013,7 +1035,7 @@ public class ModIProperties {
 				this.sicurezzaMessaggioCertificatiKeyKidRead = true;
 				
 			}catch(java.lang.Exception e) {
-				this.logError("Proprietà '"+pName+"' non impostata, errore:"+e.getMessage());
+				this.logError(getPrefixProprieta(pName)+"non impostata, errore:"+e.getMessage());
 				throw new ProtocolException(e.getMessage(),e);
 			}
     	}
@@ -1493,6 +1515,60 @@ public class ModIProperties {
 		}
 
 		return this.isSecurityTokenAuditAddPurposeId;
+	}
+	
+    private Boolean isSecurityTokenAuditExpectedPurposeId = null;
+	public boolean isSecurityTokenAuditExpectedPurposeId(){
+		if(this.isSecurityTokenAuditExpectedPurposeId==null){
+			
+			boolean defaultValue = true;
+			String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.expectedPurposeId";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isSecurityTokenAuditExpectedPurposeId = Boolean.parseBoolean(value);
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.isSecurityTokenAuditExpectedPurposeId = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.isSecurityTokenAuditExpectedPurposeId = defaultValue;
+			}
+		}
+
+		return this.isSecurityTokenAuditExpectedPurposeId;
+	}
+	
+	private Boolean isSecurityTokenAuditCompareAuthorizationPurposeId = null;
+	public boolean isSecurityTokenAuditCompareAuthorizationPurposeId(){
+		if(this.isSecurityTokenAuditCompareAuthorizationPurposeId==null){
+			
+			boolean defaultValue = true;
+			String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.compareAuthorizationPurposeId";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isSecurityTokenAuditCompareAuthorizationPurposeId = Boolean.parseBoolean(value);
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.isSecurityTokenAuditCompareAuthorizationPurposeId = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.isSecurityTokenAuditCompareAuthorizationPurposeId = defaultValue;
+			}
+		}
+
+		return this.isSecurityTokenAuditCompareAuthorizationPurposeId;
 	}
 	
     private Integer getSecurityTokenAuditDnonceSize = null;
@@ -2010,7 +2086,7 @@ public class ModIProperties {
     	
     	return this.getRestSecurityTokenSignedHeaders;
 	}
-	public String  getRestSecurityTokenSignedHeadersAsString() throws ProtocolException{
+	public String  getRestSecurityTokenSignedHeadersAsString() {
 		StringBuilder bf = new StringBuilder();
 		for (String hdr : this.getRestSecurityTokenSignedHeaders) {
 			if(bf.length()>0) {
@@ -2021,11 +2097,11 @@ public class ModIProperties {
 		return bf.toString();
 	}
 	
-	private Boolean getRestSecurityTokenClaimsIatTimeCheck_futureToleranceMillisecondsReaded = null;
-	private Long getRestSecurityTokenClaimsIatTimeCheck_futureToleranceMilliseconds = null;
-	public Long getRestSecurityTokenClaimsIatTimeCheck_futureToleranceMilliseconds() throws ProtocolException{
+	private Boolean getRestSecurityTokenClaimsIatTimeCheckFutureToleranceMillisecondsReaded = null;
+	private Long getRestSecurityTokenClaimsIatTimeCheckFutureToleranceMilliseconds = null;
+	public Long getRestSecurityTokenClaimsIatTimeCheckFutureToleranceMilliseconds() throws ProtocolException{
 
-		if(this.getRestSecurityTokenClaimsIatTimeCheck_futureToleranceMillisecondsReaded==null){
+		if(this.getRestSecurityTokenClaimsIatTimeCheckFutureToleranceMillisecondsReaded==null){
 			
 			String name = "org.openspcoop2.protocol.modipa.rest.securityToken.claims.iat.future.toleranceMilliseconds";
 			try{  
@@ -2033,18 +2109,18 @@ public class ModIProperties {
 
 				if (value != null){
 					value = value.trim();
-					long tmp = Long.valueOf(value);
+					long tmp = Long.parseLong(value);
 					if(tmp>0) {
 						long maxLongValue = Long.MAX_VALUE;
 						if(tmp>maxLongValue) {
-							this.logWarn("Valore '"+value+"' indicato nella proprietà '"+name+"' superiore al massimo consentito '"+maxLongValue+"'; il controllo viene disabilitato");
+							this.logWarn(getPrefixValoreIndicatoProprieta(value,name)+getSuffixSuperioreMassimoConsentitoControlloDisabilitato(maxLongValue));
 						}
 						else {
-							this.getRestSecurityTokenClaimsIatTimeCheck_futureToleranceMilliseconds = tmp;
+							this.getRestSecurityTokenClaimsIatTimeCheckFutureToleranceMilliseconds = tmp;
 						}
 					}
 					else {
-						this.logWarn("Verifica gestita tramite la proprietà '"+name+"' disabilitata.");
+						this.logWarn(getMessaggioVerificaDisabilitata(name));
 					}
 				}
 			}catch(java.lang.Exception e) {
@@ -2052,17 +2128,17 @@ public class ModIProperties {
 				throw new ProtocolException(e.getMessage(),e);
 			}
 			
-			this.getRestSecurityTokenClaimsIatTimeCheck_futureToleranceMillisecondsReaded = true;
+			this.getRestSecurityTokenClaimsIatTimeCheckFutureToleranceMillisecondsReaded = true;
 		}
 
-		return this.getRestSecurityTokenClaimsIatTimeCheck_futureToleranceMilliseconds;
+		return this.getRestSecurityTokenClaimsIatTimeCheckFutureToleranceMilliseconds;
 	}
 	
-	private Boolean getRestSecurityTokenClaimsIatTimeCheck_millisecondsReaded = null;
-	private Long getRestSecurityTokenClaimsIatTimeCheck_milliseconds = null;
-	public Long getRestSecurityTokenClaimsIatTimeCheck_milliseconds() throws ProtocolException{
+	private Boolean getRestSecurityTokenClaimsIatTimeCheckMillisecondsReaded = null;
+	private Long getRestSecurityTokenClaimsIatTimeCheckMilliseconds = null;
+	public Long getRestSecurityTokenClaimsIatTimeCheckMilliseconds() throws ProtocolException{
 
-		if(this.getRestSecurityTokenClaimsIatTimeCheck_millisecondsReaded==null){
+		if(this.getRestSecurityTokenClaimsIatTimeCheckMillisecondsReaded==null){
 			
 			String name = "org.openspcoop2.protocol.modipa.rest.securityToken.claims.iat.minutes";
 			try{  
@@ -2070,18 +2146,18 @@ public class ModIProperties {
 
 				if (value != null){
 					value = value.trim();
-					long tmp = Long.valueOf(value); // minuti
+					long tmp = Long.parseLong(value); // minuti
 					if(tmp>0) {
-						long maxLongValue = (((Long.MAX_VALUE)/60000l));
+						long maxLongValue = ((Long.MAX_VALUE)/60000l);
 						if(tmp>maxLongValue) {
-							this.logWarn("Valore '"+value+"' indicato nella proprietà '"+name+"' superiore al massimo consentito '"+maxLongValue+"'; il controllo viene disabilitato");
+							this.logWarn(getPrefixValoreIndicatoProprieta(value,name)+getSuffixSuperioreMassimoConsentitoControlloDisabilitato(maxLongValue));
 						}
 						else {
-							this.getRestSecurityTokenClaimsIatTimeCheck_milliseconds = tmp * 60 * 1000;
+							this.getRestSecurityTokenClaimsIatTimeCheckMilliseconds = tmp * 60 * 1000;
 						}
 					}
 					else {
-						this.logWarn("Verifica gestita tramite la proprietà '"+name+"' disabilitata.");
+						this.logWarn(getMessaggioVerificaDisabilitata(name));
 					}
 				}
 			}catch(java.lang.Exception e) {
@@ -2089,10 +2165,10 @@ public class ModIProperties {
 				throw new ProtocolException(e.getMessage(),e);
 			}
 			
-			this.getRestSecurityTokenClaimsIatTimeCheck_millisecondsReaded = true;
+			this.getRestSecurityTokenClaimsIatTimeCheckMillisecondsReaded = true;
 		}
 
-		return this.getRestSecurityTokenClaimsIatTimeCheck_milliseconds;
+		return this.getRestSecurityTokenClaimsIatTimeCheckMilliseconds;
 	}
 	
 	private Boolean isRestSecurityTokenClaimsExpTimeCheck= null;
@@ -2121,11 +2197,11 @@ public class ModIProperties {
     	return this.isRestSecurityTokenClaimsExpTimeCheck;
 	}	
 	
-	private Boolean getRestSecurityTokenClaimsExpTimeCheck_toleranceMillisecondsReaded = null;
-	private Long getRestSecurityTokenClaimsExpTimeCheck_toleranceMilliseconds = null;
-	public Long getRestSecurityTokenClaimsExpTimeCheck_toleranceMilliseconds() throws ProtocolException{
+	private Boolean getRestSecurityTokenClaimsExpTimeCheckToleranceMillisecondsReaded = null;
+	private Long getRestSecurityTokenClaimsExpTimeCheckToleranceMilliseconds = null;
+	public Long getRestSecurityTokenClaimsExpTimeCheckToleranceMilliseconds() throws ProtocolException{
 
-		if(this.getRestSecurityTokenClaimsExpTimeCheck_toleranceMillisecondsReaded==null){
+		if(this.getRestSecurityTokenClaimsExpTimeCheckToleranceMillisecondsReaded==null){
 			
 			String name = "org.openspcoop2.protocol.modipa.rest.securityToken.claims.exp.toleranceMilliseconds";
 			try{  
@@ -2133,18 +2209,18 @@ public class ModIProperties {
 
 				if (value != null){
 					value = value.trim();
-					long tmp = Long.valueOf(value); // già in millisecondi
+					long tmp = Long.parseLong(value); // già in millisecondi
 					if(tmp>0) {
 						long maxLongValue = Long.MAX_VALUE;
 						if(tmp>maxLongValue) {
-							this.logWarn("Valore '"+value+"' indicato nella proprietà '"+name+"' superiore al massimo consentito '"+maxLongValue+"'; il controllo viene disabilitato");
+							this.logWarn(getPrefixValoreIndicatoProprieta(value,name)+getSuffixSuperioreMassimoConsentitoControlloDisabilitato(maxLongValue));
 						}
 						else {
-							this.getRestSecurityTokenClaimsExpTimeCheck_toleranceMilliseconds = tmp;
+							this.getRestSecurityTokenClaimsExpTimeCheckToleranceMilliseconds = tmp;
 						}
 					}
 					else {
-						this.logWarn("Verifica gestita tramite la proprietà '"+name+"' disabilitata.");
+						this.logWarn(getMessaggioVerificaDisabilitata(name));
 					}
 				}
 			}catch(java.lang.Exception e) {
@@ -2152,10 +2228,10 @@ public class ModIProperties {
 				throw new ProtocolException(e.getMessage(),e);
 			}
 			
-			this.getRestSecurityTokenClaimsExpTimeCheck_toleranceMillisecondsReaded = true;
+			this.getRestSecurityTokenClaimsExpTimeCheckToleranceMillisecondsReaded = true;
 		}
 
-		return this.getRestSecurityTokenClaimsExpTimeCheck_toleranceMilliseconds;
+		return this.getRestSecurityTokenClaimsExpTimeCheckToleranceMilliseconds;
 	}
 
 	private DigestEncoding getRestSecurityTokenDigestDefaultEncoding= null;
@@ -2169,7 +2245,7 @@ public class ModIProperties {
 					value = value.trim();
 					this.getRestSecurityTokenDigestDefaultEncoding = DigestEncoding.valueOf(value.toUpperCase());
 					if(this.getRestSecurityTokenDigestDefaultEncoding==null) {
-						throw new ProtocolException("Invalid value");
+						throw new ProtocolException(INVALID_VALUE);
 					}
 				}
 				else {
@@ -2221,30 +2297,14 @@ public class ModIProperties {
 				if (value != null){
 					value = value.trim();
 					
-					this.getRestSecurityTokenDigestEncodingAccepted = new ArrayList<DigestEncoding>();
+					this.getRestSecurityTokenDigestEncodingAccepted = new ArrayList<>();
 					if(value.contains(",")) {
-						String [] split = value.split(",");
-						if(split==null || split.length<=0) {
-							throw new ProtocolException("Empty value");
-						}
-						for (String s : split) {
-							if(s==null) {
-								throw new ProtocolException("Null value");
-							}
-							else {
-								s = s.trim();
-							}
-							DigestEncoding tmp = DigestEncoding.valueOf(s.toUpperCase());
-							if(tmp==null) {
-								throw new ProtocolException("Invalid value");
-							}
-							this.getRestSecurityTokenDigestEncodingAccepted.add(tmp);
-						}
+						readRestSecurityTokenDigestEncodingAcceptedSplitValue(value);
 					}
 					else {
 						DigestEncoding tmp = DigestEncoding.valueOf(value.toUpperCase());
 						if(tmp==null) {
-							throw new ProtocolException("Invalid value");
+							throw new ProtocolException(INVALID_VALUE);
 						}
 						this.getRestSecurityTokenDigestEncodingAccepted.add(tmp);
 					}
@@ -2261,6 +2321,25 @@ public class ModIProperties {
     	}
     	
     	return this.getRestSecurityTokenDigestEncodingAccepted;
+	}
+	private void readRestSecurityTokenDigestEncodingAcceptedSplitValue(String value) throws ProtocolException {
+		String [] split = value.split(",");
+		if(split==null || split.length<=0) {
+			throw new ProtocolException("Empty value");
+		}
+		for (String s : split) {
+			if(s==null) {
+				throw new ProtocolException("Null value");
+			}
+			else {
+				s = s.trim();
+			}
+			DigestEncoding tmp = DigestEncoding.valueOf(s.toUpperCase());
+			if(tmp==null) {
+				throw new ProtocolException(INVALID_VALUE);
+			}
+			this.getRestSecurityTokenDigestEncodingAccepted.add(tmp);
+		}
 	}
 	
 	private Boolean getRestSecurityTokenRequestDigestCleanReaded= null;
@@ -2428,7 +2507,7 @@ public class ModIProperties {
 			}
 		}
 		
-		/*
+		/**
 		 ** Possono sempre essere definiti, poiche' utilizzati per sovrascrivere i default
 		boolean addIss = true;
 		boolean addSub = true;
@@ -2614,7 +2693,7 @@ public class ModIProperties {
     	if(this.getRestBloccanteHttpMethod==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.bloccante.httpMethod";
     		try{
-    			this.getRestBloccanteHttpMethod = new ArrayList<HttpRequestMethod>();
+    			this.getRestBloccanteHttpMethod = new ArrayList<>();
 				String value = this.reader.getValue_convertEnvProperties(name); 
 				
 				if (value != null){
@@ -2747,7 +2826,7 @@ public class ModIProperties {
     	if(this.getRestNonBloccantePushRequestHttpMethod==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.push.request.httpMethod";
     		try{
-    			this.getRestNonBloccantePushRequestHttpMethod = new ArrayList<HttpRequestMethod>();
+    			this.getRestNonBloccantePushRequestHttpMethod = new ArrayList<>();
 				String value = this.reader.getValue_convertEnvProperties(name); 
 				
 				if (value != null){
@@ -2802,7 +2881,7 @@ public class ModIProperties {
     	if(this.getRestNonBloccantePushResponseHttpMethod==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.push.response.httpMethod";
     		try{
-    			this.getRestNonBloccantePushResponseHttpMethod = new ArrayList<HttpRequestMethod>();
+    			this.getRestNonBloccantePushResponseHttpMethod = new ArrayList<>();
 				String value = this.reader.getValue_convertEnvProperties(name); 
 				
 				if (value != null){
@@ -2830,7 +2909,7 @@ public class ModIProperties {
 			return this.getRestNonBloccantePushHttpMethod;
 		}
 		
-		this.getRestNonBloccantePushHttpMethod = new ArrayList<HttpRequestMethod>();
+		this.getRestNonBloccantePushHttpMethod = new ArrayList<>();
 		
 		List<HttpRequestMethod> req = getRestNonBloccantePushRequestHttpMethod();
 		if(req!=null && !req.isEmpty()){
@@ -2885,7 +2964,7 @@ public class ModIProperties {
     	if(this.getRestNonBloccantePullRequestHttpMethod==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.pull.request.httpMethod";
     		try{
-    			this.getRestNonBloccantePullRequestHttpMethod = new ArrayList<HttpRequestMethod>();
+    			this.getRestNonBloccantePullRequestHttpMethod = new ArrayList<>();
 				String value = this.reader.getValue_convertEnvProperties(name); 
 				
 				if (value != null){
@@ -2969,7 +3048,7 @@ public class ModIProperties {
     	if(this.getRestNonBloccantePullRequestStateHttpMethod==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.pull.requestState.httpMethod";
     		try{
-    			this.getRestNonBloccantePullRequestStateHttpMethod = new ArrayList<HttpRequestMethod>();
+    			this.getRestNonBloccantePullRequestStateHttpMethod = new ArrayList<>();
 				String value = this.reader.getValue_convertEnvProperties(name); 
 				
 				if (value != null){
@@ -3024,7 +3103,7 @@ public class ModIProperties {
     	if(this.getRestNonBloccantePullResponseHttpMethod==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.pull.response.httpMethod";
     		try{
-    			this.getRestNonBloccantePullResponseHttpMethod = new ArrayList<HttpRequestMethod>();
+    			this.getRestNonBloccantePullResponseHttpMethod = new ArrayList<>();
 				String value = this.reader.getValue_convertEnvProperties(name); 
 				
 				if (value != null){
@@ -3052,8 +3131,15 @@ public class ModIProperties {
 			return this.getRestNonBloccantePullHttpMethod;
 		}
 		
-		this.getRestNonBloccantePullHttpMethod = new ArrayList<HttpRequestMethod>();
+		this.getRestNonBloccantePullHttpMethod = new ArrayList<>();
 		
+		readRestNonBloccantePullHttpMethodRequest();
+		
+		readRestNonBloccantePullHttpMethodResponse();
+		
+		return this.getRestNonBloccantePullHttpMethod;
+	}
+	private void readRestNonBloccantePullHttpMethodRequest() throws ProtocolException {
 		List<HttpRequestMethod> req = getRestNonBloccantePullRequestHttpMethod();
 		if(req!=null && !req.isEmpty()){
 			this.getRestNonBloccantePullHttpMethod.addAll(req);
@@ -3067,7 +3153,8 @@ public class ModIProperties {
 				}
 			}
 		}
-		
+	}
+	private void readRestNonBloccantePullHttpMethodResponse() throws ProtocolException {
 		List<HttpRequestMethod> res = getRestNonBloccantePullResponseHttpMethod();
 		if(res!=null && !res.isEmpty()){
 			for (HttpRequestMethod httpRequestMethod : res) {
@@ -3076,8 +3163,6 @@ public class ModIProperties {
 				}
 			}
 		}
-		
-		return this.getRestNonBloccantePullHttpMethod;
 	}
 	
 	
@@ -3138,11 +3223,11 @@ public class ModIProperties {
     	return this.getSoapSecurityTokenActor;
 	}
 	
-	private Boolean getSoapSecurityTokenTimestampCreatedTimeCheck_millisecondsReaded = null;
-	private Long getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds = null;
-	public Long getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds() throws ProtocolException{
+	private Boolean getSoapSecurityTokenTimestampCreatedTimeCheckMillisecondsReaded = null;
+	private Long getSoapSecurityTokenTimestampCreatedTimeCheckMilliseconds = null;
+	public Long getSoapSecurityTokenTimestampCreatedTimeCheckMilliseconds() throws ProtocolException{
 
-		if(this.getSoapSecurityTokenTimestampCreatedTimeCheck_millisecondsReaded==null){
+		if(this.getSoapSecurityTokenTimestampCreatedTimeCheckMillisecondsReaded==null){
 			
 			String name = "org.openspcoop2.protocol.modipa.soap.securityToken.timestamp.created.minutes";
 			try{  
@@ -3150,18 +3235,18 @@ public class ModIProperties {
 
 				if (value != null){
 					value = value.trim();
-					long tmp = Long.valueOf(value); // minuti
+					long tmp = Long.parseLong(value); // minuti
 					if(tmp>0) {
-						long maxLongValue = (((Long.MAX_VALUE)/60000l));
+						long maxLongValue = ((Long.MAX_VALUE)/60000l);
 						if(tmp>maxLongValue) {
-							this.logWarn("Valore '"+value+"' indicato nella proprietà '"+name+"' superiore al massimo consentito '"+maxLongValue+"'; il controllo viene disabilitato");
+							this.logWarn(getPrefixValoreIndicatoProprieta(value,name)+getSuffixSuperioreMassimoConsentitoControlloDisabilitato(maxLongValue));
 						}
 						else {
-							this.getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds = tmp * 60 * 1000;
+							this.getSoapSecurityTokenTimestampCreatedTimeCheckMilliseconds = tmp * 60 * 1000;
 						}
 					}
 					else {
-						this.logWarn("Verifica gestita tramite la proprietà '"+name+"' disabilitata.");
+						this.logWarn(getMessaggioVerificaDisabilitata(name));
 					}
 				}
 			}catch(java.lang.Exception e) {
@@ -3169,17 +3254,17 @@ public class ModIProperties {
 				throw new ProtocolException(e.getMessage(),e);
 			}
 			
-			this.getSoapSecurityTokenTimestampCreatedTimeCheck_millisecondsReaded = true;
+			this.getSoapSecurityTokenTimestampCreatedTimeCheckMillisecondsReaded = true;
 		}
 
-		return this.getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds;
+		return this.getSoapSecurityTokenTimestampCreatedTimeCheckMilliseconds;
 	}
 	
-	private Boolean getSoapSecurityTokenTimestampCreatedTimeCheck_futureToleranceMillisecondsReaded = null;
-	private Long getSoapSecurityTokenTimestampCreatedTimeCheck_futureToleranceMilliseconds = null;
-	public Long getSoapSecurityTokenTimestampCreatedTimeCheck_futureToleranceMilliseconds() throws ProtocolException{
+	private Boolean getSoapSecurityTokenTimestampCreatedTimeCheckFutureToleranceMillisecondsReaded = null;
+	private Long getSoapSecurityTokenTimestampCreatedTimeCheckFutureToleranceMilliseconds = null;
+	public Long getSoapSecurityTokenTimestampCreatedTimeCheckFutureToleranceMilliseconds() throws ProtocolException{
 
-		if(this.getSoapSecurityTokenTimestampCreatedTimeCheck_futureToleranceMillisecondsReaded==null){
+		if(this.getSoapSecurityTokenTimestampCreatedTimeCheckFutureToleranceMillisecondsReaded==null){
 			
 			String name = "org.openspcoop2.protocol.modipa.soap.securityToken.timestamp.created.future.toleranceMilliseconds";
 			try{  
@@ -3187,18 +3272,18 @@ public class ModIProperties {
 
 				if (value != null){
 					value = value.trim();
-					long tmp = Long.valueOf(value); // già in millisecondi
+					long tmp = Long.parseLong(value); // già in millisecondi
 					if(tmp>0) {
 						long maxLongValue = Long.MAX_VALUE;
 						if(tmp>maxLongValue) {
-							this.logWarn("Valore '"+value+"' indicato nella proprietà '"+name+"' superiore al massimo consentito '"+maxLongValue+"'; il controllo viene disabilitato");
+							this.logWarn(getPrefixValoreIndicatoProprieta(value,name)+getSuffixSuperioreMassimoConsentitoControlloDisabilitato(maxLongValue));
 						}
 						else {
-							this.getSoapSecurityTokenTimestampCreatedTimeCheck_futureToleranceMilliseconds = tmp;
+							this.getSoapSecurityTokenTimestampCreatedTimeCheckFutureToleranceMilliseconds = tmp;
 						}
 					}
 					else {
-						this.logWarn("Verifica gestita tramite la proprietà '"+name+"' disabilitata.");
+						this.logWarn(getMessaggioVerificaDisabilitata(name));
 					}
 				}
 			}catch(java.lang.Exception e) {
@@ -3206,10 +3291,10 @@ public class ModIProperties {
 				throw new ProtocolException(e.getMessage(),e);
 			}
 			
-			this.getSoapSecurityTokenTimestampCreatedTimeCheck_futureToleranceMillisecondsReaded = true;
+			this.getSoapSecurityTokenTimestampCreatedTimeCheckFutureToleranceMillisecondsReaded = true;
 		}
 
-		return this.getSoapSecurityTokenTimestampCreatedTimeCheck_futureToleranceMilliseconds;
+		return this.getSoapSecurityTokenTimestampCreatedTimeCheckFutureToleranceMilliseconds;
 	}
 	
 	private Boolean getSoapSecurityTokenFaultProcessEnabledReaded= null;
@@ -3266,11 +3351,11 @@ public class ModIProperties {
     	return this.isSoapSecurityTokenTimestampExpiresTimeCheck;
 	}	
 	
-	private Boolean getSoapSecurityTokenTimestampExpiresTimeCheck_toleranceMillisecondsReaded = null;
-	private Long getSoapSecurityTokenTimestampExpiresTimeCheck_toleranceMilliseconds = null;
-	public Long getSoapSecurityTokenTimestampExpiresTimeCheck_toleranceMilliseconds() throws ProtocolException{
+	private Boolean getSoapSecurityTokenTimestampExpiresTimeCheckToleranceMillisecondsReaded = null;
+	private Long getSoapSecurityTokenTimestampExpiresTimeCheckToleranceMilliseconds = null;
+	public Long getSoapSecurityTokenTimestampExpiresTimeCheckToleranceMilliseconds() throws ProtocolException{
 
-		if(this.getSoapSecurityTokenTimestampExpiresTimeCheck_toleranceMillisecondsReaded==null){
+		if(this.getSoapSecurityTokenTimestampExpiresTimeCheckToleranceMillisecondsReaded==null){
 			
 			String name = "org.openspcoop2.protocol.modipa.soap.securityToken.timestamp.expires.toleranceMilliseconds";
 			try{  
@@ -3278,18 +3363,18 @@ public class ModIProperties {
 
 				if (value != null){
 					value = value.trim();
-					long tmp = Long.valueOf(value); // già in millisecondi
+					long tmp = Long.parseLong(value); // già in millisecondi
 					if(tmp>0) {
 						long maxLongValue = Long.MAX_VALUE;
 						if(tmp>maxLongValue) {
-							this.logWarn("Valore '"+value+"' indicato nella proprietà '"+name+"' superiore al massimo consentito '"+maxLongValue+"'; il controllo viene disabilitato");
+							this.logWarn(getPrefixValoreIndicatoProprieta(value,name)+getSuffixSuperioreMassimoConsentitoControlloDisabilitato(maxLongValue));
 						}
 						else {
-							this.getSoapSecurityTokenTimestampExpiresTimeCheck_toleranceMilliseconds = tmp;
+							this.getSoapSecurityTokenTimestampExpiresTimeCheckToleranceMilliseconds = tmp;
 						}
 					}
 					else {
-						this.logWarn("Verifica gestita tramite la proprietà '"+name+"' disabilitata.");
+						this.logWarn(getMessaggioVerificaDisabilitata(name));
 					}
 				}
 			}catch(java.lang.Exception e) {
@@ -3297,10 +3382,10 @@ public class ModIProperties {
 				throw new ProtocolException(e.getMessage(),e);
 			}
 			
-			this.getSoapSecurityTokenTimestampExpiresTimeCheck_toleranceMillisecondsReaded = true;
+			this.getSoapSecurityTokenTimestampExpiresTimeCheckToleranceMillisecondsReaded = true;
 		}
 
-		return this.getSoapSecurityTokenTimestampExpiresTimeCheck_toleranceMilliseconds;
+		return this.getSoapSecurityTokenTimestampExpiresTimeCheckToleranceMilliseconds;
 	}
 	
 	private Boolean getSoapWSAddressingMustUnderstandReaded= null;
@@ -3437,7 +3522,7 @@ public class ModIProperties {
     	return this.getSoapCorrelationIdNamespace;
 	}
 	
-	public boolean useSoapBodyCorrelationIdNamespace() throws Exception {
+	public boolean useSoapBodyCorrelationIdNamespace() throws ProtocolException {
 		return ModICostanti.MODIPA_USE_BODY_NAMESPACE.equals(this.getSoapCorrelationIdNamespace());
 	}
 	
@@ -3574,7 +3659,7 @@ public class ModIProperties {
     	return this.getSoapReplyToNamespace;
 	}
 	
-	public boolean useSoapBodyReplyToNamespace() throws Exception {
+	public boolean useSoapBodyReplyToNamespace() throws ProtocolException {
 		return ModICostanti.MODIPA_USE_BODY_NAMESPACE.equals(this.getSoapReplyToNamespace());
 	}
 	
@@ -3709,7 +3794,7 @@ public class ModIProperties {
     	return this.getSoapRequestDigestNamespace;
 	}
 	
-	public boolean useSoapBodyRequestDigestNamespace() throws Exception {
+	public boolean useSoapBodyRequestDigestNamespace() throws ProtocolException {
 		return ModICostanti.MODIPA_USE_BODY_NAMESPACE.equals(this.getSoapRequestDigestNamespace());
 	}
 	
@@ -3819,26 +3904,26 @@ public class ModIProperties {
     	
     	return this.getSoapSecurityTokenWsaTo;
 	}
-	private Boolean getSoapSecurityTokenWsaTo_soapAction= null;
-	private Boolean getSoapSecurityTokenWsaTo_operation= null;
-	private Boolean getSoapSecurityTokenWsaTo_none= null;
+	private Boolean getSoapSecurityTokenWsaToSoapAction= null;
+	private Boolean getSoapSecurityTokenWsaToOperation= null;
+	private Boolean getSoapSecurityTokenWsaToNone= null;
 	public boolean isSoapSecurityTokenWsaToSoapAction() throws ProtocolException {
-		if(this.getSoapSecurityTokenWsaTo_soapAction==null) {
-			this.getSoapSecurityTokenWsaTo_soapAction = ModICostanti.CONFIG_MODIPA_SOAP_SECURITY_TOKEN_WSA_TO_KEYWORD_SOAP_ACTION.equalsIgnoreCase(getSoapSecurityTokenWsaTo());
+		if(this.getSoapSecurityTokenWsaToSoapAction==null) {
+			this.getSoapSecurityTokenWsaToSoapAction = ModICostanti.CONFIG_MODIPA_SOAP_SECURITY_TOKEN_WSA_TO_KEYWORD_SOAP_ACTION.equalsIgnoreCase(getSoapSecurityTokenWsaTo());
 		}
-		return this.getSoapSecurityTokenWsaTo_soapAction;
+		return this.getSoapSecurityTokenWsaToSoapAction;
 	}
 	public boolean isSoapSecurityTokenWsaToOperation() throws ProtocolException {
-		if(this.getSoapSecurityTokenWsaTo_operation==null) {
-			this.getSoapSecurityTokenWsaTo_operation = ModICostanti.CONFIG_MODIPA_SOAP_SECURITY_TOKEN_WSA_TO_KEYWORD_OPERATION.equalsIgnoreCase(getSoapSecurityTokenWsaTo());
+		if(this.getSoapSecurityTokenWsaToOperation==null) {
+			this.getSoapSecurityTokenWsaToOperation = ModICostanti.CONFIG_MODIPA_SOAP_SECURITY_TOKEN_WSA_TO_KEYWORD_OPERATION.equalsIgnoreCase(getSoapSecurityTokenWsaTo());
 		}
-		return this.getSoapSecurityTokenWsaTo_operation;
+		return this.getSoapSecurityTokenWsaToOperation;
 	}
 	public boolean isSoapSecurityTokenWsaToDisabled() throws ProtocolException {
-		if(this.getSoapSecurityTokenWsaTo_none==null) {
-			this.getSoapSecurityTokenWsaTo_none = ModICostanti.CONFIG_MODIPA_SOAP_SECURITY_TOKEN_WSA_TO_KEYWORD_NONE.equalsIgnoreCase(getSoapSecurityTokenWsaTo());
+		if(this.getSoapSecurityTokenWsaToNone==null) {
+			this.getSoapSecurityTokenWsaToNone = ModICostanti.CONFIG_MODIPA_SOAP_SECURITY_TOKEN_WSA_TO_KEYWORD_NONE.equalsIgnoreCase(getSoapSecurityTokenWsaTo());
 		}
-		return this.getSoapSecurityTokenWsaTo_none;
+		return this.getSoapSecurityTokenWsaToNone;
 	}
 	
 	private Boolean getSoapResponseSecurityTokenAudienceDefaultReaded= null;
@@ -4031,60 +4116,60 @@ public class ModIProperties {
 	 * @return True se la funzionalita' 'Riferimento ID Richiesta' richiede che venga fornito obbligatoriamente l'informazione sull'identificativo della richiesta tramite i meccanismi di integrazione
      * 
      */
-	private Boolean isRiferimentoIDRichiesta_PD_Required= null;
-	private Boolean isRiferimentoIDRichiesta_PD_RequiredRead= null;
-    public Boolean isRiferimentoIDRichiesta_PD_Required(){
-    	if(this.isRiferimentoIDRichiesta_PD_RequiredRead==null){
+	private Boolean isRiferimentoIDRichiestaPortaDelegataRequired= null;
+	private Boolean isRiferimentoIDRichiestaPortaDelegataRequiredRead= null;
+    public Boolean isRiferimentoIDRichiestaPortaDelegataRequired(){
+    	if(this.isRiferimentoIDRichiestaPortaDelegataRequiredRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.pd.riferimentoIdRichiesta.required"); 
 				
 				if (value != null){
 					value = value.trim();
-					this.isRiferimentoIDRichiesta_PD_Required = Boolean.parseBoolean(value);
+					this.isRiferimentoIDRichiestaPortaDelegataRequired = Boolean.parseBoolean(value);
 				}else{
 					this.logDebug(getMessaggioErroreProprietaNonImpostata("org.openspcoop2.protocol.modipa.pd.riferimentoIdRichiesta.required", true));
-					this.isRiferimentoIDRichiesta_PD_Required = true;
+					this.isRiferimentoIDRichiestaPortaDelegataRequired = true;
 				}
 				
-				this.isRiferimentoIDRichiesta_PD_RequiredRead = true;
+				this.isRiferimentoIDRichiestaPortaDelegataRequiredRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprietà 'org.openspcoop2.protocol.modipa.pd.riferimentoIdRichiesta.required' non impostata, viene utilizzato il default 'true', errore:"+e.getMessage());
-				this.isRiferimentoIDRichiesta_PD_Required = true;
+				this.isRiferimentoIDRichiestaPortaDelegataRequired = true;
 				
-				this.isRiferimentoIDRichiesta_PD_RequiredRead = true;
+				this.isRiferimentoIDRichiestaPortaDelegataRequiredRead = true;
 			}
     	}
     	
-    	return this.isRiferimentoIDRichiesta_PD_Required;
+    	return this.isRiferimentoIDRichiestaPortaDelegataRequired;
 	}
 	
-	private Boolean isRiferimentoIDRichiesta_PA_Required= null;
-	private Boolean isRiferimentoIDRichiesta_PA_RequiredRead= null;
-    public Boolean isRiferimentoIDRichiesta_PA_Required(){
-    	if(this.isRiferimentoIDRichiesta_PA_RequiredRead==null){
+	private Boolean isRiferimentoIDRichiestaPortaApplicativaRequired= null;
+	private Boolean isRiferimentoIDRichiestaPortaApplicativaRequiredRead= null;
+    public Boolean isRiferimentoIDRichiestaPortaApplicativaRequired(){
+    	if(this.isRiferimentoIDRichiestaPortaApplicativaRequiredRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.pa.riferimentoIdRichiesta.required"); 
 				
 				if (value != null){
 					value = value.trim();
-					this.isRiferimentoIDRichiesta_PA_Required = Boolean.parseBoolean(value);
+					this.isRiferimentoIDRichiestaPortaApplicativaRequired = Boolean.parseBoolean(value);
 				}else{
 					this.logDebug(getMessaggioErroreProprietaNonImpostata("org.openspcoop2.protocol.modipa.pa.riferimentoIdRichiesta.required", true));
-					this.isRiferimentoIDRichiesta_PA_Required = true;
+					this.isRiferimentoIDRichiestaPortaApplicativaRequired = true;
 				}
 				
-				this.isRiferimentoIDRichiesta_PA_RequiredRead = true;
+				this.isRiferimentoIDRichiestaPortaApplicativaRequiredRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprietà 'org.openspcoop2.protocol.modipa.pa.riferimentoIdRichiesta.required' non impostata, viene utilizzato il default 'true', errore:"+e.getMessage());
-				this.isRiferimentoIDRichiesta_PA_Required = true;
+				this.isRiferimentoIDRichiestaPortaApplicativaRequired = true;
 				
-				this.isRiferimentoIDRichiesta_PA_RequiredRead = true;
+				this.isRiferimentoIDRichiestaPortaApplicativaRequiredRead = true;
 			}
     	}
     	
-    	return this.isRiferimentoIDRichiesta_PA_Required;
+    	return this.isRiferimentoIDRichiestaPortaApplicativaRequired;
 	}
 	
 	
@@ -4097,32 +4182,32 @@ public class ModIProperties {
      * @return Indicazione se ritornare un soap fault personalizzato nel codice/actor/faultString per i messaggi di errore di protocollo (Porta Applicativa)
      * 
      */
-	private Boolean isPortaApplicativaBustaErrore_personalizzaElementiFault= null;
-	private Boolean isPortaApplicativaBustaErrore_personalizzaElementiFaultRead= null;
-    public Boolean isPortaApplicativaBustaErrore_personalizzaElementiFault(){
-    	if(this.isPortaApplicativaBustaErrore_personalizzaElementiFaultRead==null){
+	private Boolean isPortaApplicativaBustaErrorePersonalizzaElementiFault= null;
+	private Boolean isPortaApplicativaBustaErrorePersonalizzaElementiFaultRead= null;
+    public Boolean isPortaApplicativaBustaErrorePersonalizzaElementiFault(){
+    	if(this.isPortaApplicativaBustaErrorePersonalizzaElementiFaultRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.pa.bustaErrore.personalizzaElementiFault"); 
 				
 				if (value != null){
 					value = value.trim();
-					this.isPortaApplicativaBustaErrore_personalizzaElementiFault = Boolean.parseBoolean(value);
+					this.isPortaApplicativaBustaErrorePersonalizzaElementiFault = Boolean.parseBoolean(value);
 				}else{
 					this.logDebug("Proprietà 'org.openspcoop2.protocol.modipa.pa.bustaErrore.personalizzaElementiFault' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails)");
-					this.isPortaApplicativaBustaErrore_personalizzaElementiFault = null;
+					this.isPortaApplicativaBustaErrorePersonalizzaElementiFault = null;
 				}
 				
-				this.isPortaApplicativaBustaErrore_personalizzaElementiFaultRead = true;
+				this.isPortaApplicativaBustaErrorePersonalizzaElementiFaultRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprietà 'org.openspcoop2.protocol.modipa.pa.bustaErrore.personalizzaElementiFault' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails), errore:"+e.getMessage());
-				this.isPortaApplicativaBustaErrore_personalizzaElementiFault = null;
+				this.isPortaApplicativaBustaErrorePersonalizzaElementiFault = null;
 				
-				this.isPortaApplicativaBustaErrore_personalizzaElementiFaultRead = true;
+				this.isPortaApplicativaBustaErrorePersonalizzaElementiFaultRead = true;
 			}
     	}
     	
-    	return this.isPortaApplicativaBustaErrore_personalizzaElementiFault;
+    	return this.isPortaApplicativaBustaErrorePersonalizzaElementiFault;
 	}
     
     
@@ -4132,32 +4217,32 @@ public class ModIProperties {
      * @return Indicazione se deve essere aggiunto un errore-applicativo nei details di un messaggio di errore di protocollo (Porta Applicativa)
      * 
      */
-	private Boolean isPortaApplicativaBustaErrore_aggiungiErroreApplicativo= null;
-	private Boolean isPortaApplicativaBustaErrore_aggiungiErroreApplicativoRead= null;
-    public Boolean isPortaApplicativaBustaErrore_aggiungiErroreApplicativo(){
-    	if(this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativoRead==null){
+	private Boolean isPortaApplicativaBustaErroreAggiungiErroreApplicativo= null;
+	private Boolean isPortaApplicativaBustaErroreAggiungiErroreApplicativoRead= null;
+    public Boolean isPortaApplicativaBustaErroreAggiungiErroreApplicativo(){
+    	if(this.isPortaApplicativaBustaErroreAggiungiErroreApplicativoRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.pa.bustaErrore.aggiungiErroreApplicativo"); 
 				
 				if (value != null){
 					value = value.trim();
-					this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo = Boolean.parseBoolean(value);
+					this.isPortaApplicativaBustaErroreAggiungiErroreApplicativo = Boolean.parseBoolean(value);
 				}else{
 					this.logDebug("Proprietà 'org.openspcoop2.protocol.modipa.pa.bustaErrore.aggiungiErroreApplicativo' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails)");
-					this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo = null;
+					this.isPortaApplicativaBustaErroreAggiungiErroreApplicativo = null;
 				}
 				
-				this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativoRead = true;
+				this.isPortaApplicativaBustaErroreAggiungiErroreApplicativoRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprietà 'org.openspcoop2.protocol.modipa.pa.bustaErrore.aggiungiErroreApplicativo' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails), errore:"+e.getMessage());
-				this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo = null;
+				this.isPortaApplicativaBustaErroreAggiungiErroreApplicativo = null;
 				
-				this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativoRead = true;
+				this.isPortaApplicativaBustaErroreAggiungiErroreApplicativoRead = true;
 			}
     	}
     	
-    	return this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo;
+    	return this.isPortaApplicativaBustaErroreAggiungiErroreApplicativo;
 	}
 	
     /**
@@ -4413,33 +4498,33 @@ public class ModIProperties {
      * @return Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultApplicativo originale
      * 
      */
-	private BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultApplicativo= null;
-	private Boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead= null;
-    public BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultApplicativo(){
-    	if(this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead==null){
+	private BooleanNullable isAggiungiDetailErroreApplicativoSoapFaultApplicativo= null;
+	private Boolean isAggiungiDetailErroreApplicativoSoapFaultApplicativoRead= null;
+    public BooleanNullable isAggiungiDetailErroreApplicativoSoapFaultApplicativo(){
+    	if(this.isAggiungiDetailErroreApplicativoSoapFaultApplicativoRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.erroreApplicativo.faultApplicativo.enrichDetails"); 
 				
 				if (value != null){
 					value = value.trim();
 					Boolean b = Boolean.parseBoolean(value);
-					this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = b ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
+					this.isAggiungiDetailErroreApplicativoSoapFaultApplicativo = b.booleanValue() ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
 				}else{
 					this.logDebug("Proprietà 'org.openspcoop2.protocol.modipa.erroreApplicativo.faultApplicativo.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails)");
-					this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = BooleanNullable.NULL();
+					this.isAggiungiDetailErroreApplicativoSoapFaultApplicativo = BooleanNullable.NULL();
 				}
 				
-				this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead = true;
+				this.isAggiungiDetailErroreApplicativoSoapFaultApplicativoRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprietà 'org.openspcoop2.protocol.modipa.erroreApplicativo.faultApplicativo.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails), errore:"+e.getMessage());
-				this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = BooleanNullable.NULL();
+				this.isAggiungiDetailErroreApplicativoSoapFaultApplicativo = BooleanNullable.NULL();
 				
-				this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead = true;
+				this.isAggiungiDetailErroreApplicativoSoapFaultApplicativoRead = true;
 			}
     	}
     	
-    	return this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo;
+    	return this.isAggiungiDetailErroreApplicativoSoapFaultApplicativo;
 	}
     
     /**
@@ -4448,33 +4533,33 @@ public class ModIProperties {
      * @return Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultPdD originale
      * 
      */
-	private BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultPdD= null;
-	private Boolean isAggiungiDetailErroreApplicativo_SoapFaultPdDRead= null;
-    public BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultPdD(){
-    	if(this.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead==null){
+	private BooleanNullable isAggiungiDetailErroreApplicativoSoapFaultPdD= null;
+	private Boolean isAggiungiDetailErroreApplicativoSoapFaultPdDRead= null;
+    public BooleanNullable isAggiungiDetailErroreApplicativoSoapFaultPdD(){
+    	if(this.isAggiungiDetailErroreApplicativoSoapFaultPdDRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.erroreApplicativo.faultPdD.enrichDetails"); 
 				
 				if (value != null){
 					value = value.trim();
 					Boolean b = Boolean.parseBoolean(value);
-					this.isAggiungiDetailErroreApplicativo_SoapFaultPdD = b ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
+					this.isAggiungiDetailErroreApplicativoSoapFaultPdD = b.booleanValue() ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
 				}else{
 					this.logDebug("Proprietà 'org.openspcoop2.protocol.modipa.erroreApplicativo.faultPdD.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultPdD.enrichDetails)");
-					this.isAggiungiDetailErroreApplicativo_SoapFaultPdD = BooleanNullable.NULL();
+					this.isAggiungiDetailErroreApplicativoSoapFaultPdD = BooleanNullable.NULL();
 				}
 				
-				this.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead = true;
+				this.isAggiungiDetailErroreApplicativoSoapFaultPdDRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprietà 'org.openspcoop2.protocol.modipa.erroreApplicativo.faultPdD.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultPdD.enrichDetails), errore:"+e.getMessage());
-				this.isAggiungiDetailErroreApplicativo_SoapFaultPdD = BooleanNullable.NULL();
+				this.isAggiungiDetailErroreApplicativoSoapFaultPdD = BooleanNullable.NULL();
 				
-				this.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead = true;
+				this.isAggiungiDetailErroreApplicativoSoapFaultPdDRead = true;
 			}
     	}
     	
-    	return this.isAggiungiDetailErroreApplicativo_SoapFaultPdD;
+    	return this.isAggiungiDetailErroreApplicativoSoapFaultPdD;
 	}
 
     
