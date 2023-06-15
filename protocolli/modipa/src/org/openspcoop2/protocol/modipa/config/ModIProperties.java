@@ -93,9 +93,7 @@ public class ModIProperties {
 		}
 		
 		Properties propertiesReader = new Properties();
-		java.io.InputStream properties = null;
-		try{  
-			properties = ModIProperties.class.getResourceAsStream("/modipa.properties");
+		try (java.io.InputStream properties = ModIProperties.class.getResourceAsStream("/modipa.properties");){  
 			if(properties==null){
 				throw new ProtocolException("File '/modipa.properties' not found");
 			}
@@ -103,13 +101,6 @@ public class ModIProperties {
 		}catch(Exception e) {
 			this.logError("Riscontrato errore durante la lettura del file 'modipa.properties': "+e.getMessage());
 			throw new ProtocolException("ModIProperties initialize error: "+e.getMessage(),e);
-		}finally{
-			try{
-				if(properties!=null)
-					properties.close();
-			}catch(Exception er){
-				// close
-			}
 		}
 		try{
 			this.reader = new ModIInstanceProperties(propertiesReader, this.log);
