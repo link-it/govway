@@ -456,7 +456,7 @@ public final class ServiziApplicativiChange extends Action {
 			Parameter pIdSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId()+"");
 			Parameter pIdSoggettoSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, sa.getIdSoggetto()+"");
 			
-			parametersServletCredenzialiList = new ArrayList<Parameter>();
+			parametersServletCredenzialiList = new ArrayList<>();
 			parametersServletCredenzialiList.add(pIdSA);
 			parametersServletCredenzialiList.add(pIdSoggettoSA);
 			

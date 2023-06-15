@@ -2310,7 +2310,7 @@ public class UtentiHelper extends ConsoleHelper {
 			
 			boolean showProtocolli = (user.getProtocolliSupportati() != null && user.getProtocolliSupportati().size() >1);
 			
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 			lstParam.add(new Parameter(UtentiCostanti.LABEL_UTENTI ,UtentiCostanti.SERVLET_NAME_UTENTI_LIST));
 			lstParam.add(new Parameter(user.getLogin(), UtentiCostanti.SERVLET_NAME_UTENTI_CHANGE, new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, user.getLogin())));
 			// setto la barra del titolo
@@ -2398,7 +2398,7 @@ public class UtentiHelper extends ConsoleHelper {
 			
 			boolean showProtocolli = (user.getProtocolliSupportati() != null && user.getProtocolliSupportati().size() >1);
 			
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 			lstParam.add(new Parameter(UtentiCostanti.LABEL_UTENTI ,UtentiCostanti.SERVLET_NAME_UTENTI_LIST));
 			lstParam.add(new Parameter(user.getLogin(), UtentiCostanti.SERVLET_NAME_UTENTI_CHANGE, new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, user.getLogin())));
 			// setto la barra del titolo

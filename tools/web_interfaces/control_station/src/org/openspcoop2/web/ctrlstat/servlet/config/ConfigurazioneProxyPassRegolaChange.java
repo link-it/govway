@@ -123,7 +123,7 @@ public final class ConfigurazioneProxyPassRegolaChange extends Action {
 
 			// Preparo il menu
 			confHelper.makeMenu();
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 			
 			List<String> protocolli = confCore.getProtocolli();
 			List<IDSoggetto> soggetti = new ArrayList<>();

@@ -69,7 +69,7 @@ public class Operation {
 		return this.operazioniPrecedentiAncoraDaGestire.get(index);
 	}
 	
-	private List<Parameter> parameters = new ArrayList<Parameter>();
+	private List<Parameter> parameters = new ArrayList<>();
 	private java.util.Map<String,String> parametersHash = new java.util.HashMap<>();
 	
 	public void addParameter(Parameter p){

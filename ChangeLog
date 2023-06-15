@@ -1,5 +1,12 @@
 2023-06-15  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Nella maschera di creazione di un soggetto con profilo di interoperabiltà 'API Gateway' o 'ModI', 
+	è adesso consentito creare il soggetto con tipologia 'Fruitore' anche senza credenziali.
+	Questo scenario serve a definire il soggetto che verrà poi associato all'applicativo fruitore che possiede le credenziali.
+
+2023-06-15  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Risolto Bug OP-1598
 	(https://github.com/link-it/govway/issues/133)

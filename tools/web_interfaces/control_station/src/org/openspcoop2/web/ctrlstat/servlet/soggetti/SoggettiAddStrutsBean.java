@@ -43,8 +43,19 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 public class SoggettiAddStrutsBean {
 
 	protected String editMode = null;
-	protected String nomeprov , tipoprov, portadom, descr, versioneProtocollo,pdd, codiceIpa, pd_url_prefix_rewriter,pa_url_prefix_rewriter,protocollo,dominio;
-	protected boolean isRouter,privato; 
+	protected String nomeprov;
+	protected String tipoprov;
+	protected String portadom;
+	protected String descr;
+	protected String versioneProtocollo;
+	protected String pdd;
+	protected String codiceIpa;
+	protected String pdUrlPrefixRewriter;
+	protected String paUrlPrefixRewriter;
+	protected String protocollo;
+	protected String dominio;
+	protected boolean isRouter;
+	protected boolean privato; 
 	protected Boolean singlePdD = null;
 	protected String tipologia = null;
 

@@ -126,7 +126,7 @@ public class Parameter implements Serializable {
 	}
 	
 	public static List<Parameter> estraiParametriDaUrl(String url) {
-		List<Parameter> lista = new ArrayList<Parameter>();
+		List<Parameter> lista = new ArrayList<>();
 		if(url.contains("?")) {
 			String queryString = url.substring(url.indexOf("?")+1);
 			

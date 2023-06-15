@@ -73,7 +73,7 @@ public class ScopeHelper extends ConsoleHelper{
 		
 		if(TipoOperazione.CHANGE.equals(tipoOP)){
 			
-			List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+			List<Parameter> listaParametriChange = new ArrayList<>();
 			Parameter pId = new Parameter(ScopeCostanti.PARAMETRO_SCOPE_ID, scopeId+"");
 			listaParametriChange.add(pId);
 			

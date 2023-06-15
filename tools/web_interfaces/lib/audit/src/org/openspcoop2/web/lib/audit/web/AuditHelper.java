@@ -243,7 +243,7 @@ public class AuditHelper {
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT, 
 					AuditCostanti.SERVLET_NAME_AUDIT));
@@ -1137,7 +1137,7 @@ public class AuditHelper {
 
 			Parameter pIdOp = new Parameter(AuditCostanti.PARAMETRO_AUDIT_OPERATION_ID_OP, singleOp.getId() + "");
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			int size = params != null ? params.length +1 : 1;
 			Parameter [] params2 = new Parameter[size];

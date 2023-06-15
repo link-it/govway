@@ -69,7 +69,7 @@ public final class ConfigurazioneExtended extends AbstractServletNewWindowChange
 	
 	@Override
 	protected List<Parameter> getTitle(Object object,HttpServletRequest request, HttpSession session) throws Exception {
-		List<Parameter> lstParam = new ArrayList<Parameter>();
+		List<Parameter> lstParam = new ArrayList<>();
 		lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 		return lstParam;
 	}

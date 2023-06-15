@@ -2129,7 +2129,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 			
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request).getValue();
 			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
@@ -2382,7 +2382,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 			// setto la barra del titolo
-			List<Parameter> lstParm = new ArrayList<Parameter>();
+			List<Parameter> lstParm = new ArrayList<>();
 
 			if(showConfigurazionePD) {
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
@@ -3117,7 +3117,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String tmpTitle = this.getLabelIdServizio(asps);
 
 			// setto la barra del titolo
-			List<Parameter> lstParm = new ArrayList<Parameter>();
+			List<Parameter> lstParm = new ArrayList<>();
 
 			lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 
@@ -3454,7 +3454,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String servizioTmpTile = this.getLabelIdServizio(asps);
 			
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			
 			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request).getValue();
@@ -4851,7 +4851,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			Parameter pIdFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID, idFruzione+ "");
 
 			// setto la barra del titolo
-			List<Parameter> lstParm = new ArrayList<Parameter>();
+			List<Parameter> lstParm = new ArrayList<>();
 
 			lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 			lstParm.add(new Parameter(servizioTmpTile, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, pIdServizio,pNomeServizio, pTipoServizio));
@@ -5307,7 +5307,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request).getValue();
 			String labelAzioni = this.getLabelAzioni(serviceBindingMessage);
@@ -8865,10 +8865,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					dati.add(de);
 	
 					if(isProfiloAsincronoSupportatoDalProtocollo){
-						List<Parameter> lstParam = new ArrayList<Parameter>();
+						List<Parameter> lstParam = new ArrayList<>();
 	
 						if(isRuoloNormale){
-							lstParam = new ArrayList<Parameter>();
+							lstParam = new ArrayList<>();
 							lstParam.add(pId);
 							lstParam.add(pIdSoggettoErogatore);
 							lstParam.add(pIdSoggettoFruitore);
@@ -8901,7 +8901,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_EROGATORE_ESTESO);
 							dati.add(de);
 						}else {
-							lstParam = new ArrayList<Parameter>();
+							lstParam = new ArrayList<>();
 							lstParam.add(pId);
 							lstParam.add(pIdSoggettoErogatore);
 							lstParam.add(pIdSoggettoFruitore);
@@ -8935,7 +8935,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							dati.add(de);
 						}
 					}else {
-						List<Parameter> lstParam = new ArrayList<Parameter>();
+						List<Parameter> lstParam = new ArrayList<>();
 						lstParam.add(pId);
 						lstParam.add(pIdSoggettoErogatore);
 						lstParam.add(pIdSoggettoFruitore);

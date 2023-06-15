@@ -37,7 +37,7 @@ import java.util.List;
  */
 public class FilterParameter {
 
-	List<Parameter> parameters = new ArrayList<Parameter>();
+	List<Parameter> parameters = new ArrayList<>();
 	
 	public void addFilterParameter(Parameter p){
 		this.parameters.add(p);

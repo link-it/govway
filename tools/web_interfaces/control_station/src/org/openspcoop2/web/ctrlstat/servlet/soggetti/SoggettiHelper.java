@@ -137,7 +137,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			boolean isSupportatoCodiceIPA, boolean isSupportatoIdentificativoPorta,
 			String [] pddList,String[] pddEsterneList,String nomePddGestioneLocale,String pdd, 
 			String id, String oldnomeprov, String oldtipoprov, org.openspcoop2.core.registry.Connettore connettore,
-			long numPD,String pd_url_prefix_rewriter,long numPA, String pa_url_prefix_rewriter, List<String> listaTipiProtocollo, String protocollo,
+			long numPD,String pdUrlPrefixRewriter,long numPA, String paUrlPrefixRewriter, List<String> listaTipiProtocollo, String protocollo,
 			boolean isSupportatoAutenticazioneSoggetti, String utente,String password, String subject, String principal, String tipoauth,
 			boolean isPddEsterna,String tipologia, String dominio,String tipoCredenzialiSSLSorgente, org.openspcoop2.utils.certificate.ArchiveType tipoCredenzialiSSLTipoArchivio, BinaryParameter tipoCredenzialiSSLFileCertificato, String tipoCredenzialiSSLFileCertificatoPassword,
 			List<String> listaAliasEstrattiCertificato, String tipoCredenzialiSSLAliasCertificato,	String tipoCredenzialiSSLAliasCertificatoSubject, String tipoCredenzialiSSLAliasCertificatoIssuer,
@@ -152,7 +152,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		if(TipoOperazione.CHANGE.equals(tipoOp)){
 			String labelSoggetto = this.getLabelNomeSoggetto(protocollo, tipoprov, nomeprov);
 			
-			List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+			List<Parameter> listaParametriChange = new ArrayList<>();
 			listaParametriChange.add(new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,id));
 			listaParametriChange.add(new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,nomeprov));
 			listaParametriChange.add(new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,tipoprov));
@@ -569,8 +569,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			boolean showCredenziali = true;
 			if(this.pddCore.isPddEsterna(pdd)){
 				if(SoggettiCostanti.SOGGETTO_RUOLO_FRUITORE.equals(tipologia) || SoggettiCostanti.SOGGETTO_RUOLO_ENTRAMBI.equals(tipologia)){
-					/**autenticazioneNessunaAbilitata = this.saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocollo);*/
-					autenticazioneNessunaAbilitata = false;
+					autenticazioneNessunaAbilitata = this.saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocollo);
 				}
 				if(SoggettiCostanti.SOGGETTO_RUOLO_EROGATORE.equals(tipologia)){
 					showCredenziali = false;
@@ -671,7 +670,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				de.setType(DataElementType.HIDDEN);
 			}
 			de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_PD_URL_PREFIX_REWRITER);
-			de.setValue(pd_url_prefix_rewriter);
+			de.setValue(pdUrlPrefixRewriter);
 			de.setSize(this.getSize());
 			dati.add(de);
 			
@@ -704,7 +703,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				de.setType(DataElementType.HIDDEN);
 			}
 			de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_PA_URL_PREFIX_REWRITER);
-			de.setValue(pa_url_prefix_rewriter);
+			de.setValue(paUrlPrefixRewriter);
 			de.setSize(this.getSize());
 			dati.add(de);
 			
@@ -1621,7 +1620,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		// Titolo (nome soggetto)
 		String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(elem.getTipo());
 		
-		List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+		List<Parameter> listaParametriChange = new ArrayList<>();
 		listaParametriChange.add(new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""));
 		listaParametriChange.add(new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,elem.getNome()));
 		listaParametriChange.add(new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,elem.getTipo()));
@@ -2134,7 +2133,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 	
 	public void prepareSoggettiCredenzialiList(Soggetto soggettoRegistry, String id) throws Exception{
 		try {
-			List<Parameter> parametersServletSoggettoChange = new ArrayList<Parameter>();
+			List<Parameter> parametersServletSoggettoChange = new ArrayList<>();
 			Parameter pIdSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, id);
 			Parameter pNomeSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME, soggettoRegistry.getNome());
 			Parameter pTipoSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO, soggettoRegistry.getTipo());
@@ -2194,7 +2193,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				String tipoCredenzialiSSLAliasCertificatoNotAfter = this.getSdfCredenziali().format(notAfter);
 				
 				Parameter pIdCredenziale = new Parameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CREDENZIALI_ID, i+"");
-				List<Parameter> parametersServletCredenzialeChange = new ArrayList<Parameter>();
+				List<Parameter> parametersServletCredenzialeChange = new ArrayList<>();
 				parametersServletCredenzialeChange.add(pIdCredenziale);
 				parametersServletCredenzialeChange.addAll(parametersServletSoggettoChange);
 				parametersServletCredenzialeChange.add(new Parameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_MULTI_AGGIORNA,Costanti.CHECK_BOX_ENABLED));
@@ -2500,7 +2499,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 	}
 	public void prepareSoggettiProprietaList(Soggetto soggettoRegistry, String id, ConsoleSearch ricerca,	List<Proprieta> lista) throws Exception {
 		try {
-			List<Parameter> parametersServletSoggettoChange = new ArrayList<Parameter>();
+			List<Parameter> parametersServletSoggettoChange = new ArrayList<>();
 			Parameter pIdSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, id);
 			Parameter pNomeSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME, soggettoRegistry.getNome());
 			Parameter pTipoSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO, soggettoRegistry.getTipo());
@@ -2523,7 +2522,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 			
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 			lstParam.add(new Parameter(SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
 			lstParam.add(new Parameter(this.getLabelNomeSoggetto(protocollo, soggettoRegistry.getTipo() , soggettoRegistry.getNome()),
 					SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE, parametersServletSoggettoChange.toArray(new Parameter[parametersServletSoggettoChange.size()])));
@@ -2562,7 +2561,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 					List<DataElement> e = new ArrayList<>();
 
 					Parameter pNomeProprieta = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTI_PROP_NOME, ssp.getNome());
-					List<Parameter> parametersServletProprietaChange = new ArrayList<Parameter>();
+					List<Parameter> parametersServletProprietaChange = new ArrayList<>();
 					parametersServletProprietaChange.add(pNomeProprieta);
 					parametersServletProprietaChange.addAll(parametersServletSoggettoChange);
 				

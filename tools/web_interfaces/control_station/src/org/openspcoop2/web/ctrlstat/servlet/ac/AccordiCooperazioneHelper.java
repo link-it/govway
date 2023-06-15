@@ -271,7 +271,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
 			if (search.equals("")) {
@@ -460,7 +460,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 					new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID, id));
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			this.pd.setSearchDescription("");
 			lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
@@ -932,7 +932,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			
 			// setto la barra del titolo
 			this.pd.setSearchDescription("");
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 			lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
 			if (search.equals("")) {
 				this.pd.setSearchDescription("");
@@ -1009,7 +1009,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			String titleAS = this.getLabelIdAccordoCooperazione(ac);
 			
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
 			if (search.equals("")) {

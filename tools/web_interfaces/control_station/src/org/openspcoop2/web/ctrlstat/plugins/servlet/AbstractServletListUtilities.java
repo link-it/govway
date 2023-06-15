@@ -82,7 +82,7 @@ public abstract class AbstractServletListUtilities extends Action {
 			PageData pd = consoleHelper.getPd();
 			ControlStationCore consoleCore = consoleHelper.getCore();
 			
-			List<Parameter> newLista = new ArrayList<Parameter>();
+			List<Parameter> newLista = new ArrayList<>();
 			
 			Parameter[] pSession = this.getParameterList(consoleHelper);
 			if(pSession!=null && pSession.length>0){
@@ -122,7 +122,7 @@ public abstract class AbstractServletListUtilities extends Action {
 
 			// setto la barra del titolo 1
 			List<Parameter> lstParam = this.getTitle(object,consoleHelper);
-			List<Parameter> listP = new ArrayList<Parameter>();
+			List<Parameter> listP = new ArrayList<>();
 			if(extendedFather.sizeParameter()>0){
 				listP.addAll(extendedFather.getParameter());
 			}
@@ -205,7 +205,7 @@ public abstract class AbstractServletListUtilities extends Action {
 			IExtendedListServlet extendedServlet,IExtendedBean extendedBean,PageData pd,TipoOperazione tipoOperazione,UrlParameters extendedList) throws Exception{
 		List<Parameter> lstParam = this.getTitle(object,consoleHelper);
 		
-		List<Parameter> listP = new ArrayList<Parameter>();
+		List<Parameter> listP = new ArrayList<>();
 		if(extendedList.sizeParameter()>0){
 			listP.addAll(extendedList.getParameter());
 		}

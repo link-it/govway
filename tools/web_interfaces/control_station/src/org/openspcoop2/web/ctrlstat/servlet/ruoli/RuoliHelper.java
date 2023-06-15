@@ -71,7 +71,7 @@ public class RuoliHelper extends ConsoleHelper{
 		
 		if(TipoOperazione.CHANGE.equals(tipoOP)){
 		
-			List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+			List<Parameter> listaParametriChange = new ArrayList<>();
 			Parameter pId = new Parameter(RuoliCostanti.PARAMETRO_RUOLO_ID, ruoloId+"");
 			listaParametriChange.add(pId);
 			

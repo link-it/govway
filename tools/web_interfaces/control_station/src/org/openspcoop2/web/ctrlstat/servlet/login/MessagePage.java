@@ -101,7 +101,7 @@ public class MessagePage extends Action {
 				
 				if(messageBreadcrumbs!= null) {
 					// setto la barra del titolo
-					List<Parameter> lstParam = new ArrayList<Parameter>();
+					List<Parameter> lstParam = new ArrayList<>();
 					lstParam.add(new Parameter(messageBreadcrumbs, null));
 					ServletUtils.setPageDataTitle(pd, lstParam);
 				}

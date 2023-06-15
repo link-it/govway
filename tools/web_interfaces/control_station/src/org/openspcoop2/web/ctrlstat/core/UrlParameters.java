@@ -35,7 +35,7 @@ import org.openspcoop2.web.lib.mvc.Parameter;
 public class UrlParameters {
 
 	private String url;
-	private List<Parameter> parameter = new ArrayList<Parameter>();
+	private List<Parameter> parameter = new ArrayList<>();
 	
 	public String getUrl() {
 		return this.url;

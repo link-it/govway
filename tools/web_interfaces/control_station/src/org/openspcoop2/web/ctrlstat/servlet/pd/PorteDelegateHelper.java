@@ -2232,7 +2232,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 			boolean useIdSogg = false;
 			
 			switch (parentPD) {
@@ -4594,7 +4594,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					if(autenticazione || autenticazioneToken) {
 						
 						String servletTrasformazioniAutorizzazioneAutenticati =  PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_LIST;
-						List<Parameter> parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati = new ArrayList<Parameter>();
+						List<Parameter> parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati = new ArrayList<>();
 						parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pId);
 						parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pIdSoggetto);
 						parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pIdAsps);
@@ -4956,7 +4956,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			lstParam.add(new Parameter(nomeTrasformazione, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_CHANGE, 
 					pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione));
 			
-			List<Parameter> parametriInvocazioneServletTrasformazioniRisposta = new ArrayList<Parameter>();
+			List<Parameter> parametriInvocazioneServletTrasformazioniRisposta = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniRisposta.add(pId);
 			parametriInvocazioneServletTrasformazioniRisposta.add(pIdSoggetto);
 			parametriInvocazioneServletTrasformazioniRisposta.add(pIdAsps);
@@ -5105,7 +5105,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			lstParam.add(new Parameter(nomeTrasformazione, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_CHANGE, 
 					pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione));
 			
-			List<Parameter> parametriInvocazioneServletTrasformazioniRichiesta = new ArrayList<Parameter>();
+			List<Parameter> parametriInvocazioneServletTrasformazioniRichiesta = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniRichiesta.add(pId);
 			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdSoggetto);
 			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdAsps);
@@ -5251,7 +5251,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			lstParam.add(new Parameter(nomeTrasformazione, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_CHANGE, 
 					pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione));
 			
-			List<Parameter> parametriInvocazioneServletTrasformazioniRichiesta = new ArrayList<Parameter>();
+			List<Parameter> parametriInvocazioneServletTrasformazioniRichiesta = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniRichiesta.add(pId);
 			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdSoggetto);
 			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdAsps);

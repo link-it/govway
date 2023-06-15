@@ -918,7 +918,7 @@ public class PageData implements Serializable {
 	
 	public void addComandoResetCacheElementoButton(String servletName, List<Parameter> parameters) {
 		if(parameters == null) {
-			parameters = new ArrayList<Parameter>();
+			parameters = new ArrayList<>();
 		}
 		// aggiungo parametri postback (come si fa in postback.js)
 		parameters.add(new Parameter(Costanti.POSTBACK_ELEMENT_NAME, Costanti.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE));
@@ -931,7 +931,7 @@ public class PageData implements Serializable {
 	
 	public void addComandoVerificaCertificatiElementoButton(String servletName, List<Parameter> parameters) {
 		if(parameters == null) {
-			parameters = new ArrayList<Parameter>();
+			parameters = new ArrayList<>();
 		}
 		// aggiungo parametri postback (come si fa in postback.js)
 		parameters.add(new Parameter(Costanti.PARAMETRO_IS_POSTBACK, "true"));
@@ -943,7 +943,7 @@ public class PageData implements Serializable {
 	
 	public void addComandoVerificaConnettivitaElementoButton(String servletName, List<Parameter> parameters) {
 		if(parameters == null) {
-			parameters = new ArrayList<Parameter>();
+			parameters = new ArrayList<>();
 		}
 		// aggiungo parametri postback (come si fa in postback.js)
 		parameters.add(new Parameter(Costanti.PARAMETRO_IS_POSTBACK, "true"));
@@ -955,7 +955,7 @@ public class PageData implements Serializable {
 	
 	public void addComandoVisualizzaRuntimeElementoButton(String servletName, List<Parameter> parameters) {
 		if(parameters == null) {
-			parameters = new ArrayList<Parameter>();
+			parameters = new ArrayList<>();
 		}
 		// aggiungo parametri postback (come si fa in postback.js)
 		parameters.add(new Parameter(Costanti.PARAMETRO_IS_POSTBACK, "true"));
@@ -976,7 +976,7 @@ public class PageData implements Serializable {
 
 	public void addComandoAggiornaRicercaButton(String servletName, List<Parameter> parameters) {
 		if(parameters == null) {
-			parameters = new ArrayList<Parameter>();
+			parameters = new ArrayList<>();
 		}
 		// aggiungo parametri postback (come si fa in postback.js)
 		parameters.add(new Parameter(Costanti.POSTBACK_ELEMENT_NAME, Costanti.PARAMETRO_AGGIORNA_RICERCA));

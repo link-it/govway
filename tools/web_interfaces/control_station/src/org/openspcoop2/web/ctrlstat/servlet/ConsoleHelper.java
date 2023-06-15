@@ -17231,7 +17231,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	public void addDescrizioneVerificaConnettoreToDati(List<DataElement> dati, String server, String labelConnettore, 
 			Connettore connettore, boolean registro, String aliasConnettore) throws DriverControlStationException {
 		
-		List<Parameter> downloadCertServerParameters = new ArrayList<Parameter>();
+		List<Parameter> downloadCertServerParameters = new ArrayList<>();
 		
 		downloadCertServerParameters.add(new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_ID_CONNETTORE, connettore.getId().longValue()+""));
 		
@@ -21729,7 +21729,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	public void addComandoVerificaCertificatiButton(List<DataElement> e, String nomeElementoSuCuiEffettuareLaVerifica, String servletName, List<Parameter> parameters) {
 		if(parameters == null) {
-			parameters = new ArrayList<Parameter>();
+			parameters = new ArrayList<>();
 		}
 
 		this.addAzioneButton(e, DataElementType.IMAGE,  CostantiControlStation.ICONA_VERIFICA_CERTIFICATI_TOOLTIP,
@@ -21739,7 +21739,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	public void addComandoResetCacheButton(List<DataElement> e, String nomeElementoSuCuiEffettuareIlReset, String servletName, List<Parameter> parameters) {
 		if(parameters == null) {
-			parameters = new ArrayList<Parameter>();
+			parameters = new ArrayList<>();
 		}
 		
 		parameters.add(new Parameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE, "true"));
@@ -22781,7 +22781,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setType(DataElementType.TITLE);
 		dati.add(de);
 		
-		List<Parameter> listaParametriComuni = new ArrayList<Parameter>();
+		List<Parameter> listaParametriComuni = new ArrayList<>();
 		
 		Parameter parRuoloPorta = null;
 		if(ruoloPorta!=null) {
@@ -22812,7 +22812,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 			int numeroHandlersRichiesta = this.confCore.numeroHandlersRichiesta(valueRichiesta, ruoloPorta, idPorta);
 			
-			List<Parameter> listaParametriRichiesta = new ArrayList<Parameter>();
+			List<Parameter> listaParametriRichiesta = new ArrayList<>();
 			if(!listaParametriComuni.isEmpty()) {
 				listaParametriRichiesta.addAll(listaParametriComuni);
 			}
@@ -22840,7 +22840,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			int numeroHandlersRisposta = this.confCore.numeroHandlersRisposta(valueRisposta, ruoloPorta, idPorta);
 			
-			List<Parameter> listaParametriRisposta = new ArrayList<Parameter>();
+			List<Parameter> listaParametriRisposta = new ArrayList<>();
 			if(!listaParametriComuni.isEmpty()) {
 				listaParametriRisposta.addAll(listaParametriComuni);
 			}
@@ -22872,7 +22872,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					
 					int numeroHandlersServizio = this.confCore.numeroHandlersServizio(valueServizio);
 					
-					List<Parameter> listaParametriServizio = new ArrayList<Parameter>();
+					List<Parameter> listaParametriServizio = new ArrayList<>();
 					if(!listaParametriComuni.isEmpty()) {
 						listaParametriServizio.addAll(listaParametriComuni);
 					}
@@ -22894,7 +22894,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					
 					int numeroHandlersServizio = this.confCore.numeroHandlersServizio(valueServizio);
 					
-					List<Parameter> listaParametriServizio = new ArrayList<Parameter>();
+					List<Parameter> listaParametriServizio = new ArrayList<>();
 					if(!listaParametriComuni.isEmpty()) {
 						listaParametriServizio.addAll(listaParametriComuni);
 					}

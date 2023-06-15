@@ -300,7 +300,7 @@ public final class ConfigurazioneGenerale extends Action {
 			ResponseCachingConfigurazione cachingConfigurazione = responseCachingGenerale != null ? responseCachingGenerale.getConfigurazione() : null;
 			boolean visualizzaLinkConfigurazioneRegola = confHelper.isResponseCachingAbilitato(cachingConfigurazione) && responseCachingEnabled;
 			String servletResponseCachingConfigurazioneRegolaList = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_LIST;
-			List<Parameter> paramsResponseCachingConfigurazioneRegolaList = new ArrayList<Parameter>();
+			List<Parameter> paramsResponseCachingConfigurazioneRegolaList = new ArrayList<>();
 			int numeroResponseCachingConfigurazioneRegola = confHelper.numeroRegoleResponseCaching(cachingConfigurazione);
 			List<ResponseCachingConfigurazioneRegola> listaRegoleCachingConfigurazione = cachingConfigurazione != null ?  cachingConfigurazione.getRegolaList() : null;
 			int numeroRegoleProxyPass = confHelper.numeroRegoleProxyPass(configurazione.getUrlInvocazione());

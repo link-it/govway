@@ -1000,7 +1000,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 		AccordiServizioParteComuneHelper apcHelper = null;
 		AccordiServizioParteSpecificaHelper apsHelper = null;
 		Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, this.session, this.request, false).getValue();
-		List<Parameter> lstParam = new ArrayList<Parameter>();
+		List<Parameter> lstParam = new ArrayList<>();
 		String labelProprietario = nomeProprietario;
 		String tipoProtocollo = null;
 		IDAccordo idAccordoParteComune = null;

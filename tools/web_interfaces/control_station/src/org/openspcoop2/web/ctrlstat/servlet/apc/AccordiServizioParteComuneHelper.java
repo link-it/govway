@@ -5796,7 +5796,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
 			
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo), 
 					AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST,

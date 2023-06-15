@@ -289,7 +289,7 @@ public class ConfigurazioneAllarmiChange extends Action {
 				lstParam = lstParamPorta;
 			}
 			else {
-				lstParam  = new ArrayList<Parameter>();
+				lstParam  = new ArrayList<>();
 				
 				if(lstParamSession.size() > 0) {
 					lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI, 

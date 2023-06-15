@@ -62,6 +62,7 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.OggettoDialogEnum;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -120,8 +121,8 @@ public final class SoggettiAdd extends Action {
 			String isPrivatoParameter = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_IS_PRIVATO);
 			strutsBean.privato = ServletUtils.isCheckBoxEnabled(isPrivatoParameter);
 			strutsBean.codiceIpa = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_IPA);
-			strutsBean.pd_url_prefix_rewriter = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PD_URL_PREFIX_REWRITER);
-			strutsBean.pa_url_prefix_rewriter = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PA_URL_PREFIX_REWRITER);
+			strutsBean.pdUrlPrefixRewriter = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PD_URL_PREFIX_REWRITER);
+			strutsBean.paUrlPrefixRewriter = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PA_URL_PREFIX_REWRITER);
 			strutsBean.isRouter = ServletUtils.isCheckBoxEnabled(isRouterParameter);
 			strutsBean.dominio = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO);
 
@@ -215,6 +216,7 @@ public final class SoggettiAdd extends Action {
 
 			SoggettiCore soggettiCore = new SoggettiCore();
 			PddCore pddCore = new PddCore(soggettiCore);
+			ServiziApplicativiCore saCore = new ServiziApplicativiCore(soggettiCore);
 
 			// Tipi protocollo supportati
 			List<String> listaTipiProtocollo = soggettiCore.getProtocolli(request, session);
@@ -414,7 +416,8 @@ public final class SoggettiAdd extends Action {
 						strutsBean.tipologia = SoggettiCostanti.SOGGETTO_RUOLO_EROGATORE;
 					}
 
-					if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA.equals(strutsBean.tipoauthSoggetto)){
+					if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA.equals(strutsBean.tipoauthSoggetto) && 
+							!saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(strutsBean.protocollo)){
 						strutsBean.tipoauthSoggetto = null;
 					}
 				}
@@ -638,7 +641,7 @@ public final class SoggettiAdd extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = soggettiHelper.soggettiCheckData(tipoOp, null, strutsBean.tipoprov, strutsBean.nomeprov, strutsBean.codiceIpa, strutsBean.pd_url_prefix_rewriter, strutsBean.pa_url_prefix_rewriter,
+			boolean isOk = soggettiHelper.soggettiCheckData(tipoOp, null, strutsBean.tipoprov, strutsBean.nomeprov, strutsBean.codiceIpa, strutsBean.pdUrlPrefixRewriter, strutsBean.paUrlPrefixRewriter,
 					null, false, strutsBean.descr);
 
 			boolean singlePdD = strutsBean.singlePdD!=null && strutsBean.singlePdD.booleanValue();

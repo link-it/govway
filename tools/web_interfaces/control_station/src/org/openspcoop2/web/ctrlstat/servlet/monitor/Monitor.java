@@ -593,7 +593,7 @@ public final class Monitor extends Action {
 				ServletUtils.setObjectIntoSession(request, session, filterConsegnaAsincrona, MonitorCostanti.SESSION_ATTRIBUTE_FILTER_SEARCH);
 				
 				// refresh ricerca
-				List<Parameter> listRefresh = new ArrayList<Parameter>();
+				List<Parameter> listRefresh = new ArrayList<>();
 				listRefresh.add(pMethod);
 				listRefresh.add(pNewSearch);
 				listRefresh.add(pSorgente);
@@ -656,7 +656,7 @@ public final class Monitor extends Action {
 				}
 
 				// refresh ricerca
-				List<Parameter> listRefresh = new ArrayList<Parameter>();
+				List<Parameter> listRefresh = new ArrayList<>();
 				listRefresh.add(pMethod);
 				listRefresh.add(pNewSearch);
 				listRefresh.add(pSorgente);
@@ -678,7 +678,7 @@ public final class Monitor extends Action {
 					monitorHelper.makeMenu();
 
 					// setto la barra del titolo
-					List<Parameter> lstParam = new ArrayList<Parameter>();
+					List<Parameter> lstParam = new ArrayList<>();
 
 					lstParam.add(new Parameter(MonitorCostanti.LABEL_MONITOR, null));
 
@@ -1053,7 +1053,7 @@ public final class Monitor extends Action {
 	private List<Parameter> createSearchString(MonitorFormBean monitorFormBean )
 			throws Exception {
 		try {
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			// metodo
 			if (monitorFormBean.getMethod() != null) {
@@ -2121,7 +2121,7 @@ public final class Monitor extends Action {
 			pd.setSearch("off");
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(MonitorCostanti.LABEL_MONITOR, MonitorCostanti.SERVLET_NAME_MONITOR,
 					this.createSearchString(monitorFormBean).toArray(new Parameter[lstParam.size()])));
@@ -2297,7 +2297,7 @@ public final class Monitor extends Action {
 			pd.setNumEntries(totMsg);
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<>();
 
 			lstParam.add(new Parameter(MonitorCostanti.LABEL_MONITOR, MonitorCostanti.SERVLET_NAME_MONITOR,
 					this.createSearchString(monitorFormBean).toArray(new Parameter[lstParam.size()])));
