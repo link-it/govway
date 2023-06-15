@@ -587,6 +587,7 @@ Scenario: isTest('connettivita-base-idar04-jwk-ApplicativoBlockingIDA01') ||
 		isTest('manomissione-token-risposta-idar04-pdnd') ||
 		isTest('manomissione-payload-risposta-idar04-jwk') ||
 		isTest('manomissione-payload-risposta-idar04-pdnd') ||
+		isTest('manomissione-payload-risposta-vuota-idar04-jwk') ||
 		isTest('manomissione-header-http-firmati-risposta-idar04-jwk') ||
 		isTest('manomissione-header-http-firmati-risposta-idar04-pdnd') ||
 		isTest('assenza-header-integrity-risposta-idar04-jwk') ||

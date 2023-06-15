@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/400/InteroperabilityInvalidRequest.html",
+    "title": "InteroperabilityInvalidRequest",
+    "status": 400,
+    "detail": "[GOVWAY-1353] Header HTTP 'Digest' presente in una richiesta con http payload vuoto\n[GOVWAY-1355] Header HTTP 'Digest' possiede un valore non corrispondente al messaggio\n",
+    "govway_id": "#uuid"
+}

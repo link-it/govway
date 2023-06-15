@@ -5632,6 +5632,43 @@ Scenario: isTest('manomissione-payload-risposta-idar04-jwk') ||
     * set response.nuovo_campo = "pippa"
 
 
+Scenario: isTest('manomissione-payload-richiesta-vuota-idar04-jwk')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('manomissione-payload-richiesta-vuota-idar04-jwk')) {
+      tipoTest = 'JWK'
+    }
+    """
+
+    # nota: sull'erogazione c'è un handler che riconosce che il messaggio è rimasto {} e lo imposta a null. Da karate non ci sono riuscito
+    * remove request.a
+    * remove request.b
+    * karate.proceed(govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'-PayloadVuoto/v1')
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/manomissione-payload-richiesta-vuota.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+
+Scenario: isTest('manomissione-payload-risposta-vuota-idar04-jwk')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('manomissione-payload-risposta-vuota-idar04-jwk')) {
+      tipoTest = 'JWK'
+    }
+    """
+
+    * karate.proceed(govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
+    * match responseStatus == 200
+
+    # nota: sulla fruizione c'è un handler che riconosce che il messaggio è rimasto {} e lo imposta a null. Da karate non ci sono riuscito
+    * remove response.c
+
+
+
 Scenario: isTest('manomissione-header-http-firmati-richiesta-idar04-jwk') ||
 		isTest('manomissione-header-http-firmati-richiesta-idar04-pdnd')
 

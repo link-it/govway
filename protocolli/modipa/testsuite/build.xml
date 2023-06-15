@@ -54,6 +54,7 @@
 
 	<property name="src_testsuite" location="src" />
 	<property name="build_testsuite" location="build" />
+	<property name="dist_testsuite" location="dist" />
 
 	<!-- Ripulisce la distribuzione -->
 	<target name="clean">
@@ -79,6 +80,11 @@
 				<exclude name="**/*.java"/>
 			</fileset>
 		</copy>
+		<jar jarfile="${dist_testsuite}/govway_modi_testsuite_handlers.jar">
+			<zipfileset dir="${build_testsuite}">
+				<include name="org/openspcoop2/core/protocolli/modipa/testsuite/handler/*"/>
+			</zipfileset>
+		</jar>
 	</target>
 
 	<!-- Esecuzione dei test -->

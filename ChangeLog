@@ -1,3 +1,10 @@
+2023-06-15  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Migliorata diagnostica emessa in presenza di una richiesta con pattern INTEGRITY_REST che presenta l'header digest e un payload http vuoto.
+	L'errore che veniva segnalato nel diagnostico era fuorviante poichè veniva indicato: "Header HTTP 'digest', dichiarato tra gli header firmati, non trovato".
+	Adesso invece l'errore riportato è il seguente: "Header HTTP 'Digest' presente in una risposta con http payload vuoto".
+
 2023-06-14  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

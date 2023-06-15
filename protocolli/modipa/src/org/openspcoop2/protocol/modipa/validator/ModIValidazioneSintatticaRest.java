@@ -1154,7 +1154,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			
 			String digestHeader = HttpConstants.DIGEST;
 			String digestValueInHeaderHTTP = null;
-			if(integrita && !integritaCustom && msg.castAsRest().hasContent()) {
+			if(integrita && !integritaCustom) {
 				
 				List<String> digests = null;
 				if(msg!=null) {
@@ -1170,8 +1170,10 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 					digest = digests.get(0);
 				}
 				if(digest==null) {
-					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.PROFILO_TRASMISSIONE_NON_PRESENTE, 
-							getErrorHeaderHttpNonPresente(digestHeader)));
+					if(msg.castAsRest().hasContent()) {
+						erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.PROFILO_TRASMISSIONE_NON_PRESENTE, 
+								getErrorHeaderHttpNonPresente(digestHeader)));
+					}
 				}
 				else if(digests.size()>1) {
 					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.PROFILO_TRASMISSIONE_PRESENTE_PIU_VOLTE, 
@@ -1182,6 +1184,12 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_DIGEST, digestValueInHeaderHTTP);
 					if(request && includiRequestDigest && this.context!=null) {
 						this.context.addObject(ModICostanti.MODIPA_CONTEXT_REQUEST_DIGEST, digestValueInHeaderHTTP);
+					}
+					
+					if(!msg.castAsRest().hasContent()) {
+						String role = MessageRole.REQUEST.equals(msg.getMessageRole()) ? "richiesta" : "risposta";
+						erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_INTESTAZIONE_NON_VALIDA, 
+								getErrorHeaderHttpPrefix(digestHeader)+" presente in una "+role+" con http payload vuoto"));
 					}
 				}
 			}

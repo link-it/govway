@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/502/InteroperabilityInvalidResponse.html",
+    "title": "InteroperabilityInvalidResponse",
+    "status": 502,
+    "detail": "[GOVWAY-1353] Header HTTP 'Digest' presente in una risposta con http payload vuoto\n[GOVWAY-1355] Header HTTP 'Digest' possiede un valore non corrispondente al messaggio\n",
+    "govway_id": "#uuid"
+}

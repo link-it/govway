@@ -214,6 +214,8 @@ Prerequisiti:
 	Impostare in <.../distrib/properties/config_loader.cli.properties>
 
 		policy.enable=true
+		plugin.enable=true
+		configurazioneGenerale.enable=true
 
 + Compilare i test con
 	ant build
